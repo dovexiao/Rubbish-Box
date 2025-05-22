@@ -1,0 +1,198 @@
+import Text from '@basicComponents/text';
+import React from 'react';
+import {View, Image} from 'react-native';
+import theme from '@style';
+import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
+import globalStore from '@/services/global.state';
+import {goTo, goToWithLogin, toPriceStr} from '@/utils';
+import DetailNavTitle from '@/components/business/detail-nav-title';
+import {combineLatest, distinctUntilChanged} from 'rxjs';
+import {postUserInfo} from '@services/global.service';
+import {useTranslation} from 'react-i18next';
+import {useFocusEffect} from '@react-navigation/native';
+import Button from '@/components/basic/button';
+import useNotificationStore from '@/store/useNotificationStore';
+import {useShallow} from 'zustand/react/shallow';
+import useHomeStore from '@/store/useHomeStore';
+import Tag from '@/components/basic/tag';
+const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
+
+const HomeHeader = () => {
+  const {i18n} = useTranslation();
+  const [showLogin, setShowLogin] = React.useState(false);
+  const [showUser, setShowUser] = React.useState(false);
+  const [userName, setUserName] = React.useState(false);
+  const [userAvatar, setUserAvatar] = React.useState('');
+  const [amount, setAmount] = React.useState<number>(0);
+  const [rate, setRate] = React.useState<number>(0);
+  const {unReadMessageCount} = useNotificationStore(
+    useShallow(state => ({
+      unReadMessageCount: state.unReadMessageCount,
+    })),
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const sub = combineLatest([
+        globalStore.tokenSubject,
+        globalStore.globalLoading,
+      ]).subscribe(([t, l]) => {
+        // 没有token且没有加载时,显示login按钮
+        setShowLogin(!t && !l);
+        setShowUser(!!t);
+        if (t) {
+          postUserInfo().then(res => {
+            globalStore.userInfo = res;
+            setUserName(res.userName || res.userPhone);
+            setUserAvatar(res.userAvatar);
+          });
+        }
+      });
+      const amountSub = globalStore.amountChanged.subscribe(res => {
+        if (res.current) {
+          setAmount(res.current);
+        }
+      });
+      const rateSub = globalStore.rateSubject
+        .pipe(distinctUntilChanged())
+        .subscribe(v => {
+          setRate(v);
+        });
+
+      const msgSub = globalStore.notificationSubject.subscribe(() => {});
+      return () => {
+        sub.unsubscribe();
+        amountSub.unsubscribe();
+        rateSub.unsubscribe();
+        msgSub.unsubscribe();
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
+  );
+
+  return (
+    <DetailNavTitle
+      rate={rate}
+      showProgress
+      containerStyle={[
+        theme.flex.row,
+        theme.flex.centerByCol,
+        theme.background.transparent,
+        {
+          paddingTop: theme.paddingSize.zorro,
+          paddingBottom: theme.paddingSize.zorro,
+        },
+      ]}
+      hideServer
+      leftNode={
+        <View style={[theme.flex.centerByCol, theme.flex.row]}>
+          <NativeTouchableOpacity
+            style={[theme.flex.row, theme.flex.centerByCol]}
+            onPress={() => {
+              useHomeStore.setState({oneCategoryPageIndex: 0});
+            }}>
+            <Image
+              style={[
+                // eslint-disable-next-line react-native/no-inline-styles
+                {
+                  width: 110,
+                  height: 50,
+                  // borderRadius: 6,
+                  // borderColor: theme.basicColor.selectPrimary,
+                  // borderWidth: 1,
+                },
+              ]}
+              source={require('@assets/logos/logo-v2.webp')}
+            />
+          </NativeTouchableOpacity>
+        </View>
+      }
+      hideAmount
+      rightNode={
+        <View style={[theme.flex.centerByCol, theme.flex.row, theme.gap.m]}>
+          {showUser && (
+            <NativeTouchableOpacity
+              onPress={() => goTo('Me')}
+              style={[theme.flex.centerByCol, theme.flex.row, theme.gap.m]}>
+              <View style={[theme.flex.col, theme.margin.lefts]}>
+                <Text
+                  accent
+                  textAlign="left"
+                  color={theme.fontColor.white}
+                  style={[
+                    {
+                      marginBottom: -theme.paddingSize.xxs / 2,
+                    },
+                  ]}>
+                  {userName}
+                </Text>
+                <Text
+                  color={theme.fontColor.white}
+                  textAlign="right"
+                  size="medium"
+                  blod>
+                  {toPriceStr(amount)}
+                </Text>
+              </View>
+              <Image
+                source={userAvatar ? {uri: userAvatar} : defaultHeaderImg}
+                style={[theme.icon.xxl, {borderRadius: theme.iconSize.xxl / 2}]}
+              />
+            </NativeTouchableOpacity>
+          )}
+          {showUser ? (
+            <NativeTouchableOpacity
+              onPress={() => {
+                goToWithLogin('Notification');
+              }}
+              style={[theme.position.rel]}>
+              <Image
+                style={[theme.image.xs]}
+                source={require('@assets/icons/bell.webp')}
+                resizeMode={'cover'}
+              />
+              {unReadMessageCount?.messageTotalCount ? (
+                <Tag
+                  // eslint-disable-next-line react-native/no-inline-styles
+                  style={[theme.position.abs, {top: 0, right: 0}]}
+                  badgeSize={14}
+                  backgroundColor={theme.basicColor.red}
+                  content={
+                    unReadMessageCount?.messageTotalCount > 99
+                      ? '99+'
+                      : unReadMessageCount?.messageTotalCount
+                  }
+                />
+              ) : null}
+            </NativeTouchableOpacity>
+          ) : null}
+          {showLogin && (
+            <View style={[theme.flex.row, theme.flex.centerByCol, theme.gap.m]}>
+              <Button
+                title={i18n.t('me.user.loginUpper')}
+                type="linear-primary"
+                size="small"
+                radius={20}
+                onPress={() => {
+                  goTo('Login');
+                }}
+              />
+              <Button
+                title={i18n.t('me.user.registerUpper')}
+                type="border"
+                size="small"
+                radius={20}
+                onPress={() => {
+                  goTo('SingUp');
+                }}
+              />
+            </View>
+          )}
+        </View>
+      }>
+      <View style={[theme.flex.flex1]} />
+    </DetailNavTitle>
+  );
+};
+
+export default HomeHeader;

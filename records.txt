@@ -1,0 +1,1115 @@
+commit 78edf55a8a832bfd349c2a8e1ae3b09b744c2648
+Merge: 48ae251 7fe1b36
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Feb 29 13:42:31 2024 +0400
+
+    Merge branch 'master' into sg-320
+
+commit 27da804a21cf48da413fbc56f5fdedec1e6cc354
+Merge: 37312ff 50cb862
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Feb 27 18:36:04 2024 +0400
+
+    Merge branch 'master' into sg-320
+
+commit 50cb86219651238fa45b19edd6a188ca4182271c
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Feb 27 12:21:35 2024 +0400
+
+    update api
+
+commit 61a08f284b8326e39bc2f31797787d4e12c31b53
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sun Feb 25 13:55:23 2024 +0400
+
+    patches 动画库补丁
+
+commit 5ce7e9bde9f791748a0925ad9604376eceec6ec9
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sun Feb 25 12:47:10 2024 +0400
+
+    code style
+
+commit ac8479c73022fa64916d901d00aef77ffce185d0
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Feb 23 14:17:38 2024 +0400
+
+    code style
+
+commit 739b0d675c10874772986f20df6b30c24e7fc1be
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Feb 23 14:17:30 2024 +0400
+
+    code style
+
+commit df995134121e134a5df28055d03e9b1b80779cf6
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Feb 23 14:15:52 2024 +0400
+
+    build
+
+commit 0db178ae182838f40fa6901713ffa7bbc1ee457c
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Feb 20 13:05:36 2024 +0400
+
+    delete demo
+
+commit 0f5cc0f0c6f1425d412cc185a52a8674674e1791
+Merge: 394480b 0f905ed
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Feb 16 15:59:43 2024 +0400
+
+    Merge branch 'master' into feature/3games
+
+commit aaceee0aa071b8806104d106bcf11c02aaf61105
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Feb 15 14:55:51 2024 +0400
+
+    change title
+
+commit e05743b51ae44c68a2da5c092a1f317082779623
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Feb 13 15:18:19 2024 +0400
+
+    update logo
+
+commit 3d5e596e5b97ada51804d1715fde3737eec412a8
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Feb 13 12:07:18 2024 +0400
+
+    style
+
+commit ca7526092389768e535747101a010d99a0fc836e
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Feb 13 15:03:43 2024 +0400
+
+    style
+
+commit 676f1e4218fd2a158c6165e802cb50e0b50d6f0c
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Feb 13 12:07:18 2024 +0400
+
+    style
+
+commit 6e38f0f8584dc50fc170ecccc3a81b54f4d55c32
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Feb 7 20:59:58 2024 +0400
+
+    code style
+
+commit b4b68943ae52b0177fb6c68aef5d31543780a479
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Feb 7 18:50:00 2024 +0400
+
+    优化弹窗逻辑,链接更新后也弹窗
+
+commit 123f73906facb9091233330a3379b51b4f088991
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Feb 7 15:52:26 2024 +0400
+
+    删除无用脚本
+
+commit 367767bdb105bc22df4439af0d43ef956ed8a67e
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Feb 7 13:48:17 2024 +0400
+
+    code style
+
+commit 68306b32d4bfb83fe28f72eef4203dd2b0158027
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Feb 6 22:31:07 2024 +0400
+
+    build
+
+commit 8b23b8aa717e0441a0aae3e7c59407ef44d8bb66
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Tue Feb 6 15:17:24 2024 +0800
+
+    修复定时器问题
+
+commit 1d5cd77a3f9a53dac653cfaa3ab71ac8f29cf304
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Feb 5 18:43:52 2024 +0400
+
+    i18n
+
+commit c69902b8a48875f7348b0b16e73cc609f0bdfb82
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Mon Feb 5 21:30:29 2024 +0800
+
+    添加新字体
+
+commit e522ad87d1622bd370037b85e40b25fc8c76282b
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Mon Feb 5 13:57:19 2024 +0800
+
+    换皮 Sg /添加接口配置
+
+commit 7aa5530c5308442f4e71162ab07308d3f0157ade
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sat Feb 3 20:45:38 2024 +0400
+
+    perf 顺序调整
+
+commit 9880fd966bb3de96a14fd0d4b5b7037c4fb59c68
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Feb 2 20:59:42 2024 +0400
+
+    update color pic
+
+commit 9b9b5e0a51d84c14a1a254d79341f367dc00d921
+Merge: dffcee7 4d2ecb5
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Feb 2 18:58:29 2024 +0400
+
+    Merge branch 'master' into feature/car_entry
+
+commit 361cd836b7f350e1f0030c2623d6012ffcfa26ee
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Feb 2 18:45:47 2024 +0400
+
+    style
+
+commit dffcee7186fea1d9563241d77385b80bed34e7b7
+Author: sethvoler <sethvoler@gmail.com>
+Date:   Fri Feb 2 21:20:24 2024 +0800
+
+    feat: 添加首页 car 入口
+
+commit 834e3fee59cbe88bbbc7563549223371180a22f8
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Feb 1 18:38:54 2024 +0400
+
+    update api
+
+commit 4ac41639d13c010ead214e4ee88fb8b74c11890c
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Feb 1 16:29:33 2024 +0400
+
+    perf sport 加载动画
+
+commit ad64c1d57b60184f5fb809171dbe6bd069abe629
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Feb 1 13:53:08 2024 +0400
+
+    code style
+
+commit eb01568ba1a2473398f852df7e12924f998b0fd0
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Jan 31 18:48:34 2024 +0400
+
+    feat sports
+
+commit 0efdf48c6cb517c480d832d6b3c3754da1a231ca
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Jan 15 13:07:40 2024 +0400
+
+    style
+
+commit 4d84c49434e53b359b96ea63e4a64c4c36247cc8
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Jan 12 15:57:17 2024 +0400
+
+    perf 领取vip奖励后更新余额和转盘
+
+commit 54fb7f9848ae62da9f08eaced201f5b739734eb2
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Jan 12 11:13:53 2024 +0400
+
+    build
+
+commit 0a633133be9800c35d0d3e475058e04cc67a4ac2
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sat Jan 6 20:02:38 2024 +0400
+
+    perf 同步webview
+
+commit a8cfe6e703c74143d6777bccebe2a0a0f353c370
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Jan 2 17:41:29 2024 +0400
+
+    fix tab
+
+commit 31d39f6b50dd4c88a4b0b744fc060b6258c0f2a1
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Jan 2 15:19:23 2024 +0400
+
+    fix key and banner
+
+commit 776991df677fdafa0afb692adf8d93b748efa413
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Jan 1 16:49:18 2024 +0400
+
+    api
+
+commit c5fc5f62d57bf8fae670ef55186a9cab3de04b7d
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Jan 1 16:39:29 2024 +0400
+
+    update config defaultuserphonecode
+
+commit c56a995e63fb60c60a63bd93cf29719663e21b9a
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Dec 25 19:16:11 2023 +0400
+
+    style
+
+commit 6315d867f6d95ef6369499f45e61f4d0215df571
+Author: zhuyung <m17779696891@163.com>
+Date:   Mon Dec 25 17:10:30 2023 +0800
+
+    edit date
+
+commit 176b88a4e65e65e4263d013c019a724fed7d06b1
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Dec 20 17:36:59 2023 +0400
+
+    perf 更新属性
+
+commit 4e04b85cf24c8f791605b6627d6a5c761688a418
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Dec 19 23:26:30 2023 +0400
+
+    perf 更新下载方法
+
+commit b5b8906e27f55c95ecd1b28204fa8324747ccf94
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Dec 19 23:16:09 2023 +0400
+
+    api
+
+commit 0856f65f5744e69afee935aa990f2e3cbdcf8b30
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Dec 19 22:17:14 2023 +0400
+
+    code style
+
+commit 57da1053541c6f2f61adeba5e3566e864efbd679
+Merge: 8d4a70c 439d252
+Author: JoeH5 <tpzzht@qq.com>
+Date:   Tue Dec 19 23:19:06 2023 +0800
+
+    Merge remote-tracking branch 'origin/master' into featrue/profile
+
+commit 3727843944d8eb8a2e6dba08f71af9bae7d610c1
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Dec 19 18:49:13 2023 +0400
+
+    更新资源
+
+commit 8d4a70c978e5bf4e9b658c67bba5865a60c15239
+Author: zhuyung <m17779696891@163.com>
+Date:   Tue Dec 19 20:12:16 2023 +0800
+
+    merge master
+
+commit 3f97bd126971668cc0cbc147c2e457a6d1dd45bd
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Dec 19 13:37:35 2023 +0400
+
+    code style
+
+commit 10c19fd8035a68adb3e3ce5f9e176ab7710cd4e2
+Author: zhuyung <m17779696891@163.com>
+Date:   Tue Dec 19 17:24:31 2023 +0800
+
+    edit profile
+
+commit 962addba67976b85077ba413bb68b869da3f5cb2
+Author: zhuyung <m17779696891@163.com>
+Date:   Tue Dec 19 14:39:50 2023 +0800
+
+    -- hard
+
+commit fe376206d4cfd728086a87ae44245aa366e01b60
+Author: zhuyung <m17779696891@163.com>
+Date:   Tue Dec 19 14:08:14 2023 +0800
+
+    edit team report 7days
+
+commit 894cc8d51b8ee4c650ca6f8535be0991699c70e3
+Author: zhuyung <m17779696891@163.com>
+Date:   Mon Dec 18 20:01:21 2023 +0800
+
+    merge share
+
+commit c1d37103285301d55b758f8e4ded43a6037364b2
+Author: zhuyung <m17779696891@163.com>
+Date:   Mon Dec 18 14:01:53 2023 +0800
+
+    edit  team report
+
+commit 611876e179a763e285203d96e79a7a7b9cbb0a9b
+Author: zhuyung <m17779696891@163.com>
+Date:   Mon Dec 18 12:57:51 2023 +0800
+
+    edit profile
+
+commit f547c202acdaae9165b01b65a20f2c2389f90cba
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sun Dec 17 13:25:04 2023 +0400
+
+    perf 菜单跳转通知前判断是否存在token
+
+commit caa83f69edc877f92a160a532e9173f0bd4dd7b4
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Dec 15 16:08:09 2023 +0400
+
+    build
+
+commit a14b71e93212e555845578cf659532755d274139
+Merge: b8743d9 10a5121
+Author: Joe <tpzzht@qq.com>
+Date:   Fri Dec 15 18:40:00 2023 +0800
+
+    Merge remote-tracking branch 'origin/master' into feature/profiles-new
+
+commit d84789d2ea18e34fc706f63224c8840591bc4f63
+Merge: 09388e8 0c03d00
+Author: Joe <tpzzht@qq.com>
+Date:   Fri Dec 15 18:36:07 2023 +0800
+
+    Merge remote-tracking branch 'origin/master' into feature/proxyfixed
+
+commit 77f415c26863a601b9e7d9c42c1390b902f1b37a
+Merge: 173ff9a 0c03d00
+Author: Joe <tpzzht@qq.com>
+Date:   Fri Dec 15 15:55:10 2023 +0800
+
+    Merge remote-tracking branch 'origin/master' into feature/profiles-new
+
+commit 237619919346aca4af398df079924ff76d2dc655
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Dec 14 20:29:53 2023 +0400
+
+    fix 金刚区代理跳转
+
+commit 173ff9abdc502d4518bb425d3414cf4b9959b49b
+Merge: 2a4475a a2f11db
+Author: zhuyung <m17779696891@163.com>
+Date:   Thu Dec 14 17:48:58 2023 +0800
+
+    Merge remote-tracking branch 'origin/master' into feature/profiles-new
+
+commit ced6a488d883ac2523349d64d09bbffb46928a06
+Merge: dc52fc6 2a0d89a
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Dec 14 13:17:10 2023 +0400
+
+    Merge branch 'master' into feature/bets
+
+commit 2a4475aac234b6e4e42899bac2e0f740dd5bbd7d
+Author: zhuyung <m17779696891@163.com>
+Date:   Thu Dec 14 17:13:01 2023 +0800
+
+    merge master
+
+commit 64152e90ff4fab100011b2ae48a927de9df3f77e
+Author: zhuyung <m17779696891@163.com>
+Date:   Thu Dec 14 14:58:19 2023 +0800
+
+    edit route proxy-search
+
+commit 7c764d4d590a663356efa6ab30be69e51b196852
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Dec 13 23:55:06 2023 +0400
+
+    perf 删除重复资源
+
+commit d186a997ea0d4b35ea853677efc64682897cabb5
+Merge: 120b344 9a44381
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Dec 14 04:14:09 2023 +0400
+
+    Merge branch 'master' into feature/proxy
+
+commit dc52fc67229fa02903344c929cccfe28ff395b65
+Merge: 347ca90 9a44381
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Dec 13 23:36:15 2023 +0400
+
+    Merge branch 'master' into feature/bets
+
+commit d7eb35a26a642dedd1f4e1b20a47c5dab75e3302
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Dec 11 18:33:11 2023 +0400
+
+    perf 更新路由
+
+commit 120b344d5b8ae72acce3043f78e9e0d50b55d2c0
+Author: Joe <tpzzht@qq.com>
+Date:   Mon Dec 11 16:55:40 2023 +0800
+
+    fix(invitation): 分享裂变页面图片更换
+    Share the cracking page picture replacement
+
+commit 7bb7ba4e7264131688efac4c88ab987b6dca6fbf
+Author: Joe <tpzzht@qq.com>
+Date:   Mon Dec 11 16:50:16 2023 +0800
+
+    fix: 裂变分享页图片
+    Fission sharing page picture
+
+commit b96bd46dc2b83f36b166d6b7ec7f41c9d601a993
+Merge: 7daad27 ac98dc6
+Author: Joe <tpzzht@qq.com>
+Date:   Mon Dec 11 15:23:02 2023 +0800
+
+    Merge remote-tracking branch 'origin/master' into feature/proxy
+
+commit 84a80ce29db49a45929d49bc90076df1938b86c0
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Dec 11 03:08:23 2023 +0400
+
+    build 更新依赖
+
+commit 347ca903a893b32dcb2815bb6c29c76503f63a49
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Thu Dec 7 12:54:57 2023 +0800
+
+    change api url
+
+commit 228a6e36d16f84335ce91c8c4f034c288721e585
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Dec 6 17:32:44 2023 +0400
+
+    更新api
+
+commit da975ce4ba1976b9f5be10cf144beb9466121101
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Dec 5 15:51:45 2023 +0400
+
+    perf 下载功能更新
+
+commit 32900f8d9a675de2faa01303c5e2319c85f1fa92
+Merge: 0bb9f6c df81df7
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Tue Dec 5 18:19:26 2023 +0800
+
+    Merge branch 'master' into feature/bets
+    
+    # Conflicts:
+    #       src/common-pages
+    #       src/components
+    #       src/route.ts
+
+commit 533f2fa13497b11d4f625cf5fe782b28253c83f5
+Author: noahliang <noahliang@gmail.com>
+Date:   Mon Dec 4 21:15:57 2023 +0800
+
+    Feature/codestyle
+
+commit faae815f4ce0328526b364f148a1953b4fa3a30f
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Dec 4 17:15:05 2023 +0400
+
+    perf 更新图片
+
+commit 74358494330c1b3fcf29ec55da1fd64c6fa43bbe
+Author: noahliang <noahliang@gmail.com>
+Date:   Mon Dec 4 20:53:40 2023 +0800
+
+    Feature/transaction
+
+commit 0bb9f6c7eff5f1998c1f35f7f560c74db4255f92
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Mon Dec 4 18:43:51 2023 +0800
+
+    修复bets bug
+
+commit 4f6f39b33cd6482279cc1233aa682e07880ce82a
+Author: Joe <tpzzht@qq.com>
+Date:   Mon Dec 4 15:14:01 2023 +0800
+
+    build: 去除react-native-paper依赖
+    该依赖去除后不影响react-native-paper-date的运行，故去除
+
+commit 6e2a0fa269d35b98c57cd670469b1ef02f9165f6
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Sat Dec 2 23:22:41 2023 +0800
+
+    修复bets 加载背景
+
+commit 785b8ea68f96d8c3e4422fcc2d1a42ee1b4fd24f
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Sat Dec 2 16:33:20 2023 +0800
+
+    修复 bug
+
+commit 71c159b729a40535bd040ae3608b4fce2657720b
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Sat Dec 2 00:10:14 2023 +0800
+
+    修改资源路径
+
+commit 108c512a432f7ae8a8a04d7714d562879027aa6d
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Thu Nov 30 19:02:33 2023 +0800
+
+    优化代码
+
+commit e6d40ee56fc6be36be0eb7baf48888194e293663
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Thu Nov 30 18:18:03 2023 +0800
+
+    bets
+
+commit c972b7ad6108311fbd6b7f14a3de9b05c8f4f8cf
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Thu Nov 30 02:46:23 2023 +0800
+
+    游戏资源
+
+commit 594d1cb43d8b9d94c09fa324daedaf96634416b3
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Wed Nov 29 20:22:22 2023 +0800
+
+    样式修复
+
+commit b711d333d2d2eb8c8aaf2b8fa8de30dad5609676
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Wed Nov 29 14:56:18 2023 +0800
+
+    me页面 用户名显示
+
+commit 1995acce53d81d5970ee3d4bf971743f9e080691
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Tue Nov 28 23:52:35 2023 +0800
+
+    暂存
+
+commit dfe74ba8f09d49e138570e06230d2571cd6e4b6f
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Tue Nov 28 20:52:50 2023 +0800
+
+    昵称输入栏-的清除按钮点击区域过小，不好点击 ui样式问题
+
+commit 472b7408d1c73802270a39e6e507c40f4c5b91b0
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Tue Nov 28 17:20:30 2023 +0800
+
+    修复 头像编辑闪退问题
+
+commit 54b3cedc9c4efe7ac7ee45d32570a6e85d0c45a4
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Tue Nov 28 14:38:07 2023 +0800
+
+    修改
+
+commit 20388c397a5fb4c91c9ceb2a78ebde51322756a3
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Tue Nov 28 14:37:37 2023 +0800
+
+    用户资料bug修改
+
+commit 7244c0879ac9ade682c70181ed8954e8499c881c
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Nov 27 21:01:58 2023 +0400
+
+    perf delete origin
+
+commit 48480d35bee5b81af7b5ae9ce4d20f9f5be2a4c9
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Mon Nov 27 23:23:06 2023 +0800
+
+    my bets
+
+commit 7557b18bc2d2990d8775e1674ec3b5e2b73f42e0
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Mon Nov 27 20:51:56 2023 +0800
+
+    文件上传
+
+commit 64cffa3a2f13aecbf9914a0577d4b65c1003f413
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Mon Nov 27 20:32:04 2023 +0800
+
+    RN   文件上传
+
+commit 29ddfe3e0d48fadf0be6d791772f9fef750bb115
+Author: v-zhuyong112 <m17779696891@163.com>
+Date:   Fri Nov 24 21:22:39 2023 +0800
+
+    profiles
+
+commit 3d9ca2c74b648067132fabbc304e3eedc4d892ee
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Thu Nov 23 01:59:26 2023 +0800
+
+    my bets 列表
+
+commit d182f67e5acba8c4066418c2655c676c54263e52
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Nov 22 19:10:18 2023 +0400
+
+    update submodule hash
+
+commit 791ad863766b496cff4540989f3b3f24be216db1
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Nov 22 19:06:20 2023 +0400
+
+    code style
+
+commit 6d5376ae8066fa1da476938aa1988f3722bca156
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Nov 22 11:57:12 2023 +0400
+
+    code style
+
+commit 9b57c2eb41cd08ecd7ab9aefd391c57e6c91b99e
+Merge: 545f020 17520d1
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Nov 22 00:14:53 2023 +0400
+
+    Merge branch 'feature/i18n' into feature/facebook
+
+commit 17520d13c4e105c2b24190fb43ba16f7faaa0c13
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 21 18:28:20 2023 +0400
+
+    perf 跳转逻辑调整
+
+commit f0e174bd00c829f1dfe9c463af28d8253dd2bd7f
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 21 14:01:47 2023 +0400
+
+    perf 校验和同步翻译
+
+commit 3232f28825a8839841a4631873f11d91ee210a14
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Nov 20 15:58:11 2023 +0400
+
+    perf 更新图片
+    
+    
+    (cherry picked from commit 519742025d4d654454bb5eea29f29e936fcc3478)
+
+commit f870d37b4ff2c1aa9816a74ba691858c0ec06f52
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Nov 20 11:25:43 2023 +0400
+
+    perf 请求头增加参数
+
+commit 97ca1929ec609e348c9dec12dca5aab865741566
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sat Nov 18 19:04:07 2023 +0400
+
+    code style
+
+commit 45ea5e9621bf4b2407488a65aa25cec0562e4d5d
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Nov 16 19:24:15 2023 +0400
+
+    build 删减依赖
+
+commit f1abd90b22d107fb37427efef5490e920471a39f
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Wed Nov 15 20:46:16 2023 +0800
+
+    子模块
+
+commit 47b43ca4345d30fd7d0f60a7816458553b5aea3f
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Wed Nov 15 20:45:58 2023 +0800
+
+    多语言 功能更新
+
+commit f3a6686450ea8ad81c67570a8887fc18d02a3c7e
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 14 16:54:03 2023 +0400
+
+    fix me 字体问题
+
+commit ed9b156eb8dfec5a12dd058f2bfb592f8087b80d
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 14 16:23:14 2023 +0400
+
+    code style
+
+commit c4b240ec3c3d2fae05d4f4d9f3990bc011219d63
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 14 11:48:46 2023 +0400
+
+    feat 新版下载
+
+commit 16d952efd4e567252500d8fb23d506cf30e3f32d
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sun Nov 12 20:04:35 2023 +0400
+
+    code style
+
+commit 7f70bcbc0a73fe0e16ecd88ef67508c3b559228d
+Merge: 6fdcba1 3a5ff6e
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sun Nov 12 18:46:51 2023 +0400
+
+    Merge branch 'feature/paytm'
+
+commit 3997826169b86d308fa1729daaa57b991c3c25eb
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sun Nov 12 17:55:26 2023 +0400
+
+    update readme
+
+commit 16d7713773451a76a868d620210fc7f2341c60e2
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Sun Nov 12 20:58:51 2023 +0800
+
+    修复 加载后的短暂白屏
+
+commit b5e438b56814e9272b1cfe55fba62367080ee08b
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sun Nov 12 17:47:12 2023 +0400
+
+    fix app弹窗bug
+
+commit 3a5ff6ecc2a4f95c3428bc91de3f319efb489a35
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Sat Nov 11 17:05:16 2023 +0400
+
+    style
+
+commit 5e55e4bd13cba3b8acc49a1b70692101da7290d7
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Nov 10 20:18:18 2023 +0400
+
+    same as master
+
+commit 02aed5768988da5aa4d91e96d5bfe4bca3f92d83
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Fri Nov 10 19:32:59 2023 +0400
+
+    update google GTM
+
+commit 2c572da37d80398f13ca0a03592b408680a11a4a
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Nov 9 20:59:03 2023 +0400
+
+    perf trycatch hot push
+
+commit b5a282d8e0a50832e431f1030a68b247bd5c22f3
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Thu Nov 9 16:52:38 2023 +0400
+
+    perf 更新客服跳转
+
+commit 0b8f843da5898fee80e0e1290abb77eb3dc5c0bf
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Nov 8 21:11:46 2023 +0400
+
+    feat 打包脚本
+
+commit 6b5498299d19f09dddf6c9b6de6ec5e5528c17d6
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Wed Nov 8 17:48:28 2023 +0400
+
+    code style
+
+commit da9b9d35846fccdaaf2bbdef9ea767c1f01d9abb
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Wed Nov 8 20:39:22 2023 +0800
+
+    优化splash
+
+commit 8585c498f0ed52f71c49a5f549d21ac1cd40b131
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Wed Nov 8 18:13:29 2023 +0800
+
+    save
+
+commit faad216e4b94eea73694f5454e69aeb209606cde
+Author: DaiYz <dyz2924ever@gmail.com>
+Date:   Wed Nov 8 00:52:57 2023 +0800
+
+    弹出逻辑
+
+commit c9aa7aef562349e8d06650c745927b992919b702
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 7 20:49:22 2023 +0400
+
+    rollback recharge
+
+commit 53e0c61a20dfa8694765ab711282b4785c7fc751
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 7 18:10:21 2023 +0400
+
+    stash 暂存app.tsx
+
+commit 204cb054def6ba43e04970d05361d6622c6ba1e1
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 7 16:04:54 2023 +0400
+
+    perf codeInited
+
+commit 5304eb974252ea3d08a9bc753c538410fa1c1614
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Tue Nov 7 15:46:37 2023 +0400
+
+    perf 调整路由加载逻辑
+
+commit 958f8274223e95beaa17769918cf73ffaaf837e0
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Nov 6 21:03:47 2023 +0400
+
+    build lockfile
+
+commit 038d3a5c3f4660f024b133e8f1d6f3be196f2624
+Merge: e0a4def fae89be
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Nov 6 20:08:50 2023 +0400
+
+    Merge branch 'feature/chat' into uat
+
+commit e0a4defdda2195ce2ac836d1a2ad4b1f785abe98
+Merge: f82c208 6f9a5c3
+Author: Noah Liang <super_mumoo@163.com>
+Date:   Mon Nov 6 20:04:33 2023 +0400
+
+    Merge branch 'feature/sync-casino' into uat
+
+commit f82c20804be73d759aff12b12738cfeca27ab4ad
+Author: Noah <super_mumoo@163.com>
+Date:   Mon Nov 6 14:41:48 2023 +0400
+
+    test for submodule
+
+commit e88a476dcdfa32236d735adcb87bebaac0555b2a
+Author: Noah <super_mumoo@163.com>
+Date:   Sun Nov 5 14:23:48 2023 +0400
+
+    perf 禁用ios状态栏以及自动放大功能
+
+commit 773badc027ef8e1ff048d7691f07a263ea705ae2
+Author: Noah <super_mumoo@163.com>
+Date:   Fri Nov 3 17:56:12 2023 +0400
+
+    perf 更新轮播组件路径
+
+commit 68fa18c9466b7b909732dacf94a8a98c4b131f20
+Author: Noah <super_mumoo@163.com>
+Date:   Wed Nov 1 12:42:42 2023 +0400
+
+    update doc
+
+commit 4549e9915d7d189b185dcf27dd161ec58927c0cb
+Author: Noah <super_mumoo@163.com>
+Date:   Thu Oct 26 17:55:56 2023 +0400
+
+    code style
+
+commit 7834b938657b55530ede8bce37ba314dad877d02
+Author: Noah <super_mumoo@163.com>
+Date:   Thu Oct 26 17:36:22 2023 +0400
+
+    perf 更新图标
+
+commit 6256e1d6e27958e369aff76c2e6ae065224b5478
+Author: Noah <super_mumoo@163.com>
+Date:   Thu Oct 26 14:43:29 2023 +0400
+
+    code style
+
+commit b73e00755e41fb203ac6c2781300a04fdda8d8fa
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 21 19:49:35 2023 +0400
+
+    stash file
+
+commit 5d8b28fadc39157382143c2f1e44da0af9be1a0e
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 21 14:20:11 2023 +0400
+
+    perf home me loading
+
+commit 0d6f21903f64ec992fbbb7774280e7c2965a99d6
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 21 01:18:50 2023 +0400
+
+    perf home loading
+
+commit 01e3e3e152b4841e2eb1913ebe1f6f9ceaeb4eee
+Author: Noah <super_mumoo@163.com>
+Date:   Fri Oct 20 01:10:26 2023 +0400
+
+    feat invitation
+
+commit 2ef9295ad5ac0b3ef4d35a453a4d98c96539575b
+Author: Noah <super_mumoo@163.com>
+Date:   Thu Oct 19 17:23:07 2023 +0400
+
+    feat 弹窗逻辑
+
+commit df6acb14ce9c3cd377403534457ffa0d876c7d32
+Author: Noah <super_mumoo@163.com>
+Date:   Thu Oct 19 15:47:04 2023 +0400
+
+    code style
+
+commit 0d956ed1579831a934988b3ccc43a3c206ba8442
+Author: Noah <super_mumoo@163.com>
+Date:   Tue Oct 17 16:44:16 2023 +0400
+
+    update 更新版本号
+
+commit 0fb7b6d200fcb32925cfe31e8b372efd0c95da18
+Author: Noah <super_mumoo@163.com>
+Date:   Mon Oct 16 19:33:20 2023 +0400
+
+    code style
+
+commit 9516f6fbe0ca0e490af78b4f4d0d4cc064876848
+Author: Noah <super_mumoo@163.com>
+Date:   Mon Oct 16 17:44:52 2023 +0400
+
+    style
+
+commit 3e0ae737cb60aa3712ea7a2082aa0bd915f00862
+Author: Noah <super_mumoo@163.com>
+Date:   Mon Oct 16 17:31:30 2023 +0400
+
+    perf 优化刮刮乐路由方式
+
+commit 4f5828b6f7191f963405391fca5d490dd6c0df45
+Merge: efca716 b5f48eb
+Author: Noah <super_mumoo@163.com>
+Date:   Thu Oct 12 19:03:12 2023 +0400
+
+    Merge branch 'dev' of http://code.superclub.tk/root/rn_singam into dev
+
+commit 0b4b9d0b566d7007563d968f3f322337bbff1e5b
+Author: Noah <super_mumoo@163.com>
+Date:   Thu Oct 12 03:35:47 2023 +0400
+
+    code style
+
+commit 086ac9cddec35c5b0e436a40a8fa98209d1b88f8
+Author: Noah <super_mumoo@163.com>
+Date:   Wed Oct 11 18:24:25 2023 +0400
+
+    version
+
+commit 532d69de52c7f5f74c7396ea3125eda996e4596d
+Author: Noah <super_mumoo@163.com>
+Date:   Wed Oct 11 17:30:04 2023 +0400
+
+    perf home-menu 隐藏未开发的功能
+
+commit bd21176b2ced735847b11c0231620c498fd7aa86
+Author: Noah <super_mumoo@163.com>
+Date:   Wed Oct 11 16:30:13 2023 +0400
+
+    referral移入pages
+
+commit 13dfe612dca6b6b826b18879613546eab7ff4593
+Author: Noah <super_mumoo@163.com>
+Date:   Wed Oct 11 11:41:43 2023 +0400
+
+    perf noticeCheckOut后更新amount
+
+commit 63599604c5be755f1feecd316c2ba69c2076feeb
+Author: Noah <super_mumoo@163.com>
+Date:   Wed Oct 11 01:14:46 2023 +0400
+
+    perf 更新文件资源以及路径
+
+commit f34958b7a8ffd0e190cd543e7462e7e5608bd9d8
+Author: Noah <super_mumoo@163.com>
+Date:   Wed Oct 11 01:03:12 2023 +0400
+
+    perf 精简文件
+
+commit a137972dbbd266128fdd20d66e42e3f185ea9470
+Author: Noah <super_mumoo@163.com>
+Date:   Tue Oct 10 18:31:24 2023 +0400
+
+    fix 刮刮乐token未及时更新的bg
+
+commit 688125c8a33f9b5c195673d4dfd14492c94e6d6e
+Author: Noah <super_mumoo@163.com>
+Date:   Mon Oct 9 15:48:27 2023 +0400
+
+    更新引入
+
+commit c983f76c0473618c8c775eae80146179dda1b761
+Author: Noah <super_mumoo@163.com>
+Date:   Mon Oct 9 14:38:10 2023 +0400
+
+    code style
+
+commit 6361eef40035f7159206991cff64d10805bd2f6b
+Author: Noah <super_mumoo@163.com>
+Date:   Mon Oct 9 12:13:47 2023 +0400
+
+    update 删除多余文件
+
+commit 02226531e2b51a28f2fe9abdf5d0ede4220ad24a
+Author: Noah <super_mumoo@163.com>
+Date:   Sun Oct 8 23:30:19 2023 +0400
+
+    feat adjust更新以及基础埋点
+
+commit cead9fc2c690d627fb0d8a215cc56f45fd5b6b1d
+Author: Noah <super_mumoo@163.com>
+Date:   Sun Oct 8 21:35:58 2023 +0400
+
+    perf 增加环境变量配置
+
+commit 108e18c282d9d48d4dd527ae60e64a74d4eced4f
+Author: Noah <super_mumoo@163.com>
+Date:   Sun Oct 8 19:16:31 2023 +0400
+
+    delete console
+
+commit 6bf8454ecb4b2799839c80e7c917bf9256ee68dc
+Author: Noah <super_mumoo@163.com>
+Date:   Sun Oct 8 18:27:10 2023 +0400
+
+    feat 支付成功页面
+
+commit 01a8ab552757bde8b4e5abb73d6a9cd8ecd1c72f
+Author: Noah <super_mumoo@163.com>
+Date:   Sun Oct 8 15:42:09 2023 +0400
+
+    style floor-button  shadow
+
+commit 0b63fb818b1ab8bf1323c2b2889664e40e23e785
+Author: Noah <super_mumoo@163.com>
+Date:   Sun Oct 8 13:56:47 2023 +0400
+
+    perf 导航跳转方式
+
+commit 949fa6f8f3279bd6c8a1709a0f0b329b88a60c60
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 7 19:09:19 2023 +0400
+
+    fix home menu banner
+
+commit db0153ec42ca52539c99196cf4f568569439ead9
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 7 17:52:59 2023 +0400
+
+    code style
+
+commit b5d0af52474fc07855aa652be34c74d6656c825d
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 7 16:07:46 2023 +0400
+
+    update submodule
+
+commit 60f1e4e1e1d674672b2d4a79ad9e51427a7a0744
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 7 15:47:17 2023 +0400
+
+    code style
+
+commit 7e1ddb1fcc6965d013ce0ca4dc1c3023e836f197
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 7 15:07:56 2023 +0400
+
+    code style
+
+commit 12180db5901e0a7e1758e51d13bcd655eab52093
+Author: Noah <super_mumoo@163.com>
+Date:   Sat Oct 7 13:30:32 2023 +0400
+
+    perf 提取公共页面到子仓储

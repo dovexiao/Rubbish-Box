@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "235927243459",
+    "project_id": "megadream-e4c09",
+    "storage_bucket": "megadream-e4c09.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235927243459:android:220b3c464d2b0bfe71b076",
+        "android_client_info": {
+          "package_name": "com.sambad.megadream"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCea9xOVNLFB6h450pWQzOPBydHdcC90-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,6 @@
+[submodule "src/components"]
+	path = src/components
+	url = ssh://git@code.lt.local:2222/frontend/components.git
+[submodule "src/common-pages"]
+	path = src/common-pages
+	url = ssh://git@code.lt.local:2222/frontend/common-pages.git

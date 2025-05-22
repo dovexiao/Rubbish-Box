@@ -1,0 +1,88 @@
+import {StyleSheet, View} from 'react-native';
+import React, {useEffect, useRef, useState, useMemo} from 'react';
+import Text from '@basicComponents/text';
+
+import theme from '@/style';
+
+interface CountDownProps {
+  /** 倒计时，单位：秒 */
+  remain: number;
+}
+
+const CountDown: React.FC<CountDownProps> = ({remain}) => {
+  const remainRef = useRef(remain);
+
+  const [remainTime, setRemainTime] = useState(remain);
+  const remainValue = useMemo(() => {
+    const hour = Math.floor(remainTime / 3600);
+    const minutes = Math.floor(remainTime / 60) % 60;
+    const seconds = remainTime % 60;
+    return {
+      hour: (hour + '').padStart(2, '0'),
+      minutes: (minutes + '').padStart(2, '0'),
+      seconds: (seconds + '').padStart(2, '0'),
+    };
+  }, [remainTime]);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (remainRef.current > 1) {
+        setTimeout(() => {
+          remainRef.current--;
+          setRemainTime(remainRef.current);
+        }, 1000);
+      } else {
+        clearInterval(timer);
+      }
+    }, 1000);
+    return () => {
+      timer && clearInterval(timer);
+    };
+  }, []);
+  useEffect(() => {
+    setRemainTime(remain);
+    remainRef.current = remain;
+  }, [remain]);
+  return (
+    <View style={[theme.flex.row, theme.flex.centerByCol]}>
+      <View style={[theme.icon.s, theme.flex.center, styles.blackSquare]}>
+        <Text fontSize={9} blod style={[theme.font.white]}>
+          {remainValue.hour}
+        </Text>
+      </View>
+      <Text
+        fontSize={9}
+        blod
+        style={[theme.font.white, styles.marginHorizonalXXXS]}>
+        :
+      </Text>
+      <View style={[theme.icon.s, theme.flex.center, styles.blackSquare]}>
+        <Text fontSize={9} blod style={[theme.font.white]}>
+          {remainValue.minutes}
+        </Text>
+      </View>
+      <Text
+        fontSize={9}
+        blod
+        style={[theme.font.white, styles.marginHorizonalXXXS]}>
+        :
+      </Text>
+      <View style={[theme.icon.s, theme.flex.center, styles.blackSquare]}>
+        <Text fontSize={9} blod style={[theme.font.white]}>
+          {remainValue.seconds}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  blackSquare: {
+    backgroundColor: theme.basicColor.primary10,
+    borderRadius: 2,
+  },
+  marginHorizonalXXXS: {
+    marginHorizontal: 2,
+  },
+});
+
+export default CountDown;

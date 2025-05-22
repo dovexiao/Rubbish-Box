@@ -1,0 +1,60 @@
+diff --git a/node_modules/react-native-ratings/dist/TapRating.js b/node_modules/react-native-ratings/dist/TapRating.js
+index 1aa153f..aef5d14 100644
+--- a/node_modules/react-native-ratings/dist/TapRating.js
++++ b/node_modules/react-native-ratings/dist/TapRating.js
+@@ -1,4 +1,6 @@
+-import _ from "lodash";
++import map from "lodash/map";
++import times from "lodash/times";
++
+ import React, { useState, useEffect } from "react";
+ import { StyleSheet, Text, View } from "react-native";
+ import Star from "./components/Star";
+@@ -14,7 +16,7 @@ const TapRating = props => {
+         }
+     }, [props.defaultRating]);
+     const renderStars = rating_array => {
+-        return _.map(rating_array, star => {
++        return map(rating_array, star => {
+             return star;
+         });
+     };
+@@ -35,7 +37,7 @@ const TapRating = props => {
+     if (props.ratingContainerStyle) {
+         ratingContainerStyle.push(props.ratingContainerStyle);
+     }
+-    _.times(count, index => {
++    times(count, index => {
+         rating_array.push(<Star key={index} position={index + 1} starSelectedInPosition={value => {
+                 starSelectedInPosition(value);
+             }} fill={position >= index + 1} {...props}/>);
+diff --git a/node_modules/react-native-ratings/src/TapRating.tsx b/node_modules/react-native-ratings/src/TapRating.tsx
+index a1a23f2..1caecfd 100644
+--- a/node_modules/react-native-ratings/src/TapRating.tsx
++++ b/node_modules/react-native-ratings/src/TapRating.tsx
+@@ -1,5 +1,5 @@
+-import _ from "lodash";
+-
++import map from "lodash/map";
++import times from "lodash/times";
+ import React, { useState, useEffect } from "react";
+ 
+ import { StyleSheet, Text, View, StyleProp, ViewStyle } from "react-native";
+@@ -112,7 +112,7 @@ const TapRating: React.FunctionComponent<TapRatingProps> = props => {
+   }, [props.defaultRating] );
+ 
+   const renderStars = rating_array => {
+-    return _.map( rating_array, star => {
++    return map( rating_array, star => {
+       return star;
+     } );
+   };
+@@ -141,7 +141,7 @@ const TapRating: React.FunctionComponent<TapRatingProps> = props => {
+     ratingContainerStyle.push( props.ratingContainerStyle );
+   }
+ 
+-  _.times( count, index => {
++  times( count, index => {
+     rating_array.push(
+       <Star
+         key={index}

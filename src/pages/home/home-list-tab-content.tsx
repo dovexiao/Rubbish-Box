@@ -1,0 +1,93 @@
+import React from 'react';
+import {View} from 'react-native';
+import {
+  DiceListItem,
+  ColorListItem,
+  DigitListItem,
+  // QuickDigitListItem,
+  KeralaListItem,
+} from './home.type';
+import HomeDice from './components/dice/home-dice';
+import HomeColor from './components/color/home-color';
+import HomeDigits from './components/digit/home-digits';
+// import HomeWorldDigits from './components/world-digit/home-digits';
+import HomeState from './components/state/home-state';
+// import HomeQuickDigits from './components/quickdigit/home-quickdigits';
+
+// import HomeColor from './components/home-color';
+import HomeKerala from './components/kerala/home-kerala';
+// import HomeCar from './components/car/home-car';
+import theme from '@style';
+
+export interface HomeTabListContentProps {
+  diceList: DiceListItem[];
+  colorList: ColorListItem[];
+  digitList: DigitListItem[];
+  worldDigitList?: DigitListItem[];
+  stateList?: DigitListItem[];
+  quickDigitList?: DigitListItem[];
+  keralaList: KeralaListItem[];
+  onMeasure: (index: number, anchor: number) => void;
+}
+
+const HomeTabListContent = ({
+  onMeasure = () => {},
+  diceList = [],
+  colorList = [],
+  digitList = [],
+  stateList = [],
+  keralaList = [],
+}: HomeTabListContentProps) => {
+  const dataContent = [
+    // {
+    //   name: 'Quick3Digits',
+    //   content: <HomeQuickDigits quickDigitList={quickDigitList.slice(0, 3)} />,
+    // },
+    // {
+    //   name: 'Color',
+    //   content: <HomeColor />,
+    // },
+    {
+      name: '3Digits',
+      content: <HomeDigits digitList={digitList} />,
+    },
+    // {
+    //   name: 'World3Digits',
+    //   content: <HomeWorldDigits digitList={worldDigitList} />,
+    // },
+    {
+      name: 'State Lottery',
+      content: <HomeState digitList={stateList} />,
+    },
+    {
+      name: 'Color',
+      content: <HomeColor colorList={colorList} />,
+      // content: <HomeColor colorList={colorList.slice(0, 3)} />,
+    },
+    {
+      name: 'Kerala',
+      content: <HomeKerala keralaList={keralaList} />,
+    },
+    {
+      name: 'Dice',
+      // content: <HomeDice diceList={diceList.slice(0, 3)} />,
+      content: <HomeDice diceList={diceList} />,
+    },
+  ];
+
+  return (
+    <View style={[theme.padding.lrl]}>
+      {dataContent.map((_, i) => (
+        <View
+          key={i}
+          onLayout={e => {
+            onMeasure(i, e.nativeEvent.layout.height);
+          }}>
+          {_.content}
+        </View>
+      ))}
+    </View>
+  );
+};
+
+export default HomeTabListContent;

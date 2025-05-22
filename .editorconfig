@@ -1,0 +1,19 @@
+# 顶部描述文件格式和风格的基本规则
+
+# 通用设置，适用于所有文件类型
+root = true
+
+# 统一使用 LF 作为换行符
+[*]
+end_of_line = lf
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+# JavaScript 和 TypeScript 文件
+[*.js]
+indent_size = 2

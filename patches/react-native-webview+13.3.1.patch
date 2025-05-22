@@ -1,0 +1,19 @@
+diff --git a/node_modules/react-native-webview/lib/WebViewShared.js b/node_modules/react-native-webview/lib/WebViewShared.js
+index 0b7cd46..09f4319 100644
+--- a/node_modules/react-native-webview/lib/WebViewShared.js
++++ b/node_modules/react-native-webview/lib/WebViewShared.js
+@@ -32,12 +32,8 @@ var createOnShouldStartLoadWithRequest = function (loadRequest, originWhitelist,
+         var shouldStart = true;
+         var url = nativeEvent.url, lockIdentifier = nativeEvent.lockIdentifier;
+         if (!passesWhitelist(compileWhitelist(originWhitelist), url)) {
+-            Linking.canOpenURL(url).then(function (supported) {
+-                if (supported) {
+-                    return Linking.openURL(url);
+-                }
+-                console.warn("Can't open url: ".concat(url));
+-                return undefined;
++            Linking.canOpenURL(url).then(function () {
++                return Linking.openURL(url);
+             })["catch"](function (e) {
+                 console.warn('Error opening URL: ', e);
+             });
