@@ -1,12 +1,13 @@
 export const basicColor = {
   /** 主题色 */
-  primary: '#04CC9B',
+  primary: '#FEB705',
   primary20: '#003941',
   primary10: '#04CC9B1A',
-  primary15: '#04CC9B26',
-  primary30: '#04CC9B4d',
-  primary50: '#04CC9B80',
-  primary60: '#04CC9B99',
+  primary15: '#C7C7C7',
+  primary30: '#3f3f3f',
+  transparentP30: 'rgba(63, 63, 63, 0.4)',
+  primary50: '#1C1C1C',
+  primary60: '#000000',
   primaryFont: '#C3F0E8',
   background: '#04CC9B1A',
   background50: '#04CC9B99',
@@ -21,13 +22,14 @@ export const basicColor = {
   red: 'red',
   white: '#FFFFFF',
   dark: '#000',
-  transparent: '#0000',
+  transparent: '#1C1C1C',
+  transparentMedium: 'rgba(0, 0, 0, 0.3)',
   selectPrimary: '#2A8C83',
 };
 
 export const linearGradientColor = {
   primaryLinearGradient: ['#001C2C', '#001C2C'],
-  linearGradientBtnColor: ['#04CC9B', '#1B6755'],
+  linearGradientBtnColor: ['#FEB705', '#b98400'],
   mainNavigationLinearGradientBtnColor: ['#032235', '#10484E'],
   proxyLinearGradient: ['#dbeeea', '#dbeeea'],
   proxylightLinear: ['#E51251', '#FF8A00'],
@@ -62,7 +64,7 @@ export const fontColor = {
   noWinFontColor: '#04CC9BFF',
   //未开奖状态 文字颜色
   toDrawnFontColor: '#04CC9B99',
-  primary: '#04CC9B',
+  primary: '#FEB705',
   primaryMain: '#E0FFF7',
   purple: '#04CC9B',
   purple10: '#04CC9B1a',
@@ -70,6 +72,7 @@ export const fontColor = {
   grey: '#D8E0EA',
   green: '#0BD064',
   white: '#ffffff',
+  black: '#000000',
   white60: 'rgba(255,255,255,0.6)',
   white80: 'rgba(255,255,255,0.8)',
   brown: '#9F3131',
@@ -82,7 +85,7 @@ export const backgroundColor = {
 
   mainDark: '#003941',
   mainShallow: '#04CC9B',
-  mediumblue: '#003940',
+  mediumblue: '#FEB750',
 
   tabCheck: '#003941',
 
@@ -111,9 +114,9 @@ export const backgroundColor = {
 };
 
 export const borderColor = {
-  primary: '#04CC9B',
-  primary50: '#04CC9B80',
-  main: '#04CC9B80',
+  primary: '#FEB705',
+  primary50: '#FEB70580',
+  main: '#FEB70580',
   red: 'red',
   shallow: 'rgba(116,116,116,0.13)',
   secAccent: '#9FA5AC',

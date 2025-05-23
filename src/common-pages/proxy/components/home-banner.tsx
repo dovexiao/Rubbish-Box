@@ -1,11 +1,9 @@
 import React from 'react';
-import globalStore from '@/services/global.state';
 import theme from '@/style';
 import Carousel from 'react-native-reanimated-carousel';
 import {View} from 'react-native';
 import LazyImage from '@basicComponents/image';
 import TouchableOpacity from '@basicComponents/touchable-opacity';
-import Swiper from '@basicComponents/swiper';
 import {goToUrl} from '@/common-pages/game-navigate';
 import {useInnerStyle} from '../proxy.hooks';
 import {BannerListItem} from '../proxy.type';
@@ -20,24 +18,7 @@ const HomeBanner: React.FC<HomeBannerProps> = ({bannerList}) => {
     size: {bannerWidth, bannerHeight},
     bannerStyle,
   } = useInnerStyle();
-  return globalStore.isWeb ? (
-    <View style={[theme.padding.tbl]}>
-      <Swiper
-        pictureWidth={bannerWidth}
-        seamless={true}
-        paddingRight={theme.paddingSize.l}
-        height={bannerHeight}
-        autoPlay={true}
-        hasIndicator={true}
-        pictures={bannerList?.map(item => ({
-          uri: item.bannerImg,
-        }))}
-        onItemPress={_index => {
-          goToUrl(bannerList[_index].skipLinks || '', bannerList[_index].title);
-        }}
-      />
-    </View>
-  ) : (
+  return (
     <View style={[theme.position.rel, theme.padding.l]}>
       <Carousel
         loop

@@ -77,7 +77,7 @@ const HomeHeader = () => {
       containerStyle={[
         theme.flex.row,
         theme.flex.centerByCol,
-        theme.background.transparent,
+        theme.background.transparentMedium,
         {
           paddingTop: theme.paddingSize.zorro,
           paddingBottom: theme.paddingSize.zorro,
@@ -172,7 +172,8 @@ const HomeHeader = () => {
                 title={i18n.t('me.user.loginUpper')}
                 type="linear-primary"
                 size="small"
-                radius={20}
+                titleColor="#000000"
+                radius={5}
                 onPress={() => {
                   goTo('Login');
                 }}
@@ -180,8 +181,9 @@ const HomeHeader = () => {
               <Button
                 title={i18n.t('me.user.registerUpper')}
                 type="border"
+                titleColor="#FEB705"
                 size="small"
-                radius={20}
+                radius={5}
                 onPress={() => {
                   goTo('SingUp');
                 }}

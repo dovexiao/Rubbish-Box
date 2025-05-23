@@ -8,17 +8,14 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   LayoutChangeEvent,
-  TextStyle,
   ViewStyle,
   StyleProp,
 } from 'react-native';
 import LazyImage from '@basicComponents/image';
 import theme from '@style';
 import {designToDp} from '@components/utils/adaptive';
-import Text from '../text';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import {BasicObject} from '@/types';
-import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 const {background, borderRadius, flex, paddingSize} = theme;
 
 interface SwiperProps {
@@ -52,10 +49,8 @@ const ANIMATE_TIME = 800;
 
 export const renderOverlayLinkComponent = ({
   item,
-  onPress,
   sizeWidth,
   sizeHeight,
-  size,
 }: // size = 'big',
 {
   item: any;
@@ -67,9 +62,6 @@ export const renderOverlayLinkComponent = ({
   let position: StyleProp<ViewStyle> = {
     alignItems: 'center',
   };
-  let textPosition: StyleProp<TextStyle> = {
-    textAlign: 'center',
-  };
   if (item?.bannerPosition === 1) {
     position = {
       alignItems: 'center',
@@ -79,15 +71,9 @@ export const renderOverlayLinkComponent = ({
     position = {
       alignItems: 'flex-start',
     };
-    textPosition = {
-      textAlign: 'left',
-    };
   } else if (item?.bannerPosition === 3) {
     position = {
       alignItems: 'flex-end',
-    };
-    textPosition = {
-      textAlign: 'right',
     };
   }
   return (
@@ -98,40 +84,6 @@ export const renderOverlayLinkComponent = ({
         // eslint-disable-next-line react-native/no-inline-styles
         {width: sizeWidth, height: sizeHeight, paddingVertical: 20},
       ]}>
-      <View style={[{width: sizeWidth * (size === 'big' ? 0.75 : 0.4)}]}>
-        <Text
-          style={[textPosition]}
-          fontSize={size === 'big' ? 28 : 16}
-          white
-          blod>
-          {item?.title.replace(/\\n/g, '\n')}
-        </Text>
-        <Text
-          style={[textPosition]}
-          fontSize={size === 'big' ? 14 : 12}
-          color={theme.fontColor.white60}>
-          {item?.subTitle.replace(/\\n/g, '\n')}
-        </Text>
-      </View>
-      {item?.buttonText ? (
-        <NativeTouchableOpacity
-          style={[
-            theme.margin.topl,
-            theme.borderRadius.s,
-            theme.background.primary,
-            theme.flex.center,
-            // eslint-disable-next-line react-native/no-inline-styles
-            {
-              paddingVertical: size === 'big' ? 8 : 4,
-              paddingHorizontal: size === 'big' ? 12 : 8,
-            },
-          ]}
-          onPress={onPress}>
-          <Text white fontSize={12}>
-            {item?.buttonText}
-          </Text>
-        </NativeTouchableOpacity>
-      ) : null}
     </View>
   );
 };

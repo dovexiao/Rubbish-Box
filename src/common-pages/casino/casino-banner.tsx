@@ -7,7 +7,6 @@ import LazyImage from '@basicComponents/image';
 import TouchableOpacity from '@basicComponents/touchable-opacity';
 import {goTo} from '@/utils';
 import {BannerInfo} from './casino.service';
-import Swiper from '@/components/basic/swiper';
 
 const CasinoBanner = ({bannerList}: {bannerList: BannerInfo[]}) => {
   const bannerWidth = globalStore.screenWidth - theme.paddingSize.l * 2;
@@ -42,24 +41,7 @@ const CasinoBanner = ({bannerList}: {bannerList: BannerInfo[]}) => {
   // TODO 这里仅仅暂时解决了没有滑动标记问题，后续仍需要考虑能不能更好兼容web端
   return (
     <View style={[theme.position.rel]}>
-      {globalStore.isWeb ? (
-        <View style={[theme.margin.tbl]}>
-          <Swiper
-            pictureWidth={bannerWidth}
-            seamless={true}
-            paddingRight={theme.paddingSize.l}
-            height={bannerHeight}
-            autoPlay={true}
-            hasIndicator={true}
-            pictures={bannerList?.map(item => ({
-              uri: item.imgUrl,
-            }))}
-            onItemPress={_index => {
-              clickLink(bannerList[_index]?.skipLinks as string);
-            }}
-          />
-        </View>
-      ) : (
+      {
         <View>
           <Carousel
             loop
@@ -123,7 +105,7 @@ const CasinoBanner = ({bannerList}: {bannerList: BannerInfo[]}) => {
             ))}
           </View>
         </View>
-      )}
+      }
       {!bannerList?.length && (
         <View
           style={[

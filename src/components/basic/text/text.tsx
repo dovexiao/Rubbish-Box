@@ -55,6 +55,7 @@ export interface TextProps extends RNETextProps {
   secAccent?: boolean;
   /** 是否使用白色字体 */
   white?: boolean;
+  black?: boolean;
   /** 字间距,默认-0.3 */
   letterSpacing?: number;
   textAlign?: 'left' | 'right' | 'center';
@@ -78,6 +79,7 @@ const Text: React.FC<TextProps> = props => {
     accent = false,
     secAccent = false,
     white = false,
+    black = false,
     letterSpacing = -0.3,
     textAlign = 'left',
     calc = false,
@@ -148,6 +150,8 @@ const Text: React.FC<TextProps> = props => {
         ? theme.fontColor.secAccent
         : white
         ? theme.fontColor.white
+        : black
+        ? theme.fontColor.black
         : theme.fontColor.second),
   };
   if (_fontSize! < 12 && Platform.OS === 'web') {

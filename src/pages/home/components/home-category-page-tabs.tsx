@@ -106,7 +106,7 @@ const HomeCategoryPageTabs = () => {
         style={[
           theme.borderRadius.m,
           theme.flex.flex1,
-          theme.background.primary15,
+          theme.background.transparentP30,
 
           {height: 42, width: screenWidth - theme.paddingSize.l * 2},
         ]}
@@ -118,61 +118,36 @@ const HomeCategoryPageTabs = () => {
         horizontal
         showsHorizontalScrollIndicator={false}>
         {tabsList.map(item => {
-          if (item.isLogin && login) {
-            return (
-              <NativeTouchableOpacity
-                onPress={() => onPressItem(item?.value)}
-                key={item?.value}
-                style={[
-                  theme.flex.flex1,
-                  theme.flex.center,
-                  // {
-                  //   paddingLeft: 5,
-                  //   paddingRight: 5,
-                  // },
-                  oneCategoryPageIndex === item?.value
-                    ? {
-                        ...theme.background.primary,
-                        ...theme.borderRadius.l,
-                        height: 35,
-                      }
-                    : {
-                        height: 42,
-                      },
-                ]}>
-                <Text size="medium" blod white>
-                  {item?.title}
-                </Text>
-              </NativeTouchableOpacity>
-            );
-          } else if (!item.isLogin) {
-            return (
-              <NativeTouchableOpacity
-                onPress={() => onPressItem(item?.value)}
-                key={item?.value}
-                style={[
-                  theme.flex.flex1,
-                  theme.flex.center,
-                  // {
-                  //   paddingLeft: 5,
-                  //   paddingRight: 5,
-                  // },
-                  oneCategoryPageIndex === item?.value
-                    ? {
-                        ...theme.background.primary,
-                        ...theme.borderRadius.l,
-                        height: 35,
-                      }
-                    : {
-                        height: 42,
-                      },
-                ]}>
-                <Text size="medium" blod white>
-                  {item?.title}
-                </Text>
-              </NativeTouchableOpacity>
-            );
-          }
+          const isSelected = oneCategoryPageIndex === item?.value;
+
+          // 不渲染未登录用户无法访问的 tab
+          if (item.isLogin && !login) return null;
+
+          return (
+            <NativeTouchableOpacity
+              onPress={() => onPressItem(item?.value)}
+              key={item?.value}
+              style={[
+                theme.flex.flex1,
+                theme.flex.center,
+                isSelected
+                  ? {
+                    ...theme.background.primary,
+                    ...theme.borderRadius.l,
+                    height: 35,
+                  }
+                  : {
+                    height: 42,
+                  },
+              ]}>
+              <Text
+                size="large" blod
+                {...(isSelected ? {black: true} : {white: true})}
+              >
+                {item?.title}
+              </Text>
+            </NativeTouchableOpacity>
+          );
         })}
       </ScrollView>
     </Animated.View>

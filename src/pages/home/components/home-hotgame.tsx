@@ -7,7 +7,6 @@ import {goTo, navigateGame} from '@/utils';
 import LazyImage from '@basicComponents/image';
 import TouchableOpacity from '@basicComponents/touchable-opacity';
 import {toLiveCasino} from '../home.util';
-import Swiper from '../../../components/basic/swiper';
 
 export type HotGameType = 'game' | 'live-casino';
 
@@ -43,23 +42,7 @@ const HomeHotGame: React.FC<HomeHotGameProps> = ({hotGameList}) => {
       goTo('Login');
     }
   };
-  return globalStore.isWeb ? (
-    <View style={[theme.padding.btml]}>
-      <Swiper
-        pictureWidth={pictureWidth}
-        seamless={true}
-        paddingRight={theme.paddingSize.l}
-        height={height}
-        autoPlay={true}
-        pictures={hotGameList?.map(item => ({
-          uri: item.img,
-        }))}
-        onItemPress={_index => {
-          handleGoTo(hotGameList[_index]);
-        }}
-      />
-    </View>
-  ) : (
+  return (
     <View style={[theme.position.rel]}>
       <View style={[theme.padding.lrl, theme.margin.btml]}>
         <Carousel

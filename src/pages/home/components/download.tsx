@@ -18,8 +18,8 @@ const Download: React.FC = () => {
   // const {i18n} = useTranslation();
   const {calculateItemWidth} = useSettingWindowDimensions();
   const bannerHeight = calculateItemWidth(40);
-  const downloadSizeH = calculateItemWidth(30);
-  const downloadSizeW = calculateItemWidth(80);
+  const downloadSizeH = calculateItemWidth(27);
+  const downloadSizeW = calculateItemWidth(90);
   const iconSize = calculateItemWidth(24);
 
   const isShow = useSharedValue(true);
@@ -36,7 +36,7 @@ const Download: React.FC = () => {
   const bodyStyle = useAnimatedStyle(
     () => ({
       height: derivedHeight.value,
-      marginBottom: derivedHeight.value ? 12 : 0,
+      marginBottom: derivedHeight.value ? 3 : 0,
     }),
     [derivedHeight],
   );
@@ -56,37 +56,33 @@ const Download: React.FC = () => {
       style={[
         theme.flex.row,
         theme.flex.centerByCol,
-        theme.margin.lrl,
+        theme.margin.lrS,
         theme.flex.between,
         theme.borderRadius.s,
-        theme.background.primary50,
+        theme.background.transparentMedium,
         theme.padding.lrl,
         theme.overflow.hidden,
         bodyStyle,
       ]}>
       <View style={[theme.flex.flex, theme.flex.col, theme.flex.centerByRow]}>
-        <Text white blod style={[theme.font.m]}>
+        <Text blod style={[theme.font.l, {...theme.font.primary}]}>
           {i18n.t('other.downloadApp')}
         </Text>
-        {/*<Text color={'#ffffff60'} style={[theme.font.s]}>*/}
-        {/*  Start using exclusive services*/}
-        {/*</Text>*/}
       </View>
       <View style={[theme.flex.flex, theme.flex.row, theme.flex.centerByCol]}>
         <NativeTouchableOpacity
           onPress={toDownload}
           style={[
             theme.flex.center,
-            theme.borderRadius.xxl,
-            // eslint-disable-next-line react-native/no-inline-styles
+            theme.borderRadius.s,
             {
               height: downloadSizeH,
               width: downloadSizeW,
-              backgroundColor: '#0BD064',
+              ...theme.background.primary,
             },
           ]}>
-          <Text white blod>
-            {i18n.t('other.download')}
+          <Text black size="medium">
+            {` ${i18n.t('other.download')} `}
           </Text>
         </NativeTouchableOpacity>
         <NativeTouchableOpacity

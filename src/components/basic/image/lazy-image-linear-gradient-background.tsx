@@ -1,11 +1,9 @@
-/* eslint-disable prettier/prettier */
 import React, {ReactNode} from 'react';
-import {StyleProp, StyleSheet, ViewStyle, Image} from 'react-native';
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {LazyImageProps} from './lazy-image';
 import {ImageUrlType} from './index.type';
-import LinearGradient from '../linear-gradient';
-import theme from '@style';
 import {useResponsiveDimensions} from '@/utils';
+import Svg, {Circle, Line} from 'react-native-svg';
 
 export interface LazyImageLGBackgroundProps
   extends Omit<LazyImageProps, 'imageUrl'> {
@@ -17,65 +15,100 @@ export interface LazyImageLGBackgroundProps
   children?: ReactNode;
   fullHeight?: boolean;
 }
+
+const generatePoints = (width: number, height: number, count = 60) => {
+  const points = [];
+  for (let i = 0; i < count; i++) {
+    points.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+    });
+  }
+  return points;
+};
+
+const NeuralNetGrid: React.FC<{width: number; height: number}> = ({
+  width,
+  height,
+}) => {
+  const points = generatePoints(width, height, 360);
+  const lines = [];
+
+  points.forEach((p1, i) => {
+    const connections = points.slice(i + 1).filter(() => Math.random() < 0.08);
+    connections.forEach(p2 => {
+      lines.push(
+        <Line
+          key={`${p1.x}-${p1.y}-${p2.x}-${p2.y}`}
+          x1={p1.x}
+          y1={p1.y}
+          x2={p2.x}
+          y2={p2.y}
+          stroke="rgba(150, 200, 255, 0.4)" // 淡蓝线
+          strokeWidth="1"
+        />,
+      );
+    });
+  });
+
+  return (
+    <Svg
+      width={width}
+      height={height}
+      style={StyleSheet.absoluteFill}
+      pointerEvents="none">
+      {points.map((p, i) => {
+        const color =
+          Math.random() < 0.5
+            ? 'rgba(255,255,255,0.8)' // 白点
+            : 'rgba(120,180,255,0.8)'; // 淡蓝点
+        return (
+          <Circle key={`dot-${i}`} cx={p.x} cy={p.y} r={1.5} fill={color} />
+        );
+      })}
+    </Svg>
+  );
+};
+
 const LazyImageLGBackground: React.FC<LazyImageLGBackgroundProps> = props => {
   const {
     children = null,
     style,
-    showBottomBG = true,
     subtractBottomTabHeight = false,
     fullHeight = false,
     ...imageProps
   } = props;
+
   const {width: screenWidth, height: screenHeight} = useResponsiveDimensions();
+  const containerHeight = fullHeight
+    ? '100%'
+    : subtractBottomTabHeight
+    ? screenHeight - 50
+    : screenHeight;
 
   return (
-    <LinearGradient
-      start={{x: 0, y: 0}}
-      end={{x: 0, y: 1}}
-      locations={[0, 1]}
-      colors={theme.linearGradientColor.primaryLinearGradient}
+    <View
       style={[
         styles.view,
         style,
-        {
-          width: screenWidth,
-          height: fullHeight
-            ? '100%'
-            : subtractBottomTabHeight
-            ? screenHeight - 50
-            : screenHeight,
-        },
+        {width: screenWidth, height: containerHeight},
       ]}
       {...imageProps}>
-      <Image
-        source={require('@assets/icons/header-backimg.webp')}
-        // eslint-disable-next-line react-native/no-inline-styles
-        style={[theme.fill.fillW, theme.position.abs, {height: 188}]}
-      />
-      {showBottomBG ? (
-        <Image
-          source={require('@assets/imgs/footer-image.webp')}
-          style={[
-            theme.fill.fillW,
-            theme.position.abs,
-            // eslint-disable-next-line react-native/no-inline-styles
-            {height: 180, bottom: 0, zIndex: 0},
-          ]}
-        />
-      ) : null}
+      <View style={styles.bg}>
+        <NeuralNetGrid width={screenWidth} height={screenHeight} />
+      </View>
       {children}
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   view: {
     position: 'relative',
+    backgroundColor: '#000',
   },
-  image: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
+  bg: {
+    ...StyleSheet.absoluteFillObject,
     zIndex: -1,
   },
 });
