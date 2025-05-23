@@ -6,7 +6,6 @@ import {useShallow} from 'zustand/react/shallow';
 import HomeTabPageHome from '../pages/tab-page-home';
 import HomeLottery from '../pages/tab-page-lottery';
 import HomeCasino from '../pages/tab-page-casino';
-import HomeTabPageLive from '../pages/tab-page-live';
 import i18n from '@i18n';
 
 const HomeCategoryPageTabs = () => {
@@ -46,7 +45,6 @@ const HomeCategoryPageTabs = () => {
     Home: HomeTabPageHome,
     Lottery: HomeLottery,
     Casino: HomeCasino,
-    Live: HomeTabPageLive,
   });
 
   const [routes] = React.useState([

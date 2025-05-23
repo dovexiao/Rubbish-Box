@@ -21,8 +21,8 @@ import {useToken} from '@/store/useUserStore';
 const tabsList = [
   {title: i18n.t('headers.popular'), value: 10, isLogin: false},
   {title: i18n.t('headers.slots'), value: 4},
-  // {title: i18n.t('headers.casino'), value: 2},
-  // {title: i18n.t('headers.fish'), value: 3},
+  {title: i18n.t('headers.casino'), value: 2},
+  {title: i18n.t('headers.fish'), value: 3},
 ];
 
 const HomeCategoryPageTabs = () => {

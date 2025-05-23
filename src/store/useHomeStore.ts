@@ -55,6 +55,7 @@ type HomeStoreState = {
   getHomeTagList: () => void;
 
   categoryHomeList: PageGameSectionListItem[];
+  getCategoryHomeList: () => void;
 
   isRefresh: boolean;
   hasMoreData: boolean;

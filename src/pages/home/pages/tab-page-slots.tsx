@@ -8,22 +8,20 @@ import useHomeStore from '@/store/useHomeStore';
 import {useShallow} from 'zustand/react/shallow';
 import theme from '@/style';
 import GameList from '../components/game-list/game-list';
-// import GameHomeList from '../components/game-list/game-home-list';
-import HomePageTagTabs from '../components/home-page-tag-tabs';
 import GameHomeList from '../components/game-list/game-home-list';
-// import GameHomeList from '../components/game-list/game-home-list';
-// import GameHomeList from '@/pages/home/components/game-list/game-home-list';
+import HomePageTagTabs from '../components/home-page-tag-tabs';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
 
 const HomeTabPageSlots = () => {
-  const {screenHeight} = useSettingWindowDimensions();
   const {} = useAsyncPageSpin();
   const first = useRef(true);
+  const {screenHeight} = useSettingWindowDimensions();
 
-  const {pageTagIndex} = useHomeStore(
+  const {pageTagIndex, getHomeTagList, getCategoryHomeList} = useHomeStore(
     useShallow(state => ({
       pageTagIndex: state.pageTagIndex,
-      setTagIndex: state.setState,
+      getHomeTagList: state.getHomeTagList,
+      getCategoryHomeList: state.getCategoryHomeList,
     })),
   );
 
@@ -39,9 +37,11 @@ const HomeTabPageSlots = () => {
     };
   }, []);
 
+  // useFocusEffect(handleInit);
+
   useEffect(() => {
     handleInit();
-  }, [handleInit]);
+  }, [getCategoryHomeList, getHomeTagList, handleInit]);
 
   return (
     <View style={[theme.flex.flex1]}>

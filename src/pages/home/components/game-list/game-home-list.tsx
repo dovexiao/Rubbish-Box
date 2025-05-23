@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo} from 'react';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
-import {View, FlatList, ScrollView} from 'react-native';
+import {View, Image, FlatList, ScrollView} from 'react-native';
 import theme from '@/style';
 import {toGame} from '@/common-pages/game-navigate';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
@@ -29,7 +29,7 @@ const groupGames = (
 const GameHomeList = () => {
   const {screenWidth, screenHeight} = useSettingWindowDimensions();
 
-  const {categoryHomeList} = useHomeStore(state => ({
+  const {categoryHomeList, changeTagIndex} = useHomeStore(state => ({
     categoryHomeList: state.categoryHomeList,
     changeTagIndex: state.setState,
   }));
@@ -44,6 +44,13 @@ const GameHomeList = () => {
 
   const gameCardWidth = (screenWidth - 10 - 24) / 3;
   const gameCardHeight = (gameCardWidth / 200) * 220;
+
+  const onPressSectionHeader = useCallback(
+    (item: PageGameSectionListItem) => {
+      changeTagIndex({pageTagIndex: item?.tagId});
+    },
+    [changeTagIndex],
+  );
 
   const keyExtractor = useCallback((item: any) => {
     return item?.tagId.toString();
@@ -92,19 +99,19 @@ const GameHomeList = () => {
             <Text white blod fontSize={18}>
               {item?.tagName}
             </Text>
-            {/*<NativeTouchableOpacity*/}
-            {/*  style={[theme.flex.row, theme.flex.centerByCol]}*/}
-            {/*  onPress={() => {*/}
-            {/*    onPressSectionHeader(item);*/}
-            {/*  }}>*/}
-            {/*  <Text fontSize={14} color={theme.fontColor.primaryMain}>*/}
-            {/*    SEE ALL*/}
-            {/*  </Text>*/}
-            {/*  <Image*/}
-            {/*    source={require('@assets/icons/right-purple.webp')}*/}
-            {/*    style={[theme.icon.s]}*/}
-            {/*  />*/}
-            {/*</NativeTouchableOpacity>*/}
+            <NativeTouchableOpacity
+              style={[theme.flex.row, theme.flex.centerByCol]}
+              onPress={() => {
+                onPressSectionHeader(item);
+              }}>
+              <Text fontSize={14} color={theme.fontColor.primaryMain}>
+                SEE ALL
+              </Text>
+              <Image
+                source={require('@assets/icons/right-purple.webp')}
+                style={[theme.icon.s]}
+              />
+            </NativeTouchableOpacity>
           </View>
           <ScrollView
             horizontal
@@ -127,7 +134,7 @@ const GameHomeList = () => {
         </>
       );
     },
-    [gameCardHeight, renderGameListItem],
+    [gameCardHeight, onPressSectionHeader, renderGameListItem],
   );
 
   return (

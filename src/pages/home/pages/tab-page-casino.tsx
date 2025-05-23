@@ -10,15 +10,18 @@ import theme from '@/style';
 import GameList from '../components/game-list/game-list';
 import GameHomeList from '../components/game-list/game-home-list';
 import HomePageTagTabs from '../components/home-page-tag-tabs';
+import {useSettingWindowDimensions} from '@/store/useSettingStore';
 
 const HomeTabPageCasino = () => {
   const {} = useAsyncPageSpin();
   const first = useRef(true);
+  const {screenHeight} = useSettingWindowDimensions();
 
-  const {pageTagIndex, getHomeTagList} = useHomeStore(
+  const {pageTagIndex, getHomeTagList, getCategoryHomeList} = useHomeStore(
     useShallow(state => ({
       pageTagIndex: state.pageTagIndex,
       getHomeTagList: state.getHomeTagList,
+      getCategoryHomeList: state.getCategoryHomeList,
     })),
   );
 
@@ -38,13 +41,18 @@ const HomeTabPageCasino = () => {
 
   useEffect(() => {
     handleInit();
-  }, [getHomeTagList, handleInit]);
+  }, [getCategoryHomeList, getHomeTagList, handleInit]);
 
   return (
     <View style={[theme.flex.flex1]}>
       <HomePageTagTabs />
       {pageTagIndex === -1 && <GameHomeList />}
-      {pageTagIndex !== -1 && <GameList />}
+      {pageTagIndex !== -1 && (
+        <View style={{height: screenHeight - 230}}>
+          {/* 设置高度 */}
+          <GameList />
+        </View>
+      )}
     </View>
   );
 };

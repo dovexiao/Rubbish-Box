@@ -16,8 +16,8 @@ import HomeCategoryPageTabs from '@/pages/home/components/home-category-page-tab
 // import HomeTabPageLobby from '@/pages/home/pages/tab-page-lobby';
 // import HomeTabPageLottery from '@/pages/home/pages/tab-page-lottery';
 import HomeTabPageGame from '@/pages/home/pages/tab-page-game';
-import HomeTabPageSlots from '@/pages/home/pages/tab-page-slots';
 import HomeTabPageLive from '@/pages/home/pages/tab-page-live';
+import HomeTabPageSlots from '@/pages/home/pages/tab-page-slots';
 import HomeTabPagePopularOld from '@/pages/home/pages/tab-page-popular-old';
 
 const Home = () => {
