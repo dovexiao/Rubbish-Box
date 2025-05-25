@@ -24,6 +24,7 @@ export const basicColor = {
   dark: '#000',
   transparent: '#1C1C1C',
   transparentMedium: 'rgba(0, 0, 0, 0.3)',
+  transparentMedium1: 'rgba(0, 0, 0, 0.5)',
   selectPrimary: '#2A8C83',
 };
 
@@ -66,7 +67,7 @@ export const fontColor = {
   toDrawnFontColor: '#04CC9B99',
   primary: '#FEB705',
   primaryMain: '#E0FFF7',
-  purple: '#04CC9B',
+  purple: '#FEB705',
   purple10: '#04CC9B1a',
   red: 'red',
   grey: '#D8E0EA',
@@ -153,6 +154,8 @@ export const paddingSize = {
   xl: 14,
   xxl: 16,
   xxxl: 18,
+  xxxxl: 20,
+  maxl: 270,
 };
 
 export const borderRadiusSize = {

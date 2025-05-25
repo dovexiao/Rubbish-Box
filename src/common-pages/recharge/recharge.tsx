@@ -2,8 +2,8 @@
 /* eslint-disable prettier/prettier */
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import theme from '@/style';
-import {goBack, goTo, goCS} from '@/utils';
-import React, {useEffect, useMemo, useState, useRef} from 'react';
+import {goBack, goTo} from '@/utils';
+import React, {useMemo, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {
   BalanceListItem,
@@ -17,17 +17,11 @@ import Spin from '@/components/basic/spin';
 import {Success, upiPayment} from '@/utils';
 import RechargeBalance from './recharge-balance';
 import RechargeSelect from './recharge-select';
-import RechargeChannel from './recharge-channel';
 import RechargeButton from '@/components/business/recharge-button';
 import globalStore from '@/services/global.state';
 import {useTranslation} from 'react-i18next';
-import LazyImage, {LazyImageLGBackground} from '@/components/basic/image';
-import Text from '@/components/basic/text';
-import Button from '@/components/basic/button';
-import useCouponStore, {useCouponActions} from '@/store/useCouponStore';
-import {useRoute} from '@react-navigation/native';
-import {BasicObject} from '@/types';
-import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
+import {LazyImageLGBackground} from '@/components/basic/image';
+import useCouponStore from '@/store/useCouponStore';
 
 const Recharge = () => {
   const {i18n} = useTranslation();
@@ -35,12 +29,7 @@ const Recharge = () => {
   const [paymethodList, setPaymenthodList] = React.useState<PayMethod[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [balance, setBalance] = React.useState('');
-  const type = useRef(2);
   const [payMethodId, setPayMethodId] = React.useState<number>();
-
-  const {couponList} = useCouponStore();
-  const {getCouponList} = useCouponActions();
-  const {couponInit = true} = (useRoute()?.params as BasicObject) || {};
 
   const payMethodItem = useMemo(() => {
     return paymethodList.find(p => p.id === payMethodId);
@@ -50,23 +39,7 @@ const Recharge = () => {
     const item = balanceList.find(b => b.balance === +balance);
     return item ? item.id + '' : '';
   }, [balanceList, balance]);
-  const [amount, setAmount] = useState<number>(0);
-  useEffect(() => {
-    if (couponInit) {
-      useCouponStore.setState({selectedCoupon: {}});
-    }
-
-    const sub = globalStore.amountChanged.subscribe(res => {
-      setAmount(res.current);
-      setLoading(false);
-    });
-    return () => {
-      sub.unsubscribe();
-    };
-  }, [couponInit]);
-  useEffect(() => {
-    getCouponList(type.current as number);
-  }, [getCouponList, type]);
+  const [amount] = useState<number>(0);
   const [incomeInfo, setIncomeInfo] = React.useState({
     upiId: '',
     orderNo: '',
@@ -154,7 +127,7 @@ const Recharge = () => {
             goTo('WebView', {
               originUrl: res,
               header: true,
-              headerTitle: i18n.t('label.recharge'),
+              headerTitle: i18n.t('home.tab.deposit'),
               serverRight: false,
               hideAmount: true,
             });
@@ -190,29 +163,13 @@ const Recharge = () => {
 
   const selectedCoupon = useCouponStore(state => state.selectedCoupon);
 
-  const onPressToSelectCoupon = () => {
-    goTo('CouponPage', {
-      selectCoupon: true,
-    });
-  };
-
-  const memoCouponTitle = useMemo(() => {
-    if (Object.keys(selectedCoupon).length === 0) {
-      return i18n.t('other.notUseCoupon');
-    }
-    return i18n.t('other.rechargeWithBonus', {
-      rechargeAmount: selectedCoupon.rechargeAmount,
-      couponAmount: selectedCoupon?.couponAmount,
-    });
-  }, [i18n, selectedCoupon]);
-
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle
         onBack={goBack}
         hideAmount
         serverRight
-        title={i18n.t('label.recharge')}
+        title={i18n.t('home.tab.deposit')}
       />
       <Spin loading={loading} style={[theme.flex.flex1, theme.flex.col]}>
         <View style={[theme.flex.flex1, theme.flex.basis0]}>
@@ -227,96 +184,18 @@ const Recharge = () => {
               <RechargeSelect
                 min={payMethodItem?.minAmount || 0}
                 max={payMethodItem?.maxAmount || 0}
-                couponList={couponList as any}
                 balance={balance}
                 balanceList={balanceList}
                 onChangeBalance={val => {
                   setBalance(val);
-                  getCouponList(type.current as number);
                 }}
-                bounsComponent={
-                  <View>
-                    <View
-                      style={[
-                        theme.flex.row,
-                        theme.flex.centerByCol,
-                        // theme.margin.lrl,
-                        theme.flex.between,
-                        // height: 50,
-                        {marginTop: 8},
-                      ]}>
-                      <Text white>
-                        {i18n.t('other.useCoupon')}:{' '}
-                        {memoCouponTitle === i18n.t('other.notUseCoupon') ? (
-                          memoCouponTitle
-                        ) : (
-                          <Text
-                            fontSize={14}
-                            style={[{color: 'rgb(11, 208, 100)'}]}>
-                            {memoCouponTitle}
-                          </Text>
-                        )}
-                      </Text>
-                    </View>
-                    <View
-                      style={[
-                        theme.flex.row,
-                        theme.flex.centerByCol,
-                        // theme.margin.lrl,
-                        theme.flex.between,
-                        // height: 50,
-                        {marginTop: 8},
-                      ]}>
-                      <Button
-                        title={i18n.t('other.selectCoupon')}
-                        size="xsmall"
-                        onPress={onPressToSelectCoupon}
-                      />
-                    </View>
-                  </View>
-                }
               />
-              <RechargeChannel
-                payMethodList={paymethodList}
-                onPayMethodChange={setPayMethodId}
-                payMethodId={payMethodId}
-                balance={balance}
-              />
-              <View
-                style={[
-                  {
-                    marginTop: 20,
-                  },
-                ]}>
-                <NativeTouchableOpacity
-                  onPress={goCS}
-                  style={[
-                    theme.flex.row,
-                    theme.flex.centerByCol,
-                    // theme.background.primary,
-                    theme.margin.lrl,
-                    theme.flex.center,
-                    theme.gap.l,
-
-                    {
-                      height: 50,
-                      borderRadius: 20,
-                      // border: `1px solid ${theme.background.primary}`,
-                      borderWidth: 1,
-                      borderColor: theme.basicColor.primary15,
-                      backgroundColor: '#110F36 ',
-                    },
-                  ]}>
-                  <LazyImage
-                    imageUrl={require('@components/assets/icons/service.webp')}
-                    width={20}
-                    height={20}
-                  />
-                  <Text white fontSize={15}>{` ${i18n.t(
-                    'me.bottom.customer',
-                  )}`}</Text>
-                </NativeTouchableOpacity>
-              </View>
+              {/*<RechargeChannel*/}
+              {/*  payMethodList={paymethodList}*/}
+              {/*  onPayMethodChange={setPayMethodId}*/}
+              {/*  payMethodId={payMethodId}*/}
+              {/*  balance={balance}*/}
+              {/*/>*/}
             </View>
           </ScrollView>
         </View>

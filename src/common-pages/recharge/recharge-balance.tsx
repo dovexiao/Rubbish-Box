@@ -33,7 +33,7 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
     <View
       style={[
         theme.margin.lrl,
-        theme.background.mainDark,
+        theme.background.transparentMedium1,
         theme.border.main,
         theme.borderRadius.m,
         styles.container,
@@ -43,6 +43,7 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
           style={[
             theme.padding.leftl,
             theme.padding.topl,
+            theme.borderRadius.xs,
             theme.flex.row,
             theme.flex.between,
             theme.flex.centerByCol,
@@ -78,35 +79,15 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
             </View>
           </View>
           <Button
-            size="small"
+            size="middle"
+            titleColor={theme.fontColor.black}
             // eslint-disable-next-line react-native/no-inline-styles
-            style={{marginRight: 30}}
+            style={{marginRight: 10}}
             title={`${i18n.t('label.recharge')} ${i18n.t('label.records')}`}
             type={'linear-primary'}
             onPress={onGotoRecords}
           />
         </View>
-        {/* <Text style={[theme.margin.leftl]} color={'#F7336B'}>
-          {i18n.t('other.rechargeNotReceived')}
-        </Text>
-        <View
-          style={[
-            theme.padding.lrl,
-            theme.padding.tbs,
-            theme.background.mainDark,
-          ]}>
-          <Text color={theme.fontColor.white}>
-            {i18n.t('recharge-page.currentMethod')}:
-            <Text color={theme.fontColor.white} style={[theme.margin.leftxxs]}>
-              {payMethod}
-            </Text>
-          </Text>
-          <View style={[theme.margin.topxxs]}>
-            <Text color={theme.fontColor.purple} style={[amountStyle.opacity]}>
-              {tip}
-            </Text>
-          </View>
-        </View> */}
       </View>
     </View>
   );

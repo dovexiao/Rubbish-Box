@@ -31,7 +31,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
     <View
       style={[
         theme.flex.col,
-        theme.background.mainDark,
+        theme.background.transparentMedium1,
         theme.margin.topl,
         theme.borderRadius.s,
       ]}>
@@ -43,8 +43,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
           theme.flex.row,
           theme.flex.wrap,
           theme.borderRadius.m,
-          theme.padding.l,
-          {gap: 10},
+          {gap: 18},
         ]}>
         {payMethodList.map((payMethod, index) => {
           return (
@@ -76,7 +75,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
                   payMethodStyles.item,
                   theme.position.rel,
                   theme.flex.center,
-                  theme.background.primary15,
+                  // theme.background.primary15,
                   theme.border.primary50,
                   theme.borderRadius.s,
                 ]}>
@@ -86,22 +85,10 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
                     imageUrl={payMethod.payIcon}
                     // width={theme.imageSize.l}
                     // height={theme.imageSize.l}
-                    width={itemWidth - 10}
-                    height={70}
+                    // width={itemWidth - 10}
+                    // height={70}
                   />
                 </View>
-                {/* <Text
-                  fontSize={theme.fontSize.s}
-                  white
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  style={[
-                    payMethodStyles.itemText,
-                    theme.margin.tops,
-                    theme.font.center,
-                  ]}>
-                  {payMethod.payName}
-                </Text> */}
                 {payMethod.id === payMethodId ? (
                   <Image
                     style={[
