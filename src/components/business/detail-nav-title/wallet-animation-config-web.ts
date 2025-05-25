@@ -13,7 +13,7 @@ export default {
       w: 48,
       h: 48,
       u: '/assets/lottie/',
-      p: 'wallet.png',
+      p: 'wallet.webp',
       e: 0,
     },
     {

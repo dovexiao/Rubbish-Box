@@ -23,6 +23,7 @@ export default {
       invite: 'Invite',
       promotion: 'Promotion',
       welfare: 'Welfare',
+      deposit: 'Deposit',
       notification: 'Message',
       article: 'ArticleDetail',
     },

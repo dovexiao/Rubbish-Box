@@ -115,15 +115,6 @@ const Recharge = () => {
           globalStore.updateAmount.next();
         });
     } else {
-      // crashlytics().recordError(
-      //   new Error(
-      //     JSON.stringify({
-      //       type: '支付成功,但状态不是success',
-      //       incomeInfo: incomeInfo,
-      //       successCB: success,
-      //     }),
-      //   ),
-      // );
     }
   };
   const onFailure = (error: Error) => {

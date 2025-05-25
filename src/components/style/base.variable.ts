@@ -30,7 +30,7 @@ export const basicColor = {
 export const linearGradientColor = {
   primaryLinearGradient: ['#001C2C', '#001C2C'],
   linearGradientBtnColor: ['#FEB705', '#b98400'],
-  mainNavigationLinearGradientBtnColor: ['#032235', '#10484E'],
+  mainNavigationLinearGradientBtnColor: ['#242424', '#2f2f2f'],
   proxyLinearGradient: ['#dbeeea', '#dbeeea'],
   proxylightLinear: ['#E51251', '#FF8A00'],
   loginLinearGradient: ['#F9F0FF', '#FFF'],

@@ -9,14 +9,8 @@ import {
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import {ImageURISource, Image} from 'react-native';
-// import Casino from './common-pages/casino';
 import {NavigatorScreenProps} from '@types';
-import Welfare from './common-pages/welfare/welfare-center';
-// import Promotion from './common-pages/promotion';
 import Promotion from './common-pages/proxy-new/proxy-home';
-// import NotificationPage from './common-pages/notification';
-// import Result from './common-pages/result';
-// import {Shadow} from 'react-native-shadow-2';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import globalStore from './services/global.state';
 import {goTo} from './utils';
@@ -26,6 +20,7 @@ import {useToken} from '@/store/useUserStore';
 //活动相关
 import PromotionDrawer from './common-pages/promotion';
 import i18n from '@i18n';
+import Recharge from '@/common-pages/recharge';
 
 const Tab = createBottomTabNavigator();
 
@@ -42,37 +37,29 @@ export const mainPageList: {
     name: i18n.t('home.tab.home'),
     link: 'index/home',
     component: Home,
-    img: require('@assets/icons/home/menu.webp'),
-    activeImg: require('@assets/icons/home/menu.webp'),
+    img: require('@assets/icons/home/home.webp'),
+    activeImg: require('@assets/icons/home/home.webp'),
   },
   {
     name: i18n.t('home.tab.promotion'),
     link: 'index/PromotionDrawer',
     component: PromotionDrawer,
-    img: require('@assets/icons/home/referral.webp'),
-    activeImg: require('@assets/icons/home/referral.webp'),
+    img: require('@assets/icons/home/promotion.webp'),
+    activeImg: require('@assets/icons/home/promotion.webp'),
   },
   {
     name: i18n.t('home.tab.invite'),
     link: 'index/promotion',
     component: Promotion,
-    img: require('@assets/icons/home/promotion.webp'),
-    activeImg: require('@assets/icons/home/promotion.webp'),
+    img: require('@assets/icons/home/agency.webp'),
+    activeImg: require('@assets/icons/home/agency.webp'),
   },
-  // 隐藏页面底部消息 message tab
-  // {
-  //   name: i18n.t('home.tab.notification'),
-  //   link: 'index/notification',
-  //   component: NotificationPage,
-  //   img: require('@assets/icons/home/referral.webp'),
-  //   activeImg: require('@assets/icons/home/referral.webp'),
-  // },
   {
-    name: i18n.t('home.tab.welfare'),
-    link: 'index/welfare',
-    component: Welfare,
-    img: require('@assets/icons/home/game.webp'),
-    activeImg: require('@assets/icons/home/game.webp'),
+    name: i18n.t('home.tab.deposit'),
+    link: 'index/recharge',
+    component: Recharge,
+    img: require('@assets/icons/home/deposit.webp'),
+    activeImg: require('@assets/icons/home/deposit.webp'),
   },
   {
     name: i18n.t('home.tab.me'),
@@ -81,37 +68,10 @@ export const mainPageList: {
     img: require('@assets/icons/home/me.webp'),
     activeImg: require('@assets/icons/home/me.webp'),
   },
-  // {
-  //   name: 'Result',
-  //   link: 'index/result',
-  //   component: Result,
-  //   img: require('@assets/icons/home/casino.webp'),
-  //   activeImg: require('@assets/icons/home/casino-active.webp'),
-  // },
-  // {
-  //   name: 'Sports',
-  //   link: 'index/sports',
-  //   component: Sports,
-  //   img: require('@assets/icons/home/sports.webp'),
-  //   activeImg: require('@assets/icons/home/sports-active.webp'),
-  // },
 ];
 
 const CusTab = (props: BottomTabBarProps) => {
   return (
-    // <Shadow
-    //   {...theme.shadow.defaultShadow}
-    //   style={[
-    //     theme.flex.row,
-    //     theme.flex.around,
-    //     theme.fill.fillW,
-    //     theme.shadow.defaultShadow.style,
-    //     // eslint-disable-next-line react-native/no-inline-styles
-    //     {
-    //       height: 56,
-    //       backgroundColor: 'rgba(32, 24, 82, 0.8)',
-    //     },
-    //   ]}>
     <LinearGradient
       colors={theme.linearGradientColor.mainNavigationLinearGradientBtnColor}
       style={[
@@ -124,12 +84,12 @@ const CusTab = (props: BottomTabBarProps) => {
         const {options} = props.descriptors[route.key];
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const {isLogin: login} = useToken();
-        const InviteLabelName = login ? 'Invite' : 'Rule';
+        const InviteLabelName = login ? 'Agency' : 'Rule';
         const label =
           options.tabBarLabel !== undefined
             ? (options.tabBarLabel as string)
             : options.title !== undefined
-            ? route.name === 'Invite'
+            ? route.name === 'Agency'
               ? route.name
               : options.title
             : route.name;
@@ -139,7 +99,7 @@ const CusTab = (props: BottomTabBarProps) => {
             if (options.title === 'Sports' && !globalStore.token) {
               goTo('Login');
             } else {
-              if (route.name === 'Invite' && InviteLabelName === 'Rule') {
+              if (route.name === 'Agency' && InviteLabelName === 'Rule') {
                 goTo(route.name, {id: 1, type: 'index'});
                 // toAgentApply();
                 return;
@@ -163,7 +123,7 @@ const CusTab = (props: BottomTabBarProps) => {
               // eslint-disable-next-line react-native/no-inline-styles
               isFocused && {
                 overflow: 'visible',
-                backgroundColor: theme.basicColor.primary15,
+                backgroundColor: theme.basicColor.transparentP30,
               },
             ]}>
             <Image
