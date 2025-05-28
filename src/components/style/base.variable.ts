@@ -5,7 +5,9 @@ export const basicColor = {
   primary10: '#04CC9B1A',
   primary15: '#C7C7C7',
   primary30: '#3f3f3f',
+  transparentP60: 'rgba(63, 63, 63, 0.6)',
   transparentP30: 'rgba(63, 63, 63, 0.4)',
+  transparentP10: 'rgba(63, 63, 63, 0.1)',
   primary50: '#1C1C1C',
   primary60: '#000000',
   primaryFont: '#C3F0E8',
@@ -155,7 +157,7 @@ export const paddingSize = {
   xxl: 16,
   xxxl: 18,
   xxxxl: 20,
-  maxl: 270,
+  maxl: 250,
 };
 
 export const borderRadiusSize = {

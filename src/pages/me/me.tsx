@@ -5,28 +5,21 @@ import {
   LayoutChangeEvent,
   RefreshControl,
   Animated,
-  Image,
 } from 'react-native';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
-import React, {useCallback, useRef, useState, useEffect} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import theme from '@style';
-import {goTo, goCS, goToWithLogin} from '@utils'; //toAgentApply,
+import {goTo, goCS} from '@utils'; //toAgentApply,
 import Text from '@basicComponents/text';
 import {VipProgress} from '@businessComponents/vip';
 import {
   MeListItem,
-  gamesIcon,
-  // collectIcon,
   betsIcon,
-  rebateIcon,
   transactionsIcon,
   updateIcon,
   passwordIcon,
   languagesIcon,
   notificationsIcon,
-  resultHistoryIcon,
-  shopIcon,
-  couponIcon,
   customerServiceIcon,
 } from '@businessComponents/list-item';
 import {useConfirm} from '@basicComponents/modal';
@@ -47,21 +40,16 @@ import DetailNavTitle from '@businessComponents/detail-nav-title';
 import useVipStore, {useVipActions} from '@/store/useVipStore';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import useUserStore, {useUserActions, useUserInfo} from '@/store/useUserStore';
-import Button from '@/components/basic/button';
 import useNotificationStore from '@/store/useNotificationStore';
 import {useShallow} from 'zustand/react/shallow';
-import {useSettingWindowDimensions} from '@/store/useSettingStore';
-import {appEmail} from '@/services/global.service';
-import Clipboard from '@react-native-clipboard/clipboard';
 
-const {overflow, padding, font, margin, borderRadius, background, flex} = theme;
+const {overflow, padding, font, margin, borderRadius, background} = theme;
 
 /** TODO 单个文件过大,需要拆解 */
 const Me = () => {
   const {i18n} = useTranslation();
   const [login, setLogin] = useState<boolean>(false);
 
-  const {screenWidth} = useSettingWindowDimensions();
   const scrollAnim = useRef(new Animated.Value(0)).current;
   const {renderModal: renderConfirmModal, show: confirmShow} = useConfirm();
   const {renderModal: renderLanguageModal, show: languageShow} =
@@ -76,7 +64,7 @@ const Me = () => {
   const {setVipConfig, setVipInfo} = useVipActions();
   const user = useUserInfo();
   const {getUserInfo} = useUserActions();
-  const {noticeMap, getNoticeMap, unReadMessageCount, getUnReadCount} =
+  const {getNoticeMap, unReadMessageCount, getUnReadCount} =
     useNotificationStore(
       useShallow(state => ({
         noticeMap: state.noticeMap,
@@ -105,15 +93,6 @@ const Me = () => {
     },
     [getUserInfo, setVipConfig, setVipInfo],
   );
-  const [email, setEmail] = useState<string>('');
-  useEffect(() => {
-    appEmail()
-      .then(res => {
-        const str: string = res;
-        setEmail(str);
-      })
-      .finally();
-  }, []);
 
   const onFocusEffect = useCallback(() => {
     const sub = globalStore.tokenSubject.subscribe(token => {
@@ -140,9 +119,6 @@ const Me = () => {
       toLogin();
       return;
     }
-    // if (showNoMenu) {
-    //   globalStore.globalTotal.next(notYetWarning);
-    // }
   };
 
   const handleMoneyLayout = (e: LayoutChangeEvent) => {
@@ -165,63 +141,12 @@ const Me = () => {
     goTo('Vip');
   };
 
-  // const toAgency = () => {
-  //   // 开关，后期如果有条件可换成动态flag
-  //   const oldFlag = false;
-  //   if (!login) {
-  //     toLogin();
-  //     return;
-  //   }
-  //   if (user?.isAgent === 1) {
-  //     if (oldFlag) {
-  //       goTo('ProxyHome');
-  //     } else {
-  //       goTo('NewProxyHome');
-  //     }
-  //   } else {
-  //     toAgentApply();
-  //   }
-  // };
-
-  // const toInvitation = () => {
-  //   goTo('Invitation');
-  // };
-
-  const toRebate = () => {
-    if (!login) {
-      toLogin();
-      return;
-    }
-    // 跳转commission
-    goTo('Rebate');
-  };
-
-  const toMyGames = () => {
-    goToWithLogin('MyGames');
-  };
-
-  // const toMyCollect = () => {
-  //   goTo('CollectPage');
-  // };
-
-  const toShop = () => {
-    goTo('ShoppingPage');
-  };
-
-  const toCoupon = () => {
-    goTo('CouponPage');
-  };
-
   const toTransactions = () => {
     if (!login) {
       toLogin();
       return;
     }
     goTo('Transactions');
-  };
-
-  const toPromotion = () => {
-    goTo('PromotionDetail', {id: 4});
   };
 
   const toLanguage = () => {
@@ -268,16 +193,7 @@ const Me = () => {
     goTo('SetPassword');
   };
 
-  const toResults = () => {
-    goTo('Result');
-  };
-
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
-  const copy = () => {
-    Clipboard.setString(email);
-    globalStore.globalSucessTotal(i18n.t('share.copy-success'));
-  };
   return (
     <LazyImageLGBackground showBottomBG={false} subtractBottomTabHeight>
       {/* TODO 这里的滚动方案需要优化,以及文件过大需要拆分 */}
@@ -329,81 +245,15 @@ const Me = () => {
           />
           <MeAmount onLayout={handleMoneyLayout} onRefresh={handleRefresh} />
           <MeRowMenu />
-          <NativeTouchableOpacity activeOpacity={1} onPress={toPromotion}>
-            <Image
-              source={require('@assets/imgs/me/advertisement.webp')}
-              style={[{height: 68, width: '100%'}, theme.margin.tops]}
-            />
-          </NativeTouchableOpacity>
-          <View
-            style={[
-              margin.topl,
-              theme.flex.row,
-              theme.padding.lrl,
-              theme.flex.centerByCol,
-              theme.background.mainDark,
-              theme.borderRadius.s,
-              theme.flex.between,
-              // eslint-disable-next-line react-native/no-inline-styles
-              {height: 53},
-            ]}>
-            <View
-              style={[
-                theme.flex.flex1,
-                theme.flex.centerByRow,
-                theme.background.mainDark,
-                theme.borderRadius.s,
-                // eslint-disable-next-line react-native/no-inline-styles
-                {height: 53},
-              ]}>
-              <Text numberOfLines={1} color={'white'}>
-                {i18n.t('me.description.youHave')} {noticeMap?.REBATE}{' '}
-                {i18n.t('me.description.betRebate')}
-              </Text>
-              <Text numberOfLines={1} color={theme.fontColor.white60}>
-                {i18n.t('me.description.rebate1Description')}
-              </Text>
-            </View>
-            <Button
-              title={i18n.t('me.description.drawDown')}
-              size="small"
-              type="linear-primary"
-              radius={30}
-              onPress={toRebate}
-            />
-          </View>
-          {/* <MeRowBtn onInvite={toInvitation} onProxy={toAgency} /> */}
           <View style={[]}>
             {/* 列表区域 */}
             <View style={[borderRadius.m, overflow.hidden, margin.topxxxs]}>
-              {/* coupon位置调整 */}
-              <MeListItem
-                icon={couponIcon}
-                title={i18n.t('me.bottom.coupon')}
-                description={i18n.t('me.description.couponDescription')}
-                onPress={toCoupon}
-              />
-              <MeListItem
-                icon={gamesIcon}
-                title={i18n.t('me.bottom.games')}
-                description={i18n.t('me.description.gamesDescription')}
-                onPress={toMyGames}
-              />
-              {/* <MeListItem
-                icon={collectIcon}
-                title={i18n.t('me.bottom.collect')}
-                description="Get the collect and get bonus rewards"
-                onPress={toMyCollect}
-              /> */}
-              <MeListItem
-                icon={rebateIcon}
-                title={i18n.t('home.label.rebate')}
-                description={i18n.t('me.description.rebateDescription')}
-                onPress={toRebate}
-                rightContent={
-                  noticeMap?.REBATE ? <Tag content={noticeMap?.REBATE} /> : null
-                }
-              />
+              {/*<MeListItem*/}
+              {/*  icon={gamesIcon}*/}
+              {/*  title={i18n.t('me.bottom.games')}*/}
+              {/*  description={i18n.t('me.description.gamesDescription')}*/}
+              {/*  onPress={toMyGames}*/}
+              {/*/>*/}
               <MeListItem
                 icon={transactionsIcon}
                 title={i18n.t('me.bottom.myTransactions')}
@@ -415,18 +265,6 @@ const Me = () => {
                 title={i18n.t('me.bottom.myBets')}
                 description={i18n.t('me.description.betsDescription')}
                 onPress={toMyBets}
-              />
-              <MeListItem
-                icon={resultHistoryIcon}
-                title={i18n.t('me.bottom.resultHistory')}
-                description={i18n.t('me.description.resultHistoryDescription')}
-                onPress={toResults}
-              />
-              <MeListItem
-                icon={shopIcon}
-                title={i18n.t('me.bottom.shop')}
-                description={i18n.t('me.description.shopDescription')}
-                onPress={toShop}
               />
             </View>
             <View
@@ -494,29 +332,6 @@ const Me = () => {
                 />
               )}
             </View>
-            <View
-              style={[
-                flex.centerByCol,
-                flex.centerByRow,
-                // flex.between,
-                padding.tbs,
-                padding.lrl,
-                theme.background.mainDark,
-                theme.borderRadius.s,
-                // eslint-disable-next-line react-native/no-inline-styles
-                {
-                  marginTop: 12,
-                },
-              ]}>
-              <Text style={[font.white, font.m, font.bold, font.center]}>
-                For any queries and complaints please email us
-              </Text>
-              <NativeTouchableOpacity onPress={copy}>
-                <Text style={[font.red, font.m, font.bold, font.center]}>
-                  {email || ''}
-                </Text>
-              </NativeTouchableOpacity>
-            </View>
             {login && (
               <NativeTouchableOpacity onPress={doLogout}>
                 <View
@@ -535,22 +350,8 @@ const Me = () => {
               </NativeTouchableOpacity>
             )}
           </View>
-          <Image
-            source={require('@assets/imgs/footer-image.webp')}
-            // eslint-disable-next-line react-native/no-inline-styles
-            style={[{height: 180, width: screenWidth}]}
-          />
         </Animated.ScrollView>
-        {/* <MeHeader
-          user={user}
-          userAreaY={userAreaY}
-          login={login}
-          scrollAnim={scrollAnim}
-          onUser={handleUser}
-          showNoMenu={showNoMenu}
-        /> */}
       </Spin>
-
       {renderConfirmModal}
       {renderLanguageModal}
       {versionModal.renderModal}

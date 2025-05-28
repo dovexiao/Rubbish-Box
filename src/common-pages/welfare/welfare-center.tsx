@@ -2,7 +2,7 @@ import DetailNavTitle from '@/components/business/detail-nav-title';
 import theme from '@/style';
 import React, {useCallback} from 'react';
 import {LazyImageLGBackground} from '@basicComponents/image';
-import {ScrollView, Image} from 'react-native';
+import {ScrollView} from 'react-native';
 import CheckInCard from './components/check-in-card';
 import NewUserCard from './components/new-user-card';
 import QuestCard from './components/quest-card';
@@ -59,10 +59,6 @@ const WelfareCenterPage = () => {
         <CheckInCard />
         <NewUserCard />
         <QuestCard />
-        <Image
-          source={require('@assets/imgs/footer-image.webp')}
-          style={[theme.fill.fillW, {height: 180}]}
-        />
       </ScrollView>
     </LazyImageLGBackground>
   );

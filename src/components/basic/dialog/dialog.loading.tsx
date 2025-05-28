@@ -8,8 +8,8 @@ const DialogLoading = (props: {isVisible: boolean}) => {
     <Dialog
       isVisible={isVisible}
       overlayStyle={{
-        backgroundColor: theme.basicColor.transparent,
-        shadowColor: theme.basicColor.transparent,
+        backgroundColor: theme.basicColor.transparentP10,
+        shadowColor: theme.basicColor.transparentP10,
       }}>
       <Dialog.Loading />
     </Dialog>

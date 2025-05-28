@@ -129,14 +129,6 @@ const Vip = () => {
         onRefresh={handleRefresh}
       />
       <VipClubList vipConfigList={vipConfigList} />
-      {/* <VipTableList
-        cards={cards}
-        vipList={vipList}
-        onCheck={handleChangeCheckIndex}
-        checkIndex={checkIndex}
-        vipConfigList={vipConfigList}
-        currentLevel={currentLevel}
-      /> */}
       <RechargeButton onRecharge={toRecharge} />
     </LazyImageLGBackground>
   );

@@ -38,10 +38,6 @@ export function postUnloginVipInfo() {
   return http.post<null, IUnloginVipItemList>('app/membershipCard/getConfig');
 }
 
-export const getAgentInfo = () => {
-  return http.post('app/agent/getAgentInfo');
-};
-
 export const getGiftCodeAmount = (giftCode: string) => {
   return http.post<null, GiftAdmountData>(
     `app/red/packets/receive/${giftCode}`,

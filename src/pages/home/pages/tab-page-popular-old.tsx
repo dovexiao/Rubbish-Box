@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {ScrollView, View, Animated, Image} from 'react-native';
+import {ScrollView, View, Animated} from 'react-native';
 import theme from '@style';
 import {debounce} from '@/utils';
 import HomeTabListContent from '../home-list-tab-content';
@@ -15,7 +15,6 @@ interface HomeTabPagePopularProps {
 }
 
 const HomeTabPagePopularOld: React.FC<HomeTabPagePopularProps> = props => {
-  const {screenWidth} = useSettingWindowDimensions();
   const {} = props;
   const {screenHeight} = useSettingWindowDimensions();
   const {lotteryPageData} = useHomeStore(
@@ -127,11 +126,6 @@ const HomeTabPagePopularOld: React.FC<HomeTabPagePopularProps> = props => {
             measures.current[index] = anchor;
             measures.current = [...measures.current];
           }}
-        />
-        <Image
-          source={require('@assets/imgs/footer-image.webp')}
-          // eslint-disable-next-line react-native/no-inline-styles
-          style={[{height: 180, width: screenWidth}]}
         />
       </AnimatedScrollView>
     </View>

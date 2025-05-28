@@ -85,26 +85,17 @@ const MeVip: React.FC<MeVipProps> = ({
           </View>
           <View style={[theme.flex.row, flex.centerByCol, flex.flex1]}>
             <Text color={fontColor.white60} fontSize={fontSize.s}>
-              Level prograss{' '}
+              Level Progression{' '}
               <Text color={fontColor.white} blod>
                 {((nextValue - diff) / nextValue) * 100}%
               </Text>
             </Text>
           </View>
         </View>
-        {/* ) : (
-          <View style={[flex.flex1]}>
-            <Text style={[font.m, font.white]}>
-              {i18n.t('me.user.moreExciting')}
-            </Text>
-          </View>
-        )} */}
-
         <Image
           source={require('@assets/icons/right-white.webp')}
           style={[theme.icon.l]}
         />
-        {/* <Button size="xsmall" titleBold title={'Deposit'} onPress={onPress} /> */}
       </LinearGradient>
     </NativeTouchableOpacity>
   );

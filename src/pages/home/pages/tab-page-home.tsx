@@ -12,7 +12,6 @@ import {
 import theme from '@style';
 import useHomeStore from '@/store/useHomeStore';
 import HomeBanner from '../components/home-banner';
-import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import LazyImage from '@basicComponents/image';
 import {goToUrl} from '@/common-pages/game-navigate';
@@ -28,7 +27,6 @@ interface HomeTabProps {
 }
 
 const HomeTabPageHome: React.FC<HomeTabProps> = ({kongList = []}) => {
-  const {screenWidth} = useSettingWindowDimensions();
   const homeBannerList = useHomeStore(state => state.homeBannerList);
 
   const memoBannerList = useMemo(() => {
@@ -349,11 +347,6 @@ const HomeTabPageHome: React.FC<HomeTabProps> = ({kongList = []}) => {
           style={[{height: 68, width: '100%'}, theme.margin.tops]}
         />
       </NativeTouchableOpacity>
-      <Image
-        source={require('@assets/imgs/footer-image.webp')}
-        // eslint-disable-next-line react-native/no-inline-styles
-        style={[{height: 180, width: screenWidth}]}
-      />
       {renderModal}
       {showModal ? modal : null}
     </ScrollView>

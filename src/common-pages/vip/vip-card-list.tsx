@@ -38,13 +38,9 @@ export interface VipCardListProps {
 }
 
 const VipCardList: React.FC<VipCardListProps> = ({
-  // vipInfoList,
-  // cards,
   vipList,
-  // currentLevel,
   rechargeAmount,
   onCheck,
-  // onRefresh,
   checkIndex,
 }) => {
   const {i18n} = useTranslation();
@@ -54,29 +50,12 @@ const VipCardList: React.FC<VipCardListProps> = ({
     size: {vipCardWidth},
   } = useInnerStyle();
   const ref = useRef<FlatList>(null);
-  // const renderProgressList = useVipProgressList(vipInfoList);
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const width = vipCardWidth;
     const x = e.nativeEvent.contentOffset.x;
     const nowIndex = Math.round(x / width);
     onCheck?.(nowIndex);
   };
-
-  // const handleReceive = async (item: IVipItem) => {
-  //   if (item.statusReached === 1 && item.rewardReceivingStatus === 1) {
-  //     try {
-  //       globalStore.globalLoading.next(true);
-  //       const userInfo = await postUserInfo();
-  //       await postReceiveBox(userInfo.userId, item.level);
-  //       globalStore.globalSucessTotal(i18n.t('vip.success'));
-  //       globalStore.updateAmount.next();
-  //       globalStore.doNotices.next();
-  //       onRefresh?.();
-  //     } finally {
-  //       globalStore.globalLoading.next(false);
-  //     }
-  //   }
-  // };
 
   useEffect(() => {
     if (vipList.length <= 0) {

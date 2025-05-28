@@ -8,85 +8,74 @@ import {View} from 'react-native';
 import {designToDp} from '@utils';
 
 export interface VipOptions {
-  background: ImageUrlType;
   sign: ImageUrlType;
   small: ImageUrlType;
 }
 
 export const vipBgColors = [
-  ['#9A007AFF', '#FB9B7BFF'],
-  ['#006DEDFF', '#53A7FFFF'],
-  ['#5B00B4FF', '#BC2FFFFF'],
-  ['#4612BAFF', '#4F8AF4FF'],
-  ['#A22941FF', '#FB9B7BFF'],
-  ['#E66644FF', '#FDC304FF'],
-  ['#7E037BFF', '#CF5B61FF'],
-  ['#004F74FF', '#079F74FF'],
-  ['#442AC5FF', '#7657E5FF'],
-  ['#175EC6FF', '#00BEB9FF'],
+  ['#E2BB60', '#FB9B7BFF'],
+  ['#E2BB60', '#53A7FFFF'],
+  ['#E2BB60', '#BC2FFFFF'],
+  ['#E2BB60', '#4F8AF4FF'],
+  ['#E2BB60', '#FB9B7BFF'],
+  ['#E2BB60', '#FDC304FF'],
+  ['#E2BB60', '#CF5B61FF'],
+  ['#E2BB60', '#079F74FF'],
+  ['#E2BB60', '#7657E5FF'],
+  ['#E2BB60', '#00BEB9FF'],
 ];
 
 export const vipColors = [
-  '#9A007AFF',
-  '#006DEDFF',
-  '#5B00B4FF',
-  '#4612BAFF',
-  '#A22941FF',
-  '#E66644FF',
-  '#7E037BFF',
-  '#004F74FF',
-  '#442AC5FF',
-  '#175EC6FF',
+  '#E2BB60',
+  '#E2BB60',
+  '#E2BB60',
+  '#E2BB60',
+  '#E2BB60',
+  '#E2BB60',
+  '#E2BB60',
+  '#E2BB60',
+  '#E2BB60',
+  '#E2BB60',
 ];
 
 export const vipOptionsMap: VipOptions[] = [
   {
-    background: require('@components/assets/icons/vip/background/v0.webp'),
     sign: require('@assets/icons/vip/sign/v0.webp'),
     small: require('@assets/icons/vip/small/v0.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v1.webp'),
     sign: require('@assets/icons/vip/sign/v1.webp'),
     small: require('@assets/icons/vip/small/v1.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v2.webp'),
     sign: require('@assets/icons/vip/sign/v2.webp'),
     small: require('@assets/icons/vip/small/v2.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v3.webp'),
     sign: require('@assets/icons/vip/sign/v3.webp'),
     small: require('@assets/icons/vip/small/v3.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v4.webp'),
     sign: require('@assets/icons/vip/sign/v4.webp'),
     small: require('@assets/icons/vip/small/v4.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v5.webp'),
     sign: require('@assets/icons/vip/sign/v5.webp'),
     small: require('@assets/icons/vip/small/v5.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v6.webp'),
     sign: require('@assets/icons/vip/sign/v6.webp'),
     small: require('@assets/icons/vip/small/v6.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v7.webp'),
     sign: require('@assets/icons/vip/sign/v7.webp'),
     small: require('@assets/icons/vip/small/v7.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v8.webp'),
     sign: require('@assets/icons/vip/sign/v8.webp'),
     small: require('@assets/icons/vip/small/v8.webp'),
   },
   {
-    background: require('@components/assets/icons/vip/background/v9.webp'),
     sign: require('@assets/icons/vip/sign/v9.webp'),
     small: require('@assets/icons/vip/small/v9.webp'),
   },
@@ -137,7 +126,6 @@ export function getVipRender(vipLevel: number): VipRenderType {
     backgroundFn: (children: ReactNode, width: number) => (
       <LazyImageBackground
         occupancy="#0000"
-        imageUrl={currentVipOption.background}
         width={width}
         height={(width / backgroundWidth) * backgroundHeight}>
         {children}

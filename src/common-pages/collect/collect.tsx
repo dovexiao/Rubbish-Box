@@ -14,7 +14,6 @@ import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import Text from '@/components/basic/text';
 import Button from '@/components/basic/button';
 import CollectCategoryItem from './components/collect-category-item';
-import BottomImage from '@/components/business/bottom-image/bottom-image';
 
 const Collect = () => {
   const {i18n} = useTranslation();
@@ -93,7 +92,6 @@ const Collect = () => {
             />
           );
         })}
-        <BottomImage style={{width: itemWidth}} />
       </ScrollView>
     </LazyImageLGBackground>
   );

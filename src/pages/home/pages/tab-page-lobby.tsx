@@ -6,7 +6,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   Modal,
   TextInput,
 } from 'react-native';
@@ -32,7 +31,6 @@ interface HomeTabProps {
 }
 
 const HomeTabPageLobby: React.FC<HomeTabProps> = React.memo(() => {
-  const {screenWidth} = useSettingWindowDimensions();
 
   const scrollViewRef1 = useRef<ScrollView>(null);
 
@@ -266,10 +264,6 @@ const HomeTabPageLobby: React.FC<HomeTabProps> = React.memo(() => {
       <HomePageTagTabs />
 
       <View style={[{marginBottom: -12}]}></View>
-      <Image
-        source={require('@assets/imgs/footer-image.webp')}
-        style={[{height: 180, width: screenWidth}]}
-      />
       {renderModal}
       {showModal ? modal : null}
     </ScrollView>

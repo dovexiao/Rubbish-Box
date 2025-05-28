@@ -40,20 +40,6 @@ function VipProgress(props: VipProgress) {
     setWidth(e.nativeEvent.layout.width);
   };
 
-  // const hexToRgba = (hex: any, opacity: number = 1) => {
-  //   return hex && hex.replace(/\s+/g, '').length === 7
-  //     ? 'rgba(' +
-  //         parseInt('0x' + hex.slice(1, 3)) +
-  //         ',' +
-  //         parseInt('0x' + hex.slice(3, 5)) +
-  //         ',' +
-  //         parseInt('0x' + hex.slice(5, 7)) +
-  //         ',' +
-  //         opacity +
-  //         ')'
-  //     : '';
-  // };
-
   const renderBadgeItem = (currenLevel: number) => {
     return (
       <View

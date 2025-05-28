@@ -123,11 +123,6 @@ const HomeGameList: React.FC<HomeTabPagePopularProps> = props => {
             measures.current = [...measures.current];
           }}
         />
-        {/*<Image*/}
-        {/*  source={require('@assets/imgs/footer-image.webp')}*/}
-        {/*  // eslint-disable-next-line react-native/no-inline-styles*/}
-        {/*  style={[{height: 180, width: screenWidth}]}*/}
-        {/*/>*/}
       </AnimatedScrollView>
     </View>
   );
