@@ -149,6 +149,8 @@ const Me = () => {
     goTo('Transactions');
   };
 
+
+
   const toLanguage = () => {
     languageShow();
   };
@@ -157,6 +159,8 @@ const Me = () => {
     // 更新
     handleUpdate();
   };
+
+
 
   const doLogout = () => {
     // logout
@@ -253,6 +257,12 @@ const Me = () => {
               {/*  title={i18n.t('me.bottom.games')}*/}
               {/*  description={i18n.t('me.description.gamesDescription')}*/}
               {/*  onPress={toMyGames}*/}
+              {/*/>*/}
+              {/*<MeListItem*/}
+              {/*  icon={transactionsIcon}*/}
+              {/*  title={i18n.t('me.bottom.myTransactions')}*/}
+              {/*  description={i18n.t('me.description.transactionsDescription')}*/}
+              {/*  onPress={toTransfer}*/}
               {/*/>*/}
               <MeListItem
                 icon={transactionsIcon}

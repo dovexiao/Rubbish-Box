@@ -109,7 +109,7 @@ const WithdrawTransfer = (props: {
                   theme.flex.center,
                   styles.buttonItem,
                   theme.borderRadius.xs,
-                  theme.background.primary15,
+                  theme.background.transparentP10,
                   theme.border.primary50,
                 ]}>
                 <Text white blod fontSize={theme.fontSize.m}>

@@ -10,7 +10,6 @@ import {View, ScrollView, StyleSheet} from 'react-native';
 import {BankInfo, delBank, onAddBank, updateBank} from './add-bank-service';
 import {useRoute} from '@react-navigation/native';
 import {BasicObject} from '@/types';
-import globalStore from '@/services/global.state';
 import Button from '@/components/basic/button';
 import Text from '@/components/basic/text';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
@@ -23,7 +22,6 @@ const AddBank = () => {
   const [cardNumber, setCardNumber] = React.useState('');
   const [ifsCode, setIfsCode] = React.useState('');
   const [cardNumberCopy, setCardNumberCopy] = React.useState('');
-  const [smsCode, setSmsCode] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [upiId, setUpiId] = React.useState('');
   const [loading, setLoading] = React.useState(false);
@@ -49,7 +47,6 @@ const AddBank = () => {
         ifsCode,
         email,
         upiId,
-        smsCode,
       } as BankInfo;
       if (cardInfo) {
         params.id = cardInfo.id;
@@ -128,11 +125,10 @@ const AddBank = () => {
         cardName &&
         cardNumber &&
         cardNumber === cardNumberCopy &&
-        ifsCode &&
-        smsCode.length === 6
+        ifsCode
       );
     }
-  }, [isFirst, cardName, cardNumber, ifsCode, cardNumberCopy, smsCode]);
+  }, [isFirst, cardName, cardNumber, ifsCode, cardNumberCopy]);
 
   const onDeleteCard = async () => {
     confirmShow(
@@ -164,9 +160,10 @@ const AddBank = () => {
             <View
               style={[
                 styles.container,
+                theme.border.main,
                 theme.margin.lrl,
                 theme.borderRadius.l,
-                theme.background.mainDark,
+                theme.background.transparentP30,
               ]}>
               <InputField
                 name="accountName"
@@ -222,21 +219,6 @@ const AddBank = () => {
                 label={i18n.t('label.email')}
                 placeholder={i18n.t('bank-page.placeholder.email')}
               />
-              {!parseInt(isFirst, 10) && (
-                <InputField
-                  positionTranslation={true}
-                  name="sms"
-                  hasCode
-                  maxLength={6}
-                  value={smsCode}
-                  onChangeText={setSmsCode}
-                  placeholder={i18n.t('login.tip.no-otp')}
-                  label={'OTP'}
-                  tip={`(${i18n.t('bank-page.label.phoneNumber')}:${
-                    globalStore.userInfo!.userPhone
-                  })`}
-                />
-              )}
             </View>
           </ScrollView>
         </View>
@@ -251,6 +233,7 @@ const AddBank = () => {
           <AddButton
             disabled={disabled}
             onRecharge={onSubmit}
+            type="linear-primary"
             text={i18n.t('label.confirm')}
           />
         )}
@@ -273,7 +256,7 @@ const UpdateGroup = (props: {
         theme.flex.row,
         theme.flex.centerByCol,
         theme.padding.l,
-        theme.background.white,
+        theme.background.transparentMedium1,
       ]}>
       <NativeTouchableOpacity onPress={onDel} style={styles.button}>
         <Text fontSize={theme.fontSize.m} blod color={theme.basicColor.primary}>

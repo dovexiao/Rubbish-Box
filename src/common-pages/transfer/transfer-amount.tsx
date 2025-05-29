@@ -42,7 +42,7 @@ const TransferAmount = ({
       </Text>
       <View
         style={[
-          theme.background.mainDark,
+          theme.background.black60,
           theme.padding.l,
           theme.borderRadius.l,
         ]}>
@@ -122,7 +122,7 @@ const TransferAmount = ({
             </NativeTouchableOpacity>
           ))}
         </View>
-        <Text color={theme.fontColor.primaryMain}>
+        <Text color={theme.fontColor.primary}>
           {i18n.t('transfer-page.tip.tip')}
         </Text>
       </View>

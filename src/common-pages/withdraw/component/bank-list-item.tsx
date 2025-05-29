@@ -24,7 +24,7 @@ const BankListItem = (props: BankListItemType) => {
   const {
     style = {},
     rightIcon,
-    backgroundColor = theme.basicColor.primary15,
+    backgroundColor = theme.basicColor.transparentP10,
     onItemPress = () => {},
     onEditBank,
     cardInfo = {},

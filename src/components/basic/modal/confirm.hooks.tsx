@@ -56,7 +56,7 @@ export function useConfirm(okText?: string) {
           activeOpacity={0.8}
           onPress={handleConfirm}
           style={[flex.flex1, styles.border, flex.center]}>
-          <Text style={[{color: backgroundColor.main}, font.m]}>
+          <Text style={[{color: backgroundColor.mediumblue}, font.m]}>
             {okText || i18n.t('label.confirm')}
           </Text>
         </TouchableOpacity>
@@ -67,7 +67,7 @@ export function useConfirm(okText?: string) {
         {
           padding: 0,
           borderRadius: borderRadiusSize.m + borderRadiusSize.s,
-          backgroundColor: theme.backgroundColor.mainDark,
+          backgroundColor: theme.backgroundColor.purple80,
         },
       ],
     },

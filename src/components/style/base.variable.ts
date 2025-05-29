@@ -96,7 +96,7 @@ export const backgroundColor = {
   black50: '#00000080',
   black60: '#00000099',
 
-  purple80: '#003941',
+  purple80: 'rgba(0,0,0,0.89)',
   /** 橙 */
   second: '#F15802',
   /** 红 */
@@ -158,6 +158,7 @@ export const paddingSize = {
   xxxl: 18,
   xxxxl: 20,
   maxl: 250,
+  waxl: 20,
 };
 
 export const borderRadiusSize = {

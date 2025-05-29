@@ -24,7 +24,8 @@ const WithdrawBank = (props: WithdrawBankProps) => {
       style={[
         theme.margin.topl,
         theme.padding.l,
-        theme.background.mainDark,
+        theme.border.main,
+        theme.background.black15,
         theme.margin.lrl,
         theme.borderRadius.s,
       ]}>
@@ -60,7 +61,7 @@ const NoBank = ({onAddBank}: {onAddBank: () => void}) => {
         theme.borderRadius.m,
         theme.flex.center,
         theme.padding.l,
-        theme.background.primary15,
+        theme.background.transparentP10,
         theme.border.primary50,
         styles.noBankContainer,
       ]}>

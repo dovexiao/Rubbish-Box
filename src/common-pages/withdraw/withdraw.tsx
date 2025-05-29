@@ -5,7 +5,6 @@ import theme from '@/style';
 import {goBack, goTo} from '@/utils';
 import {useTranslation} from 'react-i18next';
 import Spin from '@/components/basic/spin';
-import RechargeButton from '@/components/business/recharge-button';
 import WithdrawBalance from './withdraw-balance';
 import WithdrawAmount from './withdraw-amount';
 import WithdrawBank from './withdraw-bank';
@@ -21,8 +20,7 @@ import {plus, times} from '@/components/utils/number-precision';
 import {onTransfer} from '../transfer/transfer-service';
 import {useNavigation} from '@react-navigation/native';
 import {LazyImageLGBackground} from '@/components/basic/image';
-import CustomModal from './CustomModal';
-import {downloadApk} from '@/utils';
+import WithdrawButton from '@businessComponents/recharge-button/withdraw-button';
 
 const Withdraw = () => {
   const {i18n} = useTranslation();
@@ -177,16 +175,6 @@ const Withdraw = () => {
     return 0;
   }, [amount, user]);
 
-  const handleImagePress = () => {
-    // 点击弹出图片去下载APK
-    downloadApk();
-    setTimeout(() => {
-      goBack();
-    }, 2000);
-  };
-
-  const imageSource = require('@/assets/icons/downloadImg.webp');
-
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle
@@ -230,8 +218,9 @@ const Withdraw = () => {
               />
             </ScrollView>
           </View>
-          <RechargeButton
+          <WithdrawButton
             onRecharge={onWithdrawSubmit}
+            type="linear-primary-gold"
             text={i18n.t('other.withdraw')}
           />
         </Spin>
@@ -272,12 +261,6 @@ const Withdraw = () => {
           receiveAmount={actualReceived}
         />
       </BottomSheet>
-      {globalStore.isWeb && (
-        <CustomModal
-          onImagePress={handleImagePress}
-          imageSource={imageSource}
-        />
-      )}
     </LazyImageLGBackground>
   );
 };

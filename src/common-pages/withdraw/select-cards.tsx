@@ -31,7 +31,7 @@ const SelectCards = (props: SelectCardsType) => {
   } = props;
 
   return (
-    <View style={[styles.container, theme.background.mainDark]}>
+    <View style={[styles.container, theme.background.primary50]}>
       <View
         style={[
           theme.flex.row,
@@ -58,7 +58,7 @@ const SelectCards = (props: SelectCardsType) => {
             <BankListItem
               onEditBank={() => onAddBank(item)}
               cardInfo={item}
-              backgroundColor={theme.backgroundColor.mainDark}
+              backgroundColor={theme.backgroundColor.black15}
               key={index}
               selectMode
               isSelect={item.id === value}
