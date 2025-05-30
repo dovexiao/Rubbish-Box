@@ -1,14 +1,14 @@
-import dayjs from 'dayjs';
 import React from 'react';
 import {FlatList, View, ActivityIndicator} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import dayjs from 'dayjs';
+
 import theme from '@/style';
 import {TabType, getList} from './transaction-service';
 import {SafeAny} from '@/types';
 import NoData from '@/components/basic/error-pages/no-data';
 import TransactionItem from './transaction-item';
-import globalStore from '@/services/global.state';
 import useInfiniteScroll from '../hooks/load-more.hooks';
-// import {DatePickerItem} from '@/components/basic/date-picker';
 
 export interface TransactionListType {
   type: string;
@@ -25,8 +25,7 @@ const TransactionList = (props: TransactionListType) => {
   const pageRef = React.useRef(1);
   const hasMores = React.useRef(false);
   const [list, setList] = React.useState<SafeAny[]>([]);
-  const [listHeight, setListHeight] = React.useState(0);
-  const [currentDate, setCurrentDate] = React.useState<Date>(new Date());
+  const [currentDate] = React.useState<Date>(new Date());
   const [loading, setLoading] = React.useState(false);
   const [firstLoad, setFirstLoad] = React.useState(true);
   const [moreLoading, setMoreLoading] = React.useState(false);
@@ -47,6 +46,7 @@ const TransactionList = (props: TransactionListType) => {
     if (loading || moreLoading) {
       return;
     }
+
     if (refresh) {
       pageRef.current = 1;
       if (!firstLoad) {
@@ -56,7 +56,9 @@ const TransactionList = (props: TransactionListType) => {
       pageRef.current += 1;
       setMoreLoading(true);
     }
+
     const yearMonth = dayjs(date).format('YYYYMM');
+
     try {
       const res = await getList({
         pageNo: pageRef.current,
@@ -64,6 +66,7 @@ const TransactionList = (props: TransactionListType) => {
         changeDesc: type,
         yearMonth,
       });
+
       if (res) {
         setList(refresh ? res : list.concat(res));
         hasMores.current = res.length >= pageSize;
@@ -81,7 +84,7 @@ const TransactionList = (props: TransactionListType) => {
     if (!hasMores.current) {
       hasMores.current = true;
     }
-    if (isActive) {
+    if (isActive || index === 0) {
       onGetItemList(true, currentDate).then();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,49 +101,39 @@ const TransactionList = (props: TransactionListType) => {
     return null;
   }, [moreLoading]);
 
-  const leftHeight = React.useMemo(() => {
-    return {height: listHeight};
-  }, [listHeight]);
-
   return (
-    <View
-      style={[theme.flex.flex1]}
-      onLayout={e => setListHeight(e.nativeEvent.layout.height)}>
+    <SafeAreaView style={{flex: 1}}>
       <FlatList
         id={`transaction-id-${index}`}
-        style={[theme.flex.flex1]}
-        // contentContainerStyle={[theme.padding.lrl]}
-        // ListHeaderComponent={
-        //   <>
-        //     <DatePickerItem value={currentDate} onChange={setCurrentDate} />
-        //   </>
-        // }
+        style={{flex: 1}}
+        contentContainerStyle={{
+          paddingHorizontal: 0,
+          paddingTop: 12,
+          paddingBottom: 32,
+          flexGrow: 1, // 保证内容区高度撑满
+        }}
+        data={list}
+        keyExtractor={(item, i) => `${item?.id ?? i}`}
+        renderItem={({item}) => <TransactionItem tabs={tabs} info={item} />}
+        ListFooterComponent={Footer}
+        ListEmptyComponent={!firstLoad && !loading ? <NoData /> : null}
+        refreshing={loading}
+        onRefresh={() => {
+          setFirstLoad(true);
+          setList([]);
+          onGetItemList(true, new Date());
+        }}
         onEndReachedThreshold={0.2}
         onMomentumScrollBegin={() => {
           onEndReachedCalledDuringMomentum.current = false;
         }}
-        onEndReached={() => {
-          onLoadMore();
-        }}
-        ListFooterComponent={Footer}
-        ListEmptyComponent={
-          !firstLoad && !loading ? (
-            <View style={[leftHeight]}>
-              <NoData />
-            </View>
-          ) : null
-        }
-        keyExtractor={(item, i) => `${i}`}
-        refreshing={loading}
-        onRefresh={() => {
-          if (globalStore.isAndroid) {
-            setCurrentDate(new Date());
-          }
-        }}
-        data={list}
-        renderItem={({item}) => <TransactionItem tabs={tabs} info={item} />}
+        onEndReached={onLoadMore}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={21}
+        removeClippedSubviews={true}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

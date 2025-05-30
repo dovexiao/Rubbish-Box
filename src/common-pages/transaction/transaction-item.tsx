@@ -6,54 +6,7 @@ import {TabType} from './transaction-service';
 import globalStore from '@/services/global.state';
 import {toPriceStr} from '@/utils';
 import {useTranslation} from 'react-i18next';
-import {View} from 'react-native';
-import Text from '@components/basic/text';
 import dayjs from 'dayjs';
-import LazyImage from '@/components/basic/image';
-const defaultCard = require('@/assets/icons/withdraw/default-card-icon.webp');
-
-// const NAMES_ENUM = [
-//   {
-//     name: 'Winnings',
-//     values: [4, 14, 101],
-//   },
-//   {
-//     name: 'Recharge',
-//     values: [1, 5],
-//   },
-//   {
-//     name: 'Bets',
-//     values: [2],
-//   },
-//   {
-//     name: 'Withdraw',
-//     values: [3],
-//   },
-//   {
-//     name: 'Commission',
-//     values: [6, 7, 8],
-//   },
-//   {
-//     name: 'Rebate',
-//     values: [12, 10],
-//   },
-//   {
-//     name: 'Transfer',
-//     values: [0, 20],
-//   },
-//   {
-//     name: 'VIP',
-//     values: [19],
-//   },
-//   {
-//     name: 'Casino',
-//     values: [98, 99, 102, 103, 104, 105, 106, 107],
-//   },
-//   {
-//     name: 'Scratch',
-//     values: [100, 101],
-//   },
-// ];
 
 const TransactionItem = (props: {
   type?: string;
@@ -119,34 +72,6 @@ const TransactionItem = (props: {
               fixed: 2,
               currency: globalStore.currency,
             })}`,
-          },
-          {
-            key: i18n.t('records.label.commission'),
-            value: `- ${toPriceStr(info.withdrawFeeRate || 0, {
-              thousands: true,
-              spacing: true,
-              fixed: 2,
-              currency: globalStore.currency,
-            })}`,
-          },
-          {
-            key: i18n.t('records.label.withdrawChannel'),
-            value: (
-              <View style={[theme.flex.row, theme.flex.centerByCol]}>
-                <View style={[theme.flex.alignEnd, theme.margin.rights]}>
-                  <Text color={theme.fontColor.white}>{info.bankName}</Text>
-                  <Text color={theme.fontColor.white}>
-                    {info.userCardNumber}
-                  </Text>
-                </View>
-                <LazyImage
-                  imageUrl={defaultCard}
-                  width={32}
-                  height={32}
-                  occupancy="transparent"
-                />
-              </View>
-            ),
           },
           {
             key: i18n.t('records.label.orderNum'),

@@ -73,7 +73,7 @@ export const fontColor = {
   purple10: '#04CC9B1a',
   red: 'red',
   grey: '#D8E0EA',
-  green: '#0BD064',
+  green: '#FEB705',
   white: '#ffffff',
   black: '#000000',
   white60: 'rgba(255,255,255,0.6)',
@@ -84,10 +84,10 @@ export const fontColor = {
 
 export const backgroundColor = {
   /** 蓝 */
-  main: '#04CC9B',
+  main: '#00000099',
 
-  mainDark: '#003941',
-  mainShallow: '#04CC9B',
+  mainDark: '#00000099',
+  mainShallow: '#00000099',
   mediumblue: '#FEB750',
 
   tabCheck: '#003941',

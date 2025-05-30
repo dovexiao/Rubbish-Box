@@ -280,7 +280,7 @@ const Me = () => {
             <View
               style={[
                 borderRadius.m,
-                theme.background.mainDark,
+                theme.background.black60,
                 overflow.hidden,
                 margin.topl,
               ]}>

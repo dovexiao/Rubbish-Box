@@ -5,22 +5,13 @@ import {TabView} from '@rneui/themed';
 import TransactionList from './transaction-list';
 import {TabType} from './transaction-service';
 import theme from '@/style';
-import MeAmount from '@/pages/me/me-amount';
-import {useUserActions} from '@/store/useUserStore';
 
 const TransactionTab = (props: {tabs: TabType[]; amount?: number | 0}) => {
   const [active, setActive] = React.useState(0);
   const {tabs = [], amount} = props;
 
-  const {getUserInfo} = useUserActions();
-
   return (
     <>
-      <MeAmount
-        containerStyle={{...theme.margin.l, ...theme.margin.topzorro}}
-        onRefresh={getUserInfo}
-        type={1}
-      />
       <TabBar routers={tabs} value={active} onChange={setActive} />
       <TabView
         value={active}
