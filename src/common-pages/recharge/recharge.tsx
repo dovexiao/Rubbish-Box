@@ -5,6 +5,7 @@ import theme from '@/style';
 import {goBack, goTo} from '@/utils';
 import React, {useMemo, useState} from 'react';
 import {ScrollView, View} from 'react-native';
+import RechargeChannel from './recharge-channel';
 import {
   BalanceListItem,
   PayMethod,
@@ -190,12 +191,12 @@ const Recharge = () => {
                   setBalance(val);
                 }}
               />
-              {/*<RechargeChannel*/}
-              {/*  payMethodList={paymethodList}*/}
-              {/*  onPayMethodChange={setPayMethodId}*/}
-              {/*  payMethodId={payMethodId}*/}
-              {/*  balance={balance}*/}
-              {/*/>*/}
+              <RechargeChannel
+                payMethodList={paymethodList}
+                onPayMethodChange={setPayMethodId}
+                payMethodId={payMethodId}
+                balance={balance}
+              />
             </View>
           </ScrollView>
         </View>

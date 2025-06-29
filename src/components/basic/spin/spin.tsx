@@ -27,7 +27,7 @@ const Spin = ({
             {
               top: 0,
               left: 0,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
             },
             overlayStyle,
           ]}>

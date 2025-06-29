@@ -4,7 +4,6 @@ import React from 'react';
 import {Animated, KeyboardAvoidingView, View, Image} from 'react-native';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import {goBack, goTo, navigationRef, scaleSize} from '@/utils';
-// import LinearGradient from '@basicComponents/linear-gradient';
 import {ScrollView} from 'react-native-gesture-handler';
 import Button from '@basicComponents/button';
 import globalStore from '@/services/global.state';
@@ -17,7 +16,6 @@ import AccountTip from './components/account-tip';
 import {BasicObject, NavigatorScreenProps} from '@/types';
 import {setScratchAuth} from '@/services/global.service';
 import {useTranslation} from 'react-i18next';
-// import LazyImage from '@/components/basic/image';
 
 import {flex} from '@/components/style';
 import {LazyImageLGBackground} from '@basicComponents/image';
@@ -158,17 +156,6 @@ const Login = (props: NavigatorScreenProps) => {
                 OTPCode={OTPCode}
                 userPassword={userPassword}
               />
-              {/*<Animated.View style={[theme.overflow.hidden]}>*/}
-              {/*  <NativeTouchableOpacity*/}
-              {/*    style={[theme.margin.topm, theme.padding.topm]}>*/}
-              {/*    <Text*/}
-              {/*      size="medium"*/}
-              {/*      textAlign="center"*/}
-              {/*      color={theme.basicColor.primary}>*/}
-              {/*      {i18n.t('login.tip.forgot')}*/}
-              {/*    </Text>*/}
-              {/*  </NativeTouchableOpacity>*/}
-              {/*</Animated.View>*/}
               <Animated.View>
                 <View
                   style={{

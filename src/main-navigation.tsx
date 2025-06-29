@@ -60,6 +60,7 @@ export const mainPageList: {
     component: Recharge,
     img: require('@assets/icons/home/deposit.webp'),
     activeImg: require('@assets/icons/home/deposit.webp'),
+    unmountOnBlur: true,
   },
   {
     name: i18n.t('home.tab.me'),
