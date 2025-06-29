@@ -99,7 +99,7 @@ const Login = (props: NavigatorScreenProps) => {
               },
             ]}>
             <Image
-              source={require('@/assets/icons/login/login-header.webp')}
+              source={require('@/assets/logos/logo.webp')}
               style={[{width: 120, height: 120, marginTop: -30}]}
             />
             <View

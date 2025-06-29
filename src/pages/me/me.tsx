@@ -19,9 +19,8 @@ import {
   updateIcon,
   passwordIcon,
   languagesIcon,
-  notificationsIcon,
-  customerServiceIcon,
-} from '@businessComponents/list-item';
+  customerServiceIcon, rebateIcon
+} from "@businessComponents/list-item";
 import {useConfirm} from '@basicComponents/modal';
 import {useLanguageModal} from '@businessComponents/language';
 import {useFocusEffect} from '@react-navigation/native';
@@ -35,7 +34,6 @@ import {getVersion} from 'react-native-device-info';
 import Spin from '@/components/basic/spin';
 import {useTranslation} from 'react-i18next';
 import MeRowMenu from './me-row-menu';
-import Tag from '@/components/basic/tag';
 import DetailNavTitle from '@businessComponents/detail-nav-title';
 import useVipStore, {useVipActions} from '@/store/useVipStore';
 import {LazyImageLGBackground} from '@/components/basic/image';
@@ -64,7 +62,7 @@ const Me = () => {
   const {setVipConfig, setVipInfo} = useVipActions();
   const user = useUserInfo();
   const {getUserInfo} = useUserActions();
-  const {getNoticeMap, unReadMessageCount, getUnReadCount} =
+  const {getNoticeMap, getUnReadCount} =
     useNotificationStore(
       useShallow(state => ({
         noticeMap: state.noticeMap,
@@ -173,20 +171,21 @@ const Me = () => {
     });
   };
 
+  const toRebate = () => {
+    if (!login) {
+      toLogin();
+      return;
+    }
+    // 跳转commission
+    goTo('Rebate');
+  };
+
   const toMyBets = () => {
     if (!login) {
       toLogin();
       return;
     }
     goTo('Bets');
-  };
-
-  const toNotify = () => {
-    if (!login) {
-      goTo('Login');
-    } else {
-      goTo('Notification');
-    }
   };
 
   const toSetPassword = () => {
@@ -276,6 +275,12 @@ const Me = () => {
                 description={i18n.t('me.description.betsDescription')}
                 onPress={toMyBets}
               />
+              <MeListItem
+                icon={rebateIcon}
+                title={i18n.t('home.label.rebate')}
+                description={i18n.t('me.description.rebateDescription')}
+                onPress={toRebate}
+              />
             </View>
             <View
               style={[
@@ -284,23 +289,23 @@ const Me = () => {
                 overflow.hidden,
                 margin.topl,
               ]}>
-              <MeListItem
-                containerStyle={[theme.padding.tbl]}
-                icon={notificationsIcon}
-                iconSize={18}
-                title={i18n.t('me.bottom.notify')}
-                rightContent={
-                  unReadMessageCount?.messageTotalCount ? (
-                    <Tag
-                      badgeSize={16}
-                      backgroundColor={theme.basicColor.red}
-                      content={unReadMessageCount?.messageTotalCount}
-                    />
-                  ) : null
-                }
-                mt={0}
-                onPress={toNotify}
-              />
+              {/*<MeListItem*/}
+              {/*  containerStyle={[theme.padding.tbl]}*/}
+              {/*  icon={notificationsIcon}*/}
+              {/*  iconSize={18}*/}
+              {/*  title={i18n.t('me.bottom.notify')}*/}
+              {/*  rightContent={*/}
+              {/*    unReadMessageCount?.messageTotalCount ? (*/}
+              {/*      <Tag*/}
+              {/*        badgeSize={16}*/}
+              {/*        backgroundColor={theme.basicColor.red}*/}
+              {/*        content={unReadMessageCount?.messageTotalCount}*/}
+              {/*      />*/}
+              {/*    ) : null*/}
+              {/*  }*/}
+              {/*  mt={0}*/}
+              {/*  onPress={toNotify}*/}
+              {/*/>*/}
 
               <MeListItem
                 icon={passwordIcon}

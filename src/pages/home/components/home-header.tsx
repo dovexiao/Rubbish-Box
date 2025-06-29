@@ -4,17 +4,14 @@ import {View, Image} from 'react-native';
 import theme from '@style';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import globalStore from '@/services/global.state';
-import {goTo, goToWithLogin, toPriceStr} from '@/utils';
+import {goTo, toPriceStr} from '@/utils';
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import {combineLatest, distinctUntilChanged} from 'rxjs';
 import {postUserInfo} from '@services/global.service';
 import {useTranslation} from 'react-i18next';
 import {useFocusEffect} from '@react-navigation/native';
 import Button from '@/components/basic/button';
-import useNotificationStore from '@/store/useNotificationStore';
-import {useShallow} from 'zustand/react/shallow';
 import useHomeStore from '@/store/useHomeStore';
-import Tag from '@/components/basic/tag';
 const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
 
 const HomeHeader = () => {
@@ -25,11 +22,6 @@ const HomeHeader = () => {
   const [userAvatar, setUserAvatar] = React.useState('');
   const [amount, setAmount] = React.useState<number>(0);
   const [rate, setRate] = React.useState<number>(0);
-  const {unReadMessageCount} = useNotificationStore(
-    useShallow(state => ({
-      unReadMessageCount: state.unReadMessageCount,
-    })),
-  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -95,8 +87,8 @@ const HomeHeader = () => {
               style={[
                 // eslint-disable-next-line react-native/no-inline-styles
                 {
-                  width: 110,
-                  height: 50,
+                  width: 180,
+                  height: 45,
                   // borderRadius: 6,
                   // borderColor: theme.basicColor.selectPrimary,
                   // borderWidth: 1,
@@ -140,32 +132,31 @@ const HomeHeader = () => {
               />
             </NativeTouchableOpacity>
           )}
-          {showUser ? (
-            <NativeTouchableOpacity
-              onPress={() => {
-                goToWithLogin('Notification');
-              }}
-              style={[theme.position.rel]}>
-              <Image
-                style={[theme.image.xs]}
-                source={require('@assets/icons/bell.webp')}
-                resizeMode={'cover'}
-              />
-              {unReadMessageCount?.messageTotalCount ? (
-                <Tag
-                  // eslint-disable-next-line react-native/no-inline-styles
-                  style={[theme.position.abs, {top: 0, right: 0}]}
-                  badgeSize={14}
-                  backgroundColor={theme.basicColor.red}
-                  content={
-                    unReadMessageCount?.messageTotalCount > 99
-                      ? '99+'
-                      : unReadMessageCount?.messageTotalCount
-                  }
-                />
-              ) : null}
-            </NativeTouchableOpacity>
-          ) : null}
+          {/*{showUser ? (*/}
+          {/*  <NativeTouchableOpacity*/}
+          {/*    onPress={() => {*/}
+          {/*      goToWithLogin('Notification');*/}
+          {/*    }}*/}
+          {/*    style={[theme.position.rel]}>*/}
+          {/*    <Image*/}
+          {/*      style={[theme.image.xs]}*/}
+          {/*      resizeMode={'cover'}*/}
+          {/*    />*/}
+          {/*    {unReadMessageCount?.messageTotalCount ? (*/}
+          {/*      <Tag*/}
+          {/*        // eslint-disable-next-line react-native/no-inline-styles*/}
+          {/*        style={[theme.position.abs, {top: 0, right: 0}]}*/}
+          {/*        badgeSize={14}*/}
+          {/*        backgroundColor={theme.basicColor.red}*/}
+          {/*        content={*/}
+          {/*          unReadMessageCount?.messageTotalCount > 99*/}
+          {/*            ? '99+'*/}
+          {/*            : unReadMessageCount?.messageTotalCount*/}
+          {/*        }*/}
+          {/*      />*/}
+          {/*    ) : null}*/}
+          {/*  </NativeTouchableOpacity>*/}
+          {/*) : null}*/}
           {showLogin && (
             <View style={[theme.flex.row, theme.flex.centerByCol, theme.gap.m]}>
               <Button

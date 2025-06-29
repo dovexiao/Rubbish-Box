@@ -71,7 +71,7 @@ const HomeUserInfo: React.FC<HomeUserInfoProps> = ({info}) => {
         ]}
         onPress={toTotalUser}>
         <LinearGradient
-          colors={['#04CC9B1A', '#04CC9B99']}
+          colors={['rgba(2,70,241,0.05)', '#1c1c1c']}
           style={[
             theme.flex.row,
             theme.fill.fillW,
@@ -109,7 +109,7 @@ const HomeUserInfo: React.FC<HomeUserInfoProps> = ({info}) => {
         ]}
         onPress={tTotalCommission}>
         <LinearGradient
-          colors={['#04CC9B1A', '#04CC9B99']}
+          colors={['rgba(2,70,241,0.05)', '#1c1c1c']}
           style={[
             theme.flex.row,
             theme.fill.fillW,

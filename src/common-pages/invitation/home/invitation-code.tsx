@@ -47,7 +47,7 @@ const InvitationCode: React.FC<InvitationCodeProps> = ({
           {height: 80, paddingLeft: 25},
         ]}>
         <View style={[{width: scaleSize(170)}]}>
-          <Text white fontSize={theme.fontSize.m}>
+          <Text black fontSize={theme.fontSize.m}>
             {i18n.t('invitation.home.code-title')}
           </Text>
           <View
@@ -84,7 +84,7 @@ const InvitationCode: React.FC<InvitationCodeProps> = ({
           radius={30}
           size="small"
           title={i18n.t('label.copy')}
-          type={'linear-primary'}
+          type={'linear-primary-gold'}
           onPress={onCopy}
         />
       </View>

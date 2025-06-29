@@ -6,19 +6,10 @@ import Text from '@basicComponents/text';
 import {useResponsiveDimensions} from '@/utils';
 
 const {flex, font, margin, padding} = theme;
-export const agencyIcon = require('@components/assets/icons/me-list-item/proxy.webp');
-
-export const gamesIcon = require('@components/assets/icons/me-list-item/games.webp');
-export const collectIcon = require('@components/assets/icons/me-list-item/collect.webp');
 export const rebateIcon = require('@components/assets/icons/me-list-item/rebate.webp');
 export const transactionsIcon = require('@components/assets/icons/me-list-item/transaction.webp');
 export const betsIcon = require('@components/assets/icons/me-list-item/bets.webp');
-export const resultHistoryIcon = require('@components/assets/icons/me-list-item/result-history.webp');
-export const shopIcon = require('@components/assets/icons/me-list-item/shop.webp');
-export const couponIcon = require('@components/assets/icons/me-list-item/coupon.webp');
-
 export const commissionIcon = require('@components/assets/icons/me-list-item/commission.webp');
-export const notificationsIcon = require('@components/assets/icons/me-list-item/notifications.webp');
 export const passwordIcon = require('@components/assets/icons/me-list-item/password.webp');
 export const languagesIcon = require('@components/assets/icons/me-list-item/languages.webp');
 export const customerServiceIcon = require('@components/assets/icons/me-list-item/customer-service.webp');

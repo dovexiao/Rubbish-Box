@@ -265,14 +265,6 @@ const Table = (props: SafeAny) => {
                 </View>
               </View>
             </ScrollView>
-            {/* <View style={[position.abs, {right: 0, height: '100%'}]}>
-              <LinearGradient
-                style={[{width: 32, height: '100%'}, flex.center]}
-                colors={['#fff', 'rgba(255, 255, 255, 0.00)']}
-                start={{x: 1, y: 1}}
-                end={{x: 0, y: 1}}
-              />
-            </View> */}
           </View>
           {props?.teamReportData.length < props?.totalSize && (
             <NativeTouchableOpacity

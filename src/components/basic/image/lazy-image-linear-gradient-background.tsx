@@ -89,9 +89,13 @@ const LazyImageLGBackground: React.FC<LazyImageLGBackgroundProps> = props => {
   return (
     <View
       style={[
+        {
+          width: screenWidth,
+          height: containerHeight,
+          backgroundColor: 'transparent', // 改为透明或 props 可控
+        },
         styles.view,
         style,
-        {width: screenWidth, height: containerHeight},
       ]}
       {...imageProps}>
       <View style={styles.bg}>

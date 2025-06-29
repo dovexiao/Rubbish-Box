@@ -5,7 +5,7 @@ import {
   MessageTypeDataResponse,
   UnReadCountResponse,
   getMessageTypeService,
-  getUnReadCountService,
+  // getUnReadCountService,
   NotificationItem,
 } from '@/common-pages/notification/notification.service';
 // import {getNoticeCheck} from '@/pages/home/home.service';
@@ -37,14 +37,14 @@ const useNotificationStore = create<NotificationStoreState>()(
         feedbackUnReadCount: 0,
       },
       getUnReadCount: async () => {
-        const res = await getUnReadCountService();
-        // const feedbackCount = await getFeedBackUnReadCount();
-        set({
-          unReadMessageCount: {
-            ...res,
-            feedbackUnReadCount: 0,
-          },
-        });
+        // const res = 0;
+        // // const feedbackCount = await getFeedBackUnReadCount();
+        // set({
+        //   unReadMessageCount: {
+        //     ...res,
+        //     feedbackUnReadCount: 0,
+        //   },
+        // });
       },
 
       messageTypeTabIndex: 0,

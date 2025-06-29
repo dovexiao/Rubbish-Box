@@ -71,7 +71,9 @@ const Bets = () => {
         disableTransition>
         {MENU.map((item, index) => {
           return (
-            <TabView.Item key={index} style={[theme.flex.flex1]}>
+            <TabView.Item
+              key={index}
+              style={[theme.flex.flex1, {backgroundColor: 'transparent'}]}>
               <BetsList
                 isActive={active === index}
                 game={activeTag}

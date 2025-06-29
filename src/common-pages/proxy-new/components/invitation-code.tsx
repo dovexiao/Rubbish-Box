@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
   btnStyle: {
     fontSize: 12,
-    color: '#fff',
+    color: '#000',
     lineHeight: 24,
     textAlign: 'center',
     fontWeight: 'bold',
@@ -81,28 +81,14 @@ const DirectSubordinates = (props: IProps) => {
   return (
     <View
       style={[
-        // theme.background.mainDark,
         theme.margin.lrl,
-
         {
           paddingBottom: theme.paddingSize.l,
           marginTop: theme.paddingSize.l,
           borderRadius: theme.borderRadiusSize.m,
-          // backgroundColor: '#3617BE',
-          backgroundColor: theme.basicColor.primary15,
+          backgroundColor: theme.basicColor.transparentP10,
         },
       ]}>
-      {/*<ImageBackground*/}
-      {/*  style={[*/}
-      {/*    theme.fill.fill,*/}
-      {/*    styles.backgroundContainer,*/}
-      {/*    theme.flex.flex,*/}
-      {/*    theme.flex.centerByRow,*/}
-      {/*    theme.flex.centerByCol,*/}
-      {/*  ]}*/}
-      {/*  imageStyle={styles.imgStyle}*/}
-      {/*  source={require('@/assets/imgs/proxy/proxyBtn.webp')}*/}
-      {/*  resizeMode="cover"></ImageBackground>*/}
       <View
         style={[
           {
@@ -162,7 +148,7 @@ const DirectSubordinates = (props: IProps) => {
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}
-            colors={[theme.basicColor.primary15, theme.basicColor.primary50]}
+            colors={[theme.basicColor.primary1, theme.basicColor.primary1]}
             style={[
               theme.flex.row,
               theme.fill.fillW,
@@ -183,14 +169,6 @@ const DirectSubordinates = (props: IProps) => {
             </Text>
           </LinearGradient>
         </NativeTouchableOpacity>
-        {/* <Button
-          onPress={() => onShare?.()}
-          radius={30}
-          width={width - theme.paddingSize.l * 4}
-          size="large"
-          title={i18n.t('proxy.home.invitation-link')}
-          titleBold={true}
-        /> */}
       </View>
     </View>
   );

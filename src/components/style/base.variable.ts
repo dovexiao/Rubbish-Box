@@ -1,6 +1,7 @@
 export const basicColor = {
   /** 主题色 */
   primary: '#FEB705',
+  primary1: '#F3BA41',
   primary20: '#003941',
   primary10: '#04CC9B1A',
   primary15: '#C7C7C7',
@@ -47,9 +48,9 @@ export const linearGradientColor = {
   //中奖状态 背景渐变色
   wonLinearGradient: ['#FFB72833', '#7230FF00'],
   //未中奖状态 背景渐变色
-  noWinLinearGradient: ['#04CC9B33', '#7230FF00'],
+  noWinLinearGradient: ['#F9A40D33', '#7230FF00'],
   //未开奖状态 背景渐变色
-  toDrawnLinearGradient: ['#04CC9B1A', '#04CC9B99'],
+  toDrawnLinearGradient: ['#F9A40D33', '#7230FF00'],
 };
 
 export const fontColor = {
@@ -64,7 +65,7 @@ export const fontColor = {
   //中奖状态 文字颜色
   wonFontColor: '#FFB728',
   //未中奖状态 文字颜色
-  noWinFontColor: '#04CC9BFF',
+  noWinFontColor: '#F9A40DFF',
   //未开奖状态 文字颜色
   toDrawnFontColor: '#04CC9B99',
   primary: '#FEB705',
@@ -87,7 +88,7 @@ export const backgroundColor = {
   main: '#00000099',
 
   mainDark: '#00000099',
-  mainShallow: '#00000099',
+  mainShallow: '#FEB750',
   mediumblue: '#FEB750',
 
   tabCheck: '#003941',

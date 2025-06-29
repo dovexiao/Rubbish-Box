@@ -1,29 +1,22 @@
 import React, {useState, useMemo, useCallback} from 'react';
 import theme from '@style';
-import {View, Text, ScrollView, RefreshControl, StyleSheet} from 'react-native';
-import {toAgentApply, goTo} from '@utils'; //goBack
-import {goToUrl} from '@/common-pages/game-navigate';
+import {View, ScrollView, RefreshControl, StyleSheet} from 'react-native';
+import {toAgentApply} from '@utils'; //goBack
 import i18n from '@i18n';
 import globalStore from '@/services/global.state';
 import {useShare} from '../hooks/share.hooks';
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import {useFocusEffect} from '@react-navigation/native'; //useRoute
-import LazyImage, {LazyImageLGBackground} from '@basicComponents/image'; //
-// import HomeUserInfo from './components/home-user-info';
+import {LazyImageLGBackground} from '@basicComponents/image'; //
 import HomeUserInfo from './components/home-user1-info';
 import HomeDataInfo from './components/home-data-info';
-// import HomeDataOperation from './components/home-data-operation';
 import InvitationCode from './components/invitation-code';
 import Table from './components/table';
-// import HomeRewards from './components/home-rewards';
-// import Button from '@/components/basic/button';
 import {ImageUrlType} from '@/components/basic/image';
 import {defaultHeaderImg} from './proxy.variable';
 import {getTotalUsers, getTodayCommission, getInviteKongArea} from './api';
 import {AgentInfo} from './types';
 import {usePaging} from './hooks/home';
-import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
-// import LinearGradient from '@/components/basic/linear-gradient';
 import HomeUser from './components/home-user';
 
 const NewProxyHome = () => {
@@ -33,7 +26,6 @@ const NewProxyHome = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [agentInfo, setAgentInfo] = useState<AgentInfo>();
   // const [todayInvite, setTodayInvite] = useState(0);
-  const [kongList, setKongList] = useState<Array<any>>();
   const inviteCode = useMemo(() => {
     return code.split('').join('  ');
   }, [code]);
@@ -66,7 +58,6 @@ const NewProxyHome = () => {
           if (Object.keys(kong.value).length === 0) {
             return;
           }
-          setKongList(kong.value);
         }
       })
       .finally(() => loading && globalStore.globalLoading.next(false));
@@ -142,67 +133,6 @@ const NewProxyHome = () => {
         </View>
         <View style={[theme.margin.topl]}>
           <HomeDataInfo info={agentInfo} />
-          <View
-            style={[
-              theme.flex.row,
-              theme.flex.between,
-              theme.flex.centerByCol,
-              {
-                marginTop: 12,
-                marginLeft: 12,
-                marginRight: 12,
-              },
-            ]}>
-            {kongList?.map((item, index) => {
-              return (
-                <View
-                  key={item.id || index}
-                  style={[
-                    theme.flex.row,
-                    theme.flex.centerByRow,
-                    theme.flex.centerByCol,
-                    styles.kongView,
-                    {
-                      width: '31%',
-                      height: 50,
-                    },
-                  ]}>
-                  <NativeTouchableOpacity
-                    style={[
-                      theme.flex.row,
-                      theme.flex.centerByRow,
-                      theme.flex.centerByCol,
-                      styles.kongBtn,
-                    ]}
-                    onPress={() => {
-                      if (item.routing) {
-                        if (item.routing.includes('http')) {
-                          goToUrl(item.routing, item.areaName);
-                          return;
-                        }
-                        let name = item.areaName ? item.areaName : '';
-                        goTo(item.routing ? item.routing : 'InviteActivity', {
-                          type: name.replace(/ /g, ''),
-                        });
-                      } else {
-                      }
-                    }}>
-                    <LazyImage
-                      imageUrl={item.areaIcon}
-                      width={30}
-                      height={30}
-                      radius={12}
-                      occupancy="transparent"
-                    />
-                    <Text numberOfLines={1} style={[styles.kongTextStyle]}>
-                      {item.areaName}
-                    </Text>
-                  </NativeTouchableOpacity>
-                </View>
-              );
-            })}
-          </View>
-          {/* <HomeDataOperation /> */}
         </View>
         <View style={[styles.inViteView]}>
           <InvitationCode
@@ -212,28 +142,6 @@ const NewProxyHome = () => {
             onCopy={() => copy(code)}
           />
         </View>
-        {/* <View
-          style={[
-            theme.flex.flex1,
-            {marginTop: 12, marginLeft: 12, marginRight: 12},
-          ]}>
-          <Button
-            onPress={() => {
-              goTo('InviteActivity');
-            }}
-            radius={30}
-            size="large"
-            title={'Invite friends'}
-            titleBold={true}
-          />
-        </View> */}
-        {/*<View style={[{marginBottom: -12}]}>*/}
-        {/*  <HomeRewards*/}
-        {/*    todayInvite={todayInvite as any}*/}
-        {/*    inviteList={inviteList as any}*/}
-        {/*    onShare={doShare}*/}
-        {/*  />*/}
-        {/*</View>*/}
         <Table
           bet={todayCommissionBet}
           invite={todayCommissionInvite}

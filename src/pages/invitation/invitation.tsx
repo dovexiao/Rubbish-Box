@@ -13,9 +13,8 @@ import {useTranslation} from 'react-i18next';
 import {ImageBackground, Image, View} from 'react-native';
 
 const invitationBG = require('@assets/imgs/pay-sucess.webp');
-// 750 × 1448
+
 const download = require('@assets/imgs/pay-sucess.webp');
-// 686 × 1012
 
 /** 这个页面只有web会进入!!!! */
 const Invitation = () => {
