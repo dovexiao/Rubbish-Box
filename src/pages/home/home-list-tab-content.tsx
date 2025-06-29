@@ -11,7 +11,6 @@ import HomeDice from './components/dice/home-dice';
 import HomeColor from './components/color/home-color';
 import HomeDigits from './components/digit/home-digits';
 // import HomeWorldDigits from './components/world-digit/home-digits';
-import HomeState from './components/state/home-state';
 // import HomeQuickDigits from './components/quickdigit/home-quickdigits';
 
 // import HomeColor from './components/home-color';
@@ -35,7 +34,7 @@ const HomeTabListContent = ({
   diceList = [],
   colorList = [],
   digitList = [],
-  stateList = [],
+  // stateList = [],
   keralaList = [],
 }: HomeTabListContentProps) => {
   const dataContent = [
@@ -55,10 +54,10 @@ const HomeTabListContent = ({
     //   name: 'World3Digits',
     //   content: <HomeWorldDigits digitList={worldDigitList} />,
     // },
-    {
-      name: 'State Lottery',
-      content: <HomeState digitList={stateList} />,
-    },
+    // {
+    //   name: 'State Lottery',
+    //   content: <HomeState digitList={stateList} />,
+    // },
     {
       name: 'Color',
       content: <HomeColor colorList={colorList} />,

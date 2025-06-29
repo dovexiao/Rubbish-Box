@@ -120,7 +120,7 @@ const HomeCategoryPageTabs = () => {
         style={[
           theme.borderRadius.m,
           theme.flex.flex1,
-          theme.background.primary15,
+          theme.background.transparentP30,
 
           { height: 42, width: screenWidth - theme.paddingSize.l * 2 },
         ]}

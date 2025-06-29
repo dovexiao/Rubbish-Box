@@ -160,6 +160,7 @@ export const paddingSize = {
   xxxxl: 20,
   maxl: 250,
   waxl: 20,
+  wax4: 40,
 };
 
 export const borderRadiusSize = {

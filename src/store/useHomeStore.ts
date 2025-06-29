@@ -8,7 +8,7 @@ import {
   DigitListItem,
   QuickDigitListItem,
   KeralaListItem,
-  MatkaListItem,
+  // MatkaListItem,
   PageTagItem,
   PageGameSectionListItem,
 } from '@/pages/home/home.type';
@@ -18,10 +18,10 @@ import {
   getColorList,
   getDigitList,
   // getWorldDigitList,
-  getStateLotteryList,
+  // getStateLotteryList,
   getQuickDigitList,
   getKeralaList,
-  getMatkaList,
+  // getMatkaList,
   getGameTagList,
   getHomeCategoryDataService,
   getCategoryGameListService,
@@ -45,9 +45,9 @@ type HomeStoreState = {
     colorList: ColorListItem[];
     digitList: DigitListItem[];
     // worldDigitList: DigitListItem[];
-    stateList: DigitListItem[];
+    // stateList: DigitListItem[];
     quickDigitList: QuickDigitListItem[];
-    matkaList: MatkaListItem[];
+    // matkaList: MatkaListItem[];
     keralaList: KeralaListItem[];
   };
   getLotteryPageData: () => void;
@@ -102,18 +102,18 @@ const useHomeStore = create<HomeStoreState>()(
           color,
           digit,
           // worldDigit,
-          stateList,
+          // stateList,
           quickDigit,
-          matka,
+          // matka,
           kerala,
         ] = await Promise.allSettled([
           getDiceList(),
           getColorList(),
           getDigitList(),
           // getWorldDigitList(),
-          getStateLotteryList(),
+          // getStateLotteryList(),
           getQuickDigitList(),
-          getMatkaList(),
+          // getMatkaList(),
           getKeralaList(),
         ]);
         set({
@@ -122,9 +122,9 @@ const useHomeStore = create<HomeStoreState>()(
             colorList: formatSettledData(color),
             digitList: formatSettledData(digit),
             // worldDigitList: formatSettledData(worldDigit),
-            stateList: formatSettledData(stateList),
+            // stateList: formatSettledData(stateList),
             quickDigitList: formatSettledData(quickDigit) || [],
-            matkaList: formatSettledData(matka),
+            // matkaList: formatSettledData(matka),
             keralaList: formatSettledData(kerala),
           },
         });
