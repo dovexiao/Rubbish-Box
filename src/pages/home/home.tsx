@@ -13,23 +13,21 @@ import {useToken} from '@/store/useUserStore';
 import {useShallow} from 'zustand/react/shallow';
 import useNotificationStore from '@/store/useNotificationStore';
 import HomeCategoryPageTabs from '@/pages/home/components/home-category-page-tabs';
-// import HomeTabPageLobby from '@/pages/home/pages/tab-page-lobby';
-// import HomeTabPageLottery from '@/pages/home/pages/tab-page-lottery';
 import HomeTabPageGame from '@/pages/home/pages/tab-page-game';
 import HomeTabPageLive from '@/pages/home/pages/tab-page-live';
 import HomeTabPageSlots from '@/pages/home/pages/tab-page-slots';
 import HomeTabPagePopularOld from '@/pages/home/pages/tab-page-popular-old';
 
 const Home = () => {
+
   const {isLogin} = useToken();
   const {getHomeBannerList, oneCategoryPageIndex} = useHomeStore(
     useShallow(state => ({
       oneCategoryPageIndex: state.oneCategoryPageIndex,
       getHomeBannerList: state.getHomeBannerList,
-      pageTagList: state.pageTagList,
-
     })),
   );
+
   const {getNoticeMap, getUnReadCount} = useNotificationStore(
     useShallow(state => ({
       getNoticeMap: state.getNoticeMap,
@@ -37,7 +35,6 @@ const Home = () => {
     })),
   );
   const [_unreadCount, _setUnreadCount] = useState(0);
-
 
   const handleFocusEffect = useCallback(() => {
     const sub = globalStore.tokenSubject.subscribe(token => {
@@ -68,8 +65,7 @@ const Home = () => {
       <HomeHeader />
       {globalStore.isWeb && !globalStore.viewType ? <Download /> : null}
       <HomeCategoryPageTabs />
-      {/*{oneCategoryPageIndex === 0 && <HomeTabPageLobby />}*/}
-      {/*{oneCategoryPageIndex === 1 && <HomeTabPageLottery />}*/}
+      {/*{oneCategoryPageIndex === 0 && <HomeTabPagePopular/>}*/}
       {oneCategoryPageIndex === 10 && <HomeTabPagePopularOld />}
       {oneCategoryPageIndex === 2 && <HomeTabPageGame />}
       {oneCategoryPageIndex === 4 && <HomeTabPageSlots />}

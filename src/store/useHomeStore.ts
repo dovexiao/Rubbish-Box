@@ -8,6 +8,7 @@ import {
   DigitListItem,
   QuickDigitListItem,
   KeralaListItem,
+  MatkaListItem,
   PageTagItem,
   PageGameSectionListItem,
 } from '@/pages/home/home.type';
@@ -16,9 +17,11 @@ import {
   getDiceList,
   getColorList,
   getDigitList,
+  // getWorldDigitList,
   getStateLotteryList,
   getQuickDigitList,
   getKeralaList,
+  getMatkaList,
   getGameTagList,
   getHomeCategoryDataService,
   getCategoryGameListService,
@@ -44,6 +47,7 @@ type HomeStoreState = {
     // worldDigitList: DigitListItem[];
     stateList: DigitListItem[];
     quickDigitList: QuickDigitListItem[];
+    matkaList: MatkaListItem[];
     keralaList: KeralaListItem[];
   };
   getLotteryPageData: () => void;
@@ -71,7 +75,7 @@ const useHomeStore = create<HomeStoreState>()(
       },
 
       isShowCategoryTab: true,
-      oneCategoryPageIndex: 10,
+      oneCategoryPageIndex: 4,
       setOneCategoryPageIndex: index => {
         set({oneCategoryPageIndex: index});
       },
@@ -100,6 +104,7 @@ const useHomeStore = create<HomeStoreState>()(
           // worldDigit,
           stateList,
           quickDigit,
+          matka,
           kerala,
         ] = await Promise.allSettled([
           getDiceList(),
@@ -108,6 +113,7 @@ const useHomeStore = create<HomeStoreState>()(
           // getWorldDigitList(),
           getStateLotteryList(),
           getQuickDigitList(),
+          getMatkaList(),
           getKeralaList(),
         ]);
         set({
@@ -118,6 +124,7 @@ const useHomeStore = create<HomeStoreState>()(
             // worldDigitList: formatSettledData(worldDigit),
             stateList: formatSettledData(stateList),
             quickDigitList: formatSettledData(quickDigit) || [],
+            matkaList: formatSettledData(matka),
             keralaList: formatSettledData(kerala),
           },
         });
@@ -130,6 +137,7 @@ const useHomeStore = create<HomeStoreState>()(
         const res = await getGameTagList(get().oneCategoryPageIndex);
         set({pageTagList: res});
       },
+
       categoryHomeList: [],
       getCategoryHomeList: async () => {
         const res = await getHomeCategoryDataService(

@@ -19,21 +19,22 @@ import i18n from '@i18n';
 import {useToken} from '@/store/useUserStore';
 
 const tabsList = [
-  {title: i18n.t('headers.popular'), value: 10, isLogin: false},
-  {title: i18n.t('headers.slots'), value: 4},
+  {title: i18n.t('headers.slots'), value: 4, isLogin: false},
+  {title: i18n.t('headers.lottery'), value: 10},
   {title: i18n.t('headers.casino'), value: 2},
   {title: i18n.t('headers.fish'), value: 3},
 ];
 
 const HomeCategoryPageTabs = () => {
-  const {isLogin: login} = useToken();
-  const {screenWidth} = useSettingWindowDimensions();
+  const { isLogin: login } = useToken();
+  const { screenWidth } = useSettingWindowDimensions();
   const {
     isShowCategoryTab,
     oneCategoryPageIndex,
     changeIndex,
     getLotteryPageData,
     getHomeTagList,
+    getCategoryHomeList,
   } = useHomeStore(
     useShallow(state => ({
       isShowCategoryTab: state.isShowCategoryTab,
@@ -42,6 +43,7 @@ const HomeCategoryPageTabs = () => {
 
       getLotteryPageData: state.getLotteryPageData,
       getHomeTagList: state.getHomeTagList,
+      getCategoryHomeList: state.getCategoryHomeList,
     })),
   );
 
@@ -82,8 +84,8 @@ const HomeCategoryPageTabs = () => {
 
   useEffect(() => {
     // console.info('=======oneCategoryPageIndex:' + oneCategoryPageIndex);
-    useHomeStore.setState({isShowCategoryTab: true});
-    useHomeStore.setState({pageTagIndex: -1});
+    useHomeStore.setState({ isShowCategoryTab: true });
+    useHomeStore.setState({ pageTagIndex: -1 });
     if (
       oneCategoryPageIndex === 1 ||
       oneCategoryPageIndex === 2 ||
@@ -95,21 +97,34 @@ const HomeCategoryPageTabs = () => {
       oneCategoryPageIndex === 12
     ) {
       getHomeTagList();
+      getCategoryHomeList();
     }
     if (oneCategoryPageIndex === 10) {
       getLotteryPageData();
     }
-  }, [getHomeTagList, getLotteryPageData, oneCategoryPageIndex]);
+  }, [
+    getCategoryHomeList,
+    getHomeTagList,
+    getLotteryPageData,
+    oneCategoryPageIndex,
+  ]);
   return (
-    <Animated.View style={[theme.margin.lrl, theme.borderRadius.m, bodyStyle]}>
+    <Animated.View
+      style={[
+        theme.margin.lrl,
+        theme.borderRadius.m,
+
+        bodyStyle,
+      ]}>
       <ScrollView
         style={[
           theme.borderRadius.m,
           theme.flex.flex1,
-          theme.background.transparentP30,
+          theme.background.primary15,
 
-          {height: 42, width: screenWidth - theme.paddingSize.l * 2},
+          { height: 42, width: screenWidth - theme.paddingSize.l * 2 },
         ]}
+
         contentContainerStyle={{
           flex: 1,
           alignItems: 'center',
@@ -118,36 +133,63 @@ const HomeCategoryPageTabs = () => {
         horizontal
         showsHorizontalScrollIndicator={false}>
         {tabsList.map(item => {
-          const isSelected = oneCategoryPageIndex === item?.value;
-
-          // 不渲染未登录用户无法访问的 tab
-          if (item.isLogin && !login) return null;
-
-          return (
-            <NativeTouchableOpacity
-              onPress={() => onPressItem(item?.value)}
-              key={item?.value}
-              style={[
-                theme.flex.flex1,
-                theme.flex.center,
-                isSelected
-                  ? {
-                    ...theme.background.primary,
-                    ...theme.borderRadius.l,
-                    height: 35,
-                  }
-                  : {
-                    height: 42,
-                  },
-              ]}>
-              <Text
-                size="large" blod
-                {...(isSelected ? {black: true} : {white: true})}
-              >
-                {item?.title}
-              </Text>
-            </NativeTouchableOpacity>
-          );
+          if (item.isLogin && login) {
+            return (
+              <NativeTouchableOpacity
+                onPress={() => onPressItem(item?.value)}
+                key={item?.value}
+                style={[
+                  theme.flex.flex1,
+                  theme.flex.center,
+                  // {
+                  //   paddingLeft: 5,
+                  //   paddingRight: 5,
+                  // },
+                  oneCategoryPageIndex === item?.value
+                    ?
+                    {
+                      ...theme.background.primary,
+                      ...theme.borderRadius.l,
+                      height: 35,
+                    }
+                    :
+                    {
+                      height: 42,
+                    },
+                ]}>
+                <Text size="medium" blod white>
+                  {item?.title}
+                </Text>
+              </NativeTouchableOpacity>);
+          } else if (!item.isLogin) {
+            return (
+              <NativeTouchableOpacity
+                onPress={() => onPressItem(item?.value)}
+                key={item?.value}
+                style={[
+                  theme.flex.flex1,
+                  theme.flex.center,
+                  // {
+                  //   paddingLeft: 5,
+                  //   paddingRight: 5,
+                  // },
+                  oneCategoryPageIndex === item?.value
+                    ?
+                    {
+                      ...theme.background.primary,
+                      ...theme.borderRadius.l,
+                      height: 35,
+                    }
+                    :
+                    {
+                      height: 42,
+                    },
+                ]}>
+                <Text size="medium" blod white>
+                  {item?.title}
+                </Text>
+              </NativeTouchableOpacity>);
+          }
         })}
       </ScrollView>
     </Animated.View>

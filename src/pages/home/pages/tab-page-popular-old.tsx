@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect} from 'react';
 import {ScrollView, View, Animated} from 'react-native';
 import theme from '@style';
 import {debounce} from '@/utils';
@@ -6,9 +6,6 @@ import HomeTabListContent from '../home-list-tab-content';
 import useHomeStore from '@/store/useHomeStore';
 import {useShallow} from 'zustand/react/shallow';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
-import HomeBanner from '@/pages/home/components/home-banner';
-import {MessagePlay} from '@basicComponents/messagePlay';
-import {appBroadcast} from '@services/global.service';
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 interface HomeTabPagePopularProps {
   onPress?: (position: number) => void;
@@ -44,18 +41,17 @@ const HomeTabPagePopularOld: React.FC<HomeTabPagePopularProps> = props => {
   const scrollAnim = React.useRef(new Animated.Value(0)).current;
   const measures = React.useRef<number[]>([]);
 
-  const homeBannerList = useHomeStore(state => state.homeBannerList);
-  const memoBannerList = useMemo(() => {
-    return homeBannerList;
-  }, [homeBannerList]);
-  const [noticeList, setNoticeList] = useState<string[]>([]);
-  useEffect(() => {
-    appBroadcast()
-      .then(list => {
-        setNoticeList(list);
-      })
-      .finally(() => {});
-  }, []);
+  // const memoBannerList = useMemo(() => {
+  //   return homeBannerList;
+  // }, [homeBannerList]);
+  // const [noticeList, setNoticeList] = useState<string[]>([]);
+  // useEffect(() => {
+  //   appBroadcast()
+  //     .then(list => {
+  //       setNoticeList(list);
+  //     })
+  //     .finally(() => {});
+  // }, []);
   const handleScroll = (e: {value: number}) => {
     const {value: y} = e;
     const totalTop = topHeight.current + 1;
@@ -111,8 +107,8 @@ const HomeTabPagePopularOld: React.FC<HomeTabPagePopularProps> = props => {
         )}
         style={[theme.flex.flex1NoHidden]}
         stickyHeaderIndices={[2]}>
-        <HomeBanner bannerList={memoBannerList} />
-        <MessagePlay notices={noticeList} />
+        {/*<HomeBanner bannerList={memoBannerList} />*/}
+        {/*<MessagePlay notices={noticeList} />*/}
 
         <HomeTabListContent
           diceList={lotteryPageData?.diceList}

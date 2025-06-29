@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import theme from '@/style';
-import React, {useCallback, memo} from 'react';
+import React, {useCallback, memo, useMemo, useEffect} from 'react';
 import {View, Image, ScrollView} from 'react-native';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import Text from '@/components/basic/text';
@@ -17,54 +17,76 @@ const HomePageTagTabs = () => {
       pageTagIndex: state.pageTagIndex,
     })),
   );
+  useEffect(() => {
+    if (pageTagList.length) {
+      setTagIndex({
+        pageTagIndex: pageTagList[0].id,
+        pageSubTagId: pageTagList[0].id || 0,
+      });
+    }
+  }, [pageTagList, setTagIndex]);
 
   const onPressTag = useCallback(
     (item: any) => {
       const subTagList =
-        pageTagList.find(findV => findV?.id === item?.id)?.subTagList || [];
-      const defaultSubTagId = subTagList.length > 0 ? subTagList[0].id : 0;
-
+        pageTagList?.find(findV => findV?.id === item?.id)?.subTagList || [];
       setTagIndex({
-        pageTagIndex: item.name === 'Featured' ? -1 : item.id,
-        pageSubTagId: defaultSubTagId,
+        pageTagIndex: item.name === 'Featured' ? -1 : item?.id,
+        pageSubTagId: [...subTagList]?.shift()?.id || 0,
       });
     },
     [pageTagList, setTagIndex],
   );
 
   return (
-    <View style={[theme.padding.tbl, theme.padding.tbxs, {height: 81}]}>
+    <View
+      // eslint-disable-next-line react-native/no-inline-styles
+      style={[theme.padding.tbl, theme.padding.tbxs, {height: 81}]}>
       <ScrollView
         style={[
           theme.flex.flex1,
           theme.margin.leftl,
+          // eslint-disable-next-line react-native/no-inline-styles
           {height: 69, width: screenWidth - theme.paddingSize.l * 2},
         ]}
         horizontal
         contentContainerStyle={[theme.gap.m]}
         showsHorizontalScrollIndicator={false}>
-        {pageTagList?.map(item => (
-          <NativeTouchableOpacity
-            onPress={() => onPressTag(item)}
-            key={item?.id}
-            style={[
-              theme.flex.center,
-              theme.padding.lrxs,
-              theme.border.white20,
-              {
-                ...theme.borderRadius.s,
-                height: 69,
-                ...(pageTagIndex === item?.id
-                  ? theme.background.tabCheck
-                  : {}),
-              },
-            ]}>
-            <Image source={{uri: item?.imageUrl}} style={[theme.image.s]} />
-            <Text size="medium" numberOfLines={1} white>
-              {item?.name}
-            </Text>
-          </NativeTouchableOpacity>
-        ))}
+        {/* <Image
+            style={[theme.icon.l, theme.margin.rights]}
+            source={require('@assets/imgs/home/ball.webp')}
+          /> */}
+        {useMemo(() => {
+          return pageTagList?.map(item => (
+            <NativeTouchableOpacity
+              onPress={() => onPressTag(item)}
+              key={item?.id}
+              style={[
+                theme.flex.center,
+                theme.padding.lrxs,
+                theme.border.white20,
+                pageTagIndex === item?.id
+                  ? // eslint-disable-next-line react-native/no-inline-styles
+                  {
+                    ...theme.background.tabCheck,
+                    ...theme.borderRadius.s,
+                    // width: 64,
+                    height: 69,
+                  }
+                  : // eslint-disable-next-line react-native/no-inline-styles
+                  {
+                    ...theme.borderRadius.s,
+                    // width: 64,
+                    height: 69,
+                  },
+              ]}>
+              <Image source={{uri: item?.imageUrl}} style={[theme.image.s]} />
+              <Text size="medium" numberOfLines={1} white>
+                {item?.name}
+              </Text>
+            </NativeTouchableOpacity>
+          ));
+        }, [pageTagList, pageTagIndex, onPressTag])}
       </ScrollView>
     </View>
   );

@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useRef} from 'react';
-import {View} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {ScrollView, View} from 'react-native';
 
 import globalStore from '@/services/global.state';
 import {useAsyncPageSpin} from '@/common-pages/hooks/async.hooks';
@@ -11,6 +11,9 @@ import GameList from '../components/game-list/game-list';
 import GameHomeList from '../components/game-list/game-home-list';
 import HomePageTagTabs from '../components/home-page-tag-tabs';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
+import HomeBanner from '@/pages/home/components/home-banner';
+import {MessagePlay} from '@basicComponents/messagePlay';
+import {appBroadcast} from '@services/global.service';
 
 const HomeTabPageSlots = () => {
   const {} = useAsyncPageSpin();
@@ -24,7 +27,18 @@ const HomeTabPageSlots = () => {
       getCategoryHomeList: state.getCategoryHomeList,
     })),
   );
-
+  const homeBannerList = useHomeStore(state => state.homeBannerList);
+  const [noticeList, setNoticeList] = useState<string[]>([]);
+  useEffect(() => {
+    appBroadcast()
+      .then(list => {
+        setNoticeList(list);
+      })
+      .finally(() => {});
+  }, []);
+  const memoBannerList = useMemo(() => {
+    return homeBannerList;
+  }, [homeBannerList]);
   const handleInit = useCallback(() => {
     first.current = false;
     const sub = globalStore.tokenSubject.subscribe(token => {
@@ -44,16 +58,21 @@ const HomeTabPageSlots = () => {
   }, [getCategoryHomeList, getHomeTagList, handleInit]);
 
   return (
-    <View style={[theme.flex.flex1]}>
+    <ScrollView style={[theme.flex.flex1]}>
+      <HomeBanner bannerList={memoBannerList} />
+      {noticeList && <MessagePlay notices={noticeList} />}
       <HomePageTagTabs />
-      {pageTagIndex === -1 && <GameHomeList />}
+
+      {/* 注意：这里不要再有 ScrollView/FlatList */}
+      {pageTagIndex === -1 && (
+        <GameHomeList /> // 确保它内部不是可滚动组件
+      )}
       {pageTagIndex !== -1 && (
-        <View style={{height: screenHeight - 230}}>
-          {/* 设置高度 */}
+        <View style={{minHeight: screenHeight - 230}}>
           <GameList />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 

@@ -11,7 +11,6 @@ import {postUserInfo} from '@services/global.service';
 import {useTranslation} from 'react-i18next';
 import {useFocusEffect} from '@react-navigation/native';
 import Button from '@/components/basic/button';
-import useHomeStore from '@/store/useHomeStore';
 const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
 
 const HomeHeader = () => {
@@ -79,10 +78,7 @@ const HomeHeader = () => {
       leftNode={
         <View style={[theme.flex.centerByCol, theme.flex.row]}>
           <NativeTouchableOpacity
-            style={[theme.flex.row, theme.flex.centerByCol]}
-            onPress={() => {
-              useHomeStore.setState({oneCategoryPageIndex: 0});
-            }}>
+            style={[theme.flex.row, theme.flex.centerByCol]}>
             <Image
               style={[
                 // eslint-disable-next-line react-native/no-inline-styles
