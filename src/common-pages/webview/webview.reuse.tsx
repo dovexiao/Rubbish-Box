@@ -157,7 +157,7 @@ const ReuseWebView = () => {
         // eslint-disable-next-line react-native/no-inline-styles
         {
           left: left,
-          backgroundColor: '#00393D',
+          backgroundColor: '#2B2B2B',
         },
       ]}>
       <DetailNavTitle

@@ -187,7 +187,7 @@ class GlobalStore {
     return this._userAmount;
   }
 
-  private _packageId = 13;
+  private _packageId = 3;
   get packageId() {
     return this._packageId;
   }
