@@ -23,7 +23,11 @@ const GameHomeList = () => {
     return categoryHomeList?.filter(item => item?.gameList.length > 0) || [];
   }, [categoryHomeList]);
 
-  const gameCardWidth = (screenWidth - 24 - 12 * 2) / 3; // 3 列布局 + 2 个 gap
+  const gameCardGap = 12;
+  const gameCardWidth = useMemo(() => {
+    return (screenWidth - 24 - gameCardGap * 2) / 3;
+  }, [screenWidth]);
+
   const gameCardHeight = (gameCardWidth / 200) * 220;
 
   const onPressSectionHeader = useCallback(
@@ -39,24 +43,32 @@ const GameHomeList = () => {
         style={{
           flexDirection: 'row',
           flexWrap: 'wrap',
-          gap: 12,
+          justifyContent: 'space-between',
         }}>
-        {gameList?.map(item => (
-          <NativeTouchableOpacity
-            key={item?.id}
-            onPress={() => {
-              toGame(item);
-            }}>
-            <View style={[theme.borderRadius.m]}>
-              <LazyImage
-                imageUrl={item?.gamePic || ''}
-                width={gameCardWidth}
-                height={gameCardHeight}
-                radius={theme.borderRadiusSize.m}
-              />
-            </View>
-          </NativeTouchableOpacity>
-        ))}
+        {gameList?.map((item, index) => {
+          const isLastInRow = (index + 1) % 3 === 0;
+          return (
+            <NativeTouchableOpacity
+              key={item?.id}
+              onPress={() => {
+                toGame(item);
+              }}
+              style={{
+                width: gameCardWidth,
+                marginBottom: gameCardGap,
+                marginRight: isLastInRow ? 0 : gameCardGap,
+              }}>
+              <View style={[theme.borderRadius.m]}>
+                <LazyImage
+                  imageUrl={item?.gamePic || ''}
+                  width={gameCardWidth}
+                  height={gameCardHeight}
+                  radius={theme.borderRadiusSize.m}
+                />
+              </View>
+            </NativeTouchableOpacity>
+          );
+        })}
       </View>
     ),
     [gameCardWidth, gameCardHeight],

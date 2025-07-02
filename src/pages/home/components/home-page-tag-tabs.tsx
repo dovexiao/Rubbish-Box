@@ -29,11 +29,15 @@ const HomePageTagTabs = () => {
     [pageTagList, setTagIndex],
   );
 
-  // 平均每个tab宽度
   const tabWidth = useMemo(() => {
     const count = pageTagList?.length || 1;
     return screenWidth / count;
   }, [pageTagList, screenWidth]);
+
+  // ✅ 所有 hooks 调用之后再判断是否渲染
+  if (!pageTagList || pageTagList.length === 0) {
+    return null;
+  }
 
   return (
     <View style={[theme.padding.tbl, theme.padding.tbxs, {height: 81}]}>
@@ -42,7 +46,7 @@ const HomePageTagTabs = () => {
           flexDirection: 'row',
           width: screenWidth,
         }}>
-        {pageTagList?.map(item => (
+        {pageTagList.map(item => (
           <View key={item?.id} style={{width: tabWidth}}>
             <NativeTouchableOpacity
               onPress={() => onPressTag(item)}

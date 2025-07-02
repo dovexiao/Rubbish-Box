@@ -37,7 +37,11 @@ const GameList = () => {
 
   const tableRef = useRef<FlatList>(null);
 
-  const gameCardWidth = (screenWidth - 10 - 24) / 3;
+  const gameCardGap = 10;
+  const gameCardWidth = useMemo(() => {
+    return (screenWidth - 24 - gameCardGap * 2) / 3;
+  }, [screenWidth]);
+
   const gameCardHeight = (gameCardWidth / 200) * 220;
 
   useEffect(() => {
@@ -49,51 +53,56 @@ const GameList = () => {
   }, []);
 
   const renderItem = useCallback(
-    ({item}: {item: any}) => (
-      <NativeTouchableOpacity onPress={() => toGame(item)}>
-        <View
-          style={[
-            {
+    ({item, index}: {item: any; index: number}) => {
+      const isLastInRow = (index + 1) % 3 === 0;
+      return (
+        <NativeTouchableOpacity onPress={() => toGame(item)}>
+          <View
+            style={{
               width: gameCardWidth,
               height: gameCardHeight + 20,
-            },
-          ]}>
-          <Card radius={theme.borderRadiusSize.m}>
-            <Card.Image
-              imageUrl={item?.gamePic}
-              width={gameCardWidth}
-              height={gameCardHeight}
-            />
+              marginRight: isLastInRow ? 0 : gameCardGap,
+              marginBottom: gameCardGap,
+            }}>
+            <Card radius={theme.borderRadiusSize.m}>
+              <Card.Image
+                imageUrl={item?.gamePic}
+                width={gameCardWidth}
+                height={gameCardHeight}
+              />
+              <Text
+                numberOfLines={1}
+                fontSize={10}
+                color={theme.fontColor.white}
+                style={[
+                  theme.font.center,
+                  theme.fill.fillW,
+                  {
+                    position: 'absolute',
+                    bottom: 2,
+                    textAlign: 'center',
+                  },
+                ]}>
+                {item?.gameType === 'pick3' ? (
+                  <CountDown
+                    remain={
+                      item.drawTime ? Math.round(item.drawTime / 1000) : 0
+                    }
+                  />
+                ) : null}
+              </Text>
+            </Card>
             <Text
               numberOfLines={1}
-              fontSize={10}
+              fontSize={12}
               color={theme.fontColor.white}
-              style={[
-                theme.font.center,
-                theme.fill.fillW,
-                {
-                  position: 'absolute',
-                  bottom: 2,
-                  textAlign: 'center',
-                },
-              ]}>
-              {item?.gameType === 'pick3' ? (
-                <CountDown
-                  remain={item.drawTime ? Math.round(item.drawTime / 1000) : 0}
-                />
-              ) : null}
+              style={[theme.font.center, theme.margin.topxxs]}>
+              {item?.name}
             </Text>
-          </Card>
-          <Text
-            numberOfLines={1}
-            fontSize={12}
-            color={theme.fontColor.white}
-            style={[theme.font.center, theme.margin.topxxs]}>
-            {item?.name}
-          </Text>
-        </View>
-      </NativeTouchableOpacity>
-    ),
+          </View>
+        </NativeTouchableOpacity>
+      );
+    },
     [gameCardWidth, gameCardHeight],
   );
 
@@ -131,6 +140,7 @@ const GameList = () => {
       </View>
     );
   }, [hasMoreData]);
+
   return (
     <View style={[theme.flex.flex1]}>
       <FlatList
@@ -158,20 +168,17 @@ const GameList = () => {
         }
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
-        contentContainerStyle={[{gap: 10}]}
+        numColumns={3}
+        columnWrapperStyle={[
+          theme.padding.lrl,
+          {
+            justifyContent: 'flex-start',
+          },
+        ]}
         showsVerticalScrollIndicator={false}
         onMomentumScrollBegin={() => {
           onEndReachedCalledDuringMomentum.current = false;
         }}
-        horizontal={false}
-        numColumns={3}
-        columnWrapperStyle={[
-          theme.padding.lrl,
-
-          {
-            gap: 10,
-          },
-        ]}
       />
     </View>
   );
