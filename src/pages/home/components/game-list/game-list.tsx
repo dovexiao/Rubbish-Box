@@ -141,6 +141,22 @@ const GameList = () => {
     );
   }, [hasMoreData]);
 
+  // 修复刷新后未重置触底标志的问题
+  useEffect(() => {
+    if (!isRefresh) {
+      onEndReachedCalledDuringMomentum.current = false;
+    }
+  }, [isRefresh, onEndReachedCalledDuringMomentum]);
+
+  // 如果列表数据加载后不满一屏，主动触发加载更多
+  useEffect(() => {
+    if (gameList.length > 0 && hasMoreData && gameList.length <= 6) {
+      setTimeout(() => {
+        loadMore();
+      }, 300);
+    }
+  }, [gameList, hasMoreData, loadMore]);
+
   return (
     <View style={[theme.flex.flex1]}>
       <FlatList
@@ -158,16 +174,14 @@ const GameList = () => {
         ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={ListFooterComponent}
         refreshControl={
-          isRefresh ? (
-            <RefreshControl
-              refreshing={isRefresh}
-              onRefresh={refreshList}
-              colors={['red', '#ffd500', '#0080ff', '#99e600']}
-            />
-          ) : undefined
+          <RefreshControl
+            refreshing={isRefresh}
+            onRefresh={refreshList}
+            colors={['red', '#ffd500', '#0080ff', '#99e600']}
+          />
         }
         onEndReached={loadMore}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.3} // 增大临界值
         numColumns={3}
         columnWrapperStyle={[
           theme.padding.lrl,

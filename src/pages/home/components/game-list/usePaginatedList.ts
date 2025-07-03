@@ -34,7 +34,7 @@ const usePaginatedList = () => {
       if (refresh) {
         pageNoRef.current = 1;
       } else {
-        pageNoRef.current = pageNoRef.current + 1;
+        pageNoRef.current += 1;
       }
       getCategoryGameList({
         page: pageNoRef.current,
@@ -43,22 +43,25 @@ const usePaginatedList = () => {
     [getCategoryGameList],
   );
 
+  // 当筛选条件变化时，刷新数据
   useEffect(() => {
+    pageNoRef.current = 1;
     fetchData(true);
-  }, [fetchData, pageTagIndex, pageSubTagId]);
+    // 重置标志，避免第一次就跳过
+    onEndReachedCalledDuringMomentum.current = false;
+  }, [fetchData, pageTagIndex, pageSubTagId, onEndReachedCalledDuringMomentum]);
 
   const refreshList = useCallback(() => {
-    if (pageNoRef.current === 1) {
-      return;
-    }
+    if (pageNoRef.current === 1) return;
+    onEndReachedCalledDuringMomentum.current = false;
     useHomeStore.setState({isRefresh: true});
     fetchData(true);
-  }, [fetchData]);
+  }, [fetchData, onEndReachedCalledDuringMomentum]);
 
   const loadMore = () => {
     if (hasMoreData && !onEndReachedCalledDuringMomentum.current) {
-      fetchData();
       onEndReachedCalledDuringMomentum.current = true;
+      fetchData();
     }
   };
 

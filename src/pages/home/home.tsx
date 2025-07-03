@@ -66,10 +66,10 @@ const Home = () => {
       {globalStore.isWeb && !globalStore.viewType ? <Download /> : null}
       <HomeCategoryPageTabs />
       {/*{oneCategoryPageIndex === 0 && <HomeTabPagePopular/>}*/}
+      {oneCategoryPageIndex === 1 && <HomeTabPageSlots />}
       {oneCategoryPageIndex === 10 && <HomeTabPagePopularOld />}
-      {oneCategoryPageIndex === 2 && <HomeTabPageGame />}
-      {oneCategoryPageIndex === 4 && <HomeTabPageSlots />}
       {oneCategoryPageIndex === 3 && <HomeTabPageLive />}
+      {oneCategoryPageIndex === 2 && <HomeTabPageGame />}
       <HomeRegister />
       <HomeService />
     </LazyImageLGBackground>

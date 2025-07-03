@@ -75,7 +75,7 @@ const useHomeStore = create<HomeStoreState>()(
       },
 
       isShowCategoryTab: true,
-      oneCategoryPageIndex: 4,
+      oneCategoryPageIndex: 1,
       setOneCategoryPageIndex: index => {
         set({oneCategoryPageIndex: index});
       },
@@ -151,20 +151,23 @@ const useHomeStore = create<HomeStoreState>()(
       categoryPageNo: 1,
       categoryGameList: [],
       getCategoryGameList: async (params: {[key: string]: any}) => {
+        const pageSize = 39;
         const res = await getCategoryGameListService({
           oneCategoryId: get().oneCategoryPageIndex,
           tagId: get().pageTagIndex,
           subTagId: get().pageSubTagId,
           pageNo: params?.page,
-          pageSize: 30,
+          pageSize,
         });
+
         const newListData =
           params?.page === 1
             ? res?.content
             : [...get().categoryGameList, ...res?.content];
+
         set({
           categoryGameList: newListData,
-          hasMoreData: newListData.length === res?.totalSize ? false : true,
+          hasMoreData: res?.content?.length >= pageSize, // ✅ 判断这页返回数量是否满
           isRefresh: false,
         });
       },

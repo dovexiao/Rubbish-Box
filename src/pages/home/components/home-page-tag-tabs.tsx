@@ -35,7 +35,7 @@ const HomePageTagTabs = () => {
   }, [pageTagList, screenWidth]);
 
   // ✅ 所有 hooks 调用之后再判断是否渲染
-  if (!pageTagList || pageTagList.length === 0) {
+  if (!pageTagList || pageTagList.length <= 1) {
     return null;
   }
 

@@ -192,7 +192,7 @@ class GlobalStore {
     return this._packageId;
   }
 
-  private _packageInfo = 'com.sambad.megadream';
+  private _packageInfo = 'com.sambad.anslot';
   get packageInfo() {
     return this._packageInfo;
   }
