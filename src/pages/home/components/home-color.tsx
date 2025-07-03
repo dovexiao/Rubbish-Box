@@ -59,7 +59,7 @@ const HomeColor = forwardRef<View, ViewProps>((props, ref) => {
         <LazyImage
           width={colorWidth}
           height={100}
-          imageUrl={require('@assets/imgs/home/list-color.webp')}
+          imageUrl={require('@assets/imgs/home/welcome-1.webp')}
           resizeMode={'stretch'}
         />
       </NativeTouchableOpacity>

@@ -3,8 +3,8 @@ import {createJSONStorage, persist} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   BannerListItem,
-  DiceListItem,
-  ColorListItem,
+  // DiceListItem,
+  // ColorListItem,
   DigitListItem,
   QuickDigitListItem,
   KeralaListItem,
@@ -14,8 +14,8 @@ import {
 } from '@/pages/home/home.type';
 import {
   getBannerList,
-  getDiceList,
-  getColorList,
+  // getDiceList,
+  // getColorList,
   getDigitList,
   // getWorldDigitList,
   // getStateLotteryList,
@@ -41,8 +41,8 @@ type HomeStoreState = {
   getHomeBannerList: () => void;
 
   lotteryPageData: {
-    diceList: DiceListItem[];
-    colorList: ColorListItem[];
+    // diceList: DiceListItem[];
+    // colorList: ColorListItem[];
     digitList: DigitListItem[];
     // worldDigitList: DigitListItem[];
     // stateList: DigitListItem[];
@@ -98,8 +98,8 @@ const useHomeStore = create<HomeStoreState>()(
       },
       getLotteryPageData: async () => {
         const [
-          dice,
-          color,
+          // dice,
+          // color,
           digit,
           // worldDigit,
           // stateList,
@@ -107,8 +107,8 @@ const useHomeStore = create<HomeStoreState>()(
           // matka,
           kerala,
         ] = await Promise.allSettled([
-          getDiceList(),
-          getColorList(),
+          // getDiceList(),
+          // getColorList(),
           getDigitList(),
           // getWorldDigitList(),
           // getStateLotteryList(),
@@ -118,8 +118,8 @@ const useHomeStore = create<HomeStoreState>()(
         ]);
         set({
           lotteryPageData: {
-            diceList: formatSettledData(dice),
-            colorList: formatSettledData(color),
+            // diceList: formatSettledData(dice),
+            // colorList: formatSettledData(color),
             digitList: formatSettledData(digit),
             // worldDigitList: formatSettledData(worldDigit),
             // stateList: formatSettledData(stateList),
@@ -151,7 +151,7 @@ const useHomeStore = create<HomeStoreState>()(
       categoryPageNo: 1,
       categoryGameList: [],
       getCategoryGameList: async (params: {[key: string]: any}) => {
-        const pageSize = 39;
+        const pageSize = 30;
         const res = await getCategoryGameListService({
           oneCategoryId: get().oneCategoryPageIndex,
           tagId: get().pageTagIndex,

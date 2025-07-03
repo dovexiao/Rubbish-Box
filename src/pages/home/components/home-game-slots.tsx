@@ -85,7 +85,7 @@ const HomeGameSlots = () => {
           // eslint-disable-next-line react-native/no-inline-styles
           {height: 64, width: 64, marginTop: 20},
         ]}
-        source={require('@assets/imgs/home/home-title-nimi-game.webp')}
+        source={require('@assets/imgs/home/welcome-1.webp')}
       />
       <View style={[theme.flex.center]}>
         <Text fontSize={24} blod color={'#04CC9B'} style={[theme.font.center]}>
@@ -102,8 +102,8 @@ const HomeGameSlots = () => {
         ]}>
         {[
           {
-            bgSource: require('@assets/imgs/home/lottery-bg-image.webp'),
-            source: require('@assets/imgs/home/lottery-header-image.webp'),
+            bgSource: require('@assets/imgs/home/welcome-1.webp'),
+            source: require('@assets/imgs/home/welcome-1.webp'),
             title: i18n.t('headers.color'),
             subTitle: i18n.t('other.homeDetail37'),
             onPressBtn: () => {
@@ -111,8 +111,8 @@ const HomeGameSlots = () => {
             },
           },
           {
-            bgSource: require('@assets/imgs/home/live-bg-image.webp'),
-            source: require('@assets/imgs/home/live-header-image.webp'),
+            bgSource: require('@assets/imgs/home/welcome-1.webp'),
+            source: require('@assets/imgs/home/welcome-1.webp'),
             title: i18n.t('headers.dice'),
             subTitle: i18n.t('other.homeDetail38'),
             onPressBtn: () => {
@@ -123,8 +123,8 @@ const HomeGameSlots = () => {
             },
           },
           {
-            bgSource: require('@assets/imgs/home/casino-bg-image.webp'),
-            source: require('@assets/imgs/home/casino-header-image.webp'),
+            bgSource: require('@assets/imgs/home/welcome-1.webp'),
+            source: require('@assets/imgs/home/welcome-1.webp'),
             title: i18n.t('headers.digits'),
             subTitle: i18n.t('other.homeDetail39'),
             onPressBtn: () => {
@@ -135,8 +135,8 @@ const HomeGameSlots = () => {
             },
           },
           {
-            bgSource: require('@assets/imgs/home/sport-bg-image.webp'),
-            source: require('@assets/imgs/home/sport-header-image.webp'),
+            bgSource: require('@assets/imgs/home/welcome-1.webp'),
+            source: require('@assets/imgs/home/welcome-1.webp'),
             title: i18n.t('headers.kerala'),
             subTitle: i18n.t('other.homeDetail40'),
             onPressBtn: () => {},

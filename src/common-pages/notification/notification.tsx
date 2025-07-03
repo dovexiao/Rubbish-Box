@@ -17,7 +17,6 @@ import Tag from '@/components/basic/tag';
 import dayjs from 'dayjs';
 import NotificationHeader from './components/notification-header';
 import globalStore from '@/services/global.state';
-import HomeService from '@/pages/home/components/home-service';
 
 const NotificationPage = () => {
   const {i18n} = useTranslation();
@@ -214,7 +213,6 @@ const NotificationPage = () => {
           <Text white>{`Contact ${i18n.t('me.bottom.customer')}`}</Text>
         </NativeTouchableOpacity>
       </ScrollView>
-      <HomeService />
     </LazyImageLGBackground>
   );
 };

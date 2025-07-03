@@ -34,7 +34,7 @@ const HomeLiveCasino = ({
           goTo('Live');
         }}
         titleIcon={require('@assets/icons/home/live-casino-floor-icon.webp')}
-        titleBgImg={require('@assets/imgs/home/floor-bg.webp')}
+        titleBgImg={require('@assets/imgs/home/welcome-1.webp')}
         renderItem={(item, index) => {
           return (
             <HomeLiveCasinoCard

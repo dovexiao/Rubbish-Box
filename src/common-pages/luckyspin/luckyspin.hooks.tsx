@@ -510,7 +510,7 @@ export function useLuckySpinModal({
       {renderToast}
     </View>,
     {
-      backDropClose: true,
+      backDropClose: false,
       onBackDropClose() {
         handleHide();
       },

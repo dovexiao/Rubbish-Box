@@ -8,6 +8,7 @@ import useHomeStore from '@/store/useHomeStore';
 import {useShallow} from 'zustand/react/shallow';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import HomeGameTop from '@/pages/home/home-game-top';
 
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 
@@ -97,9 +98,10 @@ const HomeTabPagePopularOld: React.FC<HomeTabPagePopularProps> = props => {
         )}
         style={[theme.flex.flex1NoHidden]}
         stickyHeaderIndices={[2]}>
+        <HomeGameTop />
         <HomeTabListContent
-          diceList={lotteryPageData?.diceList}
-          colorList={lotteryPageData?.colorList}
+          // diceList={lotteryPageData?.diceList}
+          // colorList={lotteryPageData?.colorList}
           digitList={lotteryPageData?.digitList}
           // stateList={lotteryPageData?.stateList}
           keralaList={lotteryPageData?.keralaList}

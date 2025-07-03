@@ -43,7 +43,7 @@ class HomeFloorTitleBox extends Component<
             },
             theme.overflow.hidden,
           ]}
-          source={source || require('@assets/imgs/home/floor-bg.webp')}>
+          source={source || require('@assets/imgs/home/welcome-1.webp')}>
           {children}
         </ImageBackground>
       );

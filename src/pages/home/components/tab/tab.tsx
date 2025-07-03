@@ -4,14 +4,12 @@ import {View, Animated, Image, ScrollView} from 'react-native';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import Text from '@/components/basic/text';
 const gameTabs = [
-  // {title: 'Quick 3D', icon: require('@assets/imgs/home/quick3d.webp')},
-  {title: '3 Digits', icon: require('@assets/imgs/home/3d.webp')},
-  // {title: 'World 3D', icon: require('@assets/imgs/home/quick3d.webp')},
-  {title: 'State', icon: require('@assets/imgs/home/quick3d.webp')},
-  {title: 'Color', icon: require('@assets/imgs/home/color.webp')},
-  {title: 'Kerala', icon: require('@assets/imgs/home/kerala.webp')},
-  {title: 'Dice', icon: require('@assets/imgs/home/dice.webp')},
-  {title: 'Matka', icon: require('@assets/imgs/home/matka.webp')},
+  {title: '3 Digits', icon: require('@assets/imgs/home/welcome-1.webp')},
+  {title: 'State', icon: require('@assets/imgs/home/welcome-1.webp')},
+  {title: 'Color', icon: require('@assets/imgs/home/welcome-1.webp')},
+  {title: 'Kerala', icon: require('@assets/imgs/home/welcome-1.webp')},
+  {title: 'Dice', icon: require('@assets/imgs/home/welcome-1.webp')},
+  {title: 'Matka', icon: require('@assets/imgs/home/welcome-1.webp')},
 ];
 
 const Tabs = ({

@@ -113,8 +113,8 @@ const HomeGameList: React.FC<HomeTabPagePopularProps> = props => {
         style={[theme.flex.flex1NoHidden]}
         stickyHeaderIndices={[1]}>
         <HomeGameTabListContent
-          diceList={lotteryPageData?.diceList}
-          colorList={lotteryPageData?.colorList}
+          // diceList={lotteryPageData?.diceList}
+          // colorList={lotteryPageData?.colorList}
           digitList={lotteryPageData?.digitList}
           quickDigitList={lotteryPageData?.quickDigitList}
           keralaList={lotteryPageData?.keralaList}

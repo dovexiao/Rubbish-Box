@@ -1,16 +1,13 @@
 import React from 'react';
 import {View} from 'react-native';
 import {
-  DiceListItem,
-  ColorListItem,
+  // DiceListItem,
+  // ColorListItem,
   DigitListItem,
   // QuickDigitListItem,
   KeralaListItem,
-  MatkaListItem,
+  // MatkaListItem,
 } from './home.type';
-import HomeDice from './components/dice/home-dice';
-
-import HomeColor from './components/color/home-color';
 import HomeDigits from './components/digit/home-digits';
 // import HomeQuickDigits from './components/quickdigit/home-quickdigits';
 
@@ -23,8 +20,8 @@ import HomeKerala from './components/kerala/home-kerala';
 import theme from '@style';
 
 export interface HomeTabListContentProps {
-  diceList: DiceListItem[];
-  colorList: ColorListItem[];
+  // diceList: DiceListItem[];
+  // colorList: ColorListItem[];
   digitList: DigitListItem[];
   quickDigitList: DigitListItem[];
   keralaList: KeralaListItem[];
@@ -33,21 +30,21 @@ export interface HomeTabListContentProps {
 
 const HomeTabListContent = ({
   onMeasure = () => {},
-  diceList = [],
-  colorList = [],
+  // diceList = [],
+  // colorList = [],
   digitList = [],
   // quickDigitList = [],
   keralaList = [], // matkaList = [],
 }: HomeTabListContentProps) => {
   const dataContent = [
-    {
-      name: 'Dice',
-      content: <HomeDice diceList={diceList.slice(0, 3)} />,
-    },
-    {
-      name: 'Color',
-      content: <HomeColor colorList={colorList.slice(0, 3)} />,
-    },
+    // {
+    //   name: 'Dice',
+    //   content: <HomeDice diceList={diceList.slice(0, 3)} />,
+    // },
+    // {
+    //   name: 'Color',
+    //   content: <HomeColor colorList={colorList.slice(0, 3)} />,
+    // },
     // {
     //   name: 'Quick3Digits',
     //   content: <HomeQuickDigits quickDigitList={quickDigitList.slice(0, 3)} />,

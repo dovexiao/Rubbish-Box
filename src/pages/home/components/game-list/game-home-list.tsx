@@ -92,7 +92,7 @@ const GameHomeList = () => {
           style={[theme.flex.row, theme.flex.centerByCol]}
           onPress={() => onPressSectionHeader(item)}>
           <Text fontSize={14} color={theme.fontColor.primaryMain}>
-            SEE ALL
+            More
           </Text>
           <Image
             source={require('@assets/icons/right-purple.webp')}

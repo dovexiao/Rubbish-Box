@@ -1,14 +1,12 @@
 import React from 'react';
 import {View} from 'react-native';
 import {
-  DiceListItem,
-  ColorListItem,
+  // DiceListItem,
+  // ColorListItem,
   DigitListItem,
   // QuickDigitListItem,
   KeralaListItem,
 } from './home.type';
-import HomeDice from './components/dice/home-dice';
-import HomeColor from './components/color/home-color';
 import HomeDigits from './components/digit/home-digits';
 // import HomeWorldDigits from './components/world-digit/home-digits';
 // import HomeQuickDigits from './components/quickdigit/home-quickdigits';
@@ -19,8 +17,8 @@ import HomeKerala from './components/kerala/home-kerala';
 import theme from '@style';
 
 export interface HomeTabListContentProps {
-  diceList: DiceListItem[];
-  colorList: ColorListItem[];
+  // diceList: DiceListItem[];
+  // colorList: ColorListItem[];
   digitList: DigitListItem[];
   worldDigitList?: DigitListItem[];
   stateList?: DigitListItem[];
@@ -31,8 +29,8 @@ export interface HomeTabListContentProps {
 
 const HomeTabListContent = ({
   onMeasure = () => {},
-  diceList = [],
-  colorList = [],
+  // diceList = [],
+  // colorList = [],
   digitList = [],
   // stateList = [],
   keralaList = [],
@@ -58,19 +56,19 @@ const HomeTabListContent = ({
     //   name: 'State Lottery',
     //   content: <HomeState digitList={stateList} />,
     // },
-    {
-      name: 'Color',
-      content: <HomeColor colorList={colorList} />,
-      // content: <HomeColor colorList={colorList.slice(0, 3)} />,
-    },
+    // {
+    //   name: 'Color',
+    //   content: <HomeColor colorList={colorList} />,
+    //   // content: <HomeColor colorList={colorList.slice(0, 3)} />,
+    // },
+    // {
+    //   name: 'Dice',
+    //   // content: <HomeDice diceList={diceList.slice(0, 3)} />,
+    //   content: <HomeDice diceList={diceList} />,
+    // },
     {
       name: 'Kerala',
       content: <HomeKerala keralaList={keralaList} />,
-    },
-    {
-      name: 'Dice',
-      // content: <HomeDice diceList={diceList.slice(0, 3)} />,
-      content: <HomeDice diceList={diceList} />,
     },
   ];
 

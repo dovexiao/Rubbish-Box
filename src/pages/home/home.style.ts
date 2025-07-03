@@ -111,8 +111,8 @@ export const homeScratchCardStyle = StyleSheet.create({
 export const homeServiceStyle = StyleSheet.create({
   service: {
     borderRadius: 52,
-    right: 22,
-    bottom: 20,
+    right: 0,
+    bottom: 24,
     zIndex: 5,
     padding: 3,
   },

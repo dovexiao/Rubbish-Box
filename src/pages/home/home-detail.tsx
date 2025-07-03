@@ -18,8 +18,8 @@ import HomeColorCard from './components/color/home-color-card';
 import HomeMatkaCard from './components/matka/home-matka-card';
 import theme from '@/style';
 import {
-  getDiceList,
-  getColorList,
+  // getDiceList,
+  // getColorList,
   getDigitList,
   // getQuickDigitList,
   getKeralaList,
@@ -89,14 +89,14 @@ const HomeDetail = () => {
   const listDetail = async () => {
     let list = [];
     switch (detailType) {
-      case 'dicegame':
-        list = await getDiceList();
-        setData(list);
-        break;
-      case 'colorgame':
-        list = await getColorList();
-        setData(list);
-        break;
+      // case 'dicegame':
+      //   list = await getDiceList();
+      //   setData(list);
+      //   break;
+      // case 'colorgame':
+      //   list = await getColorList();
+      //   setData(list);
+      //   break;
       case 'kerala':
         list = await getKeralaList();
         setData(list);
