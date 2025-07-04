@@ -54,6 +54,9 @@ export interface IVipConfigItem {
   amount: number;
   level: number;
   spin: number;
+  dailyBonus: number;
+  withdrawCount: number;
+  withdrawAmount: number;
   recharge: number;
   [k: string]: SafeAny;
 }

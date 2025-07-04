@@ -64,13 +64,13 @@ const ShoppingPage = () => {
             {
               title: 'Coin',
               colors: ['#095770', '#013747'],
-              source: require('@assets/icons/welfare/goldCoin.webp'),
+              source: require('@assets/icons/common/common.webp'),
               amount: shopAmountData?.coinCount,
             },
             {
               title: 'Gem',
               colors: ['#46563B', '#193931'],
-              source: require('@assets/icons/welfare/diamond.webp'),
+              source: require('@assets/icons/common/common.webp'),
               amount: shopAmountData?.gemCount,
             },
           ]}

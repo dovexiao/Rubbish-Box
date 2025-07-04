@@ -58,7 +58,7 @@ const GoodsItemEasy = (props: {
             props?.onPress?.(props?.item);
           }}>
           <LazyImage
-            imageUrl={require('@assets/icons/welfare/goldCoin.webp')}
+            imageUrl={require('@assets/icons/common/common.webp')}
             width={18}
             height={18}
           />
@@ -118,7 +118,7 @@ const GoodsItemFullWidth = (props: {
             props?.onPress?.(props?.item);
           }}>
           <LazyImage
-            imageUrl={require('@assets/icons/welfare/goldCoin.webp')}
+            imageUrl={require('@assets/icons/common/common.webp')}
             width={18}
             height={18}
           />
@@ -156,7 +156,7 @@ const GoodsItemComplexity = (props: {
         },
       ]}>
       <LazyImageBackground
-        imageUrl={require('@assets/icons/welfare/goods-header-bg.webp')}
+        imageUrl={require('@assets/icons/common/common.webp')}
         height={calculateItemWidth(16)}
         width={calculateItemWidth(87)}
         style={[theme.flex.center]}>
@@ -232,7 +232,7 @@ const GoodsItemComplexity = (props: {
           size="xsmall"
           radius={30}>
           <LazyImage
-            imageUrl={require('@assets/icons/welfare/goldCoin.webp')}
+            imageUrl={require('@assets/icons/common/common.webp')}
             width={18}
             height={18}
           />

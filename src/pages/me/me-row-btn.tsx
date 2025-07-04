@@ -57,13 +57,13 @@ const MeRowBtn: React.FC<MeRowBtnProps> = ({onInvite, onProxy}) => {
     // eslint-disable-next-line react-native/no-inline-styles
     <View style={[theme.flex.row, {gap: 10}]}>
       {renderItem({
-        url: require('@assets/imgs/me/invite.webp'),
+        url: require('@assets/icons/common/common.webp'),
         title: i18n.t('invitation.home.title'),
         description: 'Invite friends to earn gold coins together',
         onPress: onInvite,
       })}
       {renderItem({
-        url: require('@assets/imgs/me/proxy.webp'),
+        url: require('@assets/icons/common/common.webp'),
         title: i18n.t('me.bottom.proxy'),
         description: 'View detailed commission data',
         onPress: onProxy,

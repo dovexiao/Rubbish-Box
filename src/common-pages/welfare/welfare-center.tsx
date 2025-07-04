@@ -44,7 +44,7 @@ const WelfareCenterPage = () => {
             {
               title: 'Coin',
               colors: [theme.basicColor.primary10, theme.basicColor.primary30],
-              source: require('@assets/icons/welfare/goldCoin.webp'),
+              source: require('@assets/icons/common/common.webp'),
               amount: welfareHomeData?.wealCoinInfo?.coinCount,
             },
             {

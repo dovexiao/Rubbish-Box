@@ -29,8 +29,8 @@ const VipClubList: React.FC<VipTableListProps> = ({vipConfigList}) => {
         <View
           key={`${item?.level}${index}`}
           style={{
-            width: 163,
-            height: 256,
+            width: 198,
+            height: 363,
             backgroundColor: theme.basicColor.transparentP60,
             borderRadius: 10,
             marginLeft: 10,
@@ -60,10 +60,38 @@ const VipClubList: React.FC<VipTableListProps> = ({vipConfigList}) => {
           </Text>
 
           {/* 信息块抽象成方法 */}
-          {renderInfoRow('Bouns', item?.amount, theme.basicColor.white)}
-          {renderInfoRow('Spin', item?.spin, '#FFFFFF')}
           {renderInfoRow(
-            'deposit',
+            'Level Bonus',
+            formatINR(item?.amount),
+            '#0BD064',
+            theme.basicColor.yellow,
+          )}
+          {renderInfoRow(
+            'Withdrawal Count',
+            item?.withdrawCount,
+            '#0BD064',
+            theme.basicColor.yellow,
+          )}
+          {renderInfoRow(
+            'Withdrawal Amount',
+            formatINR(item?.withdrawAmount),
+            '#0BD064',
+            theme.basicColor.yellow,
+          )}
+          {renderInfoRow(
+            'Spin Count',
+            item?.spin,
+            '#0BD064',
+            theme.basicColor.yellow,
+          )}
+          {renderInfoRow(
+            'Daily Bonus',
+            formatINR(item?.dailyBonus),
+            '#0BD064',
+            theme.basicColor.yellow,
+          )}
+          {renderInfoRow(
+            'Deposit',
             formatINR(item?.recharge),
             '#0BD064',
             theme.basicColor.yellow,

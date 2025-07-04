@@ -32,7 +32,6 @@ import {toGame} from '../game-navigate';
 import {useTranslation} from 'react-i18next';
 import {goBack} from '@/utils';
 const messageIcon = require('./assets/message.webp');
-// const gameIcon = require('./assets/game.webp');
 
 const Casino = (props: NavigatorScreenProps) => {
   const {route} = props;

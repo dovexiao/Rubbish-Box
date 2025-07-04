@@ -1,9 +1,9 @@
 import theme from '@/style';
 
-export const invitationImcomeIcon = require('@assets/icons/invitation/invitation-income.webp');
-export const invitationPeopleIcon = require('@assets/icons/invitation/invitation-people.webp');
-export const invitationRecordIcon = require('@assets/icons/invitation/invitation-records.webp');
-export const invitationRulesIcon = require('@assets/icons/invitation/invitation-rules.webp');
+export const invitationImcomeIcon = require('@assets/icons/common/common.webp');
+export const invitationPeopleIcon = require('@assets/icons/common/common.webp');
+export const invitationRecordIcon = require('@assets/icons/common/common.webp');
+export const invitationRulesIcon = require('@assets/icons/common/common.webp');
 
 export const invitationCodeCardImg = require('@components/assets/imgs/invitation/invitation-code-card.webp');
 export const rightIcon = require('@components/assets/icons/right-icon.webp');

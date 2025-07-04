@@ -110,7 +110,7 @@ const WalletPage = () => {
 
           <MeListItem
             iconSize={18}
-            icon={require('@assets/icons/home/home-menu/drawer-gold-area-5.webp')}
+            icon={require('@assets/icons/common/common.webp')}
             title={`${i18n.t('me.bottom.myTransactions')} ${i18n.t(
               'other.records',
             )}`}
@@ -128,7 +128,7 @@ const WalletPage = () => {
             <MeListItem
               mt={0}
               iconSize={18}
-              icon={require('@assets/icons/home/home-menu/drawer-gold-area-2.webp')}
+              icon={require('@assets/icons/common/common.webp')}
               title={`${i18n.t('label.recharge')} ${i18n.t('label.records')}`}
               onPress={() => {
                 goToWithLogin('RechargeRecords');
@@ -137,7 +137,7 @@ const WalletPage = () => {
             <MeListItem
               mt={0}
               iconSize={18}
-              icon={require('@assets/icons/home/home-menu/drawer-gold-area-2.webp')}
+              icon={require('@assets/icons/common/common.webp')}
               title={`${i18n.t('other.withdraw')} ${i18n.t('other.records')}`}
               onPress={() => {
                 goToWithLogin('WithdrawRecords');
@@ -146,7 +146,7 @@ const WalletPage = () => {
             <MeListItem
               mt={0}
               iconSize={18}
-              icon={require('@assets/icons/home/home-menu/drawer-gold-area-2.webp')}
+              icon={require('@assets/icons/common/common.webp')}
               title={`${i18n.t('label.transfer')} ${i18n.t('label.records')}`}
               onPress={() => {
                 goToWithLogin('TransferRecords');
@@ -179,7 +179,7 @@ const WalletPage = () => {
             <MeListItem
               mt={0}
               iconSize={18}
-              icon={require('@assets/icons/home/home-menu/drawer-gold-area-4.webp')}
+              icon={require('@assets/icons/common/common.webp')}
               title={`${i18n.t('me.bottom.myBets')} ${i18n.t('label.records')}`}
               onPress={() => {
                 goToWithLogin('Bets');

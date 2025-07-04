@@ -44,7 +44,7 @@ const Splash = (props: Partial<NavigatorScreenProps> & SplashProps) => {
             },
           ]}>
           <Image
-            source={require('@assets/icons/agentfranchise/agentfranchise-12.webp')}
+            source={require('@assets/icons/common/common.webp')}
             style={[
               // eslint-disable-next-line react-native/no-inline-styles
               {

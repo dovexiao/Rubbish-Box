@@ -24,7 +24,7 @@ const CheckInCard = () => {
   return (
     <CustomCard title="Check in to share jockpot">
       <LazyImageBackground
-        imageUrl={require('@assets/imgs/welfare/sign-in-header-bg.webp')}
+        imageUrl={require('@assets/icons/common/common.webp')}
         width={screenWidth - 24}
         height={106}
         style={[theme.margin.tops, theme.flex.centerByCol, theme.flex.end]}>

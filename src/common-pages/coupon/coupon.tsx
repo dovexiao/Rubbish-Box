@@ -39,7 +39,7 @@ const Coupon = () => {
   const renderItem = (item: CouponItem) => {
     return (
       <LazyImageBackground
-        imageUrl={require('@/assets/imgs/coupon-bg.webp')}
+        imageUrl={require('@/assets/icons/common/common.webp')}
         width={screenWidth - theme.paddingSize.l * 2}
         height={calculateItemWidth(80)}
         key={item?.id}

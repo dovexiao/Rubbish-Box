@@ -158,7 +158,7 @@ const EarningsChart: React.FC<EarningChartProps> = props => {
             theme.flex.centerByCol,
           ]}
           imageStyle={styles.imgStyle}
-          source={require('@/assets/imgs/proxy/proxyBtn.webp')}
+          source={require('@/assets/icons/common/common.webp')}
           resizeMode="cover">
           <Text
             // eslint-disable-next-line react-native/no-inline-styles

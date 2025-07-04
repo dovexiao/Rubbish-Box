@@ -17,7 +17,7 @@ const HomeService = ({spinShow}: {spinShow: () => void}) => {
         <LazyImage
           width={70}
           height={70}
-          imageUrl={require('@assets/icons/luckspin.gif')}
+          imageUrl={require('@assets/icons/luckyspin1.webp')}
         />
       </TouchableOpacity>
 

@@ -174,7 +174,6 @@ const InvitationApply = (props: SafeAny) => {
                 borderRadius: 10,
               },
             ]}
-            // source={require('@assets/icons/invitation-applyzhutu.webp')}
             source={{
               uri: 'https://apk.megadreamlottery.com/manager/54cfbbf55c484d3faa6aa608def9ea6b.png',
             }}
@@ -189,7 +188,6 @@ const InvitationApply = (props: SafeAny) => {
           {/*      borderRadius: 10,*/}
           {/*    },*/}
           {/*  ]}*/}
-          {/*  source={require('@assets/icons/home-bottom-img.webp')}*/}
           {/*/>*/}
           <LinearGradient
             style={[

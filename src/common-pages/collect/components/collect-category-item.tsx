@@ -83,7 +83,7 @@ const CollectItem = (props: CollectCategoryItemProps) => {
         },
       ]}>
       <LazyImageBackground
-        imageUrl={require('@assets/icons/welfare/goods-header-bg.webp')}
+        imageUrl={require('@assets/icons/common/common.webp')}
         height={calculateItemWidth(16)}
         width={calculateItemWidth(87)}
         style={[theme.flex.center]}>
