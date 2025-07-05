@@ -114,10 +114,12 @@ const VipCardList: React.FC<VipCardListProps> = ({
           <View style={[theme.flex.row, theme.flex.centerByCol]}>
             <Text color={theme.fontColor.white60} fontSize={theme.fontSize.s}>
               Level prograss{' '}
-              <Text color={theme.fontColor.white} blod>
-                {Math.max(
-                  0,
-                  Math.min((rechargeAmount / item?.amount) * 100, 100),
+              <Text color={theme.fontColor.white}>
+                {Math.floor(
+                  Math.max(
+                    0,
+                    Math.min((rechargeAmount / item?.amount) * 100, 100),
+                  ),
                 )}
                 %
               </Text>

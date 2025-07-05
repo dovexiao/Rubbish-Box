@@ -67,18 +67,6 @@ const VipClubList: React.FC<VipTableListProps> = ({vipConfigList}) => {
             theme.basicColor.yellow,
           )}
           {renderInfoRow(
-            'Withdrawal Count',
-            item?.withdrawCount,
-            '#0BD064',
-            theme.basicColor.yellow,
-          )}
-          {renderInfoRow(
-            'Withdrawal Amount',
-            formatINR(item?.withdrawAmount),
-            '#0BD064',
-            theme.basicColor.yellow,
-          )}
-          {renderInfoRow(
             'Spin Count',
             item?.spin,
             '#0BD064',
@@ -87,6 +75,18 @@ const VipClubList: React.FC<VipTableListProps> = ({vipConfigList}) => {
           {renderInfoRow(
             'Daily Bonus',
             formatINR(item?.dailyBonus),
+            '#0BD064',
+            theme.basicColor.yellow,
+          )}
+          {renderInfoRow(
+            'Withdrawal Count',
+            item?.withdrawCount,
+            '#0BD064',
+            theme.basicColor.yellow,
+          )}
+          {renderInfoRow(
+            'Withdrawal Amount',
+            formatINR(item?.withdrawAmount),
             '#0BD064',
             theme.basicColor.yellow,
           )}
