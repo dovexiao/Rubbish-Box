@@ -87,7 +87,7 @@ const VipClub = () => {
                   textAlign: 'center',
                 },
               ]}>
-              Become a member of IndraLottery Club and get exclusive bonuses
+              Become a member of supbet Club and get exclusive bonuses
             </Text>
           </View>
         </ImageBackground>

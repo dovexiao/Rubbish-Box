@@ -147,7 +147,7 @@ const InvitationApply = (props: SafeAny) => {
                         color: '#FFFFFF',
                       },
                     ]}>
-                    Indra Lottery
+                    Supbet
                   </Text>
                   <Text
                     fontSize={12}

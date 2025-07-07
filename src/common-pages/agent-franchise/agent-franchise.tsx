@@ -72,7 +72,7 @@ const AgentFranchise = () => {
               ]}>
               We have a special offer for you - a unique affiliate program with
               more generous referral rewards. We have put together a separate
-              program with special conditions. Join the IndraLottery affiliate
+              program with special conditions. Join the supbet affiliate
               program and start earning commissions right away.
             </Text>
           </View>
@@ -110,7 +110,7 @@ const AgentFranchise = () => {
                   marginTop: 30,
                 },
               ]}>
-              It only takes 2 simple steps to join the IndraLottery Affiliate
+              It only takes 2 simple steps to join the supbet Affiliate
               Program and start earning commissions immediately.
             </Text>
             <Image
@@ -733,7 +733,7 @@ const AgentFranchise = () => {
                     textAlign: 'center',
                   },
                 ]}>
-                Join Indra Lottery Agent Program
+                Join supbet Agent Program
               </Text>
               <Text
                 fontSize={theme.fontSize.l}

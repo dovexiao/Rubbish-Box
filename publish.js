@@ -29,8 +29,8 @@ function replaceAndBuild(channel) {
         reject(err);
         return;
       }
-      const apkName = `IndraLottery${
-        channel === 'IndraLottery' ? '' : '_' + channel
+      const apkName = `supbet{
+        channel === 'supbet' ? '' : '_' + channel
       }.apk`;
       exec(
         `mv ./android/app/build/outputs/apk/release/app-release.apk ~/Desktop/apps/${apkName}`,

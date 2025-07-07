@@ -127,16 +127,16 @@ export const goCS = () => {
 export const downloadApk = () => {
   const channelId = globalStore.channel;
   if (globalStore.isAndroid) {
-    if (channelId === 'Indra') {
-      Linking.openURL('https://static.indralottery.info/apk/IndraLottery.apk');
+    if (channelId === 'supbet') {
+      Linking.openURL('https://apk.supbet001.com/apk/supbet.apk');
     } else {
-      Linking.openURL(`https://static.indralottery.info/apk/IndraLottery_${channelId}.apk
+      Linking.openURL(`https://apk.supbet001.com/apk/supbet_${channelId}.apk
       `);
     }
   }
-  if (channelId === 'Indra') {
-    location.href = 'https://static.indralottery.info/apk/IndraLottery.apk';
+  if (channelId === 'supbet') {
+    location.href = 'https://apk.supbet001.com/apk/supbet.apk';
   } else {
-    location.href = `https://static.indralottery.info/apk/IndraLottery_${channelId}.apk`;
+    location.href = `https://apk.supbet001.com/apk/supbet_${channelId}.apk`;
   }
 };

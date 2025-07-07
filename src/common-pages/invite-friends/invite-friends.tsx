@@ -70,8 +70,8 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              Indra Lottery is a leading online casino offering the best slots
-              and casino games. It's easy to recommend Indra Lottery to your
+              Supbet is a leading online casino offering the best slots
+              and casino games. It's easy to recommend Supbet to your
               friends all you have to do is share your unique referral link with
               your friends via email or social media. You'll receive in credits
               for every eligible friend who signs up and makes their first
@@ -114,7 +114,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              At Indra Lottery Online Casino, referring a friend has never been
+              At Supbet Online Casino, referring a friend has never been
               easier. In short, Refer a Friend is an online casino promotion
               that rewards players for referring friends to the casino. For
               every eligible friend who registers and makes a deposit, the
@@ -155,7 +155,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              Create an account on IndraLottery
+              Create an account on supbet
             </Text>
             <Text
               fontSize={theme.fontSize.l}
@@ -191,7 +191,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              Invite your friends to register and play games on IndraLottery
+              Invite your friends to register and play games on supbet
             </Text>
             <Text
               fontSize={theme.fontSize.l}
@@ -202,7 +202,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              Promote IndraLottery as the best online gambling site among your
+              Promote supbet as the best online gambling site among your
               friends!
             </Text>
             <Image
@@ -443,7 +443,7 @@ const InviteFriends = () => {
                       color: '#FFFFFF',
                     },
                   ]}>
-                  IndraLottery is one of the best gaming platforms in the world
+                  supbet is one of the best gaming platforms in the world
                   Your friends will love it.
                 </Text>
               </View>
@@ -477,7 +477,7 @@ const InviteFriends = () => {
               share it with friends and people interested in gambling via social
               media, text messages, emails, carrier pigeons, or tell the nosy
               neighbor on the street to share it with anyone. Your referral uses
-              your link to sign up as a Indra Lottery member. Your friend makes
+              your link to sign up as a Supbet member. Your friend makes
               a deposit and you get a cash bonus! Referral bonuses are a great
               way for players to earn extra income, especially if they have a
               lot of friends who love playing casino games online. You can refer
@@ -613,7 +613,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              Anyone can recommend Indra Lottery to their friends, friends or
+              Anyone can recommend Supbet to their friends, friends or
               acquaintances. All you need is an active player account to get
               your unique referral code and start making money immediately.
             </Text>
@@ -640,7 +640,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              What types of refer-a-friend bonuses are there in Indra Lottery?
+              What types of refer-a-friend bonuses are there in Supbet?
             </Text>
             <Text
               fontSize={theme.fontSize.l}
@@ -730,7 +730,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              Create an account on IndraLottery. click on the Refer a Friend
+              Create an account on supbet. click on the Refer a Friend
               section. Your referral link will appear there and you can start
               sharing right away!
             </Text>
@@ -910,7 +910,7 @@ const InviteFriends = () => {
                 },
               ]}>
               2. In order to receive the Refer a Friend benefit, the Referrer
-              must have made at least one deposit at Indra Lottery Casino.
+              must have made at least one deposit at Supbet Casino.
             </Text>
             <Text
               fontSize={theme.fontSize.l}
@@ -934,7 +934,7 @@ const InviteFriends = () => {
                 },
               ]}>
               4. Only new players (players who do not have an account at Indra
-              Indra Lottery Casino) will be considered as Refer a Friend.
+              Supbet Casino) will be considered as Refer a Friend.
             </Text>
             <Text
               fontSize={theme.fontSize.l}
@@ -970,7 +970,7 @@ const InviteFriends = () => {
               ]}>
               7. The Referrer and the Referred Friend are eligible for the Refer
               a Friend promotion only if the Referred Friend registers at Indra
-              Indra Lottery Casino via a unique referral link.
+              Supbet Casino via a unique referral link.
             </Text>
             <Text
               fontSize={theme.fontSize.l}
@@ -981,7 +981,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              8. For every friend you refer who deposits at Indra Lottery
+              8. For every friend you refer who deposits at Supbet
               Casino, the Referrer will receive a free bonus.
             </Text>
             <Text
@@ -1042,7 +1042,7 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              13. Indra Lottery Casino reserves the right to change or terminate
+              13. Supbet Casino reserves the right to change or terminate
               this promotion at any time without prior notice.
             </Text>
           </View>

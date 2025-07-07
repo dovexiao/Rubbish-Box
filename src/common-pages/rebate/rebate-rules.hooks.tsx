@@ -12,7 +12,7 @@ import {useTranslation} from 'react-i18next';
 
 const {borderRadiusSize, flex, padding} = theme;
 const nameMap: Record<number, string> = {
-  3: 'IndraLottery',
+  3: 'supbet',
 };
 export function useRebateRules() {
   const {i18n} = useTranslation();

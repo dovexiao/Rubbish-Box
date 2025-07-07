@@ -856,11 +856,11 @@ export default {
         'Players can claim a betting rebate Bonus DailyBonus claim time is after 00:30 the Next Day.',
       precaution: 'Precautions:',
       'precaution-detail-1':
-        '-Only the qualified {{name}} members couldparticipate in activities Every member has to complete account detailsin the Indra Lottery Account to claim a rebate Bonus.- Any user involved in illegal activities is strictlyprohibited',
+        '-Only the qualified {{name}} members couldparticipate in activities Every member has to complete account detailsin the Supbet Account to claim a rebate Bonus.- Any user involved in illegal activities is strictlyprohibited',
       'precaution-detail-2':
         '-Same phone number, bank account number.Email address, and IP address can not be usedfor multiple accounts',
       'precaution-detail-3':
-        '-{{name}} has the right to freeze accounts orcancel payments if found illegal/fraudulentactivities committed by individuals or groups intaking advantage of bonuses, (final bonusdecision belongs to Indra Lottery)',
+        '-{{name}} has the right to freeze accounts orcancel payments if found illegal/fraudulentactivities committed by individuals or groups intaking advantage of bonuses, (final bonusdecision belongs to Supbet)',
     },
   },
   wallet: {
