@@ -19,8 +19,9 @@ import {
   updateIcon,
   passwordIcon,
   languagesIcon,
-  customerServiceIcon, rebateIcon
-} from "@businessComponents/list-item";
+  customerServiceIcon,
+  rebateIcon,
+} from '@businessComponents/list-item';
 import {useConfirm} from '@basicComponents/modal';
 import {useLanguageModal} from '@businessComponents/language';
 import {useFocusEffect} from '@react-navigation/native';
@@ -62,15 +63,14 @@ const Me = () => {
   const {setVipConfig, setVipInfo} = useVipActions();
   const user = useUserInfo();
   const {getUserInfo} = useUserActions();
-  const {getNoticeMap, getUnReadCount} =
-    useNotificationStore(
-      useShallow(state => ({
-        noticeMap: state.noticeMap,
-        getNoticeMap: state.getNoticeMap,
-        unReadMessageCount: state.unReadMessageCount,
-        getUnReadCount: state.getUnReadCount,
-      })),
-    );
+  const {getNoticeMap, getUnReadCount} = useNotificationStore(
+    useShallow(state => ({
+      noticeMap: state.noticeMap,
+      getNoticeMap: state.getNoticeMap,
+      unReadMessageCount: state.unReadMessageCount,
+      getUnReadCount: state.getUnReadCount,
+    })),
+  );
 
   const refresh = useCallback(
     async (token: string | null, showloading = true) => {
@@ -147,8 +147,6 @@ const Me = () => {
     goTo('Transactions');
   };
 
-
-
   const toLanguage = () => {
     languageShow();
   };
@@ -157,8 +155,6 @@ const Me = () => {
     // 更新
     handleUpdate();
   };
-
-
 
   const doLogout = () => {
     // logout

@@ -72,8 +72,8 @@ const AgentFranchise = () => {
               ]}>
               We have a special offer for you - a unique affiliate program with
               more generous referral rewards. We have put together a separate
-              program with special conditions. Join the supbet affiliate
-              program and start earning commissions right away.
+              program with special conditions. Join the supbet affiliate program
+              and start earning commissions right away.
             </Text>
           </View>
 
@@ -110,8 +110,8 @@ const AgentFranchise = () => {
                   marginTop: 30,
                 },
               ]}>
-              It only takes 2 simple steps to join the supbet Affiliate
-              Program and start earning commissions immediately.
+              It only takes 2 simple steps to join the supbet Affiliate Program
+              and start earning commissions immediately.
             </Text>
             <Image
               style={[

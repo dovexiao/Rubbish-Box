@@ -18,12 +18,11 @@ import HomeTabPageGame from '@/pages/home/pages/tab-page-game';
 import HomeTabPageLive from '@/pages/home/pages/tab-page-live';
 import HomeTabPageSlots from '@/pages/home/pages/tab-page-slots';
 import HomeTabPagePopularOld from '@/pages/home/pages/tab-page-popular-old';
-import { useLuckySpinModal } from '@/common-pages/luckyspin/luckyspin.hooks';
-import { useLuckySpinActions } from '@/store/luckySpinStore';
-import { getNoticeCheck } from "@/pages/home/home.service";
+import {useLuckySpinModal} from '@/common-pages/luckyspin/luckyspin.hooks';
+import {useLuckySpinActions} from '@/store/luckySpinStore';
+import {getNoticeCheck} from '@/pages/home/home.service';
 
 const Home = () => {
-
   const {isLogin} = useToken();
   const {getHomeBannerList, oneCategoryPageIndex} = useHomeStore(
     useShallow(state => ({

@@ -83,8 +83,7 @@ export const renderOverlayLinkComponent = ({
         theme.padding.lrxxl,
         // eslint-disable-next-line react-native/no-inline-styles
         {width: sizeWidth, height: sizeHeight, paddingVertical: 20},
-      ]}>
-    </View>
+      ]}></View>
   );
 };
 

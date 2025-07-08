@@ -26,8 +26,7 @@ const Promotion = () => {
   } = useInnerStyle();
   const [tagIndex] = useState(0);
 
-  const { screenHeight} =
-    useSettingWindowDimensions();
+  const {screenHeight} = useSettingWindowDimensions();
 
   const [refreshing, setRefreshing] = useState(false);
   const pageNo = useRef(1);
@@ -99,8 +98,7 @@ const Promotion = () => {
               height={
                 item.activityType === 'signin' ? signImgHeight : itemImgHeight
               }
-              imageUrl={item.activityIcon}>
-            </Card.Image>
+              imageUrl={item.activityIcon}></Card.Image>
           </NativeTouchableOpacity>
         </Card>
       </View>

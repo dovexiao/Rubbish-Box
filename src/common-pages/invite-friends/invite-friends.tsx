@@ -70,16 +70,15 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              Supbet is a leading online casino offering the best slots
-              and casino games. It's easy to recommend Supbet to your
-              friends all you have to do is share your unique referral link with
-              your friends via email or social media. You'll receive in credits
-              for every eligible friend who signs up and makes their first
-              deposit. Referral bonuses are a great way for players to earn
-              extra money, especially if they have a lot of friends who love
-              playing casino games online. Recommend MageDream to your friends
-              today so they can enjoy the best online casino experience in the
-              world.
+              Supbet is a leading online casino offering the best slots and
+              casino games. It's easy to recommend Supbet to your friends all
+              you have to do is share your unique referral link with your
+              friends via email or social media. You'll receive in credits for
+              every eligible friend who signs up and makes their first deposit.
+              Referral bonuses are a great way for players to earn extra money,
+              especially if they have a lot of friends who love playing casino
+              games online. Recommend MageDream to your friends today so they
+              can enjoy the best online casino experience in the world.
             </Text>
             <Image
               style={[
@@ -114,11 +113,11 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              At Supbet Online Casino, referring a friend has never been
-              easier. In short, Refer a Friend is an online casino promotion
-              that rewards players for referring friends to the casino. For
-              every eligible friend who registers and makes a deposit, the
-              player will receive a free bonus.
+              At Supbet Online Casino, referring a friend has never been easier.
+              In short, Refer a Friend is an online casino promotion that
+              rewards players for referring friends to the casino. For every
+              eligible friend who registers and makes a deposit, the player will
+              receive a free bonus.
             </Text>
           </View>
 
@@ -443,8 +442,8 @@ const InviteFriends = () => {
                       color: '#FFFFFF',
                     },
                   ]}>
-                  supbet is one of the best gaming platforms in the world
-                  Your friends will love it.
+                  supbet is one of the best gaming platforms in the world Your
+                  friends will love it.
                 </Text>
               </View>
             </LinearGradient>
@@ -477,11 +476,11 @@ const InviteFriends = () => {
               share it with friends and people interested in gambling via social
               media, text messages, emails, carrier pigeons, or tell the nosy
               neighbor on the street to share it with anyone. Your referral uses
-              your link to sign up as a Supbet member. Your friend makes
-              a deposit and you get a cash bonus! Referral bonuses are a great
-              way for players to earn extra income, especially if they have a
-              lot of friends who love playing casino games online. You can refer
-              You can refer as many friends as you want, so don't hesitate!
+              your link to sign up as a Supbet member. Your friend makes a
+              deposit and you get a cash bonus! Referral bonuses are a great way
+              for players to earn extra income, especially if they have a lot of
+              friends who love playing casino games online. You can refer You
+              can refer as many friends as you want, so don't hesitate!
             </Text>
             <Button
               style={[{width: 251, height: 44, marginTop: 30}]}
@@ -730,9 +729,9 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              Create an account on supbet. click on the Refer a Friend
-              section. Your referral link will appear there and you can start
-              sharing right away!
+              Create an account on supbet. click on the Refer a Friend section.
+              Your referral link will appear there and you can start sharing
+              right away!
             </Text>
           </View>
 
@@ -981,8 +980,8 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              8. For every friend you refer who deposits at Supbet
-              Casino, the Referrer will receive a free bonus.
+              8. For every friend you refer who deposits at Supbet Casino, the
+              Referrer will receive a free bonus.
             </Text>
             <Text
               fontSize={theme.fontSize.l}
@@ -1042,8 +1041,8 @@ const InviteFriends = () => {
                   marginTop: 30,
                 },
               ]}>
-              13. Supbet Casino reserves the right to change or terminate
-              this promotion at any time without prior notice.
+              13. Supbet Casino reserves the right to change or terminate this
+              promotion at any time without prior notice.
             </Text>
           </View>
 

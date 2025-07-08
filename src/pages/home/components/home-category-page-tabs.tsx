@@ -26,8 +26,8 @@ const tabsList = [
 ];
 
 const HomeCategoryPageTabs = () => {
-  const { isLogin: login } = useToken();
-  const { screenWidth } = useSettingWindowDimensions();
+  const {isLogin: login} = useToken();
+  const {screenWidth} = useSettingWindowDimensions();
   const {
     isShowCategoryTab,
     oneCategoryPageIndex,
@@ -84,8 +84,8 @@ const HomeCategoryPageTabs = () => {
 
   useEffect(() => {
     // console.info('=======oneCategoryPageIndex:' + oneCategoryPageIndex);
-    useHomeStore.setState({ isShowCategoryTab: true });
-    useHomeStore.setState({ pageTagIndex: -1 });
+    useHomeStore.setState({isShowCategoryTab: true});
+    useHomeStore.setState({pageTagIndex: -1});
     if (
       oneCategoryPageIndex === 1 ||
       oneCategoryPageIndex === 2 ||
@@ -109,22 +109,15 @@ const HomeCategoryPageTabs = () => {
     oneCategoryPageIndex,
   ]);
   return (
-    <Animated.View
-      style={[
-        theme.margin.lrl,
-        theme.borderRadius.m,
-
-        bodyStyle,
-      ]}>
+    <Animated.View style={[theme.margin.lrl, theme.borderRadius.m, bodyStyle]}>
       <ScrollView
         style={[
           theme.borderRadius.m,
           theme.flex.flex1,
           theme.background.transparentP30,
 
-          { height: 42, width: screenWidth - theme.paddingSize.l * 2 },
+          {height: 42, width: screenWidth - theme.paddingSize.l * 2},
         ]}
-
         contentContainerStyle={{
           flex: 1,
           alignItems: 'center',
@@ -146,21 +139,20 @@ const HomeCategoryPageTabs = () => {
                   //   paddingRight: 5,
                   // },
                   oneCategoryPageIndex === item?.value
-                    ?
-                    {
-                      ...theme.background.primary,
-                      ...theme.borderRadius.l,
-                      height: 35,
-                    }
-                    :
-                    {
-                      height: 42,
-                    },
+                    ? {
+                        ...theme.background.primary,
+                        ...theme.borderRadius.l,
+                        height: 35,
+                      }
+                    : {
+                        height: 42,
+                      },
                 ]}>
                 <Text size="medium" blod white>
                   {item?.title}
                 </Text>
-              </NativeTouchableOpacity>);
+              </NativeTouchableOpacity>
+            );
           } else if (!item.isLogin) {
             return (
               <NativeTouchableOpacity
@@ -174,21 +166,20 @@ const HomeCategoryPageTabs = () => {
                   //   paddingRight: 5,
                   // },
                   oneCategoryPageIndex === item?.value
-                    ?
-                    {
-                      ...theme.background.primary,
-                      ...theme.borderRadius.l,
-                      height: 35,
-                    }
-                    :
-                    {
-                      height: 42,
-                    },
+                    ? {
+                        ...theme.background.primary,
+                        ...theme.borderRadius.l,
+                        height: 35,
+                      }
+                    : {
+                        height: 42,
+                      },
                 ]}>
                 <Text size="medium" blod white>
                   {item?.title}
                 </Text>
-              </NativeTouchableOpacity>);
+              </NativeTouchableOpacity>
+            );
           }
         })}
       </ScrollView>
