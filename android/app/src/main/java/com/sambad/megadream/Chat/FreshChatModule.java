@@ -141,7 +141,7 @@ public class FreshChatModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getChannelIdWithString(Callback successCallback) {
-      String result = "FB91";
+      String result = "supbet";
       successCallback.invoke(result);
     }
 
