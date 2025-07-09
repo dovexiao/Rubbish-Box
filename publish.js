@@ -8,7 +8,7 @@ const channelList = [
   'FB53',
   'SM61',
   'SM62',
-  'Indra', // 默认渠道
+  'supbet', // 默认渠道
 ];
 
 function replaceAndBuild(channel) {

@@ -80,10 +80,10 @@ const createHTTP = ({
     async config => {
       config.data = {
         channel: globalStore.isAndroid ? 'Android' : 'h5',
-        channelId: globalStore.channel || 'Indra',
+        channelId: globalStore.channel || 'supbet',
         lang: globalStore.lang,
         visitor: globalStore.visitor,
-        reqDate: new Date().getTime(),
+        // reqDate: new Date().getTime(),
         ...datas,
         ...mergeData,
         ...config.data,
