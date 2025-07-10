@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import DetailNavTitle from '@businessComponents/detail-nav-title';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {useInnerStyle} from './promotion.hooks';
 import theme from '@style';
 import {FlatList, ListRenderItemInfo, RefreshControl, View} from 'react-native';
@@ -15,131 +15,122 @@ import {goToUrl} from '@/common-pages/game-navigate';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import {goTo} from '@/utils';
-// import { useRoute } from '@react-navigation/native';
 
 const Promotion = () => {
-  // const route = useRoute();
   const {i18n} = useTranslation();
   const {
     size: {itemImgWidth, itemImgHeight, signImgHeight},
     listStyle,
   } = useInnerStyle();
-  const [tagIndex] = useState(0);
-
-  const {screenHeight} = useSettingWindowDimensions();
 
   const [refreshing, setRefreshing] = useState(false);
   const pageNo = useRef(1);
   const totalPage = useRef(1);
   const [promotionList, setPromotionList] = useState<PromotionListItem[]>([]);
-  const refreshPageInfo = (isMore = false) => {
-    return getPromotionList(pageNo.current, tagIndex).then(pageInfo => {
-      if (pageInfo?.content) {
-        setPromotionList(
-          isMore
-            ? [...promotionList, ...pageInfo.content]
-            : [...pageInfo.content],
-        );
-        totalPage.current = pageInfo.totalPages;
+  const tagIndex = 0;
+
+  const {screenHeight} = useSettingWindowDimensions();
+
+  const fetchPageData = useCallback(
+    async (isMore = false) => {
+      try {
+        const pageInfo = await getPromotionList(pageNo.current, tagIndex);
+        if (pageInfo?.content) {
+          setPromotionList(prev =>
+            isMore ? [...prev, ...pageInfo.content] : [...pageInfo.content],
+          );
+          totalPage.current = pageInfo.totalPages;
+        }
+      } catch (e) {
+        console.error('Error fetching promotions:', e);
       }
-    });
-  };
-  const refreshPage = (loading = true, isMore = false) => {
-    loading && globalStore.globalLoading.next(true);
+    },
+    [tagIndex],
+  );
+
+  const refreshPage = useCallback(async () => {
+    globalStore.globalLoading.next(true);
     pageNo.current = 1;
-    refreshPageInfo(isMore).finally(() => {
-      globalStore.globalLoading.next(false);
-      setRefreshing(false);
-    });
-  };
-  const refreshNextPage = () => {
+    await fetchPageData(false);
+    globalStore.globalLoading.next(false);
+    setRefreshing(false);
+  }, [fetchPageData]);
+
+  const loadNextPage = useCallback(async () => {
     if (pageNo.current < totalPage.current) {
       pageNo.current++;
       globalStore.globalLoading.next(true);
-      refreshPageInfo(true).finally(() =>
-        globalStore.globalLoading.next(false),
-      );
+      await fetchPageData(true);
+      globalStore.globalLoading.next(false);
     }
-  };
+  }, [fetchPageData]);
+
   useEffect(() => {
-    refreshPage(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tagIndex]);
+    refreshPage();
+  }, [refreshPage]);
 
   const onPressItemTo = (item: PromotionListItem) => {
-    if (!item?.activityUrl || item?.activityUrl.length === 0) {
+    if (!item?.activityUrl) {
       goTo('PromotionDetail', {id: item?.id});
-      return;
+    } else {
+      goToUrl(item.activityUrl, item.activityTitle);
     }
-    goToUrl(item.activityUrl, item.activityTitle);
   };
 
-  const renderItem = ({item, index}: ListRenderItemInfo<PromotionListItem>) => {
-    return (
-      <View
-        style={[
-          theme.background.mainDark,
-          theme.border.primary50,
-          theme.borderRadius.s,
-        ]}
-        key={item.id}>
-        <Card key={index}>
-          <NativeTouchableOpacity
-            onPress={() => {
-              onPressItemTo(item);
-            }}>
-            <Card.Image
-              style={[
-                theme.flex.centerByCol,
-                theme.borderRadius.s,
-                theme.position.rel,
-              ]}
-              width={itemImgWidth}
-              height={
-                item.activityType === 'signin' ? signImgHeight : itemImgHeight
-              }
-              imageUrl={item.activityIcon}></Card.Image>
-          </NativeTouchableOpacity>
-        </Card>
-      </View>
-    );
-  };
+  const renderItem = ({item}: ListRenderItemInfo<PromotionListItem>) => (
+    <View
+      style={[
+        theme.background.mainDark,
+        theme.border.primary50,
+        theme.borderRadius.s,
+        theme.margin.bottomMd,
+      ]}>
+      <Card>
+        <NativeTouchableOpacity onPress={() => onPressItemTo(item)}>
+          <Card.Image
+            style={[
+              theme.flex.centerByCol,
+              theme.borderRadius.s,
+              theme.position.rel,
+            ]}
+            width={itemImgWidth}
+            height={
+              item.activityType === 'signin' ? signImgHeight : itemImgHeight
+            }
+            imageUrl={item.activityIcon}
+          />
+        </NativeTouchableOpacity>
+      </Card>
+    </View>
+  );
+
   return (
-    <LazyImageLGBackground
-      style={[{height: screenHeight}]}
-      showBottomBG={false}>
-      <DetailNavTitle
-        title={i18n.t('promotion.title')}
-        hideServer
-        // onBack={undefined}
-        // onBack={(route.path || '').indexOf('index') > -1 ? undefined : goBack}
-      />
+    <LazyImageLGBackground style={{height: screenHeight}} showBottomBG={false}>
+      <DetailNavTitle title={i18n.t('promotion.title')} hideServer />
       <FlatList
-        style={[theme.flex.flex1]}
         data={promotionList}
         renderItem={renderItem}
+        keyExtractor={(item) => String(item.id)}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => {
               setRefreshing(true);
-              refreshPage(false);
+              refreshPage();
             }}
           />
         }
         ListEmptyComponent={
-          <View style={[theme.padding.xxl]}>
+          <View style={theme.padding.xxl}>
             <NoData />
           </View>
         }
-        onEndReached={refreshNextPage}
+        onEndReached={loadNextPage}
         contentContainerStyle={[theme.padding.lrl, listStyle.list]}
         ListFooterComponent={
-          promotionList &&
-          promotionList.length > 0 &&
-          pageNo.current >= totalPage.current ? (
+          promotionList.length > 0 && pageNo.current >= totalPage.current ? (
             <NoMoreData />
-          ) : undefined
+          ) : null
         }
       />
     </LazyImageLGBackground>

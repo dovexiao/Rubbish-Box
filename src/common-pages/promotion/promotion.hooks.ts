@@ -14,8 +14,8 @@ function useSize() {
       designWidth,
       topClipHeight: globalStore.isWeb ? 44 : StatusBar.currentHeight || 0,
       itemImgWidth,
-      signImgHeight: (itemImgWidth * 192) / 351,
-      itemImgHeight: (itemImgWidth * 192) / 351,
+      signImgHeight: (itemImgWidth * 158) / 351,
+      itemImgHeight: (itemImgWidth * 158) / 351,
       itemButtonWidth: (screenWidth * 96) / designWidth,
     };
   }, [screenWidth, screenHeight, designWidth]);

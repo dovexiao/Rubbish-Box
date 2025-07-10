@@ -1,93 +1,132 @@
-import React from 'react';
+/* eslint-disable prettier/prettier */
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScrollView, View} from 'react-native';
-import DetailNavTitle from '@/components/business/detail-nav-title';
+import {useTranslation} from 'react-i18next';
+import {useNavigation} from '@react-navigation/native';
+import {BottomSheet} from '@rneui/themed';
+
 import theme from '@/style';
 import {goBack, goTo} from '@/utils';
-import {useTranslation} from 'react-i18next';
+import globalStore from '@/services/global.state';
+import {LazyImageLGBackground} from '@/components/basic/image';
+import DetailNavTitle from '@/components/business/detail-nav-title';
 import Spin from '@/components/basic/spin';
+
 import WithdrawBalance from './withdraw-balance';
 import WithdrawAmount from './withdraw-amount';
 import WithdrawBank from './withdraw-bank';
-import {BottomSheet} from '@rneui/themed';
-import SelectCards from './select-cards';
 import WithdrawSuccess from './withdraw-success';
-import {getBankList, CardListItemType, onWithdraw} from './withdraw-service';
-import globalStore from '@/services/global.state';
 import WithdrawTransfer from './withdraw-transfer';
-import {IUserInfo, postUserInfo} from '@/services/global.service';
-import {BasicObject} from '@/types';
-import {plus, times} from '@/components/utils/number-precision';
-import {onTransfer} from '../transfer/transfer-service';
-import {useNavigation} from '@react-navigation/native';
-import {LazyImageLGBackground} from '@/components/basic/image';
+import SelectCards from './select-cards';
 import WithdrawButton from '@businessComponents/recharge-button/withdraw-button';
+
+import {
+  getBankList,
+  CardListItemType,
+  onWithdraw,
+} from './withdraw-service';
+import {postUserInfo, IUserInfo} from '@/services/global.service';
+import {onTransfer} from '../transfer/transfer-service';
+import {plus, times} from '@/components/utils/number-precision';
 
 const Withdraw = () => {
   const {i18n} = useTranslation();
-  const [loading, setLoading] = React.useState(false);
-  const [cardList, setCardList] = React.useState<CardListItemType[]>([]);
-  const [showCard, setShowCard] = React.useState(false);
-  const [showTransfer, setShowTransfer] = React.useState(false);
-  const [showSuccess, setShowSuccess] = React.useState(false);
-  const [amount, setAmount] = React.useState('');
-  const [price, setPrice] = React.useState<string>('');
-  const [selectedCard, setSelectedCard] = React.useState<string | undefined>();
-  const [user, setUser] = React.useState<IUserInfo | BasicObject>({});
   const navigation = useNavigation();
-  React.useEffect(() => {
+
+  const [loading, setLoading] = useState(false);
+  const [cardList, setCardList] = useState<CardListItemType[]>([]);
+  const [selectedCard, setSelectedCard] = useState<string>();
+  const [showCard, setShowCard] = useState(false);
+  const [showTransfer, setShowTransfer] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const [user, setUser] = useState<IUserInfo | undefined>();
+  const [amount, setAmount] = useState('');
+  const [price, setPrice] = useState('');
+
+  // ======================
+  // ✅ 初始化加载数据
+  // ======================
+  const fetchUserAndBanks = useCallback(async () => {
     setLoading(true);
-    Promise.allSettled([getUserInfo(), onGetBankList()]).finally(() =>
-      setLoading(false),
-    );
-    navigation.addListener('focus', () => {
-      onGetBankList();
+    try {
+      const [userRes, bankRes] = await Promise.all([
+        postUserInfo(),
+        getBankList(),
+      ]);
+      setUser(userRes);
+      setCardList(bankRes || []);
+      if (bankRes?.length) {
+        setSelectedCard(bankRes[0].id);
+      }
+    } catch (err) {
+      console.error('初始化失败', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUserAndBanks();
+  }, [fetchUserAndBanks]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getBankList().then(res => {
+        setCardList(res || []);
+        if (res?.length) {
+          setSelectedCard(res[0].id);
+        }
+      });
     });
+    return unsubscribe;
   }, [navigation]);
 
-  const getUserInfo = async (refresh = false) => {
-    try {
-      if (refresh) {
-        setLoading(true);
-      }
-      const res = await postUserInfo();
-      setUser(res);
-    } finally {
-      if (refresh) {
-        setLoading(false);
-      }
-    }
-  };
-
-  const onGetBankList = async (refresh = false) => {
-    try {
-      if (refresh) {
-        setLoading(true);
-      }
-      const res = (await getBankList()) || [];
-      if (res.length > 0) {
-        setSelectedCard(res[0]?.id);
-      }
-      setCardList(res);
-    } finally {
-      if (refresh) {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     if (!globalStore.token) {
       goTo('Login', {backPage: 'Home'});
-      return;
+    } else {
+      fetchUserAndBanks();
     }
-    getUserInfo(true);
-  };
+  }, [fetchUserAndBanks]);
 
-  const selectedBankCard = React.useMemo(() => {
-    return cardList.find(item => item.id === selectedCard) || {};
+  const selectedBankCard = useMemo(() => {
+    return cardList.find(item => item.id === selectedCard);
   }, [selectedCard, cardList]);
 
-  const onGoAddBank = (cardInfo?: CardListItemType) => {
+  const handleGotoRecords = useCallback(() => {
+    if (!globalStore.token) {
+      goTo('Login', {backPage: 'Home'});
+    } else {
+      goTo('WithdrawRecords');
+    }
+  }, []);
+
+  const getReceive = useMemo(() => {
+    return price ? (Number(price) * 0.97).toFixed(2) : '';
+  }, [price]);
+
+  const actualReceived = useMemo(() => {
+    const max = user?.canWithdrawAmount || 0;
+    const num = Number(amount);
+    if (
+      !isNaN(num) &&
+      user?.withdrawalFreeConfigs?.length &&
+      num <= max
+    ) {
+      const config = user.withdrawalFreeConfigs.find(
+        (c: { minValue: number; maxValue: number; pct: number }) =>
+          num >= c.minValue && num <= c.maxValue,
+      );
+      if (config) {
+        return times(plus(1, config.pct), num);
+      }
+    }
+    return 0;
+  }, [amount, user]);
+
+
+  const onGoAddBank = useCallback((cardInfo?: CardListItemType) => {
     if (!globalStore.token) {
       goTo('Login', {backPage: 'Home'});
       return;
@@ -96,84 +135,45 @@ const Withdraw = () => {
       isFirst: cardList.length === 0 ? '1' : '0',
       cardInfo,
     });
-  };
+  }, [cardList]);
 
   const onWithdrawSubmit = async () => {
+    if (!selectedCard) {
+      globalStore.globalWaringTotal(i18n.t('withdraw-page.error.addCard'));
+      return;
+    }
+    if (!price || Number(price) <= 0) {
+      globalStore.globalWaringTotal(i18n.t('withdraw-page.error.addAmount'));
+      return;
+    }
+    setLoading(true);
     try {
-      if (!selectedCard) {
-        globalStore.globalWaringTotal(i18n.t('withdraw-page.error.addCard'));
-        return;
-      }
-      if (!price) {
-        globalStore.globalWaringTotal(i18n.t('withdraw-page.error.addAmount'));
-        return;
-      }
-      setLoading(true);
       await onWithdraw({
         cardId: selectedCard,
         price: Number(price),
       });
       setShowSuccess(true);
+    } catch (err) {
+      console.error('提现失败', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const getReceive = React.useMemo(() => {
-    if (price) {
-      return (Number(price) * 0.97).toFixed(2);
-    }
-    return '';
-  }, [price]);
-
-  const handleGotoRecords = () => {
-    if (!globalStore.token) {
-      goTo('Login', {backPage: 'Home'});
-      return;
-    }
-    goTo('WithdrawRecords');
-  };
-
   const onSubmitTransfer = async () => {
     setShowTransfer(false);
     setLoading(true);
-    onTransfer(Number(amount))
-      .then(() => {
-        getUserInfo(false);
-        globalStore.globalSucessTotal(i18n.t('transfer-page.tip.success'));
-      })
-      .finally(() => {
-        setAmount('');
-        setLoading(false);
-      });
-  };
-
-  const actualReceived = React.useMemo(() => {
-    const max = user?.canWithdrawAmount || 0;
-    if (
-      user!.withdrawalFreeConfigs &&
-      user!.withdrawalFreeConfigs.length > 0 &&
-      max > 0
-    ) {
-      if (amount && amount <= max) {
-        const amountToNumber = Number(amount);
-        if (!isNaN(amountToNumber)) {
-          const config = user!.withdrawalFreeConfigs.find(
-            (item: {maxValue: number; minValue: number}) => {
-              return (
-                item.maxValue >= amountToNumber &&
-                item.minValue <= amountToNumber
-              );
-            },
-          );
-          if (config) {
-            return times(plus(1, config.pct), amountToNumber);
-          }
-        }
-      }
+    try {
+      await onTransfer(Number(amount));
+      await fetchUserAndBanks();
+      globalStore.globalSucessTotal(i18n.t('transfer-page.tip.success'));
+    } catch (err) {
+      console.error('转账失败', err);
+    } finally {
+      setAmount('');
+      setLoading(false);
     }
-    return 0;
-  }, [amount, user]);
+  };
 
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
@@ -193,18 +193,14 @@ const Withdraw = () => {
           }}
         />
       ) : (
-        <Spin
-          loading={loading}
-          style={[theme.flex.flex1, theme.flex.col, theme.flex.start]}>
-          <View style={[theme.flex.flex1, theme.flex.basis0]}>
-            <ScrollView contentContainerStyle={[]} style={[theme.flex.flex1]}>
+        <Spin loading={loading} style={[theme.flex.flex1, theme.flex.col]}>
+          <View style={[theme.flex.flex1]}>
+            <ScrollView style={[theme.flex.flex1]}>
               <WithdrawBalance
                 onGotoRecords={handleGotoRecords}
-                balance={user!.canWithdrawAmount}
+                balance={user?.canWithdrawAmount || 0}
                 onRefresh={handleRefresh}
-                onPressTransfer={() => {
-                  setShowTransfer(true);
-                }}
+                onPressTransfer={() => setShowTransfer(true)}
               />
               <WithdrawBank
                 bankInfo={selectedBankCard}
@@ -226,39 +222,27 @@ const Withdraw = () => {
         </Spin>
       )}
 
-      <BottomSheet
-        modalProps={{
-          animationType: 'fade',
-        }}
-        isVisible={showCard}>
+      <BottomSheet isVisible={showCard}>
         <SelectCards
-          onClose={() => setShowCard(false)}
           list={cardList}
-          onAddBank={(card?: CardListItemType) => {
-            setShowCard(false);
-            onGoAddBank(card);
-          }}
           value={selectedCard}
-          onChange={v => {
-            setSelectedCard(v);
-          }}
+          onChange={setSelectedCard}
+          onClose={() => setShowCard(false)}
+          onAddBank={onGoAddBank}
         />
       </BottomSheet>
-      <BottomSheet
-        modalProps={{
-          animationType: 'fade',
-        }}
-        isVisible={showTransfer}>
+
+      <BottomSheet isVisible={showTransfer}>
         <WithdrawTransfer
-          onConfirm={onSubmitTransfer}
+          inputAmount={amount}
+          onInputChange={setAmount}
+          withdrawAmount={user?.canWithdrawAmount || 0}
+          receiveAmount={actualReceived}
           onClose={() => {
             setAmount('');
             setShowTransfer(false);
           }}
-          withdrawAmount={user!.canWithdrawAmount}
-          inputAmount={amount}
-          onInputChange={setAmount}
-          receiveAmount={actualReceived}
+          onConfirm={onSubmitTransfer}
         />
       </BottomSheet>
     </LazyImageLGBackground>

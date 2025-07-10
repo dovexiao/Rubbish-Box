@@ -1,17 +1,15 @@
 /* eslint-disable prettier/prettier */
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import theme from '@style';
 import globalStore from '@services/global.state';
 import HomeHeader from './components/home-header';
 import Download from './components/download';
 import HomeService from './components/home-service';
-// import HomeRegister from './components/home-register';
-import {useFocusEffect} from '@react-navigation/native';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import useHomeStore from '@/store/useHomeStore';
 import {useToken} from '@/store/useUserStore';
 import {useShallow} from 'zustand/react/shallow';
-import {BasicObject} from '@types';
 import useNotificationStore from '@/store/useNotificationStore';
 import HomeCategoryPageTabs from '@/pages/home/components/home-category-page-tabs';
 import HomeTabPageGame from '@/pages/home/pages/tab-page-game';
@@ -28,95 +26,94 @@ const Home = () => {
     useShallow(state => ({
       oneCategoryPageIndex: state.oneCategoryPageIndex,
       getHomeBannerList: state.getHomeBannerList,
-    })),
+    }))
   );
 
-  const [freeCount] = useState(0);
-  const [spinBatchCount] = useState(30);
-  const [spinBasePrice] = useState(10);
   const {setSpinConfig} = useLuckySpinActions();
+
+  // 🎯 LuckySpin 配置
+  const LUCKY_SPIN_CONFIG = {
+    freeCount: 0,
+    spinBatchCount: 30,
+    spinBasePrice: 10,
+  };
+
   const {renderModal: renderSpin, show: spinShow} = useLuckySpinModal({
     onNotice: () => {
-      doNotice(globalStore.token);
-      // onRefreshSpinConfig();
       if (globalStore.token) {
+        doNotice(globalStore.token);
         setSpinConfig(true);
       }
     },
-    batchCount: spinBatchCount,
-    singleAmount: spinBasePrice,
-    freeCount,
+    batchCount: LUCKY_SPIN_CONFIG.spinBatchCount,
+    singleAmount: LUCKY_SPIN_CONFIG.spinBasePrice,
+    freeCount: LUCKY_SPIN_CONFIG.freeCount,
   });
-
-  const [_noticeMap, setNoticeMap] = useState<BasicObject>({
-    FREE_LOTTERY: 0,
-    REBATE: 0,
-    LUCKY_SPIN: 0,
-  });
-
-  const doNotice = useCallback((token: string | null) => {
-    if (token) {
-      getNoticeCheck().then(noticeList => {
-        const newNoticeMap: BasicObject = {
-          FREE_LOTTERY: 0,
-          REBATE: 0,
-          LUCKY_SPIN: 0,
-        };
-        for (const item of noticeList) {
-          if (item.noticeKey in newNoticeMap) {
-            newNoticeMap[item.noticeKey] = item.noticeCount;
-          }
-        }
-        setNoticeMap(newNoticeMap);
-      });
-    } else {
-      setNoticeMap({FREE_LOTTERY: 0, REBATE: 0, LUCKY_SPIN: 0});
-    }
-  }, []);
 
   const {getNoticeMap, getUnReadCount} = useNotificationStore(
     useShallow(state => ({
       getNoticeMap: state.getNoticeMap,
       getUnReadCount: state.getUnReadCount,
-    })),
+    }))
   );
-  const [_unreadCount, _setUnreadCount] = useState(0);
 
-  const handleFocusEffect = useCallback(() => {
-    const sub = globalStore.tokenSubject.subscribe(token => {
-      globalStore.amountCheckOut.next();
-      if (token) {
-        getUnReadCount();
+  // 📢 拉取公告提示
+  const doNotice = useCallback(async (token: string | null) => {
+    if (!token) return;
+    try {
+      const noticeList = await getNoticeCheck();
+      const mapped: Record<string, number> = {
+        FREE_LOTTERY: 0,
+        REBATE: 0,
+        LUCKY_SPIN: 0,
+      };
+      for (const item of noticeList) {
+        if (mapped.hasOwnProperty(item.noticeKey)) {
+          mapped[item.noticeKey] = item.noticeCount;
+        }
       }
-    });
-    return () => {
-      sub.unsubscribe();
-    };
-  }, [getUnReadCount]);
-  useFocusEffect(handleFocusEffect);
+      // 若你希望后续使用，可以 useState 保存 mapped
+    } catch (err) {
+      console.error('公告检查失败', err);
+    }
+  }, []);
+
+  // 🎯 页面聚焦时监听 token 变化
+  useFocusEffect(
+    useCallback(() => {
+      const sub = globalStore.tokenSubject.subscribe(token => {
+        if (token) {
+          globalStore.amountCheckOut.next();
+          getUnReadCount();
+        }
+      });
+      return () => sub.unsubscribe();
+    }, [getUnReadCount])
+  );
+
+  // 🎯 页面挂载时加载轮播图 + 公告提示
   useEffect(() => {
+    getHomeBannerList();
     if (isLogin) {
       getNoticeMap();
-    } else {
     }
-    getHomeBannerList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLogin]);
+  }, [isLogin, getHomeBannerList, getNoticeMap]);
 
   return (
     <LazyImageLGBackground
       showBottomBG={false}
-      subtractBottomTabHeight={true}
-      style={[theme.fill.fill, theme.position.rel]}>
+      subtractBottomTabHeight
+      style={[theme.fill.fill, theme.position.rel]}
+    >
       <HomeHeader />
-      {globalStore.isWeb && !globalStore.viewType ? <Download /> : null}
+      {globalStore.isWeb && !globalStore.viewType && <Download />}
       <HomeCategoryPageTabs />
-      {/*{oneCategoryPageIndex === 0 && <HomeTabPagePopular/>}*/}
+
       {oneCategoryPageIndex === 1 && <HomeTabPageSlots />}
       {oneCategoryPageIndex === 10 && <HomeTabPagePopularOld />}
       {oneCategoryPageIndex === 3 && <HomeTabPageLive />}
       {oneCategoryPageIndex === 2 && <HomeTabPageGame />}
-      {/*<HomeRegister />*/}
+
       <HomeService spinShow={spinShow} />
       {renderSpin}
     </LazyImageLGBackground>
