@@ -174,7 +174,10 @@ const SingUp = (props: NavigatorScreenProps) => {
                 OTPCode.length !== 6 ||
                 !is18 ||
                 !agree
-              }>
+              }
+              style={{
+                backgroundColor: '#F3BA63', // 修改按钮背景色
+              }}>
               <Text
                 color={theme.basicColor.white}
                 size="large"
@@ -183,6 +186,7 @@ const SingUp = (props: NavigatorScreenProps) => {
               </Text>
             </Button>
           </View>
+
           <AccountTip
             tip="login.tip.has-account"
             linkTip="login.tip.sign-in"
