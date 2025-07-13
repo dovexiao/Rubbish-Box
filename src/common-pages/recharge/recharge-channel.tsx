@@ -4,7 +4,7 @@ import Text from '@basicComponents/text';
 import {View, Image} from 'react-native';
 import theme from '@style';
 import {PayMethod} from './recharge.service';
-import LazyImage from '@/components/basic/image';
+// import LazyImage from '@/components/basic/image';
 import {useInnerStyle} from './recharge.hooks';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
@@ -80,13 +80,10 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
                   theme.borderRadius.s,
                 ]}>
                 <View style={[theme.flex.center]}>
-                  <LazyImage
-                    occupancy="#0000"
-                    imageUrl={payMethod.payIcon}
-                    // width={theme.imageSize.l}
-                    // height={theme.imageSize.l}
-                    // width={itemWidth - 10}
-                    // height={70}
+                  <Image
+                    source={{uri: payMethod.payIcon}}
+                    style={{width: 93, height: 108}}
+                    resizeMode="contain"
                   />
                 </View>
                 {payMethod.id === payMethodId ? (
@@ -94,7 +91,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
                     style={[
                       theme.position.abs,
                       theme.icon.s,
-                      // eslint-disable-next-line react-native/no-inline-styles
+
                       {bottom: 0, right: 0},
                     ]}
                     source={require('@/assets/icons/btn-checked.webp')}

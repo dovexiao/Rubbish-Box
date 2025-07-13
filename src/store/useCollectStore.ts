@@ -1,8 +1,8 @@
 import {
   postChangeGameStatus,
-  postGetGameStatus,
+  // postGetGameStatus,
   postToCloseGame,
-  postToOpenGame,
+  // postToOpenGame,
 } from '@/common-pages/game-navigate';
 import {create} from 'zustand';
 
@@ -20,9 +20,9 @@ const useCollectStore = create<CollectStoreState>()((set, get) => ({
   collectStatus: 0,
 
   openGameReport: async () => {
-    postToOpenGame(get().openGameId);
-    const isCollect = await postGetGameStatus(get().openGameId);
-    set({collectStatus: isCollect ? 1 : 0});
+    // postToOpenGame(get().openGameId);
+    // const isCollect = await postGetGameStatus(get().openGameId);
+    // set({collectStatus: isCollect ? 1 : 0});
   },
   changeGameCollectStatus: async () => {
     try {

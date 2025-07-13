@@ -55,13 +55,13 @@ export function useShare(autoInit = false) {
       return;
     }
     if (globalStore.isAndroid) {
-      onShare(`${invateText}?code=${code}`);
+      onShare(`${invateText}`);
     } else {
       copyShareLink(tip);
     }
   };
 
-  const copyShareLink = (tip = '') => copy(`${invateText}?code=${code}`, tip);
+  const copyShareLink = (tip = '') => copy(`${invateText}`, tip);
 
   const initShare = () => {
     return getShareInfo().then(data => {

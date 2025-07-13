@@ -276,7 +276,6 @@ export async function toGame({
     goTo('Login');
     return;
   }
-  console.log(11111, name, _type, source, provider);
 
   const gameHandler: Record<string, () => void> = {
     'SKY GAME': () => navigateGame(name || 'Casino', gameUrl || ''),
@@ -286,16 +285,16 @@ export async function toGame({
 
     // Slotegrator: () => toSlotegrator(name || 'Slotegrator', id + ''),
   };
-  if (source === 'SEAG' && provider === 'PG') {
+  if (source === 'HUIDU' && provider === 'PG') {
     source = 'PG';
   }
-  if ((source === 'SEAG' || source === 'NOAH_PG') && provider === 'NOAH_PG') {
+  if ((source === 'HUIDU' || source === 'NOAH_PG') && provider === 'NOAH_PG') {
     source = 'PG';
   }
 
   useCollectStore.setState({openGameId: id});
   useCollectStore.getState().openGameReport();
-  if (source === 'SEAG') {
+  if (source === 'HUIDU') {
     toUrlGame(name || source, id + '', provider);
     return;
   }

@@ -69,54 +69,35 @@ export function getKMAuthorize(tripartiteUniqueness: string) {
 }
 
 export function getWSStart(id: string) {
-  return indusWinHttp.get<{id: string}, string>('/iGaming/ws/getGamesStart', {
-    params: {id},
-  });
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}}`);
 }
 
 export function getPGStart(id: string) {
-  return indusWinHttp.get<{id: string}, string>('/iGaming/pg/getGamesStart', {
-    params: {
-      id: id,
-    },
-  });
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}}`);
 }
 export function getNoahPGStart(id: string) {
-  return indusWinHttp.get<{id: string}, string>(
-    '/iGaming/noah/pg/GetUserSession',
-    {
-      params: {
-        id: id,
-      },
-    },
-  );
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}}`);
 }
 export function getYGGStart(id: string) {
-  return indusWinHttp.post<{id: string}, string>(
-    `/iGaming/ata/login/game/${id}`,
-  );
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}`);
 }
 
 export function getJILIStart(id: string) {
-  return indusWinHttp.post<{id: string}, string>(
-    `/iGaming/jl/singleWallet/LoginWithoutRedirect/${id}`,
-  );
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}`);
 }
 
 export function getCQ9Start(id: string) {
-  return indusWinHttp.post<{id: string}, string>(
-    `/iGaming/cq9/game/link/${id}`,
-  );
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}`);
 }
 
 export function getFCStart(id: string) {
-  return indusWinHttp.post<{id: string}, string>(`/iGaming/fc/login/${id}`);
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}`);
 }
 
 export function getT1Start(id: string) {
-  return indusWinHttp.post<{id: string}, string>(`/iGaming/t1/login/${id}`);
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}`);
 }
 
 export function getAWCStart(id: string) {
-  return indusWinHttp.post<{id: string}, string>(`/iGaming/sexy/login/${id}`);
+  return indusWinHttp.post<{id: string}, string>(`/iGaming/js/login/${id}`);
 }

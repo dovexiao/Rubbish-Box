@@ -188,7 +188,7 @@ const BetsListItem = ({
         source: info.source,
         name: info.gameName,
         gameUrl: info.gameUrl,
-        id: ['Slotegrator', 'WS168', 'SEAG'].includes(info.source)
+        id: ['Slotegrator', 'WS168', 'HUIDU'].includes(info.source)
           ? info.gameId
           : info.orderId,
         tripartiteUniqueness: info.tripartiteUniqueness,

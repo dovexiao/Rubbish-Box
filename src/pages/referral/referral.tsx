@@ -104,9 +104,9 @@ const Referral = () => {
       return;
     }
     if (globalStore.isAndroid) {
-      onShare(`${invateText}?code=${code}`);
+      onShare(`${invateText}`);
     } else {
-      copy(`${invateText}?code=${code}`);
+      copy(`${invateText}`);
     }
   };
 

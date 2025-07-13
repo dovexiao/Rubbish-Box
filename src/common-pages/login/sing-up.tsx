@@ -37,10 +37,10 @@ const SingUp = (props: NavigatorScreenProps) => {
 
   const [userPhone, setUserPhone] = React.useState('');
   const [OTPCode, setOTPCode] = React.useState('');
-  // const [invitaCode, setInvitaCode] = React.useState(
-  //   globalStore.isWeb ? localStorage.getItem('invitationCode') || '' : '',
-  // );
-  const [invitaCode, setInvitaCode] = React.useState('');
+  const [invitaCode, setInvitaCode] = React.useState(
+    globalStore.isWeb ? localStorage.getItem('invitationCode') || '' : '',
+  );
+  // const [invitaCode, setInvitaCode] = React.useState('');
   const [is18, setIs18] = React.useState(false);
   const [agree, setAgree] = React.useState(false);
   const [blured, setBlured] = React.useState(true);

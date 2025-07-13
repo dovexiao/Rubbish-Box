@@ -131,7 +131,12 @@ const Recharge = () => {
   // ✅ 发起充值流程
   const handleRecharge = async () => {
     const {minAmount, maxAmount} = payMethodItem || {};
-    if (!amount || (minAmount && amount < minAmount) || (maxAmount && amount > maxAmount)) {
+    if (
+      !balance ||
+      +balance <= 0 ||
+      (minAmount && +balance < minAmount) ||
+      (maxAmount && +balance > maxAmount)
+    ) {
       globalStore.globalWaringTotal(i18n.t('recharge-page.tip.money-error'));
       return;
     }
@@ -208,7 +213,7 @@ const Recharge = () => {
           </ScrollView>
         </View>
         <RechargeButton
-          disabled={amount <= 0}
+          disabled={balance === '' || +balance <= 0}
           onRecharge={handleRecharge}
         />
       </Spin>
