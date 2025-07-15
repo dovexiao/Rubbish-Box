@@ -15,6 +15,7 @@ import {VipProgress} from '@businessComponents/vip';
 import {
   MeListItem,
   betsIcon,
+  giftcode,
   transactionsIcon,
   updateIcon,
   passwordIcon,
@@ -41,6 +42,9 @@ import {LazyImageLGBackground} from '@/components/basic/image';
 import useUserStore, {useUserActions, useUserInfo} from '@/store/useUserStore';
 import useNotificationStore from '@/store/useNotificationStore';
 import {useShallow} from 'zustand/react/shallow';
+import GiftPop from '@/common-pages/gift-code/gift-pop';
+import { getGiftCodeAmount } from '@/pages/me/me.service';
+import { useRebateSuccessToast } from '@/common-pages/rebate/rebate-toast.hooks';
 
 const {overflow, padding, font, margin, borderRadius, background} = theme;
 
@@ -145,6 +149,40 @@ const Me = () => {
       return;
     }
     goTo('Transactions');
+  };
+
+  const toInvitation = () => {
+    if (!login) {
+      toLogin();
+      return;
+    }
+    handleOpenPop();
+  };
+
+  const [isGiftPopVisible, setGiftPopVisible] = useState(false);
+
+
+  const handleOpenPop = () => {
+    setGiftPopVisible(true);
+  };
+
+  const handleClosePop = () => {
+    setGiftPopVisible(false);
+  };
+
+  const {show} = useRebateSuccessToast();
+
+  const handleSubmit = async (value: string) => {
+    try {
+      if (!value) {
+        return;
+      }
+      const res = await getGiftCodeAmount(value);
+      show(Number(res));
+      handleClosePop(); // 关闭弹窗
+    } catch (error) {
+      handleClosePop(); // 关闭弹窗
+    }
   };
 
   const toLanguage = () => {
@@ -260,6 +298,12 @@ const Me = () => {
               {/*  onPress={toTransfer}*/}
               {/*/>*/}
               <MeListItem
+                icon={giftcode}
+                title={i18n.t('me.bottom.giftCode')}
+                description={i18n.t('me.description.giftCode')}
+                onPress={toInvitation}
+              />
+              <MeListItem
                 icon={transactionsIcon}
                 title={i18n.t('me.bottom.myTransactions')}
                 description={i18n.t('me.description.transactionsDescription')}
@@ -363,6 +407,11 @@ const Me = () => {
           </View>
         </Animated.ScrollView>
       </Spin>
+      <GiftPop
+        visible={isGiftPopVisible}
+        onClose={handleClosePop}
+        onSubmit={handleSubmit}
+      />
       {renderConfirmModal}
       {renderLanguageModal}
       {versionModal.renderModal}

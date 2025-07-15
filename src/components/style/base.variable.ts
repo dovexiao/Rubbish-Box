@@ -29,6 +29,7 @@ export const basicColor = {
   transparentMedium: 'rgba(0, 0, 0, 0.3)',
   transparentMedium1: 'rgba(0, 0, 0, 0.5)',
   selectPrimary: '#2A8C83',
+  newButtonLinear: ['#EDA83D', '#F7B500'], //大部分情况为大型按钮(从左到右渐变),标签（从下到上渐变）配色
 };
 
 export const linearGradientColor = {

@@ -153,6 +153,8 @@ export default {
       shop: 'Shop',
       coupon: 'My Coupon',
       giftCode: 'Gift Code',
+      enterYourGiftCode: 'Enter your gift code',
+      exchange: 'Exchange',
     },
     description: {
       couponDescription: 'Your get coupon are here',

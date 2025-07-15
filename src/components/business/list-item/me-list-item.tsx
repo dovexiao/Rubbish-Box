@@ -8,6 +8,7 @@ import {useResponsiveDimensions} from '@/utils';
 const {flex, font, margin, padding} = theme;
 export const rebateIcon = require('@components/assets/icons/me-list-item/rebate.webp');
 export const transactionsIcon = require('@components/assets/icons/me-list-item/transaction.webp');
+export const giftcode = require('@components/assets/icons/me-list-item/giftcode.webp');
 export const betsIcon = require('@components/assets/icons/me-list-item/bets.webp');
 export const commissionIcon = require('@components/assets/icons/me-list-item/commission.webp');
 export const passwordIcon = require('@components/assets/icons/me-list-item/password.webp');
