@@ -41,7 +41,7 @@ export interface KeralaListItem {
   instName: 'KERALA';
   issueNo: 'BR-93';
   lotteryMoney: number;
-  lotteryPrice: number;
+  lotteryPrice: string;
   lotteryType: string;
   sellMoney: number;
 }

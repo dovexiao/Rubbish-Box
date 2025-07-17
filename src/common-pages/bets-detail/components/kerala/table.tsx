@@ -59,11 +59,7 @@ const KeralaTable = ({list = []}: {list: BasicObject[]}) => {
                 size="medium"
                 white
                 style={[theme.font.center]}>
-                {toPriceStr(item.lotteryPrice, {
-                  fixed: 2,
-                  showCurrency: true,
-                  thousands: true,
-                })}
+                item.lotteryPrice
               </Text>
             </View>
             <View style={[theme.flex.flex1]}>
