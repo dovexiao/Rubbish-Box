@@ -346,6 +346,7 @@ export default {
     slots: 'Slots',
     live: 'Live',
     sport: 'Sport',
+    support: 'Support',
     register: 'Register',
     home1: 'Convenient deposit and withdrawal',
     home2: '24/7 support',

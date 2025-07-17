@@ -179,7 +179,7 @@ export async function toUrlGame(name: string, id: string, provider: string) {
     return;
   }
   try {
-    const url = await openGames[provider](id);
+    const url = await getFCStart(id);
     await goTo('WebView', {
       header: true,
       hideAmount: true,

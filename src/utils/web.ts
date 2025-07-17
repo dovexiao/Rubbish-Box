@@ -116,12 +116,13 @@ export async function toSlotegrator(name: string, id: string) {
 /** 前往客服 */
 export const goCS = () => {
   // navigateTo('https://direct.lc.chat/18181035/');
-  goTo('WebView', {
-    header: true,
-    headerTitle: 'Official Customer Service',
-    hideAmount: true,
-    originUrl: 'https://tawk.to/chat/6783d58baf5bfec1dbea7cf1/1ihdfkb8f',
-  });
+  navigateTo('https://chat.ssrchat.com/service/gp18cv');
+  // goTo('WebView', {
+  //   header: true,
+  //   headerTitle: 'Official Customer Service',
+  //   hideAmount: true,
+  //   originUrl: 'https://tawk.to/chat/6783d58baf5bfec1dbea7cf1/1ihdfkb8f',
+  // });
 };
 
 export const downloadApk = () => {

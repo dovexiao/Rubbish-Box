@@ -20,7 +20,8 @@ const tabsList = [
   {title: i18n.t('headers.popular'), value: 1, isLogin: false},
   {title: i18n.t('headers.lottery'), value: 10},
   {title: i18n.t('headers.live'), value: 3},
-  {title: i18n.t('headers.sport'), value: 2},
+  // {title: i18n.t('headers.sport'), value: 2},
+  {title: i18n.t('headers.support'), value: 2},
 ];
 
 const HomeCategoryPageTabs = () => {
