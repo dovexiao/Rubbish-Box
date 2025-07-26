@@ -300,7 +300,7 @@ const Me = () => {
               <MeListItem
                 icon={giftcode}
                 title={i18n.t('me.bottom.giftCode')}
-                description={i18n.t('me.description.giftCode')}
+                description={i18n.t('me.bottom.giftCode')}
                 onPress={toInvitation}
               />
               <MeListItem
