@@ -14,7 +14,6 @@ import {
   getJILIStart,
   getCQ9Start,
   getFCStart,
-  getT1Start,
   getAWCStart,
 } from './service';
 import {BasicObject} from '@/types';
@@ -164,10 +163,15 @@ export async function toUrlGame(name: string, id: string, provider: string) {
   const openGames: {[key: string]: any} = {
     YGG: getYGGStart,
     Evoplay: getYGGStart,
+    Evolution: getFCStart,
     JILI: getJILIStart,
     CQ9: getCQ9Start,
     FC: getFCStart,
-    T1: getT1Start,
+    PGSoft: getFCStart,
+    JDB: getFCStart,
+    BFLottobit: getFCStart,
+    Spribe: getFCStart,
+    T1: getFCStart,
     SEXYBCRT: getAWCStart,
   };
   if (!Object.keys(openGames).includes(provider)) {
