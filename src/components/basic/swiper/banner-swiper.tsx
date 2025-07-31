@@ -1,16 +1,31 @@
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React from 'react';
-import globalStore from '@/services/global.state';
-import theme from '@/style';
-import Carousel from 'react-native-reanimated-carousel';
+import React, {useState, useCallback} from 'react';
 import {View, StyleSheet, Linking} from 'react-native';
+import Carousel from 'react-native-reanimated-carousel';
 import {LazyImageBackground} from '@basicComponents/image';
 import TouchableOpacity from '@basicComponents/touchable-opacity';
+import theme from '@/style';
+import globalStore from '@/services/global.state';
 import Swiper from './swiper';
 import {goToUrl} from '@/common-pages/game-navigate';
 import {renderOverlayLinkComponent} from '@/components/basic/swiper';
 import {BannerListItem} from '@/pages/home/home.type';
+
+const styles = StyleSheet.create({
+  idotBox: {
+    bottom: theme.paddingSize.xxl,
+  },
+  idot: {
+    width: theme.paddingSize.xxs,
+    height: theme.paddingSize.xxs,
+    borderRadius: theme.paddingSize.xxs / 2,
+    marginHorizontal: theme.paddingSize.xxs / 2,
+    backgroundColor: theme.backgroundColor.palegrey,
+  },
+  idotActive: {
+    backgroundColor: theme.basicColor.primary,
+    width: theme.paddingSize.l,
+  },
+});
 
 interface BannerSwiperProps {
   bannerList: BannerListItem[];
@@ -27,60 +42,68 @@ const BannerSwiper = ({
   bannerOverlaySize = 'big',
   type = 1,
 }: BannerSwiperProps) => {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const styles = StyleSheet.create({
-    idotBox: {
-      bottom: theme.paddingSize.xxl,
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // 使用 useCallback 避免匿名函数重复创建
+  const onPressBanner = useCallback(
+    (item: BannerListItem) => {
+      if (type === 2) {
+        if (item?.popUrl) {
+          Linking.openURL(item.popUrl);
+        }
+      } else {
+        goToUrl(item.skipLinks, item.title);
+      }
     },
-    idot: {
-      width: theme.paddingSize.xxs,
-      height: theme.paddingSize.xxs,
-      borderRadius: theme.paddingSize.xxs / 2,
-      marginHorizontal: theme.paddingSize.xxs / 2,
-      backgroundColor: theme.backgroundColor.palegrey,
+    [type],
+  );
+
+  // 节流设置 currentIndex
+  const onProgressChange = useCallback(
+    (e: number) => {
+      let index = Math.abs(Math.round(e / bannerWidth));
+      if (index >= bannerList.length) {
+        index = 0;
+      }
+      if (index !== currentIndex) {
+        setCurrentIndex(index);
+      }
     },
-    idotActive: {
-      backgroundColor: theme.basicColor.primary,
-      width: theme.paddingSize.l,
-    },
-  });
-  return globalStore.isWeb ? (
-    <Swiper
-      pictureWidth={bannerWidth}
-      seamless={true}
-      paddingRight={theme.paddingSize.l}
-      height={bannerHeight}
-      autoPlay={true}
-      hasIndicator={true}
-      pictures={bannerList?.map(
-        (item: {bannerImg: string; bannerVideo: string}) => ({
+    [bannerList.length, bannerWidth, currentIndex],
+  );
+
+  if (globalStore.isWeb) {
+    return (
+      <Swiper
+        pictureWidth={bannerWidth}
+        seamless={true}
+        paddingRight={theme.paddingSize.l}
+        height={bannerHeight}
+        autoPlay={true}
+        hasIndicator={true}
+        pictures={bannerList?.map(item => ({
           uri: item.bannerImg,
           videoUri: item?.bannerVideo || '',
-        }),
-      )}
-      itemRadius={theme.borderRadiusSize.s}
-      onItemPress={_index => {
-        if (type === 2) {
-          Linking.openURL(bannerList[_index]?.popUrl);
-          return;
-        } else {
-          goToUrl(bannerList[_index].skipLinks, bannerList[_index].title);
-        }
-      }}
-      renderOverlayComponent={index => {
-        const bannerItem = bannerList[index];
-        return renderOverlayLinkComponent({
-          item: bannerItem,
-          onPress: () => {
-            goToUrl(bannerItem.skipLinks, bannerItem.title);
-          },
-          sizeHeight: bannerHeight,
-          sizeWidth: bannerWidth,
-          size: bannerOverlaySize,
-        });
-      }}
-    />
-  ) : (
+        }))}
+        itemRadius={theme.borderRadiusSize.s}
+        onItemPress={index => {
+          onPressBanner(bannerList[index]);
+        }}
+        renderOverlayComponent={index => {
+          const bannerItem = bannerList[index];
+          return renderOverlayLinkComponent({
+            item: bannerItem,
+            onPress: () => onPressBanner(bannerItem),
+            sizeHeight: bannerHeight,
+            sizeWidth: bannerWidth,
+            size: bannerOverlaySize,
+          });
+        }}
+      />
+    );
+  }
+
+  return (
     <View style={[theme.position.rel]}>
       <Carousel
         loop
@@ -91,26 +114,11 @@ const BannerSwiper = ({
         autoPlayInterval={3000}
         scrollAnimationDuration={1000}
         data={bannerList}
-        onProgressChange={e => {
-          let index = Math.abs(Math.round(e / bannerWidth));
-          if (index >= bannerList?.length) {
-            index = 0;
-          }
-          if (index !== currentIndex) {
-            setCurrentIndex(index);
-          }
-        }}
+        onProgressChange={onProgressChange}
         renderItem={({item}) => (
           <TouchableOpacity
             style={[theme.fill.fill, {bottom: 8}]}
-            onPress={() => {
-              if (type === 2) {
-                Linking.openURL(item?.popUrl);
-                return;
-              } else {
-                goToUrl(item.skipLinks, item.title);
-              }
-            }}>
+            onPress={() => onPressBanner(item)}>
             <View
               style={[
                 theme.fill.fill,
@@ -124,10 +132,8 @@ const BannerSwiper = ({
                 height={bannerHeight}
                 width={bannerWidth}>
                 {renderOverlayLinkComponent({
-                  item: item,
-                  onPress: () => {
-                    goToUrl(item.skipLinks, item.title);
-                  },
+                  item,
+                  onPress: () => onPressBanner(item),
                   sizeHeight: bannerHeight,
                   sizeWidth: bannerWidth,
                   size: bannerOverlaySize,
@@ -171,4 +177,4 @@ const BannerSwiper = ({
   );
 };
 
-export default BannerSwiper;
+export default React.memo(BannerSwiper);
