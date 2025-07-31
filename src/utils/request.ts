@@ -69,7 +69,7 @@ const createHTTP = ({
   // 创建一个Axios实例
   const http = axios.create({
     baseURL: baseUrl,
-    timeout: 60000, // 设置请求超时时间
+    timeout: 15000, // 设置请求超时时间
     headers: {
       ...header,
       ...mergeHeader,
@@ -109,7 +109,7 @@ const createHTTP = ({
       });
       errorLog('请求拦截器错误:', error);
       globalStore.globalWaringTotal('Request Error');
-      // return Promise.reject(error);
+      return Promise.reject(error);
     },
   );
 
@@ -148,7 +148,7 @@ const createHTTP = ({
       });
       errorLog('响应拦截器错误:', error);
       globalStore.globalWaringTotal('Network Error');
-      // return Promise.reject(error);
+      return Promise.reject(error);
     },
   );
 

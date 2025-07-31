@@ -33,7 +33,7 @@ import {
   // PopInfo,
   checkPop,
   dailyRecord,
-  initPush,
+  // initPush,
   setToken,
   setUserInfo,
   setVisitor,
@@ -89,15 +89,15 @@ function App(): JSX.Element {
   const [codeInited, setCodeInited] = React.useState(false);
   const [available, setAvailable] = React.useState(0);
   const {height} = useWindowDimensions();
-  const initChat = () => {
-    const chatModule = require('@components/chat');
-    const freshchatConfig = new chatModule.FreshchatConfig(
-      '3431af1d-2d7a-41e3-b0d0-11bc0b3f3bd9',
-      'e45c710e-7a8f-4629-9d05-9d84c379abce',
-    );
-    freshchatConfig.domain = 'msdk.freshchat.com';
-    chatModule.Freshchat.init(freshchatConfig);
-  };
+  // const initChat = () => {
+  //   const chatModule = require('@components/chat');
+  //   const freshchatConfig = new chatModule.FreshchatConfig(
+  //     '3431af1d-2d7a-41e3-b0d0-11bc0b3f3bd9',
+  //     'e45c710e-7a8f-4629-9d05-9d84c379abce',
+  //   );
+  //   freshchatConfig.domain = 'msdk.freshchat.com';
+  //   chatModule.Freshchat.init(freshchatConfig);
+  // };
 
   /** 全局订阅 */
   const globalSubscriptions = () => {
@@ -311,8 +311,8 @@ function App(): JSX.Element {
   React.useEffect(() => {
     if (codeInited && globalStore.isAndroid) {
       // 先更新，在干其他的
-      initChat();
-      initPush();
+      // initChat();
+      // initPush();
       setLoading(false);
     }
   }, [codeInited]);
