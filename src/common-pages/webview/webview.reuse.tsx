@@ -23,7 +23,6 @@ const gameLoadingImage: Record<string, ImageSourcePropType> = {
   Color: require('@/assets/imgs/loading/color.webp'),
   Digit: require('@/assets/imgs/loading/digit.webp'),
   Kerala: require('@/assets/imgs/loading/kerala.webp'),
-  Matka: require('@/assets/imgs/loading/matka.webp'),
   quick: require('@/assets/imgs/loading/digit.webp'),
 };
 

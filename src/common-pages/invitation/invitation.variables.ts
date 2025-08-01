@@ -15,7 +15,6 @@ export const whatsappIcon = require('@components/assets/icons/proxy/whatsapp.web
 // export const content = require('@assets/imgs/invitation/content.webp');
 // export const bottom = require('@assets/imgs/invitation/bottom.webp');
 // export const CardOuterBg = require('@assets/imgs/invitation/card-outer.webp');
-export const CardTopRightImg = require('@assets/imgs/invitation/card-top-right.webp');
 export const invitationColors = {
   tableHeader: '#FF6868',
   tableEven: '#FFD5D5',

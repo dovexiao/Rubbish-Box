@@ -4,7 +4,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   Modal,
   TextInput,
 } from 'react-native';
@@ -33,28 +32,10 @@ const HomeTabPageHome: React.FC<HomeTabProps> = ({kongList = []}) => {
     return homeBannerList?.filter(item => item?.putPage.indexOf('Home') !== -1);
   }, [homeBannerList]);
   const scrollViewRef1 = useRef<ScrollView>(null);
-
-  // const scrollToPosition = (position: any) => {
-  //   if (scrollViewRef1.current) {
-  //     scrollViewRef1.current?.scrollTo({y: position, animated: true});
-  //   }
-  // };
-  const toPromotion = () => {
-    goTo('PromotionDetail', {id: 10});
-  };
   /********************gift code */
   const {i18n} = useTranslation();
   const clicked = useRef(false);
   const [code, setCode] = useState('');
-  // const {getUserInfo} = useUserActions();
-
-  // const refreshAmount = () => {
-  //   getUserInfo();
-  //   globalStore.updateAmount.next();
-  // };
-
-  // const {renderModal: renderGetModal, show1: getModalShow} =
-  //   useGetModal(refreshAmount);
 
   const onPressCancel = () => {
     clicked.current = false;
@@ -341,12 +322,6 @@ const HomeTabPageHome: React.FC<HomeTabProps> = ({kongList = []}) => {
           );
         })}
       </View>
-      <NativeTouchableOpacity activeOpacity={1} onPress={toPromotion}>
-        <Image
-          source={require('@assets/imgs/me/advertisement.webp')}
-          style={[{height: 68, width: '100%'}, theme.margin.tops]}
-        />
-      </NativeTouchableOpacity>
       {renderModal}
       {showModal ? modal : null}
     </ScrollView>
