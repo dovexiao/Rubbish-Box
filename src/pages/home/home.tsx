@@ -101,7 +101,6 @@ const Home = () => {
 
   return (
     <LazyImageLGBackground
-      showBottomBG={false}
       subtractBottomTabHeight
       style={[theme.fill.fill, theme.position.rel]}
     >

@@ -15,9 +15,7 @@ const AgentFranchise = () => {
   const {screenWidth, calculateItemWidth} = useSettingWindowDimensions();
   const imageWidth = screenWidth - theme.paddingSize.xxl * 2;
   return (
-    <LazyImageLGBackground
-      style={[theme.fill.fill, theme.flex.col]}
-      showBottomBG={false}>
+    <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle
         title={i18n.t('agentfranchise.detail.title')}
         hideAmount

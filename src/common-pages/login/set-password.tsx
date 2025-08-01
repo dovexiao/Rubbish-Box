@@ -38,9 +38,7 @@ const SetPassword = (props: NavigatorScreenProps) => {
     }
   };
   return (
-    <LazyImageLGBackground
-      locations={[0, 1]}
-      style={[theme.fill.fill, theme.flex.col]}>
+    <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <NavTitle
         onBack={fromLogin ? undefined : () => goBack()}
         title={i18n.t('login.label.set-password')}

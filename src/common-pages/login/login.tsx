@@ -63,7 +63,7 @@ const Login = (props: NavigatorScreenProps) => {
     <KeyboardAvoidingView
       behavior="height"
       style={[theme.fill.fill, theme.flex.col, theme.position.rel]}>
-      <LazyImageLGBackground locations={[0, 1]} showBottomBG>
+      <LazyImageLGBackground>
         <ScrollView keyboardShouldPersistTaps="always" style={[flex.flex1]}>
           <NavTitle
             onClose={() => {

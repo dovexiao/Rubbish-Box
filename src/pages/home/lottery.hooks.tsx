@@ -12,9 +12,9 @@ import {Tooltip} from '@rneui/themed';
 import globalStore from '@/services/global.state';
 
 const closeIcon = require('@assets/icons/home/button-close.png');
-const progressBgIcon = require('@assets/icons/home/free-lottery/progress-bg.png');
-const progressIcon = require('@assets/icons/home/free-lottery/progress.png');
-const questionIcon = require('@assets/icons/home/free-lottery/question.png');
+const progressBgIcon = require('@assets/icons/home/button-close.png');
+const progressIcon = require('@assets/icons/home/button-close.png');
+const questionIcon = require('@assets/icons/home/button-close.png');
 
 const TouchableOpacity = globalStore.isWeb
   ? WebTouchableOpacity

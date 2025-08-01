@@ -40,7 +40,7 @@ const Collect = () => {
   };
 
   return (
-    <LazyImageLGBackground style={[theme.fill.fill]} showBottomBG={false}>
+    <LazyImageLGBackground style={[theme.fill.fill]}>
       <DetailNavTitle
         onBack={goBack}
         hideAmount

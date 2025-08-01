@@ -6,11 +6,9 @@ import {useAsyncPageSpin} from '@/common-pages/hooks/async.hooks';
 
 import useHomeStore from '@/store/useHomeStore';
 import {useShallow} from 'zustand/react/shallow';
-import theme from '@/style';
 import GameList from '../components/game-list/game-list';
 import GameHomeList from '../components/game-list/game-home-list';
 import HomePageTagTabs from '../components/home-page-tag-tabs';
-import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import HomeBanner from '@/pages/home/components/home-banner';
 import {MessagePlay} from '@basicComponents/messagePlay';
 import {appBroadcast} from '@services/global.service';
@@ -18,7 +16,6 @@ import {appBroadcast} from '@services/global.service';
 const HomeTabPageSlots = () => {
   const {} = useAsyncPageSpin();
   const first = useRef(true);
-  const {screenHeight} = useSettingWindowDimensions();
 
   const {pageTagIndex, getHomeTagList, getCategoryHomeList} = useHomeStore(
     useShallow(state => ({
@@ -58,17 +55,14 @@ const HomeTabPageSlots = () => {
   }, [getCategoryHomeList, getHomeTagList, handleInit]);
 
   return (
-    <ScrollView style={[theme.flex.flex1]}>
+    <ScrollView style={{flex: 1}} contentContainerStyle={{flexGrow: 1}}>
       <HomeBanner bannerList={memoBannerList} />
       {noticeList && <MessagePlay notices={noticeList} />}
       <HomePageTagTabs />
 
-      {/* 注意：这里不要再有 ScrollView/FlatList */}
-      {pageTagIndex === -1 && (
-        <GameHomeList /> // 确保它内部不是可滚动组件
-      )}
+      {pageTagIndex === -1 && <GameHomeList />}
       {pageTagIndex !== -1 && (
-        <View style={{minHeight: screenHeight - 230}}>
+        <View style={{paddingBottom: 300}}>
           <GameList />
         </View>
       )}

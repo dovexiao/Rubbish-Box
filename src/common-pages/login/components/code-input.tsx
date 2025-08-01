@@ -1,26 +1,43 @@
 import React from 'react';
-import {Animated, View, Image} from 'react-native';
-import {Input} from '@rneui/themed';
+import {View, Image} from 'react-native';
+import {Input, Dialog} from '@rneui/themed';
 import theme from '@style';
 import Text from '@basicComponents/text';
 import {sendCode} from '../login.service';
 import LinearGradient from '@basicComponents/linear-gradient';
 import {inputProps, styles} from '../login.style';
-import {Dialog} from '@rneui/themed';
 import globalStore from '@/services/global.state';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import Button from '@basicComponents/button';
+import {Shadow} from 'react-native-shadow-2';
+import {BasicObject} from '@/types';
 import {useTranslation} from 'react-i18next';
+import {scaleSize} from '@utils';
 
-// const closeIcon = require('@components/assets/icons/clear.webp');
+const closeIcon = require('@components/assets/icons/clear.webp');
+
+const shadow = {
+  startColor: '#ADB3C8',
+  distance: 0,
+  offset: [0, 1],
+  style: [theme.borderRadius.xs, theme.overflow.hidden] as BasicObject[],
+} as BasicObject;
+
+if (globalStore.isWeb) {
+  shadow.distance = 0;
+  delete shadow.offset;
+  shadow.style.push({
+    boxShadow: '0 2px 1px 0px #F7B500',
+  });
+}
 
 const CodeInput = ({
   setValueOrCode,
   switchIndex,
-  userPhone = '',
-  userPhoneCode = '',
-  OTPCode = '',
-  userPassword = '',
+  userPhone,
+  userPhoneCode,
+  OTPCode,
+  userPassword,
 }: {
   setValueOrCode: (value: string) => void;
   switchIndex: number;
@@ -30,98 +47,194 @@ const CodeInput = ({
   userPassword?: string;
 }) => {
   const {i18n} = useTranslation();
-  const [secureTextEntry, setSecureTextEntry] = React.useState(true);
-  const [hasOTP, setHasOTP] = React.useState(false);
+  const [hasOTP, setOTP] = React.useState(false);
   const [OTPLoading, setOTPLoading] = React.useState(false);
-  const [countdown, setCountdown] = React.useState(60);
-  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [secureTextEntry, setSecureTextEntry] = React.useState(true);
+  const [OTPTime, setOTPTime] = React.useState(59);
+  const [blured, setBlured] = React.useState(true);
+  const OTPTimeRef = React.useRef(59);
 
-  React.useEffect(() => {
-    if (hasOTP && countdown > 0) {
-      timerRef.current = setTimeout(() => {
-        setCountdown(countdown - 1);
-      }, 1000);
-    } else if (countdown === 0) {
-      setHasOTP(false);
-      setCountdown(60);
-      timerRef.current && clearTimeout(timerRef.current);
-    }
-    return () => {
-      timerRef.current && clearTimeout(timerRef.current);
-    };
-  }, [countdown, hasOTP]);
-
-  // 复用清除按钮动画
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  React.useEffect(() => {
-    const hasValue = switchIndex === 0 ? !!userPassword : !!OTPCode;
-    Animated.timing(fadeAnim, {
-      toValue: hasValue ? 1 : 0,
-      duration: 100,
-      useNativeDriver: true,
-    }).start();
-  }, [userPassword, OTPCode, switchIndex, fadeAnim]);
-
-  const handleGetOTP = () => {
-    if (OTPLoading) {
-      return;
-    }
-    if (!userPhone) {
-      globalStore.globalWaringTotal(i18n.t('login.tip.no-phone'));
-      return;
-    }
-    setOTPLoading(true);
-    sendCode((globalStore.sendPhoneCode ? userPhoneCode : '') + userPhone)
-      .then(() => {
-        globalStore.globalTotal.next({
-          type: 'success',
-          message: i18n.t('tip.success'),
-        });
-        setHasOTP(true);
-      })
-      .finally(() => setOTPLoading(false));
+  const setHasOTP = () => {
+    setOTP(true);
+    OTPTimeRef.current = 59;
+    setOTPTime(OTPTimeRef.current);
   };
 
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      if (hasOTP && OTPTimeRef.current > 1) {
+        OTPTimeRef.current -= 1;
+        setOTPTime(OTPTimeRef.current);
+      } else {
+        clearInterval(timer);
+        setOTP(false);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [hasOTP]);
+
   return (
-    <View style={[theme.fill.fillW]}>
-      {switchIndex === 0 ? (
-        // Password Input
-        <View style={[styles.inputBox, theme.position.rel]}>
+    <View style={[theme.position.rel, theme.fill.fillW]}>
+      {switchIndex === 1 ? (
+        // 验证码输入框
+        <View
+          style={[
+            styles.inputBox,
+            theme.position.rel,
+            theme.fill.fillW,
+            blured ? styles.greyBorder : styles.deepBorder,
+          ]}>
           <Image
-            style={{width: 18, height: 18}}
+            style={{width: scaleSize(13), height: scaleSize(13)}}
+            source={require('@components/assets/icons/code.webp')}
+          />
+          <View style={theme.flex.flex1}>
+            <Input
+              {...inputProps}
+              onFocus={() => setBlured(false)}
+              onBlur={() => setBlured(true)}
+              keyboardType="numeric"
+              inputMode="numeric"
+              value={OTPCode}
+              onChangeText={value => {
+                if (/^[0-9]*$/.test(value)) {
+                  setValueOrCode(value);
+                }
+              }}
+              maxLength={6}
+              placeholder={i18n.t('login.tip.otp')}
+            />
+          </View>
+          {OTPCode?.length ? (
+            <NativeTouchableOpacity onPress={() => setValueOrCode('')}>
+              <Image
+                style={{
+                  height: theme.iconSize.xl / 2,
+                  width: theme.iconSize.xl / 2,
+                }}
+                source={closeIcon}
+              />
+            </NativeTouchableOpacity>
+          ) : null}
+          <Shadow {...shadow}>
+            <View>
+              {hasOTP ? (
+                <View
+                  style={[
+                    theme.padding.lrl,
+                    theme.padding.tbm,
+                    theme.borderRadius.xs,
+                    {
+                      width: theme.paddingSize.l * 4,
+                      backgroundColor: theme.basicColor.primary,
+                    },
+                  ]}>
+                  <Text
+                    fontSize={theme.fontSize.s}
+                    white
+                    textAlign="center"
+                    blod>
+                    {OTPTime}s
+                  </Text>
+                </View>
+              ) : (
+                <Button
+                  radius={0}
+                  buttonStyle={{
+                    paddingHorizontal: theme.paddingSize.zorro,
+                    paddingVertical: theme.paddingSize.zorro,
+                    backgroundColor: theme.basicColor.transparent,
+                    ...styles.getOTP,
+                  }}
+                  containerStyle={{
+                    borderRadius: theme.borderRadiusSize.xs,
+                  }}
+                  onPress={() => {
+                    if (OTPLoading || !userPhone) {
+                      return;
+                    }
+                    setOTPLoading(true);
+                    sendCode(
+                      (globalStore.sendPhoneCode ? userPhoneCode : '') +
+                        userPhone,
+                    )
+                      .then(() => {
+                        setHasOTP();
+                        globalStore.globalTotal.next({
+                          type: 'success',
+                          message: i18n.t('tip.success'),
+                        });
+                      })
+                      .finally(() => setOTPLoading(false));
+                  }}>
+                  <LinearGradient
+                    style={[theme.padding.lrl, theme.padding.tbs]}
+                    colors={theme.linearGradientColor.linearGradientBtnColor}
+                    start={{x: 0, y: 0}}
+                    end={{x: 0, y: 1}}>
+                    {OTPLoading ? (
+                      <Dialog.Loading
+                        loadingProps={{size: 'small'}}
+                        loadingStyle={[
+                          theme.icon.xs,
+                          {
+                            marginVertical: theme.paddingSize.xxs / 2,
+                            marginHorizontal: theme.paddingSize.xs,
+                          },
+                        ]}
+                      />
+                    ) : (
+                      <Text white>{i18n.t('login.label.get-otp')}</Text>
+                    )}
+                  </LinearGradient>
+                </Button>
+              )}
+            </View>
+          </Shadow>
+        </View>
+      ) : (
+        // 密码输入框
+        <View
+          style={[
+            styles.inputBox,
+            theme.fill.fillW,
+            blured ? styles.greyBorder : styles.deepBorder,
+          ]}>
+          <Image
+            style={{width: scaleSize(10), height: scaleSize(14)}}
             source={require('@assets/icons/login/lock.webp')}
           />
           <View style={theme.flex.flex1}>
             <Input
               {...inputProps}
+              onFocus={() => setBlured(false)}
+              onBlur={() => setBlured(true)}
               value={userPassword}
               onChangeText={value => {
-                const valid = /^[A-Za-z0-9~!@#$%^&*()_+\[\]{};:,.<>?]*$/.test(
-                  value,
-                );
-                setValueOrCode(valid ? value : userPassword);
+                if (/^[A-Za-z0-9~!@#$%^&*()_+\[\]{};:,.<>?]*$/.test(value)) {
+                  setValueOrCode(value);
+                }
               }}
               secureTextEntry={secureTextEntry}
               maxLength={18}
               placeholder={i18n.t('login.tip.password')}
             />
           </View>
-          <Animated.View style={{opacity: fadeAnim}}>
-            <NativeTouchableOpacity
-              disabled={!userPassword}
-              onPress={() => setValueOrCode('')}>
-              {/*<Image*/}
-              {/*  style={[*/}
-              {/*    {height: theme.iconSize.xl / 2, width: theme.iconSize.xl / 2},*/}
-              {/*  ]}*/}
-              {/*  source={closeIcon}*/}
-              {/*/>*/}
+          {userPassword?.length ? (
+            <NativeTouchableOpacity onPress={() => setValueOrCode('')}>
+              <Image
+                style={{
+                  height: theme.iconSize.xl / 2,
+                  width: theme.iconSize.xl / 2,
+                }}
+                source={closeIcon}
+              />
             </NativeTouchableOpacity>
-          </Animated.View>
+          ) : null}
           <NativeTouchableOpacity
             onPress={() => setSecureTextEntry(!secureTextEntry)}>
             <Image
-              style={theme.icon.s}
+              style={[theme.icon.s, {marginLeft: 5}]}
               source={
                 secureTextEntry
                   ? require('@assets/icons/login/eye-close.webp')
@@ -129,85 +242,6 @@ const CodeInput = ({
               }
             />
           </NativeTouchableOpacity>
-        </View>
-      ) : (
-        // OTP Input
-        <View style={[styles.inputBox, theme.position.rel]}>
-          <Image
-            style={{width: 18, height: 18}}
-            source={require('@components/assets/pofile/idImg.webp')}
-          />
-          <View style={theme.flex.flex1}>
-            <Input
-              {...inputProps}
-              value={OTPCode}
-              keyboardType="numeric"
-              onChangeText={value => {
-                const valid = /^[0-9]*$/.test(value);
-                setValueOrCode(valid ? value : OTPCode);
-              }}
-              maxLength={6}
-              placeholder={i18n.t('login.tip.otp')}
-            />
-          </View>
-          <Animated.View style={{opacity: fadeAnim}}>
-            <NativeTouchableOpacity
-              disabled={!OTPCode}
-              onPress={() => setValueOrCode('')}>
-              {/*<Image*/}
-              {/*  style={[*/}
-              {/*    {height: theme.iconSize.xl / 2, width: theme.iconSize.xl / 2},*/}
-              {/*  ]}*/}
-              {/*  source={closeIcon}*/}
-              {/*/>*/}
-            </NativeTouchableOpacity>
-          </Animated.View>
-          {hasOTP ? (
-            <View
-              style={[
-                theme.padding.lrl,
-                theme.padding.tbm,
-                theme.borderRadius.xs,
-                theme.background.primary,
-              ]}>
-              <Text white blod>
-                {countdown}s
-              </Text>
-            </View>
-          ) : (
-            <Button
-              radius={0}
-              buttonStyle={{
-                paddingHorizontal: theme.paddingSize.zorro,
-                paddingVertical: theme.paddingSize.zorro,
-                ...styles.getOTP,
-              }}
-              containerStyle={{
-                borderRadius: theme.borderRadiusSize.xs,
-              }}
-              onPress={handleGetOTP}>
-              <LinearGradient
-                style={[theme.padding.lrl, theme.padding.tbs]}
-                colors={theme.linearGradientColor.linearGradientBtnColor}
-                start={{x: 0, y: 0}}
-                end={{x: 0, y: 1}}>
-                {OTPLoading ? (
-                  <Dialog.Loading
-                    loadingProps={{size: 'small'}}
-                    loadingStyle={[
-                      theme.icon.xs,
-                      {
-                        marginVertical: theme.paddingSize.xxs / 2,
-                        marginHorizontal: theme.paddingSize.xs,
-                      },
-                    ]}
-                  />
-                ) : (
-                  <Text white>{i18n.t('login.label.get-otp')}</Text>
-                )}
-              </LinearGradient>
-            </Button>
-          )}
         </View>
       )}
     </View>

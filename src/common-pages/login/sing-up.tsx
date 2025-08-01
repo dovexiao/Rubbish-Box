@@ -52,10 +52,7 @@ const SingUp = (props: NavigatorScreenProps) => {
   //   setLayoutHeight(nativeEvent.layout.height);
   // };
   return (
-    <LazyImageLGBackground
-      showBottomBG
-      locations={[0, 1]}
-      style={[theme.fill.fill, theme.flex.col]}>
+    <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <NavTitle onClose={goBack} />
       <ScrollView style={{zIndex: 10}}>
         <View

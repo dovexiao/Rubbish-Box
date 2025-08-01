@@ -105,7 +105,7 @@ const Promotion = () => {
   );
 
   return (
-    <LazyImageLGBackground style={{height: screenHeight}} showBottomBG={false}>
+    <LazyImageLGBackground style={{height: screenHeight}} >
       <DetailNavTitle title={i18n.t('promotion.title')} hideServer />
       <FlatList
         data={promotionList}

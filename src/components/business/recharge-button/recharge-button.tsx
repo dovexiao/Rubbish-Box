@@ -32,7 +32,7 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
     },
     buttonWrap: {
       paddingTop: theme.paddingSize.l,
-      paddingBottom: globalStore.isAndroid ? 24 * 3 : 24,
+      paddingBottom: globalStore.isAndroid ? 63 * 3 : 63,
     },
   });
 

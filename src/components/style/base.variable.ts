@@ -26,7 +26,7 @@ export const basicColor = {
   white: '#FFFFFF',
   dark: '#000',
   transparent: '#1C1C1C',
-  transparentMedium: 'rgba(0, 0, 0, 0.3)',
+  transparentMedium: 'rgba(4,4,4,0.1)',
   transparentMedium1: 'rgba(0, 0, 0, 0.5)',
   selectPrimary: '#2A8C83',
   newButtonLinear: ['#EDA83D', '#F7B500'], //大部分情况为大型按钮(从左到右渐变),标签（从下到上渐变）配色

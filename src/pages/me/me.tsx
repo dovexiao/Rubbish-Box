@@ -232,7 +232,7 @@ const Me = () => {
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
   return (
-    <LazyImageLGBackground showBottomBG={false} subtractBottomTabHeight>
+    <LazyImageLGBackground subtractBottomTabHeight>
       {/* TODO 这里的滚动方案需要优化,以及文件过大需要拆分 */}
       <Spin loading={pageLoading} style={[theme.fill.fill, theme.padding.lrl]}>
         <Animated.ScrollView

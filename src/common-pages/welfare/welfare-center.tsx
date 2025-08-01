@@ -28,7 +28,6 @@ const WelfareCenterPage = () => {
 
   return (
     <LazyImageLGBackground
-      showBottomBG={false}
       subtractBottomTabHeight
       style={[theme.position.rel, theme.overflow.hidden]}>
       <DetailNavTitle

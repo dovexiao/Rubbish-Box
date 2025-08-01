@@ -3,53 +3,51 @@ import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {LazyImageProps} from './lazy-image';
 import {ImageUrlType} from './index.type';
 import {useResponsiveDimensions} from '@/utils';
-import Svg, {Circle, Line} from 'react-native-svg';
+import Svg, {Polygon} from 'react-native-svg';
 
 export interface LazyImageLGBackgroundProps
   extends Omit<LazyImageProps, 'imageUrl'> {
-  showBottomBG?: boolean;
   subtractBottomTabHeight?: boolean;
-  locations?: number[];
   style?: StyleProp<ViewStyle>;
   imageUrl?: ImageUrlType;
   children?: ReactNode;
   fullHeight?: boolean;
 }
 
-const generatePoints = (width: number, height: number, count = 60) => {
-  const points = [];
-  for (let i = 0; i < count; i++) {
-    points.push({
-      x: Math.random() * width,
-      y: Math.random() * height,
-    });
-  }
-  return points;
-};
-
-const NeuralNetGrid: React.FC<{width: number; height: number}> = ({
+const HexGrid: React.FC<{width: number; height: number}> = ({
   width,
   height,
 }) => {
-  const points = generatePoints(width, height, 360);
-  const lines = [];
+  const hexSize = 15; // 单个六边形大小
+  const hexWidth = hexSize * Math.sqrt(3);
+  const hexHeight = hexSize * 2;
+  const hexVert = (hexHeight * 3) / 4;
 
-  points.forEach((p1, i) => {
-    const connections = points.slice(i + 1).filter(() => Math.random() < 0.08);
-    connections.forEach(p2 => {
-      lines.push(
-        <Line
-          key={`${p1.x}-${p1.y}-${p2.x}-${p2.y}`}
-          x1={p1.x}
-          y1={p1.y}
-          x2={p2.x}
-          y2={p2.y}
-          stroke="rgba(150, 200, 255, 0.4)" // 淡蓝线
+  const hexagons = [];
+
+  for (let y = 0; y < height + hexHeight; y += hexVert) {
+    for (let x = 0; x < width + hexWidth; x += hexWidth) {
+      const offsetX = (Math.floor(y / hexVert) % 2) * (hexWidth / 2);
+      const points = [
+        `${x + offsetX + hexWidth / 2},${y}`,
+        `${x + offsetX + hexWidth},${y + hexHeight / 4}`,
+        `${x + offsetX + hexWidth},${y + (hexHeight * 3) / 4}`,
+        `${x + offsetX + hexWidth / 2},${y + hexHeight}`,
+        `${x + offsetX},${y + (hexHeight * 3) / 4}`,
+        `${x + offsetX},${y + hexHeight / 4}`,
+      ].join(' ');
+
+      hexagons.push(
+        <Polygon
+          key={`${x}-${y}`}
+          points={points}
+          stroke="rgba(63, 63, 63, 0.2)" // 边框颜色（带透明度）
           strokeWidth="1"
+          fill="none"
         />,
       );
-    });
-  });
+    }
+  }
 
   return (
     <Svg
@@ -57,15 +55,7 @@ const NeuralNetGrid: React.FC<{width: number; height: number}> = ({
       height={height}
       style={StyleSheet.absoluteFill}
       pointerEvents="none">
-      {points.map((p, i) => {
-        const color =
-          Math.random() < 0.5
-            ? 'rgba(255,255,255,0.8)' // 白点
-            : 'rgba(120,180,255,0.8)'; // 淡蓝点
-        return (
-          <Circle key={`dot-${i}`} cx={p.x} cy={p.y} r={1.5} fill={color} />
-        );
-      })}
+      {hexagons}
     </Svg>
   );
 };
@@ -80,6 +70,7 @@ const LazyImageLGBackground: React.FC<LazyImageLGBackgroundProps> = props => {
   } = props;
 
   const {width: screenWidth, height: screenHeight} = useResponsiveDimensions();
+
   const containerHeight = fullHeight
     ? '100%'
     : subtractBottomTabHeight
@@ -89,31 +80,21 @@ const LazyImageLGBackground: React.FC<LazyImageLGBackgroundProps> = props => {
   return (
     <View
       style={[
-        {
-          width: screenWidth,
-          height: containerHeight,
-          backgroundColor: 'transparent', // 改为透明或 props 可控
-        },
-        styles.view,
+        styles.container,
         style,
+        {width: screenWidth, height: containerHeight},
       ]}
       {...imageProps}>
-      <View style={styles.bg}>
-        <NeuralNetGrid width={screenWidth} height={screenHeight} />
-      </View>
+      <HexGrid width={screenWidth} height={screenHeight} />
       {children}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  view: {
+  container: {
     position: 'relative',
-    backgroundColor: '#000',
-  },
-  bg: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: -1,
+    backgroundColor: '#000', // 背景底色黑
   },
 });
 
