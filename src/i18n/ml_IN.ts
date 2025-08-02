@@ -49,9 +49,8 @@ export default {
       title: 'ലൈവ് കാസിനോ',
     },
     tip: {
-      closed:
-        '{{name}} ഇപ്പോൾ അടച്ചിരിക്കുന്നു, ദയവായി അടുത്ത ഗെയിം തിരഞ്ഞെടുക്കുക',
-      copied: ' പകർത്തുക',
+      downTips1: 'Get your Supbet App here',
+      downTips2: 'Start using exclusive services',
     },
     label: {
       menu: 'മെനു',

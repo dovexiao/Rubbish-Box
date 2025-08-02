@@ -49,8 +49,8 @@ export default {
       title: 'लाइव कैसीनो',
     },
     tip: {
-      closed: '{{name}} अभी बंद है, कृपया अगला खेल चुनें',
-      copied: 'सफलतापूर्वक कॉपी किया गया, कृपया दोस्तों के साथ शेयर करें',
+      downTips1: 'Get your Supbet App here',
+      downTips2: 'Start using exclusive services',
     },
     label: {
       menu: 'मेन्यू',

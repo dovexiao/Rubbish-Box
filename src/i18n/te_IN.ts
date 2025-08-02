@@ -48,8 +48,8 @@ export default {
       title: 'లైవ్ క్యాసినో',
     },
     tip: {
-      closed: '{{name}} ఇప్పుడు మూసివేయబడింది, దయచేసి తదుపరి ఆటను ఎంచుకోండి',
-      copied: 'కాపీ విజయవంతంగా పూర్తయింది, దయచేసి స్నేహితులతో షేర్ చేయండి',
+      downTips1: 'Get your Supbet App here',
+      downTips2: 'Start using exclusive services',
     },
     label: {
       menu: 'మెను',

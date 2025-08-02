@@ -1,113 +1,81 @@
-import React from 'react';
-import {View, Image} from 'react-native';
-import Text from '@basicComponents/text';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import theme from '@/style';
-import {downloadApk} from '@/utils';
-import i18n from '@i18n';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
-import {useSettingWindowDimensions} from '@/store/useSettingStore';
+import {downloadApk} from '@/utils'; //goTo
+import globalStore from '@services/global.state';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import {View, Image} from 'react-native';
+import Text from '@basicComponents/text';
+import LinearGradient from '@/components/basic/linear-gradient';
 
 const Download: React.FC = () => {
-  const {calculateItemWidth} = useSettingWindowDimensions();
-
-  // 动态尺寸
-  const bannerHeight = calculateItemWidth(40);
-  const downloadSizeH = calculateItemWidth(27);
-  const downloadSizeW = calculateItemWidth(90);
-  const iconSize = calculateItemWidth(24);
-
-  // 显示控制
-  const isVisible = useSharedValue(true);
-
-  // 动画样式
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      height: withTiming(isVisible.value ? bannerHeight : 0, {duration: 400}),
-      marginBottom: withTiming(isVisible.value ? 6 : 0, {duration: 400}),
-      overflow: 'hidden',
-    };
-  }, [isVisible]);
-
-  // 下载方法
+  const {i18n} = useTranslation();
+  const [show] = React.useState(true); //setShow
   const toDownload = () => {
+    // if (!globalStore.token) {
+    //   globalStore.globalWaringTotal(i18n.t('home.tip.beforDownload'));
+    //   goTo('Login');
+    //   return;
+    // }
     downloadApk();
   };
-
-  return (
-    <Animated.View
-      key="accordionItem_download-view"
+  const heightZoom = 50 / 375;
+  const bannerHeight = globalStore.screenWidth * heightZoom;
+  const downloadSizeH = (30 * globalStore.screenWidth) / 375;
+  const downloadSizeW = (90 * globalStore.screenWidth) / 375;
+  const imgSize = (35 * globalStore.screenWidth) / 375;
+  return show ? (
+    <LinearGradient
+      colors={theme.basicColor.primaryLinearGradient}
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 0}}
       style={[
         theme.flex.row,
+        theme.flex.centerByCol,
         theme.flex.between,
-        theme.borderRadius.s,
-        theme.background.transparentMedium,
-        theme.padding.lrl,
-        animatedStyle,
+        {
+          height: bannerHeight,
+          paddingLeft: theme.paddingSize.xxl,
+          paddingRight: theme.paddingSize.xxl,
+          marginTop: 3,
+        },
       ]}>
-      {/* 文案区域 */}
-      <View
-        style={[
-          theme.flex.flex,
-          theme.flex.row,
-          {maxWidth: '60%', alignItems: 'center'},
-        ]}>
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          blod
+      <View style={[theme.flex.flex, theme.flex.row]}>
+        <Image
           style={[
-            theme.font.l,
-            theme.font.primary,
-            {textAlignVertical: 'center'},
-          ]}>
-          {i18n.t('other.downloadApp')}
-        </Text>
-      </View>
-
-      {/* 按钮 + 关闭区域 */}
-      <View
-        style={[
-          theme.flex.row,
-          theme.flex.centerByCol,
-          {gap: 8, flexShrink: 0},
-        ]}>
-        <NativeTouchableOpacity
-          onPress={toDownload}
-          style={[
-            theme.flex.center,
-            theme.borderRadius.s,
             {
-              height: downloadSizeH,
-              width: downloadSizeW,
-              ...theme.background.primary,
+              height: imgSize,
+              width: imgSize,
+              marginRight: theme.paddingSize.m,
             },
-          ]}>
-          <Text black size="medium" numberOfLines={1}>
-            {i18n.t('other.download')}
+          ]}
+          source={require('@assets/logos/logo.webp')}
+        />
+        <View style={[theme.flex.flex, theme.flex.col, theme.flex.centerByRow]}>
+          <Text main blod style={[theme.font.fm]} color={theme.fontColor.white}>
+            {i18n.t('home.tip.downTips1')}
           </Text>
-        </NativeTouchableOpacity>
-
-        <NativeTouchableOpacity
-          hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
-          onPress={() => {
-            isVisible.value = false;
-          }}
-          style={[theme.flex.center, {height: iconSize, width: iconSize}]}>
+          <Text second style={[theme.font.fs]} color={theme.fontColor.white}>
+            {i18n.t('home.tip.downTips2')}
+          </Text>
+        </View>
+      </View>
+      <View style={[theme.flex.flex, theme.flex.row, theme.flex.centerByCol]}>
+        <NativeTouchableOpacity onPress={toDownload}>
           <Image
-            style={{
-              height: iconSize,
-              width: iconSize,
-            }}
-            source={require('@assets/icons/close-white.webp')}
+            style={[
+              {
+                height: downloadSizeH,
+                width: downloadSizeW,
+              },
+            ]}
+            source={require('@assets/animated/home-download.gif')}
           />
         </NativeTouchableOpacity>
       </View>
-    </Animated.View>
+    </LinearGradient>
+  ) : (
+    <></>
   );
 };
 

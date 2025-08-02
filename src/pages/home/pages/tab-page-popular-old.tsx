@@ -82,7 +82,7 @@ const HomeTabPagePopularOld: React.FC<HomeTabPagePopularProps> = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: tabBarHeight + 16, // ✅ 给底部加 padding 避免被遮挡
+          paddingBottom: tabBarHeight + 16,
         }}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {y: scrollAnim}}}],

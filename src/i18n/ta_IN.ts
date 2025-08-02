@@ -49,8 +49,8 @@ export default {
       title: 'லைவ் கேசினோ',
     },
     tip: {
-      closed: '{{name}} ஈஸ் கிளோஸ்ட் நொவ் , ப்ளீஸ் ச்சூஸ் நெஸ்ட் கேம் ',
-      copied: 'காப்பி சக்ஸஸ்புள்ளி, ப்ளீஸ் ஷேர் ஹர் வித்பிரென்ஸ்',
+      downTips1: 'Get your Supbet App here',
+      downTips2: 'Start using exclusive services',
     },
     label: {
       menu: 'மெனு ',

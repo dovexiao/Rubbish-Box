@@ -4,7 +4,7 @@ import {useInnerStyle} from './promotion.hooks';
 import DetailNavTitle from '@businessComponents/detail-nav-title';
 import {goBack, goTo} from '@utils';
 import {PromotionListItem, getPromotionDetail} from './promotion.service';
-import {ScrollView, View, Image} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import theme from '@/style';
 import Text from '@basicComponents/text';
 // import Button from '@basicComponents/button';
@@ -13,7 +13,6 @@ import {goToUrl} from '@/common-pages/game-navigate';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import {useRoute} from '@react-navigation/native';
 import {BasicObject} from '@/types';
-import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import {PromotionFixBottomButton} from './components';
 
 const PromotionDetail = () => {
@@ -27,8 +26,6 @@ const PromotionDetail = () => {
     listStyle,
     // detailStyle,
   } = useInnerStyle();
-  const {calculateItemWidth} = useSettingWindowDimensions();
-  const imageWidth = screenWidth - theme.paddingSize.l * 2;
   const [buttonTitle, setButtonTitle] = useState<string>('');
   const [buttonLink, setButtonLink] = useState<string>('');
 
@@ -98,15 +95,6 @@ const PromotionDetail = () => {
             theme.borderRadius.m,
             {marginBottom: 8},
           ]}>
-          <Image
-            style={[
-              {
-                width: imageWidth,
-                height: calculateItemWidth(180),
-              },
-            ]}
-            source={{uri: item?.activityIcon}}
-          />
           <View style={[theme.padding.xxl]}>
             <Text
               fontSize={28}

@@ -13,7 +13,6 @@ export default {
       referral: 'Referral',
       me: 'Me',
       live: 'Live',
-
       liveCasino: 'Live Casino',
       sports: 'Sports',
       lottery: 'Lottery',
@@ -86,8 +85,8 @@ export default {
       text: 'Next draw starts in',
     },
     tip: {
-      closed: '{{name}} is closed now, please choose next game',
-      copied: 'Copy successfully, please share with friends',
+      downTips1: 'Get your Supbet App here',
+      downTips2: 'Start using exclusive services',
     },
     label: {
       menu: 'Menu',
