@@ -22,8 +22,8 @@ interface PageButtonInfo {
 
 const buttonMap: Record<PageButtonType, PageButtonInfo> = {
   all: {
-    icon: require('@components/assets/icons/page-button/view-all.webp'),
-    pressedIcon: require('@components/assets/icons/page-button/view-all-press.webp'),
+    icon: require('@components/assets/icons/page-button/page-left.webp'),
+    pressedIcon: require('@components/assets/icons/page-button/page-left.webp'),
     iconWidth: 70,
     iconHeight: 28,
   },

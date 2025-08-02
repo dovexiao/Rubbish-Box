@@ -5,7 +5,6 @@ export const invitationPeopleIcon = require('@assets/icons/common/common.webp');
 export const invitationRecordIcon = require('@assets/icons/common/common.webp');
 export const invitationRulesIcon = require('@assets/icons/common/common.webp');
 
-export const invitationCodeCardImg = require('@components/assets/imgs/invitation/invitation-code-card.webp');
 export const rightIcon = require('@components/assets/icons/right-icon.webp');
 
 export const defaultHeaderImg = require('@components/assets/icons/default-header.webp');

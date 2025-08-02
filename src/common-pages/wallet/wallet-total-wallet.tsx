@@ -77,23 +77,8 @@ const WalletTotalWallet: React.FC<WalletTotalWalletProps> = ({
               borderBottomLeftRadius: 15,
               marginTop: 30,
             },
-          ]}>
-          <ImageBackground
-            source={require('@components/assets/icons/button-backImg-primary.webp')}
-            resizeMode={'stretch'}
-            style={[
-              theme.fill.fill,
-              theme.flex.center,
-              {width: 82, height: 30},
-            ]}>
-            <Text
-              fontSize={theme.fontSize.s}
-              blod
-              color={theme.fontColor.white}>
-              {i18n.t('wallet.recharge')}
-            </Text>
-          </ImageBackground>
-        </View>
+          ]}
+        />
       </NativeTouchableOpacity>
     </ImageBackground>
   );

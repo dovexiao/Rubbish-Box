@@ -5,7 +5,7 @@ import theme from '@/style';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import {goBack, goTo} from '@/utils';
 import {useTranslation} from 'react-i18next';
-import {View, Image, TextInput} from 'react-native';
+import {View, TextInput} from 'react-native';
 import Text from '@/components/basic/text';
 import ImagePickerView from './image-picker';
 import Button from '@/components/basic/button';
@@ -90,10 +90,6 @@ const FeedBack = () => {
             {i18n.t('other.communicate4')}
           </Text>
         </View>
-        <Image
-          source={require('@components/assets/icons/me-list-item/coupon.webp')}
-          style={[{height: 80, width: 80}]}
-        />
       </LinearGradient>
       <View
         style={[

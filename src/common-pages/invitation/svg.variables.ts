@@ -9,7 +9,6 @@ import {ReactComponent as PhoneIcontwo} from '@components/assets/icons/invitatio
 import {ReactComponent as SaveIcon} from '@components/assets/icons/invitation/save.svg';
 import {ReactComponent as SaveIcontwo} from '@components/assets/icons/invitation/savetwo.svg';
 import {ReactComponent as InvitationCode} from '@components/assets/icons/invitation/Invitation-code.svg';
-import {ReactComponent as SignGiftBg} from '@components/assets/imgs/invitation/sign-gift-bg.svg';
 export {
   RulePointIcon,
   RuleHeaderIcon,
@@ -22,5 +21,4 @@ export {
   SaveIcon,
   SaveIcontwo,
   InvitationCode,
-  SignGiftBg,
 };

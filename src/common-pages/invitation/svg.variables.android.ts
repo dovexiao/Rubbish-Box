@@ -7,7 +7,6 @@ import BackIcon from '@components/assets/icons/back.svg';
 import PhoneIcon from '@components/assets/icons/invitation/phone.svg';
 import SaveIcon from '@components/assets/icons/invitation/save.svg';
 import InvitationCode from '@components/assets/icons/invitation/Invitation-code.svg';
-import SignGiftBg from '@components/assets/imgs/invitation/sign-gift-bg.svg';
 
 export {
   RulePointIcon,
@@ -19,5 +18,4 @@ export {
   PhoneIcon,
   SaveIcon,
   InvitationCode,
-  SignGiftBg,
 };

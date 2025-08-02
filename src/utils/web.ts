@@ -116,7 +116,7 @@ export async function toSlotegrator(name: string, id: string) {
 /** 前往客服 */
 export const goCS = () => {
   // navigateTo('https://direct.lc.chat/18181035/');
-  navigateTo('https://chat.ssrchat.com/service/gp18cv');
+  navigateTo('https://chat.ssrchat.com/service/gcs9nr');
   // goTo('WebView', {
   //   header: true,
   //   headerTitle: 'Official Customer Service',

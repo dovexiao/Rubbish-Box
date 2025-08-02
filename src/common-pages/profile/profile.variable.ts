@@ -63,4 +63,3 @@ export const rightIcon = require('@components/assets/pofile/rightIcon.webp');
 export const pic = require('@components/assets/pofile/pic.webp');
 export const del = require('@components/assets/pofile/del.webp');
 export const delIcon = require('@components/assets/pofile/delIcon.webp');
-export const profileImg = require('@components/assets/pofile/profile-img.jpg');
