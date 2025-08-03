@@ -45,15 +45,19 @@ const BetsListItem = ({
           : dayjs(drawTime).format('DD-MM hh:mm A');
       return (
         <View style={[theme.flex.row, theme.flex.centerByCol]}>
-          <Text color={theme.fontColor.white} style={[theme.margin.rights]}>
+          <Text color={theme.basicColor.white} style={[theme.margin.rights]}>
             {i18n.t('bets-page.label.drawTime')}
           </Text>
-          <Text color={theme.fontColor.white}>{time}</Text>
+          <Text color={theme.basicColor.white}>{time}</Text>
         </View>
       );
     }
     if (source) {
-      return source === 'SKY GAME' ? '' : <Text>{source}</Text>;
+      return source === 'SKY GAME' ? (
+        ''
+      ) : (
+        <Text color={theme.basicColor.white}>{source}</Text>
+      );
     }
     return `${toPriceStr(orderAmount, {
       fixed: 2,
@@ -101,8 +105,7 @@ const BetsListItem = ({
 
   const status = React.useMemo(() => {
     const {shareGameDto = {}} = info || {};
-    // const {gameCode} = shareGameDto;
-    const gameCode = shareGameDto?.gameCode || info.gameCode;
+    const {gameCode} = shareGameDto;
     if (gameCode === 'kerala') {
       // Kerala
       if (info.bonusStatus === 0) {
@@ -158,8 +161,7 @@ const BetsListItem = ({
     if (hideShare) {
       return false;
     }
-    const gameCode = info?.shareGameDto?.gameCode || info?.gameCode;
-    if (gameCode === 'kerala') {
+    if (info?.shareGameDto?.gameCode === 'kerala') {
       return status === 1;
     }
     if (info?.shareGameDto === undefined) {
@@ -188,11 +190,10 @@ const BetsListItem = ({
         source: info.source,
         name: info.gameName,
         gameUrl: info.gameUrl,
-        id: ['Slotegrator', 'WS168', 'HUIDU'].includes(info.source)
+        id: ['Slotegrator', 'WS168', 'SEAG'].includes(info.source)
           ? info.gameId
           : info.orderId,
         tripartiteUniqueness: info.tripartiteUniqueness,
-        provider: info.provider,
       });
     } else if (game === 'Sports') {
       goTo('Sports');

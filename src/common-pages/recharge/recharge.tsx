@@ -39,7 +39,17 @@ const Recharge = () => {
 
   const selectedCoupon = useCouponStore(state => state.selectedCoupon);
 
-  const [amount] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0);
+  useEffect(() => {
+    const sub = globalStore.amountChanged.subscribe(res => {
+      setAmount(res.current);
+      setLoading(false);
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, []);
+
   const payMethodItem = useMemo(
     () => paymethodList.find(p => p.id === payMethodId),
     [paymethodList, payMethodId]
@@ -57,7 +67,6 @@ const Recharge = () => {
       .then(([balances, methods]) => {
         setBalanceList(balances);
         setPaymethodList(methods);
-
         if (balances.length > 0) {
           setBalance(balances[0].balance + '');
         }
