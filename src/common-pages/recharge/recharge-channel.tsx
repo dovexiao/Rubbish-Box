@@ -4,11 +4,7 @@ import Text from '@basicComponents/text';
 import {View, Image} from 'react-native';
 import theme from '@style';
 import {PayMethod} from './recharge.service';
-// import LazyImage from '@/components/basic/image';
-import {useInnerStyle} from './recharge.hooks';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
-import {useTranslation} from 'react-i18next';
-import {useSettingWindowDimensions} from '@/store/useSettingStore';
 
 export interface RechargeChannelProps {
   payMethodList: PayMethod[];
@@ -23,10 +19,6 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
   onPayMethodChange,
   balance,
 }) => {
-  const {i18n} = useTranslation();
-  const {payMethodStyles} = useInnerStyle();
-  const {screenWidth} = useSettingWindowDimensions();
-  const itemWidth = (screenWidth - 48 - 20) / 3;
   return (
     <View
       style={[
@@ -34,74 +26,67 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
         theme.background.transparentMedium1,
         theme.margin.topl,
         theme.borderRadius.s,
+        {paddingHorizontal: 16, paddingVertical: 12},
       ]}>
-      <Text fontSize={theme.fontSize.m} white style={[theme.margin.l]}>
-        {i18n.t('recharge-page.label.channel')}
-      </Text>
-      <View
-        style={[
-          theme.flex.row,
-          theme.flex.wrap,
-          theme.borderRadius.m,
-          {gap: 18},
-        ]}>
-        {payMethodList.map((payMethod, index) => {
-          return (
-            <NativeTouchableOpacity
-              key={index}
-              disabled={
-                !(
-                  balance &&
-                  +balance >= payMethod.minAmount &&
-                  +balance <= payMethod.maxAmount
-                )
-              }
-              style={[
-                {
-                  opacity: !(
-                    balance &&
-                    +balance >= payMethod.minAmount &&
-                    +balance <= payMethod.maxAmount
-                  )
-                    ? 0.3
-                    : 1,
-                },
-              ]}
-              onPress={() => onPayMethodChange(payMethod.id)}>
-              <View
-                key={index}
-                style={[
-                  {width: itemWidth},
-                  payMethodStyles.item,
-                  theme.position.rel,
-                  theme.flex.center,
-                  // theme.background.primary15,
-                  theme.border.primary50,
-                  theme.borderRadius.s,
-                ]}>
-                <View style={[theme.flex.center]}>
-                  <Image
-                    source={{uri: payMethod.payIcon}}
-                    style={{width: 93, height: 108}}
-                    resizeMode="contain"
-                  />
-                </View>
-                {payMethod.id === payMethodId ? (
-                  <Image
-                    style={[
-                      theme.position.abs,
-                      theme.icon.s,
+      {/*<Text fontSize={theme.fontSize.m} white style={[theme.margin.bottoml]}>*/}
+      {/*  {i18n.t('recharge-page.label.channel')}*/}
+      {/*</Text>*/}
 
-                      {bottom: 0, right: 0},
-                    ]}
-                    source={require('@/assets/icons/btn-checked.webp')}
-                  />
-                ) : null}
-              </View>
-            </NativeTouchableOpacity>
-          );
-        })}
-      </View>
+      {payMethodList.map(payMethod => {
+        const isDisabled =
+          !balance ||
+          +balance < payMethod.minAmount ||
+          +balance > payMethod.maxAmount;
+
+        const isSelected = payMethod.id === payMethodId;
+
+        return (
+          <NativeTouchableOpacity
+            key={payMethod.id}
+            disabled={isDisabled}
+            onPress={() => onPayMethodChange(payMethod.id)}
+            style={[
+              theme.flex.row,
+              theme.flex.center,
+              theme.borderRadius.s,
+              isSelected ? theme.border.primary : theme.border.primary50,
+              {marginBottom: 12, padding: 12},
+              isDisabled && {opacity: 0.4},
+            ]}>
+            {/* 左侧图片 */}
+            <Image
+              source={{uri: payMethod.payIcon}}
+              style={{width: 60, height: 60, borderRadius: 8, marginRight: 16}}
+              resizeMode="contain"
+            />
+
+            {/* 中间文字 */}
+            <View style={{flex: 1, justifyContent: 'center'}}>
+              <Text
+                fontSize={theme.fontSize.m}
+                white
+                numberOfLines={1}
+                ellipsizeMode="tail">
+                {payMethod.payName}
+              </Text>
+              <Text
+                fontSize={theme.fontSize.xs}
+                white
+                style={{opacity: 0.6, marginTop: 4}}>
+                {`Limit: ${payMethod.minAmount} - ${payMethod.maxAmount}`}
+              </Text>
+            </View>
+
+            {/* 右侧选中图标 */}
+            {isSelected && (
+              <Image
+                source={require('@/assets/icons/btn-checked.webp')}
+                style={{width: 24, height: 24}}
+              />
+            )}
+          </NativeTouchableOpacity>
+        );
+      })}
     </View>
   );
 };
