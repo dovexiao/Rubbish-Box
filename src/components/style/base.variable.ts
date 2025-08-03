@@ -160,6 +160,7 @@ export const paddingSize = {
   xxl: 16,
   xxxl: 18,
   xxxxl: 20,
+  xxxxll: 30,
   maxl: 250,
   waxl: 20,
   wax4: 40,

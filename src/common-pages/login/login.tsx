@@ -97,8 +97,8 @@ const Login = (props: NavigatorScreenProps) => {
               },
             ]}>
             <Image
-              source={require('@/assets/logos/logo.webp')}
-              style={[{width: 120, height: 120, marginTop: -30}]}
+              source={require('@assets/logos/logo-v2.webp')}
+              style={[{width: 300, height: 60, marginTop: 10}]}
             />
             <View
               style={[
@@ -106,6 +106,7 @@ const Login = (props: NavigatorScreenProps) => {
                 theme.margin.tbm,
                 theme.fill.fillW,
                 theme.flex.alignEnd,
+                {marginTop: 30},
               ]}>
               {['login.label.password-login', 'login.label.otp-login'].map(
                 (v, i) => {

@@ -57,7 +57,6 @@ const HomeHeader = () => {
         rateSub.unsubscribe();
         msgSub.unsubscribe();
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 
@@ -76,24 +75,16 @@ const HomeHeader = () => {
       ]}
       hideServer
       leftNode={
-        <View style={[theme.flex.centerByCol, theme.flex.row]}>
-          <NativeTouchableOpacity
-            style={[theme.flex.row, theme.flex.centerByCol]}>
-            <Image
-              style={[
-                // eslint-disable-next-line react-native/no-inline-styles
-                {
-                  width: 180,
-                  height: 45,
-                  // borderRadius: 6,
-                  // borderColor: theme.basicColor.selectPrimary,
-                  // borderWidth: 1,
-                },
-              ]}
-              source={require('@assets/logos/logo-v2.webp')}
-            />
-          </NativeTouchableOpacity>
-        </View>
+        <NativeTouchableOpacity style={{marginLeft: -12}}>
+          <Image
+            style={{
+              width: 180,
+              height: 45,
+              transform: [{scale: 0.8}],
+            }}
+            source={require('@assets/logos/logo-v2.webp')}
+          />
+        </NativeTouchableOpacity>
       }
       hideAmount
       rightNode={
@@ -128,31 +119,6 @@ const HomeHeader = () => {
               />
             </NativeTouchableOpacity>
           )}
-          {/*{showUser ? (*/}
-          {/*  <NativeTouchableOpacity*/}
-          {/*    onPress={() => {*/}
-          {/*      goToWithLogin('Notification');*/}
-          {/*    }}*/}
-          {/*    style={[theme.position.rel]}>*/}
-          {/*    <Image*/}
-          {/*      style={[theme.image.xs]}*/}
-          {/*      resizeMode={'cover'}*/}
-          {/*    />*/}
-          {/*    {unReadMessageCount?.messageTotalCount ? (*/}
-          {/*      <Tag*/}
-          {/*        // eslint-disable-next-line react-native/no-inline-styles*/}
-          {/*        style={[theme.position.abs, {top: 0, right: 0}]}*/}
-          {/*        badgeSize={14}*/}
-          {/*        backgroundColor={theme.basicColor.red}*/}
-          {/*        content={*/}
-          {/*          unReadMessageCount?.messageTotalCount > 99*/}
-          {/*            ? '99+'*/}
-          {/*            : unReadMessageCount?.messageTotalCount*/}
-          {/*        }*/}
-          {/*      />*/}
-          {/*    ) : null}*/}
-          {/*  </NativeTouchableOpacity>*/}
-          {/*) : null}*/}
           {showLogin && (
             <View style={[theme.flex.row, theme.flex.centerByCol, theme.gap.m]}>
               <Button
