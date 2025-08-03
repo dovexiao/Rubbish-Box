@@ -40,6 +40,16 @@ export const getCasinoList = (params: CasinoListParams) => {
   );
 };
 
+/** sport获取游戏链接 */
+export function getSportUrl() {
+  return http.post<null, string>('iGaming/js/login/sport/');
+}
+
+/** fish,casino,live获取游戏链接 */
+export function getCasinoUrl(id: number) {
+  return http.post<{id: number}, string>('iGaming/js/login/' + id);
+}
+
 /** casino获取游戏类型列表 */
 export const getCasinoType = () => {
   return http.post<null, CasinoTypeItem[]>('app/casion/game/type/list');

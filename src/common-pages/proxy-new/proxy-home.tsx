@@ -1,6 +1,12 @@
 import React, {useState, useMemo, useCallback} from 'react';
 import theme from '@style';
-import {View, ScrollView, RefreshControl, StyleSheet} from 'react-native';
+import {
+  View,
+  ScrollView,
+  RefreshControl,
+  StyleSheet,
+  Image,
+} from 'react-native';
 import {toAgentApply} from '@utils'; //goBack
 import i18n from '@i18n';
 import globalStore from '@/services/global.state';
@@ -11,18 +17,17 @@ import {LazyImageLGBackground} from '@basicComponents/image'; //
 import HomeUserInfo from './components/home-user1-info';
 import HomeDataInfo from './components/home-data-info';
 import InvitationCode from './components/invitation-code';
-import Table from './components/table';
-import {ImageUrlType} from '@/components/basic/image';
-import {defaultHeaderImg} from './proxy.variable';
-import {getTotalUsers, getTodayCommission, getInviteKongArea} from './api';
+import {getTotalUsers, getTodayCommission} from './api';
 import {AgentInfo} from './types';
 import {usePaging} from './hooks/home';
 import HomeUser from './components/home-user';
 
+const agentRuleImg = require('@/assets/imgs/proxy/agentrule.webp'); // <-- 引入图片
+
 const NewProxyHome = () => {
-  // const route = useRoute();
+  const basePx = globalStore.screenWidth / 375;
   const {doShare, initShare, code, refreshCode, copy} = useShare();
-  const [meAvatar, setMeAvatar] = useState<string>();
+  const [_meAvatar, setMeAvatar] = useState<string>();
   const [refreshing, setRefreshing] = useState(false);
   const [agentInfo, setAgentInfo] = useState<AgentInfo>();
   // const [todayInvite, setTodayInvite] = useState(0);
@@ -34,11 +39,11 @@ const NewProxyHome = () => {
     // loading && globalStore.globalLoading.next(true);
     return Promise.allSettled([
       getTotalUsers(),
-      getInviteKongArea(2), //金刚区
+      // getInviteKongArea(2), //金刚区
       // getTodayCommission({pageNo: 1, pageSize: 10}),
       initShare(),
     ])
-      .then(([agent, kong]) => {
+      .then(([agent]) => {
         if (agent.status === 'fulfilled') {
           if (!agent.value) {
             return;
@@ -50,14 +55,6 @@ const NewProxyHome = () => {
           const {userAvatar} = agent.value;
           setAgentInfo(agent.value);
           setMeAvatar(userAvatar);
-        }
-        if (kong.status === 'fulfilled') {
-          if (!kong.value) {
-            return;
-          }
-          if (Object.keys(kong.value).length === 0) {
-            return;
-          }
         }
       })
       .finally(() => loading && globalStore.globalLoading.next(false));
@@ -71,11 +68,11 @@ const NewProxyHome = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
-  const resultTopMe = useMemo(() => {
-    return {
-      headImg: meAvatar || (defaultHeaderImg as ImageUrlType),
-    };
-  }, [meAvatar]);
+  // const resultTopMe = useMemo(() => {
+  //   return {
+  //     headImg: meAvatar || (defaultHeaderImg as ImageUrlType),
+  //   };
+  // }, [meAvatar]);
   const isFrist = React.useRef(false);
   const doInit = useCallback(() => {
     init1(!isFrist);
@@ -89,12 +86,12 @@ const NewProxyHome = () => {
     init().finally(() => setRefreshing(false));
   };
   const {
-    resultList,
+    // resultList,
     init,
     onScroll,
-    todayCommissionBet,
-    todayCommissionInvite,
-    todayCommissionRecharge,
+    // todayCommissionBet,
+    // todayCommissionInvite,
+    // todayCommissionRecharge,
   } = usePaging(
     (pageNo, pageSize) => {
       return getTodayCommission({
@@ -142,13 +139,14 @@ const NewProxyHome = () => {
             onCopy={() => copy(code)}
           />
         </View>
-        <Table
-          bet={todayCommissionBet}
-          invite={todayCommissionInvite}
-          recharge={todayCommissionRecharge}
-          user={resultList as any}
-          me={resultTopMe}
-        />
+        <View style={styles.bottomImgView}>
+          <Image
+            source={agentRuleImg}
+            style={{width: basePx * 375, height: 2333}}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={[styles.bottomView]} />
         <View style={[styles.bottomView]} />
       </ScrollView>
     </LazyImageLGBackground>
@@ -192,6 +190,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     marginLeft: 4,
+  },
+  bottomImgView: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
   },
 });
 export default NewProxyHome;

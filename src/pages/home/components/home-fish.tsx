@@ -51,9 +51,7 @@ const HomeCasino: React.FC = () => {
   return (
     <View style={[styles.wrapper]}>
       {data.map(item => (
-        <View
-          key={item.gameId}
-          style={[styles.card, {backgroundColor: theme.basicColor.primary}]}>
+        <View key={item.gameId} style={[styles.card]}>
           <TouchableOpacity onPress={() => getUrl(item.gameId)}>
             <LazyImage
               imageUrl={item.gamePic}
@@ -92,7 +90,7 @@ const styles = StyleSheet.create({
   name: {
     marginTop: 5,
     marginBottom: 7,
-    color: theme.basicColor.primary,
+    color: theme.basicColor.white,
     fontSize: 13,
     fontWeight: '600',
     textAlign: 'center',

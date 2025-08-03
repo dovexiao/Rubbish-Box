@@ -4,7 +4,6 @@ import {
   // headerSize,
 } from '@/pages/me/me.variable';
 import theme from '@style';
-import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import React from 'react';
 import {View} from 'react-native'; //StyleSheet
 import LazyImage from '@basicComponents/image';
@@ -16,7 +15,6 @@ import Level from '@/common-pages/proxy/basic-components/level';
 
 const {flex, font, margin, fill} = theme;
 import globalStore from '@/services/global.state';
-import {toAgentApply} from '@/utils';
 import {useUserInfo} from '@/store/useUserStore';
 import i18n from '@i18n';
 
@@ -33,9 +31,9 @@ const MeUser: React.FC<MeUserProps> = ({level}) => {
   // const pressLeft = () => {
   //   goTo('NewProxyMyRatio');
   // };
-  const pressRight = () => {
-    toAgentApply();
-  };
+  // const pressRight = () => {
+  //   toAgentApply();
+  // };
 
   return (
     <View
@@ -89,21 +87,21 @@ const MeUser: React.FC<MeUserProps> = ({level}) => {
               {/*  />*/}
               {/*</NativeTouchableOpacity>*/}
 
-              <NativeTouchableOpacity
-                style={[flex.row, flex.centerByCol]}
-                onPress={() => pressRight()}>
-                <Text
-                  style={[margin.leftxxs, font.white]}
-                  fontSize={theme.fontSize.s}>
-                  {i18n.t('newProxy.child.rightText')}
-                </Text>
-                <LazyImage
-                  occupancy={'transparent'}
-                  imageUrl={require('@assets/imgs/proxy/right-white.webp')}
-                  width={16}
-                  height={16}
-                />
-              </NativeTouchableOpacity>
+              {/*<NativeTouchableOpacity*/}
+              {/*  style={[flex.row, flex.centerByCol]}*/}
+              {/*  onPress={() => pressRight()}>*/}
+              {/*  <Text*/}
+              {/*    style={[margin.leftxxs, font.white]}*/}
+              {/*    fontSize={theme.fontSize.s}>*/}
+              {/*    {i18n.t('newProxy.child.rightText')}*/}
+              {/*  </Text>*/}
+              {/*  <LazyImage*/}
+              {/*    occupancy={'transparent'}*/}
+              {/*    imageUrl={require('@assets/imgs/proxy/right-white.webp')}*/}
+              {/*    width={16}*/}
+              {/*    height={16}*/}
+              {/*  />*/}
+              {/*</NativeTouchableOpacity>*/}
             </View>
           </View>
         </View>

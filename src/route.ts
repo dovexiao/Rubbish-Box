@@ -62,6 +62,8 @@ import {newProxyRoute} from '@/common-pages/proxy-new/route';
 import CouponPage from './common-pages/coupon';
 import FeedBackPage from './common-pages/feedback';
 import FeedBackRecordPage from './common-pages/feedback/record';
+import CasinoGameWeb from './common-pages/casino-game-web/casino-game-web';
+
 
 type Routes = {
   name: string;
@@ -353,10 +355,15 @@ const routes: Routes[] = [
     component: NotificationPage,
     link: 'notification',
   },
+  {
+    name: 'CasinoGameWeb',
+    component: CasinoGameWeb,
+    link: 'casino-game-web',
+  },
 ];
 
 const linking: LinkingOptions<{}> = {
-  prefixes: ['https://playpick3.com', 'playpick3://'],
+  prefixes: ['https://supbet.cc', 'supbet://'],
   config: {
     screens: {
       Index: {

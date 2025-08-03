@@ -13,13 +13,13 @@ import HomeService from './components/home-service';
 import {NoMoreData} from '@basicComponents/default-page';
 import Spin from '@basicComponents/spin';
 import HomeTabListContent from './home-list-tab-content';
-import LinearGradient from '@/components/basic/linear-gradient';
 import {useLuckySpinActions} from '@/store/luckySpinStore';
 import {useLuckySpinModal} from '@/common-pages/luckyspin/luckyspin.hooks';
 import HomeFish from './components/home-fish';
 import HomeLive from './components/home-live';
 import HomeCasino from './components/home-casino';
 import HomeGameTop from '@/pages/home/home-game-top';
+import {LazyImageLGBackground} from '@basicComponents/image';
 
 const Home = () => {
   const basePx = globalStore.screenWidth / 375;
@@ -110,9 +110,7 @@ const Home = () => {
   //   return () => sub.unsubscribe();
   // }, []);
   return (
-    <LinearGradient
-      colors={theme.linearGradientColor.mainNavigationLinearGradientBtnColor}
-      style={[theme.flex.col, theme.fill.fill]}>
+    <LazyImageLGBackground style={[theme.flex.col, theme.fill.fill]}>
       <Spin loading={pageLoading} style={[theme.flex.col, theme.fill.fill]}>
         <View style={[theme.fill.fill, theme.flex.col]}>
           <HomeHeader />
@@ -173,11 +171,13 @@ const Home = () => {
             {selectedGame === 4 && <HomeFish />}
             <NoMoreData text="" />
           </Animated.ScrollView>
-          <HomeService spinShow={spinShow} />
-          {renderSpin}
+          <View style={{position: 'absolute', bottom: 60, left: 0, right: 0}}>
+            <HomeService spinShow={spinShow} />
+            {renderSpin}
+          </View>
         </View>
       </Spin>
-    </LinearGradient>
+    </LazyImageLGBackground>
   );
 };
 

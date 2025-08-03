@@ -15,6 +15,7 @@ export default {
       live: 'Live',
       liveCasino: 'Live Casino',
       sports: 'Sports',
+      fishing: 'Fishing',
       lottery: 'Lottery',
       game: 'Games',
       promotions: 'Promotions',

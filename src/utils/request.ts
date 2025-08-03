@@ -83,7 +83,7 @@ const createHTTP = ({
         channelId: globalStore.channel || 'supbet',
         lang: globalStore.lang,
         visitor: globalStore.visitor,
-        // reqDate: new Date().getTime(),
+        reqDate: new Date().getTime(),
         ...datas,
         ...mergeData,
         ...config.data,

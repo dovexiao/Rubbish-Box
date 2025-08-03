@@ -23,10 +23,10 @@ const FILTER_MENU = [
   {
     name: 'Dice',
   },
-  {
-    name: 'Satta Matka',
-    hideIds: [5, 101],
-  },
+  // {
+  //   name: 'Satta Matka',
+  //   hideIds: [5, 101],
+  // },
   // {
   //   name: 'Scratch off',
   // },

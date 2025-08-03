@@ -15,7 +15,6 @@ import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import globalStore from './services/global.state';
 import {goTo} from './utils';
 import LinearGradient from './components/basic/linear-gradient';
-import ArticleDetail from './common-pages/article/article-detail';
 import {useToken} from '@/store/useUserStore';
 //活动相关
 import PromotionDrawer from './common-pages/promotion';
@@ -156,15 +155,15 @@ const CusTab = (props: BottomTabBarProps) => {
     // </Shadow>
   );
 };
+
 const MainNav = () => {
-  const {isLogin} = useToken();
-  if (!isLogin) {
-    mainPageList[2].component = ArticleDetail;
-    mainPageList[2].link = 'index/promotion?id=1&type=index';
-  } else {
-    mainPageList[2].component = Promotion;
-    mainPageList[2].link = 'index/promotion?id=1&type=index';
-  }
+  // if (!isLogin) {
+  //   mainPageList[2].component = ArticleDetail;
+  //   mainPageList[2].link = 'index/promotion?id=1&type=index';
+  // } else {
+  //   mainPageList[2].component = Promotion;
+  //   mainPageList[2].link = 'index/promotion?id=1&type=index';
+  // }
   return (
     <Tab.Navigator
       // eslint-disable-next-line react/no-unstable-nested-components

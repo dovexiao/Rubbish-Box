@@ -32,7 +32,7 @@ export function useLanguageModal({
     hide();
   };
   const {renderModal, show, hide} = useBottomSheet(
-    <View style={[padding.s, flex.col]}>
+    <View style={[padding.s, flex.col, {backgroundColor: '#000'}]}>
       <View style={[flex.row, flex.between, flex.centerByCol]}>
         <Text style={[font.bold, font.m, font.white]}>
           {i18n.t('me.language.switch')}
