@@ -16,11 +16,11 @@ const HomeDigits = forwardRef<View, HomeDigitProps>((props, ref) => {
   const {i18n} = useTranslation();
   const {style, digitList, ...otherProp} = props;
   const cardWidth =
-    (globalStore.screenWidth - theme.paddingSize.l * 3 - theme.paddingSize.s) /
-    3;
-  const imageHeight = (cardWidth * 250) / 200;
+    (globalStore.screenWidth - theme.paddingSize.l * 2 - theme.paddingSize.s) /
+    2;
+  const imageHeight = (cardWidth * 210) / 370;
   const seperateDigitList = useMemo(() => {
-    return getSeperateList(digitList, 3);
+    return getSeperateList(digitList, 2);
   }, [digitList]);
   return (
     <View
@@ -57,7 +57,7 @@ const HomeDigits = forwardRef<View, HomeDigitProps>((props, ref) => {
                     imageHeight={imageHeight}
                     cardWidth={cardWidth}
                     // marginRight={_index % 3 === 0}
-                    marginRight={_index % 3 == 2 ? false : true}
+                    marginRight={_index % 2 === 0}
                     // marginTop={index < 3 ? false : true}
                     item={item}
                   />

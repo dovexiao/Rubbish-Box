@@ -17,7 +17,7 @@ const boxWidthFull = screenWidth - SIDE_PADDING * 2;
 
 // 分别设置两行的宽高比
 const firstRowAspectRatio = 2; // 第一行盒子比例
-const secondRowAspectRatio = 3; // 第二行全宽盒子比例
+const secondRowAspectRatio = 3.5; // 第二行全宽盒子比例
 
 const HomeHotGame: React.FC = () => {
   return (
