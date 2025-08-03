@@ -53,6 +53,8 @@ export const linearGradientColor = {
   noWinLinearGradient: ['#F9A40D33', '#7230FF00'],
   //未开奖状态 背景渐变色
   toDrawnLinearGradient: ['#F9A40D33', '#7230FF00'],
+  toDrawnLinearGradient1: ['#FF000000'],
+  toDrawnLinearGradient2: ['transparent'],
 };
 
 export const fontColor = {

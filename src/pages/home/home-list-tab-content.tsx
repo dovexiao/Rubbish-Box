@@ -7,7 +7,7 @@ import {
   // QuickDigitListItem,
   KeralaListItem,
 } from './home.type';
-import HomeDigits from './components/digit/home-digits';
+// import HomeDigits from './components/digit/home-digits';
 // import HomeWorldDigits from './components/world-digit/home-digits';
 // import HomeQuickDigits from './components/quickdigit/home-quickdigits';
 
@@ -15,6 +15,8 @@ import HomeDigits from './components/digit/home-digits';
 import HomeKerala from './components/kerala/home-kerala';
 // import HomeCar from './components/car/home-car';
 import theme from '@style';
+// import HomeDigitOff from '@/pages/home/components/digit-off/home-digit-off';
+import HomeDigits from '@/pages/home/components/digit/home-digits';
 
 export interface HomeTabListContentProps {
   // diceList: DiceListItem[];

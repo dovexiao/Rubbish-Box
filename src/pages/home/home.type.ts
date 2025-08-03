@@ -7,6 +7,35 @@ export interface NoticeMap {
   LUCKY_SPIN?: number;
 }
 
+/** Casino接口入参 */
+export interface CasinoListParams {
+  pageNo: number;
+  gameType: string;
+}
+
+/** Casino列表返回数据类型 */
+export interface CasinoListResponse {
+  content: CasinoGameItem[];
+  totalSize: number;
+  totalPages: number;
+}
+
+/** Casino游戏类型 */
+export interface CasinoGameItem {
+  gameId: number;
+  gameName: string;
+  gamePic: string;
+  provider: string;
+  tripartiteUniqueness: string;
+}
+
+/** Casino类型列表数据类型 */
+export interface CasinoTypeItem {
+  icon: string;
+  name: string;
+  openIcon: string;
+}
+
 /** 首页banner */
 export type BannerListItem = {
   bannerId: number;
@@ -14,6 +43,20 @@ export type BannerListItem = {
   bannerVideo: string;
   skipLinks: string;
 } & BasicObject;
+
+/** 3D Official Lottery类型 */
+export interface DigitOffListItem {
+  closeTimeMillis: number;
+  currentTimestamp: number;
+  digitsBackImg: string;
+  digitsLogo: string;
+  digitsName: string;
+  drawTimestamp: number;
+  id: number;
+  sort: number;
+  status: number;
+  winAmount: number;
+}
 
 /** 小游戏类型 */
 export interface HotGameItem {
