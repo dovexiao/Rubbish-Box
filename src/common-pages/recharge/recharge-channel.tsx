@@ -5,6 +5,7 @@ import {View, Image} from 'react-native';
 import theme from '@style';
 import {PayMethod} from './recharge.service';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
+import {useTranslation} from 'react-i18next';
 
 export interface RechargeChannelProps {
   payMethodList: PayMethod[];
@@ -19,6 +20,8 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
   onPayMethodChange,
   balance,
 }) => {
+  const {i18n} = useTranslation();
+
   return (
     <View
       style={[
@@ -28,9 +31,9 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
         theme.borderRadius.s,
         {paddingHorizontal: 16, paddingVertical: 12},
       ]}>
-      {/*<Text fontSize={theme.fontSize.m} white style={[theme.margin.bottoml]}>*/}
-      {/*  {i18n.t('recharge-page.label.channel')}*/}
-      {/*</Text>*/}
+      <Text fontSize={theme.fontSize.m} white style={{marginBottom: 18}}>
+        {i18n.t('recharge-page.label.channel')}
+      </Text>
 
       {payMethodList.map(payMethod => {
         const isDisabled =
@@ -56,21 +59,27 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
             {/* 左侧图片 */}
             <Image
               source={{uri: payMethod.payIcon}}
-              style={{width: 60, height: 60, borderRadius: 8, marginRight: 16}}
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 8,
+                marginRight: 16,
+                backgroundColor: '#FFFFFF',
+              }}
               resizeMode="contain"
             />
 
             {/* 中间文字 */}
             <View style={{flex: 1, justifyContent: 'center'}}>
               <Text
-                fontSize={theme.fontSize.m}
+                fontSize={theme.fontSize.l1}
                 white
                 numberOfLines={1}
                 ellipsizeMode="tail">
                 {payMethod.payName}
               </Text>
               <Text
-                fontSize={theme.fontSize.xs}
+                fontSize={theme.fontSize.m}
                 white
                 style={{opacity: 0.6, marginTop: 4}}>
                 {`Limit: ${payMethod.minAmount} - ${payMethod.maxAmount}`}
@@ -80,8 +89,13 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
             {/* 右侧选中图标 */}
             {isSelected && (
               <Image
+                style={[
+                  theme.position.abs,
+                  theme.icon.s,
+
+                  {bottom: 0, right: 0},
+                ]}
                 source={require('@/assets/icons/btn-checked.webp')}
-                style={{width: 24, height: 24}}
               />
             )}
           </NativeTouchableOpacity>
