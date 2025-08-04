@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import i18n from '@/i18n';
 import globalStore from '@/services/global.state';
-import {errorLog, goTo, navigateTo} from '@/utils';
+import { errorLog, goTo, navigateTo } from "@/utils";
 import {
   getSlotegratorGameStart,
   // getKMAuthorize,
@@ -185,6 +185,7 @@ export async function toUrlGame(name: string, id: string, provider: string) {
   try {
     const url = await getFCStart(id);
     await goTo('WebView', {
+      replace: true,
       header: true,
       hideAmount: true,
       headerTitle: name,

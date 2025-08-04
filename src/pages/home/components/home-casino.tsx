@@ -17,6 +17,7 @@ import globalStore from '@/services/global.state';
 import {goTo} from '@/utils';
 import LazyImage from '@/components/basic/image';
 import theme from '@style';
+import { toUrlGame } from "@/common-pages/game-navigate";
 
 const HomeCasino: React.FC = () => {
   const [scrollViewWidth, setScrollViewWidth] = useState(0);
@@ -96,12 +97,12 @@ const HomeCasino: React.FC = () => {
     }
   };
 
-  const getUrl = async (id: number) => {
+  const getUrl = async (name: string, id: number, provider: string) => {
     if (!globalStore.token) {
       goTo('Login');
       return;
     }
-    goTo('CasinoGameWeb', {id: id});
+    toUrlGame(name, id.toString(), provider);
   };
 
   const onTabLayout = (tabName: string) => (event: LayoutChangeEvent) => {
@@ -157,7 +158,7 @@ const HomeCasino: React.FC = () => {
               styles.card,
               // {backgroundColor: theme.basicColor.primary},
             ]}>
-            <TouchableOpacity onPress={() => getUrl(item.gameId)}>
+            <TouchableOpacity onPress={() => getUrl(item.gameName, item.gameId, item.provider)}>
               <LazyImage
                 imageUrl={item.gamePic}
                 width={(globalStore.screenWidth - 42) / 3}

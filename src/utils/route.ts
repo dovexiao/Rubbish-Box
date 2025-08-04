@@ -70,3 +70,9 @@ export const goTo = (router: string, params?: BasicObject) => {
     navigate(router, params);
   }
 };
+
+/**
+ * @param router 路由名称
+ * @param params url参数,如果参数中存在对象,在外部转换
+ * @param options 额外配置，例如 { replace: true }
+ */

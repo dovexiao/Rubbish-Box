@@ -246,12 +246,16 @@ export const formatSettledData = <T, D>(
  */
 export const formatNumberGroup = (inputString?: string | '') => {
   if (inputString) {
-    let formattedString = inputString!.replace(/(\d{4})/g, '$1 ');
-    const strArr = formattedString.split(' ');
-    const fist = strArr.slice(0, strArr.length - 1);
-    const last = strArr.slice(-1);
-    const firstStr = fist.map((item: string) => '*'.repeat(item.length));
-    return firstStr.concat(last).join(' ');
+    const length = inputString.length;
+    if (length <= 4) {
+      // 长度不足4位时不做掩码
+      return inputString;
+    }
+    const firstTwo = inputString.slice(0, 2);
+    const lastTwo = inputString.slice(-2);
+    const middle = '*'.repeat(length - 4);
+
+    return `${firstTwo} ${middle} ${lastTwo}`;
   }
   return '';
 };

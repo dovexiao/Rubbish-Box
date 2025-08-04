@@ -205,19 +205,21 @@ const AddBank = () => {
               />
               <InputField
                 positionTranslation={true}
-                name="upId"
-                value={upiId}
-                onChangeText={setUpiId}
-                label={i18n.t('bank-page.label.UPI')}
-                placeholder={i18n.t('bank-page.placeholder.UPI')}
-              />
-              <InputField
-                positionTranslation={true}
                 name="email"
+                required
                 value={email}
                 onChangeText={setEmail}
                 label={i18n.t('label.email')}
                 placeholder={i18n.t('bank-page.placeholder.email')}
+              />
+              <InputField
+                positionTranslation={true}
+                name="upId"
+                required
+                value={upiId}
+                onChangeText={setUpiId}
+                label={i18n.t('bank-page.label.UPI')}
+                placeholder={i18n.t('bank-page.placeholder.UPI')}
               />
             </View>
           </ScrollView>
