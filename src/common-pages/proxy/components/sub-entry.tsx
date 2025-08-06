@@ -4,10 +4,8 @@ import i18n from '@i18n';
 import {
   teamReportImage,
   commissionDetailImage,
-  invitationRulesImage,
   // customerServiceImage,
 } from '../proxy.variable';
-import {commissionIcon} from '@businessComponents/list-item';
 import {View} from 'react-native';
 import {SubItem} from '../basic-components';
 import {goTo, toAgentApply} from '@/utils';
@@ -25,8 +23,8 @@ const SubEntry: React.FC<SubEntryProps> = ({userId, agentLevel}) => {
       icon: commissionDetailImage,
       title: i18n.t('proxy.home.commission-detail'),
     },
-    {icon: invitationRulesImage, title: i18n.t('proxy.home.invitation-rules')},
-    {icon: commissionIcon, title: i18n.t('invitation.home.title')},
+    // {icon: invitationRulesImage, title: i18n.t('proxy.home.invitation-rules')},
+    // {icon: commissionIcon, title: i18n.t('invitation.home.title')},
     // {
     //   icon: customerServiceImage,
     //   title: i18n.t('proxy.home.agent-line-customer-service'),

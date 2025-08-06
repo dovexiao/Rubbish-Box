@@ -65,7 +65,7 @@ const ProxyUserInfo: React.FC<ProxyUserInfoProps> = ({
       style={[
         theme.flex.col,
         theme.padding.l,
-        theme.background.mainDark,
+        theme.background.black15,
         style,
       ]}>
       <View

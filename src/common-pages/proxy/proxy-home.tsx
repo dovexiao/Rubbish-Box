@@ -1,7 +1,7 @@
 import React, {useState, useMemo, useCallback} from 'react';
 import theme from '@style';
 import {View, ScrollView, RefreshControl} from 'react-native';
-import {goBack, setDataForSettled, toAgentApply} from '@utils';
+import {goBack, toAgentApply} from '@utils';
 import InvitationCode from './components/invitation-code';
 import SubEntry from './components/sub-entry';
 import EarningsChart, {EarnMeItem} from './components/earnings-chart';
@@ -11,15 +11,10 @@ import {
   getBannerList,
   getTodayEarningsChart,
 } from './proxy.service';
-import HomeBanner from './components/home-banner';
 import HomeUserInfo from './components/home-user-info';
 import {useInnerStyle} from './proxy.hooks';
 import globalStore from '@/services/global.state';
-import {
-  AgentInfo,
-  BannerListItem,
-  TodayEarningsChartItemRes,
-} from './proxy.type';
+import {AgentInfo, TodayEarningsChartItemRes} from './proxy.type';
 import {defaultHeaderImg} from './proxy.variable';
 import {ImageUrlType} from '@/components/basic/image';
 import {useShare} from '../hooks/share.hooks';
@@ -34,12 +29,10 @@ const ProxyHome = () => {
   } = useInnerStyle();
   const route = useRoute();
   const [agentInfo, setAgentInfo] = useState<AgentInfo>();
-  const [inited, setInited] = useState(false);
   const {code, refreshCode, doShare, initShare, copy} = useShare();
   const [topUser, setTopUser] = useState<TodayEarningsChartItemRes[]>([]);
   const [topMe, setTopMe] = useState<EarnMeItem>();
   const [meAvatar, setMeAvatar] = useState<string>();
-  const [bannerList, setBannerList] = useState<BannerListItem[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const inviteCode = useMemo(() => {
     return code.split('').join('  ');
@@ -53,8 +46,7 @@ const ProxyHome = () => {
       getBannerList(),
       initShare(),
     ])
-      .then(([agent, chart, banner]) => {
-        setInited(true);
+      .then(([agent, chart]) => {
         if (agent.status === 'fulfilled') {
           if (!agent.value) {
             return;
@@ -76,7 +68,6 @@ const ProxyHome = () => {
             commissionAmount,
           });
         }
-        setDataForSettled(setBannerList, banner);
       })
       .finally(() => loading && globalStore.globalLoading.next(false));
   };
@@ -127,13 +118,7 @@ const ProxyHome = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }>
-        {(!inited || bannerList.length > 0) && (
-          <HomeBanner bannerList={bannerList} />
-        )}
-        <View
-          style={
-            inited && bannerList.length === 0 ? [theme.margin.topl] : null
-          }>
+        <View>
           <HomeUserInfo info={agentInfo} />
         </View>
         <InvitationCode

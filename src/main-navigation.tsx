@@ -10,7 +10,6 @@ import {
 } from '@react-navigation/bottom-tabs';
 import {ImageURISource, Image} from 'react-native';
 import {NavigatorScreenProps} from '@types';
-import Promotion from './common-pages/proxy-new/proxy-home';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import globalStore from './services/global.state';
 import {goTo} from './utils';
@@ -20,6 +19,7 @@ import {useToken} from '@/store/useUserStore';
 import PromotionDrawer from './common-pages/promotion';
 import i18n from '@i18n';
 import Recharge from '@/common-pages/recharge';
+import ProxyHome from "@/common-pages/proxy";
 
 const Tab = createBottomTabNavigator();
 
@@ -49,7 +49,7 @@ export const mainPageList: {
   {
     name: i18n.t('home.tab.invite'),
     link: 'index/promotion',
-    component: Promotion,
+    component: ProxyHome,
     img: require('@assets/icons/home/agency.webp'),
     activeImg: require('@assets/icons/home/agency.webp'),
   },

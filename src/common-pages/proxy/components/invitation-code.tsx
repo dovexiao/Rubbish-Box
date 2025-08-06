@@ -116,6 +116,7 @@ const DirectSubordinates = (props: IProps) => {
         <Button
           onPress={() => onShare?.()}
           radius={30}
+          color={theme.fontColor.primary}
           width={width - theme.paddingSize.l * 4}
           size="large"
           title={i18n.t('newProxy.home.invitation-link')}
