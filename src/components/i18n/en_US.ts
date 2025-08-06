@@ -736,9 +736,8 @@ export default {
       fee: '<0>Withdrawal will be charged with </0><1>{{percent}}</1><0> payment channel fee</0>',
       times:
         '<0>Each user could withdraw </0><1>{{times}}</1><0> times per day.</0>',
-      note: '*Note: withdraw may be delayed due to someBank issues. In this case, the withdrawn amount will be returned to your wallet. Thank you for your patience.',
-      limit:
-        'We have found some money laundry behaviorsSo limits that recharge amount should be used for betting only. The commission and winninoamount could be withdrawn immediately.',
+      note: 'Under normal circumstances, the withdrawal amount will arrive in your account in about ',
+      limit: ' , and the longest time will not exceed ',
     },
     error: {
       addCard: 'Please add a bank card first',

@@ -104,8 +104,7 @@ const BetsListItem = ({
   };
 
   const status = React.useMemo(() => {
-    const {shareGameDto = {}} = info || {};
-    const {gameCode} = shareGameDto;
+    const {gameCode} = info.gameCode;
     if (gameCode === 'kerala') {
       // Kerala
       if (info.bonusStatus === 0) {
@@ -161,14 +160,8 @@ const BetsListItem = ({
     if (hideShare) {
       return false;
     }
-    if (info?.shareGameDto?.gameCode === 'kerala') {
-      return status === 1;
-    }
-    if (info?.shareGameDto === undefined) {
-      return false;
-    }
     return status === 1 || status === 2;
-  }, [status, hideShare, info]);
+  }, [hideShare, status]);
 
   const drawTime =
     info.drawDate || info.gameDrawTime || info.openTime || info.drawTime;

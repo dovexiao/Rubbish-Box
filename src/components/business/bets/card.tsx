@@ -46,6 +46,11 @@ const DATA_MAP = {
     bg: theme.linearGradientColor.toDrawnLinearGradient,
     color: theme.fontColor.toDrawnFontColor,
   },
+  3: {
+    text: 'noWin',
+    bg: theme.linearGradientColor.toDrawnLinearGradient,
+    color: theme.fontColor.toDrawnFontColor,
+  },
 };
 
 const BetsCard = (props: BetsCardType) => {

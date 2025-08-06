@@ -56,21 +56,23 @@ const WithdrawAmount = (props: WithdrawAmountType) => {
       <View>
         <Text style={[theme.margin.btml]}>
           <Trans i18nKey={'withdraw-page.rules.fee'} values={{percent: '3%'}}>
-            <Text color={theme.fontColor.primaryMain} />
-            <Text color={theme.fontColor.primaryMain} />
+            <Text color={theme.fontColor.primary} />
+            <Text color={theme.fontColor.primary} />
           </Trans>
         </Text>
-        <Text style={[theme.margin.btml]}>
-          <Trans i18nKey={'withdraw-page.rules.times'} values={{times: '(3)'}}>
-            <Text color={theme.fontColor.primaryMain} />
-            <Text color={theme.fontColor.primaryMain} />
-          </Trans>
-        </Text>
+        {/*<Text style={[theme.margin.btml]}>*/}
+        {/*  <Trans i18nKey={'withdraw-page.rules.times'} values={{times: '(3)'}}>*/}
+        {/*    <Text color={theme.fontColor.primaryMain} />*/}
+        {/*    <Text color={theme.fontColor.primaryMain} />*/}
+        {/*  </Trans>*/}
+        {/*</Text>*/}
         <Text color={theme.fontColor.primaryMain} style={[theme.margin.btml]}>
           {i18n.t('withdraw-page.rules.note')}
-        </Text>
-        <Text color={theme.fontColor.primaryMain} style={[theme.margin.btml]}>
-          {i18n.t('withdraw-page.rules.limit')}
+          <Text color={theme.fontColor.primary}>2 hours</Text>
+          <Text color={theme.fontColor.primaryMain} style={[theme.margin.btml]}>
+            {i18n.t('withdraw-page.rules.limit')}
+            <Text color={theme.fontColor.primary}>24 hours.</Text>
+          </Text>
         </Text>
       </View>
     </View>

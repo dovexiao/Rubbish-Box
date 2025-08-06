@@ -15,10 +15,6 @@ import {toPriceStr} from '@utils';
 import globalStore from '@/services/global.state';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import {useTranslation} from 'react-i18next';
-import {
-  // rechargeIcon,
-  withdrawIcon,
-} from '@/common-pages/wallet/wallet.variable';
 import LinearGradient from '@/components/basic/linear-gradient';
 import {useToken, useUserInfo} from '@/store/useUserStore';
 
@@ -37,18 +33,18 @@ const MeAmount: React.FC<MeAmountProps> = ({
   onRefresh,
 }) => {
   const {i18n} = useTranslation();
-  const {renderModal, show} = useCardModal();
+  const {renderModal} = useCardModal();
 
   const {isLogin: login} = useToken();
   const user = useUserInfo();
-
-  const showDrawModal = () => {
-    show({
-      icon: withdrawIcon,
-      title: i18n.t('me.tip.withdrawTitle'),
-      content: i18n.t('me.tip.withdrawContent'),
-    });
-  };
+  //
+  // const showDrawModal = () => {
+  //   show({
+  //     icon: withdrawIcon,
+  //     title: i18n.t('me.tip.withdrawTitle'),
+  //     content: i18n.t('me.tip.withdrawContent'),
+  //   });
+  // };
 
   return (
     <LinearGradient
@@ -63,7 +59,7 @@ const MeAmount: React.FC<MeAmountProps> = ({
         theme.borderRadius.s,
         theme.padding.xxxl,
         // eslint-disable-next-line react-native/no-inline-styles
-        {height: 141},
+        {height: 66},
         containerStyle,
       ]}
       onLayout={onLayout}>
@@ -109,38 +105,38 @@ const MeAmount: React.FC<MeAmountProps> = ({
           </View>
         </NativeTouchableOpacity>
       </View>
-      <View style={[{width: '100%', height: 1}, theme.background.primary]} />
-      <View style={[theme.flex.row, theme.flex.between]}>
-        <NativeTouchableOpacity style={[theme.flex.flex1]} activeOpacity={1}>
-          <View style={[theme.flex.row, theme.flex.centerByCol]}>
-            <Text style={[theme.font.primaryMain]} fontSize={theme.fontSize.s}>
-              {i18n.t('me.money.withdrawAmount')}
-            </Text>
-            <NativeTouchableOpacity
-              activeOpacity={1}
-              style={[theme.margin.lefts, theme.flex.center]}
-              onPress={showDrawModal}>
-              <LazyImage
-                occupancy={'transparent'}
-                imageUrl={require('@assets/icons/about.webp')}
-                width={theme.iconSize.s}
-                height={theme.iconSize.s}
-              />
-            </NativeTouchableOpacity>
-          </View>
-          <Text
-            fontFamily="fontDin"
-            blod
-            style={[theme.font.xl, theme.font.white, theme.margin.topxxs]}>
-            {login
-              ? toPriceStr(user?.canWithdrawAmount || 0, {
-                  thousands: true,
-                  spacing: true,
-                })
-              : '******'}
-          </Text>
-        </NativeTouchableOpacity>
-      </View>
+      {/*<View style={[{width: '100%', height: 1}, theme.background.primary]} />*/}
+      {/*<View style={[theme.flex.row, theme.flex.between]}>*/}
+      {/*  <NativeTouchableOpacity style={[theme.flex.flex1]} activeOpacity={1}>*/}
+      {/*    <View style={[theme.flex.row, theme.flex.centerByCol]}>*/}
+      {/*      <Text style={[theme.font.primaryMain]} fontSize={theme.fontSize.s}>*/}
+      {/*        {i18n.t('me.money.withdrawAmount')}*/}
+      {/*      </Text>*/}
+      {/*      <NativeTouchableOpacity*/}
+      {/*        activeOpacity={1}*/}
+      {/*        style={[theme.margin.lefts, theme.flex.center]}*/}
+      {/*        onPress={showDrawModal}>*/}
+      {/*        <LazyImage*/}
+      {/*          occupancy={'transparent'}*/}
+      {/*          imageUrl={require('@assets/icons/about.webp')}*/}
+      {/*          width={theme.iconSize.s}*/}
+      {/*          height={theme.iconSize.s}*/}
+      {/*        />*/}
+      {/*      </NativeTouchableOpacity>*/}
+      {/*    </View>*/}
+      {/*    <Text*/}
+      {/*      fontFamily="fontDin"*/}
+      {/*      blod*/}
+      {/*      style={[theme.font.xl, theme.font.white, theme.margin.topxxs]}>*/}
+      {/*      {login*/}
+      {/*        ? toPriceStr(user?.canWithdrawAmount || 0, {*/}
+      {/*            thousands: true,*/}
+      {/*            spacing: true,*/}
+      {/*          })*/}
+      {/*        : '******'}*/}
+      {/*    </Text>*/}
+      {/*  </NativeTouchableOpacity>*/}
+      {/*</View>*/}
       {renderModal}
     </LinearGradient>
   );
