@@ -512,7 +512,7 @@ export default {
     record: 'फीडबैक रिकॉर्ड',
   },
   proxy: {
-    title: 'Agency Center',
+    title: 'Earn Money',
     tier: 'Tier{{number}}',
     all: 'All',
     search: 'फ़ोन नंबर खोजें',

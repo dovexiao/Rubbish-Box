@@ -61,13 +61,7 @@ const ProxyUserInfo: React.FC<ProxyUserInfoProps> = ({
 }) => {
   const {userInfoStyle} = useInnerStyle();
   return (
-    <View
-      style={[
-        theme.flex.col,
-        theme.padding.l,
-        theme.background.black15,
-        style,
-      ]}>
+    <View style={[theme.flex.col, theme.padding.l, style]}>
       <View
         style={[
           theme.fill.fillW,
@@ -190,7 +184,7 @@ const ProxyUserInfo: React.FC<ProxyUserInfoProps> = ({
           userInfoStyle.greyArea,
           theme.padding.tbs,
           theme.padding.lrl,
-          theme.background.background,
+          theme.background.background1,
         ]}>
         <View style={[theme.flex.col, userInfoStyle.bottomLine]}>
           {userDataTopContent}

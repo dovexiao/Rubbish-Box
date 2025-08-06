@@ -13,6 +13,7 @@ export const basicColor = {
   primary60: '#000000',
   primaryFont: '#C3F0E8',
   background: '#04CC9B1A',
+  background1: '#FFFFFF1A',
   background50: '#04CC9B99',
   purple: '#04CC9B4d',
   yellow: '#FFC300',
@@ -97,6 +98,7 @@ export const backgroundColor = {
 
   tabCheck: '#003941',
 
+  black10: 'rgba(255,255,255,0.15)',
   black15: '#00000026',
   black50: '#00000080',
   black60: '#00000099',

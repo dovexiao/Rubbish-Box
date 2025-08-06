@@ -20,7 +20,6 @@ import dayjs from 'dayjs';
 import CommissionRateModal from './commission-rate-Modal';
 import {SafeAny} from '@/types';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
-import globalStore from '@/services/global.state';
 
 export interface HomeUserInfoProps {
   info?: AgentInfo;
@@ -34,9 +33,6 @@ const HomeUserInfo: React.FC<HomeUserInfoProps> = ({info}) => {
     goTo('ProxyNewUser', {userCount: info?.todayNewUserCount || 0});
   };
   const CommissionRateModalRef: SafeAny = useRef(null);
-  const toRebate = () => {
-    CommissionRateModalRef.current.showModal(info?.agentLevel || 1);
-  };
   const styles = StyleSheet.create({
     rechargeUser: {
       width: 120,
@@ -67,12 +63,11 @@ const HomeUserInfo: React.FC<HomeUserInfoProps> = ({info}) => {
               style={[theme.margin.leftxxs]}
               white>
               {info?.registerDate
-                ? dayjs(info.registerDate, 'YYYY-MM-DD').format('DD/MM YYYY')
+                ? dayjs(info.registerDate, 'YYYY-MM-DD').format('DD-MM-YYYY')
                 : '-'}
             </Text>
           </View>
         }
-        onRebate={globalStore.packageId !== 2 ? toRebate : undefined}
         onTeamReport={handleToTeamReport}
         userDataTopContent={
           <View style={[theme.flex.col]}>

@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useRef, useState} from 'react';
 import {Share} from 'react-native';
 import {getShareInfo, updateInviteCode} from './share.service';
 import globalStore from '@/services/global.state';
@@ -7,7 +7,7 @@ import {SafeAny} from '@/types';
 import Clipboard from '@react-native-clipboard/clipboard';
 import i18n from '@/i18n';
 
-export function useShare(autoInit = false) {
+export function useShare(_autoInit = false) {
   const [code, setCode] = useState<string>('');
   const [invateText, setInviteText] = useState('');
   const throttleRef = useRef(false);
@@ -55,7 +55,7 @@ export function useShare(autoInit = false) {
       return;
     }
     if (globalStore.isAndroid) {
-      onShare(`${invateText}`);
+      onShare(`${invateText}?code=${code}`);
     } else {
       copyShareLink(tip);
     }
@@ -75,11 +75,11 @@ export function useShare(autoInit = false) {
     await initShare();
   };
 
-  useEffect(() => {
-    if (autoInit) {
-      initShare();
-    }
-  }, [autoInit]);
+  // useEffect(() => {
+  //   if (autoInit) {
+  //     initShare();
+  //   }
+  // }, [autoInit]);
 
   return {
     initShare,

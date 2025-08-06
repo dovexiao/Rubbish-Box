@@ -149,7 +149,7 @@ export default {
     },
   },
   proxy: {
-    title: 'Agency Center',
+    title: 'Earn Money',
     tier: 'Tier{{number}}',
     all: 'All',
     search: 'Search Phone number',
