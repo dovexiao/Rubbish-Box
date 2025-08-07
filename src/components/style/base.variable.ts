@@ -10,6 +10,7 @@ export const basicColor = {
   transparentP30: 'rgba(63, 63, 63, 0.4)',
   transparentP10: 'rgba(63, 63, 63, 0.1)',
   primary50: '#1C1C1C',
+  primary3030: '#656565',
   primary60: '#000000',
   primaryFont: '#C3F0E8',
   background: '#04CC9B1A',

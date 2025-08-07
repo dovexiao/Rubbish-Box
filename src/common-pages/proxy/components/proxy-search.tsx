@@ -72,7 +72,7 @@ const ProxySearch: React.FC<ProxySearchProps> = ({
         containerStyle={[
           theme.flex.flex1,
           theme.flex.centerByCol,
-          theme.background.background,
+          theme.background.transparentP10,
           searchStyle.container,
           theme.borderRadius.s,
           // eslint-disable-next-line react-native/no-inline-styles

@@ -32,11 +32,11 @@ export const tableLeft = {
 };
 export const tableLeftNew = {
   ...tableLeft,
-  backgroundColor: '#F1F5F8',
+  backgroundColor: '#1C1C1C',
 };
 export const tableLeftTwo = {
   ...tableLeft,
-  backgroundColor: '#FFF',
+  backgroundColor: '#191919',
 };
 export const TextStyle = {
   color: fontColor.white,
