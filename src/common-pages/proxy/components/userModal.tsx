@@ -15,7 +15,7 @@ import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import LazyImage from '@/components/basic/image';
 const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
 import LinearGradient from '@basicComponents/linear-gradient';
-import {getUserInfo, getUser7DayGameList} from '../proxy.service';
+import {getUserInfo} from '../proxy.service';
 import Text from '@basicComponents/text';
 import Tier from '../basic-components/tier';
 import Drawer, {DrawerRef} from '@/components/basic/drawer/drawer';
@@ -44,7 +44,6 @@ const boxRadius = {
   borderTopRightRadius: 8,
 };
 import {IProxyUserInfo} from '../proxy.type';
-import {SafeAny} from '@/types';
 import {ScrollView} from 'react-native-gesture-handler';
 import {goWhatsAppChat, toPriceStr} from '@/utils';
 import dayjs from 'dayjs';
@@ -63,16 +62,16 @@ const ModalContent = forwardRef((props, ref: any) => {
     getUserInfo(userId)
       .then(info => setUserInfo(info))
       .finally(() => setLoading(false));
-    getUser7DayGameList({userId: userId})
-      .then((info: SafeAny) => {
-        info.map((item: listObj) => {
-          item.gameList.map((game: listObj) => {
-            game.status = false;
-          });
-        });
-        setGameList(info);
-      })
-      .finally(() => setLoading(false));
+    // getUser7DayGameList({userId: userId})
+    //   .then((info: SafeAny) => {
+    //     info.map((item: listObj) => {
+    //       item.gameList.map((game: listObj) => {
+    //         game.status = false;
+    //       });
+    //     });
+    //     setGameList(info);
+    //   })
+    //   .finally(() => setLoading(false));
   };
   const handleContact = () => {
     goWhatsAppChat(userInfo?.contactPhone);

@@ -75,7 +75,10 @@ const ProxyNewUser = (props: NavigatorScreenProps) => {
         <View style={[theme.flex.col, theme.flex.flex1, theme.padding.l]}>
           <View
             style={[theme.flex.row, theme.flex.centerByCol, theme.margin.btml]}>
-            <Text main fontSize={theme.fontSize.m} blod>
+            <Text
+              main
+              fontSize={theme.fontSize.m}
+              color={theme.fontColor.white}>
               {i18n.t('proxy.new-user.today')}
             </Text>
             <Text

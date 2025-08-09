@@ -50,10 +50,10 @@ export function useShare(_autoInit = false) {
     }
   };
   const doShare = (tip = '') => {
-    if (!code) {
-      goTo('Login');
-      return;
-    }
+    // if (!code) {
+    //   goTo('Login');
+    //   return;
+    // }
     if (globalStore.isAndroid) {
       onShare(`${invateText}?code=${code}`);
     } else {

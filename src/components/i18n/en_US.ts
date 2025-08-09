@@ -314,7 +314,7 @@ export default {
     },
     'new-user': {
       title: 'New User',
-      today: 'New Users Today:',
+      today: 'New Users Today: ',
       error:
         'No new users yet! \nInvite your friends to earn more commissions.',
       invite: 'Invite now',
@@ -523,7 +523,7 @@ export default {
     },
     'new-user': {
       title: 'New User',
-      today: 'New Users Today:',
+      today: 'New Users Today: ',
       error:
         'No new users yet! \nInvite your friends to earn more commissions.',
       invite: 'Invite now',

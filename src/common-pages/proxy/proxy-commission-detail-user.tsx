@@ -149,7 +149,7 @@ const ProxyCommissionDetailUser = (props: NavigatorScreenProps) => {
         ) : (
           <View
             style={[
-              theme.background.lightGrey,
+              theme.background.black50,
               theme.padding.tbxxl,
               commissionDetailStyle.error,
             ]}>
