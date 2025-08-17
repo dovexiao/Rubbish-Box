@@ -147,7 +147,8 @@ const HomeGameList: React.FC<{setSelectedGame: (id: number) => void}> = ({
               }}>
               {selectedBox === item.id ? (
                 <ImageBackground
-                  source={require('@/assets/icons/home/home-game-list/list-bg.webp')}>
+                  source={require('@/assets/icons/home/home-game-list/list-bg.webp')}
+                  style={styles.verticalBox}>
                   <Image source={item.image} style={styles.smallImage} />
                   <Text style={styles.text}>{item.text}</Text>
                 </ImageBackground>
