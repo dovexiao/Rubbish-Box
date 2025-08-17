@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
   tanText: {
     fontSize: 10,
     textAlign: 'center',
+    color: theme.basicColor.primary,
   },
   bottomContainer: {
     flex: 1,
