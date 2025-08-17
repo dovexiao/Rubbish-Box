@@ -28,7 +28,7 @@ const ProxyHome = () => {
     size: {screenHeight},
     whiteAreaStyle,
   } = useInnerStyle();
-  const route = useRoute();
+  // const route = useRoute();
   const [agentInfo, setAgentInfo] = useState<AgentInfo>();
   const {code, doShare, initShare, copy} = useShare();
   const [refreshing, setRefreshing] = useState(false);
@@ -82,7 +82,7 @@ const ProxyHome = () => {
       <DetailNavTitle
         hideServer
         hideAmount
-        onBack={(route.path || '').indexOf('index') > -1 ? undefined : goBack}
+        // onBack={(route.path || '').indexOf('index') > -1 ? undefined : goBack}
         title={i18n.t('proxy.title')}
         iconColor="white"
         titleColor={theme.fontColor.white}

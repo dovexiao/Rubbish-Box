@@ -190,7 +190,7 @@ const Recharge = () => {
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle
-        onBack={goBack}
+        // onBack={goBack}
         hideAmount
         serverRight
         title={i18n.t('home.tab.deposit')}
