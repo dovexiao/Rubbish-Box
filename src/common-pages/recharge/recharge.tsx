@@ -4,7 +4,7 @@ import React, {useMemo, useState, useEffect, useCallback} from 'react';
 import {ScrollView, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import theme from '@/style';
-import {goBack, goTo} from '@/utils';
+import {goTo} from '@/utils';//goBack, 
 import globalStore from '@/services/global.state';
 
 import {LazyImageLGBackground} from '@/components/basic/image';

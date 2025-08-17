@@ -7,7 +7,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
-import {goBack, toAgentApply} from '@utils';
+import {toAgentApply} from '@utils'; //goBack,
 import InvitationCode from './components/invitation-code';
 import SubEntry from './components/sub-entry';
 import i18n from '@i18n';
@@ -18,7 +18,7 @@ import globalStore from '@/services/global.state';
 import {AgentInfo} from './proxy.type';
 import {useShare} from '../hooks/share.hooks';
 import DetailNavTitle from '@/components/business/detail-nav-title';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native'; //, useRoute
 import {LazyImageLGBackground} from '@basicComponents/image';
 
 const agentRuleImg = require('@/assets/imgs/proxy/agentrule.webp'); // <-- 引入图片
