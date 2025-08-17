@@ -1,3 +1,4 @@
+// import {background} from '@/components/style';
 import globalStore from '@/services/global.state';
 import {BasicObject} from '@/types';
 import theme from '@style';
@@ -40,7 +41,8 @@ export const styles = StyleSheet.create({
   },
   loginButton: {
     height: 48,
-    backgroundColor: theme.basicColor.primary,
+    // backgroundColor: theme.basicColor.primary,
+    backgroundImage: theme.linearGradientColor.loginButtonLinearGradient,
     paddingVertical: 0,
     paddingHorizontal: 0,
   },

@@ -28,7 +28,7 @@ export const basicColor = {
   white: '#FFFFFF',
   dark: '#000',
   transparent: '#1C1C1C',
-  transparentMedium: 'rgba(4,4,4,0.1)',
+  transparentMedium: 'rgb(122, 6, 6)',
   transparentMedium1: 'rgba(0, 0, 0, 0.9)',
   selectPrimary: '#2A8C83',
   primaryLinearGradient: ['#5C01A8', '#83081B'],
@@ -36,9 +36,14 @@ export const basicColor = {
 };
 
 export const linearGradientColor = {
+  pageLinearGradient: ['rgb(122, 6, 6)', 'rgb(35, 4, 2)'],
+  homeTopLogLinearGradient: ['rgb(224, 32, 32)', 'rgb(153, 24, 79)'],
+  loginButtonLinearGradient:
+    'linear-gradient(0deg, rgb(121, 74, 0), rgb(253, 229, 109), rgb(108, 46, 16))',
+
   primaryLinearGradient: ['#001C2C', '#001C2C'],
   linearGradientBtnColor: ['#FEB705', '#b98400'],
-  mainNavigationLinearGradientBtnColor: ['#242424', '#2f2f2f'],
+  mainNavigationLinearGradientBtnColor: ['rgb(122, 6, 6)', 'rgb(122, 6, 6)'],
   proxyLinearGradient: ['#dbeeea', '#dbeeea'],
   proxylightLinear: ['#E51251', '#FF8A00'],
   loginLinearGradient: ['#F9F0FF', '#FFF'],
@@ -87,6 +92,7 @@ export const fontColor = {
   white80: 'rgba(255,255,255,0.8)',
   brown: '#9F3131',
   button: '#8F4E00',
+  login: 'rgb(73, 24, 2)',
 };
 
 export const backgroundColor = {
@@ -109,6 +115,7 @@ export const backgroundColor = {
   second: '#F15802',
   /** 红 */
   accent: '#F44336',
+  newFirst: 'rgb(161, 37, 28)',
   /** 绿 */
   secAccent: '#009919',
   grey: '#D8E0EA',

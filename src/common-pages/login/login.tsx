@@ -1,7 +1,13 @@
 import theme from '@style';
 import Text from '@basicComponents/text';
 import React from 'react';
-import {Animated, KeyboardAvoidingView, View, Image} from 'react-native';
+import {
+  Animated,
+  KeyboardAvoidingView,
+  View,
+  Image,
+  ImageBackground,
+} from 'react-native';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import {goBack, goTo, navigationRef, scaleSize} from '@/utils';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -18,7 +24,7 @@ import {setScratchAuth} from '@/services/global.service';
 import {useTranslation} from 'react-i18next';
 
 import {flex} from '@/components/style';
-import {LazyImageLGBackground} from '@basicComponents/image';
+// import {LazyImageLGBackground} from '@basicComponents/image';
 import {useUserActions} from '@/store/useUserStore';
 // const icon = require('../../assets/icons/login/login-botttom.webp');
 const Login = (props: NavigatorScreenProps) => {
@@ -63,7 +69,10 @@ const Login = (props: NavigatorScreenProps) => {
     <KeyboardAvoidingView
       behavior="height"
       style={[theme.fill.fill, theme.flex.col, theme.position.rel]}>
-      <LazyImageLGBackground>
+      <ImageBackground
+        source={{uri: require('@assets/imgs/me_bg.png')}}
+        resizeMode="cover"
+        style={[theme.fill.fill, {height: '100%'}]}>
         <ScrollView keyboardShouldPersistTaps="always" style={[flex.flex1]}>
           <NavTitle
             onClose={() => {
@@ -87,11 +96,11 @@ const Login = (props: NavigatorScreenProps) => {
             style={[
               theme.flex.centerByCol,
               theme.margin.lrl,
-              theme.borderRadius.s,
+              // theme.borderRadius.s,
               theme.padding.l,
               theme.position.rel,
-              theme.background.mainDark,
-              theme.border.primary50,
+              // theme.background.mainDark,
+              // theme.border.primary50,
               {
                 marginTop: scaleSize(50),
               },
@@ -244,7 +253,7 @@ const Login = (props: NavigatorScreenProps) => {
             </View>
           </View>
         </ScrollView>
-      </LazyImageLGBackground>
+      </ImageBackground>
     </KeyboardAvoidingView>
   );
 };
