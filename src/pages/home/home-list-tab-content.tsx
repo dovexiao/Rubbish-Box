@@ -16,12 +16,12 @@ import HomeKerala from './components/kerala/home-kerala';
 // import HomeCar from './components/car/home-car';
 import theme from '@style';
 // import HomeDigitOff from '@/pages/home/components/digit-off/home-digit-off';
-import HomeDigits from '@/pages/home/components/digit/home-digits';
+import HomeDigitOff from '@/pages/home/components/digit-off/home-digit-off';
 
 export interface HomeTabListContentProps {
   // diceList: DiceListItem[];
   // colorList: ColorListItem[];
-  digitList: DigitListItem[];
+  // digitList: DigitListItem[];
   worldDigitList?: DigitListItem[];
   stateList?: DigitListItem[];
   quickDigitList?: DigitListItem[];
@@ -33,7 +33,6 @@ const HomeTabListContent = ({
   onMeasure = () => {},
   // diceList = [],
   // colorList = [],
-  digitList = [],
   // stateList = [],
   keralaList = [],
 }: HomeTabListContentProps) => {
@@ -48,7 +47,7 @@ const HomeTabListContent = ({
     // },
     {
       name: '3Digits',
-      content: <HomeDigits digitList={digitList} />,
+      content: <HomeDigitOff />,
     },
     // {
     //   name: 'World3Digits',

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState, useRef, useMemo} from 'react';
 import {RefreshControl, View, ScrollView, Animated} from 'react-native';
 import theme from '@style';
-import {getBannerList, getDigitList, getKeralaList} from './home.service';
+import {getBannerList, getKeralaList} from './home.service';
 import globalStore from '@services/global.state';
 import HomeHeader from './components/home-header';
 import Download from './components/download';
@@ -28,7 +28,7 @@ const Home = () => {
   const [pageLoading, setPageLoading] = useState(false);
   const [bannerList, setbannerList] = useState<BannerListItem[]>([]);
   const [keralaList, setKeralaList] = useState<KeralaListItem[]>([]);
-  const [digitList, setDigitList] = useState<DigitListItem[]>([]);
+  const [digitList] = useState<DigitListItem[]>([]);
   const [showTabs, setShowTabs] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
@@ -38,10 +38,10 @@ const Home = () => {
 
   const getGame2List = useCallback(() => {
     setPageLoading(true);
-    Promise.allSettled([getKeralaList(), getDigitList()])
-      .then(([kerala, digit]) => {
+    Promise.allSettled([getKeralaList()])
+      .then(([kerala]) => {
         setDataForSettled(setKeralaList, kerala);
-        setDataForSettled(setDigitList, digit);
+        // setDataForSettled(setDigitList, digit);
       })
       .finally(() => {
         setPageLoading(false);
@@ -159,7 +159,7 @@ const Home = () => {
             {selectedGame === 1 && <HomeCasino />}
             {selectedGame === 2 && (
               <HomeTabListContent
-                digitList={digitList}
+                // digitList={digitList}
                 keralaList={keralaList}
                 onMeasure={(index, anchor) => {
                   measures.current[index] = anchor;

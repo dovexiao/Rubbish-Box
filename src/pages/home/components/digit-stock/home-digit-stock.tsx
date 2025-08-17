@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {View, FlatList, StyleSheet, ImageBackground} from 'react-native';
-import HomeDigitOffCard from './home-digit-off-card';
+import {View, FlatList, StyleSheet, Image} from 'react-native';
+import HomeDigitStoCard from './home-digit-stock-card';
 import {getDigitOffList} from '../../home.service';
 import {DigitOffListItem} from '../../home.type';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
@@ -11,11 +11,10 @@ import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {goTo} from '@/utils';
 import globalStore from '@/services/global.state';
 
-const HomeDigitOff: React.FC = () => {
-  const basePx = globalStore.screenWidth / 375;
+const HomeDigitSto: React.FC = () => {
   const {screenWidth} = useScreenSize();
   const {i18n} = useTranslation();
-  const digitsType = 1;
+  const digitsType = 2;
   const [digitOffData, setDigitOffData] = useState<DigitOffListItem[]>([]); // 使用状态存储动态数据
 
   const listDetail = async () => {
@@ -35,27 +34,33 @@ const HomeDigitOff: React.FC = () => {
 
   return (
     <View>
-      <ImageBackground
-        source={require('@/assets/icons/home/game-name-bg.webp')}
+      <View
         style={[
           theme.flex.row,
-          theme.flex.center,
+          theme.padding.tbs,
+          theme.padding.lrl,
+          theme.flex.centerByCol,
           // eslint-disable-next-line react-native/no-inline-styles
           {
-            height: basePx * 46,
-            marginLeft: -14,
-            marginRight: -14,
-            marginBottom: 10,
+            height: 52,
           },
         ]}>
+        <Image
+          source={require('@/assets/icons/home/game-name-img.webp')}
+          style={{
+            width: theme.iconSize.m,
+            height: theme.iconSize.m,
+            marginRight: theme.paddingSize.s,
+          }}
+        />
         <Text
-          fontSize={17}
-          color={theme.basicColor.primary}
+          size="large"
+          main
           fontFamily="fontInter"
-          style={{fontWeight: '700', marginBottom: 5}}>
-          {i18n.t('home.digit.title')}
+          style={{fontWeight: '600'}}>
+          {i18n.t('home.digitSto.title')}
         </Text>
-      </ImageBackground>
+      </View>
       <View style={styles.container}>
         <FlatList
           data={digitOffData}
@@ -80,13 +85,13 @@ const HomeDigitOff: React.FC = () => {
                 (styles.itemContainer,
                 [
                   {
-                    width: (screenWidth - 36) / 2,
+                    width: (screenWidth - 56) / 2,
                     height: screenWidth * 0.288,
                     marginBottom: 8,
                   },
                 ])
               }>
-              <HomeDigitOffCard
+              <HomeDigitStoCard
                 drawTimestamp={item.drawTimestamp}
                 status={item.status}
                 winAmount={item.winAmount}
@@ -106,6 +111,7 @@ const HomeDigitOff: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
+    marginHorizontal: 12,
     marginBottom: 4,
   },
 
@@ -118,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeDigitOff;
+export default HomeDigitSto;

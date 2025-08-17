@@ -115,7 +115,7 @@ const HomeGameList: React.FC<HomeTabPagePopularProps> = props => {
         <HomeGameTabListContent
           // diceList={lotteryPageData?.diceList}
           // colorList={lotteryPageData?.colorList}
-          digitList={lotteryPageData?.digitList}
+          // digitList={lotteryPageData?.digitList}
           quickDigitList={lotteryPageData?.quickDigitList}
           keralaList={lotteryPageData?.keralaList}
           onMeasure={(index: number, anchor: number) => {

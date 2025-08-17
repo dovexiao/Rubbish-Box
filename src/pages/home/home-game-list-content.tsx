@@ -22,7 +22,7 @@ import theme from '@style';
 export interface HomeTabListContentProps {
   // diceList: DiceListItem[];
   // colorList: ColorListItem[];
-  digitList: DigitListItem[];
+  // digitList: DigitListItem[];
   quickDigitList: DigitListItem[];
   keralaList: KeralaListItem[];
   onMeasure: (index: number, anchor: number) => void;
@@ -32,7 +32,7 @@ const HomeTabListContent = ({
   onMeasure = () => {},
   // diceList = [],
   // colorList = [],
-  digitList = [],
+  // digitList = [],
   // quickDigitList = [],
   keralaList = [], // matkaList = [],
 }: HomeTabListContentProps) => {
@@ -53,10 +53,10 @@ const HomeTabListContent = ({
     //   name: 'Color',
     //   content: <HomeColor />,
     // },
-    {
-      name: '3Digits',
-      content: <HomeDigits digitList={digitList.slice(0, 3)} />,
-    },
+    // {
+    //   name: '3Digits',
+    //   content: <HomeDigits digitList={digitList.slice(0, 3)} />,
+    // },
     {
       name: 'Kerala',
       content: <HomeKerala keralaList={keralaList.slice(0, 3)} />,

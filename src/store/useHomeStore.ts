@@ -5,7 +5,7 @@ import {
   BannerListItem,
   // DiceListItem,
   // ColorListItem,
-  DigitListItem,
+  // DigitListItem,
   QuickDigitListItem,
   KeralaListItem,
   // MatkaListItem,
@@ -16,7 +16,7 @@ import {
   getBannerList,
   // getDiceList,
   // getColorList,
-  getDigitList,
+  // getDigitList,
   // getWorldDigitList,
   // getStateLotteryList,
   getQuickDigitList,
@@ -43,7 +43,7 @@ type HomeStoreState = {
   lotteryPageData: {
     // diceList: DiceListItem[];
     // colorList: ColorListItem[];
-    digitList: DigitListItem[];
+    // digitList: DigitListItem[];
     // worldDigitList: DigitListItem[];
     // stateList: DigitListItem[];
     quickDigitList: QuickDigitListItem[];
@@ -100,7 +100,7 @@ const useHomeStore = create<HomeStoreState>()(
         const [
           // dice,
           // color,
-          digit,
+          // digit,
           // worldDigit,
           // stateList,
           quickDigit,
@@ -109,7 +109,7 @@ const useHomeStore = create<HomeStoreState>()(
         ] = await Promise.allSettled([
           // getDiceList(),
           // getColorList(),
-          getDigitList(),
+          // getDigitList(),
           // getWorldDigitList(),
           // getStateLotteryList(),
           getQuickDigitList(),
@@ -120,7 +120,7 @@ const useHomeStore = create<HomeStoreState>()(
           lotteryPageData: {
             // diceList: formatSettledData(dice),
             // colorList: formatSettledData(color),
-            digitList: formatSettledData(digit),
+            // digitList: formatSettledData(digit),
             // worldDigitList: formatSettledData(worldDigit),
             // stateList: formatSettledData(stateList),
             quickDigitList: formatSettledData(quickDigit) || [],

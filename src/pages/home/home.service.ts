@@ -62,17 +62,17 @@ export const getBannerList = (type = 2) => {
   });
 };
 
-/** 热门小游戏 */
-export const getHotGgmeList = () => {
-  return http.post<null, HotGameItem[]>('app/hotGame/list');
-};
-
 /** 3D Official Lottery列表 */
 export const getDigitOffList = (digitsType: number) => {
   return http.post<{digitsType: number}, DigitOffListItem[]>(
-    'app/pick/info/list',
+    'app/digits/info/list',
     {digitsType},
   );
+};
+
+/** 热门小游戏 */
+export const getHotGgmeList = () => {
+  return http.post<null, HotGameItem[]>('app/hotGame/list');
 };
 
 /** kerala列表 */
