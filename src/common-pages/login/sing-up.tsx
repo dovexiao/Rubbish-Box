@@ -112,7 +112,7 @@ const SingUp = (props: NavigatorScreenProps) => {
               padding: theme.paddingSize.l * 2,
             },
           ]}>
-          <Text fontSize={20} blod color={theme.basicColor.newFontYellow}>
+          <Text fontSize={20} blod color={theme.basicColor.newFontYellow} style={[{marginBottom: 10}]}>
             {i18n.t('login.label.sign')}
           </Text>
           <PhoneInput
