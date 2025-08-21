@@ -1,8 +1,10 @@
+/* eslint-disable */
+/* prettier-ignore */
 import React from 'react';
 import NavTitle from '@basicComponents/nav-title';
-import {View, Image} from 'react-native';
+import {View, Image, Platform} from 'react-native';
 import theme from '@style';
-import {goBack, goTo, useResponsiveDimensions} from '@utils';
+import {goBack, goTo, scaleSize, useResponsiveDimensions} from '@utils';
 import {ScrollView} from 'react-native-gesture-handler';
 import PhoneInput from './components/phone-input';
 import CodeInput from './components/code-input';
@@ -17,7 +19,8 @@ import {BasicObject, NavigatorScreenProps} from '@/types';
 import {setScratchAuth} from '@/services/global.service';
 import {useTranslation} from 'react-i18next';
 import {LazyImageLGBackground} from '@basicComponents/image';
-import {useUserActions} from '@/store/useUserStore';
+import Clipboard from '@react-native-clipboard/clipboard';
+import DeviceInfo from 'react-native-device-info';
 // import LazyImage from '@/components/basic/image';
 // const icon = require('../../assets/icons/login/login-botttom.webp');
 
@@ -37,22 +40,66 @@ const SingUp = (props: NavigatorScreenProps) => {
 
   const [userPhone, setUserPhone] = React.useState('');
   const [OTPCode, setOTPCode] = React.useState('');
-  const [invitaCode, setInvitaCode] = React.useState(
-    globalStore.isWeb ? localStorage.getItem('invitationCode') || '' : '',
-  );
-  // const [invitaCode, setInvitaCode] = React.useState('');
+  // const [invitaCode, setInvitaCode] = React.useState(
+  //   globalStore.isWeb ? localStorage.getItem('invitationCode') || '' : '',
+  // );
+  const [invitaCode, setInvitaCode] = React.useState('');
   const [is18, setIs18] = React.useState(false);
   const [agree, setAgree] = React.useState(false);
   const [blured, setBlured] = React.useState(true);
   const [userPhoneCode, setUserPhoneCode] = React.useState(
     globalStore.defaultPhoneCode,
   );
-  const {setToken} = useUserActions();
   // const handleLayout = ({nativeEvent}: SafeAny) => {
   //   setLayoutHeight(nativeEvent.layout.height);
   // };
+  // 状态管理
+  const [inviteCode, setInviteCode] = React.useState<string>('');
+  const [equipmentType, setEquipmentType] = React.useState<string>('');
+  const [systemType, setSystemType] = React.useState<string>('');
+
+  console.log('inviteCode', inviteCode);
+  console.log('equipmentType', equipmentType);
+  console.log('systemType', systemType);
+
+  React.useEffect(() => {
+    if (Platform.OS === 'android') {
+      // 只有安卓平台才读取剪切板、设备型号和系统版本
+      async function fetchData() {
+        try {
+          // 获取剪切板内容并检查是否以 nicegame_ 开头
+          const clipboardContent = await Clipboard.getString();
+          if (clipboardContent.startsWith('nicegame_')) {
+            setInviteCode(clipboardContent);
+          } else {
+            setInviteCode(''); // 如果不符合条件，设置为空串
+          }
+
+          // 获取设备型号
+          const deviceModel = DeviceInfo.getModel();
+          setEquipmentType(deviceModel);
+
+          // 获取系统版本
+          const systemVersion = DeviceInfo.getSystemVersion();
+          setSystemType(systemVersion);
+        } catch (error) {
+          console.error('Error fetching data: ', error);
+        }
+      }
+      fetchData();
+    } else {
+      // 在 Web 平台直接赋值为空串
+      setInviteCode('');
+      setEquipmentType('');
+      setSystemType('');
+    }
+  }, []);
+
   return (
-    <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
+    <LazyImageLGBackground
+      showBottomBG
+      locations={[0, 1]}
+      style={[theme.fill.fill, theme.flex.col]}>
       <NavTitle onClose={goBack} />
       <ScrollView style={{zIndex: 10}}>
         <View
@@ -60,16 +107,12 @@ const SingUp = (props: NavigatorScreenProps) => {
           style={[
             theme.borderRadius.l,
             theme.margin.l,
-            theme.background.mainDark,
             {
+              backgroundColor: theme.basicColor.newBgInOne,
               padding: theme.paddingSize.l * 2,
             },
           ]}>
-          <Text
-            fontSize={20}
-            blod
-            color={theme.fontColor.white}
-            style={[theme.margin.btml]}>
+          <Text fontSize={20} blod color={theme.basicColor.newFontYellow} style={[{marginBottom: 10}]}>
             {i18n.t('login.label.sign')}
           </Text>
           <PhoneInput
@@ -92,8 +135,7 @@ const SingUp = (props: NavigatorScreenProps) => {
               blured ? styles.greyBorder : styles.deepBorder,
             ]}>
             <Image
-              // eslint-disable-next-line react-native/no-inline-styles
-              style={{width: 18, height: 18}}
+              style={{width: scaleSize(13), height: scaleSize(13)}}
               source={require('@assets/icons/login/invitation-code.webp')}
             />
             <View style={theme.flex.flex1}>
@@ -119,7 +161,7 @@ const SingUp = (props: NavigatorScreenProps) => {
                 marginTop: theme.paddingSize.m * 2,
                 marginLeft: theme.paddingSize.zorro,
                 marginRight: theme.paddingSize.zorro,
-                backgroundColor: theme.backgroundColor.mainDark,
+                backgroundColor: theme.basicColor.newBgInOne,
               }}
               checked={v.checked}
               onPress={() => v.onPress(!v.checked)}
@@ -139,7 +181,7 @@ const SingUp = (props: NavigatorScreenProps) => {
                 <Text
                   style={theme.padding.lefts}
                   fontSize={theme.fontSize.m}
-                  white>
+                  color={theme.basicColor.newFontWhite}>
                   {i18n.t(v.label)}
                 </Text>
               }
@@ -150,13 +192,32 @@ const SingUp = (props: NavigatorScreenProps) => {
               marginVertical: theme.paddingSize.m * 2,
             }}>
             <Button
-              radius={50}
+              type="linear-primary"
+              radius={theme.borderRadiusSize.l}
               onPress={() => {
                 globalStore.globalLoading.next(true);
-                userLogin(userPhone, OTPCode, invitaCode, false)
+                let deviceCode = '';
+                if (Platform.OS !== 'android') {
+                  deviceCode = localStorage.getItem('gps_adid') || '';
+                }
+                userLogin(
+                  userPhone,
+                  OTPCode,
+                  deviceCode,
+                  inviteCode,
+                  equipmentType,
+                  systemType,
+                  invitaCode,
+                  false,
+                )
                   .then(res => {
+                    if (globalStore.channel === 'hipfc01') {
+                      const url =
+                        'https://ppprfd.pgoriginad.com/action/3b982489-5c0b-484c-991e-b3fe72720144/319047';
+                      fetch(url);
+                    }
                     globalStore.token = res.token;
-                    setToken(res.token);
+                    globalStore.isNewUser = String(res.isNewUser);
                     const data: BasicObject = {fromLogin: true};
                     sucessPage && (data.sucessPage = sucessPage);
                     sucessPageParams &&
@@ -171,10 +232,7 @@ const SingUp = (props: NavigatorScreenProps) => {
                 OTPCode.length !== 6 ||
                 !is18 ||
                 !agree
-              }
-              style={{
-                backgroundColor: '#F3BA63', // 修改按钮背景色
-              }}>
+              }>
               <Text
                 color={theme.basicColor.white}
                 size="large"
@@ -183,7 +241,6 @@ const SingUp = (props: NavigatorScreenProps) => {
               </Text>
             </Button>
           </View>
-
           <AccountTip
             tip="login.tip.has-account"
             linkTip="login.tip.sign-in"

@@ -94,14 +94,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginRight: 8,
     borderWidth: 1,
-    backgroundColor: theme.basicColor.primary10,
+    backgroundColor: theme.basicColor.newBgInTwo,
     borderColor: 'transparent',
     borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   itemSelected: {
-    backgroundColor: theme.basicColor.primary,
+    backgroundColor: theme.basicColor.newBgInOne,
   },
 });
 

@@ -80,10 +80,10 @@ const Promotion = () => {
   const renderItem = ({item}: ListRenderItemInfo<PromotionListItem>) => (
     <View
       style={[
-        theme.background.mainDark,
-        theme.border.primary50,
-        theme.borderRadius.s,
+        // theme.border.primary50,
+        // theme.borderRadius.l,
         theme.margin.bottomMd,
+        // {backgroundColor: theme.basicColor.newBgInOne},
       ]}>
       <Card>
         <NativeTouchableOpacity onPress={() => onPressItemTo(item)}>

@@ -51,8 +51,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
         theme.flex.col,
         theme.borderRadius.m,
         theme.padding.l,
-        theme.background.transparentMedium1,
-        {marginTop: 12},
+        {marginTop: 12, backgroundColor: theme.basicColor.newBgInOne},
       ]}>
       {/* 输入框区域 */}
       <View style={[theme.flex.col, theme.margin.btms]}>

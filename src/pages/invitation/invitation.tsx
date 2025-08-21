@@ -71,7 +71,7 @@ const Invitation = () => {
           style={[
             // eslint-disable-next-line react-native/no-inline-styles
             {
-              backgroundColor: '#0047B1',
+              backgroundColor: theme.basicColor.primary50,
             },
             theme.borderRadius.xl,
             theme.padding.l,

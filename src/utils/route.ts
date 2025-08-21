@@ -30,7 +30,7 @@ const objectToQueryString = (obj: BasicObject) => {
 };
 
 export const goToWithLogin = (router: string, params?: BasicObject) => {
-  const token = useUserStore.getState().token;
+  const token = globalStore.token || useUserStore.getState().token;
   if (!token) {
     goTo('Login');
     return;

@@ -26,7 +26,7 @@ const Download: React.FC = () => {
   const imgSize = (35 * globalStore.screenWidth) / 375;
   return show ? (
     <LinearGradient
-      colors={theme.basicColor.primaryLinearGradient}
+      colors={theme.linearGradientColor.homeTopLogLinearGradient}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 0}}
       style={[

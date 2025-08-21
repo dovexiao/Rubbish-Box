@@ -94,6 +94,15 @@ class GlobalStore {
   };
   tokenSubject = new BehaviorSubject<string | null>(this._token);
 
+  /** 是否登录标识 */
+  private _isNewUser: string = null!;
+  get isNewUser() {
+    return this._isNewUser;
+  }
+  set isNewUser(newUser: string) {
+    this._isNewUser = newUser;
+    this.asyncSetItem('isNewUser', newUser);
+  }
   /** 用户信息 */
   private _userInfo: BasicObject | null = null;
   get userInfo() {

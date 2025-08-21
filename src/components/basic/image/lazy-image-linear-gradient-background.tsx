@@ -4,6 +4,7 @@ import {LazyImageProps} from './lazy-image';
 import {ImageUrlType} from './index.type';
 import {useResponsiveDimensions} from '@/utils';
 import Svg, {Polygon} from 'react-native-svg';
+import theme from '@/style';
 
 export interface LazyImageLGBackgroundProps
   extends Omit<LazyImageProps, 'imageUrl'> {
@@ -12,6 +13,8 @@ export interface LazyImageLGBackgroundProps
   imageUrl?: ImageUrlType;
   children?: ReactNode;
   fullHeight?: boolean;
+  showBottomBG?: boolean;
+  locations?: number[];
 }
 
 const HexGrid: React.FC<{width: number; height: number}> = ({
@@ -94,7 +97,7 @@ const LazyImageLGBackground: React.FC<LazyImageLGBackgroundProps> = props => {
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    backgroundColor: '#000', // 背景底色黑
+    backgroundImage: `linear-gradient(180deg, ${theme.linearGradientColor.pageLinearGradient})`,
   },
 });
 

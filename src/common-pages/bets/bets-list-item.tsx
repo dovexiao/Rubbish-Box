@@ -104,6 +104,19 @@ const BetsListItem = ({
   };
 
   const status = React.useMemo(() => {
+    console.log(111111, info);
+    const pickStatus = info.pickStatus === 0 ? 0 : info.pickStatus || undefined;
+    const openStatus = info.openStatus === 0 ? 0 : info.openStatus || undefined;
+    if (info.shareGameDto !== undefined && pickStatus !== undefined) {
+      // 3 Digit
+      // 1=中奖 0=未中奖 2=未使用
+      return info.pickStatus;
+    }
+    if (info.shareGameDto !== undefined && openStatus !== undefined) {
+      // Color
+      // 1=中奖 0=未中奖 2=未使用
+      return info.openStatus;
+    }
     const {gameCode} = info.gameCode;
     if (gameCode === 'kerala') {
       // Kerala

@@ -7,9 +7,9 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
-import {goBack, toAgentApply} from '@utils';
+import {toAgentApply} from '@utils'; //goBack,
 import InvitationCode from './components/invitation-code';
-import SubEntry from './components/sub-entry';
+// import SubEntry from './components/sub-entry';
 import i18n from '@i18n';
 import {getAgentInfo} from './proxy.service';
 import HomeUserInfo from './components/home-user-info';
@@ -18,7 +18,7 @@ import globalStore from '@/services/global.state';
 import {AgentInfo} from './proxy.type';
 import {useShare} from '../hooks/share.hooks';
 import DetailNavTitle from '@/components/business/detail-nav-title';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native'; //, useRoute
 import {LazyImageLGBackground} from '@basicComponents/image';
 
 const agentRuleImg = require('@/assets/imgs/proxy/agentrule.webp'); // <-- 引入图片
@@ -28,7 +28,7 @@ const ProxyHome = () => {
     size: {screenHeight},
     whiteAreaStyle,
   } = useInnerStyle();
-  const route = useRoute();
+  // const route = useRoute();
   const [agentInfo, setAgentInfo] = useState<AgentInfo>();
   const {code, doShare, initShare, copy} = useShare();
   const [refreshing, setRefreshing] = useState(false);
@@ -82,7 +82,7 @@ const ProxyHome = () => {
       <DetailNavTitle
         hideServer
         hideAmount
-        onBack={(route.path || '').indexOf('index') > -1 ? undefined : goBack}
+        // onBack={(route.path || '').indexOf('index') > -1 ? undefined : goBack}
         title={i18n.t('proxy.title')}
         iconColor="white"
         titleColor={theme.fontColor.white}
@@ -101,10 +101,10 @@ const ProxyHome = () => {
           onShare={doShare}
           onCopy={() => copy(code)}
         />
-        <SubEntry
+        {/* <SubEntry
           userId={agentInfo?.userId}
           agentLevel={agentInfo?.agentLevel}
-        />
+        /> */}
         <View style={styles.bottomImgView}>
           <Image
             source={agentRuleImg}

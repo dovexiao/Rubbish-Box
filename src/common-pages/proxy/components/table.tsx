@@ -32,18 +32,21 @@ export const tableLeft = {
 };
 export const tableLeftNew = {
   ...tableLeft,
-  backgroundColor: '#1C1C1C',
+  // backgroundColor: '#1C1C1C',
+  backgroundColor: theme.basicColor.newBgInOne5,
 };
 export const tableLeftTwo = {
   ...tableLeft,
-  backgroundColor: '#191919',
+  // backgroundColor: '#191919',
+  backgroundColor: theme.basicColor.newBgInOne,
 };
 export const TextStyle = {
   color: fontColor.white,
   fontSize: fontSize.m,
 };
 export const backgroundColor = {
-  backgroundColor: '#EFF2F7',
+  // backgroundColor: '#0f8d74',
+  // backgroundColor: theme.basicColor.newBgInOne,
 };
 export interface teamReportDataObj {
   userId: number;
@@ -70,24 +73,13 @@ const Table = (props: SafeAny) => {
         <View style={[{paddingBottom: 30}]}>
           <View
             style={[
-              theme.background.white,
               flex.flex,
               flex.row,
               flex.alignStart,
+              {backgroundColor: theme.basicColor.newBgInTwo},
             ]}>
             <View style={[flex.row]}>
               <View style={{width: 110, height: 28}}>
-                {/* <View
-                  style={[
-                    tableLeft,
-                    theme.flex.flex,
-                    theme.flex.center,
-                    {width: 110, height: 28},
-                  ]}>
-                  <Text style={[TextStyle]}>
-                    {i18n.t('proxy.team-report.user-id')}
-                  </Text>
-                </View> */}
                 {props?.teamReportData &&
                   props?.teamReportData.map(
                     (item: teamReportDataObj, index: number) => {
@@ -126,12 +118,18 @@ const Table = (props: SafeAny) => {
                 }
               }}>
               <View style={[flex.row, flex.centerByCol]}>
-                <View style={[{backgroundColor: '#D8E2E7', width: 100}]}>
+                <View
+                  style={[
+                    {
+                      backgroundColor: theme.basicColor.newBgInTwo,
+                      width: 100,
+                    },
+                  ]}>
                   {/* <View style={[padding.rights, padding.leftl]}>
                     <Sort title={i18n.t('proxy.team-report.user')} />
                   </View> */}
                   <View
-                    style={[{backgroundColor: '#fff'}]}
+                    style={[{backgroundColor: theme.basicColor.newBgInTwo}]}
                     onLayout={({nativeEvent}) => {
                       props.setUserWidth(nativeEvent.layout.width);
                     }}>
@@ -157,7 +155,10 @@ const Table = (props: SafeAny) => {
                     )}
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7', width: 100}]}>
+                <View
+                  style={[
+                    {backgroundColor: theme.basicColor.newBgInTwo, width: 100},
+                  ]}>
                   {/* <View style={[padding.rights]}>
                     <Sort title={i18n.t('proxy.team-report.recharge')} />
                   </View> */}
@@ -192,7 +193,10 @@ const Table = (props: SafeAny) => {
                     )}
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7', width: 100}]}>
+                <View
+                  style={[
+                    {backgroundColor: theme.basicColor.newBgInTwo, width: 100},
+                  ]}>
                   {/* <View style={[padding.rights]}>
                     <Sort title={i18n.t('proxy.team-report.betting')} />
                   </View> */}
@@ -227,7 +231,10 @@ const Table = (props: SafeAny) => {
                     )}
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7', width: 100}]}>
+                <View
+                  style={[
+                    {backgroundColor: theme.basicColor.newBgInTwo, width: 100},
+                  ]}>
                   {/* <View style={[padding.rights]}>
                     <Sort title={i18n.t('proxy.team-report.commission')} />
                   </View> */}

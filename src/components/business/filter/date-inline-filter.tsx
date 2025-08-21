@@ -109,13 +109,15 @@ const DateInlineFilter: React.FC<DateInlineFilterProps> = props => {
       <NativeTouchableOpacity onPress={() => show()}>
         <View
           style={[
-            theme.background.mainDark,
             filterStyle.dateInline,
             theme.padding.lrs,
             theme.borderRadius.xs,
             theme.flex.row,
             theme.flex.center,
             theme.border.primary50,
+            {
+              backgroundColor: theme.basicColor.newButtonYellow,
+            },
           ]}>
           <LazyImage
             imageUrl={filterImg}
@@ -139,7 +141,6 @@ const DateInlineFilter: React.FC<DateInlineFilterProps> = props => {
       <NativeTouchableOpacity onPress={handleOpenPick}>
         <View
           style={[
-            theme.background.mainDark,
             filterStyle.dateInline,
             theme.padding.lrs,
             theme.borderRadius.xs,
@@ -148,6 +149,9 @@ const DateInlineFilter: React.FC<DateInlineFilterProps> = props => {
             theme.flex.between,
             theme.margin.leftxxs,
             theme.border.primary50,
+            {
+              backgroundColor: theme.basicColor.newButtonYellow,
+            },
           ]}>
           {showTime ? (
             <View style={[theme.overflow.hidden, margin.rightxxs]}>

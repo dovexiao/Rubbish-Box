@@ -17,15 +17,16 @@ import i18n from '@i18n';
 interface GiftPopProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (value: string) => void;
+  onSubmit: (value: string, callback: () => void) => void;
 }
 
 const GiftPop: React.FC<GiftPopProps> = ({visible, onClose, onSubmit}) => {
   const [inputValue, setInputValue] = useState<string>('');
   const {screenWidth} = useScreenSize();
   const handleSubmit = () => {
-    onSubmit(inputValue);
-    setInputValue(''); // Clear input after submit
+    onSubmit(inputValue, () => {
+      setInputValue(''); // Clear input after submit
+    });
   };
 
   return (

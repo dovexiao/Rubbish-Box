@@ -79,7 +79,7 @@ const CodeInput = ({
         // 验证码输入框
         <View
           style={[
-            styles.inputBox,
+            styles.loginInputBox,
             theme.position.rel,
             theme.fill.fillW,
             blured ? styles.greyBorder : styles.deepBorder,
@@ -196,7 +196,7 @@ const CodeInput = ({
         // 密码输入框
         <View
           style={[
-            styles.inputBox,
+            styles.loginInputBox,
             theme.fill.fillW,
             blured ? styles.greyBorder : styles.deepBorder,
           ]}>

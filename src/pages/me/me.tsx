@@ -46,7 +46,7 @@ import GiftPop from '@/common-pages/gift-code/gift-pop';
 import { getGiftCodeAmount } from '@/pages/me/me.service';
 import { useRebateSuccessToast } from '@/common-pages/rebate/rebate-toast.hooks';
 
-const {overflow, padding, font, margin, borderRadius, background} = theme;
+const {overflow, padding, font, margin, borderRadius, basicColor} = theme;
 
 /** TODO 单个文件过大,需要拆解 */
 const Me = () => {
@@ -172,7 +172,7 @@ const Me = () => {
 
   const {show} = useRebateSuccessToast();
 
-  const handleSubmit = async (value: string) => {
+  const handleSubmit = async (value: string, callback: () => void) => {
     try {
       if (!value) {
         return;
@@ -180,8 +180,12 @@ const Me = () => {
       const res = await getGiftCodeAmount(value);
       show(Number(res));
       handleClosePop(); // 关闭弹窗
+      callback(); // 调用回调函数
     } catch (error) {
-      handleClosePop(); // 关闭弹窗
+      setTimeout(() => {
+        handleClosePop(); // 关闭弹窗
+        callback();
+      }, 500);
     }
   };
 
@@ -391,12 +395,14 @@ const Me = () => {
               <NativeTouchableOpacity onPress={doLogout}>
                 <View
                   style={[
-                    background.mainShallow,
                     padding.lrm,
                     padding.tbl,
                     borderRadius.m,
                     overflow.hidden,
                     margin.topl,
+                    {
+                      backgroundColor: basicColor.newBgInOne,
+                    }
                   ]}>
                   <Text style={[font.white, font.m, font.bold, font.center]}>
                     {i18n.t('me.bottom.logout')}

@@ -82,7 +82,7 @@ const Button: React.FC<LinearButtonProps> = props => {
     title,
     titleBold = false,
     titleFontFamily = 'fontInter',
-    titleColor = theme.fontColor.white,
+    titleColor = theme.fontColor.login,
     type = 'primary',
     size = 'middle',
     width,

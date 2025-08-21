@@ -48,7 +48,7 @@ const Sort = forwardRef(
         }}
         style={[
           tableright,
-          theme.background.mainDark,
+          // theme.background.mainDark,
           theme.flex.flex,
           theme.flex.center,
           flex.row,

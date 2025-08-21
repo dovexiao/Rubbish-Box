@@ -77,11 +77,11 @@ const BetsTab = (props: {
           theme.flex.row,
           theme.flex.centerByCol,
           styles.tabContainer,
-          theme.background.black50,
           theme.borderRadius.s,
           // eslint-disable-next-line react-native/no-inline-styles
           {
             height: 42,
+            backgroundColor: theme.basicColor.newBgInTwo,
           },
         ]}>
         <View
@@ -109,7 +109,7 @@ const BetsTab = (props: {
                       paddingHorizontal: 8,
                       paddingVertical: 4,
                       borderRadius: 6,
-                      backgroundColor: theme.basicColor.primary,
+                      backgroundColor: theme.basicColor.newBgInOne,
                     }
                   : {}
               }>

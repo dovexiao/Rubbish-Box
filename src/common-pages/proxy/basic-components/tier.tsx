@@ -77,7 +77,10 @@ const Tier: React.FC<TierProps> = props => {
           style={[styles.vipWrap, theme.flex.center]}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
-          colors={[theme.basicColor.primary10, theme.basicColor.primary50]}>
+          colors={[
+            theme.basicColor.newTransparent,
+            theme.basicColor.newTransparent,
+          ]}>
           <Text color={theme.fontColor.white} fontSize={theme.fontSize.s}>
             {i18n.t('proxy.tier', {number: ` ${level}`})}
           </Text>

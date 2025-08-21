@@ -35,7 +35,7 @@ const searchBox = {
   marginLeft: 10,
   width: 64,
   height: 40,
-  backgroundColor: basicColor.primary,
+  backgroundColor: basicColor.newBgInOne,
 };
 const searchText = {
   color: '#fff',
@@ -117,7 +117,7 @@ const ProxyTeamReport = () => {
   useEffect(() => {
     if (!phone) {
       parameter.pageNo = 1;
-      setTotalSize(0);
+      setTotalSize(10);
       setTeamReportData([]);
     }
     setParameter({
@@ -144,7 +144,7 @@ const ProxyTeamReport = () => {
         <View style={[{height: 104}]}>
           <View
             style={[
-              theme.background.white,
+              // theme.background.white,
               theme.margin.lrl,
               theme.borderRadius.xl,
               {height: 64},
@@ -178,8 +178,8 @@ const ProxyTeamReport = () => {
             </View>
           </View>
           {totalSize > 0 && (
-            <View style={[padding.l, {height: 40, backgroundColor: '#fff'}]}>
-              <Text color={fontColor.main} fontSize={14}>
+            <View style={[padding.l, {height: 40}]}>
+              <Text color={fontColor.yellow} fontSize={14}>
                 Found <Text color={basicColor.primary}>{totalSize}</Text>{' '}
                 results in the search.
               </Text>
@@ -199,7 +199,7 @@ const ProxyTeamReport = () => {
                   tableLeft,
                   theme.flex.flex,
                   theme.flex.center,
-                  {width: 110},
+                  {width: 110, backgroundColor: theme.basicColor.newBgInTwo},
                 ]}>
                 <Text style={[TextStyle]}>
                   {i18n.t('proxy.team-report.user-id')}
@@ -207,13 +207,8 @@ const ProxyTeamReport = () => {
               </View>
             </View>
             <ScrollView horizontal={true} ref={scrollViewRef}>
-              <View
-                style={[
-                  flex.row,
-                  flex.centerByCol,
-                  {backgroundColor: '#D8E2E7'},
-                ]}>
-                <View style={[{backgroundColor: '#D8E2E7'}]}>
+              <View style={[flex.row, flex.centerByCol]}>
+                <View style={[{backgroundColor: theme.basicColor.newBgInTwo}]}>
                   <View
                     style={[padding.rights, padding.leftl, {width: userWidth}]}>
                     <Sort
@@ -236,7 +231,7 @@ const ProxyTeamReport = () => {
                     />
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7'}]}>
+                <View style={[{backgroundColor: theme.basicColor.newBgInTwo}]}>
                   <View style={[padding.rights, {width: rechargeWidth}]}>
                     <Sort
                       title={i18n.t('proxy.team-report.recharge')}
@@ -258,7 +253,7 @@ const ProxyTeamReport = () => {
                     />
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7'}]}>
+                <View style={[{backgroundColor: theme.basicColor.newBgInTwo}]}>
                   <View style={[padding.rights, {width: bettingWidth}]}>
                     <Sort
                       title={i18n.t('proxy.team-report.betting')}
@@ -280,7 +275,7 @@ const ProxyTeamReport = () => {
                     />
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7'}]}>
+                <View style={[{backgroundColor: theme.basicColor.newBgInTwo}]}>
                   <View style={[padding.rights, {width: commissionWidth}]}>
                     <Sort
                       title={i18n.t('proxy.team-report.commission')}

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
+import globalStore from '@/services/global.state';
 
 import CustomCard from './custom-card';
 import Text from '@basicComponents/text';
@@ -61,7 +62,7 @@ const NewUserCard = () => {
   };
 
   const onPressDrawdown = async (item: WelfareCheckingItem) => {
-    const token = useUserStore.getState().token;
+    const token = globalStore.token || useUserStore.getState().token;
     if (!token) {
       goTo('Login');
       return;

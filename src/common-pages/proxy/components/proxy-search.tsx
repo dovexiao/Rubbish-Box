@@ -83,10 +83,10 @@ const ProxySearch: React.FC<ProxySearchProps> = ({
         ]}
         leftIconContainerStyle={[searchStyle.leftIcon, theme.margin.leftl]}
         inputContainerStyle={[
-          theme.background.background,
           searchStyle.inputContainer,
-          // theme.borderRadius.s,
-          // theme.border.primary50,
+          {
+            backgroundColor: theme.basicColor.newBgInOne,
+          },
         ]}
         inputStyle={[searchInputStyle]}
         clearIcon={

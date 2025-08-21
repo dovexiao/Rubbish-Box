@@ -58,7 +58,7 @@ const BetsCard = (props: BetsCardType) => {
     status,
     id = '',
     onCopy,
-    cover,
+    // cover,
     title,
     tag,
     content = '',
@@ -81,11 +81,11 @@ const BetsCard = (props: BetsCardType) => {
     <Ele
       onPress={goDetail}
       style={[
-        theme.background.mainDark,
         theme.borderRadius.m,
         theme.padding.l,
         theme.margin.topl,
         style,
+        {backgroundColor: theme.basicColor.newBgInOne},
       ]}>
       <LinearGradient
         style={[
@@ -127,15 +127,16 @@ const BetsCard = (props: BetsCardType) => {
             theme.flex.centerByCol,
             theme.margin.rightxxl,
           ]}>
-          <View style={styles.cover}>
+          {/* <View style={styles.cover}>
             <LazyImage
               imageUrl={cover}
               width={48}
               height={48}
               occupancy="transparent"
             />
-          </View>
-          <View style={[theme.flex.flex1, theme.margin.leftl]}>
+          </View> */}
+          {/* , theme.margin.leftl */}
+          <View style={[theme.flex.flex1]}>
             <View style={[theme.flex.row, theme.flex.centerByCol]}>
               {tag && (
                 <View style={[styles.tag]}>

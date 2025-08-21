@@ -91,6 +91,7 @@ export function useInnerStyle() {
     container: {
       height: scaleSize(75),
       overflow: 'hidden',
+      backgroundColor: theme.basicColor.newBgInOne,
     },
     bgBox: {
       width: size.screenWidth - theme.paddingSize.l * 2,

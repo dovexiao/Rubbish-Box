@@ -56,11 +56,11 @@ const useUserStore = create<UserStoreState>()(
 export default useUserStore;
 
 export const useToken = () => {
-  const token = useUserStore(state => state.token);
+  // const token = useUserStore(state => state.token);
+  const token = globalStore.token || '';
   const isLogin = useMemo(() => {
     return !!token;
   }, [token]);
-
   return {
     token,
     isLogin,

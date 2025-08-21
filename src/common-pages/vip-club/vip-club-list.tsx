@@ -31,7 +31,7 @@ const VipClubList: React.FC<VipTableListProps> = ({vipConfigList}) => {
           style={{
             width: 198,
             height: 363,
-            backgroundColor: theme.basicColor.transparentP60,
+            backgroundColor: theme.basicColor.newBgInOne,
             borderRadius: 10,
             marginLeft: 10,
             paddingHorizontal: 10,
@@ -118,7 +118,7 @@ const renderInfoRow = (
         height: 24,
         borderRadius: 5,
         marginTop: 10,
-        backgroundColor: theme.basicColor.primary50,
+        // backgroundColor: theme.basicColor.primary50,
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.1)',
         paddingHorizontal: 10,

@@ -136,9 +136,9 @@ const RecordItem = (props: RecordItemType) => {
       style={[
         theme.borderRadius.s,
         theme.margin.btml,
-        theme.background.mainDark,
         theme.padding.btms,
         style,
+        {backgroundColor: theme.basicColor.newBgInOne},
       ]}>
       {hasStatus && (
         <LinearGradient

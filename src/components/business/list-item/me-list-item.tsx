@@ -62,7 +62,7 @@ const MeListItem: React.FC<MeListItemProps> = props => {
         padding.tbs,
         padding.lrl,
         // theme.border.main,
-        theme.background.primary50,
+        theme.background.newBgInOne,
         theme.borderRadius.s,
 
         {

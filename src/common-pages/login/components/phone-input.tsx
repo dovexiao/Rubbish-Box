@@ -52,7 +52,10 @@ const PhoneInput = (props: {
   }, [fadeAnim, userPhone, blured]);
   return (
     <View
-      style={[styles.inputBox, blured ? styles.greyBorder : styles.deepBorder]}>
+      style={[
+        styles.loginInputBox,
+        blured ? styles.greyBorder : styles.deepBorder,
+      ]}>
       <Image
         style={{
           width: 18,

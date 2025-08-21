@@ -82,8 +82,8 @@ const TabsRoundScroll: React.FC<TabsProps> = ({
                 ? // eslint-disable-next-line react-native/no-inline-styles
                   {
                     paddingHorizontal: 8,
-                    ...theme.background.primary,
                     ...theme.borderRadius.s,
+                    backgroundColor: theme.basicColor.newBgInOne,
                     height: 34,
                   }
                 : // eslint-disable-next-line react-native/no-inline-styles
