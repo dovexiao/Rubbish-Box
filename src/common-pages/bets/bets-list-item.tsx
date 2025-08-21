@@ -105,55 +105,67 @@ const BetsListItem = ({
 
   const status = React.useMemo(() => {
     console.log(111111, info);
-    // const {gameCode} = info.gameCode;
-    // if (gameCode === 'kerala') {
-    // Kerala
-    //   if (info.bonusStatus === 0) {
-    //     return info.wonAmount > 0 ? 1 : 0;
-    //   }
-    //   return info.bonusStatus;
-    // }
-    // if (gameCode === 'pick3') {
-    //   // 3 Digit
-    //   if (info.wonCode && !info.wonCode.startsWith('*')) {
-    //     // 已开奖
-    //     return info.winAmount > 0 ? 1 : 0;
-    //   }
-    //   return 2;
-    // }
-    // if (gameCode === 'color') {
-    //   // color
-    //   if (info.openStatus === 1) {
-    //     // 未开奖
-    //     return 2;
-    //   } else {
-    //     return info.awardAmount > 0 ? 1 : 0;
-    //   }
-    // }
-    // if (gameCode === 'matka') {
-    //   if (info.openStatus === 1) {
-    //     return 2;
-    //   }
-    //   return info.wonAmount > 0 ? 1 : 0;
-    // }
-    // if (gameCode === 'dice') {
-    //   // dice
-    //   if (info.openStatus === 1) {
-    //     // 未开奖
-    //     return 2;
-    //   } else {
-    //     return info.totalAwardAmount > 0 ? 1 : 0;
-    //   }
-    // }
-    // if (info.orderStatus !== undefined && info.openStatus !== undefined) {
-    //   // 1=中奖 0=未中奖 2=未使用
-    //   // scratch
-    //   if (info.openStatus === 2) {
-    //     // 未开奖
-    //     return 2;
-    //   }
-    //   return info.orderStatus;
-    // }
+    const pickStatus = info.pickStatus === 0 ? 0 : info.pickStatus || undefined;
+    const openStatus = info.openStatus === 0 ? 0 : info.openStatus || undefined;
+    if (info.shareGameDto !== undefined && pickStatus !== undefined) {
+      // 3 Digit
+      // 1=中奖 0=未中奖 2=未使用
+      return info.pickStatus;
+    }
+    if (info.shareGameDto !== undefined && openStatus !== undefined) {
+      // Color
+      // 1=中奖 0=未中奖 2=未使用
+      return info.openStatus;
+    }
+    const {gameCode} = info.gameCode;
+    if (gameCode === 'kerala') {
+      // Kerala
+      if (info.bonusStatus === 0) {
+        return info.wonAmount > 0 ? 1 : 0;
+      }
+      return info.bonusStatus;
+    }
+    if (gameCode === 'pick3') {
+      // 3 Digit
+      if (info.wonCode && !info.wonCode.startsWith('*')) {
+        // 已开奖
+        return info.winAmount > 0 ? 1 : 0;
+      }
+      return 2;
+    }
+    if (gameCode === 'color') {
+      // color
+      if (info.openStatus === 1) {
+        // 未开奖
+        return 2;
+      } else {
+        return info.awardAmount > 0 ? 1 : 0;
+      }
+    }
+    if (gameCode === 'matka') {
+      if (info.openStatus === 1) {
+        return 2;
+      }
+      return info.wonAmount > 0 ? 1 : 0;
+    }
+    if (gameCode === 'dice') {
+      // dice
+      if (info.openStatus === 1) {
+        // 未开奖
+        return 2;
+      } else {
+        return info.totalAwardAmount > 0 ? 1 : 0;
+      }
+    }
+    if (info.orderStatus !== undefined && info.openStatus !== undefined) {
+      // 1=中奖 0=未中奖 2=未使用
+      // scratch
+      if (info.openStatus === 2) {
+        // 未开奖
+        return 2;
+      }
+      return info.orderStatus;
+    }
     return info.orderStatus;
   }, [info]);
 
