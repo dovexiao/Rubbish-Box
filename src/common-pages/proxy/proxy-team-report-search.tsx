@@ -117,7 +117,7 @@ const ProxyTeamReport = () => {
   useEffect(() => {
     if (!phone) {
       parameter.pageNo = 1;
-      setTotalSize(0);
+      setTotalSize(10);
       setTeamReportData([]);
     }
     setParameter({
@@ -144,7 +144,7 @@ const ProxyTeamReport = () => {
         <View style={[{height: 104}]}>
           <View
             style={[
-              theme.background.white,
+              // theme.background.white,
               theme.margin.lrl,
               theme.borderRadius.xl,
               {height: 64},
@@ -178,8 +178,8 @@ const ProxyTeamReport = () => {
             </View>
           </View>
           {totalSize > 0 && (
-            <View style={[padding.l, {height: 40, backgroundColor: '#fff'}]}>
-              <Text color={fontColor.main} fontSize={14}>
+            <View style={[padding.l, {height: 40}]}>
+              <Text color={fontColor.yellow} fontSize={14}>
                 Found <Text color={basicColor.primary}>{totalSize}</Text>{' '}
                 results in the search.
               </Text>
