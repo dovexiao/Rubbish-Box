@@ -30,6 +30,13 @@ export const styles = StyleSheet.create({
     ...theme.padding.lrl,
     ...theme.background.mainDark,
   },
+  loginInputBox: {
+    ...theme.flex.row,
+    ...theme.flex.centerByCol,
+    ...theme.border.primary50,
+    ...theme.borderRadius.s,
+    ...theme.padding.lrl,
+  },
   greyBorder: {},
   deepBorder: {},
   getOTP: {
