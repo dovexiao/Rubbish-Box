@@ -179,13 +179,13 @@ const Table = (props: SafeAny) => {
                               {marginRight: 0, height: 40},
                             ]}>
                             <Text style={[TextStyle]}>
-                              {/* {toPriceStr(+(item.rechargeAmount || 0), {
+                              {toPriceStr(+(item.rechargeAmount || 0), {
                                 fixed: 2,
                                 currency: globalStore.currency,
                                 thousands: true,
                                 suffixUnit: 'K',
                                 overPrice: 100000,
-                              })} */}
+                              })}
                             </Text>
                           </View>
                         );
