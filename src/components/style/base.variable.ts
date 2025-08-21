@@ -49,12 +49,12 @@ export const basicColor = {
   },
 
   // 页面背景色配置
-  newBgOne: ['#7A0606', '#230402'], //一级页面
-  newBgTwo: '#440602', //二级页面
-  newBgInOne: '#A1251C', //页面内背景色
-  newBgInTwo: '#7A0606', //页面内背景色,页面头部背景色
-  newBgInThree: '#230402', //页面内背景色
-  newBgPop: '#9C231A', //弹窗背景色
+  newBgOne: ['#7A0606', '#230402'], //一级页面 68, 6, 2 35, 4, 2
+  newBgTwo: '#440602', //二级页面 68, 6, 2
+  newBgInOne: '#A1251C', //页面内背景色 161, 37, 28
+  newBgInTwo: '#7A0606', //页面内背景色,页面头部背景色 122, 6, 6
+  newBgInThree: '#230402', //页面内背景色 35, 4, 2
+  newBgPop: '#9C231A', //弹窗背景色 153, 35, 26
 
   // 字体颜色
   newFontYellow: '#F8D72F',

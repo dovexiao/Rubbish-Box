@@ -50,7 +50,7 @@ const MeAmount: React.FC<MeAmountProps> = ({
     <LinearGradient
       start={{x: 0, y: 0}}
       end={{x: 1, y: 0}}
-      colors={['#1C1C1C54', '#1C1C1C0f']}
+      colors={[theme.basicColor.newBgInOne, theme.basicColor.newBgInTwo]}
       style={[
         theme.flex.around,
         theme.margin.topl,

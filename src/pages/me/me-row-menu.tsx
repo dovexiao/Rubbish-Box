@@ -7,7 +7,7 @@ import Text from '@basicComponents/text';
 import {goToWithLogin} from '@utils';
 import theme from '@style';
 
-const {backgroundColor} = theme;
+const {basicColor} = theme;
 
 export interface MeRowMenuProps {}
 
@@ -58,13 +58,13 @@ const MeRowMenu: React.FC<MeRowMenuProps> = () => {
         url: require('@assets/icons/me/recharge.webp'),
         title: i18n.t('me.bottom.deposit'),
         onPress: toRecharge,
-        bgColor: backgroundColor.black60,
+        bgColor: basicColor.newBgInOne,
       })}
       {renderItem({
         url: require('@assets/icons/me/withdraw.webp'),
         title: i18n.t('me.bottom.withdraw'),
         onPress: toWithdraw,
-        bgColor: backgroundColor.black60,
+        bgColor: basicColor.newBgInOne,
       })}
     </View>
   );
