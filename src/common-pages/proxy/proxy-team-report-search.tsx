@@ -35,7 +35,7 @@ const searchBox = {
   marginLeft: 10,
   width: 64,
   height: 40,
-  backgroundColor: basicColor.primary,
+  backgroundColor: basicColor.newBgInOne,
 };
 const searchText = {
   color: '#fff',
@@ -199,7 +199,7 @@ const ProxyTeamReport = () => {
                   tableLeft,
                   theme.flex.flex,
                   theme.flex.center,
-                  {width: 110},
+                  {width: 110, backgroundColor: theme.basicColor.newBgInTwo},
                 ]}>
                 <Text style={[TextStyle]}>
                   {i18n.t('proxy.team-report.user-id')}
@@ -207,13 +207,8 @@ const ProxyTeamReport = () => {
               </View>
             </View>
             <ScrollView horizontal={true} ref={scrollViewRef}>
-              <View
-                style={[
-                  flex.row,
-                  flex.centerByCol,
-                  {backgroundColor: '#D8E2E7'},
-                ]}>
-                <View style={[{backgroundColor: '#D8E2E7'}]}>
+              <View style={[flex.row, flex.centerByCol]}>
+                <View style={[{backgroundColor: theme.basicColor.newBgInTwo}]}>
                   <View
                     style={[padding.rights, padding.leftl, {width: userWidth}]}>
                     <Sort
@@ -236,7 +231,7 @@ const ProxyTeamReport = () => {
                     />
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7'}]}>
+                <View style={[{backgroundColor: theme.basicColor.newBgInTwo}]}>
                   <View style={[padding.rights, {width: rechargeWidth}]}>
                     <Sort
                       title={i18n.t('proxy.team-report.recharge')}
@@ -258,7 +253,7 @@ const ProxyTeamReport = () => {
                     />
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7'}]}>
+                <View style={[{backgroundColor: theme.basicColor.newBgInTwo}]}>
                   <View style={[padding.rights, {width: bettingWidth}]}>
                     <Sort
                       title={i18n.t('proxy.team-report.betting')}
@@ -280,7 +275,7 @@ const ProxyTeamReport = () => {
                     />
                   </View>
                 </View>
-                <View style={[{backgroundColor: '#D8E2E7'}]}>
+                <View style={[{backgroundColor: theme.basicColor.newBgInTwo}]}>
                   <View style={[padding.rights, {width: commissionWidth}]}>
                     <Sort
                       title={i18n.t('proxy.team-report.commission')}
