@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {TextInput, View, Image, ScrollView} from 'react-native';
+import {TextInput, View, Image, ScrollView, Platform} from 'react-native';
 import Text from '@basicComponents/text';
 import LinearGradient from '@basicComponents/linear-gradient';
 import {BasicObject, SafeAny} from '@/types';
@@ -371,7 +371,19 @@ const InvitationApply = (props: SafeAny) => {
                     return;
                   }
                   globalStore.globalLoading.next(true);
-                  userLogin(userPhone, OTPCode, invitaCode)
+                  let deviceCode = '';
+                  if (Platform.OS !== 'android') {
+                    deviceCode = localStorage.getItem('gps_adid') || '';
+                  }
+                  userLogin(
+                    userPhone,
+                    OTPCode,
+                    deviceCode,
+                    '',
+                    '',
+                    '',
+                    invitaCode,
+                  )
                     .then((res: SafeAny) => {
                       globalStore.globalTotal.next({
                         type: 'success',

@@ -13,6 +13,8 @@ export interface LazyImageLGBackgroundProps
   imageUrl?: ImageUrlType;
   children?: ReactNode;
   fullHeight?: boolean;
+  showBottomBG?: boolean;
+  locations?: number[];
 }
 
 const HexGrid: React.FC<{width: number; height: number}> = ({

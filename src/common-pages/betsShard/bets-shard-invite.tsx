@@ -289,7 +289,7 @@ const BetsShardHome = ({
                     return;
                   }
                   globalStore.globalLoading.next(true);
-                  userLogin(userPhone, OTPCode, invitaCode)
+                  userLogin(userPhone, OTPCode, '', '', '', invitaCode)
                     .then(() => {
                       InvitationApplyModalRef.current.showModal();
                     })
