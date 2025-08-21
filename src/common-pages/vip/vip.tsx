@@ -32,7 +32,9 @@ const Vip = () => {
   const [vipList, setVipList] = useState<IVipItem[]>([]);
   const [vipConfigList, setVipConfigList] = useState<IVipConfigItem[]>([]);
   const [checkIndex, setCheckIndex] = useState(0);
-  const {isLogin} = useToken();
+  const {isLogin, token} = useToken();
+  console.log('isLogin', isLogin);
+  console.log('token', token);
   const user = useUserInfo();
   const {level} = useVipStore(state => state.vipInfo);
   const cards = useMemo(() => {
