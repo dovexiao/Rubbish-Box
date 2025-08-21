@@ -50,12 +50,12 @@ const DirectSubordinates = (props: IProps) => {
   return (
     <View
       style={[
-        theme.background.mainDark,
         theme.margin.lrl,
         {
           padding: theme.paddingSize.l,
           marginTop: theme.paddingSize.l,
           borderRadius: theme.borderRadiusSize.m,
+          backgroundColor: theme.basicColor.newBgInTwo,
         },
       ]}>
       <ProxyTitle
@@ -116,7 +116,7 @@ const DirectSubordinates = (props: IProps) => {
         <Button
           onPress={() => onShare?.()}
           radius={30}
-          color={theme.fontColor.primary}
+          color={theme.basicColor.yellow}
           width={width - theme.paddingSize.l * 4}
           size="large"
           title={i18n.t('newProxy.home.invitation-link')}

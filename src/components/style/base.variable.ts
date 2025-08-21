@@ -52,6 +52,7 @@ export const basicColor = {
   newBgOne: ['#7A0606', '#230402'], //一级页面 68, 6, 2 35, 4, 2
   newBgTwo: '#440602', //二级页面 68, 6, 2
   newBgInOne: '#A1251C', //页面内背景色 161, 37, 28
+  newBgInOne5: '#A1251C99', //页面内背景色 161, 37, 28
   newBgInTwo: '#7A0606', //页面内背景色,页面头部背景色 122, 6, 6
   newBgInThree: '#230402', //页面内背景色 35, 4, 2
   newBgPop: '#9C231A', //弹窗背景色 153, 35, 26
@@ -88,6 +89,7 @@ export const basicColor = {
   newSpecialOne: ['#E02020', '#99184F'], // 首页下载部分背景色
   newSpecialTwo: '#4b1d1a', // 用于casino，live，fish单个游戏卡片背景色
   newSpecialThree: '#6d0505', //用于lottery的tab切换整体背景色
+  newTransparent: 'rgba(0, 0, 0, 0)', //透明色
 };
 
 export const linearGradientColor = {
@@ -104,7 +106,7 @@ export const linearGradientColor = {
   loginLinearGradient: ['#F9F0FF', '#FFF'],
   rechargeButtonLinearGradient: ['#e51251', '#ff8a00'],
   invitationRecordLinearGradient: ['#FBCBCB', 'rgba(255, 255, 255, 0.00)'],
-
+  tranProxylightLinear: ['#00000000', '#00000000'],
   //home-menu
   chestLinearGradient: ['#1CFFB61a', '#1CFFB64d'],
   //home-menu

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {toAgentApply} from '@utils'; //goBack,
 import InvitationCode from './components/invitation-code';
-import SubEntry from './components/sub-entry';
+// import SubEntry from './components/sub-entry';
 import i18n from '@i18n';
 import {getAgentInfo} from './proxy.service';
 import HomeUserInfo from './components/home-user-info';
@@ -101,10 +101,10 @@ const ProxyHome = () => {
           onShare={doShare}
           onCopy={() => copy(code)}
         />
-        <SubEntry
+        {/* <SubEntry
           userId={agentInfo?.userId}
           agentLevel={agentInfo?.agentLevel}
-        />
+        /> */}
         <View style={styles.bottomImgView}>
           <Image
             source={agentRuleImg}

@@ -184,7 +184,10 @@ const ProxyUserInfo: React.FC<ProxyUserInfoProps> = ({
           userInfoStyle.greyArea,
           theme.padding.tbs,
           theme.padding.lrl,
-          theme.background.background1,
+          {
+            backgroundColor: theme.basicColor.newBgInTwo,
+            borderRadius: theme.borderRadiusSize.m,
+          },
         ]}>
         <View style={[theme.flex.col, userInfoStyle.bottomLine]}>
           {userDataTopContent}

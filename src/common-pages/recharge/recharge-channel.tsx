@@ -26,10 +26,13 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
     <View
       style={[
         theme.flex.col,
-        theme.background.transparentMedium1,
         theme.margin.topl,
         theme.borderRadius.s,
-        {paddingHorizontal: 16, paddingVertical: 12},
+        {
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          backgroundColor: theme.basicColor.newBgInOne,
+        },
       ]}>
       <Text fontSize={theme.fontSize.m} white style={{marginBottom: 18}}>
         {i18n.t('recharge-page.label.channel')}

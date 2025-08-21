@@ -273,7 +273,9 @@ const Tabs: React.FC<TabsProps> = ({
             style={[
               indicatorStyle,
               theme.position.abs,
-              theme.background.primary,
+              {
+                backgroundColor: theme.basicColor.newButtonYellow,
+              },
             ]}
           />
         </View>

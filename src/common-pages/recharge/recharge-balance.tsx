@@ -33,7 +33,6 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
     <View
       style={[
         theme.margin.lrl,
-        theme.background.transparentMedium1,
         theme.border.main,
         theme.borderRadius.m,
         styles.container,

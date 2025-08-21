@@ -39,7 +39,7 @@ const searchBox = {
   marginLeft: 10,
   width: 64,
   height: 40,
-  backgroundColor: basicColor.primary,
+  backgroundColor: basicColor.newBgInOne,
 };
 const searchText = {
   color: '#fff',
@@ -201,11 +201,11 @@ const ProxyTeamReport = () => {
           <View style={[theme.margin.topl]}>
             <View
               style={[
-                theme.background.mainDark,
                 theme.borderRadius.s,
                 theme.margin.lrl,
                 {
                   height: 80,
+                  backgroundColor: theme.basicColor.newBgInTwo,
                 },
               ]}>
               <View
@@ -215,6 +215,9 @@ const ProxyTeamReport = () => {
                   flex.between,
                   theme.margin.lrl,
                   theme.margin.topl,
+                  {
+                    marginBottom: 4,
+                  },
                 ]}>
                 <View style={[theme.flex.center]}>
                   <Text
@@ -245,12 +248,11 @@ const ProxyTeamReport = () => {
             </View>
             <View
               style={[
-                theme.background.mainDark,
                 flex.flex,
                 flex.row,
                 flex.alignStart,
                 theme.margin.topl,
-                {height: 28},
+                {height: 28, backgroundColor: theme.basicColor.newBgInTwo},
               ]}>
               <View
                 style={[
@@ -268,8 +270,7 @@ const ProxyTeamReport = () => {
                   style={[
                     flex.row,
                     flex.centerByCol,
-                    theme.background.mainDark,
-                    {height: 28},
+                    {height: 28, backgroundColor: theme.basicColor.newBgInTwo},
                   ]}>
                   <View
                     style={[padding.rights, padding.leftl, {width: userWidth}]}>

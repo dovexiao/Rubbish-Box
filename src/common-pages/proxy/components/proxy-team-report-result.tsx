@@ -96,7 +96,9 @@ const ProxyTeamReportResult: React.FC = () => {
         theme.margin.topl,
         theme.padding.l,
         theme.borderRadius.m,
-        theme.background.mainDark,
+        {
+          backgroundColor: theme.basicColor.newBgInTwo,
+        },
       ]}>
       <View style={[theme.flex.col, theme.flex.between]}>
         <View
@@ -105,7 +107,7 @@ const ProxyTeamReportResult: React.FC = () => {
             start={{x: 0, y: 1}}
             end={{x: 0, y: 0}}
             style={[LinearGradientBox, theme.flex.flex1]}
-            colors={baseVariable.linearGradientColor.primaryLinearGradient}>
+            colors={baseVariable.linearGradientColor.tranProxylightLinear}>
             <ScrollView showsVerticalScrollIndicator={false} horizontal={true}>
               {date.map((item, index) => {
                 return (
@@ -124,9 +126,14 @@ const ProxyTeamReportResult: React.FC = () => {
                       {marginLeft: index === 0 ? 8 : 0},
                     ]}>
                     <Text
-                      color={theme.fontColor.white}
+                      // color={theme.fontColor.white}
                       fontSize={
                         item.status ? theme.fontSize.m : theme.fontSize.s
+                      }
+                      color={
+                        item.status
+                          ? theme.basicColor.newFontYellow
+                          : theme.fontColor.white
                       }
                       fontWeight={item.status ? '700' : '500'}>
                       {i18n.t('proxy.team.' + item.name)}
@@ -152,7 +159,6 @@ const ProxyTeamReportResult: React.FC = () => {
           <NativeTouchableOpacity onPress={handleOpenPick}>
             <View
               style={[
-                theme.background.background,
                 theme.padding.tbxxs,
                 theme.padding.lrs,
                 theme.borderRadius.xs,
@@ -160,7 +166,10 @@ const ProxyTeamReportResult: React.FC = () => {
                 theme.flex.row,
                 theme.flex.center,
                 theme.border.shallow,
-                {marginLeft: 28},
+                {
+                  marginLeft: 28,
+                  backgroundColor: theme.basicColor.newButtonYellow,
+                },
               ]}>
               {startDate ? (
                 <View style={[{overflow: 'hidden', flexWrap: 'nowrap'}]}>

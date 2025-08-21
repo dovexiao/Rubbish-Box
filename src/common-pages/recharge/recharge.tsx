@@ -225,6 +225,7 @@ const Recharge = () => {
           disabled={balance === '' || +balance <= 0}
           onRecharge={handleRecharge}
         />
+        <View style={[{height: 30}]}></View>
       </Spin>
     </LazyImageLGBackground>
   );
