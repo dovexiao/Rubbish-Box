@@ -321,6 +321,8 @@ const Login = (props: NavigatorScreenProps) => {
                             globalStore.token = res.token;
                             globalStore.isNewUser = String(res.isNewUser);
                           }
+                          goBack();
+                          globalStore.globalLoading.next(false);
                         })
                         .catch(() => {
                           globalStore.globalLoading.next(false);
