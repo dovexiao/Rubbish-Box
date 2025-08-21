@@ -172,7 +172,7 @@ const Me = () => {
 
   const {show} = useRebateSuccessToast();
 
-  const handleSubmit = async (value: string) => {
+  const handleSubmit = async (value: string, callback: () => void) => {
     try {
       if (!value) {
         return;
@@ -180,8 +180,12 @@ const Me = () => {
       const res = await getGiftCodeAmount(value);
       show(Number(res));
       handleClosePop(); // 关闭弹窗
+      callback(); // 调用回调函数
     } catch (error) {
-      handleClosePop(); // 关闭弹窗
+      setTimeout(() => {
+        handleClosePop(); // 关闭弹窗
+        callback();
+      }, 500);
     }
   };
 
