@@ -4,6 +4,7 @@ import i18n from '@i18n';
 import {icBgImage} from '../proxy.variable';
 import {View, ImageBackground} from 'react-native';
 import {ProxyTitle, CardItem} from '../basic-components';
+import LinearGradient from '@/components/basic/linear-gradient';
 import Text from '@basicComponents/text';
 import Button from '@basicComponents/button';
 import style from './style';
@@ -113,15 +114,20 @@ const DirectSubordinates = (props: IProps) => {
             </Text>
           </NativeTouchableOpacity>
         </ImageBackground>
-        <Button
-          onPress={() => onShare?.()}
-          radius={30}
-          color={theme.basicColor.yellow}
-          width={width - theme.paddingSize.l * 4}
-          size="large"
-          title={i18n.t('newProxy.home.invitation-link')}
-          titleBold={true}
-        />
+        <LinearGradient
+          colors={theme.basicColor.newButtonLinear}
+          style={[{borderRadius: 30}]}>
+          <Button
+            onPress={() => onShare?.()}
+            radius={30}
+            color={theme.basicColor.newTransparent}
+            width={width - theme.paddingSize.l * 4}
+            size="large"
+            title={i18n.t('newProxy.home.invitation-link')}
+            titleBold={true}
+            titleColor={theme.fontColor.white}
+          />
+        </LinearGradient>
       </View>
     </View>
   );
