@@ -17,7 +17,6 @@ import PhoneInput from './components/phone-input';
 import NavTitle from '@basicComponents/nav-title';
 import AccountTip from './components/account-tip';
 import {BasicObject, NavigatorScreenProps} from '@/types';
-import {setScratchAuth} from '@/services/global.service';
 import {useTranslation} from 'react-i18next';
 // import LazyImage from '@/components/basic/image';
 
@@ -322,13 +321,6 @@ const Login = (props: NavigatorScreenProps) => {
                             globalStore.token = res.token;
                             globalStore.isNewUser = String(res.isNewUser);
                           }
-                          setScratchAuth(
-                            () => {},
-                            () => {
-                              goBack();
-                              globalStore.globalLoading.next(false);
-                            },
-                          );
                         })
                         .catch(() => {
                           globalStore.globalLoading.next(false);

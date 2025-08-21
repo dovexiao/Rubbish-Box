@@ -12,31 +12,31 @@ export interface MessageCountInfo {
 // 这里用来放一些全局要用到的请求
 
 /** 获取刮刮乐令牌 */
-// export const setScratchAuth = () => {};
+export const setScratchAuth = () => {};
 /** 获取刮刮乐令牌 */
-export const setScratchAuth = (
-  callback?: ({authorize, url}: {authorize: string; url: string}) => void,
-  finallyBack?: () => void,
-  catchBack?: (e: SafeAny) => void,
-) => {
-  indusWinHttp
-    .post<null, {authorize: string; url: string}>(
-      'iGaming/api/player/authorize',
-    )
-    .then(auth => {
-      if (auth) {
-        globalStore.setItem('scratchToken', auth.authorize);
-        globalStore.setItem('scratchUrl', auth.url);
-      }
-      callback?.(auth);
-    })
-    .catch(e => {
-      catchBack?.(e);
-    })
-    .finally(() => {
-      finallyBack?.();
-    });
-};
+// export const setScratchAuth = (
+//   callback?: ({authorize, url}: {authorize: string; url: string}) => void,
+//   finallyBack?: () => void,
+//   catchBack?: (e: SafeAny) => void,
+// ) => {
+//   indusWinHttp
+//     .post<null, {authorize: string; url: string}>(
+//       'iGaming/api/player/authorize',
+//     )
+//     .then(auth => {
+//       if (auth) {
+//         globalStore.setItem('scratchToken', auth.authorize);
+//         globalStore.setItem('scratchUrl', auth.url);
+//       }
+//       callback?.(auth);
+//     })
+//     .catch(e => {
+//       catchBack?.(e);
+//     })
+//     .finally(() => {
+//       finallyBack?.();
+//     });
+// };
 
 /** 获取用户余额 */
 export const getBalance = () => {
