@@ -140,7 +140,7 @@ const PersonalCenter = () => {
         <View
           style={[
             margin.l,
-            background.transparentP30,
+            background.newBgInOne,
             borderRadius.l,
             padding.lrl,
           ]}>

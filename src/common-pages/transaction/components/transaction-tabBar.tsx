@@ -86,7 +86,9 @@ const TabBar = (
               theme.flex.center,
               // eslint-disable-next-line react-native/no-inline-styles
               {height: 34},
-              value === index ? theme.background.primary : {},
+              value === index
+                ? {backgroundColor: theme.basicColor.newBgInOne}
+                : {},
             ]}
             onLayout={e => {
               saveWidth.current[index] = e.nativeEvent.layout.width;

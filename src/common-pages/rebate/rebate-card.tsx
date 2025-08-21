@@ -85,9 +85,9 @@ const RebateCard: React.FC<RebateCardProps> = ({data, onRefresh}) => {
   return (
     <View
       style={[
-        theme.background.mainDark,
         theme.borderRadius.m,
         theme.padding.l,
+        {backgroundColor: theme.basicColor.newBgInOne},
       ]}>
       <LinearGradient
         start={{x: 0, y: 0}}

@@ -81,11 +81,11 @@ const BetsCard = (props: BetsCardType) => {
     <Ele
       onPress={goDetail}
       style={[
-        theme.background.mainDark,
         theme.borderRadius.m,
         theme.padding.l,
         theme.margin.topl,
         style,
+        {backgroundColor: theme.basicColor.newBgInOne},
       ]}>
       <LinearGradient
         style={[

@@ -31,6 +31,7 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
       height: 48,
     },
     buttonWrap: {
+      // backgroundColor: theme.basicColor.newBgInTwo,
       paddingTop: theme.paddingSize.l,
       paddingBottom: globalStore.isAndroid ? 33 * 3 : 33,
     },
@@ -38,22 +39,17 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
 
   return (
     <View
-      style={[
-        theme.flex.center,
-        theme.fill.fillW,
-        rechargeStyle.buttonWrap,
-        // theme.background.primary,
-      ]}>
+      style={[theme.flex.center, theme.fill.fillW, rechargeStyle.buttonWrap]}>
       <Button
         size="large"
         type={type}
         radius={5}
-        color={theme.fontColor.primary}
+        color={theme.basicColor.newBgInOne}
         disabled={disabled}
         width={rechargeButtonWidth}
         buttonStyle={[rechargeStyle.button]}
         onPress={onRecharge}>
-        <Text fontSize={theme.fontSize.m} blod color={theme.basicColor.dark}>
+        <Text fontSize={theme.fontSize.m} blod color={theme.basicColor.white}>
           {text || i18n.t('home.tab.deposit')}
         </Text>
       </Button>

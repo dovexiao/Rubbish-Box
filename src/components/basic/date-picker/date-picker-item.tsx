@@ -23,7 +23,6 @@ const DatePickerItem = (props: SelectDateType) => {
           style={[
             theme.flex.row,
             theme.flex.centerByCol,
-            theme.background.mainDark,
             theme.borderRadius.m,
             theme.padding.lrl,
             theme.margin.lrl,
@@ -33,6 +32,7 @@ const DatePickerItem = (props: SelectDateType) => {
             // eslint-disable-next-line react-native/no-inline-styles
             {
               height: 36,
+              backgroundColor: theme.basicColor.newBgInOne,
             },
             containerStyle,
           ]}>

@@ -97,7 +97,7 @@ export const linearGradientColor = {
     'linear-gradient(0deg, rgb(121, 74, 0), rgb(253, 229, 109), rgb(108, 46, 16))',
 
   primaryLinearGradient: ['#001C2C', '#001C2C'],
-  linearGradientBtnColor: ['#FEB705', '#b98400'],
+  linearGradientBtnColor: ['#FF493A', '#F7B500'],
   mainNavigationLinearGradientBtnColor: ['rgb(122, 6, 6)', 'rgb(122, 6, 6)'],
   proxyLinearGradient: ['#dbeeea', '#dbeeea'],
   proxylightLinear: ['#E51251', '#FF8A00'],
