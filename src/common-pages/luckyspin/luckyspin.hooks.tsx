@@ -274,18 +274,22 @@ export function useLuckySpinModal({
           ) : (
             <>
               <Text
-                color={'#ffffff'}
-                style={[theme.font.s, styles.buy, theme.margin.rightxxs]}>
+                color={'#4B1D1D'}
+                style={[
+                  styles.buy,
+                  theme.margin.rightxxs,
+                  {fontSize: theme.fontSize.xs},
+                ]}>
                 buy
               </Text>
-              <Text color={'#ffffff'} style={[theme.font.s]}>
+              <Text color={'#4B1D1D'} style={[{fontSize: theme.fontSize.xs}]}>
                 {toPriceStr(+item.betAmount, {thousands: true})}
               </Text>
             </>
           )}
         </View>
         <View style={[theme.flex.row, theme.flex.centerByCol]}>
-          <Text color={'#ffffff'} style={[theme.font.s, theme.margin.rightxxs]}>
+          <Text color={'#4B1D1D'} style={[theme.font.s, theme.margin.rightxxs]}>
             {i18n.t('luckyspin.won')}
           </Text>
           <Text style={[theme.font.s, styles.won]}>
@@ -472,7 +476,10 @@ export function useLuckySpinModal({
             containerStyle={active => (active ? [styles.tabActive] : [])}
             titleStyle={active => [
               ...(active ? [styles.tabActiveText] : [styles.tabNotActiveText]),
-              theme.font.s,
+              // theme.font.fs,
+              {
+                fontSize: theme.fontSize.xs,
+              },
               theme.font.bold,
             ]}
             value={tabIndex}

@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Text from '@basicComponents/text';
+import {LazyImageBackground} from '@basicComponents/image';
 import {useModal} from '@basicComponents/modal';
 import theme from '@style';
 import WebTouchableOpacity, {
@@ -15,10 +16,10 @@ import LuckyspinBoxAnimation from './luckyspin-box-animation';
 const TouchableOpacity = globalStore.isWeb
   ? WebTouchableOpacity
   : NativeTouchableOpacity;
+const buttonGreenIcon = require('@assets/imgs/luckyspin/button-green.png');
 
 export function useGetModal(refresh?: () => void) {
   const [amount, setAmount] = useState<number>(0);
-  const [type, setType] = useState<number>(2);
   const styles = StyleSheet.create({
     amount: {
       color: '#fff75e',
@@ -42,7 +43,7 @@ export function useGetModal(refresh?: () => void) {
               <LuckyspinWinAnimationWeb />
             </View>
             <View style={[theme.position.abs]}>
-              <LuckyspinBoxAnimationWeb type={type} />
+              <LuckyspinBoxAnimationWeb />
             </View>
           </View>
         ) : (
@@ -65,18 +66,19 @@ export function useGetModal(refresh?: () => void) {
         {/* TODO 这里的amount后面如果不加一个空格的话,如果amount为个位数,在Android显示不出来,应该是宽度的问题,暂时这样解决 */}
         {'+' + amount + ' '}
       </Text>
-      <TouchableOpacity
-        style={[
-          theme.background.primary,
-          theme.flex.center,
-          {width: 125, height: 46, borderRadius: 30},
-        ]}
-        onPress={() => handleHide()}>
-        <Text
-          fontSize={theme.fontSize.l}
-          style={[theme.font.bold, theme.font.white]}>
-          Get
-        </Text>
+      <TouchableOpacity onPress={() => handleHide()}>
+        <LazyImageBackground
+          occupancy={'transparent'}
+          imageUrl={buttonGreenIcon}
+          width={125}
+          height={46}
+          style={[theme.flex.col, theme.flex.center]}>
+          <Text
+            fontSize={theme.fontSize.l}
+            style={[theme.font.bold, theme.font.white]}>
+            Get
+          </Text>
+        </LazyImageBackground>
       </TouchableOpacity>
     </View>,
     {
@@ -93,22 +95,13 @@ export function useGetModal(refresh?: () => void) {
     hide();
   };
 
-  const handleShow = (_amount: any) => {
+  const handleShow = (_amount: number) => {
     setAmount(() => _amount);
-    show();
-  };
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  const handleShow1 = (_amount: any, type: number) => {
-    setAmount(() => _amount);
-    if (type) {
-      setType(() => type);
-    }
     show();
   };
 
   return {
     renderModal,
     show: handleShow,
-    show1: handleShow1,
   };
 }

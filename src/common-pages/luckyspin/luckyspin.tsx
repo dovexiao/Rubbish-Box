@@ -393,7 +393,7 @@ const LuckySpinPage = () => {
             height={32}
             style={[theme.flex.center, theme.flex.row]}>
             <Text
-              fontSize={theme.fontSize.s}
+              fontSize={theme.fontSize.m}
               fontFamily="fontDin"
               style={[theme.font.bold, theme.margin.rightm]}>
               {toPriceStr(globalStore.userAmount, {
@@ -405,10 +405,10 @@ const LuckySpinPage = () => {
                 if (animating) {
                   return;
                 }
-                // if (!isLogin) {
-                //   goTo('Login');
-                //   return;
-                // }
+                if (!globalStore.token) {
+                  goTo('Login');
+                  return;
+                }
                 goToWithLogin(i18n.t('home.tab.deposit'));
               }}>
               <LinearGradient
