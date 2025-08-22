@@ -63,6 +63,8 @@ export const basicColor = {
   newFontPink: '#FF9D9D',
   newFontRed1: '#CF2E29', //常用于字体颜色
   newTabSelectYellow: '#F5D243', //常用于字体颜色
+  newFontRed2: '#D81F25', //常用于字体颜色
+  newGrey: '#656462', //常用于字体颜色
 
   // 纯黑纯白
   newFontWhite: '#FFFFFF', //常用于字体颜色

@@ -36,14 +36,14 @@ const DirectSubordinates = (props: IProps) => {
   };
   const upstyle = {
     style: {
-      color: theme.fontColor.white,
+      color: theme.fontColor.black,
       fontSize: 18,
     },
     bold: true,
   };
   const downstyle = {
     style: {
-      color: theme.fontColor.white60,
+      color: theme.basicColor.newGrey,
       fontSize: theme.fontSize.s,
     },
     bold: false,
@@ -104,7 +104,7 @@ const DirectSubordinates = (props: IProps) => {
             onPress={() => onCopy?.()}>
             <Text
               blod
-              color={theme.basicColor.white}
+              color={theme.basicColor.newFontRed2}
               style={[
                 {
                   fontSize: theme.fontSize.l,

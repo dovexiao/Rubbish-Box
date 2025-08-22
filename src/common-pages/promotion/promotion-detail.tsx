@@ -6,7 +6,7 @@ import {goBack, goTo} from '@utils';
 import {PromotionListItem, getPromotionDetail} from './promotion.service';
 import {ScrollView, View} from 'react-native';
 import theme from '@/style';
-import Text from '@basicComponents/text';
+// import Text from '@basicComponents/text';
 // import Button from '@basicComponents/button';
 import {useTranslation} from 'react-i18next';
 import {goToUrl} from '@/common-pages/game-navigate';
@@ -57,7 +57,8 @@ const PromotionDetail = () => {
       marginTop: 0,
     },
     img: {
-      width: screenWidth - (theme.paddingSize.xxl + theme.paddingSize.l) * 2,
+      // width: screenWidth - (theme.paddingSize.xxl + theme.paddingSize.l) * 2,
+      width: screenWidth,
     },
   };
   const buttonClick = useMemo(() => {
@@ -83,13 +84,13 @@ const PromotionDetail = () => {
       <ScrollView
         style={[
           theme.flex.flex1,
-          theme.margin.lrl,
-          theme.margin.tbxxl,
+          // theme.margin.lrl,
+          // theme.margin.tbxxl,
           // theme.padding.xxl,
-          theme.borderRadius.m,
+          // theme.borderRadius.m,
         ]}
         contentContainerStyle={[listStyle.list]}>
-        <View
+        {/* <View
           style={[
             theme.background.mainDark,
             theme.borderRadius.m,
@@ -117,13 +118,15 @@ const PromotionDetail = () => {
               {item?.activitySubTitle}
             </Text>
           </View>
-        </View>
+        </View> */}
         <View
-          style={[
-            theme.background.mainDark,
-            theme.padding.xxl,
-            theme.borderRadius.m,
-          ]}>
+          style={
+            [
+              // theme.background.mainDark,
+              // theme.padding.xxl,
+              // theme.borderRadius.m,
+            ]
+          }>
           <RenderHtml
             source={source}
             baseStyle={htmlStyle}
