@@ -34,7 +34,7 @@ class GlobalStore {
       type: 'success',
       message,
       tip,
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor || '#A1251C',
     });
   };
   globalWaringTotal = (message: string, tip?: string | ReactElement) => {

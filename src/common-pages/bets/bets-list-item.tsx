@@ -104,18 +104,29 @@ const BetsListItem = ({
   };
 
   const status = React.useMemo(() => {
-    console.log(111111, info);
-    const pickStatus = info.pickStatus === 0 ? 0 : info.pickStatus || undefined;
-    const openStatus = info.openStatus === 0 ? 0 : info.openStatus || undefined;
-    if (info.shareGameDto !== undefined && pickStatus !== undefined) {
-      // 3 Digit
-      // 1=中奖 0=未中奖 2=未使用
-      return info.pickStatus;
-    }
-    if (info.shareGameDto !== undefined && openStatus !== undefined) {
-      // Color
-      // 1=中奖 0=未中奖 2=未使用
-      return info.openStatus;
+    if (!info.gameCode) {
+      const pickStatus =
+        info.pickStatus === 0 ? 0 : info.pickStatus || undefined;
+      const openStatus =
+        info.openStatus === 0 ? 0 : info.openStatus || undefined;
+      const bonusStatus =
+        info.openStatus === 0 ? 0 : info.bonusStatus || undefined;
+      if (info.shareGameDto !== undefined && pickStatus !== undefined) {
+        // 3 Digit
+        // 1=中奖 0=未中奖 2=未使用
+        return info.pickStatus;
+      }
+      if (info.shareGameDto !== undefined && openStatus !== undefined) {
+        // Color
+        // 1=中奖 0=未中奖 2=未使用
+        return info.openStatus;
+      }
+      if (info.shareGameDto !== undefined && bonusStatus !== undefined) {
+        if (info.bonusStatus === 0) {
+          return info.wonAmount > 0 ? 1 : 0;
+        }
+        return info.bonusStatus;
+      }
     }
     const {gameCode} = info.gameCode;
     if (gameCode === 'kerala') {
