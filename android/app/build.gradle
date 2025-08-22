@@ -159,7 +159,7 @@ dependencies {
 
     //chat
     //freshchatSDK
-    implementation 'com.github.freshworks:freshchat-android:6.0.0'
+    implementation 'com.github.freshworks:freshchat-android:6.1.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     // paytm
