@@ -82,6 +82,7 @@ const Home = () => {
   const {renderModal: renderSpin, show: spinShow} = useLuckySpinModal({
     onNotice: () => {
       // onRefreshSpinConfig();
+      console.log('Lucky Spin Notice');
       if (globalStore.token) {
         setSpinConfig(true);
       }

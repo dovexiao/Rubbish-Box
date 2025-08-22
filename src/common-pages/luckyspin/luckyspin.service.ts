@@ -57,7 +57,7 @@ export const postSpinOrderCreate = (count: number, basePrice: number = 10) => {
 
 export const postSpinConfig = (hasToken: boolean) => {
   if (hasToken) {
-    return http.post<null, SpinConfig>('app/turntable/config/getConfig');
+    return http.post<null, any>('app/turntable/config/getConfig');
   }
   return http.post<null, SpinConfig>('app/turntable/config/notToken/getConfig');
 };

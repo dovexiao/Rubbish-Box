@@ -28,7 +28,7 @@ const useLuckySpinStore = create<LuckySpinStoreState>(set => ({
         luckySpinConfig: {
           spinBasePrice: data?.singleAmount,
           spinBatchCount: data?.batchCount,
-          freeCount: data?.myFree || 0,
+          freeCount: data || 0,
         },
       });
     },
