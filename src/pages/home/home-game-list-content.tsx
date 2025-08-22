@@ -8,7 +8,7 @@ import {
   KeralaListItem,
   // MatkaListItem,
 } from './home.type';
-import HomeDigits from './components/digit/home-digits';
+// import HomeDigits from './components/digit/home-digits';
 // import HomeQuickDigits from './components/quickdigit/home-quickdigits';
 
 // import HomeColor from './components/home-color';
