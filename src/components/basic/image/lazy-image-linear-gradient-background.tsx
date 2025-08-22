@@ -3,7 +3,7 @@ import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {LazyImageProps} from './lazy-image';
 import {ImageUrlType} from './index.type';
 import {useResponsiveDimensions} from '@/utils';
-import Svg, {Polygon} from 'react-native-svg';
+// import Svg, {Polygon} from 'react-native-svg';
 import theme from '@/style';
 
 export interface LazyImageLGBackgroundProps
@@ -17,51 +17,51 @@ export interface LazyImageLGBackgroundProps
   locations?: number[];
 }
 
-const HexGrid: React.FC<{width: number; height: number}> = ({
-  width,
-  height,
-}) => {
-  const hexSize = 15; // 单个六边形大小
-  const hexWidth = hexSize * Math.sqrt(3);
-  const hexHeight = hexSize * 2;
-  const hexVert = (hexHeight * 3) / 4;
+// const HexGrid: React.FC<{width: number; height: number}> = ({
+//   width,
+//   height,
+// }) => {
+//   const hexSize = 15; // 单个六边形大小
+//   const hexWidth = hexSize * Math.sqrt(3);
+//   const hexHeight = hexSize * 2;
+//   const hexVert = (hexHeight * 3) / 4;
 
-  const hexagons = [];
+//   const hexagons = [];
 
-  for (let y = 0; y < height + hexHeight; y += hexVert) {
-    for (let x = 0; x < width + hexWidth; x += hexWidth) {
-      const offsetX = (Math.floor(y / hexVert) % 2) * (hexWidth / 2);
-      const points = [
-        `${x + offsetX + hexWidth / 2},${y}`,
-        `${x + offsetX + hexWidth},${y + hexHeight / 4}`,
-        `${x + offsetX + hexWidth},${y + (hexHeight * 3) / 4}`,
-        `${x + offsetX + hexWidth / 2},${y + hexHeight}`,
-        `${x + offsetX},${y + (hexHeight * 3) / 4}`,
-        `${x + offsetX},${y + hexHeight / 4}`,
-      ].join(' ');
+//   for (let y = 0; y < height + hexHeight; y += hexVert) {
+//     for (let x = 0; x < width + hexWidth; x += hexWidth) {
+//       const offsetX = (Math.floor(y / hexVert) % 2) * (hexWidth / 2);
+//       const points = [
+//         `${x + offsetX + hexWidth / 2},${y}`,
+//         `${x + offsetX + hexWidth},${y + hexHeight / 4}`,
+//         `${x + offsetX + hexWidth},${y + (hexHeight * 3) / 4}`,
+//         `${x + offsetX + hexWidth / 2},${y + hexHeight}`,
+//         `${x + offsetX},${y + (hexHeight * 3) / 4}`,
+//         `${x + offsetX},${y + hexHeight / 4}`,
+//       ].join(' ');
 
-      hexagons.push(
-        <Polygon
-          key={`${x}-${y}`}
-          points={points}
-          stroke="rgba(63, 63, 63, 0.2)" // 边框颜色（带透明度）
-          strokeWidth="1"
-          fill="none"
-        />,
-      );
-    }
-  }
+//       hexagons.push(
+//         <Polygon
+//           key={`${x}-${y}`}
+//           points={points}
+//           stroke="rgba(63, 63, 63, 0.2)" // 边框颜色（带透明度）
+//           strokeWidth="1"
+//           fill="none"
+//         />,
+//       );
+//     }
+//   }
 
-  return (
-    <Svg
-      width={width}
-      height={height}
-      style={StyleSheet.absoluteFill}
-      pointerEvents="none">
-      {hexagons}
-    </Svg>
-  );
-};
+//   return (
+//     <Svg
+//       width={width}
+//       height={height}
+//       style={StyleSheet.absoluteFill}
+//       pointerEvents="none">
+//       {hexagons}
+//     </Svg>
+//   );
+// };
 
 const LazyImageLGBackground: React.FC<LazyImageLGBackgroundProps> = props => {
   const {
@@ -88,7 +88,7 @@ const LazyImageLGBackground: React.FC<LazyImageLGBackgroundProps> = props => {
         {width: screenWidth, height: containerHeight},
       ]}
       {...imageProps}>
-      <HexGrid width={screenWidth} height={screenHeight} />
+      {/* <HexGrid width={screenWidth} height={screenHeight} /> */}
       {children}
     </View>
   );

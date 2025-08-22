@@ -80,7 +80,7 @@ const CusTab = (props: BottomTabBarProps) => {
         theme.flex.row,
         theme.flex.around,
         theme.fill.fillW,
-        theme.shadow.defaultShadow.style,
+        // theme.shadow.defaultShadow.style,
         // eslint-disable-next-line react-native/no-inline-styles
         {
           height: 56,
