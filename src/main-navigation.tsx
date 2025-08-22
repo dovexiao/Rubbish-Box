@@ -132,11 +132,11 @@ const CusTab = (props: BottomTabBarProps) => {
                   ? // eslint-disable-next-line react-native/no-inline-styles
                     {
                       marginTop: -14,
-                      width: 42,
-                      height: 42,
+                      width:25,
+                      height:25,
                     }
                   : // eslint-disable-next-line react-native/no-inline-styles
-                    {height: 28, width: 28},
+                    {height: 18, width: 18},
               ]}
               source={mainPageList[index].img}
             />
