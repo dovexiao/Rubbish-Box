@@ -97,7 +97,7 @@ const LazyImageLGBackground: React.FC<LazyImageLGBackgroundProps> = props => {
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    backgroundImage: `linear-gradient(180deg, ${theme.linearGradientColor.pageLinearGradient})`,
+    backgroundColor: `linear-gradient(180deg, ${theme.linearGradientColor.pageLinearGradient})`,
   },
 });
 
