@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Arial, Arial-Bold',
     fontWeight: '700',
-    color: theme.basicColor.primary,
+    color: theme.basicColor.white,
     textAlign: 'center',
   },
 });

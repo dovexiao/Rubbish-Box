@@ -210,12 +210,12 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 12,
-    color: theme.basicColor.primary,
+    color: theme.basicColor.newFontRed1,
     fontWeight: '600',
   },
   tabTextActive: {
     fontSize: 12,
-    color: theme.basicColor.primary,
+    color: theme.basicColor.newTabSelectYellow,
     fontWeight: '600',
   },
   tabIndicator: {

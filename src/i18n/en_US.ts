@@ -86,8 +86,8 @@ export default {
       text: 'Next draw starts in',
     },
     tip: {
-      downTips1: 'Get your Supbet App here',
-      downTips2: 'Start using exclusive services',
+      downTips1: 'Supbet',
+      downTips2: 'Get up to 888Rs – Download Now',
     },
     label: {
       menu: 'Menu',

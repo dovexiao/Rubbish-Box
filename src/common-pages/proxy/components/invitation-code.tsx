@@ -56,7 +56,7 @@ const DirectSubordinates = (props: IProps) => {
           padding: theme.paddingSize.l,
           marginTop: theme.paddingSize.l,
           borderRadius: theme.borderRadiusSize.m,
-          backgroundColor: theme.basicColor.newBgInTwo,
+          backgroundColor: theme.basicColor.newBgInOne,
         },
       ]}>
       <ProxyTitle

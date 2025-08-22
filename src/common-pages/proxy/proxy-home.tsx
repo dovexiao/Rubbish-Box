@@ -92,7 +92,14 @@ const ProxyHome = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }>
-        <View>
+        <View
+          style={[
+            {
+              backgroundColor: theme.basicColor.newBgInOne,
+              margin: 12,
+              borderRadius: 8,
+            },
+          ]}>
           <HomeUserInfo info={agentInfo} />
         </View>
         <InvitationCode
