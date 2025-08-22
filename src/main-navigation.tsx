@@ -12,7 +12,6 @@ import {NavigatorScreenProps} from '@types';
 // import Result from './common-pages/result';
 import {Shadow} from 'react-native-shadow-2';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
-import {useTranslation} from 'react-i18next';
 import globalStore from './services/global.state';
 import {goTo} from './utils';
 import i18n from '@i18n';
@@ -157,7 +156,6 @@ const CusTab = (props: BottomTabBarProps) => {
 };
 
 const MainNav = () => {
-  const {i18n} = useTranslation();
   return (
     <Tab.Navigator
       // eslint-disable-next-line react/no-unstable-nested-components
