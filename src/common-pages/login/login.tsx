@@ -20,6 +20,7 @@ import {BasicObject, NavigatorScreenProps} from '@/types';
 import {useTranslation} from 'react-i18next';
 // import LazyImage from '@/components/basic/image';
 
+import {useUserActions} from '@/store/useUserStore';
 import {flex} from '@/components/style';
 import {LazyImageLGBackground} from '@basicComponents/image';
 // const icon = require('../../assets/icons/login/login-botttom.webp');
@@ -27,6 +28,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import DeviceInfo from 'react-native-device-info';
 const Login = (props: NavigatorScreenProps) => {
   const {i18n} = useTranslation();
+    const {setToken} = useUserActions();
   /** 直接返回的目标页面,避免原页面加载就需要token */
   const backPage =
     ((props.route.params as BasicObject)?.backPage as string) || null;
@@ -317,8 +319,10 @@ const Login = (props: NavigatorScreenProps) => {
                         .then(res => {
                           if (typeof res === 'string') {
                             globalStore.token = res;
+                            setToken(res);
                           } else {
                             globalStore.token = res.token;
+                            setToken(res.token);
                             globalStore.isNewUser = String(res.isNewUser);
                           }
                           goBack();
