@@ -2,7 +2,7 @@ import Text from '@/components/basic/text';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import globalStore from '@/services/global.state';
 import theme from '@/style';
-import {goTo, toPriceStr} from '@/utils';
+import {toPriceStr, goToWithLogin} from '@/utils';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Image} from 'react-native';
@@ -30,7 +30,7 @@ const Wallet: React.FC<WalletProps> = ({theme: walletTheme = 'light'}) => {
   return (
     <NativeTouchableOpacity
       onPress={() => {
-        goTo('Recharge');
+        goToWithLogin(i18n.t('home.tab.deposit'));
       }}
       style={[theme.flex.row, theme.flex.centerByCol]}>
       <View style={[theme.flex.col, theme.margin.rights]}>

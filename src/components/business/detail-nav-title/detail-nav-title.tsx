@@ -2,7 +2,7 @@ import NavTitle from '@basicComponents/nav-title';
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
 import theme from '@style';
-import {goTo, toPriceStr} from '@/utils';
+import {goTo, toPriceStr, goToWithLogin} from '@/utils';
 import Text from '@basicComponents/text';
 import globalStore from '@/services/global.state';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
@@ -142,7 +142,9 @@ const DetailNavTitle = (
                 </View>
                 <NativeTouchableOpacity
                   onPress={() => {
-                    globalStore.token ? goTo('Recharge') : goTo('Login');
+                    globalStore.token
+                      ? goToWithLogin(i18n.t('home.tab.deposit'))
+                      : goTo('Login');
                   }}>
                   {globalStore.isWeb ? (
                     <WalletWeb

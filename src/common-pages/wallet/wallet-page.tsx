@@ -82,7 +82,7 @@ const WalletPage = () => {
   //     return;
   //   }
   //   // 跳转recharge
-  //   goTo('Recharge');
+  // goToWithLogin(i18n.t('home.tab.deposit'));
   // };
 
   const route = useRoute();

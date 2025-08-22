@@ -5,7 +5,7 @@ import {useInnerStyle} from './vip.hooks';
 import VipCardList from './vip-card-list';
 // import VipTableList from './vip-table-list';
 import DetailNavTitle from '@businessComponents/detail-nav-title';
-import {debounce, goBack, goTo} from '@/utils';
+import {debounce, goBack, goTo, goToWithLogin} from '@/utils';
 import {
   VipProgressInfo,
   getVipRender,
@@ -105,7 +105,7 @@ const Vip = () => {
       goTo('Login');
       return;
     }
-    goTo('Recharge');
+    goToWithLogin(i18n.t('home.tab.deposit'));
   };
 
   return (

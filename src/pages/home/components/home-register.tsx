@@ -13,12 +13,14 @@ import {
   Platform,
 } from 'react-native';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
-import {goTo} from '@utils';
+import {goTo, goToWithLogin} from '@utils';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
+import {useTranslation} from 'react-i18next';
 import React, {useState, useEffect, useRef} from 'react'; //, {useMemo}
 // import {BasicObject} from '@types';
 // import globalStore from '@/services/global.state';
 const HomeRegister = () => {
+  const {i18n} = useTranslation();
   const {isLogin} = useToken();
   const [showModal, setShowModal] = useState(false);
   const bounceValue = useRef(new Animated.Value(1)).current;
@@ -98,7 +100,7 @@ const HomeRegister = () => {
             activeOpacity={1}
             onPress={() => {
               if (isLogin) {
-                goTo('Recharge');
+                goToWithLogin(i18n.t('home.tab.deposit'));
               } else {
                 goTo('Login');
               }

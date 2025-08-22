@@ -13,7 +13,7 @@ import LazyImage, {LazyImageBackground} from '@basicComponents/image';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Animated} from 'react-native';
 import Text from '@basicComponents/text';
-import {goTo, toPriceStr} from '@utils';
+import {goTo, toPriceStr, goToWithLogin} from '@utils';
 import LinearGradient from '@basicComponents/linear-gradient';
 import {Tab} from '@rneui/themed';
 import globalStore from '@services/global.state';
@@ -363,7 +363,7 @@ export function useLuckySpinModal({
                   goTo('Login');
                   return;
                 }
-                goTo('Recharge');
+                goToWithLogin(i18n.t('home.tab.deposit'));
                 handleHide();
               }}>
               <LinearGradient

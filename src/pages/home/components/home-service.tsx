@@ -1,12 +1,19 @@
 import theme from '@style';
 import {homeServiceStyle} from '../home.style';
-import React from 'react';
+import React, {useState} from 'react';
 import TouchableOpacity from '@basicComponents/touchable-opacity';
-import {goCS} from '@/utils';
+import {goCS, goTo} from '@/utils';
 import LazyImage from '@basicComponents/image/lazy-image';
 import {View} from 'react-native';
+import globalStore from '@/services/global.state';
+import HomePopTwo from './home-pop-two';
 
 const HomeService = ({spinShow}: {spinShow: () => void}) => {
+  const [isImageVisible, setIsImageVisible] = useState(false);
+
+  const toggleModal = () => {
+    setIsImageVisible(!isImageVisible);
+  };
   return (
     <View
       style={[theme.position.abs, homeServiceStyle.service, theme.flex.center]}>
@@ -20,6 +27,23 @@ const HomeService = ({spinShow}: {spinShow: () => void}) => {
           imageUrl={require('@assets/icons/luckyspin.gif')}
         />
       </TouchableOpacity>
+      {(globalStore.userInfo?.totalRechargeAmount === 0 ||
+        !globalStore.token) && (
+        <TouchableOpacity
+          onPress={() => {
+            if (!globalStore.token) {
+              goTo('Login');
+              return;
+            }
+            toggleModal();
+          }}>
+          <LazyImage
+            width={70}
+            height={70}
+            imageUrl={require('@assets/gif/first-recharge.gif')}
+          />
+        </TouchableOpacity>
+      )}
 
       <TouchableOpacity onPress={goCS}>
         <LazyImage
@@ -28,6 +52,10 @@ const HomeService = ({spinShow}: {spinShow: () => void}) => {
           imageUrl={require('@components/assets/icons/service.webp')}
         />
       </TouchableOpacity>
+      <HomePopTwo
+        isImageVisible={isImageVisible}
+        setIsImageVisible={setIsImageVisible}
+      />
     </View>
   );
 };

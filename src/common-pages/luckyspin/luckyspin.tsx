@@ -18,7 +18,7 @@ import LazyImage, {
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Animated} from 'react-native';
 import Text from '@basicComponents/text';
-import {goBack, goTo, toPriceStr} from '@utils';
+import {goBack, goTo, toPriceStr, goToWithLogin} from '@utils';
 import LinearGradient from '@basicComponents/linear-gradient';
 import {Tab} from '@rneui/themed';
 import globalStore from '@services/global.state';
@@ -405,11 +405,11 @@ const LuckySpinPage = () => {
                 if (animating) {
                   return;
                 }
-                if (!isLogin) {
-                  goTo('Login');
-                  return;
-                }
-                goTo('Recharge');
+                // if (!isLogin) {
+                //   goTo('Login');
+                //   return;
+                // }
+                goToWithLogin(i18n.t('home.tab.deposit'));
               }}>
               <LinearGradient
                 start={{x: 0, y: 0}}

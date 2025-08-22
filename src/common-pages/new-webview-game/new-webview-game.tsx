@@ -3,7 +3,8 @@ import React, {useState} from 'react'; //{ useState }linshi
 import theme from '@style';
 import {useWebView} from '../hooks/webview.hooks';
 import {View} from 'react-native';
-import {navGoBack, goTo} from '@utils';
+import {useTranslation} from 'react-i18next';
+import {navGoBack, goTo, goToWithLogin} from '@utils';
 import {useRoute, RouteProp} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native'; // linshi
 
@@ -18,6 +19,7 @@ type RootStackParamList = {
 type NewWebViewGameRouteProp = RouteProp<RootStackParamList, 'NewWebViewGame'>;
 
 const NewWebViewGame = () => {
+  const {i18n} = useTranslation();
   // 使用 useRoute 钩子获取路由参数
   const route = useRoute<NewWebViewGameRouteProp>();
   const {type, params} = route.params;
@@ -42,7 +44,7 @@ const NewWebViewGame = () => {
       navGoBack();
     }
     if (dataObj?.type === 'router' && dataObj?.msg === 'Recharge') {
-      goTo('Recharge');
+      goToWithLogin(i18n.t('home.tab.deposit'));
     }
     if (dataObj?.type === 'router' && dataObj?.msg === 'Login') {
       goTo('Login');
