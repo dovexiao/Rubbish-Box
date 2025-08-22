@@ -171,7 +171,7 @@ const MainNav = () => {
           name={v.name}
           component={v.component}
           options={{
-            title: i18n.t(`home.tab.${v.name.toLocaleLowerCase()}`),
+            title: v.name,
             unmountOnBlur: v.unmountOnBlur,
           }}
         />
