@@ -78,7 +78,7 @@ const RecordItem = (props: RecordItemType) => {
     hasMore = true,
     showBalance = true,
     statusTip,
-    iconUrl,
+    // iconUrl,
     hasStatus = false,
     hasAmountPrefix,
     moreData = [],
@@ -195,17 +195,17 @@ const RecordItem = (props: RecordItemType) => {
             theme.margin.rightxl,
             theme.flex.flex1,
           ]}>
-          <LazyImage
+          {/* <LazyImage
             imageUrl={iconUrl}
             width={24}
             height={24}
             occupancy="transparent"
-          />
+          /> */}
           <View style={[theme.flex.flex1]}>
             <Text
               white
               numberOfLines={1}
-              style={[theme.margin.leftl]}
+              // style={[theme.margin.leftl]}
               size="medium"
               fontFamily="fontInterBold">
               {capitalizeWords(typeName)}
