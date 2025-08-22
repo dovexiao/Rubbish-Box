@@ -288,7 +288,10 @@ const Me = () => {
           <MeRowMenu />
           <View style={[]}>
             {/* 列表区域 */}
-            <View style={[borderRadius.m, overflow.hidden, margin.topxxxs]}>
+            <View style={[borderRadius.m, overflow.hidden, margin.topl,
+                {
+                  backgroundColor: theme.basicColor.newBgInOne,
+                }]}>
               {/*<MeListItem*/}
               {/*  icon={gamesIcon}*/}
               {/*  title={i18n.t('me.bottom.games')}*/}
@@ -302,27 +305,32 @@ const Me = () => {
               {/*  onPress={toTransfer}*/}
               {/*/>*/}
               <MeListItem
+                mt={0}
                 icon={giftcode}
                 title={i18n.t('me.bottom.giftCode')}
                 description={i18n.t('me.bottom.giftCode')}
                 onPress={toInvitation}
               />
               <MeListItem
+                mt={0}
                 icon={transactionsIcon}
                 title={i18n.t('me.bottom.myTransactions')}
                 description={i18n.t('me.description.transactionsDescription')}
                 onPress={toTransactions}
               />
               <MeListItem
+                mt={0}
                 icon={betsIcon}
                 title={i18n.t('me.bottom.myBets')}
                 description={i18n.t('me.description.betsDescription')}
                 onPress={toMyBets}
               />
               <MeListItem
+                mt={0}
                 icon={rebateIcon}
                 title={i18n.t('home.label.rebate')}
                 description={i18n.t('me.description.rebateDescription')}
+                btmBorder={false}
                 onPress={toRebate}
               />
             </View>
@@ -330,7 +338,10 @@ const Me = () => {
               style={[
                 borderRadius.m,
                 overflow.hidden,
-                // margin.topl,
+                margin.topl,
+                {
+                  backgroundColor: theme.basicColor.newBgInOne,
+                }
               ]}>
               {/*<MeListItem*/}
               {/*  containerStyle={[theme.padding.tbl]}*/}
@@ -354,14 +365,14 @@ const Me = () => {
                 icon={passwordIcon}
                 iconSize={18}
                 containerStyle={[theme.padding.tbl]}
-                mt={8}
+                mt={0}
                 title={i18n.t('me.bottom.password')}
                 onPress={toSetPassword}
               />
 
               <MeListItem
                 containerStyle={[theme.padding.tbl]}
-                mt={8}
+                mt={0}
                 iconSize={18}
                 icon={languagesIcon}
                 title={i18n.t('me.bottom.lang')}
@@ -369,11 +380,12 @@ const Me = () => {
               />
               <MeListItem
                 containerStyle={[theme.padding.tbl]}
-                mt={8}
+                mt={0}
                 iconSize={18}
                 icon={customerServiceIcon}
                 title={i18n.t('me.bottom.customer')}
                 onPress={goCS}
+                btmBorder={Platform.OS === 'android' ? true : false}
                 hideBottomBorder={Platform.OS === 'android' ? false : true}
               />
               {Platform.OS === 'android' && (
@@ -381,7 +393,8 @@ const Me = () => {
                   containerStyle={[theme.padding.tbl]}
                   icon={updateIcon}
                   iconSize={18}
-                  mt={8}
+                  mt={0}
+                  btmBorder={false}
                   title={i18n.t('me.bottom.update')}
                   rightContent={
                     <Text style={[font.secAccent, font.s]}>{getVersion()}</Text>

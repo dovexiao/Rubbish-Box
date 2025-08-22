@@ -1,7 +1,7 @@
 import LazyImage, {ImageUrlType} from '@components/basic/image';
 import theme from '@style';
 import React, {ReactNode, useMemo} from 'react';
-import {Pressable, StyleProp, View, ViewStyle} from 'react-native';
+import {Pressable, StyleProp, View, ViewStyle, StyleSheet} from 'react-native';
 import Text from '@basicComponents/text';
 import {useResponsiveDimensions} from '@/utils';
 
@@ -30,6 +30,7 @@ export interface MeListItemProps {
   hideBottomBorder?: boolean;
   rightIconSize?: number;
   mt?: number; //maginTop
+  btmBorder?: boolean; //maginTop
 }
 
 const MeListItem: React.FC<MeListItemProps> = props => {
@@ -41,6 +42,7 @@ const MeListItem: React.FC<MeListItemProps> = props => {
     title,
     description = '',
     mt = 8,
+    btmBorder = true,
     rightContent = null,
     hasRightIcon = true,
     rightIconSize = 24,
@@ -102,8 +104,20 @@ const MeListItem: React.FC<MeListItemProps> = props => {
           </View>
         )}
       </View>
+      {/* 添加底线 */}
+      {btmBorder && <View style={styles.bottomLine} />}
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  bottomLine: {
+    position: 'absolute',
+    bottom: 0,
+    height: 1,
+    width: '94%', // 底线宽度占比内容区域
+    backgroundColor: theme.borderColor.white10, // 底线颜色
+  },
+});
 
 export default MeListItem;
