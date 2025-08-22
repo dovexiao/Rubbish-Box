@@ -329,7 +329,6 @@ const Me = () => {
             <View
               style={[
                 borderRadius.m,
-                theme.background.black60,
                 overflow.hidden,
                 margin.topl,
               ]}>
@@ -355,14 +354,14 @@ const Me = () => {
                 icon={passwordIcon}
                 iconSize={18}
                 containerStyle={[theme.padding.tbl]}
-                mt={0}
+                mt={8}
                 title={i18n.t('me.bottom.password')}
                 onPress={toSetPassword}
               />
 
               <MeListItem
                 containerStyle={[theme.padding.tbl]}
-                mt={0}
+                mt={8}
                 iconSize={18}
                 icon={languagesIcon}
                 title={i18n.t('me.bottom.lang')}
@@ -370,7 +369,7 @@ const Me = () => {
               />
               <MeListItem
                 containerStyle={[theme.padding.tbl]}
-                mt={0}
+                mt={8}
                 iconSize={18}
                 icon={customerServiceIcon}
                 title={i18n.t('me.bottom.customer')}
@@ -382,11 +381,11 @@ const Me = () => {
                   containerStyle={[theme.padding.tbl]}
                   icon={updateIcon}
                   iconSize={18}
+                  mt={8}
                   title={i18n.t('me.bottom.update')}
                   rightContent={
                     <Text style={[font.secAccent, font.s]}>{getVersion()}</Text>
                   }
-                  mt={0}
                   onPress={toUpdate}
                 />
               )}
@@ -410,6 +409,7 @@ const Me = () => {
                 </View>
               </NativeTouchableOpacity>
             )}
+            <View style={[theme.margin.topl]}></View>
           </View>
         </Animated.ScrollView>
       </Spin>
