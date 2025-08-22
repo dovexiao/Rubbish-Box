@@ -330,7 +330,7 @@ const Me = () => {
               style={[
                 borderRadius.m,
                 overflow.hidden,
-                margin.topl,
+                // margin.topl,
               ]}>
               {/*<MeListItem*/}
               {/*  containerStyle={[theme.padding.tbl]}*/}
