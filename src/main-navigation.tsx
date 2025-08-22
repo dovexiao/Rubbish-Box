@@ -1,23 +1,27 @@
-/* eslint-disable prettier/prettier */
 import React from 'react';
 import Text from '@basicComponents/text';
 import Home from './pages/home';
-import Wallet from './pages/me';
+// import Me from './pages/me';
 import theme from '@style';
 import {
   BottomTabBarProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import {ImageURISource, Image} from 'react-native';
+import {ImageURISource, Image, View} from 'react-native'; //ImageBackground
 import {NavigatorScreenProps} from '@types';
+// import Result from './common-pages/result';
+import {Shadow} from 'react-native-shadow-2';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
+import {useTranslation} from 'react-i18next';
 import globalStore from './services/global.state';
 import {goTo} from './utils';
-import LinearGradient from './components/basic/linear-gradient';
-import {useToken} from '@/store/useUserStore';
+import i18n from '@i18n';
+// import Promotion from './common-pages/promotion';
+
+/* eslint-disable prettier/prettier */
+import Wallet from './pages/me';
 //活动相关
 import PromotionDrawer from './common-pages/promotion';
-import i18n from '@i18n';
 import Recharge from '@/common-pages/recharge';
 import ProxyHome from "@/common-pages/proxy";
 
@@ -36,134 +40,124 @@ export const mainPageList: {
     name: i18n.t('home.tab.home'),
     link: 'index/home',
     component: Home,
-    img: require('@assets/icons/home/home.webp'),
-    activeImg: require('@assets/icons/home/home.webp'),
+    img: require('@assets/icons/home/home-inselect.webp'),
+    activeImg: require('@assets/icons/home/home-select.webp'),
   },
   {
     name: i18n.t('home.tab.promotion'),
     link: 'index/PromotionDrawer',
     component: PromotionDrawer,
-    img: require('@assets/icons/home/promotion.webp'),
-    activeImg: require('@assets/icons/home/promotion.webp'),
+    img: require('@assets/icons/home/activity-inselect.webp'),
+    activeImg: require('@assets/icons/home/activity-select.webp'),
   },
   {
     name: i18n.t('home.tab.invite'),
     link: 'index/promotion',
     component: ProxyHome,
-    img: require('@assets/icons/home/agency.webp'),
-    activeImg: require('@assets/icons/home/agency.webp'),
+    img: require('@assets/icons/home/agency-inselect.webp'),
+    activeImg: require('@assets/icons/home/agency-select.webp'),
   },
   {
     name: i18n.t('home.tab.deposit'),
     link: 'index/recharge',
     component: Recharge,
-    img: require('@assets/icons/home/deposit.webp'),
-    activeImg: require('@assets/icons/home/deposit.webp'),
-    unmountOnBlur: true,
+    img: require('@assets/icons/home/results-inselect.webp'),
+    activeImg: require('@assets/icons/home/results-select.webp'),
   },
   {
     name: i18n.t('home.tab.me'),
     link: 'index/me',
     component: Wallet,
-    img: require('@assets/icons/home/me.webp'),
-    activeImg: require('@assets/icons/home/me.webp'),
+    img: require('@assets/icons/home/account-inselect.webp'),
+    activeImg: require('@assets/icons/home/account-select.webp'),
   },
 ];
 
 const CusTab = (props: BottomTabBarProps) => {
   return (
-    <LinearGradient
-      colors={theme.linearGradientColor.mainNavigationLinearGradientBtnColor}
+    <Shadow
+      {...theme.shadow.defaultShadow}
       style={[
         theme.flex.row,
+        theme.flex.around,
         theme.fill.fillW,
+        theme.shadow.defaultShadow.style,
         // eslint-disable-next-line react-native/no-inline-styles
-        {height: 50},
+        {
+          height: 56,
+          backgroundColor: theme.basicColor.newBgInTwo,
+        },
       ]}>
-      {props.state?.routes.map((route, index) => {
-        const {options} = props.descriptors[route.key];
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const {isLogin: login} = useToken();
-        const InviteLabelName = login ? 'Agency' : 'Rule';
-        const label =
-          options.tabBarLabel !== undefined
-            ? (options.tabBarLabel as string)
-            : options.title !== undefined
-            ? route.name === 'Agency'
-              ? route.name
-              : options.title
-            : route.name;
-        const isFocused = props.state.index === index;
-        const onPress = () => {
-          if (!isFocused) {
-            if (options.title === 'Sports' && !globalStore.token) {
-              goTo('Login');
-            } else {
-              if (route.name === 'Agency' && InviteLabelName === 'Rule') {
-                goTo(route.name, {id: 1, type: 'index'});
-                // toAgentApply();
-                return;
+      <View
+        style={[
+          theme.flex.row,
+          theme.fill.fillW,
+          // eslint-disable-next-line react-native/no-inline-styles
+          {height: 56},
+        ]}>
+        {props.state?.routes.map((route, index) => {
+          const {options} = props.descriptors[route.key];
+          const label =
+            options.tabBarLabel !== undefined
+              ? (options.tabBarLabel as string)
+              : options.title !== undefined
+              ? options.title
+              : route.name;
+          const isFocused = props.state.index === index;
+          const onPress = () => {
+            if (!isFocused) {
+              if (
+                (options.title === 'Agency' ||
+                  options.title === 'एजेंसी' ||
+                  options.title === 'ഏജൻസി' ||
+                  options.title === 'ஏஜென்சி' ||
+                  options.title === 'ఏజెన్సీ') &&
+                !globalStore.token
+              ) {
+                goTo('Login');
+              } else {
+                goTo(route.name);
               }
-              goTo(route.name);
             }
-          }
-        };
-        return (
-          <NativeTouchableOpacity
-            key={label}
-            activeOpacity={0.8}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? {selected: true} : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
-            onPress={onPress}
-            style={[
-              theme.flex.center,
-              theme.flex.flex1,
-              // eslint-disable-next-line react-native/no-inline-styles
-              isFocused && {
-                overflow: 'visible',
-                backgroundColor: theme.basicColor.transparentP30,
-              },
-            ]}>
-            <Image
-              style={[
-                isFocused
-                  ? // eslint-disable-next-line react-native/no-inline-styles
-                    {
-                      marginTop: -14,
-                      width:25,
-                      height:25,
-                    }
-                  : // eslint-disable-next-line react-native/no-inline-styles
-                    {height: 18, width: 18},
-              ]}
-              source={mainPageList[index].img}
-            />
-            <Text
-              blod={true}
-              fontSize={10}
-              style={{
-                color: theme.basicColor.white,
-              }}>
-              {label}
-            </Text>
-          </NativeTouchableOpacity>
-        );
-      })}
-    </LinearGradient>
-    // </Shadow>
+          };
+          return (
+            <NativeTouchableOpacity
+              key={label}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityState={isFocused ? {selected: true} : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              style={[theme.flex.center, theme.flex.flex1, theme.padding.tbs]}>
+              <Image
+                style={theme.icon.l}
+                source={
+                  isFocused
+                    ? mainPageList[index].activeImg
+                    : mainPageList[index].img
+                }
+              />
+              <Text
+                blod={true}
+                fontSize={10}
+                style={{
+                  color: isFocused
+                    ? theme.basicColor.newFontWhite
+                    : theme.basicColor.newFontPink,
+                }}>
+                {label}
+              </Text>
+            </NativeTouchableOpacity>
+          );
+        })}
+      </View>
+    </Shadow>
   );
 };
 
 const MainNav = () => {
-  // if (!isLogin) {
-  //   mainPageList[2].component = ArticleDetail;
-  //   mainPageList[2].link = 'index/promotion?id=1&type=index';
-  // } else {
-  //   mainPageList[2].component = Promotion;
-  //   mainPageList[2].link = 'index/promotion?id=1&type=index';
-  // }
+  const {i18n} = useTranslation();
   return (
     <Tab.Navigator
       // eslint-disable-next-line react/no-unstable-nested-components
@@ -177,7 +171,7 @@ const MainNav = () => {
           name={v.name}
           component={v.component}
           options={{
-            title: v.name,
+            title: i18n.t(`home.tab.${v.name.toLocaleLowerCase()}`),
             unmountOnBlur: v.unmountOnBlur,
           }}
         />
