@@ -110,7 +110,7 @@ const BetsListItem = ({
       const openStatus =
         info.openStatus === 0 ? 0 : info.openStatus || undefined;
       const bonusStatus =
-        info.openStatus === 0 ? 0 : info.bonusStatus || undefined;
+        info.bonusStatus === 0 ? 0 : info.bonusStatus || undefined;
       if (info.shareGameDto !== undefined && pickStatus !== undefined) {
         // 3 Digit
         // 1=中奖 0=未中奖 2=未使用
