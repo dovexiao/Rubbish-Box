@@ -31,7 +31,7 @@ import {
 } from './luckyspin.service';
 import Sound from '@basicComponents/sound';
 import {useGetModal} from './getmodal.hooks';
-import {useLuckySpinActions} from '@/store/luckySpinStore';
+// import {useLuckySpinActions} from '@/store/luckySpinStore';
 import {
   ITEM_HEIGHT,
   buttonGoldenIcon,
@@ -70,7 +70,7 @@ export function useLuckySpinModal({
   onNotice,
   freeCount = 0,
 }: LuckySpinModalProps) {
-  const {setSpinConfig} = useLuckySpinActions();
+  // const {setSpinConfig} = useLuckySpinActions();
   const {i18n} = useTranslation();
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -532,7 +532,7 @@ export function useLuckySpinModal({
   const handleShow = () => {
     setShowModal(true);
     if (globalStore.token) {
-      setSpinConfig(true);
+      // setSpinConfig(true);
     }
     show();
   };

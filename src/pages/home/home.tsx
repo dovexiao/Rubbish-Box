@@ -20,6 +20,7 @@ import HomeLive from './components/home-live';
 import HomeCasino from './components/home-casino';
 import HomeGameTop from '@/pages/home/home-game-top';
 import {LazyImageLGBackground} from '@basicComponents/image';
+import {postSpinConfig} from '@/common-pages/luckyspin/luckyspin.service';
 
 const Home = () => {
   const basePx = globalStore.screenWidth / 375;
@@ -75,14 +76,12 @@ const Home = () => {
   }, [selectedGame, digitList.length, getGame2List]);
 
   // Lucky Spin
-  const [freeCount] = useState(0);
+  const [freeCount, setFreeCount] = useState(0);
   const [spinBatchCount] = useState(30);
   const [spinBasePrice] = useState(10);
   const {setSpinConfig} = useLuckySpinActions();
   const {renderModal: renderSpin, show: spinShow} = useLuckySpinModal({
     onNotice: () => {
-      // onRefreshSpinConfig();
-      console.log('Lucky Spin Notice');
       if (globalStore.token) {
         setSpinConfig(true);
       }
@@ -91,14 +90,17 @@ const Home = () => {
     singleAmount: spinBasePrice,
     freeCount,
   });
-
-  // const onRefreshSpinConfig = () => {
-  //   if (globalStore.token) {
-  //     postSpinConfig(true).then(data => {
-  //       setFreeCount(data?.myFree || 0);
-  //     });
-  //   }
-  // };
+  const showModal = () => {
+    onRefreshSpinConfig();
+    spinShow();
+  };
+  const onRefreshSpinConfig = () => {
+    if (globalStore.token) {
+      postSpinConfig(true).then(data => {
+        setFreeCount(data || 0);
+      });
+    }
+  };
 
   // useEffect(() => {
   //   const sub = globalStore.tokenSubject.subscribe(token => {
@@ -173,7 +175,7 @@ const Home = () => {
             <NoMoreData text="" />
           </Animated.ScrollView>
           <View style={{position: 'absolute', bottom: 60, left: 0, right: 0}}>
-            <HomeService spinShow={spinShow} />
+            <HomeService spinShow={showModal} />
             {renderSpin}
           </View>
         </View>
