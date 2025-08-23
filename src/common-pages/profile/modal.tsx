@@ -127,7 +127,7 @@ const ModelDemo = (props: any, ref: any) => {
           style={[
             height48,
             {
-              backgroundColor: basicColor.primary,
+              backgroundColor: basicColor.newBgInOne,
             },
             flex.flex,
             flex.center,

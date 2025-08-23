@@ -70,7 +70,7 @@ export function useToast(
       ...modalOptions,
       overlayStyle: {
         borderRadius: borderRadiusSize.xl,
-        backgroundColor: backgroundColor || theme.basicColor.primary50,
+        backgroundColor: backgroundColor || theme.basicColor.newBgInOne,
       },
     },
   );

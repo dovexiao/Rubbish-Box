@@ -51,6 +51,7 @@ const rejectResponse = <T>(
   globalStore.globalTotal.next({
     type: 'warning',
     message: response.data.msg,
+    backgroundColor: '#A1251C',
   });
   return Promise.reject(response);
 };
@@ -106,6 +107,7 @@ const createHTTP = ({
       globalStore.globalTotal.next({
         type: 'warning',
         message: error.message,
+        backgroundColor: '#A1251C',
       });
       errorLog('请求拦截器错误:', error);
       globalStore.globalWaringTotal('Request Error');
@@ -145,6 +147,7 @@ const createHTTP = ({
       globalStore.globalTotal.next({
         type: 'warning',
         message: error.message,
+        backgroundColor: '#A1251C',
       });
       errorLog('响应拦截器错误:', error);
       globalStore.globalWaringTotal('Network Error');
