@@ -105,7 +105,6 @@ const CusTab = (props: BottomTabBarProps) => {
           const isFocused = props.state.index === index;
           const onPress = () => {
             if (!isFocused) {
-              console.log(111111, options);
               if (
                 (options.title === 'Earn Money' ||
                   options.title === 'आमंत्रित करना' ||
