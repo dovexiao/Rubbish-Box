@@ -129,15 +129,15 @@ export const downloadApk = () => {
   const channelId = globalStore.channel;
   if (globalStore.isAndroid) {
     if (channelId === 'supbet') {
-      Linking.openURL('https://file.supbet001.com/apk/supbet.apk');
+      Linking.openURL('https://www.staticimg007.com.com/apk/supbet.apk');
     } else {
-      Linking.openURL(`https://file.supbet001.com/apk/supbet_${channelId}.apk
+      Linking.openURL(`https://www.staticimg007.com.com/apk/supbet_${channelId}.apk
       `);
     }
   }
   if (channelId === 'supbet') {
-    location.href = 'https://file.supbet001.com/apk/supbet.apk';
+    location.href = 'https://www.staticimg007.com/apk/supbet.apk';
   } else {
-    location.href = `https://file.supbet001.com/apk/supbet_${channelId}.apk`;
+    location.href = `https://www.staticimg007.com/apk/supbet_${channelId}.apk`;
   }
 };
