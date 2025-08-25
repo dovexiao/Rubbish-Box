@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import Text from '@basicComponents/text';
-import {View, Image} from 'react-native';
+import {View, Image, StyleSheet} from 'react-native';
 import theme from '@style';
 import {PayMethod} from './recharge.service';
 import {useInnerStyle} from './recharge.hooks';
@@ -37,9 +37,13 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
           // backgroundColor: theme.basicColor.newBgInOne,
         },
       ]}>
-      <Text fontSize={theme.fontSize.m} white style={{marginBottom: 18}}>
-        {i18n.t('recharge-page.label.channel')}
-      </Text>
+      <View style={styleSheet.title}>
+        <View style={styleSheet.titleIcon}></View>
+        <Text style={styleSheet.titleText}>
+          {' '}
+          {i18n.t('recharge-page.label.channel')}
+        </Text>
+      </View>
 
       {payMethodList.map(payMethod => {
         const isDisabled =
@@ -119,4 +123,26 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
   );
 };
 
+const styleSheet = StyleSheet.create({
+  title: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  titleIcon: {
+    width: 4,
+    height: 15,
+    backgroundColor: theme.basicColor.newButtonYellow,
+    borderRadius: 2,
+    marginRight: 8,
+  },
+  titleText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: theme.basicColor.newFontWhite,
+    fontFamily: 'Arial, Arial-Bold',
+  },
+});
 export default RechargeChannel;

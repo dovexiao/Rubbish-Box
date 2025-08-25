@@ -14,6 +14,7 @@ import RechargeSelect from './recharge-select';
 import RechargeChannel from './recharge-channel';
 import RechargeButton from '@/components/business/recharge-button';
 import Spin from '@/components/basic/spin';
+import RechargeRule from './recharge-rule';
 
 import {
   BalanceListItem,
@@ -204,7 +205,7 @@ const Recharge = () => {
               onRefresh={handleRefresh}
               onGotoRecords={handleGotoRecords}
             />
-            <View style={[theme.padding.lrl, theme.fill.fillH]}>
+            <View style={[theme.padding.lrl]}>
               <RechargeSelect
                 min={payMethodItem?.minAmount || 0}
                 max={payMethodItem?.maxAmount || 0}
@@ -219,6 +220,9 @@ const Recharge = () => {
                 balance={balance}
               />
             </View>
+              <View style={[theme.padding.lrxxl]}>
+                <RechargeRule />
+              </View>
           </ScrollView>
         </View>
         <RechargeButton
