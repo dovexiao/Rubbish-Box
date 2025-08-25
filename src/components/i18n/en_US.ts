@@ -666,6 +666,9 @@ export default {
   },
   'recharge-page': {
     currentMethod: 'Current Method',
+    rechargeRecords: 'Recharge records',
+    depositAmount: 'Deposit amount',
+    extra: 'Extra',
     label: {
       records: 'records',
       min: 'Min',

@@ -208,6 +208,9 @@ export default {
   },
   'recharge-page': {
     currentMethod: 'தற்போதைய முறை',
+    rechargeRecords: 'ரீசார்ஜ் பதிவுகள்',
+    depositAmount: 'வைப்பு தொகை',
+    extra: 'கூடுதல்',
     label: {
       records: 'பதிவுகள்',
       min: 'குறைந்தபட்சம்',

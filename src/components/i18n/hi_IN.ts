@@ -169,6 +169,9 @@ export default {
   },
   'recharge-page': {
     currentMethod: 'वर्तमान विधि',
+    rechargeRecords: 'रिचार्ज रिकॉर्ड',
+    depositAmount: 'जमा राशि',
+    extra: 'अतिरिक्त',
     label: {
       records: 'रिकॉर्ड्स',
       min: 'मिनिमम',

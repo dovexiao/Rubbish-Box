@@ -184,6 +184,9 @@ export default {
   },
   'recharge-page': {
     currentMethod: 'ప్రస్తుత పద్దతి',
+    rechargeRecords: 'రీఛార్జ్ రికార్డులు',
+    depositAmount: 'డిపాజిట్ మొత్తం',
+    extra: 'అదనపు',
     label: {
       records: 'రికార్డులు',
       min: 'కనిష్ఠ',

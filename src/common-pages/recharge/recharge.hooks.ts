@@ -74,11 +74,14 @@ export function useInnerStyle() {
   const selectStyles = StyleSheet.create({
     item: {
       width: size.itemWidth,
-      height: size.itemHeight,
+      height: size.itemHeight - 20,
     },
     itemMargin: {
       marginLeft:
-        (size.screenWidth - theme.paddingSize.l * 4 - size.itemWidth * 4 - 1) /
+        (size.screenWidth - theme.paddingSize.l * 3 - size.itemWidth * 3 - 1) /
+        3,
+      marginBottom:
+        (size.screenWidth - theme.paddingSize.l * 3 - size.itemWidth * 3 - 1) /
         3,
     },
     inputWrap: {},

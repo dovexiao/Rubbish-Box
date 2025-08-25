@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
-import {View, Image, Dimensions} from 'react-native';
+import {View, ImageBackground, Image, StyleSheet} from 'react-native'; //Dimensions,
 import {Input} from '@rneui/themed';
 import {useTranslation} from 'react-i18next';
 import theme from '@/style';
@@ -8,7 +8,8 @@ import {toPriceStr} from '@/utils';
 import Text from '@basicComponents/text';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useInnerStyle} from './recharge.hooks';
-import globalStore from '@/services/global.state';
+import LinearGradient from '@/components/basic/linear-gradient';
+// import globalStore from '@/services/global.state';
 import {BalanceListItem} from './recharge.service';
 
 export interface RechargeSelectProps {
@@ -20,8 +21,8 @@ export interface RechargeSelectProps {
   bounsComponent?: any;
 }
 
-const screenWidth = Dimensions.get('window').width;
-const isSmallScreen = screenWidth < 350;
+// const screenWidth = Dimensions.get('window').width;
+// const isSmallScreen = screenWidth < 350;
 
 const RechargeSelect: React.FC<RechargeSelectProps> = ({
   balance,
@@ -49,12 +50,149 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
     <View
       style={[
         theme.flex.col,
-        theme.borderRadius.m,
+        // theme.borderRadius.m,
         theme.padding.l,
-        {marginTop: 12, backgroundColor: theme.basicColor.newBgInOne},
+        // backgroundColor: theme.basicColor.newBgInOne
+        {marginTop: 12},
       ]}>
+      <View style={styleSheet.title}>
+        <View style={styleSheet.titleIcon}></View>
+        <Text style={styleSheet.titleText}>
+          {i18n.t('recharge-page.depositAmount')}
+        </Text>
+      </View>
+      {/* 快捷金额选择区域 */}
+      <View
+        style={[
+          theme.padding.tops,
+          theme.flex.row,
+          theme.flex.wrap,
+          theme.flex.between,
+          {
+            marginBottom: 12,
+          }
+        ]}>
+        {balanceList.map((bl, index) => {
+          // const isSelected = bl.balance + '' === balance;
+          // const bonusValue = (bl.balance * bl.giveBalance) / 100;
+
+          return (
+            <NativeTouchableOpacity
+              key={index}
+              style={[selectStyles.item, theme.flex.col, {marginBottom: 12,}]}
+              onPress={() => onChangeBalance(bl.balance + '')}>
+               {bl.balance + '' !== balance ? (
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 0, y: 1}}
+                colors={[
+                  theme.basicColor.newBgInOne,
+                  theme.basicColor.newBgInOne,
+                ]}
+                style={[
+                  theme.flex.center,
+                  theme.borderRadius.s,
+                  selectStyles.item,
+                ]}>
+                {bl.giveBalance != 0 && (
+                  <ImageBackground
+                    style={[
+                      {
+                        width: 60,
+                        height: 17.6,
+                        position: 'absolute',
+                        top: -8,
+                        right: 0,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+                    ]}
+                    source={require('@assets/icons/wallet/qipao.webp')}>
+                    <Text
+                      fontSize={theme.fontSize.xs}
+                      color={theme.basicColor.white}>
+                      {i18n.t('recharge-page.extra')}+
+                      {toPriceStr(bl.giveBalance, {
+                        fixed: 0,
+                        showCurrency: false,
+                        thousands: true,
+                      })}
+                      %
+                    </Text>
+                  </ImageBackground>
+                )}
+
+                <Text
+                  fontSize={17}
+                  color={theme.basicColor.newFontWhite}
+                  style={[{fontWeight: '900'}]}>
+                  ₹{' '}
+                  {toPriceStr(bl.balance, {
+                    fixed: 0,
+                    showCurrency: false,
+                    thousands: true,
+                  })}
+                </Text>
+              </LinearGradient>
+            ) : (
+              <LinearGradient
+                start={{x: 0.5, y: 1}} // 起点：底部中间
+                end={{x: 0.5, y: 0}} // 终点：顶部中间
+                colors={theme.basicColor.newButtonLinear}
+                style={[
+                  theme.flex.center,
+                  selectStyles.item,
+                  theme.borderRadius.s,
+                ]}>
+                {bl.giveBalance != 0 && (
+                  <ImageBackground
+                    style={[
+                      {
+                        width: 60,
+                        height: 17.6,
+                        position: 'absolute',
+                        top: -8,
+                        right: 0,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+                    ]}
+                    source={require('@assets/icons/wallet/qipao.webp')}>
+                    <Text
+                      fontSize={theme.fontSize.xs}
+                      color={theme.basicColor.white}>
+                      {i18n.t('recharge-page.extra')}+{' '}
+                      {toPriceStr(bl.giveBalance, {
+                        fixed: 0,
+                        showCurrency: false,
+                        thousands: true,
+                      })}
+                      %
+                    </Text>
+                  </ImageBackground>
+                )}
+
+                <Text
+                  fontSize={17}
+                  color={theme.basicColor.white}
+                  style={[{fontWeight: '900'}]}>
+                  ₹{' '}
+                  {toPriceStr(bl.balance, {
+                    fixed: 0,
+                    showCurrency: false,
+                    thousands: true,
+                  })}
+                </Text>
+              </LinearGradient>
+            )}
+            </NativeTouchableOpacity>
+          );
+        })}
+      </View>
       {/* 输入框区域 */}
-      <View style={[theme.flex.col, theme.margin.btms]}>
+      <View style={[theme.flex.col, theme.margin.bts]}>
         <View
           style={[
             theme.flex.col,
@@ -75,110 +213,61 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
             placeholder={i18n.t('recharge-page.label.enter')}
           />
         </View>
-
+      </View>
         {/* 最小最大金额显示 */}
-        <View style={[theme.flex.row]}>
-          <Text white fontSize={theme.fontSize.m}>
+        <View style={styleSheet.tips}>
+          <Image
+            source={require('@/assets/icons/wallet/recharge-tishi.webp')}
+            style={styleSheet.tipsImg}
+          />
+          <Text style={styleSheet.tipsText}>
             {i18n.t('recharge-page.label.min')}
           </Text>
-          <Text
-            style={[theme.margin.leftxxs]}
-            white
-            blod
-            fontSize={theme.fontSize.m}>
+          <Text style={[theme.margin.leftxxs, styleSheet.tipsText]}>
             {min ? toPriceStr(min, {fixed: 0, thousands: true}) : '--'}
           </Text>
-          <Text
-            style={[theme.margin.leftxxl]}
-            white
-            fontSize={theme.fontSize.m}>
+          <Text style={[theme.margin.leftxxl, styleSheet.tipsText]}>
             {i18n.t('recharge-page.label.max')}
           </Text>
-          <Text
-            style={[theme.margin.leftxxs]}
-            white
-            blod
-            fontSize={theme.fontSize.m}>
+          <Text style={[theme.margin.leftxxs, styleSheet.tipsText]}>
             {max ? toPriceStr(max, {fixed: 0, thousands: true}) : '--'}
           </Text>
         </View>
-      </View>
-
-      {/* 快捷金额选择区域 */}
-      <View
-        style={[
-          theme.padding.topm,
-          theme.flex.row,
-          theme.flex.wrap,
-          theme.gap.m,
-        ]}>
-        {balanceList.map((bl, index) => {
-          const isSelected = bl.balance + '' === balance;
-          const bonusValue = (bl.balance * bl.giveBalance) / 100;
-
-          return (
-            <NativeTouchableOpacity
-              key={index}
-              style={[selectStyles.item, theme.flex.col, {minHeight: 80}]}
-              onPress={() => onChangeBalance(bl.balance + '')}>
-              <View
-                style={[
-                  theme.flex.center,
-                  isSelected ? theme.border.primary : theme.border.primary50,
-                  theme.borderRadius.s,
-                  selectStyles.item,
-                  theme.gap.xs,
-                  theme.position.rel,
-                  {minHeight: 80},
-                ]}>
-                <Text
-                  color={
-                    isSelected ? theme.basicColor.white : theme.fontColor.white
-                  }
-                  blod
-                  fontSize={20}>
-                  {toPriceStr(bl.balance, {
-                    fixed: 0,
-                    showCurrency: true,
-                    thousands: true,
-                  })}
-                </Text>
-
-                {/* 优惠信息，避免换行 */}
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  color={
-                    isSelected ? theme.fontColor.primary : theme.fontColor.white
-                  }
-                  style={{
-                    maxWidth: '100%',
-                    flexShrink: 1,
-                    fontSize: isSmallScreen ? 10 : 11,
-                  }}>
-                  {`${i18n.t('other.bonus')} ${bl.giveBalance}% ${
-                    globalStore.currency
-                  }${bonusValue}`}
-                </Text>
-
-                {/* 选中图标 */}
-                {isSelected && (
-                  <Image
-                    style={[
-                      theme.position.abs,
-                      theme.icon.s,
-                      {bottom: 0, right: 0},
-                    ]}
-                    source={require('@/assets/icons/btn-checked.webp')}
-                  />
-                )}
-              </View>
-            </NativeTouchableOpacity>
-          );
-        })}
-      </View>
     </View>
   );
 };
 
+const styleSheet = StyleSheet.create({
+  title: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  titleIcon: {
+    width: 4,
+    height: 15,
+    backgroundColor: theme.basicColor.newButtonYellow,
+    borderRadius: 2,
+    marginRight: 8,
+  },
+  titleText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: theme.basicColor.newFontWhite,
+    fontFamily: 'Arial, Arial-Bold',
+  },
+  tips: {
+    ...theme.flex.row,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 20,
+  },
+  tipsImg: {
+    ...theme.margin.rightxs,
+    width: 14,
+    height: 14,
+  },
+  tipsText: {fontSize: 12, color: theme.basicColor.newFontPink},
+});
 export default RechargeSelect;

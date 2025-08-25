@@ -29,11 +29,12 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
     <View
       style={[
         theme.flex.col,
-        theme.margin.topl,
+        // theme.margin.topl,
         theme.borderRadius.s,
         {
           paddingHorizontal: 16,
           paddingVertical: 12,
+          paddingTop: 0,
           // backgroundColor: theme.basicColor.newBgInOne,
         },
       ]}>
