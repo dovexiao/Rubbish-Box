@@ -1,95 +1,84 @@
 import LazyImage, {ImageUrlType} from '@components/basic/image';
 import theme from '@style';
-import React, {ReactNode, useMemo} from 'react';
-import {Pressable, StyleProp, View, ViewStyle, StyleSheet} from 'react-native';
+import React, {ReactNode} from 'react';
+import {Pressable, View} from 'react-native';
 import Text from '@basicComponents/text';
 import {useResponsiveDimensions} from '@/utils';
 
 const {flex, font, margin, padding} = theme;
+export const agencyIcon = require('@components/assets/icons/me-list-item/proxy.webp');
+export const resultHistoryIcon = require('@components/assets/icons/me-list-item/result-history.webp');
+export const betsIcon = require('@components/assets/icons/me-list-item/money.webp');
+export const transactionsIcon = require('@components/assets/icons/me-list-item/transactions.webp');
+export const giftcode = require('@components/assets/icons/me-list-item/commission.webp');
 export const rebateIcon = require('@components/assets/icons/me-list-item/rebate.webp');
-export const transactionsIcon = require('@components/assets/icons/me-list-item/transaction.webp');
-export const giftcode = require('@components/assets/icons/me-list-item/giftcode.webp');
-export const betsIcon = require('@components/assets/icons/me-list-item/bets.webp');
-export const commissionIcon = require('@components/assets/icons/me-list-item/commission.webp');
+export const notificationsIcon = require('@components/assets/icons/me-list-item/notifications.webp');
 export const passwordIcon = require('@components/assets/icons/me-list-item/password.webp');
 export const languagesIcon = require('@components/assets/icons/me-list-item/languages.webp');
 export const customerServiceIcon = require('@components/assets/icons/me-list-item/customer-service.webp');
 export const updateIcon = require('@components/assets/icons/me-list-item/update-icon.webp');
+export const gameIcon = require('@components/assets/icons/me-list-item/game.webp');
 
-const rightIcon = require('@assets/icons/right-purple.webp');
+const rightIcon = require('@components/assets/icons/me-list-item/right-icon-2.webp');
 
 export interface MeListItemProps {
-  containerStyle?: StyleProp<ViewStyle>;
   icon: ImageUrlType;
   iconSize?: number;
+  mt?: number;
   title: string;
-  description?: string;
   hasRightIcon?: boolean;
   rightContent?: ReactNode;
   onPress?: () => void;
   hideBottomBorder?: boolean;
-  rightIconSize?: number;
-  mt?: number; //maginTop
-  btmBorder?: boolean; //maginTop
 }
 
 const MeListItem: React.FC<MeListItemProps> = props => {
   const {width} = useResponsiveDimensions();
+  const rightIconSize = (width / 375) * 8;
+  const rightIconSizeh = (width / 375) * 14;
+  const defaultIconSize = (width / 375) * 16;
   const {
-    containerStyle,
     icon,
-    iconSize,
+    iconSize = defaultIconSize,
     title,
-    description = '',
-    mt = 8,
-    btmBorder = true,
     rightContent = null,
     hasRightIcon = true,
-    rightIconSize = 24,
-    // hideBottomBorder = false,
+    hideBottomBorder = false,
     onPress,
   } = props;
 
-  const memoIconSize = useMemo(() => {
-    return iconSize ? (width / 375) * iconSize : (width / 375) * 36;
-  }, [iconSize, width]);
-
+  const borderStyle = !hideBottomBorder
+    ? {
+        borderBlockColor: '#ffffff1a',
+        borderBottomWidth: 1,
+      }
+    : {};
   return (
     <Pressable
       onPress={onPress}
       style={[
-        flex.row,
         flex.centerByCol,
+        flex.row,
         flex.between,
-        padding.tbs,
+        padding.tbl,
         padding.lrl,
-        // theme.border.main,
-        theme.background.newBgInOne,
-        theme.borderRadius.s,
-
-        {
-          marginTop: mt,
-        },
-        containerStyle,
+        {height: 49},
+        borderStyle,
       ]}>
       <View style={[flex.centerByCol, flex.row]}>
         {icon && (
           <LazyImage
             occupancy={'transparent'}
             imageUrl={icon}
-            width={memoIconSize}
-            height={memoIconSize}
+            width={iconSize}
+            height={iconSize}
           />
         )}
-        <View style={[]}>
-          <Text style={[margin.lefts, font.m, font.white]}>{title}</Text>
-          {description ? (
-            <Text
-              style={[margin.lefts, margin.topxxs, font.s, font.primaryMain]}>
-              {description}
-            </Text>
-          ) : null}
-        </View>
+        <Text
+          color={theme.basicColor.newFontWhite}
+          style={[margin.lefts, font.fm]}>
+          {title}
+        </Text>
       </View>
       <View style={[flex.row, flex.centerByCol]}>
         {rightContent}
@@ -99,25 +88,13 @@ const MeListItem: React.FC<MeListItemProps> = props => {
               occupancy={'transparent'}
               imageUrl={rightIcon}
               width={rightIconSize}
-              height={rightIconSize}
+              height={rightIconSizeh}
             />
           </View>
         )}
       </View>
-      {/* 添加底线 */}
-      {btmBorder && <View style={styles.bottomLine} />}
     </Pressable>
   );
 };
-
-const styles = StyleSheet.create({
-  bottomLine: {
-    position: 'absolute',
-    bottom: 0,
-    height: 1,
-    width: '94%', // 底线宽度占比内容区域
-    backgroundColor: theme.borderColor.white10, // 底线颜色
-  },
-});
 
 export default MeListItem;
