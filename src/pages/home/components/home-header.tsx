@@ -75,14 +75,14 @@ const HomeHeader = () => {
       ]}
       hideServer
       leftNode={
-        <NativeTouchableOpacity style={{marginLeft: -12}}>
+        <NativeTouchableOpacity style={{marginLeft: -38}}>
           <Image
             style={{
               width: 180,
               height: 45,
-              transform: [{scale: 0.8}],
+              transform: [{scale: 0.55}],
             }}
-            source={require('@assets/logos/logo-v2.webp')}
+            source={require('@assets/logos/logo-v2.png')}
           />
         </NativeTouchableOpacity>
       }
