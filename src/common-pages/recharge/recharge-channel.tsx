@@ -4,8 +4,10 @@ import Text from '@basicComponents/text';
 import {View, Image} from 'react-native';
 import theme from '@style';
 import {PayMethod} from './recharge.service';
+import {useInnerStyle} from './recharge.hooks';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
+import Ok from '../svg/ok';
 
 export interface RechargeChannelProps {
   payMethodList: PayMethod[];
@@ -21,6 +23,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
   balance,
 }) => {
   const {i18n} = useTranslation();
+  const {payMethodStyles} = useInnerStyle();
 
   return (
     <View
@@ -31,7 +34,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
         {
           paddingHorizontal: 16,
           paddingVertical: 12,
-          backgroundColor: theme.basicColor.newBgInOne,
+          // backgroundColor: theme.basicColor.newBgInOne,
         },
       ]}>
       <Text fontSize={theme.fontSize.m} white style={{marginBottom: 18}}>
@@ -55,16 +58,20 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
               theme.flex.row,
               theme.flex.center,
               theme.borderRadius.s,
-              isSelected ? theme.border.primary : theme.border.primary50,
-              {marginBottom: 12, padding: 12},
-              isDisabled && {opacity: 0.4},
+              isSelected ? theme.border.primary : {},
+              {
+                marginBottom: 12,
+                padding: 12,
+                backgroundColor: theme.basicColor.newBgInOne,
+              },
+              isDisabled && {opacity: 0.6},
             ]}>
             {/* 左侧图片 */}
             <Image
               source={{uri: payMethod.payIcon}}
               style={{
-                width: 60,
-                height: 60,
+                width: 32,
+                height: 32,
                 borderRadius: 8,
                 marginRight: 16,
                 backgroundColor: '#FFFFFF',
@@ -75,31 +82,35 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
             {/* 中间文字 */}
             <View style={{flex: 1, justifyContent: 'center'}}>
               <Text
-                fontSize={theme.fontSize.l1}
+                fontSize={theme.fontSize.l}
                 white
                 numberOfLines={1}
                 ellipsizeMode="tail">
-                {payMethod.payName}
+                {payMethod.payName}(
+                {`Limit: ${payMethod.minAmount} - ${payMethod.maxAmount}`})
               </Text>
-              <Text
+              {/* <Text
                 fontSize={theme.fontSize.m}
                 white
                 style={{opacity: 0.6, marginTop: 4}}>
                 {`Limit: ${payMethod.minAmount} - ${payMethod.maxAmount}`}
-              </Text>
+              </Text> */}
             </View>
 
             {/* 右侧选中图标 */}
-            {isSelected && (
-              <Image
+            {isSelected ? (
+              <View
                 style={[
                   theme.position.abs,
-                  theme.icon.s,
-
-                  {bottom: 0, right: 0},
-                ]}
-                source={require('@/assets/icons/btn-checked.webp')}
-              />
+                  payMethodStyles.itemSelectedIcon,
+                  theme.flex.center,
+                  {marginRight: 12},
+                ]}>
+                <Ok />
+              </View>
+            ) : (
+              // 空圆圈不要了，占位
+              <View />
             )}
           </NativeTouchableOpacity>
         );

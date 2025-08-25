@@ -7,7 +7,7 @@ import {ButtonType} from '@/components/basic/button/button';
 import {useTranslation} from 'react-i18next';
 import {useResponsiveDimensions} from '@/utils';
 import globalStore from '@/services/global.state';
-
+import LinearGradient from '@/components/basic/linear-gradient';
 export interface RechargeButtonProps {
   disabled?: boolean;
   type?: ButtonType;
@@ -34,25 +34,33 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
       // backgroundColor: theme.basicColor.newBgInTwo,
       paddingTop: theme.paddingSize.l,
       paddingBottom: globalStore.isAndroid ? 33 * 3 : 33,
+      // backgroundColor: `linear-gradient(180deg, ${theme.basicColor.newButtonBgOne})`,
     },
   });
 
   return (
+    // <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}></LazyImageLGBackground>
     <View
       style={[theme.flex.center, theme.fill.fillW, rechargeStyle.buttonWrap]}>
-      <Button
-        size="large"
-        type={type}
-        radius={5}
-        color={theme.basicColor.newBgInOne}
-        disabled={disabled}
-        width={rechargeButtonWidth}
-        buttonStyle={[rechargeStyle.button]}
-        onPress={onRecharge}>
-        <Text fontSize={theme.fontSize.m} blod color={theme.basicColor.white}>
-          {text || i18n.t('home.tab.deposit')}
-        </Text>
-      </Button>
+      <LinearGradient
+        start={{x: 0, y: 1}}
+        end={{x: 0, y: 1}}
+        colors={theme.basicColor.newButtonBgOne}
+        style={[rechargeStyle.button, {borderRadius: 45}]}>
+        <Button
+          size="large"
+          type={type}
+          radius={5}
+          color="transparent"
+          disabled={disabled}
+          width={rechargeButtonWidth}
+          buttonStyle={[{backgroundColor: 'transparent'}, rechargeStyle.button]}
+          onPress={onRecharge}>
+          <Text fontSize={theme.fontSize.m} blod color={theme.basicColor.white}>
+            {text || i18n.t('home.tab.deposit')}
+          </Text>
+        </Button>
+      </LinearGradient>
     </View>
   );
 };

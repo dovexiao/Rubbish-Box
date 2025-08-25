@@ -50,6 +50,7 @@ export const basicColor = {
 
   // 页面背景色配置
   newBgOne: ['#7A0606', '#230402'], //一级页面 68, 6, 2 35, 4, 2
+  newButtonBgOne: ['#FB413A', '#F49E2D'], //一级页面 68, 6, 2 35, 4, 2
   newBgTwo: '#440602', //二级页面 68, 6, 2
   newBgInOne: '#A1251C', //页面内背景色 161, 37, 28
   newBgInOne5: '#A1251C99', //页面内背景色 161, 37, 28
