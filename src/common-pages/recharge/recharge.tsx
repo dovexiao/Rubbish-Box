@@ -51,6 +51,30 @@ const Recharge = () => {
     };
   }, []);
 
+  const bBalance: number = Number(balance);
+  let exResult: number = 0;
+  const sortedBalanceList = [...balanceList].sort(
+    (a, b) => a.balance - b.balance,
+  );
+  for (let i = 0; i < sortedBalanceList.length - 1; i++) {
+    if (
+      sortedBalanceList[i].balance <= bBalance &&
+      bBalance < sortedBalanceList[i + 1].balance
+    ) {
+      exResult = (sortedBalanceList[i].giveBalance / 100) * bBalance;
+      break; // 找到后退出循环
+    }
+
+    // 在循环内直接处理大于或等于最大值的情况
+    if (
+      i === sortedBalanceList.length - 2 &&
+      bBalance >= sortedBalanceList[i + 1].balance
+    ) {
+      const lastItem = sortedBalanceList[i + 1];
+      exResult = (lastItem.giveBalance / 100) * bBalance;
+      break;
+    }
+  }
   const payMethodItem = useMemo(
     () => paymethodList.find(p => p.id === payMethodId),
     [paymethodList, payMethodId]
@@ -228,6 +252,14 @@ const Recharge = () => {
         <RechargeButton
           disabled={balance === '' || +balance <= 0}
           onRecharge={handleRecharge}
+          text={
+            i18n.t('label.recharge') +
+            (exResult > 0
+              ? '( ' +
+                i18n.t('recharge-page.extra') +
+                ` +₹${exResult.toFixed(2).toString()} )`
+              : '')
+          }
         />
         <View style={[{height: 30}]}></View>
       </Spin>
