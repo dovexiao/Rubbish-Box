@@ -92,9 +92,10 @@ export function useInnerStyle() {
       position: 'absolute',
     },
     container: {
-      height: scaleSize(75),
+      height: scaleSize(143),
+      borderTopLeftRadius: theme.borderRadiusSize.l,
+      borderTopRightRadius: theme.borderRadiusSize.l,
       overflow: 'hidden',
-      backgroundColor: theme.basicColor.newBgInOne,
     },
     bgBox: {
       width: size.screenWidth - theme.paddingSize.l * 2,

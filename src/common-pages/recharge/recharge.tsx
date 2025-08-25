@@ -211,7 +211,7 @@ const Recharge = () => {
       setLoading(false);
     }
   };
-
+  const payMethodStr = payMethodItem?.payName ? `${payMethodItem?.payName}(${`Limit: ${payMethodItem.minAmount} - ${payMethodItem.maxAmount}`})` : '';
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle
@@ -223,12 +223,14 @@ const Recharge = () => {
       <Spin loading={loading} style={[theme.flex.flex1, theme.flex.col]}>
         <View style={[theme.flex.flex1, theme.flex.basis0]}>
           <ScrollView>
-            <RechargeBalance
-              balance={amount}
-              payMethod={payMethodItem?.payName}
-              onRefresh={handleRefresh}
-              onGotoRecords={handleGotoRecords}
-            />
+            <View style={[{backgroundColor: theme.basicColor.newBgInThree}]}>
+              <RechargeBalance
+                balance={amount}
+                payMethod={payMethodStr}
+                onRefresh={handleRefresh}
+                onGotoRecords={handleGotoRecords}
+              />
+            </View>
             <View style={[theme.padding.lrl]}>
               <RechargeSelect
                 min={payMethodItem?.minAmount || 0}
