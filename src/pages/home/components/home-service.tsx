@@ -30,6 +30,7 @@ const HomeService = ({spinShow}: {spinShow: () => void}) => {
       {(globalStore.userInfo?.totalRechargeAmount === 0 ||
         !globalStore.token) && (
         <TouchableOpacity
+          style={{marginBottom: 8}}
           onPress={() => {
             if (!globalStore.token) {
               goTo('Login');
@@ -38,8 +39,8 @@ const HomeService = ({spinShow}: {spinShow: () => void}) => {
             toggleModal();
           }}>
           <LazyImage
-            width={70}
-            height={70}
+            width={60}
+            height={60}
             imageUrl={require('@assets/gif/first-recharge.gif')}
           />
         </TouchableOpacity>
