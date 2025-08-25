@@ -19,7 +19,7 @@ import {goTo} from '@/utils';
 const Promotion = () => {
   const {i18n} = useTranslation();
   const {
-    size: {itemImgWidth, itemImgHeight, signImgHeight},
+    size: {itemImgWidth, signImgHeight},//itemImgHeight,
     listStyle,
   } = useInnerStyle();
 
@@ -81,7 +81,7 @@ const Promotion = () => {
     <View
       style={[
         // theme.border.primary50,
-        // theme.borderRadius.l,
+        theme.borderRadius.m,
         theme.margin.bottomMd,
         // {backgroundColor: theme.basicColor.newBgInOne},
       ]}>
@@ -90,12 +90,12 @@ const Promotion = () => {
           <Card.Image
             style={[
               theme.flex.centerByCol,
-              theme.borderRadius.s,
+              theme.borderRadius.m,
               theme.position.rel,
             ]}
             width={itemImgWidth}
             height={
-              item.activityType === 'signin' ? signImgHeight : itemImgHeight
+              item.activityType === 'signin' ? signImgHeight : 122
             }
             imageUrl={item.activityIcon}
           />
