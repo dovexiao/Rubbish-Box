@@ -98,9 +98,9 @@ export const basicColor = {
 };
 
 export const linearGradientColor = {
-  pageLinearGradient: ['rgb(107, 11, 15)', 'rgb(56, 9, 9)', 'rgb(31, 8, 7)'],
+  // pageLinearGradient: ['rgb(107, 11, 15)', 'rgb(56, 9, 9)', 'rgb(31, 8, 7)'],
   // pageLinearGradient: ['rgb(122, 6, 6)', 'rgb(35, 4, 2)'],
-  // pageLinearGradient: ['#6B0B0F', '#1F0807'],
+  pageLinearGradient: ['#6B0B0F', '#1F0807'],
   homeTopLogLinearGradient: ['rgb(224, 32, 32)', 'rgb(153, 24, 79)'],
   loginButtonLinearGradient:
     'linear-gradient(0deg, rgb(121, 74, 0), rgb(253, 229, 109), rgb(108, 46, 16))',
