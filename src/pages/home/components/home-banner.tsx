@@ -9,7 +9,7 @@ import {useSettingWindowDimensions} from '@/store/useSettingStore';
 const HomeBanner = ({bannerList}: {bannerList: BannerListItem[]}) => {
   const {screenWidth, calculateItemWidth} = useSettingWindowDimensions();
   const bannerWidth = screenWidth - theme.paddingSize.l * 2;
-  const bannerHeight = calculateItemWidth(170);
+  const bannerHeight = calculateItemWidth(125);
 
   return (
     <View
