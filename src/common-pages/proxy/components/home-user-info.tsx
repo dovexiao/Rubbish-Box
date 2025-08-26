@@ -63,7 +63,7 @@ const HomeUserInfo: React.FC<HomeUserInfoProps> = ({info}) => {
               style={[theme.margin.leftxxs]}
               white>
               {info?.registerDate
-                ? dayjs(info.registerDate, 'YYYY-MM-DD').format('DD-MM-YYYY')
+                ? dayjs(info.registerDate, 'YYYY-MM-DD').format('DD/MM YYYY')
                 : '-'}
             </Text>
           </View>
@@ -71,7 +71,10 @@ const HomeUserInfo: React.FC<HomeUserInfoProps> = ({info}) => {
         onTeamReport={handleToTeamReport}
         userDataTopContent={
           <View style={[theme.flex.col]}>
-            <Text blod white style={[theme.padding.btms]}>
+            <Text
+              blod
+              color={theme.basicColor.newFontYellow}
+              style={[theme.padding.btms]}>
               {i18n.t('proxy.user.today')}
             </Text>
             <View style={[theme.flex.row, theme.margin.btms]}>
@@ -119,7 +122,10 @@ const HomeUserInfo: React.FC<HomeUserInfoProps> = ({info}) => {
           <NativeTouchableOpacity
             style={[theme.flex.col]}
             onPress={handleToTeamReport}>
-            <Text blod white style={[theme.padding.tbs]}>
+            <Text
+              blod
+              color={theme.basicColor.newFontYellow}
+              style={[theme.padding.tbs]}>
               {i18n.t('proxy.user.total')}
             </Text>
             <View style={[theme.flex.row]}>

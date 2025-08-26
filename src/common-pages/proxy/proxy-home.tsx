@@ -30,7 +30,7 @@ const ProxyHome = () => {
   } = useInnerStyle();
   // const route = useRoute();
   const [agentInfo, setAgentInfo] = useState<AgentInfo>();
-  const {code, doShare, initShare, copy} = useShare();
+  const {code, refreshCode, doShare, initShare, copy} = useShare();
   const [refreshing, setRefreshing] = useState(false);
   const inviteCode = useMemo(() => {
     return code.split('').join('  ');
@@ -69,6 +69,7 @@ const ProxyHome = () => {
 
   const handleUpdateInviteCode = async () => {
     globalStore.globalLoading.next(true);
+    refreshCode().finally(() => globalStore.globalLoading.next(false));
   };
   return (
     <LazyImageLGBackground
