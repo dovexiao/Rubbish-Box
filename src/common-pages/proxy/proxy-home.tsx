@@ -172,6 +172,7 @@ const ProxyHome = () => {
                   marginRight: 12 * percent,
                   backgroundColor: '#FFF7Fb',
                   width: globalStore.screenWidth - 28 * percent,
+                  paddingBottom: 10,
                 },
               ]}>
               <Button

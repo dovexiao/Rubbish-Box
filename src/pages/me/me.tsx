@@ -476,7 +476,7 @@ const Me = () => {
                   </View>
                 </NativeTouchableOpacity>
               )}
-              <View style={[theme.margin.topl]}></View>
+              <View style={[{height: 60}]}></View>
             </View>
           </View>
         </Animated.ScrollView>

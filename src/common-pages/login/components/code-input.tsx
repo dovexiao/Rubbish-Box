@@ -126,7 +126,7 @@ const CodeInput = ({
                     theme.borderRadius.xs,
                     {
                       width: theme.paddingSize.l * 4,
-                      backgroundColor: theme.basicColor.primary,
+                      // backgroundColor: theme.basicColor.newTransparent,
                     },
                   ]}>
                   <Text
