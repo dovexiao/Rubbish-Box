@@ -106,7 +106,7 @@ const DatePicker = ({
         isVisible={open}>
         <View
           style={[
-            theme.background.mainDark,
+            theme.background.newBgPop,
             theme.flex.col,
             theme.borderRadius.m,
             // eslint-disable-next-line react-native/no-inline-styles
@@ -172,7 +172,13 @@ const DatePicker = ({
           <Button
             title={i18n.t('label.confirm')}
             titleBold
-            buttonStyle={[theme.padding.tbl, {height: theme.paddingSize.l * 4}]}
+            buttonStyle={[
+              theme.padding.tbl,
+              {
+                height: theme.paddingSize.l * 4,
+                backgroundColor: theme.basicColor.newButtonYellow,
+              },
+            ]}
             onPress={() => {
               if (type === 'day') {
                 onValueChange?.(
