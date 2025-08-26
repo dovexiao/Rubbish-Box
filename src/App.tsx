@@ -256,7 +256,7 @@ function App(): JSX.Element {
   React.useEffect(() => {
     globalStore.asyncGetItem('channel').then(c => {
       if (globalStore.isWeb) {
-        globalStore.channel = c || 'supbet';
+        globalStore.channel = c || 'hkz01';
       }
       if (globalStore.isAndroid) {
         initChannelId();

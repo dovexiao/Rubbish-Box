@@ -21,6 +21,7 @@ import {useToken, useUserInfo} from '@/store/useUserStore';
 const refreshIcon = require('@assets/icons/refresh.webp');
 
 export interface MeAmountProps {
+  login?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
   onLayout?: (e: LayoutChangeEvent) => void;
   onRefresh?: () => void;
@@ -50,13 +51,16 @@ const MeAmount: React.FC<MeAmountProps> = ({
     <LinearGradient
       start={{x: 0, y: 0}}
       end={{x: 1, y: 0}}
-      colors={[theme.basicColor.newBgInOne, theme.basicColor.newBgInTwo]}
+      colors={[
+        theme.basicColor.newTransparent,
+        theme.basicColor.newTransparent,
+      ]}
       style={[
         theme.flex.around,
         theme.margin.topl,
         theme.padding.tbs,
-        theme.border.main,
-        theme.borderRadius.s,
+        // theme.border.main,
+        // theme.borderRadius.s,
         theme.padding.xxxl,
         // eslint-disable-next-line react-native/no-inline-styles
         {height: 66},

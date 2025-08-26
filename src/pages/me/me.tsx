@@ -5,6 +5,7 @@ import {
   LayoutChangeEvent,
   RefreshControl,
   Animated,
+  ImageBackground,
 } from 'react-native';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import React, {useCallback, useRef, useState} from 'react';
@@ -262,7 +263,54 @@ const Me = () => {
             />
           }>
           {/* <DetailNavTitle hideAmount hideServer title={i18n.t('home.tab.me')} /> */}
-          <View style={{height: 12}} />
+
+          <View style={[{height: 299}]}>
+              <View style={[theme.padding.m, theme.margin.lrl, {height: 85}]}>
+                <MeUser
+                  login={login}
+                  user={user}
+                  level={level}
+                  onUser={handleUser}
+                  showNoMenu={false}
+                />
+              </View>
+              <ImageBackground
+                source={require('@assets/icons/me/card-backimg.webp')}
+                resizeMode="stretch"
+                style={[
+                  theme.padding.lrxxl,
+                  theme.padding.topl,
+                  theme.flex.flex1,
+                  theme.flex.between,
+                  theme.background.transparent,
+                  {height: 214},
+                ]}>
+                <MeAmount
+                  login={login}
+                  onLayout={handleMoneyLayout}
+                  // topBlockWidth={topBlockWidth}
+                  // user={user}
+                  // onRecharge={toRecharge}
+                  // onWithdraw={toWithdraw}
+                  onRefresh={handleRefresh}
+                />
+                <MeVip
+                  level={level}
+                  onPress={toVip}
+                  nextLevelValue={nextValue}
+                  renderProgress={
+                    <VipProgress
+                      currentLevel={level}
+                      nextCurrentLevel={level + 1}
+                      current={nextValue - diff}
+                      total={nextValue}
+                      hasCurrentText={true}
+                    />
+                  }
+                />
+              </ImageBackground>
+            </View>
+          {/* <View style={{height: 12}} />
           <MeUser
             login={login}
             user={user}
@@ -285,7 +333,7 @@ const Me = () => {
               />
             }
           />
-          <MeAmount onLayout={handleMoneyLayout} onRefresh={handleRefresh} />
+          <MeAmount onLayout={handleMoneyLayout} onRefresh={handleRefresh} /> */}
           <MeRowMenu />
           <View style={[]}>
             {/* 列表区域 */}

@@ -55,13 +55,13 @@ const MeRowMenu: React.FC<MeRowMenuProps> = () => {
   return (
     <View style={styles.container}>
       {renderItem({
-        url: require('@assets/icons/me/recharge-white.webp'),
+        url: require('@assets/icons/me/recharge.webp'),
         title: i18n.t('me.bottom.deposit'),
         onPress: toRecharge,
         bgColor: basicColor.newBgThree,
       })}
       {renderItem({
-        url: require('@assets/icons/me/withdraw-white.webp'),
+        url: require('@assets/icons/me/withdraw.webp'),
         title: i18n.t('me.bottom.withdraw'),
         onPress: toWithdraw,
         bgColor: basicColor.newBgThree,
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 30,
     height: 30,
+    marginLeft: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
