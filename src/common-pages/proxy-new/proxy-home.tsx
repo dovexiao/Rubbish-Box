@@ -22,7 +22,7 @@ import {AgentInfo} from './types';
 import {usePaging} from './hooks/home';
 import HomeUser from './components/home-user';
 
-const agentRuleImg = require('@/assets/imgs/proxy/agentrule.webp'); // <-- 引入图片
+const agentRuleImg = require('@/assets/imgs/proxy/agentrule1.webp'); // <-- 引入图片
 
 const NewProxyHome = () => {
   const basePx = globalStore.screenWidth / 375;

@@ -1,17 +1,20 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useMemo, useCallback} from 'react';
 import theme from '@style';
 import {
   View,
+  Text,
   ScrollView,
   RefreshControl,
   Image,
   StyleSheet,
 } from 'react-native';
-import {toAgentApply} from '@utils'; //goBack,
+import {toAgentApply} from '@utils'; //
+import {goToUrl} from '@/common-pages/game-navigate';
 import InvitationCode from './components/invitation-code';
 // import SubEntry from './components/sub-entry';
 import i18n from '@i18n';
-import {getAgentInfo} from './proxy.service';
+import {getAgentInfo, getAgentLink} from './proxy.service';
 import HomeUserInfo from './components/home-user-info';
 import {useInnerStyle} from './proxy.hooks';
 import globalStore from '@/services/global.state';
@@ -20,8 +23,11 @@ import {useShare} from '../hooks/share.hooks';
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import {useFocusEffect} from '@react-navigation/native'; //, useRoute
 import {LazyImageLGBackground} from '@basicComponents/image';
+import Button from '@/components/basic/button';
 
-const agentRuleImg = require('@/assets/imgs/proxy/agentrule.webp'); // <-- 引入图片
+const agentRuleImg1 = require('@/assets/imgs/proxy/agentrule1.webp'); // <-- 引入图片
+const agentRuleImg2 = require('@/assets/imgs/proxy/agentrule2.webp'); // <-- 引入图片
+const agentRuleImg3 = require('@/assets/imgs/proxy/agentrule3.webp'); // <-- 引入图片
 
 const ProxyHome = () => {
   const {
@@ -53,10 +59,28 @@ const ProxyHome = () => {
       })
       .finally(() => loading && globalStore.globalLoading.next(false));
   };
-
+  const [link, setLink] = useState<any>({});
+  const fetchLink = (loading: boolean = false) => {
+    loading && globalStore.globalLoading.next(true);
+    return Promise.allSettled([getAgentLink()])
+      .then(([link]) => {
+        if (link.status === 'fulfilled') {
+          setLink(link.value);
+        }
+      })
+      .finally(() => loading && globalStore.globalLoading.next(false));
+  };
+  const onPressButton = (type: number) => {
+    if (type === 2) {
+      goToUrl(link.wsLink);
+    } else {
+      goToUrl(link.tgLInk);
+    }
+  };
   const isFrist = React.useRef(false);
   const doInit = useCallback(() => {
     init(!isFrist);
+    fetchLink();
     isFrist.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -71,6 +95,7 @@ const ProxyHome = () => {
     globalStore.globalLoading.next(true);
     refreshCode().finally(() => globalStore.globalLoading.next(false));
   };
+  const percent = globalStore.screenWidth / 375;
   return (
     <LazyImageLGBackground
       style={[
@@ -115,10 +140,93 @@ const ProxyHome = () => {
         /> */}
         <View style={styles.bottomImgView}>
           <Image
-            source={agentRuleImg}
-            style={{width: '100%', height: 2333}}
-            resizeMode="contain"
+            source={agentRuleImg1}
+            style={{width: '100%', height: 746 * percent}}
+            resizeMode="cover"
           />
+          <Image
+            source={agentRuleImg2}
+            style={{width: '100%', height: 1009 * percent}}
+            resizeMode="cover"
+          />
+          <Image
+            source={agentRuleImg3}
+            style={{width: '100%', height: 1000 * percent}}
+            resizeMode="cover"
+          />
+          <View
+            style={{
+              backgroundColor: '#ffffff',
+              position: 'relative',
+              top: -2,
+              width: globalStore.screenWidth,
+            }}>
+            <View
+              style={[
+                theme.flex.row,
+                {
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                  marginLeft: 16 * percent,
+                  marginRight: 12 * percent,
+                  backgroundColor: '#FFF7Fb',
+                  width: globalStore.screenWidth - 28 * percent,
+                },
+              ]}>
+              <Button
+                style={[
+                  {
+                    flex: 1,
+                    height: 44,
+                    marginTop: 10,
+                    marginBottom: 20,
+                  },
+                ]}
+                buttonStyle={[{backgroundColor: '#FF493A'}]}
+                radius={22}
+                onPress={() => {
+                  onPressButton(1);
+                }}>
+                <Text
+                  style={[
+                    {
+                      color: '#FFFFFF',
+                      fontSize: theme.fontSize.l,
+                      fontWeight: '700',
+                    },
+                  ]}>
+                  Join Telegtam
+                </Text>
+              </Button>
+              <Button
+                style={[
+                  {
+                    flex: 1,
+                    height: 44,
+                    marginTop: 10,
+                    marginBottom: 20,
+                    // backgroundColor: '#F7B500',
+                  },
+                ]}
+                buttonStyle={[{backgroundColor: '#F7B500'}]}
+                radius={22}
+                onPress={() => {
+                  onPressButton(2);
+                }}>
+                <Text
+                  style={[
+                    {
+                      color: '#FFFFFF',
+                      fontSize: theme.fontSize.l,
+                      fontWeight: '700',
+                    },
+                  ]}>
+                  Join Whatsapp
+                </Text>
+              </Button>
+            </View>
+          </View>
         </View>
         {/*<EarningsChart user={topUser} me={resultTopMe} />*/}
         <View style={[theme.fill.fillW, whiteAreaStyle.area]} />
@@ -134,5 +242,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginTop: 20,
+    // backgroundColor: '#ffffff',
   },
 });

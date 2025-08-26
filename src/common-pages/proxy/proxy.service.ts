@@ -24,6 +24,14 @@ import {PageParams, PageResponse} from '@/types';
 export function getAgentInfo() {
   return http.post<null, AgentInfo>('app/agent/getAgentInfo2');
 }
+// 代理页面跳转链接
+export interface AgentLink {
+  tgLInk: string;
+  wsLink: string;
+}
+export function getAgentLink() {
+  return http.post<null, AgentLink>('app/base/agent/link');
+}
 
 // 团队报表
 export function getTeamReport(params: TeamReportParams) {
