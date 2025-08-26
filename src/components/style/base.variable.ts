@@ -67,11 +67,12 @@ export const basicColor = {
   newTabSelectYellow: '#F5D243', //常用于字体颜色
   newFontRed2: '#D81F25', //常用于字体颜色
   newGrey: '#656462', //常用于字体颜色
-
+  newAmountColor: '#8E5B18', //常用于金额字体颜色
+  newAmountColorLight: '#8E5C1A', //常用于浅色金额字体颜色
   // 纯黑纯白
   newFontWhite: '#FFFFFF', //常用于字体颜色
   newFontBlack: '#000000', //常用于字体颜色
-
+  newFontF: '#FF9191',
   // 分割线/边框
   newLineWhite: 'rgba(255, 255, 255, 0.4)',
   newLineBlack: 'rgba(0, 0, 0, 0.4)',

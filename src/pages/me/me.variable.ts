@@ -19,5 +19,5 @@ export const moneyBackground = '';
 // 头像之后可能会用组件里面的头像图片
 export const emptyHeaderImg = require('@components/assets/icons/default-header.webp');
 export const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
-export const rightIcon = require('@assets/icons/me/right-icon.webp');
+export const rightIcon = require('@assets/icons/me/right.webp');
 export const whiteRightIcon = require('@/assets/icons/chevron_right.webp');

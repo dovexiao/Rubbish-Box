@@ -22,6 +22,7 @@ const refreshIcon = require('@assets/icons/refresh.webp');
 
 export interface MeAmountProps {
   login?: boolean;
+  mtFlag?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
   onLayout?: (e: LayoutChangeEvent) => void;
   onRefresh?: () => void;
@@ -32,6 +33,7 @@ const MeAmount: React.FC<MeAmountProps> = ({
   containerStyle,
   onLayout,
   onRefresh,
+  mtFlag = true,
 }) => {
   const {i18n} = useTranslation();
   const {renderModal} = useCardModal();
@@ -57,7 +59,7 @@ const MeAmount: React.FC<MeAmountProps> = ({
       ]}
       style={[
         theme.flex.around,
-        theme.margin.topl,
+        mtFlag && theme.margin.topl,
         theme.padding.tbs,
         // theme.border.main,
         // theme.borderRadius.s,
@@ -77,15 +79,24 @@ const MeAmount: React.FC<MeAmountProps> = ({
         <NativeTouchableOpacity>
           <View style={[theme.flex.col]}>
             <View style={[theme.flex.row, theme.flex.centerByCol]}>
-              <Text style={[theme.font.s, theme.font.primaryMain]}>
+              <Text style={[theme.font.s, theme.font.newAmountColor]}>
                 {i18n.t('me.money.totalWallet')}
               </Text>
             </View>
             <View style={[theme.flex.row, theme.flex.centerByCol]}>
               <Text
                 fontFamily="fontDin"
-                blod
-                style={[theme.font.xl, theme.font.white, theme.margin.topxxs]}>
+                color={theme.basicColor.newAmountColorLight}
+                style={[
+                  // theme.font.xxxl,
+                  // theme.font.newAmountColorLight,
+                  // theme.margin.topxxs,
+                  {
+                    fontWeight: '800',
+                    marginRight: 8,
+                    fontSize: 28,
+                  },
+                ]}>
                 {login
                   ? toPriceStr(user?.userBalance || 0, {
                       thousands: true,
@@ -101,8 +112,8 @@ const MeAmount: React.FC<MeAmountProps> = ({
                 <LazyImage
                   occupancy={'transparent'}
                   imageUrl={refreshIcon}
-                  width={theme.iconSize.xxl}
-                  height={theme.iconSize.xxl}
+                  width={theme.iconSize.l}
+                  height={theme.iconSize.l}
                 />
               </NativeTouchableOpacity>
             </View>

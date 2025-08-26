@@ -5,99 +5,96 @@ import Text from '@basicComponents/text';
 import i18n from '@i18n';
 import {toPriceStr} from '@utils';
 import globalStore from '@/services/global.state';
-
+// import Button from '@basicComponents/button';
+// import LinearGradient from '@/components/basic/linear-gradient';
+import {whiteRightIcon} from './me.variable';
 import theme from '@style';
-import {vipBgColors, vipOptionsMap} from '@businessComponents/vip';
-import LinearGradient from '@/components/basic/linear-gradient';
-import useVipStore from '@/store/useVipStore';
-const {flex, padding, fontColor, fontSize} = theme; //font
+import {vipOptionsMap} from '@businessComponents/vip';
+const {flex, padding, fontSize} = theme;
 interface MeVipProps {
   level: number;
-  login?: boolean;
   nextLevelValue: number;
   renderProgress: any;
   onPress: () => void;
+  currentPercent: number;
 }
 
 const MeVip: React.FC<MeVipProps> = ({
   level,
-  // login,
   nextLevelValue,
   onPress,
   renderProgress,
+  currentPercent,
 }) => {
-  const {nextValue, diff} = useVipStore(state => state.vipInfo);
-
   return (
-    <NativeTouchableOpacity onPress={onPress}>
-      <LinearGradient
-        colors={vipBgColors[level]}
-        start={{x: 0, y: 0}}
-        end={{x: 0, y: 1}}
+    <View
+      style={[
+        flex.flex,
+        flex.row,
+        padding.lrl,
+        flex.centerByCol,
+        flex.between,
+        {
+          height: 65,
+          borderRadius: 49,
+          backgroundColor: theme.basicColor.newBgInOne,
+        },
+      ]}>
+      <Image
+        source={vipOptionsMap[level].small as ImageSourcePropType}
         style={[
-          flex.flex,
-          flex.row,
-          padding.lrxxs,
-          flex.centerByCol,
-          flex.between,
-          theme.borderRadius.s,
-          theme.border.white30,
-          // eslint-disable-next-line react-native/no-inline-styles
-          {height: 60},
-        ]}>
+          {
+            height: (globalStore.screenWidth * 34) / 375,
+            width: (globalStore.screenWidth * 40) / 375,
+          },
+        ]}
+      />
+
+      <View style={[flex.flex1, padding.lrl, flex.centerByRow, {height: 49}]}>
+        <View style={[{marginBottom: 4}]}>
+          <Text
+            fontSize={10}
+            fontFamily={'fontDinBold'}
+            style={[{color: theme.basicColor.newFontF}]}>
+            Level progression {(currentPercent * 100).toFixed(0)} %
+          </Text>
+        </View>
+        <View style={[theme.flex.row]}>{renderProgress}</View>
+        <View style={[flex.row, theme.margin.topxxxs]}>
+          <Text
+            color={theme.basicColor.newFontYellow}
+            numberOfLines={2}
+            fontSize={fontSize.xs}>
+            {i18n.t('me.vip.recharge')}{' '}
+            <Text color={theme.basicColor.newFontYellow}>
+              {toPriceStr(nextLevelValue, {fixed: 0})}
+            </Text>{' '}
+            {i18n.t('me.vip.move')} VIP{level + 1}
+          </Text>
+        </View>
+      </View>
+      <NativeTouchableOpacity
+        onPress={onPress}
+        style={[{position: 'relative'}]}>
         <Image
-          source={vipOptionsMap[level].small as ImageSourcePropType}
+          source={whiteRightIcon}
           style={[
             {
-              height: (globalStore.screenWidth * 58) / 375,
-              width: (globalStore.screenWidth * 58) / 375,
+              height: (globalStore.screenWidth * 12) / 375,
+              width: (globalStore.screenWidth * 16) / 375,
+              // height: 12,
+              // width: 12,
             },
           ]}
         />
-
-        {/* {login ? ( */}
-        <View
-          style={[
-            flex.flex1,
-            padding.lrxxs,
-            flex.around,
-            flex.centerByRow,
-            // eslint-disable-next-line react-native/no-inline-styles
-            {height: 50},
-          ]}>
-          <View style={[flex.row, flex.centerByCol, flex.flex1]}>
-            <Text
-              numberOfLines={1}
-              color={fontColor.white60}
-              fontSize={fontSize.s}>
-              {i18n.t('me.vip.recharge')}{' '}
-              <Text color={fontColor.white} blod>
-                {toPriceStr(nextLevelValue, {fixed: 0})}
-              </Text>{' '}
-              {i18n.t('me.vip.move')}{' '}
-              <Text color={fontColor.white} blod>
-                VIP{level + 1}
-              </Text>
-            </Text>
-          </View>
-          <View style={[theme.flex.row, flex.centerByCol, flex.flex1]}>
-            {renderProgress}
-          </View>
-          <View style={[theme.flex.row, flex.centerByCol, flex.flex1]}>
-            <Text color={fontColor.white60} fontSize={fontSize.s}>
-              Level Progression{' '}
-              <Text color={fontColor.white} blod>
-                {((nextValue - diff) / nextValue) * 100}%
-              </Text>
-            </Text>
-          </View>
-        </View>
-        <Image
-          source={require('@assets/icons/right-white.webp')}
-          style={[theme.icon.l]}
-        />
-      </LinearGradient>
-    </NativeTouchableOpacity>
+      </NativeTouchableOpacity>
+      {/* <Button
+      size="xsmall"
+      titleBold
+      title={i18n.t('me.vip.deposit')}
+      onPress={onPress}
+    /> */}
+    </View>
   );
 };
 

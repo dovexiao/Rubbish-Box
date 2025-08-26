@@ -1,3 +1,5 @@
+/* eslint-disable react/self-closing-comp */
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import {
   View,
@@ -239,7 +241,7 @@ const Me = () => {
   return (
     <LazyImageLGBackground subtractBottomTabHeight>
       {/* TODO 这里的滚动方案需要优化,以及文件过大需要拆分 */}
-      <Spin loading={pageLoading} style={[theme.fill.fill, theme.padding.lrl]}>
+      <Spin loading={pageLoading} style={[theme.fill.fill]}>
         <Animated.ScrollView
           onScroll={Animated.event(
             [
@@ -262,10 +264,8 @@ const Me = () => {
               }}
             />
           }>
-          {/* <DetailNavTitle hideAmount hideServer title={i18n.t('home.tab.me')} /> */}
-
-          <View style={[{height: 299}]}>
-              <View style={[theme.padding.m, theme.margin.lrl, {height: 85}]}>
+          <View>
+              <View style={[{height: 85, paddingTop: Platform.OS === 'ios' ? 40 : 20}, theme.padding.lrl]}>
                 <MeUser
                   login={login}
                   user={user}
@@ -274,203 +274,210 @@ const Me = () => {
                   showNoMenu={false}
                 />
               </View>
-              <ImageBackground
-                source={require('@assets/icons/me/card-backimg.webp')}
-                resizeMode="stretch"
-                style={[
-                  theme.padding.lrxxl,
-                  theme.padding.topl,
-                  theme.flex.flex1,
-                  theme.flex.between,
-                  theme.background.transparent,
-                  {height: 214},
-                ]}>
-                <MeAmount
-                  login={login}
-                  onLayout={handleMoneyLayout}
-                  // topBlockWidth={topBlockWidth}
-                  // user={user}
-                  // onRecharge={toRecharge}
-                  // onWithdraw={toWithdraw}
-                  onRefresh={handleRefresh}
-                />
-                <MeVip
-                  level={level}
-                  onPress={toVip}
-                  nextLevelValue={nextValue}
-                  renderProgress={
-                    <VipProgress
-                      currentLevel={level}
-                      nextCurrentLevel={level + 1}
-                      current={nextValue - diff}
-                      total={nextValue}
-                      hasCurrentText={true}
-                    />
-                  }
-                />
-              </ImageBackground>
-            </View>
-          {/* <View style={{height: 12}} />
-          <MeUser
-            login={login}
-            user={user}
-            level={level}
-            onUser={handleUser}
-            showNoMenu={false}
-          />
-          <MeVip
-            login={login}
-            level={level}
-            onPress={toVip}
-            nextLevelValue={nextValue}
-            renderProgress={
-              <VipProgress
-                currentLevel={level}
-                nextCurrentLevel={level + 1}
-                current={nextValue - diff}
-                total={nextValue}
-                hasCurrentText={true}
-              />
-            }
-          />
-          <MeAmount onLayout={handleMoneyLayout} onRefresh={handleRefresh} /> */}
-          <MeRowMenu />
-          <View style={[]}>
-            {/* 列表区域 */}
-            <View style={[borderRadius.m, overflow.hidden, margin.topl,
-                {
-                  backgroundColor: theme.basicColor.newBgInOne,
-                }]}>
-              {/*<MeListItem*/}
-              {/*  icon={gamesIcon}*/}
-              {/*  title={i18n.t('me.bottom.games')}*/}
-              {/*  description={i18n.t('me.description.gamesDescription')}*/}
-              {/*  onPress={toMyGames}*/}
-              {/*/>*/}
-              {/*<MeListItem*/}
-              {/*  icon={transactionsIcon}*/}
-              {/*  title={i18n.t('me.bottom.myTransactions')}*/}
-              {/*  description={i18n.t('me.description.transactionsDescription')}*/}
-              {/*  onPress={toTransfer}*/}
-              {/*/>*/}
-              <MeListItem
-                icon={giftcode}
-                title={i18n.t('me.bottom.giftCode')}
-                // description={i18n.t('me.bottom.giftCode')}
-                onPress={toInvitation}
-              />
-              <MeListItem
-                // mt={0}
-                icon={transactionsIcon}
-                title={i18n.t('me.bottom.myTransactions')}
-                // description={i18n.t('me.description.transactionsDescription')}
-                onPress={toTransactions}
-              />
-              <MeListItem
-                // mt={0}
-                icon={betsIcon}
-                title={i18n.t('me.bottom.myBets')}
-                // description={i18n.t('me.description.betsDescription')}
-                onPress={toMyBets}
-              />
-              <MeListItem
-                // mt={0}
-                icon={rebateIcon}
-                title={i18n.t('home.label.rebate')}
-                // description={i18n.t('me.description.rebateDescription')}
-                // btmBorder={false}
-                onPress={toRebate}
-              />
-            </View>
-            <View
-              style={[
-                borderRadius.m,
-                overflow.hidden,
-                margin.topl,
-                {
-                  backgroundColor: theme.basicColor.newBgInOne,
-                }
-              ]}>
-              {/*<MeListItem*/}
-              {/*  containerStyle={[theme.padding.tbl]}*/}
-              {/*  icon={notificationsIcon}*/}
-              {/*  iconSize={18}*/}
-              {/*  title={i18n.t('me.bottom.notify')}*/}
-              {/*  rightContent={*/}
-              {/*    unReadMessageCount?.messageTotalCount ? (*/}
-              {/*      <Tag*/}
-              {/*        badgeSize={16}*/}
-              {/*        backgroundColor={theme.basicColor.red}*/}
-              {/*        content={unReadMessageCount?.messageTotalCount}*/}
-              {/*      />*/}
-              {/*    ) : null*/}
-              {/*  }*/}
-              {/*  mt={0}*/}
-              {/*  onPress={toNotify}*/}
-              {/*/>*/}
-
-              <MeListItem
-                icon={passwordIcon}
-                iconSize={18}
-                // containerStyle={[theme.padding.tbl]}
-                // mt={0}
-                title={i18n.t('me.bottom.password')}
-                onPress={toSetPassword}
-              />
-
-              <MeListItem
-                // containerStyle={[theme.padding.tbl]}
-                // mt={0}
-                iconSize={18}
-                icon={languagesIcon}
-                title={i18n.t('me.bottom.lang')}
-                onPress={toLanguage}
-              />
-              <MeListItem
-                // containerStyle={[theme.padding.tbl]}
-                // mt={0}
-                iconSize={18}
-                icon={customerServiceIcon}
-                title={i18n.t('me.bottom.customer')}
-                onPress={goCS}
-                // btmBorder={Platform.OS === 'android' ? true : false}
-                hideBottomBorder={Platform.OS === 'android' ? false : true}
-              />
-              {Platform.OS === 'android' && (
-                <MeListItem
-                  // containerStyle={[theme.padding.tbl]}
-                  icon={updateIcon}
-                  iconSize={18}
-                  // mt={0}
-                  // btmBorder={false}
-                  title={i18n.t('me.bottom.update')}
-                  rightContent={
-                    <Text style={[font.secAccent, font.s]}>{getVersion()}</Text>
-                  }
-                  onPress={toUpdate}
-                />
-              )}
-            </View>
-            {login && (
-              <NativeTouchableOpacity onPress={doLogout}>
-                <View
+              <View style={[theme.padding.lrxl]}>
+                <ImageBackground
+                  source={require('@assets/icons/me/card-backimg.webp')}
+                  resizeMode="stretch"
                   style={[
-                    padding.lrm,
-                    padding.tbl,
-                    borderRadius.m,
-                    overflow.hidden,
-                    margin.topl,
+                    // theme.padding.lrl,
+                    // theme.padding.topl,
+                    theme.flex.flex1,
+                    theme.flex.between,
+                    theme.background.transparent,
+                    {height: 104, width: '100%',paddingBottom: 38},
+                  ]}>
+                  <MeAmount
+                    login={login}
+                    mtFlag={false}
+                    onLayout={handleMoneyLayout}
+                    // topBlockWidth={topBlockWidth}
+                    // user={user}
+                    // onRecharge={toRecharge}
+                    // onWithdraw={toWithdraw}
+                    onRefresh={handleRefresh}
+                  />
+                </ImageBackground>
+              </View>
+              <View style={{
+                height: 70,
+              }}>
+                <ImageBackground
+                  source={require('@assets/icons/me/card-back-tio.webp')}
+                  resizeMode="cover"
+                  style={[
+                    theme.flex.flex1,
+                    theme.flex.between,
+                    theme.background.transparent,
+                    {height: 70, width: globalStore.screenWidth, zIndex: 1},
                     {
-                      backgroundColor: basicColor.newBgInOne,
+                      position: 'relative',
+                      top: -45,
                     }
                   ]}>
-                  <Text style={[font.white, font.m, font.bold, font.center]}>
-                    {i18n.t('me.bottom.logout')}
-                  </Text>
-                </View>
-              </NativeTouchableOpacity>
-            )}
-            <View style={[theme.margin.topl]}></View>
+                    <View style={{height: 70}}></View>
+                  </ImageBackground>
+                    <View style={{
+                      position: 'absolute', top: 0, zIndex: 1,
+                      left: 12,
+                      right: 18,
+                    }}>
+                      <MeVip
+                        level={level}
+                        onPress={toVip}
+                        nextLevelValue={nextValue}
+                        currentPercent={(nextValue - diff) / nextValue}
+                        renderProgress={
+                          <VipProgress
+                            currentLevel={level}
+                            nextCurrentLevel={level + 1}
+                            current={nextValue - diff}
+                            total={nextValue}
+                            hasCurrentText={true}
+                          />
+                        }
+                      />
+                    </View>
+              </View>
+          </View>
+          <View style={[theme.padding.lrl]}>
+            <MeRowMenu />
+            <View style={[]}>
+              {/* 列表区域 */}
+              <View style={[borderRadius.m, overflow.hidden, margin.topl,
+                  {
+                    backgroundColor: theme.basicColor.newBgInOne,
+                  }]}>
+                {/*<MeListItem*/}
+                {/*  icon={gamesIcon}*/}
+                {/*  title={i18n.t('me.bottom.games')}*/}
+                {/*  description={i18n.t('me.description.gamesDescription')}*/}
+                {/*  onPress={toMyGames}*/}
+                {/*/>*/}
+                {/*<MeListItem*/}
+                {/*  icon={transactionsIcon}*/}
+                {/*  title={i18n.t('me.bottom.myTransactions')}*/}
+                {/*  description={i18n.t('me.description.transactionsDescription')}*/}
+                {/*  onPress={toTransfer}*/}
+                {/*/>*/}
+                <MeListItem
+                  icon={giftcode}
+                  title={i18n.t('me.bottom.giftCode')}
+                  // description={i18n.t('me.bottom.giftCode')}
+                  onPress={toInvitation}
+                />
+                <MeListItem
+                  // mt={0}
+                  icon={transactionsIcon}
+                  title={i18n.t('me.bottom.myTransactions')}
+                  // description={i18n.t('me.description.transactionsDescription')}
+                  onPress={toTransactions}
+                />
+                <MeListItem
+                  // mt={0}
+                  icon={betsIcon}
+                  title={i18n.t('me.bottom.myBets')}
+                  // description={i18n.t('me.description.betsDescription')}
+                  onPress={toMyBets}
+                />
+                <MeListItem
+                  // mt={0}
+                  icon={rebateIcon}
+                  title={i18n.t('home.label.rebate')}
+                  // description={i18n.t('me.description.rebateDescription')}
+                  // btmBorder={false}
+                  onPress={toRebate}
+                />
+              </View>
+              <View
+                style={[
+                  borderRadius.m,
+                  overflow.hidden,
+                  margin.topl,
+                  {
+                    backgroundColor: theme.basicColor.newBgInOne,
+                  }
+                ]}>
+                {/*<MeListItem*/}
+                {/*  containerStyle={[theme.padding.tbl]}*/}
+                {/*  icon={notificationsIcon}*/}
+                {/*  iconSize={18}*/}
+                {/*  title={i18n.t('me.bottom.notify')}*/}
+                {/*  rightContent={*/}
+                {/*    unReadMessageCount?.messageTotalCount ? (*/}
+                {/*      <Tag*/}
+                {/*        badgeSize={16}*/}
+                {/*        backgroundColor={theme.basicColor.red}*/}
+                {/*        content={unReadMessageCount?.messageTotalCount}*/}
+                {/*      />*/}
+                {/*    ) : null*/}
+                {/*  }*/}
+                {/*  mt={0}*/}
+                {/*  onPress={toNotify}*/}
+                {/*/>*/}
+
+                <MeListItem
+                  icon={passwordIcon}
+                  iconSize={18}
+                  // containerStyle={[theme.padding.tbl]}
+                  // mt={0}
+                  title={i18n.t('me.bottom.password')}
+                  onPress={toSetPassword}
+                />
+
+                <MeListItem
+                  // containerStyle={[theme.padding.tbl]}
+                  // mt={0}
+                  iconSize={18}
+                  icon={languagesIcon}
+                  title={i18n.t('me.bottom.lang')}
+                  onPress={toLanguage}
+                />
+                <MeListItem
+                  // containerStyle={[theme.padding.tbl]}
+                  // mt={0}
+                  iconSize={18}
+                  icon={customerServiceIcon}
+                  title={i18n.t('me.bottom.customer')}
+                  onPress={goCS}
+                  // btmBorder={Platform.OS === 'android' ? true : false}
+                  hideBottomBorder={Platform.OS === 'android' ? false : true}
+                />
+                {Platform.OS === 'android' && (
+                  <MeListItem
+                    // containerStyle={[theme.padding.tbl]}
+                    icon={updateIcon}
+                    iconSize={18}
+                    // mt={0}
+                    // btmBorder={false}
+                    title={i18n.t('me.bottom.update')}
+                    rightContent={
+                      <Text style={[font.secAccent, font.s]}>{getVersion()}</Text>
+                    }
+                    onPress={toUpdate}
+                  />
+                )}
+              </View>
+              {login && (
+                <NativeTouchableOpacity onPress={doLogout}>
+                  <View
+                    style={[
+                      padding.lrm,
+                      padding.tbl,
+                      borderRadius.m,
+                      overflow.hidden,
+                      margin.topl,
+                      {
+                        backgroundColor: basicColor.newBgInOne,
+                      }
+                    ]}>
+                    <Text style={[font.white, font.m, font.bold, font.center]}>
+                      {i18n.t('me.bottom.logout')}
+                    </Text>
+                  </View>
+                </NativeTouchableOpacity>
+              )}
+              <View style={[theme.margin.topl]}></View>
+            </View>
           </View>
         </Animated.ScrollView>
       </Spin>
