@@ -59,7 +59,7 @@ export default {
       play: 'Play Now',
     },
     color: {
-      title: 'Win go',
+      title: 'WIN GO',
       play: 'Play Now',
     },
     matka: {
