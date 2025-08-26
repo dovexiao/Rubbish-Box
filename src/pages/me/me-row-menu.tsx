@@ -33,8 +33,7 @@ const MeRowMenu: React.FC<MeRowMenuProps> = () => {
         style={[styles.menuItem, {backgroundColor: bgColor}]}
         onPress={onPress}>
         <Text
-          fontSize={theme.fontSize.s}
-          fontWeight="700"
+          fontSize={theme.fontSize.m}
           numberOfLines={1}
           ellipsizeMode="tail"
           style={styles.menuText}>
@@ -44,8 +43,8 @@ const MeRowMenu: React.FC<MeRowMenuProps> = () => {
           <LazyImage
             occupancy="transparent"
             imageUrl={url}
-            width={35}
-            height={35}
+            width={55}
+            height={55}
           />
         </View>
       </NativeTouchableOpacity>
@@ -91,7 +90,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 30,
     height: 30,
-    marginLeft: 10,
+    marginLeft: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -67,10 +67,10 @@ const PersonalCenter = () => {
 
   useEffect(() => {
     getUserInfo();
+    getDefaultAvatar().then(res => setAvatar(res));
   }, []);
   const getUserInfo = async () => {
     const res: any = await postUserInfo();
-    getDefaultAvatar().then(res => setAvatar(res));
     setInfo(res);
   };
 
