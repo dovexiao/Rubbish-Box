@@ -525,7 +525,7 @@ export default {
     record: 'फीडबैक रिकॉर्ड',
   },
   proxy: {
-    title: 'Earn Money',
+    title: 'Agency Center',
     tier: 'Tier{{number}}',
     all: 'All',
     search: 'फ़ोन नंबर खोजें',

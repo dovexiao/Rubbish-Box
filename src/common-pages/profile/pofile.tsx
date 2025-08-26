@@ -66,11 +66,11 @@ const PersonalCenter = () => {
   // const {getUserInfo} = useUserActions();
 
   useEffect(() => {
-    getDefaultAvatar().then(res => setAvatar(res));
     getUserInfo();
   }, []);
   const getUserInfo = async () => {
     const res: any = await postUserInfo();
+    getDefaultAvatar().then(res => setAvatar(res));
     setInfo(res);
   };
 
@@ -149,9 +149,7 @@ const PersonalCenter = () => {
             <LazyImage
               occupancy={'transparent'}
               resizeMode="cover"
-              imageUrl={
-                userInfo?.userAvatar ? userInfo?.userAvatar : defaultHeaderImg
-              }
+              imageUrl={info?.userAvatar ? info?.userAvatar : defaultHeaderImg}
               width={pofileImgWidth}
               height={pofileImgWidth}
               radius={pofileImgWidth}

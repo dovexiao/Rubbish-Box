@@ -36,7 +36,7 @@ import {getVersion} from 'react-native-device-info';
 import Spin from '@/components/basic/spin';
 import {useTranslation} from 'react-i18next';
 import MeRowMenu from './me-row-menu';
-import DetailNavTitle from '@businessComponents/detail-nav-title';
+// import DetailNavTitle from '@businessComponents/detail-nav-title';
 import useVipStore, {useVipActions} from '@/store/useVipStore';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import useUserStore, {useUserActions, useUserInfo} from '@/store/useUserStore';
@@ -261,7 +261,8 @@ const Me = () => {
               }}
             />
           }>
-          <DetailNavTitle hideAmount hideServer title={i18n.t('home.tab.me')} />
+          {/* <DetailNavTitle hideAmount hideServer title={i18n.t('home.tab.me')} /> */}
+          <View style={{height: 12}} />
           <MeUser
             login={login}
             user={user}

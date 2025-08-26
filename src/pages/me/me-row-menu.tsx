@@ -32,14 +32,6 @@ const MeRowMenu: React.FC<MeRowMenuProps> = () => {
       <NativeTouchableOpacity
         style={[styles.menuItem, {backgroundColor: bgColor}]}
         onPress={onPress}>
-        <View style={styles.iconWrap}>
-          <LazyImage
-            occupancy="transparent"
-            imageUrl={url}
-            width={30}
-            height={30}
-          />
-        </View>
         <Text
           fontSize={theme.fontSize.s}
           fontWeight="700"
@@ -48,6 +40,14 @@ const MeRowMenu: React.FC<MeRowMenuProps> = () => {
           style={styles.menuText}>
           {title}
         </Text>
+        <View style={styles.iconWrap}>
+          <LazyImage
+            occupancy="transparent"
+            imageUrl={url}
+            width={35}
+            height={35}
+          />
+        </View>
       </NativeTouchableOpacity>
     );
   };
@@ -55,16 +55,16 @@ const MeRowMenu: React.FC<MeRowMenuProps> = () => {
   return (
     <View style={styles.container}>
       {renderItem({
-        url: require('@assets/icons/me/recharge.webp'),
+        url: require('@assets/icons/me/recharge-white.webp'),
         title: i18n.t('me.bottom.deposit'),
         onPress: toRecharge,
-        bgColor: basicColor.newBgInOne,
+        bgColor: basicColor.newBgThree,
       })}
       {renderItem({
-        url: require('@assets/icons/me/withdraw.webp'),
+        url: require('@assets/icons/me/withdraw-white.webp'),
         title: i18n.t('me.bottom.withdraw'),
         onPress: toWithdraw,
-        bgColor: basicColor.newBgInOne,
+        bgColor: basicColor.newBgThree,
       })}
     </View>
   );
@@ -76,30 +76,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 9,
-    paddingHorizontal: 10,
     height: 60,
-    borderWidth: 1,
-    borderColor: '#FEB705',
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    // 可选阴影
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+    gap: 10,
   },
 
   menuItem: {
     flex: 1,
-    marginHorizontal: 5,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    gap: 9,
+    height: 60,
   },
   iconWrap: {
     width: 30,
