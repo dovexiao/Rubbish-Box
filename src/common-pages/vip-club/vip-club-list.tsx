@@ -63,37 +63,37 @@ const VipClubList: React.FC<VipTableListProps> = ({vipConfigList}) => {
           {renderInfoRow(
             'Level Bonus',
             formatINR(item?.amount),
-            '#0BD064',
+            '#FFFFFF',
             theme.basicColor.yellow,
           )}
           {renderInfoRow(
             'Spin Count',
             item?.spin,
-            '#0BD064',
+            '#FFFFFF',
             theme.basicColor.yellow,
           )}
           {renderInfoRow(
             'Daily Bonus',
             formatINR(item?.dailyBonus),
-            '#0BD064',
+            '#FFFFFF',
             theme.basicColor.yellow,
           )}
           {renderInfoRow(
             'Withdrawal Count',
             item?.withdrawCount,
-            '#0BD064',
+            '#FFFFFF',
             theme.basicColor.yellow,
           )}
           {renderInfoRow(
             'Withdrawal Amount',
             formatINR(item?.withdrawAmount),
-            '#0BD064',
+            '#FFFFFF',
             theme.basicColor.yellow,
           )}
           {renderInfoRow(
             'Deposit',
             formatINR(item?.recharge),
-            '#0BD064',
+            '#FFFFFF',
             theme.basicColor.yellow,
           )}
         </View>
@@ -133,7 +133,7 @@ const renderInfoRow = (
       </Text>
       <Text
         fontSize={12}
-        fontWeight="400"
+        fontWeight="500"
         numberOfLines={1}
         ellipsizeMode="tail"
         style={{color: valueColor}}>

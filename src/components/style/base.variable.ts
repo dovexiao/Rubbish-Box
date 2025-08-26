@@ -57,6 +57,7 @@ export const basicColor = {
   newBgInTwo: '#7A0606', //页面内背景色,页面头部背景色 122, 6, 6
   newBgInThree: '#230402', //页面内背景色 35, 4, 2
   newBgPop: '#9C231A', //弹窗背景色 153, 35, 26
+  newBgThree: '#750c11',
 
   // 字体颜色
   newFontYellow: '#F8D72F',
