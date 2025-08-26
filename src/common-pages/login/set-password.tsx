@@ -93,7 +93,16 @@ const SetPassword = (props: NavigatorScreenProps) => {
           />
         </View>
         <Button
-          style={[theme.margin.topxxl]}
+          style={[
+            theme.margin.topxxl,
+            {
+              height: 48,
+            },
+          ]}
+          type={
+            !(!pwd || !confrimPWD || confirmed) ? 'linear-primary' : 'primary'
+          }
+          radius={theme.borderRadiusSize.l}
           onPress={() => {
             if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,15}$/.test(pwd)) {
               globalStore.globalTotal.next({
