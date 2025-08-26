@@ -23,7 +23,7 @@ const CasinoNewPage = () => {
         <Text style={styleSheet.ruleText}>
           4, {i18n.t('recharge-page.tip.tip4')}
         </Text>
-        {/* <Text style={styleSheet.ruleText}>
+        <Text style={styleSheet.ruleText}>
           5, {i18n.t('recharge-page.tip.tip5')}
         </Text>
         <Text style={styleSheet.ruleText}>
@@ -35,7 +35,7 @@ const CasinoNewPage = () => {
         <Text style={styleSheet.ruleTextRed}>
           8, {i18n.t('recharge-page.tip.tip8')}
         </Text>
-        <Text style={styleSheet.ruleTextRed}>
+        {/* <Text style={styleSheet.ruleTextRed}>
           9, {i18n.t('recharge-page.tip.tip9')}
         </Text> */}
       </View>
