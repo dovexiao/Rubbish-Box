@@ -478,7 +478,7 @@ function App(): JSX.Element {
           {
             // borderRadius: 8,
             width: popImageWidth,
-            height: popImageWidth * imageRatio,
+            height: popImageWidth * imageRatio + 300,
             backgroundColor: theme.backgroundColor.newFirst,
           },
         ]}>
@@ -486,7 +486,7 @@ function App(): JSX.Element {
           style={[
             {
               width: popImageWidth,
-              height: popImageWidth * imageRatio,
+              height: popImageWidth * imageRatio + 300,
               overflow: 'hidden',
             },
           ]}>
@@ -494,7 +494,7 @@ function App(): JSX.Element {
             type={2}
             bannerList={bannerList}
             bannerWidth={popImageWidth}
-            bannerHeight={popImageWidth * imageRatio}
+            bannerHeight={popImageWidth * imageRatio + 300}
             bannerOverlaySize="small"
           />
         </View>
