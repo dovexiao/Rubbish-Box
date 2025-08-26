@@ -15,7 +15,7 @@ import {
   font,
   fontColor,
   basicColor,
-  backgroundColor,
+  // backgroundColor,
 } from '@/components/style';
 import {del} from './profile.variable';
 import LazyImage from '@/components/basic/image';
@@ -32,6 +32,7 @@ import {
   delIcon,
   pos,
 } from './profile.variable';
+import theme from '@/style';
 // import globalStore from '@/services/global.state';
 const ModelDemo = (props: any, ref: any) => {
   const [name, seTName] = useState('');
@@ -75,8 +76,9 @@ const ModelDemo = (props: any, ref: any) => {
             padding.l,
             borderRadius.xs,
             {
+              backgroundColor: theme.basicColor.newBgInTwo,
               borderColor: '#04CC9B26',
-              borderWidth: 1,
+              borderWidth: 0,
               color: fontColor.white,
               fontSize: 14,
               fontWeight: name.trim().length > 1 ? 'bold' : 'normal',
@@ -127,7 +129,7 @@ const ModelDemo = (props: any, ref: any) => {
           style={[
             height48,
             {
-              backgroundColor: basicColor.newBgInOne,
+              backgroundColor: basicColor.newButtonYellow,
             },
             flex.flex,
             flex.center,
@@ -142,7 +144,7 @@ const ModelDemo = (props: any, ref: any) => {
       backDropClose: true,
       overlayStyle: {
         borderRadius: 20,
-        backgroundColor: backgroundColor.mainDark,
+        backgroundColor: theme.basicColor.newBgPop,
       },
     },
   );

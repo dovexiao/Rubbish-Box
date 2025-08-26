@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useMemo, useRef, useState} from 'react';
-import {View} from 'react-native';
+import React, {useMemo, useRef, useState, useEffect} from 'react';
+import {View, ScrollView} from 'react-native';
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import {goBack, goTo, useResponsiveDimensions} from '@/utils';
 import Modal from './modal';
@@ -9,6 +9,13 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import globalStore from '@/services/global.state';
 import {vipOptionsMap} from '@businessComponents/vip';
 import i18n from '@i18n';
+import Upload from './upload';
+import BoxShadow from '@/components/basic/shadow';
+import {
+  uploadProfilePhotoBase64,
+  updateProfile,
+  getDefaultAvatar,
+} from './pofile.service';
 
 import {
   flex,
@@ -22,6 +29,7 @@ import {
   fontColor,
   basicColor,
 } from '@/components/style';
+import {postUserInfo} from '@/services/global.service';
 import LazyImage from '@/components/basic/image';
 import Text from '@basicComponents/text';
 import {LazyImageLGBackground} from '@basicComponents/image';
@@ -36,25 +44,73 @@ import {
   smartphone,
   lock,
   idImg,
+  pic,
+  RectangleImgWidth,
 } from './profile.variable';
 
 import {ToastType, useToast} from '@/components/basic/modal';
-import {CopyImg} from './svg.variable';
+import {CopyImg, AddImg} from './svg.variable';
 import Spin from '@/components/basic/spin';
-import {useUserActions, useUserInfo} from '@/store/useUserStore';
+import {useUserInfo} from '@/store/useUserStore'; //useUserActions,
+const borderBox = {
+  borderColor: basicColor.primary,
+};
 
 const PersonalCenter = () => {
+  const [info, setInfo] = useState<any>({});
+  const [avatar, setAvatar] = useState<any>([]);
   const {renderModal, show} = useToast();
+  const [loading, setLoading] = useState(false);
 
   const userInfo = useUserInfo();
-  const {getUserInfo} = useUserActions();
+  // const {getUserInfo} = useUserActions();
+
+  useEffect(() => {
+    getDefaultAvatar().then(res => setAvatar(res));
+    getUserInfo();
+  }, []);
+  const getUserInfo = async () => {
+    const res: any = await postUserInfo();
+    setInfo(res);
+  };
 
   const memoVipLevel = useMemo(() => {
     return userInfo?.level && userInfo?.level !== 0 ? userInfo?.level : 0;
   }, [userInfo?.level]);
 
   const editRef: any = useRef(null);
+  const imagePicker: any =
+    globalStore.isAndroid && require('react-native-image-picker');
 
+  // 从相册中选择
+  const changeAvatar = async () => {
+    imagePicker.launchImageLibrary(
+      {
+        mediaType: 'photo',
+        maxWidth: 1000, // 设置选择照片的大小，设置小的话会相应的进行压缩
+        maxHeight: 1000,
+        quality: 0.8,
+        includeBase64: true,
+      },
+      async (res: any) => {
+        if (res.didCancel) {
+          return false;
+        }
+        if (globalStore.isAndroid) {
+          // 对获取的图片进行处理
+          const ret: any = await uploadProfilePhotoBase64({
+            data: 'data:image/png;base64,' + res?.assets[0]?.base64,
+          });
+          await updateProfile(info?.userName, ret);
+          getUserInfo();
+        }
+      },
+    );
+  };
+  const handleChangeAvatar = async (img: any) => {
+    await updateProfile(info?.userName, img);
+    getUserInfo();
+  };
   const handleCopy = () => {
     if (userInfo?.userId) {
       Clipboard.setString('' + userInfo?.userId);
@@ -66,7 +122,6 @@ const PersonalCenter = () => {
   };
 
   const {height: screenHeight} = useResponsiveDimensions();
-  const [loading] = useState(false);
   return (
     <LazyImageLGBackground>
       <DetailNavTitle
@@ -101,6 +156,32 @@ const PersonalCenter = () => {
               height={pofileImgWidth}
               radius={pofileImgWidth}
             />
+            <View style={[position.abs]}>
+              {globalStore.isAndroid ? (
+                <NativeTouchableOpacity onPress={() => changeAvatar()}>
+                  <LazyImage
+                    occupancy={'transparent'}
+                    imageUrl={pic}
+                    width={32}
+                    height={32}
+                  />
+                </NativeTouchableOpacity>
+              ) : (
+                <Upload
+                  pic={
+                    <LazyImage
+                      occupancy={'transparent'}
+                      imageUrl={pic}
+                      width={48}
+                      height={48}
+                    />
+                  }
+                  getUserInfo={getUserInfo}
+                  startUpload={() => setLoading(true)}
+                  endUpload={() => setLoading(false)}
+                />
+              )}
+            </View>
           </View>
 
           <View style={[flex.flex, flex.around, margin.leftxxl]}>
@@ -123,8 +204,8 @@ const PersonalCenter = () => {
                 <LazyImage
                   occupancy={'transparent'}
                   imageUrl={edit}
-                  width={24}
-                  height={24}
+                  width={18}
+                  height={18}
                 />
               </NativeTouchableOpacity>
             </View>
@@ -135,6 +216,98 @@ const PersonalCenter = () => {
               height={(globalStore.screenWidth * 20) / 375}
             />
           </View>
+        </View>
+        <View
+          style={[
+            flex.flex,
+            flex.centerByCol,
+            flex.row,
+            flex.center,
+            padding.lrl,
+          ]}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            horizontal={true}
+            style={{width: 248}}>
+            {avatar.map((item: any, index: number) => {
+              return (
+                <View
+                  key={index}
+                  style={
+                    info?.userAvatar === item
+                      ? [
+                          margin.rights,
+                          borderBox,
+                          {borderRadius: 50, borderWidth: 2},
+                        ]
+                      : [
+                          margin.rights,
+                          {borderWidth: 2, borderColor: 'transparent'},
+                        ]
+                  }>
+                  <NativeTouchableOpacity
+                    onPress={() => handleChangeAvatar(item)}>
+                    <LazyImage
+                      occupancy={'transparent'}
+                      imageUrl={item}
+                      width={RectangleImgWidth}
+                      height={RectangleImgWidth}
+                      radius={50}
+                    />
+                  </NativeTouchableOpacity>
+                </View>
+              );
+            })}
+          </ScrollView>
+          {globalStore.isAndroid ? (
+            <NativeTouchableOpacity onPress={() => changeAvatar()}>
+              <View
+                style={[
+                  margin.leftl,
+                  {
+                    width: 48,
+                    height: 48,
+                    backgroundColor: '#fff',
+                    borderRadius: 50,
+                  },
+                  flex.center,
+                ]}>
+                <AddImg height={16} radius={50} fill={basicColor.newSvgOne} />
+              </View>
+            </NativeTouchableOpacity>
+          ) : (
+            <View style={[margin.leftl]}>
+              <BoxShadow
+                shadowStyle={{
+                  radius: 50,
+                  out: {x: 0, y: 4, blur: 4, color: 'rgba(0, 0, 0, 0.10)'},
+                }}>
+                <View
+                  style={[
+                    {
+                      width: 48,
+                      height: 48,
+                      backgroundColor: '#fff',
+                      borderRadius: 50,
+                    },
+                    flex.center,
+                  ]}>
+                  <Upload
+                    pic={
+                      <AddImg
+                        height={16}
+                        radius={50}
+                        fill={basicColor.newSvgOne}
+                      />
+                    }
+                    getUserInfo={getUserInfo}
+                    startUpload={() => setLoading(true)}
+                    endUpload={() => setLoading(false)}
+                  />
+                </View>
+              </BoxShadow>
+            </View>
+          )}
         </View>
 
         <View
