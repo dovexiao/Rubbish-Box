@@ -43,7 +43,6 @@ const BetsDetail = () => {
   };
 
   const Result = React.useMemo(() => {
-    console.log(111111, game);
     switch (game) {
       case 'Kerala':
         return currentInfo.bonusStatus === 0 ? (

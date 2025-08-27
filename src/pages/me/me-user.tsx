@@ -141,8 +141,8 @@ const MeUser: React.FC<MeUserProps> = ({onUser, showNoMenu, login}) => {
           <LazyImage
             occupancy={'transparent'}
             imageUrl={rightIcon}
-            width={(rightIconSize / 3) * 2}
-            height={rightIconSize}
+            width={(rightIconSize / 3) * 4}
+            height={rightIconSize * 1.5}
           />
           {/* ) : null} */}
         </View>
