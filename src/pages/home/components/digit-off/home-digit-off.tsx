@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, FlatList, StyleSheet, ImageBackground} from 'react-native';
+import {View, FlatList, StyleSheet, ImageBackground, Image} from 'react-native';
 import HomeDigitOffCard from './home-digit-off-card';
 import {getDigitOffList} from '../../home.service';
 import {DigitOffListItem} from '../../home.type';
@@ -48,9 +48,17 @@ const HomeDigitOff: React.FC = () => {
             marginBottom: 10,
           },
         ]}>
+        <Image
+          source={require('@/assets/icons/home/game-name-img.webp')}
+          style={{
+            width: theme.iconSize.m,
+            height: theme.iconSize.m,
+            marginRight: theme.paddingSize.s,
+          }}
+        />
         <Text
           fontSize={17}
-          color={theme.basicColor.primary}
+          color={theme.basicColor.newFontYellow}
           fontFamily="fontInter"
           style={{fontWeight: '700', marginBottom: 5}}>
           {i18n.t('home.digit.title')}

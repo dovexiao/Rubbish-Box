@@ -23,14 +23,14 @@ import {LazyImageLGBackground} from '@basicComponents/image';
 import {postSpinConfig} from '@/common-pages/luckyspin/luckyspin.service';
 
 const Home = () => {
-  const basePx = globalStore.screenWidth / 375;
+  // const basePx = globalStore.screenWidth / 375;
   const [selectedGame, setSelectedGame] = useState<number>(1);
   const [refreshing, setRefreshing] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [bannerList, setbannerList] = useState<BannerListItem[]>([]);
   const [keralaList, setKeralaList] = useState<KeralaListItem[]>([]);
   const [digitList] = useState<DigitListItem[]>([]);
-  const [showTabs, setShowTabs] = useState(false);
+  // const [showTabs, setShowTabs] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollAnim = useRef(new Animated.Value(0)).current;
@@ -51,9 +51,10 @@ const Home = () => {
   }, []);
 
   const handleScroll = useCallback(({value}: {value: number}) => {
-    const y = value;
-    const totalTop = topHeight.current;
-    setShowTabs(y >= totalTop);
+    console.log(value);
+    // const y = value;
+    // const totalTop = topHeight.current;
+    // setShowTabs(y >= totalTop);
   }, []);
 
   const debouncedHandleScroll = useMemo(
@@ -147,7 +148,7 @@ const Home = () => {
               <HomeGameList setSelectedGame={setSelectedGame} />
               {selectedGame === 2 && <HomeGameTop />}
             </View>
-            {selectedGame === 2 && showTabs ? (
+            {/* {selectedGame === 2 && showTabs ? (
               <View
                 style={{
                   height: basePx * 72 + 20,
@@ -157,7 +158,7 @@ const Home = () => {
               />
             ) : (
               <View style={{height: 0}} />
-            )}
+            )} */}
 
             {selectedGame === 1 && <HomeCasino />}
             {selectedGame === 2 && (

@@ -11,8 +11,11 @@ import {
   LayoutChangeEvent,
   Animated,
   Easing,
+  ImageBackground,
+  Image,
 } from 'react-native';
-import HomeFloorTitleBox from './home-floor-title-box';
+import globalStore from '@/services/global.state';
+// import HomeFloorTitleBox from './home-floor-title-box';
 
 interface HomeFloorBoxProps<listItemT> {
   /** 数据列表 */
@@ -32,7 +35,7 @@ interface HomeFloorBoxProps<listItemT> {
   onPressViewAll?: () => void;
   type?: string;
 }
-const huoIcon = require('@assets/animated/fire.gif');
+// const huoIcon = require('@assets/animated/fire.gif');
 
 class HomeFloorBox<listItemT> extends Component<
   HomeFloorBoxProps<listItemT>,
@@ -112,12 +115,42 @@ class HomeFloorBox<listItemT> extends Component<
     });
   };
   render() {
-    const {list, renderItem, title, type} = this.props;
-    const {bounceValue} = this.state;
-    const typeFlag = type === 'worldDigit' || type === 'digit';
+    const basePx = globalStore.screenWidth / 375;
+    const {list, renderItem, title} = this.props; //type
+    // const {bounceValue} = this.state;
+    // const typeFlag = type === 'worldDigit' || type === 'digit';
     return (
       <View style={[theme.fill.fillW, theme.flex.col]}>
-        <HomeFloorTitleBox style={[theme.fill.fillW]}>
+        <ImageBackground
+          source={require('@/assets/icons/home/game-name-bg.webp')}
+          style={[
+            theme.flex.row,
+            theme.flex.center,
+
+            {
+              height: basePx * 46,
+              marginLeft: -14,
+              marginRight: -14,
+              marginBottom: 10,
+            },
+          ]}>
+          <Image
+            source={require('@/assets/icons/home/game-name-img.webp')}
+            style={{
+              width: theme.iconSize.m,
+              height: theme.iconSize.m,
+              marginRight: theme.paddingSize.s,
+            }}
+          />
+          <Text
+            fontSize={17}
+            color={theme.basicColor.newFontYellow}
+            fontFamily="fontInter"
+            style={{fontWeight: '700', marginBottom: 5}}>
+            {title}
+          </Text>
+        </ImageBackground>
+        {/* <HomeFloorTitleBox style={[theme.fill.fillW]}>
           <View
             style={[
               theme.flex.row,
@@ -146,7 +179,7 @@ class HomeFloorBox<listItemT> extends Component<
               {title}
             </Text>
           </View>
-        </HomeFloorTitleBox>
+        </HomeFloorTitleBox> */}
         <View style={[theme.margin.btml, theme.flex.row, theme.flex.wrap]}>
           {list.map((item, index) => renderItem(item, index))}
         </View>
