@@ -1,7 +1,7 @@
 import {StyleSheet, View} from 'react-native';
 import React, {useEffect, useRef, useState, useMemo} from 'react';
 import Text from '@basicComponents/text';
-
+import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 import theme from '@/style';
 
 interface CountDownProps {
@@ -11,7 +11,7 @@ interface CountDownProps {
 
 const CountDown: React.FC<CountDownProps> = ({remain}) => {
   const remainRef = useRef(remain);
-
+  const {screenWidth} = useScreenSize();
   const [remainTime, setRemainTime] = useState(remain);
   const remainValue = useMemo(() => {
     const hour = Math.floor(remainTime / 3600);
@@ -44,30 +44,45 @@ const CountDown: React.FC<CountDownProps> = ({remain}) => {
   }, [remain]);
   return (
     <View style={[theme.flex.row, theme.flex.centerByCol]}>
-      <View style={[theme.icon.s, theme.flex.center, styles.blackSquare]}>
-        <Text fontSize={9} blod style={[theme.font.white]}>
+      <View
+        style={[
+          theme.flex.center,
+          styles.blackSquare,
+          {width: screenWidth * 0.056, height: screenWidth * 0.056},
+        ]}>
+        <Text fontSize={screenWidth * 0.037} blod style={[theme.font.white]}>
           {remainValue.hour}
         </Text>
       </View>
       <Text
-        fontSize={9}
+        fontSize={screenWidth * 0.037}
         blod
-        style={[theme.font.white, styles.marginHorizonalXXXS]}>
+        style={styles.marginHorizonalXXXS}>
         :
       </Text>
-      <View style={[theme.icon.s, theme.flex.center, styles.blackSquare]}>
-        <Text fontSize={9} blod style={[theme.font.white]}>
+      <View
+        style={[
+          theme.flex.center,
+          styles.blackSquare,
+          {width: screenWidth * 0.056, height: screenWidth * 0.056},
+        ]}>
+        <Text fontSize={screenWidth * 0.037} blod style={[theme.font.white]}>
           {remainValue.minutes}
         </Text>
       </View>
       <Text
-        fontSize={9}
+        fontSize={screenWidth * 0.037}
         blod
-        style={[theme.font.white, styles.marginHorizonalXXXS]}>
+        style={styles.marginHorizonalXXXS}>
         :
       </Text>
-      <View style={[theme.icon.s, theme.flex.center, styles.blackSquare]}>
-        <Text fontSize={9} blod style={[theme.font.white]}>
+      <View
+        style={[
+          theme.flex.center,
+          styles.blackSquare,
+          {width: screenWidth * 0.056, height: screenWidth * 0.056},
+        ]}>
+        <Text fontSize={screenWidth * 0.037} blod style={[theme.font.white]}>
           {remainValue.seconds}
         </Text>
       </View>
@@ -77,11 +92,12 @@ const CountDown: React.FC<CountDownProps> = ({remain}) => {
 
 const styles = StyleSheet.create({
   blackSquare: {
-    backgroundColor: theme.basicColor.primary10,
-    borderRadius: 2,
+    backgroundColor: '#000000',
+    borderRadius: 2.5,
   },
   marginHorizonalXXXS: {
-    marginHorizontal: 2,
+    color: '#000000',
+    marginHorizontal: 3,
   },
 });
 

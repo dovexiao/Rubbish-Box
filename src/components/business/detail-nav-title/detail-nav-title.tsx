@@ -127,14 +127,15 @@ const DetailNavTitle = (
                       theme.margin.rightxxs,
                     ]}>
                     <Text
-                      fontSize={theme.fontSize.xxs}
+                      fontSize={theme.fontSize.s}
                       color={otherProps?.titleColor || theme.fontColor.white}>
                       Balance
                     </Text>
                     <Text
                       fontFamily="fontInter"
                       blod
-                      fontSize={theme.fontSize.xxs}
+                      size="medium"
+                      // fontSize={theme.fontSize.s}
                       color={otherProps?.titleColor || theme.fontColor.white}>
                       {login ? toPriceStr(amount, {suffixUnit: 'K'}) : '-'}
                     </Text>

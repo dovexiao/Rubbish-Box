@@ -48,8 +48,9 @@ import {useShallow} from 'zustand/react/shallow';
 import GiftPop from '@/common-pages/gift-code/gift-pop';
 import { getGiftCodeAmount } from '@/pages/me/me.service';
 import { useRebateSuccessToast } from '@/common-pages/rebate/rebate-toast.hooks';
+import LinearGradient from '@/components/basic/linear-gradient';
 
-const {overflow, padding, font, margin, borderRadius, basicColor} = theme;
+const {overflow, padding, font, margin, borderRadius} = theme;
 
 /** TODO 单个文件过大,需要拆解 */
 const Me = () => {
@@ -459,24 +460,26 @@ const Me = () => {
               </View>
               {login && (
                 <NativeTouchableOpacity onPress={doLogout}>
-                  <View
-                    style={[
-                      padding.lrm,
-                      padding.tbl,
-                      borderRadius.m,
-                      overflow.hidden,
-                      margin.topl,
-                      {
-                        backgroundColor: basicColor.newBgInOne,
-                      }
-                    ]}>
-                    <Text style={[font.white, font.m, font.bold, font.center]}>
-                      {i18n.t('me.bottom.logout')}
-                    </Text>
-                  </View>
+                  <LinearGradient
+                      style={[
+                        padding.lrm,
+                        padding.tbl,
+                        borderRadius.m,
+                        overflow.hidden,
+                        margin.topl,
+                      ]}
+                      start={{x: 0, y: 1}}
+                      end={{x: 0, y: 1}}
+                      colors={theme.linearGradientColor.linearGradientBtnColor}>
+                    <View>
+                      <Text style={[font.white, font.m, font.bold, font.center]}>
+                        {i18n.t('me.bottom.logout')}
+                      </Text>
+                    </View>
+                  </LinearGradient>
                 </NativeTouchableOpacity>
               )}
-              <View style={[{height: 60}]}></View>
+              <View style={[{height: 80}]}></View>
             </View>
           </View>
         </Animated.ScrollView>
