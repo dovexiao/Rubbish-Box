@@ -9,7 +9,7 @@ import {inputProps, styles} from '../login.style';
 import globalStore from '@/services/global.state';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import Button from '@basicComponents/button';
-import {Shadow} from 'react-native-shadow-2';
+// import {Shadow} from 'react-native-shadow-2';
 import {BasicObject} from '@/types';
 import {useTranslation} from 'react-i18next';
 import {scaleSize} from '@utils';
@@ -116,81 +116,91 @@ const CodeInput = ({
               />
             </NativeTouchableOpacity>
           ) : null}
-          <Shadow {...shadow}>
-            <View>
-              {hasOTP ? (
-                <View
-                  style={[
-                    theme.padding.lrl,
-                    theme.padding.tbm,
-                    theme.borderRadius.xs,
-                    {
-                      width: theme.paddingSize.l * 4,
-                      // backgroundColor: theme.basicColor.newTransparent,
-                    },
-                  ]}>
-                  <Text
-                    fontSize={theme.fontSize.s}
-                    white
-                    textAlign="center"
-                    blod>
-                    {OTPTime}s
-                  </Text>
-                </View>
-              ) : (
-                <Button
-                  radius={0}
-                  buttonStyle={{
-                    paddingHorizontal: theme.paddingSize.zorro,
-                    paddingVertical: theme.paddingSize.zorro,
-                    backgroundColor: theme.basicColor.transparent,
-                    ...styles.getOTP,
-                  }}
-                  containerStyle={{
-                    borderRadius: theme.borderRadiusSize.xs,
-                  }}
-                  onPress={() => {
-                    if (OTPLoading || !userPhone) {
-                      return;
-                    }
-                    setOTPLoading(true);
-                    sendCode(
-                      (globalStore.sendPhoneCode ? userPhoneCode : '') +
-                        userPhone,
-                    )
-                      .then(() => {
-                        setHasOTP();
-                        globalStore.globalTotal.next({
-                          type: 'success',
-                          message: i18n.t('tip.success'),
-                        });
-                      })
-                      .finally(() => setOTPLoading(false));
-                  }}>
-                  <LinearGradient
-                    style={[theme.padding.lrl, theme.padding.tbs]}
-                    colors={theme.linearGradientColor.linearGradientBtnColor}
-                    start={{x: 0, y: 0}}
-                    end={{x: 0, y: 1}}>
-                    {OTPLoading ? (
-                      <Dialog.Loading
-                        loadingProps={{size: 'small'}}
-                        loadingStyle={[
-                          theme.icon.xs,
-                          {
-                            marginVertical: theme.paddingSize.xxs / 2,
-                            marginHorizontal: theme.paddingSize.xs,
-                          },
-                        ]}
-                      />
-                    ) : (
-                      <Text white>{i18n.t('login.label.get-otp')}</Text>
-                    )}
-                  </LinearGradient>
-                </Button>
-              )}
-            </View>
-          </Shadow>
+          {/* <Shadow {...shadow}> */}
+          <View>
+            {hasOTP ? (
+              <Button
+                buttonStyle={{
+                  width: theme.paddingSize.l * 4,
+                  backgroundColor: theme.basicColor.newStatusYellow,
+                  ...styles.getOTP,
+                }}
+                disabled={true}>
+                {/* style={{backgroundColor: theme.basicColor.newStatusYellow}}> */}
+                <Text white>{OTPTime}s</Text>
+              </Button>
+            ) : (
+              // <View
+              //   style={[
+              //     theme.padding.lrl,
+              //     theme.padding.tbm,
+              //     theme.borderRadius.xs,
+              //     {
+              //       width: theme.paddingSize.l * 4,
+              //       // backgroundColor: theme.basicColor.newTransparent,
+              //     },
+              //   ]}>
+              //   <Text
+              //     fontSize={theme.fontSize.s}
+              //     white
+              //     textAlign="center"
+              //     blod>
+              //     {OTPTime}s
+              //   </Text>
+              // </View>
+              <Button
+                radius={0}
+                buttonStyle={{
+                  paddingHorizontal: theme.paddingSize.zorro,
+                  paddingVertical: theme.paddingSize.zorro,
+                  backgroundColor: theme.basicColor.transparent,
+                  ...styles.getOTP,
+                }}
+                containerStyle={{
+                  borderRadius: theme.borderRadiusSize.xs,
+                }}
+                onPress={() => {
+                  if (OTPLoading || !userPhone) {
+                    return;
+                  }
+                  setOTPLoading(true);
+                  sendCode(
+                    (globalStore.sendPhoneCode ? userPhoneCode : '') +
+                      userPhone,
+                  )
+                    .then(() => {
+                      setHasOTP();
+                      globalStore.globalTotal.next({
+                        type: 'success',
+                        message: i18n.t('tip.success'),
+                      });
+                    })
+                    .finally(() => setOTPLoading(false));
+                }}>
+                <LinearGradient
+                  style={[theme.padding.lrl, theme.padding.tbs]}
+                  colors={theme.linearGradientColor.linearGradientBtnColor}
+                  start={{x: 0, y: 0}}
+                  end={{x: 0, y: 1}}>
+                  {OTPLoading ? (
+                    <Dialog.Loading
+                      loadingProps={{size: 'small'}}
+                      loadingStyle={[
+                        theme.icon.xs,
+                        {
+                          marginVertical: theme.paddingSize.xxs / 2,
+                          marginHorizontal: theme.paddingSize.xs,
+                        },
+                      ]}
+                    />
+                  ) : (
+                    <Text white>{i18n.t('login.label.get-otp')}</Text>
+                  )}
+                </LinearGradient>
+              </Button>
+            )}
+          </View>
+          {/* </Shadow> */}
         </View>
       ) : (
         // 密码输入框

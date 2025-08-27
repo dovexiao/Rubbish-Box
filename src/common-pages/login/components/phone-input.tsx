@@ -61,7 +61,7 @@ const PhoneInput = (props: {
           width: 18,
           height: 18,
         }}
-        source={require('@components/assets/pofile/smartphone.webp')}
+        source={require('@components/assets/icons/phone.webp')}
       />
       <View
         style={[
