@@ -64,7 +64,9 @@ const HomeUserDataItem: React.FC<HomeUserDataItemProps> = ({
         <View
           style={[theme.flex.row, theme.flex.centerByCol, userInfoStyle.rate]}>
           <Text
-            color={rateMoney === 0 ? theme.fontColor.white : proxyColor.raise}
+            color={
+              rateMoney === 0 ? theme.basicColor.newFontPink : proxyColor.raise
+            }
             fontFamily="fontInter"
             blod
             fontSize={theme.fontSize.xs}

@@ -37,6 +37,8 @@ export const invitationRulesImage = require('@components/assets/icons/proxy/invi
 export const customerServiceImage = require('@components/assets/icons/proxy/customer-service.webp');
 
 export const rightIcon = require('@components/assets/icons/right-icon.webp');
+export const rightIcon2 = require('@components/assets/icons/right-icon-2.webp');
+export const rightIcon3 = require('@components/assets/icons/right-icon-3.webp');
 export const searchIcon = require('@components/assets/icons/proxy/search-icon.webp');
 export const closeIcon = require('@components/assets/icons/clear.webp');
 

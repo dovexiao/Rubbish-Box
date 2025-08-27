@@ -36,7 +36,7 @@ export function useLanguageModal({
       style={[
         padding.s,
         flex.col,
-        {backgroundColor: theme.basicColor.newBgInOne},
+        {backgroundColor: theme.basicColor.newBgPop},
       ]}>
       <View style={[flex.row, flex.between, flex.centerByCol]}>
         <Text style={[font.bold, font.m, font.white]}>

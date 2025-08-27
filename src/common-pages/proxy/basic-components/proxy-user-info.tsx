@@ -5,7 +5,7 @@ import theme from '@style';
 import Level from './level';
 import Text from '@/components/basic/text';
 import {useInnerStyle} from '../proxy.hooks';
-import {rightIcon} from '../proxy.variable';
+import {rightIcon3} from '../proxy.variable';
 import i18n from '@/i18n';
 import {toPriceStr} from '@/utils';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
@@ -169,10 +169,10 @@ const ProxyUserInfo: React.FC<ProxyUserInfoProps> = ({
         </View>
         {onTeamReport && (
           <Image
-            source={rightIcon}
+            source={rightIcon3}
             style={{
-              width: theme.paddingSize.xl,
-              height: theme.paddingSize.xl,
+              width: 17,
+              height: 17,
               marginLeft: theme.paddingSize.s,
             }}
           />

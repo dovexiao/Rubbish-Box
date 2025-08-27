@@ -84,7 +84,9 @@ export function useInnerStyle() {
         (size.screenWidth - theme.paddingSize.l * 3 - size.itemWidth * 3 - 1) /
         3,
     },
-    inputWrap: {},
+    inputWrap: {
+      backgroundColor: theme.basicColor.newBgInOne,
+    },
   });
 
   const balanceStyles = StyleSheet.create({

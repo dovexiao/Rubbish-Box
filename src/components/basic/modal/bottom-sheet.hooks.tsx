@@ -49,7 +49,7 @@ export function useBottomSheet(
         <View
           style={[
             theme.padding.l,
-            theme.background.mainDark,
+            {backgroundColor: theme.basicColor.newBgPop},
             height ? {height: height} : {},
             topBorderRadius
               ? {
