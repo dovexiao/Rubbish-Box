@@ -21,11 +21,21 @@ export function useRebateRules() {
     return nameMap[globalStore.packageId];
   }, []);
   const {show, hide, renderModal} = useModal(
-    <View style={[theme.padding.l, flex.col, bonusToastStyle.rule]}>
+    <View
+      style={[
+        theme.padding.l,
+        flex.col,
+        bonusToastStyle.rule,
+        theme.borderRadius.s,
+        {backgroundColor: theme.basicColor.white},
+      ]}>
       <View style={[flex.col, padding.l]}>
         <View
           style={[theme.flex.row, theme.flex.between, theme.flex.centerByCol]}>
-          <Text white fontSize={theme.fontSize.xl} blod>
+          <Text
+            style={{color: theme.basicColor.dark}}
+            fontSize={theme.fontSize.xl}
+            blod>
             {i18n.t('rebate.title')}
           </Text>
           <NativeTouchableOpacity onPress={() => hide()}>
@@ -38,13 +48,19 @@ export function useRebateRules() {
           </NativeTouchableOpacity>
         </View>
 
-        <Text white fontSize={theme.fontSize.l} blod>
+        <Text
+          style={{color: theme.basicColor.dark}}
+          fontSize={theme.fontSize.l}
+          blod>
           {i18n.t('rebate.rule.betting')}
         </Text>
         <Text accent fontSize={theme.fontSize.m}>
           {i18n.t('rebate.rule.betting-detail', {name})}
         </Text>
-        <Text white fontSize={theme.fontSize.l} blod>
+        <Text
+          style={{color: theme.basicColor.dark}}
+          fontSize={theme.fontSize.l}
+          blod>
           {i18n.t('rebate.rule.activity')}
         </Text>
         <Text accent fontSize={theme.fontSize.m}>
@@ -56,7 +72,10 @@ export function useRebateRules() {
         <Text accent fontSize={theme.fontSize.m}>
           {i18n.t('rebate.rule.actrule-detail', {name})}
         </Text>
-        <Text white fontSize={theme.fontSize.l} blod>
+        <Text
+          style={{color: theme.basicColor.dark}}
+          fontSize={theme.fontSize.l}
+          blod>
           {i18n.t('rebate.rule.precaution')}
         </Text>
         <Text accent fontSize={theme.fontSize.m}>
