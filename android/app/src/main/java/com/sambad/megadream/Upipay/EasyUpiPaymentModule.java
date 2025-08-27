@@ -1,4 +1,4 @@
-package com.sambad.megadream.Upipay;
+package com.sambad.supbetgame.Upipay;
 
 import android.app.Activity;
 import android.content.Context;

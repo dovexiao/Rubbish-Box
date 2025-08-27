@@ -1,4 +1,4 @@
-package com.sambad.megadream.Chat;
+package com.sambad.supbetgame.Chat;
 
 import androidx.annotation.NonNull;
 

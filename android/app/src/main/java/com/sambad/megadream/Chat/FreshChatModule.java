@@ -1,4 +1,4 @@
-package com.sambad.megadream.Chat;
+package com.sambad.supbetgame.Chat;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
