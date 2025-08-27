@@ -27,6 +27,7 @@ import {
 
 import {Success, upiPayment} from '@/utils';
 import useCouponStore from '@/store/useCouponStore';
+// import { background, backgroundColor } from '@/components/style';
 
 const Recharge = () => {
   const {i18n} = useTranslation();
@@ -220,7 +221,7 @@ const Recharge = () => {
         serverRight
         title={i18n.t('home.tab.deposit')}
       />
-      <Spin loading={loading} style={[theme.flex.flex1, theme.flex.col]}>
+      <Spin loading={loading} style={[theme.flex.flex1, theme.flex.col, {backgroundColor: theme.basicColor.newBgInTwo}]}>
         <View style={[theme.flex.flex1, theme.flex.basis0]}>
           <ScrollView>
             <View style={[{backgroundColor: theme.basicColor.newBgInThree}]}>
