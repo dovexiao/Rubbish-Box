@@ -142,7 +142,7 @@ export const fontColor = {
   noWinFontColor: '#FFFFFF',
   //未开奖状态 背景渐变色
   toDrawnFontColor: '#FFFFFF',
-  primary: '#00BB8F',
+  primary: '#F8D72F',
   grey: '#D8E0EA',
   white: '#ffffff',
   brown: '#8F4E00',
@@ -157,7 +157,7 @@ export const fontColor = {
   black: '#000000',
   white60: 'rgba(255,255,255,0.6)',
   white80: 'rgba(255,255,255,0.8)',
-  login: 'rgb(73, 24, 2)',
+  login: '#ffffff', //'rgb(73, 24, 2)'
 };
 
 export const backgroundColor = {

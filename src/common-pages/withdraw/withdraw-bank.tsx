@@ -25,7 +25,7 @@ const WithdrawBank = (props: WithdrawBankProps) => {
         theme.margin.topl,
         theme.padding.l,
         theme.border.main,
-        theme.background.black15,
+        theme.background.newBgInTwo,
         theme.margin.lrl,
         theme.borderRadius.s,
       ]}>

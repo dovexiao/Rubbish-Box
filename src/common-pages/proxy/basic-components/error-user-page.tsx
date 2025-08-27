@@ -31,6 +31,7 @@ const ErrorInvitePage: React.FC<ErrorInvitePageProps> = ({
       </Text>
       {buttonTitle && (
         <Button
+          type="linear-primary"
           size="large"
           titleBold
           width={(174 * screenWidth) / designWidth}

@@ -23,7 +23,7 @@ const WithdrawAmount = (props: WithdrawAmountType) => {
         theme.padding.bl,
         theme.border.main,
         theme.borderRadius.s,
-        theme.background.transparentP10,
+        theme.background.newBgInTwo,
         theme.margin.l,
       ]}>
       <Text style={[theme.margin.tbm]} white size="medium">
