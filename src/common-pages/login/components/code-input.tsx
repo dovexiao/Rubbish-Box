@@ -111,6 +111,7 @@ const CodeInput = ({
                 style={{
                   height: theme.iconSize.xl / 2,
                   width: theme.iconSize.xl / 2,
+                  marginRight: 4,
                 }}
                 source={closeIcon}
               />
