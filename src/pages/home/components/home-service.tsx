@@ -27,7 +27,7 @@ const HomeService = ({spinShow}: {spinShow: () => void}) => {
           imageUrl={require('@assets/icons/luckyspin.gif')}
         />
       </TouchableOpacity>
-      {(globalStore.userInfo?.totalRechargeAmount === 0 ||
+      {(globalStore.userInfo?.totalRechargeAmount !== 0 ||
         !globalStore.token) && (
         <TouchableOpacity
           style={{marginBottom: 8}}

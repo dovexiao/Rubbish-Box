@@ -4,7 +4,8 @@ import {SafeAny} from '@types';
 import i18n from '@/i18n';
 import {getSlotegratorGameStart, postUserInfo} from '@/services/global.service';
 import {postLiveAuthorize} from '@/common-pages/game-navigate';
-import {Linking} from 'react-native';
+// import {Linking} from 'react-native';
+import envConfig from '@/utils/env.config';
 declare var window: any;
 
 export function postMessage(data: SafeAny) {
@@ -116,7 +117,8 @@ export async function toSlotegrator(name: string, id: string) {
 /** 前往客服 */
 export const goCS = () => {
   // navigateTo('https://direct.lc.chat/18181035/');
-  navigateTo('https://chat.ssrchat.com/service/gtjx8p');
+  // navigateTo('https://chat.ssrchat.com/service/gtjx8p');
+  navigateTo(envConfig.getCustomServiceUrl || '');
   // goTo('WebView', {
   //   header: true,
   //   headerTitle: 'Official Customer Service',
@@ -127,17 +129,19 @@ export const goCS = () => {
 
 export const downloadApk = () => {
   const channelId = globalStore.channel;
-  if (globalStore.isAndroid) {
-    if (channelId === 'supbet') {
-      Linking.openURL('https://www.staticimg007.com.com/apk/supbet.apk');
-    } else {
-      Linking.openURL(`https://www.staticimg007.com.com/apk/supbet_${channelId}.apk
-      `);
-    }
-  }
+  // if (globalStore.isAndroid) {
+  //   if (channelId === 'supbet') {
+  //     Linking.openURL('https://www.staticimg007.com.com/apk/supbet.apk');
+  //   } else {
+  //     Linking.openURL(`https://www.staticimg007.com.com/apk/supbet_${channelId}.apk
+  //     `);
+  //   }
+  // }
   if (channelId === 'supbet') {
-    location.href = 'https://www.staticimg007.com/apk/supbet.apk';
+    location.href = envConfig.downloadUrl || '';
+    // location.href = 'https://www.staticimg007.com/apk/supbet.apk';
   } else {
-    location.href = `https://www.staticimg007.com/apk/supbet_${channelId}.apk`;
+    location.href = envConfig.downloadChannelUrl || '';
+    // location.href = `https://www.staticimg007.com/apk/supbet_${channelId}.apk`;
   }
 };

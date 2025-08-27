@@ -12,6 +12,11 @@ const ENV_CONFIG = (IS_WEB ? process.env : RNConfig) as {
   REACT_APP_API_RACECAR_URL?: string;
   REACT_APP_API_H5VUE_URL?: string;
   REACT_APP_PACKAGE?: number;
+  REACT_APP_API_DOWNLOAD_URL?: string;
+  REACT_APP_API_CHANNEL_ID?: string;
+  REACT_APP_API_PACKAGE_ID?: string | number;
+  REACT_APP_API_CUSTOM_SERVICE_URL?: string;
+  REACT_APP_API_DOWNLOAD_CHANNEL_URL?: string;
   [k: string]: string | number | undefined;
 };
 
@@ -51,6 +56,21 @@ class Config {
     return this._moengageAppId;
   }
 
+  get downloadUrl() {
+    return ENV_CONFIG.REACT_APP_API_DOWNLOAD_URL;
+  }
+  get downloadChannelUrl() {
+    return ENV_CONFIG.REACT_APP_API_DOWNLOAD_CHANNEL_URL;
+  }
+  get getChannelId() {
+    return ENV_CONFIG.REACT_APP_API_CHANNEL_ID;
+  }
+  get getPackageId() {
+    return ENV_CONFIG.REACT_APP_API_PACKAGE_ID;
+  }
+  get getCustomServiceUrl() {
+    return ENV_CONFIG.REACT_APP_API_CUSTOM_SERVICE_URL;
+  }
   constructor() {
     this._baseUrl = ENV_CONFIG.REACT_APP_API_BASE_URL;
     // this._baseUrl = 'https://api.mega4cx25.com/';

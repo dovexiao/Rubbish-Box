@@ -5,6 +5,7 @@ import {BasicObject, ReuseWebViewEvents, ReuseWebViewProp} from '@types';
 import {Dimensions, Platform} from 'react-native';
 import type {MessageCountInfo} from './global.service';
 import {ReactElement} from 'react';
+import envConfig from '@/utils/env.config';
 export enum ViewType {
   'default',
   'webview',
@@ -196,7 +197,7 @@ class GlobalStore {
     return this._userAmount;
   }
 
-  private _packageId = 9;
+  private _packageId = envConfig.getPackageId as number;
   get packageId() {
     return this._packageId;
   }
