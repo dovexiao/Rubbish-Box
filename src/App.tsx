@@ -479,7 +479,7 @@ function App(): JSX.Element {
             // borderRadius: 8,
             width: popImageWidth,
             height: popImageWidth * imageRatio + 300,
-            backgroundColor: theme.backgroundColor.newFirst,
+            backgroundColor: theme.basicColor.newTransparent,
           },
         ]}>
         <View
