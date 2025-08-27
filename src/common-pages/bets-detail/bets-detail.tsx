@@ -43,6 +43,7 @@ const BetsDetail = () => {
   };
 
   const Result = React.useMemo(() => {
+    console.log(111111, game);
     switch (game) {
       case 'Kerala':
         return currentInfo.bonusStatus === 0 ? (
@@ -258,7 +259,9 @@ const BetsDetail = () => {
                 theme.margin.btml,
                 theme.borderRadius.m,
                 theme.overflow.hidden,
-                theme.background.mainDark,
+                {
+                  backgroundColor: theme.basicColor.newBgInOne,
+                },
               ]}>
               {Table}
             </View>

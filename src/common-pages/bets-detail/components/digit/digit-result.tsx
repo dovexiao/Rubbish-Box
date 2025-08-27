@@ -31,7 +31,7 @@ const DigitResult = ({info = {}}: {info: BasicObject}) => {
   return (
     <View
       style={[
-        theme.background.mainDark,
+        theme.background.newBgInOne,
         theme.padding.l,
         theme.margin.lrl,
         theme.borderRadius.l,

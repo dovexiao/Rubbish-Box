@@ -3,8 +3,8 @@ import {View, StyleSheet} from 'react-native';
 import Text from '@/components/basic/text';
 import React from 'react';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
-import LazyImage from '@/components/basic/image';
-import {downIcon} from '@/common-pages/rebate/rebate.variables';
+// import LazyImage from '@/components/basic/image';
+// import {downIcon} from '@/common-pages/rebate/rebate.variables';
 import theme from '@/style';
 import {useTranslation} from 'react-i18next';
 
@@ -22,7 +22,7 @@ const KeralaResult = ({
       style={[
         theme.padding.l,
         theme.flex.row,
-        theme.background.mainDark,
+        theme.background.newBgInOne,
         theme.flex.between,
         theme.margin.btml,
       ]}>
@@ -30,12 +30,12 @@ const KeralaResult = ({
         {info.issueNo} {i18n.t('bets-detail.label.drawRes')}
       </Text>
       <View style={[styles.arrowStyle]}>
-        <LazyImage
+        {/* <LazyImage
           imageUrl={downIcon}
           width={14}
           height={14}
           occupancy="transparent"
-        />
+        /> */}
       </View>
     </NativeTouchableOpacity>
   );

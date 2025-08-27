@@ -37,7 +37,7 @@ const ColorResult = ({info = {}}: {info: BasicObject}) => {
       style={[
         theme.flex.row,
         theme.padding.tbl,
-        theme.background.mainDark,
+        theme.background.newBgInOne,
         styles.container,
       ]}>
       <View style={[theme.flex.flex1]}>

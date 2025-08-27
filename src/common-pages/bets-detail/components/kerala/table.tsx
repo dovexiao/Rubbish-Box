@@ -14,9 +14,11 @@ const KeralaTable = ({list = []}: {list: BasicObject[]}) => {
   return (
     <View
       style={[
-        theme.background.mainDark,
         theme.padding.l,
         theme.borderRadius.l,
+        {
+          backgroundColor: theme.basicColor.newBgInOne,
+        },
       ]}>
       <View style={[tableStyle.th]}>
         <View style={[theme.flex.flex1]}>
@@ -59,7 +61,11 @@ const KeralaTable = ({list = []}: {list: BasicObject[]}) => {
                 size="medium"
                 white
                 style={[theme.font.center]}>
-                item.lotteryPrice
+                {toPriceStr(item.lotteryPrice || 0, {
+                  fixed: 2,
+                  showCurrency: true,
+                  thousands: false,
+                })}
               </Text>
             </View>
             <View style={[theme.flex.flex1]}>

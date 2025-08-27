@@ -16,7 +16,7 @@ const DiceResult = ({info}: {info: BasicObject}) => {
   }, [info]);
   const {i18n} = useTranslation();
   return (
-    <View style={[theme.background.mainDark, theme.padding.l]}>
+    <View style={[theme.background.newBgInOne, theme.padding.l]}>
       <Text white fontFamily="fontInterBold" size="medium">
         {info.issNo} {i18n.t('bets-detail.label.drawRes')}:
       </Text>

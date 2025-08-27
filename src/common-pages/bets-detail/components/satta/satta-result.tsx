@@ -28,7 +28,7 @@ const SataResult = ({info}: {info: BasicObject}) => {
   return (
     <View
       style={[
-        theme.background.mainDark,
+        theme.background.newBgInOne,
         theme.padding.l,
         theme.flex.row,
         theme.flex.centerByCol,

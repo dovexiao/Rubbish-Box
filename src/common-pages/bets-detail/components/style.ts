@@ -29,7 +29,8 @@ const tableStyle = StyleSheet.create({
     paddingHorizontal: 12,
   },
   tdGray: {
-    backgroundColor: '#2E2666',
+    backgroundColor: theme.basicColor.newBgInOne,
+    // backgroundColor: '#2E2666',
   },
 });
 
