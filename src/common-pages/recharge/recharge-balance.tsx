@@ -84,11 +84,18 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
           </NativeTouchableOpacity>
         </View>
         <View style={[theme.padding.lrl, theme.padding.tbs]}>
-          <Text style={styleSheet.tips}>
+          <Text
+            style={styleSheet.tips}
+            fontSize={globalStore.isAndroid ? 10 : 12}>
             {i18n.t('recharge-page.currentMethod')} :
             <Text style={styleSheet.tips}> {payMethod}</Text>
           </Text>
-          <Text style={styleSheet.tips}>{tip}</Text>
+          <Text
+            style={styleSheet.tips}
+            numberOfLines={1}
+            fontSize={globalStore.isAndroid ? 10 : 12}>
+            {tip}
+          </Text>
         </View>
       </View>
     </ImageBackground>
@@ -137,7 +144,6 @@ const styleSheet = StyleSheet.create({
     fontWeight: '700',
   },
   tips: {
-    fontSize: 12,
     fontFamily: 'Arial, Arial-Regular',
     color: '#ffffff',
   },

@@ -51,7 +51,7 @@ const MeVip: React.FC<MeVipProps> = ({
       />
 
       <View style={[flex.flex1, padding.lrl, flex.centerByRow, {height: 49}]}>
-        <View style={[{marginBottom: 4}]}>
+        <View style={[{marginBottom: globalStore.isAndroid ? 0 : 4}]}>
           <Text
             fontSize={10}
             fontFamily={'fontDinBold'}
@@ -60,7 +60,7 @@ const MeVip: React.FC<MeVipProps> = ({
           </Text>
         </View>
         <View style={[theme.flex.row]}>{renderProgress}</View>
-        <View style={[flex.row, theme.margin.topxxxs]}>
+        <View style={[flex.row, {marginTop: globalStore.isAndroid ? 0 : 4}]}>
           <Text
             color={theme.basicColor.newFontYellow}
             numberOfLines={2}

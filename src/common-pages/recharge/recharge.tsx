@@ -250,6 +250,7 @@ const Recharge = () => {
               <View style={[theme.padding.lrxxl]}>
                 <RechargeRule />
               </View>
+              <View style={[{height: 30}]}></View>
           </ScrollView>
         </View>
         <RechargeButton
@@ -264,7 +265,6 @@ const Recharge = () => {
               : '')
           }
         />
-        <View style={[{height: 30}]}></View>
       </Spin>
     </LazyImageLGBackground>
   );

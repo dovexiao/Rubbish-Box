@@ -117,7 +117,7 @@ const DetailNavTitle = (
                     // eslint-disable-next-line react-native/no-inline-styles
                     {
                       right: 28,
-                      top: globalStore.isWeb ? 18 : 16,
+                      top: globalStore.isWeb ? 18 : 12,
                     },
                   ]}>
                   <View
@@ -125,6 +125,9 @@ const DetailNavTitle = (
                       theme.flex.col,
                       theme.flex.alignEnd,
                       theme.margin.rightxxs,
+                      globalStore.isAndroid && {
+                        width: 130,
+                      },
                     ]}>
                     <Text
                       fontSize={theme.fontSize.s}

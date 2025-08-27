@@ -33,7 +33,7 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
     buttonWrap: {
       // backgroundColor: theme.basicColor.newBgInTwo,
       paddingTop: theme.paddingSize.l,
-      paddingBottom: globalStore.isAndroid ? 33 * 3 : 33,
+      paddingBottom: globalStore.isAndroid ? 33 * 2.3 : 66,
       // backgroundColor: `linear-gradient(180deg, ${theme.basicColor.newButtonBgOne})`,
     },
   });

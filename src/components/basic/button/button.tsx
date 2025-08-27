@@ -143,7 +143,7 @@ const Button: React.FC<LinearButtonProps> = props => {
             },
           ]}
           disabled={disabled}
-          disabledStyle={[theme.background.newStatusYellow]}
+          disabledStyle={[theme.background.newStatusGrey]}
           // eslint-disable-next-line react-native/no-inline-styles
           disabledTitleStyle={{color: '#ffffff4d'}}
           buttonStyle={[
