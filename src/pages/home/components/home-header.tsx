@@ -12,6 +12,7 @@ import {useTranslation} from 'react-i18next';
 import {useFocusEffect} from '@react-navigation/native';
 import {getAllRemind} from '@/pages/home/home.service';
 import Button from '@/components/basic/button';
+import envConfig from '@/utils/env.config';
 // const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
 
 const HomeHeader = () => {
@@ -105,7 +106,9 @@ const HomeHeader = () => {
               height: 20,
               // transform: [{scale: 0.5}],
             }}
-            source={require('@assets/logos/logo-v2.png')}
+            source={{
+              uri: envConfig.getLogoV2,
+            }}
           />
         </NativeTouchableOpacity>
       }

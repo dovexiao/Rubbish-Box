@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {View, Image} from 'react-native';
 import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
+import envConfig from '@/utils/env.config';
 
 const Download: React.FC = () => {
   const {i18n} = useTranslation();
@@ -49,7 +50,9 @@ const Download: React.FC = () => {
               marginRight: theme.paddingSize.m,
             },
           ]}
-          source={require('@assets/logos/logo.webp')}
+          source={{
+            uri: envConfig.getLogo,
+          }}
         />
         <View style={[theme.flex.flex, theme.flex.col, theme.flex.centerByRow]}>
           <Text main blod style={[theme.font.fm]} color={theme.fontColor.white}>

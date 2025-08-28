@@ -17,6 +17,9 @@ const ENV_CONFIG = (IS_WEB ? process.env : RNConfig) as {
   REACT_APP_API_PACKAGE_ID?: string | number;
   REACT_APP_API_CUSTOM_SERVICE_URL?: string;
   REACT_APP_API_DOWNLOAD_CHANNEL_URL?: string;
+  REACT_APP_API_LOGO_URL?: string;
+  REACT_APP_API_LOGO_URL_V2?: string;
+  REACT_APP_API_LAUNCH_SCREEN_URL?: string;
   [k: string]: string | number | undefined;
 };
 
@@ -70,6 +73,15 @@ class Config {
   }
   get getCustomServiceUrl() {
     return ENV_CONFIG.REACT_APP_API_CUSTOM_SERVICE_URL;
+  }
+  get getLogo() {
+    return ENV_CONFIG.REACT_APP_API_LOGO_URL;
+  }
+  get getLogoV2() {
+    return ENV_CONFIG.REACT_APP_API_LOGO_URL_V2;
+  }
+  get getLaunchScreen() {
+    return ENV_CONFIG.REACT_APP_API_LAUNCH_SCREEN_URL;
   }
   constructor() {
     this._baseUrl = ENV_CONFIG.REACT_APP_API_BASE_URL;

@@ -3,6 +3,7 @@ import {TextInput, View, Image, ScrollView, Platform} from 'react-native';
 import Text from '@basicComponents/text';
 import LinearGradient from '@basicComponents/linear-gradient';
 import {BasicObject, SafeAny} from '@/types';
+import envConfig from '@/utils/env.config';
 
 import InvitationApplyModal from './invitation-apply-modal';
 import {
@@ -131,7 +132,9 @@ const InvitationApply = (props: SafeAny) => {
                       borderWidth: 1,
                     },
                   ]}
-                  source={require('@assets/logos/logo.webp')}
+                  source={{
+                    uri: envConfig.getLogo,
+                  }}
                 />
                 <View
                   style={[
