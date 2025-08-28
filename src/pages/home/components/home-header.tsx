@@ -13,7 +13,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {getAllRemind} from '@/pages/home/home.service';
 import Button from '@/components/basic/button';
 import envConfig from '@/utils/env.config';
-// const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
+const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
 
 const HomeHeader = () => {
   const styles = StyleSheet.create({
@@ -31,7 +31,7 @@ const HomeHeader = () => {
   const [showLogin, setShowLogin] = React.useState(false);
   const [showUser, setShowUser] = React.useState(false);
   const [userName, setUserName] = React.useState(false);
-  const [_userAvatar, setUserAvatar] = React.useState('');
+  const [userAvatar, setUserAvatar] = React.useState('');
   const [amount, setAmount] = React.useState<number>(0);
   const [rate, setRate] = React.useState<number>(0);
   const [remind, setRemind] = React.useState('');
@@ -119,6 +119,10 @@ const HomeHeader = () => {
             <NativeTouchableOpacity
               onPress={() => goTo('Me')}
               style={[theme.flex.centerByCol, theme.flex.row]}>
+              <Image
+                source={userAvatar ? {uri: userAvatar} : defaultHeaderImg}
+                style={[theme.icon.xxl, {borderRadius: theme.iconSize.xxl / 2}]}
+              />
               <View style={[theme.flex.col, theme.margin.lefts]}>
                 <Text
                   accent
@@ -157,10 +161,6 @@ const HomeHeader = () => {
                 />
                 {remind === '1' && <View style={[styles.bellTipIcon]} />}
               </NativeTouchableOpacity>
-              {/* <Image
-                source={userAvatar ? {uri: userAvatar} : defaultHeaderImg}
-                style={[theme.icon.xxl, {borderRadius: theme.iconSize.xxl / 2}]}
-              /> */}
             </NativeTouchableOpacity>
           )}
           {showLogin && (
