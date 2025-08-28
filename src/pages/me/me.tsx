@@ -20,6 +20,7 @@ import {
   betsIcon,
   giftcode,
   transactionsIcon,
+  notificationsIcon,
   updateIcon,
   passwordIcon,
   languagesIcon,
@@ -193,6 +194,13 @@ const Me = () => {
     }
   };
 
+  const toNotify = () => {
+    if (!login) {
+      goTo('Login');
+    } else {
+      goTo('NotifyNew');
+    }
+  };
   const toLanguage = () => {
     languageShow();
   };
@@ -416,6 +424,19 @@ const Me = () => {
                 {/*  onPress={toNotify}*/}
                 {/*/>*/}
 
+                {/* messageCountInfo && messageCountInfo.messageTotalCount
+                      ? null
+                      : // <Tag
+                        //   badgeSize={16}
+                        //   content={messageCountInfo.messageTotalCount}
+                        // />
+                        null */}
+                <MeListItem
+                  icon={notificationsIcon}
+                  title={i18n.t('me.bottom.notify')}
+                  rightContent={null}
+                  onPress={toNotify}
+                />
                 <MeListItem
                   icon={passwordIcon}
                   iconSize={18}

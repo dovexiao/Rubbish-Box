@@ -1,6 +1,6 @@
 import Text from '@basicComponents/text';
 import React from 'react';
-import {View, Image} from 'react-native';
+import {View, Image, StyleSheet} from 'react-native';
 import theme from '@style';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import globalStore from '@/services/global.state';
@@ -10,17 +10,39 @@ import {combineLatest, distinctUntilChanged} from 'rxjs';
 import {postUserInfo} from '@services/global.service';
 import {useTranslation} from 'react-i18next';
 import {useFocusEffect} from '@react-navigation/native';
+import {getAllRemind} from '@/pages/home/home.service';
 import Button from '@/components/basic/button';
-const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
+// const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
 
 const HomeHeader = () => {
+  const styles = StyleSheet.create({
+    bellTipIcon: {
+      width: 7,
+      height: 7,
+      backgroundColor: '#fa5637',
+      borderRadius: 50,
+      position: 'absolute',
+      top: 10,
+      right: 10,
+    },
+  });
   const {i18n} = useTranslation();
   const [showLogin, setShowLogin] = React.useState(false);
   const [showUser, setShowUser] = React.useState(false);
   const [userName, setUserName] = React.useState(false);
-  const [userAvatar, setUserAvatar] = React.useState('');
+  const [_userAvatar, setUserAvatar] = React.useState('');
   const [amount, setAmount] = React.useState<number>(0);
   const [rate, setRate] = React.useState<number>(0);
+  const [remind, setRemind] = React.useState('');
+  React.useEffect(() => {
+    // 在组件加载时调用接口并更新状态
+    const fetchRemind = async () => {
+      const response = await getAllRemind(); // 调用接口
+      setRemind(String(response)); // 将返回的数据存储到状态中
+    };
+
+    fetchRemind(); // 调用函数
+  }, []); // 依赖空数组，确保只在组件加载时调用一次
 
   useFocusEffect(
     React.useCallback(() => {
@@ -93,7 +115,7 @@ const HomeHeader = () => {
           {showUser && (
             <NativeTouchableOpacity
               onPress={() => goTo('Me')}
-              style={[theme.flex.centerByCol, theme.flex.row, theme.gap.m]}>
+              style={[theme.flex.centerByCol, theme.flex.row]}>
               <View style={[theme.flex.col, theme.margin.lefts]}>
                 <Text
                   accent
@@ -114,10 +136,28 @@ const HomeHeader = () => {
                   {toPriceStr(amount)}
                 </Text>
               </View>
-              <Image
+              <NativeTouchableOpacity
+                onPress={() => {
+                  goTo('NotifyNew');
+                }}
+                style={[
+                  theme.padding.s,
+                  theme.position.rel,
+                  {
+                    marginRight: theme.paddingSize.s,
+                  },
+                ]}>
+                <Image
+                  style={[theme.icon.xl]}
+                  source={require('@assets/icons/bell.webp')}
+                  resizeMode={'cover'}
+                />
+                {remind === '1' && <View style={[styles.bellTipIcon]} />}
+              </NativeTouchableOpacity>
+              {/* <Image
                 source={userAvatar ? {uri: userAvatar} : defaultHeaderImg}
                 style={[theme.icon.xxl, {borderRadius: theme.iconSize.xxl / 2}]}
-              />
+              /> */}
             </NativeTouchableOpacity>
           )}
           {showLogin && (

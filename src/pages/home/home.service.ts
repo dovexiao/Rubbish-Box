@@ -33,6 +33,11 @@ export const getNoticeCheck = () => {
   return http.post<null, NoticeCheckList>('app/sys/notice/check');
 };
 
+// 所有消息提醒
+export const getAllRemind = () => {
+  return http.post<null, number>('app/message/all/remind');
+};
+
 export const getCasinoList = (params: CasinoListParams) => {
   return http.post<CasinoListParams, CasinoListResponse>(
     'app/casion/list',

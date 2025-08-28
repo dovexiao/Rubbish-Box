@@ -65,6 +65,7 @@ import FeedBackRecordPage from './common-pages/feedback/record';
 import CasinoGameWeb from './common-pages/casino-game-web/casino-game-web';
 import NewWebViewGame from "@/common-pages/new-webview-game/new-webview-game";
 
+import NotifyNew from '@/common-pages/notify-new/notify-new';
 
 type Routes = {
   name: string;
@@ -355,6 +356,11 @@ const routes: Routes[] = [
     name: 'Notification',
     component: NotificationPage,
     link: 'notification',
+  },
+  {
+    name: 'NotifyNew',
+    component: NotifyNew,
+    link: 'notify-new',
   },
   {
     name: 'NewWebViewGame',
