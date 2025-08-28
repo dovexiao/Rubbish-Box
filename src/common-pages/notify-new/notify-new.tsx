@@ -6,7 +6,6 @@ import {View} from 'react-native';
 import {navGoBack} from '@utils';
 
 const NotifyNewPage = () => {
-  console.log(1111111, config.vueH5Url);
   const urlPrefix = `${config.vueH5Url}/notify`;
   const handleMessage = (data: any) => {
     let dataObj = data;
