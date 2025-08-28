@@ -21,6 +21,8 @@ import HomeCasino from './components/home-casino';
 import HomeGameTop from '@/pages/home/home-game-top';
 import {LazyImageLGBackground} from '@basicComponents/image';
 import {postSpinConfig} from '@/common-pages/luckyspin/luckyspin.service';
+import {getFirstRecharge} from '@/pages/home/home.service';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Home = () => {
   // const basePx = globalStore.screenWidth / 375;
@@ -102,17 +104,37 @@ const Home = () => {
       });
     }
   };
-
+  const [firstShow, setFirstShow] = useState(0);
+  const [login, setLogin] = useState(false);
+  const getRecharge = async () => {
+    const data = await getFirstRecharge();
+    console.log(22222, data);
+    setFirstShow(data);
+  };
+  const onFocusEffect = useCallback(() => {
+    const sub = globalStore.tokenSubject.subscribe(token => {
+      setLogin(!!token);
+      if (token) {
+        getRecharge();
+      }
+    });
+    const msgSub = globalStore.notificationSubject.subscribe(_countInfo => {});
+    return () => {
+      sub.unsubscribe();
+      msgSub.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useFocusEffect(onFocusEffect);
+  // const getRechargeValue = async () => {
+  //   const data = await getFirstRecharge();
+  //   console.log(22222, data);
+  //   setFirstShow(data);
+  // };
   // useEffect(() => {
-  //   const sub = globalStore.tokenSubject.subscribe(token => {
-  //     postSpinConfig(!!token).then(data => {
-  //       setSpinBasePrice(data?.singleAmount);
-  //       setSpinBatchCount(data?.batchCount);
-  //       setFreeCount(data?.myFree || 0);
-  //     });
-  //   });
-  //   return () => sub.unsubscribe();
-  // }, []);
+  //   getRechargeValue();
+  // }, [token]);
+  // console.log(11111, firstShow, isLogin, token);
   return (
     <LazyImageLGBackground style={[theme.flex.col, theme.fill.fill]}>
       <Spin loading={pageLoading} style={[theme.flex.col, theme.fill.fill]}>
@@ -176,7 +198,11 @@ const Home = () => {
             <NoMoreData text="" />
           </Animated.ScrollView>
           <View style={{position: 'absolute', bottom: 60, left: 0, right: 0}}>
-            <HomeService spinShow={showModal} />
+            <HomeService
+              isLogin={login}
+              firstShow={firstShow}
+              spinShow={showModal}
+            />
             {renderSpin}
           </View>
         </View>

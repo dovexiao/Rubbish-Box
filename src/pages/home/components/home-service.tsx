@@ -5,12 +5,18 @@ import TouchableOpacity from '@basicComponents/touchable-opacity';
 import {goCS, goTo} from '@/utils';
 import LazyImage from '@basicComponents/image/lazy-image';
 import {View} from 'react-native';
-import globalStore from '@/services/global.state';
 import HomePopTwo from './home-pop-two';
 
-const HomeService = ({spinShow}: {spinShow: () => void}) => {
+const HomeService = ({
+  spinShow,
+  firstShow,
+  isLogin,
+}: {
+  spinShow: () => void;
+  firstShow?: number;
+  isLogin?: boolean;
+}) => {
   const [isImageVisible, setIsImageVisible] = useState(false);
-
   const toggleModal = () => {
     setIsImageVisible(!isImageVisible);
   };
@@ -27,12 +33,11 @@ const HomeService = ({spinShow}: {spinShow: () => void}) => {
           imageUrl={require('@assets/icons/luckyspin.gif')}
         />
       </TouchableOpacity>
-      {(globalStore.userInfo?.totalRechargeAmount !== 0 ||
-        !globalStore.token) && (
+      {(firstShow === 1 || !isLogin) && (
         <TouchableOpacity
           style={{marginBottom: 8}}
           onPress={() => {
-            if (!globalStore.token) {
+            if (!isLogin) {
               goTo('Login');
               return;
             }

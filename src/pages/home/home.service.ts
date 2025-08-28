@@ -32,6 +32,9 @@ import {
 export const getNoticeCheck = () => {
   return http.post<null, NoticeCheckList>('app/sys/notice/check');
 };
+export const getFirstRecharge = () => {
+  return http.post<null, any>('app/base/check/first/recharge');
+};
 
 // 所有消息提醒
 export const getAllRemind = () => {
