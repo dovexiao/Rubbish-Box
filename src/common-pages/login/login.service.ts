@@ -1,21 +1,21 @@
 import globalStore from '@/services/global.state';
-// import uuid from 'react-native-uuid';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '@utils';
 export const sendCode = (userPhone: string) => {
   return http.post('app/sendCode', {userPhone});
 };
-// const myAppType = 'myApp 1.0.2';
-// const getUuid = async (manufacturer: string) => {
-//   const uuids: any = uuid.v4();
-//   const getStorage = await AsyncStorage.getItem(manufacturer);
-//   if (getStorage === null) {
-//     AsyncStorage.setItem(manufacturer, uuids);
-//     return uuids;
-//   } else {
-//     return getStorage;
-//   }
-// };
+const myAppType = 'myApp 1.0.2';
+const getUuid = async (manufacturer: string) => {
+  const uuids: any = uuid.v4();
+  const getStorage = await AsyncStorage.getItem(manufacturer);
+  if (getStorage === null) {
+    AsyncStorage.setItem(manufacturer, uuids);
+    return uuids;
+  } else {
+    return getStorage;
+  }
+};
 export const userLogin = async (
   userPhone: string,
   code: string,
@@ -26,12 +26,12 @@ export const userLogin = async (
   userInviteCode?: string,
   isLogin: boolean = true,
 ) => {
-  // const manufacturer = myAppType;
-  // const id = await getUuid(manufacturer);
+  const manufacturer = myAppType;
+  const id = await getUuid(manufacturer);
   const date = {
     userPhone,
     code,
-    deviceCode,
+    deviceCode: id,
     inviteCode,
     equipmentType,
     systemType,
@@ -57,12 +57,12 @@ export const passwordLogin = async (
   equipmentType: string,
   systemType: string,
 ) => {
-  // const manufacturer = myAppType;
-  // const id = await getUuid(manufacturer);
+  const manufacturer = myAppType;
+  const id = await getUuid(manufacturer);
   return http.post<null, string>('app/password/login', {
     userPhone,
     password,
-    deviceCode,
+    deviceCode: id,
     inviteCode,
     equipmentType,
     systemType,
