@@ -30,7 +30,20 @@
     "build:web": "dotenv -e .env.dev react-app-rewired build",
     "build:web:uat": "dotenv -e .env.uat react-app-rewired build",
     "build:web:prod": "dotenv -e .env.prod react-app-rewired build",
-    "build:web:prod1": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prod react-app-rewired build",
+
+    "build:web:prod9": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prod react-app-rewired build",
+    "build:web:prod101": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodsupbetseven react-app-rewired build",
+    "build:web:prod102": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodlotteryindia react-app-rewired build",
+    "build:web:prod103": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodsupbetone react-app-rewired build",
+    "build:web:prod104": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodgobet react-app-rewired build",
+    "build:web:prod105": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodmybetfive react-app-rewired build",
+    "build:web:prod106": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodmybetnine react-app-rewired build",
+    "build:web:prod107": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodwinlucky react-app-rewired build",
+    "build:web:prod108": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodluckyone react-app-rewired build",
+    "build:web:prod109": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodspinsseven react-app-rewired build",
+    "build:web:prod110": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodspinsnine react-app-rewired build",
+
+
     "upgrade:android:uuuuuuat": "appcenter codepush release-react -d Uat -a ziencinacabos-gmail.com/MegaDream -t 1.0.0",
     "upgrade:android:pro": "appcenter codepush release-react -a 15201335016-163.com/Indra-Lottery-1 -d Production -t 2.1.2 -m",
     "upgrade:android:test": "appcenter codepush release-react -d Dev -a ziencinacabos-gmail.com/MegaDream -t 1.0.0",
