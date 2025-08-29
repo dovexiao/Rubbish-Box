@@ -352,37 +352,34 @@ function App(): JSX.Element {
         // 如果需要更新,就不触发弹窗
         return;
       }
-      globalStore.asyncGetItem('last_check_pop').then(res => {
-        const timeCode = parseInt(res || '0', 10);
-        if (
-          !timeCode ||
-          timeCode < new Date(new Date().toLocaleDateString()).getTime()
-        ) {
-          setTimeout(() => {
-            checkPop().then(popInfo => {
-              setBannerList(popInfo);
-              if (popInfo?.length > 0) {
-                Image.getSize(popInfo[0].bannerImg, (width, height) => {
-                  setImageRatio(height / width);
-                  trigglePop();
-                });
-              }
-              // if (popInfo?.status === 1 && popInfo?.popImg) {
-              //   Image.getSize(popInfo.popImg, (width, height) => {
-              //     setOverlayState({
-              //       ...popInfo,
-              //       imageRatio: height / width,
-              //     });
-              //     trigglePop();
-              //   });
-              // }
-            });
-            globalStore.asyncSetItem(
-              'last_check_pop',
-              new Date().getTime() + '',
-            );
-          }, 1000);
-        }
+      globalStore.asyncGetItem('last_check_pop').then(_res => {
+        // const timeCode = parseInt(res || '0', 10);
+        // if (
+        //   !timeCode ||
+        //   timeCode < new Date(new Date().toLocaleDateString()).getTime()
+        // ) {
+        setTimeout(() => {
+          checkPop().then(popInfo => {
+            setBannerList(popInfo);
+            if (popInfo?.length > 0) {
+              Image.getSize(popInfo[0].bannerImg, (width, height) => {
+                setImageRatio(height / width);
+                trigglePop();
+              });
+            }
+            // if (popInfo?.status === 1 && popInfo?.popImg) {
+            //   Image.getSize(popInfo.popImg, (width, height) => {
+            //     setOverlayState({
+            //       ...popInfo,
+            //       imageRatio: height / width,
+            //     });
+            //     trigglePop();
+            //   });
+            // }
+          });
+          globalStore.asyncSetItem('last_check_pop', new Date().getTime() + '');
+        }, 1000);
+        // }
       });
     },
     false,
@@ -393,7 +390,7 @@ function App(): JSX.Element {
     // 直接延迟是因为为了避免被顶号的情况导致弹窗被带到login
     if (globalStore.isWeb) {
       const id = setInterval(() => {
-        if (location.href.indexOf('/index/') > -1 && checkLangRef.current) {
+        if (location.href.indexOf('/index/') > -1) {
           clearInterval(id);
           !popVisible && setPopVisible(true);
         }
