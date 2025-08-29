@@ -18,7 +18,7 @@ const header = {
 
 export const datas: any = {
   packageId: globalStore.packageId,
-  packageInfo: globalStore.packageInfo,
+  // packageInfo: globalStore.packageInfo,
   versionCode: VERSION_CODE,
 };
 
@@ -81,7 +81,7 @@ const createHTTP = ({
     async config => {
       config.data = {
         channel: globalStore.isAndroid ? 'Android' : 'h5',
-        channelId: globalStore.channel || 'supbet',
+        channelId: envConfig.getChannelId || globalStore.channel || 'supbet',
         lang: globalStore.lang,
         visitor: globalStore.visitor,
         reqDate: new Date().getTime(),
