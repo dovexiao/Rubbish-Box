@@ -77,7 +77,7 @@ export const checkVersion = () => {
     {channelId: string; versionCode: string; signInfo: string},
     VersionInfo
   >('app/version/check', {
-    channelId: globalStore.channel,
+    channelId: envConfig.getChannelId || globalStore.channel,
     packageInfo: undefined,
     versionCode: VERSION_CODE,
   });

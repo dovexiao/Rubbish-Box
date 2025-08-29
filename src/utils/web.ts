@@ -128,7 +128,7 @@ export const goCS = () => {
 };
 
 export const downloadApk = () => {
-  const channelId = globalStore.channel;
+  const channelId = envConfig.getChannelId || globalStore.channel;
   // if (globalStore.isAndroid) {
   //   if (channelId === 'supbet') {
   //     Linking.openURL('https://www.staticimg007.com.com/apk/supbet.apk');
