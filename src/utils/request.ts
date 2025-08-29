@@ -2,7 +2,7 @@ import {Platform} from 'react-native';
 import axios, {AxiosResponse} from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalStore from '@services/global.state';
-import {errorLog, goTo, parseCookie} from '@utils';
+import {errorLog, goTo, parseCookie, getUrlParams} from '@utils';
 import envConfig from './env.config';
 import {BasicObject} from '@/types';
 import {getVersion} from 'react-native-device-info';
@@ -103,6 +103,7 @@ const createHTTP = ({
   // 请求拦截器
   http.interceptors.request.use(
     async config => {
+      const params = getUrlParams();
       config.data = {
         channel: globalStore.isAndroid ? 'Android' : 'h5',
         lang: globalStore.lang,
@@ -112,6 +113,7 @@ const createHTTP = ({
         ...mergeData,
         ...config.data,
         channelId:
+          params.channelId ||
           ENV_CONFIG.REACT_APP_API_CHANNEL_ID ||
           globalStore.channel ||
           'supbet',
