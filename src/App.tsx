@@ -7,6 +7,7 @@ import {
   StatusBar,
   View,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import {
   CardStyleInterpolators,
@@ -405,7 +406,7 @@ function App(): JSX.Element {
       !popVisible && setPopVisible(true);
     }
   }, [loading, chckedLang, bannerList]);
-
+  const addHeight = Platform.OS === 'web' ? 50 : 300;
   return (
     <SafeAreaProvider style={[theme.position.rel]}>
       {/* <StartLoadingWeb /> */}
@@ -475,7 +476,7 @@ function App(): JSX.Element {
           {
             // borderRadius: 8,
             width: popImageWidth,
-            height: popImageWidth * imageRatio + 300,
+            height: popImageWidth * imageRatio + addHeight,
             backgroundColor: theme.basicColor.newTransparent,
           },
         ]}>
@@ -483,7 +484,7 @@ function App(): JSX.Element {
           style={[
             {
               width: popImageWidth,
-              height: popImageWidth * imageRatio + 300,
+              height: popImageWidth * imageRatio + addHeight,
               overflow: 'hidden',
             },
           ]}>
@@ -491,7 +492,7 @@ function App(): JSX.Element {
             type={2}
             bannerList={bannerList}
             bannerWidth={popImageWidth}
-            bannerHeight={popImageWidth * imageRatio + 300}
+            bannerHeight={popImageWidth * imageRatio + addHeight}
             bannerOverlaySize="small"
           />
         </View>
