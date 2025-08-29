@@ -128,7 +128,6 @@ const createHTTP = ({
         config.headers.fbp = cookiedata._fbp;
         config.headers.fbc = cookiedata._fbc;
       }
-      console.log(1111111, config.data);
       return config;
     },
     (error: any) => {
