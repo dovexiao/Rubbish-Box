@@ -1,3 +1,4 @@
+import {Platform} from 'react-native';
 import axios, {AxiosResponse} from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalStore from '@services/global.state';
@@ -6,6 +7,29 @@ import envConfig from './env.config';
 import {BasicObject} from '@/types';
 import {getVersion} from 'react-native-device-info';
 import useUserStore from '@/store/useUserStore';
+import RNConfig from 'react-native-config';
+
+const IS_WEB = Platform.OS === 'web';
+
+const ENV_CONFIG = (IS_WEB ? process.env : RNConfig) as {
+  REACT_APP_ENV: 'dev' | 'prod';
+  REACT_APP_API_BASE_URL: string;
+  REACT_APP_API_INDUSWIN_URL?: string;
+  REACT_APP_API_SPORTS_URL?: string;
+  REACT_APP_API_H5GAMES_URL?: string;
+  REACT_APP_API_RACECAR_URL?: string;
+  REACT_APP_API_H5VUE_URL?: string;
+  REACT_APP_PACKAGE?: number;
+  REACT_APP_API_DOWNLOAD_URL?: string;
+  REACT_APP_API_CHANNEL_ID?: string;
+  REACT_APP_API_PACKAGE_ID?: string | number;
+  REACT_APP_API_CUSTOM_SERVICE_URL?: string;
+  REACT_APP_API_DOWNLOAD_CHANNEL_URL?: string;
+  REACT_APP_API_LOGO_URL?: string;
+  REACT_APP_API_LOGO_URL_V2?: string;
+  REACT_APP_API_LAUNCH_SCREEN_URL?: string;
+  [k: string]: string | number | undefined;
+};
 
 export const VERSION_CODE = globalStore.isWeb
   ? '999'
@@ -81,13 +105,16 @@ const createHTTP = ({
     async config => {
       config.data = {
         channel: globalStore.isAndroid ? 'Android' : 'h5',
-        channelId: envConfig.getChannelId || globalStore.channel || 'supbet',
         lang: globalStore.lang,
         visitor: globalStore.visitor,
         reqDate: new Date().getTime(),
         ...datas,
         ...mergeData,
         ...config.data,
+        channelId:
+          ENV_CONFIG.REACT_APP_API_CHANNEL_ID ||
+          globalStore.channel ||
+          'supbet',
       };
       const token = globalStore.token || (await getToken());
       if (token) {
@@ -101,6 +128,7 @@ const createHTTP = ({
         config.headers.fbp = cookiedata._fbp;
         config.headers.fbc = cookiedata._fbc;
       }
+      console.log(1111111, config.data);
       return config;
     },
     (error: any) => {
