@@ -59,31 +59,54 @@ class Config {
     return this._moengageAppId;
   }
 
+  private _downloadUrl = '';
   get downloadUrl() {
-    return ENV_CONFIG.REACT_APP_API_DOWNLOAD_URL;
+    return this._downloadUrl || ENV_CONFIG.REACT_APP_API_DOWNLOAD_URL;
   }
+  private _downloadChannelUrl = '';
   get downloadChannelUrl() {
-    return ENV_CONFIG.REACT_APP_API_DOWNLOAD_CHANNEL_URL;
+    return (
+      this._downloadChannelUrl || ENV_CONFIG.REACT_APP_API_DOWNLOAD_CHANNEL_URL
+    );
   }
+  private _getChannelId = '';
   get getChannelId() {
-    return ENV_CONFIG.REACT_APP_API_CHANNEL_ID;
+    return this._getChannelId || ENV_CONFIG.REACT_APP_API_CHANNEL_ID;
   }
+  private _getPackageId = '';
   get getPackageId() {
-    return ENV_CONFIG.REACT_APP_API_PACKAGE_ID;
+    return this._getPackageId || ENV_CONFIG.REACT_APP_API_PACKAGE_ID;
   }
+  private _getCustomServiceUrl = '';
   get getCustomServiceUrl() {
-    return ENV_CONFIG.REACT_APP_API_CUSTOM_SERVICE_URL;
+    return (
+      this._getCustomServiceUrl || ENV_CONFIG.REACT_APP_API_CUSTOM_SERVICE_URL
+    );
   }
+  private _getLogo = '';
   get getLogo() {
-    return ENV_CONFIG.REACT_APP_API_LOGO_URL;
+    return this._getLogo || ENV_CONFIG.REACT_APP_API_LOGO_URL;
   }
+  private _getLogoV2 = '';
   get getLogoV2() {
-    return ENV_CONFIG.REACT_APP_API_LOGO_URL_V2;
+    return this._getLogoV2 || ENV_CONFIG.REACT_APP_API_LOGO_URL_V2;
   }
+  private _getLaunchScreen = '';
   get getLaunchScreen() {
-    return ENV_CONFIG.REACT_APP_API_LAUNCH_SCREEN_URL;
+    return this._getLaunchScreen || ENV_CONFIG.REACT_APP_API_LAUNCH_SCREEN_URL;
   }
   constructor() {
+    this._downloadUrl = ENV_CONFIG.REACT_APP_API_DOWNLOAD_URL || '';
+    this._getChannelId = ENV_CONFIG.REACT_APP_API_CHANNEL_ID || '';
+    this._getPackageId = ENV_CONFIG.REACT_APP_API_PACKAGE_ID as string;
+    this._getCustomServiceUrl =
+      ENV_CONFIG.REACT_APP_API_CUSTOM_SERVICE_URL || '';
+    this._getLogo = ENV_CONFIG.REACT_APP_API_LOGO_URL || '';
+    this._getLogoV2 = ENV_CONFIG.REACT_APP_API_LOGO_URL_V2 || '';
+    this._getLaunchScreen = ENV_CONFIG.REACT_APP_API_LAUNCH_SCREEN_URL || '';
+    this._downloadChannelUrl =
+      ENV_CONFIG.REACT_APP_API_DOWNLOAD_CHANNEL_URL || '';
+
     this._baseUrl = ENV_CONFIG.REACT_APP_API_BASE_URL;
     // this._baseUrl = 'https://api.mega4cx25.com/';
     this._induswinUrl =
