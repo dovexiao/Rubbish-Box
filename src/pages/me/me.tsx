@@ -48,13 +48,15 @@ import useNotificationStore from '@/store/useNotificationStore';
 import {useShallow} from 'zustand/react/shallow';
 import GiftPop from '@/common-pages/gift-code/gift-pop';
 import { getGiftCodeAmount } from '@/pages/me/me.service';
-import { useRebateSuccessToast } from '@/common-pages/rebate/rebate-toast.hooks';
+import {ToastType, useToast} from '@basicComponents/modal';
+// import { useRebateSuccessToast } from '@/common-pages/rebate/rebate-toast.hooks';
 import LinearGradient from '@/components/basic/linear-gradient';
 
 const {overflow, padding, font, margin, borderRadius} = theme;
 
 /** TODO 单个文件过大,需要拆解 */
 const Me = () => {
+  const {renderModal, show} = useToast();
   const {i18n} = useTranslation();
   const [login, setLogin] = useState<boolean>(false);
 
@@ -175,7 +177,7 @@ const Me = () => {
     setGiftPopVisible(false);
   };
 
-  const {show} = useRebateSuccessToast();
+  // const {show} = useRebateSuccessToast();
 
   const handleSubmit = async (value: string, callback: () => void) => {
     try {
@@ -183,7 +185,11 @@ const Me = () => {
         return;
       }
       const res = await getGiftCodeAmount(value);
-      show(Number(res));
+      refresh(globalStore.token);
+      show({
+        type: ToastType.success,
+        message: res.title || '',
+      });
       handleClosePop(); // 关闭弹窗
       callback(); // 调用回调函数
     } catch (error) {
@@ -513,6 +519,7 @@ const Me = () => {
       {renderConfirmModal}
       {renderLanguageModal}
       {versionModal.renderModal}
+      {renderModal}
     </LazyImageLGBackground>
   );
 };
