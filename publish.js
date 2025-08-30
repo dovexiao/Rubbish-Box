@@ -3,16 +3,16 @@ const fs = require('fs');
 const {exit} = require('process');
 
 const channelList = [
-  'prodgobet',
-  'prodlotteryindia',
-  'prodluckyone',
-  'prodmybetfive',
-  'prodmybetnine',
-  'prodspinsnine',
-  'prodspinsseven',
-  'prodsupbetone',
-  'prodsupbetseven',
-  'prodwinluck',
+  // 'prodgobet',
+  // 'prodlotteryindia',
+  // 'prodluckyone',
+  // 'prodmybetfive',
+  // 'prodmybetnine',
+  // 'prodspinsnine',
+  // 'prodspinsseven',
+  // 'prodsupbetone',
+  // 'prodsupbetseven',
+  'prodwinlucky',
   'supbet',
 ];
 async function replaceConfigFiles(channel) {
