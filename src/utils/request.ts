@@ -112,11 +112,12 @@ const createHTTP = ({
         ...datas,
         ...mergeData,
         ...config.data,
-        channelId:
-          params.channelId ||
-          ENV_CONFIG.REACT_APP_API_CHANNEL_ID ||
-          globalStore.channel ||
-          'supbet',
+        channelId: IS_WEB
+          ? globalStore.channel
+          : params.channelId ||
+            ENV_CONFIG.REACT_APP_API_CHANNEL_ID ||
+            globalStore.channel ||
+            'supbet',
       };
       const token = globalStore.token || (await getToken());
       if (token) {
