@@ -127,6 +127,7 @@ const Withdraw = () => {
 
 
   const onGoAddBank = useCallback((cardInfo?: CardListItemType) => {
+    setShowCard(false);
     if (!globalStore.token) {
       goTo('Login', {backPage: 'Home'});
       return;

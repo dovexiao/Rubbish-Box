@@ -62,7 +62,7 @@ const baseInputStyle = {
 const inputStyle = globalStore.isWeb
   ? {
       ...baseInputStyle,
-      caretColor: theme.fontColor.main,
+      caretColor: theme.fontColor.white,
       outline: 'none',
     }
   : baseInputStyle;
