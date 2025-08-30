@@ -74,9 +74,12 @@ const Edit = (props: {onEditBank?: () => void}) => {
     <NativeTouchableOpacity
       onPress={() => onEditBank()}
       style={[
-        theme.background.primary,
+        // theme.background.primary,
         theme.borderRadius.xs,
         styles.editButton,
+        {
+          backgroundColor: theme.basicColor.newBgInOne,
+        },
       ]}>
       <EditIcon />
       <Text color={theme.fontColor.white} style={[theme.margin.leftxxs]}>
@@ -107,7 +110,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   selected: {
-    borderColor: theme.basicColor.primary,
+    borderColor: theme.basicColor.newButtonYellow,
   },
   editButton: {
     flexDirection: 'row',
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
     right: -24,
     bottom: -24,
     borderRadius: 24,
-    backgroundColor: theme.basicColor.primary,
+    backgroundColor: theme.basicColor.newBgInOne,
   },
   check: {
     position: 'absolute',
