@@ -15,7 +15,7 @@ import RechargeChannel from './recharge-channel';
 import RechargeButton from '@/components/business/recharge-button';
 import Spin from '@/components/basic/spin';
 import RechargeRule from './recharge-rule';
-
+import { useFocusEffect } from '@react-navigation/native';
 import {
   BalanceListItem,
   PayMethod,
@@ -87,21 +87,45 @@ const Recharge = () => {
   }, [balanceList, balance]);
 
   // ✅ 初始化获取充值选项
-  useEffect(() => {
-    setLoading(true);
-    Promise.all([getBalanceList(), getPayMethod()])
-      .then(([balances, methods]) => {
-        setBalanceList(balances);
-        setPaymethodList(methods);
-        if (balances.length > 0) {
-          setBalance(balances[0].balance + '');
+  useFocusEffect(
+    React.useCallback(() => {
+      // 每次页面获得焦点时执行（包括首次进入和返回进入）
+      const fetchData = async () => {
+        setLoading(true);
+        try {
+          // 调用getBalanceList和getPayMethod
+          const [balances, methods] = await Promise.all([
+            getBalanceList(),
+            getPayMethod()
+          ]);
+          setBalanceList(balances);
+          setPaymethodList(methods);
+          if (balances.length > 0) {
+            setBalance(balances[0].balance + '');
+          }
+          if (methods.length > 0) {
+            setPayMethodId(methods[0].id);
+          }
+        } catch (error) {
+          console.error('Failed to fetch data:', error);
+        } finally {
+          setLoading(false);
         }
-        if (methods.length > 0) {
-          setPayMethodId(methods[0].id);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
+      };
+  
+      fetchData();
+  
+      // 订阅逻辑（保持不变）
+      const sub = globalStore.amountChanged.subscribe(res => {
+        setAmount(res.current);
+        setLoading(false);
+      });
+  
+      return () => {
+        sub.unsubscribe(); // 页面失焦时取消订阅
+      };
+    }, []) // 空依赖 → useCallback确保函数引用稳定
+  );
 
   // ✅ 刷新余额
   const handleRefresh = useCallback(() => {
