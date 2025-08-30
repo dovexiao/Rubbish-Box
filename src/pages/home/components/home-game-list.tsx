@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import globalStore from '@/services/global.state';
 import {goTo} from '@/utils';
 import theme from '@style';
 import {useTranslation} from 'react-i18next';
+import {getHomeTabCheck} from '../home.service';
 
 interface BoxData {
   id: number;
@@ -23,6 +24,7 @@ const HomeGameList: React.FC<{setSelectedGame: (id: number) => void}> = ({
 }) => {
   const {i18n} = useTranslation();
   const [selectedBox, setSelectedBox] = useState<number>(1);
+  const [gameData, setGameData] = useState<BoxData[]>([]); // 状态管理游戏数据
 
   const boxWidth = (globalStore.screenWidth - 24) / 5; // 平分屏幕宽度
 
@@ -53,7 +55,40 @@ const HomeGameList: React.FC<{setSelectedGame: (id: number) => void}> = ({
       text: i18n.t('home.tab.sports'),
     },
   ];
+  // 获取游戏排序
+  const getGameOrder = async () => {
+    try {
+      const response = await getHomeTabCheck();
+      if (response === 1) {
+        // 返回1，保持原始顺序
+        setGameData([...data]);
+      } else if (response === 2) {
+        // 返回2，将id为2的项放在第一位
+        const id2Item = data.find(item => item.id === 2);
+        const otherItems = data.filter(item => item.id !== 2);
 
+        if (id2Item) {
+          setGameData([id2Item, ...otherItems]);
+        } else {
+          setGameData([...data]);
+        }
+        setSelectedBox(id2Item?.id || 1);
+        setSelectedGame(id2Item?.id || 1);
+      } else {
+        // 其他情况保持原始顺序
+        setGameData([...data]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch game order:', error);
+      // 出错时使用原始数据
+      setGameData([...data]);
+    }
+  };
+
+  useEffect(() => {
+    getGameOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const getUrl = async () => {
     if (!globalStore.token) {
       goTo('Login');
@@ -61,10 +96,10 @@ const HomeGameList: React.FC<{setSelectedGame: (id: number) => void}> = ({
     }
     goTo('CasinoGameWeb', {id: 99999});
   };
-
+  const displayData = gameData.length > 0 ? gameData : data;
   return (
     <View style={styles.container}>
-      {data.map(item => (
+      {displayData.map(item => (
         <TouchableOpacity
           key={item.id}
           style={[styles.box, {width: boxWidth, height: 1.28 * boxWidth}]}

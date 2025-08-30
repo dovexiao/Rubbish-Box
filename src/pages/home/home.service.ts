@@ -35,7 +35,9 @@ export const getNoticeCheck = () => {
 export const getFirstRecharge = () => {
   return http.post<null, any>('app/base/check/first/recharge');
 };
-
+export const getHomeTabCheck = () => {
+  return http.post<null, any>('app/base/check/tab');
+};
 // 所有消息提醒
 export const getAllRemind = () => {
   return http.post<null, number>('app/message/all/remind');
