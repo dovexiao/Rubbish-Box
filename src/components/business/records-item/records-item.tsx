@@ -264,7 +264,7 @@ const RecordItem = (props: RecordItemType) => {
         <Text white>
           {timeLabel} {i18n.t('label.time')}
         </Text>
-        <Text white>{dayjs(time).format('DD/MM/YYYY hh:mm')}</Text>
+        <Text white>{dayjs(time).format('DD/MM/YYYY hh:mm A')}</Text>
       </View>
       {showDetail && (
         <View>
