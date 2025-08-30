@@ -1,5 +1,5 @@
 package com.sambad.supbetgame.Chat;
-
+import com.sambad.supbetgame.BuildConfig; 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -141,7 +141,7 @@ public class FreshChatModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getChannelIdWithString(Callback successCallback) {
-      String result = "supbet";
+      String result = BuildConfig.REACT_APP_API_CHANNEL_ID;
       successCallback.invoke(result);
     }
 

@@ -1,0 +1,6 @@
+<resources>
+    <!-- <string name="app_name">Supbet</string> -->
+    <string moduleConfig="true" name="CodePushDeploymentKey"></string>
+    <string name="freshchat_file_provider_authority">com.sambad.prodmybetnine.provider</string>
+    <string name="freshchat_campaign_notification_channel_name">Campaign messages</string>
+</resources>

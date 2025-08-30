@@ -1,6 +1,45 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 
+project.ext.envConfigFiles = [
+    // '101luck': '.env.101luck',
+    // '101luckDebug': '.env.101luck',
+    // '101luckRelease': '.env.101luck',
+    'prodgobet': '.env.prodgobet',
+    'prodgobetDebug': '.env.prodgobet',
+    'prodgobetRelease': '.env.prodgobet',
+    'prodlotteryindia': '.env.prodlotteryindia',
+    'prodlotteryindiaDebug': '.env.prodlotteryindia',
+    'prodlotteryindiaRelease': '.env.prodlotteryindia',
+    'prodluckyone': '.env.prodluckyone',
+    'prodluckyoneDebug': '.env.prodluckyone',
+    'prodluckyoneRelease': '.env.prodluckyone',
+    'prodmybetfive': '.env.prodmybetfive',
+    'prodmybetfiveDebug': '.env.prodmybetfive',
+    'prodmybetfiveRelease': '.env.prodmybetfive',
+    'prodmybetnine': '.env.prodmybetnine',
+    'prodmybetnineDebug': '.env.prodmybetnine',
+    'prodmybetnineRelease': '.env.prodmybetnine',
+    'prodspinsnine': '.env.prodspinsnine',
+    'prodspinsnineDebug': '.env.prodspinsnine',
+    'prodspinsnineRelease': '.env.prodspinsnine',
+    'prodspinsseven': '.env.prodspinsseven',
+    'prodspinssevenDebug': '.env.prodspinsseven',
+    'prodspinssevenRelease': '.env.prodspinsseven',
+    'prodsupbetone': '.env.prodsupbetone',
+    'prodsupbetoneDebug': '.env.prodsupbetone',
+    'prodsupbetoneRelease': '.env.prodsupbetone',
+    'prodsupbetseven': '.env.prodsupbetseven',
+    'prodsupbetsevenDebug': '.env.prodsupbetseven',
+    'prodsupbetsevenRelease': '.env.prodsupbetseven',
+    'prodwinluck': '.env.prodwinluck',
+    'prodwinluckDebug': '.env.prodwinluck',
+    'prodwinluckRelease': '.env.prodwinluck',
+    'supbet': '.env.supbet',
+    'supbetDebug': '.env.supbet',
+    'supbetRelease': '.env.supbet'
+]
+apply from: project(':react-native-config').projectDir.getPath() + '/dotenv.gradle'
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -75,9 +114,10 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.sambad.supbetgame"
+    // namespace "com.sambad.supbetgame"
     defaultConfig {
-        applicationId "com.sambad.supbetgame"
+        // applicationId "com.sambad.supbetgame"
+        applicationId "com.sambad"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -90,6 +130,98 @@ android {
         versionName "2.1.2"
         // ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
         ndk.abiFilters 'armeabi-v7a'
+        resValue "string", "build_config_package", "com.sambad.supbetgame"
+    }
+    flavorDimensions "environment"
+    productFlavors {
+        "prodgobet" {
+            dimension "environment"
+            applicationIdSuffix ".prodgobet"
+            resValue "string", "app_name", "Gobet758"
+            resValue "string", "env_config_path", ".env.prodgobet"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodgobet\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodgobet"  // 资源目录隔离
+        }
+        "prodlotteryindia" {
+            dimension "environment"
+            applicationIdSuffix ".prodlotteryindia"
+            resValue "string", "app_name", "Lottery India"
+            resValue "string", "env_config_path", ".env.prodlotteryindia"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodlotteryindia\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodlotteryindia"  // 资源目录隔离
+        }
+        "prodluckyone" {
+            dimension "environment"
+            applicationIdSuffix ".prodluckyone"
+            resValue "string", "app_name", "Lucky101"
+            resValue "string", "env_config_path", ".env.prodluckyone"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodluckyone\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodluckyone"  // 资源目录隔离
+        }
+        "prodmybetfive" {
+            dimension "environment"
+            applicationIdSuffix ".prodmybetfive"
+            resValue "string", "app_name", "Mybet758"
+            resValue "string", "env_config_path", ".env.prodmybetfive"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodmybetfive\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodmybetfive"  // 资源目录隔离
+        }
+        "prodmybetnine" {
+            dimension "environment"
+            applicationIdSuffix ".prodmybetnine"
+            resValue "string", "app_name", "Mybet798"
+            resValue "string", "env_config_path", ".env.prodmybetnine"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodmybetnine\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodmybetnine"  // 资源目录隔离
+        }
+        "prodspinsnine" {
+            dimension "environment"
+            applicationIdSuffix ".prodspinsnine"
+            resValue "string", "app_name", "Spins999"
+            resValue "string", "env_config_path", ".env.prodspinsnine"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodspinsnine\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodspinsnine"  // 资源目录隔离
+        }
+        "prodspinsseven" {
+            dimension "environment"
+            applicationIdSuffix ".prodspinsseven"
+            resValue "string", "app_name", "Spins007"
+            resValue "string", "env_config_path", ".env.prodspinsseven"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodspinsseven\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodspinsseven"  // 资源目录隔离
+        }
+        "prodsupbetone" {
+            dimension "environment"
+            applicationIdSuffix ".prodsupbetone"
+            resValue "string", "app_name", "Supbet001"
+            resValue "string", "env_config_path", ".env.prodsupbetone"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodsupbetone\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodsupbetone"  // 资源目录隔离
+        }
+        "prodsupbetseven" {
+            dimension "environment"
+            applicationIdSuffix ".prodsupbetseven"
+            resValue "string", "app_name", "Supbet007"
+            resValue "string", "env_config_path", ".env.prodsupbetseven"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodsupbetseven\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodsupbetseven"  // 资源目录隔离
+        }
+        "prodwinluck" {
+            dimension "environment"
+            applicationIdSuffix ".prodwinluck"
+            resValue "string", "app_name", "Winlucky001"
+            resValue "string", "env_config_path", ".env.prodwinluck"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodwinluck\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "prodwinluck"  // 资源目录隔离
+        }
+        supbet {
+            dimension "environment"
+            applicationIdSuffix ".supbet"
+            resValue "string", "app_name", "Supbet"
+            resValue "string", "env_config_path", ".env.supbet"
+            buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"supbet\""  // 目录名与flavor一致
+            resValue "string", "code_push_hash_dir", "supbet"  // 资源目录隔离
+        }
     }
     signingConfigs {
         debug {
@@ -132,6 +264,7 @@ android {
 
 dependencies {
 
+    implementation project(':react-native-config')
     //moengage
     implementation("com.moengage:moe-android-sdk:12.10.00")
     implementation("com.moengage:inbox-core:2.6.0")
@@ -182,5 +315,4 @@ apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
-apply from: project(':react-native-config').projectDir.getPath() + '/dotenv.gradle'
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
