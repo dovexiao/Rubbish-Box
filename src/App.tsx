@@ -406,7 +406,7 @@ function App(): JSX.Element {
       !popVisible && setPopVisible(true);
     }
   }, [loading, chckedLang, bannerList]);
-  const addHeight = Platform.OS === 'web' ? 50 : 300;
+  const addHeight = Platform.OS === 'web' ? 50 : 150;
   return (
     <SafeAreaProvider style={[theme.position.rel]}>
       {/* <StartLoadingWeb /> */}
