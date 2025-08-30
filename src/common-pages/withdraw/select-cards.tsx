@@ -31,7 +31,11 @@ const SelectCards = (props: SelectCardsType) => {
   } = props;
 
   return (
-    <View style={[styles.container, theme.background.primary50]}>
+    <View
+      style={[
+        styles.container,
+        {backgroundColor: theme.basicColor.newBgInOne},
+      ]}>
       <View
         style={[
           theme.flex.row,
@@ -72,7 +76,7 @@ const SelectCards = (props: SelectCardsType) => {
       <View style={[theme.padding.l]}>
         <NativeTouchableOpacity
           onPress={() => onAddBank()}
-          style={[styles.add, theme.background.primary30]}>
+          style={[styles.add, {backgroundColor: theme.basicColor.newBgTwo}]}>
           <Add />
           <Text color={theme.fontColor.white} style={[theme.margin.tops]}>
             {i18n.t('withdraw-page.label.addBank')}
