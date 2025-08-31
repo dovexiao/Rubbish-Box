@@ -1,4 +1,4 @@
-package com.sambad.supbet001game.Chat;
+package com.sambad.supbetgame.Chat;
 
 import androidx.annotation.NonNull;
 

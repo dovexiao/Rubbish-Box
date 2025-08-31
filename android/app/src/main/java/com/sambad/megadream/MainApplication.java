@@ -1,4 +1,4 @@
-package com.sambad.supbet001game;
+package com.sambad.supbetgame;
 
 import android.app.Application;
 
@@ -9,7 +9,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
-import com.sambad.supbet001game.Chat.FreshChatPackage;
+import com.sambad.supbetgame.Chat.FreshChatPackage;
 import com.moengage.core.DataCenter;
 import com.moengage.core.LogLevel;
 import com.moengage.core.MoEngage;
@@ -18,7 +18,7 @@ import com.moengage.core.config.NotificationConfig;
 //import com.moengage.core.internal.lifecycle.ApplicationLifecycleObserver;
 import com.moengage.pushbase.MoEPushHelper;
 import com.moengage.react.MoEInitializer;
-import com.sambad.supbet001game.Upipay.EasyUpiPaymentPackage;
+import com.sambad.supbetgame.Upipay.EasyUpiPaymentPackage;
 import com.microsoft.codepush.react.CodePush;
 
 import java.util.List;

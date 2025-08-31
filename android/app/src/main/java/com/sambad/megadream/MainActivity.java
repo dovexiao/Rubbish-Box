@@ -1,4 +1,4 @@
-package com.sambad.supbet001game;
+package com.sambad.supbetgame;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
