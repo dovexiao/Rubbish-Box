@@ -32,12 +32,13 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
     },
     buttonWrap: {
       // backgroundColor: theme.basicColor.newBgInTwo,
-      paddingTop: theme.paddingSize.l,
-      paddingBottom: globalStore.isAndroid ? 33 * 2.3 : 66,
+      paddingTop: theme.paddingSize.m,
+      paddingBottom: globalStore.isAndroid
+        ? (56 * width) / designWidth + 10
+        : 66,
       // backgroundColor: `linear-gradient(180deg, ${theme.basicColor.newButtonBgOne})`,
     },
   });
-
   return (
     // <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}></LazyImageLGBackground>
     <View

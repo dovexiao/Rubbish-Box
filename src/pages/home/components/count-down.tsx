@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Platform} from 'react-native';
 import React, {useEffect, useRef, useState, useMemo} from 'react';
 import Text from '@basicComponents/text';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
@@ -50,7 +50,10 @@ const CountDown: React.FC<CountDownProps> = ({remain}) => {
           styles.blackSquare,
           {width: screenWidth * 0.056, height: screenWidth * 0.056},
         ]}>
-        <Text fontSize={screenWidth * 0.037} blod style={[theme.font.white]}>
+        <Text
+          fontSize={screenWidth * 0.037}
+          blod
+          style={[theme.font.white, styles.textSpe]}>
           {remainValue.hour}
         </Text>
       </View>
@@ -66,7 +69,10 @@ const CountDown: React.FC<CountDownProps> = ({remain}) => {
           styles.blackSquare,
           {width: screenWidth * 0.056, height: screenWidth * 0.056},
         ]}>
-        <Text fontSize={screenWidth * 0.037} blod style={[theme.font.white]}>
+        <Text
+          fontSize={screenWidth * 0.037}
+          blod
+          style={[theme.font.white, styles.textSpe]}>
           {remainValue.minutes}
         </Text>
       </View>
@@ -82,7 +88,10 @@ const CountDown: React.FC<CountDownProps> = ({remain}) => {
           styles.blackSquare,
           {width: screenWidth * 0.056, height: screenWidth * 0.056},
         ]}>
-        <Text fontSize={screenWidth * 0.037} blod style={[theme.font.white]}>
+        <Text
+          fontSize={screenWidth * 0.035}
+          blod
+          style={[theme.font.white, styles.textSpe]}>
           {remainValue.seconds}
         </Text>
       </View>
@@ -95,9 +104,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
     borderRadius: 2.5,
   },
+  textSpe: {
+    position: 'relative',
+    top: Platform.OS === 'android' ? -2 : 0,
+  },
   marginHorizonalXXXS: {
     color: '#000000',
     marginHorizontal: 3,
+    paddingBottom: Platform.OS === 'android' ? 2 : 0,
   },
 });
 

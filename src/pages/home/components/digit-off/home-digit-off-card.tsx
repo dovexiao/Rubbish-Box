@@ -40,7 +40,7 @@ const HomeDigitOffCard: React.FC<CardProps> = ({
           <Text style={[styles.win, {fontSize: screenWidth * 0.027}]}>
             WIN-PRIZE
           </Text>
-          <Text style={[styles.amount, {fontSize: screenWidth * 0.061}]}>
+          <Text style={[styles.amount, {fontSize: screenWidth * 0.05}]}>
             ₹{winAmount}
           </Text>
         </View>
@@ -58,11 +58,7 @@ const HomeDigitOffCard: React.FC<CardProps> = ({
               borderRadius: screenWidth * 0.027,
             },
           ]}>
-          <Text
-            style={[
-              styles.playText,
-              {fontSize: screenWidth * 0.035, lineHeight: screenWidth * 0.056},
-            ]}>
+          <Text style={[styles.playText, {fontSize: screenWidth * 0.031}]}>
             PLAY
           </Text>
         </View>
@@ -140,6 +136,9 @@ const styles = StyleSheet.create({
 
   play: {
     backgroundColor: '#ffffff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   playText: {
@@ -147,6 +146,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'Arial, Arial-Bold',
     textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
