@@ -75,9 +75,9 @@ android {
 
   compileSdkVersion rootProject.ext.compileSdkVersion
 
-  namespace "com.sambad.supbetgame"
+  namespace "com.sambad.supbet001game"
   defaultConfig {
-    applicationId "com.sambad.supbetgame"
+    applicationId "com.sambad.supbet001game"
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
     versionCode 1

@@ -9,4 +9,4 @@
 
 # Add any project specific keep options here:
 
--keep class com.sambad.supbetgame.BuildConfig { *; }
+-keep class com.sambad.supbet001game.BuildConfig { *; }

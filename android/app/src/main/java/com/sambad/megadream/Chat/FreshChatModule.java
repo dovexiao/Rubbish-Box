@@ -1,5 +1,5 @@
-package com.sambad.supbetgame.Chat;
-import com.sambad.supbetgame.BuildConfig; 
+package com.sambad.supbet001game.Chat;
+import com.sambad.supbet001game.BuildConfig;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;

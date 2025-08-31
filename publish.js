@@ -3,11 +3,11 @@ const fs = require('fs');
 const {exit} = require('process');
 
 const channelList = [
-  'sboFB01',
-  'sboFB02',
-  'sboFB03',
-  'sboFB04',
-  'sboFB05',
+  // 'sboFB01',
+  // 'sboFB02',
+  // 'sboFB03',
+  // 'sboFB04',
+  // 'sboFB05',
   'supbet001', // 默认渠道
 ];
 
@@ -29,8 +29,8 @@ function replaceAndBuild(channel) {
         reject(err);
         return;
       }
-      const apkName = `IndraLottery${
-        channel === 'IndraLottery' ? '' : '_' + channel
+      const apkName = `supbet001${
+        channel === 'supbet001' ? '' : '_' + channel
       }.apk`;
       exec(
         `mv ./android/app/build/outputs/apk/release/app-release.apk ~/Desktop/apps/${apkName}`,
