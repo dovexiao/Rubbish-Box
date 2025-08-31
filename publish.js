@@ -3,15 +3,15 @@ const fs = require('fs');
 const {exit} = require('process');
 
 const channelList = [
-  'prodgobet',
-  'prodlotteryindia',
-  'prodluckyone',
-  'prodmybetfive',
-  'prodmybetnine',
-  'prodspinsnine',
-  'prodspinsseven',
-  'prodsupbetone',
-  'prodsupbetseven',
+  // 'prodgobet',
+  // 'prodlotteryindia',
+  // 'prodluckyone',
+  // 'prodmybetfive',
+  // 'prodmybetnine',
+  // 'prodspinsnine',
+  // 'prodspinsseven',
+  // 'prodsupbetone',
+  // 'prodsupbetseven',
   'prodwinlucky',
   'supbet',
 ];
