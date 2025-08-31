@@ -61,8 +61,10 @@ export const mainPageList: {
     name: i18n.t('vip.title'),
     link: 'index/vip',
     component: Vip,
-    img: require('@assets/icons/home/results-inselect.webp'),
-    activeImg: require('@assets/icons/home/results-select.webp'),
+    img: require('@assets/icons/home/vip.png'),
+    activeImg: require('@assets/icons/home/vip-select.png'),
+    // img: require('@assets/icons/home/results-inselect.webp'),
+    // activeImg: require('@assets/icons/home/results-select.webp'),
   },
   {
     name: i18n.t('home.tab.me'),
