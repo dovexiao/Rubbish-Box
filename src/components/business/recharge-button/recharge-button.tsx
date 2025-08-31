@@ -6,7 +6,7 @@ import React from 'react';
 import {ButtonType} from '@/components/basic/button/button';
 import {useTranslation} from 'react-i18next';
 import {useResponsiveDimensions} from '@/utils';
-import globalStore from '@/services/global.state';
+// import globalStore from '@/services/global.state';
 import LinearGradient from '@/components/basic/linear-gradient';
 export interface RechargeButtonProps {
   disabled?: boolean;
@@ -33,9 +33,10 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
     buttonWrap: {
       // backgroundColor: theme.basicColor.newBgInTwo,
       paddingTop: theme.paddingSize.m,
-      paddingBottom: globalStore.isAndroid
-        ? (56 * width) / designWidth + 10
-        : 66,
+      paddingBottom: theme.paddingSize.m,
+      // paddingBottom: globalStore.isAndroid
+      //   ? (56 * width) / designWidth + 10
+      //   : 66,
       // backgroundColor: `linear-gradient(180deg, ${theme.basicColor.newButtonBgOne})`,
     },
   });

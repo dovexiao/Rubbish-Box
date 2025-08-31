@@ -5,13 +5,13 @@ import {useInnerStyle} from './vip.hooks';
 import VipCardList from './vip-card-list';
 // import VipTableList from './vip-table-list';
 import DetailNavTitle from '@businessComponents/detail-nav-title';
-import {debounce, goBack, goTo, goToWithLogin} from '@/utils';
+import {debounce, goTo, goToWithLogin} from '@/utils'; //goBack
 import {
   VipProgressInfo,
   getVipRender,
   maxVipLevel,
 } from '@/components/business/vip';
-import RechargeButton from '@/components/business/recharge-button';
+// import RechargeButton from '@/components/business/recharge-button';
 import {
   IVipConfigItem,
   IVipItem,
@@ -113,7 +113,7 @@ const Vip = () => {
       style={[theme.fill.fillW, theme.flex.col, vipStyle.container]}>
       <DetailNavTitle
         title={i18n.t('vip.title')}
-        onBack={() => goBack()}
+        // onBack={() => goBack()}
         hideServer
       />
       <View style={[theme.padding.lrxxl]}>
@@ -131,7 +131,7 @@ const Vip = () => {
         onRefresh={handleRefresh}
       />
       <VipClubList vipConfigList={vipConfigList} />
-      <RechargeButton onRecharge={toRecharge} />
+      {/* <RechargeButton onRecharge={toRecharge} /> */}
     </LazyImageLGBackground>
   );
 };

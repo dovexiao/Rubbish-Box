@@ -11,7 +11,8 @@ import Result from './common-pages/result';
 import PaidSuccess from './common-pages/paid-success';
 import Recharge from './common-pages/recharge';
 import Withdraw from './common-pages/withdraw';
-import Vip from './common-pages/vip/vip';
+// import Vip from './common-pages/vip/vip';
+// import Vip from './common-pages/recharge';
 import Wallet from './common-pages/wallet/wallet-page';
 import Rebate from './common-pages/rebate';
 import Bets from './common-pages/bets';
@@ -122,7 +123,7 @@ const routes: Routes[] = [
     link: 'paid-success',
   },
   {
-    name: 'Recharge',
+    name: 'Deposit',
     component: Recharge,
     link: 'recharge',
   },
@@ -136,11 +137,11 @@ const routes: Routes[] = [
     component: AddBank,
     link: 'add-bank',
   },
-  {
-    name: 'Vip',
-    component: Vip,
-    link: 'vip',
-  },
+  // {
+  //   name: 'Vip',
+  //   component: Vip,
+  //   link: 'vip',
+  // },
   {
     name: 'Wallet',
     component: Wallet,

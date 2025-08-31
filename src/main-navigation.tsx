@@ -21,7 +21,8 @@ import i18n from '@i18n';
 import Wallet from './pages/me';
 //活动相关
 import PromotionDrawer from './common-pages/promotion';
-import Recharge from '@/common-pages/recharge';
+import Vip from '@/common-pages/vip/vip';
+// import Recharge from '@/common-pages/recharge';
 import ProxyHome from "@/common-pages/proxy";
 
 const Tab = createBottomTabNavigator();
@@ -57,9 +58,9 @@ export const mainPageList: {
     activeImg: require('@assets/icons/home/agency-select.webp'),
   },
   {
-    name: i18n.t('home.tab.deposit'),
-    link: 'index/recharge',
-    component: Recharge,
+    name: i18n.t('vip.title'),
+    link: 'index/vip',
+    component: Vip,
     img: require('@assets/icons/home/results-inselect.webp'),
     activeImg: require('@assets/icons/home/results-select.webp'),
   },

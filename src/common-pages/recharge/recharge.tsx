@@ -4,7 +4,7 @@ import React, {useMemo, useState, useEffect, useCallback} from 'react';
 import {ScrollView, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import theme from '@/style';
-import {goTo} from '@/utils';//goBack, 
+import {goTo, goBack} from '@/utils';//goBack,
 import globalStore from '@/services/global.state';
 
 import {LazyImageLGBackground} from '@/components/basic/image';
@@ -240,7 +240,7 @@ const Recharge = () => {
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle
-        // onBack={goBack}
+        onBack={goBack}
         hideAmount
         serverRight
         title={i18n.t('home.tab.deposit')}

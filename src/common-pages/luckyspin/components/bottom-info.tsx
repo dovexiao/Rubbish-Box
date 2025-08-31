@@ -21,7 +21,7 @@ const BottomInfo: React.FC<BottomInfoProps> = ({freeCount, onClose}) => {
       goTo('Login');
       return;
     }
-    goTo('Vip');
+    goTo('VIP');
     onClose?.();
   };
   return (
