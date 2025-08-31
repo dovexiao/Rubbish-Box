@@ -53,7 +53,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
         // theme.borderRadius.m,
         theme.padding.l,
         // backgroundColor: theme.basicColor.newBgInOne
-        {marginTop: 12},
+        {marginTop: 12, paddingBottom: 0},
       ]}>
       <View style={styleSheet.title}>
         <View style={styleSheet.titleIcon}></View>
