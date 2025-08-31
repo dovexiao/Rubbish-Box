@@ -108,7 +108,6 @@ const Home = () => {
   const [login, setLogin] = useState(false);
   const getRecharge = async () => {
     const data = await getFirstRecharge();
-    console.log(22222, data);
     setFirstShow(data);
   };
   const onFocusEffect = useCallback(() => {
