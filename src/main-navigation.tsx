@@ -113,7 +113,8 @@ const CusTab = (props: BottomTabBarProps) => {
                   options.title === 'आमंत्रित करना' ||
                   options.title === 'ഏജൻസി' ||
                   options.title === 'ஏஜென்சி' ||
-                  options.title === 'ఏజెన్సీ') &&
+                  options.title === 'ఏజెన్సీ' ||
+                  options.title === 'VIP')  &&
                 !globalStore.token
               ) {
                 goTo('Login');
