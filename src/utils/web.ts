@@ -128,7 +128,8 @@ export const goCS = () => {
 };
 
 export const downloadApk = () => {
-  const channelId = envConfig.getChannelId || globalStore.channel;
+  const channelId = globalStore.channel;
+  // const channelId = envConfig.getChannelId || globalStore.channel;
   // if (globalStore.isAndroid) {
   //   if (channelId === 'supbet') {
   //     Linking.openURL('https://www.staticimg007.com.com/apk/supbet.apk');
@@ -138,10 +139,11 @@ export const downloadApk = () => {
   //   }
   // }
   if (channelId === 'supbet') {
-    location.href = envConfig.downloadUrl || '';
-    // location.href = 'https://www.staticimg007.com/apk/supbet.apk';
+    // location.href = envConfig.downloadUrl || '';
+    location.href = 'https://www.staticimg007.com/apk/supbet.apk';
   } else {
-    location.href = envConfig.downloadChannelUrl || '';
-    // location.href = `https://www.staticimg007.com/apk/supbet_${channelId}.apk`;
+    // location.href = envConfig.downloadChannelUrl || '';
+
+    location.href = `https://www.staticimg007.com/apk/supbet_${channelId}.apk`;
   }
 };
