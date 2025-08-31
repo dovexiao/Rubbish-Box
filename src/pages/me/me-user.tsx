@@ -20,7 +20,6 @@ const {flex, padding, font, margin, fill} = theme;
 import Button from '@basicComponents/button';
 import globalStore from '@/services/global.state';
 import {goTo} from '@/utils';
-import {useUserInfo} from '@/store/useUserStore'; //useToken
 import useVipStore from '@/store/useVipStore';
 
 interface MeUserProps {
@@ -31,9 +30,9 @@ interface MeUserProps {
   showNoMenu?: boolean;
 }
 
-const MeUser: React.FC<MeUserProps> = ({onUser, showNoMenu, login}) => {
+const MeUser: React.FC<MeUserProps> = ({onUser, showNoMenu, login, user}) => {
   // const {isLogin: login} = useToken();
-  const user = useUserInfo();
+  // const user = useUserInfo();
   const {level} = useVipStore(state => state.vipInfo);
   return (
     <NativeTouchableOpacity

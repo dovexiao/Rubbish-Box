@@ -17,14 +17,17 @@ import {
   IVipItem,
   postVipConfig,
   postVipInfo,
+  postUserInfo,
 } from '@/services/global.service';
 import globalStore from '@/services/global.state';
 import {useTranslation} from 'react-i18next';
 import {LazyImageLGBackground} from '@basicComponents/image';
 import VipClubList from '@/common-pages/vip-club/vip-club-list';
 import MeUser from '@/pages/me/me-user';
-import {useToken, useUserInfo} from '@/store/useUserStore';
+import {useToken} from '@/store/useUserStore'; //useUserInfo
 import useVipStore from '@/store/useVipStore';
+import {useFocusEffect} from '@react-navigation/native';
+import {IUserInfo} from '@services/global.service';
 
 const Vip = () => {
   const {i18n} = useTranslation();
@@ -33,9 +36,9 @@ const Vip = () => {
   const [vipConfigList, setVipConfigList] = useState<IVipConfigItem[]>([]);
   const [checkIndex, setCheckIndex] = useState(0);
   const {isLogin, token} = useToken();
+  const [user, setUser] = useState<IUserInfo>();
   console.log('isLogin', isLogin);
   console.log('token', token);
-  const user = useUserInfo();
   const {level} = useVipStore(state => state.vipInfo);
   const cards = useMemo(() => {
     const vips = vipList.map(v => v.level);
@@ -71,10 +74,21 @@ const Vip = () => {
     );
   }, [vipList]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // 每次页面获得焦点时执行（包括首次进入和返回进入）
+      handleRefresh();
+      // setUser(userInfo);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []), // 空依赖 → useCallback确保函数引用稳定
+  );
   const handleRefresh = () => {
     globalStore.globalLoading.next(true);
-    Promise.allSettled([postVipInfo(), postVipConfig()])
-      .then(([_listvalue, _config]) => {
+    Promise.allSettled([postVipInfo(), postVipConfig(), postUserInfo()])
+      .then(([_listvalue, _config, _user]) => {
+        if (_user.status === 'fulfilled') {
+          setUser(_user.value);
+        }
         if (_listvalue.status === 'fulfilled') {
           const _list = _listvalue.value;
           setVipList(
@@ -94,7 +108,7 @@ const Vip = () => {
       .finally(() => globalStore.globalLoading.next(false));
   };
   useEffect(() => {
-    handleRefresh();
+    // handleRefresh();
   }, []);
 
   const handleChangeCheckIndex = debounce((index: number) => {
