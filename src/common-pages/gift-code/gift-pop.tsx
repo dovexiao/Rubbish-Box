@@ -37,7 +37,7 @@ const GiftPop: React.FC<GiftPopProps> = ({visible, onClose, onSubmit}) => {
       onRequestClose={onClose}>
       <View style={styles.overlay}>
         <ImageBackground
-          source={require('@assets/icons/me/gift-pop.webp')}
+          source={require('@assets/icons/me/gift-pop.png')}
           style={[
             styles.background,
             {width: screenWidth * 0.72, height: screenWidth * 0.83},
