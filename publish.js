@@ -3,11 +3,11 @@ const fs = require('fs');
 const {exit} = require('process');
 
 const channelList = [
-  // 'sboFB01',
-  // 'sboFB02',
-  // 'sboFB03',
-  // 'sboFB04',
-  // 'sboFB05',
+  'sboFB01',
+  'sboFB02',
+  'sboFB03',
+  'sboFB04',
+  'sboFB05',
   'supbet001', // 默认渠道
 ];
 
