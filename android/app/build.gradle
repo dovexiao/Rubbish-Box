@@ -209,7 +209,7 @@ android {
         "prodwinlucky" {
             dimension "environment"
             applicationIdSuffix ".prodwinlucky"
-            resValue "string", "app_name", "Supbet"
+            resValue "string", "app_name", "Winlucky001"
             resValue "string", "env_config_path", ".env.prodwinlucky"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodwinlucky\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodwinlucky"  // 资源目录隔离

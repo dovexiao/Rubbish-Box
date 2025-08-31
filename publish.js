@@ -12,7 +12,7 @@ const channelList = [
   // 'prodspinsseven',
   // 'prodsupbetone',
   // 'prodsupbetseven',
-  'prodwinlucky',
+  // 'prodwinlucky',
   'supbet',
 ];
 async function replaceConfigFiles(channel) {
