@@ -3,6 +3,7 @@ import React, {useEffect, useRef, useState, useMemo} from 'react';
 import Text from '@basicComponents/text';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 import theme from '@/style';
+import {isXiaomiDevice} from '@/utils';
 
 interface CountDownProps {
   /** 倒计时，单位：秒 */
@@ -53,7 +54,13 @@ const CountDown: React.FC<CountDownProps> = ({remain}) => {
         <Text
           fontSize={screenWidth * 0.037}
           blod
-          style={[theme.font.white, styles.textSpe]}>
+          style={[
+            theme.font.white,
+            styles.textSpe,
+            {
+              top: isXiaomiDevice() ? -2 : 0,
+            },
+          ]}>
           {remainValue.hour}
         </Text>
       </View>
@@ -72,7 +79,13 @@ const CountDown: React.FC<CountDownProps> = ({remain}) => {
         <Text
           fontSize={screenWidth * 0.037}
           blod
-          style={[theme.font.white, styles.textSpe]}>
+          style={[
+            theme.font.white,
+            styles.textSpe,
+            {
+              top: isXiaomiDevice() ? -2 : 0,
+            },
+          ]}>
           {remainValue.minutes}
         </Text>
       </View>
@@ -91,7 +104,13 @@ const CountDown: React.FC<CountDownProps> = ({remain}) => {
         <Text
           fontSize={screenWidth * 0.035}
           blod
-          style={[theme.font.white, styles.textSpe]}>
+          style={[
+            theme.font.white,
+            styles.textSpe,
+            {
+              top: isXiaomiDevice() ? -2 : 0,
+            },
+          ]}>
           {remainValue.seconds}
         </Text>
       </View>
@@ -106,7 +125,7 @@ const styles = StyleSheet.create({
   },
   textSpe: {
     position: 'relative',
-    top: Platform.OS === 'android' ? -2 : 0,
+    // 小米系统字体有问题，需要调整位置
   },
   marginHorizonalXXXS: {
     color: '#000000',

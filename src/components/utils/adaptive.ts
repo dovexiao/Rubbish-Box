@@ -24,3 +24,19 @@ export const gutterLetter = (str: string, fontSize?: number) => {
     return str.length * charWidth + marginWidth;
   }
 };
+export const isXiaomiDevice = () => {
+  const brand = DeviceInfo.getBrand().toLowerCase();
+  // const manufacturer = DeviceInfo.getManufacturer();
+  const model = DeviceInfo.getModel().toLowerCase();
+  return (
+    brand.includes('xiaomi') ||
+    // manufacturer.includes('xiaomi') ||
+    brand.includes('redmi') ||
+    // manufacturer.includes('redmi') ||
+    brand.includes('poco') ||
+    // manufacturer.includes('poco') ||
+    model.includes('mi ') ||
+    model.includes('redmi') ||
+    model.includes('poco')
+  );
+};
