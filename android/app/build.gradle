@@ -121,7 +121,7 @@ android {
     // namespace "com.sambad"
     defaultConfig {
         // applicationId "com.sambad.supbetgame"
-        // applicationId "com.sambad"
+        applicationId "com.sambad"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -134,7 +134,7 @@ android {
         versionName "2.1.2"
         // ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
         ndk.abiFilters 'armeabi-v7a'
-        // resValue "string", "build_config_package", "com.sambad.supbetgame"
+        resValue "string", "build_config_package", "com.sambad.supbetgame"
     }
      // 确保源集配置正确
     sourceSets {
@@ -195,7 +195,6 @@ android {
             resValue "string", "env_config_path", ".env.prodgobet"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodgobet\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodgobet"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodgobet"
         }
         "prodlotteryindia" {
             dimension "environment"
@@ -207,7 +206,6 @@ android {
             resValue "string", "env_config_path", ".env.prodlotteryindia"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodlotteryindia\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodlotteryindia"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodlotteryindia"
         }
         "prodluckyone" {
             dimension "environment"
@@ -219,7 +217,6 @@ android {
             resValue "string", "env_config_path", ".env.prodluckyone"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodluckyone\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodluckyone"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodluckyone"
         }
         "prodmybetfive" {
             dimension "environment"
@@ -231,7 +228,6 @@ android {
             resValue "string", "env_config_path", ".env.prodmybetfive"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodmybetfive\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodmybetfive"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodmybetfive"
         }
         "prodmybetnine" {
             dimension "environment"
@@ -243,7 +239,6 @@ android {
             resValue "string", "env_config_path", ".env.prodmybetnine"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodmybetnine\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodmybetnine"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodmybetnine"
         }
         "prodspinsnine" {
             dimension "environment"
@@ -255,7 +250,6 @@ android {
             resValue "string", "env_config_path", ".env.prodspinsnine"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodspinsnine\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodspinsnine"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodspinsnine"
         }
         "prodspinsseven" {
             dimension "environment"
@@ -267,7 +261,6 @@ android {
             resValue "string", "env_config_path", ".env.prodspinsseven"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodspinsseven\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodspinsseven"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodspinsseven"
         }
         "prodsupbetone" {
             dimension "environment"
@@ -279,7 +272,6 @@ android {
             resValue "string", "env_config_path", ".env.prodsupbetone"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodsupbetone\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodsupbetone"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodsupbetone"
         }
         "prodsupbetseven" {
             dimension "environment"
@@ -291,7 +283,6 @@ android {
             resValue "string", "env_config_path", ".env.prodsupbetseven"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodsupbetseven\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodsupbetseven"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodsupbetseven"
         }
         "prodwinlucky" {
             dimension "environment"
@@ -303,7 +294,6 @@ android {
             resValue "string", "env_config_path", ".env.prodwinlucky"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodwinlucky\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodwinlucky"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.prodwinlucky"
         }
         "supbet" {
             dimension "environment"
@@ -315,7 +305,6 @@ android {
             resValue "string", "env_config_path", ".env.supbet"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"supbet\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "supbet"  // 资源目录隔离
-            resValue "string", "build_config_package", "com.sambad.supbet"
         }
     }
     signingConfigs {
