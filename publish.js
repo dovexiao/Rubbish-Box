@@ -6,72 +6,77 @@ const mainPackage = [
   {
     title: 'prodgobet',
     channelList:[
-      'gobet758'
+      'gbFB01'
     ]
   },
   {
     title: 'prodlotteryindia',
     channelList:[
-      'lotteryindia'
+      'liFB01'
     ]
   },
-  {
-    title: 'prodluckyone',
-    channelList:[
-      'lucky101'
-    ]
-  },
+  // {
+  //   title: 'prodluckyone',
+  //   channelList:[
+  //     'lucky101'
+  //   ]
+  // },
   {
     title: 'prodmybetfive',
     channelList:[
-      'mybet758'
+      'mbfFB01'
     ]
   },
-  {
-    title: 'prodmybetnine',
-    channelList:[
-      'mybet798'
-    ]
-  },
+  // {
+  //   title: 'prodmybetnine',
+  //   channelList:[
+  //     'mybet798'
+  //   ]
+  // },
   {
     title: 'prodspinsnine',
     channelList:[
-      'spins999'
+      'spnFB01'
     ]
   },
   {
     title: 'prodspinsseven',
     channelList:[
-      'spins007'
+      'spsB01'
     ]
   },
   {
     title: 'prodsupbetone',
     channelList:[
-      'supbet001'
-    ]
-  },
-  {
-    title: 'prodsupbetseven',
-    channelList:[
-      'supbet007'
-    ]
-  },
-  {
-    title: 'prodwinlucky',
-    channelList:[
-      'winlucky001'
-    ]
-  },
-  {
-    title: 'supbet',
-    channelList: [
       'sboFB01',
       'sboFB02',
       'sboFB03',
       'sboFB04',
       'sboFB05',
-      'supbet', // 默认渠道
+      'sboFB06'
+    ]
+  },
+  {
+    title: 'prodsupbetseven',
+    channelList:[
+      'sbsFB01'
+    ]
+  },
+  // {
+  //   title: 'prodwinlucky',
+  //   channelList:[
+  //     'winlucky001'
+  //   ]
+  // },
+  {
+    title: 'supbet',
+    channelList: [
+      // 'sboFB01',
+      // 'sboFB02',
+      // 'sboFB03',
+      // 'sboFB04',
+      // 'sboFB05',
+      'sbFB01', // 默认渠道
     ]
   }
 ];
