@@ -12,6 +12,7 @@ const FILTER_MENU = [
   },
   {
     name: 'Quick 3D',
+    // name: '3 Digit',
     hideIds: [5, 101],
   },
   {
@@ -56,7 +57,6 @@ const BetsFilter = (props: {
       return true;
     });
   }, []);
-
   const changeName = debounce((name: string) => {
     onChange(name);
   });
