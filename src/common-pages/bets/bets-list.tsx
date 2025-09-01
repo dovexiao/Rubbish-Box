@@ -76,7 +76,6 @@ const BetsList = (props: {
       pageRef.current += 1;
       setMoreLoading(true);
     }
-    console.log(11111, game, status);
     const yearMonth = formatDate(currentDate, 'yyyyMM');
     try {
       let res = [];
@@ -87,7 +86,6 @@ const BetsList = (props: {
         pageSize,
         yearMonth,
       };
-      console.log(222222, normalParams);
       const startTime = formatDate(currentDate, 'yyyy-MM-01 00:00:00');
       const endTime = formatDate(
         getDaysByDate(currentDate),
