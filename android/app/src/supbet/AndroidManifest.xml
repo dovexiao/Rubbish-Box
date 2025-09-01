@@ -1,9 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sambad.supbetgame">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" >
     <!-- xmlns:tools="http://schemas.android.com/tools" -->
       <!-- tools:replace="android:networkSecurityConfig" -->
 
-    <!-- <uses-feature
+    <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
     <uses-feature
@@ -11,25 +10,43 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- adjust需要的权限 -->
+    <!-- 可以保留不动 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <!-- android13推送权限 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<!--    <uses-permission android:name="android.permission.READ_SMS" />-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <queries>
+        <!-- Package Specific UPI Apps -->
         <package android:name="in.amazon.mShop.android.shopping" />
         <package android:name="in.org.npci.upiapp" />
         <package android:name="com.google.android.apps.nbu.paisa.user" />
         <package android:name="com.phonepe.app" />
         <package android:name="net.one97.paytm" />
-    </queries> -->
+    </queries>
 
     <application
-      android:name=".MainApplication"> 
+      android:name=".MainApplication"
+      android:label="@string/app_name"
+      android:icon="${appIcon}"
+      android:roundIcon="@mipmap/ic_launcher_round"
+      android:allowBackup="false"
+      android:usesCleartextTraffic="true"
+      android:networkSecurityConfig="@xml/network_security_config"
+      android:screenOrientation="portrait"
+      android:theme="@style/AppTheme">
       <activity
         android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+        android:launchMode="singleTask"
+        android:screenOrientation="portrait"
+        android:windowSoftInputMode="adjustResize"
         android:exported="true">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
