@@ -49,7 +49,7 @@ export default {
       title: 'लाइव कैसीनो',
     },
     tip: {
-      downTips1: 'Get your Supbet App here',
+      downTips1: 'Receive surprise rewards',
       downTips2: 'Start using exclusive services',
     },
     label: {

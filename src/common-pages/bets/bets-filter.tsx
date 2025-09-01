@@ -11,7 +11,7 @@ const FILTER_MENU = [
     hideIds: [5, 101],
   },
   {
-    name: '3 Digit',
+    name: 'Quick 3D',
     hideIds: [5, 101],
   },
   {
