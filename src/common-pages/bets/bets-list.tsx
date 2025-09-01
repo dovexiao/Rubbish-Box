@@ -23,7 +23,7 @@ const getOrderStatus = (gameName: string, status: string) => {
   if (status === 'ALL') {
     return '3';
   }
-  if (['Kerala', '3 Digit'].includes(gameName)) {
+  if (['Kerala', '3 Digit', 'Quick 3D'].includes(gameName)) {
     return status === 'UNKNOWN' ? '2' : status === 'KNOWN' ? '0' : '1';
   } else if (['Dice', 'Color'].includes(gameName)) {
     return status === 'UNKNOWN' ? '0' : status === 'KNOWN' ? '4' : '1';
@@ -101,7 +101,8 @@ const BetsList = (props: {
               lotteryType: 'KERALA',
             })) || [];
           break;
-        case '3 Digit':
+        // case '3 Digit':
+        case 'Quick 3D':
           // 0:已开奖，1:已中奖，2:未开奖 3:全部
           res = (await get3D(normalParams)) || [];
           break;

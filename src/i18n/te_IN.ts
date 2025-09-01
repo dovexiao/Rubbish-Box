@@ -48,7 +48,7 @@ export default {
       title: 'లైవ్ క్యాసినో',
     },
     tip: {
-      downTips1: 'Get your Supbet App here',
+      downTips1: 'Receive surprise rewards',
       downTips2: 'Start using exclusive services',
     },
     label: {

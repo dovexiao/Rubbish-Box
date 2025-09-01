@@ -86,7 +86,7 @@ export default {
       text: 'Next draw starts in',
     },
     tip: {
-      downTips1: 'Supbet',
+      downTips1: 'Receive surprise rewards',
       downTips2: 'Get up to 888Rs – Download Now',
     },
     label: {
