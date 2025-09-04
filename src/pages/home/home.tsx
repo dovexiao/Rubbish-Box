@@ -183,7 +183,7 @@ const Home = () => {
           setCasinoData(prev =>
             isLoadMore ? [...prev, ...res.content] : res.content,
           );
-          setCasinoHasMore(res.totalSize > 24 * page);
+          setCasinoHasMore(res.totalSize > 51 * page);
         } else {
           setCasinoHasMore(false);
         }
