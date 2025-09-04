@@ -173,6 +173,11 @@ export async function toUrlGame(name: string, id: string, provider: string) {
     Spribe: getFCStart,
     T1: getFCStart,
     SEXYBCRT: getAWCStart,
+    // new add
+    PGS: getFCStart,
+    KM: getFCStart,
+    Eazy: getFCStart,
+    iDeal: getFCStart,
   };
   if (!Object.keys(openGames).includes(provider)) {
     globalStore.globalLoading.next(false);
