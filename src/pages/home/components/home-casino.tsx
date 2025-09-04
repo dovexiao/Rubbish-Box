@@ -19,6 +19,7 @@ import {goTo} from '@/utils';
 import LazyImage from '@/components/basic/image';
 import theme from '@style';
 import { toUrlGame } from "@/common-pages/game-navigate";
+import {useTranslation} from 'react-i18next';
 interface HomeCasinoProps {
   tabs: CasinoTypeItem[];
   selectedTab: string;
@@ -35,12 +36,13 @@ const HomeCasino: React.FC<HomeCasinoProps> = ({
   data,
   loading,
   loadingMore,
-  hasMore
+  hasMore,
 }) => {
   const [scrollViewWidth, setScrollViewWidth] = useState(0);
   const [tabLayouts, setTabLayouts] = useState<{[key: string]: {x: number; width: number}}>({});
   const scrollViewRef = useRef<ScrollView>(null);
 
+  const {i18n} = useTranslation();
   // Tab 布局和滚动逻辑
   useEffect(() => {
     if (selectedTab) {
@@ -145,13 +147,13 @@ const HomeCasino: React.FC<HomeCasinoProps> = ({
         {loadingMore && (
           <View style={styles.loadingMore}>
             <ActivityIndicator size="small" color={theme.basicColor.newTabSelectYellow} />
-            <Text style={styles.loadingText}>加载中...</Text>
+            <Text style={styles.loadingText}>{i18n.t('loading')}</Text>
           </View>
         )}
         
         {!hasMore && data.length > 0 && (
           <View style={styles.noMoreData}>
-            <Text style={styles.noMoreText}>没有更多游戏了</Text>
+            <Text style={styles.noMoreText}>{i18n.t('defaultPage.noMore')}</Text>
           </View>
         )}
       </View>
