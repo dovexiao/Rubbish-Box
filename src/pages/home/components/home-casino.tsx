@@ -138,8 +138,13 @@ const HomeCasino: React.FC<HomeCasinoProps> = ({
                 occupancy="transparent"
                 radius={9}
               />
-              <Text style={styles.name}>{item.gameName}</Text>
             </TouchableOpacity>
+            <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
+              {item.gameName}
+            </Text>
+            {/* <View>
+              <Text style={styles.name}>{item.gameName}</Text>
+            </View> */}
           </View>
         ))}
         
