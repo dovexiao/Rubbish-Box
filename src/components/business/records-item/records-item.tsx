@@ -15,10 +15,15 @@ import LazyImage from '@components/basic/image';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import dayjs from 'dayjs';
 import {useTranslation} from 'react-i18next';
+import {ToastType, useToast} from '@/components/basic/modal';
+import Clipboard from '@react-native-clipboard/clipboard';
+
+import {CopyImg} from '@/common-pages/profile/svg.variable';
 
 interface moreDataType {
   key: string;
   value: string | ReactElement<{}>;
+  canCopy?: boolean;
 }
 
 export interface RecordItemType {
@@ -131,6 +136,16 @@ const RecordItem = (props: RecordItemType) => {
     return i18n.t(t);
   }, [type, isSpecial, i18n, typeName]);
 
+  const {renderModal, show} = useToast();
+  const handleCopy = (value: string) => {
+    if (value) {
+      Clipboard.setString('' + value);
+      show({
+        type: ToastType.success,
+        message: i18n.t('share.copy-success'),
+      });
+    }
+  };
   return (
     <View
       style={[
@@ -269,17 +284,26 @@ const RecordItem = (props: RecordItemType) => {
       {showDetail && (
         <View>
           {moreData.map((item, index) => (
-            <View style={styles.item} key={index}>
+            <View style={styles.itemOrder} key={index}>
               <Text color={theme.fontColor.white}>{item.key}</Text>
               {React.isValidElement(item.value) ? (
                 item.value
               ) : (
-                <Text white>{item.value}</Text>
+                <View style={styles.itemOrderView}>
+                  <Text color={theme.fontColor.white}>{item.value}</Text>
+                  {item.canCopy && (
+                    <NativeTouchableOpacity
+                      onPress={() => handleCopy(item.value as string)}>
+                      <CopyImg width={16} height={16} />
+                    </NativeTouchableOpacity>
+                  )}
+                </View>
               )}
             </View>
           ))}
         </View>
       )}
+      {renderModal}
     </View>
   );
 };
@@ -288,6 +312,20 @@ const styles = StyleSheet.create({
   item: {
     height: 40,
     paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  itemOrder: {
+    height: 40,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  itemOrderView: {
+    color: theme.fontColor.white,
+    fontSize: theme.fontSize.s,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

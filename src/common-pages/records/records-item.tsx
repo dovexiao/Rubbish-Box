@@ -117,6 +117,7 @@ const Item = (
           {
             key: i18n.t('records.label.orderNum'),
             value: info.orderNo,
+            canCopy: true,
           },
         ];
       case 'transfer':
