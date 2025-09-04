@@ -11,6 +11,7 @@ export interface NoticeMap {
 export interface CasinoListParams {
   pageNo: number;
   gameType: string;
+  pageSize?: number;
 }
 
 /** Casino列表返回数据类型 */

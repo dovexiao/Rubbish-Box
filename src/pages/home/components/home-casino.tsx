@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ScrollView,
   LayoutChangeEvent,
+  ActivityIndicator,
 } from 'react-native';
 import {getCasinoList, getCasinoType} from '../home.service';
 import {CasinoGameItem, CasinoListParams, CasinoTypeItem} from '../home.type';
@@ -18,52 +19,29 @@ import {goTo} from '@/utils';
 import LazyImage from '@/components/basic/image';
 import theme from '@style';
 import { toUrlGame } from "@/common-pages/game-navigate";
-
-const HomeCasino: React.FC = () => {
+interface HomeCasinoProps {
+  tabs: CasinoTypeItem[];
+  selectedTab: string;
+  onTabChange: (tabName: string) => void;
+  data: CasinoGameItem[];
+  loading: boolean;
+  loadingMore: boolean;
+  hasMore: boolean;
+}
+const HomeCasino: React.FC<HomeCasinoProps> = ({
+  tabs,
+  selectedTab,
+  onTabChange,
+  data,
+  loading,
+  loadingMore,
+  hasMore
+}) => {
   const [scrollViewWidth, setScrollViewWidth] = useState(0);
-  const [tabs, setTabs] = useState<CasinoTypeItem[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>('');
-  const [data, setData] = useState<CasinoGameItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // 保存每个 tab 的布局信息
-  const [tabLayouts, setTabLayouts] = useState<{
-    [key: string]: {x: number; width: number};
-  }>({});
-
-  // ScrollView ref 用于滚动
+  const [tabLayouts, setTabLayouts] = useState<{[key: string]: {x: number; width: number}}>({});
   const scrollViewRef = useRef<ScrollView>(null);
 
-  // fetchData 只和 selectedTab 相关，最后展示游戏列表
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params: CasinoListParams = {pageNo: 1, gameType: selectedTab};
-      const res = await getCasinoList(params);
-      if (
-        res?.content &&
-        Array.isArray(res.content) &&
-        res.content.length > 0
-      ) {
-        setData(res.content);
-      } else {
-        setData([]);
-      }
-    } catch (error) {
-      console.error('Error fetching casino list', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedTab]);
-
-  // —— 优化 1：只在 selectedTab 变更时请求数据 ——
-  useEffect(() => {
-    if (selectedTab) {
-      fetchData();
-    }
-  }, [selectedTab, fetchData]);
-
-  // —— 优化 2：把滚动到中间的逻辑单独放一个 useEffect ——
+  // Tab 布局和滚动逻辑
   useEffect(() => {
     if (selectedTab) {
       const layout = tabLayouts[selectedTab];
@@ -75,26 +53,9 @@ const HomeCasino: React.FC = () => {
     }
   }, [selectedTab, tabLayouts, scrollViewWidth]);
 
-  // 获取 tab 列表
-  useEffect(() => {
-    fetchTabs();
-  }, []);
-
-  const fetchTabs = async () => {
-    try {
-      const res = await getCasinoType();
-      if (res && Array.isArray(res)) {
-        // 过滤掉 name 为 "Live" 的项
-        const filteredTabs = res.filter(item => item.name !== 'Live');
-        setTabs(filteredTabs);
-        // 默认选中第一个 tab（如果存在）
-        if (filteredTabs.length > 0) {
-          setSelectedTab(filteredTabs[0].name);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching tabs', error);
-    }
+  const onTabLayout = (tabName: string) => (event: LayoutChangeEvent) => {
+    const {x, width} = event.nativeEvent.layout;
+    setTabLayouts(prev => ({...prev, [tabName]: {x, width}}));
   };
 
   const getUrl = async (name: string, id: number, provider: string) => {
@@ -105,18 +66,13 @@ const HomeCasino: React.FC = () => {
     toUrlGame(name, id.toString(), provider);
   };
 
-  const onTabLayout = (tabName: string) => (event: LayoutChangeEvent) => {
-    const {x, width} = event.nativeEvent.layout;
-    setTabLayouts(prev => ({...prev, [tabName]: {x, width}}));
-  };
-
   const renderTab = (tab: CasinoTypeItem, index: number) => {
     const isActive = selectedTab === tab.name;
     const isLast = index === tabs.length - 1;
     return (
       <TouchableOpacity
         key={`${tab.name}-${index}`}
-        onPress={() => !isActive && setSelectedTab(tab.name)}
+        onPress={() => !isActive && onTabChange(tab.name)}
         onLayout={onTabLayout(tab.name)}
         style={[styles.tabItemContainer, isLast && styles.lastTabItem]}>
         <View style={styles.tabItem}>
@@ -133,12 +89,29 @@ const HomeCasino: React.FC = () => {
     );
   };
 
+  const renderItem = ({ item }: { item: CasinoGameItem }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => getUrl(item.gameName, item.gameId, item.provider)}
+    >
+      <LazyImage
+        imageUrl={item.gamePic}
+        width={(globalStore.screenWidth - 42) / 3}
+        height={(globalStore.screenWidth - 42) / 3}
+        occupancy="transparent"
+        radius={9}
+      />
+      <Text style={styles.name}>{item.gameName}</Text>
+    </TouchableOpacity>
+  );
+
   if (!loading && data.length === 0) {
     return <NoData />;
   }
 
   return (
     <View style={[styles.container]}>
+      {/* Tab 部分 */}
       <View
         style={styles.tabScrollWrapper}
         onLayout={e => setScrollViewWidth(e.nativeEvent.layout.width)}>
@@ -150,14 +123,11 @@ const HomeCasino: React.FC = () => {
           {tabs.map((tab, index) => renderTab(tab, index))}
         </ScrollView>
       </View>
+      
+      {/* 游戏列表 - 使用 View 而不是 FlatList */}
       <View style={styles.cardsWrapper}>
         {data.map((item, index) => (
-          <View
-            key={`${item.gameId}-${index}`}
-            style={[
-              styles.card,
-              // {backgroundColor: theme.basicColor.primary},
-            ]}>
+          <View key={`${item.gameId}-${index}`} style={styles.card}>
             <TouchableOpacity onPress={() => getUrl(item.gameName, item.gameId, item.provider)}>
               <LazyImage
                 imageUrl={item.gamePic}
@@ -166,12 +136,24 @@ const HomeCasino: React.FC = () => {
                 occupancy="transparent"
                 radius={9}
               />
+              <Text style={styles.name}>{item.gameName}</Text>
             </TouchableOpacity>
-            <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
-              {item.gameName}
-            </Text>
           </View>
         ))}
+        
+        {/* 加载状态 */}
+        {loadingMore && (
+          <View style={styles.loadingMore}>
+            <ActivityIndicator size="small" color={theme.basicColor.newTabSelectYellow} />
+            <Text style={styles.loadingText}>加载中...</Text>
+          </View>
+        )}
+        
+        {!hasMore && data.length > 0 && (
+          <View style={styles.noMoreData}>
+            <Text style={styles.noMoreText}>没有更多游戏了</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -180,6 +162,28 @@ const HomeCasino: React.FC = () => {
 export default HomeCasino;
 
 const styles = StyleSheet.create({
+   loadingMore: {
+    padding: 15,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  loadingText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: theme.basicColor.newFontYellow,
+  },
+  noMoreData: {
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  noMoreText: {
+    fontSize: 14,
+    color: theme.basicColor.newFontYellow,
+  },
   container: {
     paddingHorizontal: 12,
   },
