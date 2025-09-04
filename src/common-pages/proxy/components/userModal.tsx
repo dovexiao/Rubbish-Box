@@ -87,20 +87,31 @@ const ModalContent = forwardRef((props, ref: any) => {
     <Drawer ref={drawerRef} mode="bottom" contentBackgroundColor="#0000">
       <ScrollView
         stickyHeaderIndices={[0]}
-        style={[background.white, boxRadius, {width: '100%', maxHeight: 700}]}>
+        style={[
+          boxRadius,
+          {
+            width: '100%',
+            maxHeight: 700,
+            backgroundColor: theme.basicColor.newBgPop,
+          },
+        ]}>
         <View
           style={[
-            {padding: 20, paddingBottom: 0, height: 44},
+            {
+              padding: 20,
+              paddingBottom: 0,
+              height: 44,
+              backgroundColor: theme.basicColor.newBgPop,
+            },
             margin.btml,
             flex.row,
             boxRadius,
-            background.white,
             flex.between,
             flex.flex,
           ]}>
           <Text
             style={[{position: 'absolute'}]}
-            color={'#000'}
+            color={'#fff'}
             blod
             fontFamily={'fontInter'}
             fontSize={fontSize.m}>
@@ -115,7 +126,8 @@ const ModalContent = forwardRef((props, ref: any) => {
           </NativeTouchableOpacity>
         </View>
         <View style={[theme.padding.btmxxl]}>
-          <View style={[padding.l, {backgroundColor: '#F3F5F8'}]}>
+          <View
+            style={[padding.l, {backgroundColor: theme.basicColor.newBgInOne}]}>
             <View
               style={[flex.between, flex.row, margin.lrl, flex.centerByCol]}>
               <View>
@@ -147,7 +159,7 @@ const ModalContent = forwardRef((props, ref: any) => {
                     </View>
                   </View>
                   <View style={[margin.lefts]}>
-                    <Text color={fontColor.main} blod fontSize={fontSize.m}>
+                    <Text color={fontColor.white} blod fontSize={fontSize.m}>
                       {userInfo?.userPhone}
                     </Text>
                   </View>
@@ -159,7 +171,7 @@ const ModalContent = forwardRef((props, ref: any) => {
                 {userInfo?.agentLevel && userInfo?.agentLevel === 1 ? (
                   <View>
                     <Text
-                      color={fontColor.main}
+                      color={fontColor.white}
                       fontSize={fontSize.s}
                       style={[margin.btmxxs]}>
                       {i18n.t('proxy.team-report.up-line')}
@@ -175,11 +187,11 @@ const ModalContent = forwardRef((props, ref: any) => {
               </NativeTouchableOpacity>
             </View>
             <View style={[flex.row, margin.tops, margin.lrl]}>
-              <Text color={fontColor.accent} fontSize={fontSize.s}>
+              <Text color={fontColor.white} fontSize={fontSize.s}>
                 {i18n.t('proxy.team-report.register-date')}
               </Text>
               <Text
-                color={fontColor.second}
+                color={fontColor.white}
                 fontSize={fontSize.s}
                 style={[margin.leftxxs]}>
                 {dayjs(userInfo?.registerDate).format('MM/DD YYYY')}
@@ -187,24 +199,26 @@ const ModalContent = forwardRef((props, ref: any) => {
             </View>
             <View
               style={[
-                background.white,
+                background.newBgThree,
                 margin.topl,
                 padding.lrl,
                 padding.tbs,
                 flex.row,
                 flex.between,
               ]}>
-              <Text fontSize={12} fontWeight={'bold'} color={'#252529'}>
+              <Text fontSize={12} fontWeight={'bold'} color={'#fff'}>
                 {i18n.t('proxy.user.new-user-title')}
               </Text>
             </View>
             <View
               style={[
-                background.white,
                 padding.lrl,
                 padding.tbs,
                 flex.row,
                 flex.between,
+                {
+                  backgroundColor: theme.basicColor.newBgThree,
+                },
               ]}>
               <View
                 style={[
@@ -219,14 +233,14 @@ const ModalContent = forwardRef((props, ref: any) => {
                     <View style={[flex.row, flex.centerByCol]}>
                       <NewUserIcon width={16} height={16} />
                       <Text
-                        color={fontColor.accent}
+                        color={fontColor.white}
                         fontSize={fontSize.s}
                         style={[margin.leftxxs]}>
                         {i18n.t('proxy.user.users')}
                       </Text>
                     </View>
                     <Text
-                      color={fontColor.main}
+                      color={fontColor.white}
                       fontSize={fontSize.m}
                       blod
                       style={[margin.topxxs]}>
@@ -239,14 +253,14 @@ const ModalContent = forwardRef((props, ref: any) => {
                     <View style={[flex.row, flex.centerByCol]}>
                       <BettingUsersIcon width={16} height={16} />
                       <Text
-                        color={fontColor.accent}
+                        color={fontColor.white}
                         fontSize={fontSize.s}
                         style={[margin.leftxxs]}>
                         {i18n.t('proxy.user.recharge-user')}
                       </Text>
                     </View>
                     <Text
-                      color={fontColor.main}
+                      color={fontColor.white}
                       fontSize={fontSize.m}
                       blod
                       style={[
@@ -264,23 +278,26 @@ const ModalContent = forwardRef((props, ref: any) => {
             <View
               style={[
                 padding.lrl,
-                background.white,
+                // background.newSpecialThree,
                 flex.row,
                 flex.between,
                 padding.btms,
+                {
+                  backgroundColor: theme.basicColor.newSpecialThree,
+                },
               ]}>
               <View>
                 <View style={[flex.row, flex.centerByCol]}>
                   <HomeRechargeIcon width={16} height={16} />
                   <Text
-                    color={fontColor.accent}
+                    color={fontColor.white}
                     fontSize={fontSize.s}
                     style={[margin.leftxxs]}>
                     {i18n.t('proxy.team-report.recharge')}
                   </Text>
                 </View>
                 <Text
-                  color={fontColor.main}
+                  color={fontColor.white}
                   fontSize={fontSize.m}
                   blod
                   style={[margin.topxxs]}>
@@ -297,17 +314,17 @@ const ModalContent = forwardRef((props, ref: any) => {
                   <HomeBettingIcon
                     width={16}
                     height={16}
-                    stroke={theme.fontColor.accent}
+                    stroke={theme.fontColor.white}
                   />
                   <Text
-                    color={fontColor.accent}
+                    color={fontColor.white}
                     fontSize={fontSize.s}
                     style={[margin.leftxxs]}>
                     {i18n.t('proxy.team-report.betting')}
                   </Text>
                 </View>
                 <Text
-                  color={fontColor.main}
+                  color={fontColor.white}
                   fontSize={fontSize.m}
                   blod
                   style={[margin.topxxs, {textAlign: 'right'}]}>

@@ -81,7 +81,9 @@ const Tier: React.FC<TierProps> = props => {
             theme.basicColor.newTransparent,
             theme.basicColor.newTransparent,
           ]}>
-          <Text color={theme.fontColor.white} fontSize={theme.fontSize.s}>
+          <Text
+            color={theme.basicColor.newFontWhite}
+            fontSize={theme.fontSize.s}>
             {i18n.t('proxy.tier', {number: ` ${level}`})}
           </Text>
         </LinearGradient>
