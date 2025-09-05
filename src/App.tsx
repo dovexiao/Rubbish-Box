@@ -52,6 +52,7 @@ import {useSettingWindowDimensions} from './store/useSettingStore';
 // import {goToUrl} from './common-pages/game-navigate';
 import {BannerSwiper} from '@/components/basic/swiper';
 // import StartLoadingWeb from './common-pages/start-loading';
+import {Adjust, AdjustConfig} from 'react-native-adjust';
 setVisitor(getUUID());
 
 declare var CodePush: any;
@@ -406,6 +407,27 @@ function App(): JSX.Element {
       !popVisible && setPopVisible(true);
     }
   }, [loading, chckedLang, bannerList]);
+
+  // 初始化Adjust配置（使用原生已配置的App Token）
+  const initAdjust = () => {
+    const adjustConfig = new AdjustConfig(
+      '3meh2m59zif4',
+      __DEV__
+        ? AdjustConfig.EnvironmentSandbox
+        : AdjustConfig.EnvironmentProduction,
+    );
+
+    // 开启详细日志（生产环境建议关闭）
+    adjustConfig.setLogLevel(AdjustConfig.LogLevelVerbose);
+
+    // 初始化SDK
+    Adjust.initSdk(adjustConfig);
+  };
+
+  React.useEffect(() => {
+    // 在应用启动时调用
+    initAdjust();
+  }, []);
   const addHeight = Platform.OS === 'web' ? 50 : 50;
   return (
     <SafeAreaProvider style={[theme.position.rel]}>

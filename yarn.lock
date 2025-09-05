@@ -12918,6 +12918,11 @@ react-is@^17.0.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-adjust@^5.4.2:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-adjust/-/react-native-adjust-5.4.2.tgz#cd0338e054de9b0e424f1fa5bfedd3e6ecfe3288"
+  integrity sha512-q4nHdV71UVpYDyp/SaJjaM8SHjd1xu4dnkQlwODu4nf81rdO/EJ5/IFGRAxo+77XxK71ELhpSGqNNKx0gf7GUA==
+
 react-native-code-push@^8.1.0:
   version "8.1.0"
   resolved "https://registry.npmmirror.com/react-native-code-push/-/react-native-code-push-8.1.0.tgz"

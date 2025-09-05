@@ -13,7 +13,7 @@
     "start:test": "ENVFILE=.env.test react-native start --reset-cache",
     "start:test:win": "SET ENVFILE=.env.test react-native start --reset-cache",
     "start:uat": "ENVFILE=.env.uat react-native start --reset-cache",
-    "start:prod": "ENVFILE=.env.prod react-native start --reset-cache",
+    "start:prod": "ENVFILE=.env.supbet react-native start --reset-cache",
     "start:web": "dotenv -e .env.dev react-app-rewired start --reset-cache --stats-children",
     "start:web:test": "dotenv -e .env.test react-app-rewired start --stats-children",
     "start:web:uat": "dotenv -e .env.uat react-app-rewired start --stats-children",
@@ -29,7 +29,6 @@
     "build:web": "dotenv -e .env.dev react-app-rewired build",
     "build:web:uat": "dotenv -e .env.uat react-app-rewired build",
     "build:web:prod": "dotenv -e .env.prod react-app-rewired build",
-
     "build:prod": "rm -rf android/app/build && cd android && export ENVFILE=.env.prod && ./gradlew assembleRelease && cd ../",
     "build:prod9": "rm -rf android/app/build && cd android && export ENVFILE=.env.supbet && ./gradlew assembleSupbetRelease && cd ../",
     "build:prod101": "rm -rf android/app/build && cd android && export ENVFILE=.env.prodsupbetseven && ./gradlew assembleProdsupbetsevenRelease && cd ../",
@@ -42,8 +41,6 @@
     "build:prod108": "rm -rf android/app/build && cd android && export ENVFILE=.env.prodluckyone && ./gradlew assembleProdluckyoneRelease && cd ../",
     "build:prod109": "rm -rf android/app/build && cd android && export ENVFILE=.env.prodspinsseven && ./gradlew assembleProdspinssevenRelease && cd ../",
     "build:prod110": "rm -rf android/app/build && cd android && export ENVFILE=.env.prodspinsnine && ./gradlew assembleProdspinsnineRelease && cd ../",
-
-
     "build:web:prod9": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.supbet react-app-rewired build",
     "build:web:prod101": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodsupbetseven react-app-rewired build",
     "build:web:prod102": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodlotteryindia react-app-rewired build",
@@ -55,8 +52,6 @@
     "build:web:prod108": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodluckyone react-app-rewired build",
     "build:web:prod109": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodspinsseven react-app-rewired build",
     "build:web:prod110": "DISABLE_ESLINT_PLUGIN=true dotenv -e .env.prodspinsnine react-app-rewired build",
-
-
     "upgrade:android:uuuuuuat": "appcenter codepush release-react -d Uat -a ziencinacabos-gmail.com/MegaDream -t 1.0.0",
     "upgrade:android:pro": "appcenter codepush release-react -a 15201335016-163.com/Indra-Lottery-1 -d Production -t 2.1.2 -m",
     "upgrade:android:test": "appcenter codepush release-react -d Dev -a ziencinacabos-gmail.com/MegaDream -t 1.0.0",
@@ -91,6 +86,7 @@
     "react-dropzone": "^14.2.3",
     "react-i18next": "^13.5.0",
     "react-native": "^0.72.3",
+    "react-native-adjust": "^5.4.2",
     "react-native-code-push": "^8.1.0",
     "react-native-config": "^1.5.1",
     "react-native-countdown-component": "^2.7.1",

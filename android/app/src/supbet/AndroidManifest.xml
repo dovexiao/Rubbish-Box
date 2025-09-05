@@ -61,6 +61,17 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/freshchat_file_provider_paths" />
+            <meta-data
+                android:name="com.adjust.sdk.appToken"
+                android:value="3meh2m59zif4" />
+                <!-- 安装引用接收器（可选，用于跟踪Google Play安装来源） -->
+                <!-- <receiver
+                    android:name="com.adjust.sdk.AdjustReferrerReceiver"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="com.android.vending.INSTALL_REFERRER" />
+                    </intent-filter>
+                </receiver> -->
             <!-- <meta-data
                 android:name="API_URL"
                 android:value="${api_url}" /> -->
