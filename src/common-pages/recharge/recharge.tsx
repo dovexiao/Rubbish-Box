@@ -23,10 +23,14 @@ import {
   getPayMethod,
   goIncome,
   paySuccess,
+  getAdjustParams,
+  AdjustParams,
 } from './recharge.service';
 
 import {Success, upiPayment} from '@/utils';
 import useCouponStore from '@/store/useCouponStore';
+// 导入Adjust事件跟踪函数
+import { trackFirstDeposit, trackRecharge, trackDepositAll } from '@/utils/AdjustEventTracker';
 // import { background, backgroundColor } from '@/components/style';
 
 const Recharge = () => {
@@ -86,7 +90,7 @@ const Recharge = () => {
     return item ? item.id + '' : '';
   }, [balanceList, balance]);
 
-  // ✅ 初始化获取充值选项
+  // ✅ 初始化获取充值选项并调用getAdjustParams
   useFocusEffect(
     React.useCallback(() => {
       // 每次页面获得焦点时执行（包括首次进入和返回进入）
@@ -94,10 +98,12 @@ const Recharge = () => {
         setLoading(true);
         try {
           // 调用getBalanceList和getPayMethod
-          const [balances, methods] = await Promise.all([
+          const [balances, methods, adjustParamsResponse] = await Promise.all([
             getBalanceList(),
-            getPayMethod()
+            getPayMethod(),
+            getAdjustParams() // 新增：调用getAdjustParams获取参数
           ]);
+          
           setBalanceList(balances);
           setPaymethodList(methods);
           if (balances.length > 0) {
@@ -106,8 +112,40 @@ const Recharge = () => {
           if (methods.length > 0) {
             setPayMethodId(methods[0].id);
           }
+          
+          // 新增：处理Adjust参数并上报
+          const adjustParams = adjustParamsResponse as AdjustParams;
+          console.log(222222, adjustParams)
+          if (adjustParams) {
+            // 上报首充事件
+            if ('First_deposit' in adjustParams) {
+              const amount = adjustParams.First_deposit ? parseFloat(String(adjustParams.First_deposit)) : 0;
+              if (!isNaN(amount) && amount > 0) {
+                await trackFirstDeposit(amount);
+                console.log('上报首充事件成功');
+              }
+            }
+            
+            // 上报总充值事件
+            if ('Deposit' in adjustParams) {
+              const amount = adjustParams.Deposit ? parseFloat(String(adjustParams.Deposit)) : 0;
+              if (!isNaN(amount) && amount > 0) {
+                await trackDepositAll(amount);
+                console.log('上报总充值事件成功');
+              }
+            }
+            
+            // 上报复充事件
+            if ('Recharge' in adjustParams) {
+              const amount = adjustParams.Recharge ? parseFloat(String(adjustParams.Recharge)) : 0;
+              if (!isNaN(amount) && amount > 0) {
+                await trackRecharge(amount);
+                console.log('上报复充事件成功');
+              }
+            }
+          }
         } catch (error) {
-          console.error('Failed to fetch data:', error);
+          console.error('Failed to fetch data or report to Adjust:', error);
         } finally {
           setLoading(false);
         }

@@ -102,3 +102,12 @@ export const getPayMethod = () => {
 export const paySuccess = (payCallback: PayCallbackModel) => {
   return http.post<SafeAny>('app/callback/upi/result', payCallback);
 };
+
+export interface AdjustParams {
+  First_deposit?: number | string;
+  Deposit?: number | string;
+  Recharge?: number | string;
+}
+export const getAdjustParams = () => {
+  return http.post<AdjustParams>('app/pay/adjust/notice');
+};

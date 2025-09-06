@@ -52,7 +52,6 @@ import {useSettingWindowDimensions} from './store/useSettingStore';
 // import {goToUrl} from './common-pages/game-navigate';
 import {BannerSwiper} from '@/components/basic/swiper';
 // import StartLoadingWeb from './common-pages/start-loading';
-import {Adjust, AdjustConfig} from 'react-native-adjust';
 setVisitor(getUUID());
 
 declare var CodePush: any;
@@ -410,18 +409,27 @@ function App(): JSX.Element {
 
   // 初始化Adjust配置（使用原生已配置的App Token）
   const initAdjust = () => {
-    const adjustConfig = new AdjustConfig(
-      '3meh2m59zif4',
-      __DEV__
-        ? AdjustConfig.EnvironmentSandbox
-        : AdjustConfig.EnvironmentProduction,
-    );
-
-    // 开启详细日志（生产环境建议关闭）
-    adjustConfig.setLogLevel(AdjustConfig.LogLevelVerbose);
-
-    // 初始化SDK
-    Adjust.initSdk(adjustConfig);
+    if (Platform.OS !== 'web') {
+      // ios的在TS文件中已调用start方法，这边在调用就会多次触发
+      // const {Adjust, AdjustConfig} = require('react-native-adjust');
+      // const adjustConfig = new AdjustConfig(
+      //   '3meh2m59zif4',
+      //   __DEV__
+      //     ? AdjustConfig.EnvironmentSandbox
+      //     : AdjustConfig.EnvironmentProduction,
+      // );
+      // // 开启详细日志（生产环境建议关闭）
+      // adjustConfig.setLogLevel(AdjustConfig.LogLevelVerbose);
+      // // 初始化SDK
+      // Adjust.create(adjustConfig);
+    } else {
+      const Adjust = require('@adjustcom/adjust-web-sdk');
+      Adjust.initSdk({
+        appToken: '3meh2m59zif4',
+        environment: __DEV__ ? 'sandbox' : 'production', // 或'production'
+        logLevel: 'verbose', // 可选
+      });
+    }
   };
 
   React.useEffect(() => {
