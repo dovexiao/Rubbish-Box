@@ -54,7 +54,7 @@ const initializeAdjust = async (): Promise<boolean> => {
           const webSdk = await import('@adjustcom/adjust-web-sdk');
           Adjust = webSdk.default || webSdk;
         }
-        console.log('web', APP_CONFIG.environment);
+        // console.log('web', APP_CONFIG.environment);
         // 初始化Web SDK
         Adjust.initSdk({
           appToken: APP_CONFIG.web.appToken,
@@ -70,7 +70,7 @@ const initializeAdjust = async (): Promise<boolean> => {
       Adjust = adjustModule.Adjust;
       AdjustEvent = adjustModule.AdjustEvent;
       AdjustConfigParams = adjustModule.AdjustConfig;
-      console.log('android', APP_CONFIG.environment, Adjust, AdjustEvent);
+      // console.log('android', APP_CONFIG.environment, Adjust, AdjustEvent);
       const adjustConfig = new adjustModule.AdjustConfig(
         APP_CONFIG.android.appToken,
         APP_CONFIG.environment === 'production'
@@ -131,7 +131,7 @@ export const initAdjustTracker = async (): Promise<boolean> => {
  */
 export const trackRegister = async (): Promise<void> => {
   if (!(await initializeAdjust()) || !isAdjustAvailable()) {
-    console.log('[Adjust模拟] 注册事件跟踪');
+    // console.log('[Adjust模拟] 注册事件跟踪');
     return;
   }
 
@@ -144,7 +144,7 @@ export const trackRegister = async (): Promise<void> => {
       const event = new AdjustEvent(EVENT_TOKENS.Register);
       Adjust.trackEvent(event);
     }
-    console.log('注册事件跟踪成功');
+    // console.log('注册事件跟踪成功');
   } catch (error) {
     console.error('注册事件跟踪失败:', error);
   }
@@ -165,7 +165,7 @@ export const trackFirstDeposit = async (
   }
 
   if (!(await initializeAdjust()) || !isAdjustAvailable()) {
-    console.log(`[Adjust模拟] 首充事件跟踪，金额: ${amount} ${currency}`);
+    // console.log(`[Adjust模拟] 首充事件跟踪，金额: ${amount} ${currency}`);
     return;
   }
 
@@ -181,7 +181,7 @@ export const trackFirstDeposit = async (
       event.setRevenue(amount, currency);
       Adjust.trackEvent(event);
     }
-    console.log(`首充事件跟踪成功，金额: ${amount} ${currency}`);
+    // console.log(`首充事件跟踪成功，金额: ${amount} ${currency}`);
   } catch (error) {
     console.error('首充事件跟踪失败:', error);
   }
@@ -202,7 +202,7 @@ export const trackRecharge = async (
   }
 
   if (!(await initializeAdjust()) || !isAdjustAvailable()) {
-    console.log(`[Adjust模拟] 复充事件跟踪，金额: ${amount} ${currency}`);
+    // console.log(`[Adjust模拟] 复充事件跟踪，金额: ${amount} ${currency}`);
     return;
   }
 
@@ -218,7 +218,7 @@ export const trackRecharge = async (
       event.setRevenue(amount, currency);
       Adjust.trackEvent(event);
     }
-    console.log(`复充事件跟踪成功，金额: ${amount} ${currency}`);
+    // console.log(`复充事件跟踪成功，金额: ${amount} ${currency}`);
   } catch (error) {
     console.error('复充事件跟踪失败:', error);
   }
@@ -238,7 +238,7 @@ export const trackDepositAll = async (
   }
 
   if (!(await initializeAdjust()) || !isAdjustAvailable()) {
-    console.log(`[Adjust模拟] 总充值事件跟踪，金额: ${amount} ${currency}`);
+    // console.log(`[Adjust模拟] 总充值事件跟踪，金额: ${amount} ${currency}`);
     return;
   }
 
@@ -254,7 +254,7 @@ export const trackDepositAll = async (
       event.setRevenue(amount, currency);
       Adjust.trackEvent(event);
     }
-    console.log(`总充值事件跟踪成功，金额: ${amount} ${currency}`);
+    // console.log(`总充值事件跟踪成功，金额: ${amount} ${currency}`);
   } catch (error) {
     console.error('总充值事件跟踪失败:', error);
   }
@@ -271,7 +271,7 @@ export const trackGameRounds = async (rounds: number): Promise<void> => {
   }
 
   if (!(await initializeAdjust()) || !isAdjustAvailable()) {
-    console.log(`[Adjust模拟] 游戏局数跟踪，局数: ${rounds}`);
+    // console.log(`[Adjust模拟] 游戏局数跟踪，局数: ${rounds}`);
     return;
   }
 
@@ -286,7 +286,7 @@ export const trackGameRounds = async (rounds: number): Promise<void> => {
       event.addCallbackParameter('rounds', rounds.toString());
       Adjust.trackEvent(event);
     }
-    console.log(`游戏局数跟踪成功，局数: ${rounds}`);
+    // console.log(`游戏局数跟踪成功，局数: ${rounds}`);
   } catch (error) {
     console.error('游戏局数跟踪失败:', error);
   }
@@ -303,7 +303,7 @@ export const trackGameTime = async (seconds: number): Promise<void> => {
   }
 
   if (!(await initializeAdjust()) || !isAdjustAvailable()) {
-    console.log(`[Adjust模拟] 游戏时长跟踪，时长: ${seconds}秒`);
+    // console.log(`[Adjust模拟] 游戏时长跟踪，时长: ${seconds}秒`);
     return;
   }
 
@@ -318,7 +318,7 @@ export const trackGameTime = async (seconds: number): Promise<void> => {
       event.addCallbackParameter('duration', seconds.toString());
       Adjust.trackEvent(event);
     }
-    console.log(`游戏时长跟踪成功，时长: ${seconds}秒`);
+    // console.log(`游戏时长跟踪成功，时长: ${seconds}秒`);
   } catch (error) {
     console.error('游戏时长跟踪失败:', error);
   }
@@ -335,7 +335,7 @@ export const trackRetention = async (
   >,
 ): Promise<void> => {
   if (!(await initializeAdjust()) || !isAdjustAvailable()) {
-    console.log(`[Adjust模拟] 留存事件跟踪，类型: ${type}`);
+    // console.log(`[Adjust模拟] 留存事件跟踪，类型: ${type}`);
     return;
   }
 
@@ -348,7 +348,7 @@ export const trackRetention = async (
       const event = new AdjustEvent(EVENT_TOKENS[type]);
       Adjust.trackEvent(event);
     }
-    console.log(`留存事件跟踪成功，类型: ${type}`);
+    // console.log(`留存事件跟踪成功，类型: ${type}`);
   } catch (error) {
     console.error(`留存事件跟踪失败，类型: ${type}`, error);
   }

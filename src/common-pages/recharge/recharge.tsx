@@ -115,7 +115,6 @@ const Recharge = () => {
           
           // 新增：处理Adjust参数并上报
           const adjustParams = adjustParamsResponse as AdjustParams;
-          console.log(222222, adjustParams)
           if (adjustParams) {
             // 上报首充事件
             if ('First_deposit' in adjustParams) {
