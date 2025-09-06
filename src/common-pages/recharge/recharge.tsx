@@ -162,8 +162,8 @@ const Recharge = () => {
     }
   }, [incomeInfo.orderNo]);
 
-  const onFailure = useCallback((error: Error) => {
-    globalStore.globalWaringTotal(error.message || i18n.t('recharge-page.tip.pay-failed'));
+  const onFailure = useCallback((error: {msg: string, code?: number}) => {
+    globalStore.globalWaringTotal(error.msg || i18n.t('recharge-page.tip.pay-failed'));
   }, [i18n]);
 
   // ✅ 发起支付
@@ -231,7 +231,8 @@ const Recharge = () => {
         setIncomeInfo(res);
       }
     } catch (error) {
-      globalStore.globalWaringTotal(i18n.t('recharge-page.tip.pay-failed'));
+      const errorData = (error as any).data || {}
+      globalStore.globalWaringTotal(errorData.msg || i18n.t('recharge-page.tip.pay-failed'));
     } finally {
       setLoading(false);
     }
