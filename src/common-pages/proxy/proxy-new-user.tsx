@@ -82,7 +82,7 @@ const ProxyNewUser = (props: NavigatorScreenProps) => {
               {i18n.t('proxy.new-user.today')}
             </Text>
             <Text
-              color={theme.basicColor.primary}
+              color={theme.basicColor.newFontYellow}
               fontSize={theme.fontSize.m}
               blod
               style={[theme.margin.leftxxs]}>

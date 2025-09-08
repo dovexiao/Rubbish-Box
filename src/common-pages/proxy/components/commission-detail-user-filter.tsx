@@ -21,7 +21,7 @@ const CommissionDetailUserFilter: React.FC<CommissionDetailUserFilterProps> = ({
   return (
     <View style={[theme.flex.row, theme.flex.between]}>
       <SortFilter
-        style={[theme.background.background, theme.borderRadius.xs]}
+        style={[theme.background.newButtonYellow, theme.borderRadius.xs]}
         title={i18n.t('proxy.filter.commission')}
         required
         sort={commissionSort}
