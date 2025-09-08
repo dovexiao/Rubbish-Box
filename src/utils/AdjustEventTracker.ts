@@ -1,4 +1,27 @@
 import {Platform} from 'react-native';
+import RNConfig from 'react-native-config';
+
+const IS_WEB = Platform.OS === 'web';
+
+const ENV_CONFIG = (IS_WEB ? process.env : RNConfig) as {
+  REACT_APP_ENV: 'dev' | 'prod';
+  REACT_APP_API_BASE_URL: string;
+  REACT_APP_API_INDUSWIN_URL?: string;
+  REACT_APP_API_SPORTS_URL?: string;
+  REACT_APP_API_H5GAMES_URL?: string;
+  REACT_APP_API_RACECAR_URL?: string;
+  REACT_APP_API_H5VUE_URL?: string;
+  REACT_APP_PACKAGE?: number;
+  REACT_APP_API_DOWNLOAD_URL?: string;
+  REACT_APP_API_CHANNEL_ID?: string;
+  REACT_APP_API_PACKAGE_ID?: string | number;
+  REACT_APP_API_CUSTOM_SERVICE_URL?: string;
+  REACT_APP_API_DOWNLOAD_CHANNEL_URL?: string;
+  REACT_APP_API_LOGO_URL?: string;
+  REACT_APP_API_LOGO_URL_V2?: string;
+  REACT_APP_API_LAUNCH_SCREEN_URL?: string;
+  [k: string]: string | number | undefined;
+};
 
 // 定义Adjust Web SDK类型
 interface AdjustWeb {
@@ -32,7 +55,8 @@ let isInitialized = false;
 const APP_CONFIG = {
   android: {appToken: '3meh2m59zif4'},
   web: {appToken: '3meh2m59zif4'},
-  environment: 'sandbox' as 'sandbox' | 'production',
+  // environment: 'sandbox' as 'sandbox' | 'production',
+  environment: ENV_CONFIG.REACT_APP_ENV === 'prod' ? 'production' : 'sandbox',
   logLevel: 'verbose' as 'verbose' | 'info' | 'warning' | 'error' | 'none',
 };
 
@@ -54,7 +78,7 @@ const initializeAdjust = async (): Promise<boolean> => {
           const webSdk = await import('@adjustcom/adjust-web-sdk');
           Adjust = webSdk.default || webSdk;
         }
-        // console.log('web', APP_CONFIG.environment);
+        console.log('web', APP_CONFIG.environment);
         // 初始化Web SDK
         Adjust.initSdk({
           appToken: APP_CONFIG.web.appToken,
@@ -70,7 +94,7 @@ const initializeAdjust = async (): Promise<boolean> => {
       Adjust = adjustModule.Adjust;
       AdjustEvent = adjustModule.AdjustEvent;
       AdjustConfigParams = adjustModule.AdjustConfig;
-      // console.log('android', APP_CONFIG.environment, Adjust, AdjustEvent);
+      console.log('android', APP_CONFIG.environment, Adjust, AdjustEvent);
       const adjustConfig = new adjustModule.AdjustConfig(
         APP_CONFIG.android.appToken,
         APP_CONFIG.environment === 'production'
