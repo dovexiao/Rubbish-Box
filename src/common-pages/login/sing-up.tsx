@@ -21,6 +21,8 @@ import {useTranslation} from 'react-i18next';
 import {LazyImageLGBackground} from '@basicComponents/image';
 import Clipboard from '@react-native-clipboard/clipboard';
 import DeviceInfo from 'react-native-device-info';
+
+import { trackRegister } from '@utils/AdjustEventTracker';
 // import LazyImage from '@/components/basic/image';
 // const icon = require('../../assets/icons/login/login-botttom.webp');
 
@@ -224,6 +226,7 @@ const SingUp = (props: NavigatorScreenProps) => {
                       (data.sucessPageParams = sucessPageParams);
                     setScratchAuth();
                     goTo('SetPassword', data);
+                    Platform.OS === 'android' && trackRegister();
                   })
                   .finally(() => globalStore.globalLoading.next(false));
               }}

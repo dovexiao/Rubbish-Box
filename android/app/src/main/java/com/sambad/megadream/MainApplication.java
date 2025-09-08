@@ -1,6 +1,10 @@
 package com.sambad.supbetgame;
 
 import android.app.Application;
+//adjust
+// import com.adjust.sdk.Adjust;
+// import com.adjust.sdk.AdjustConfig;
+// import com.adjust.sdk.LogLevel;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -67,10 +71,30 @@ public class MainApplication extends Application implements ReactApplication {
   public ReactNativeHost getReactNativeHost() {
     return mReactNativeHost;
   }
+  // private void initAdjust() {
+  //       // 1. 获取App Token（从meta-data中读取或直接硬编码）
+  //       String appToken = "3meh2m59zif4";
+        
+  //       // 2. 设置环境（测试：SANDBOX / 生产：PRODUCTION）
+  //       // String environment = AdjustConfig.ENVIRONMENT_SANDBOX; // 测试环境
+  //       String environment = AdjustConfig.ENVIRONMENT_PRODUCTION; // 生产环境
+
+  //       // 3. 创建配置对象
+  //       AdjustConfig config = new AdjustConfig(this, appToken, environment);
+        
+  //       // 4. 配置高级选项（可选）
+  //       config.setLogLevel(com.adjust.sdk.LogLevel.VERBOSE); // 开启详细日志（测试环境用）
+  //       // config.setUrlStrategy(AdjustConfig.URL_STRATEGY_CN); // 中国区数据驻留
+  //       // config.setSendInBackground(true); // 后台发送数据
+        
+  //       // 5. 初始化SDK
+  //       Adjust.initSdk(config);
+  // }
 
   @Override
   public void onCreate() {
     super.onCreate();
+    // initAdjust();
     SoLoader.init(this, /* native exopackage */ false);
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.

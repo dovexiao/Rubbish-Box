@@ -55,7 +55,8 @@ module.exports = function override(config, env) {
       /react-native-firebase/, // firebase
       /react-native-moengage/, // 客服相关
       /react-native-fs/, // 文件上传
-      // /react-native-pager-view/, // 页面滚动
+      /react-native-adjust/, // 文件上传
+      // /react-native-pager-view/, // Adjust SDK
     ].map(resourceRegExp => new webpack.IgnorePlugin({resourceRegExp})),
     new Dotenv(),
   );
