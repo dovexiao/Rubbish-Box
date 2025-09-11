@@ -118,7 +118,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                         showCurrency: false,
                         thousands: true,
                       })}
-                      %
+                      {/* % */}
                     </Text>
                   </ImageBackground>
                 )}
@@ -167,9 +167,9 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                       {toPriceStr(bl.giveBalance, {
                         fixed: 0,
                         showCurrency: false,
-                        thousands: true,
+                        thousands: false,
                       })}
-                      %
+                      {/* % */}
                     </Text>
                   </ImageBackground>
                 )}

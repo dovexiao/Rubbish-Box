@@ -66,7 +66,8 @@ const Recharge = () => {
       sortedBalanceList[i].balance <= bBalance &&
       bBalance < sortedBalanceList[i + 1].balance
     ) {
-      exResult = (sortedBalanceList[i].giveBalance / 100) * bBalance;
+      // exResult = (sortedBalanceList[i].giveBalance / 100) * bBalance;
+      exResult = (sortedBalanceList[i].giveBalance);
       break; // 找到后退出循环
     }
 
@@ -76,7 +77,8 @@ const Recharge = () => {
       bBalance >= sortedBalanceList[i + 1].balance
     ) {
       const lastItem = sortedBalanceList[i + 1];
-      exResult = (lastItem.giveBalance / 100) * bBalance;
+      // exResult = (lastItem.giveBalance / 100) * bBalance;
+      exResult = (lastItem.giveBalance);
       break;
     }
   }
