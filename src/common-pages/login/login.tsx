@@ -305,6 +305,8 @@ const Login = (props: NavigatorScreenProps) => {
                             inviteCode,
                             equipmentType,
                             systemType,
+                            '',
+                            false,
                           )
                         : passwordLogin(
                             (globalStore.sendPhoneCode ? userPhoneCode : '') +
