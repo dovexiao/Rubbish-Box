@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useMemo} from 'react';
 import {
   View,
   Animated,
@@ -80,7 +80,10 @@ const VipClubList: React.FC<VipClubListProps> = ({
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-
+  // 添加平滑过渡的动画值
+  // const activeIndexAnim = useRef(new Animated.Value(0)).current;
+  // 添加防抖动的标志
+  // const isAnimating = useRef(false);
   // VIP Club List effects
   useEffect(() => {
     const id = scrollX.addListener(({value}) => {
@@ -92,7 +95,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
       // const idx = Math.round(value / CARD_WIDTH);
       const idx = Math.floor(scrollProgress + threshold);
       const clamped = Math.min(Math.max(idx, 0), vipConfigList.length - 1);
-
+      console.log('clamped', clamped);
       // 只在索引真正改变时才更新状态
       if (activeIndex !== clamped) {
         setActiveIndex(clamped);
@@ -131,7 +134,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
           cardStyle.cardContainerStyle,
           {
             width: vipCardWidth - 20, // 使用vipCardWidth宽度
-            height: 120,
+            height: 140,
             marginHorizontal: 10,
             borderRadius: 8,
             borderWidth: 1,
@@ -141,6 +144,10 @@ const VipClubList: React.FC<VipClubListProps> = ({
           theme.flex.between,
           theme.padding.lrl,
           theme.flex.centerByCol,
+          {
+            paddingTop: 10,
+            paddingBottom: 10,
+          },
         ]}
         key={index}>
         <View
@@ -245,68 +252,96 @@ const VipClubList: React.FC<VipClubListProps> = ({
       </LinearGradient>
     );
   };
+  // 添加平滑过渡的计算函数
+  // const getScrollBasedProgress = useMemo(() => {
+  //   return (index: number) => {
+  //     const scrollProgress = Animated.divide(
+  //       scrollX,
+  //       new Animated.Value(vipCardWidth),
+  //     );
 
+  //     // 计算当前索引的激活程度 (0-1之间)
+  //     const distance = Animated.subtract(
+  //       scrollProgress,
+  //       new Animated.Value(index),
+  //     );
+
+  //     // 将距离转换为激活程度，距离越近激活程度越高
+  //     const activationProgress = distance.interpolate({
+  //       inputRange: [-1, -0.35, 0, 0.35, 1], // 35%阈值对应激活逻辑
+  //       outputRange: [0, 0, 1, 0, 0],
+  //       extrapolate: 'clamp',
+  //     });
+
+  //     return activationProgress;
+  //   };
+  // }, [scrollX, vipCardWidth]);
   // 根据贝塞尔曲线计算小球在弧线上的精确位置
-  const getBallPositionOnCurve = (index: number) => {
-    // 计算小球相对于当前滚动位置的偏移
-    const scrollProgress = Animated.divide(
-      scrollX,
-      new Animated.Value(vipCardWidth), // 使用vipCardWidth
-    );
-    const ballOffset = Animated.subtract(
-      new Animated.Value(index),
-      scrollProgress,
-    );
+  const getBallPositionOnCurve = useMemo(() => {
+    return (index: number) => {
+      // 计算小球相对于当前滚动位置的偏移
+      const scrollProgress = Animated.divide(
+        scrollX,
+        new Animated.Value(vipCardWidth), // 使用vipCardWidth
+      );
+      const ballOffset = Animated.subtract(
+        new Animated.Value(index),
+        scrollProgress,
+      );
 
-    // 将偏移映射到弧线上的位置
-    // -1对应弧线左端，0对应弧线中心，1对应弧线右端
-    const normalizedOffset = Animated.divide(ballOffset, new Animated.Value(1));
+      // 将偏移映射到弧线上的位置
+      // -1对应弧线左端，0对应弧线中心，1对应弧线右端
+      const normalizedOffset = Animated.divide(
+        ballOffset,
+        new Animated.Value(1),
+      );
 
-    // 计算弧线上的t值（0到1之间）
-    const t = Animated.add(
-      new Animated.Value(0.5),
-      // Animated.multiply(normalizedOffset, new Animated.Value(0.5)),
-      Animated.multiply(normalizedOffset, new Animated.Value(0.8)),
-    );
+      // 计算弧线上的t值（0到1之间）
+      const t = Animated.add(
+        new Animated.Value(0.5),
+        Animated.multiply(normalizedOffset, new Animated.Value(0.8)),
+      );
 
-    // 限制t值在合理范围内
-    const clampedT = t.interpolate({
-      inputRange: [-0.5, 0, 1, 1.5],
-      // outputRange: [-0.5, 0, 1, 1.5],
-      outputRange: [0.05, 0.2, 0.8, 0.95],
-      extrapolate: 'extend',
-    });
+      // 限制t值在合理范围内
+      const clampedT = t.interpolate({
+        inputRange: [-0.5, 0, 1, 1.5],
+        // outputRange: [-0.5, 0, 1, 1.5],
+        outputRange: [0.05, 0.2, 0.8, 0.95],
+        // extrapolate: Platform.OS === 'web' ? 'extend' : 'clamp',
+        extrapolate: Platform.OS === 'web' ? 'extend' : 'extend',
+      });
 
-    // 计算贝塞尔曲线上的X位置
-    // B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
-    const oneMinusT = Animated.subtract(new Animated.Value(1), clampedT);
-    const oneMinusTSquared = Animated.multiply(oneMinusT, oneMinusT);
-    const tSquared = Animated.multiply(clampedT, clampedT);
-    const twoOneMinusTTimesT = Animated.multiply(
-      Animated.multiply(new Animated.Value(2), oneMinusT),
-      clampedT,
-    );
+      // 计算贝塞尔曲线上的X位置
+      // B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
+      const oneMinusT = Animated.subtract(new Animated.Value(1), clampedT);
+      const oneMinusTSquared = Animated.multiply(oneMinusT, oneMinusT);
+      const tSquared = Animated.multiply(clampedT, clampedT);
+      const twoOneMinusTTimesT = Animated.multiply(
+        Animated.multiply(new Animated.Value(2), oneMinusT),
+        clampedT,
+      );
 
-    // X位置：P₀.x = SIDE_PADDING, P₁.x = CONTROL_X, P₂.x = screenWidth - SIDE_PADDING
-    const ballX = Animated.add(
-      Animated.add(
-        Animated.multiply(oneMinusTSquared, new Animated.Value(SIDE_PADDING)),
-        Animated.multiply(twoOneMinusTTimesT, new Animated.Value(CONTROL_X)),
-      ),
-      Animated.multiply(
-        tSquared,
-        new Animated.Value(screenWidth - SIDE_PADDING),
-      ),
-    );
+      // X位置：P₀.x = SIDE_PADDING, P₁.x = CONTROL_X, P₂.x = screenWidth - SIDE_PADDING
+      const ballX = Animated.add(
+        Animated.add(
+          Animated.multiply(oneMinusTSquared, new Animated.Value(SIDE_PADDING)),
+          Animated.multiply(twoOneMinusTTimesT, new Animated.Value(CONTROL_X)),
+        ),
+        Animated.multiply(
+          tSquared,
+          new Animated.Value(screenWidth - SIDE_PADDING),
+        ),
+      );
 
-    // Y位置：P₀.y = 0, P₁.y = CONTROL_Y, P₂.y = 0
-    const ballY = Animated.multiply(
-      new Animated.Value(CONTROL_Y),
-      twoOneMinusTTimesT,
-    );
+      // Y位置：P₀.y = 0, P₁.y = CONTROL_Y, P₂.y = 0
+      const ballY = Animated.multiply(
+        new Animated.Value(CONTROL_Y),
+        twoOneMinusTTimesT,
+      );
 
-    return {x: ballX, y: ballY};
-  };
+      return {x: ballX, y: ballY};
+    };
+  }, [scrollX, CONTROL_X, vipCardWidth]);
 
   // 计算可见小球索引
   const getVisibleBalls = (active: number, length: number) => {
@@ -371,18 +406,22 @@ const VipClubList: React.FC<VipClubListProps> = ({
         showsHorizontalScrollIndicator={false}
         snapToInterval={vipCardWidth} // 使用vipCardWidth作为顶部卡片的滚动间隔
         decelerationRate="fast"
-        scrollEventThrottle={64}
+        scrollEventThrottle={Platform.OS !== 'web' ? 32 : 64}
         contentContainerStyle={{
           paddingHorizontal: (screenWidth - vipCardWidth) / 2, // 根据vipCardWidth计算padding
         }}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {x: scrollX}}}],
-          {useNativeDriver: false},
+          {useNativeDriver: Platform.OS !== 'web' ? true : false},
         )}>
         {vipConfigList.map((item, index) => (
           <View key={index} style={{width: vipCardWidth, alignItems: 'center'}}>
             {/* 上方VIP卡片区域 */}
-            <View style={{marginBottom: 12, width: vipCardWidth}}>
+            <View
+              style={{
+                marginBottom: 12,
+                width: vipCardWidth,
+              }}>
               {renderVipCardItem({
                 item: vipList[index],
                 index,
@@ -398,94 +437,189 @@ const VipClubList: React.FC<VipClubListProps> = ({
             />
 
             {/* 下方Club卡片区域 */}
-            <View
-              style={[
-                {
-                  width: CARD_WIDTH - 60,
-                  height: index === activeIndex ? 383 : 363, // 当前活跃卡片高度增加20
-                  marginHorizontal: 10,
-                  alignItems: 'center',
-                  borderRadius: 10,
-                  backgroundColor: theme.basicColor.newBgInOne,
-                  paddingHorizontal: 10,
-                  position: 'relative',
-                  overflow: 'visible',
-                  zIndex: index === activeIndex ? 10 : 1,
-                  elevation: index === activeIndex ? 10 : 1,
-                },
-                index === activeIndex ? activeStyle : null,
-                // index < 8 && index > 7 ? activeStyleLeft : null,
-                index === activeIndex - 1 ? activeStyleLeft : null,
-                index === activeIndex + 1 ? activeStyleRight : null,
-                // index === vipConfigList.length - 1 ? activeStyleRight : null,
-                // index === vipConfigList.length - 2 ? activeStyleRight : null,
-              ]}>
-              {/* 三角形指示器 - 只显示在当前活跃卡片上 */}
-              {index === activeIndex && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: -14,
-                    left: '50%',
-                    marginLeft: Platform.OS === 'android' ? 5 : -8,
-                    zIndex: 10,
-                    width: 16,
-                    height: 15,
-                    backgroundColor: 'transparent',
-                  }}>
-                  <View
-                    style={{
-                      width: 0,
-                      height: 0,
-                      borderLeftWidth: 8,
-                      borderRightWidth: 8,
-                      borderBottomWidth: 15,
-                      borderLeftColor: 'transparent',
-                      borderRightColor: 'transparent',
-                      borderBottomColor: theme.basicColor.newBgInOne,
-                      borderStyle: 'solid',
-                    }}
-                  />
+            {Platform.OS !== 'web' ? (
+              <View
+                style={[
+                  {
+                    width: CARD_WIDTH,
+                    height: index === activeIndex ? 383 : 363, // 当前活跃卡片高度增加20
+                    marginHorizontal: 10,
+                    alignItems: 'center',
+                    borderRadius: 10,
+                    backgroundColor: theme.basicColor.newBgInOne,
+                    paddingHorizontal: 10,
+                    position: 'relative',
+                    overflow: 'visible',
+                    zIndex: index === activeIndex ? 10 : 1,
+                    elevation: index === activeIndex ? 10 : 1,
+                  },
+                  index === activeIndex ? activeStyle : null,
+                  // index < 8 && index > 7 ? activeStyleLeft : null,
+                  // index === activeIndex - 1 ? activeStyleLeft : null,
+                  // index === activeIndex + 1 ? activeStyleRight : null,
+                  // index === vipConfigList.length - 1 ? activeStyleRight : null,
+                  // index === vipConfigList.length - 2 ? activeStyleRight : null,
+                ]}>
+                {/* 三角形指示器 - 只显示在当前活跃卡片上 */}
+                {index === activeIndex && (
                   <View
                     style={{
                       position: 'absolute',
-                      top: 1,
-                      left: 1,
-                      width: 0,
-                      height: 0,
-                      borderLeftWidth: 7,
-                      borderRightWidth: 7,
-                      borderBottomWidth: 13,
-                      borderLeftColor: 'transparent',
-                      borderRightColor: 'transparent',
-                      borderBottomColor: theme.basicColor.newBgInOne,
-                      borderStyle: 'solid',
-                    }}
-                  />
-                </View>
-              )}
-              <Image
-                source={vipOptionsMap[item?.level].small as ImageSourcePropType}
-                style={{
-                  width: 95,
-                  height: 95,
-                  marginTop: 10,
-                  resizeMode: 'contain',
-                }}
-              />
-              <Text
-                fontSize={18}
-                fontWeight="700"
-                style={{color: '#FFFFFF', marginTop: 10}}>
-                V{index}
-              </Text>
-              {renderInfoRow('Level Bonus', item?.amount)}
-              {renderInfoRow('Spin Count', item?.spin)}
-              {renderInfoRow('Daily Bonus', item?.dailyBonus)}
-              {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
-              {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
-              {renderInfoRow('Deposit', item?.recharge)}
-            </View>
+                      top: -14,
+                      left: '50%',
+                      marginLeft: Platform.OS === 'android' ? 5 : -8,
+                      zIndex: 10,
+                      width: 16,
+                      height: 15,
+                      backgroundColor: 'transparent',
+                    }}>
+                    <View
+                      style={{
+                        width: 0,
+                        height: 0,
+                        borderLeftWidth: 8,
+                        borderRightWidth: 8,
+                        borderBottomWidth: 15,
+                        borderLeftColor: 'transparent',
+                        borderRightColor: 'transparent',
+                        borderBottomColor: theme.basicColor.newBgInOne,
+                        borderStyle: 'solid',
+                      }}
+                    />
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: 1,
+                        left: 1,
+                        width: 0,
+                        height: 0,
+                        borderLeftWidth: 7,
+                        borderRightWidth: 7,
+                        borderBottomWidth: 13,
+                        borderLeftColor: 'transparent',
+                        borderRightColor: 'transparent',
+                        borderBottomColor: theme.basicColor.newBgInOne,
+                        borderStyle: 'solid',
+                      }}
+                    />
+                  </View>
+                )}
+                <Image
+                  source={
+                    vipOptionsMap[item?.level].small as ImageSourcePropType
+                  }
+                  style={{
+                    width: 95,
+                    height: 95,
+                    marginTop: 10,
+                    resizeMode: 'contain',
+                  }}
+                />
+                <Text
+                  fontSize={18}
+                  fontWeight="700"
+                  style={{color: '#FFFFFF', marginTop: 10}}>
+                  V{index}
+                </Text>
+                {renderInfoRow('Level Bonus', item?.amount)}
+                {renderInfoRow('Spin Count', item?.spin)}
+                {renderInfoRow('Daily Bonus', item?.dailyBonus)}
+                {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
+                {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
+                {renderInfoRow('Deposit', item?.recharge)}
+              </View>
+            ) : (
+              <View
+                style={[
+                  {
+                    width: CARD_WIDTH - 60,
+                    height: index === activeIndex ? 383 : 363, // 当前活跃卡片高度增加20
+                    marginHorizontal: 10,
+                    alignItems: 'center',
+                    borderRadius: 10,
+                    backgroundColor: theme.basicColor.newBgInOne,
+                    paddingHorizontal: 10,
+                    position: 'relative',
+                    overflow: 'visible',
+                    zIndex: index === activeIndex ? 10 : 1,
+                    elevation: index === activeIndex ? 10 : 1,
+                  },
+                  index === activeIndex ? activeStyle : null,
+                  // index < 8 && index > 7 ? activeStyleLeft : null,
+                  index === activeIndex - 1 ? activeStyleLeft : null,
+                  index === activeIndex + 1 ? activeStyleRight : null,
+                  // index === vipConfigList.length - 1 ? activeStyleRight : null,
+                  // index === vipConfigList.length - 2 ? activeStyleRight : null,
+                ]}>
+                {/* 三角形指示器 - 只显示在当前活跃卡片上 */}
+                {index === activeIndex && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      top: -14,
+                      left: '50%',
+                      marginLeft: -8,
+                      zIndex: 10,
+                      width: 16,
+                      height: 15,
+                      backgroundColor: 'transparent',
+                    }}>
+                    <View
+                      style={{
+                        width: 0,
+                        height: 0,
+                        borderLeftWidth: 8,
+                        borderRightWidth: 8,
+                        borderBottomWidth: 15,
+                        borderLeftColor: 'transparent',
+                        borderRightColor: 'transparent',
+                        borderBottomColor: theme.basicColor.newBgInOne,
+                        borderStyle: 'solid',
+                      }}
+                    />
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: 1,
+                        left: 1,
+                        width: 0,
+                        height: 0,
+                        borderLeftWidth: 7,
+                        borderRightWidth: 7,
+                        borderBottomWidth: 13,
+                        borderLeftColor: 'transparent',
+                        borderRightColor: 'transparent',
+                        borderBottomColor: theme.basicColor.newBgInOne,
+                        borderStyle: 'solid',
+                      }}
+                    />
+                  </View>
+                )}
+                <Image
+                  source={
+                    vipOptionsMap[item?.level].small as ImageSourcePropType
+                  }
+                  style={{
+                    width: 95,
+                    height: 95,
+                    marginTop: 10,
+                    resizeMode: 'contain',
+                  }}
+                />
+                <Text
+                  fontSize={18}
+                  fontWeight="700"
+                  style={{color: '#FFFFFF', marginTop: 10}}>
+                  V{index}
+                </Text>
+                {renderInfoRow('Level Bonus', item?.amount)}
+                {renderInfoRow('Spin Count', item?.spin)}
+                {renderInfoRow('Daily Bonus', item?.dailyBonus)}
+                {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
+                {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
+                {renderInfoRow('Deposit', item?.recharge)}
+              </View>
+            )}
           </View>
         ))}
       </Animated.ScrollView>
