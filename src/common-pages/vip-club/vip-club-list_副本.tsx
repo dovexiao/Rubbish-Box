@@ -8,6 +8,9 @@ import {
   ImageSourcePropType,
   Platform,
   ScrollView,
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   ListRenderItemInfo,
 } from 'react-native';
 import Text from '@basicComponents/text';
@@ -35,7 +38,8 @@ import LinearGradient from '@/components/basic/linear-gradient';
 import {useInnerStyle} from '../vip/vip.hooks';
 
 const {width: screenWidth} = Dimensions.get('window');
-const CARD_WIDTH = screenWidth - theme.paddingSize.l * 2;
+const CARD_WIDTH = 218;
+const VISIBLE_CARDS_PADDING = (screenWidth - CARD_WIDTH) / 2;
 const ARC_HEIGHT = 28;
 const ARC_FACTOR = 2;
 const CONTROL_Y = ARC_HEIGHT * ARC_FACTOR;
@@ -68,57 +72,128 @@ const VipClubList: React.FC<VipClubListProps> = ({
   vipList = [],
   // Common props
   // onCheck,
-  checkIndex,
+  // checkIndex,
 }) => {
   const {i18n} = useTranslation();
   const {
+    vipStyle,
     cardStyle,
     size: {vipCardWidth},
   } = useInnerStyle();
 
-  // VIP Club List effects
+  const cardListRef = useRef<FlatList>(null);
+  const isUserScrollingTop = useRef(false);
+  const isUserScrollingBottom = useRef(false);
+  // const isSyncingFromBottom = useRef(false);
+  // const isSyncingFromTop = useRef(false);
+  const isScrollingProgrammatically = useRef(false);
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [topActiveIndex, setTopActiveIndex] = useState(0);
+  const [mainActiveIndex, setMainActiveIndex] = useState(0);
+
+  // Handle VIP Card scroll
+  const handleCardScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (isScrollingProgrammatically.current) {
+      return;
+    }
+    const width = vipCardWidth;
+    const x = e.nativeEvent.contentOffset.x;
+    const nowIndex = Math.round(x / width);
+    // 添加边界检查，确保索引在有效范围内
+    const clampedIndex = Math.max(0, Math.min(nowIndex, vipList.length - 1));
+    if (topActiveIndex !== clampedIndex) {
+      setTopActiveIndex(clampedIndex);
+      setMainActiveIndex(clampedIndex);
+      // setActiveIndex(clampedIndex);
+      if (Platform.OS !== 'web') {
+        setTopActiveIndex(clampedIndex);
+        if (scrollViewRef.current && (clampedIndex || clampedIndex === 0)) {
+          // console.log('上方卡片滚动clampedIndex---android', clampedIndex);
+          // setActiveIndex(clampedIndex);
+          // scrollViewRef.current.scrollTo({
+          //   x: clampedIndex * CARD_WIDTH,
+          //   animated: true,
+          // });
+        }
+      } else {
+        if (scrollViewRef.current && (clampedIndex || clampedIndex === 0)) {
+          console.log('上方卡片滚动clampedIndex--web', clampedIndex);
+          isScrollingProgrammatically.current = true;
+          // Web 端设置较短的延迟
+          setTimeout(() => {
+            isScrollingProgrammatically.current = false;
+          }, 800);
+        }
+      }
+    }
+  };
+  useEffect(() => {
+    setMainActiveIndex(activeIndex);
+    if (vipList.length <= 0) {
+      return;
+    }
+    if (activeIndex < 0) {
+      return;
+    }
+    cardListRef.current?.scrollToIndex({
+      index: activeIndex || 0,
+    });
+  }, [activeIndex, vipList.length]);
+  useEffect(() => {
+    setMainActiveIndex(topActiveIndex);
+    if (vipList.length <= 0) {
+      return;
+    }
+    if (topActiveIndex < 0) {
+      return;
+    }
+    scrollViewRef.current?.scrollTo({
+      x: topActiveIndex * CARD_WIDTH,
+      animated: true,
+    });
+  }, [topActiveIndex, vipList.length]);
 
   // VIP Club List effects
   useEffect(() => {
     const id = scrollX.addListener(({value}) => {
-      // 计算滚动进度，调整阈值让卡片更接近中心才激活
-      const scrollProgress = value / vipCardWidth;
-      // 使用更严格的判断条件：卡片需要滚动超过65%才切换到下一个
-      // 这样V9卡片需要更接近中心位置才会变高
-      const threshold = 0.35; // 35%的位置开始切换，
-      // const idx = Math.round(value / CARD_WIDTH);
-      const idx = Math.floor(scrollProgress + threshold);
+      if (isScrollingProgrammatically.current) {
+        return;
+      }
+      const idx = Math.round(value / CARD_WIDTH);
       const clamped = Math.min(Math.max(idx, 0), vipConfigList.length - 1);
-
       // 只在索引真正改变时才更新状态
       if (activeIndex !== clamped) {
-        setActiveIndex(clamped);
+        setMainActiveIndex(clamped);
+        if (Platform.OS !== 'web') {
+          setActiveIndex(clamped);
+        } else {
+          isScrollingProgrammatically.current = true;
+          setActiveIndex(clamped);
+          // Web 端设置较短的延迟
+          setTimeout(() => {
+            isScrollingProgrammatically.current = false;
+          }, 800);
+        }
       }
+      // if (Platform.OS !== 'web') {
+      //   const idx = Math.round(value / CARD_WIDTH);
+      //   const clamped = Math.min(Math.max(idx, 0), vipConfigList.length - 1);
+      //   if (activeIndex !== clamped) {
+      //     setActiveIndex(clamped);
+      //   }
+      // } else {
+      //   const idx = Math.round(value / CARD_WIDTH);
+      //   const clamped = Math.min(Math.max(idx, 0), vipConfigList.length - 1);
+      //   isSyncingFromBottom.current = true;
+      //   if (activeIndex !== clamped) {
+      //     setActiveIndex(clamped);
+      //   }
+      // }
     });
     return () => scrollX.removeListener(id);
-  }, [scrollX, vipConfigList.length, activeIndex, vipCardWidth]);
-  useEffect(() => {
-    if (vipConfigList.length <= 0) {
-      return;
-    }
-    if (checkIndex !== undefined && checkIndex >= 0) {
-      const clampedIndex = Math.min(
-        Math.max(checkIndex, 0),
-        vipConfigList.length - 1,
-      );
-      setActiveIndex(clampedIndex);
-      // 滚动到指定位置
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({
-          x: clampedIndex * vipCardWidth,
-          animated: true,
-        });
-      }, 100);
-    }
-  }, [vipConfigList.length, checkIndex, vipCardWidth]);
+  }, [scrollX, vipConfigList.length, activeIndex]);
 
   const CONTROL_X = screenWidth / 2;
 
@@ -129,18 +204,12 @@ const VipClubList: React.FC<VipClubListProps> = ({
         colors={vipBgColors[index]}
         style={[
           cardStyle.cardContainerStyle,
-          {
-            width: vipCardWidth - 20, // 使用vipCardWidth宽度
-            height: 120,
-            marginHorizontal: 10,
-            borderRadius: 8,
-            borderWidth: 1,
-            borderColor: 'rgba(255,255,255,0.3)',
-          },
           theme.flex.row,
           theme.flex.between,
           theme.padding.lrl,
           theme.flex.centerByCol,
+          theme.borderRadius.s,
+          theme.border.white30,
         ]}
         key={index}>
         <View
@@ -251,7 +320,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
     // 计算小球相对于当前滚动位置的偏移
     const scrollProgress = Animated.divide(
       scrollX,
-      new Animated.Value(vipCardWidth), // 使用vipCardWidth
+      new Animated.Value(CARD_WIDTH),
     );
     const ballOffset = Animated.subtract(
       new Animated.Value(index),
@@ -351,77 +420,202 @@ const VipClubList: React.FC<VipClubListProps> = ({
     </View>
   );
 
-  const visibleBalls = getVisibleBalls(activeIndex, vipConfigList.length);
-  const activeStyle = {
-    top: -10,
-    // width: CARD_WIDTH - 80,
-  };
-  const activeStyleLeft = {
-    right: -60,
-  };
-  const activeStyleRight = {
-    left: -60,
-  };
+  const visibleBalls = getVisibleBalls(mainActiveIndex, vipConfigList.length);
+
   return (
     <View style={{flex: 1}}>
-      {/* 单一滚动容器 - 包含上方卡片、中间小球、下方卡片 */}
-      <Animated.ScrollView
-        ref={scrollViewRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={vipCardWidth} // 使用vipCardWidth作为顶部卡片的滚动间隔
-        decelerationRate="fast"
-        scrollEventThrottle={64}
-        contentContainerStyle={{
-          paddingHorizontal: (screenWidth - vipCardWidth) / 2, // 根据vipCardWidth计算padding
-        }}
-        onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {x: scrollX}}}],
-          {useNativeDriver: false},
-        )}>
-        {vipConfigList.map((item, index) => (
-          <View key={index} style={{width: vipCardWidth, alignItems: 'center'}}>
-            {/* 上方VIP卡片区域 */}
-            <View style={{marginBottom: 12, width: vipCardWidth}}>
-              {renderVipCardItem({
-                item: vipList[index],
-                index,
-              } as ListRenderItemInfo<IVipItem>)}
-            </View>
+      {/* VIP Card List Section */}
+      <View style={{marginBottom: 20}}>
+        <FlatList
+          ref={cardListRef}
+          style={[vipStyle.cardList]}
+          showsHorizontalScrollIndicator={false}
+          onScrollBeginDrag={() => {
+            isUserScrollingTop.current = true;
+          }}
+          onScrollEndDrag={() => {
+            isUserScrollingTop.current = false;
+          }}
+          onMomentumScrollEnd={() => {
+            isUserScrollingTop.current = false;
+          }}
+          onScroll={handleCardScroll}
+          contentContainerStyle={[vipStyle.cardListContent]}
+          data={vipList}
+          pagingEnabled
+          scrollEventThrottle={Platform.OS === 'web' ? 100 : 32}
+          snapToAlignment="center"
+          renderItem={renderVipCardItem}
+          getItemLayout={(data, index) => ({
+            // length: vipCardWidth + theme.paddingSize.l,
+            // offset: (vipCardWidth + theme.paddingSize.l) * index,
+            length: vipCardWidth,
+            offset: vipCardWidth * index,
+            index,
+          })}
+          horizontal
+        />
+      </View>
 
-            {/* 中间小球指示器区域的占位空间 */}
-            <View
-              style={{
-                height: CONTROL_Y + 40,
-                marginBottom: 15,
-              }}
+      {/* VIP Club List Section */}
+      <View style={{flex: 1}}>
+        <View
+          style={{
+            height: CONTROL_Y + 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          {/* 贝塞尔弧线 */}
+          <Svg
+            height={CONTROL_Y + 40}
+            width={screenWidth}
+            style={{position: 'absolute', top: 20}}>
+            <Defs>
+              <SvgLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+                <Stop offset="0%" stopColor="#EEACAC" stopOpacity="0.2" />
+                <Stop offset="50%" stopColor="#EEACAC" stopOpacity="1" />
+                <Stop offset="100%" stopColor="#EEACAC" stopOpacity="0.2" />
+              </SvgLinearGradient>
+            </Defs>
+            <Path
+              d={`M${SIDE_PADDING},0 Q${CONTROL_X},${CONTROL_Y} ${
+                screenWidth - SIDE_PADDING
+              },0`}
+              stroke="url(#grad)"
+              strokeWidth={3}
+              fill="transparent"
             />
+          </Svg>
 
-            {/* 下方Club卡片区域 */}
+          {/* 小球 */}
+          <Svg
+            height={CONTROL_Y + 40}
+            width={screenWidth}
+            style={{position: 'absolute', top: 20}}>
+            {visibleBalls.map(idx => {
+              const ballPos = getBallPositionOnCurve(idx);
+              const isCenter = idx === mainActiveIndex;
+              const size = isCenter ? NODE_SIZE_CENTER : NODE_SIZE_SIDE;
+              const fill = theme.basicColor.white;
+              const platformOffset = Platform.OS === 'android' ? 8 : size * 2;
+              const textY = Animated.add(
+                ballPos.y,
+                new Animated.Value(platformOffset),
+              );
+              return (
+                <React.Fragment key={`ball-${idx}`}>
+                  {/* 发光效果 - 外层光晕 */}
+                  {isCenter && (
+                    <AnimatedCircle
+                      cx={ballPos.x}
+                      cy={ballPos.y}
+                      r={size / 2 + 3}
+                      fill="rgba(255,255,255,0.3)"
+                    />
+                  )}
+                  {/* 发光效果 - 中层光晕 */}
+                  <AnimatedCircle
+                    cx={ballPos.x}
+                    cy={ballPos.y}
+                    r={size / 2 + (isCenter ? 2 : 1)}
+                    fill={
+                      isCenter
+                        ? 'rgba(255,255,255,0.5)'
+                        : 'rgba(255,255,255,0.2)'
+                    }
+                  />
+                  <AnimatedCircle
+                    cx={ballPos.x}
+                    cy={ballPos.y}
+                    r={size / 2}
+                    fill={fill}
+                  />
+                  {Platform.OS === 'android' ? (
+                    // ✅ 安卓：用绝对定位的 Animated.View + Text
+                    <Animated.View
+                      style={{
+                        position: 'absolute',
+                        transform: [
+                          {translateX: ballPos.x},
+                          {
+                            translateY: Animated.add(
+                              ballPos.y,
+                              new Animated.Value(platformOffset),
+                            ),
+                          },
+                        ],
+                        marginLeft: -(isCenter ? 12 : 10) / 2,
+                      }}
+                      pointerEvents="none">
+                      <Text
+                        fontSize={isCenter ? 11 : 9}
+                        fontWeight="600"
+                        style={{
+                          color: '#fff',
+                          textAlign: 'center',
+                          width: size * 2,
+                        }}>
+                        {`V${idx}`}
+                      </Text>
+                    </Animated.View>
+                  ) : (
+                    <AnimatedSvgText
+                      x={ballPos.x}
+                      y={textY}
+                      fontSize={isCenter ? 12 : 10}
+                      fontWeight="600"
+                      textAnchor="middle"
+                      alignmentBaseline="middle"
+                      fill="#fff">
+                      {`V${idx}`}
+                    </AnimatedSvgText>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </Svg>
+        </View>
+        {/* 卡片滚动 */}
+        <Animated.ScrollView
+          ref={scrollViewRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          onScrollBeginDrag={() => {
+            isUserScrollingBottom.current = true;
+          }}
+          onMomentumScrollEnd={() => {
+            isUserScrollingBottom.current = false;
+          }}
+          contentContainerStyle={{
+            paddingHorizontal: VISIBLE_CARDS_PADDING,
+            alignItems: 'center',
+            paddingTop: 15,
+          }}
+          snapToInterval={CARD_WIDTH}
+          decelerationRate="fast"
+          scrollEventThrottle={Platform.OS === 'web' ? 100 : 32}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {x: scrollX}}}],
+            {useNativeDriver: Platform.OS !== 'web'},
+          )}>
+          {vipConfigList.map((item, index) => (
             <View
-              style={[
-                {
-                  width: CARD_WIDTH - 60,
-                  height: index === activeIndex ? 383 : 363, // 当前活跃卡片高度增加20
-                  marginHorizontal: 10,
-                  alignItems: 'center',
-                  borderRadius: 10,
-                  backgroundColor: theme.basicColor.newBgInOne,
-                  paddingHorizontal: 10,
-                  position: 'relative',
-                  overflow: 'visible',
-                  zIndex: index === activeIndex ? 10 : 1,
-                  elevation: index === activeIndex ? 10 : 1,
-                },
-                index === activeIndex ? activeStyle : null,
-                // index < 8 && index > 7 ? activeStyleLeft : null,
-                index === activeIndex - 1 ? activeStyleLeft : null,
-                index === activeIndex + 1 ? activeStyleRight : null,
-                // index === vipConfigList.length - 1 ? activeStyleRight : null,
-                // index === vipConfigList.length - 2 ? activeStyleRight : null,
-              ]}>
+              key={index}
+              style={{
+                width: CARD_WIDTH - 20,
+                height: 363,
+                marginHorizontal: 10,
+                alignItems: 'center',
+                borderRadius: 10,
+                backgroundColor: theme.basicColor.newBgInOne,
+                paddingHorizontal: 10,
+                position: 'relative',
+                overflow: 'visible', // <- 也加在卡片上试试（有时需要）
+                zIndex: index === mainActiveIndex ? 10 : 1, // iOS
+                elevation: index === mainActiveIndex ? 10 : 1, // Android
+              }}>
               {/* 三角形指示器 - 只显示在当前活跃卡片上 */}
-              {index === activeIndex && (
+              {index === mainActiveIndex && (
                 <View
                   style={{
                     position: 'absolute',
@@ -486,127 +680,8 @@ const VipClubList: React.FC<VipClubListProps> = ({
               {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
               {renderInfoRow('Deposit', item?.recharge)}
             </View>
-          </View>
-        ))}
-      </Animated.ScrollView>
-      {/* 固定在屏幕中间的小球指示器 */}
-      <View
-        style={{
-          position: 'absolute',
-          top: vipList.length > 0 ? 140 : 100, // 根据上方卡片高度调整位置
-          left: 0,
-          right: 0,
-          height: CONTROL_Y + 40,
-          alignItems: 'center',
-          justifyContent: 'center',
-          pointerEvents: 'none', // 允许触摸事件穿透
-        }}>
-        {/* 贝塞尔弧线 */}
-        <Svg
-          height={CONTROL_Y + 40}
-          width={screenWidth}
-          style={{position: 'absolute', top: 20}}>
-          <Defs>
-            <SvgLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
-              <Stop offset="0%" stopColor="#EEACAC" stopOpacity="0.2" />
-              <Stop offset="50%" stopColor="#EEACAC" stopOpacity="1" />
-              <Stop offset="100%" stopColor="#EEACAC" stopOpacity="0.2" />
-            </SvgLinearGradient>
-          </Defs>
-          <Path
-            d={`M${SIDE_PADDING},0 Q${CONTROL_X},${CONTROL_Y} ${
-              screenWidth - SIDE_PADDING
-            },0`}
-            stroke="url(#grad)"
-            strokeWidth={3}
-            fill="transparent"
-          />
-        </Svg>
-
-        {/* 小球 */}
-        <Svg
-          height={CONTROL_Y + 40}
-          width={screenWidth}
-          style={{position: 'absolute', top: 20}}>
-          {visibleBalls.map(idx => {
-            const ballPos = getBallPositionOnCurve(idx);
-            const isCenter = idx === activeIndex;
-            const size = isCenter ? NODE_SIZE_CENTER : NODE_SIZE_SIDE;
-            const fill = theme.basicColor.white;
-            const platformOffset = Platform.OS === 'android' ? 8 : size * 2;
-            const textY = Animated.add(
-              ballPos.y,
-              new Animated.Value(platformOffset),
-            );
-            return (
-              <React.Fragment key={`ball-${idx}`}>
-                {/* 发光效果 - 外层光晕 */}
-                {isCenter && (
-                  <AnimatedCircle
-                    cx={ballPos.x}
-                    cy={ballPos.y}
-                    r={size / 2 + 3}
-                    fill="rgba(255,255,255,0.3)"
-                  />
-                )}
-                {/* 发光效果 - 中层光晕 */}
-                <AnimatedCircle
-                  cx={ballPos.x}
-                  cy={ballPos.y}
-                  r={size / 2 + (isCenter ? 2 : 1)}
-                  fill={
-                    isCenter ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.2)'
-                  }
-                />
-                <AnimatedCircle
-                  cx={ballPos.x}
-                  cy={ballPos.y}
-                  r={size / 2}
-                  fill={fill}
-                />
-                {Platform.OS === 'android' ? (
-                  <Animated.View
-                    style={{
-                      position: 'absolute',
-                      transform: [
-                        {translateX: ballPos.x},
-                        {
-                          translateY: Animated.add(
-                            ballPos.y,
-                            new Animated.Value(platformOffset),
-                          ),
-                        },
-                      ],
-                      marginLeft: -(isCenter ? 12 : 10) / 2,
-                    }}
-                    pointerEvents="none">
-                    <Text
-                      fontSize={isCenter ? 11 : 9}
-                      fontWeight="600"
-                      style={{
-                        color: '#fff',
-                        textAlign: 'center',
-                        width: size * 2,
-                      }}>
-                      {`V${idx}`}
-                    </Text>
-                  </Animated.View>
-                ) : (
-                  <AnimatedSvgText
-                    x={ballPos.x}
-                    y={textY}
-                    fontSize={isCenter ? 12 : 10}
-                    fontWeight="600"
-                    textAnchor="middle"
-                    alignmentBaseline="middle"
-                    fill="#fff">
-                    {`V${idx}`}
-                  </AnimatedSvgText>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </Svg>
+          ))}
+        </Animated.ScrollView>
       </View>
     </View>
   );

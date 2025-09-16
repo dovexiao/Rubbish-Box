@@ -97,6 +97,8 @@ export const basicColor = {
   newSpecialTwo: '#4b1d1a', // 用于casino，live，fish单个游戏卡片背景色
   newSpecialThree: '#6d0505', //用于lottery的tab切换整体背景色
   newTransparent: 'rgba(0, 0, 0, 0)', //透明色
+  // vip滑动条背景色
+  newVipProgressBg: '#EBA8AA',
 };
 
 export const linearGradientColor = {

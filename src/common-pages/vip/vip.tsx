@@ -1,11 +1,11 @@
 import theme from '@/style';
 import React, {useMemo, useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {View, ScrollView} from 'react-native';
 import {useInnerStyle} from './vip.hooks';
-import VipCardList from './vip-card-list';
+// import VipCardList from './vip-card-list';
 // import VipTableList from './vip-table-list';
 import DetailNavTitle from '@businessComponents/detail-nav-title';
-import {debounce, goTo, goToWithLogin} from '@/utils'; //goBack
+import {goTo, goToWithLogin} from '@/utils'; //goBack
 import {
   VipProgressInfo,
   getVipRender,
@@ -35,10 +35,10 @@ const Vip = () => {
   const [vipList, setVipList] = useState<IVipItem[]>([]);
   const [vipConfigList, setVipConfigList] = useState<IVipConfigItem[]>([]);
   const [checkIndex, setCheckIndex] = useState(0);
-  const {isLogin, token} = useToken();
+  const {isLogin} = useToken();
   const [user, setUser] = useState<IUserInfo>();
-  console.log('isLogin', isLogin);
-  console.log('token', token);
+  // console.log('isLogin', isLogin);
+  // console.log('token', token);
   const {level} = useVipStore(state => state.vipInfo);
   const cards = useMemo(() => {
     const vips = vipList.map(v => v.level);
@@ -79,7 +79,6 @@ const Vip = () => {
       // 每次页面获得焦点时执行（包括首次进入和返回进入）
       handleRefresh();
       // setUser(userInfo);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []), // 空依赖 → useCallback确保函数引用稳定
   );
   const handleRefresh = () => {
@@ -111,9 +110,11 @@ const Vip = () => {
     // handleRefresh();
   }, []);
 
-  const handleChangeCheckIndex = debounce((index: number) => {
-    setCheckIndex(index);
-  });
+  // const handleChangeCheckIndex = (index: number) => {
+  //   if (checkIndex !== index) {
+  //     setCheckIndex(index);
+  //   }
+  // };
   const toRecharge = () => {
     if (!globalStore.token) {
       goTo('Login');
@@ -121,7 +122,6 @@ const Vip = () => {
     }
     goToWithLogin(i18n.t('home.tab.deposit'));
   };
-
   return (
     <LazyImageLGBackground
       style={[theme.fill.fillW, theme.flex.col, vipStyle.container]}>
@@ -130,22 +130,32 @@ const Vip = () => {
         // onBack={() => goBack()}
         hideServer
       />
-      <View style={[theme.padding.lrxxl]}>
-        <MeUser login={isLogin} user={user} level={level} showNoMenu={false} />
-      </View>
-      <VipCardList
-        vipInfoList={vipInfoList}
-        cards={cards}
-        vipList={vipList}
-        rechargeAmount={rechargeAmount}
-        onRecharge={toRecharge}
-        onCheck={handleChangeCheckIndex}
-        checkIndex={checkIndex}
-        currentLevel={currentLevel}
-        onRefresh={handleRefresh}
-      />
-      <VipClubList vipConfigList={vipConfigList} />
-      {/* <RechargeButton onRecharge={toRecharge} /> */}
+      <ScrollView>
+        <View style={[theme.padding.lrxxl]}>
+          <MeUser
+            login={isLogin}
+            user={user}
+            level={level}
+            showNoMenu={false}
+          />
+        </View>
+        <VipClubList
+          vipConfigList={vipConfigList}
+          // VIP Card List props
+          rechargeAmount={rechargeAmount}
+          vipInfoList={vipInfoList}
+          cards={cards}
+          vipList={vipList}
+          onRecharge={toRecharge}
+          onRefresh={handleRefresh}
+          currentLevel={currentLevel}
+          // Common props
+          // onCheck={handleChangeCheckIndex}
+          checkIndex={checkIndex}
+        />
+        <View style={{height: 60}} />
+        {/* <RechargeButton onRecharge={toRecharge} /> */}
+      </ScrollView>
     </LazyImageLGBackground>
   );
 };

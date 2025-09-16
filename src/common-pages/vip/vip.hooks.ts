@@ -10,7 +10,8 @@ function useSize() {
     return {
       screenWidth,
       screenHeight,
-      vipCardWidth: screenWidth - theme.paddingSize.l * 2,
+      // vipCardWidth: screenWidth - theme.paddingSize.l * 2,
+      vipCardWidth: screenWidth,
       designWidth,
       rechargeButtonWidth,
     };
