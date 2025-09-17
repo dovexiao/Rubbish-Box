@@ -5,11 +5,16 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
+  Image,
+  Modal,
 } from 'react-native';
 import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
 import theme from '@/style';
+import {useTranslation} from 'react-i18next';
+import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 
+const ablotW = require('@assets/icons/about-w.webp');
 const {width: screenWidth} = Dimensions.get('window');
 
 interface VipClubTopProps {
@@ -39,7 +44,13 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
   h = 150,
   w = screenWidth - 20,
 }) => {
+  const {i18n} = useTranslation();
   const [isPressed, setIsPressed] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const handleInfoPress = () => {
+    setVisible(true);
+  };
 
   const handlePress = () => {
     console.log('handlePress');
@@ -83,17 +94,36 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
         {/* 中间金额区域 */}
         <View style={styles.middleSection}>
           <View style={styles.salaryContainer}>
-            <Text
-              fontSize={theme.fontSize.m}
-              color={theme.fontColor.white80}
-              style={[
-                styles.salaryLabel,
-                {
-                  textAlign: 'center',
-                },
-              ]}>
-              Weekly Salary
-            </Text>
+            <View style={[theme.flex.row, theme.flex.centerByCol]}>
+              <Text
+                fontSize={theme.fontSize.m}
+                color={theme.fontColor.white80}
+                style={[
+                  styles.salaryLabel,
+                  {
+                    textAlign: 'center',
+                  },
+                ]}>
+                {i18n.t('vip.weeklySalary')}
+              </Text>
+              <NativeTouchableOpacity
+                style={{
+                  marginLeft: 5,
+                }}
+                onPress={() => {
+                  handleInfoPress();
+                }}>
+                <Image
+                  source={ablotW}
+                  style={[
+                    {
+                      width: 16,
+                      height: 16,
+                    },
+                  ]}
+                />
+              </NativeTouchableOpacity>
+            </View>
             <Text
               fontSize={theme.fontSize.xxxl}
               fontWeight="bold"
@@ -175,8 +205,8 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
             </Text>
 
             <Text
-              fontSize={theme.fontSize.xs}
-              color={theme.fontColor.white60}
+              fontSize={theme.fontSize.s}
+              color={theme.fontColor.white}
               style={[
                 styles.progressLabel,
                 {
@@ -188,10 +218,89 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
           </View>
         </View>
       </ImageBackground>
+      <Modal
+        animationType="fade"
+        transparent
+        visible={visible}
+        onRequestClose={() => {
+          setVisible(false);
+        }}>
+        <View style={modalStyles.overlay}>
+          <View
+            style={[
+              modalStyles.container,
+              {backgroundColor: theme.basicColor.newBgInTwo},
+            ]}>
+            <Text style={modalStyles.title}>{i18n.t('label.prompt')}</Text>
+            <Text style={modalStyles.message}>
+              {
+                'This is a detailed explanation of weekly salary, to be determined ...'
+              }
+            </Text>
+            <View style={modalStyles.buttonRow}>
+              {/* <TouchableOpacity style={modalStyles.button} onPress={onCancel}>
+                <Text style={modalStyles.cancelText}></Text>
+              </TouchableOpacity> */}
+              <TouchableOpacity
+                style={modalStyles.button}
+                onPress={() => {
+                  setVisible(false);
+                }}>
+                <Text style={modalStyles.confirmText}>
+                  {i18n.t('label.confirm')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
-
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    width: '75%',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: theme.fontColor.white,
+  },
+  message: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: theme.fontColor.white,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
+  button: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  cancelText: {
+    color: '#999',
+    fontSize: 16,
+  },
+  confirmText: {
+    color: theme.basicColor.newFontYellow,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'center',
@@ -201,7 +310,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadiusSize.l,
     overflow: 'hidden',
     justifyContent: 'flex-end',
-    paddingBottom: 15,
+    paddingBottom: 5,
   },
   backgroundImage: {
     borderRadius: theme.borderRadiusSize.l,
@@ -302,6 +411,8 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadiusSize.xs,
   },
   progressBarText: {
+    marginTop: 8,
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

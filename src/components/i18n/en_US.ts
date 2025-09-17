@@ -2,6 +2,7 @@
 export default {
   label: {
     ok: 'Ok',
+    prompt: 'Prompt',
     confirm: 'Confirm',
     cancel: 'Cancel',
     download: 'Download',
@@ -71,6 +72,7 @@ export default {
     finished: 'To be Finished',
     received: 'Received',
     recharge: 'Recharge',
+    weeklySalary: 'Weekly Salary',
     move: 'more to reach level',
     title: 'VIP',
     table: {

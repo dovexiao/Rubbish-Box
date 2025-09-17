@@ -492,7 +492,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
                   cy={y}
                   r={NODE_SIZE_SIDE * 1.2}
                   fill="#fff"
-                  // opacity={opacity}
+                  opacity={opacity}
                 />
                 <Animated.View
                   style={{

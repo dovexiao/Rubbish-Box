@@ -55,7 +55,8 @@ export function useShare(_autoInit = false) {
     //   return;
     // }
     if (globalStore.isAndroid) {
-      onShare(`${invateText}?code=${code}`);
+      onShare(`${invateText}`);
+      // onShare(`${invateText}?code=${code}`);
     } else {
       copyShareLink(tip);
     }
