@@ -44,6 +44,7 @@ interface VipClubListProps {
   rechargeAmount?: number;
   vipList?: IVipItem[];
   checkIndex?: number;
+  handlePressClaim?: () => void;
 }
 
 const AnimatedCircle = Animated.createAnimatedComponent(SvgCircle);

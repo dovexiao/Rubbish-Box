@@ -33,6 +33,7 @@ import {toPriceStr} from '@/utils';
 import {useTranslation} from 'react-i18next';
 import LinearGradient from '@/components/basic/linear-gradient';
 import {useInnerStyle} from '../vip/vip.hooks';
+import VipClubTop from './vip-club-top';
 
 const {width: screenWidth} = Dimensions.get('window');
 const CARD_WIDTH = screenWidth - theme.paddingSize.l * 2;
@@ -54,7 +55,7 @@ interface VipClubListProps {
   onRefresh?: () => void;
   currentLevel?: number;
   // Common props
-  // onCheck?: (index: number) => void;
+  handlePressClaim?: () => void;
   checkIndex?: number;
 }
 
@@ -67,7 +68,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
   rechargeAmount = 0,
   vipList = [],
   // Common props
-  // onCheck,
+  handlePressClaim,
   checkIndex,
 }) => {
   const {i18n} = useTranslation();
@@ -527,128 +528,132 @@ const VipClubList: React.FC<VipClubListProps> = ({
         ))}
       </Animated.ScrollView>
       {/* 固定在屏幕中间的小球指示器 */}
-      <View
-        style={{
-          position: 'absolute',
-          top: vipList.length > 0 ? 140 : 100, // 根据上方卡片高度调整位置
-          left: 0,
-          right: 0,
-          height: CONTROL_Y + 40,
-          alignItems: 'center',
-          justifyContent: 'center',
-          pointerEvents: 'none', // 允许触摸事件穿透
-        }}>
-        {/* 贝塞尔弧线 */}
-        <Svg
-          height={CONTROL_Y + 40}
-          width={screenWidth}
-          style={{position: 'absolute', top: 20}}>
-          <Defs>
-            <SvgLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
-              <Stop offset="0%" stopColor="#EEACAC" stopOpacity="0.2" />
-              <Stop offset="50%" stopColor="#EEACAC" stopOpacity="1" />
-              <Stop offset="100%" stopColor="#EEACAC" stopOpacity="0.2" />
-            </SvgLinearGradient>
-          </Defs>
-          <Path
-            d={`M${SIDE_PADDING},0 Q${CONTROL_X},${CONTROL_Y} ${
-              screenWidth - SIDE_PADDING
-            },0`}
-            stroke="url(#grad)"
-            strokeWidth={3}
-            fill="transparent"
-          />
-        </Svg>
 
-        {/* 小球 */}
-        {Platform.OS !== 'web' ? null : (
+      <VipClubTop onClaim={handlePressClaim} />
+      {vipList.length > 0 ? (
+        <View
+          style={{
+            position: 'absolute',
+            top: vipList.length > 0 ? 140 : 100, // 根据上方卡片高度调整位置
+            left: 0,
+            right: 0,
+            height: CONTROL_Y + 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none', // 允许触摸事件穿透
+          }}>
+          {/* 贝塞尔弧线 */}
           <Svg
             height={CONTROL_Y + 40}
             width={screenWidth}
             style={{position: 'absolute', top: 20}}>
-            {visibleBalls.map(idx => {
-              const ballPos = getBallPositionOnCurve(idx);
-              const isCenter = idx === activeIndex;
-              const size = isCenter ? NODE_SIZE_CENTER : NODE_SIZE_SIDE;
-              const fill = theme.basicColor.white;
-              const platformOffset = Platform.OS === 'android' ? 8 : size * 2;
-              const textY = Animated.add(
-                ballPos.y,
-                new Animated.Value(platformOffset),
-              );
-              return (
-                <React.Fragment key={`ball-${idx}`}>
-                  {/* 发光效果 - 外层光晕 */}
-                  {isCenter && (
+            <Defs>
+              <SvgLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+                <Stop offset="0%" stopColor="#EEACAC" stopOpacity="0.2" />
+                <Stop offset="50%" stopColor="#EEACAC" stopOpacity="1" />
+                <Stop offset="100%" stopColor="#EEACAC" stopOpacity="0.2" />
+              </SvgLinearGradient>
+            </Defs>
+            <Path
+              d={`M${SIDE_PADDING},0 Q${CONTROL_X},${CONTROL_Y} ${
+                screenWidth - SIDE_PADDING
+              },0`}
+              stroke="url(#grad)"
+              strokeWidth={3}
+              fill="transparent"
+            />
+          </Svg>
+
+          {/* 小球 */}
+          {Platform.OS !== 'web' ? null : (
+            <Svg
+              height={CONTROL_Y + 40}
+              width={screenWidth}
+              style={{position: 'absolute', top: 20}}>
+              {visibleBalls.map(idx => {
+                const ballPos = getBallPositionOnCurve(idx);
+                const isCenter = idx === activeIndex;
+                const size = isCenter ? NODE_SIZE_CENTER : NODE_SIZE_SIDE;
+                const fill = theme.basicColor.white;
+                const platformOffset = Platform.OS === 'android' ? 8 : size * 2;
+                const textY = Animated.add(
+                  ballPos.y,
+                  new Animated.Value(platformOffset),
+                );
+                return (
+                  <React.Fragment key={`ball-${idx}`}>
+                    {/* 发光效果 - 外层光晕 */}
+                    {isCenter && (
+                      <AnimatedCircle
+                        cx={ballPos.x}
+                        cy={ballPos.y}
+                        r={size / 2 + 3}
+                        fill="rgba(255,255,255,0.3)"
+                      />
+                    )}
+                    {/* 发光效果 - 中层光晕 */}
                     <AnimatedCircle
                       cx={ballPos.x}
                       cy={ballPos.y}
-                      r={size / 2 + 3}
-                      fill="rgba(255,255,255,0.3)"
+                      r={size / 2 + (isCenter ? 2 : 1)}
+                      fill={
+                        isCenter
+                          ? 'rgba(255,255,255,0.5)'
+                          : 'rgba(255,255,255,0.2)'
+                      }
                     />
-                  )}
-                  {/* 发光效果 - 中层光晕 */}
-                  <AnimatedCircle
-                    cx={ballPos.x}
-                    cy={ballPos.y}
-                    r={size / 2 + (isCenter ? 2 : 1)}
-                    fill={
-                      isCenter
-                        ? 'rgba(255,255,255,0.5)'
-                        : 'rgba(255,255,255,0.2)'
-                    }
-                  />
-                  <AnimatedCircle
-                    cx={ballPos.x}
-                    cy={ballPos.y}
-                    r={size / 2}
-                    fill={fill}
-                  />
-                  {Platform.OS === 'android' ? (
-                    <Animated.View
-                      style={{
-                        position: 'absolute',
-                        transform: [
-                          {translateX: ballPos.x},
-                          {
-                            translateY: Animated.add(
-                              ballPos.y,
-                              new Animated.Value(platformOffset),
-                            ),
-                          },
-                        ],
-                        marginLeft: -(isCenter ? 12 : 10) / 2,
-                      }}
-                      pointerEvents="none">
-                      <Text
-                        fontSize={isCenter ? 11 : 9}
-                        fontWeight="600"
+                    <AnimatedCircle
+                      cx={ballPos.x}
+                      cy={ballPos.y}
+                      r={size / 2}
+                      fill={fill}
+                    />
+                    {Platform.OS === 'android' ? (
+                      <Animated.View
                         style={{
-                          color: '#fff',
-                          textAlign: 'center',
-                          width: size * 2,
-                        }}>
+                          position: 'absolute',
+                          transform: [
+                            {translateX: ballPos.x},
+                            {
+                              translateY: Animated.add(
+                                ballPos.y,
+                                new Animated.Value(platformOffset),
+                              ),
+                            },
+                          ],
+                          marginLeft: -(isCenter ? 12 : 10) / 2,
+                        }}
+                        pointerEvents="none">
+                        <Text
+                          fontSize={isCenter ? 11 : 9}
+                          fontWeight="600"
+                          style={{
+                            color: '#fff',
+                            textAlign: 'center',
+                            width: size * 2,
+                          }}>
+                          {`V${idx}`}
+                        </Text>
+                      </Animated.View>
+                    ) : (
+                      <AnimatedSvgText
+                        x={ballPos.x}
+                        y={textY}
+                        fontSize={isCenter ? 12 : 10}
+                        fontWeight="600"
+                        textAnchor="middle"
+                        alignmentBaseline="middle"
+                        fill="#fff">
                         {`V${idx}`}
-                      </Text>
-                    </Animated.View>
-                  ) : (
-                    <AnimatedSvgText
-                      x={ballPos.x}
-                      y={textY}
-                      fontSize={isCenter ? 12 : 10}
-                      fontWeight="600"
-                      textAnchor="middle"
-                      alignmentBaseline="middle"
-                      fill="#fff">
-                      {`V${idx}`}
-                    </AnimatedSvgText>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </Svg>
-        )}
-      </View>
+                      </AnimatedSvgText>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </Svg>
+          )}
+        </View>
+      ) : null}
     </View>
   );
 };

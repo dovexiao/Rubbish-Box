@@ -22,8 +22,11 @@ interface VipClubListProps {
 }
 
 const VipClubList: React.FC<VipClubListProps> = props => {
+  const handlePressClaim = () => {
+    console.log('Claim button pressed');
+  };
   if (Platform.OS === 'web') {
-    return <VipClubListWeb {...props} />;
+    return <VipClubListWeb handlePressClaim={handlePressClaim} {...props} />;
   }
   if (Platform.OS === 'android') {
     // 为 Android 组件提供默认的 renderVipCardItem 函数
@@ -36,10 +39,15 @@ const VipClubList: React.FC<VipClubListProps> = props => {
           return null; // 或者提供一个简单的默认渲染
         }),
     };
-    return <VipClubListAndroid {...androidProps} />;
+    return (
+      <VipClubListAndroid
+        handlePressClaim={handlePressClaim}
+        {...androidProps}
+      />
+    );
   }
   // iOS 可以沿用 Web 方案或类似 Android
-  return <VipClubListWeb {...props} />;
+  return <VipClubListWeb handlePressClaim={handlePressClaim} {...props} />;
 };
 
 export default VipClubList;
