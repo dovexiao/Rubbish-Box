@@ -7,7 +7,7 @@ import {
   BottomTabBarProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import {ImageURISource, Image, View} from 'react-native'; //ImageBackground
+import {ImageURISource, Image, View, StyleSheet} from 'react-native'; //ImageBackground
 import {NavigatorScreenProps} from '@types';
 // import Result from './common-pages/result';
 import {Shadow} from 'react-native-shadow-2';
@@ -26,7 +26,7 @@ import Vip from '@/common-pages/vip/vip';
 import ProxyHome from "@/common-pages/proxy";
 
 const Tab = createBottomTabNavigator();
-
+const daillyGif = require('@/assets/gif/daillybonus.gif');
 export const mainPageList: {
   name: string;
   link: string;
@@ -76,6 +76,7 @@ export const mainPageList: {
 ];
 
 const CusTab = (props: BottomTabBarProps) => {
+  const showGif = 1;
   return (
     <Shadow
       {...theme.shadow.defaultShadow}
@@ -132,7 +133,7 @@ const CusTab = (props: BottomTabBarProps) => {
               accessibilityLabel={options.tabBarAccessibilityLabel}
               testID={options.tabBarTestID}
               onPress={onPress}
-              style={[theme.flex.center, theme.flex.flex1, theme.padding.tbs]}>
+              style={[theme.flex.center, theme.flex.flex1, theme.padding.tbs, {position: 'relative', overflow: index === showGif ? 'visible' : 'hidden'}]}>
               <Image
                 style={theme.icon.l}
                 source={
@@ -141,6 +142,10 @@ const CusTab = (props: BottomTabBarProps) => {
                     : mainPageList[index].img
                 }
               />
+              {index === showGif && <Image
+                style={[styles.icon]}
+                source={daillyGif}
+              />}
               <Text
                 blod={true}
                 fontSize={10}
@@ -181,5 +186,14 @@ const MainNav = () => {
     </Tab.Navigator>
   );
 };
-
+const styles = StyleSheet.create({
+  icon: {
+    width: 48,
+    height: 16,
+    position: 'absolute',
+    top: -3,
+    left: '50%',
+    transform: [{translateX: 8}],
+  },
+});
 export default MainNav;
