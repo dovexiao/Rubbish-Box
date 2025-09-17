@@ -80,7 +80,6 @@ const VipClubList: React.FC<VipClubListProps> = ({
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [currentActiveIndex, setCurrentActiveIndex] = useState(0);
   // 添加平滑过渡的动画值
   // const activeIndexAnim = useRef(new Animated.Value(0)).current;
   // 添加防抖动的标志
@@ -97,7 +96,6 @@ const VipClubList: React.FC<VipClubListProps> = ({
       const idx = Math.floor(scrollProgress + threshold);
       const clamped = Math.min(Math.max(idx, 0), vipConfigList.length - 1);
       // 只在索引真正改变时才更新状态
-      setCurrentActiveIndex(clamped);
       if (activeIndex !== clamped) {
         setActiveIndex(clamped);
       }
@@ -390,7 +388,6 @@ const VipClubList: React.FC<VipClubListProps> = ({
   const visibleBalls = getVisibleBalls(activeIndex, vipConfigList.length);
   const activeStyle = {
     top: -10,
-    // width: CARD_WIDTH - 80,
   };
   const activeStyleLeft = {
     right: -60,
@@ -438,189 +435,94 @@ const VipClubList: React.FC<VipClubListProps> = ({
             />
 
             {/* 下方Club卡片区域 */}
-            {Platform.OS !== 'web' ? (
-              <View
-                style={[
-                  {
-                    width: CARD_WIDTH,
-                    height: index === currentActiveIndex ? 383 : 363, // 当前活跃卡片高度增加20
-                    marginHorizontal: 10,
-                    alignItems: 'center',
-                    borderRadius: 10,
-                    backgroundColor: theme.basicColor.newBgInOne,
-                    paddingHorizontal: 10,
-                    position: 'relative',
-                    overflow: 'visible',
-                    zIndex: index === activeIndex ? 10 : 1,
-                    elevation: index === activeIndex ? 10 : 1,
-                  },
-                  index === activeIndex ? activeStyle : null,
-                  // index < 8 && index > 7 ? activeStyleLeft : null,
-                  // index === activeIndex - 1 ? activeStyleLeft : null,
-                  // index === activeIndex + 1 ? activeStyleRight : null,
-                  // index === vipConfigList.length - 1 ? activeStyleRight : null,
-                  // index === vipConfigList.length - 2 ? activeStyleRight : null,
-                ]}>
-                {/* 三角形指示器 - 只显示在当前活跃卡片上 */}
-                {index === currentActiveIndex && (
+            <View
+              style={[
+                {
+                  width: CARD_WIDTH - 60,
+                  height: index === activeIndex ? 383 : 363, // 当前活跃卡片高度增加20
+                  marginHorizontal: 10,
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  backgroundColor: theme.basicColor.newBgInOne,
+                  paddingHorizontal: 10,
+                  position: 'relative',
+                  overflow: 'visible',
+                  zIndex: index === activeIndex ? 10 : 1,
+                  elevation: index === activeIndex ? 10 : 1,
+                },
+                index === activeIndex ? activeStyle : null,
+                // index < 8 && index > 7 ? activeStyleLeft : null,
+                index === activeIndex - 1 ? activeStyleLeft : null,
+                index === activeIndex + 1 ? activeStyleRight : null,
+                // index === vipConfigList.length - 1 ? activeStyleRight : null,
+                // index === vipConfigList.length - 2 ? activeStyleRight : null,
+              ]}>
+              {/* 三角形指示器 - 只显示在当前活跃卡片上 */}
+              {index === activeIndex && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -14,
+                    left: '50%',
+                    marginLeft: -8,
+                    zIndex: 10,
+                    width: 16,
+                    height: 15,
+                    backgroundColor: 'transparent',
+                  }}>
+                  <View
+                    style={{
+                      width: 0,
+                      height: 0,
+                      borderLeftWidth: 8,
+                      borderRightWidth: 8,
+                      borderBottomWidth: 15,
+                      borderLeftColor: 'transparent',
+                      borderRightColor: 'transparent',
+                      borderBottomColor: theme.basicColor.newBgInOne,
+                      borderStyle: 'solid',
+                    }}
+                  />
                   <View
                     style={{
                       position: 'absolute',
-                      top: -14,
-                      left: '50%',
-                      marginLeft: Platform.OS === 'android' ? 5 : -8,
-                      zIndex: 10,
-                      width: 16,
-                      height: 15,
-                      backgroundColor: 'transparent',
-                    }}>
-                    <View
-                      style={{
-                        width: 0,
-                        height: 0,
-                        borderLeftWidth: 8,
-                        borderRightWidth: 8,
-                        borderBottomWidth: 15,
-                        borderLeftColor: 'transparent',
-                        borderRightColor: 'transparent',
-                        borderBottomColor: theme.basicColor.newBgInOne,
-                        borderStyle: 'solid',
-                      }}
-                    />
-                    <View
-                      style={{
-                        position: 'absolute',
-                        top: 1,
-                        left: 1,
-                        width: 0,
-                        height: 0,
-                        borderLeftWidth: 7,
-                        borderRightWidth: 7,
-                        borderBottomWidth: 13,
-                        borderLeftColor: 'transparent',
-                        borderRightColor: 'transparent',
-                        borderBottomColor: theme.basicColor.newBgInOne,
-                        borderStyle: 'solid',
-                      }}
-                    />
-                  </View>
-                )}
-                <Image
-                  source={
-                    vipOptionsMap[item?.level].small as ImageSourcePropType
-                  }
-                  style={{
-                    width: 95,
-                    height: 95,
-                    marginTop: 10,
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Text
-                  fontSize={18}
-                  fontWeight="700"
-                  style={{color: '#FFFFFF', marginTop: 10}}>
-                  V{index}
-                </Text>
-                {renderInfoRow('Level Bonus', item?.amount)}
-                {renderInfoRow('Spin Count', item?.spin)}
-                {renderInfoRow('Daily Bonus', item?.dailyBonus)}
-                {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
-                {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
-                {renderInfoRow('Deposit', item?.recharge)}
-              </View>
-            ) : (
-              <View
-                style={[
-                  {
-                    width: CARD_WIDTH - 60,
-                    height: index === activeIndex ? 383 : 363, // 当前活跃卡片高度增加20
-                    marginHorizontal: 10,
-                    alignItems: 'center',
-                    borderRadius: 10,
-                    backgroundColor: theme.basicColor.newBgInOne,
-                    paddingHorizontal: 10,
-                    position: 'relative',
-                    overflow: 'visible',
-                    zIndex: index === activeIndex ? 10 : 1,
-                    elevation: index === activeIndex ? 10 : 1,
-                  },
-                  index === activeIndex ? activeStyle : null,
-                  // index < 8 && index > 7 ? activeStyleLeft : null,
-                  index === activeIndex - 1 ? activeStyleLeft : null,
-                  index === activeIndex + 1 ? activeStyleRight : null,
-                  // index === vipConfigList.length - 1 ? activeStyleRight : null,
-                  // index === vipConfigList.length - 2 ? activeStyleRight : null,
-                ]}>
-                {/* 三角形指示器 - 只显示在当前活跃卡片上 */}
-                {index === activeIndex && (
-                  <View
-                    style={{
-                      position: 'absolute',
-                      top: -14,
-                      left: '50%',
-                      marginLeft: -8,
-                      zIndex: 10,
-                      width: 16,
-                      height: 15,
-                      backgroundColor: 'transparent',
-                    }}>
-                    <View
-                      style={{
-                        width: 0,
-                        height: 0,
-                        borderLeftWidth: 8,
-                        borderRightWidth: 8,
-                        borderBottomWidth: 15,
-                        borderLeftColor: 'transparent',
-                        borderRightColor: 'transparent',
-                        borderBottomColor: theme.basicColor.newBgInOne,
-                        borderStyle: 'solid',
-                      }}
-                    />
-                    <View
-                      style={{
-                        position: 'absolute',
-                        top: 1,
-                        left: 1,
-                        width: 0,
-                        height: 0,
-                        borderLeftWidth: 7,
-                        borderRightWidth: 7,
-                        borderBottomWidth: 13,
-                        borderLeftColor: 'transparent',
-                        borderRightColor: 'transparent',
-                        borderBottomColor: theme.basicColor.newBgInOne,
-                        borderStyle: 'solid',
-                      }}
-                    />
-                  </View>
-                )}
-                <Image
-                  source={
-                    vipOptionsMap[item?.level].small as ImageSourcePropType
-                  }
-                  style={{
-                    width: 95,
-                    height: 95,
-                    marginTop: 10,
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Text
-                  fontSize={18}
-                  fontWeight="700"
-                  style={{color: '#FFFFFF', marginTop: 10}}>
-                  V{index}
-                </Text>
-                {renderInfoRow('Level Bonus', item?.amount)}
-                {renderInfoRow('Spin Count', item?.spin)}
-                {renderInfoRow('Daily Bonus', item?.dailyBonus)}
-                {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
-                {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
-                {renderInfoRow('Deposit', item?.recharge)}
-              </View>
-            )}
+                      top: 1,
+                      left: 1,
+                      width: 0,
+                      height: 0,
+                      borderLeftWidth: 7,
+                      borderRightWidth: 7,
+                      borderBottomWidth: 13,
+                      borderLeftColor: 'transparent',
+                      borderRightColor: 'transparent',
+                      borderBottomColor: theme.basicColor.newBgInOne,
+                      borderStyle: 'solid',
+                    }}
+                  />
+                </View>
+              )}
+              <Image
+                source={vipOptionsMap[item?.level].small as ImageSourcePropType}
+                style={{
+                  width: 95,
+                  height: 95,
+                  marginTop: 10,
+                  resizeMode: 'contain',
+                }}
+              />
+              <Text
+                fontSize={18}
+                fontWeight="700"
+                style={{color: '#FFFFFF', marginTop: 10}}>
+                V{index}
+              </Text>
+              {renderInfoRow('Level Bonus', item?.amount)}
+              {renderInfoRow('Spin Count', item?.spin)}
+              {renderInfoRow('Daily Bonus', item?.dailyBonus)}
+              {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
+              {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
+              {renderInfoRow('Deposit', item?.recharge)}
+            </View>
           </View>
         ))}
       </Animated.ScrollView>
