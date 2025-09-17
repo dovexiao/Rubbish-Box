@@ -8,13 +8,14 @@ import {
   RefreshControl,
   Animated,
   ImageBackground,
+  Image,
 } from 'react-native';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import React, {useCallback, useRef, useState} from 'react';
 import theme from '@style';
 import {goTo, goCS} from '@utils'; //toAgentApply,
 import Text from '@basicComponents/text';
-import {VipProgress} from '@businessComponents/vip';
+// import {VipProgress} from '@businessComponents/vip';
 import {
   MeListItem,
   betsIcon,
@@ -34,7 +35,7 @@ import globalStore from '@/services/global.state';
 import {toLogin} from './me.variable';
 import MeUser from './me-user';
 import MeAmount from './me-amount';
-import MeVip from './me-vip';
+// import MeVip from './me-vip';
 import {useVersionModal} from '@/common-pages/hooks/versionmodal.hooks';
 import {getVersion} from 'react-native-device-info';
 import Spin from '@/components/basic/spin';
@@ -70,7 +71,7 @@ const Me = () => {
   const firstFocus = useRef(true);
   const [pageLoading, setPageLoading] = useState(false);
 
-  const {level, nextValue, diff} = useVipStore(state => state.vipInfo);
+  const {level} = useVipStore(state => state.vipInfo);
   const {setVipConfig, setVipInfo} = useVipActions();
   const user = useUserInfo();
   const {getUserInfo} = useUserActions();
@@ -336,7 +337,21 @@ const Me = () => {
                       left: 12,
                       right: 18,
                     }}>
-                      <MeVip
+
+                  <NativeTouchableOpacity
+                    onPress={toVip}
+                    style={[{position: 'relative'}]}>
+                    <Image
+                      source={require('@assets/icons/me/acount-vip.webp')}
+                      style={[
+                        {
+                          width: globalStore.screenWidth - 20,
+                          height: (globalStore.screenWidth * 65) / 375,
+                        },
+                      ]}
+                    />
+                  </NativeTouchableOpacity>
+                      {/* <MeVip
                         level={level}
                         onPress={toVip}
                         nextLevelValue={nextValue}
@@ -350,7 +365,7 @@ const Me = () => {
                             hasCurrentText={true}
                           />
                         }
-                      />
+                      /> */}
                     </View>
               </View>
           </View>
