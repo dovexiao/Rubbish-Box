@@ -23,6 +23,8 @@ interface VipClubTopProps {
   needRechargeAmount?: number;
   /** 当前进度 0-1 */
   progress?: number;
+  h?: number;
+  w?: number;
   /** 按钮状态：'available' | 'claimed' | 'locked' */
   buttonStatus?: 'available' | 'claimed' | 'locked';
   /** 点击领取按钮的回调 */
@@ -30,16 +32,17 @@ interface VipClubTopProps {
 }
 
 const VipClubTop: React.FC<VipClubTopProps> = ({
-  nextLevel = 4,
   weeklySalary = 666,
-  needRechargeAmount = 2700,
   progress = 0.6,
   buttonStatus = 'available',
   onClaim,
+  h = 150,
+  w = screenWidth - 20,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
 
   const handlePress = () => {
+    console.log('handlePress');
     if (buttonStatus === 'available' && onClaim) {
       onClaim();
     }
@@ -49,10 +52,10 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
     switch (buttonStatus) {
       case 'available':
         return 'Available';
-      case 'claimed':
-        return 'Claimed';
-      case 'locked':
-        return 'Locked';
+      //   case 'claimed':
+      //     return 'Claimed';
+      //   case 'locked':
+      //     return 'Locked';
       default:
         return 'Available';
     }
@@ -72,78 +75,38 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {width: w}]}>
       {/* 卡片主体 */}
       <ImageBackground
-        source={{
-          uri: 'https://your-background-image-url.com/vip-card-bg.png',
-        }}
-        style={styles.cardContainer}
-        imageStyle={styles.backgroundImage}>
-        <LinearGradient
-          colors={['#4A2C7A', '#6B4C94', '#2D1B4E']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 1}}
-          style={styles.gradientOverlay}>
-          {/* 顶部文字 */}
-          <View style={styles.topSection}>
+        source={require('@assets/imgs/vip/vip-weekly.webp')}
+        style={[styles.cardContainer, {width: w, height: h}]}>
+        {/* 中间金额区域 */}
+        <View style={styles.middleSection}>
+          <View style={styles.salaryContainer}>
             <Text
-              fontSize={theme.fontSize.xs}
+              fontSize={theme.fontSize.m}
               color={theme.fontColor.white80}
               style={[
-                styles.topText,
+                styles.salaryLabel,
                 {
                   textAlign: 'center',
                 },
               ]}>
-              Recharge ₹{needRechargeAmount.toLocaleString()} more reach level
-              VIP{nextLevel}
+              Weekly Salary
+            </Text>
+            <Text
+              fontSize={theme.fontSize.xxxl}
+              fontWeight="bold"
+              color={theme.fontColor.white}
+              style={[
+                styles.salaryAmount,
+                {
+                  textAlign: 'center',
+                },
+              ]}>
+              ₹{weeklySalary}
             </Text>
           </View>
-
-          {/* 中间金额区域 */}
-          <View style={styles.middleSection}>
-            <View style={styles.salaryContainer}>
-              <Text
-                fontSize={theme.fontSize.xxxl}
-                fontWeight="bold"
-                color={theme.fontColor.white}
-                style={[
-                  styles.salaryAmount,
-                  {
-                    textAlign: 'center',
-                  },
-                ]}>
-                ₹{weeklySalary}
-              </Text>
-              <Text
-                fontSize={theme.fontSize.m}
-                color={theme.fontColor.white80}
-                style={[
-                  styles.salaryLabel,
-                  {
-                    textAlign: 'center',
-                  },
-                ]}>
-                Weekly Salary
-              </Text>
-            </View>
-
-            {/* 装饰性元素 - 左侧 */}
-            <View style={styles.decorLeft}>
-              <Text fontSize={theme.fontSize.xs} color={'#FFD700'}>
-                16px
-              </Text>
-            </View>
-
-            {/* 装饰性元素 - 右侧 */}
-            <View style={styles.decorRight}>
-              <Text fontSize={theme.fontSize.xs} color={'#FFD700'}>
-                10px
-              </Text>
-            </View>
-          </View>
-
           {/* 按钮区域 */}
           <View style={styles.buttonSection}>
             <TouchableOpacity
@@ -179,9 +142,38 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
               </LinearGradient>
             </TouchableOpacity>
           </View>
+        </View>
 
-          {/* 进度条区域 */}
-          <View style={styles.progressSection}>
+        {/* 进度条区域 */}
+        <View style={styles.progressSection}>
+          <View style={styles.progressBarContainer}>
+            <View style={styles.progressBarBg}>
+              <LinearGradient
+                colors={['#98B1FF', '#A356F7']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+                style={[
+                  styles.progressBarFill,
+                  {
+                    width: `${Math.min(progress * 100, 100)}%`,
+                  },
+                ]}
+              />
+            </View>
+          </View>
+          <View style={styles.progressBarText}>
+            <Text
+              fontSize={theme.fontSize.xs}
+              color={theme.fontColor.white60}
+              style={[
+                styles.progressLabel,
+                {
+                  textAlign: 'center',
+                },
+              ]}>
+              Weekly Recharge
+            </Text>
+
             <Text
               fontSize={theme.fontSize.xs}
               color={theme.fontColor.white60}
@@ -193,23 +185,8 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
               ]}>
               ₹2,300/₹5,000(V2)
             </Text>
-            <View style={styles.progressBarContainer}>
-              <View style={styles.progressBarBg}>
-                <LinearGradient
-                  colors={['#FF6B35', '#FFD700', '#FF8E53']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  style={[
-                    styles.progressBarFill,
-                    {
-                      width: `${Math.min(progress * 100, 100)}%`,
-                    },
-                  ]}
-                />
-              </View>
-            </View>
           </View>
-        </LinearGradient>
+        </View>
       </ImageBackground>
     </View>
   );
@@ -217,37 +194,37 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: screenWidth - theme.paddingSize.xxl,
     alignSelf: 'center',
     marginVertical: theme.paddingSize.l,
   },
   cardContainer: {
-    width: '100%',
-    height: 180,
     borderRadius: theme.borderRadiusSize.l,
     overflow: 'hidden',
+    justifyContent: 'flex-end',
+    paddingBottom: 15,
   },
   backgroundImage: {
     borderRadius: theme.borderRadiusSize.l,
   },
-  gradientOverlay: {
+  topSection: {
+    alignItems: 'center',
+    marginBottom: theme.paddingSize.xs,
     flex: 1,
     paddingHorizontal: theme.paddingSize.l,
     paddingVertical: theme.paddingSize.m,
     justifyContent: 'space-between',
   },
-  topSection: {
-    alignItems: 'center',
-    marginBottom: theme.paddingSize.xs,
-  },
   topText: {
     marginTop: theme.paddingSize.xxs,
   },
   middleSection: {
-    flex: 1,
-    justifyContent: 'center',
+    // flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     position: 'relative',
+    paddingLeft: 15,
+    paddingRight: 20,
   },
   salaryContainer: {
     alignItems: 'center',
@@ -308,8 +285,10 @@ const styles = StyleSheet.create({
     marginBottom: theme.paddingSize.xxs,
   },
   progressBarContainer: {
-    width: '80%',
+    width: '100%',
     alignItems: 'center',
+    paddingLeft: 15,
+    paddingRight: 20,
   },
   progressBarBg: {
     width: '100%',
@@ -321,6 +300,14 @@ const styles = StyleSheet.create({
   progressBarFill: {
     height: '100%',
     borderRadius: theme.borderRadiusSize.xs,
+  },
+  progressBarText: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
+    paddingLeft: 15,
+    paddingRight: 20,
   },
 });
 

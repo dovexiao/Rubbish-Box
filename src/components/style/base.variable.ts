@@ -69,6 +69,7 @@ export const basicColor = {
   newGrey: '#656462', //常用于字体颜色
   newAmountColor: '#8E5B18', //常用于金额字体颜色
   newAmountColorLight: '#8E5C1A', //常用于浅色金额字体颜色
+  newRed: '#E02020', //常用于字体颜色
   // 纯黑纯白
   newFontWhite: '#FFFFFF', //常用于字体颜色
   newFontBlack: '#000000', //常用于字体颜色

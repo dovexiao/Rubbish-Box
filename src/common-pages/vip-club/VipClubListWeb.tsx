@@ -42,7 +42,8 @@ const ARC_FACTOR = 2;
 const CONTROL_Y = ARC_HEIGHT * ARC_FACTOR;
 const NODE_SIZE_CENTER = 10;
 const NODE_SIZE_SIDE = 6;
-const SIDE_PADDING = 20;
+const SIDE_PADDING = 0;
+const TOP_WEEKLY_HEIFGT = 150;
 
 interface VipClubListProps {
   vipConfigList: IVipConfigItem[];
@@ -426,11 +427,26 @@ const VipClubList: React.FC<VipClubListProps> = ({
                 index,
               } as ListRenderItemInfo<IVipItem>)}
             </View>
-
+            {vipList.length > 0 ? (
+              <View
+                style={{
+                  position: 'relative',
+                  top: vipList.length > 0 ? -70 : -50,
+                  right: 0,
+                  zIndex: -1,
+                  elevation: 10,
+                }}>
+                <VipClubTop
+                  w={vipCardWidth - 20}
+                  h={TOP_WEEKLY_HEIFGT}
+                  onClaim={handlePressClaim}
+                />
+              </View>
+            ) : null}
             {/* 中间小球指示器区域的占位空间 */}
             <View
               style={{
-                height: CONTROL_Y + 40,
+                height: CONTROL_Y - 40,
                 marginBottom: 15,
               }}
             />
@@ -458,6 +474,39 @@ const VipClubList: React.FC<VipClubListProps> = ({
                 // index === vipConfigList.length - 1 ? activeStyleRight : null,
                 // index === vipConfigList.length - 2 ? activeStyleRight : null,
               ]}>
+              {index === activeIndex && (
+                <LinearGradient
+                  colors={['#fff9b2', '#e8b138']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 7,
+                    marginLeft: -8,
+                    zIndex: 10,
+                    width: 90,
+                    height: 22,
+                    // backgroundImage: 'linear-gradient(90deg,#fff9b2, #e8b138 91%)',
+                    borderRadius: 12,
+                    borderTopRightRadius: 0,
+                    borderBottomLeftRadius: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={[
+                      {
+                        fontSize: 12,
+                        fontWeight: '500',
+                        color: theme.basicColor.newRed,
+                      },
+                    ]}>
+                    {i18n.t('vip.currentLevel')}
+                  </Text>
+                </LinearGradient>
+              )}
               {/* 三角形指示器 - 只显示在当前活跃卡片上 */}
               {index === activeIndex && (
                 <View
@@ -519,7 +568,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
               </Text>
               {renderInfoRow('Level Bonus', item?.amount)}
               {renderInfoRow('Spin Count', item?.spin)}
-              {renderInfoRow('Daily Bonus', item?.dailyBonus)}
+              {/* {renderInfoRow('Daily Bonus', item?.dailyBonus)} */}
               {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
               {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
               {renderInfoRow('Deposit', item?.recharge)}
@@ -529,12 +578,14 @@ const VipClubList: React.FC<VipClubListProps> = ({
       </Animated.ScrollView>
       {/* 固定在屏幕中间的小球指示器 */}
 
-      <VipClubTop onClaim={handlePressClaim} />
       {vipList.length > 0 ? (
         <View
           style={{
             position: 'absolute',
-            top: vipList.length > 0 ? 140 : 100, // 根据上方卡片高度调整位置
+            top:
+              vipList.length > 0
+                ? 140 + TOP_WEEKLY_HEIFGT - 60
+                : 100 + TOP_WEEKLY_HEIFGT - 60, // 根据上方卡片高度调整位置
             left: 0,
             right: 0,
             height: CONTROL_Y + 40,

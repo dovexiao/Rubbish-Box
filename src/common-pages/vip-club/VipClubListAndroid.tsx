@@ -30,6 +30,7 @@ import {
   vipBgColors,
   maxVipLevel,
 } from '@/components/business/vip';
+import VipClubTop from './vip-club-top';
 
 const {width: screenWidth} = Dimensions.get('window');
 const CARD_WIDTH = screenWidth - theme.paddingSize.l * 2;
@@ -38,6 +39,7 @@ const ARC_FACTOR = 2;
 const CONTROL_Y = ARC_HEIGHT * ARC_FACTOR;
 const NODE_SIZE_SIDE = 6;
 const SIDE_PADDING = 20;
+const TOP_WEEKLY_HEIFGT = 150;
 
 interface VipClubListProps {
   vipConfigList: IVipConfigItem[];
@@ -54,6 +56,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
   rechargeAmount = 0,
   vipList = [],
   checkIndex,
+  handlePressClaim,
 }) => {
   const {
     cardStyle,
@@ -63,7 +66,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-
+  const [currentActiveIndex, setCurrentActiveIndex] = useState(-1);
   // 初始化滚动到 checkIndex
   useEffect(() => {
     if (checkIndex !== undefined && checkIndex >= 0) {
@@ -253,6 +256,25 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
     </View>
   );
 
+  const animatedIndicators = vipConfigList.map((_, index) => {
+    const inputRange = [
+      (index - 1) * CARD_WIDTH,
+      index * CARD_WIDTH,
+      (index + 1) * CARD_WIDTH,
+    ];
+
+    const scale = scrollX.interpolate({
+      inputRange,
+      outputRange: [0.1, 1, 1],
+    });
+
+    const opacity = scrollX.interpolate({
+      inputRange,
+      outputRange: [0, 1, 1],
+    });
+
+    return {scale, opacity};
+  });
   return (
     <View style={{flex: 1}}>
       <Animated.ScrollView
@@ -267,7 +289,22 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
         }}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {x: scrollX}}}],
-          {useNativeDriver: true},
+          {
+            useNativeDriver: true,
+            listener: event => {
+              const nativeEvent = event.nativeEvent as {
+                contentOffset?: {x: number};
+              };
+              if (nativeEvent && nativeEvent.contentOffset) {
+                const offset = nativeEvent.contentOffset;
+                const offsetX = offset.x;
+                const idx = Math.round(offsetX / CARD_WIDTH);
+                if (currentActiveIndex !== idx) {
+                  setCurrentActiveIndex(idx);
+                }
+              }
+            },
+          },
         )}
         onMomentumScrollEnd={e => {
           const idx = Math.round(e.nativeEvent.contentOffset.x / vipCardWidth);
@@ -281,7 +318,23 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
                 index,
               } as ListRenderItemInfo<IVipItem>)}
             </View>
-            <View style={{height: CONTROL_Y + 40, marginBottom: 15}} />
+            {vipList.length > 0 ? (
+              <View
+                style={{
+                  position: 'relative',
+                  top: vipList.length > 0 ? -60 : -40,
+                  right: 0,
+                  zIndex: -1,
+                  elevation: 10,
+                }}>
+                <VipClubTop
+                  w={vipCardWidth - 20}
+                  h={TOP_WEEKLY_HEIFGT}
+                  onClaim={handlePressClaim}
+                />
+              </View>
+            ) : null}
+            <View style={{height: CONTROL_Y - 40, marginBottom: 15}} />
             <View
               style={{
                 width: CARD_WIDTH,
@@ -295,6 +348,42 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
                 zIndex: index === activeIndex ? 10 : 1,
                 elevation: index === activeIndex ? 10 : 1,
               }}>
+              <Animated.View
+                style={{
+                  transform: [{scale: animatedIndicators[index].scale}],
+                  opacity: animatedIndicators[index].opacity,
+                  position: 'absolute',
+                  top: 0,
+                  left: 7,
+                  marginLeft: -8,
+                  zIndex: 10,
+                }}>
+                <LinearGradient
+                  colors={['#fff9b2', '#e8b138']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}
+                  style={{
+                    width: 100,
+                    height: 22,
+                    borderRadius: 12,
+                    borderTopRightRadius: 0,
+                    borderBottomLeftRadius: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={[
+                      {
+                        fontSize: 11,
+                        fontWeight: '500',
+                        color: theme.basicColor.newRed,
+                      },
+                    ]}>
+                    {i18n.t('vip.currentLevel')}
+                  </Text>
+                </LinearGradient>
+              </Animated.View>
               <Image
                 source={vipOptionsMap[item?.level].small as ImageSourcePropType}
                 style={{
@@ -309,7 +398,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
               </Text>
               {renderInfoRow('Level Bonus', item?.amount)}
               {renderInfoRow('Spin Count', item?.spin)}
-              {renderInfoRow('Daily Bonus', item?.dailyBonus)}
+              {/* {renderInfoRow('Daily Bonus', item?.dailyBonus)} */}
               {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
               {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
               {renderInfoRow('Deposit', item?.recharge)}
@@ -322,7 +411,10 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
       <View
         style={{
           position: 'absolute',
-          top: vipList.length > 0 ? 140 : 100,
+          top:
+            vipList.length > 0
+              ? 110 + TOP_WEEKLY_HEIFGT
+              : 70 + TOP_WEEKLY_HEIFGT,
           left: 0,
           right: 0,
           height: CONTROL_Y + 40,

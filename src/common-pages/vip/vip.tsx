@@ -23,11 +23,11 @@ import globalStore from '@/services/global.state';
 import {useTranslation} from 'react-i18next';
 import {LazyImageLGBackground} from '@basicComponents/image';
 import VipClubList from '@/common-pages/vip-club/vip-club-list';
-import MeUser from '@/pages/me/me-user';
-import {useToken} from '@/store/useUserStore'; //useUserInfo
-import useVipStore from '@/store/useVipStore';
+// import MeUser from '@/pages/me/me-user';
+// import {useToken} from '@/store/useUserStore'; //useUserInfo
+// import useVipStore from '@/store/useVipStore';
 import {useFocusEffect} from '@react-navigation/native';
-import {IUserInfo} from '@services/global.service';
+// import {IUserInfo} from '@services/global.service';
 
 const Vip = () => {
   const {i18n} = useTranslation();
@@ -35,11 +35,11 @@ const Vip = () => {
   const [vipList, setVipList] = useState<IVipItem[]>([]);
   const [vipConfigList, setVipConfigList] = useState<IVipConfigItem[]>([]);
   const [checkIndex, setCheckIndex] = useState(0);
-  const {isLogin} = useToken();
-  const [user, setUser] = useState<IUserInfo>();
+  // const {isLogin} = useToken();
+  // const [user, setUser] = useState<IUserInfo>();
   // console.log('isLogin', isLogin);
   // console.log('token', token);
-  const {level} = useVipStore(state => state.vipInfo);
+  // const {level} = useVipStore(state => state.vipInfo);
   const cards = useMemo(() => {
     const vips = vipList.map(v => v.level);
     return vips.map(lv => getVipRender(lv));
@@ -85,9 +85,9 @@ const Vip = () => {
     globalStore.globalLoading.next(true);
     Promise.allSettled([postVipInfo(), postVipConfig(), postUserInfo()])
       .then(([_listvalue, _config, _user]) => {
-        if (_user.status === 'fulfilled') {
-          setUser(_user.value);
-        }
+        // if (_user.status === 'fulfilled') {
+        //   setUser(_user.value);
+        // }
         if (_listvalue.status === 'fulfilled') {
           const _list = _listvalue.value;
           setVipList(
@@ -131,14 +131,14 @@ const Vip = () => {
         hideServer
       />
       <ScrollView>
-        <View style={[theme.padding.lrxxl]}>
+        {/* <View style={[theme.padding.lrxxl]}>
           <MeUser
             login={isLogin}
             user={user}
             level={level}
             showNoMenu={false}
           />
-        </View>
+        </View> */}
         <VipClubList
           vipConfigList={vipConfigList}
           // VIP Card List props
