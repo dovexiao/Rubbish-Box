@@ -323,12 +323,12 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
                 style={{
                   position: 'relative',
                   top: vipList.length > 0 ? -60 : -40,
-                  right: 0,
+                  right: -2,
                   zIndex: -1,
                   elevation: 10,
                 }}>
                 <VipClubTop
-                  w={vipCardWidth - 20}
+                  w={vipCardWidth - 12}
                   h={TOP_WEEKLY_HEIFGT}
                   onClaim={handlePressClaim}
                 />

@@ -253,30 +253,6 @@ const VipClubList: React.FC<VipClubListProps> = ({
       </LinearGradient>
     );
   };
-  // 添加平滑过渡的计算函数
-  // const getScrollBasedProgress = useMemo(() => {
-  //   return (index: number) => {
-  //     const scrollProgress = Animated.divide(
-  //       scrollX,
-  //       new Animated.Value(vipCardWidth),
-  //     );
-
-  //     // 计算当前索引的激活程度 (0-1之间)
-  //     const distance = Animated.subtract(
-  //       scrollProgress,
-  //       new Animated.Value(index),
-  //     );
-
-  //     // 将距离转换为激活程度，距离越近激活程度越高
-  //     const activationProgress = distance.interpolate({
-  //       inputRange: [-1, -0.35, 0, 0.35, 1], // 35%阈值对应激活逻辑
-  //       outputRange: [0, 0, 1, 0, 0],
-  //       extrapolate: 'clamp',
-  //     });
-
-  //     return activationProgress;
-  //   };
-  // }, [scrollX, vipCardWidth]);
   // 根据贝塞尔曲线计算小球在弧线上的精确位置
   const getBallPositionOnCurve = useMemo(() => {
     return (index: number) => {
