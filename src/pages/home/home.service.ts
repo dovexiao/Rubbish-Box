@@ -35,6 +35,9 @@ export const getNoticeCheck = () => {
 export const getFirstRecharge = () => {
   return http.post<null, any>('app/base/check/first/recharge');
 };
+export const getFirstRechargeV1 = () => {
+  return http.post<null, any>('app/base/check/first/recharge/v1');
+};
 export const getHomeTabCheck = () => {
   return http.post<null, any>('app/base/check/tab');
 };
