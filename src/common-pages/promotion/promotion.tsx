@@ -31,10 +31,12 @@ import LinearGradient from '@/components/basic/linear-gradient';
 const proNew = require('@/assets/imgs/promotion/promotion-new.webp');
 const proWhy = require('@/assets/imgs/promotion/pro-right-why.webp');
 const amountClaim = require('@/assets/imgs/promotion/claim.webp');
-// const amount1 = require('@/assets/imgs/promotion/pro-amount.webp');
-// const amount2 = require('@/assets/imgs/promotion/pro-amount.webp');
-// const amount3 = require('@/assets/imgs/promotion/pro-amount.webp');
-// const amount4 = require('@/assets/imgs/promotion/pro-amount.webp');
+const proAmountImages = [
+  require('@/assets/imgs/promotion/pro-amount1.webp'),
+  require('@/assets/imgs/promotion/pro-amount2.webp'),
+  require('@/assets/imgs/promotion/pro-amount3.webp'),
+  require('@/assets/imgs/promotion/pro-amount4.webp'),
+];
 const Promotion = () => {
   const {i18n} = useTranslation();
   const {
@@ -317,9 +319,7 @@ const Promotion = () => {
                     left: 3,
                   }}>
                   <Image
-                    source={require(`@/assets/imgs/promotion/pro-amount${
-                      idx + 1
-                    }.webp`)}
+                    source={proAmountImages[idx]}
                     style={{
                       width: 25,
                       height: 25,
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
   },
   progressBarBg: {
     width: '100%',
-    height: 6,
+    height: 7,
     backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: theme.borderRadiusSize.xs,
     overflow: 'hidden',
