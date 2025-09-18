@@ -7,7 +7,7 @@ import {
   BottomTabBarProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import {ImageURISource, Image, View, StyleSheet} from 'react-native'; //ImageBackground
+import {ImageURISource, Image, View} from 'react-native'; //ImageBackground
 import {NavigatorScreenProps} from '@types';
 // import Result from './common-pages/result';
 import {Shadow} from 'react-native-shadow-2';
@@ -24,9 +24,10 @@ import PromotionDrawer from './common-pages/promotion';
 import Vip from '@/common-pages/vip/vip';
 // import Recharge from '@/common-pages/recharge';
 import ProxyHome from "@/common-pages/proxy";
+import BreatheImage from '@/components/basic/animations/breatheImage';
 
 const Tab = createBottomTabNavigator();
-const daillyGif = require('@/assets/gif/daillybonus.gif');
+// const daillyGif = require('@/assets/gif/daillybonus.gif');
 export const mainPageList: {
   name: string;
   link: string;
@@ -142,10 +143,11 @@ const CusTab = (props: BottomTabBarProps) => {
                     : mainPageList[index].img
                 }
               />
-              {index === showGif && <Image
+              {/* {index === showGif && <Image
                 style={[styles.icon]}
                 source={daillyGif}
-              />}
+              />} */}
+              {index === showGif && <BreatheImage />}
               <Text
                 blod={true}
                 fontSize={10}
@@ -186,14 +188,14 @@ const MainNav = () => {
     </Tab.Navigator>
   );
 };
-const styles = StyleSheet.create({
-  icon: {
-    width: 48,
-    height: 16,
-    position: 'absolute',
-    top: -3,
-    left: '50%',
-    transform: [{translateX: 8}],
-  },
-});
+// const styles = StyleSheet.create({
+//   icon: {
+//     width: 48,
+//     height: 16,
+//     position: 'absolute',
+//     top: -3,
+//     left: '50%',
+//     transform: [{translateX: 8}],
+//   },
+// });
 export default MainNav;
