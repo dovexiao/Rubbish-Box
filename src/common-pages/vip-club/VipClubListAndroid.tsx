@@ -8,6 +8,9 @@ import {
   ImageSourcePropType,
   ScrollView,
   ListRenderItemInfo,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
 } from 'react-native';
 import Text from '@basicComponents/text';
 import Svg, {
@@ -31,6 +34,9 @@ import {
   maxVipLevel,
 } from '@/components/business/vip';
 import VipClubTop from './vip-club-top';
+import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
+
+const ablotW = require('@assets/icons/about-w.webp');
 
 const {width: screenWidth} = Dimensions.get('window');
 const CARD_WIDTH = screenWidth - theme.paddingSize.l * 2;
@@ -38,7 +44,7 @@ const ARC_HEIGHT = 28;
 const ARC_FACTOR = 2;
 const CONTROL_Y = ARC_HEIGHT * ARC_FACTOR;
 const NODE_SIZE_SIDE = 6;
-const SIDE_PADDING = 20;
+const SIDE_PADDING = 0;
 const TOP_WEEKLY_HEIFGT = 150;
 
 interface VipClubListProps {
@@ -275,6 +281,44 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
 
     return {scale, opacity};
   });
+  // buttonStatus?: 'available' | 'claimed' | 'locked';
+  const [buttonStatus, _setButtonStatus] = useState('available');
+  const handlePress = () => {
+    console.log('click-------handlePress');
+    // if (buttonStatus === 'available' && onClaim) {
+    //   onClaim();
+    // }
+  };
+  const [visible, setVisible] = useState(false);
+
+  const handleInfoPress = () => {
+    setVisible(true);
+  };
+  const getButtonText = () => {
+    switch (buttonStatus) {
+      case 'available':
+        return 'Available';
+      //   case 'claimed':
+      //     return 'Claimed';
+      //   case 'locked':
+      //     return 'Locked';
+      default:
+        return 'Available';
+    }
+  };
+
+  const getButtonStyle = () => {
+    switch (buttonStatus) {
+      case 'available':
+        return styles.availableButton;
+      case 'claimed':
+        return styles.claimedButton;
+      case 'locked':
+        return styles.lockedButton;
+      default:
+        return styles.availableButton;
+    }
+  };
   return (
     <View style={{flex: 1}}>
       <Animated.ScrollView
@@ -318,23 +362,12 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
                 index,
               } as ListRenderItemInfo<IVipItem>)}
             </View>
-            {vipList.length > 0 ? (
-              <View
-                style={{
-                  position: 'relative',
-                  top: vipList.length > 0 ? -60 : -40,
-                  right: -2,
-                  zIndex: -1,
-                  elevation: 10,
-                }}>
-                <VipClubTop
-                  w={vipCardWidth - 12}
-                  h={TOP_WEEKLY_HEIFGT}
-                  onClaim={handlePressClaim}
-                />
-              </View>
-            ) : null}
-            <View style={{height: CONTROL_Y - 40, marginBottom: 15}} />
+            <View
+              style={{
+                height: CONTROL_Y + TOP_WEEKLY_HEIFGT - 30,
+                marginBottom: 15,
+              }}
+            />
             <View
               style={{
                 width: CARD_WIDTH,
@@ -406,6 +439,84 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
           </View>
         ))}
       </Animated.ScrollView>
+      {vipList.length > 0 ? (
+        <View
+          style={{
+            position: 'absolute',
+            top: vipList.length > 0 ? (screenWidth / 410) * 100 : 80,
+            // right: 0,
+            left: (screenWidth - vipCardWidth) / 2 + 11,
+            zIndex: -1,
+            elevation: 10,
+          }}>
+          <VipClubTop
+            w={vipCardWidth - 20}
+            h={TOP_WEEKLY_HEIFGT}
+            onClaim={handlePressClaim}
+          />
+        </View>
+      ) : null}
+      {vipList.length > 0 ? (
+        <NativeTouchableOpacity
+          style={{
+            marginLeft: 5,
+            position: 'absolute',
+            top: vipList.length > 0 ? 155 : 115,
+            left: (screenWidth - vipCardWidth) / 2 + (screenWidth / 375) * 130,
+          }}
+          delayPressIn={0}
+          onPressIn={() => {
+            handleInfoPress();
+          }}>
+          <Image
+            source={ablotW}
+            style={[
+              {
+                width: 20,
+                height: 20,
+              },
+            ]}
+          />
+        </NativeTouchableOpacity>
+      ) : null}
+      {vipList.length > 0 ? (
+        <View
+          style={[
+            styles.buttonSection,
+            {
+              position: 'absolute',
+              top: vipList.length > 0 ? 150 : 110,
+              right: (screenWidth - vipCardWidth) / 2 + 30,
+            },
+          ]}>
+          <TouchableOpacity
+            style={[styles.claimButton, getButtonStyle()]}
+            onPressIn={handlePress}
+            disabled={buttonStatus !== 'available'}>
+            <LinearGradient
+              colors={
+                buttonStatus === 'available'
+                  ? ['#FF6B35', '#FF8E53']
+                  : ['#888888', '#666666']
+              }
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              style={styles.buttonGradient}>
+              <Text
+                fontSize={theme.fontSize.m}
+                fontWeight="bold"
+                color={theme.fontColor.white}
+                style={[
+                  {
+                    textAlign: 'center',
+                  },
+                ]}>
+                {getButtonText()}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       {/* 贝塞尔弧线 & 小球 */}
       <View
@@ -518,8 +629,123 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
           })}
         </Svg>
       </View>
+      <Modal
+        animationType="none"
+        transparent
+        visible={visible}
+        onRequestClose={() => {
+          setVisible(false);
+        }}>
+        <View style={modalStyles.overlay}>
+          <View
+            style={[
+              modalStyles.container,
+              {backgroundColor: theme.basicColor.newBgInTwo},
+            ]}>
+            <Text style={modalStyles.title}>{i18n.t('label.prompt')}</Text>
+            <Text style={modalStyles.message}>
+              {
+                'This is a detailed explanation of weekly salary, to be determined ...'
+              }
+            </Text>
+            <View style={modalStyles.buttonRow}>
+              {/* <TouchableOpacity style={modalStyles.button} onPress={onCancel}>
+                <Text style={modalStyles.cancelText}></Text>
+              </TouchableOpacity> */}
+              <TouchableOpacity
+                style={modalStyles.button}
+                onPress={() => {
+                  setVisible(false);
+                }}>
+                <Text style={modalStyles.confirmText}>
+                  {i18n.t('label.confirm')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    width: '75%',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: theme.fontColor.white,
+  },
+  message: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: theme.fontColor.white,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
+  button: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  cancelText: {
+    color: '#999',
+    fontSize: 16,
+  },
+  confirmText: {
+    color: theme.basicColor.newFontYellow,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
+const styles = StyleSheet.create({
+  buttonSection: {
+    alignItems: 'center',
+    marginBottom: theme.paddingSize.s,
+  },
+  claimButton: {
+    borderRadius: theme.borderRadiusSize.xxxl,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  availableButton: {},
+  claimedButton: {
+    opacity: 0.7,
+  },
+  lockedButton: {
+    opacity: 0.5,
+  },
+  buttonPressed: {
+    transform: [{scale: 0.95}],
+  },
+  buttonGradient: {
+    paddingHorizontal: theme.paddingSize.xxxl,
+    paddingVertical: theme.paddingSize.s,
+    minWidth: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default VipClubListAndroid;

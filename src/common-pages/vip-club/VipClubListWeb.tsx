@@ -600,7 +600,6 @@ const VipClubList: React.FC<VipClubListProps> = ({
           </View>
         ))}
       </Animated.ScrollView>
-      {/* 固定在屏幕中间的小球指示器 */}
       {vipList.length > 0 ? (
         <View
           style={{
@@ -684,7 +683,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
           </TouchableOpacity>
         </View>
       ) : null}
-
+      {/* 固定在屏幕中间的小球指示器 */}
       {vipList.length > 0 ? (
         <View
           style={{
@@ -896,58 +895,6 @@ const modalStyles = StyleSheet.create({
   },
 });
 const styles = StyleSheet.create({
-  container: {
-    alignSelf: 'center',
-    marginVertical: theme.paddingSize.l,
-  },
-  cardContainer: {
-    borderRadius: theme.borderRadiusSize.l,
-    overflow: 'hidden',
-    justifyContent: 'flex-end',
-    paddingBottom: 5,
-  },
-  backgroundImage: {
-    borderRadius: theme.borderRadiusSize.l,
-  },
-  topSection: {
-    alignItems: 'center',
-    marginBottom: theme.paddingSize.xs,
-    flex: 1,
-    paddingHorizontal: theme.paddingSize.l,
-    paddingVertical: theme.paddingSize.m,
-    justifyContent: 'space-between',
-  },
-  topText: {
-    marginTop: theme.paddingSize.xxs,
-  },
-  middleSection: {
-    // flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'relative',
-    paddingLeft: 15,
-    paddingRight: 20,
-  },
-  salaryContainer: {
-    alignItems: 'center',
-  },
-  salaryAmount: {
-    marginBottom: theme.paddingSize.xxs,
-  },
-  salaryLabel: {},
-  decorLeft: {
-    position: 'absolute',
-    left: theme.paddingSize.l,
-    top: '50%',
-    transform: [{translateY: -10}],
-  },
-  decorRight: {
-    position: 'absolute',
-    right: theme.paddingSize.l,
-    top: '30%',
-    transform: [{translateY: -10}],
-  },
   buttonSection: {
     alignItems: 'center',
     marginBottom: theme.paddingSize.s,
@@ -980,39 +927,6 @@ const styles = StyleSheet.create({
     minWidth: 100,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  progressSection: {
-    alignItems: 'center',
-  },
-  progressLabel: {
-    marginBottom: theme.paddingSize.xxs,
-  },
-  progressBarContainer: {
-    width: '100%',
-    alignItems: 'center',
-    paddingLeft: 15,
-    paddingRight: 20,
-  },
-  progressBarBg: {
-    width: '100%',
-    height: 6,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    borderRadius: theme.borderRadiusSize.xs,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: theme.borderRadiusSize.xs,
-  },
-  progressBarText: {
-    marginTop: 8,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'relative',
-    paddingLeft: 15,
-    paddingRight: 20,
   },
 });
 
