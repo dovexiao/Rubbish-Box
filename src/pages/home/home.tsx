@@ -34,7 +34,7 @@ import HomeCasino from './components/home-casino';
 import HomeGameTop from '@/pages/home/home-game-top';
 import {LazyImageLGBackground} from '@basicComponents/image';
 import {postSpinConfig} from '@/common-pages/luckyspin/luckyspin.service';
-import {getFirstRecharge} from '@/pages/home/home.service';
+import {getFirstRechargeV1} from '@/pages/home/home.service';
 import {useFocusEffect} from '@react-navigation/native';
 
 import {getCasinoList, getCasinoType} from './home.service';
@@ -120,10 +120,12 @@ const Home = () => {
     }
   };
   const [firstShow, setFirstShow] = useState(0);
+  const [dynamicUrl, setDynamicUrl] = useState('');
   const [login, setLogin] = useState(false);
   const getRecharge = async () => {
-    const data = await getFirstRecharge();
-    setFirstShow(data);
+    const data = await getFirstRechargeV1();
+    setFirstShow(data?.isRecharge || 0);
+    setDynamicUrl(data?.rechargeImg || '');
   };
   const onFocusEffect = useCallback(() => {
     const sub = globalStore.tokenSubject.subscribe(token => {
@@ -323,6 +325,7 @@ const Home = () => {
             <HomeService
               isLogin={login}
               firstShow={firstShow}
+              dynamicUrl={dynamicUrl}
               spinShow={showModal}
             />
             {renderSpin}

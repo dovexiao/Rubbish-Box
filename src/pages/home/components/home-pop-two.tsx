@@ -1,22 +1,21 @@
 import React from 'react';
 import {Image, Modal, StyleSheet, View} from 'react-native'; //Text
 import theme from '@style';
-import LazyImage from '@/components/basic/image';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 import {goToWithLogin} from '@utils';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
 
-const sampleImage = require('@assets/icons/home/first-recharge.webp'); // 弹出图片路径
-
 interface HomePopTwoProps {
   isImageVisible: boolean;
   setIsImageVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  dynamicUrl?: string;
 }
 
 const HomePopTwo: React.FC<HomePopTwoProps> = ({
   isImageVisible,
   setIsImageVisible,
+  dynamicUrl,
 }) => {
   const {i18n} = useTranslation();
   const {screenWidth} = useScreenSize();
@@ -29,7 +28,7 @@ const HomePopTwo: React.FC<HomePopTwoProps> = ({
     closeImage();
     goToWithLogin(i18n.t('home.tab.deposit'));
   };
-
+  console.log(111111, dynamicUrl);
   return (
     <Modal
       transparent={true}
@@ -40,11 +39,22 @@ const HomePopTwo: React.FC<HomePopTwoProps> = ({
         <NativeTouchableOpacity
           onPress={onImage}
           style={[{marginBottom: screenWidth * 0.13}]}>
-          <LazyImage
-            imageUrl={sampleImage}
+          <Image
+            style={[
+              {
+                width: screenWidth * 0.85,
+                height: screenWidth * 0.98,
+              },
+            ]}
+            source={{
+              uri: dynamicUrl,
+            }}
+          />
+          {/* <LazyImage
+            imageUrl={{uri: dynamicUrl}}
             width={screenWidth * 0.85}
             height={screenWidth * 0.98}
-          />
+          /> */}
         </NativeTouchableOpacity>
         <NativeTouchableOpacity
           onPress={closeImage}
