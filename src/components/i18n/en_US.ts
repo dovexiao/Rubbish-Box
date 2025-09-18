@@ -902,6 +902,7 @@ export default {
     join: 'Join',
     checkin: 'Check in',
     checkinDescription: 'Check in daily to get a lot of rewards',
+    continueBonus: 'Continuous recharge bonus',
   },
   feedback: {
     title: 'FeedBack',

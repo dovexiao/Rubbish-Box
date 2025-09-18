@@ -345,7 +345,7 @@ const Me = () => {
                       source={require('@assets/icons/me/acount-vip.webp')}
                       style={[
                         {
-                          width: globalStore.screenWidth - 20,
+                          width: globalStore.screenWidth - 24,
                           height: (globalStore.screenWidth * 65) / 375,
                         },
                       ]}

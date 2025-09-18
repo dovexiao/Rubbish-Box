@@ -19,6 +19,8 @@ export interface PromotionListItem {
   activityType?: 'signin' | 'other';
   id: number;
   tagList: BasicObject[];
+  amount: number;
+  buttonStyle?: number;
 }
 
 export function getPromotionList(pageNo: number, tagId: number) {
