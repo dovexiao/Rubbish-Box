@@ -9,6 +9,11 @@ import {
   Platform,
   ScrollView,
   ListRenderItemInfo,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import Text from '@basicComponents/text';
 import Svg, {
@@ -34,6 +39,8 @@ import {useTranslation} from 'react-i18next';
 import LinearGradient from '@/components/basic/linear-gradient';
 import {useInnerStyle} from '../vip/vip.hooks';
 import VipClubTop from './vip-club-top';
+import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
+const ablotW = require('@assets/icons/about-w.webp');
 
 const {width: screenWidth} = Dimensions.get('window');
 const CARD_WIDTH = screenWidth - theme.paddingSize.l * 2;
@@ -373,6 +380,60 @@ const VipClubList: React.FC<VipClubListProps> = ({
   const activeStyleRight = {
     left: -60,
   };
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (scrollTimeout.current) {
+      clearTimeout(scrollTimeout.current);
+    }
+    scrollTimeout.current = setTimeout(() => {
+      const x = e.nativeEvent.contentOffset.x;
+      const targetIndex = Math.round(x / vipCardWidth);
+      scrollViewRef.current?.scrollTo({
+        x: targetIndex * vipCardWidth,
+        animated: true,
+      });
+    }, 100); // 100~150ms 视情况
+  };
+
+  // buttonStatus?: 'available' | 'claimed' | 'locked';
+  const [isPressed, setIsPressed] = useState(false);
+  const [buttonStatus, _setButtonStatus] = useState('available');
+  const handlePress = () => {
+    console.log('click-------handlePress');
+    // if (buttonStatus === 'available' && onClaim) {
+    //   onClaim();
+    // }
+  };
+  const [visible, setVisible] = useState(false);
+
+  const handleInfoPress = () => {
+    setVisible(true);
+  };
+  const getButtonText = () => {
+    switch (buttonStatus) {
+      case 'available':
+        return 'Available';
+      //   case 'claimed':
+      //     return 'Claimed';
+      //   case 'locked':
+      //     return 'Locked';
+      default:
+        return 'Available';
+    }
+  };
+
+  const getButtonStyle = () => {
+    switch (buttonStatus) {
+      case 'available':
+        return styles.availableButton;
+      case 'claimed':
+        return styles.claimedButton;
+      case 'locked':
+        return styles.lockedButton;
+      default:
+        return styles.availableButton;
+    }
+  };
   return (
     <View style={{flex: 1}}>
       {/* 单一滚动容器 - 包含上方卡片、中间小球、下方卡片 */}
@@ -388,7 +449,10 @@ const VipClubList: React.FC<VipClubListProps> = ({
         }}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {x: scrollX}}}],
-          {useNativeDriver: Platform.OS !== 'web' ? true : false},
+          {
+            useNativeDriver: Platform.OS !== 'web' ? true : false,
+            listener: handleScroll,
+          },
         )}>
         {vipConfigList.map((item, index) => (
           <View key={index} style={{width: vipCardWidth, alignItems: 'center'}}>
@@ -403,26 +467,10 @@ const VipClubList: React.FC<VipClubListProps> = ({
                 index,
               } as ListRenderItemInfo<IVipItem>)}
             </View>
-            {vipList.length > 0 ? (
-              <View
-                style={{
-                  position: 'relative',
-                  top: vipList.length > 0 ? -70 : -50,
-                  right: 0,
-                  zIndex: -1,
-                  elevation: 10,
-                }}>
-                <VipClubTop
-                  w={vipCardWidth - 20}
-                  h={TOP_WEEKLY_HEIFGT}
-                  onClaim={handlePressClaim}
-                />
-              </View>
-            ) : null}
             {/* 中间小球指示器区域的占位空间 */}
             <View
               style={{
-                height: CONTROL_Y - 40,
+                height: CONTROL_Y + TOP_WEEKLY_HEIFGT - 40,
                 marginBottom: 15,
               }}
             />
@@ -553,6 +601,89 @@ const VipClubList: React.FC<VipClubListProps> = ({
         ))}
       </Animated.ScrollView>
       {/* 固定在屏幕中间的小球指示器 */}
+      {vipList.length > 0 ? (
+        <View
+          style={{
+            position: 'absolute',
+            top: vipList.length > 0 ? 70 : 50,
+            // right: 0,
+            left: (screenWidth - vipCardWidth) / 2 + 10,
+            zIndex: -1,
+            elevation: 10,
+          }}>
+          <VipClubTop
+            w={vipCardWidth - 20}
+            h={TOP_WEEKLY_HEIFGT}
+            onClaim={handlePressClaim}
+          />
+        </View>
+      ) : null}
+      {vipList.length > 0 ? (
+        <NativeTouchableOpacity
+          style={{
+            marginLeft: 5,
+            position: 'absolute',
+            top: vipList.length > 0 ? 147 : 107,
+            left: (screenWidth - vipCardWidth) / 2 + 120,
+          }}
+          onPress={() => {
+            handleInfoPress();
+          }}>
+          <Image
+            source={ablotW}
+            style={[
+              {
+                width: 16,
+                height: 16,
+              },
+            ]}
+          />
+        </NativeTouchableOpacity>
+      ) : null}
+      {vipList.length > 0 ? (
+        <View
+          style={[
+            styles.buttonSection,
+            {
+              position: 'absolute',
+              top: vipList.length > 0 ? 150 : 110,
+              right: (screenWidth - vipCardWidth) / 2 + 30,
+            },
+          ]}>
+          <TouchableOpacity
+            style={[
+              styles.claimButton,
+              getButtonStyle(),
+              isPressed && styles.buttonPressed,
+            ]}
+            onPress={handlePress}
+            onPressIn={() => setIsPressed(true)}
+            onPressOut={() => setIsPressed(false)}
+            disabled={buttonStatus !== 'available'}>
+            <LinearGradient
+              colors={
+                buttonStatus === 'available'
+                  ? ['#FF6B35', '#FF8E53']
+                  : ['#888888', '#666666']
+              }
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              style={styles.buttonGradient}>
+              <Text
+                fontSize={theme.fontSize.m}
+                fontWeight="bold"
+                color={theme.fontColor.white}
+                style={[
+                  {
+                    textAlign: 'center',
+                  },
+                ]}>
+                {getButtonText()}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       {vipList.length > 0 ? (
         <View
@@ -681,8 +812,208 @@ const VipClubList: React.FC<VipClubListProps> = ({
           )}
         </View>
       ) : null}
+      <Modal
+        animationType="fade"
+        transparent
+        visible={visible}
+        onRequestClose={() => {
+          setVisible(false);
+        }}>
+        <View style={modalStyles.overlay}>
+          <View
+            style={[
+              modalStyles.container,
+              {backgroundColor: theme.basicColor.newBgInTwo},
+            ]}>
+            <Text style={modalStyles.title}>{i18n.t('label.prompt')}</Text>
+            <Text style={modalStyles.message}>
+              {
+                'This is a detailed explanation of weekly salary, to be determined ...'
+              }
+            </Text>
+            <View style={modalStyles.buttonRow}>
+              {/* <TouchableOpacity style={modalStyles.button} onPress={onCancel}>
+                <Text style={modalStyles.cancelText}></Text>
+              </TouchableOpacity> */}
+              <TouchableOpacity
+                style={modalStyles.button}
+                onPress={() => {
+                  setVisible(false);
+                }}>
+                <Text style={modalStyles.confirmText}>
+                  {i18n.t('label.confirm')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    width: '75%',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: theme.fontColor.white,
+  },
+  message: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: theme.fontColor.white,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
+  button: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  cancelText: {
+    color: '#999',
+    fontSize: 16,
+  },
+  confirmText: {
+    color: theme.basicColor.newFontYellow,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
+const styles = StyleSheet.create({
+  container: {
+    alignSelf: 'center',
+    marginVertical: theme.paddingSize.l,
+  },
+  cardContainer: {
+    borderRadius: theme.borderRadiusSize.l,
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+    paddingBottom: 5,
+  },
+  backgroundImage: {
+    borderRadius: theme.borderRadiusSize.l,
+  },
+  topSection: {
+    alignItems: 'center',
+    marginBottom: theme.paddingSize.xs,
+    flex: 1,
+    paddingHorizontal: theme.paddingSize.l,
+    paddingVertical: theme.paddingSize.m,
+    justifyContent: 'space-between',
+  },
+  topText: {
+    marginTop: theme.paddingSize.xxs,
+  },
+  middleSection: {
+    // flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
+    paddingLeft: 15,
+    paddingRight: 20,
+  },
+  salaryContainer: {
+    alignItems: 'center',
+  },
+  salaryAmount: {
+    marginBottom: theme.paddingSize.xxs,
+  },
+  salaryLabel: {},
+  decorLeft: {
+    position: 'absolute',
+    left: theme.paddingSize.l,
+    top: '50%',
+    transform: [{translateY: -10}],
+  },
+  decorRight: {
+    position: 'absolute',
+    right: theme.paddingSize.l,
+    top: '30%',
+    transform: [{translateY: -10}],
+  },
+  buttonSection: {
+    alignItems: 'center',
+    marginBottom: theme.paddingSize.s,
+  },
+  claimButton: {
+    borderRadius: theme.borderRadiusSize.xxxl,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  availableButton: {},
+  claimedButton: {
+    opacity: 0.7,
+  },
+  lockedButton: {
+    opacity: 0.5,
+  },
+  buttonPressed: {
+    transform: [{scale: 0.95}],
+  },
+  buttonGradient: {
+    paddingHorizontal: theme.paddingSize.xxxl,
+    paddingVertical: theme.paddingSize.s,
+    minWidth: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressSection: {
+    alignItems: 'center',
+  },
+  progressLabel: {
+    marginBottom: theme.paddingSize.xxs,
+  },
+  progressBarContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingLeft: 15,
+    paddingRight: 20,
+  },
+  progressBarBg: {
+    width: '100%',
+    height: 6,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderRadius: theme.borderRadiusSize.xs,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: theme.borderRadiusSize.xs,
+  },
+  progressBarText: {
+    marginTop: 8,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
+    paddingLeft: 15,
+    paddingRight: 20,
+  },
+});
 
 export default VipClubList;

@@ -5,16 +5,16 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
-  Image,
+  //   Image,
   Modal,
 } from 'react-native';
 import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
 import theme from '@/style';
 import {useTranslation} from 'react-i18next';
-import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
+// import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 
-const ablotW = require('@assets/icons/about-w.webp');
+// const ablotW = require('@assets/icons/about-w.webp');
 const {width: screenWidth} = Dimensions.get('window');
 
 interface VipClubTopProps {
@@ -39,51 +39,44 @@ interface VipClubTopProps {
 const VipClubTop: React.FC<VipClubTopProps> = ({
   weeklySalary = 666,
   progress = 0.6,
-  buttonStatus = 'available',
-  onClaim,
+  //   buttonStatus = 'available',
+  //   onClaim,
   h = 150,
   w = screenWidth - 20,
 }) => {
   const {i18n} = useTranslation();
-  const [isPressed, setIsPressed] = useState(false);
+  //   const [isPressed, setIsPressed] = useState(false);
   const [visible, setVisible] = useState(false);
 
-  const handleInfoPress = () => {
-    setVisible(true);
-  };
+  //   const handleInfoPress = () => {
+  //     setVisible(true);
+  //   };
 
-  const handlePress = () => {
-    console.log('handlePress');
-    if (buttonStatus === 'available' && onClaim) {
-      onClaim();
-    }
-  };
+  //   const getButtonText = () => {
+  //     switch (buttonStatus) {
+  //       case 'available':
+  //         return 'Available';
+  //       //   case 'claimed':
+  //       //     return 'Claimed';
+  //       //   case 'locked':
+  //       //     return 'Locked';
+  //       default:
+  //         return 'Available';
+  //     }
+  //   };
 
-  const getButtonText = () => {
-    switch (buttonStatus) {
-      case 'available':
-        return 'Available';
-      //   case 'claimed':
-      //     return 'Claimed';
-      //   case 'locked':
-      //     return 'Locked';
-      default:
-        return 'Available';
-    }
-  };
-
-  const getButtonStyle = () => {
-    switch (buttonStatus) {
-      case 'available':
-        return styles.availableButton;
-      case 'claimed':
-        return styles.claimedButton;
-      case 'locked':
-        return styles.lockedButton;
-      default:
-        return styles.availableButton;
-    }
-  };
+  //   const getButtonStyle = () => {
+  //     switch (buttonStatus) {
+  //       case 'available':
+  //         return styles.availableButton;
+  //       case 'claimed':
+  //         return styles.claimedButton;
+  //       case 'locked':
+  //         return styles.lockedButton;
+  //       default:
+  //         return styles.availableButton;
+  //     }
+  //   };
 
   return (
     <View style={[styles.container, {width: w}]}>
@@ -106,7 +99,7 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
                 ]}>
                 {i18n.t('vip.weeklySalary')}
               </Text>
-              <NativeTouchableOpacity
+              {/* <NativeTouchableOpacity
                 style={{
                   marginLeft: 5,
                 }}
@@ -122,7 +115,7 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
                     },
                   ]}
                 />
-              </NativeTouchableOpacity>
+              </NativeTouchableOpacity> */}
             </View>
             <Text
               fontSize={theme.fontSize.xxxl}
@@ -138,7 +131,7 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
             </Text>
           </View>
           {/* 按钮区域 */}
-          <View style={styles.buttonSection}>
+          {/* <View style={styles.buttonSection}>
             <TouchableOpacity
               style={[
                 styles.claimButton,
@@ -171,7 +164,7 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
 
         {/* 进度条区域 */}
