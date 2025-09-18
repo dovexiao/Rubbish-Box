@@ -283,12 +283,6 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
   });
   // buttonStatus?: 'available' | 'claimed' | 'locked';
   const [buttonStatus, _setButtonStatus] = useState('available');
-  const handlePress = () => {
-    console.log('click-------handlePress');
-    // if (buttonStatus === 'available' && onClaim) {
-    //   onClaim();
-    // }
-  };
   const [visible, setVisible] = useState(false);
 
   const handleInfoPress = () => {
@@ -445,15 +439,11 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
             position: 'absolute',
             top: vipList.length > 0 ? (screenWidth / 410) * 100 : 80,
             // right: 0,
-            left: (screenWidth - vipCardWidth) / 2 + 11,
+            left: (screenWidth - vipCardWidth) / 2 + 10,
             zIndex: -1,
             elevation: 10,
           }}>
-          <VipClubTop
-            w={vipCardWidth - 20}
-            h={TOP_WEEKLY_HEIFGT}
-            onClaim={handlePressClaim}
-          />
+          <VipClubTop w={vipCardWidth - 20} h={TOP_WEEKLY_HEIFGT} />
         </View>
       ) : null}
       {vipList.length > 0 ? (
@@ -491,7 +481,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
           ]}>
           <TouchableOpacity
             style={[styles.claimButton, getButtonStyle()]}
-            onPressIn={handlePress}
+            onPressIn={handlePressClaim}
             disabled={buttonStatus !== 'available'}>
             <LinearGradient
               colors={

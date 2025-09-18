@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useRef} from 'react';
 import {Animated, Easing, StyleSheet} from 'react-native';
 
@@ -21,7 +22,7 @@ const BreatheImage = () => {
         }),
       ]),
     ).start();
-  }, [scale]);
+  }, []);
 
   return (
     <Animated.Image
@@ -38,7 +39,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     left: '50%',
-    // transform: [{translateX: 12}],
   },
 });
 
