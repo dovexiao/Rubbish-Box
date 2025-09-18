@@ -27,7 +27,6 @@ import ProxyHome from "@/common-pages/proxy";
 import BreatheImage from '@/components/basic/animations/breatheImage';
 
 const Tab = createBottomTabNavigator();
-// const daillyGif = require('@/assets/gif/daillybonus.gif');
 export const mainPageList: {
   name: string;
   link: string;
@@ -143,10 +142,6 @@ const CusTab = (props: BottomTabBarProps) => {
                     : mainPageList[index].img
                 }
               />
-              {/* {index === showGif && <Image
-                style={[styles.icon]}
-                source={daillyGif}
-              />} */}
               {index === showGif && <BreatheImage />}
               <Text
                 blod={true}
@@ -188,14 +183,4 @@ const MainNav = () => {
     </Tab.Navigator>
   );
 };
-// const styles = StyleSheet.create({
-//   icon: {
-//     width: 48,
-//     height: 16,
-//     position: 'absolute',
-//     top: -3,
-//     left: '50%',
-//     transform: [{translateX: 8}],
-//   },
-// });
 export default MainNav;
