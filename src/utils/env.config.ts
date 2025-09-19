@@ -108,7 +108,6 @@ class Config {
       ENV_CONFIG.REACT_APP_API_DOWNLOAD_CHANNEL_URL || '';
 
     this._baseUrl = ENV_CONFIG.REACT_APP_API_BASE_URL;
-    // this._baseUrl = 'https://api.mega4cx25.com/';
     this._induswinUrl =
       ENV_CONFIG.REACT_APP_API_INDUSWIN_URL ||
       ENV_CONFIG.REACT_APP_API_BASE_URL;
