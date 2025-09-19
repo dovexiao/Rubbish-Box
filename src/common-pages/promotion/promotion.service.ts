@@ -50,3 +50,19 @@ export function getPromotionDetail(id: number) {
     `app/sysActivity/getSysActivity/${id}`,
   );
 }
+// 查看七日列表
+export function getSevenDayRewards() {
+  return http.post<{}, any>(
+    'app/activity/recharge/log/activity/recharge/sevenDayRewards',
+  );
+}
+// 查看复充列表
+export function getListRecharge() {
+  return http.post<{}, any>('app/activity/recharge/log/listRecharge');
+}
+// 领取七日连充奖励金额
+export function getReceiveSevenDayReward(arr: any) {
+  return http.post<{}, any>('app/activity/recharge/log/receiveSevenDayReward', {
+    ids: arr,
+  });
+}

@@ -15,11 +15,13 @@ import LinearGradient from '@/components/basic/linear-gradient';
 interface HomePopTwoProps {
   isImageVisible: boolean;
   setIsImageVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  amount: number;
 }
 
 const GetBonusModal: React.FC<HomePopTwoProps> = ({
   isImageVisible,
   setIsImageVisible,
+  amount = 0,
 }) => {
   const {i18n} = useTranslation();
   const {screenWidth} = useScreenSize();
@@ -27,8 +29,7 @@ const GetBonusModal: React.FC<HomePopTwoProps> = ({
   const closeImage = () => {
     setIsImageVisible(false);
   };
-  const onPressGetBonus = (amount: number) => {
-    console.log('amount', amount);
+  const onPressGetBonus = () => {
     closeImage();
   };
   return (
@@ -38,7 +39,7 @@ const GetBonusModal: React.FC<HomePopTwoProps> = ({
       onRequestClose={closeImage}
       animationType="fade">
       <View style={styles.modalOverlay}>
-        <NativeTouchableOpacity>
+        <NativeTouchableOpacity activeOpacity={1}>
           <LazyImage
             imageUrl={topUrl}
             width={screenWidth * 0.98}
@@ -81,7 +82,7 @@ const GetBonusModal: React.FC<HomePopTwoProps> = ({
                     fontSize: 20,
                   },
                 ]}>
-                888Rs
+                {amount}Rs
               </Text>
             </View>
           </View>
@@ -89,7 +90,7 @@ const GetBonusModal: React.FC<HomePopTwoProps> = ({
 
         {/* 获取奖励按钮 */}
         <NativeTouchableOpacity
-          onPress={() => onPressGetBonus(888)}
+          onPress={() => onPressGetBonus()}
           style={{
             alignItems: 'center',
             width: '70%',

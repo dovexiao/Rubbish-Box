@@ -858,6 +858,7 @@ export default {
     rebate: 'Estimated Rebate:',
     congratulations: 'Congratulations!',
     'get-bonus': 'Get Bonus',
+    'get-all-bonus': 'Get All Bonus',
     'get-bonus-modal': 'Get',
     rule: {
       betting: 'Betting Bonus:',

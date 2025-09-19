@@ -1,7 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import DetailNavTitle from '@businessComponents/detail-nav-title';
-import React, {useRef, useState, useEffect, useCallback} from 'react';
+import React, {useRef, useState, useEffect, useCallback, useMemo} from 'react';
 import {useInnerStyle} from './promotion.hooks';
+import {useFocusEffect} from '@react-navigation/native';
 import theme from '@style';
 import {
   FlatList,
@@ -18,7 +19,13 @@ import {
 } from 'react-native';
 import Card from '@basicComponents/card';
 import {NoMoreData} from '@/components/basic/default-page';
-import {PromotionListItem, getPromotionList} from './promotion.service';
+import {
+  PromotionListItem,
+  getPromotionList,
+  getReceiveSevenDayReward,
+  getListRecharge,
+  getSevenDayRewards,
+} from './promotion.service';
 import globalStore from '@/services/global.state';
 import NoData from '@/components/basic/error-pages/no-data';
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
@@ -30,6 +37,7 @@ import {goTo} from '@/utils';
 import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
 import GetBonusModal from './components/get-bonus-modal';
+import LazyImage from '@/components/basic/image/lazy-image';
 const proNew = require('@/assets/imgs/promotion/promotion-new.webp');
 const proWhy = require('@/assets/imgs/promotion/pro-right-why.webp');
 const amountClaim = require('@/assets/imgs/promotion/claim.webp');
@@ -40,13 +48,13 @@ const proAmountImages = [
   require('@/assets/imgs/promotion/pro-amount4.webp'),
 ];
 const proAmountSevenImages = [
+  require('@/assets/imgs/promotion/amt_10.webp'),
+  require('@/assets/imgs/promotion/amt_20.webp'),
   require('@/assets/imgs/promotion/amt_30.webp'),
-  require('@/assets/imgs/promotion/amt_30.webp'),
+  require('@/assets/imgs/promotion/amt_40.webp'),
   require('@/assets/imgs/promotion/amt_50.webp'),
-  require('@/assets/imgs/promotion/amt_30.webp'),
-  require('@/assets/imgs/promotion/amt_30.webp'),
-  require('@/assets/imgs/promotion/amt_30.webp'),
-  require('@/assets/imgs/promotion/amt_80.webp'),
+  require('@/assets/imgs/promotion/amt_60.webp'),
+  require('@/assets/imgs/promotion/amt_100.webp'),
 ];
 const proAmountSevenTopImages = [
   require('@/assets/imgs/promotion/pro-amount.webp'),
@@ -118,6 +126,8 @@ const Promotion = () => {
       goToUrl(item.activityUrl, item.activityTitle);
     }
   };
+  const [_countdown, setCountdown] = useState(36); // 初始倒计时秒数
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -126,8 +136,6 @@ const Promotion = () => {
       useNativeDriver: true,
     }).start();
   });
-  const [_countdown, setCountdown] = useState(36); // 初始倒计时秒数
-  const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -143,27 +151,111 @@ const Promotion = () => {
     return () => clearInterval(timer);
   }, []);
   const [visible, setVisible] = useState(false);
-  const onPressGetBonus = (amt?: number) => {
-    console.log('item', amt);
-    setIsImageVisible(true);
-    // if (item?.activityUrl) {
-    //   goToUrl(item.activityUrl, item.activityTitle);
-    // }
-  };
+  const [sevenInfo, setSevenInfo] = useState<any>([]);
+  const [canGetNum, setCanGetNum] = useState(0); //可领取数量
+  const [rechargeInfo, setRechargeInfo] = useState<any>({});
+  const fetchSevenInfo = useCallback(async () => {
+    //七日
+    try {
+      const sevenRes = await getSevenDayRewards();
+      // const sevenRes = [
+      //   {
+      //     amount: 10,
+      //     finished: true,
+      //     received: true,
+      //     day: 1,
+      //   },
+      //   {
+      //     amount: 10,
+      //     finished: true,
+      //     received: true,
+      //     day: 2,
+      //   },
+      //   {
+      //     amount: 10,
+      //     finished: true,
+      //     received: false,
+      //     day: 3,
+      //   },
+      //   {
+      //     amount: 10,
+      //     finished: false,
+      //     received: false,
+      //     day: 4,
+      //   },
+      //   {
+      //     amount: 10,
+      //     finished: false,
+      //     received: false,
+      //     day: 5,
+      //   },
+      //   {
+      //     amount: 10,
+      //     finished: false,
+      //     received: false,
+      //     day: 6,
+      //   },
+      //   {
+      //     amount: 10,
+      //     finished: true,
+      //     received: false,
+      //     day: 7,
+      //   },
+      // ];
+      setSevenInfo(sevenRes);
+      if (sevenRes?.length) {
+        setCanGetNum(
+          sevenRes.filter((item: any) => item?.finished && !item?.received)
+            .length,
+        );
+      }
+    } catch (e) {
+      console.error('Error fetching promotions:', e);
+    }
+  }, []);
+  const fetchRechargeInfo = useCallback(async () => {
+    //查看复充列表
+    try {
+      const rechargeInfo = await getListRecharge();
+      console.log(2222222, rechargeInfo);
+      setRechargeInfo(rechargeInfo);
+    } catch (e) {
+      console.error('Error fetching promotions:', e);
+    }
+  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      // 启动动画效果
+      fadeAnim.setValue(0);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+      // 调用接口获取数据
+      fetchSevenInfo();
+      fetchRechargeInfo();
+    }, [fetchSevenInfo, fetchRechargeInfo, fadeAnim]),
+  );
   // 复充
-  const renderRedBonusCard = (item: PromotionListItem) => {
+  const onPressGoDeposit = useCallback(() => {
+    goTo('Recharge');
+  }, []);
+  const renderRedBonusCard = useMemo(() => {
+    // rechargeInfo
     return (
       <Animated.View
         style={{
-          opacity: fadeAnim,
-          transform: [
-            {
-              scale: fadeAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.95, 1],
-              }),
-            },
-          ],
+          // opacity: fadeAnim,
+          // transform: [
+          //   {
+          //     scale: fadeAnim.interpolate({
+          //       inputRange: [0, 1],
+          //       outputRange: [0.95, 1],
+          //     }),
+          //   },
+          // ],
           marginBottom: 2,
         }}>
         <LinearGradient
@@ -367,7 +459,7 @@ const Promotion = () => {
                     position: 'relative',
                     zIndex: 10,
                   }}>
-                  {item.buttonStyle === 1 ? (
+                  {true ? (
                     <Image
                       source={amountClaim}
                       style={{
@@ -384,15 +476,24 @@ const Promotion = () => {
                   {idx === 0
                     ? '2nd'
                     : idx === 1
-                    ? '3rd'
+                    ? '3st'
                     : idx === 2
-                    ? '5th'
-                    : '7th'}
+                    ? '4st'
+                    : '5st'}
                 </Text>
               </View>
             ))}
             {/* 紫色进度条 */}
-            <View style={styles.progressSection}>
+            <View
+              style={[
+                styles.progressSection,
+                {
+                  bottom: Platform.select({
+                    web: 22,
+                    android: 24,
+                  }),
+                },
+              ]}>
               <View style={styles.progressBarContainer}>
                 <View style={styles.progressBarBg}>
                   <LinearGradient
@@ -412,7 +513,7 @@ const Promotion = () => {
           </View>
           {/* 获取奖励按钮 */}
           <NativeTouchableOpacity
-            onPress={() => onPressGetBonus(item.amount || 0)}
+            onPress={() => onPressGoDeposit()}
             style={{
               alignItems: 'center',
             }}>
@@ -448,21 +549,83 @@ const Promotion = () => {
         </LinearGradient>
       </Animated.View>
     );
-  };
+  }, [i18n, onPressGoDeposit]);
   // 七日连冲
-  const renderSevenContinuousBonusCard = (item: PromotionListItem) => {
+  const [canGetAmount, setCanGetAmount] = useState(0); //可领取数量
+  const bounceAnim = useRef(new Animated.Value(2)).current;
+  useEffect(() => {
+    const createBounceAnimation = () => {
+      return Animated.sequence([
+        Animated.timing(bounceAnim, {
+          toValue: 2.3,
+          duration: 600,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(bounceAnim, {
+          toValue: 1.7,
+          duration: 600,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]);
+    };
+
+    const startBounceLoop = () => {
+      Animated.loop(createBounceAnimation(), {
+        iterations: -1, // 无限循环
+      }).start();
+    };
+
+    // 延迟开始跳动动画，让页面先完成淡入
+    const timer = setTimeout(() => {
+      startBounceLoop();
+    }, 800);
+
+    return () => {
+      clearTimeout(timer);
+      bounceAnim.stopAnimation();
+      // bounceAnim1.stopAnimation();
+    };
+  }, [bounceAnim]);
+  const getSevenContinuousBonus = useCallback((item: any) => {
+    if (item?.finished && !item?.received) {
+      let arr = [];
+      arr.push(item?.id);
+      getReceiveSevenDayReward(arr)
+        .then(res => {
+          if (res?.code === 200) {
+            setCanGetAmount(item?.amount || 0);
+            setIsImageVisible(true);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
+  const onPressGetBonus1 = useCallback(() => {
+    const arr = sevenInfo.filter(
+      (item: any) => item?.finished && !item?.received,
+    );
+    let amt = 0;
+    arr.forEach((item: any) => {
+      amt += item?.amount || 0;
+    });
+    const idList = arr.map((item: any) => item.id);
+    if (idList.length > 0) {
+      getReceiveSevenDayReward(idList)
+        .then(res => {
+          if (res?.code === 200) {
+            setCanGetAmount(amt);
+            setIsImageVisible(true);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [sevenInfo]);
+  const renderSevenContinuousBonusCard = useMemo(() => {
     return (
-      <Animated.View
+      <View
         style={{
-          opacity: fadeAnim,
-          transform: [
-            {
-              scale: fadeAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.95, 1],
-              }),
-            },
-          ],
           marginBottom: 2,
         }}>
         <LinearGradient
@@ -497,13 +660,21 @@ const Promotion = () => {
                 width: 56,
                 height: 56,
                 resizeMode: 'contain',
+                // opacity: fadeAnim,
+                // transform: [
+                //   {
+                //     scale: fadeAnim.interpolate({
+                //       inputRange: [0, 1],
+                //       outputRange: [0.95, 1],
+                //     }),
+                //   },
+                // ],
               }}
             />
           </View>
           <View style={{marginTop: 12, marginBottom: 17}}>
             <View
               style={{
-                flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
                 elevation: 101,
@@ -515,10 +686,6 @@ const Promotion = () => {
                   fontSize: 16,
                   fontWeight: 'bold',
                   flex: 1,
-                  // marginRight: 12,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
                 }}>
                 {i18n.t('promotion.sevenContinueBonus')}
               </Text>
@@ -539,110 +706,205 @@ const Promotion = () => {
                 paddingRight: 5,
               }}>
               {proAmountSevenImages.map((img, index) => {
-                const img5Flag = index === 2; //第三天
-                // const img7Flag = index === 6; //最后一天大奖
                 const imgW = 28;
+                const currentItem = sevenInfo[index] || {};
+                console.log(111111, currentItem);
                 return (
                   <View
+                    key={`seven-day${index + 1}`}
                     style={{
                       flexBasis:
                         index !== proAmountSevenImages.length - 1
                           ? '25%'
                           : '50%',
                     }}>
-                    <LinearGradient
-                      key={`day${index + 1}`}
-                      colors={['#C803FF', '#FF0085']}
-                      start={{x: 0, y: 0}}
-                      end={{x: 0, y: 1}}
-                      style={{
-                        borderRadius: 12,
-                        marginLeft: 5,
-                        marginRight: 5,
-                        marginBottom: 8,
-                        height: 80,
+                    {/* 跳动时领取 */}
+                    <NativeTouchableOpacity
+                      onPressIn={() => {
+                        getSevenContinuousBonus(currentItem);
                       }}>
-                      <View
+                      <LinearGradient
+                        key={`day${index + 1}`}
+                        colors={['#C803FF', '#FF0085']}
+                        start={{x: 0, y: 0}}
+                        end={{x: 0, y: 1}}
                         style={{
-                          backgroundColor: '#C803FF',
-                          borderTopLeftRadius: 12,
-                          borderTopRightRadius: 12,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          paddingTop: 4,
-                          paddingBottom: 4,
+                          borderRadius: 12,
+                          marginLeft: 5,
+                          marginRight: 5,
+                          marginBottom: 8,
+                          height: 80,
                         }}>
-                        <Text
-                          style={{
-                            color: '#FFFFFF',
-                            fontSize: 10,
-                          }}>
-                          Day{index + 1}
-                        </Text>
-                      </View>
-                      {/* 两张图片垂直排列 */}
-                      {index !== proAmountSevenImages.length - 1 ? (
                         <View
                           style={{
-                            flex: 1,
-                            justifyContent: 'center',
+                            backgroundColor: currentItem?.finished
+                              ? '#C803FF'
+                              : '#999999',
+                            borderTopLeftRadius: 12,
+                            borderTopRightRadius: 12,
                             alignItems: 'center',
-                          }}>
-                          <Image
-                            source={proAmountSevenTopImages[index]}
-                            style={{
-                              width: imgW,
-                              height: imgW,
-                              resizeMode: 'contain',
-                              transform: [
-                                {
-                                  scale: img5Flag ? 1.5 : 1,
-                                },
-                              ],
-                            }}
-                          />
-                          <Image
-                            source={proAmountSevenImages[index]}
-                            style={{
-                              width: 38,
-                              height: 18,
-                              resizeMode: 'contain',
-                            }}
-                          />
-                        </View>
-                      ) : (
-                        <View
-                          style={{
-                            flex: 1,
-                            flexDirection: 'row',
                             justifyContent: 'center',
-                            alignItems: 'center',
+                            paddingTop: 4,
+                            paddingBottom: 4,
                           }}>
-                          <Image
-                            source={proAmountSevenTopImages[index]}
+                          <Text
                             style={{
-                              width: imgW,
-                              height: imgW,
-                              resizeMode: 'contain',
-                              transform: [
-                                {
-                                  scale: 2,
-                                },
-                              ],
-                            }}
-                          />
-                          <Image
-                            source={proAmountSevenImages[index]}
-                            style={{
-                              width: 40,
-                              height: 18,
-                              resizeMode: 'contain',
-                              marginLeft: 20,
-                            }}
-                          />
+                              color: '#FFFFFF',
+                              fontSize: 10,
+                            }}>
+                            Day{index + 1}
+                          </Text>
                         </View>
-                      )}
-                    </LinearGradient>
+                        {/* 两张图片垂直排列 */}
+                        {index !== proAmountSevenImages.length - 1 ? (
+                          <View
+                            style={{
+                              flex: 1,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <Animated.Image
+                              source={proAmountSevenTopImages[index]}
+                              style={{
+                                width: imgW,
+                                height: imgW,
+                                resizeMode: 'contain',
+                                transform: [
+                                  {
+                                    scale: index === 2 ? 2 : 1,
+                                    // scale:
+                                    //   currentItem?.finished &&
+                                    //   !currentItem?.received &&
+                                    //   index === 2
+                                    //     ? bounceAnim
+                                    //     : 1,
+                                  },
+                                ],
+                              }}
+                            />
+                            {currentItem?.finished && !currentItem?.received ? (
+                              <View
+                                style={{
+                                  position: 'relative',
+                                  backgroundColor: 'transparent',
+                                }}>
+                                <LazyImage
+                                  imageUrl={proAmountSevenImages[index]}
+                                  width={38}
+                                  height={18}
+                                  style={{
+                                    backgroundColor: 'transparent',
+                                  }}
+                                />
+                                <LazyImage
+                                  imageUrl={require('@/assets/imgs/promotion/pro_btn_bg.webp')}
+                                  width={66}
+                                  height={22}
+                                  style={{
+                                    zIndex: -1,
+                                    position: 'absolute',
+                                    left: -14,
+                                  }}
+                                />
+                              </View>
+                            ) : (
+                              <Animated.Image
+                                source={proAmountSevenImages[index]}
+                                style={{
+                                  width: 38,
+                                  height: 18,
+                                  resizeMode: 'contain',
+                                  transform: [
+                                    {
+                                      scale: 1,
+                                    },
+                                  ],
+                                }}
+                              />
+                            )}
+                          </View>
+                        ) : (
+                          <View
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <Animated.Image
+                              source={proAmountSevenTopImages[index]}
+                              style={{
+                                width: imgW,
+                                height: imgW,
+                                resizeMode: 'contain',
+                                transform: [
+                                  {
+                                    scale: 2,
+                                    // scale:
+                                    //   currentItem?.finished &&
+                                    //   !currentItem?.received
+                                    //     ? bounceAnim
+                                    //     : 2,
+                                  },
+                                ],
+                              }}
+                            />
+                            {currentItem?.finished && !currentItem?.received ? (
+                              <View
+                                style={{
+                                  position: 'relative',
+                                  backgroundColor: 'transparent',
+                                  marginLeft: 30,
+                                }}>
+                                <LazyImage
+                                  imageUrl={proAmountSevenImages[index]}
+                                  width={40}
+                                  height={18}
+                                  style={{
+                                    backgroundColor: 'transparent',
+                                  }}
+                                />
+                                <LazyImage
+                                  imageUrl={require('@/assets/imgs/promotion/pro_btn_bg.webp')}
+                                  width={66}
+                                  height={22}
+                                  style={{
+                                    zIndex: -1,
+                                    position: 'absolute',
+                                    left: -13,
+                                    top: -1,
+                                  }}
+                                />
+                              </View>
+                            ) : (
+                              <Image
+                                source={proAmountSevenImages[index]}
+                                style={{
+                                  width: 40,
+                                  height: 18,
+                                  resizeMode: 'contain',
+                                  marginLeft: 30,
+                                }}
+                              />
+                            )}
+                          </View>
+                        )}
+                        {currentItem?.received && (
+                          <View
+                            style={{
+                              position: 'absolute',
+                              bottom: 4,
+                              right: 4,
+                            }}>
+                            <LazyImage
+                              imageUrl={require('@/assets/imgs/promotion/selected.webp')}
+                              width={15}
+                              height={15}
+                            />
+                          </View>
+                        )}
+                      </LinearGradient>
+                    </NativeTouchableOpacity>
                   </View>
                 );
               })}
@@ -650,7 +912,8 @@ const Promotion = () => {
           </View>
           {/* 获取奖励按钮 */}
           <NativeTouchableOpacity
-            onPress={() => onPressGetBonus(item.amount || 0)}
+            onPress={() => onPressGetBonus1()}
+            disabled={canGetNum <= 0}
             style={{
               alignItems: 'center',
             }}>
@@ -678,21 +941,17 @@ const Promotion = () => {
                   fontWeight: 'bold',
                   fontSize: 16,
                 }}>
-                {i18n.t('rebate.get-bonus')}
+                {canGetNum > 1
+                  ? i18n.t('rebate.get-all-bonus')
+                  : i18n.t('rebate.get-bonus')}
               </Text>
             </LinearGradient>
           </NativeTouchableOpacity>
         </LinearGradient>
-      </Animated.View>
+      </View>
     );
-  };
+  }, [canGetNum, getSevenContinuousBonus, i18n, onPressGetBonus1, sevenInfo]);
   const renderItem = ({item}: ListRenderItemInfo<PromotionListItem>) => {
-    if (item.activityTitle === 'Recharge for bonus') {
-      return renderRedBonusCard(item);
-    }
-    if (item.activityTitle === 'WEEKLY RECHARGE') {
-      return renderSevenContinuousBonusCard(item);
-    }
     return (
       <View
         style={[
@@ -719,6 +978,22 @@ const Promotion = () => {
     );
   };
 
+  const renderListHeader = useCallback(() => {
+    if (rechargeInfo?.showFlag) {
+      return (
+        <View>
+          {renderSevenContinuousBonusCard}
+          {renderRedBonusCard}
+        </View>
+      );
+    } else {
+      return renderSevenContinuousBonusCard;
+    }
+  }, [
+    rechargeInfo?.showFlag,
+    renderRedBonusCard,
+    renderSevenContinuousBonusCard,
+  ]);
   return (
     <LazyImageLGBackground style={{height: screenHeight}}>
       <DetailNavTitle title={i18n.t('promotion.title')} hideServer />
@@ -726,6 +1001,7 @@ const Promotion = () => {
         data={promotionList}
         renderItem={renderItem}
         keyExtractor={item => String(item.id)}
+        ListHeaderComponent={renderListHeader}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -751,6 +1027,7 @@ const Promotion = () => {
 
       <GetBonusModal
         isImageVisible={isImageVisible}
+        amount={canGetAmount || 0}
         setIsImageVisible={setIsImageVisible}
       />
       <Modal
@@ -843,7 +1120,6 @@ const styles = StyleSheet.create({
   progressSection: {
     alignItems: 'center',
     position: 'absolute',
-    bottom: Platform.OS === 'web' ? 22 : 28,
     left: 0,
     right: 0,
     zIndex: -1,
