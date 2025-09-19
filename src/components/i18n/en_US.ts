@@ -858,6 +858,7 @@ export default {
     rebate: 'Estimated Rebate:',
     congratulations: 'Congratulations!',
     'get-bonus': 'Get Bonus',
+    'get-bonus-modal': 'Get',
     rule: {
       betting: 'Betting Bonus:',
       'betting-detail':
@@ -903,6 +904,7 @@ export default {
     checkin: 'Check in',
     checkinDescription: 'Check in daily to get a lot of rewards',
     continueBonus: 'Continuous recharge bonus',
+    sevenContinueBonus: 'Daily Continuous recharge bonus',
   },
   feedback: {
     title: 'FeedBack',

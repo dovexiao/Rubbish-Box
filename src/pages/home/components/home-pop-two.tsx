@@ -28,7 +28,6 @@ const HomePopTwo: React.FC<HomePopTwoProps> = ({
     closeImage();
     goToWithLogin(i18n.t('home.tab.deposit'));
   };
-  console.log(111111, dynamicUrl);
   return (
     <Modal
       transparent={true}

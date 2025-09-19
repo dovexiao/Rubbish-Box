@@ -14,6 +14,7 @@ import {
   Modal,
   StyleSheet,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import Card from '@basicComponents/card';
 import {NoMoreData} from '@/components/basic/default-page';
@@ -28,6 +29,7 @@ import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import {goTo} from '@/utils';
 import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
+import GetBonusModal from './components/get-bonus-modal';
 const proNew = require('@/assets/imgs/promotion/promotion-new.webp');
 const proWhy = require('@/assets/imgs/promotion/pro-right-why.webp');
 const amountClaim = require('@/assets/imgs/promotion/claim.webp');
@@ -36,6 +38,24 @@ const proAmountImages = [
   require('@/assets/imgs/promotion/pro-amount2.webp'),
   require('@/assets/imgs/promotion/pro-amount3.webp'),
   require('@/assets/imgs/promotion/pro-amount4.webp'),
+];
+const proAmountSevenImages = [
+  require('@/assets/imgs/promotion/amt_30.webp'),
+  require('@/assets/imgs/promotion/amt_30.webp'),
+  require('@/assets/imgs/promotion/amt_50.webp'),
+  require('@/assets/imgs/promotion/amt_30.webp'),
+  require('@/assets/imgs/promotion/amt_30.webp'),
+  require('@/assets/imgs/promotion/amt_30.webp'),
+  require('@/assets/imgs/promotion/amt_80.webp'),
+];
+const proAmountSevenTopImages = [
+  require('@/assets/imgs/promotion/pro-amount.webp'),
+  require('@/assets/imgs/promotion/pro-amount.webp'),
+  require('@/assets/imgs/promotion/box_50.webp'),
+  require('@/assets/imgs/promotion/pro-amount.webp'),
+  require('@/assets/imgs/promotion/pro-amount.webp'),
+  require('@/assets/imgs/promotion/pro-amount.webp'),
+  require('@/assets/imgs/promotion/box_80.webp'),
 ];
 const Promotion = () => {
   const {i18n} = useTranslation();
@@ -49,6 +69,7 @@ const Promotion = () => {
   const totalPage = useRef(1);
   const [promotionList, setPromotionList] = useState<PromotionListItem[]>([]);
   const tagIndex = 0;
+  const [isImageVisible, setIsImageVisible] = useState(false);
 
   const {screenHeight} = useSettingWindowDimensions();
 
@@ -124,10 +145,12 @@ const Promotion = () => {
   const [visible, setVisible] = useState(false);
   const onPressGetBonus = (amt?: number) => {
     console.log('item', amt);
+    setIsImageVisible(true);
     // if (item?.activityUrl) {
     //   goToUrl(item.activityUrl, item.activityTitle);
     // }
   };
+  // 复充
   const renderRedBonusCard = (item: PromotionListItem) => {
     return (
       <Animated.View
@@ -141,7 +164,7 @@ const Promotion = () => {
               }),
             },
           ],
-          marginBottom: 16,
+          marginBottom: 2,
         }}>
         <LinearGradient
           colors={['#FA1C1B', '#A1251D']}
@@ -167,8 +190,9 @@ const Promotion = () => {
               left: -1,
               borderTopLeftRadius: 16,
               borderBottomRightRadius: 20,
-              elevation: 4,
+              elevation: 100,
               zIndex: 10,
+              backgroundColor: 'transparent',
             }}>
             <Image
               source={proNew}
@@ -186,7 +210,7 @@ const Promotion = () => {
               top: 0,
               borderTopRightRadius: 16,
               borderBottomLeftRadius: 20,
-              elevation: 4,
+              elevation: 100,
               zIndex: 10,
               width: 40,
               height: 22,
@@ -201,6 +225,7 @@ const Promotion = () => {
                   width: 12,
                   height: 12,
                   resizeMode: 'contain',
+                  backgroundColor: 'transparent',
                 }}
               />
             </NativeTouchableOpacity>
@@ -297,7 +322,6 @@ const Promotion = () => {
               </View>
             </View>
           </View>
-
           {/* 奖励图标行 */}
           <View
             style={{
@@ -307,44 +331,28 @@ const Promotion = () => {
               marginBottom: 8,
               paddingHorizontal: 8,
               position: 'relative',
+              backgroundColor: 'transparent',
             }}>
-            {[2000, 3000, 4000, 5000].map((amt, idx) => (
+            {[2000, 3000, 4000, 5000].map((_amt, idx) => (
               <View key={idx} style={{alignItems: 'center', flex: 1}}>
                 {/* 金币图标 */}
                 <View
                   style={{
-                    width: 25,
-                    height: 25,
+                    width: 54,
+                    height: 63,
                     position: 'relative',
                     left: 3,
+                    top: idx === 0 ? 3 : 0,
                   }}>
                   <Image
                     source={proAmountImages[idx]}
                     style={{
-                      width: 25,
-                      height: 25,
+                      width: 54,
+                      height: 63,
                       resizeMode: 'contain',
                     }}
                   />
                 </View>
-                <Text
-                  style={{
-                    color: '#fff7e3',
-                    fontSize: 11,
-                    fontWeight: 'bold',
-                  }}>
-                  {i18n.t('recharge-page.label.max')}
-                </Text>
-                <Text
-                  style={{
-                    color: '#FFD700',
-                    fontSize: 16,
-                    // fontWeight: 'bold',
-                    marginBottom: 8,
-                    fontStyle: 'italic',
-                  }}>
-                  {amt}Rs
-                </Text>
 
                 {/* 完成状态勾选 */}
                 <View
@@ -357,6 +365,7 @@ const Promotion = () => {
                     alignItems: 'center',
                     marginBottom: 4,
                     position: 'relative',
+                    zIndex: 10,
                   }}>
                   {item.buttonStyle === 1 ? (
                     <Image
@@ -364,6 +373,7 @@ const Promotion = () => {
                       style={{
                         width: 16,
                         height: 16,
+                        zIndex: 10,
                       }}
                     />
                   ) : (
@@ -374,14 +384,13 @@ const Promotion = () => {
                   {idx === 0
                     ? '2nd'
                     : idx === 1
-                    ? '3st'
+                    ? '3rd'
                     : idx === 2
-                    ? '5st'
-                    : '1st'}
+                    ? '5th'
+                    : '7th'}
                 </Text>
               </View>
             ))}
-
             {/* 紫色进度条 */}
             <View style={styles.progressSection}>
               <View style={styles.progressBarContainer}>
@@ -440,9 +449,249 @@ const Promotion = () => {
       </Animated.View>
     );
   };
+  // 七日连冲
+  const renderSevenContinuousBonusCard = (item: PromotionListItem) => {
+    return (
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [
+            {
+              scale: fadeAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.95, 1],
+              }),
+            },
+          ],
+          marginBottom: 2,
+        }}>
+        <LinearGradient
+          colors={['#FA1C1B', '#A1251D']}
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          style={{
+            borderRadius: 16,
+            position: 'relative',
+            paddingBottom: 4,
+            shadowColor: '#000',
+            shadowOffset: {width: 0, height: 4},
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 8,
+          }}>
+          {/* "New"图标标签 */}
+          <View
+            style={{
+              position: 'absolute',
+              top: -3,
+              left: -1,
+              borderTopLeftRadius: 16,
+              borderBottomRightRadius: 20,
+              elevation: 100,
+              zIndex: 10,
+              backgroundColor: 'transparent',
+            }}>
+            <Image
+              source={proNew}
+              style={{
+                width: 56,
+                height: 56,
+                resizeMode: 'contain',
+              }}
+            />
+          </View>
+          <View style={{marginTop: 12, marginBottom: 17}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                elevation: 101,
+                zIndex: 11,
+              }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  flex: 1,
+                  // marginRight: 12,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {i18n.t('promotion.sevenContinueBonus')}
+              </Text>
+            </View>
+          </View>
+
+          {/* 领取连充奖励图标行 */}
+          <View key={'first-row'} style={{alignItems: 'center', flex: 1}}>
+            {/* 7天连充奖励网格布局 */}
+            <View
+              style={{
+                width: '100%',
+                marginBottom: 16,
+                flexDirection: 'row',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                paddingLeft: 5,
+                paddingRight: 5,
+              }}>
+              {proAmountSevenImages.map((img, index) => {
+                const img5Flag = index === 2; //第三天
+                // const img7Flag = index === 6; //最后一天大奖
+                const imgW = 28;
+                return (
+                  <View
+                    style={{
+                      flexBasis:
+                        index !== proAmountSevenImages.length - 1
+                          ? '25%'
+                          : '50%',
+                    }}>
+                    <LinearGradient
+                      key={`day${index + 1}`}
+                      colors={['#C803FF', '#FF0085']}
+                      start={{x: 0, y: 0}}
+                      end={{x: 0, y: 1}}
+                      style={{
+                        borderRadius: 12,
+                        marginLeft: 5,
+                        marginRight: 5,
+                        marginBottom: 8,
+                        height: 80,
+                      }}>
+                      <View
+                        style={{
+                          backgroundColor: '#C803FF',
+                          borderTopLeftRadius: 12,
+                          borderTopRightRadius: 12,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          paddingTop: 4,
+                          paddingBottom: 4,
+                        }}>
+                        <Text
+                          style={{
+                            color: '#FFFFFF',
+                            fontSize: 10,
+                          }}>
+                          Day{index + 1}
+                        </Text>
+                      </View>
+                      {/* 两张图片垂直排列 */}
+                      {index !== proAmountSevenImages.length - 1 ? (
+                        <View
+                          style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <Image
+                            source={proAmountSevenTopImages[index]}
+                            style={{
+                              width: imgW,
+                              height: imgW,
+                              resizeMode: 'contain',
+                              transform: [
+                                {
+                                  scale: img5Flag ? 1.5 : 1,
+                                },
+                              ],
+                            }}
+                          />
+                          <Image
+                            source={proAmountSevenImages[index]}
+                            style={{
+                              width: 38,
+                              height: 18,
+                              resizeMode: 'contain',
+                            }}
+                          />
+                        </View>
+                      ) : (
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <Image
+                            source={proAmountSevenTopImages[index]}
+                            style={{
+                              width: imgW,
+                              height: imgW,
+                              resizeMode: 'contain',
+                              transform: [
+                                {
+                                  scale: 2,
+                                },
+                              ],
+                            }}
+                          />
+                          <Image
+                            source={proAmountSevenImages[index]}
+                            style={{
+                              width: 40,
+                              height: 18,
+                              resizeMode: 'contain',
+                              marginLeft: 20,
+                            }}
+                          />
+                        </View>
+                      )}
+                    </LinearGradient>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+          {/* 获取奖励按钮 */}
+          <NativeTouchableOpacity
+            onPress={() => onPressGetBonus(item.amount || 0)}
+            style={{
+              alignItems: 'center',
+            }}>
+            <LinearGradient
+              colors={['#FE8A1A', '#FEBC0A']}
+              start={{x: 0, y: 0}}
+              end={{x: 0, y: 1}}
+              style={{
+                position: 'relative',
+                alignItems: 'center',
+                marginBottom: 8,
+                width: '80%',
+                borderRadius: 25,
+                paddingVertical: 12,
+                paddingHorizontal: 60,
+                shadowColor: '#FF6347',
+                shadowOffset: {width: 0, height: 4},
+                shadowOpacity: 0.4,
+                shadowRadius: 6,
+                elevation: 6,
+              }}>
+              <Text
+                style={{
+                  color: theme.fontColor.white60,
+                  fontWeight: 'bold',
+                  fontSize: 16,
+                }}>
+                {i18n.t('rebate.get-bonus')}
+              </Text>
+            </LinearGradient>
+          </NativeTouchableOpacity>
+        </LinearGradient>
+      </Animated.View>
+    );
+  };
   const renderItem = ({item}: ListRenderItemInfo<PromotionListItem>) => {
     if (item.activityTitle === 'Recharge for bonus') {
       return renderRedBonusCard(item);
+    }
+    if (item.activityTitle === 'WEEKLY RECHARGE') {
+      return renderSevenContinuousBonusCard(item);
     }
     return (
       <View
@@ -498,6 +747,11 @@ const Promotion = () => {
             <NoMoreData />
           ) : null
         }
+      />
+
+      <GetBonusModal
+        isImageVisible={isImageVisible}
+        setIsImageVisible={setIsImageVisible}
       />
       <Modal
         animationType="none"
@@ -589,10 +843,11 @@ const styles = StyleSheet.create({
   progressSection: {
     alignItems: 'center',
     position: 'absolute',
-    bottom: 22,
+    bottom: Platform.OS === 'web' ? 22 : 28,
     left: 0,
     right: 0,
     zIndex: -1,
+    elevation: 1,
   },
   progressLabel: {
     marginBottom: theme.paddingSize.xxs,
