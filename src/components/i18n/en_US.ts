@@ -859,6 +859,7 @@ export default {
     congratulations: 'Congratulations!',
     'get-bonus': 'Get Bonus',
     'get-all-bonus': 'Get All Bonus',
+    'go-get-bonus': 'Recharge Now Get Bonus',
     'get-bonus-modal': 'Get',
     rule: {
       betting: 'Betting Bonus:',

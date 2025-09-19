@@ -33,7 +33,7 @@ import {useTranslation} from 'react-i18next';
 import {goToUrl} from '@/common-pages/game-navigate';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
-import {goTo} from '@/utils';
+import {goTo, goToWithLogin} from '@/utils';
 import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
 import GetBonusModal from './components/get-bonus-modal';
@@ -216,11 +216,31 @@ const Promotion = () => {
   const fetchRechargeInfo = useCallback(async () => {
     //查看复充列表
     try {
-      const rechargeInfo = await getListRecharge();
+      // const rechargeInfo = await getListRecharge();
+      const rechargeInfo = {
+        countdownTimestamp: 1698220800000,
+        rechargeLogs: [
+          {
+            amount: 120,
+            createDate: 20231025,
+            giveAmount: 20,
+            id: 1,
+            orderNo: 'ORD20231025123456',
+            packageId: 101,
+            ratioAmount: 0.2,
+            rechargeAmount: 100,
+            rechargeCount: 3,
+            status: 1,
+            succeseFlag: true,
+            userId: 10001,
+          },
+        ],
+        showFlag: true,
+      };
       console.log(2222222, rechargeInfo);
       setRechargeInfo(rechargeInfo);
     } catch (e) {
-      console.error('Error fetching promotions:', e);
+      console.error('111111111Error fetching promotions:', e);
     }
   }, []);
   useFocusEffect(
@@ -240,8 +260,8 @@ const Promotion = () => {
   );
   // 复充
   const onPressGoDeposit = useCallback(() => {
-    goTo('Recharge');
-  }, []);
+    goToWithLogin(i18n.t('home.tab.deposit'));
+  }, [i18n]);
   const renderRedBonusCard = useMemo(() => {
     // rechargeInfo
     return (
@@ -256,6 +276,7 @@ const Promotion = () => {
           //     }),
           //   },
           // ],
+          marginTop: 10,
           marginBottom: 2,
         }}>
         <LinearGradient
@@ -528,7 +549,6 @@ const Promotion = () => {
                 width: '80%',
                 borderRadius: 25,
                 paddingVertical: 12,
-                paddingHorizontal: 60,
                 shadowColor: '#FF6347',
                 shadowOffset: {width: 0, height: 4},
                 shadowOpacity: 0.4,
@@ -536,12 +556,13 @@ const Promotion = () => {
                 elevation: 6,
               }}>
               <Text
+                numberOfLines={1}
                 style={{
                   color: theme.fontColor.white60,
                   fontWeight: 'bold',
                   fontSize: 16,
                 }}>
-                {i18n.t('rebate.get-bonus')}
+                {i18n.t('rebate.go-get-bonus')}
               </Text>
             </LinearGradient>
           </NativeTouchableOpacity>
@@ -603,9 +624,15 @@ const Promotion = () => {
     }
   }, []);
   const onPressGetBonus1 = useCallback(() => {
+    console.log('onPressGetBonus1');
     const arr = sevenInfo.filter(
       (item: any) => item?.finished && !item?.received,
     );
+    if (arr.length <= 0) {
+      console.log('没有可领取的');
+      onPressGoDeposit();
+      return;
+    }
     let amt = 0;
     arr.forEach((item: any) => {
       amt += item?.amount || 0;
@@ -621,7 +648,7 @@ const Promotion = () => {
         })
         .catch(() => {});
     }
-  }, [sevenInfo]);
+  }, [onPressGoDeposit, sevenInfo]);
   const renderSevenContinuousBonusCard = useMemo(() => {
     return (
       <View
@@ -708,7 +735,6 @@ const Promotion = () => {
               {proAmountSevenImages.map((img, index) => {
                 const imgW = 28;
                 const currentItem = sevenInfo[index] || {};
-                console.log(111111, currentItem);
                 return (
                   <View
                     key={`seven-day${index + 1}`}
@@ -913,7 +939,7 @@ const Promotion = () => {
           {/* 获取奖励按钮 */}
           <NativeTouchableOpacity
             onPress={() => onPressGetBonus1()}
-            disabled={canGetNum <= 0}
+            // disabled={canGetNum <= 0}
             style={{
               alignItems: 'center',
             }}>
@@ -928,7 +954,6 @@ const Promotion = () => {
                 width: '80%',
                 borderRadius: 25,
                 paddingVertical: 12,
-                paddingHorizontal: 60,
                 shadowColor: '#FF6347',
                 shadowOffset: {width: 0, height: 4},
                 shadowOpacity: 0.4,
@@ -943,6 +968,8 @@ const Promotion = () => {
                 }}>
                 {canGetNum > 1
                   ? i18n.t('rebate.get-all-bonus')
+                  : canGetNum <= 0
+                  ? i18n.t('rebate.go-get-bonus')
                   : i18n.t('rebate.get-bonus')}
               </Text>
             </LinearGradient>
