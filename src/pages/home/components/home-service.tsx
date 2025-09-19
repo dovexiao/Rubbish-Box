@@ -10,11 +10,13 @@ import HomePopTwo from './home-pop-two';
 const HomeService = ({
   spinShow,
   firstShow,
+  dynamicUrl,
   isLogin,
 }: {
   spinShow: () => void;
   firstShow?: number;
   isLogin?: boolean;
+  dynamicUrl?: string;
 }) => {
   const [isImageVisible, setIsImageVisible] = useState(false);
   const toggleModal = () => {
@@ -60,6 +62,7 @@ const HomeService = ({
       </TouchableOpacity>
       <HomePopTwo
         isImageVisible={isImageVisible}
+        dynamicUrl={dynamicUrl}
         setIsImageVisible={setIsImageVisible}
       />
     </View>
