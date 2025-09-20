@@ -85,9 +85,11 @@ const Vip = () => {
     globalStore.globalLoading.next(true);
     Promise.allSettled([postVipInfo(), postVipConfig(), postUserInfo()])
       .then(([_listvalue, _config, _user]) => {
-        // if (_user.status === 'fulfilled') {
-        //   setUser(_user.value);
-        // }
+        if (_user.status === 'fulfilled') {
+          console.log('user', _user.value);
+          setCheckIndex(_user.value.level);
+          // setUser(_user.value);
+        }
         if (_listvalue.status === 'fulfilled') {
           const _list = _listvalue.value;
           setVipList(
@@ -95,10 +97,10 @@ const Vip = () => {
               ? _list.slice(0, maxVipLevel + 1)
               : _list,
           );
-          setCheckIndex(
-            _list.findIndex(v => v.rewardReceivingStatus && v.statusReached) +
-              1,
-          );
+          // setCheckIndex(
+          //   _list.findIndex(v => v.rewardReceivingStatus && v.statusReached) +
+          //     1,
+          // );
         }
         if (_config.status === 'fulfilled') {
           setVipConfigList(_config.value);
