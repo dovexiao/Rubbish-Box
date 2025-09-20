@@ -342,7 +342,7 @@ const Me = () => {
                     onPress={toVip}
                     style={[{position: 'relative'}]}>
                     <Image
-                      source={require('@assets/icons/me/acount-vip.webp')}
+                      source={require('@assets/icons/me/acount-vip.png')}
                       style={[
                         {
                           width: globalStore.screenWidth - 24,

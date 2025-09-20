@@ -879,7 +879,7 @@ const modalStyles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    width: '75%',
+    width: '85%',
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',

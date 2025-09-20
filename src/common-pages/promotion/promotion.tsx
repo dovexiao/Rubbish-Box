@@ -172,6 +172,7 @@ const Promotion = () => {
   const [canGetNum, setCanGetNum] = useState(0); //可领取数量
   const [rechargeInfo, setRechargeInfo] = useState<any>({});
   const [currentTime, setCurrentTime] = useState(0);
+  const [modalType, setModalType] = useState(0);
   const [isCountdownExpired, setIsCountdownExpired] = useState(false);
   const fetchSevenInfo = useCallback(async () => {
     //七日
@@ -300,7 +301,7 @@ const Promotion = () => {
               }}
             />
           </View>
-          <View
+          <NativeTouchableOpacity
             style={{
               position: 'absolute',
               right: 0,
@@ -314,8 +315,12 @@ const Promotion = () => {
               backgroundColor: 'rgba(255,255,255,0.2)',
               alignItems: 'center',
               justifyContent: 'center',
+            }}
+            onPressIn={() => {
+              setModalType(0);
+              setVisible(true);
             }}>
-            <NativeTouchableOpacity onPressIn={() => setVisible(true)}>
+            <View>
               <Image
                 source={proWhy}
                 style={{
@@ -325,8 +330,8 @@ const Promotion = () => {
                   backgroundColor: 'transparent',
                 }}
               />
-            </NativeTouchableOpacity>
-          </View>
+            </View>
+          </NativeTouchableOpacity>
           {/* <NativeTouchableOpacity onPress={() => onPressItemTo(item)}> */}
           {/* 标题和倒计时行 */}
           <View style={{marginTop: 10, marginBottom: 10}}>
@@ -698,6 +703,37 @@ const Promotion = () => {
               }}
             />
           </View>
+          <NativeTouchableOpacity
+            onPressIn={() => {
+              setModalType(1);
+              setVisible(true);
+            }}
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              borderTopRightRadius: 16,
+              borderBottomLeftRadius: 20,
+              elevation: 100,
+              zIndex: 10,
+              width: 40,
+              height: 22,
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View>
+              <Image
+                source={proWhy}
+                style={{
+                  width: 12,
+                  height: 12,
+                  resizeMode: 'contain',
+                  backgroundColor: 'transparent',
+                }}
+              />
+            </View>
+          </NativeTouchableOpacity>
           <View style={{marginTop: 12, marginBottom: 17}}>
             <View
               style={{
@@ -724,7 +760,7 @@ const Promotion = () => {
             <View
               style={{
                 width: '100%',
-                marginBottom: 16,
+                marginBottom: 6,
                 flexDirection: 'row',
                 alignItems: 'center',
                 flexWrap: 'wrap',
@@ -889,6 +925,11 @@ const Promotion = () => {
                                   height={18}
                                   style={{
                                     backgroundColor: 'transparent',
+                                    transform: [
+                                      {
+                                        scale: 1.3,
+                                      },
+                                    ],
                                   }}
                                 />
                                 <LazyImage
@@ -900,6 +941,11 @@ const Promotion = () => {
                                     position: 'absolute',
                                     left: -13,
                                     top: -1,
+                                    transform: [
+                                      {
+                                        scale: 1.3,
+                                      },
+                                    ],
                                   }}
                                 />
                               </View>
@@ -911,6 +957,11 @@ const Promotion = () => {
                                   height: 18,
                                   resizeMode: 'contain',
                                   marginLeft: 30,
+                                  transform: [
+                                    {
+                                      scale: 1.5,
+                                    },
+                                  ],
                                 }}
                               />
                             )}
@@ -1075,31 +1126,65 @@ const Promotion = () => {
           setVisible(false);
         }}>
         <View style={modalStyles.overlay}>
-          <View
-            style={[
-              modalStyles.container,
-              {backgroundColor: theme.basicColor.newBgInTwo},
-            ]}>
-            <Text style={modalStyles.message}>
-              After the first recharge is completed, you can get additional
-              recharge rewards for repurchase；
-            </Text>
-            <Text style={modalStyles.message}>2nd recharge bonus 5%</Text>
-            <Text style={modalStyles.message}>3st recharge bonus 7%</Text>
-            <Text style={modalStyles.message}>4st recharge bonus 9%</Text>
-            <Text style={modalStyles.message}>5st recharge bonus 11%</Text>
-            <View style={modalStyles.buttonRow}>
-              <TouchableOpacity
-                style={modalStyles.button}
-                onPress={() => {
-                  setVisible(false);
-                }}>
-                <Text style={modalStyles.confirmText}>
-                  {i18n.t('label.cancel')}
-                </Text>
-              </TouchableOpacity>
+          {modalType === 0 ? (
+            <View
+              style={[
+                modalStyles.container,
+                {backgroundColor: theme.basicColor.newBgInTwo},
+              ]}>
+              <Text style={modalStyles.message}>
+                After the first recharge is completed, you can get additional
+                recharge rewards for repurchase；
+              </Text>
+              <Text style={modalStyles.message}>2nd recharge bonus 5%</Text>
+              <Text style={modalStyles.message}>3st recharge bonus 7%</Text>
+              <Text style={modalStyles.message}>4st recharge bonus 9%</Text>
+              <Text style={modalStyles.message}>5st recharge bonus 11%</Text>
+              <View style={modalStyles.buttonRow}>
+                <TouchableOpacity
+                  style={modalStyles.button}
+                  onPress={() => {
+                    setVisible(false);
+                  }}>
+                  <Text style={modalStyles.confirmText}>
+                    {i18n.t('label.cancel')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          ) : (
+            <View
+              style={[
+                modalStyles.container,
+                {backgroundColor: theme.basicColor.newBgInTwo},
+              ]}>
+              <Text style={modalStyles.message}>
+                You can receive rewards every day if you top up for 7
+                consecutive days；Notice：Recharge rewards must be continuously
+                recharged to be claimed. If the recharge is disconnected, the
+                recharge days will be recalculated
+              </Text>
+              <Text style={modalStyles.message}>Consecutive days</Text>
+              <Text style={modalStyles.message}>Day1 bonus 10Rs</Text>
+              <Text style={modalStyles.message}>Day2 bonus 20Rs</Text>
+              <Text style={modalStyles.message}>Day3 bonus 30Rs</Text>
+              <Text style={modalStyles.message}>Day4 bonus 40Rs</Text>
+              <Text style={modalStyles.message}>Day5 bonus 50Rs</Text>
+              <Text style={modalStyles.message}>Day6 bonus 60Rs</Text>
+              <Text style={modalStyles.message}>Day7 bonus 100Rs</Text>
+              <View style={modalStyles.buttonRow}>
+                <TouchableOpacity
+                  style={modalStyles.button}
+                  onPress={() => {
+                    setVisible(false);
+                  }}>
+                  <Text style={modalStyles.confirmText}>
+                    {i18n.t('label.cancel')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </View>
       </Modal>
     </LazyImageLGBackground>
@@ -1113,7 +1198,7 @@ const modalStyles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    width: '75%',
+    width: '85%',
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
