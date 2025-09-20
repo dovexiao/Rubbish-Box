@@ -398,37 +398,39 @@ const VipClubList: React.FC<VipClubListProps> = ({
 
   // buttonStatus?: 'available' | 'claimed' | 'locked';
   const [isPressed, setIsPressed] = useState(false);
-  const [buttonStatus, _setButtonStatus] = useState('available');
+  // const [buttonStatus, _setButtonStatus] = useState('available');
   const [visible, setVisible] = useState(false);
 
   const handleInfoPress = () => {
     setVisible(true);
   };
-  const getButtonText = () => {
-    switch (buttonStatus) {
-      case 'available':
-        return 'Available';
-      //   case 'claimed':
-      //     return 'Claimed';
-      //   case 'locked':
-      //     return 'Locked';
-      default:
-        return 'Available';
-    }
-  };
+  // const getButtonText = () => {
+  //   switch (buttonStatus) {
+  //     case 'available':
+  //       return 'Available';
+  //     //   case 'claimed':
+  //     //     return 'Claimed';
+  //     //   case 'locked':
+  //     //     return 'Locked';
+  //     default:
+  //       return 'Available';
+  //   }
+  // };
 
-  const getButtonStyle = () => {
-    switch (buttonStatus) {
-      case 'available':
-        return styles.availableButton;
-      case 'claimed':
-        return styles.claimedButton;
-      case 'locked':
-        return styles.lockedButton;
-      default:
-        return styles.availableButton;
-    }
-  };
+  // const getButtonStyle = () => {
+  //   switch (buttonStatus) {
+  //     case 'available':
+  //       return styles.availableButton;
+  //     case 'claimed':
+  //       return styles.claimedButton;
+  //     case 'locked':
+  //       return styles.lockedButton;
+  //     default:
+  //       return styles.availableButton;
+  //   }
+  // };
+  const buttonStatus =
+    currentInfo.receive === 0 && currentInfo.weekRewardAmount > 0;
   return (
     <View style={{flex: 1}}>
       {/* 单一滚动容器 - 包含上方卡片、中间小球、下方卡片 */}
@@ -647,20 +649,14 @@ const VipClubList: React.FC<VipClubListProps> = ({
             },
           ]}>
           <TouchableOpacity
-            style={[
-              styles.claimButton,
-              getButtonStyle(),
-              isPressed && styles.buttonPressed,
-            ]}
+            style={[styles.claimButton, isPressed && styles.buttonPressed]}
             onPress={handlePressClaim}
             onPressIn={() => setIsPressed(true)}
             onPressOut={() => setIsPressed(false)}
-            disabled={buttonStatus !== 'available'}>
+            disabled={buttonStatus}>
             <LinearGradient
               colors={
-                buttonStatus === 'available'
-                  ? ['#FF6B35', '#FF8E53']
-                  : ['#888888', '#666666']
+                buttonStatus ? ['#FF6B35', '#FF8E53'] : ['#888888', '#666666']
               }
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
@@ -674,7 +670,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
                     textAlign: 'center',
                   },
                 ]}>
-                {getButtonText()}
+                {'Available'}
               </Text>
             </LinearGradient>
           </TouchableOpacity>

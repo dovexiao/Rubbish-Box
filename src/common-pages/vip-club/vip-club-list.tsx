@@ -36,13 +36,12 @@ const VipClubList: React.FC<VipClubListProps> = props => {
     };
     fetchVipInfo();
   }, []);
-  const [isImageVisible, setIsImageVisible] = useState(false);
+  const [isImageVisible, setIsImageVisible] = useState(true);
   const handlePressClaim = async () => {
-    if (currentInfo.receive === 0) {
+    if (currentInfo.receive === 0 && currentInfo.weekRewardAmount > 0) {
       await appVipReceive();
       setIsImageVisible(true);
     }
-    console.log('Claim button pressed');
   };
 
   if (Platform.OS === 'web') {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, StyleSheet, View} from 'react-native';
+import {Modal, Platform, StyleSheet, View} from 'react-native';
 import Text from '@basicComponents/text';
 import theme from '@style';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
@@ -63,7 +63,13 @@ const GetBonusModal: React.FC<HomePopTwoProps> = ({
               imageUrl={midBtnPlus}
               width={12}
               height={12}
-              style={[{position: 'absolute', left: 10, top: 10}]}
+              style={[
+                {
+                  position: 'absolute',
+                  left: 10,
+                  top: Platform.OS === 'android' ? 10 : 11,
+                },
+              ]}
             />
             <View
               style={[
@@ -74,6 +80,7 @@ const GetBonusModal: React.FC<HomePopTwoProps> = ({
                   bottom: 0,
                   justifyContent: 'center',
                   alignItems: 'center',
+                  minWidth: 70,
                 },
               ]}>
               <Text
