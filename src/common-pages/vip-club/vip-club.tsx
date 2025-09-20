@@ -17,7 +17,6 @@ const VipClub = () => {
   const {screenWidth, calculateItemWidth} = useSettingWindowDimensions();
   const imageWidth = screenWidth - theme.paddingSize.xxl * 2;
   const {vipConfigList} = useVipStore();
-
   const {setVipConfig} = useVipActions();
 
   useEffect(() => {

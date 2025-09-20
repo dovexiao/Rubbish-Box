@@ -65,6 +65,7 @@ interface VipClubListProps {
   // Common props
   handlePressClaim?: () => void;
   checkIndex?: number;
+  currentInfo?: any;
 }
 
 const AnimatedCircle = Animated.createAnimatedComponent(SvgCircle);
@@ -78,6 +79,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
   // Common props
   handlePressClaim,
   checkIndex,
+  currentInfo = {},
 }) => {
   const {i18n} = useTranslation();
   const {
@@ -130,7 +132,6 @@ const VipClubList: React.FC<VipClubListProps> = ({
       }, 100);
     }
   }, [vipConfigList.length, checkIndex, vipCardWidth]);
-
   const CONTROL_X = screenWidth / 2;
 
   // Render VIP Card Item
@@ -398,12 +399,6 @@ const VipClubList: React.FC<VipClubListProps> = ({
   // buttonStatus?: 'available' | 'claimed' | 'locked';
   const [isPressed, setIsPressed] = useState(false);
   const [buttonStatus, _setButtonStatus] = useState('available');
-  const handlePress = () => {
-    console.log('click-------handlePress');
-    // if (buttonStatus === 'available' && onClaim) {
-    //   onClaim();
-    // }
-  };
   const [visible, setVisible] = useState(false);
 
   const handleInfoPress = () => {
@@ -613,6 +608,8 @@ const VipClubList: React.FC<VipClubListProps> = ({
           <VipClubTop
             w={vipCardWidth - 20}
             h={TOP_WEEKLY_HEIFGT}
+            currentLevel={checkIndex}
+            currentInfo={currentInfo}
             onClaim={handlePressClaim}
           />
         </View>
@@ -655,7 +652,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
               getButtonStyle(),
               isPressed && styles.buttonPressed,
             ]}
-            onPress={handlePress}
+            onPress={handlePressClaim}
             onPressIn={() => setIsPressed(true)}
             onPressOut={() => setIsPressed(false)}
             disabled={buttonStatus !== 'available'}>
@@ -824,11 +821,26 @@ const VipClubList: React.FC<VipClubListProps> = ({
               modalStyles.container,
               {backgroundColor: theme.basicColor.newBgInTwo},
             ]}>
-            <Text style={modalStyles.title}>{i18n.t('label.prompt')}</Text>
-            <Text style={modalStyles.message}>
-              {
+            <Text style={[modalStyles.message, modalStyles.messageTitle]}>
+              VIP salary Rules：
+              {/* {
                 'This is a detailed explanation of weekly salary, to be determined ...'
-              }
+              } */}
+            </Text>
+            <Text style={modalStyles.message}>
+              To receive your salary, you must complete the weekly top-up task.
+            </Text>
+            <Text style={modalStyles.message}>
+              Salaries are settled every Monday at 3 PM.
+            </Text>
+            <Text style={modalStyles.message}>
+              When VIP pay is settled, your salary is based on your VIP level
+              from the previous week.
+            </Text>
+            <Text style={modalStyles.message}>
+              VIP reward Once you have received your previous VIP pay, you can
+              still receive your current week's VIP pay without having to top
+              up.
             </Text>
             <View style={modalStyles.buttonRow}>
               {/* <TouchableOpacity style={modalStyles.button} onPress={onCancel}>
@@ -840,7 +852,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
                   setVisible(false);
                 }}>
                 <Text style={modalStyles.confirmText}>
-                  {i18n.t('label.confirm')}
+                  {i18n.t('label.cancel')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -870,10 +882,14 @@ const modalStyles = StyleSheet.create({
     color: theme.fontColor.white,
   },
   message: {
+    width: '100%',
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 20,
     color: theme.fontColor.white,
+  },
+  messageTitle: {
+    fontSize: 18,
   },
   buttonRow: {
     flexDirection: 'row',

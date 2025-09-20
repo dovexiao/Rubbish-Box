@@ -653,11 +653,9 @@ const Promotion = () => {
       let arr = [];
       arr.push(item?.id);
       getReceiveSevenDayReward(arr)
-        .then(res => {
-          if (res?.code === 200) {
-            setCanGetAmount(item?.amount || 0);
-            setIsImageVisible(true);
-          }
+        .then(() => {
+          setCanGetAmount(item?.amount || 0);
+          setIsImageVisible(true);
         })
         .catch(() => {});
     }
@@ -679,11 +677,9 @@ const Promotion = () => {
     const idList = arr.map((item: any) => item.id);
     if (idList.length > 0) {
       getReceiveSevenDayReward(idList)
-        .then(res => {
-          if (res?.code === 200) {
-            setCanGetAmount(amt);
-            setIsImageVisible(true);
-          }
+        .then(() => {
+          setCanGetAmount(amt);
+          setIsImageVisible(true);
         })
         .catch(() => {});
     }
@@ -1119,12 +1115,14 @@ const Promotion = () => {
               modalStyles.container,
               {backgroundColor: theme.basicColor.newBgInTwo},
             ]}>
-            <Text style={modalStyles.title}>{i18n.t('label.prompt')}</Text>
             <Text style={modalStyles.message}>
-              {
-                'This is a detailed explanation of weekly salary, to be determined ...'
-              }
+              After the first recharge is completed, you can get additional
+              recharge rewards for repurchase；
             </Text>
+            <Text style={modalStyles.message}>2nd recharge bonus 5%</Text>
+            <Text style={modalStyles.message}>3st recharge bonus 7%</Text>
+            <Text style={modalStyles.message}>4st recharge bonus 9%</Text>
+            <Text style={modalStyles.message}>5st recharge bonus 11%</Text>
             <View style={modalStyles.buttonRow}>
               <TouchableOpacity
                 style={modalStyles.button}
@@ -1132,7 +1130,7 @@ const Promotion = () => {
                   setVisible(false);
                 }}>
                 <Text style={modalStyles.confirmText}>
-                  {i18n.t('label.confirm')}
+                  {i18n.t('label.cancel')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -1162,8 +1160,9 @@ const modalStyles = StyleSheet.create({
     color: theme.fontColor.white,
   },
   message: {
+    width: '100%',
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 20,
     color: theme.fontColor.white,
   },

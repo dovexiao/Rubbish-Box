@@ -7,6 +7,7 @@ import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
 import LazyImage from '@/components/basic/image';
+import globalStore from '@services/global.state';
 const topUrl = require('@assets/imgs/promotion/modal-amt.webp');
 const midUrl = require('@assets/imgs/promotion/modal-btn.webp');
 const midBtnPlus = require('@assets/imgs/promotion/modal-plus.webp');
@@ -30,6 +31,7 @@ const GetBonusModal: React.FC<HomePopTwoProps> = ({
     setIsImageVisible(false);
   };
   const onPressGetBonus = () => {
+    globalStore.updateAmount.next();
     closeImage();
   };
   return (

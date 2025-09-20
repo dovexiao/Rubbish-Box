@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {Platform} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Platform, View} from 'react-native';
 import VipClubListWeb from './VipClubListWeb'; // 你现有的那份代码
 import VipClubListAndroid from './VipClubListAndroid';
 import {
@@ -9,6 +9,7 @@ import {
   appVipCurrent,
 } from '@/services/global.service';
 import {VipProgressInfo, VipRenderType} from '@/components/business/vip';
+import GetBonusModal from '../promotion/components/get-bonus-modal';
 
 // 定义组件 props 类型，兼容两个平台的所有 props
 interface VipClubListProps {
@@ -27,19 +28,38 @@ interface VipClubListProps {
 }
 
 const VipClubList: React.FC<VipClubListProps> = props => {
+  const [currentInfo, setCurrentInfo] = useState<any>({});
   useEffect(() => {
     const fetchVipInfo = async () => {
-      const resReceive = await appVipReceive();
       const resCurrent = await appVipCurrent();
-      console.log('111111', resReceive, resCurrent);
+      setCurrentInfo(resCurrent);
     };
     fetchVipInfo();
   }, []);
-  const handlePressClaim = () => {
+  const [isImageVisible, setIsImageVisible] = useState(false);
+  const handlePressClaim = async () => {
+    if (currentInfo.receive === 0) {
+      await appVipReceive();
+      setIsImageVisible(true);
+    }
     console.log('Claim button pressed');
   };
+
   if (Platform.OS === 'web') {
-    return <VipClubListWeb handlePressClaim={handlePressClaim} {...props} />;
+    return (
+      <View>
+        <VipClubListWeb
+          currentInfo={currentInfo}
+          handlePressClaim={handlePressClaim}
+          {...props}
+        />
+        <GetBonusModal
+          isImageVisible={isImageVisible}
+          amount={currentInfo.weekRewardAmount || 0}
+          setIsImageVisible={setIsImageVisible}
+        />
+      </View>
+    );
   }
   if (Platform.OS === 'android') {
     // 为 Android 组件提供默认的 renderVipCardItem 函数
@@ -53,14 +73,35 @@ const VipClubList: React.FC<VipClubListProps> = props => {
         }),
     };
     return (
-      <VipClubListAndroid
-        handlePressClaim={handlePressClaim}
-        {...androidProps}
-      />
+      <View>
+        <VipClubListAndroid
+          handlePressClaim={handlePressClaim}
+          currentInfo={currentInfo}
+          {...androidProps}
+        />
+        <GetBonusModal
+          isImageVisible={isImageVisible}
+          amount={currentInfo.weekRewardAmount || 0}
+          setIsImageVisible={setIsImageVisible}
+        />
+      </View>
     );
   }
   // iOS 可以沿用 Web 方案或类似 Android
-  return <VipClubListWeb handlePressClaim={handlePressClaim} {...props} />;
+  return (
+    <View>
+      <VipClubListWeb
+        currentInfo={currentInfo}
+        handlePressClaim={handlePressClaim}
+        {...props}
+      />
+      <GetBonusModal
+        isImageVisible={isImageVisible}
+        amount={currentInfo.weekRewardAmount || 0}
+        setIsImageVisible={setIsImageVisible}
+      />
+    </View>
+  );
 };
 
 export default VipClubList;

@@ -53,6 +53,7 @@ interface VipClubListProps {
   vipList?: IVipItem[];
   checkIndex?: number;
   handlePressClaim?: () => void;
+  currentInfo?: any;
 }
 
 const AnimatedCircle = Animated.createAnimatedComponent(SvgCircle);
@@ -63,6 +64,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
   vipList = [],
   checkIndex,
   handlePressClaim,
+  currentInfo = {},
 }) => {
   const {
     cardStyle,
@@ -443,7 +445,12 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
             zIndex: -1,
             elevation: 10,
           }}>
-          <VipClubTop w={vipCardWidth - 20} h={TOP_WEEKLY_HEIFGT} />
+          <VipClubTop
+            w={vipCardWidth - 20}
+            h={TOP_WEEKLY_HEIFGT}
+            currentLevel={checkIndex}
+            currentInfo={currentInfo}
+          />
         </View>
       ) : null}
       {vipList.length > 0 ? (
@@ -632,11 +639,27 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
               modalStyles.container,
               {backgroundColor: theme.basicColor.newBgInTwo},
             ]}>
-            <Text style={modalStyles.title}>{i18n.t('label.prompt')}</Text>
-            <Text style={modalStyles.message}>
-              {
+            {/* <Text style={modalStyles.title}>{i18n.t('label.prompt')}</Text> */}
+            <Text style={[modalStyles.message, modalStyles.messageTitle]}>
+              VIP salary Rules：
+              {/* {
                 'This is a detailed explanation of weekly salary, to be determined ...'
-              }
+              } */}
+            </Text>
+            <Text style={modalStyles.message}>
+              To receive your salary, you must complete the weekly top-up task.
+            </Text>
+            <Text style={modalStyles.message}>
+              Salaries are settled every Monday at 3 PM.
+            </Text>
+            <Text style={modalStyles.message}>
+              When VIP pay is settled, your salary is based on your VIP level
+              from the previous week.
+            </Text>
+            <Text style={modalStyles.message}>
+              VIP reward Once you have received your previous VIP pay, you can
+              still receive your current week's VIP pay without having to top
+              up.
             </Text>
             <View style={modalStyles.buttonRow}>
               {/* <TouchableOpacity style={modalStyles.button} onPress={onCancel}>
@@ -648,7 +671,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
                   setVisible(false);
                 }}>
                 <Text style={modalStyles.confirmText}>
-                  {i18n.t('label.confirm')}
+                  {i18n.t('label.cancel')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -678,10 +701,14 @@ const modalStyles = StyleSheet.create({
     color: theme.fontColor.white,
   },
   message: {
+    width: '100%',
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 20,
     color: theme.fontColor.white,
+  },
+  messageTitle: {
+    fontSize: 18,
   },
   buttonRow: {
     flexDirection: 'row',

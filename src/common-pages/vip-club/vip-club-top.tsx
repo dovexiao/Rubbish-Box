@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   ImageBackground,
@@ -27,27 +27,34 @@ interface VipClubTopProps {
   /** 需要充值的金额才能到达下一等级 */
   needRechargeAmount?: number;
   /** 当前进度 0-1 */
-  progress?: number;
   h?: number;
   w?: number;
   /** 按钮状态：'available' | 'claimed' | 'locked' */
   buttonStatus?: 'available' | 'claimed' | 'locked';
   /** 点击领取按钮的回调 */
   onClaim?: () => void;
+  currentInfo?: any;
 }
 
 const VipClubTop: React.FC<VipClubTopProps> = ({
-  weeklySalary = 666,
-  progress = 0.6,
   //   buttonStatus = 'available',
   //   onClaim,
   h = 150,
   w = screenWidth - 20,
+  currentInfo = {},
+  currentLevel = 0,
 }) => {
   const {i18n} = useTranslation();
   //   const [isPressed, setIsPressed] = useState(false);
   const [visible, setVisible] = useState(false);
-
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    if (currentInfo?.currentRechargeAmount && currentInfo?.maxRechargeAmount) {
+      setProgress(
+        currentInfo?.currentRechargeAmount / currentInfo?.maxRechargeAmount,
+      );
+    }
+  }, [currentInfo]);
   //   const handleInfoPress = () => {
   //     setVisible(true);
   //   };
@@ -127,7 +134,7 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
                   textAlign: 'center',
                 },
               ]}>
-              ₹{weeklySalary}
+              ₹{currentInfo?.weekRewardAmount || 0}
             </Text>
           </View>
           {/* 按钮区域 */}
@@ -206,7 +213,8 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
                   textAlign: 'center',
                 },
               ]}>
-              ₹2,300/₹5,000(V2)
+              ₹{currentInfo?.currentRechargeAmount || 0}/₹
+              {currentInfo?.maxRechargeAmount || 0}(V{currentLevel + 1})
             </Text>
           </View>
         </View>
@@ -231,9 +239,6 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
               }
             </Text>
             <View style={modalStyles.buttonRow}>
-              {/* <TouchableOpacity style={modalStyles.button} onPress={onCancel}>
-                <Text style={modalStyles.cancelText}></Text>
-              </TouchableOpacity> */}
               <TouchableOpacity
                 style={modalStyles.button}
                 onPress={() => {
