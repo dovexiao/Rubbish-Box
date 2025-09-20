@@ -1,4 +1,4 @@
-package com.sambad.supbet;
+package com.sambad.supbetgame;
 
 import android.app.Application;
 
@@ -31,7 +31,8 @@ public class MainApplication extends Application implements ReactApplication {
       new DefaultReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
-          return false;
+          // return false;
+          return BuildConfig.DEBUG;
         }
 
         @Override
@@ -56,12 +57,14 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected boolean isNewArchEnabled() {
-          return true;
+          // return true;
+          return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
         }
 
         @Override
         protected Boolean isHermesEnabled() {
-          return true;
+          return BuildConfig.IS_HERMES_ENABLED;
+          // return true;
         }
       };
 
@@ -96,10 +99,10 @@ public class MainApplication extends Application implements ReactApplication {
     SaleSmartyInit.init(this,"https://plugin-code.salesmartly.com/js/project_149638_449536_1756301810.js");
 
     SoLoader.init(this, /* native exopackage */ false);
-//    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+   if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();
-//    }
+   }
       // Configure MoEngage SDK
       MoEngage.Builder moEngage =
               new MoEngage.Builder(this, "Q60RICPHDSGXDX7PXH3NCE7K", DataCenter.DATA_CENTER_1 /* [YOUR_DATA_CENTER] */)

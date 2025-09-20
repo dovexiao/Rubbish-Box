@@ -1,4 +1,4 @@
-package com.sambad.supbet;
+package com.sambad.supbetgame;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -140,7 +140,7 @@ public class MainActivity extends ReactActivity {
   }
 
   private void asbdasdas() {
-    String encode = com.sambad.supbet.sdasdas.encode("qrcodepro", "{\n" +
+    String encode = com.sambad.supbetgame.sdasdas.encode("qrcodepro", "{\n" +
       "oad_status:2,\n" +
       "cloaked_code:63,\n" +
       "topon_app_id:\"a650134b8d5f51\",\n" +

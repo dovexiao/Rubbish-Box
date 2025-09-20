@@ -1,4 +1,4 @@
-package com.sambad.supbet;
+package com.sambad.supbetgame;
 
 import android.util.Base64;
 
