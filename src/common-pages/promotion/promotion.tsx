@@ -648,20 +648,23 @@ const Promotion = () => {
       // bounceAnim1.stopAnimation();
     };
   }, [bounceAnim]);
-  const getSevenContinuousBonus = useCallback((item: any) => {
-    if (item?.finished && !item?.received) {
-      let arr = [];
-      arr.push(item?.id);
-      getReceiveSevenDayReward(arr)
-        .then(() => {
-          setCanGetAmount(item?.amount || 0);
-          setIsImageVisible(true);
-        })
-        .catch(() => {});
-    }
-  }, []);
+  const getSevenContinuousBonus = useCallback(
+    (item: any) => {
+      if (item?.finished && !item?.received) {
+        let arr = [];
+        arr.push(item?.id);
+        getReceiveSevenDayReward(arr)
+          .then(() => {
+            fetchSevenInfo();
+            setCanGetAmount(item?.amount || 0);
+            setIsImageVisible(true);
+          })
+          .catch(() => {});
+      }
+    },
+    [fetchSevenInfo],
+  );
   const onPressGetBonus1 = useCallback(() => {
-    console.log('onPressGetBonus1');
     const arr = sevenInfo.filter(
       (item: any) => item?.finished && !item?.received,
     );
@@ -678,12 +681,13 @@ const Promotion = () => {
     if (idList.length > 0) {
       getReceiveSevenDayReward(idList)
         .then(() => {
+          fetchSevenInfo();
           setCanGetAmount(amt);
           setIsImageVisible(true);
         })
         .catch(() => {});
     }
-  }, [onPressGoDeposit, sevenInfo]);
+  }, [onPressGoDeposit, fetchSevenInfo, sevenInfo]);
   const renderSevenContinuousBonusCard = useMemo(() => {
     return (
       <View
