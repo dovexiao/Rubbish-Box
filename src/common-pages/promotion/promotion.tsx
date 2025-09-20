@@ -62,12 +62,14 @@ const proAmountSevenImages = [
 const proAmountSevenTopImages = [
   require('@/assets/imgs/promotion/pro-amount.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
-  require('@/assets/imgs/promotion/box_50.webp'),
+  require('@/assets/imgs/promotion/pro-amount.webp'),
+  // require('@/assets/imgs/promotion/box_50.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
   require('@/assets/imgs/promotion/box_80.webp'),
 ];
+const boxScaleIcon = require('@/assets/imgs/promotion/box_50.webp');
 const Promotion = () => {
   const {i18n} = useTranslation();
   const {
@@ -180,7 +182,7 @@ const Promotion = () => {
       //   {
       //     amount: 10,
       //     finished: true,
-      //     received: true,
+      //     received: false,
       //     day: 2,
       //   },
       //   {
@@ -827,20 +829,22 @@ const Promotion = () => {
                               alignItems: 'center',
                             }}>
                             <Animated.Image
-                              source={proAmountSevenTopImages[index]}
+                              source={
+                                currentItem?.finished && !currentItem?.received
+                                  ? boxScaleIcon
+                                  : proAmountSevenTopImages[index]
+                              }
                               style={{
                                 width: imgW,
                                 height: imgW,
                                 resizeMode: 'contain',
                                 transform: [
                                   {
-                                    scale: index === 2 ? 2 : 1,
-                                    // scale:
-                                    //   currentItem?.finished &&
-                                    //   !currentItem?.received &&
-                                    //   index === 2
-                                    //     ? bounceAnim
-                                    //     : 1,
+                                    scale:
+                                      currentItem?.finished &&
+                                      !currentItem?.received
+                                        ? bounceAnim
+                                        : 1,
                                   },
                                 ],
                               }}
@@ -902,12 +906,12 @@ const Promotion = () => {
                                 resizeMode: 'contain',
                                 transform: [
                                   {
-                                    scale: 2,
-                                    // scale:
-                                    //   currentItem?.finished &&
-                                    //   !currentItem?.received
-                                    //     ? bounceAnim
-                                    //     : 2,
+                                    // scale: 2,
+                                    scale:
+                                      currentItem?.finished &&
+                                      !currentItem?.received
+                                        ? bounceAnim
+                                        : 2,
                                   },
                                 ],
                               }}
@@ -1014,7 +1018,14 @@ const Promotion = () => {
         </LinearGradient>
       </View>
     );
-  }, [canGetNum, getSevenContinuousBonus, i18n, onPressGetBonus1, sevenInfo]);
+  }, [
+    bounceAnim,
+    canGetNum,
+    getSevenContinuousBonus,
+    i18n,
+    onPressGetBonus1,
+    sevenInfo,
+  ]);
   const renderItem = ({item}: ListRenderItemInfo<PromotionListItem>) => {
     return (
       <View
