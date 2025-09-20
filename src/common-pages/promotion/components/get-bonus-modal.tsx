@@ -31,8 +31,8 @@ const GetBonusModal: React.FC<HomePopTwoProps> = ({
     setIsImageVisible(false);
   };
   const onPressGetBonus = () => {
-    globalStore.updateAmount.next();
     closeImage();
+    globalStore.updateAmount.next();
   };
   return (
     <Modal
