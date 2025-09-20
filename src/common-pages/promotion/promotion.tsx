@@ -38,6 +38,9 @@ import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
 import GetBonusModal from './components/get-bonus-modal';
 import LazyImage from '@/components/basic/image/lazy-image';
+import DeviceInfo from 'react-native-device-info';
+import CountDown from './components/count-down';
+
 const proNew = require('@/assets/imgs/promotion/promotion-new.webp');
 const proWhy = require('@/assets/imgs/promotion/pro-right-why.webp');
 const amountClaim = require('@/assets/imgs/promotion/claim.webp');
@@ -71,7 +74,14 @@ const Promotion = () => {
     size: {itemImgWidth, signImgHeight}, //itemImgHeight,
     listStyle,
   } = useInnerStyle();
-
+  const [isXiaomi, setIsXiaomi] = useState(false);
+  useEffect(() => {
+    const getDeviceBrand = async () => {
+      const manufacturer = await DeviceInfo.getManufacturer();
+      setIsXiaomi(manufacturer.toLowerCase().includes('xiaomi'));
+    };
+    getDeviceBrand();
+  }, []);
   const [refreshing, setRefreshing] = useState(false);
   const pageNo = useRef(1);
   const totalPage = useRef(1);
@@ -154,6 +164,8 @@ const Promotion = () => {
   const [sevenInfo, setSevenInfo] = useState<any>([]);
   const [canGetNum, setCanGetNum] = useState(0); //可领取数量
   const [rechargeInfo, setRechargeInfo] = useState<any>({});
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isCountdownExpired, setIsCountdownExpired] = useState(false);
   const fetchSevenInfo = useCallback(async () => {
     //七日
     try {
@@ -213,36 +225,45 @@ const Promotion = () => {
       console.error('Error fetching promotions:', e);
     }
   }, []);
+  const countHideAnim = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (currentTime <= 0 && currentTime !== 0) {
+      // 倒计时结束，触发隐藏动画
+      setIsCountdownExpired(true);
+
+      // 根据用户偏好，使用动画驱动的实时效果
+      Animated.timing(countHideAnim, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
+        // 动画完成后，可以执行其他隐藏逻辑
+        console.log('倒计时功能已隐藏');
+      });
+    }
+  }, [currentTime, countHideAnim]);
   const fetchRechargeInfo = useCallback(async () => {
     //查看复充列表
     try {
-      // const rechargeInfo = await getListRecharge();
-      const rechargeInfo = {
-        countdownTimestamp: 1698220800000,
-        rechargeLogs: [
-          {
-            amount: 120,
-            createDate: 20231025,
-            giveAmount: 20,
-            id: 1,
-            orderNo: 'ORD20231025123456',
-            packageId: 101,
-            ratioAmount: 0.2,
-            rechargeAmount: 100,
-            rechargeCount: 3,
-            status: 1,
-            succeseFlag: true,
-            userId: 10001,
-          },
-        ],
-        showFlag: true,
-      };
-      console.log(2222222, rechargeInfo);
+      const rechargeInfo = await getListRecharge();
+      if (rechargeInfo?.countdownTimestamp) {
+        const futureTimestamp = rechargeInfo?.countdownTimestamp; // 目标时间戳（毫秒）
+        const currentTimestamp = Date.now();
+        const remainingTimeInMillis = futureTimestamp - currentTimestamp;
+        setCurrentTime(remainingTimeInMillis);
+
+        // 检查是否已经过期
+        if (remainingTimeInMillis <= 0) {
+          setIsCountdownExpired(true);
+          countHideAnim.setValue(0);
+        }
+      }
       setRechargeInfo(rechargeInfo);
     } catch (e) {
       console.error('111111111Error fetching promotions:', e);
     }
-  }, []);
+  }, [countHideAnim]);
   useFocusEffect(
     useCallback(() => {
       // 启动动画效果
@@ -364,7 +385,11 @@ const Promotion = () => {
               </Text>
 
               {/* 倒计时 */}
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+
+              <CountDown
+                remain={currentTime ? Math.round(currentTime / 1000) : 0}
+              />
+              {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <View
                   style={{
                     backgroundColor: '#fff',
@@ -432,7 +457,7 @@ const Promotion = () => {
                     36
                   </Text>
                 </View>
-              </View>
+              </View> */}
             </View>
           </View>
           {/* 奖励图标行 */}
@@ -446,64 +471,70 @@ const Promotion = () => {
               position: 'relative',
               backgroundColor: 'transparent',
             }}>
-            {[2000, 3000, 4000, 5000].map((_amt, idx) => (
-              <View key={idx} style={{alignItems: 'center', flex: 1}}>
-                {/* 金币图标 */}
-                <View
-                  style={{
-                    width: 54,
-                    height: 63,
-                    position: 'relative',
-                    left: 3,
-                    top: idx === 0 ? 3 : 0,
-                  }}>
-                  <Image
-                    source={proAmountImages[idx]}
+            {[2000, 3000, 4000, 5000].map((_amt, idx) => {
+              const logs = rechargeInfo?.rechargeLogs || [];
+              const currentReItem = logs[idx];
+              return (
+                <View key={idx} style={{alignItems: 'center', flex: 1}}>
+                  {/* 金币图标 */}
+                  <View
                     style={{
                       width: 54,
                       height: 63,
-                      resizeMode: 'contain',
-                    }}
-                  />
-                </View>
-
-                {/* 完成状态勾选 */}
-                <View
-                  style={{
-                    width: 16,
-                    height: 16,
-                    borderRadius: 8,
-                    backgroundColor: '#9932CC',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginBottom: 4,
-                    position: 'relative',
-                    zIndex: 10,
-                  }}>
-                  {true ? (
+                      position: 'relative',
+                      left: 3,
+                      top: idx === 0 ? 3 : 0,
+                    }}>
                     <Image
-                      source={amountClaim}
+                      source={proAmountImages[idx]}
                       style={{
-                        width: 16,
-                        height: 16,
-                        zIndex: 10,
+                        width: 54,
+                        height: 63,
+                        resizeMode: 'contain',
                       }}
                     />
-                  ) : (
-                    <view style={styles.checkmark} />
-                  )}
+                  </View>
+
+                  {/* 完成状态勾选 */}
+                  <View
+                    style={{
+                      width: 16,
+                      height: 16,
+                      borderRadius: 8,
+                      // backgroundColor: '#9932CC',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginBottom: 4,
+                      position: 'relative',
+                      zIndex: 10,
+                    }}>
+                    {currentReItem?.succeseFlag ? (
+                      <Image
+                        source={amountClaim}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          zIndex: 10,
+                          transform: [{scale: 1}],
+                        }}
+                      />
+                    ) : (
+                      <View style={styles.checkmark} />
+                    )}
+                  </View>
+                  <Text
+                    style={{color: '#fff', fontSize: 11, fontWeight: '500'}}>
+                    {idx === 0
+                      ? '2nd'
+                      : idx === 1
+                      ? '3st'
+                      : idx === 2
+                      ? '4st'
+                      : '5st'}
+                  </Text>
                 </View>
-                <Text style={{color: '#fff', fontSize: 11, fontWeight: '500'}}>
-                  {idx === 0
-                    ? '2nd'
-                    : idx === 1
-                    ? '3st'
-                    : idx === 2
-                    ? '4st'
-                    : '5st'}
-                </Text>
-              </View>
-            ))}
+              );
+            })}
             {/* 紫色进度条 */}
             <View
               style={[
@@ -511,7 +542,7 @@ const Promotion = () => {
                 {
                   bottom: Platform.select({
                     web: 22,
-                    android: 24,
+                    android: isXiaomi ? 28 : 24,
                   }),
                 },
               ]}>
@@ -570,7 +601,13 @@ const Promotion = () => {
         </LinearGradient>
       </Animated.View>
     );
-  }, [i18n, onPressGoDeposit]);
+  }, [
+    currentTime,
+    i18n,
+    isXiaomi,
+    onPressGoDeposit,
+    rechargeInfo?.rechargeLogs,
+  ]);
   // 七日连冲
   const [canGetAmount, setCanGetAmount] = useState(0); //可领取数量
   const bounceAnim = useRef(new Animated.Value(2)).current;
@@ -1006,7 +1043,7 @@ const Promotion = () => {
   };
 
   const renderListHeader = useCallback(() => {
-    if (rechargeInfo?.showFlag) {
+    if (rechargeInfo?.showFlag && !isCountdownExpired) {
       return (
         <View>
           {renderSevenContinuousBonusCard}
@@ -1020,6 +1057,7 @@ const Promotion = () => {
     rechargeInfo?.showFlag,
     renderRedBonusCard,
     renderSevenContinuousBonusCard,
+    isCountdownExpired,
   ]);
   return (
     <LazyImageLGBackground style={{height: screenHeight}}>
@@ -1142,7 +1180,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: theme.basicColor.white,
+    backgroundColor: theme.fontColor.white60,
   },
   progressSection: {
     alignItems: 'center',
@@ -1163,7 +1201,7 @@ const styles = StyleSheet.create({
   },
   progressBarBg: {
     width: '100%',
-    height: 7,
+    height: 6,
     backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: theme.borderRadiusSize.xs,
     overflow: 'hidden',
