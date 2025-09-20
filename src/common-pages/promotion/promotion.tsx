@@ -337,7 +337,7 @@ const Promotion = () => {
             <View
               style={{
                 flexDirection: 'row',
-                justifyContent: 'space-between',
+                justifyContent: login ? 'space-between' : 'center',
                 alignItems: 'center',
               }}>
               <Text
@@ -352,10 +352,10 @@ const Promotion = () => {
               </Text>
 
               {/* 倒计时 */}
-
-              <CountDown
+              
+              {login && <CountDown
                 remain={currentTime ? Math.round(currentTime / 1000) : 0}
-              />
+              />}
               {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <View
                   style={{
@@ -1064,7 +1064,7 @@ const Promotion = () => {
   };
 
   const renderListHeader = useCallback(() => {
-    if (rechargeInfo?.showFlag && !isCountdownExpired && login) {
+    if (rechargeInfo?.showFlag && !isCountdownExpired) {
       return (
         <View>
           {renderSevenContinuousBonusCard}
