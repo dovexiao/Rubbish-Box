@@ -175,7 +175,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
               color={theme.fontColor.white}>
               V{index}
             </Text>
-            {index !== 0 && (
+            {/* {index !== 0 && (
               <View style={[cardStyle.topTag]}>
                 <Text fontSize={theme.fontSize.s} color={theme.fontColor.white}>
                   (
@@ -187,7 +187,20 @@ const VipClubList: React.FC<VipClubListProps> = ({
                   )
                 </Text>
               </View>
-            )}
+            )} */}
+            <View style={[cardStyle.topTag, theme.flex.row]}>
+              <Text white fontSize={theme.fontSize.s} blod>
+                {toPriceStr(rechargeAmount, {fixed: 0, thousands: true})}
+              </Text>
+              <Text
+                white
+                fontSize={theme.fontSize.s}
+                blod
+                style={[theme.margin.leftxxs]}>
+                / {toPriceStr(item.amount, {fixed: 0, thousands: true})}(V
+                {Math.min(index + 1, maxVipLevel)})
+              </Text>
+            </View>
           </View>
           <View style={[theme.flex.row, theme.flex.centerByCol]}>
             <Text color={theme.fontColor.white60} fontSize={theme.fontSize.s}>
@@ -213,7 +226,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
             />
           </View>
 
-          <View style={[theme.position.rel, theme.flex.row]}>
+          {/* <View style={[theme.position.rel, theme.flex.row]}>
             <Text white fontSize={theme.fontSize.s} blod>
               {toPriceStr(rechargeAmount, {fixed: 0, thousands: true})}
             </Text>
@@ -225,7 +238,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
               / {toPriceStr(item.amount, {fixed: 0, thousands: true})}(V
               {Math.min(index + 1, maxVipLevel)})
             </Text>
-          </View>
+          </View> */}
           <View
             style={[theme.flex.row, theme.flex.centerByCol, theme.fill.fillW]}>
             <Text
@@ -430,7 +443,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
   //   }
   // };
   const buttonStatus =
-    currentInfo.receive === 0 && currentInfo.weekRewardAmount > 0;
+    currentInfo.receive === 1 && currentInfo.weekRewardAmount > 0;
   return (
     <View style={{flex: 1}}>
       {/* 单一滚动容器 - 包含上方卡片、中间小球、下方卡片 */}

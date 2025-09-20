@@ -48,6 +48,7 @@ export function useInnerStyle() {
     },
     topTag: {
       marginBottom: 5,
+      marginLeft: 4,
     },
     sign: {
       top: -26,

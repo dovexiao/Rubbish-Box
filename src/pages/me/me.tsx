@@ -347,6 +347,7 @@ const Me = () => {
                         {
                           width: globalStore.screenWidth - 24,
                           height: (globalStore.screenWidth * 65) / 375,
+                          borderRadius: 12,
                         },
                       ]}
                     />

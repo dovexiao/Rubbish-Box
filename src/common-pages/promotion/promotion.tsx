@@ -77,12 +77,17 @@ const Promotion = () => {
     listStyle,
   } = useInnerStyle();
   const [isXiaomi, setIsXiaomi] = useState(false);
+  const [login, setLogin] = useState(false);
   useEffect(() => {
     const getDeviceBrand = async () => {
       const manufacturer = await DeviceInfo.getManufacturer();
       setIsXiaomi(manufacturer.toLowerCase().includes('xiaomi'));
     };
     getDeviceBrand();
+
+    globalStore.tokenSubject.subscribe(token => {
+      setLogin(!!token);
+    });
   }, []);
   const [refreshing, setRefreshing] = useState(false);
   const pageNo = useRef(1);
@@ -172,52 +177,8 @@ const Promotion = () => {
     //七日
     try {
       const sevenRes = await getSevenDayRewards();
-      // const sevenRes = [
-      //   {
-      //     amount: 10,
-      //     finished: true,
-      //     received: true,
-      //     day: 1,
-      //   },
-      //   {
-      //     amount: 10,
-      //     finished: true,
-      //     received: false,
-      //     day: 2,
-      //   },
-      //   {
-      //     amount: 10,
-      //     finished: true,
-      //     received: false,
-      //     day: 3,
-      //   },
-      //   {
-      //     amount: 10,
-      //     finished: false,
-      //     received: false,
-      //     day: 4,
-      //   },
-      //   {
-      //     amount: 10,
-      //     finished: false,
-      //     received: false,
-      //     day: 5,
-      //   },
-      //   {
-      //     amount: 10,
-      //     finished: false,
-      //     received: false,
-      //     day: 6,
-      //   },
-      //   {
-      //     amount: 10,
-      //     finished: true,
-      //     received: false,
-      //     day: 7,
-      //   },
-      // ];
-      setSevenInfo(sevenRes);
       if (sevenRes?.length) {
+        setSevenInfo(sevenRes);
         setCanGetNum(
           sevenRes.filter((item: any) => item?.finished && !item?.received)
             .length,
@@ -368,7 +329,7 @@ const Promotion = () => {
           </View>
           {/* <NativeTouchableOpacity onPress={() => onPressItemTo(item)}> */}
           {/* 标题和倒计时行 */}
-          <View style={{marginTop: 12, marginBottom: 20}}>
+          <View style={{marginTop: 10, marginBottom: 10}}>
             <View
               style={{
                 flexDirection: 'row',
@@ -378,7 +339,7 @@ const Promotion = () => {
               <Text
                 style={{
                   color: '#fff',
-                  fontSize: 12,
+                  fontSize: 16,
                   fontWeight: 'bold',
                   flex: 1,
                   marginRight: 12,
@@ -645,7 +606,6 @@ const Promotion = () => {
     return () => {
       clearTimeout(timer);
       bounceAnim.stopAnimation();
-      // bounceAnim1.stopAnimation();
     };
   }, [bounceAnim]);
   const getSevenContinuousBonus = useCallback(
@@ -1054,7 +1014,7 @@ const Promotion = () => {
   };
 
   const renderListHeader = useCallback(() => {
-    if (rechargeInfo?.showFlag && !isCountdownExpired) {
+    if (rechargeInfo?.showFlag && !isCountdownExpired && login) {
       return (
         <View>
           {renderSevenContinuousBonusCard}
@@ -1069,6 +1029,7 @@ const Promotion = () => {
     renderRedBonusCard,
     renderSevenContinuousBonusCard,
     isCountdownExpired,
+    login,
   ]);
   return (
     <LazyImageLGBackground style={{height: screenHeight}}>

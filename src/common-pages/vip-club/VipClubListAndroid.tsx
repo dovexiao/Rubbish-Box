@@ -291,7 +291,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
     setVisible(true);
   };
   const buttonStatus =
-    currentInfo.receive === 0 && currentInfo.weekRewardAmount > 0;
+    currentInfo.receive === 1 && currentInfo.weekRewardAmount > 0;
   return (
     <View style={{flex: 1}}>
       <Animated.ScrollView
