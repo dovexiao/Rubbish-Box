@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Platform, View} from 'react-native';
 import VipClubListWeb from './VipClubListWeb'; // 你现有的那份代码
 import VipClubListAndroid from './VipClubListAndroid';
@@ -10,6 +10,7 @@ import {
 } from '@/services/global.service';
 import {VipProgressInfo, VipRenderType} from '@/components/business/vip';
 import GetBonusModal from '../promotion/components/get-bonus-modal';
+import {useFocusEffect} from '@react-navigation/native';
 
 // 定义组件 props 类型，兼容两个平台的所有 props
 interface VipClubListProps {
@@ -29,13 +30,15 @@ interface VipClubListProps {
 
 const VipClubList: React.FC<VipClubListProps> = props => {
   const [currentInfo, setCurrentInfo] = useState<any>({});
-  useEffect(() => {
-    const fetchVipInfo = async () => {
-      const resCurrent = await appVipCurrent();
-      setCurrentInfo(resCurrent);
-    };
-    fetchVipInfo();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchVipInfo = async () => {
+        const resCurrent = await appVipCurrent();
+        setCurrentInfo(resCurrent);
+      };
+      fetchVipInfo();
+    }, []),
+  );
   const [isImageVisible, setIsImageVisible] = useState(false);
   const handlePressClaim = async () => {
     if (currentInfo.receive === 0 && currentInfo.weekRewardAmount > 0) {
