@@ -248,7 +248,6 @@ const Promotion = () => {
     goToWithLogin(i18n.t('home.tab.deposit'));
   }, [i18n]);
   const renderRedBonusCard = useMemo(() => {
-    // rechargeInfo
     return (
       <Animated.View
         style={{
@@ -612,7 +611,7 @@ const Promotion = () => {
       clearTimeout(timer);
       bounceAnim.stopAnimation();
     };
-  }, [bounceAnim]);
+  }, [bounceAnim, sevenInfo.length]);
   const getSevenContinuousBonus = useCallback(
     (item: any) => {
       if (item?.finished && !item?.received) {
