@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Platform} from 'react-native';
 import VipClubListWeb from './VipClubListWeb'; // 你现有的那份代码
 import VipClubListAndroid from './VipClubListAndroid';
-import {IVipConfigItem, IVipItem} from '@/services/global.service';
+import {
+  IVipConfigItem,
+  IVipItem,
+  appVipReceive,
+  appVipCurrent,
+} from '@/services/global.service';
 import {VipProgressInfo, VipRenderType} from '@/components/business/vip';
 
 // 定义组件 props 类型，兼容两个平台的所有 props
@@ -22,6 +27,14 @@ interface VipClubListProps {
 }
 
 const VipClubList: React.FC<VipClubListProps> = props => {
+  useEffect(() => {
+    const fetchVipInfo = async () => {
+      const resReceive = await appVipReceive();
+      const resCurrent = await appVipCurrent();
+      console.log('111111', resReceive, resCurrent);
+    };
+    fetchVipInfo();
+  }, []);
   const handlePressClaim = () => {
     console.log('Claim button pressed');
   };

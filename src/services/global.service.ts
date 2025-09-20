@@ -161,3 +161,11 @@ export function appBroadcast() {
 export function appEmail() {
   return http.post<null, string>('app/base/official/email');
 }
+
+export function appVipReceive() {
+  return http.post<null, string>('app/vip/week/receive/reward');
+}
+
+export function appVipCurrent() {
+  return http.post<null, string>('app/vip/week/current/reward');
+}
