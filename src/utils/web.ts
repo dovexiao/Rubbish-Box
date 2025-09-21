@@ -6,6 +6,8 @@ import {getSlotegratorGameStart, postUserInfo} from '@/services/global.service';
 import {postLiveAuthorize} from '@/common-pages/game-navigate';
 // import {Linking} from 'react-native';
 import envConfig from '@/utils/env.config';
+import {NativeModules} from 'react-native';
+
 declare var window: any;
 
 export function postMessage(data: SafeAny) {
@@ -97,6 +99,27 @@ export async function toLiveCasino(
   }
 }
 
+const {NativeActionManager} = NativeModules;
+
+// 调用方法示例
+export async function callNativeAction() {
+  // 调用 showToast
+  // NativeActionManager.performNativeAction('showToast', {});
+
+  // 调用 openSaleSmarty
+  NativeActionManager.performNativeAction('openSaleSmarty', {});
+
+  // 调用 claseSaleSmarty (注意拼写，原生代码中是 claseSaleSmarty)
+  // NativeActionManager.performNativeAction('claseSaleSmarty', {});
+
+  // 调用 uploadUserMessage
+  // NativeActionManager.performNativeAction('uploadUserMessage', {
+  // //   可以传递参数
+  //   userId: '123123',
+  //   userName: 'testUser',
+  // });
+}
+
 export async function toSlotegrator(name: string, id: string) {
   globalStore.globalLoading.next(true);
   try {
@@ -118,7 +141,8 @@ export async function toSlotegrator(name: string, id: string) {
 export const goCS = () => {
   // navigateTo('https://direct.lc.chat/18181035/');
   // navigateTo('https://chat.ssrchat.com/service/gtjx8p');
-  navigateTo(envConfig.getCustomServiceUrl || '');
+  callNativeAction();
+  // callNativeAction(envConfig.getCustomServiceUrl || '');
   // goTo('WebView', {
   //   header: true,
   //   headerTitle: 'Official Customer Service',

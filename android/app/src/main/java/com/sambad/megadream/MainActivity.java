@@ -4,37 +4,25 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
-import com.sambad.supbetgame.R;
-import android.content.pm.PackageManager;
-import android.Manifest;
+import com.sdk.sun.salesmartyplugin.index.SaleSmartyInit;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.view.ViewGroup;
 import android.widget.Toast;
-import androidx.core.app.ActivityCompat;
-
-import com.sdk.sun.salesmartyplugin.index.SaleSmartyInit;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.webkit.WebView;
+import java.util.Map;
 
 
 public class MainActivity extends ReactActivity {
-  RelativeLayout parent;
-  TextView textView;
-  EditText user_id;
-  EditText user_name;
-  EditText language;
-  EditText phone;
-  EditText email;
-  EditText description;
-  LinearLayout upload_view;
-  private static final String TAG = "MainActivity";
-
-
   private Handler handler;
+  private ViewGroup contentView;
+  private WebView webView;
+  private LinearLayout saleSmartyView;
+  private boolean isAdd = false;
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
@@ -53,89 +41,134 @@ public class MainActivity extends ReactActivity {
   @Override
   protected ReactActivityDelegate createReactActivityDelegate() {
     return new DefaultReactActivityDelegate(
-        this,
-        getMainComponentName(),
-        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
-        DefaultNewArchitectureEntryPoint.getFabricEnabled());
+      this,
+      getMainComponentName(),
+      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+      DefaultNewArchitectureEntryPoint.getFabricEnabled());
   }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     // super.onCreate(savedInstanceState);
     super.onCreate(null);
-    setContentView(R.layout.activity_main);
     asbdasdas();
-
-    parent = findViewById(R.id.parent);
-    upload_view = findViewById(R.id.upload_view);
-    textView = findViewById(R.id.un_read_num);
-    user_id = findViewById(R.id.user_id);
-    user_name = findViewById(R.id.user_name);
-    language = findViewById(R.id.language);
-    phone = findViewById(R.id.phone);
-    email = findViewById(R.id.email);
-    description = findViewById(R.id.description);
-    //初始化浏览器
     SaleSmartyInit.initSaleSmartyView(this);
-    //添加浏览器到某个viewgroup
-    SaleSmartyInit.addSaleSmartyView(parent);
-
-
-//展示上传用户信息页面和关闭上传用户信息页面
-    findViewById(R.id.upload).setOnClickListener(v -> {
-      if (upload_view.getVisibility() == View.VISIBLE) {
-        upload_view.setVisibility(View.GONE);
-      } else {
-        upload_view.setVisibility(View.VISIBLE);
-      }
-    });
-    //上传用户信息
-    findViewById(R.id.start_upload).setOnClickListener(v -> {
-      String[] labels = {"test"};
-      SaleSmartyInit.uploadUserMessage(
-        "AA123",
-        "username123",
-       "en",
-        "userphone",
-        "email",
-        "desc",
-        labels);
-      Toast.makeText(MainActivity.this, "上传信息成功", Toast.LENGTH_SHORT).show();
-      if (upload_view.getVisibility() == View.VISIBLE) {
-        upload_view.setVisibility(View.GONE);
-      } else {
-        upload_view.setVisibility(View.VISIBLE);
-      }
-    });
-    //关闭窗口
-    findViewById(R.id.show).setOnClickListener(v -> SaleSmartyInit.openSaleSmartyView());
-    //打开窗口
-    findViewById(R.id.close).setOnClickListener(v -> SaleSmartyInit.closeSaleSmartyView());
-    //获得未读信息数
-    SaleSmartyInit.setUnReadMessagesListener(num -> textView.setText("未读消息" + num));
-
-    SaleSmartyInit.setOnOpenSaleSmartyViewListener(() -> Toast.makeText(MainActivity.this, "打开了窗口", Toast.LENGTH_SHORT).show());
-    SaleSmartyInit.setOnCloseSaleSmartyViewListener(() -> Toast.makeText(MainActivity.this, "关闭了窗口", Toast.LENGTH_SHORT).show());
-
-    getPermission();
-
 
 
     handler = new Handler();
+
     handler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        }
+      @Override
+      public void run() {
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        contentView.findViewById(android.R.id.content);
+        // 获取父布局
+//        contentView = findViewById(android.R.id.content);
+//        addProtectedContainer();
+        // 添加浏览器到父布局
+//        if (contentView != null) {
+//          SaleSmartyInit.addSaleSmartyView(contentView);
+//        }
+      }
     }, 5000);
   }
 
-  private boolean getPermission() {
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-      return true;
-    } else {
-      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-      return false;
+
+  private void addProtectedContainer() {
+    if (contentView != null) {
+      // 检查是否已有容器
+      if (saleSmartyView == null) {
+        // 创建容器
+        saleSmartyView = new LinearLayout(this);
+        // 设置布局参数
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+          ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewGroup.LayoutParams.MATCH_PARENT);
+
+        // 添加到 contentView
+        contentView.addView(saleSmartyView, params);
+        saleSmartyView.setBackgroundColor(getResources().getColor(android.R.color.black));
+        webView = SaleSmartyInit.addSaleSmartyView(saleSmartyView);
+
+        if (webView != null) {
+//          webView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+          // 更重要的是设置 WebView 的背景绘制为透明
+          webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+        }
+
+        SaleSmartyInit.setOnCloseSaleSmartyViewListener(()->{
+          SaleSmartyInit.closeSaleSmartyView();
+          webView.setVisibility(View.GONE);
+          saleSmartyView.setVisibility(View.GONE);
+        });
+      }
+    }
+  }
+
+  private void showCustomerView() {
+    if (contentView != null) {
+      // 检查是否已有容器
+      if (saleSmartyView == null) {
+        // 创建容器
+        saleSmartyView = new LinearLayout(this);
+        // 设置布局参数
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+          ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewGroup.LayoutParams.MATCH_PARENT);
+
+        // 添加到 contentView
+        contentView.addView(saleSmartyView, params);
+        saleSmartyView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        webView = SaleSmartyInit.addSaleSmartyView(saleSmartyView);
+
+        if (webView != null) {
+          webView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+          // 更重要的是设置 WebView 的背景绘制为透明
+          webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+        }
+
+        SaleSmartyInit.setOnCloseSaleSmartyViewListener(() -> {
+          contentView.post(() -> {
+            saleSmartyView.setVisibility(View.GONE);
+            webView.setVisibility(View.GONE);
+          });
+        });
+      } else {
+        saleSmartyView.setVisibility(View.VISIBLE);
+        webView.setVisibility(View.VISIBLE);
+        SaleSmartyInit.openSaleSmartyView();
+      }
+    }
+  }
+
+  public void performNativeAction(String action, Map<String, Object> map) {
+    // 执行原生操作
+    Log.d("MainActivity", "performNativeAction: ");
+    switch (action) {
+      case "showToast":
+        Toast.makeText(this, "来自 RN 的消息", Toast.LENGTH_SHORT).show();
+        break;
+      case "openSaleSmarty":
+        showCustomerView();
+        if (contentView != null) {
+          handler.postDelayed(() -> {
+            String[] labels = {"test"};
+            SaleSmartyInit.uploadUserMessage(
+              "AA123",
+              "username123",
+              "en",
+              "userphone",
+              "email",
+              "desc",
+              labels);
+          }, 500);
+        }
+
+        break;
+      case "claseSaleSmarty":
+        SaleSmartyInit.closeSaleSmartyView();
+        break;
+
     }
   }
 
@@ -172,6 +205,8 @@ public class MainActivity extends ReactActivity {
       "lock_close_delay_time:10\n" +
       "}");
 
-    Log.i(TAG, "asbdasdas: \n" + encode);
+    Log.i("MainActivity", "asbdasdas: \n" + encode);
   }
+
+
 }
