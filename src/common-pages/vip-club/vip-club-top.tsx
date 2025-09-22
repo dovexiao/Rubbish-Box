@@ -131,7 +131,8 @@ const VipClubTop: React.FC<VipClubTopProps> = ({
               style={[
                 styles.salaryAmount,
                 {
-                  textAlign: 'center',
+                  textAlign: 'left',
+                  width: '100%',
                 },
               ]}>
               ₹{currentInfo?.weekRewardAmount || 0}

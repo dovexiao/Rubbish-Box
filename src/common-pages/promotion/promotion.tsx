@@ -661,6 +661,7 @@ const Promotion = () => {
       <View
         style={{
           marginBottom: 2,
+          marginTop: 10,
         }}>
         <LinearGradient
           colors={['#FA1C1B', '#A1251D']}
