@@ -357,7 +357,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
   };
 
   // Render info row for VIP club cards
-  const renderInfoRow = (label: string, value: any) => (
+  const renderInfoRow = (label: string, value: any, isAmt?: boolean) => (
     <View
       style={{
         flexDirection: 'row',
@@ -400,7 +400,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
         fontSize={16}
         fontWeight="500"
         style={{color: theme.basicColor.yellow}}>
-        {value}
+        {isAmt ? toPriceStr(value, {fixed: 0, thousands: true}) : value}
       </Text>
     </View>
   );
@@ -630,12 +630,12 @@ const VipClubList: React.FC<VipClubListProps> = ({
                 style={{color: '#FFFFFF', marginTop: 10}}>
                 V{index}
               </Text> */}
-              {renderInfoRow('Level Bonus', item?.amount)}
+              {renderInfoRow('Level Bonus', item?.amount, true)}
               {renderInfoRow('Spin Count', item?.spin)}
               {/* {renderInfoRow('Daily Bonus', item?.dailyBonus)} */}
               {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
-              {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
-              {renderInfoRow('Deposit', item?.recharge)}
+              {renderInfoRow('Withdrawal Amount', item?.withdrawAmount, true)}
+              {renderInfoRow('Deposit', item?.recharge, true)}
             </View>
           </View>
         ))}

@@ -245,7 +245,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
     </LinearGradient>
   );
 
-  const renderInfoRow = (label: string, value: any) => (
+  const renderInfoRow = (label: string, value: any, isAmt?: boolean) => (
     <View
       style={{
         flexDirection: 'row',
@@ -286,7 +286,8 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
         </Text>
       </View>
       <Text style={{color: theme.basicColor.yellow, fontSize: 12}}>
-        {value}
+        {isAmt ? toPriceStr(value, {fixed: 0, thousands: true}) : value}
+        {/* {value} */}
       </Text>
     </View>
   );
@@ -438,12 +439,12 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
               <Text style={{color: '#fff', fontSize: 18, marginTop: 10}}>
                 V{index}
               </Text> */}
-              {renderInfoRow('Level Bonus', item?.amount)}
+              {renderInfoRow('Level Bonus', item?.amount, true)}
               {renderInfoRow('Spin Count', item?.spin)}
               {/* {renderInfoRow('Daily Bonus', item?.dailyBonus)} */}
               {renderInfoRow('Withdrawal Count', item?.withdrawCount)}
-              {renderInfoRow('Withdrawal Amount', item?.withdrawAmount)}
-              {renderInfoRow('Deposit', item?.recharge)}
+              {renderInfoRow('Withdrawal Amount', item?.withdrawAmount, true)}
+              {renderInfoRow('Deposit', item?.recharge, true)}
             </View>
           </View>
         ))}
