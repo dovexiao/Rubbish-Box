@@ -350,6 +350,7 @@ const Promotion = () => {
                   display: 'flex',
                   justifyContent: login ? 'flex-start' : 'center',
                   alignItems: 'center',
+                  textAlign: login ? 'left' : 'center',
                 }}>
                 {i18n.t('promotion.continueBonus')}
               </Text>
