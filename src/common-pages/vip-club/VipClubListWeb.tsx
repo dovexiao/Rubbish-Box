@@ -861,25 +861,24 @@ const VipClubList: React.FC<VipClubListProps> = ({
               {backgroundColor: theme.basicColor.newBgInTwo},
             ]}>
             <Text style={[modalStyles.message, modalStyles.messageTitle]}>
-              VIP salary Rules：
-              {/* {
-                'This is a detailed explanation of weekly salary, to be determined ...'
-              } */}
+              VIP Salary Rules：
             </Text>
             <Text style={modalStyles.message}>
-              To receive your salary, you must complete the weekly top-up task.
+              1.To receive your VIP salary, you must complete the weekly
+              recharge task.
             </Text>
             <Text style={modalStyles.message}>
-              Salaries are settled every Monday at 3 PM.
+              2.Salaries are settled every Monday at 3:00 PM, based on your VIP
+              level from the previous week.
             </Text>
             <Text style={modalStyles.message}>
-              When VIP pay is settled, your salary is based on your VIP level
-              from the previous week.
+              3.After claiming your previous VIP salary, you can still receive
+              the current week’s salary even without recharging.
             </Text>
             <Text style={modalStyles.message}>
-              VIP reward Once you have received your previous VIP pay, you can
-              still receive your current week's VIP pay without having to top
-              up.
+              4.If you skip the recharge task for two weeks in a row (third
+              week, if you didn’t top up, you cannot get the VIP salary), you
+              will not be eligible until you recharge again.
             </Text>
             <View style={modalStyles.buttonRow}>
               {/* <TouchableOpacity style={modalStyles.button} onPress={onCancel}>
