@@ -1167,19 +1167,19 @@ const Promotion = () => {
                 {backgroundColor: theme.basicColor.newBgInTwo},
               ]}>
               <Text style={modalStyles.message}>
-                You can receive rewards every day if you top up for 7
-                consecutive days；Notice：Recharge rewards must be continuously
-                recharged to be claimed. If the recharge is disconnected, the
-                recharge days will be recalculated
+                Daily Continuous Recharge Bonus
               </Text>
-              <Text style={modalStyles.message}>Consecutive days</Text>
-              <Text style={modalStyles.message}>Day1 bonus 10Rs</Text>
-              <Text style={modalStyles.message}>Day2 bonus 20Rs</Text>
-              <Text style={modalStyles.message}>Day3 bonus 30Rs</Text>
-              <Text style={modalStyles.message}>Day4 bonus 40Rs</Text>
-              <Text style={modalStyles.message}>Day5 bonus 50Rs</Text>
-              <Text style={modalStyles.message}>Day6 bonus 60Rs</Text>
-              <Text style={modalStyles.message}>Day7 bonus 100Rs</Text>
+              <Text style={modalStyles.message}>Day 1 → ₹10 Bonus</Text>
+              <Text style={modalStyles.message}>Day 2 → ₹20 Bonus</Text>
+              <Text style={modalStyles.message}>Day 3 → ₹30 Bonus</Text>
+              <Text style={modalStyles.message}>Day 4 → ₹40 Bonus</Text>
+              <Text style={modalStyles.message}>Day 5 → ₹50 Bonus</Text>
+              <Text style={modalStyles.message}>Day 6 → ₹60 Bonus</Text>
+              <Text style={modalStyles.message}>Day 7 → ₹100 Bonus</Text>
+              <Text style={modalStyles.message}>
+                Note (small text below): Recharge every day without missing! If
+                you skip one day ,cycle restarts from Day 1
+              </Text>
               <View style={modalStyles.buttonRow}>
                 <TouchableOpacity
                   style={modalStyles.button}
