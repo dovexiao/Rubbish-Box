@@ -41,6 +41,8 @@ import {useInnerStyle} from '../vip/vip.hooks';
 import VipClubTop from './vip-club-top';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 const ablotW = require('@assets/icons/about-w.webp');
+const vipLeft = require('@assets/imgs/vip/vip-left.webp');
+const vipTop = require('@assets/imgs/vip/vip-top.webp');
 
 const {width: screenWidth} = Dimensions.get('window');
 const CARD_WIDTH = screenWidth - theme.paddingSize.l * 2;
@@ -362,21 +364,40 @@ const VipClubList: React.FC<VipClubListProps> = ({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',
-        height: 24,
+        height: 42,
         borderRadius: 5,
         marginTop: 10,
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.1)',
         paddingHorizontal: 10,
+        paddingTop: 10,
+        paddingBottom: 10,
       }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Image
+          source={vipLeft as ImageSourcePropType}
+          style={{
+            width: 12,
+            height: 12,
+            // marginTop: 30,
+            marginRight: 5,
+            resizeMode: 'contain',
+          }}
+        />
+        <Text
+          fontSize={15}
+          fontWeight="400"
+          style={{color: theme.fontColor.white60}}>
+          {label}
+        </Text>
+      </View>
       <Text
-        fontSize={12}
-        fontWeight="400"
-        style={{color: theme.basicColor.white}}>
-        {label}
-      </Text>
-      <Text
-        fontSize={12}
+        fontSize={16}
         fontWeight="500"
         style={{color: theme.basicColor.yellow}}>
         {value}
@@ -490,7 +511,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
               style={[
                 {
                   width: CARD_WIDTH - 60,
-                  height: index === activeIndex ? 383 : 363, // 当前活跃卡片高度增加20
+                  height: index === activeIndex ? 343 : 323, // 当前活跃卡片高度增加20
                   marginHorizontal: 10,
                   alignItems: 'center',
                   borderRadius: 10,
@@ -585,7 +606,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
                   />
                 </View>
               )}
-              <Image
+              {/* <Image
                 source={vipOptionsMap[item?.level].small as ImageSourcePropType}
                 style={{
                   width: 95,
@@ -593,13 +614,22 @@ const VipClubList: React.FC<VipClubListProps> = ({
                   marginTop: 10,
                   resizeMode: 'contain',
                 }}
+              /> */}
+              <Image
+                source={vipTop as ImageSourcePropType}
+                style={{
+                  width: 160,
+                  height: 12,
+                  marginTop: 30,
+                  resizeMode: 'contain',
+                }}
               />
-              <Text
+              {/* <Text
                 fontSize={18}
                 fontWeight="700"
                 style={{color: '#FFFFFF', marginTop: 10}}>
                 V{index}
-              </Text>
+              </Text> */}
               {renderInfoRow('Level Bonus', item?.amount)}
               {renderInfoRow('Spin Count', item?.spin)}
               {/* {renderInfoRow('Daily Bonus', item?.dailyBonus)} */}
