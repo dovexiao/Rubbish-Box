@@ -1,6 +1,7 @@
 import theme from '@style';
 import {homeServiceStyle} from '../home.style';
 import React, {useState} from 'react';
+import {Platform} from 'react-native';
 import TouchableOpacity from '@basicComponents/touchable-opacity';
 import {goCS, goTo} from '@/utils';
 import LazyImage from '@basicComponents/image/lazy-image';
@@ -53,13 +54,17 @@ const HomeService = ({
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity onPress={goCS}>
-        <LazyImage
-          width={55}
-          height={55}
-          imageUrl={require('@components/assets/icons/service.webp')}
-        />
-      </TouchableOpacity>
+      {Platform.OS !== 'web' ? (
+        <TouchableOpacity onPress={goCS}>
+          <LazyImage
+            width={55}
+            height={55}
+            imageUrl={require('@components/assets/icons/service.webp')}
+          />
+        </TouchableOpacity>
+      ) : (
+        <View style={{width: 55, height: 55}}></View>
+      )}
       <HomePopTwo
         isImageVisible={isImageVisible}
         dynamicUrl={dynamicUrl}
