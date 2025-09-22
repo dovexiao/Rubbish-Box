@@ -790,7 +790,11 @@ const Promotion = () => {
                       }}>
                       <LinearGradient
                         key={`day${index + 1}`}
-                        colors={['#C803FF', '#FF0085']}
+                        colors={
+                          !currentItem?.finished && !currentItem?.received
+                            ? ['#CF2730', '#A11116']
+                            : ['#C803FF', '#FF0085']
+                        }
                         start={{x: 0, y: 0}}
                         end={{x: 0, y: 1}}
                         style={{
