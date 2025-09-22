@@ -347,15 +347,18 @@ const Promotion = () => {
                   fontWeight: 'bold',
                   flex: 1,
                   marginRight: 12,
+                  display: 'flex',
+                  justifyContent: login ? 'flex-start' : 'center',
+                  alignItems: 'center',
                 }}>
                 {i18n.t('promotion.continueBonus')}
               </Text>
-
               {/* 倒计时 */}
-              
-              {login && <CountDown
-                remain={currentTime ? Math.round(currentTime / 1000) : 0}
-              />}
+              {login && (
+                <CountDown
+                  remain={currentTime ? Math.round(currentTime / 1000) : 0}
+                />
+              )}
               {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <View
                   style={{
@@ -556,7 +559,7 @@ const Promotion = () => {
               <Text
                 numberOfLines={1}
                 style={{
-                  color: theme.fontColor.white60,
+                  color: theme.fontColor.white,
                   fontWeight: 'bold',
                   fontSize: 16,
                 }}>
@@ -572,6 +575,7 @@ const Promotion = () => {
     currentTime,
     i18n,
     isXiaomi,
+    login,
     onPressGoDeposit,
     rechargeInfo?.rechargeLogs,
   ]);
@@ -1013,7 +1017,7 @@ const Promotion = () => {
               }}>
               <Text
                 style={{
-                  color: theme.fontColor.white60,
+                  color: theme.fontColor.white,
                   fontWeight: 'bold',
                   fontSize: 16,
                 }}>
@@ -1079,7 +1083,6 @@ const Promotion = () => {
     renderRedBonusCard,
     renderSevenContinuousBonusCard,
     isCountdownExpired,
-    login,
   ]);
   return (
     <LazyImageLGBackground style={{height: screenHeight}}>
