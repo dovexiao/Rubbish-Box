@@ -144,6 +144,6 @@ export const downloadApk = () => {
   } else {
     // location.href = envConfig.downloadChannelUrl || '';
 
-    location.href = `https://www.staticimg007.com/apk/supbet${channelId}.apk`;
+    location.href = `https://www.staticimg007.com/apk/supbet_${channelId}.apk`;
   }
 };
