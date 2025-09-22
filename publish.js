@@ -20,6 +20,10 @@ const mainPackage = [
   {
     title: 'prodluckyone',
     channelList:[
+      'luFB01',
+      'luFB02',
+      'luFB03',
+      'luFB04',
       'lucky101'
     ]
   },
@@ -33,6 +37,11 @@ const mainPackage = [
   {
     title: 'prodmybetnine',
     channelList:[
+      'mbnFB01',
+      'mbnFB02',
+      'mbnFB03',
+      'mbnFB04',
+      'mbnFB05',
       'mybet798'
     ]
   },
@@ -74,16 +83,18 @@ const mainPackage = [
   {
     title: 'prodwinlucky',
     channelList:[
+      'wlFB01',
+      'wlFB02',
       'winlucky001'
     ]
   },
   {
     title: 'supbet',
     channelList: [
-      // 'sboFB01',
-      // 'sboFB02',
-      // 'sboFB03',
-      // 'sboFB04',
+      'sboFB01',
+      'sboFB02',
+      'sboFB03',
+      'sboFB04',
       'sbFB01',
       'supbet', // 默认渠道
     ]
