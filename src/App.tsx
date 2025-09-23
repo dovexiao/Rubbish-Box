@@ -459,8 +459,8 @@ function App(): JSX.Element {
           };
           const selfInfo = userInfo || defaultUserInfo || {};
           w.ssq.push('setLoginInfo', {
-            userId: selfInfo.userId || '',
-            username: selfInfo.userName || '',
+            userId: selfInfo.userName || '',
+            username: selfInfo.userId || '',
             language: globalStore.lang,
             phone: selfInfo.userPhone || '',
             email: 'No Email',

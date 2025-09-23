@@ -104,17 +104,33 @@ public class MainActivity extends ReactActivity {
         showCustomerView();
         if (contentView != null) {
           handler.postDelayed(() -> {
+            String userId   = String.valueOf(map.getOrDefault("userId", "AA123"));
+            String username = String.valueOf(map.getOrDefault("username", "username123"));
+            String language = String.valueOf(map.getOrDefault("language", "en"));
+            String phone    = String.valueOf(map.getOrDefault("phone", "userphone"));
+            String email    = String.valueOf(map.getOrDefault("email", "email"));
+            String desc     = String.valueOf(map.getOrDefault("desc", "desc"));
             String[] labels = {"test"};
+            // Object labelsObj = map.get("labels");
+            // if (labelsObj instanceof List) {
+            //   @SuppressWarnings("unchecked")
+            //   List<String> labelsList = (List<String>) labelsObj;
+            //   labels = labelsList.toArray(new String[0]);
+            // } else if (labelsObj instanceof String) {
+            //   labels = new String[]{(String) labelsObj};
+            // }
+            
+            Log.d("MainActivity", "performNativeAction---------: " + userId + " " + username + " " + language + " " + phone + " " + email + " " + desc + " ");
             SaleSmartyInit.uploadUserMessage(
-              "AA123",
-              "username123",
-              "en",
-              "userphone",
-              "email",
-              "desc",
-              labels
+                userId,
+                username,
+                language,
+                phone,
+                email,
+                desc,
+                labels
             );
-          }, 500);
+        }, 500);
         }
         break;
 
