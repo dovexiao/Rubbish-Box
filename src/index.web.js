@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'production') {
   console.table = () => {};
   console.group = () => {};
 }
-
+window.ssq = window.ssq || [];
 AppRegistry.registerComponent('App', () => App);
 
 AppRegistry.runApplication('App', {

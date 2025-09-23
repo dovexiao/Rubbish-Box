@@ -436,6 +436,43 @@ function App(): JSX.Element {
     // 在应用启动时调用
     initAdjust();
   }, []);
+
+  React.useEffect(() => {
+    // 在应用启动时调用
+    initAdjust();
+  }, [globalStore.userInfo?.userId]);
+  React.useEffect(() => {
+    if (Platform.OS === 'web') {
+      const subscription = globalStore.userSubject
+        .pipe(takeUntil(globalStore.appDistory))
+        .subscribe(userInfo => {
+          const w = window as any;
+          const defaultUserInfo = {
+            userId: 'player_111111',
+            userName: 'tourist_player_0000000',
+            language: 'en',
+            userPhone: 'No Phone',
+            email: 'No Email',
+            desc: 'No Desc',
+            labels: ['No Label'],
+          };
+          const selfInfo = userInfo || defaultUserInfo || {};
+          w.ssq.push('setLoginInfo', {
+            userId: selfInfo.userId || '',
+            username: selfInfo.userName || '',
+            language: globalStore.lang,
+            phone: selfInfo.userPhone || '',
+            email: 'No Email',
+            desc: 'No Desc',
+            label_names: ['label_1', 'label_2'],
+            custom_fields_ext: {'1210': 'test11', more: ['s1', 's2']},
+          });
+        });
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, []);
   const addHeight = Platform.OS === 'web' ? 50 : 50;
   return (
     <SafeAreaProvider style={[theme.position.rel]}>
