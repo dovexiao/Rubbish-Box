@@ -458,7 +458,6 @@ function App(): JSX.Element {
             custom_fields_ext: {'1210': 'test11', more: ['s1', 's2']},
           };
           const selfInfo = userInfo || defaultUserInfo || {};
-          console.log(111111, selfInfo);
           w.ssq.push('setLoginInfo', {
             user_id: selfInfo.userName || '',
             user_name: selfInfo.userId || '',
