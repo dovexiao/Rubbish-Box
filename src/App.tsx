@@ -437,7 +437,7 @@ function App(): JSX.Element {
     initAdjust();
   }, []);
   React.useEffect(() => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS !== 'android') {
       const subscription = globalStore.userSubject
         .pipe(takeUntil(globalStore.appDistory))
         .subscribe(userInfo => {
@@ -454,9 +454,9 @@ function App(): JSX.Element {
           };
           const selfInfo = userInfo || defaultUserInfo || {};
           w.ssq.push('setLoginInfo', {
-            userId: selfInfo.userName || '',
-            username: selfInfo.userId || '',
-            language: globalStore.lang,
+            user_id: selfInfo.userName || '',
+            user_name: selfInfo.userId || '',
+            language: globalStore.lang || 'en',
             phone: selfInfo.userPhone || '',
             email: 'No Email',
             description: 'Web user',
