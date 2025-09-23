@@ -111,14 +111,6 @@ public class MainActivity extends ReactActivity {
             String email    = String.valueOf(map.getOrDefault("email", "email"));
             String desc     = String.valueOf(map.getOrDefault("desc", "desc"));
             String[] labels = {"test"};
-            // Object labelsObj = map.get("labels");
-            // if (labelsObj instanceof List) {
-            //   @SuppressWarnings("unchecked")
-            //   List<String> labelsList = (List<String>) labelsObj;
-            //   labels = labelsList.toArray(new String[0]);
-            // } else if (labelsObj instanceof String) {
-            //   labels = new String[]{(String) labelsObj};
-            // }
             
             Log.d("MainActivity", "performNativeAction---------: " + userId + " " + username + " " + language + " " + phone + " " + email + " " + desc + " ");
             SaleSmartyInit.uploadUserMessage(
