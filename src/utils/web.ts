@@ -144,7 +144,7 @@ export const goCS = () => {
   const selfInfo = globalStore.userInfo || {};
   const userInfo = {
     userId: selfInfo.userName + '',
-    username: selfInfo.userId + '',
+    username: selfInfo.userId ? selfInfo.userId + '' : '',
     language: globalStore.lang + '',
     phone: selfInfo.userPhone + '',
     email: 'No Email',
