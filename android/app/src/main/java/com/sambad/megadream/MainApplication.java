@@ -1,10 +1,6 @@
 package com.sambad.supbetgame;
 
 import android.app.Application;
-//adjust
-// import com.adjust.sdk.Adjust;
-// import com.adjust.sdk.AdjustConfig;
-// import com.adjust.sdk.LogLevel;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -19,11 +15,13 @@ import com.moengage.core.LogLevel;
 import com.moengage.core.MoEngage;
 import com.moengage.core.config.LogConfig;
 import com.moengage.core.config.NotificationConfig;
-//import com.moengage.core.internal.lifecycle.ApplicationLifecycleObserver;
 import com.moengage.pushbase.MoEPushHelper;
 import com.moengage.react.MoEInitializer;
+import com.sambad.supbetgame.R;
+import com.sambad.supbetgame.ReactNativeFlipper;
 import com.sambad.supbetgame.Upipay.EasyUpiPaymentPackage;
 import com.microsoft.codepush.react.CodePush;
+import com.sdk.sun.salesmartyplugin.index.SaleSmartyInit;
 
 import java.util.List;
 
@@ -33,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
       new DefaultReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
+          // return false;
           return BuildConfig.DEBUG;
         }
 
@@ -45,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
+          packages.add(new NativeActionPackage());
           // Packages that cannot be autolinked yet can be added manually here, for example:
           packages.add(new EasyUpiPaymentPackage());
           packages.add(new FreshChatPackage());
@@ -58,12 +58,14 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected boolean isNewArchEnabled() {
+          // return true;
           return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
         }
 
         @Override
         protected Boolean isHermesEnabled() {
           return BuildConfig.IS_HERMES_ENABLED;
+          // return true;
         }
       };
 
@@ -74,19 +76,19 @@ public class MainApplication extends Application implements ReactApplication {
   // private void initAdjust() {
   //       // 1. 获取App Token（从meta-data中读取或直接硬编码）
   //       String appToken = "3meh2m59zif4";
-        
+
   //       // 2. 设置环境（测试：SANDBOX / 生产：PRODUCTION）
   //       // String environment = AdjustConfig.ENVIRONMENT_SANDBOX; // 测试环境
   //       String environment = AdjustConfig.ENVIRONMENT_PRODUCTION; // 生产环境
 
   //       // 3. 创建配置对象
   //       AdjustConfig config = new AdjustConfig(this, appToken, environment);
-        
+
   //       // 4. 配置高级选项（可选）
   //       config.setLogLevel(com.adjust.sdk.LogLevel.VERBOSE); // 开启详细日志（测试环境用）
   //       // config.setUrlStrategy(AdjustConfig.URL_STRATEGY_CN); // 中国区数据驻留
   //       // config.setSendInBackground(true); // 后台发送数据
-        
+
   //       // 5. 初始化SDK
   //       Adjust.initSdk(config);
   // }
@@ -95,11 +97,13 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     // initAdjust();
+    SaleSmartyInit.init(this,"https://plugin-code.salesmartly.com/js/project_149638_449536_1756301810.js");
+
     SoLoader.init(this, /* native exopackage */ false);
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+   if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();
-    }
+   }
       // Configure MoEngage SDK
       MoEngage.Builder moEngage =
               new MoEngage.Builder(this, "Q60RICPHDSGXDX7PXH3NCE7K", DataCenter.DATA_CENTER_1 /* [YOUR_DATA_CENTER] */)
