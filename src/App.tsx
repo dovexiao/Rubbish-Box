@@ -453,8 +453,9 @@ function App(): JSX.Element {
             language: 'en',
             userPhone: 'No Phone',
             email: 'No Email',
-            desc: 'No Desc',
-            labels: ['No Label'],
+            description: 'No Desc',
+            label_names: ['label_1', 'label_2'],
+            custom_fields_ext: {'1210': 'test11', more: ['s1', 's2']},
           };
           const selfInfo = userInfo || defaultUserInfo || {};
           w.ssq.push('setLoginInfo', {
@@ -463,7 +464,7 @@ function App(): JSX.Element {
             language: globalStore.lang,
             phone: selfInfo.userPhone || '',
             email: 'No Email',
-            desc: 'No Desc',
+            description: 'Web user',
             label_names: ['label_1', 'label_2'],
             custom_fields_ext: {'1210': 'test11', more: ['s1', 's2']},
           });
