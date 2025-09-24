@@ -136,7 +136,6 @@ export async function callNativeAction(user: SafeAny) {
   //   userName: 'testUser',
   // });
 }
-
 /** 前往客服 */
 export const goCS = () => {
   // navigateTo('https://direct.lc.chat/18181035/');
@@ -148,7 +147,7 @@ export const goCS = () => {
     language: globalStore.lang + '',
     phone: selfInfo.userPhone + '',
     email: 'No Email',
-    desc: 'iphone user',
+    desc: globalStore.currentOrder || 'iphone user',
   };
   if (userInfo.username) {
     callNativeAction(userInfo);
