@@ -58,14 +58,12 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected boolean isNewArchEnabled() {
-          // return true;
           return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
         }
 
         @Override
         protected Boolean isHermesEnabled() {
           return BuildConfig.IS_HERMES_ENABLED;
-          // return true;
         }
       };
 
@@ -97,7 +95,7 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     // initAdjust();
-    SaleSmartyInit.init(this,"https://plugin-code.salesmartly.com/js/project_149638_449536_1756301810.js");
+    SaleSmartyInit.init(this, BuildConfig.REACT_APP_SALESMARTLY_SCRIPT_URL);
 
     SoLoader.init(this, /* native exopackage */ false);
    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
