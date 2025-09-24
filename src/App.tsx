@@ -441,7 +441,6 @@ function App(): JSX.Element {
       const subscription = globalStore.userSubject
         .pipe(takeUntil(globalStore.appDistory))
         .subscribe(userInfo => {
-          // console.log('currentOrder-----', globalStore.currentOrder);
           const w = window as any;
           const defaultUserInfo = {
             userId: 'player_111111',
@@ -469,7 +468,7 @@ function App(): JSX.Element {
         subscription.unsubscribe();
       };
     }
-  }, []);
+  }, [globalStore.currentOrder]);
   const addHeight = Platform.OS === 'web' ? 50 : 50;
   return (
     <SafeAreaProvider style={[theme.position.rel]}>
