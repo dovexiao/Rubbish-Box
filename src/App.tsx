@@ -441,6 +441,7 @@ function App(): JSX.Element {
       const subscription = globalStore.userSubject
         .pipe(takeUntil(globalStore.appDistory))
         .subscribe(userInfo => {
+          // console.log('currentOrder-----', globalStore.currentOrder);
           const w = window as any;
           const defaultUserInfo = {
             userId: 'player_111111',
@@ -459,7 +460,7 @@ function App(): JSX.Element {
             language: globalStore.lang || 'en',
             phone: selfInfo.userPhone || '',
             email: 'No Email',
-            description: 'Web user',
+            description: globalStore.currentOrder || 'Web user',
             label_names: ['label_1', 'label_2'],
             custom_fields_ext: {'1210': 'test11', more: ['s1', 's2']},
           });

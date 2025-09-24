@@ -61,6 +61,21 @@ class GlobalStore {
   get channel() {
     return this._channel;
   }
+  /** 渠道 */
+  private _currentOrder: string = null!;
+  get currentOrder() {
+    return this._currentOrder;
+  }
+  set currentOrder(c: string) {
+    if (c) {
+      this._currentOrder = c;
+      // this.userSubject.next(c);
+      this.asyncSetItem('c', c);
+    } else {
+      this._currentOrder = '';
+      // this.asyncRemoveItem('user');
+    }
+  }
   set channel(c: string) {
     this._channel = c;
     this.asyncSetItem('channel', c);

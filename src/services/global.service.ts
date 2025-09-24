@@ -169,3 +169,8 @@ export function appVipReceive() {
 export function appVipCurrent() {
   return http.post<null, string>('app/vip/week/current/reward');
 }
+// 获取最近10条充值记录
+export function appPayWaster() {
+  return http.post<null, any>('app/pay/water/listRechargeRecords');
+}
+
