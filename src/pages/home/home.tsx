@@ -13,7 +13,6 @@ import globalStore from '@services/global.state';
 import HomeHeader from './components/home-header';
 import Download from './components/download';
 import HomeBanner from './components/home-banner';
-import dayjs from 'dayjs';
 import {
   BannerListItem,
   DigitListItem,
@@ -37,7 +36,6 @@ import {LazyImageLGBackground} from '@basicComponents/image';
 import {postSpinConfig} from '@/common-pages/luckyspin/luckyspin.service';
 import {getFirstRechargeV1} from '@/pages/home/home.service';
 import {useFocusEffect} from '@react-navigation/native';
-import {appPayWaster} from '@services/global.service';
 
 import {getCasinoList, getCasinoType} from './home.service';
 
@@ -129,27 +127,11 @@ const Home = () => {
     setFirstShow(data?.isRecharge || 0);
     setDynamicUrl(data?.rechargeImg || '');
   };
-  const getWaterString = (list: any[], paramKey: string) => {
-    return list
-      .map((item: any) => {
-        const createTime = dayjs(item.createTime).format(
-          'DD-MM YYYY hh:mm:ss A',
-        );
-        return `[${createTime}]:${item[paramKey]};   `;
-      })
-      .join('');
-  };
-  const getPayWaster = useCallback(async () => {
-    const data = await appPayWaster();
-    const orderStr = getWaterString(data?.listWaterVo || [], 'tradeNo');
-    globalStore.currentOrder = orderStr || '';
-  }, []);
   const onFocusEffect = useCallback(() => {
     const sub = globalStore.tokenSubject.subscribe(token => {
       setLogin(!!token);
       if (token) {
         getRecharge();
-        getPayWaster();
       }
     });
     const msgSub = globalStore.notificationSubject.subscribe(_countInfo => {});
@@ -157,7 +139,7 @@ const Home = () => {
       sub.unsubscribe();
       msgSub.unsubscribe();
     };
-  }, [getPayWaster]);
+  }, []);
   useFocusEffect(onFocusEffect);
 
   const [casinoTabs, setCasinoTabs] = useState<CasinoTypeItem[]>([]);

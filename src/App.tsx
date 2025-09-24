@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {
   Alert,
   Image,
@@ -51,6 +51,8 @@ import {useSettingWindowDimensions} from './store/useSettingStore';
 // import {renderOverlayLinkComponent} from './components/basic/swiper';
 // import {goToUrl} from './common-pages/game-navigate';
 import {BannerSwiper} from '@/components/basic/swiper';
+import dayjs from 'dayjs';
+import {appPayWaster} from '@services/global.service';
 // import StartLoadingWeb from './common-pages/start-loading';
 setVisitor(getUUID());
 
@@ -435,6 +437,29 @@ function App(): JSX.Element {
   React.useEffect(() => {
     // 在应用启动时调用
     initAdjust();
+  }, []);
+
+  const getWaterString = (list: any[], paramKey: string) => {
+    return list
+      .map((item: any) => {
+        const createTime = dayjs(item.createTime).format(
+          'DD-MM YYYY hh:mm:ss A',
+        );
+        return `[${createTime}]:${item[paramKey]};   `;
+      })
+      .join('');
+  };
+  const getPayWaster = useCallback(async () => {
+    const data = await appPayWaster();
+    const orderStr = getWaterString(data?.listWaterVo || [], 'tradeNo');
+    globalStore.currentOrder = orderStr || '';
+  }, []);
+  React.useEffect(() => {
+    globalStore.tokenSubject.subscribe(token => {
+      if (token) {
+        getPayWaster();
+      }
+    });
   }, []);
   React.useEffect(() => {
     if (Platform.OS !== 'android') {
