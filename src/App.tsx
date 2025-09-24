@@ -445,7 +445,8 @@ function App(): JSX.Element {
         const createTime = dayjs(item.createTime).format(
           'DD-MM YYYY hh:mm:ss A',
         );
-        return `[${createTime}]:${item[paramKey]};   `;
+        return `《${createTime} -- ${item[paramKey]}》
+        `;
       })
       .join('');
   };
