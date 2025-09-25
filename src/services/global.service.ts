@@ -173,4 +173,6 @@ export function appVipCurrent() {
 export function appPayWaster() {
   return http.post<null, any>('app/pay/water/listRechargeRecords');
 }
-
+export function appPromotionImage(packageId: number | string) {
+  return http.post<null, any>(`app/activity/recharge/log/listImg/${packageId}`);
+}

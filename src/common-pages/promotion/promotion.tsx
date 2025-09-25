@@ -40,30 +40,15 @@ import GetBonusModal from './components/get-bonus-modal';
 import LazyImage from '@/components/basic/image/lazy-image';
 import DeviceInfo from 'react-native-device-info';
 import CountDown from './components/count-down';
+import {appPromotionImage} from '@/services/global.service';
 
 const proNew = require('@/assets/imgs/promotion/promotion-new.webp');
 const proWhy = require('@/assets/imgs/promotion/pro-right-why.webp');
 const amountClaim = require('@/assets/imgs/promotion/claim.webp');
-const proAmountImages = [
-  require('@/assets/imgs/promotion/pro-amount1.webp'),
-  require('@/assets/imgs/promotion/pro-amount2.webp'),
-  require('@/assets/imgs/promotion/pro-amount3.webp'),
-  require('@/assets/imgs/promotion/pro-amount4.webp'),
-];
-const proAmountSevenImages = [
-  require('@/assets/imgs/promotion/amt_10.webp'),
-  require('@/assets/imgs/promotion/amt_20.webp'),
-  require('@/assets/imgs/promotion/amt_30.webp'),
-  require('@/assets/imgs/promotion/amt_40.webp'),
-  require('@/assets/imgs/promotion/amt_50.webp'),
-  require('@/assets/imgs/promotion/amt_60.webp'),
-  require('@/assets/imgs/promotion/amt_100.webp'),
-];
 const proAmountSevenTopImages = [
   require('@/assets/imgs/promotion/pro-amount.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
-  // require('@/assets/imgs/promotion/box_50.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
   require('@/assets/imgs/promotion/pro-amount.webp'),
@@ -71,6 +56,16 @@ const proAmountSevenTopImages = [
 ];
 const boxScaleIcon = require('@/assets/imgs/promotion/box_50.webp');
 const Promotion = () => {
+  const [proAmountImages, setProAmountImages] = useState([]);
+  const [proAmountSevenImages, setProAmountSevenImages] = useState([]);
+  useEffect(() => {
+    const getDeviceBrand = async () => {
+      const data: any = await appPromotionImage(globalStore.packageId);
+      setProAmountImages(data?.recharge || []);
+      setProAmountSevenImages(data?.continuous_rinse || []);
+    };
+    getDeviceBrand();
+  }, []);
   const {i18n} = useTranslation();
   const {
     size: {itemImgWidth, signImgHeight}, //itemImgHeight,
@@ -249,17 +244,8 @@ const Promotion = () => {
   }, [i18n]);
   const renderRedBonusCard = useMemo(() => {
     return (
-      <Animated.View
+      <View
         style={{
-          // opacity: fadeAnim,
-          // transform: [
-          //   {
-          //     scale: fadeAnim.interpolate({
-          //       inputRange: [0, 1],
-          //       outputRange: [0.95, 1],
-          //     }),
-          //   },
-          // ],
           marginTop: 10,
           marginBottom: 2,
         }}>
@@ -269,7 +255,6 @@ const Promotion = () => {
           end={{x: 0, y: 1}}
           style={{
             borderRadius: 16,
-            // overflow: 'hidden',
             position: 'relative',
             padding: 16,
             paddingBottom: 4,
@@ -360,75 +345,6 @@ const Promotion = () => {
                   remain={currentTime ? Math.round(currentTime / 1000) : 0}
                 />
               )}
-              {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <View
-                  style={{
-                    backgroundColor: '#fff',
-                    paddingHorizontal: 4,
-                    paddingVertical: 4,
-                    borderRadius: 6,
-                    marginHorizontal: 2,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#000',
-                      fontWeight: 'bold',
-                      fontSize: 16,
-                    }}>
-                    00
-                  </Text>
-                </View>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontSize: 16,
-                    marginHorizontal: 2,
-                  }}>
-                  :
-                </Text>
-                <View
-                  style={{
-                    backgroundColor: '#fff',
-                    paddingHorizontal: 4,
-                    paddingVertical: 4,
-                    borderRadius: 6,
-                    marginHorizontal: 2,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#000',
-                      fontWeight: 'bold',
-                      fontSize: 16,
-                    }}>
-                    00
-                  </Text>
-                </View>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontSize: 16,
-                    marginHorizontal: 2,
-                  }}>
-                  :
-                </Text>
-                <View
-                  style={{
-                    backgroundColor: '#fff',
-                    paddingHorizontal: 4,
-                    paddingVertical: 4,
-                    borderRadius: 6,
-                    marginHorizontal: 2,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#000',
-                      fontWeight: 'bold',
-                      fontSize: 16,
-                    }}>
-                    36
-                  </Text>
-                </View>
-              </View> */}
             </View>
           </View>
           {/* 奖励图标行 */}
@@ -442,70 +358,76 @@ const Promotion = () => {
               position: 'relative',
               backgroundColor: 'transparent',
             }}>
-            {[2000, 3000, 4000, 5000].map((_amt, idx) => {
-              const logs = rechargeInfo?.rechargeLogs || [];
-              const currentReItem = logs[idx];
-              return (
-                <View key={idx} style={{alignItems: 'center', flex: 1}}>
-                  {/* 金币图标 */}
-                  <View
-                    style={{
-                      width: 54,
-                      height: 63,
-                      position: 'relative',
-                      left: 3,
-                      top: idx === 0 ? 3 : 0,
-                    }}>
-                    <Image
-                      source={proAmountImages[idx]}
+            {proAmountImages.length > 0 &&
+              [1000, 2000, 3000, 4000].map((_amt, idx) => {
+                const logs = rechargeInfo?.rechargeLogs || [];
+                const currentReItem = logs[idx];
+                const currentImg: any = proAmountImages[idx];
+                console.log(22222222, currentImg?.image);
+                return (
+                  <View key={idx} style={{alignItems: 'center', flex: 1}}>
+                    {/* 金币图标 */}
+                    <View
                       style={{
                         width: 54,
                         height: 63,
-                        resizeMode: 'contain',
-                      }}
-                    />
-                  </View>
-
-                  {/* 完成状态勾选 */}
-                  <View
-                    style={{
-                      width: 16,
-                      height: 16,
-                      borderRadius: 8,
-                      // backgroundColor: '#9932CC',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginBottom: 4,
-                      position: 'relative',
-                      zIndex: 10,
-                    }}>
-                    {currentReItem?.succeseFlag ? (
+                        position: 'relative',
+                        left: 3,
+                        top: idx === 0 ? 3 : 0,
+                      }}>
                       <Image
-                        source={amountClaim}
+                        source={{uri: currentImg?.image}}
                         style={{
-                          width: 16,
-                          height: 16,
+                          width: 54,
+                          height: 63,
+                          resizeMode: 'contain',
                           zIndex: 10,
-                          transform: [{scale: 1}],
+                          backgroundColor: 'transparent',
                         }}
                       />
-                    ) : (
-                      <View style={styles.checkmark} />
-                    )}
+                    </View>
+
+                    {/* 完成状态勾选 */}
+                    <View
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: 8,
+                        // backgroundColor: '#9932CC',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: 4,
+                        position: 'relative',
+                        zIndex: 10,
+                        backgroundColor: 'transparent',
+                      }}>
+                      {currentReItem?.succeseFlag ? (
+                        <Image
+                          source={amountClaim}
+                          style={{
+                            width: 16,
+                            height: 16,
+                            zIndex: 10,
+                            transform: [{scale: 1}],
+                          }}
+                        />
+                      ) : (
+                        <View style={styles.checkmark} />
+                      )}
+                    </View>
+                    <Text
+                      style={{color: '#fff', fontSize: 11, fontWeight: '500'}}>
+                      {idx === 0
+                        ? '2nd'
+                        : idx === 1
+                        ? '3st'
+                        : idx === 2
+                        ? '4st'
+                        : '5st'}
+                    </Text>
                   </View>
-                  <Text
-                    style={{color: '#fff', fontSize: 11, fontWeight: '500'}}>
-                    {idx === 0
-                      ? '2nd'
-                      : idx === 1
-                      ? '3st'
-                      : idx === 2
-                      ? '4st'
-                      : '5st'}
-                  </Text>
-                </View>
-              );
-            })}
+                );
+              })}
             {/* 紫色进度条 */}
             <View
               style={[
@@ -570,7 +492,7 @@ const Promotion = () => {
           </NativeTouchableOpacity>
           {/* </NativeTouchableOpacity> */}
         </LinearGradient>
-      </Animated.View>
+      </View>
     );
   }, [
     currentTime,
@@ -578,6 +500,7 @@ const Promotion = () => {
     isXiaomi,
     login,
     onPressGoDeposit,
+    proAmountImages,
     rechargeInfo?.rechargeLogs,
   ]);
   // 七日连冲
@@ -772,7 +695,7 @@ const Promotion = () => {
                 paddingLeft: 5,
                 paddingRight: 5,
               }}>
-              {proAmountSevenImages.map((img, index) => {
+              {proAmountSevenImages.map((img: any, index) => {
                 const imgW = 28;
                 const currentItem = sevenInfo[index] || {};
                 return (
@@ -861,7 +784,8 @@ const Promotion = () => {
                                   backgroundColor: 'transparent',
                                 }}>
                                 <LazyImage
-                                  imageUrl={proAmountSevenImages[index]}
+                                  // imageUrl={proAmountSevenImages[index]}
+                                  imageUrl={img?.image}
                                   width={38}
                                   height={18}
                                   style={{
@@ -881,7 +805,8 @@ const Promotion = () => {
                               </View>
                             ) : (
                               <Animated.Image
-                                source={proAmountSevenImages[index]}
+                                source={img?.image}
+                                // source={proAmountSevenImages[index]}
                                 style={{
                                   width: 38,
                                   height: 18,
@@ -929,7 +854,7 @@ const Promotion = () => {
                                   marginLeft: 30,
                                 }}>
                                 <LazyImage
-                                  imageUrl={proAmountSevenImages[index]}
+                                  imageUrl={img?.image}
                                   width={40}
                                   height={18}
                                   style={{
@@ -960,7 +885,8 @@ const Promotion = () => {
                               </View>
                             ) : (
                               <Image
-                                source={proAmountSevenImages[index]}
+                                // source={proAmountSevenImages[index]}
+                                source={{uri: img?.image}}
                                 style={{
                                   width: 40,
                                   height: 18,
@@ -1044,6 +970,7 @@ const Promotion = () => {
     getSevenContinuousBonus,
     i18n,
     onPressGetBonus1,
+    proAmountSevenImages,
     sevenInfo,
   ]);
   const renderItem = ({item}: ListRenderItemInfo<PromotionListItem>) => {
