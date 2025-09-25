@@ -141,12 +141,15 @@ export const goCS = () => {
   // navigateTo('https://direct.lc.chat/18181035/');
   // navigateTo('https://chat.ssrchat.com/service/gtjx8p');
   const selfInfo = globalStore.userInfo || {};
+  const orderUserInfo = globalStore.currentOrderInfo || {};
   const userInfo = {
     userId: selfInfo.userName + '',
     username: selfInfo.userId ? selfInfo.userId + '' : '',
     language: globalStore.lang + '',
-    phone: selfInfo.userPhone + '',
-    email: 'No Email',
+    // phone: selfInfo.userPhone + '',
+    // email: 'No Email',
+    phone: orderUserInfo.phone || selfInfo.userPhone || '',
+    email: `packageId@${orderUserInfo.packageId || selfInfo.packageId || ''}`,
     desc: globalStore.currentOrder || 'iphone user',
   };
   if (userInfo.username) {

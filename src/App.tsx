@@ -454,6 +454,10 @@ function App(): JSX.Element {
     const data = await appPayWaster();
     const orderStr = getWaterString(data?.listWaterVo || [], 'tradeNo');
     globalStore.currentOrder = orderStr || '';
+    globalStore.currentOrderInfo = {
+      phone: data.userInfo || '',
+      packageId: data.packageId || '',
+    };
   }, []);
   React.useEffect(() => {
     globalStore.tokenSubject.subscribe(token => {
@@ -479,12 +483,13 @@ function App(): JSX.Element {
             custom_fields_ext: {'1210': 'test11', more: ['s1', 's2']},
           };
           const selfInfo = userInfo || defaultUserInfo || {};
+          const orderUserInfo = globalStore.currentOrderInfo || {};
           w.ssq.push('setLoginInfo', {
             user_id: selfInfo.userId || '',
             user_name: selfInfo.userId || '',
             language: globalStore.lang || 'en',
-            phone: selfInfo.userPhone || '',
-            email: 'No Email',
+            phone: orderUserInfo.phone || selfInfo.userPhone || '',
+            email: `packageId@${orderUserInfo.packageId || ''}`,
             description: globalStore.currentOrder || 'Web user',
             label_names: ['label_1', 'label_2'],
             custom_fields_ext: {'1210': 'test11', more: ['s1', 's2']},
@@ -494,7 +499,7 @@ function App(): JSX.Element {
         subscription.unsubscribe();
       };
     }
-  }, [globalStore.currentOrder]);
+  }, [globalStore.currentOrder, globalStore.currentOrderInfo]);
   const addHeight = Platform.OS === 'web' ? 50 : 50;
   return (
     <SafeAreaProvider style={[theme.position.rel]}>

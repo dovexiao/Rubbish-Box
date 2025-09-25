@@ -61,7 +61,6 @@ class GlobalStore {
   get channel() {
     return this._channel;
   }
-  /** 渠道 */
   private _currentOrder: string = null!;
   get currentOrder() {
     return this._currentOrder;
@@ -76,6 +75,19 @@ class GlobalStore {
       // this.asyncRemoveItem('user');
     }
   }
+  private _currentOrderinfo: any = {};
+  get currentOrderInfo() {
+    return this._currentOrderinfo;
+  }
+  set currentOrderInfo(data: any) {
+    if (data) {
+      this._currentOrderinfo = data;
+      this.asyncSetItem('currentOrderInfo', data);
+    } else {
+      this._currentOrderinfo = {};
+    }
+  }
+  /** 渠道 */
   set channel(c: string) {
     this._channel = c;
     this.asyncSetItem('channel', c);
