@@ -363,7 +363,6 @@ const Promotion = () => {
                 const logs = rechargeInfo?.rechargeLogs || [];
                 const currentReItem = logs[idx];
                 const currentImg: any = proAmountImages[idx];
-                console.log(22222222, currentImg?.image);
                 return (
                   <View key={idx} style={{alignItems: 'center', flex: 1}}>
                     {/* 金币图标 */}
