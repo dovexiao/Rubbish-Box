@@ -804,7 +804,7 @@ const Promotion = () => {
                               </View>
                             ) : (
                               <Animated.Image
-                                source={img?.image}
+                                source={{uri: img?.image}}
                                 // source={proAmountSevenImages[index]}
                                 style={{
                                   width: 38,
@@ -884,7 +884,6 @@ const Promotion = () => {
                               </View>
                             ) : (
                               <Image
-                                // source={proAmountSevenImages[index]}
                                 source={{uri: img?.image}}
                                 style={{
                                   width: 40,
