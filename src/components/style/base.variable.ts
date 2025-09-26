@@ -18,15 +18,15 @@ export const basicColor = {
   selectPrimary: '#2A8C83',
 
   /** 主题色 */
-  primary: '#00BB8F',
-  primary50: '#00BB8F',
-  primary10: '#00BB8F1A',
-  primary20: '#03D0A6',
+  primary: '#A1251C',
+  primary50: '#440602',
+  primary10: '#00000000',
+  primary20: '#00000000',
   primaryFont: '#C3F0E8',
-  background: '#00BB8FFF',
+  background: '#00000000',
   /** 渐变主题色 */
-  primaryLinearGradient: ['#00BB8F', '#FFFFFF'],
-  primaryGrayLinearGradient: ['#00BB8F', '#FFFFFF', '#F5F5F5', '#F5F5F5'],
+  primaryLinearGradient: ['#A1251C', '#FFFFFF'],
+  primaryGrayLinearGradient: ['#A1251C', '#FFFFFF', '#F5F5F5', '#F5F5F5'],
   proxyLinearGradient: ['#dbeeea', '#dbeeea'],
   proxybgColor: '#C92619',
   proxyResetLink: '#0f8d74',
@@ -165,7 +165,7 @@ export const fontColor = {
 
 export const backgroundColor = {
   /** 蓝 */
-  main: '#00BB8F',
+  main: '#F8D72F',
   /** 橙 */
   second: '#F15802',
   /** 红 */
