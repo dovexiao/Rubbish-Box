@@ -60,9 +60,9 @@ const Promotion = () => {
   const [proAmountSevenImages, setProAmountSevenImages] = useState([]);
   useEffect(() => {
     const getDeviceBrand = async () => {
-      const data: any = await appPromotionImage(globalStore.packageId);
-      setProAmountImages(data?.recharge || []);
-      setProAmountSevenImages(data?.continuous_rinse || []);
+      const data: any = await appPromotionImage();
+      setProAmountImages(data?.recharge.images || []);
+      setProAmountSevenImages(data?.continuous_rinse.images || []);
     };
     getDeviceBrand();
   }, []);
@@ -1016,6 +1016,10 @@ const Promotion = () => {
     renderSevenContinuousBonusCard,
     isCountdownExpired,
   ]);
+  const currentReacgarge: any = proAmountImages[0] || {};
+  const currentReacgarge1: any = proAmountImages[1] || {};
+  const currentReacgarge2: any = proAmountImages[2] || {};
+  const currentReacgarge3: any = proAmountImages[3] || {};
   return (
     <LazyImageLGBackground style={{height: screenHeight}}>
       <DetailNavTitle title={i18n.t('promotion.title')} hideServer />
@@ -1067,13 +1071,28 @@ const Promotion = () => {
                 {backgroundColor: theme.basicColor.newBgInTwo},
               ]}>
               <Text style={modalStyles.message}>
-                After the first recharge is completed, you can get additional
-                recharge rewards for repurchase；
+                Extra Recharge Bonus(After the first recharge)
               </Text>
-              <Text style={modalStyles.message}>2nd recharge bonus 5%</Text>
-              <Text style={modalStyles.message}>3st recharge bonus 7%</Text>
-              <Text style={modalStyles.message}>4st recharge bonus 9%</Text>
-              <Text style={modalStyles.message}>5st recharge bonus 11%</Text>
+              <Text style={modalStyles.message}>
+                2nd recharge → +{currentReacgarge.ratio || ''}, Max ₹
+                {currentReacgarge.max_amount || ''}
+              </Text>
+              <Text style={modalStyles.message}>
+                3rd recharge → +{currentReacgarge1.ratio || ''}, Max ₹
+                {currentReacgarge1.max_amount || ''}
+              </Text>
+              <Text style={modalStyles.message}>
+                4th recharge → +{currentReacgarge2.ratio || ''}, Max ₹
+                {currentReacgarge2.max_amount || ''}
+              </Text>
+              <Text style={modalStyles.message}>
+                5th recharge → +{currentReacgarge3.ratio || ''}, Max ₹
+                {currentReacgarge3.max_amount || ''}
+              </Text>
+              <Text style={modalStyles.message}>
+                Note :The bonus applies only once per recharge count. Higher
+                top-ups won’t increase the bonus beyond the maximum limit.
+              </Text>
               <View style={modalStyles.buttonRow}>
                 <TouchableOpacity
                   style={modalStyles.button}
