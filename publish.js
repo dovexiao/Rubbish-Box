@@ -85,17 +85,15 @@ const mainPackage = [
     channelList:[
       'wlFB01',
       'wlFB02',
+      'wlFB03',
+      'wlFB04',
+      'wlFB05',
       'winlucky001'
     ]
   },
   {
     title: 'supbet',
     channelList: [
-      'sboFB01',
-      'sboFB02',
-      'sboFB03',
-      'sboFB04',
-      'sbFB01',
       'supbet', // 默认渠道
     ]
   }
