@@ -656,6 +656,7 @@ export default {
         'Resolving resources (this process does not consume the network)',
       alertTitle: 'Update Available',
       restart: 'Restart',
+      sure: 'Confirm',
       alertContent:
         'An update is available. Restarting the app to apply the update...',
     },

@@ -14,56 +14,59 @@ const {setBuildEnv} = require('./build-scripts.js');
 const mainPackage = [
   {
     title: 'prodgobet',
-    channelList: ['gbFB01', 'gobet758'],
-  },
-  {
-    title: 'prodlotteryindia',
-    channelList: ['liFB01', 'lotteryindia'],
-  },
-  {
-    title: 'prodluckyone',
-    channelList: ['lucky101'],
-  },
-  {
-    title: 'prodmybetfive',
-    channelList: ['mybet758', 'mbfFB01'],
-  },
-  {
-    title: 'prodmybetnine',
-    channelList: ['mybet798'],
-  },
-  {
-    title: 'prodspinsnine',
-    channelList: ['spnFB01', 'spnFB02', 'spins999'],
-  },
-  {
-    title: 'prodspinsseven',
-    channelList: ['spsB01', 'spins007'],
-  },
-  {
-    title: 'prodsupbetone',
     channelList: [
-      'sboFB01',
-      'sboFB02',
-      'sboFB03',
-      'sboFB04',
-      'sboFB05',
-      'sboFB06',
-      'supbet001',
+      // 'gbFB01',
+      'gobet758',
     ],
   },
-  {
-    title: 'prodsupbetseven',
-    channelList: ['sbsFB01', 'sbsFB02', 'supbet007'],
-  },
-  {
-    title: 'prodwinlucky',
-    channelList: ['winlucky001'],
-  },
+  // {
+  //   title: 'prodlotteryindia',
+  //   channelList: ['liFB01', 'lotteryindia'],
+  // },
+  // {
+  //   title: 'prodluckyone',
+  //   channelList: ['lucky101'],
+  // },
+  // {
+  //   title: 'prodmybetfive',
+  //   channelList: ['mybet758', 'mbfFB01'],
+  // },
+  // {
+  //   title: 'prodmybetnine',
+  //   channelList: ['mybet798'],
+  // },
+  // {
+  //   title: 'prodspinsnine',
+  //   channelList: ['spnFB01', 'spnFB02', 'spins999'],
+  // },
+  // {
+  //   title: 'prodspinsseven',
+  //   channelList: ['spsB01', 'spins007'],
+  // },
+  // {
+  //   title: 'prodsupbetone',
+  //   channelList: [
+  //     'sboFB01',
+  //     'sboFB02',
+  //     'sboFB03',
+  //     'sboFB04',
+  //     'sboFB05',
+  //     'sboFB06',
+  //     'supbet001',
+  //   ],
+  // },
+  // {
+  //   title: 'prodsupbetseven',
+  //   channelList: ['sbsFB01', 'sbsFB02', 'supbet007'],
+  // },
+  // {
+  //   title: 'prodwinlucky',
+  //   channelList: ['winlucky001'],
+  // },
   {
     title: 'supbet',
     channelList: [
-      'sbFB01',
+      // 'sbFB01',
       'supbet', // 默认渠道
     ],
   },
@@ -74,10 +77,7 @@ const mainPackage = [
  * @param {string} channel - 渠道ID
  * @param {string} packageName - 包名
  */
-async function startRewriteEnv(
-  channel: string,
-  packageName: string,
-): Promise<void> {
+async function startRewriteEnv(channel, packageName) {
   const envFile = `./.env.${packageName}`;
   setBuildEnv('REACT_APP_API_CHANNEL_ID', channel, envFile);
 }
@@ -88,11 +88,7 @@ async function startRewriteEnv(
  * @param {string} packageName - 包名
  * @param {string} version - 版本号
  */
-async function buildHotUpdatePackage(
-  channel: string,
-  packageName: string,
-  version: string,
-): Promise<void> {
+async function buildHotUpdatePackage(channel, packageName, version) {
   const appFile = 'src/App.tsx';
 
   // 重新写入渠道配置
@@ -163,7 +159,7 @@ async function buildHotUpdatePackage(
 /**
  * 主函数：为所有包和渠道生成热更新包
  */
-async function main(): Promise<void> {
+async function main() {
   const version = process.argv[2] || '1.0.0';
   console.log(`开始为版本 ${version} 生成热更新包...`);
 

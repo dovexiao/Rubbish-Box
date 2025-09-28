@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useCallback} from 'react';
 import {
-  // Alert,
+  Alert,
   Image,
   // Linking,
   StatusBar,
@@ -53,13 +53,15 @@ import {useSettingWindowDimensions} from './store/useSettingStore';
 import {BannerSwiper} from '@/components/basic/swiper';
 import dayjs from 'dayjs';
 import {appPayWaster} from '@services/global.service';
-import {UpdateProvider, Pushy} from 'react-native-update';
+import {UpdateProvider, Pushy, useUpdate} from 'react-native-update';
 const pushyClient = new Pushy({
   appKey: 'pzyfXnB4qhPsH6JtPfW3_sI-',
+  updateStrategy: null, //-----关闭pushy自带热更新
+  checkStrategy: null,
   // 注意，默认情况下，在开发环境中不会检查更新
   // 如需在开发环境中调试更新，请设置debug为true
   // 但即便打开此选项，也仅能检查、下载热更，并不能实际应用热更。实际应用热更必须在release包中进行。
-  // debug: true,
+  debug: true,
 });
 // import StartLoadingWeb from './common-pages/start-loading';
 setVisitor(getUUID());
@@ -68,6 +70,19 @@ const Stack = createStackNavigator();
 const params = getUrlParams();
 
 function App(): JSX.Element {
+  const {
+    // client,
+    checkUpdate,
+    downloadUpdate,
+    // downloadAndInstallApk
+    // switchVersionLater,
+    switchVersion,
+    // updateInfo,
+    // markSuccess,
+    // packageVersion,
+    // currentHash,
+    // progress: {received, total} = {},
+  } = useUpdate();
   if (params.channel) {
     globalStore.channel = params.channel;
   }
@@ -85,13 +100,13 @@ function App(): JSX.Element {
   // const remoteBundleRef = React.useRef<null | SafeAny>();
   // const downloadLock = React.useRef<boolean>(false);
   const [currentRouteName, setCurrentRouteName] = React.useState('');
-  const [loading, _setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(!globalStore.isWeb);
   const [globalLoading, setGlobalLoading] = React.useState(false);
   const {renderModal: renderToast, show: toastShow} = useToast();
   const {updateWindowDimensions, screenWidth} = useSettingWindowDimensions();
 
   // const [codeInited, setCodeInited] = React.useState(false);
-  const [available, _setAvailable] = React.useState(0);
+  const [available, setAvailable] = React.useState(0);
   const {height} = useWindowDimensions();
   // const initChat = () => {
   //   const chatModule = require('@components/chat');
@@ -173,7 +188,49 @@ function App(): JSX.Element {
       }
     });
   };
-
+  const checkUpdateVersion = async () => {
+    try {
+      const res = await checkUpdate();
+      const info = res;
+      if (info?.expired) {
+        Alert.alert(
+          'The version is too old',
+          'Please download the latest version',
+          [
+            {
+              text: i18n.t('splash.tip.sure'),
+              onPress: () => {
+                setLoading(false);
+              },
+            },
+          ],
+        );
+      } else if (info?.update) {
+        // 强制更新
+        setAvailable(1);
+        const ok = await downloadUpdate();
+        Alert.alert(
+          i18n.t('splash.tip.alertTitle'),
+          i18n.t('splash.tip.alertContent'),
+          [
+            {
+              text: i18n.t('splash.tip.restart'),
+              onPress: () => {
+                if (ok) {
+                  switchVersion();
+                }
+                setLoading(false);
+              },
+            },
+          ],
+        );
+      } else {
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
   const initApp = () => {
     setToken();
     setUserInfo();
@@ -189,6 +246,7 @@ function App(): JSX.Element {
          */
         console.log('pushClicked', notificationPayload);
       });
+      checkUpdateVersion();
     } else if (globalStore.isWeb) {
       globalStore.asyncGetItem('channel').then(channel => {
         globalStore.channel = channel || getUrlParams().channel;
