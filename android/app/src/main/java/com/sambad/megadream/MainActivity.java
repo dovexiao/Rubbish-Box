@@ -8,6 +8,7 @@ import android.widget.Toast;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.webkit.WebView;
+import android.content.Intent;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -138,5 +139,11 @@ public class MainActivity extends ReactActivity {
         runOnUiThread(() -> SaleSmartyInit.closeSaleSmartyView());
         break;
     }
+  }
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    super.onActivityResult(requestCode, resultCode, intent);
+    //不管是否选中文件，都执行回调
+    SaleSmartyInit.upLoadFiles(requestCode,intent);
   }
 }
