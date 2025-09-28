@@ -27,6 +27,7 @@ module.exports = function override(config, env) {
     path.resolve('node_modules/react-native-webview'),
     path.resolve('node_modules/rxjs'),
     path.resolve('node_modules/react-native-vector-icons'),
+    path.resolve('node_modules/react-native-update'),
   ])(config);
   // 查看包体大小
   // const BundleAnalyzerPlugin =
@@ -51,12 +52,13 @@ module.exports = function override(config, env) {
       /lottie-react-native/, // lottie库
       // lottie动画相关
       /react-native-image-picker/, //图片相机库
-      /react-native-code-push/, // 热更新
       /react-native-firebase/, // firebase
       /react-native-moengage/, // 客服相关
       /react-native-fs/, // 文件上传
       /react-native-adjust/, // 文件上传
       // /react-native-pager-view/, // Adjust SDK
+      // 排除react-native-update在web环境下的问题模块
+      /react-native-update\/src\/NativePushy/,
     ].map(resourceRegExp => new webpack.IgnorePlugin({resourceRegExp})),
     new Dotenv(),
   );
@@ -106,7 +108,18 @@ module.exports = function override(config, env) {
       },
     };
   }
+  // 解决react-native-update在web环境下的模块解析问题
+  config.resolve.fallback = {
+    ...config.resolve.fallback,
+    'react-native/Libraries/Core/ReactNativeVersion': false,
+    TurboModuleRegistry: false,
+  };
 
+  // 添加别名解析
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    'react-native-update/src/NativePushy': false,
+  };
   // config.resolve.fallback = {
   //   path: require.resolve('path-browserify'),
   //   os: require.resolve('os-browserify/browser'),

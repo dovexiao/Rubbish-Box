@@ -20,8 +20,9 @@ import com.moengage.react.MoEInitializer;
 import com.sambad.supbetgame.R;
 import com.sambad.supbetgame.ReactNativeFlipper;
 import com.sambad.supbetgame.Upipay.EasyUpiPaymentPackage;
-import com.microsoft.codepush.react.CodePush;
 import com.sdk.sun.salesmartyplugin.index.SaleSmartyInit;
+
+import cn.reactnative.modules.update.UpdateContext;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected String getJSBundleFile() {
-          return CodePush.getJSBundleFile();
+          return UpdateContext.getBundleUrl(MainApplication.this);
         }
 
         @Override

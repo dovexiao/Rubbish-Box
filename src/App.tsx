@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useCallback} from 'react';
 import {
-  Alert,
+  // Alert,
   Image,
   // Linking,
   StatusBar,
@@ -20,7 +20,7 @@ import theme from '@style';
 import {linking, routes} from './route';
 import {getUUID, getUrlParams, navigationRef, envConfig} from '@utils';
 import globalStore from './services/global.state';
-import {BasicObject, SafeAny} from '@types';
+import {BasicObject} from '@types';
 import {DialogLoading} from '@basicComponents/dialog';
 import {useToast} from '@basicComponents/modal';
 import {
@@ -53,14 +53,17 @@ import {useSettingWindowDimensions} from './store/useSettingStore';
 import {BannerSwiper} from '@/components/basic/swiper';
 import dayjs from 'dayjs';
 import {appPayWaster} from '@services/global.service';
+import {UpdateProvider, Pushy} from 'react-native-update';
+const pushyClient = new Pushy({
+  appKey: 'pzyfXnB4qhPsH6JtPfW3_sI-',
+  // 注意，默认情况下，在开发环境中不会检查更新
+  // 如需在开发环境中调试更新，请设置debug为true
+  // 但即便打开此选项，也仅能检查、下载热更，并不能实际应用热更。实际应用热更必须在release包中进行。
+  // debug: true,
+});
 // import StartLoadingWeb from './common-pages/start-loading';
 setVisitor(getUUID());
 
-declare var CodePush: any;
-declare var AppWithCodePush: any;
-if (globalStore.isAndroid) {
-  CodePush = require('react-native-code-push');
-}
 const Stack = createStackNavigator();
 const params = getUrlParams();
 
@@ -79,18 +82,16 @@ function App(): JSX.Element {
   }
   const {i18n} = useTranslation();
   const routeNameRef = React.useRef<null | string>();
-  const remoteBundleRef = React.useRef<null | SafeAny>();
-  const downloadLock = React.useRef<boolean>(false);
+  // const remoteBundleRef = React.useRef<null | SafeAny>();
+  // const downloadLock = React.useRef<boolean>(false);
   const [currentRouteName, setCurrentRouteName] = React.useState('');
-  const [loading, setLoading] = React.useState(!globalStore.isWeb);
+  const [loading, _setLoading] = React.useState(false);
   const [globalLoading, setGlobalLoading] = React.useState(false);
   const {renderModal: renderToast, show: toastShow} = useToast();
   const {updateWindowDimensions, screenWidth} = useSettingWindowDimensions();
-  // const [screenHeight, setScreenHeight] = useState(
-  //   globalStore.isWeb ? innerHeight + 'px' : innerHeight,
-  // );
-  const [codeInited, setCodeInited] = React.useState(false);
-  const [available, setAvailable] = React.useState(0);
+
+  // const [codeInited, setCodeInited] = React.useState(false);
+  const [available, _setAvailable] = React.useState(0);
   const {height} = useWindowDimensions();
   // const initChat = () => {
   //   const chatModule = require('@components/chat');
@@ -154,53 +155,6 @@ function App(): JSX.Element {
     //     noticeCheckOut();
     //   });
   };
-
-  const checkUpdate = async () => {
-    if (__DEV__ || !envConfig.codePushKey) {
-      return setCodeInited(true);
-    }
-    if (globalStore.isWeb) {
-      return;
-    }
-    try {
-      remoteBundleRef.current = await CodePush.checkForUpdate(
-        envConfig.codePushKey,
-      );
-      checkRemoteBoundle(remoteBundleRef.current);
-    } catch (error) {
-      checkRemoteBoundle(null);
-    }
-  };
-
-  const checkRemoteBoundle = async (remoteBundle: SafeAny) => {
-    if (remoteBundle) {
-      if (remoteBundle.isMandatory) {
-        // 强制更新
-        setAvailable(1);
-        const bundle = await remoteBundle.download();
-        await bundle.install(CodePush.InstallMode.ON_NEXT_RESTART);
-        Alert.alert(
-          i18n.t('splash.tip.alertTitle'),
-          i18n.t('splash.tip.alertContent'),
-          [
-            {
-              text: i18n.t('splash.tip.restart'),
-              onPress: async () => {
-                await CodePush.notifyAppReady();
-                await CodePush.restartApp();
-              },
-            },
-          ],
-        );
-      } else {
-        // 后台下载 先去首页
-        setCodeInited(true);
-      }
-    } else {
-      setCodeInited(true);
-    }
-  };
-
   const [chckedLang, setCheckLang] = React.useState(false);
   const {renderModal: renderLanguageModal, show: languageShow} =
     useLanguageModal({
@@ -235,7 +189,6 @@ function App(): JSX.Element {
          */
         console.log('pushClicked', notificationPayload);
       });
-      checkUpdate();
     } else if (globalStore.isWeb) {
       globalStore.asyncGetItem('channel').then(channel => {
         globalStore.channel = channel || getUrlParams().channel;
@@ -275,60 +228,14 @@ function App(): JSX.Element {
     };
   }, []);
 
-  const startBackDownload = async () => {
-    if (remoteBundleRef.current && !remoteBundleRef.current.isMandatory) {
-      downloadLock.current = true;
-      const bundle = await remoteBundleRef.current.download(
-        (progress: {receivedBytes: any; totalBytes: any}) => {
-          const {receivedBytes, totalBytes} = progress;
-          const rate = (receivedBytes / totalBytes).toFixed(2);
-          globalStore.rate = parseFloat(rate);
-        },
-      );
-      await bundle.install(CodePush.InstallMode.ON_NEXT_RESTART);
-      Alert.alert(
-        i18n.t('splash.tip.alertTitle'),
-        i18n.t('splash.tip.alertContent'),
-        [
-          {
-            text: i18n.t('splash.tip.restart'),
-            onPress: async () => {
-              globalStore.rate = 0;
-              await CodePush.notifyAppReady();
-              await CodePush.restartApp();
-            },
-          },
-          {
-            text: i18n.t('label.cancel'),
-            onPress: async () => {
-              globalStore.rate = 0;
-              remoteBundleRef.current = null;
-              await CodePush.notifyAppReady();
-            },
-          },
-        ],
-      );
-    }
-  };
-
-  React.useEffect(() => {
-    if (codeInited && globalStore.isAndroid) {
-      // 先更新，在干其他的
-      // initChat();
-      // initPush();
-      setLoading(false);
-    }
-  }, [codeInited]);
-
-  React.useEffect(() => {
-    if (
-      currentRouteName === 'Home' &&
-      globalStore.isAndroid &&
-      !downloadLock.current
-    ) {
-      startBackDownload();
-    }
-  }, [currentRouteName]);
+  // React.useEffect(() => {
+  //   if (codeInited && globalStore.isAndroid) {
+  //     // 先更新，在干其他的
+  //     // initChat();
+  //     // initPush();
+  //     setLoading(false);
+  //   }
+  // }, [codeInited]);
 
   const popImageWidth = screenWidth * 0.75;
   const [popVisible, setPopVisible] = React.useState(false);
@@ -633,9 +540,31 @@ function App(): JSX.Element {
   );
 }
 
-if (globalStore.isAndroid) {
-  let codePushOptions = {checkFrequency: CodePush.CheckFrequency.MANUAL};
-  AppWithCodePush = CodePush(codePushOptions)(App);
-}
+export default function Root() {
+  // const [updateModule, setUpdateModule] = React.useState<any>(null);
 
-export default globalStore.isWeb ? App : AppWithCodePush;
+  // React.useEffect(() => {
+  //   if (!globalStore.isWeb) {
+  //     import('react-native-update').then(setUpdateModule);
+  //   }
+  // }, []);
+  if (globalStore.isWeb || !pushyClient) {
+    return <App />;
+  }
+  return (
+    <UpdateProvider client={pushyClient}>
+      <App />
+    </UpdateProvider>
+  );
+}
+// if (globalStore.isAndroid) {
+//   // let codePushOptions = {checkFrequency: CodePush.CheckFrequency.MANUAL};
+//   // AppWithCodePush = CodePush(codePushOptions)(App);
+//   AppWithCodePush = (
+//     <UpdateProvider client={pushyClient}>
+//       <App />
+//     </UpdateProvider>
+//   );
+// }
+
+// export default globalStore.isWeb ? App : AppWithCodePush;

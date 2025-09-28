@@ -1,0 +1,93 @@
+diff --git a/node_modules/react-native-update/android/.project b/node_modules/react-native-update/android/.project
+new file mode 100644
+index 0000000..d7ffacd
+--- /dev/null
++++ b/node_modules/react-native-update/android/.project
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>react-native-update</name>
++	<comment>Project react-native-update created by Buildship.</comment>
++	<projects>
++	</projects>
++	<buildSpec>
++		<buildCommand>
++			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++	</buildSpec>
++	<natures>
++		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
++	</natures>
++	<filteredResources>
++		<filter>
++			<id>1757679673691</id>
++			<name></name>
++			<type>30</type>
++			<matcher>
++				<id>org.eclipse.core.resources.regexFilterMatcher</id>
++				<arguments>node_modules|\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
++			</matcher>
++		</filter>
++	</filteredResources>
++</projectDescription>
+diff --git a/node_modules/react-native-update/src/NativePushy.ts b/node_modules/react-native-update/src/NativePushy.ts
+index e1f6afd..c2ddc1d 100644
+--- a/node_modules/react-native-update/src/NativePushy.ts
++++ b/node_modules/react-native-update/src/NativePushy.ts
+@@ -1,6 +1,20 @@
+-import { TurboModule, TurboModuleRegistry } from 'react-native';
++// 兼容性导入，同时支持新旧版本的 React Native
++let TurboModuleRegistry;
++let NativeModules;
+ 
+-export interface Spec extends TurboModule {
++try {
++  // 尝试使用新的 TurboModule 架构
++  const ReactNative = require('react-native');
++  TurboModuleRegistry = ReactNative.TurboModuleRegistry;
++  NativeModules = ReactNative.NativeModules;
++} catch (error) {
++  // 如果导入失败，使用 NativeModules
++  const ReactNative = require('react-native');
++  NativeModules = ReactNative.NativeModules;
++}
++
++// 定义接口
++export interface Spec {
+   getConstants: () => {
+     downloadRootDir: string;
+     packageVersion: string;
+@@ -40,4 +54,15 @@ export interface Spec extends TurboModule {
+   removeListeners(count: number): void;
+ }
+ 
+-export default TurboModuleRegistry.get<Spec>('Pushy') as Spec | null;
++// 获取原生模块
++let NativePushy = null;
++
++if (TurboModuleRegistry) {
++  // 使用 TurboModule 架构
++  NativePushy = TurboModuleRegistry.get('Pushy');
++} else if (NativeModules) {
++  // 使用旧的 NativeModules 架构
++  NativePushy = NativeModules.Pushy;
++}
++
++export default NativePushy;
+\ No newline at end of file
+diff --git a/node_modules/react-native-update/src/core.ts b/node_modules/react-native-update/src/core.ts
+index 7ebe8b0..7b4255b 100644
+--- a/node_modules/react-native-update/src/core.ts
++++ b/node_modules/react-native-update/src/core.ts
+@@ -3,7 +3,8 @@ import { emptyModule, log } from './utils';
+ const {
+   version: v,
+ } = require('react-native/Libraries/Core/ReactNativeVersion');
+-const RNVersion = `${v.major}.${v.minor}.${v.patch}`;
++// const RNVersion = `${v.major}.${v.minor}.${v.patch}`;
++const RNVersion = "0.72.3";
+ const isTurboModuleEnabled =
+   // https://github.com/facebook/react-native/pull/48362
+   (global as any).__turboModuleProxy || (global as any).RN$Bridgeless;

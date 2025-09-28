@@ -6,91 +6,91 @@ const mainPackage = [
   {
     title: 'prodgobet',
     channelList:[
-      'gbFB01',
+      // 'gbFB01',
       'gobet758'
     ]
   },
-  {
-    title: 'prodlotteryindia',
-    channelList:[
-      'liFB01',
-      'lotteryindia'
-    ]
-  },
-  {
-    title: 'prodluckyone',
-    channelList:[
-      'luFB01',
-      'luFB02',
-      'luFB03',
-      'luFB04',
-      'lucky101'
-    ]
-  },
-  {
-    title: 'prodmybetfive',
-    channelList:[
-      'mybet758',
-      'mbfFB01'
-    ]
-  },
-  {
-    title: 'prodmybetnine',
-    channelList:[
-      'mbnFB01',
-      'mbnFB02',
-      'mbnFB03',
-      'mbnFB04',
-      'mbnFB05',
-      'mybet798'
-    ]
-  },
-  {
-    title: 'prodspinsnine',
-    channelList:[
-      'spnFB01',
-      'spnFB02',
-      'spins999'
-    ]
-  },
-  {
-    title: 'prodspinsseven',
-    channelList:[
-      'spsB01',
-      'spins007'
-    ]
-  },
-  {
-    title: 'prodsupbetone',
-    channelList:[
-      'sboFB01',
-      'sboFB02',
-      'sboFB03',
-      'sboFB04',
-      'sboFB05',
-      'sboFB06',
-      'supbet001'
-    ]
-  },
-  {
-    title: 'prodsupbetseven',
-    channelList:[
-      'sbsFB01',
-      'sbsFB02',
-      'supbet007'
-    ]
-  },
-  {
-    title: 'prodwinlucky',
-    channelList:[
-      'wlFB01',
-      'wlFB02',
-      'wlFB03',
-      'wlFB04',
-      'wlFB05',
-      'winlucky001'
-    ]
-  },
+  // {
+  //   title: 'prodlotteryindia',
+  //   channelList:[
+  //     'liFB01',
+  //     'lotteryindia'
+  //   ]
+  // },
+  // {
+  //   title: 'prodluckyone',
+  //   channelList:[
+  //     'luFB01',
+  //     'luFB02',
+  //     'luFB03',
+  //     'luFB04',
+  //     'lucky101'
+  //   ]
+  // },
+  // {
+  //   title: 'prodmybetfive',
+  //   channelList:[
+  //     'mybet758',
+  //     'mbfFB01'
+  //   ]
+  // },
+  // {
+  //   title: 'prodmybetnine',
+  //   channelList:[
+  //     'mbnFB01',
+  //     'mbnFB02',
+  //     'mbnFB03',
+  //     'mbnFB04',
+  //     'mbnFB05',
+  //     'mybet798'
+  //   ]
+  // },
+  // {
+  //   title: 'prodspinsnine',
+  //   channelList:[
+  //     'spnFB01',
+  //     'spnFB02',
+  //     'spins999'
+  //   ]
+  // },
+  // {
+  //   title: 'prodspinsseven',
+  //   channelList:[
+  //     'spsB01',
+  //     'spins007'
+  //   ]
+  // },
+  // {
+  //   title: 'prodsupbetone',
+  //   channelList:[
+  //     'sboFB01',
+  //     'sboFB02',
+  //     'sboFB03',
+  //     'sboFB04',
+  //     'sboFB05',
+  //     'sboFB06',
+  //     'supbet001'
+  //   ]
+  // },
+  // {
+  //   title: 'prodsupbetseven',
+  //   channelList:[
+  //     'sbsFB01',
+  //     'sbsFB02',
+  //     'supbet007'
+  //   ]
+  // },
+  // {
+  //   title: 'prodwinlucky',
+  //   channelList:[
+  //     'wlFB01',
+  //     'wlFB02',
+  //     'wlFB03',
+  //     'wlFB04',
+  //     'wlFB05',
+  //     'winlucky001'
+  //   ]
+  // },
   {
     title: 'supbet',
     channelList: [
