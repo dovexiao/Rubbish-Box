@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useCallback} from 'react';
 import {
-  Alert,
+  // Alert,
   Image,
   // Linking,
   StatusBar,
@@ -23,7 +23,7 @@ import {
   getUrlParams,
   navigationRef,
   envConfig,
-  fetchPushy,
+  // fetchPushy,
 } from '@utils';
 import globalStore from './services/global.state';
 import {BasicObject} from '@types';
@@ -59,11 +59,11 @@ import {useSettingWindowDimensions} from './store/useSettingStore';
 import {BannerSwiper} from '@/components/basic/swiper';
 import dayjs from 'dayjs';
 import {appPayWaster} from '@services/global.service';
-import {UpdateProvider, Pushy, useUpdate} from 'react-native-update';
+import {UpdateProvider, Pushy} from 'react-native-update'; //useUpdate
 const pushyClient = new Pushy({
   appKey: 'pzyfXnB4qhPsH6JtPfW3_sI-',
-  updateStrategy: null, //-----关闭pushy自带热更新
-  checkStrategy: null,
+  updateStrategy: 'silentAndLater', //-----关闭pushy自带热更新
+  // checkStrategy: null,
   // 注意，默认情况下，在开发环境中不会检查更新
   // 如需在开发环境中调试更新，请设置debug为true
   // 但即便打开此选项，也仅能检查、下载热更，并不能实际应用热更。实际应用热更必须在release包中进行。
@@ -76,20 +76,20 @@ const Stack = createStackNavigator();
 const params = getUrlParams();
 
 function App(): JSX.Element {
-  const {
-    // client,
-    checkUpdate,
-    downloadUpdate,
-    // downloadAndInstallApk
-    switchVersionLater,
-    // switchVersion,
-    // updateInfo,
-    // markSuccess,
-    // packageVersion,
-    // currentHash,
-    // progress: {received, total} = {},
-    // restartApp,
-  } = useUpdate();
+  // const {
+  //   // client,
+  //   checkUpdate,
+  //   downloadUpdate,
+  //   // downloadAndInstallApk
+  //   switchVersionLater,
+  //   // switchVersion,
+  //   // updateInfo,
+  //   // markSuccess,
+  //   // packageVersion,
+  //   // currentHash,
+  //   // progress: {received, total} = {},
+  //   // restartApp,
+  // } = useUpdate();
   if (params.channel) {
     globalStore.channel = params.channel;
   }
@@ -107,13 +107,14 @@ function App(): JSX.Element {
   // const remoteBundleRef = React.useRef<null | SafeAny>();
   // const downloadLock = React.useRef<boolean>(false);
   const [currentRouteName, setCurrentRouteName] = React.useState('');
-  const [loading, setLoading] = React.useState(!globalStore.isWeb);
+  // const [loading, _setLoading] = React.useState(!globalStore.isWeb);
+  const [loading, _setLoading] = React.useState(false);
   const [globalLoading, setGlobalLoading] = React.useState(false);
   const {renderModal: renderToast, show: toastShow} = useToast();
   const {updateWindowDimensions, screenWidth} = useSettingWindowDimensions();
 
   // const [codeInited, setCodeInited] = React.useState(false);
-  const [available, setAvailable] = React.useState(0);
+  const [available, _setAvailable] = React.useState(0);
   const {height} = useWindowDimensions();
   // const initChat = () => {
   //   const chatModule = require('@components/chat');
@@ -195,60 +196,60 @@ function App(): JSX.Element {
       }
     });
   };
-  const checkUpdateVersion = async () => {
-    try {
-      const res = await checkUpdate();
-      const info = res;
-      if (info?.expired) {
-        Alert.alert(
-          'The version is too old',
-          'Please download the latest version later',
-          [
-            {
-              text: i18n.t('splash.tip.sure'),
-              onPress: () => {
-                setLoading(false);
-              },
-            },
-          ],
-        );
-      } else if (info?.update) {
-        // 强制更新
-        Alert.alert(
-          i18n.t('splash.tip.alertTitle'),
-          i18n.t('splash.tip.alertContent'),
-          [
-            {
-              text: i18n.t('splash.tip.download'),
-              onPress: async () => {
-                setAvailable(1);
-                const ok = await downloadUpdate();
-                if (ok) {
-                  switchVersionLater();
-                  Alert.alert(
-                    'Update completed',
-                    'The next startup will automatically apply the new version',
-                    [
-                      {
-                        text: i18n.t('splash.tip.sure'),
-                        onPress: () => {
-                          setLoading(false);
-                        },
-                      },
-                    ],
-                  );
-                }
-              },
-            },
-          ],
-        );
-      } else {
-        setLoading(false);
-      }
-    } catch (error) {
-      setLoading(false);
-    }
-  };
+  // const checkUpdateVersion = async () => {
+  //   try {
+  //     const res = await checkUpdate();
+  //     const info = res;
+  //     if (info?.expired) {
+  //       Alert.alert(
+  //         'The version is too old',
+  //         'Please download the latest version later',
+  //         [
+  //           {
+  //             text: i18n.t('splash.tip.sure'),
+  //             onPress: () => {
+  //               setLoading(false);
+  //             },
+  //           },
+  //         ],
+  //       );
+  //     } else if (info?.update) {
+  //       // 强制更新
+  //       Alert.alert(
+  //         i18n.t('splash.tip.alertTitle'),
+  //         i18n.t('splash.tip.alertContent'),
+  //         [
+  //           {
+  //             text: i18n.t('splash.tip.download'),
+  //             onPress: async () => {
+  //               setAvailable(1);
+  //               const ok = await downloadUpdate();
+  //               if (ok) {
+  //                 switchVersionLater();
+  //                 Alert.alert(
+  //                   'Update completed',
+  //                   'The next startup will automatically apply the new version',
+  //                   [
+  //                     {
+  //                       text: i18n.t('splash.tip.sure'),
+  //                       onPress: () => {
+  //                         setLoading(false);
+  //                       },
+  //                     },
+  //                   ],
+  //                 );
+  //               }
+  //             },
+  //           },
+  //         ],
+  //       );
+  //     } else {
+  //       setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     setLoading(false);
+  //   }
+  // };
   const initApp = () => {
     setToken();
     setUserInfo();
@@ -256,13 +257,13 @@ function App(): JSX.Element {
     globalSubscriptions();
     dailyRecord();
     if (globalStore.isAndroid) {
-      fetchPushy().then(flag => {
-        if (flag) {
-          checkUpdateVersion();
-        } else {
-          setLoading(false);
-        }
-      });
+      // fetchPushy().then(flag => {
+      //   if (flag) {
+      //     checkUpdateVersion();
+      //   } else {
+      //     setLoading(false);
+      //   }
+      // });
       versionModal.handleUpdate();
       const ReactMoE = require('react-native-moengage').default;
       ReactMoE.setEventListener('pushClicked', (notificationPayload: any) => {
