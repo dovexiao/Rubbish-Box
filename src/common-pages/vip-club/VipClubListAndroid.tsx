@@ -500,11 +500,11 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
               right: (screenWidth - vipCardWidth) / 2 + 30,
             },
           ]}>
-          <TouchableOpacity
+          <NativeTouchableOpacity
             activeOpacity={1}
             style={[styles.claimButton]}
             onPressIn={handlePressClaim}
-            disabled={buttonStatus}>
+            disabled={!buttonStatus}>
             <LinearGradient
               colors={
                 buttonStatus ? ['#FF6B35', '#FF8E53'] : ['#888888', '#666666']
@@ -524,7 +524,7 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
                 {'Available'}
               </Text>
             </LinearGradient>
-          </TouchableOpacity>
+          </NativeTouchableOpacity>
         </View>
       ) : null}
 

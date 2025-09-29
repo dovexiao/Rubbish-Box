@@ -65,7 +65,7 @@ interface VipClubListProps {
   onRefresh?: () => void;
   currentLevel?: number;
   // Common props
-  handlePressClaim?: () => void;
+  handlePressClaim: () => void;
   checkIndex?: number;
   currentInfo?: any;
 }
@@ -691,12 +691,15 @@ const VipClubList: React.FC<VipClubListProps> = ({
               right: (screenWidth - vipCardWidth) / 2 + 30,
             },
           ]}>
-          <TouchableOpacity
+          <NativeTouchableOpacity
             style={[styles.claimButton, isPressed && styles.buttonPressed]}
-            onPress={handlePressClaim}
+            onPress={() => {
+              console.log('claim');
+              handlePressClaim();
+            }}
             onPressIn={() => setIsPressed(true)}
             onPressOut={() => setIsPressed(false)}
-            disabled={buttonStatus}>
+            disabled={!buttonStatus}>
             <LinearGradient
               colors={
                 buttonStatus ? ['#FF6B35', '#FF8E53'] : ['#888888', '#666666']
@@ -716,7 +719,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
                 {'Available'}
               </Text>
             </LinearGradient>
-          </TouchableOpacity>
+          </NativeTouchableOpacity>
         </View>
       ) : null}
       {/* 固定在屏幕中间的小球指示器 */}
