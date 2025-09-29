@@ -505,40 +505,79 @@ const Promotion = () => {
   // 七日连冲
   const [canGetAmount, setCanGetAmount] = useState(0); //可领取数量
   const bounceAnim = useRef(new Animated.Value(2)).current;
-  useEffect(() => {
-    const createBounceAnimation = () => {
-      return Animated.sequence([
-        Animated.timing(bounceAnim, {
-          toValue: 2.3,
-          duration: 600,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(bounceAnim, {
-          toValue: 1.7,
-          duration: 600,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]);
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const createBounceAnimation = () => {
+        return Animated.sequence([
+          Animated.timing(bounceAnim, {
+            toValue: 2.3,
+            duration: 600,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(bounceAnim, {
+            toValue: 1.7,
+            duration: 600,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]);
+      };
 
-    const startBounceLoop = () => {
-      Animated.loop(createBounceAnimation(), {
-        iterations: -1, // 无限循环
-      }).start();
-    };
+      const startBounceLoop = () => {
+        Animated.loop(createBounceAnimation(), {
+          iterations: -1, // 无限循环
+        }).start();
+      };
 
-    // 延迟开始跳动动画，让页面先完成淡入
-    const timer = setTimeout(() => {
-      startBounceLoop();
-    }, 800);
+      // 延迟开始跳动动画，让页面先完成淡入
+      const timer = setTimeout(() => {
+        startBounceLoop();
+      }, 1500);
 
-    return () => {
-      clearTimeout(timer);
-      bounceAnim.stopAnimation();
-    };
-  }, [bounceAnim, sevenInfo.length]);
+      return () => {
+        clearTimeout(timer);
+        bounceAnim.stopAnimation();
+      };
+    }, [bounceAnim]),
+  );
+  const btnAnim = useRef(new Animated.Value(1)).current;
+  useFocusEffect(
+    useCallback(() => {
+      const createBounceAnimation = () => {
+        return Animated.sequence([
+          Animated.timing(btnAnim, {
+            toValue: 1.1,
+            duration: 600,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(btnAnim, {
+            toValue: 0.9,
+            duration: 600,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]);
+      };
+
+      const startBounceLoop = () => {
+        Animated.loop(createBounceAnimation(), {
+          iterations: -1, // 无限循环
+        }).start();
+      };
+
+      // 延迟开始跳动动画，让页面先完成淡入
+      const timer = setTimeout(() => {
+        startBounceLoop();
+      }, 1500);
+
+      return () => {
+        clearTimeout(timer);
+        btnAnim.stopAnimation();
+      };
+    }, [btnAnim]),
+  );
   const getSevenContinuousBonus = useCallback(
     (item: any) => {
       if (item?.finished && !item?.received) {
@@ -791,14 +830,25 @@ const Promotion = () => {
                                     backgroundColor: 'transparent',
                                   }}
                                 />
-                                <LazyImage
-                                  imageUrl={require('@/assets/imgs/promotion/pro_btn_bg.webp')}
-                                  width={66}
-                                  height={22}
+                                <Animated.Image
+                                  source={require('@/assets/imgs/promotion/pro_btn_bg.webp')}
+                                  // width={66}
+                                  // height={22}
                                   style={{
+                                    width: 66,
+                                    height: 22,
                                     zIndex: -1,
                                     position: 'absolute',
                                     left: -14,
+                                    transform: [
+                                      {
+                                        scale:
+                                          currentItem?.finished &&
+                                          !currentItem?.received
+                                            ? btnAnim
+                                            : 1,
+                                      },
+                                    ],
                                   }}
                                 />
                               </View>
@@ -865,8 +915,8 @@ const Promotion = () => {
                                     ],
                                   }}
                                 />
-                                <LazyImage
-                                  imageUrl={require('@/assets/imgs/promotion/pro_btn_bg.webp')}
+                                <Animated.Image
+                                  source={require('@/assets/imgs/promotion/pro_btn_bg.webp')}
                                   width={66}
                                   height={22}
                                   style={{
@@ -876,7 +926,11 @@ const Promotion = () => {
                                     top: -1,
                                     transform: [
                                       {
-                                        scale: 1.3,
+                                        scale:
+                                          currentItem?.finished &&
+                                          !currentItem?.received
+                                            ? btnAnim
+                                            : 1,
                                       },
                                     ],
                                   }}
@@ -970,6 +1024,7 @@ const Promotion = () => {
     onPressGetBonus1,
     proAmountSevenImages,
     sevenInfo,
+    btnAnim,
   ]);
   const renderItem = ({item}: ListRenderItemInfo<PromotionListItem>) => {
     return (
