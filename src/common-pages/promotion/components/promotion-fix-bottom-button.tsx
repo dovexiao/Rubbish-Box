@@ -15,7 +15,7 @@ export interface PromotionButtonProps {
 }
 
 const PromotionFixedBottomButton: React.FC<PromotionButtonProps> = ({
-  type = 'primary',
+  type = 'linear-primary',
   onPress,
   disabled,
   text,
