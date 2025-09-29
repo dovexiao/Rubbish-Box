@@ -81,13 +81,14 @@ function App(): JSX.Element {
     checkUpdate,
     downloadUpdate,
     // downloadAndInstallApk
-    // switchVersionLater,
-    switchVersion,
+    switchVersionLater,
+    // switchVersion,
     // updateInfo,
     // markSuccess,
     // packageVersion,
     // currentHash,
     // progress: {received, total} = {},
+    // restartApp,
   } = useUpdate();
   if (params.channel) {
     globalStore.channel = params.channel;
@@ -213,19 +214,30 @@ function App(): JSX.Element {
         );
       } else if (info?.update) {
         // 强制更新
-        setAvailable(1);
         Alert.alert(
           i18n.t('splash.tip.alertTitle'),
           i18n.t('splash.tip.alertContent'),
           [
             {
-              text: i18n.t('splash.tip.restart'),
+              text: i18n.t('splash.tip.download'),
               onPress: async () => {
+                setAvailable(1);
                 const ok = await downloadUpdate();
                 if (ok) {
-                  switchVersion();
+                  switchVersionLater();
+                  Alert.alert(
+                    'Update completed',
+                    'The next startup will automatically apply the new version',
+                    [
+                      {
+                        text: i18n.t('splash.tip.sure'),
+                        onPress: () => {
+                          setLoading(false);
+                        },
+                      },
+                    ],
+                  );
                 }
-                setLoading(false);
               },
             },
           ],
@@ -244,6 +256,13 @@ function App(): JSX.Element {
     globalSubscriptions();
     dailyRecord();
     if (globalStore.isAndroid) {
+      fetchPushy().then(flag => {
+        if (flag) {
+          checkUpdateVersion();
+        } else {
+          setLoading(false);
+        }
+      });
       versionModal.handleUpdate();
       const ReactMoE = require('react-native-moengage').default;
       ReactMoE.setEventListener('pushClicked', (notificationPayload: any) => {
@@ -322,44 +341,34 @@ function App(): JSX.Element {
     false,
     () => {
       // 如果需要更新,就不触发弹窗
-      fetchPushy().then(flag => {
-        if (flag) {
-          checkUpdateVersion();
-        } else {
-          setLoading(false);
-        }
-        globalStore.asyncGetItem('last_check_pop').then(_res => {
-          // const timeCode = parseInt(res || '0', 10);
-          // if (
-          //   !timeCode ||
-          //   timeCode < new Date(new Date().toLocaleDateString()).getTime()
-          // ) {
-          setTimeout(() => {
-            checkPop().then(popInfo => {
-              setBannerList(popInfo);
-              if (popInfo?.length > 0) {
-                Image.getSize(popInfo[0].bannerImg, (width, height) => {
-                  setImageRatio(height / width);
-                  trigglePop();
-                });
-              }
-              // if (popInfo?.status === 1 && popInfo?.popImg) {
-              //   Image.getSize(popInfo.popImg, (width, height) => {
-              //     setOverlayState({
-              //       ...popInfo,
-              //       imageRatio: height / width,
-              //     });
-              //     trigglePop();
-              //   });
-              // }
-            });
-            globalStore.asyncSetItem(
-              'last_check_pop',
-              new Date().getTime() + '',
-            );
-          }, 1000);
-          // }
-        });
+      globalStore.asyncGetItem('last_check_pop').then(_res => {
+        // const timeCode = parseInt(res || '0', 10);
+        // if (
+        //   !timeCode ||
+        //   timeCode < new Date(new Date().toLocaleDateString()).getTime()
+        // ) {
+        setTimeout(() => {
+          checkPop().then(popInfo => {
+            setBannerList(popInfo);
+            if (popInfo?.length > 0) {
+              Image.getSize(popInfo[0].bannerImg, (width, height) => {
+                setImageRatio(height / width);
+                trigglePop();
+              });
+            }
+            // if (popInfo?.status === 1 && popInfo?.popImg) {
+            //   Image.getSize(popInfo.popImg, (width, height) => {
+            //     setOverlayState({
+            //       ...popInfo,
+            //       imageRatio: height / width,
+            //     });
+            //     trigglePop();
+            //   });
+            // }
+          });
+          globalStore.asyncSetItem('last_check_pop', new Date().getTime() + '');
+        }, 1000);
+        // }
       });
     },
     false,
