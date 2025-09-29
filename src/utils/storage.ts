@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export enum StorageEnum {
   token = 'userToken',
   user = 'userInfo',
+  showPushyFlag = 'showPushyFlag',
 }
 
 export const getStorage = async <T>(key: StorageEnum): Promise<T | null> => {

@@ -18,7 +18,13 @@ import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import MainNav from './main-navigation';
 import theme from '@style';
 import {linking, routes} from './route';
-import {getUUID, getUrlParams, navigationRef, envConfig} from '@utils';
+import {
+  getUUID,
+  getUrlParams,
+  navigationRef,
+  envConfig,
+  fetchPushy,
+} from '@utils';
 import globalStore from './services/global.state';
 import {BasicObject} from '@types';
 import {DialogLoading} from '@basicComponents/dialog';
@@ -195,7 +201,7 @@ function App(): JSX.Element {
       if (info?.expired) {
         Alert.alert(
           'The version is too old',
-          'Please download the latest version',
+          'Please download the latest version later',
           [
             {
               text: i18n.t('splash.tip.sure'),
@@ -208,14 +214,14 @@ function App(): JSX.Element {
       } else if (info?.update) {
         // 强制更新
         setAvailable(1);
-        const ok = await downloadUpdate();
         Alert.alert(
           i18n.t('splash.tip.alertTitle'),
           i18n.t('splash.tip.alertContent'),
           [
             {
               text: i18n.t('splash.tip.restart'),
-              onPress: () => {
+              onPress: async () => {
+                const ok = await downloadUpdate();
                 if (ok) {
                   switchVersion();
                 }
@@ -246,7 +252,6 @@ function App(): JSX.Element {
          */
         console.log('pushClicked', notificationPayload);
       });
-      checkUpdateVersion();
     } else if (globalStore.isWeb) {
       globalStore.asyncGetItem('channel').then(channel => {
         globalStore.channel = channel || getUrlParams().channel;
@@ -315,39 +320,46 @@ function App(): JSX.Element {
   const [imageRatio, setImageRatio] = useState(281 / 360);
   const versionModal = useVersionModal(
     false,
-    versionInfo => {
-      if (versionInfo) {
-        // 如果需要更新,就不触发弹窗
-        return;
-      }
-      globalStore.asyncGetItem('last_check_pop').then(_res => {
-        // const timeCode = parseInt(res || '0', 10);
-        // if (
-        //   !timeCode ||
-        //   timeCode < new Date(new Date().toLocaleDateString()).getTime()
-        // ) {
-        setTimeout(() => {
-          checkPop().then(popInfo => {
-            setBannerList(popInfo);
-            if (popInfo?.length > 0) {
-              Image.getSize(popInfo[0].bannerImg, (width, height) => {
-                setImageRatio(height / width);
-                trigglePop();
-              });
-            }
-            // if (popInfo?.status === 1 && popInfo?.popImg) {
-            //   Image.getSize(popInfo.popImg, (width, height) => {
-            //     setOverlayState({
-            //       ...popInfo,
-            //       imageRatio: height / width,
-            //     });
-            //     trigglePop();
-            //   });
-            // }
-          });
-          globalStore.asyncSetItem('last_check_pop', new Date().getTime() + '');
-        }, 1000);
-        // }
+    () => {
+      // 如果需要更新,就不触发弹窗
+      fetchPushy().then(flag => {
+        if (flag) {
+          checkUpdateVersion();
+        } else {
+          setLoading(false);
+        }
+        globalStore.asyncGetItem('last_check_pop').then(_res => {
+          // const timeCode = parseInt(res || '0', 10);
+          // if (
+          //   !timeCode ||
+          //   timeCode < new Date(new Date().toLocaleDateString()).getTime()
+          // ) {
+          setTimeout(() => {
+            checkPop().then(popInfo => {
+              setBannerList(popInfo);
+              if (popInfo?.length > 0) {
+                Image.getSize(popInfo[0].bannerImg, (width, height) => {
+                  setImageRatio(height / width);
+                  trigglePop();
+                });
+              }
+              // if (popInfo?.status === 1 && popInfo?.popImg) {
+              //   Image.getSize(popInfo.popImg, (width, height) => {
+              //     setOverlayState({
+              //       ...popInfo,
+              //       imageRatio: height / width,
+              //     });
+              //     trigglePop();
+              //   });
+              // }
+            });
+            globalStore.asyncSetItem(
+              'last_check_pop',
+              new Date().getTime() + '',
+            );
+          }, 1000);
+          // }
+        });
       });
     },
     false,
@@ -593,19 +605,12 @@ function App(): JSX.Element {
           />
         </NativeTouchableOpacity>
       </Overlay>
-      {renderLanguageModal}
+      {!loading && renderLanguageModal}
     </SafeAreaProvider>
   );
 }
 
 export default function Root() {
-  // const [updateModule, setUpdateModule] = React.useState<any>(null);
-
-  // React.useEffect(() => {
-  //   if (!globalStore.isWeb) {
-  //     import('react-native-update').then(setUpdateModule);
-  //   }
-  // }, []);
   if (globalStore.isWeb || !pushyClient) {
     return <App />;
   }
@@ -615,14 +620,3 @@ export default function Root() {
     </UpdateProvider>
   );
 }
-// if (globalStore.isAndroid) {
-//   // let codePushOptions = {checkFrequency: CodePush.CheckFrequency.MANUAL};
-//   // AppWithCodePush = CodePush(codePushOptions)(App);
-//   AppWithCodePush = (
-//     <UpdateProvider client={pushyClient}>
-//       <App />
-//     </UpdateProvider>
-//   );
-// }
-
-// export default globalStore.isWeb ? App : AppWithCodePush;
