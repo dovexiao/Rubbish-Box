@@ -17,18 +17,23 @@ interface HomePopTwoProps {
   isImageVisible: boolean;
   setIsImageVisible: React.Dispatch<React.SetStateAction<boolean>>;
   amount: number;
+  cb?: () => void;
 }
 
 const GetBonusModal: React.FC<HomePopTwoProps> = ({
   isImageVisible,
   setIsImageVisible,
   amount = 0,
+  cb,
 }) => {
   const {i18n} = useTranslation();
   const {screenWidth} = useScreenSize();
   // Modal关闭
   const closeImage = () => {
     setIsImageVisible(false);
+    if (cb) {
+      cb();
+    }
   };
   const onPressGetBonus = () => {
     closeImage();

@@ -43,11 +43,16 @@ const VipClubList: React.FC<VipClubListProps> = props => {
   const handlePressClaim = async () => {
     if (currentInfo.receive === 1 && currentInfo.weekRewardAmount > 0) {
       await appVipReceive();
+      setCurrentInfo({
+        weekRewardAmount: currentInfo.weekRewardAmount || 0,
+      });
       setIsImageVisible(true);
-      setCurrentInfo({});
     }
   };
-
+  const cbFunction = async () => {
+    const resCurrent = await appVipCurrent();
+    setCurrentInfo(resCurrent);
+  };
   if (Platform.OS === 'web') {
     return (
       <View>
@@ -60,6 +65,7 @@ const VipClubList: React.FC<VipClubListProps> = props => {
           isImageVisible={isImageVisible}
           amount={currentInfo.weekRewardAmount || 0}
           setIsImageVisible={setIsImageVisible}
+          cb={cbFunction}
         />
       </View>
     );
@@ -86,6 +92,7 @@ const VipClubList: React.FC<VipClubListProps> = props => {
           isImageVisible={isImageVisible}
           amount={currentInfo.weekRewardAmount || 0}
           setIsImageVisible={setIsImageVisible}
+          cb={cbFunction}
         />
       </View>
     );
@@ -102,6 +109,7 @@ const VipClubList: React.FC<VipClubListProps> = props => {
         isImageVisible={isImageVisible}
         amount={currentInfo.weekRewardAmount || 0}
         setIsImageVisible={setIsImageVisible}
+        cb={cbFunction}
       />
     </View>
   );

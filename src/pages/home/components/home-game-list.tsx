@@ -19,9 +19,10 @@ interface BoxData {
   text: string;
 }
 
-const HomeGameList: React.FC<{setSelectedGame: (id: number) => void}> = ({
-  setSelectedGame,
-}) => {
+const HomeGameList: React.FC<{
+  selectedGame?: number;
+  setSelectedGame: (id: number) => void;
+}> = ({selectedGame, setSelectedGame}) => {
   const {i18n} = useTranslation();
   const [selectedBox, setSelectedBox] = useState<number>(1);
   const [gameData, setGameData] = useState<BoxData[]>([]); // 状态管理游戏数据
@@ -89,6 +90,11 @@ const HomeGameList: React.FC<{setSelectedGame: (id: number) => void}> = ({
     getGameOrder();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    setSelectedBox(selectedGame || 1);
+    setSelectedGame(selectedGame || 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedGame]);
   const getUrl = async () => {
     if (!globalStore.token) {
       goTo('Login');

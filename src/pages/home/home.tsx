@@ -6,6 +6,7 @@ import {
   Animated,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
 } from 'react-native';
 import theme from '@style';
 import {getBannerList, getKeralaList} from './home.service';
@@ -66,12 +67,73 @@ const Home = () => {
         setRefreshing(false);
       });
   }, []);
+  // 吸顶相关状态
+  const [_stickyHeaderHeight, setStickyHeaderHeight] = useState(0);
+  const [triggerHeight, setTriggerHeight] = useState(200); // 初始默认值
+  // const [showStickyHeader, setShowStickyHeader] = useState(false);
 
-  const handleScroll = useCallback(({}: {value: number}) => {
-    // console.log(value);
-    // const y = value;
-    // const totalTop = topHeight.current;
-    // setShowTabs(y >= totalTop);
+  // 吸顶动画值
+  // const stickyHeaderAnim = useRef(new Animated.Value(0)).current;
+  const stickyContentRef = useRef<View>(null);
+
+  // 根据平台设置不同的吸顶高度
+  const getStickyHeight = useMemo(() => {
+    if (Platform.OS === 'web') {
+      return 110; // Web端吸顶高度
+    } else if (Platform.OS === 'android') {
+      return 52; // Android端吸顶高度
+    } else {
+      return 70; // iOS端吸顶高度（备用）
+    }
+  }, []);
+
+  // 动态计算吸顶透明度和位移
+  const stickyOpacity = useMemo(() => {
+    const bufferZone = 20;
+    const startPoint = Math.max(triggerHeight - bufferZone, 0);
+    const endPoint = triggerHeight + bufferZone;
+
+    // 确保inputRange数组递增且有效
+    const inputRange =
+      startPoint >= endPoint ? [0, 100, 200] : [0, startPoint, endPoint];
+
+    return scrollAnim.interpolate({
+      inputRange,
+      outputRange: [0, 0, 1],
+      extrapolate: 'clamp',
+    });
+  }, [scrollAnim, triggerHeight]);
+
+  const stickyTranslateY = useMemo(() => {
+    const bufferZone = 20;
+    const startPoint = Math.max(triggerHeight - bufferZone, 0);
+    const endPoint = triggerHeight + bufferZone;
+
+    // 确保inputRange数组递增且有效
+    const inputRange =
+      startPoint >= endPoint ? [0, 100, 200] : [0, startPoint, endPoint];
+
+    return scrollAnim.interpolate({
+      inputRange,
+      outputRange: [-getStickyHeight, -getStickyHeight, 0],
+      extrapolate: 'clamp',
+    });
+  }, [scrollAnim, getStickyHeight, triggerHeight]);
+  const handleScroll = useCallback(() => {
+    // const scrollY = value;
+    // const triggerPoint = topHeight.current - getStickyHeight - 80;
+    // // 使用动画驱动的实时效果
+    // const shouldShowSticky = scrollY >= triggerPoint;
+    // console.log('shouldShowSticky', shouldShowSticky, triggerPoint);
+    // if (shouldShowSticky !== showStickyHeader) {
+    //   setShowStickyHeader(shouldShowSticky);
+    //   // 平滑的动画过渡
+    //   Animated.timing(stickyHeaderAnim, {
+    //     toValue: shouldShowSticky ? 1 : 0,
+    //     duration: 200,
+    //     useNativeDriver: true,
+    //   }).start();
+    // }
   }, []);
 
   const debouncedHandleScroll = useMemo(
@@ -255,6 +317,34 @@ const Home = () => {
         <View style={[theme.fill.fill, theme.flex.col]}>
           <HomeHeader />
           {globalStore.isWeb && !globalStore.viewType && <Download />}
+          {/* 吸顶内容 - 固定在顶部 */}
+          {/* {showStickyHeader && ( */}
+          <Animated.View
+            style={{
+              position: 'absolute',
+              top: getStickyHeight,
+              left: 0,
+              right: 0,
+              // height: getStickyHeight,
+              height: 115,
+              zIndex: 1000,
+              elevation: 10,
+              backgroundColor: theme.basicColor.newBgInTwo || '#000',
+              transform: [{translateY: stickyTranslateY}],
+              opacity: stickyOpacity,
+            }}>
+            <View
+              ref={stickyContentRef}
+              onLayout={e => {
+                setStickyHeaderHeight(e.nativeEvent.layout.height);
+              }}>
+              <HomeGameList
+                setSelectedGame={setSelectedGame}
+                selectedGame={selectedGame}
+              />
+            </View>
+          </Animated.View>
+          {/* )} */}
           <Animated.ScrollView
             ref={scrollViewRef}
             scrollEventThrottle={16}
@@ -279,9 +369,17 @@ const Home = () => {
             <View
               onLayout={e => {
                 topHeight.current = e.nativeEvent.layout.height;
+
+                const height = e.nativeEvent.layout.height;
+                topHeight.current = height;
+                // 更新触发高度，重新计算动画插值
+                setTriggerHeight(Math.max(height - getStickyHeight, 0));
               }}>
               <HomeBanner bannerList={bannerList} />
-              <HomeGameList setSelectedGame={setSelectedGame} />
+              <HomeGameList
+                setSelectedGame={setSelectedGame}
+                selectedGame={selectedGame}
+              />
               {selectedGame === 2 && <HomeGameTop />}
             </View>
             {/* {selectedGame === 2 && showTabs ? (
