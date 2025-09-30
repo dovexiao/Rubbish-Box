@@ -44,6 +44,7 @@ const VipClubList: React.FC<VipClubListProps> = props => {
     if (currentInfo.receive === 1 && currentInfo.weekRewardAmount > 0) {
       await appVipReceive();
       setIsImageVisible(true);
+      setCurrentInfo({});
     }
   };
 
