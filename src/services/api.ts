@@ -1,0 +1,287 @@
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
+
+import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS, UPLOAD_API_URL } from "../config/api"
+import { IS_DEV } from "../config/env"
+import { getDeviceInfoForAPI } from "../utils/deviceInfo"
+
+/**
+ * 扩展AxiosRequestConfig类型，添加metadata字段
+ */
+declare module "axios" {
+  interface AxiosRequestConfig {
+    metadata?: {
+      startTime: number
+    }
+  }
+}
+
+/**
+ * 日志配置
+ */
+const LOG_CONFIG = {
+  ENABLED: IS_DEV, // 只在开发环境打印日志
+  SHOW_REQUEST: true,
+  SHOW_RESPONSE: true,
+  SHOW_ERROR: true,
+  MAX_DATA_LENGTH: 1000, // 最大数据长度，超过则截断
+}
+
+/**
+ * 格式化日志数据
+ */
+const formatLogData = (data: any): string => {
+  if (!data) return "无"
+
+  try {
+    const jsonStr = JSON.stringify(data, null, 2)
+    if (jsonStr.length > LOG_CONFIG.MAX_DATA_LENGTH) {
+      return jsonStr.substring(0, LOG_CONFIG.MAX_DATA_LENGTH) + "... (数据过长，已截断)"
+    }
+    return jsonStr
+  } catch {
+    return String(data)
+  }
+}
+
+/**
+ * 安全的日志打印
+ */
+const safeLog = (message: string, ...args: any[]) => {
+  if (LOG_CONFIG.ENABLED) {
+    console.log(message, ...args)
+  }
+}
+
+/**
+ * API基础配置
+ * 对应UniApp项目中的utils/http.ts和utils/request.ts
+ */
+
+// 创建axios实例
+const apiClient: AxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: API_TIMEOUT,
+  headers: DEFAULT_HEADERS,
+})
+
+// 请求拦截器
+apiClient.interceptors.request.use(
+  async (config) => {
+    // 添加请求开始时间
+    config.metadata = { startTime: Date.now() }
+
+    // 添加设备信息到请求参数中
+    try {
+      const deviceInfo = await getDeviceInfoForAPI()
+      
+      // 根据请求方法添加设备信息
+      if (config.method?.toLowerCase() === 'get') {
+        // GET请求添加到params
+        config.params = {
+          ...config.params,
+          ...deviceInfo
+        }
+      } else {
+        // POST/PUT等请求添加到data
+        if (config.data && typeof config.data === 'object') {
+          config.data = {
+            ...config.data,
+            ...deviceInfo
+          }
+        } else {
+          config.data = {
+            ...deviceInfo,
+            ...(config.data || {})
+          }
+        }
+      }
+      
+      safeLog("📱 已添加设备信息:", deviceInfo.device_code)
+    } catch (error) {
+      safeLog("⚠️ 添加设备信息失败:", error)
+    }
+
+    // 打印请求详细信息
+    if (LOG_CONFIG.ENABLED && LOG_CONFIG.SHOW_REQUEST) {
+      safeLog("🚀 API请求开始 ===================================")
+      safeLog("📍 请求URL:", (config.baseURL || "") + (config.url || ""))
+      safeLog("📋 请求方法:", config.method?.toUpperCase())
+      safeLog("📦 请求头:", formatLogData(config.headers))
+      safeLog("📄 请求参数:", formatLogData(config.params))
+      safeLog("📝 请求数据:", formatLogData(config.data))
+      safeLog("⏱️ 超时时间:", config.timeout + "ms")
+      safeLog("🕐 请求时间:", new Date().toLocaleTimeString())
+      safeLog("===============================================")
+    }
+
+    // 从存储中获取token
+    try {
+      const { useUserStore } = await import("../stores/userStore")
+      const userStore = useUserStore.getState()
+      const token = userStore.token || "" // 直接从 userStore.token 获取
+
+      if (token && typeof token === "string") {
+        config.headers.Authorization = `Bearer ${token}`
+        safeLog("🔐 已添加Token:", token.substring(0, 20) + "...")
+      } else {
+        safeLog("⚠️ Token不存在或为空")
+      }
+    } catch (error) {
+      safeLog("⚠️ 获取Token失败:", error)
+    }
+
+    return config
+  },
+  (error) => {
+    safeLog("❌ 请求拦截器错误:", error)
+    return Promise.reject(error)
+  },
+)
+
+// 响应拦截器
+apiClient.interceptors.response.use(
+  (response) => {
+    // 计算请求耗时
+    const duration = response.config.metadata?.startTime
+      ? Date.now() - response.config.metadata.startTime
+      : 0
+
+    // 打印响应详细信息
+    if (LOG_CONFIG.ENABLED && LOG_CONFIG.SHOW_RESPONSE) {
+      safeLog("✅ API响应成功 ===================================")
+      safeLog("📍 响应URL:", response.config.url)
+      safeLog("📊 响应状态:", response.status, response.statusText)
+      safeLog("📋 响应头:", formatLogData(response.headers))
+      safeLog("📄 响应数据:", formatLogData(response.data))
+      safeLog("⏱️ 请求耗时:", duration + "ms")
+      safeLog("🕐 响应时间:", new Date().toLocaleTimeString())
+      safeLog("===============================================")
+    }
+
+    // 处理响应数据
+    const res = response.data
+
+    // 根据API的返回格式进行处理
+    if (res.code === 201 || res.code === 200) {
+      safeLog("✅ 请求成功，返回数据:", formatLogData(res.data))
+      return res.data
+    }
+
+    // 处理HTTP 401状态码
+    if (response.status === 401) {
+      safeLog("🔐 未授权，需要重新登录")
+      // 可以在这里添加重定向到登录页的逻辑
+      return Promise.reject(new Error("登录已失效，请重新登录"))
+    }
+
+    // 处理其他HTTP状态码错误
+    if (response.status !== 200 && response.status !== 201) {
+      safeLog("⚠️ HTTP状态码错误:", response.status, response.statusText)
+      return Promise.reject(new Error(`HTTP ${response.status}: ${response.statusText}`))
+    }
+
+    // 处理业务状态码错误
+    safeLog("⚠️ 业务错误:", res.code, res.message)
+    return Promise.reject(new Error(res.message || "请求失败"))
+  },
+  (error) => {
+    // 计算请求耗时
+    const duration = error.config?.metadata?.startTime
+      ? Date.now() - error.config.metadata.startTime
+      : 0
+
+    // 打印错误详细信息
+    if (LOG_CONFIG.ENABLED && LOG_CONFIG.SHOW_ERROR) {
+      safeLog("❌ API请求失败 ===================================")
+      safeLog("📍 错误URL:", error.config?.url || "未知")
+      safeLog("📊 错误状态:", error.response?.status || "网络错误")
+      safeLog("📋 错误信息:", error.message)
+      safeLog("📄 错误响应:", formatLogData(error.response?.data))
+      safeLog("⏱️ 请求耗时:", duration + "ms")
+      safeLog("🕐 错误时间:", new Date().toLocaleTimeString())
+      safeLog("🔍 完整错误:", error)
+      safeLog("===============================================")
+    }
+
+    return Promise.reject(error)
+  },
+)
+
+/**
+ * 通用请求方法
+ */
+export const request = async <T = any>(config: AxiosRequestConfig): Promise<T> => {
+  try {
+    const response = await apiClient(config)
+    return response as T
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+/**
+ * GET请求
+ */
+export const get = <T = any>(url: string, params?: any): Promise<T> => {
+  return request<T>({
+    method: "GET",
+    url,
+    params,
+  })
+}
+
+/**
+ * POST请求
+ */
+export const post = <T = any>(url: string, data?: any): Promise<T> => {
+  return request<T>({
+    method: "POST",
+    url,
+    data,
+  })
+}
+
+/**
+ * PUT请求
+ */
+export const put = <T = any>(url: string, data?: any): Promise<T> => {
+  return request<T>({
+    method: "PUT",
+    url,
+    data,
+  })
+}
+
+/**
+ * DELETE请求
+ */
+export const del = <T = any>(url: string, params?: any): Promise<T> => {
+  return request<T>({
+    method: "DELETE",
+    url,
+    params,
+  })
+}
+
+/**
+ * 文件上传请求
+ */
+export const upload = <T = any>(file: FormData): Promise<T> => {
+  return request<T>({
+    method: "POST",
+    url: UPLOAD_API_URL,
+    data: file,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+}
+
+export default {
+  request,
+  get,
+  post,
+  put,
+  del,
+  upload,
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>EPUB 阅读器</title>
+    <script src="/static/epub-reader/epub.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script> -->
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #epub-viewer {
+            width: 100vw;
+            height: 100vh;
+            background: #f5faff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="epub-viewer"></div>
+    <script>
+        console.log(ePub)
+        var book = ePub('/static/epub-reader/the-great-gatsby.epub'); // 改为你的epub文件路径
+        var rendition = book.renderTo('epub-viewer', { width: '100vw', height: '100vh' });
+        rendition.display();
+    </script>
+</body>
+
+</html>
