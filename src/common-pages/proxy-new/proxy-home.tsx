@@ -5,7 +5,7 @@ import {
   ScrollView,
   RefreshControl,
   StyleSheet,
-  Image,
+  // Image,
 } from 'react-native';
 import {toAgentApply} from '@utils'; //goBack
 import i18n from '@i18n';
@@ -22,10 +22,8 @@ import {AgentInfo} from './types';
 import {usePaging} from './hooks/home';
 import HomeUser from './components/home-user';
 
-const agentRuleImg = require('@/assets/imgs/proxy/agentrule1.webp'); // <-- 引入图片
-
 const NewProxyHome = () => {
-  const basePx = globalStore.screenWidth / 375;
+  // const basePx = globalStore.screenWidth / 375;
   const {doShare, initShare, code, refreshCode, copy} = useShare();
   const [_meAvatar, setMeAvatar] = useState<string>();
   const [refreshing, setRefreshing] = useState(false);
@@ -139,13 +137,13 @@ const NewProxyHome = () => {
             onCopy={() => copy(code)}
           />
         </View>
-        <View style={styles.bottomImgView}>
-          <Image
-            source={agentRuleImg}
-            style={{width: basePx * 375, height: 2333}}
-            resizeMode="contain"
-          />
-        </View>
+        {/*<View style={styles.bottomImgView}>*/}
+        {/*  <Image*/}
+        {/*    source={agentRuleImg}*/}
+        {/*    style={{width: basePx * 375, height: 2333}}*/}
+        {/*    resizeMode="contain"*/}
+        {/*  />*/}
+        {/*</View>*/}
         <View style={[styles.bottomView]} />
         <View style={[styles.bottomView]} />
       </ScrollView>
