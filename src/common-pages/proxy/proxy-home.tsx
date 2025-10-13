@@ -147,7 +147,7 @@ const ProxyHome = () => {
           />
           <Image
             source={{uri: 'https://www.staticimg007.com/static/agent3.png'}}
-            style={{width: '100%', height: 1149 * percent}}
+            style={{width: '100%', height: 1066 * percent}}
             resizeMode="cover"
           />
           <View
