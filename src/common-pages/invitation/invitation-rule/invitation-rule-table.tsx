@@ -53,7 +53,7 @@ const InvitationRuleTable = () => {
         theme.flex.col,
         theme.borderRadius.m,
         theme.overflow.hidden,
-        theme.background.mainDark,
+        theme.background.newFirst1,
       ]}>
       <View
         style={[
@@ -94,8 +94,8 @@ const InvitationRuleTable = () => {
               {
                 backgroundColor:
                   index % 2 === 0
-                    ? theme.basicColor.primary50
-                    : theme.basicColor.primary30,
+                    ? theme.basicColor.transparentMedium
+                    : theme.basicColor.brown,
               },
             ]}>
             {itemCols.map((col, colIndex) => (

@@ -22,7 +22,7 @@ const InvitationRuleContent = () => {
         theme.padding.btml,
         ruleStyle.contentWrap,
         theme.borderRadius.m,
-        theme.background.mainDark,
+        theme.background.newFirst,
       ]}>
       <View style={[theme.flex.center]}>
         <RuleHeaderIcon width={218} height={32} />

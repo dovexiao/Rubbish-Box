@@ -5,7 +5,7 @@ import {useInnerStyle} from './vip.hooks';
 // import VipCardList from './vip-card-list';
 // import VipTableList from './vip-table-list';
 import DetailNavTitle from '@businessComponents/detail-nav-title';
-import {goTo, goToWithLogin} from '@/utils'; //goBack
+import {goTo, goBack, goToWithLogin} from '@/utils'; //goBack
 import {
   VipProgressInfo,
   getVipRender,
@@ -129,7 +129,7 @@ const Vip = () => {
       style={[theme.fill.fillW, theme.flex.col, vipStyle.container]}>
       <DetailNavTitle
         title={i18n.t('vip.title')}
-        // onBack={() => goBack()}
+        onBack={() => goBack()}
         hideServer
       />
       <ScrollView>

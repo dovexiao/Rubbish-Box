@@ -41,7 +41,7 @@ const InvitationInfo: React.FC<InvitationInfoProps> = ({
       style={[
         theme.flex.col,
         theme.padding.xxl,
-        theme.background.mainDark,
+        theme.background.newFirst1,
         theme.borderRadius.l,
       ]}>
       <View style={[theme.flex.col, homeStyle.infoUpItem]}>

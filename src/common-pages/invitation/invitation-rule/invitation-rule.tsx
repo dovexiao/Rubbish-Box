@@ -30,7 +30,7 @@ const InvitationRule = () => {
             style={[
               theme.flex.col,
               theme.padding.l,
-              theme.background.mainDark,
+              theme.background.newFirst,
               theme.margin.btml,
               theme.borderRadius.m,
             ]}>

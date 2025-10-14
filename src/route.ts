@@ -8,6 +8,7 @@ import {BasicObject, NavigatorScreenProps} from './types';
 import globalStore from './services/global.state';
 import Result from './common-pages/result';
 // import Referral from './pages/referral';
+import Vip from './common-pages/vip/vip';
 import PaidSuccess from './common-pages/paid-success';
 import Recharge from './common-pages/recharge';
 import Withdraw from './common-pages/withdraw';
@@ -137,11 +138,11 @@ const routes: Routes[] = [
     component: AddBank,
     link: 'add-bank',
   },
-  // {
-  //   name: 'Vip',
-  //   component: Vip,
-  //   link: 'vip',
-  // },
+  {
+    name: 'Vip',
+    component: Vip,
+    link: 'vip',
+  },
   {
     name: 'Wallet',
     component: Wallet,

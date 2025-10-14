@@ -40,7 +40,7 @@ const InvitationBouns: React.FC<InvitationBounsProps> = ({
     <View
       style={[
         theme.flex.col,
-        theme.background.mainDark,
+        theme.background.newFirst1,
         theme.borderRadius.m,
         theme.margin.topl,
       ]}>

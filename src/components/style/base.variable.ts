@@ -202,6 +202,7 @@ export const backgroundColor = {
 
   purple80: 'rgba(0,0,0,0.89)',
   newFirst: 'rgb(161, 37, 28)',
+  newFirst1: 'rgb(219 45 32)',
   white35: '#ffffff59',
   lightblue: '#e7f3f1',
 };

@@ -59,7 +59,7 @@ export const mainPageList: {
     activeImg: require('@assets/icons/home/agency-select.webp'),
   },
   {
-    name: i18n.t('vip.title'),
+    name: i18n.t('headers.earn'),
     link: 'index/invitation',
     component: Invitation,
     img: require('@assets/icons/home/vip.webp'),

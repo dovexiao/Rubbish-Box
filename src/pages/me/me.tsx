@@ -148,7 +148,7 @@ const Me = () => {
       toLogin();
       return;
     }
-    goTo('VIP');
+    goTo('Vip');
   };
 
   const toTransactions = () => {

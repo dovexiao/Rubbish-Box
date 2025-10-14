@@ -354,7 +354,7 @@ export default {
     play: 'Play',
     unlock: 'Unlock',
     vipLevel: 'Vip Level',
-    earn: 'Earn',
+    earn: 'Earn Money',
     color: 'Color',
     dice: 'Quick3D',
     digits: '3Digits',
