@@ -185,12 +185,12 @@ export const downloadApk = () => {
   //     `);
   //   }
   // }
-  if (channelId === 'mybet798') {
+  if (channelId === 'supbet') {
     // location.href = envConfig.downloadUrl || '';
-    location.href = 'https://www.staticimg007.com/apk/mybet798.apk';
+    location.href = 'https://www.staticimg007.com/apk/supbet.apk';
   } else {
     // location.href = envConfig.downloadChannelUrl || '';
 
-    location.href = `https://www.staticimg007.com/apk/mybet798_${channelId}.apk`;
+    location.href = `https://www.staticimg007.com/apk/supbet_${channelId}.apk`;
   }
 };
