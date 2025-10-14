@@ -16,14 +16,15 @@ import globalStore from './services/global.state';
 import {goTo} from './utils';
 import i18n from '@i18n';
 // import Promotion from './common-pages/promotion';
+import Invitation from '@/common-pages/invitation';
 
 /* eslint-disable prettier/prettier */
 import Wallet from './pages/me';
 //活动相关
 import PromotionDrawer from './common-pages/promotion';
-import Vip from '@/common-pages/vip/vip';
+// import Vip from '@/common-pages/vip/vip';
 // import Recharge from '@/common-pages/recharge';
-import ProxyHome from "@/common-pages/proxy";
+import ProxyHome from '@/common-pages/proxy';
 import BreatheImage from '@/components/basic/animations/breatheImage';
 
 const Tab = createBottomTabNavigator();
@@ -59,8 +60,8 @@ export const mainPageList: {
   },
   {
     name: i18n.t('vip.title'),
-    link: 'index/vip',
-    component: Vip,
+    link: 'index/invitation',
+    component: Invitation,
     img: require('@assets/icons/home/vip.webp'),
     activeImg: require('@assets/icons/home/vip-select.webp'),
     // img: require('@assets/icons/home/results-inselect.webp'),
