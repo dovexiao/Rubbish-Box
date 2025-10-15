@@ -158,19 +158,25 @@ export default function PointsMallScreen() {
       {/* 顶部固定区域 */}
       <View style={styles.topSection}>
         {/* 顶部货币区域 */}
-        <View style={styles.topCurrencySection}>
-          {/* 456货币卡片 */}
-          <TouchableOpacity style={styles.currencyCard} onPress={goToPointsDetail}>
-            <Image
-              source={require("../../../assets/images/coin.png")}
-              style={styles.coinIcon}
-              resizeMode="contain"
-            />
-            <Text style={styles.currencyAmount}>{pointsBalance || 0}</Text>
-            <Text style={styles.currencyLabel}>货币</Text>
-            <Ionicons name="chevron-forward" size={rpx(12)} color="#666" style={styles.arrowIcon} />
-          </TouchableOpacity>
-        </View>
+        <LinearGradient
+            colors={['#E7B500', '#FFE7CD', '#F7F7F7']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+        >
+          <View style={styles.topCurrencySection}>
+            {/* 456货币卡片 */}
+            <TouchableOpacity style={styles.currencyCard} onPress={goToPointsDetail}>
+              <Image
+                  source={require("../../../assets/images/coin.png")}
+                  style={styles.coinIcon}
+                  resizeMode="contain"
+              />
+              <Text style={styles.currencyAmount}>{pointsBalance || 0}</Text>
+              <Text style={styles.currencyLabel}>货币</Text>
+              <Ionicons name="chevron-forward" size={rpx(12)} color="rgba(255, 144, 0, 1)" style={styles.arrowIcon} />
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
 
         {/* 分类导航 */}
         <View style={styles.categorySection}>
@@ -280,20 +286,23 @@ const styles = createStyles({
     height: "100%",
   },
   topSection: {
-    paddingHorizontal: 29,
+    // paddingHorizontal: 29,
     flexShrink: 0,
   },
   topCurrencySection: {
-    marginTop: 12,
+    paddingTop: 45.3125,
+    paddingLeft: 31.25,
+    paddingBottom: 13.671875,
   },
   currencyCard: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 0,
+    paddingVertical: 3,
     paddingHorizontal: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(255, 250, 236, 0.75)",
+    shadow: "0px -11px 14px 0px rgba(255, 197, 89, 0.25)",
+    // borderWidth: 1,
+    // borderColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 10,
     alignSelf: "flex-start",
   },
@@ -303,13 +312,13 @@ const styles = createStyles({
   },
   currencyAmount: {
     fontSize: 9.375,
-    color: "#333",
+    color: "rgba(255, 144, 0, 1)",
     fontWeight: "500",
     marginLeft: 4,
   },
   currencyLabel: {
     fontSize: 8.6,
-    color: "#666",
+    color: "rgba(255, 144, 0, 1)",
     marginLeft: 2,
   },
   arrowIcon: {
