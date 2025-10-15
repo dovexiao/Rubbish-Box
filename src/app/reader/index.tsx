@@ -304,7 +304,7 @@ export default function ReaderIndex() {
                 ? { uri: getBookCover(book) as string }
                 : getBookCover(book)
             }
-            style={styles.weekHotCover}
+            style={styles.weekHotCover} 
             resizeMode="cover"
           />
           <View style={styles.weekHotInfo}>
@@ -324,7 +324,8 @@ export default function ReaderIndex() {
             </View>
           </View>
           <View style={styles.weekHotLabel}>
-            <Text style={styles.weekHotLabelText}>本周必读</Text>
+              <Text style={styles.weekHotLabelText}>本周必读</Text>
+               <View style={styles.triangleBottom} />  
           </View>
         </TouchableOpacity>
       </View>
@@ -338,10 +339,15 @@ export default function ReaderIndex() {
     return (
       <View style={styles.recommendSection}>
         <View style={styles.sectionHeader}>
-          <View style={styles.sectionTitleContainer}>
+          <LinearGradient 
+            style={styles.sectionTitleContainer}
+            colors={["#A0D2FF", "#7080FF"]} // 渐变色值
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
             <Ionicons name="star" size={rpx(16)} color="#FFD700" />
             <Text style={styles.sectionTitle}>经典书单推荐</Text>
-          </View>
+          </LinearGradient>
         </View>
         <ScrollView
           horizontal
@@ -542,7 +548,7 @@ export default function ReaderIndex() {
 
   return (
     <LinearGradient
-      colors={["#93abff", "#e4f4ff", "#cdedff", "#ffffff"]}
+      colors={["#CDF7FF", "#EFF6FF", "#FDFEFF", "#BCD4FF"]}
       locations={[-0.1128, 0.1494, 0.8474, 1.0586]}
       style={styles.container}
     >
@@ -552,7 +558,7 @@ export default function ReaderIndex() {
       {/* 内容区域 */}
       <View style={styles.contentContainer}>
         {/* 左侧导航 */}
-        <View style={styles.sideNav}>
+        <View style={styles.sideNav} >
           <TouchableOpacity
             style={[styles.navButton, currentTab === "recommend" && styles.activeNavButton]}
             onPress={() => handleTabChange("recommend")}
@@ -600,22 +606,26 @@ const styles = createStyles({
   contentContainer: {
     flex: 1,
     flexDirection: "row" as const,
+    height: "100%" as const,
   },
   // 左侧导航样式
   sideNav: {
-    width: rpx(80),
-    backgroundColor: "rgba(255,255,255,0.5)",
-    paddingVertical: 20,
+    width: 90.625,
+    height: "100%" as const,
+    backgroundColor: 'transparent', 
+    paddingVertical: 31.25,
     alignItems: "center" as const,
+    justifyContent: "center" as const,
+    display: "flex" as const,  
   },
   navButton: {
     alignItems: "center" as const,
     paddingVertical: 15,
     width: "100%" as const,
   },
-  activeNavButton: {
-    backgroundColor: "rgba(0,122,255,0.1)",
-  },
+  // activeNavButton: {
+  //   backgroundColor: "rgba(0,122,255,0.1)",
+  // },
   navText: {
     fontSize: 14,
     color: "#999",
@@ -630,10 +640,12 @@ const styles = createStyles({
   },
   // 推荐页面样式
   recommendContainer: {
-    flex: 1,
-    paddingHorizontal: 15,
+    flex: 1,  
+    flexDirection: 'row',
+    paddingHorizontal: 15,  
   },
   weekHotSection: {
+    width:307.422,
     marginBottom: 20,
   },
   weekHotCard: {
@@ -666,19 +678,24 @@ const styles = createStyles({
     marginBottom: 15,
   },
   weekHotLabel: {
-    position: "absolute" as const,
-    top: 10,
-    right: 10,
-    backgroundColor: "#FF6B35",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+     width: 23.438,  
+    height: 33.203 + 10,    
+    position: 'absolute',  
+    top: 0,  
+    right: 10,  
+    backgroundColor: '#FFE481',  
+    paddingHorizontal: 4,  
+    justifyContent: 'center',   
+    alignItems: 'center',  
   },
   weekHotLabelText: {
-    fontSize: 12,
-    color: "#FFF",
+    fontSize: 7.031,
+    color: "#AB6400",
+    zIndex: 20, 
     fontWeight: "bold" as const,
+    
   },
+  
   badgeContainer: {
     flexDirection: "row" as const,
     gap: 10,
@@ -704,6 +721,7 @@ const styles = createStyles({
     color: "#FFF",
   },
   recommendSection: {
+    width:307.422,
     marginBottom: 20,
   },
   sectionHeader: {
@@ -713,14 +731,22 @@ const styles = createStyles({
     marginBottom: 15,
   },
   sectionTitleContainer: {
+    width:103.125,
+    height:20.313,
     flexDirection: "row" as const,
     alignItems: "center" as const,
     gap: 5,
+    backgroundColor: "#7080FF",
+    borderRadius: 16,
+     borderTopLeftRadius: 26,     
+    borderBottomRightRadius: 26,  
+    borderTopRightRadius: 0,      
+    borderBottomLeftRadius: 0,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold" as const,
-    color: "#333",
+    color: "#FFF",
   },
   recommendScroll: {
     flexDirection: "row" as const,
