@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { Provider as PaperProvider } from "react-native-paper"
 
-// import ImmersiveWrapper from "../components/ImmersiveMode"
+import ImmersiveWrapper from "../components/ImmersiveMode"
 // 导入P0核心功能Hooks
 import { useAppLifecycle } from "../hooks/useAppLifecycle"
 import { useDataSync } from "../hooks/useDataSync"
@@ -240,7 +240,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.container}>
       {/* 全局沉浸式模式 - 隐藏状态栏和三大金刚键 */}
-      {/* <ImmersiveWrapper enabled={true} /> */}
+      <ImmersiveWrapper enabled={true} />
 
       <PaperProvider>
         <SafeAreaProvider>

@@ -1,8 +1,6 @@
 import { StyleSheet, Dimensions, Platform } from "react-native"
 
 // 设计稿尺寸配置
-const DESIGN_WIDTH = 1920 // 设计稿宽度（px）
-const DESIGN_HEIGHT = 1200 // 设计稿高度（px）
 const DESIGN_WIDTH_RPX = 750 // 设计稿宽度转rpx
 const DESIGN_HEIGHT_RPX = 468.75 // 设计稿高度转rpx (1200 * 750 / 1920)
 
@@ -26,16 +24,84 @@ const isTablet = (): boolean => {
   return minDimension >= 600
 }
 
+// 获取设备类型和适配策略
+const getDeviceAdaptationStrategy = () => {
+  const { width, height } = getScreenDimensions()
+  const landscape = isLandscape()
+  
+  // 标准化尺寸（确保width > height为横屏）
+  const screenWidth = landscape ? width : height
+  const screenHeight = landscape ? height : width
+  
+  // 定义支持的平板尺寸和对应的适配策略
+  const tabletConfigs = [
+    {
+      name: '1920×1200',
+      width: 1920,
+      height: 1200,
+      scaleRatio: 2.56, 
+      baseRpx: 750
+    },
+    {
+      name: '1920×1080', 
+      width: 1920,
+      height: 1080,
+      scaleRatio: 2.56, 
+      baseRpx: 750
+    },
+    {
+      name: '1280×800',
+      width: 1280,
+      height: 800,
+      scaleRatio: 1.7067, 
+      baseRpx: 750 
+    }
+  ]
+  
+  // 查找匹配的配置
+  const matchedConfig = tabletConfigs.find(config => 
+    Math.abs(screenWidth - config.width) <= 10 && 
+    Math.abs(screenHeight - config.height) <= 10
+  )
+  
+  if (matchedConfig) {
+    return {
+      deviceName: matchedConfig.name,
+      scaleRatio: matchedConfig.scaleRatio,
+      baseRpx: matchedConfig.baseRpx,
+      isCustom: true
+    }
+  }
+  
+  // 默认策略
+  return {
+    deviceName: 'Unknown',
+    scaleRatio: landscape ? screenHeight / DESIGN_HEIGHT_RPX : screenWidth / DESIGN_WIDTH_RPX,
+    baseRpx: landscape ? DESIGN_HEIGHT_RPX : DESIGN_WIDTH_RPX,
+    isCustom: false
+  }
+}
+
 /**
  * 智能rpx转换函数
  * 自动适配不同屏幕方向和设备类型
  * 
  * 转换规则：
- * 1. 横屏模式：基于屏幕高度计算（设计稿高度468.75rpx → 实际屏幕高度）
- * 2. 竖屏模式：基于屏幕宽度计算（设计稿宽度750rpx → 实际屏幕宽度）
- * 3. 自动根据设备方向选择最佳转换基准
+ * 1. 优先使用设备专用适配策略（1920×1200、1920×1080、1280×800）
+ * 2. 横屏模式：基于屏幕高度计算（设计稿高度468.75rpx → 实际屏幕高度）
+ * 3. 竖屏模式：基于屏幕宽度计算（设计稿宽度750rpx → 实际屏幕宽度）
+ * 4. 自动根据设备方向选择最佳转换基准
  */
 const rpx = (size: number): number => {
+  const strategy = getDeviceAdaptationStrategy()
+  
+  if (strategy.isCustom) {
+    // 使用专门的适配策略
+    // 公式：实际像素 = rpx值 × 缩放比例
+    return size * strategy.scaleRatio
+  }
+  
+  // 使用原有的通用策略
   const { width, height } = getScreenDimensions()
   
   if (isLandscape()) {
@@ -54,6 +120,13 @@ const rpx = (size: number): number => {
  * 用于调试和日志输出
  */
 export const getScaleRatio = (): number => {
+  const strategy = getDeviceAdaptationStrategy()
+  
+  if (strategy.isCustom) {
+    return strategy.scaleRatio
+  }
+  
+  // 使用原有逻辑
   const { width, height } = getScreenDimensions()
   if (isLandscape()) {
     return height / DESIGN_HEIGHT_RPX
@@ -69,6 +142,7 @@ export const getScreenInfo = () => {
   const { width, height } = getScreenDimensions()
   const landscape = isLandscape()
   const tablet = isTablet()
+  const strategy = getDeviceAdaptationStrategy()
   const scale = getScaleRatio()
   
   return {
@@ -76,8 +150,10 @@ export const getScreenInfo = () => {
     height,
     isLandscape: landscape,
     isTablet: tablet,
+    deviceName: strategy.deviceName,
     scaleRatio: scale.toFixed(4),
-    baseRpx: landscape ? DESIGN_HEIGHT_RPX : DESIGN_WIDTH_RPX,
+    baseRpx: strategy.baseRpx,
+    isCustomAdaptation: strategy.isCustom,
     platform: Platform.OS,
   }
 }
