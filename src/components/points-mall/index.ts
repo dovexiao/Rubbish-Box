@@ -1,0 +1,11 @@
+/**
+ * 积分商城弹窗组件统一导出
+ * 100%还原UniApp项目 /src/pages/pointsMall/components
+ */
+
+export { ProductDetailPopup } from "./ProductDetailPopup"
+export { OrderConfirmPopup } from "./OrderConfirmPopup"
+export { AddressListPopup } from "./AddressListPopup"
+export { AddAddressPopup } from "./AddAddressPopup"
+export { EditAddressPopup } from "./EditAddressPopup"
+

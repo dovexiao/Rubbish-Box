@@ -61,6 +61,7 @@ export const Images = {
   aiResultTitleBg: require("../../assets/images/AI-result-title-bg.png"),
   aiLoadingNotionBg: require("../../assets/images/ai-loading-notion-bg.png"),
   aiResultCorrect: require("../../assets/images/ai-result-corrout.png"),
+  loadingBg: require("../../assets/images/loading-bg.png"),
   frame2090059922: require("../../assets/images/Frame-2090059922.png"),
   generatedImage: require("../../assets/images/Generated-Image.png"),
   vector3417: require("../../assets/images/Vector-3417.png"),
@@ -82,18 +83,18 @@ export const Images = {
   studyBg2: require("../../assets/images/study/bg2.png"),
   studyBg3: require("../../assets/images/study/bg3.png"),
 
-  // 学习页面专用图片 - 对应UniApp /static/images/study/目录
-  studyBg17: require("../../static/images/study/bg17.png"), // 错题本图标
-  studyBg18: require("../../static/images/study/bg18.png"), // 作文批改图标
-  studyBg19: require("../../static/images/study/bg19.png"), // 作业批改图标
-  studyBg20: require("../../static/images/study/bg20.png"), // 作文收录图标
-  studyBg21: require("../../static/images/study/bg21.png"), // AI卡片背景
-  studyBg22: require("../../static/images/study/bg22.png"), // AI卡片顶部装饰
-  studyBg23: require("../../static/images/study/bg23.png"), // 阅读卡片背景
-  studyBg24: require("../../static/images/study/bg24.png"), // 阅读卡片顶部装饰
-  studyBg25: require("../../static/images/study/bg25.png"), // 课堂卡片背景
-  studyBg26: require("../../static/images/study/bg26.png"), // 课堂卡片装饰
-  studyPolygon: require("../../static/images/study/Polygon.png"), // 箭头图标
+  // 学习页面专用图片 - 对应UniApp /static/images/study/目录（已迁移到/assets/images/study/）
+  studyBg17: require("../../assets/images/study/bg17.png"), // 错题本图标
+  studyBg18: require("../../assets/images/study/bg18.png"), // 作文批改图标
+  studyBg19: require("../../assets/images/study/bg19.png"), // 作业批改图标
+  studyBg20: require("../../assets/images/study/bg20.png"), // 作文收录图标
+  studyBg21: require("../../assets/images/study/bg21.png"), // AI卡片背景
+  studyBg22: require("../../assets/images/study/bg22.png"), // AI卡片顶部装饰
+  studyBg23: require("../../assets/images/study/bg23.png"), // 阅读卡片背景
+  studyBg24: require("../../assets/images/study/bg24.png"), // 阅读卡片顶部装饰
+  studyBg25: require("../../assets/images/study/bg25.png"), // 课堂卡片背景
+  studyBg26: require("../../assets/images/study/bg26.png"), // 课堂卡片装饰
+  studyPolygon: require("../../assets/images/study/Polygon.png"), // 箭头图标
 
   // 旋转页面图标
   rotate: require("../../assets/images/rotate.png"),

@@ -6,11 +6,9 @@ import {
   Image,
   ScrollView,
   Modal,
-  useWindowDimensions,
 } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useRouter } from "expo-router"
-import RenderHtml, { HTMLElementModel, HTMLContentModel } from "react-native-render-html"
 
 import { Images } from "../constants/Assets"
 import { useTabbarStore } from "../stores/tabbarStore"
@@ -18,12 +16,139 @@ import { createStyles } from "../utils/rpxStyleSheet"
 
 const Text = RNText
 
-// 配置MathML支持
-const customHTMLElementModels = {
-  math: HTMLElementModel.fromCustomModel({
-    tagName: "math",
-    contentModel: HTMLContentModel.mixed,
-  }),
+/**
+ * 将MathML和HTML混合内容转换为可读文本
+ * 支持常见数学公式：分数、幂次、根号、上下标等
+ */
+const parseContent = (html: string): string => {
+  if (!html) return ""
+
+  let result = html
+
+  // 1. 处理MathML数学公式
+  result = result.replace(/<math[^>]*>(.*?)<\/math>/gis, (match, content) => {
+    // 提取并格式化数学内容
+    const math = content
+      // 分数：<mfrac><mrow>1</mrow><mrow>2</mrow></mfrac> → (1/2)
+      .replace(
+        /<mfrac[^>]*>\s*<mrow[^>]*>(.*?)<\/mrow>\s*<mrow[^>]*>(.*?)<\/mrow>\s*<\/mfrac>/gi,
+        "($1/$2)",
+      )
+      // 上标（幂）：<msup><mrow>x</mrow><mrow>2</mrow></msup> → x^2
+      .replace(
+        /<msup[^>]*>\s*<mrow[^>]*>(.*?)<\/mrow>\s*<mrow[^>]*>(.*?)<\/mrow>\s*<\/msup>/gi,
+        "$1^$2",
+      )
+      // 下标：<msub><mrow>x</mrow><mrow>1</mrow></msub> → x_1
+      .replace(
+        /<msub[^>]*>\s*<mrow[^>]*>(.*?)<\/mrow>\s*<mrow[^>]*>(.*?)<\/mrow>\s*<\/msub>/gi,
+        "$1_$2",
+      )
+      // 根号：<msqrt><mrow>2</mrow></msqrt> → √2
+      .replace(/<msqrt[^>]*>\s*<mrow[^>]*>(.*?)<\/mrow>\s*<\/msqrt>/gi, "√$1")
+      // 运算符：<mo>+</mo>
+      .replace(/<mo[^>]*>([^<]+)<\/mo>/g, " $1 ")
+      // 数字：<mn>123</mn>
+      .replace(/<mn[^>]*>([^<]+)<\/mn>/g, "$1")
+      // 变量：<mi>x</mi>
+      .replace(/<mi[^>]*>([^<]+)<\/mi>/g, "$1")
+      // 文本：<mtext>text</mtext>
+      .replace(/<mtext[^>]*>([^<]+)<\/mtext>/g, "$1")
+      // 样式容器：<mstyle>...</mstyle>
+      .replace(/<mstyle[^>]*>(.*?)<\/mstyle>/gi, "$1")
+      // 行内容器：<mrow>...</mrow>
+      .replace(/<mrow[^>]*>(.*?)<\/mrow>/gi, "$1")
+      // 移除所有剩余MathML标签
+      .replace(/<[^>]*>/g, "")
+      // 处理HTML实体 - 基础运算符
+      .replace(/&#x0002B;|&#43;/g, "+")
+      .replace(/&#x02212;|&#8722;/g, "-")
+      .replace(/&#x00028;|&#40;/g, "(")
+      .replace(/&#x00029;|&#41;/g, ")")
+      .replace(/&#x0007C;|&#124;/g, "|") // 竖线（绝对值）
+      .replace(/&#x0005B;|&#91;/g, "[") // 左方括号
+      .replace(/&#x0005D;|&#93;/g, "]") // 右方括号
+      .replace(/&#x0007B;|&#123;/g, "{") // 左花括号
+      .replace(/&#x0007D;|&#125;/g, "}") // 右花括号
+      .replace(/&#x000D7;|&#215;/g, "×")
+      .replace(/&#x000F7;|&#247;/g, "÷")
+      .replace(/&times;/g, "×")
+      .replace(/&divide;/g, "÷")
+      .replace(/&plusmn;/g, "±")
+      .replace(/&#x02217;|&#8727;|&lowast;/g, "∗") // 星号运算符
+      .replace(/&#x000B7;|&#183;|&middot;/g, "·") // 中点（点乘）
+      // 比较符号
+      .replace(/&le;|&#8804;|&#x02264;/g, "≤")
+      .replace(/&ge;|&#8805;|&#x02265;/g, "≥")
+      .replace(/&ne;|&#8800;|&#x02260;/g, "≠")
+      .replace(/&lt;|&#60;/g, "<")
+      .replace(/&gt;|&#62;/g, ">")
+      .replace(/&#x0003D;|&#61;/g, "=")
+      // 希腊字母
+      .replace(/&#x003C0;|&#960;|&pi;/g, "π")
+      .replace(/&#x003B1;|&#945;|&alpha;/g, "α")
+      .replace(/&#x003B2;|&#946;|&beta;/g, "β")
+      .replace(/&#x003B3;|&#947;|&gamma;/g, "γ")
+      .replace(/&#x00394;|&#916;|&Delta;/g, "Δ")
+      .replace(/&#x003B4;|&#948;|&delta;/g, "δ")
+      .replace(/&#x003B5;|&#949;|&epsilon;/g, "ε")
+      .replace(/&#x003B8;|&#952;|&theta;/g, "θ")
+      .replace(/&#x003BB;|&#955;|&lambda;/g, "λ")
+      .replace(/&#x003BC;|&#956;|&mu;/g, "μ")
+      .replace(/&#x003C3;|&#963;|&sigma;/g, "σ")
+      .replace(/&#x003A3;|&#931;|&Sigma;/g, "Σ")
+      .replace(/&#x003C9;|&#969;|&omega;/g, "ω")
+      .replace(/&#x003A9;|&#937;|&Omega;/g, "Ω")
+      // 数学符号
+      .replace(/&#x0221A;|&#8730;|&radic;/g, "√")
+      .replace(/&#x0221E;|&#8734;|&infin;/g, "∞")
+      .replace(/&#x02220;|&#8736;|&ang;/g, "∠")
+      .replace(/&#x02299;|&#8857;|&odot;/g, "⊙")
+      .replace(/&#x02261;|&#8801;|&equiv;/g, "≡")
+      .replace(/&#x02248;|&#8776;|&asymp;/g, "≈")
+      .replace(/&#x02208;|&#8712;|&isin;/g, "∈")
+      .replace(/&#x02209;|&#8713;|&notin;/g, "∉")
+      .replace(/&#x02282;|&#8834;|&sub;/g, "⊂")
+      .replace(/&#x02286;|&#8838;|&sube;/g, "⊆")
+      .replace(/&#x02229;|&#8745;|&cap;/g, "∩")
+      .replace(/&#x0222A;|&#8746;|&cup;/g, "∪")
+      // 上标和下标数字（如果有的话）
+      .replace(/&#x000B2;|&#178;|&sup2;/g, "²")
+      .replace(/&#x000B3;|&#179;|&sup3;/g, "³")
+      .replace(/&#x000B9;|&#185;|&sup1;/g, "¹")
+      // 分数（特殊字符）
+      .replace(/&#x000BD;|&#189;|&frac12;/g, "½")
+      .replace(/&#x000BC;|&#188;|&frac14;/g, "¼")
+      .replace(/&#x000BE;|&#190;|&frac34;/g, "¾")
+      // 度数符号
+      .replace(/&#x000B0;|&#176;|&deg;/g, "°")
+      // 百分号
+      .replace(/&#x00025;|&#37;|&percnt;/g, "%")
+      // 清理多余空格
+      .replace(/\s+/g, " ")
+      .trim()
+
+    return ` ${math} `
+  })
+
+  // 2. 处理普通HTML标签
+  result = result
+    .replace(/<br\s*\/?>/gi, "\n") // 换行
+    .replace(/<\/p>/gi, "\n\n") // 段落结束
+    .replace(/<p[^>]*>/gi, "") // 段落开始
+    .replace(/<\/div>/gi, "\n") // div结束
+    .replace(/<div[^>]*>/gi, "") // div开始
+    .replace(/<[^>]*>/g, "") // 移除所有剩余HTML标签
+    .replace(/&nbsp;/g, " ") // 空格
+    .replace(/&lt;/g, "<") // 小于号
+    .replace(/&gt;/g, ">") // 大于号
+    .replace(/&amp;/g, "&") // 和号
+    .replace(/&quot;/g, '"') // 引号
+    .replace(/&#39;/g, "'") // 单引号
+    .replace(/\n\s*\n\s*\n/g, "\n\n") // 最多保留两个连续换行
+    .trim()
+
+  return result
 }
 
 interface GradingResult {
@@ -54,16 +179,21 @@ interface Props {
 export function QuestionResult({ data }: Props) {
   const router = useRouter()
   const tabbarStore = useTabbarStore()
-  const { width } = useWindowDimensions()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [revealAnswer, setRevealAnswer] = useState(false)
+  const [filterType, setFilterType] = useState<"all" | "wrong" | "unanswered">("all") // 筛选类型
 
-  // 只保留答错和未作答的题目
-  const filteredQuestions = useMemo(
-    () =>
-      (data.grading_results || []).filter((q) => q.status === "答错了" || q.status === "未作答"),
-    [data.grading_results],
-  )
+  // 根据筛选类型过滤题目
+  const filteredQuestions = useMemo(() => {
+    const results = data.grading_results || []
+    if (filterType === "wrong") {
+      return results.filter((q) => q.status === "答错了")
+    } else if (filterType === "unanswered") {
+      return results.filter((q) => q.status === "未作答")
+    }
+    // 默认显示答错和未作答的题目
+    return results.filter((q) => q.status === "答错了" || q.status === "未作答")
+  }, [data.grading_results, filterType])
 
   const currentQuestion = useMemo(
     () => filteredQuestions[currentIndex] || {},
@@ -108,6 +238,21 @@ export function QuestionResult({ data }: Props) {
     setCurrentIndex(index)
     setRevealAnswer(false)
   }, [])
+
+  // 切换筛选类型
+  const handleFilterChange = useCallback(
+    (type: "all" | "wrong" | "unanswered") => {
+      // 如果点击的是当前已激活的筛选项，则切换回显示全部
+      if (filterType === type && type !== "all") {
+        setFilterType("all")
+      } else {
+        setFilterType(type)
+      }
+      setCurrentIndex(0) // 重置到第一题
+      setRevealAnswer(false)
+    },
+    [filterType],
+  )
 
   // 返回AI学习页面
   const goAI = useCallback(() => {
@@ -165,22 +310,39 @@ export function QuestionResult({ data }: Props) {
                 <Text style={styles.summaryBoldText}>{Math.round(statistics.accuracy)}</Text>
                 <Text style={styles.summaryText}>%</Text>
               </View>
-              <View style={styles.topSummaryItem}>
+              <TouchableWithoutFeedback onPress={() => handleFilterChange("wrong")}>
+                <View
+                  style={[
+                    styles.topSummaryItem,
+                    styles.clickableSummaryItem,
+                    filterType === "wrong" && styles.topSummaryItemActive,
+                  ]}
+                >
                 <Text style={styles.summaryText}>答错</Text>
                 <Text style={styles.summaryBoldText}>{statistics.wrong_count}</Text>
                 <Text style={styles.summaryText}>题</Text>
               </View>
-              <View style={[styles.topSummaryItem, styles.lastSummaryItem]}>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => handleFilterChange("unanswered")}>
+                <View
+                  style={[
+                    styles.topSummaryItem,
+                    styles.clickableSummaryItem,
+                    styles.lastSummaryItem,
+                    filterType === "unanswered" && styles.topSummaryItemActive,
+                  ]}
+                >
                 <Text style={styles.summaryText}>未答</Text>
                 <Text style={styles.summaryBoldText}>{statistics.unanswered_count}</Text>
                 <Text style={styles.summaryText}>题</Text>
               </View>
+              </TouchableWithoutFeedback>
             </LinearGradient>
 
             {/* 左侧题目列表 */}
             <LinearGradient
               colors={["#f7fcff", "#5ba8ff"]}
-              locations={[0.861, 1.4882]}
+              locations={[0.95, 1.4882]}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
               style={styles.leftList}
@@ -191,7 +353,13 @@ export function QuestionResult({ data }: Props) {
                 resizeMode="contain"
               />
               <View style={styles.listTitle}>
-                <Text style={styles.listTitleText}>错题&未答题列表</Text>
+                <Text style={styles.listTitleText}>
+                  {filterType === "wrong"
+                    ? "错题列表"
+                    : filterType === "unanswered"
+                      ? "未答题列表"
+                      : "错题&未答题列表"}
+                </Text>
                 <Image
                   style={styles.reviewTitleBg1}
                   source={Images.vector3418}
@@ -202,6 +370,13 @@ export function QuestionResult({ data }: Props) {
                   source={Images.frame2090059195}
                   resizeMode="contain"
                 />
+                {filterType !== "all" && (
+                  <TouchableWithoutFeedback onPress={() => handleFilterChange("all")}>
+                    <View style={styles.resetFilterBtn}>
+                      <Text style={styles.resetFilterText}>显示全部</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                )}
               </View>
 
               {/* 题目列表 */}
@@ -210,7 +385,8 @@ export function QuestionResult({ data }: Props) {
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
               >
-                {filteredQuestions.map((q, idx) => (
+                {filteredQuestions.length > 0 ? (
+                  filteredQuestions.map((q, idx) => (
                   <TouchableWithoutFeedback
                     key={q.question_index}
                     onPress={() => handleQuestionChange(idx)}
@@ -222,32 +398,26 @@ export function QuestionResult({ data }: Props) {
                       ]}
                     >
                       <Text style={styles.qIndex}>{idx + 1}.</Text>
-                      <View style={styles.qTextContainer}>
-                        <RenderHtml
-                          contentWidth={width * 0.35}
-                          source={{ html: q.question_text || "" }}
-                          customHTMLElementModels={customHTMLElementModels}
-                          tagsStyles={{
-                            body: {
-                              color: "#000",
-                              fontSize: styles.htmlFontSize.questionText,
-                              margin: 0,
-                              padding: 0,
-                            },
-                            p: { margin: 0, padding: 0 },
-                          }}
-                        />
+                        <Text style={styles.questionText} numberOfLines={2} ellipsizeMode="tail">
+                          {parseContent(q.question_text || "")}
+                        </Text>
                       </View>
+                    </TouchableWithoutFeedback>
+                  ))
+                ) : (
+                  <View style={styles.emptyState}>
+                    <Text style={styles.emptyStateText}>
+                      {filterType === "wrong" ? "没有答错的题目" : "没有未答的题目"}
+                    </Text>
                     </View>
-                  </TouchableWithoutFeedback>
-                ))}
+                )}
               </ScrollView>
             </LinearGradient>
           </View>
 
           {/* 右侧答案与解析 */}
           <View style={styles.rightDetail}>
-            {currentQuestion && (
+            {filteredQuestions.length > 0 && currentQuestion ? (
               <LinearGradient
                 colors={["#f7fcff", "#5ba8ff"]}
                 locations={[0.861, 1.4882]}
@@ -262,7 +432,7 @@ export function QuestionResult({ data }: Props) {
                 {/* 可滚动内容区域 */}
                 <ScrollView
                   style={styles.scrollableContent}
-                  contentContainerStyle={{ paddingTop: 8, paddingBottom: 16 }}
+                  contentContainerStyle={styles.scrollableContentContainer}
                   showsVerticalScrollIndicator={false}
                   nestedScrollEnabled={true}
                 >
@@ -276,24 +446,9 @@ export function QuestionResult({ data }: Props) {
                         {!revealAnswer ? (
                           <Text style={styles.scratchHint}>点击查看答案</Text>
                         ) : (
-                          <View style={styles.answerTextContainer}>
-                            <RenderHtml
-                              contentWidth={width * 0.42}
-                              source={{ html: currentQuestion.correct_answer || "" }}
-                              customHTMLElementModels={customHTMLElementModels}
-                              tagsStyles={{
-                                body: {
-                                  color: "#333",
-                                  fontSize: styles.htmlFontSize.answerText,
-                                  textAlign: "center",
-                                  margin: 0,
-                                  padding: 0,
-                                },
-                                p: { margin: 0, padding: 0 },
-                                math: { color: "#333", fontSize: styles.htmlFontSize.answerText },
-                              }}
-                            />
-                          </View>
+                          <Text style={styles.answerText}>
+                            {parseContent(currentQuestion.correct_answer || "")}
+                          </Text>
                         )}
                       </View>
                     </TouchableWithoutFeedback>
@@ -302,26 +457,25 @@ export function QuestionResult({ data }: Props) {
                   {/* 解析块 */}
                   <View style={styles.analysisBlock}>
                     <Text style={styles.analysisTitle}>解析</Text>
-                    <View style={styles.analysisContentContainer}>
-                      <RenderHtml
-                        contentWidth={width * 0.42}
-                        source={{ html: currentQuestion.feedback || "" }}
-                        customHTMLElementModels={customHTMLElementModels}
-                        tagsStyles={{
-                          body: {
-                            color: "#333",
-                            fontSize: styles.htmlFontSize.analysisText,
-                            lineHeight: 36, // 增加行高，提高可读性
-                            margin: 0,
-                            padding: 0,
-                          },
-                          p: { margin: 0, padding: 0, marginBottom: 12 },
-                          math: { color: "#333", fontSize: styles.htmlFontSize.analysisText },
-                        }}
-                      />
-                    </View>
+                    <Text style={styles.analysisText}>
+                      {parseContent(currentQuestion.feedback || "")}
+                    </Text>
                   </View>
                 </ScrollView>
+              </LinearGradient>
+            ) : (
+              <LinearGradient
+                colors={["#f7fcff", "#5ba8ff"]}
+                locations={[0.861, 1.4882]}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={styles.rightDetailItem}
+              >
+                <View style={styles.emptyDetailState}>
+                  <Text style={styles.emptyStateText}>
+                    {filterType === "wrong" ? "没有答错的题目" : "没有未答的题目"}
+                  </Text>
+                </View>
               </LinearGradient>
             )}
           </View>
@@ -334,12 +488,6 @@ export function QuestionResult({ data }: Props) {
 const styles = createStyles({
   questionResultUI: {
     marginHorizontal: 38.48, // 38.48rpx - UniApp原值
-  },
-  // HTML渲染字体大小（从rpx转换）
-  htmlFontSize: {
-    questionText: 22, // 8.6rpx - UniApp原值
-    answerText: 24, // 9.375rpx - UniApp原值
-    analysisText: 24, // 9.375rpx - UniApp原值
   },
   topSummary: {
     width: 303.125, // 303.125rpx - UniApp原值
@@ -376,6 +524,16 @@ const styles = createStyles({
     flexDirection: "row" as const,
     alignItems: "center" as const,
     justifyContent: "center" as const,
+  },
+  clickableSummaryItem: {
+    // 可点击的统计项，添加视觉提示
+    opacity: 1,
+  },
+  topSummaryItemActive: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.5)",
   },
   lastSummaryItem: {
     borderRightWidth: 0,
@@ -445,6 +603,23 @@ const styles = createStyles({
     top: 7, // 7rpx - UniApp原值
     right: 9.8, // 9.8rpx - UniApp原值
   },
+  resetFilterBtn: {
+    position: "absolute" as const,
+    right: 0,
+    top: -2,
+    backgroundColor: "#fff",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 3,
+    borderWidth: 0.5,
+    borderColor: "#3496fa",
+    zIndex: 10, // 确保按钮在图片上方
+  },
+  resetFilterText: {
+    color: "#3496fa",
+    fontSize: 8,
+    fontWeight: "bold" as const,
+  },
   questionList: {
     marginTop: 12, // 12rpx - UniApp原值
     height: 218, // 218rpx - UniApp原值，固定高度
@@ -477,9 +652,29 @@ const styles = createStyles({
     color: "#1571fc",
     marginRight: 8, // 8rpx - UniApp原值
     fontSize: 8.6, // 8.6rpx - UniApp原值
+    flexShrink: 0,
   },
-  qTextContainer: {
+  questionText: {
     flex: 1,
+    color: "#000",
+    fontSize: 8.6, // 8.6rpx - UniApp原值
+    lineHeight: 12, // 增加行高提高可读性
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    paddingVertical: 40,
+  },
+  emptyStateText: {
+    color: "#999",
+    fontSize: 10,
+    textAlign: "center" as const,
+  },
+  emptyDetailState: {
+    flex: 1,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   rightDetail: {
     flexDirection: "column" as const,
@@ -553,10 +748,11 @@ const styles = createStyles({
     fontWeight: "bold" as const,
     zIndex: 2,
   },
-  answerTextContainer: {
-    width: "100%" as const,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
+  answerText: {
+    color: "#333",
+    fontSize: 9.375, // 9.375rpx - UniApp原值
+    textAlign: "center" as const,
+    lineHeight: 14, // 增加行高
   },
   analysisBlock: {
     marginBottom: 20, // 底部留白
@@ -568,12 +764,17 @@ const styles = createStyles({
     marginBottom: 10, // 10rpx - UniApp原值
     fontSize: 15,
   },
-  analysisContentContainer: {
-    width: "100%" as const,
-    paddingTop: 4, // 与标题保持距离
+  analysisText: {
+    color: "#333",
+    fontSize: 9.375, // 9.375rpx - UniApp原值
+    lineHeight: 14, // 增加行高，提高可读性
   },
   scrollableContent: {
     flex: 1,
+  },
+  scrollableContentContainer: {
+    paddingTop: 8,
+    paddingBottom: 16,
   },
   successModal: {
     position: "absolute" as const,

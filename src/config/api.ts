@@ -19,11 +19,11 @@ export const API_BASE_URL = SERVER_BASE_URL
 // 上传文件的基础URL
 export const UPLOAD_API_URL = UPLOAD_BASE_URL
 
-// API请求超时时间（毫秒）
-export const API_TIMEOUT = 15000
+// API请求超时时间（毫秒）- 统一设置为 180 秒
+export const API_TIMEOUT = 180000
 
 // OCR 请求超时时间（OCR处理耗时较长，需要更长的超时时间）
-export const OCR_TIMEOUT = 30000000 // 60秒
+export const OCR_TIMEOUT = 180000 // 180秒
 
 // API版本（根据实际后端接口调整）
 export const API_VERSION = ""

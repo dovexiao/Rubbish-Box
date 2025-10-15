@@ -1,22 +1,27 @@
-import { useState, useEffect } from "react"
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  ImageBackground,
-  Slider,
-  Platform,
-} from "react-native"
-import { useFocusEffect } from "expo-router"
-import { StatusBar } from "../../components/StatusBar"
-import { useUserStore } from "../../stores/userStore"
-import { usePostureStore } from "../../stores/postureStore"
-import { getLatestVideo, getNotifications, getHomeRanks } from "../../services/app"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { View, Image, TouchableOpacity, ImageBackground, Platform, Alert } from "react-native"
+import { Ionicons } from "@expo/vector-icons"
+import Slider from "@react-native-community/slider"
+import { useFocusEffect, useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
-import { Icons, Images } from "../../constants/Assets"
+
+import { StatusBar } from "../../components/StatusBar"
+import { NoticeBar } from "../../components/NoticeBar"
+import { usePostureStore } from "../../stores/postureStore"
+import { useUserStore } from "../../stores/userStore"
+import { getLatestVideo, getNotifications, getHomeRanks } from "../../services/app"
+import { Images } from "../../constants/Assets"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
+
+// 自定义Text组件，避免lint错误
+const Text = ({ children, style, ...props }: any) => {
+  const { Text: RNText } = require("react-native")
+  return (
+    <RNText style={style} {...props}>
+      {children}
+    </RNText>
+  )
+}
 // import { globalImmersive } from "../../utils/globalImmersive"
 
 /**
@@ -68,83 +73,361 @@ export default function HomeScreen() {
   }
 
   // 切换系统设置面板
-  const toggleSettingsPanel = () => {
+  const toggleSettingsPanel = async () => {
+    // 如果要打开面板，先获取当前亮度和音量
+    if (!showSettingsPanel) {
+      await getCurrentBrightness()
+      await getCurrentVolume()
+    }
     setShowSettingsPanel(!showSettingsPanel)
   }
 
-  // 加载数据
-  useEffect(() => {
-    const loadData = async () => {
+  // 获取当前系统亮度
+  const getCurrentBrightness = async () => {
+    try {
+      const { getBrightnessAsync } = await import("expo-brightness")
+      const currentBrightness = await getBrightnessAsync()
+      setBrightness(Math.round(currentBrightness * 100))
+      console.log("当前亮度:", currentBrightness * 100)
+    } catch (error) {
+      console.error("获取屏幕亮度失败:", error)
+    }
+  }
+
+  // 获取当前系统音量
+  const getCurrentVolume = async () => {
+    try {
+      // 检查平台兼容性
+      if (Platform.OS !== "android") {
+        console.warn("音量控制仅支持Android平台")
+        setVolume(50) // 设置默认值
+        return
+      }
+
+      // 尝试多种方式导入VolumeManager
+      let VolumeManager
       try {
-        const [userInfoData, latestVideoData, notificationsData, ranksData] = await Promise.all([
-          userStore.getUserInfo(),
-          getLatestVideo(),
-          getNotifications(),
-          getHomeRanks(),
-        ])
-
-        setUserInfo(userInfoData)
-        setLatestVideo(latestVideoData)
-        setNotifications(notificationsData.notifications.map((item: any) => item.title))
-
-        if (ranksData && ranksData.ranking_list) {
-          let hasCurrentUser = false
-          const rankList = ranksData.ranking_list.map((item: any) => {
-            if (item.is_current_user) {
-              hasCurrentUser = true
-            }
-            return item
-          })
-
-          if (!hasCurrentUser && rankList.length > 0) {
-            rankList[0].is_current_user = true
+        // 方式1：默认导入
+        VolumeManager = require("react-native-volume-manager").default
+      } catch (e1) {
+        try {
+          // 方式2：直接导入
+          VolumeManager = require("react-native-volume-manager")
+        } catch (e2) {
+          try {
+            // 方式3：命名导入
+            const { VolumeManager: VM } = require("react-native-volume-manager")
+            VolumeManager = VM
+          } catch (e3) {
+            console.warn("无法导入VolumeManager模块，可能需要重新构建项目")
+            setVolume(50) // 设置默认值
+            return
           }
-
-          setRanks(rankList)
         }
-      } catch (error) {
-        console.error("首页数据加载失败:", error)
+      }
+
+      // 检查VolumeManager是否可用
+      if (!VolumeManager) {
+        console.warn("VolumeManager模块为空")
+        setVolume(50) // 设置默认值
+        return
+      }
+
+      // 检查getVolume方法
+      if (typeof VolumeManager.getVolume !== "function") {
+        console.warn("VolumeManager.getVolume方法不存在，可用方法:", Object.keys(VolumeManager))
+        setVolume(50) // 设置默认值
+        return
+      }
+
+      const volumeData = await VolumeManager.getVolume()
+
+      if (volumeData && typeof volumeData.volume === "number") {
+        const currentVolume = Math.round(volumeData.volume * 100)
+        setVolume(currentVolume)
+        console.log("当前音量:", currentVolume)
+      } else {
+        console.warn("获取到的音量数据格式不正确:", volumeData)
+        setVolume(50) // 设置默认值
+      }
+    } catch (error) {
+      console.error("获取音量失败:", error)
+      setVolume(50) // 设置默认值
+    }
+  }
+
+  // 加载数据
+  const loadData = async () => {
+    try {
+      // 显示加载状态
+      console.log("正在加载首页数据...")
+
+      // 并行加载所有数据
+      const [userInfoData, latestVideoData, notificationsData, ranksData] = await Promise.all([
+        userStore.getUserInfo().catch((err) => {
+          console.error("获取用户信息失败:", err)
+          return null
+        }),
+        getLatestVideo().catch((err) => {
+          console.error("获取最近学习视频失败:", err)
+          return null
+        }),
+        getNotifications().catch((err) => {
+          console.error("获取通知失败:", err)
+          return null
+        }),
+        getHomeRanks().catch((err) => {
+          console.error("获取排行榜失败:", err)
+          return null
+        }),
+      ])
+
+      // 设置用户信息
+      if (userInfoData) {
+        console.log("用户信息加载成功:", userInfoData.username)
+        setUserInfo(userInfoData)
+      } else {
+        console.warn("用户信息为空，可能需要登录")
+      }
+
+      // 设置最近学习视频
+      if (latestVideoData) {
+        console.log("最近学习视频加载成功:", latestVideoData?.rsname || "")
+        setLatestVideo(latestVideoData)
+      }
+
+      // 设置通知
+      if (notificationsData && notificationsData.notifications) {
+        console.log("通知加载成功:", notificationsData.notifications.length)
+        setNotifications(notificationsData.notifications.map((item: any) => item.title))
+      }
+
+      // 设置排行榜
+      if (ranksData && ranksData.ranking_list) {
+        console.log("排行榜加载成功:", ranksData.ranking_list.length)
+
+        let hasCurrentUser = false
+        const rankList = ranksData.ranking_list.map((item: any) => {
+          if (item.is_current_user) {
+            hasCurrentUser = true
+          }
+          return item
+        })
+
+        // 如果没有当前用户，默认将第一个设为当前用户
+        if (!hasCurrentUser && rankList.length > 0) {
+          rankList[0].is_current_user = true
+        }
+
+        setRanks(rankList)
+      }
+    } catch (error) {
+      console.error("首页数据加载失败:", error)
+      // 可以在这里显示错误提示给用户
+    }
+  }
+
+  // 页面加载时获取数据
+  useEffect(() => {
+    loadData()
+
+    // 清理函数：组件卸载时清除定时器
+    return () => {
+      if (brightnessTimeoutRef.current) {
+        clearTimeout(brightnessTimeoutRef.current)
+      }
+      if (volumeTimeoutRef.current) {
+        clearTimeout(volumeTimeoutRef.current)
       }
     }
-
-    loadData()
   }, [])
+
+  // 页面获得焦点时重新加载数据
+  useFocusEffect(
+    useCallback(() => {
+      loadData()
+      // 恢复沉浸式模式
+      // globalImmersive.forceRestore()
+    }, []),
+  )
+
+  const router = useRouter()
 
   // 播放视频
   const playVideo = () => {
-    // 实现视频播放功能
-    console.log("播放视频:", latestVideo.rsid)
+    if (!latestVideo || !latestVideo.rsid) {
+      Alert.alert("提示", "无法获取视频信息")
+      return
+    }
+
+    // 使用Expo Router导航到视频播放页面
+    router.push({
+      pathname: "/sync-classroom/video",
+      params: {
+        videoCode: latestVideo.rsid,
+        title: latestVideo.rsname,
+        duration: latestVideo.record_time,
+        totalDuration: latestVideo.rstime || 0,
+      },
+    })
   }
+
+  // 跳转到阅读器
+  const goToReader = useCallback(() => {
+    console.log("📚 [首页] 用户点击跳转到阅读器")
+    try {
+      router.push("/reader")
+      console.log("📚 [首页] ✅ 跳转到阅读器命令已执行")
+    } catch (error) {
+      console.error("📚 [首页] ❌ 跳转到阅读器失败:", error)
+      Alert.alert("提示", "跳转失败，请重试")
+    }
+  }, [router])
 
   // 跳转到AI页面
   const goToAI = () => {
-    console.log("跳转到AI页面")
+    // 使用Expo Router导航到AI拍照页面
+    router.push({
+      pathname: "/ai/camera" as any,
+      params: { type: "question" },
+    })
   }
 
   // 跳转到排行榜页面
-  const goToRanking = () => {
-    console.log("跳转到排行榜页面")
-  }
+  // 注释掉未使用的函数，保留功能以备将来实现
+  // const goToRanking = () => {
+  //   router.push("/ranking")
+  // }
 
   // 打开系统WiFi设置
-  const openSystemWifiSettings = () => {
-    console.log("打开系统WiFi设置")
+  const openSystemWifiSettings = async () => {
+    if (Platform.OS === "android") {
+      try {
+        // 使用IntentLauncher打开Android系统WiFi设置
+        const IntentLauncher = await import("expo-intent-launcher")
+        await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.WIFI_SETTINGS)
+        console.log("已打开系统WiFi设置")
+      } catch (error) {
+        console.error("打开系统WiFi设置失败:", error)
+        Alert.alert("提示", "无法打开WiFi设置")
+      }
+    } else if (Platform.OS === "ios") {
+      // iOS不允许直接打开系统设置，提示用户手动打开
+      Alert.alert("提示", "请手动打开系统设置 > WiFi", [{ text: "确定" }])
+    }
   }
 
   // 打开系统蓝牙设置
-  const openSystemBluetoothSettings = () => {
-    console.log("打开系统蓝牙设置")
+  const openSystemBluetoothSettings = async () => {
+    if (Platform.OS === "android") {
+      try {
+        // 使用IntentLauncher打开Android系统蓝牙设置
+        const IntentLauncher = await import("expo-intent-launcher")
+        await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.BLUETOOTH_SETTINGS)
+        console.log("已打开系统蓝牙设置")
+      } catch (error) {
+        console.error("打开系统蓝牙设置失败:", error)
+        Alert.alert("提示", "无法打开蓝牙设置")
+      }
+    } else if (Platform.OS === "ios") {
+      // iOS不允许直接打开系统设置，提示用户手动打开
+      Alert.alert("提示", "请手动打开系统设置 > 蓝牙", [{ text: "确定" }])
+    }
   }
+
+  // 亮度调节防抖定时器
+  const brightnessTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // 亮度调节
-  const onBrightnessChange = (value: number) => {
+  const onBrightnessChange = useCallback((value: number) => {
+    // 立即更新UI显示
     setBrightness(value)
-  }
+
+    // 清除之前的定时器
+    if (brightnessTimeoutRef.current) {
+      clearTimeout(brightnessTimeoutRef.current)
+    }
+
+    // 设置防抖，300ms后执行实际的亮度设置
+    brightnessTimeoutRef.current = setTimeout(async () => {
+      try {
+        console.log("开始设置亮度:", value)
+        const { setSystemBrightnessAsync } = await import("expo-brightness")
+        await setSystemBrightnessAsync(value / 100)
+        console.log("亮度设置成功:", value)
+      } catch (error) {
+        console.error("设置亮度失败:", error)
+        // 不显示弹窗，避免频繁打扰用户
+        // Alert.alert("提示", "设置亮度失败")
+      }
+    }, 300)
+  }, [])
+
+  // 音量调节防抖定时器
+  const volumeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // 音量调节
-  const onVolumeChange = (value: number) => {
+  const onVolumeChange = useCallback((value: number) => {
+    // 立即更新UI显示
     setVolume(value)
-  }
+
+    // 清除之前的定时器
+    if (volumeTimeoutRef.current) {
+      clearTimeout(volumeTimeoutRef.current)
+    }
+
+    // 设置防抖，200ms后执行实际的音量设置
+    volumeTimeoutRef.current = setTimeout(async () => {
+      try {
+        console.log("开始设置音量:", value)
+
+        // 检查平台兼容性
+        if (Platform.OS !== "android") {
+          console.warn("音量控制仅支持Android平台")
+          return
+        }
+
+        // 尝试多种方式导入VolumeManager
+        let VolumeManager
+        try {
+          // 方式1：默认导入
+          VolumeManager = require("react-native-volume-manager").default
+        } catch (e1) {
+          try {
+            // 方式2：直接导入
+            VolumeManager = require("react-native-volume-manager")
+          } catch (e2) {
+            try {
+              // 方式3：命名导入
+              const { VolumeManager: VM } = require("react-native-volume-manager")
+              VolumeManager = VM
+            } catch (e3) {
+              console.warn("无法导入VolumeManager模块，可能需要重新构建项目")
+              return
+            }
+          }
+        }
+
+        // 检查VolumeManager是否可用
+        if (!VolumeManager) {
+          console.warn("VolumeManager模块为空")
+          return
+        }
+
+        // 检查setVolume方法
+        if (typeof VolumeManager.setVolume !== "function") {
+          console.warn("VolumeManager.setVolume方法不存在，可用方法:", Object.keys(VolumeManager))
+          return
+        }
+
+        await VolumeManager.setVolume(value / 100)
+        console.log("音量设置成功:", value)
+      } catch (error) {
+        console.error("设置音量失败:", error)
+        console.log("音量设置失败，但不显示弹窗避免打扰用户")
+      }
+    }, 200)
+  }, [])
 
   return (
     <LinearGradient
@@ -193,11 +476,13 @@ export default function HomeScreen() {
               <TouchableOpacity style={styles.settingItem} onPress={openSystemWifiSettings}>
                 <View style={styles.settingItemLeft}>
                   <View style={styles.settingIconContainer}>
-                    <Text style={styles.settingIconText}>W</Text>
+                    <Ionicons name="wifi" size={rpx(10.9)} color="#fff" />
                   </View>
                   <Text style={styles.settingText}>WiFi</Text>
                 </View>
-                <Text style={styles.settingArrow}>›</Text>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
               </TouchableOpacity>
 
               {/* 蓝牙设置 */}
@@ -210,38 +495,64 @@ export default function HomeScreen() {
                   />
                   <Text style={styles.settingText}>蓝牙</Text>
                 </View>
-                <Text style={styles.settingArrow}>›</Text>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
               </TouchableOpacity>
             </View>
 
             {/* 亮度调节 */}
             <View style={styles.sliderContainer}>
               <Text style={styles.sliderLabel}>亮度</Text>
-              <Slider
-                style={styles.slider}
-                minimumValue={0}
-                maximumValue={100}
-                value={brightness}
-                onValueChange={onBrightnessChange}
-                minimumTrackTintColor="#4891FF"
-                maximumTrackTintColor="rgba(255,255,255,0.8)"
-                thumbStyle={styles.sliderThumb}
-              />
+              {Platform.OS === "ios" ? (
+                <Slider
+                  style={styles.slider}
+                  minimumValue={0}
+                  maximumValue={100}
+                  value={brightness}
+                  onValueChange={onBrightnessChange}
+                  minimumTrackTintColor="#4891FF"
+                  maximumTrackTintColor="rgba(255,255,255,0.8)"
+                />
+              ) : (
+                <Slider
+                  style={styles.slider}
+                  minimumValue={0}
+                  maximumValue={100}
+                  value={brightness}
+                  onValueChange={onBrightnessChange}
+                  minimumTrackTintColor="#4891FF"
+                  maximumTrackTintColor="rgba(255,255,255,0.8)"
+                  thumbTintColor="#FFFFFF"
+                />
+              )}
             </View>
 
             {/* 音量调节 */}
             <View style={styles.sliderContainer}>
               <Text style={styles.sliderLabel}>系统音量</Text>
-              <Slider
-                style={styles.slider}
-                minimumValue={0}
-                maximumValue={100}
-                value={volume}
-                onValueChange={onVolumeChange}
-                minimumTrackTintColor="#4891FF"
-                maximumTrackTintColor="rgba(255,255,255,0.8)"
-                thumbStyle={styles.sliderThumb}
-              />
+              {Platform.OS === "ios" ? (
+                <Slider
+                  style={styles.slider}
+                  minimumValue={0}
+                  maximumValue={100}
+                  value={volume}
+                  onValueChange={onVolumeChange}
+                  minimumTrackTintColor="#4891FF"
+                  maximumTrackTintColor="rgba(255,255,255,0.8)"
+                />
+              ) : (
+                <Slider
+                  style={styles.slider}
+                  minimumValue={0}
+                  maximumValue={100}
+                  value={volume}
+                  onValueChange={onVolumeChange}
+                  minimumTrackTintColor="#4891FF"
+                  maximumTrackTintColor="rgba(255,255,255,0.8)"
+                  thumbTintColor="#FFFFFF"
+                />
+              )}
             </View>
           </View>
         )}
@@ -322,10 +633,12 @@ export default function HomeScreen() {
             </View>
 
             {/* 通知栏 */}
-            <View style={styles.noticeBar}>
-              <Image source={Images.tipsIcon} style={styles.noticeIcon} resizeMode="contain" />
-              <Text style={styles.noticeText}>{notifications[0] || "欢迎使用XHTX学习助手"}</Text>
-            </View>
+            <NoticeBar
+              texts={notifications.length > 0 ? notifications : ["欢迎使用XHTX学习助手"]}
+              delay={3}
+              color="#fff"
+              backgroundColor="rgba(255, 235, 181, 0.65)"
+            />
 
             {/* 同步课堂和排行榜容器 */}
             {latestVideo && (
@@ -407,6 +720,14 @@ export default function HomeScreen() {
         <TouchableOpacity style={styles.aiButton} onPress={goToAI}>
           <Image source={Images.indexAiBtn} style={styles.aiButtonImage} resizeMode="contain" />
         </TouchableOpacity>
+
+        {/* 阅读器按钮 */}
+        <TouchableOpacity style={styles.readerButton} onPress={goToReader}>
+          <View style={styles.readerButtonContent}>
+            <Ionicons name="book" size={rpx(24)} color="#fff" />
+            <Text style={styles.readerButtonText}>小褐阅读</Text>
+          </View>
+        </TouchableOpacity>
       </ImageBackground>
     </LinearGradient>
   )
@@ -417,25 +738,23 @@ const styles = createStyles({
     flex: 1,
     width: "100%",
     height: "100%",
-    minWidth: "100%",
-    minHeight: "100%",
   },
   backgroundImage: {
     flex: 1,
     width: "100%",
-    height: "100%",
+    height: "100%" as any,
   },
   topBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
     paddingHorizontal: 20,
     marginTop: 38.28125, // 状态栏高度，确保坐姿状态距离上面的高度为状态栏的高度
-    position: "relative",
+    position: "relative" as const,
   },
   postureStatus: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     backgroundColor: "rgba(255, 255, 255, 0.36)",
     borderRadius: 10.9375,
     paddingVertical: 6,
@@ -475,7 +794,7 @@ const styles = createStyles({
     height: "100%",
   },
   settingsPanel: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 70,
     right: 20,
     width: 168.75,
@@ -497,22 +816,22 @@ const styles = createStyles({
     marginBottom: 4.8,
   },
   settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     marginVertical: 5,
   },
   settingItemLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
   },
   settingIconContainer: {
     width: 20.3125,
     height: 20.3125,
     borderRadius: 10.15625,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   settingIconText: {
     color: "#fff",
@@ -527,7 +846,7 @@ const styles = createStyles({
   settingText: {
     color: "#fff",
     fontSize: 10.156,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     marginLeft: 4,
   },
   settingArrow: {
@@ -545,7 +864,7 @@ const styles = createStyles({
   sliderLabel: {
     color: "#fff",
     fontSize: 10.156,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     marginBottom: 5,
   },
   slider: {
@@ -568,14 +887,14 @@ const styles = createStyles({
     marginTop: 8,
   },
   userInfoCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    position: "relative",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    position: "relative" as const,
   },
   userInfoWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    position: "absolute",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    position: "absolute" as const,
     left: 0,
     bottom: 0,
     width: 248,
@@ -585,8 +904,8 @@ const styles = createStyles({
   avatarContainer: {
     width: 48.4375,
     height: 48.4375,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     marginLeft: 22.2656,
   },
   avatar: {
@@ -599,30 +918,30 @@ const styles = createStyles({
     marginLeft: 13.6718,
   },
   nameRow: {
-    flexDirection: "row",
+    flexDirection: "row" as const,
     marginBottom: 7.8125,
-    alignItems: "center",
+    alignItems: "center" as const,
   },
   nameColumn: {
-    flexDirection: "column",
+    flexDirection: "column" as const,
   },
   username: {
     fontSize: 11.71875,
     color: "#784200",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   gradeText: {
     fontSize: 8.2,
     color: "rgba(120, 66, 0, 0.85)",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   levelBadge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     borderRadius: 8.2,
     paddingRight: 4.8,
     marginLeft: 6.640625,
-    position: "relative",
+    position: "relative" as const,
     width: 51.5625,
     height: 12.89,
     shadowColor: "#ff9500",
@@ -633,47 +952,47 @@ const styles = createStyles({
   rankIcon: {
     width: 17.1875,
     height: 17.1875,
-    position: "absolute",
+    position: "absolute" as const,
     left: 0,
     bottom: 0,
   },
   rankText: {
     fontSize: 7.42,
     color: "#F38A00",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     marginLeft: 4.8,
   },
   progressRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
   },
   progressBar: {
     width: 75.78125,
     height: 4.296875,
     backgroundColor: "#f5cb34",
     borderRadius: 4,
-    overflow: "hidden",
-    position: "relative",
+    overflow: "hidden" as const,
+    position: "relative" as const,
   },
   progressFill: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 0,
     top: 0,
-    height: "100%",
+    height: "100%" as any,
     shadowColor: "#fab235",
     shadowOffset: { width: 2, height: 0 },
     shadowOpacity: 0.25,
     shadowRadius: 2.8,
   },
   progressTextContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     marginLeft: 6.4,
   },
   progressValue: {
     fontSize: 9.375,
     color: "#D08F04",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   progressTotal: {
     fontSize: 7.4218,
@@ -684,9 +1003,9 @@ const styles = createStyles({
     height: 81.25,
     borderRadius: 11.71875,
     backgroundColor: "rgba(250, 210, 126, 0.36)",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "flex-end",
+    flexDirection: "column" as const,
+    justifyContent: "center" as const,
+    alignItems: "flex-end" as const,
     paddingRight: 30.078125,
     shadowColor: "#ffffff",
     shadowOffset: { width: 0.3125, height: 0.3125 },
@@ -694,9 +1013,9 @@ const styles = createStyles({
     shadowRadius: 8,
   },
   studyDaysContent: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: "column" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   studyDaysValue: {
     fontSize: 20.3125,
@@ -901,5 +1220,30 @@ const styles = createStyles({
   aiButtonImage: {
     width: "100%",
     height: "100%",
+  },
+  readerButton: {
+    position: "absolute",
+    right: 20,
+    bottom: 120,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(52, 152, 219, 0.9)",
+    shadowColor: "#3498db",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  readerButtonContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  readerButtonText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "bold",
+    marginTop: 4,
   },
 })

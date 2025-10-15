@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
-import { View, ScrollView, Text } from "react-native"
+import { View, ScrollView, Text, Alert, ActivityIndicator } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useLocalSearchParams, router } from "expo-router"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 import { NavBar } from "../../components/NavBar"
 import { StatusBar } from "../../components/StatusBar"
@@ -18,16 +19,68 @@ export default function PolishedCompositionScreen() {
   const [title, setTitle] = useState("")
   const [compositionPages, setCompositionPages] = useState<string[][]>([])
   const [isChinese, setIsChinese] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 从localStorage或params中获取数据
-    // TODO: 实现数据获取逻辑
-    console.log("PolishedComposition mounted", params)
-  }, [params])
+    const loadData = async () => {
+      try {
+        setLoading(true) // 开始加载
+        
+        // 从 AsyncStorage 获取数据
+        const tempDataStr = await AsyncStorage.getItem("temp_polished_data")
+        console.log("读取到的数据:", tempDataStr ? "有数据" : "无数据")
+
+        if (!tempDataStr) {
+          setLoading(false)
+          Alert.alert("提示", "暂无润色内容")
+          router.back()
+          return
+        }
+
+        const tempData = JSON.parse(tempDataStr)
+        console.log("解析后的数据:", tempData)
+
+        // 检查数据是否过期（超过1小时）
+        const now = Date.now()
+        if (now - tempData.timestamp > 3600000) {
+          setLoading(false)
+          Alert.alert("提示", "数据已过期，请重新查看")
+          await AsyncStorage.removeItem("temp_polished_data")
+          router.back()
+          return
+        }
+
+        // 设置数据（保持 loading 状态，等待分页处理完成）
+        setAiResponse(tempData.aiResponse)
+        setTitle(tempData.title || "润色后作文")
+
+        console.log("数据加载成功:", {
+          title: tempData.title,
+          hasPolishedComposition: !!tempData.aiResponse?.polishedComposition,
+        })
+      } catch (error) {
+        console.error("加载数据失败:", error)
+        setLoading(false)
+        Alert.alert("错误", "加载数据失败")
+        router.back()
+      }
+    }
+
+    loadData()
+  }, [])
 
   // 处理分页
   useEffect(() => {
-    if (!aiResponse?.polishedComposition) return
+    if (!aiResponse?.polishedComposition) {
+      // 如果没有润色内容，关闭 loading
+      if (aiResponse) {
+        setLoading(false)
+      }
+      return
+    }
+
+    // 开始渲染，保持 loading 状态（数据加载时已经设置为 true）
+    console.log("开始分页处理...")
 
     const text = aiResponse.polishedComposition
     const isEnglish = aiResponse.compositionLanguage === "english"
@@ -138,6 +191,13 @@ export default function PolishedCompositionScreen() {
 
       setCompositionPages(pages)
     }
+
+    // 渲染完成后，延迟关闭 loading（确保页面已经渲染）
+    console.log("分页处理完成，准备关闭 loading")
+    setTimeout(() => {
+      setLoading(false)
+      console.log("Loading 已关闭")
+    }, 100)
   }, [aiResponse])
 
   return (
@@ -155,32 +215,39 @@ export default function PolishedCompositionScreen() {
       </View>
 
       {/* 滚动内容 */}
-      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          <Text style={styles.pageTitle}>{title || "润色后作文"}</Text>
-
-          {/* 作文页面列表 */}
-          <View style={styles.pagesContainer}>
-            {compositionPages.map((pageContent, index) => (
-              <View key={index} style={styles.pageWrapper}>
-                <CompositionCanvas
-                  id={`polishedCanvas_${index}`}
-                  title={index === 0 ? title || "润色后作文" : "续"}
-                  score={0}
-                  isChinese={isChinese}
-                  content={pageContent}
-                />
-              </View>
-            ))}
-          </View>
-
-          {compositionPages.length === 0 && (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>暂无润色内容</Text>
-            </View>
-          )}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#4891FF" />
+          <Text style={styles.loadingText}>正在加载润色内容...</Text>
         </View>
-      </ScrollView>
+      ) : (
+        <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.content}>
+            {/* <Text style={styles.pageTitle}>{title || "润色后作文"}</Text> */}
+
+            {/* 作文页面列表 */}
+            {compositionPages.length > 0 ? (
+              <View style={styles.pagesContainer}>
+                {compositionPages.map((pageContent, index) => (
+                  <View key={index} style={styles.pageWrapper}>
+                    <CompositionCanvas
+                      id={`polishedCanvas_${index}`}
+                      title={index === 0 ? title || "润色后作文" : "续"}
+                      score={0}
+                      isChinese={isChinese}
+                      content={pageContent}
+                    />
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>暂无润色内容</Text>
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      )}
     </LinearGradient>
   )
 }
@@ -226,6 +293,17 @@ const styles = createStyles({
   emptyText: {
     fontSize: 13.28125, // 17rpx
     color: "#999",
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 78.125, // 100rpx
+  },
+  loadingText: {
+    marginTop: 15.625, // 20rpx
+    fontSize: 11.71875, // 15rpx
+    color: "#666",
   },
 })
 

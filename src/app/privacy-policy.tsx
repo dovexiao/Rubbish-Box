@@ -49,18 +49,15 @@ export default function PrivacyPolicyScreen() {
             </View>
 
             {/* 隐私政策内容 */}
-            <ScrollView 
-              style={styles.contentContainer}
-              showsVerticalScrollIndicator={false}
-            >
+            <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
               <Text style={styles.policyTitle}>小橘同学智能学习桌隐私保护政策</Text>
-              
+
               <Text style={styles.updateTime}>更新时间：2024年12月</Text>
-              
+
               <Text style={styles.intro}>
                 小橘同学智能学习桌（以下简称"我们"）深知个人信息对您的重要性，并会尽全力保护您的个人信息安全可靠。我们致力于维持您对我们的信任，恪守以下原则，保护您的个人信息：权责一致原则、目的明确原则、选择同意原则、最少够用原则、确保安全原则、主体参与原则、公开透明原则等。
               </Text>
-              
+
               <Text style={styles.sectionTitle}>1. 我们收集的信息</Text>
               <Text style={styles.content}>
                 1.1 账户信息：包括您的手机号码、昵称等注册信息。{"\n\n"}
@@ -68,14 +65,14 @@ export default function PrivacyPolicyScreen() {
                 1.3 学习数据：包括学习时长、学习内容、学习进度等。{"\n\n"}
                 1.4 使用信息：包括应用使用情况、功能使用偏好等。
               </Text>
-              
+
               <Text style={styles.sectionTitle}>2. 信息收集方式</Text>
               <Text style={styles.content}>
                 2.1 您主动提供：注册账户、使用服务时主动提供的信息。{"\n\n"}
                 2.2 自动收集：在您使用服务过程中自动收集的技术信息。{"\n\n"}
                 2.3 第三方获取：从合法的第三方获取您已同意共享的信息。
               </Text>
-              
+
               <Text style={styles.sectionTitle}>3. 信息使用目的</Text>
               <Text style={styles.content}>
                 3.1 提供基础服务功能，如学习辅导、数据分析等。{"\n\n"}
@@ -83,24 +80,23 @@ export default function PrivacyPolicyScreen() {
                 3.3 保障账户和服务安全。{"\n\n"}
                 3.4 遵守法律法规要求。
               </Text>
-              
+
               <Text style={styles.sectionTitle}>4. 信息共享与披露</Text>
               <Text style={styles.content}>
                 4.1 我们不会向第三方出售、出租、共享或交易您的个人信息。{"\n\n"}
-                4.2 以下情况除外：{"\n"}
-                - 获得您的明确同意{"\n"}
-                - 法律法规要求{"\n"}
-                - 保护用户或公众的重大利益{"\n"}
-                - 与我们的关联公司共享（仅限于实现服务功能）
+                4.2 以下情况除外：{"\n"}- 获得您的明确同意{"\n"}- 法律法规要求{"\n"}-
+                保护用户或公众的重大利益{"\n"}- 与我们的关联公司共享（仅限于实现服务功能）
               </Text>
-              
+
               <Text style={styles.sectionTitle}>5. 信息存储</Text>
               <Text style={styles.content}>
                 5.1 存储地点：您的个人信息将存储在中华人民共和国境内。{"\n\n"}
-                5.2 存储期限：在您使用服务期间及之后的合理期限内存储，具体期限根据业务需要和法律要求确定。{"\n\n"}
+                5.2
+                存储期限：在您使用服务期间及之后的合理期限内存储，具体期限根据业务需要和法律要求确定。
+                {"\n\n"}
                 5.3 存储安全：我们采用行业标准的安全措施保护您的个人信息。
               </Text>
-              
+
               <Text style={styles.sectionTitle}>6. 您的权利</Text>
               <Text style={styles.content}>
                 6.1 访问权：您有权了解我们收集、使用您个人信息的情况。{"\n\n"}
@@ -108,22 +104,22 @@ export default function PrivacyPolicyScreen() {
                 6.3 删除权：在特定情况下，您有权要求我们删除您的个人信息。{"\n\n"}
                 6.4 撤回同意：您有权撤回对个人信息处理的同意。
               </Text>
-              
+
               <Text style={styles.sectionTitle}>7. 儿童隐私保护</Text>
               <Text style={styles.content}>
                 我们非常重视儿童个人信息的保护。如果您是14周岁以下的儿童，建议您请您的父母或监护人仔细阅读本隐私政策，并在征得您的父母或监护人同意后使用我们的服务或向我们提供信息。
               </Text>
-              
+
               <Text style={styles.sectionTitle}>8. 隐私政策更新</Text>
               <Text style={styles.content}>
                 我们可能会根据服务变更以及法律法规要求更新本隐私政策。更新后的隐私政策将在应用内发布，请您定期查看。
               </Text>
-              
+
               <Text style={styles.sectionTitle}>9. 联系我们</Text>
               <Text style={styles.content}>
                 如果您对本隐私政策有任何疑问、意见或建议，请通过应用内客服或邮件与我们联系。我们将在15个工作日内回复您的请求。
               </Text>
-              
+
               <View style={styles.bottomSpace} />
             </ScrollView>
           </LinearGradient>

@@ -1,9 +1,9 @@
+import { router } from "expo-router"
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
 
 import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS, UPLOAD_API_URL } from "../config/api"
 import { IS_DEV } from "../config/env"
 import { getDeviceInfoForAPI } from "../utils/deviceInfo"
-
 /**
  * 扩展AxiosRequestConfig类型，添加metadata字段
  */
@@ -73,29 +73,29 @@ apiClient.interceptors.request.use(
     // 添加设备信息到请求参数中
     try {
       const deviceInfo = await getDeviceInfoForAPI()
-      
+
       // 根据请求方法添加设备信息
-      if (config.method?.toLowerCase() === 'get') {
+      if (config.method?.toLowerCase() === "get") {
         // GET请求添加到params
         config.params = {
           ...config.params,
-          ...deviceInfo
+          ...deviceInfo,
         }
       } else {
         // POST/PUT等请求添加到data
-        if (config.data && typeof config.data === 'object') {
+        if (config.data && typeof config.data === "object") {
           config.data = {
             ...config.data,
-            ...deviceInfo
+            ...deviceInfo,
           }
         } else {
           config.data = {
             ...deviceInfo,
-            ...(config.data || {})
+            ...config.data,
           }
         }
       }
-      
+
       safeLog("📱 已添加设备信息:", deviceInfo.device_code)
     } catch (error) {
       safeLog("⚠️ 添加设备信息失败:", error)
@@ -114,6 +114,21 @@ apiClient.interceptors.request.use(
       safeLog("===============================================")
     }
 
+    // 检查是否是登录相关的API（这些API不需要token）
+    const loginRelatedAPIs = [
+      "/AppStart/Input_Code",
+      "/AppStart/SignInPhoneid",
+      "/AppStart/SignInPassword",
+      "/AppStart/ResetPassword",
+    ]
+
+    const isLoginRelatedAPI = loginRelatedAPIs.some((api) => config.url?.includes(api))
+
+    if (isLoginRelatedAPI) {
+      safeLog("🔓 登录相关API，无需添加Token")
+      return config
+    }
+
     // 从存储中获取token
     try {
       const { useUserStore } = await import("../stores/userStore")
@@ -124,10 +139,11 @@ apiClient.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`
         safeLog("🔐 已添加Token:", token.substring(0, 20) + "...")
       } else {
-        safeLog("⚠️ Token不存在或为空")
+        safeLog("⚠️ 未找到Token，继续发送请求但不添加Authorization头")
       }
     } catch (error) {
       safeLog("⚠️ 获取Token失败:", error)
+      safeLog("⚠️ 继续发送请求但不添加Authorization头")
     }
 
     return config
@@ -140,7 +156,7 @@ apiClient.interceptors.request.use(
 
 // 响应拦截器
 apiClient.interceptors.response.use(
-  (response) => {
+  async (response) => {
     // 计算请求耗时
     const duration = response.config.metadata?.startTime
       ? Date.now() - response.config.metadata.startTime
@@ -170,7 +186,17 @@ apiClient.interceptors.response.use(
     // 处理HTTP 401状态码
     if (response.status === 401) {
       safeLog("🔐 未授权，需要重新登录")
-      // 可以在这里添加重定向到登录页的逻辑
+      // 处理未授权情况
+      try {
+        const { useUserStore } = await import("../stores/userStore")
+        const userStore = useUserStore.getState()
+        userStore.logout()
+        safeLog("🔐 用户未授权，已清除token")
+
+        router.replace("/login")
+      } catch (error) {
+        safeLog("⚠️ 处理未授权错误:", error)
+      }
       return Promise.reject(new Error("登录已失效，请重新登录"))
     }
 
@@ -189,6 +215,29 @@ apiClient.interceptors.response.use(
     const duration = error.config?.metadata?.startTime
       ? Date.now() - error.config.metadata.startTime
       : 0
+
+    // 特殊处理401未授权错误
+    if (error.response?.status === 401) {
+      safeLog("🔐 检测到401未授权错误，需要重新登录")
+
+      // 处理未授权情况
+      try {
+        import("../stores/userStore")
+          .then(({ useUserStore }) => {
+            const userStore = useUserStore.getState()
+            userStore.logout()
+            safeLog("🔐 已清除本地token")
+
+            router.replace("/login")
+          })
+          .catch((e) => {
+            safeLog("⚠️ 清除token失败:", e)
+          })
+      } catch (e) {
+        safeLog("⚠️ 处理未授权错误:", e)
+      }
+      return Promise.reject(new Error("登录已失效，请重新登录"))
+    }
 
     // 打印错误详细信息
     if (LOG_CONFIG.ENABLED && LOG_CONFIG.SHOW_ERROR) {

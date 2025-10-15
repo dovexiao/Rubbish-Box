@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
-import { rpx } from "../utils/rpxStyleSheet"
+import {  rpx } from "../utils/rpxStyleSheet"
 
 interface SelectorOption {
   label: string
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     color: "#999999",
   },
   arrowContainer: {
-    width: rpx(15.625), // 15.625rpx
+    width: 15.625, // 15.625rpx
     alignItems: "center",
     justifyContent: "center",
   },

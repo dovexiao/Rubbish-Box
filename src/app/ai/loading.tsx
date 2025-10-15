@@ -4,10 +4,10 @@ import { LinearGradient } from "expo-linear-gradient"
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router"
 
 import { SciencePopularization } from "../../components/SciencePopularization"
+import { Images } from "../../constants/Assets"
 import { aiOcr } from "../../services/ai"
-import { createStyles } from "../../utils/rpxStyleSheet"
-import { SERVER_BASE_URL } from "../../config/env"
 import { globalImmersive } from "../../utils/globalImmersive"
+import { createStyles } from "../../utils/rpxStyleSheet"
 
 /**
  * AI加载页面
@@ -17,8 +17,7 @@ import { globalImmersive } from "../../utils/globalImmersive"
 export default function AILoadingScreen() {
   const router = useRouter()
   const params = useLocalSearchParams()
-  const [gifLoaded, setGifLoaded] = useState(false)
-  const [gifUrl, setGifUrl] = useState("")
+  const [imageLoaded, setImageLoaded] = useState(false)
   const hasCalledOCR = useRef(false)
   const [isNavigating, setIsNavigating] = useState(false) // 跳转状态
 
@@ -31,24 +30,9 @@ export default function AILoadingScreen() {
   )
 
   useEffect(() => {
-    console.log("🎬 Loading页面：初始化GIF加载")
-    // 加载 GIF 资源
-    const gifSrc = `${SERVER_BASE_URL}/media/fonts/ai-loading.gif`
-    setGifUrl(gifSrc)
-    console.log("🎬 GIF URL:", gifSrc)
-
-    // 模拟 GIF 加载完成
-    const timer = setTimeout(() => {
-      console.log("🎬 GIF加载完成，设置gifLoaded=true")
-      setGifLoaded(true)
-    }, 500) // 减少延迟到500ms，让科普组件更快显示
-
-    return () => {
-      clearTimeout(timer)
-      // 组件卸载时清理 GIF
-      setGifUrl("")
-      setGifLoaded(false)
-    }
+    console.log("🎬 Loading页面：初始化背景图片")
+    // 图片加载完成立即显示科普组件
+    setImageLoaded(true)
   }, [])
 
   useEffect(() => {
@@ -123,13 +107,12 @@ export default function AILoadingScreen() {
       end={{ x: 1, y: 1 }}
       style={styles.loadingContainer}
     >
-      {/* 加载背景GIF - 使用网络GIF */}
-      {gifUrl && <Image source={{ uri: gifUrl }} style={styles.loadingBg} resizeMode="cover" />}
+      {/* 加载背景图片 - 使用静态图片 */}
+      <Image source={Images.loadingBg} style={styles.loadingBg} resizeMode="cover" />
 
-      {/* 科普功能组件 - 调试信息 */}
+      {/* 科普功能组件 */}
       <View style={styles.scienceContainer}>
-        {console.log("🎬 传递给科普组件的 gifLoaded:", gifLoaded)}
-        <SciencePopularization gifLoaded={gifLoaded} />
+        <SciencePopularization gifLoaded={imageLoaded} />
       </View>
     </LinearGradient>
   )

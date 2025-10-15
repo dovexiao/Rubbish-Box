@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { createStyles, rpx } from '../utils/rpxStyleSheet';
+import { createStyles } from '../utils/rpxStyleSheet';
 
 interface DebugToolsProps {
   visible?: boolean;
@@ -84,13 +84,13 @@ export function DebugTools({ visible = __DEV__ }: DebugToolsProps) {
       {showGrid && (
         <View style={styles.gridOverlay} pointerEvents="none">
           {/* 横向网格线 */}
-          {Array.from({ length: Math.ceil(height / rpx(100)) }).map((_, i) => (
+          {Array.from({ length: Math.ceil(height / 100) }).map((_, i) => (
             <View 
               key={`h-${i}`} 
               style={[
                 styles.gridLine, 
                 { 
-                  top: rpx(i * 100), 
+                  top: i * 100, 
                   width: '100%',
                   height: 1,
                 }
@@ -99,13 +99,13 @@ export function DebugTools({ visible = __DEV__ }: DebugToolsProps) {
           ))}
           
           {/* 纵向网格线 */}
-          {Array.from({ length: Math.ceil(width / rpx(100)) }).map((_, i) => (
+          {Array.from({ length: Math.ceil(width / 100) }).map((_, i) => (
             <View 
               key={`v-${i}`} 
               style={[
                 styles.gridLine, 
                 { 
-                  left: rpx(i * 100), 
+                  left: i * 100, 
                   height: '100%',
                   width: 1,
                 }
@@ -120,7 +120,7 @@ export function DebugTools({ visible = __DEV__ }: DebugToolsProps) {
         <View style={styles.infoPanel} pointerEvents="none">
           <Text style={styles.infoText}>屏幕: {width.toFixed(0)} x {height.toFixed(0)}px</Text>
           <Text style={styles.infoText}>rpx比例: {(width / 750).toFixed(4)}</Text>
-          <Text style={styles.infoText}>100rpx = {rpx(100).toFixed(1)}px</Text>
+          <Text style={styles.infoText}>100rpx = {(100 * width / 750).toFixed(1)}px</Text>
         </View>
       )}
       

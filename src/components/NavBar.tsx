@@ -2,9 +2,9 @@
  * @Author: zdb zhiubo_1@163.com
  * @Date: 2025-09-30 13:32:51
  * @LastEditors: zdb zhiubo_1@163.com
- * @LastEditTime: 2025-10-08 18:05:26
+ * @LastEditTime: 2025-10-13 13:32:49
  * @FilePath: /xhtx-app/xhtx/src/components/NavBar.tsx
- * @Description: 
+ * @Description:
  */
 import { View, Text, TouchableOpacity } from "react-native"
 import { useRouter } from "expo-router"
@@ -36,16 +36,12 @@ export function NavBar({
     if (onBackPress) {
       onBackPress()
     } else {
-      // 直接返回，不使用循环
-      if (goBackDelta === 1) {
+      // 检查是否可以返回
+      if (router.canGoBack?.()) {
         router.back()
       } else {
-        // 如果需要返回多层，使用canGoBack检查
-        for (let i = 0; i < goBackDelta; i++) {
-          if (router.canGoBack?.()) {
-            router.back()
-          }
-        }
+        // 如果不能返回，导航到首页
+        router.navigate("/(tabs)/study")
       }
     }
   }
@@ -54,8 +50,8 @@ export function NavBar({
     <View style={styles.container}>
       <View style={styles.navBar}>
         {leftArrow && (
-          <TouchableOpacity 
-            style={styles.leftButton} 
+          <TouchableOpacity
+            style={styles.leftButton}
             onPress={handleClickLeft}
             activeOpacity={0.6}
             delayPressIn={0}
@@ -96,9 +92,11 @@ const styles = createStyles({
     fontSize: 15.625, // 15.625rpx - UniApp原值
     fontWeight: "400" as const,
     fontFamily: "Kingnam-Bobo",
+    flexShrink: 1,
   },
   rightContent: {
-    width: 31.25, // 40px转rpx = 31.25rpx
+    minWidth: 31.25, // 40px转rpx = 31.25rpx
     alignItems: "flex-end" as const,
+    flexShrink: 0,
   },
 })

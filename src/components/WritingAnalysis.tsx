@@ -1,11 +1,21 @@
 import { View, Text } from "react-native"
-import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg"
+import Svg, {
+  Polygon,
+  Circle,
+  Line,
+  Text as SvgText,
+  TSpan,
+  Defs,
+  RadialGradient,
+  Stop,
+} from "react-native-svg"
+
 import { createStyles } from "../utils/rpxStyleSheet"
 
 interface ScoreItem {
   name: string
   grade: string
-  progress: string
+  progress: string | number // 支持字符串（如 "80%"）或数字（如 80）
   description: string
   color: string
 }
@@ -27,12 +37,15 @@ export function WritingAnalysis({ scoreItems }: Props) {
     )
   }
 
-  // 雷达图配置
-  const width = 194
-  const height = 169
+  // 雷达图配置 - 增大雷达图，减少空白
+  const width = 194 // 194rpx，与容器一致
+  const height = 169 // 169rpx，与容器一致
   const centerX = width / 2
   const centerY = height / 2
-  const maxRadius = Math.min(width, height) * 0.35
+  const labelDistance = 12 // 减小标签距离
+  const textMargin = 15 // 文字预留空间（两行文字+间距）
+  // 计算最大半径：(容器最小边 / 2) - 标签距离 - 文字预留
+  const maxRadius = Math.min(width, height) / 2 - labelDistance - textMargin
 
   // 计算雷达图的各个点位置
   const angleStep = (Math.PI * 2) / scoreItems.length
@@ -96,7 +109,10 @@ export function WritingAnalysis({ scoreItems }: Props) {
     const points = scoreItems
       .map((item, index) => {
         const angle = angleStep * index - Math.PI / 2
-        const percentage = parseFloat(item.progress.replace("%", "")) / 100
+        // 处理 progress 可能是数字或字符串的情况
+        const progressValue = item.progress || "0%"
+        const progressStr = typeof progressValue === "string" ? progressValue : `${progressValue}%`
+        const percentage = parseFloat(progressStr.replace("%", "")) / 100
         const radius = maxRadius * percentage
         const x = centerX + Math.cos(angle) * radius
         const y = centerY + Math.sin(angle) * radius
@@ -116,7 +132,11 @@ export function WritingAnalysis({ scoreItems }: Props) {
         {/* 数据点 */}
         {scoreItems.map((item, index) => {
           const angle = angleStep * index - Math.PI / 2
-          const percentage = parseFloat(item.progress.replace("%", "")) / 100
+          // 处理 progress 可能是数字或字符串的情况
+          const progressValue = item.progress || "0%"
+          const progressStr =
+            typeof progressValue === "string" ? progressValue : `${progressValue}%`
+          const percentage = parseFloat(progressStr.replace("%", "")) / 100
           const radius = maxRadius * percentage
           const x = centerX + Math.cos(angle) * radius
           const y = centerY + Math.sin(angle) * radius
@@ -141,17 +161,13 @@ export function WritingAnalysis({ scoreItems }: Props) {
   const renderLabels = () => {
     return scoreItems.map((item, index) => {
       const angle = angleStep * index - Math.PI / 2
-      const labelRadius = maxRadius + 20
+      const labelRadius = maxRadius + labelDistance // 使用计算好的标签距离
       const x = centerX + Math.cos(angle) * labelRadius
       const y = centerY + Math.sin(angle) * labelRadius
 
-      // 根据位置调整对齐方式
-      let textAnchor: "start" | "middle" | "end" = "middle"
-      if (x < centerX - 10) {
-        textAnchor = "end"
-      } else if (x > centerX + 10) {
-        textAnchor = "start"
-      }
+      // 处理百分比显示
+      const progressValue = item.progress || "0%"
+      const progressStr = typeof progressValue === "string" ? progressValue : `${progressValue}%`
 
       return (
         <SvgText
@@ -159,14 +175,16 @@ export function WritingAnalysis({ scoreItems }: Props) {
           x={x}
           y={y}
           fill="rgba(124, 210, 105, 1)"
-          fontSize={10}
+          fontSize={9} // 调整字体大小
           fontWeight="bold"
-          textAnchor={textAnchor}
+          textAnchor="middle"
         >
+          <TSpan x={x} dy={0} textAnchor="middle">
           {item.name}
-          <SvgText x={x} dy={12} fill="rgba(124, 210, 105, 1)" fontSize={10} fontWeight="bold">
-            {item.progress}
-          </SvgText>
+          </TSpan>
+          <TSpan x={x} dy={10} textAnchor="middle" fontSize={8}>
+            {progressStr}
+          </TSpan>
         </SvgText>
       )
     })
@@ -176,12 +194,12 @@ export function WritingAnalysis({ scoreItems }: Props) {
     <View style={styles.container}>
       <Svg width={width} height={height}>
         {/* 定义渐变 */}
-        <defs>
-          <radialGradient id="gradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(146, 222, 255, 1)" stopOpacity={1} />
-            <stop offset="100%" stopColor="rgba(92, 255, 103, 1)" stopOpacity={1} />
-          </radialGradient>
-        </defs>
+        <Defs>
+          <RadialGradient id="gradient" cx="50%" cy="50%" r="50%">
+            <Stop offset="0%" stopColor="rgba(146, 222, 255, 1)" stopOpacity={1} />
+            <Stop offset="100%" stopColor="rgba(92, 255, 103, 1)" stopOpacity={1} />
+          </RadialGradient>
+        </Defs>
 
         {/* 网格层级 */}
         {renderGridLevels()}
@@ -201,10 +219,13 @@ export function WritingAnalysis({ scoreItems }: Props) {
 
 const styles = createStyles({
   container: {
-    width: 194, // 194rpx
-    height: 169, // 169rpx
+    width: 194, // 194rpx 恢复原尺寸
+    height: 169, // 169rpx 恢复原尺寸
     justifyContent: "center",
     alignItems: "center",
+    // borderWidth: 1,
+    // borderColor: "#e0e0e0",
+    borderRadius: 4,
   },
   emptyText: {
     fontSize: 12,

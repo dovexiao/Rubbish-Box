@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react"
-import { View, Text, Animated, ImageBackground } from "react-native"
+import { View, Animated, ImageBackground } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { createStyles } from "../utils/rpxStyleSheet"
-import { getWhysList } from "../services/ai"
+
+import { Text } from "./Themed"
 import { Images } from "../constants/Assets"
+import { getWhysList } from "../services/ai"
+import { createStyles } from "../utils/rpxStyleSheet"
 
 interface ScienceData {
   id?: number
@@ -27,13 +29,59 @@ export function SciencePopularization({ data, gifLoaded = false }: Props) {
   const [scienceData, setScienceData] = useState<ScienceData>(data || { title: "", content: "" })
   const [isLoaded, setIsLoaded] = useState(false)
   const [scienceDataList, setScienceDataList] = useState<ScienceData[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [_currentIndex, _setCurrentIndex] = useState(0)
   const fadeAnim = useRef(new Animated.Value(0)).current
   const scaleAnim = useRef(new Animated.Value(0.8)).current
   const hasFetchedWhys = useRef(false)
 
+  // 更新科普知识内容
+  const updateWhysContent = useCallback(
+    (newData: ScienceData) => {
+      console.log("更新科普内容:", newData.title)
+
+      if (isLoaded) {
+        // 淡出动画
+        Animated.parallel([
+          Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleAnim, {
+            toValue: 0.8,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+        ]).start(() => {
+          // 使用 requestAnimationFrame 包裹 setState，避免 useInsertionEffect 警告
+          requestAnimationFrame(() => {
+            // 更新数据
+            setScienceData(newData)
+
+            // 淡入动画
+            Animated.parallel([
+              Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+              Animated.timing(scaleAnim, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+            ]).start()
+          })
+        })
+      } else {
+        setScienceData(newData)
+      }
+    },
+    [isLoaded, fadeAnim, scaleAnim],
+  )
+
   // 获取科普知识列表
-  const fetchWhysList = async () => {
+  const fetchWhysList = useCallback(async () => {
     // 使用 useRef 防止重复请求
     if (hasFetchedWhys.current) {
       return
@@ -60,50 +108,7 @@ export function SciencePopularization({ data, gifLoaded = false }: Props) {
       console.error("获取科普知识失败:", error)
       hasFetchedWhys.current = false // 失败时重置，允许重试
     }
-  }
-
-  // 更新科普知识内容
-  const updateWhysContent = (newData: ScienceData) => {
-    console.log("更新科普内容:", newData.title)
-
-    if (isLoaded) {
-      // 淡出动画
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 0.8,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        // 使用 requestAnimationFrame 包裹 setState，避免 useInsertionEffect 警告
-        requestAnimationFrame(() => {
-          // 更新数据
-          setScienceData(newData)
-
-          // 淡入动画
-          Animated.parallel([
-            Animated.timing(fadeAnim, {
-              toValue: 1,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-            Animated.timing(scaleAnim, {
-              toValue: 1,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-          ]).start()
-        })
-      })
-    } else {
-      setScienceData(newData)
-    }
-  }
+  }, [scienceDataList.length, updateWhysContent])
 
   // 显示下一条科普知识 - 使用useCallback避免重复创建
   const showNextWhys = useCallback(() => {
@@ -112,7 +117,7 @@ export function SciencePopularization({ data, gifLoaded = false }: Props) {
       return
     }
 
-    setCurrentIndex((prevIndex) => {
+    _setCurrentIndex((prevIndex) => {
       const nextIndex = (prevIndex + 1) % scienceDataList.length
       console.log(`显示第${nextIndex + 1}条科普知识，标题:`, scienceDataList[nextIndex].title)
 
@@ -121,7 +126,7 @@ export function SciencePopularization({ data, gifLoaded = false }: Props) {
 
       return nextIndex
     })
-  }, [scienceDataList])
+  }, [scienceDataList, updateWhysContent])
 
   // 监听 gifLoaded 变化 - 简化逻辑，立即显示
   useEffect(() => {
@@ -157,7 +162,7 @@ export function SciencePopularization({ data, gifLoaded = false }: Props) {
   useEffect(() => {
     console.log("科普组件挂载")
     fetchWhysList()
-  }, [])
+  }, [fetchWhysList])
 
   // 设置轮播定时器 - 移除currentIndex依赖，避免重复创建定时器
   useEffect(() => {
@@ -229,7 +234,7 @@ const styles = createStyles({
   sciencePopularization: {
     position: "absolute" as const,
     top: 131.4, // 131.4rpx - UniApp原值
-    left: 120.59375, // 120.59375rpx - UniApp原值
+    left: 100.59375, // 120.59375rpx - UniApp原值
     zIndex: 100, // 提高层级，确保显示在最上层
     width: 212.5, // 212.5rpx - UniApp原值
     height: 114.0625, // 114.0625rpx - UniApp原值
@@ -272,7 +277,7 @@ const styles = createStyles({
     fontWeight: "bold",
     position: "absolute" as const,
     left: 4, // 4rpx
-    top: 0,
+    top: 4,
   },
   cardContent: {
     position: "relative" as const,
@@ -283,7 +288,7 @@ const styles = createStyles({
   contentText: {
     color: "#2681f0", // UniApp原值
     fontSize: 8.6, // 8.6rpx
-    lineHeight: 12, // 1.4倍行高
+    lineHeight: 10, // 1.4倍行高
   },
 })
 

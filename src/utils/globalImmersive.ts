@@ -25,12 +25,13 @@ class GlobalImmersiveManager {
 
   /**
    * 启用全局沉浸式模式
+   * 针对Android 15优化，增加持续恢复机制
    */
   enable(): void {
     if (this.isEnabled) return
 
     this.isEnabled = true
-    console.log("启用全局沉浸式模式")
+    console.log("启用全局沉浸式模式（Android 15优化）")
 
     // 立即隐藏状态栏和三大金刚键
     this.hideSystemUI()
@@ -40,6 +41,9 @@ class GlobalImmersiveManager {
 
     // 设置导航监听器（如果可用）
     this.setupNavigationListener()
+    
+    // 设置持续恢复定时器（针对Android 15）
+    this.setupRestoreInterval()
   }
 
   /**
@@ -72,21 +76,26 @@ class GlobalImmersiveManager {
 
   /**
    * 隐藏系统UI（状态栏和三大金刚键）
+   * 针对Android 15优化
    */
   private hideSystemUI(): void {
     // 隐藏状态栏
-    StatusBar.setHidden(true)
-    // StatusBar.setTranslucent(true)
-    // StatusBar.setBackgroundColor("transparent", true)
-    console.log("隐状态栏已隐藏")
+    StatusBar.setHidden(true, "none")
+    console.log("状态栏已隐藏")
+    
     if (Platform.OS === "android") {
       StatusBar.setBarStyle("light-content", true)
+      StatusBar.setTranslucent(true)
+      StatusBar.setBackgroundColor("transparent", true)
 
-      // 隐藏三大金刚键
+      // 隐藏三大金刚键 - 使用多次调用确保生效
       try {
         if (Immersive && Immersive.on) {
+          // 连续调用3次以确保在Android 15上生效
           Immersive.on()
-          console.log("三大金刚键已隐藏")
+          setTimeout(() => Immersive.on && Immersive.on(), 100)
+          setTimeout(() => Immersive.on && Immersive.on(), 300)
+          console.log("三大金刚键已隐藏（Android 15优化）")
         } else {
           console.warn("Immersive.on 方法不存在")
         }
@@ -142,6 +151,22 @@ class GlobalImmersiveManager {
     }
   }
 
+  /**
+   * 设置持续恢复定时器（针对Android 15）
+   */
+  private setupRestoreInterval(): void {
+    if (this.restoreInterval) {
+      this.removeRestoreInterval()
+    }
+    
+    // 每2秒检查并恢复一次全屏状态
+    this.restoreInterval = setInterval(() => {
+      if (this.isEnabled && Platform.OS === "android") {
+        this.restoreImmersiveMode()
+      }
+    }, 2000)
+  }
+  
   /**
    * 移除恢复检查定时器
    */

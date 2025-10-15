@@ -238,6 +238,267 @@ export async function getWhysList(): Promise<WhysListResponse> {
   return await post<WhysListResponse>("/AppStart/UserInformation/whys_list/", {})
 }
 
+// ==================== 错题本相关接口 ====================
+
+/**
+ * 错题本数据响应类型
+ */
+export interface CorrectionRecordResponse {
+  data: CorrectionRecordItem[]
+}
+
+export interface CorrectionRecordItem {
+  /** 所有的已订正错题 */
+  corrected_count: number
+  /** 本周已订正的错题 */
+  corrected_count_this_week: number
+  /** 总错题次数 */
+  incorrect_count: number
+  /** 本周所有的错题 */
+  incorrect_count_this_week: number
+  /** 科目 */
+  subject: string
+  /** 本周未订正的错题 */
+  this_week_uncorrected_count: number
+  /** 高频错题列表 */
+  top_error_questions: TopErrorQuestion[]
+}
+
+export interface TopErrorQuestion {
+  /** 高频错题字段 */
+  question_text: string
+}
+
+/**
+ * 获取错题本数据
+ */
+export async function getCorrectionRecordResponse(): Promise<CorrectionRecordResponse> {
+  return await post<CorrectionRecordResponse>("/AppStart/Protected/new_correction_record/", {})
+}
+
+/**
+ * 错题列表查询参数
+ */
+export interface SubjectQuestionsParams {
+  /** 学科名称 */
+  subject: string
+  /** 查询本周的数据true开启false关闭，默认关闭 */
+  this_week_only?: boolean
+  /** 倒序desc 正序asc */
+  order_by_error_count?: string
+  /** 查询是否订正：all/correct/unCorrect */
+  is_corrected?: string
+}
+
+/**
+ * 错题列表响应
+ */
+export interface SubjectQuestionsResponse {
+  /** 总共有多少道题目 */
+  count: number
+  /** 学科 */
+  subject: string
+  /** 错题列表 */
+  wrong_questions: WrongQuestion[]
+}
+
+/**
+ * 错题详情
+ */
+export interface WrongQuestion {
+  /** 正确选项 */
+  correct_answer: string
+  /** 解析 */
+  explanation: string
+  /** 题目的id */
+  id: number
+  /** 选项 - 支持多种格式：字符串数组、对象数组、或键值对对象 */
+  options: string[] | QuestionOption[] | Record<string, string>
+  /** 题目序号 */
+  question_index: number | string
+  /** 题目 */
+  question_text: string
+  /** 类型"课后练习来的题目"，"错题本转换" */
+  question_type: string
+  /** 学生答案 */
+  student_answer: string
+  /** 创建时间 */
+  created_at: string
+  /** 错误次数 */
+  error_count: number
+  /** 是否订正 */
+  is_corrected?: string
+}
+
+/**
+ * 题目选项
+ */
+export interface QuestionOption {
+  /** 选项字母 A/B/C/D */
+  letter: string
+  /** 选项内容 */
+  text: string
+}
+
+/**
+ * 获取某个学科错题列表
+ */
+export async function getSubjectQuestions(
+  params: SubjectQuestionsParams,
+): Promise<SubjectQuestionsResponse> {
+  return await post<SubjectQuestionsResponse>(
+    "/AppStart/Protected/query_questionRecord_details/",
+    params,
+  )
+}
+
+/**
+ * 错题拍照识别参数
+ */
+export interface WrongTransferSelectionParams {
+  /** 图片UUID */
+  imguuid: string
+}
+
+/**
+ * 错题拍照识别返回数据
+ */
+export interface WrongTransferSelectionResponse {
+  /** 识别出的错题列表 */
+  questions: WrongQuestion[]
+  /** 缓存ID */
+  cache_id: string
+}
+
+/**
+ * 错题拍照确认参数
+ */
+export interface WrongTransferConfirmParams {
+  /** 图片UUID/批次ID */
+  batch_id: string
+  /** 选中的题目索引数组 */
+  selected_indices: number[]
+  /** 缓存ID */
+  cache_id: string
+}
+
+/**
+ * 错题拍照识别
+ */
+export async function getWrongTransferSelection(
+  params: WrongTransferSelectionParams,
+): Promise<WrongTransferSelectionResponse> {
+  return await post<WrongTransferSelectionResponse>(
+    "/AppStart/Protected/wrong_question_conversion/",
+    params,
+  )
+}
+
+/**
+ * 错题拍照确认提交
+ */
+export async function confirmWrongTransfer(params: WrongTransferConfirmParams): Promise<any> {
+  return await post("/AppStart/Protected/save_converted_question/", params)
+}
+
+/**
+ * 举一反三参数
+ */
+export interface QuestionsMoreParams {
+  /** 错题id */
+  question_id: string
+  /** 错题类型 */
+  question_type: string
+}
+
+/**
+ * 举一反三响应
+ */
+export interface QuestionsMoreResponse {
+  /** 原始内容 */
+  ai_response: string
+  /** 题目数据 */
+  data: {
+    /** 题目总列表 */
+    questions: any[]
+    /** 科目 */
+    subject: string
+    /** 总共多少道题目 */
+    total_questions: number
+  }
+  graded_at: string
+  success: boolean
+}
+
+/**
+ * 获取举一反三列表
+ */
+export async function getQuestionsMore(params: QuestionsMoreParams): Promise<QuestionsMoreResponse> {
+  return await post<QuestionsMoreResponse>(
+    "/AppStart/Protected/wrong_question_one_to_more/",
+    params,
+  )
+}
+
+/**
+ * 获取课程练习题
+ */
+export async function getCourseQuestions(params: {
+  video_code: string
+}): Promise<QuestionsMoreResponse> {
+  return await post<QuestionsMoreResponse>(
+    "/AppStart/ProgramResources/query_practice_questionSet/",
+    params,
+  )
+}
+
+/**
+ * 获取错题详情
+ */
+export async function getQuestionDetails(params: {
+  question_id: string
+  question_type: string
+}): Promise<any> {
+  return await post("/AppStart/Protected/wrong_question_details/", params)
+}
+
+/**
+ * 作文收录记录分组
+ */
+export interface CompositionRecordDatum {
+  /** 该月的记录列表 */
+  records?: CompositionRecord[]
+  /** 年月 */
+  year_month?: string
+}
+
+/**
+ * 作文收录单条记录
+ */
+export interface CompositionRecord {
+  batch_id?: string
+  /** 作文类型 */
+  composition_type?: string
+  /** 作文原始图片，多张的话只会取第一张 */
+  cover_image?: string
+  /** 那一天进行批改的时间 */
+  created_at?: string
+  /** id传入作文详情进行查询 */
+  id?: number
+  /** 分数 */
+  rating?: string
+}
+
+/**
+ * 获取作文收录记录列表
+ */
+export async function getCompositionCorrectionRecordList(): Promise<CompositionRecordDatum[]> {
+  return await post<CompositionRecordDatum[]>(
+    "/AppStart/Protected/composition_correction_record_list/",
+    {},
+  )
+}
+
 /**
  * 上传图片
  * @param formData - 包含图片文件的FormData
@@ -268,7 +529,7 @@ export async function uploadImage(
           "Content-Type": "multipart/form-data",
           "Authorization": token ? `Bearer ${token}` : "",
         },
-        timeout: 30000, // 30秒超时
+        timeout: 180000, // 180秒超时
       },
     )
 

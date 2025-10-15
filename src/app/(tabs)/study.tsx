@@ -22,10 +22,10 @@ export default function StudyScreen() {
   }
 
   // 跳转到小褐阅读页面
-  const goToReader = debounce(() => {
+  const goToReader = () => {
     console.log("跳转到阅读页面")
-    // router.push("/reader")
-  }, 300)
+    router.push("/reader")
+  }
 
   // 跳转到同步课堂页面
   const goToSyncClassroom = () => {
@@ -46,7 +46,7 @@ export default function StudyScreen() {
     if (type === "错题集") {
       // 跳转到错题本页面
       console.log("跳转到错题本")
-      // router.push("/ai/error-book")
+      router.push("/ai/error-book")
     } else {
       Alert.alert("提示", `${type}功能开发中`)
     }
@@ -55,7 +55,7 @@ export default function StudyScreen() {
   // 跳转到作文收录页面
   const goToCompositionRecord = debounce(() => {
     console.log("跳转到作文收录")
-    // router.push("/ai/composition-record")
+    router.push("/ai/composition-record")
   }, 300)
 
   return (

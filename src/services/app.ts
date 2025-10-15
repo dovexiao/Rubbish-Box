@@ -1,84 +1,77 @@
-import { create } from "apisauce"
+import { get, post } from "./api"
 
-// API基础配置
-const api = create({
-  baseURL: "https://api.example.com", // 替换为实际API地址
-  timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-  },
-})
+// 使用统一的API配置，无需单独配置拦截器
 
-// 请求拦截器
-api.addRequestTransform((request) => {
-  // 从存储获取token
-  const token = ""
-  if (token) {
-    request.headers["Authorization"] = `Bearer ${token}`
-  }
-})
+// 通知接口响应
+export interface NotificationsResponse {
+  generated_at: string
+  notifications: Notification[]
+  source: string
+  /**
+   * 全部的内容条数
+   */
+  total_count: number
+}
 
-// 响应拦截器
-api.addResponseTransform((response) => {
-  if (!response.ok) {
-    throw response
-  }
-})
+export interface Notification {
+  /**
+   * 编号
+   */
+  id: number
+  /**
+   * 标题(内容)
+   */
+  title: string
+}
+
+// 排行榜响应接口
+export interface RankResponse {
+  /**
+   * 当前用户排名(有学习记录才返回
+   */
+  current_user_ranking: number
+  /**
+   * 排行榜用户列表
+   */
+  ranking_list: RankingList[]
+  /**
+   * 总用户数
+   */
+  total_users: number
+}
+
+export interface RankingList {
+  /**
+   * 是否是当前用户
+   */
+  is_current_user: boolean
+  /**
+   * 用户排名
+   */
+  ranking: number
+  /**
+   * 总学习时长
+   */
+  total_duration: number
+  /**
+   * 用户名
+   */
+  username: string
+}
 
 // 最近学习视频接口
 export const getLatestVideo = async () => {
-  try {
-    // 模拟数据
-    return {
-      type: 1,
-      rsid: "video001",
-      rsname: "数学基础课程",
-      rspname: "小学数学",
-      record_time: 300,
-      cover_v: "/static/images/book-1.png",
-      referer_img: "",
-    }
-  } catch (error) {
-    console.error("获取最近学习视频失败:", error)
-    throw error
-  }
+  return await post("/AppStart/UserInformation/latest_video/")
 }
 
 // 获取通知接口
-export const getNotifications = async () => {
-  try {
-    // 模拟数据
-    return {
-      notifications: [
-        { id: 1, title: "欢迎使用XHTX学习助手!" },
-        { id: 2, title: "新功能上线: AI智能批改作业" },
-        { id: 3, title: "坐姿监测功能已开启，保护孩子健康" },
-      ],
-    }
-  } catch (error) {
-    console.error("获取通知失败:", error)
-    throw error
-  }
+export const getNotifications = async (): Promise<NotificationsResponse> => {
+  return await get("/AppStart/home/notifications")
 }
 
 // 获取排行榜接口
-export const getHomeRanks = async () => {
-  try {
-    // 模拟数据
-    return {
-      ranking_list: [
-        { ranking: 1, username: "张三", total_duration: 120, is_current_user: false },
-        { ranking: 2, username: "李四", total_duration: 100, is_current_user: true },
-        { ranking: 3, username: "王五", total_duration: 80, is_current_user: false },
-      ],
-      total_users: 100,
-      current_user_ranking: 2,
-    }
-  } catch (error) {
-    console.error("获取排行榜失败:", error)
-    throw error
-  }
+export const getHomeRanks = async (): Promise<RankResponse> => {
+  return await post("/AppStart/UserRanking/home_ranking/")
 }
 
 // 保存用户坐姿数据
@@ -90,11 +83,5 @@ export interface SaveMointorDataParams {
 }
 
 export const saveMointorData = async (params: SaveMointorDataParams) => {
-  try {
-    // 模拟API调用
-    return { success: true }
-  } catch (error) {
-    console.error("保存坐姿数据失败:", error)
-    throw error
-  }
+  return await post("/AppStart/UserInformation/add_study_duration/", params)
 }

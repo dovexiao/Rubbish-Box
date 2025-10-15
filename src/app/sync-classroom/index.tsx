@@ -365,7 +365,7 @@ export default function SyncClassroomScreen() {
   const startPractice = useCallback(
     (point: any) => {
       router.push({
-        pathname: "/ai/practice",
+        pathname: "/ai/error-book/practice",
         params: {
           mode: "multiple",
           type: "course",
@@ -425,11 +425,7 @@ export default function SyncClassroomScreen() {
       style={styles.pageContainer}
     >
       <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
-      <NavBar 
-        title="同步课堂" 
-        leftArrow 
-        onBackPress={() => router.navigate("/(tabs)/study")}
-      />
+      <NavBar title="同步课堂" leftArrow onBackPress={() => router.navigate("/(tabs)/study")} />
 
       {/* 学科选择标签 */}
       <View style={styles.subjectTabs}>
@@ -528,10 +524,10 @@ export default function SyncClassroomScreen() {
                         <Text style={styles.knowledgeTitle}>
                           {course.description} ：{course.title}
                         </Text>
-                        <Ionicons 
-                          name={course.expanded ? "chevron-down" : "chevron-forward"} 
-                          size={rpx(15.625)} 
-                          color="#666" 
+                        <Ionicons
+                          name={course.expanded ? "chevron-down" : "chevron-forward"}
+                          size={rpx(15.625)}
+                          color="#666"
                         />
                       </TouchableOpacity>
 

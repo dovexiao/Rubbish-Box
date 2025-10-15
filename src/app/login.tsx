@@ -144,14 +144,18 @@ export default function LoginScreen() {
     }
   }
 
-  // 调试用：打印组件信息
+  // 调试用：打印组件信息（仅在开发环境且状态变化显著时记录）
   useEffect(() => {
-    console.log("=== 登录页面调试信息 ===")
-    console.log("当前登录模式:", loginMode)
-    console.log("手机号:", phone)
-    console.log("是否同意协议:", agreeTerms)
-    console.log("加载状态:", loading)
-  }, [loginMode, phone, agreeTerms, loading])
+    // 判断是否为开发环境
+    if (__DEV__) {
+      // 只有在登录模式变化或加载状态变化时才记录日志
+      if (loginMode === "sms" || loading) {
+        console.log("=== 登录页面状态变化 ===")
+        console.log("当前登录模式:", loginMode)
+        console.log("加载状态:", loading)
+      }
+    }
+  }, [loginMode, loading])
 
   // 忘记密码
   const handleForgotPassword = () => {
@@ -310,17 +314,11 @@ export default function LoginScreen() {
                 <View style={styles.agreementTextContainer}>
                   <Text style={styles.agreementText}>
                     阅读并同意{" "}
-                    <Text 
-                      style={styles.linkText}
-                      onPress={() => router.push("/user-agreement")}
-                    >
+                    <Text style={styles.linkText} onPress={() => router.push("/user-agreement")}>
                       《用户协议》
-                    </Text>
-                    {" "}和{" "}
-                    <Text 
-                      style={styles.linkText}
-                      onPress={() => router.push("/privacy-policy")}
-                    >
+                    </Text>{" "}
+                    和{" "}
+                    <Text style={styles.linkText} onPress={() => router.push("/privacy-policy")}>
                       《隐私条款》
                     </Text>
                   </Text>

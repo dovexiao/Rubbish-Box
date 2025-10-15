@@ -50,7 +50,7 @@ interface UserState {
 const getStorageValue = (key: string): string | null => {
   try {
     return storage.getString(key) || null
-  } catch (error) {
+  } catch (_error) {
     // 在服务端渲染时返回null
     return null
   }
@@ -83,7 +83,7 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   setUserInfo: (data) => {
-    const { token, refreshToken, userInfo } = data
+    const { token, userInfo } = data
     set({
       token,
       user: userInfo || null,
@@ -108,7 +108,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       if (storedUserInfo) {
         try {
           user = JSON.parse(storedUserInfo)
-        } catch (e) {
+        } catch (_e) {
           console.warn("Failed to parse stored user info")
         }
       }
@@ -127,34 +127,29 @@ export const useUserStore = create<UserState>((set, get) => ({
     set({ isLoading: true, error: null })
 
     try {
-      // 模拟登录API调用
-      const mockResponse = {
-        user: {
-          id: "user123",
-          username: username,
-          avatar: "/static/images/user-avatar-boy.png",
-          grade: "三年级",
-          rank: "初级学者",
-          total_duration: 50,
-          rank_required: 100,
-          study_days: 15,
-          gender: 0,
-        },
-        token: "mock-token-" + Date.now(),
-      }
+      // 使用统一的API配置
+      const { post } = await import("../services/api")
+
+      const response = await post("/AppStart/SignInPassword/", {
+        phoneid: username,
+        password: password,
+        device_code: "mobile",
+      })
+
+      const { user, token } = response
 
       set({
-        user: mockResponse.user,
-        token: mockResponse.token,
+        user,
+        token,
         isLoggedIn: true,
         isLoading: false,
         showLoginPopup: false,
       })
 
       // 保存token到持久化存储
-      storage.set(STORAGE_KEYS.TOKEN, mockResponse.token)
+      storage.set(STORAGE_KEYS.TOKEN, token)
       // 保存用户信息
-      storage.set(STORAGE_KEYS.USER_INFO, JSON.stringify(mockResponse.user))
+      storage.set(STORAGE_KEYS.USER_INFO, JSON.stringify(user))
     } catch (error: any) {
       set({
         error: error.message || "登录失败",
@@ -192,19 +187,8 @@ export const useUserStore = create<UserState>((set, get) => ({
       }
     }
 
-    // 模拟用户信息
-    const mockUser = {
-      username: "测试用户",
-      grade: "三年级",
-      rank: "初级学者",
-      total_duration: 50,
-      rank_required: 100,
-      study_days: 15,
-      gender: 0,
-    }
-
-    set({ user: mockUser, isLoggedIn: true })
-    return mockUser
+    // 如果没有用户信息，抛出错误
+    throw new Error("用户未登录")
   },
 
   showLoginModal: () => set({ showLoginPopup: true }),

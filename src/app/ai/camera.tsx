@@ -8,13 +8,15 @@ import {
   Dimensions,
   StatusBar as RNStatusBar,
 } from "react-native"
+import { StatusBar } from "../../components/StatusBar"
 import { CameraView, useCameraPermissions } from "expo-camera"
 import * as FileSystem from "expo-file-system"
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router"
 
+import { LoadingOverlay } from "../../components/LoadingOverlay"
 import { NavBar } from "../../components/NavBar"
-import { createStyles } from "../../utils/rpxStyleSheet"
 import { globalImmersive } from "../../utils/globalImmersive"
+import { createStyles } from "../../utils/rpxStyleSheet"
 
 const Text = RNText
 
@@ -36,6 +38,8 @@ export default function CameraScreen() {
   const [photos, setPhotos] = useState<PhotoInfo[]>([])
   const [_isAnimating, _setIsAnimating] = useState(false)
   const [_isSubmitting, _setIsSubmitting] = useState(false)
+  const [uploadLoading, setUploadLoading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState("")
   const [cameraKey, setCameraKey] = useState(0) // 用于强制重新挂载相机
   const cameraRef = useRef<CameraView>(null)
 
@@ -151,7 +155,7 @@ export default function CameraScreen() {
 
     try {
       const photo = await cameraRef.current.takePictureAsync({
-        quality: 0.8,
+        quality: 1,
         base64: false,
       })
 
@@ -162,7 +166,6 @@ export default function CameraScreen() {
           timestamp: Date.now(),
         }
         setPhotos((prev) => [...prev, newPhoto])
-        Alert.alert("成功", "拍照成功", [{ text: "确定" }])
       }
     } catch (error) {
       console.error("拍照失败:", error)
@@ -197,16 +200,24 @@ export default function CameraScreen() {
     }
 
     _setIsSubmitting(true)
+    setUploadLoading(true)
+    setUploadProgress("准备上传...")
     console.log("提交照片进行AI批改:", photos)
 
     try {
       // 上传照片并获取batch_id
       const batch_id = await uploadPhotos()
 
-      // 跳转到AI加载页面
-      router.push(`/ai/loading?imguuid=${batch_id}&type=${type}`)
+      setUploadProgress("上传完成")
+
+      // 短暂延迟后跳转到AI加载页面
+      setTimeout(() => {
+        setUploadLoading(false)
+        router.push(`/ai/loading?imguuid=${batch_id}&type=${type}`)
+      }, 300)
     } catch (error) {
       console.error("上传照片失败:", error)
+      setUploadLoading(false)
       Alert.alert("错误", "上传照片失败，请重试")
       _setIsSubmitting(false)
     }
@@ -230,6 +241,7 @@ export default function CameraScreen() {
       for (let i = 0; i < photos.length; i++) {
         const photo = photos[i]
         console.log(`📤 上传第 ${i + 1}/${photos.length} 张照片...`)
+        setUploadProgress(`正在上传第 ${i + 1}/${photos.length} 张照片...`)
 
         const uploadResult = await FileSystem.uploadAsync(uploadUrl, photo.path, {
           fieldName: "images",
@@ -287,6 +299,7 @@ export default function CameraScreen() {
 
       {/* 覆盖层UI */}
       <View style={styles.overlay}>
+      <StatusBar theme="dark" />
         {/* 使用NavBar组件 */}
         <NavBar title={navTitle} leftArrow={true} goBackDelta={1} onBackPress={goBack} />
 
@@ -336,11 +349,14 @@ export default function CameraScreen() {
 
         {/* 开始批改按钮 */}
         {photos.length > 0 && (
-          <TouchableOpacity style={styles.startBtn} onPress={submitPhotos}>
+          <TouchableOpacity style={styles.startBtn} onPress={submitPhotos} disabled={uploadLoading}>
             <Text style={styles.startBtnText}>开始批改</Text>
           </TouchableOpacity>
         )}
       </View>
+
+      {/* 上传Loading遮罩 */}
+      <LoadingOverlay visible={uploadLoading} text={uploadProgress} color="#4891FF" />
     </View>
   )
 }
@@ -356,7 +372,6 @@ const styles = createStyles({
     height: "100%",
     backgroundColor: "#000",
   },
-
   camera: {
     position: "absolute" as const,
     top: 0,

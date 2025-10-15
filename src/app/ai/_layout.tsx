@@ -14,6 +14,13 @@ export default function AILayout() {
       <Stack.Screen name="rotate" />
       <Stack.Screen name="loading" />
       <Stack.Screen name="result" />
+      <Stack.Screen name="error-book" />
+      <Stack.Screen name="practice" />
+      <Stack.Screen name="practice-result" />
+      <Stack.Screen name="question-analysis" />
+      <Stack.Screen name="composition-record" />
+      <Stack.Screen name="photo-manager" />
+      <Stack.Screen name="polished-composition" />
     </Stack>
   )
 }

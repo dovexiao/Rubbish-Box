@@ -3,7 +3,7 @@
     "name": "xhtx",
     "slug": "xhtx",
     "version": "0.0.1",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/app/icons/1024x1024.png",
     "scheme": "xhtx",
     "userInterfaceStyle": "automatic",
