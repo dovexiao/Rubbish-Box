@@ -27,7 +27,7 @@ const BreatheImage = () => {
   return (
     <Animated.Image
       source={require('@/assets/gif/daillybonus.gif')}
-      style={[styles.icon, {transform: [{translateX: 5}, {scale}]}]}
+      style={[styles.icon, {transform: [{translateX: 5}, {scale}], zIndex: 10}]}
     />
   );
 };

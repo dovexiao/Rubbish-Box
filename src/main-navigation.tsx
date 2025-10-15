@@ -25,7 +25,7 @@ import PromotionDrawer from './common-pages/promotion';
 // import Vip from '@/common-pages/vip/vip';
 // import Recharge from '@/common-pages/recharge';
 import ProxyHome from '@/common-pages/proxy';
-import BreatheImage from '@/components/basic/animations/breatheImage';
+// import BreatheImage from '@/components/basic/animations/breatheImage';
 
 const Tab = createBottomTabNavigator();
 export const mainPageList: {
@@ -52,11 +52,11 @@ export const mainPageList: {
     activeImg: require('@assets/icons/home/activity-select.webp'),
   },
   {
-    name: 'ProxyHome',
+    name: i18n.t('home.tab.invite'),
     link: 'index/ProxyHome',
     component: ProxyHome,
-    img: require('@assets/icons/home/agency-inselect.webp'),
-    activeImg: require('@assets/icons/home/agency-select.webp'),
+    img: require('@assets/icons/home/agency-inselect.gif'),
+    activeImg: require('@assets/icons/home/agency-select.gif'),
   },
   {
     name: i18n.t('headers.earn'),
@@ -89,7 +89,7 @@ const CusTab = (props: BottomTabBarProps) => {
         // eslint-disable-next-line react-native/no-inline-styles
         {
           height: 56,
-          backgroundColor: theme.basicColor.newBgInTwo,
+          backgroundColor: '#6a000a',
         },
       ]}>
       <View
@@ -111,7 +111,7 @@ const CusTab = (props: BottomTabBarProps) => {
           const onPress = () => {
             if (!isFocused) {
               if (
-                (options.title === 'Agency' ||
+                (options.title === 'ProxyHome' ||
                   options.title === 'आमंत्रित करना' ||
                   options.title === 'ഏജൻസി' ||
                   options.title === 'ஏஜென்சி' ||
@@ -134,26 +134,37 @@ const CusTab = (props: BottomTabBarProps) => {
               accessibilityLabel={options.tabBarAccessibilityLabel}
               testID={options.tabBarTestID}
               onPress={onPress}
-              style={[theme.flex.center, theme.flex.flex1, theme.padding.tbs, {position: 'relative', overflow: index === showGif ? 'visible' : 'hidden'}]}>
+              style={[theme.flex.center, theme.flex.flex1, theme.padding.tbs, {position: 'relative', overflow: 'visible'}]}>
               <Image
-                style={theme.icon.l}
+                style={[
+                  theme.icon.l,
+                  index === 2
+                    ? {
+                        marginTop: -25,
+                        width: 87,
+                        height: 87,
+                      }
+                    : {},
+                ]}
                 source={
                   isFocused
                     ? mainPageList[index].activeImg
                     : mainPageList[index].img
                 }
               />
-              {index === showGif && <BreatheImage />}
-              <Text
-                blod={true}
-                fontSize={10}
-                style={{
-                  color: isFocused
-                    ? theme.basicColor.newFontWhite
-                    : theme.basicColor.newFontPink,
-                }}>
-                {label}
-              </Text>
+              {/* {index === showGif && <BreatheImage />} */}
+              {index !== 2 && (
+                <Text
+                  blod={true}
+                  fontSize={10}
+                  style={{
+                    color: isFocused
+                      ? theme.basicColor.newFontWhite
+                      : theme.basicColor.newFontPink,
+                  }}>
+                  {label}
+                </Text>
+              )}
             </NativeTouchableOpacity>
           );
         })}
