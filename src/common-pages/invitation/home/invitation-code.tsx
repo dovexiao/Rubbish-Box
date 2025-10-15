@@ -41,10 +41,9 @@ const InvitationCode: React.FC<InvitationCodeProps> = ({
           theme.flex.row,
           theme.flex.centerByCol,
           theme.flex.between,
-          theme.background.newFirst1,
           theme.border.primary50,
           theme.borderRadius.s,
-          {height: 80, paddingLeft: 25},
+          {height: 80, paddingLeft: 25, backgroundColor: theme.basicColor.newBgInTwo},
         ]}>
         <View style={[{width: scaleSize(170)}]}>
           <Text white fontSize={theme.fontSize.m}>
