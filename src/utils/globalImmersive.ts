@@ -43,7 +43,7 @@ class GlobalImmersiveManager {
     this.setupNavigationListener()
     
     // 设置持续恢复定时器（针对Android 15）
-    this.setupRestoreInterval()
+    // this.setupRestoreInterval()
   }
 
   /**
