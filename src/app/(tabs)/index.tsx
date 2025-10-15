@@ -656,7 +656,7 @@ export default function HomeScreen() {
                         style={styles.studyButton}
                       >
                         <Text style={styles.studyButtonText}>
-                          {latestVideo.type === 2 ? "继续学习" : "去学习"}
+                          {latestVideo.type === 2 ? "继续学习111" : "去学习"}
                         </Text>
                         <Text style={styles.studyButtonArrow}>›</Text>
                       </LinearGradient>
