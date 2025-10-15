@@ -52,8 +52,8 @@ export const mainPageList: {
     activeImg: require('@assets/icons/home/activity-select.webp'),
   },
   {
-    name: i18n.t('home.tab.invite'),
-    link: 'index/promotion',
+    name: 'ProxyHome',
+    link: 'index/ProxyHome',
     component: ProxyHome,
     img: require('@assets/icons/home/agency-inselect.webp'),
     activeImg: require('@assets/icons/home/agency-select.webp'),
