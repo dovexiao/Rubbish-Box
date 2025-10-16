@@ -46,17 +46,17 @@ const HomeHotGame: React.FC = () => {
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={[styles.boxFull, {aspectRatio: secondRowAspectRatio}]}
-          onPress={() => goTo('GameWebView', {type: 'color'})}>
-          <ImageBackground
-            source={require('@/assets/imgs/home/home-color.webp')}
-            style={styles.imageBox}
-            imageStyle={styles.image}
-          />
-        </TouchableOpacity>
-      </View>
+      {/*<View style={styles.row}>*/}
+      {/*  <TouchableOpacity*/}
+      {/*    style={[styles.boxFull, {aspectRatio: secondRowAspectRatio}]}*/}
+      {/*    onPress={() => goTo('GameWebView', {type: 'color'})}>*/}
+      {/*    <ImageBackground*/}
+      {/*      source={require('@/assets/imgs/home/home-color.webp')}*/}
+      {/*      style={styles.imageBox}*/}
+      {/*      imageStyle={styles.image}*/}
+      {/*    />*/}
+      {/*  </TouchableOpacity>*/}
+      {/*</View>*/}
     </View>
   );
 };

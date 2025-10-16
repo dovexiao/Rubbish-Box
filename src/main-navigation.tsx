@@ -52,20 +52,20 @@ export const mainPageList: {
     activeImg: require('@assets/icons/home/activity-select.webp'),
   },
   {
-    name: i18n.t('home.tab.invite'),
-    link: 'index/ProxyHome',
-    component: ProxyHome,
-    img: require('@assets/icons/home/agency-inselect.gif'),
-    activeImg: require('@assets/icons/home/agency-select.gif'),
-  },
-  {
     name: i18n.t('headers.earn'),
     link: 'index/invitation',
     component: Invitation,
-    img: require('@assets/icons/home/vip.webp'),
-    activeImg: require('@assets/icons/home/vip-select.webp'),
+    img: require('@assets/icons/home/agency-inselect.gif'),
+    activeImg: require('@assets/icons/home/agency-select.gif'),
     // img: require('@assets/icons/home/results-inselect.webp'),
     // activeImg: require('@assets/icons/home/results-select.webp'),
+  },
+  {
+    name: i18n.t('home.tab.invite'),
+    link: 'index/ProxyHome',
+    component: ProxyHome,
+    img: require('@assets/icons/home/agency-inselect.webp'),
+    activeImg: require('@assets/icons/home/agency-select.webp'),
   },
   {
     name: i18n.t('home.tab.me'),
@@ -111,7 +111,7 @@ const CusTab = (props: BottomTabBarProps) => {
           const onPress = () => {
             if (!isFocused) {
               if (
-                (options.title === 'ProxyHome' ||
+                (options.title === 'Agency' ||
                   options.title === 'आमंत्रित करना' ||
                   options.title === 'ഏജൻസി' ||
                   options.title === 'ஏஜென்சி' ||
