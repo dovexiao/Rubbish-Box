@@ -41,8 +41,8 @@ const InvitationInfo: React.FC<InvitationInfoProps> = ({
       style={[
         theme.flex.col,
         theme.padding.xxl,
-        theme.background.mainDark,
         theme.borderRadius.l,
+        {backgroundColor: theme.basicColor.newBgInTwo},
       ]}>
       <View style={[theme.flex.col, homeStyle.infoUpItem]}>
         <View
@@ -134,8 +134,8 @@ const InvitationInfo: React.FC<InvitationInfoProps> = ({
           onPress={onRecord}>
           <LazyImage
             imageUrl={invitationRecordIcon}
-            width={33}
-            height={33}
+            width={24}
+            height={24}
             occupancy="#0000"
           />
           <Text
@@ -160,8 +160,8 @@ const InvitationInfo: React.FC<InvitationInfoProps> = ({
           onPress={onRule}>
           <LazyImage
             imageUrl={invitationRulesIcon}
-            width={33}
-            height={33}
+            width={24}
+            height={24}
             occupancy="#0000"
           />
           <Text

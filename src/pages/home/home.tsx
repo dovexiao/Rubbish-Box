@@ -7,8 +7,9 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
+import {BasicObject} from '@types';
 import theme from '@style';
-import {getBannerList, getKeralaList} from './home.service';
+import {getBannerList, getKeralaList, getNoticeCheck} from './home.service';
 import globalStore from '@services/global.state';
 import HomeHeader from './components/home-header';
 import Download from './components/download';
@@ -38,6 +39,7 @@ import {getFirstRechargeV1} from '@/pages/home/home.service';
 import {useFocusEffect} from '@react-navigation/native';
 
 import {getCasinoList, getCasinoType} from './home.service';
+import HomeGoldArea from './components/home-gold-area';
 
 const Home = () => {
   // const basePx = globalStore.screenWidth / 375;
@@ -48,6 +50,12 @@ const Home = () => {
   const [keralaList, setKeralaList] = useState<KeralaListItem[]>([]);
   const [digitList] = useState<DigitListItem[]>([]);
   // const [showTabs, setShowTabs] = useState(false);
+
+  const [noticeMap, setNoticeMap] = useState<BasicObject>({
+    FREE_LOTTERY: 0,
+    REBATE: 0,
+    LUCKY_SPIN: 0,
+  });
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollAnim = useRef(new Animated.Value(0)).current;
@@ -66,6 +74,27 @@ const Home = () => {
         setRefreshing(false);
       });
   }, []);
+
+  const doNotice = (token: string | null) => {
+    if (token) {
+      getNoticeCheck().then(noticeList => {
+        const newNoticeMap: BasicObject = {};
+        Object.keys(noticeMap).forEach(key => {
+          const notice = noticeList.find(item => item.noticeKey === key);
+          if (notice) {
+            newNoticeMap[key] = notice.noticeCount;
+          }
+        });
+        setNoticeMap(newNoticeMap);
+      });
+    } else {
+      setNoticeMap({
+        FREE_LOTTERY: 0,
+        REBATE: 0,
+        LUCKY_SPIN: 0,
+      });
+    }
+  };
 
   const handleScroll = useCallback(({}: {value: number}) => {
     // console.log(value);
@@ -281,6 +310,11 @@ const Home = () => {
                 topHeight.current = e.nativeEvent.layout.height;
               }}>
               <HomeBanner bannerList={bannerList} />
+              <HomeGoldArea
+                noticeMap={noticeMap}
+                onNotice={() => doNotice(globalStore.token)}
+                spinShow={spinShow}
+              />
               <HomeGameList setSelectedGame={setSelectedGame} />
               {selectedGame === 2 && <HomeGameTop />}
             </View>

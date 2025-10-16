@@ -9,6 +9,7 @@ import Button from '@/components/basic/button';
 import {invitationColors} from '../invitation.variables';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {InvitationModalShowOption} from '../invitation-record-modal';
+import LinearGradient from '@/components/basic/linear-gradient';
 export interface InvitationBounsProps {
   inviteTaskUserId?: number;
   bouns?: number;
@@ -40,9 +41,9 @@ const InvitationBouns: React.FC<InvitationBounsProps> = ({
     <View
       style={[
         theme.flex.col,
-        theme.background.mainDark,
         theme.borderRadius.m,
         theme.margin.topl,
+        {backgroundColor: theme.basicColor.newBgInTwo},
       ]}>
       <View
         style={[
@@ -160,19 +161,24 @@ const InvitationBouns: React.FC<InvitationBounsProps> = ({
             </Text>
           </NativeTouchableOpacity>
         </View>
-        <Button
-          titleBold
-          size="middle"
-          disabled={completed}
-          title={
-            completed
-              ? t('invitation.home.completed')
-              : t('invitation.home.go-complete')
-          }
-          disabledStyle={[{backgroundColor: invitationColors.disabled}]}
-          buttonStyle={[theme.fill.fillW, homeStyle.bonusButton]}
-          onPress={onGoComplete}
-        />
+        <LinearGradient
+          colors={theme.basicColor.newButtonLinear}
+          style={[{borderRadius: 30}]}>
+          <Button
+            titleBold
+            size="middle"
+            disabled={completed}
+            color={theme.basicColor.newTransparent}
+            title={
+              completed
+                ? t('invitation.home.completed')
+                : t('invitation.home.go-complete')
+            }
+            disabledStyle={[{backgroundColor: invitationColors.disabled}]}
+            buttonStyle={[theme.fill.fillW, homeStyle.bonusButton]}
+            onPress={onGoComplete}
+          />
+        </LinearGradient>
       </View>
     </View>
   );

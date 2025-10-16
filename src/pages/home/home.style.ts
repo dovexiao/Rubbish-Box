@@ -53,6 +53,7 @@ export default StyleSheet.create({
     right: 5,
   },
   text: {
+    color: 'white',
     textAlign: 'center',
     fontWeight: '500',
   },

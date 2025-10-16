@@ -13,7 +13,7 @@ import {
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import React, {useCallback, useRef, useState} from 'react';
 import theme from '@style';
-import {goTo, goCS} from '@utils'; //toAgentApply,
+import {goTo} from '@utils'; //toAgentApply,
 import Text from '@basicComponents/text';
 // import {VipProgress} from '@businessComponents/vip';
 import {
@@ -25,7 +25,7 @@ import {
   updateIcon,
   passwordIcon,
   languagesIcon,
-  customerServiceIcon,
+  // customerServiceIcon,
   rebateIcon,
 } from '@businessComponents/list-item';
 import {useConfirm} from '@basicComponents/modal';
@@ -148,7 +148,7 @@ const Me = () => {
       toLogin();
       return;
     }
-    goTo('VIP');
+    goTo('Vip');
   };
 
   const toTransactions = () => {
@@ -476,16 +476,16 @@ const Me = () => {
                   title={i18n.t('me.bottom.lang')}
                   onPress={toLanguage}
                 />
-                <MeListItem
-                  // containerStyle={[theme.padding.tbl]}
-                  // mt={0}
-                  iconSize={18}
-                  icon={customerServiceIcon}
-                  title={i18n.t('me.bottom.customer')}
-                  onPress={goCS}
-                  // btmBorder={Platform.OS === 'android' ? true : false}
-                  hideBottomBorder={Platform.OS === 'android' ? false : true}
-                />
+                {/*<MeListItem*/}
+                {/*  // containerStyle={[theme.padding.tbl]}*/}
+                {/*  // mt={0}*/}
+                {/*  iconSize={18}*/}
+                {/*  icon={customerServiceIcon}*/}
+                {/*  title={i18n.t('me.bottom.customer')}*/}
+                {/*  onPress={goCS}*/}
+                {/*  // btmBorder={Platform.OS === 'android' ? true : false}*/}
+                {/*  hideBottomBorder={Platform.OS === 'android' ? false : true}*/}
+                {/*/>*/}
                 {Platform.OS === 'android' && (
                   <MeListItem
                     // containerStyle={[theme.padding.tbl]}

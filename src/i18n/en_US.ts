@@ -100,6 +100,8 @@ export default {
       referFriend: 'Refer Friend',
       agent: 'Agent',
       promotion: 'Promotion',
+      dailyRewards: 'Daily Rewards',
+      earnMoney: 'Earn Money',
     },
     luckyspin: {
       add: 'Add',
@@ -354,7 +356,7 @@ export default {
     play: 'Play',
     unlock: 'Unlock',
     vipLevel: 'Vip Level',
-    earn: 'Earn',
+    earn: 'Earn Money',
     color: 'Color',
     dice: 'Quick3D',
     digits: '3Digits',
