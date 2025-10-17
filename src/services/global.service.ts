@@ -176,3 +176,7 @@ export function appPayWaster() {
 export function appPromotionImage() {
   return http.post<null, any>(`app/activity/recharge/log/listImg`);
 }
+
+export const getPayEventNotice = () => {
+  return http.post<null, number>('app/pay/event/notice');
+};

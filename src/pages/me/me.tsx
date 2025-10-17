@@ -52,11 +52,31 @@ import { getGiftCodeAmount } from '@/pages/me/me.service';
 import {ToastType, useToast} from '@basicComponents/modal';
 // import { useRebateSuccessToast } from '@/common-pages/rebate/rebate-toast.hooks';
 import LinearGradient from '@/components/basic/linear-gradient';
+import {getPayEventNotice} from '@/services/global.service';
+import AdjustService from '@/utils/AdjustService';
 
 const {overflow, padding, font, margin, borderRadius} = theme;
 
 /** TODO 单个文件过大,需要拆解 */
 const Me = () => {
+  React.useEffect(() => {
+    const fetchPayEventNotice = async () => {
+      try {
+        const res = await getPayEventNotice();
+        console.log('返回res',res)
+        if (res > 0) {
+          AdjustService.track('recharge', res, 'INR');
+        }
+      } catch (err) {
+        console.log('请求失败:', err);
+      }
+    };
+    if (globalStore.token) {
+      fetchPayEventNotice();
+    }
+  }, []);
+
+
   const {renderModal, show} = useToast();
   const {i18n} = useTranslation();
   const [login, setLogin] = useState<boolean>(false);
