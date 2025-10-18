@@ -53,8 +53,8 @@ let isInitialized = false;
 
 // 应用配置（请替换为实际的应用令牌）
 const APP_CONFIG = {
-  android: {appToken: '3meh2m59zif4'},
-  web: {appToken: '3meh2m59zif4'},
+  android: {appToken: 'n6zcg598o6bk'},
+  web: {appToken: 'n6zcg598o6bk'},
   // environment: 'sandbox' as 'sandbox' | 'production',
   environment: ENV_CONFIG.REACT_APP_ENV === 'prod' ? 'production' : 'sandbox',
   logLevel: 'verbose' as 'verbose' | 'info' | 'warning' | 'error' | 'none',
@@ -134,15 +134,15 @@ const isAdjustAvailable = (): boolean => {
 
 // 事件Token映射（与Adjust后台配置对应）
 export const EVENT_TOKENS = {
-  Register: 'azwuw3',
-  First_Deposit: 'oig3he',
-  Recharge: '26oxq3',
+  Register: 'pq5yba',
+  First_Deposit: 'nv7401',
+  Recharge: 'jgi9qa',
   Deposit: 'd75e06',
-  game_rounds: 'uxh5j1',
-  game_time: 'np6qka',
-  nextdaylogin: '6e5ka3',
-  threedaylogin: 'xc97gn',
-  sevendaylogin: 'de65u4',
+  game_rounds: 'aexogy',
+  game_time: 'uop9h8',
+  nextdaylogin: 'b227at',
+  threedaylogin: '2l00io',
+  sevendaylogin: '36yztv',
 } as const;
 
 // 初始化SDK（应用启动时调用）
