@@ -9,7 +9,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
-import {toAgentApply} from '@utils'; //
+import {toAgentApply, goBack} from '@utils'; //
 import {goToUrl} from '@/common-pages/game-navigate';
 import InvitationCode from './components/invitation-code';
 // import SubEntry from './components/sub-entry';
@@ -104,7 +104,7 @@ const ProxyHome = () => {
       <DetailNavTitle
         hideServer
         hideAmount
-        // onBack={(route.path || '').indexOf('index') > -1 ? undefined : goBack}
+        onBack={goBack}
         title={i18n.t('proxy.title')}
         iconColor="white"
         titleColor={theme.fontColor.white}

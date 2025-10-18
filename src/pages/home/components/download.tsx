@@ -8,6 +8,7 @@ import {View, Image} from 'react-native';
 import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
 import envConfig from '@/utils/env.config';
+import AdjustService from '@/utils/AdjustService';
 
 const Download: React.FC = () => {
   const {i18n} = useTranslation();
@@ -18,6 +19,8 @@ const Download: React.FC = () => {
     //   goTo('Login');
     //   return;
     // }
+    AdjustService.track('download');
+    console.log('上报成功');
     downloadApk();
   };
   const heightZoom = 50 / 375;

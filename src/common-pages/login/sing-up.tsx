@@ -23,6 +23,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import DeviceInfo from 'react-native-device-info';
 
 import { trackRegister } from '@utils/AdjustEventTracker';
+import AdjustService from '@/utils/AdjustService';
 // import LazyImage from '@/components/basic/image';
 // const icon = require('../../assets/icons/login/login-botttom.webp');
 
@@ -213,6 +214,10 @@ const SingUp = (props: NavigatorScreenProps) => {
                   false,
                 )
                   .then(res => {
+                    if (res.isNewUser === true) {
+                      AdjustService.track('register');
+                      console.log('上报成功');
+                    }
                     if (globalStore.channel === 'hipfc01') {
                       const url =
                         'https://ppprfd.pgoriginad.com/action/3b982489-5c0b-484c-991e-b3fe72720144/319047';
