@@ -61,7 +61,9 @@ export default {
       'free-lottery': 'ப்பிரி லாட்டரி',
       referral: 'ரெபரரால்',
       agent: 'ஏஜென்ட்',
-      promotion: 'பதவி உயர்வு',
+      promotion: 'Promotion',
+      dailyRewards: 'டெய்லி ரிவார்ட்ஸ் ',
+      earnMoney: 'Earn Money',
     },
     luckyspin: {
       add: 'அட்',
@@ -79,9 +81,9 @@ export default {
     user: {
       userId: 'யூசர் ஐடி',
       moreExciting: 'மோர் எஸ்ஸிட்டிங் ஆப்டர் லொக்கிங் இன்',
-      login: 'உள்நுழைய',
-      loginUpper: 'மேல் உள்நுழைவு',
-      registerUpper: 'രജിസ്റ്റർ',
+      login: 'லாகின்',
+      loginUpper: 'லாகின்',
+      registerUpper: 'சைன் அப்',
     },
     money: {
       totalWallet: 'டோட்டல் வாலட்',
