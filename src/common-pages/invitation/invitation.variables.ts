@@ -9,11 +9,7 @@ export const rightIcon = require('@components/assets/icons/right-icon.webp');
 
 export const defaultHeaderImg = require('@components/assets/icons/default-header.webp');
 export const whatsappIcon = require('@components/assets/icons/proxy/whatsapp.webp');
-// export const topone = require('@assets/imgs/invitation/topone.webp');
-// export const toptwo = require('@assets/imgs/invitation/toptwo.webp');
-// export const content = require('@assets/imgs/invitation/content.webp');
-// export const bottom = require('@assets/imgs/invitation/bottom.webp');
-// export const CardOuterBg = require('@assets/imgs/invitation/card-outer.webp');
+export const CardOuterBg = require('@assets/imgs/invitation/card-outer.webp');
 export const invitationColors = {
   tableHeader: '#FF6868',
   tableEven: '#FFD5D5',

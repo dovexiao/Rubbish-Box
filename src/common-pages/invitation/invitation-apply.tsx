@@ -1,19 +1,27 @@
+/* eslint-disable */
+/* prettier-ignore */
 import React, {useEffect, useRef, useState} from 'react';
-import {TextInput, View, Image, ScrollView, Platform} from 'react-native';
+import {TextInput, View, Image, Platform} from 'react-native';
+import {
+  CardOuterBg,
+  invitationApplyColor,
+} from './invitation.variables';
 import Text from '@basicComponents/text';
 import LinearGradient from '@basicComponents/linear-gradient';
 import {BasicObject, SafeAny} from '@/types';
-import envConfig from '@/utils/env.config';
 
 import InvitationApplyModal from './invitation-apply-modal';
 import {
+  basicColor,
   borderRadius,
   flex,
   fontSize,
   margin,
   padding,
+  position,
 } from '@/components/style';
-// import {PhoneIcontwo, SaveIcontwo} from './svg.variables';
+import LazyImage from '@/components/basic/image';
+import {PhoneIcon, SaveIcon} from './svg.variables';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {sendCode, userLogin} from '../login/login.service';
 import globalStore from '@/services/global.state';
@@ -21,13 +29,11 @@ import i18n from '@/i18n';
 import baseVariable from '@/style/base.variable';
 import {goTo, useResponsiveDimensions} from '@/utils';
 import theme from '@/style';
-import {LazyImageLGBackground} from '@/components/basic/image';
-import {useUserActions} from '@/store/useUserStore';
+import envConfig from '@/utils/env.config';
 const outline: SafeAny = {
   outline: 0,
 };
 const InvitationApply = (props: SafeAny) => {
-  const {setToken} = useUserActions();
   const [userPhone, setUserPhone] = useState('');
   const [OTPCode, setOTPCode] = useState('');
   const OTPTimeRef = useRef(59);
@@ -86,128 +92,59 @@ const InvitationApply = (props: SafeAny) => {
   }, [screenWidth]);
 
   return (
-    <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
-      <ScrollView style={[theme.flex.flex1]}>
-        <View
-          style={[
-            theme.position.rel,
-            theme.padding.xxl,
-            {height: screenHeight, marginBottom: 120},
-          ]}>
-          <NativeTouchableOpacity
-            onPress={() => {
-              // goTo('HomeDetail');
-              goTo(globalStore.homePage);
-            }}>
-            <LinearGradient
-              style={[
-                theme.borderRadius.xl,
-                {
-                  width: '100%',
-                  aspectRatio: '343/71',
-                  border: '1px solid ',
-                  borderColor: theme.basicColor.primary15,
-                },
-              ]}
-              colors={[theme.basicColor.primary15, theme.basicColor.primary50]}>
-              <View
-                style={[
-                  theme.fill.fill,
-                  theme.flex.flex,
-                  theme.flex.row,
-                  theme.flex.centerByCol,
-                  // eslint-disable-next-line react-native/no-inline-styles
-                  {
-                    paddingLeft: 20,
-                  },
-                ]}>
-                <Image
-                  style={[
-                    // eslint-disable-next-line react-native/no-inline-styles
-                    {
-                      width: 48,
-                      height: 48,
-                      borderRadius: 6,
-                      borderColor: theme.basicColor.primary15,
-                      borderWidth: 1,
-                    },
-                  ]}
-                  source={{
-                    uri: envConfig.getLogo,
-                  }}
-                />
-                <View
-                  style={[
-                    {
-                      marginLeft: 10,
-                    },
-                  ]}>
-                  <Text
-                    fontSize={22}
-                    fontWeight="700"
-                    style={[
-                      {
-                        color: '#FFFFFF',
-                      },
-                    ]}>
-                    Supbet
-                  </Text>
-                  <Text
-                    fontSize={12}
-                    fontWeight="400"
-                    style={[
-                      {
-                        color: '#FFFFFF',
-                      },
-                    ]}>
-                    Very fun game platform
-                  </Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </NativeTouchableOpacity>
-          <Image
-            style={[
-              {
-                width: '100%',
-                height: '55%',
-                aspectRatio: 1,
-                marginTop: 15,
-                marginBottom: 15,
-                borderRadius: 10,
-              },
-            ]}
-            source={{
-              uri: 'https://apk.megadreamlottery.com/manager/54cfbbf55c484d3faa6aa608def9ea6b.png',
-            }}
-          />
-          {/*<Image*/}
-          {/*  style={[*/}
-          {/*    {*/}
-          {/*      width: '100%',*/}
-          {/*      aspectRatio: 1,*/}
-          {/*      marginTop: 15,*/}
-          {/*      marginBottom: 15,*/}
-          {/*      borderRadius: 10,*/}
-          {/*    },*/}
-          {/*  ]}*/}
-          {/*/>*/}
-          <LinearGradient
-            style={[
-              theme.borderRadius.xl,
-              {
-                width: '100%',
-                aspectRatio: '343/333',
-                border: '1px solid ',
-                borderColor: theme.basicColor.primary15,
-              },
-            ]}
-            colors={[theme.basicColor.primary15, theme.basicColor.primary50]}>
+    <LinearGradient
+      colors={theme.basicColor.newBgOne}
+      start={{x: 0.2, y: 0}}
+      end={{x: 1, y: 0.92}}
+      style={[theme.position.rel, {height: screenHeight}]}>
+      <Image
+        style={[
+          {
+            width: screenWidth / 1.11,
+            height: screenWidth / 4.12,
+            position: 'absolute',
+            top: 40,
+            right: '50%',
+            transform: [{translateX: screenWidth / 1.11 / 2}],
+            zIndex: 2,
+          },
+        ]}
+        source={{
+          uri: envConfig.getInvitationApply,
+        }}></Image>
+      <Image
+        style={[
+          {
+            width: screenWidth,
+            height: screenWidth / 1.94,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            position: 'absolute',
+            marginTop: 40,
+          },
+        ]}
+        source={require('@assets/imgs/invitation/invitation-2.png')}></Image>
+      <View
+        style={[
+          {
+            marginTop: screenWidth / 1.5,
+          },
+          theme.fill.fillW,
+          padding.lrl,
+        ]}>
+        <LazyImage
+          imageUrl={CardOuterBg}
+          occupancy="#0000"
+          width={'100%'}
+          height={fromBgSize.formBox.height}
+        />
+        <View style={[position.abs, fromBgSize.formBox]}>
+          <View style={[theme.fill.fill, theme.padding.tbs]}>
             <View style={[fromBgSize.formTitleBg, theme.flex.centerByRow]}>
               <Text
-                fontSize={22}
+                fontSize={20}
                 calc
-                color={'#FFFFFF'}
+                color={basicColor.newFontWhite}
                 style={[
                   {
                     width: fromBgSize.titlsSize.width,
@@ -226,6 +163,7 @@ const InvitationApply = (props: SafeAny) => {
                 {
                   borderEndEndRadius: theme.borderRadiusSize.xl,
                   borderEndStartRadius: theme.borderRadiusSize.xl,
+                  backgroundColor: theme.basicColor.newBgInOne,
                 },
               ]}>
               <View style={[theme.flex.flex1, theme.flex.center]}>
@@ -235,8 +173,8 @@ const InvitationApply = (props: SafeAny) => {
                     {
                       height: fromBgSize.button.height,
                       borderWidth: 1,
-                      borderColor: theme.basicColor.primary60,
-                      background: theme.basicColor.primary30,
+                      borderColor: invitationApplyColor.borderColor,
+                      backgroundColor: invitationApplyColor.backgroundColor,
                     },
                     padding.lrl,
                     theme.fill.fillW,
@@ -244,14 +182,7 @@ const InvitationApply = (props: SafeAny) => {
                     flex.row,
                     flex.centerByCol,
                   ]}>
-                  {/*<PhoneIcontwo width={24} height={24} />*/}
-                  <Image
-                    style={{
-                      width: 18,
-                      height: 18,
-                    }}
-                    source={require('@components/assets/pofile/smartphone.webp')}
-                  />
+                  <PhoneIcon width={24} height={24} />
                   <TextInput
                     placeholder="Phone number"
                     style={[
@@ -261,7 +192,6 @@ const InvitationApply = (props: SafeAny) => {
                         marginLeft: 16,
                         borderWidth: 0,
                         borderColor: 'none',
-                        color: '#FFFFFF',
                       },
                       flex.flex1,
                       outline,
@@ -278,8 +208,8 @@ const InvitationApply = (props: SafeAny) => {
                     {
                       height: fromBgSize.button.height,
                       borderWidth: 1,
-                      borderColor: theme.basicColor.primary60,
-                      background: theme.basicColor.primary30,
+                      borderColor: invitationApplyColor.borderColor,
+                      backgroundColor: invitationApplyColor.backgroundColor,
                     },
                     padding.lrl,
                     theme.fill.fillW,
@@ -288,14 +218,7 @@ const InvitationApply = (props: SafeAny) => {
                     flex.centerByCol,
                     margin.topl,
                   ]}>
-                  {/*<SaveIcontwo width={24} height={24} />*/}
-                  <Image
-                    style={{
-                      width: 18,
-                      height: 18,
-                    }}
-                    source={require('@components/assets/pofile/idImg.webp')}
-                  />
+                  <SaveIcon width={24} height={24} />
                   <TextInput
                     placeholder="OTP"
                     underlineColorAndroid={'transparent'}
@@ -307,7 +230,6 @@ const InvitationApply = (props: SafeAny) => {
                         borderWidth: 0,
                         borderColor: 'none',
                         fontSize: 15,
-                        color: '#FFFFFF',
                       },
                       flex.flex1,
                       outline,
@@ -358,8 +280,11 @@ const InvitationApply = (props: SafeAny) => {
                           })
                           .finally(() => setOTPLoading(false));
                       }}>
-                      <Text color={'#FFFFFF'} fontSize={14} fontWeight="400">
-                        Get OTP
+                      <Text
+                        color={basicColor.newFontRed}
+                        fontSize={15}
+                        fontWeight="bold">
+                        Send
                       </Text>
                     </NativeTouchableOpacity>
                   )}
@@ -393,7 +318,7 @@ const InvitationApply = (props: SafeAny) => {
                         message: i18n.t('tip.success'),
                       });
                       globalStore.token = res.token;
-                      setToken(res.token);
+                      globalStore.isNewUser = String(res.isNewUser);
                       goTo(globalStore.homePage);
                     })
                     .finally(() => globalStore.globalLoading.next(false));
@@ -407,13 +332,13 @@ const InvitationApply = (props: SafeAny) => {
                   ]}>
                   <LinearGradient
                     style={[fromBgSize.button, theme.fill.fillW, flex.center]}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1}}
-                    colors={['#04CC9B1A 0%', '#04CC9B80 98%']}>
+                    start={{x: 0, y: 0.5}}
+                    end={{x: 1, y: 0.5}}
+                    colors={basicColor.newButtonLinear}>
                     <View>
                       <Text
                         fontSize={16}
-                        color={'#fff'}
+                        color={basicColor.newFontWhite}
                         fontFamily="fontInterBold">
                         {i18n.t('label.logIn')}
                       </Text>
@@ -426,15 +351,16 @@ const InvitationApply = (props: SafeAny) => {
                 size="small"
                 calc
                 textAlign="center"
-                style={[margin.tops, {color: theme.basicColor.primary60}]}>
+                color={basicColor.newFontWhite}
+                style={[margin.tops]}>
                 {i18n.t('referral.tip.desc')}
               </Text>
             </View>
-          </LinearGradient>
-          <InvitationApplyModal ref={InvitationApplyModalRef} />
+          </View>
         </View>
-      </ScrollView>
-    </LazyImageLGBackground>
+      </View>
+      <InvitationApplyModal ref={InvitationApplyModalRef} />
+    </LinearGradient>
   );
 };
 
