@@ -69,7 +69,14 @@ const HomeGoldArea = ({
       goTo('Login');
       return;
     }
-    goTo('ProxyHome');
+    const lotteryInfo = await postGetFreeLottery();
+    lotteryShow({
+      current: lotteryInfo.num,
+      total: lotteryInfo.maxNum,
+      backgroundUrl: lotteryInfo.imgUrl,
+      shareUrl: lotteryInfo.shareUrl,
+      toolTipContent: lotteryInfo.contentStr,
+    });
   };
 
   return (
@@ -148,11 +155,11 @@ const HomeGoldArea = ({
           <View style={[theme.flex.flex1]}>
             <Image
               style={styles.vipNavsItemImg}
-              source={require('@assets/gif/agent.webp')}
+              source={require('@assets/gif/lottery.webp')}
             />
           </View>
           <Text second style={styles.text} fontSize={12} fontFamily="fontInter">
-            {i18n.t('home.label.agent')}
+            {i18n.t('home.label.free-lottery')}
           </Text>
           {getNavTag(noticeMap.FREE_LOTTERY)}
         </View>
