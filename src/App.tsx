@@ -56,7 +56,7 @@ import {useSettingWindowDimensions} from './store/useSettingStore';
 // import {LazyImageBackground} from './components/basic/image';
 // import {renderOverlayLinkComponent} from './components/basic/swiper';
 // import {goToUrl} from './common-pages/game-navigate';
-import {BannerSwiper} from '@/components/basic/swiper';
+import PopList from '@/components/basic/swiper/pop-list';
 import dayjs from 'dayjs';
 import {appPayWaster} from '@services/global.service';
 import {UpdateProvider, Pushy} from 'react-native-update'; //useUpdate
@@ -76,6 +76,20 @@ const Stack = createStackNavigator();
 const params = getUrlParams();
 
 function App(): JSX.Element {
+  const basePx = globalStore.screenWidth / 375;
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+
+  // 关闭当前弹窗时逻辑
+  const handleCloseBanner = () => {
+    if (currentBannerIndex < bannerList.length - 1) {
+      // 显示下一张
+      setCurrentBannerIndex(currentBannerIndex + 1);
+    } else {
+      // 所有弹完关闭 Overlay
+      setPopVisible(false);
+      setCurrentBannerIndex(0); // 重置
+    }
+  };
   // const {
   //   // client,
   //   checkUpdate,
@@ -555,66 +569,42 @@ function App(): JSX.Element {
           theme.padding.zorro,
           theme.flex.centerByCol,
           {
-            // borderRadius: 8,
             width: popImageWidth,
             height: popImageWidth * imageRatio + addHeight,
             backgroundColor: theme.basicColor.newTransparent,
           },
         ]}>
         <View
-          style={[
-            {
-              width: popImageWidth,
-              height: popImageWidth * imageRatio + addHeight,
-              overflow: 'hidden',
-            },
-          ]}>
-          <BannerSwiper
-            type={2}
-            bannerList={bannerList}
-            bannerWidth={popImageWidth}
-            bannerHeight={popImageWidth * imageRatio + addHeight}
-            bannerOverlaySize="small"
-          />
-        </View>
-        {/* <NativeTouchableOpacity
-          onPress={() => {
-            if (overlayState?.popUrl) {
-              Linking.openURL(overlayState?.popUrl);
-            }
+          style={{
+            width: popImageWidth,
+            height: popImageWidth * imageRatio + addHeight,
+            overflow: 'hidden',
           }}>
-          <LazyImageBackground
-            imageUrl={overlayState?.popImg}
-            width={popImageWidth}
-            height={popImageWidth * overlayState?.imageRatio}>
-            {renderOverlayLinkComponent({
-              item: {
-                bannerPosition: overlayState?.bannerPosition,
-                title: overlayState?.title,
-                subTitle: overlayState?.subTitle,
-              },
-              onPress: () => {
-                goToUrl(overlayState?.popUrl, overlayState?.title);
-              },
-              sizeWidth: popImageWidth,
-              sizeHeight: popImageWidth * overlayState?.imageRatio,
-            })}
-          </LazyImageBackground>
-        </NativeTouchableOpacity> */}
+            <PopList
+              type={2}
+              bannerList={bannerList}
+              bannerWidth={popImageWidth}
+              bannerHeight={popImageWidth * imageRatio + addHeight}
+              bannerOverlaySize="small"
+              currentIndex={currentBannerIndex}
+              onClose={() => setPopVisible(false)}
+            />
+        </View>
+
+        {/* 关闭按钮 */}
         <NativeTouchableOpacity
           style={{
-            right: theme.paddingSize.xxl,
-            top: theme.paddingSize.xxl,
+            right: - 110 * basePx,
+            bottom: 470 * basePx,
           }}
-          onPress={() => {
-            setPopVisible(false);
-          }}>
+          onPress={handleCloseBanner}>
           <Image
             style={[theme.icon.xxl, theme.position.abs]}
             source={require('@assets/icons/home/button-close.png')}
           />
         </NativeTouchableOpacity>
       </Overlay>
+
       {!loading && renderLanguageModal}
     </SafeAreaProvider>
   );
