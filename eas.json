@@ -6,19 +6,10 @@
     "development": {
       "extends": "production",
       "distribution": "internal",
+      "channel": "development",
       "android": {
         "gradleCommand": ":app:assembleDebug",
         "buildType": "apk",
-        "gradleProperties": {
-          "android.enableSeparateBuildPerCPUArchitecture": "false",
-          "android.enableAapt2": "true",
-          "android.useAndroidX": "true",
-          "android.enableJetifier": "true",
-          "org.gradle.jvmargs": "-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError",
-          "org.gradle.daemon": "true",
-          "org.gradle.parallel": "true",
-          "org.gradle.configureondemand": "true"
-        },
         "env": {
           "ANDROID_ABI_FILTERS": "arm64-v8a"
         }
@@ -39,6 +30,7 @@
     "preview": {
       "extends": "production",
       "distribution": "internal",
+      "channel": "preview",
       "ios": { "simulator": true },
       "android": { "buildType": "apk" }
     },
@@ -46,7 +38,15 @@
       "extends": "preview",
       "ios": { "simulator": false }
     },
-    "production": {}
+    "production": {
+      "channel": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
+      }
+    }
   },
   "submit": {
     "production": {}

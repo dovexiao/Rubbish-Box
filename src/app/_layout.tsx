@@ -1,11 +1,15 @@
 import React, { useEffect } from "react"
-import { Slot, SplashScreen, useSegments } from "expo-router"
+import { Slot, useSegments } from "expo-router"
+import * as SplashScreen from "expo-splash-screen"
 import * as ScreenOrientation from "expo-screen-orientation"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { Provider as PaperProvider } from "react-native-paper"
+import { InteractionManager } from "react-native"
 
 import ImmersiveWrapper from "../components/ImmersiveMode"
+import GlobalLoginManager from "../components/GlobalLoginManager"
+import GlobalUpdateDialog from "../components/GlobalUpdateDialog"
 // 导入P0核心功能Hooks
 import { useAppLifecycle } from "../hooks/useAppLifecycle"
 import { useDataSync } from "../hooks/useDataSync"
@@ -19,6 +23,7 @@ import { usePostureStore } from "../stores/postureStore"
 import { useUserStore } from "../stores/userStore"
 import { createStyles, getScreenInfo } from "../utils/rpxStyleSheet"
 import RouteGuard from "../services/routeGuard"
+
 // 防止闪屏
 SplashScreen.preventAutoHideAsync()
 
@@ -64,8 +69,8 @@ export default function RootLayout() {
       return
     }
 
-    // 添加延迟，确保用户数据已完全加载
-    setTimeout(() => {
+    // 使用InteractionManager优化路由守卫性能
+    InteractionManager.runAfterInteractions(() => {
       // 再次检查token，确保最新状态
       const currentToken = useUserStore.getState().token
       console.log(`路由守卫检查前再次确认token: ${currentToken ? "已存在" : "不存在"}`)
@@ -78,7 +83,7 @@ export default function RootLayout() {
 
       // 使用路由守卫验证访问权限
       RouteGuard.beforeEach(path)
-    }, 300)
+    })
   }, [segments])
 
   // P0核心功能Hooks
@@ -147,14 +152,17 @@ export default function RootLayout() {
     onAppShow: async () => {
       console.log("应用进入前台")
 
-      // P1功能：检查应用更新
-      await checkForUpdatesOnShow()
+      // 使用InteractionManager优化前台恢复性能
+      InteractionManager.runAfterInteractions(async () => {
+        // P1功能：检查应用更新
+        await checkForUpdatesOnShow()
 
-      // P1功能：系统键监听的兜底处理
-      systemKeyHandleAppShow()
+        // P1功能：系统键监听的兜底处理
+        systemKeyHandleAppShow()
 
-      // 这里可以添加其他进入前台时的逻辑
-      // 比如恢复监测等
+        // 这里可以添加其他进入前台时的逻辑
+        // 比如恢复监测等
+      })
     },
 
     onAppHide: () => {
@@ -173,8 +181,11 @@ export default function RootLayout() {
   const networkCallbacks = {
     onNetworkConnected: async () => {
       console.log("网络已连接")
-      // 网络恢复后触发一次设备授权复验（缓存优先）
-      await reverifyDeviceAuthorization()
+      // 使用InteractionManager优化网络恢复性能
+      InteractionManager.runAfterInteractions(async () => {
+        // 网络恢复后触发一次设备授权复验（缓存优先）
+        await reverifyDeviceAuthorization()
+      })
     },
 
     onNetworkDisconnected: () => {
@@ -194,13 +205,14 @@ export default function RootLayout() {
   const { isConnected, networkType } = useNetworkStatus(networkCallbacks)
 
   useEffect(() => {
-    // 初始化用户存储数据 - 使用async IIFE立即执行
-    ;(async () => {
+    // 使用InteractionManager优化初始化性能
+    InteractionManager.runAfterInteractions(async () => {
+      // 初始化用户存储数据
       await initializeFromStorage()
       // 加载完成后检查token状态
       const token = useUserStore.getState().token
       console.log("用户数据初始化完成，token状态:", token ? "已存在" : "不存在")
-    })()
+    })
 
     // 锁定横屏模式（还原UniApp逻辑：plus.screen.lockOrientation('landscape-primary')）
     const lockOrientation = async () => {
@@ -227,14 +239,8 @@ export default function RootLayout() {
     console.log(`网络状态: ${isConnected ? "已连接" : "未连接"} (${networkType})`)
     console.log("==================")
 
-    // 延迟隐藏闪屏
-    const timer = setTimeout(() => {
-      SplashScreen.hideAsync()
-    }, 1000)
-
-    return () => {
-      clearTimeout(timer)
-    }
+    // 立即隐藏闪屏（无动画）
+    SplashScreen.hideAsync()
   }, [initializeFromStorage, isConnected, networkType])
 
   return (
@@ -245,6 +251,10 @@ export default function RootLayout() {
       <PaperProvider>
         <SafeAreaProvider>
           <Slot />
+          {/* 全局登录管理器 */}
+          <GlobalLoginManager />
+          {/* 全局更新对话框 */}
+          <GlobalUpdateDialog />
         </SafeAreaProvider>
       </PaperProvider>
     </GestureHandlerRootView>

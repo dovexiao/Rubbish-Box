@@ -1,5 +1,7 @@
-import { Alert, Image, ImageBackground, Text, TouchableOpacity, View } from "react-native"
+import { Alert, Image, ImageBackground, Text, TouchableOpacity, View, ActivityIndicator } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
+import { useState, useEffect } from "react"
+import { InteractionManager } from "react-native"
 
 import { StatusBar } from "../../components/StatusBar"
 import { Images } from "../../constants/Assets"
@@ -12,6 +14,9 @@ import { useRouter } from "expo-router"
  */
 export default function StudyScreen() {
   const router = useRouter()
+  const [isContentLoaded, setIsContentLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
   // 防抖函数实现
   const debounce = (func: (...args: any[]) => void, delay: number) => {
     let timeoutId: ReturnType<typeof setTimeout>
@@ -20,6 +25,20 @@ export default function StudyScreen() {
       timeoutId = setTimeout(() => func(...args), delay)
     }
   }
+
+  // 模拟内容加载
+  useEffect(() => {
+    if (!isContentLoaded) {
+      setIsLoading(true)
+      InteractionManager.runAfterInteractions(() => {
+        // 模拟加载时间
+        setTimeout(() => {
+          setIsContentLoaded(true)
+          setIsLoading(false)
+        }, 100)
+      })
+    }
+  }, [isContentLoaded])
 
   // 跳转到小褐阅读页面
   const goToReader = () => {
@@ -69,7 +88,18 @@ export default function StudyScreen() {
 
       {/* 功能卡片区域 */}
       <View style={styles.mainContent}>
-        <View style={styles.leftColumn}>
+        {/* 加载状态 */}
+        {isLoading && !isContentLoaded && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#1890ff" />
+            <Text style={styles.loadingText}>正在加载...</Text>
+          </View>
+        )}
+        
+        {/* 内容区域 */}
+        {isContentLoaded && (
+          <>
+          <View style={styles.leftColumn}>
           {/* AI批改大卡片 */}
           <View style={styles.cardShadowWrapper}>
             <ImageBackground
@@ -213,6 +243,8 @@ export default function StudyScreen() {
             </ImageBackground>
           </View>
         </View>
+          </>
+          )}
       </View>
     </LinearGradient>
   )
@@ -580,5 +612,16 @@ const styles = createStyles({
 
   classroomArrow: {
     width: 7.375,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 50,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: "#666",
   },
 })

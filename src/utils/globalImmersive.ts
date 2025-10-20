@@ -80,8 +80,8 @@ class GlobalImmersiveManager {
    */
   private hideSystemUI(): void {
     // 隐藏状态栏
-    StatusBar.setHidden(true, "none")
-    console.log("状态栏已隐藏")
+    // StatusBar.setHidden(true, "none")
+    // console.log("状态栏已隐藏")
     
     if (Platform.OS === "android") {
       StatusBar.setBarStyle("light-content", true)

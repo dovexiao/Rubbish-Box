@@ -83,14 +83,14 @@ export default function VideoPlayerScreen() {
     globalImmersive.forceRestore()
 
     // 持续隐藏 - 使用定时器确保（对抗Video组件的干扰）
-    const interval = setInterval(() => {
-      RNStatusBar.setHidden(true, "none")
-      globalImmersive.forceRestore()
-    }, 500)
+    // const interval = setInterval(() => {
+    //   RNStatusBar.setHidden(true, "none")
+    //   globalImmersive.forceRestore()
+    // }, 500)
 
-    return () => {
-      clearInterval(interval)
-    }
+    // return () => {
+    //   clearInterval(interval)
+    // }
   }, [])
 
   // 页面获得焦点时恢复沉浸式模式

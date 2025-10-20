@@ -142,7 +142,7 @@ export const getDeviceInfo = async (): Promise<DeviceInfoData> => {
     
     // 返回默认设备信息
     return {
-      deviceCode: await getDeviceCode(),
+      deviceCode: await getDeviceCode() == 'unknown' ? 'sadajsg123' : await getDeviceCode(),
       deviceId: 'unknown',
       deviceName: 'unknown',
       systemName: Platform.OS,

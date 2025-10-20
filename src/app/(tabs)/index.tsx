@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Image, TouchableOpacity, ImageBackground, Platform, Alert } from "react-native"
+import { View, Image, TouchableOpacity, ImageBackground, Platform, Alert, ActivityIndicator } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import Slider from "@react-native-community/slider"
 import { useFocusEffect, useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
+import { InteractionManager } from "react-native"
 
 import { StatusBar } from "../../components/StatusBar"
 import { NoticeBar } from "../../components/NoticeBar"
@@ -53,6 +54,8 @@ export default function HomeScreen() {
   })
   const [notifications, setNotifications] = useState<string[]>([])
   const [ranks, setRanks] = useState<any[]>([])
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // 页面获得焦点时恢复沉浸式模式
   useFocusEffect(() => {
@@ -77,7 +80,6 @@ export default function HomeScreen() {
     // 如果要打开面板，先获取当前亮度和音量
     if (!showSettingsPanel) {
       await getCurrentBrightness()
-      await getCurrentVolume()
     }
     setShowSettingsPanel(!showSettingsPanel)
   }
@@ -95,135 +97,105 @@ export default function HomeScreen() {
   }
 
   // 获取当前系统音量
-  const getCurrentVolume = async () => {
+const openVolumeSettings = async () => {
+  if (Platform.OS === 'android') {
     try {
-      // 检查平台兼容性
-      if (Platform.OS !== "android") {
-        console.warn("音量控制仅支持Android平台")
-        setVolume(50) // 设置默认值
-        return
-      }
-
-      // 尝试多种方式导入VolumeManager
-      let VolumeManager
-      try {
-        // 方式1：默认导入
-        VolumeManager = require("react-native-volume-manager").default
-      } catch (e1) {
-        try {
-          // 方式2：直接导入
-          VolumeManager = require("react-native-volume-manager")
-        } catch (e2) {
-          try {
-            // 方式3：命名导入
-            const { VolumeManager: VM } = require("react-native-volume-manager")
-            VolumeManager = VM
-          } catch (e3) {
-            console.warn("无法导入VolumeManager模块，可能需要重新构建项目")
-            setVolume(50) // 设置默认值
-            return
-          }
-        }
-      }
-
-      // 检查VolumeManager是否可用
-      if (!VolumeManager) {
-        console.warn("VolumeManager模块为空")
-        setVolume(50) // 设置默认值
-        return
-      }
-
-      // 检查getVolume方法
-      if (typeof VolumeManager.getVolume !== "function") {
-        console.warn("VolumeManager.getVolume方法不存在，可用方法:", Object.keys(VolumeManager))
-        setVolume(50) // 设置默认值
-        return
-      }
-
-      const volumeData = await VolumeManager.getVolume()
-
-      if (volumeData && typeof volumeData.volume === "number") {
-        const currentVolume = Math.round(volumeData.volume * 100)
-        setVolume(currentVolume)
-        console.log("当前音量:", currentVolume)
-      } else {
-        console.warn("获取到的音量数据格式不正确:", volumeData)
-        setVolume(50) // 设置默认值
-      }
+      // 跳转到音频设置页面
+       const IntentLauncher = await import("expo-intent-launcher")
+      await IntentLauncher.startActivityAsync(
+        IntentLauncher.ActivityAction.SOUND_SETTINGS
+      );
     } catch (error) {
-      console.error("获取音量失败:", error)
-      setVolume(50) // 设置默认值
+      console.error('无法打开音量设置:', error);
+      Alert.alert('错误', '无法打开系统音量设置');
     }
+      } else {
+    // iOS 不允许直接跳转到音量设置
+    Alert.alert(
+      '提示', 
+      'iOS 不支持直接跳转到音量设置，请手动打开：设置 > 声音与触感',
+      [{ text: '确定' }]
+    );
   }
+};
 
-  // 加载数据
+  // 加载数据 - 优化版本：先切换页面再加载内容
   const loadData = async () => {
+    if (isLoading || isDataLoaded) return
+    
+    setIsLoading(true)
     try {
-      // 显示加载状态
       console.log("正在加载首页数据...")
 
-      // 并行加载所有数据
-      const [userInfoData, latestVideoData, notificationsData, ranksData] = await Promise.all([
-        userStore.getUserInfo().catch((err) => {
-          console.error("获取用户信息失败:", err)
-          return null
-        }),
-        getLatestVideo().catch((err) => {
-          console.error("获取最近学习视频失败:", err)
-          return null
-        }),
-        getNotifications().catch((err) => {
-          console.error("获取通知失败:", err)
-          return null
-        }),
-        getHomeRanks().catch((err) => {
-          console.error("获取排行榜失败:", err)
-          return null
-        }),
-      ])
+      // 使用InteractionManager确保页面切换完成后再加载数据
+      InteractionManager.runAfterInteractions(async () => {
+        // 并行加载所有数据
+        const [userInfoData, latestVideoData, notificationsData, ranksData] = await Promise.all([
+          userStore.getUserInfo().catch((err) => {
+            console.error("获取用户信息失败:", err)
+            return null
+          }),
+          getLatestVideo().catch((err) => {
+            console.error("获取最近学习视频失败:", err)
+            return null
+          }),
+          getNotifications().catch((err) => {
+            console.error("获取通知失败:", err)
+            return null
+          }),
+          getHomeRanks().catch((err) => {
+            console.error("获取排行榜失败:", err)
+            return null
+          }),
+        ])
 
-      // 设置用户信息
-      if (userInfoData) {
-        console.log("用户信息加载成功:", userInfoData.username)
-        setUserInfo(userInfoData)
-      } else {
-        console.warn("用户信息为空，可能需要登录")
-      }
-
-      // 设置最近学习视频
-      if (latestVideoData) {
-        console.log("最近学习视频加载成功:", latestVideoData?.rsname || "")
-        setLatestVideo(latestVideoData)
-      }
-
-      // 设置通知
-      if (notificationsData && notificationsData.notifications) {
-        console.log("通知加载成功:", notificationsData.notifications.length)
-        setNotifications(notificationsData.notifications.map((item: any) => item.title))
-      }
-
-      // 设置排行榜
-      if (ranksData && ranksData.ranking_list) {
-        console.log("排行榜加载成功:", ranksData.ranking_list.length)
-
-        let hasCurrentUser = false
-        const rankList = ranksData.ranking_list.map((item: any) => {
-          if (item.is_current_user) {
-            hasCurrentUser = true
-          }
-          return item
-        })
-
-        // 如果没有当前用户，默认将第一个设为当前用户
-        if (!hasCurrentUser && rankList.length > 0) {
-          rankList[0].is_current_user = true
+        // 设置用户信息
+        if (userInfoData) {
+          console.log("用户信息加载成功:", userInfoData.username)
+          setUserInfo(userInfoData)
+        } else {
+          console.warn("用户信息为空，可能需要登录")
         }
 
-        setRanks(rankList)
-      }
+        // 设置最近学习视频
+        if (latestVideoData) {
+          console.log("最近学习视频加载成功:", latestVideoData?.rsname || "")
+          setLatestVideo(latestVideoData)
+        }
+
+        // 设置通知
+        if (notificationsData && notificationsData.notifications) {
+          console.log("通知加载成功:", notificationsData.notifications.length)
+          setNotifications(notificationsData.notifications.map((item: any) => item.title))
+        }
+
+        // 设置排行榜
+        if (ranksData && ranksData.ranking_list) {
+          console.log("排行榜加载成功:", ranksData.ranking_list.length)
+
+          let hasCurrentUser = false
+          const rankList = ranksData.ranking_list.map((item: any) => {
+            if (item.is_current_user) {
+              hasCurrentUser = true
+            }
+            return item
+          })
+
+          // 如果没有当前用户，默认将第一个设为当前用户
+          if (!hasCurrentUser && rankList.length > 0) {
+            rankList[0].is_current_user = true
+          }
+
+          setRanks(rankList)
+        }
+
+        setIsDataLoaded(true)
+        console.log("首页数据加载完成")
+      })
     } catch (error) {
       console.error("首页数据加载失败:", error)
-      // 可以在这里显示错误提示给用户
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -236,19 +208,19 @@ export default function HomeScreen() {
       if (brightnessTimeoutRef.current) {
         clearTimeout(brightnessTimeoutRef.current)
       }
-      if (volumeTimeoutRef.current) {
-        clearTimeout(volumeTimeoutRef.current)
-      }
+      
     }
   }, [])
 
-  // 页面获得焦点时重新加载数据
+  // 页面获得焦点时重新加载数据（仅在需要时）
   useFocusEffect(
     useCallback(() => {
-      loadData()
+      if (!isDataLoaded) {
+        loadData()
+      }
       // 恢复沉浸式模式
       // globalImmersive.forceRestore()
-    }, []),
+    }, [isDataLoaded]),
   )
 
   const router = useRouter()
@@ -272,17 +244,7 @@ export default function HomeScreen() {
     })
   }
 
-  // 跳转到阅读器
-  const goToReader = useCallback(() => {
-    console.log("📚 [首页] 用户点击跳转到阅读器")
-    try {
-      router.push("/reader")
-      console.log("📚 [首页] ✅ 跳转到阅读器命令已执行")
-    } catch (error) {
-      console.error("📚 [首页] ❌ 跳转到阅读器失败:", error)
-      Alert.alert("提示", "跳转失败，请重试")
-    }
-  }, [router])
+
 
   // 跳转到AI页面
   const goToAI = () => {
@@ -363,71 +325,6 @@ export default function HomeScreen() {
     }, 300)
   }, [])
 
-  // 音量调节防抖定时器
-  const volumeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  // 音量调节
-  const onVolumeChange = useCallback((value: number) => {
-    // 立即更新UI显示
-    setVolume(value)
-
-    // 清除之前的定时器
-    if (volumeTimeoutRef.current) {
-      clearTimeout(volumeTimeoutRef.current)
-    }
-
-    // 设置防抖，200ms后执行实际的音量设置
-    volumeTimeoutRef.current = setTimeout(async () => {
-      try {
-        console.log("开始设置音量:", value)
-
-        // 检查平台兼容性
-        if (Platform.OS !== "android") {
-          console.warn("音量控制仅支持Android平台")
-          return
-        }
-
-        // 尝试多种方式导入VolumeManager
-        let VolumeManager
-        try {
-          // 方式1：默认导入
-          VolumeManager = require("react-native-volume-manager").default
-        } catch (e1) {
-          try {
-            // 方式2：直接导入
-            VolumeManager = require("react-native-volume-manager")
-          } catch (e2) {
-            try {
-              // 方式3：命名导入
-              const { VolumeManager: VM } = require("react-native-volume-manager")
-              VolumeManager = VM
-            } catch (e3) {
-              console.warn("无法导入VolumeManager模块，可能需要重新构建项目")
-              return
-            }
-          }
-        }
-
-        // 检查VolumeManager是否可用
-        if (!VolumeManager) {
-          console.warn("VolumeManager模块为空")
-          return
-        }
-
-        // 检查setVolume方法
-        if (typeof VolumeManager.setVolume !== "function") {
-          console.warn("VolumeManager.setVolume方法不存在，可用方法:", Object.keys(VolumeManager))
-          return
-        }
-
-        await VolumeManager.setVolume(value / 100)
-        console.log("音量设置成功:", value)
-      } catch (error) {
-        console.error("设置音量失败:", error)
-        console.log("音量设置失败，但不显示弹窗避免打扰用户")
-      }
-    }, 200)
-  }, [])
 
   return (
     <LinearGradient
@@ -537,7 +434,7 @@ export default function HomeScreen() {
                   minimumValue={0}
                   maximumValue={100}
                   value={volume}
-                  onValueChange={onVolumeChange}
+                  onValueChange={openVolumeSettings}
                   minimumTrackTintColor="#4891FF"
                   maximumTrackTintColor="rgba(255,255,255,0.8)"
                 />
@@ -547,7 +444,7 @@ export default function HomeScreen() {
                   minimumValue={0}
                   maximumValue={100}
                   value={volume}
-                  onValueChange={onVolumeChange}
+                  onValueChange={openVolumeSettings}
                   minimumTrackTintColor="#4891FF"
                   maximumTrackTintColor="rgba(255,255,255,0.8)"
                   thumbTintColor="#FFFFFF"
@@ -559,7 +456,17 @@ export default function HomeScreen() {
 
         {/* 主内容区 */}
         <View style={styles.mainContent}>
-          <View style={styles.contentContainer}>
+          {/* 加载状态 */}
+          {isLoading && !isDataLoaded && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#1890ff" />
+              <Text style={styles.loadingText}>正在加载数据...</Text>
+            </View>
+          )}
+          
+          {/* 内容区域 */}
+          {isDataLoaded && (
+            <View style={styles.contentContainer}>
             {/* 用户信息卡片 */}
             <View style={styles.userInfoCard}>
               <ImageBackground
@@ -656,7 +563,7 @@ export default function HomeScreen() {
                         style={styles.studyButton}
                       >
                         <Text style={styles.studyButtonText}>
-                          {latestVideo.type === 2 ? "继续学习111" : "去学习"}
+                          {latestVideo.type === 2 ? "继续学习" : "去学习"}
                         </Text>
                         <Text style={styles.studyButtonArrow}>›</Text>
                       </LinearGradient>
@@ -714,19 +621,12 @@ export default function HomeScreen() {
               </View>
             )}
           </View>
+          )}
         </View>
 
         {/* AI按钮 */}
         <TouchableOpacity style={styles.aiButton} onPress={goToAI}>
           <Image source={Images.indexAiBtn} style={styles.aiButtonImage} resizeMode="contain" />
-        </TouchableOpacity>
-
-        {/* 阅读器按钮 */}
-        <TouchableOpacity style={styles.readerButton} onPress={goToReader}>
-          <View style={styles.readerButtonContent}>
-            <Ionicons name="book" size={rpx(24)} color="#fff" />
-            <Text style={styles.readerButtonText}>小褐阅读</Text>
-          </View>
         </TouchableOpacity>
       </ImageBackground>
     </LinearGradient>
@@ -1245,5 +1145,16 @@ const styles = createStyles({
     color: "#fff",
     fontWeight: "bold",
     marginTop: 4,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 50,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: "#666",
   },
 })

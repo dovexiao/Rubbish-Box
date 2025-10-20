@@ -32,7 +32,8 @@ export default function ProfileScreen() {
 
   const handleLogout = () => {
     userStore.logout()
-    router.replace("/login")
+    // 登出后不需要跳转，用户可以继续使用应用
+    console.log("🔐 用户已登出")
   }
 
   return (

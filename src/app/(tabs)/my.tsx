@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
+import { InteractionManager } from "react-native"
 import {
   View,
   Text,
@@ -7,6 +8,7 @@ import {
   ImageBackground,
   Alert,
   ScrollView,
+  ActivityIndicator,
 } from "react-native"
 import { useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
@@ -18,6 +20,7 @@ import { StatusBar } from "../../components/StatusBar"
 import { NavBar } from "../../components/NavBar"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { useUserStore } from "../../stores/userStore"
+import { useUpdateManager } from "../../hooks/useUpdateManager"
 import {
   getUserBadges,
   getUserStudyData,
@@ -34,6 +37,7 @@ import {
 export default function MyScreen() {
   const router = useRouter()
   const userStore = useUserStore()
+  const { manualCheckForUpdates } = useUpdateManager()
 
   const [userInfo, setUserInfo] = useState<any>((userStore as any).userInfo)
   const [badges, setBadges] = useState<MedalList[]>([])
@@ -42,37 +46,60 @@ export default function MyScreen() {
     total_corrected_questions: 0,
   })
   const [weeklyStudyData, setWeeklyStudyData] = useState<DailyStudyData[]>([])
+  const [isInitialized, setIsInitialized] = useState(false)
 
-  // 获取所有数据
+  // 预计算用户头像，避免重复计算
+  const userAvatar = useMemo(() => {
+    return userInfo?.gender
+      ? require("../../../assets/images/user-avatar-girl.png")
+      : require("../../../assets/images/user-avatar-boy.png")
+  }, [userInfo?.gender])
+
+  // 获取所有数据 - 优化版本
   const fetchAllData = useCallback(async () => {
     try {
-      // 获取用户信息
-      const userInfoData = await (userStore as any).getUserInfo?.()
+      // 并行加载所有数据
+      const [userInfoData, badgesData, todayData, studyDataResult] = await Promise.all([
+        (userStore as any).getUserInfo?.().catch(() => null),
+        getUserBadges().catch(() => ({ medal_list: [] })),
+        getUserTodayQuestionData().catch(() => ({ total_wrong_questions: 0, total_corrected_questions: 0 })),
+        getUserStudyData().catch(() => ({ daily_data: [] }))
+      ])
+
+      // 批量更新状态
       if (userInfoData) {
         setUserInfo(userInfoData)
       }
-
-      // 获取勋章数据
-      const badgesData = await getUserBadges()
       setBadges(badgesData.medal_list || [])
-
-      // 获取今日错题数据
-      const todayData = await getUserTodayQuestionData()
       setTodayQuestionData(todayData)
-
-      // 获取学习数据
-      const studyDataResult = await getUserStudyData()
       setWeeklyStudyData(studyDataResult.daily_data || [])
     } catch (error) {
       console.error("获取数据失败:", error)
     }
   }, [userStore])
 
-  // 页面显示时加载数据
+  // 初始化数据 - 使用InteractionManager优化
+  useEffect(() => {
+    if (!isInitialized) {
+      InteractionManager.runAfterInteractions(async () => {
+        await fetchAllData()
+        setIsInitialized(true)
+      })
+    }
+  }, [isInitialized, fetchAllData])
+
+  // 页面显示时只刷新用户信息（其他数据已预加载）
   useFocusEffect(
     useCallback(() => {
-      fetchAllData()
-    }, [fetchAllData]),
+      if (isInitialized) {
+        // 只刷新用户信息，其他数据保持不变
+        (userStore as any).getUserInfo?.().then((userInfoData: any) => {
+          if (userInfoData) {
+            setUserInfo(userInfoData)
+          }
+        }).catch(() => {})
+      }
+    }, [isInitialized, userStore]),
   )
 
   // 处理会员点击
@@ -87,8 +114,18 @@ export default function MyScreen() {
       {
         text: "确定",
         onPress: () => {
-          ;(userStore as any).clearUserInfo?.()
-          ;(userStore as any).openLoginPopup?.()
+          userStore.logout()
+          // 使用新的登录弹窗系统
+          import("../../utils/loginUtils").then(({ showLoginModal }) => {
+            showLoginModal({
+              onSuccess: () => {
+                console.log("🔐 切换账号成功")
+              },
+              onCancel: () => {
+                console.log("🔐 用户取消登录")
+              },
+            })
+          })
         },
       },
     ])
@@ -185,7 +222,17 @@ export default function MyScreen() {
     >
       <StatusBar theme="dark" />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {/* 加载状态 */}
+      {!isInitialized && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#1890ff" />
+          <Text style={styles.loadingText}>正在加载个人信息...</Text>
+        </View>
+      )}
+
+      {/* 内容区域 */}
+      {isInitialized && (
+        <ScrollView showsVerticalScrollIndicator={false}>
         {/* 用户信息头部 */}
         <View style={styles.userHeader}>
           <TouchableOpacity
@@ -195,11 +242,7 @@ export default function MyScreen() {
           >
             <View style={styles.userAvatar}>
               <Image
-                source={
-                  userInfo?.gender
-                    ? require("../../../assets/images/user-avatar-girl.png")
-                    : require("../../../assets/images/user-avatar-boy.png")
-                }
+                source={userAvatar}
                 style={styles.avatarImage}
                 resizeMode="cover"
               />
@@ -224,6 +267,23 @@ export default function MyScreen() {
             />
             <Text style={styles.switchText}>切换账号</Text>
           </TouchableOpacity>
+
+          {/* 测试更新功能按钮 - 仅开发环境显示 */}
+          {__DEV__ && (
+            <TouchableOpacity
+              style={styles.testUpdateBtn}
+              onPress={manualCheckForUpdates}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name="refresh"
+                size={rpx(12)}
+                color="rgba(13, 92, 245, 0.83)"
+                style={styles.switchIcon}
+              />
+              <Text style={styles.switchText}>测试更新</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* 主要内容区域 */}
@@ -346,7 +406,8 @@ export default function MyScreen() {
             </View>
           </View>
         </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </LinearGradient>
   )
 }
@@ -364,7 +425,7 @@ const styles = createStyles({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 15.625,
+    marginTop: 39.625,
     marginBottom: 15.625,
     paddingHorizontal: 29,
   },
@@ -429,6 +490,22 @@ const styles = createStyles({
     shadowOpacity: 0.1,
     shadowRadius: 4.67,
     elevation: 2,
+  },
+  testUpdateBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 7.8125,
+    paddingVertical: 3.90625,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.5)",
+    borderRadius: 19.531,
+    shadowColor: "#FFFFFF",
+    shadowOffset: { width: 3.516, height: -1.953 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4.67,
+    elevation: 2,
+    marginTop: 7.8125,
   },
   switchIcon: {
     marginRight: 4,
@@ -687,5 +764,16 @@ const styles = createStyles({
   chartPlaceholderText: {
     fontSize: 10,
     color: "#999",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 50,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: "#666",
   },
 })

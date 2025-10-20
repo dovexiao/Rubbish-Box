@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   ScrollView,
   RefreshControl,
+  InteractionManager,
+  Pressable,
 } from "react-native"
 import { NavBar } from "../../components/NavBar"
 import { useRouter } from "expo-router"
@@ -18,24 +20,27 @@ import { Ionicons } from "@expo/vector-icons"
 import { StatusBar } from "../../components/StatusBar"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import {
-  getBookList,
-  getBook,
   getBooksList,
   getRecommendBooks,
   getBookCategories,
-  getBookDetail,
-  getChapterDetail,
-  updateReadingProgress,
-  BookItem,
   BookListParams,
   RecommendData,
   CategoryData,
-  BookDetailResponse,
-  ChapterDetailResponse,
-  UpdateProgressParams,
 } from "../../services/reader"
 import { SERVER_BASE_URL } from "../../config/env"
 import { Images } from "../../constants/Assets"
+import { useParallelPreload } from "../../hooks/usePagePreload"
+
+// 导航图标图片
+const NAV_IMAGES = {
+  recommend: require("../../../assets/images/reader-tab-recommend.png"),
+  recommendActive: require("../../../assets/images/reader-tab-recommend-active.png"),
+  category: require("../../../assets/images/reader-tab-class.png"),
+  categoryActive: require("../../../assets/images/reader-tab-class-active.png"),
+  weekHotIcon: require("../../../assets/images/reader-recommend-week.png"),
+  readerRecommend: require("../../../assets/images/reader-recommend.png"),
+ 
+}
 
 /**
  * 小褐阅读 - 书籍列表页面
@@ -135,10 +140,12 @@ export default function ReaderIndex() {
       setCategoryNames(allCategories.map((cat) => cat.name))
 
       console.log("📚 [API] 分类列表处理后:", allCategories)
+      return allCategories
     } catch (error) {
       console.error("获取分类列表失败:", error)
       setCategories([{ id: 0, name: "类型", book_count: 0 }])
       setCategoryNames(["类型"])
+      throw error
     }
   }, [])
 
@@ -149,8 +156,10 @@ export default function ReaderIndex() {
       const data = await getRecommendBooks()
       setRecommendData(data)
       console.log("📚 [API] 推荐数据:", data)
+      return data
     } catch (error) {
       console.error("获取推荐书籍失败:", error)
+      throw error
     } finally {
       setRecommendLoading(false)
     }
@@ -185,7 +194,7 @@ export default function ReaderIndex() {
         setHasMore(response.total > response.page * response.page_size)
       } catch (error) {
         console.error("获取书籍列表失败:", error)
-        Alert.alert("提示", "获取书籍失败，请重试")
+        Alert.alert("提示", "获取失败，请重试")
       } finally {
         setLoading(false)
         setInitialLoading(false)
@@ -207,8 +216,10 @@ export default function ReaderIndex() {
     (tab: "recommend" | "category") => {
       setCurrentTab(tab)
       if (tab === "category" && books.length === 0) {
-        // 第一次切换到分类页面时加载数据
-        setTimeout(() => getBooks(true), 100)
+        // 使用 InteractionManager 延迟加载，确保UI先响应
+        InteractionManager.runAfterInteractions(() => {
+          getBooks(true)
+        })
       }
     },
     [books.length, getBooks],
@@ -219,7 +230,9 @@ export default function ReaderIndex() {
     (idx: number) => {
       setActiveSort(idx)
       resetBookList()
-      setTimeout(() => getBooks(true), 100)
+      InteractionManager.runAfterInteractions(() => {
+        getBooks(true)
+      })
     },
     [resetBookList, getBooks],
   )
@@ -229,7 +242,9 @@ export default function ReaderIndex() {
     (idx: number) => {
       setActiveCategory(idx)
       resetBookList()
-      setTimeout(() => getBooks(true), 100)
+      InteractionManager.runAfterInteractions(() => {
+        getBooks(true)
+      })
     },
     [resetBookList, getBooks],
   )
@@ -271,14 +286,12 @@ export default function ReaderIndex() {
           resizeMode="cover"
         />
         <Text style={styles.recommendBookTitle} numberOfLines={1}>
-          {book.title}
+          {book.title || ""}
         </Text>
-        <Text style={styles.recommendBookAuthor} numberOfLines={1}>
-          {book.authors?.map((a: any) => a.name).join(", ") || ""}
-        </Text>
-        <Text style={styles.recommendBookCategory} numberOfLines={1}>
-          连环漫画
-        </Text>
+        <View style={styles.recommendBookTags}>
+          <Text style={styles.recommendBookTag}> {book.categories.map((author: any) => author.name).join(", ")}</Text>
+
+        </View>
       </TouchableOpacity>
     ),
     [getBookCover, handleBookClick],
@@ -298,35 +311,53 @@ export default function ReaderIndex() {
           onPress={() => handleBookClick(book)}
           activeOpacity={0.8}
         >
+          {/* 背景装饰图案 */}
+          <View style={styles.weekHotBackground}>
+            <View style={styles.catDecoration1} />
+            <View style={styles.catDecoration2} />
+            <View style={styles.catDecoration3} />
+          </View>
+          
+          {/* 标题在卡片内部 */}
+            <Image
+              source={ NAV_IMAGES.weekHotIcon}
+              style={styles.weekHotIcon}
+              resizeMode="contain"
+            />
+          {/* 主要内容 */}
+          <View style={styles.weekHotContent}>
+            <View style={styles.weekHotLeft}>
           <Image
             source={
               typeof getBookCover(book) === "string"
                 ? { uri: getBookCover(book) as string }
                 : getBookCover(book)
             }
-            style={styles.weekHotCover} 
+            style={styles.weekHotCover}
             resizeMode="cover"
           />
-          <View style={styles.weekHotInfo}>
-            <Text style={styles.weekHotTitle} numberOfLines={2}>
+            </View>
+            <View style={styles.weekHotRight}>
+              <Text style={styles.weekHotTitle} numberOfLines={2} ellipsizeMode="tail">
               {book.title}
             </Text>
-            <Text style={styles.weekHotDesc} numberOfLines={3}>
-              故事围绕经典角色特展开，它因贪吃被带入超的时代广场...
+              <Text style={styles.weekHotDesc} numberOfLines={2} ellipsizeMode="tail">
+                {book.introduction}
             </Text>
             <View style={styles.badgeContainer}>
               <View style={styles.hotBadge}>
-                <Text style={styles.hotBadgeText}>热门推荐</Text>
+                  <Text style={styles.hotBadgeText}>
+                    {book.categories.map((author: any) => author.name).join(", ")}
+                  </Text>
               </View>
-              <View style={styles.classicBadge}>
-                <Text style={styles.classicBadgeText}>经典绘本</Text>
               </View>
             </View>
           </View>
-          <View style={styles.weekHotLabel}>
-              <Text style={styles.weekHotLabelText}>本周必读</Text>
-               <View style={styles.triangleBottom} />  
-          </View>
+          
+          {/* 本周必读标签 */}
+          {/* <View style={styles.weekHotLabel}>
+            <Text style={styles.weekHotLabelText}>本周必读</Text>
+          </View> */}
         </TouchableOpacity>
       </View>
     )
@@ -337,28 +368,110 @@ export default function ReaderIndex() {
     if (!recommendData?.classic || recommendData.classic.length === 0) return null
 
     return (
-      <View style={styles.recommendSection}>
-        <View style={styles.sectionHeader}>
-          <LinearGradient 
-            style={styles.sectionTitleContainer}
-            colors={["#A0D2FF", "#7080FF"]} // 渐变色值
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-          >
-            <Ionicons name="star" size={rpx(16)} color="#FFD700" />
-            <Text style={styles.sectionTitle}>经典书单推荐</Text>
-          </LinearGradient>
-        </View>
+      <View style={styles.classicSection}>
+        <View style={styles.classicCard}>
+          {/* 标题在卡片内部 */}
+          <Image
+              source={ NAV_IMAGES.readerRecommend}
+              style={styles.classicTitle}
+              resizeMode="contain"
+            />
+          
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.recommendScroll}
+            contentContainerStyle={styles.recommendScrollContent}
         >
           {recommendData.classic.slice(0, 4).map((book, index) => renderRecommendItem(book, index))}
         </ScrollView>
+        </View>
       </View>
     )
   }, [recommendData, renderRecommendItem])
+
+  // 渲染三个榜单卡片
+  const renderRankingCards = useCallback(() => {
+    if (!recommendData) return null
+
+    const rankings = [
+      { 
+        title: "新书榜", 
+        color: "#B6E3FF", 
+        books: recommendData.new_book || [],
+        icon: "NEW",
+        iconStyle: { opacity: 0.3 }
+      },
+      { 
+        title: "科普榜", 
+        color: "#DAFFDA", 
+        books: recommendData.science || [],
+        icon: "🔍",
+        iconStyle: { opacity: 0.3 }
+      },
+      { 
+        title: "热度榜", 
+        color: "#F1BBFF", 
+        books: recommendData.hot || [],
+        icon: "🔥",
+        iconStyle: { opacity: 0.3 }
+      }
+    ]
+
+    return (
+      <View style={styles.rankingSection}>
+        {rankings.map((ranking, index) => (
+          <View key={index} style={[styles.rankingCard, { backgroundColor: ranking.color }]}>
+            {/* 标题区域，带背景水印 */}
+            <View style={styles.rankingTitleContainer}>
+              <View style={[styles.rankingTitleBackground, ranking.iconStyle]}>
+                <Text style={styles.rankingTitleIcon}>{ranking.icon}</Text>
+              </View>
+            <Text style={styles.rankingTitle}>{ranking.title}</Text>
+            </View>
+            
+            {/* 书籍列表 */}
+            <View style={styles.rankingBookList}>
+              {ranking.books.slice(0, 3).map((book, bookIndex) => (
+              <TouchableOpacity
+                  key={book.id}
+                style={styles.rankingBookItem}
+                onPress={() => handleBookClick(book)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.rankingBookNumber}>{bookIndex + 1}</Text>
+                <Image
+                  source={
+                    typeof getBookCover(book) === "string"
+                      ? { uri: getBookCover(book) as string }
+                      : getBookCover(book)
+                  }
+                  style={styles.rankingBookCover}
+                  resizeMode="cover"
+                />
+                <View style={styles.rankingBookInfo}>
+                    <View>
+                  <Text style={styles.rankingBookTitle} numberOfLines={1}>
+                        {book.title}
+                  </Text>
+                  <Text style={styles.rankingBookDesc} numberOfLines={2}>
+                        {book.introduction || "暂无简介"}
+                  </Text>
+                    </View>
+                   
+                  <View style={styles.rankingBookStats}>
+                      <Ionicons name="flame" size={rpx(6.15625)} color="#FF5722" />
+                    <Text style={styles.rankingBookViews}>1.45w</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+              </View>
+          </View>
+        ))}
+      </View>
+    )
+  }, [recommendData, getBookCover, handleBookClick])
 
   // 渲染推荐页面
   const renderRecommendPage = useCallback(() => {
@@ -372,52 +485,27 @@ export default function ReaderIndex() {
     }
 
     return (
-      <ScrollView
-        style={styles.recommendContainer}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        showsVerticalScrollIndicator={false}
+      <ScrollView 
+        style={styles.recommendScrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        {renderWeekHot()}
-        {renderClassicSection()}
+        <View style={styles.recommendContainer}>
+          {/* 本周必读和经典书单推荐在同一行 */}
+          <View style={styles.topSection}>
+            <View style={styles.weekHotContainer}>
+              {renderWeekHot()}
+            </View>
+            <View style={styles.classicContainer}>
+              {renderClassicSection()}
+            </View>
+          </View>
+          {renderRankingCards()}
+        </View>
       </ScrollView>
     )
-  }, [recommendLoading, refreshing, onRefresh, renderWeekHot, renderClassicSection])
-
-  // 渲染分类书籍项
-  const renderBookItem = useCallback(
-    ({ item }: { item: any }) => (
-      <View style={styles.bookItemContainer}>
-        <TouchableOpacity
-          style={styles.bookItem}
-          onPress={() => handleBookClick(item)}
-          activeOpacity={0.8}
-        >
-          <Image
-            source={
-              typeof getBookCover(item) === "string"
-                ? { uri: getBookCover(item) as string }
-                : getBookCover(item)
-            }
-            style={styles.bookCover}
-            resizeMode="cover"
-          />
-          <View style={styles.bookInfo}>
-            <Text style={styles.bookTitle} numberOfLines={2}>
-              {item.title}
-            </Text>
-            <Text style={styles.bookAuthor} numberOfLines={1}>
-              {item.authors?.map((a: any) => a.name).join(", ") || ""}
-            </Text>
-            <Text style={styles.bookDesc} numberOfLines={2}>
-              发动理科思维，破解案件真相
-            </Text>
-            <Text style={styles.bookCategory}>经典文学</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    ),
-    [getBookCover, handleBookClick],
-  )
+  }, [recommendLoading, refreshing, onRefresh, renderWeekHot, renderClassicSection, renderRankingCards])
 
   // 渲染筛选按钮
   const renderFilterButton = useCallback(
@@ -461,15 +549,19 @@ export default function ReaderIndex() {
           style={styles.gridBookCover}
           resizeMode="cover"
         />
+        <View style={styles.gridBookInfo}>
+          <View>
         <Text style={styles.gridBookTitle} numberOfLines={1}>
           {item.title}
         </Text>
-        <Text style={styles.gridBookAuthor} numberOfLines={1}>
-          {item.authors?.map((a: any) => a.name).join(", ") || ""}
+            <Text style={styles.gridBookAuthor} numberOfLines={2} ellipsizeMode="tail">
+              {item.introduction || ""}
         </Text>
-        <Text style={styles.gridBookCategory} numberOfLines={1}>
+          </View>
+          <Text style={styles.gridBookCategory}>
           {item.category || "经典文学"}
         </Text>
+        </View> 
       </TouchableOpacity>
     ),
     [getBookCover, handleBookClick],
@@ -540,15 +632,24 @@ export default function ReaderIndex() {
     initialLoading,
   ])
 
-  // 页面初始化
-  useEffect(() => {
-    getCategories()
-    getRecommendations()
+  // 使用并行预加载Hook - 立即显示页面，然后异步加载数据
+  const { data: preloadData, loading: preloadLoading } = useParallelPreload({
+    categories: getCategories,
+    recommendations: getRecommendations,
+    initialBooks: () => books.length === 0 ? getBooks(true) : Promise.resolve()
   }, [])
+
+  // 当预加载数据完成后，更新状态
+  useEffect(() => {
+    if (preloadData?.recommendations && typeof preloadData.recommendations !== 'function') {
+      setRecommendData(preloadData.recommendations as RecommendData)
+      setRecommendLoading(false)
+    }
+  }, [preloadData])
 
   return (
     <LinearGradient
-      colors={["#CDF7FF", "#EFF6FF", "#FDFEFF", "#BCD4FF"]}
+      colors={["#93abff", "#e4f4ff", "#cdedff", "#ffffff"]}
       locations={[-0.1128, 0.1494, 0.8474, 1.0586]}
       style={styles.container}
     >
@@ -558,39 +659,49 @@ export default function ReaderIndex() {
       {/* 内容区域 */}
       <View style={styles.contentContainer}>
         {/* 左侧导航 */}
-        <View style={styles.sideNav} >
-          <TouchableOpacity
-            style={[styles.navButton, currentTab === "recommend" && styles.activeNavButton]}
+        <View style={styles.sideNav}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.navButton, 
+              currentTab === "recommend" && styles.activeNavButton,
+              pressed && styles.navButtonPressed
+            ]}
             onPress={() => handleTabChange("recommend")}
           >
-            <Ionicons
-              name="thumbs-up"
-              size={rpx(24)}
-              color={currentTab === "recommend" ? "#007AFF" : "#999"}
+            <Image
+              source={currentTab === "recommend" ? NAV_IMAGES.recommendActive : NAV_IMAGES.recommend}
+              style={styles.navIcon}
+              resizeMode="contain"
             />
             <Text style={[styles.navText, currentTab === "recommend" && styles.activeNavText]}>
               推荐
             </Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
-            style={[styles.navButton, currentTab === "category" && styles.activeNavButton]}
+          <Pressable
+            style={({ pressed }) => [
+              styles.navButton, 
+              currentTab === "category" && styles.activeNavButton,
+              pressed && styles.navButtonPressed
+            ]}
             onPress={() => handleTabChange("category")}
           >
-            <Ionicons
-              name="grid"
-              size={rpx(24)}
-              color={currentTab === "category" ? "#007AFF" : "#999"}
+            <Image
+              source={currentTab === "category" ? NAV_IMAGES.categoryActive : NAV_IMAGES.category}
+              style={styles.navIcon}
+              resizeMode="contain"
             />
             <Text style={[styles.navText, currentTab === "category" && styles.activeNavText]}>
               分类
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* 主内容区 */}
         <View style={styles.mainContent}>
-          {currentTab === "recommend" ? renderRecommendPage() : renderCategoryPage()}
+          {useMemo(() => {
+            return currentTab === "recommend" ? renderRecommendPage() : renderCategoryPage()
+          }, [currentTab, renderRecommendPage, renderCategoryPage])}
         </View>
       </View>
     </LinearGradient>
@@ -598,113 +709,187 @@ export default function ReaderIndex() {
 }
 
 const styles = createStyles({
+             
+  weekHotIcon: {
+    width: 78.125,
+    height: 22.65625,
+  },
   container: {
     flex: 1,
     width: "100%" as const,
     height: "100%" as const,
+
   },
   contentContainer: {
     flex: 1,
     flexDirection: "row" as const,
-    height: "100%" as const,
+    paddingLeft: 31.25,
+    paddingRight: 31.25,
   },
   // 左侧导航样式
   sideNav: {
-    width: 90.625,
-    height: "100%" as const,
-    backgroundColor: 'transparent', 
-    paddingVertical: 31.25,
     alignItems: "center" as const,
-    justifyContent: "center" as const,
-    display: "flex" as const,  
+    paddingTop: 30,
   },
   navButton: {
     alignItems: "center" as const,
     paddingVertical: 15,
     width: "100%" as const,
   },
-  // activeNavButton: {
-  //   backgroundColor: "rgba(0,122,255,0.1)",
-  // },
+  navIcon: {
+    width: 35.9375,
+    height: 35.9375,
+    marginBottom: 5,
+  },
+  activeNavButton: {
+    // backgroundColor: "rgba(0,122,255,0.1)",
+  },
+  navButtonPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.95 }],
+  },
   navText: {
-    fontSize: 14,
+    fontSize: 12.5,
     color: "#999",
     marginTop: 5,
   },
   activeNavText: {
-    color: "#007AFF",
+    color: "#000000",
     fontWeight: "600" as const,
   },
   mainContent: {
     flex: 1,
+    paddingBottom: 20,
   },
   // 推荐页面样式
+  recommendScrollView: {
+    flex: 1,
+  },
   recommendContainer: {
-    flex: 1,  
-    flexDirection: 'row',
-    paddingHorizontal: 15,  
+    flex: 1,
+    paddingHorizontal: 15,
+  },
+  // 顶部区域：本周必读和经典书单推荐在同一行
+  topSection: {
+    flexDirection: "row" as const,
+    marginBottom: 20,
+    gap: 12,
+    alignItems: "flex-start" as const,
+  },
+  weekHotContainer: {
+    flex: 1, // 本周推荐和经典书单推荐各占50%
+  },
+  classicContainer: {
+    flex: 1, // 本周推荐和经典书单推荐各占50%
   },
   weekHotSection: {
-    width:307.422,
-    marginBottom: 20,
+    marginBottom: 0,
   },
   weekHotCard: {
-    flexDirection: "row" as const,
-    backgroundColor: "rgba(255, 193, 7, 0.8)",
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: "#FFCA43", // 金色背景
+    borderRadius: 7.8125,
+    paddingTop: 4.8,
+    paddingBottom: 4.8,
+    paddingLeft: 10.9375,
+    paddingRight:  10.9375,
     position: "relative" as const,
+    height: 133.59375,
+    overflow: "hidden" as const,
   },
-  weekHotCover: {
-    width: 100,
-    height: 140,
-    borderRadius: 8,
-  },
-  weekHotInfo: {
-    flex: 1,
-    marginLeft: 15,
-    justifyContent: "space-between" as const,
-  },
-  weekHotTitle: {
-    fontSize: 18,
+  weekHotCardTitle: {
+    fontSize: 16,
     fontWeight: "bold" as const,
     color: "#333",
-    marginBottom: 8,
+    marginBottom: 10,
+    textAlign: "left" as const,
+  },
+  weekHotBackground: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.3,
+  },
+  catDecoration1: {
+    position: "absolute" as const,
+    top: 20,
+    right: 20,
+    width: 40,
+    height: 30,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: 20,
+  },
+  catDecoration2: {
+    position: "absolute" as const,
+    top: 50,
+    right: 10,
+    width: 25,
+    height: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    borderRadius: 15,
+  },
+  catDecoration3: {
+    position: "absolute" as const,
+    bottom: 20,
+    right: 30,
+    width: 35,
+    height: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 18,
+  },
+  weekHotContent: {
+    flexDirection: "row" as const,
+    marginTop: 7,
+    alignItems: "flex-start" as const,
+    zIndex: 1,
+  },
+  weekHotLeft: {
+    marginRight: 17.1875,
+  },
+  weekHotCover: {
+    width: 66.40625,
+    height: 85.9375,
+    borderRadius: 3.9,
+  },
+  weekHotRight: {
+    alignItems: "flex-start" as const,
+  },
+  weekHotTitle: {
+    fontSize: 10.15625,
+    fontWeight: "bold" as const,
+    color: "#705001",
+    textAlign: "center" as const,
   },
   weekHotDesc: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-    marginBottom: 15,
+    fontSize: 7.03125,
+    color: "#7050018C",
+    marginBottom: 8,
+    flex: 1,
   },
   weekHotLabel: {
-     width: 23.438,  
-    height: 33.203 + 10,    
-    position: 'absolute',  
-    top: 0,  
-    right: 10,  
-    backgroundColor: '#FFE481',  
-    paddingHorizontal: 4,  
-    justifyContent: 'center',   
-    alignItems: 'center',  
+    position: "absolute" as const,
+    top: 10,
+    right: 10,
+    backgroundColor: "#FF6B35",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
   weekHotLabelText: {
-    fontSize: 7.031,
-    color: "#AB6400",
-    zIndex: 20, 
+    fontSize: 12,
+    color: "#FFF",
     fontWeight: "bold" as const,
-    
   },
-  
   badgeContainer: {
     flexDirection: "row" as const,
     gap: 10,
   },
   hotBadge: {
-    backgroundColor: "#FF5722",
+    backgroundColor: "#00000021",
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: 4,
   },
   hotBadgeText: {
     fontSize: 10,
@@ -721,60 +906,160 @@ const styles = createStyles({
     color: "#FFF",
   },
   recommendSection: {
-    width:307.422,
     marginBottom: 20,
   },
-  sectionHeader: {
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    justifyContent: "space-between" as const,
-    marginBottom: 15,
+  classicSection: {
+    marginBottom: 0,
   },
-  sectionTitleContainer: {
-    width:103.125,
-    height:20.313,
+  classicCard: {
+    backgroundColor: "#C2D9FB", // 白色背景
+    borderRadius: 7.8125,
+    paddingTop: 4.8,
+    paddingBottom: 4.8,
+    paddingLeft: 10.9375,
+    paddingRight:  10.9375,
+    position: "relative" as const,
+    height: 133.59375,
+    overflow: "hidden" as const,
+  },
+  classicTitleContainer: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
+    marginBottom: 10,
     gap: 5,
-    backgroundColor: "#7080FF",
-    borderRadius: 16,
-     borderTopLeftRadius: 26,     
-    borderBottomRightRadius: 26,  
-    borderTopRightRadius: 0,      
-    borderBottomLeftRadius: 0,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold" as const,
-    color: "#FFF",
+  classicTitle: {
+   width: 100,
+   height: 25,
+   position: "absolute" as const,
+   top: -2,
+   left: 0,
   },
   recommendScroll: {
     flexDirection: "row" as const,
   },
+  recommendScrollContent: {
+    paddingRight: 15,
+  },
   recommendBookCard: {
-    width: 120,
-    marginRight: 15,
+    marginTop: 18.75,
+    marginRight: 18.75,
+    width: 56.25,
+    alignItems: "flex-start" as const,
   },
   recommendBookCover: {
-    width: 120,
-    height: 160,
-    borderRadius: 8,
-    marginBottom: 8,
+    width: 56.25,
+    height: 73.4375,
+    borderRadius: 3.2,
+ 
   },
   recommendBookTitle: {
-    fontSize: 14,
-    fontWeight: "500" as const,
-    color: "#333",
-    marginBottom: 4,
+    fontSize: 7.8125,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    marginBottom: 2,
+    textAlign: "left" as const,
   },
-  recommendBookAuthor: {
-    fontSize: 12,
-    color: "#666",
+  recommendBookTags: {
+    flexDirection: "row" as const,
+    gap: 4,
+    flexWrap: "wrap" as const,
+    justifyContent: "flex-start" as const,
+  },
+  recommendBookTag: {
+    fontSize: 7.03125,
+    color: "#00000099",
+    backgroundColor: "#2734A70F",
+    borderRadius: 4,
+  },
+  // 榜单卡片样式
+  rankingSection: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    marginTop: 10,
+    paddingHorizontal: 5,
+    gap: 8,
+  },
+  rankingCard: {
+    width: "31%" as const,
+    borderRadius: 7.8125,
+    minHeight: 320,
+  },
+  rankingTitleContainer: {
+    position: "relative" as const,
+    alignItems: "flex-start" as const,
+    marginBottom: 15,
+  },
+  rankingTitleBackground: {
+    position: "absolute" as const,
+    top: -5,
+    fontSize: 24,
+    fontWeight: "bold" as const,
+  },
+  rankingTitleIcon: {
+    fontSize: 24,
+    fontWeight: "bold" as const,
+    color: "rgba(0,0,0,0.1)",
+  },
+  rankingTitle: {
+    fontSize: 16,
+    fontWeight: "bold" as const,
+    color: "#333",
+    textAlign: "left" as const,
+    paddingLeft: 11.7,
+    paddingTop: 8.6,
+    zIndex: 1,
+  },
+  rankingBookList: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 7.8125,
+    paddingLeft: 18.75,
+    paddingRight: 18.75,
+    paddingTop: 12.5,
+    paddingBottom: 12.5,
+  },
+  rankingBookItem: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    marginBottom: 7.8125,
+  },
+  rankingBookNumber: {
+    fontSize: 10.15625,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    marginRight: 8.6,
+  },
+  rankingBookCover: {
+    width: 46.875,
+    height: 67.1875,
+    borderRadius: 4,
+  },
+  rankingBookInfo: {
+    marginLeft: 9.375,
+    flex: 1,
+    height: 67.1875,
+    justifyContent: "space-between" as const,
+  },
+  rankingBookTitle: {
+    fontSize: 9.375,
+    fontWeight: "600" as const,
+    color: "#000000",
     marginBottom: 2,
   },
-  recommendBookCategory: {
-    fontSize: 10,
-    color: "#999",
+  rankingBookDesc: {
+    fontSize: 7.03125,
+    color: "#1D1D1D8C",
+    marginBottom: 2,
+
+  },
+  rankingBookStats: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+  },
+  rankingBookViews: {
+    fontSize: 7.03125,
+    color: "#1D1D1D8C",
+    marginLeft: 2,
   },
   // 分类页面样式
   categoryPageContainer: {
@@ -782,45 +1067,43 @@ const styles = createStyles({
   },
   filters: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    // paddingVertical: 10,
   },
   filterScroll: {
-    marginBottom: 10,
+    marginBottom: 4.8,
   },
   filterRow: {
     flexDirection: "row" as const,
     gap: 10,
   },
   categoryLabel: {
-    fontSize: 14,
-    color: "#333",
+    fontSize: 10.15625,
+    color: "#81A2CC",
     marginBottom: 8,
     marginTop: 10,
     paddingHorizontal: 20,
   },
   sortButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: "#E3F2FD",
-    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 11.8175,
+    backgroundColor: "#D6EBF7",
   },
   categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: "#E3F2FD",
-    marginHorizontal: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 11.8175,
+    backgroundColor: "#D6EBF7",
   },
   filterButtonActive: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#CFECFF",
   },
   filterButtonText: {
     fontSize: 12,
-    color: "#666",
+    color: "#81A2CC",
   },
   filterButtonTextActive: {
-    color: "#FFF",
+    color: "#1571FC",
   },
   // 网格布局
   gridContainer: {
@@ -831,90 +1114,42 @@ const styles = createStyles({
     justifyContent: "space-between" as const,
     paddingHorizontal: 10,
   },
+  
   gridBookItem: {
     width: "22%" as const, // 一行4个，留一点间距
     marginBottom: 20,
+    flexDirection: "row" as const,
     alignItems: "center" as const,
   },
   gridBookCover: {
-    width: "100%" as const,
-    aspectRatio: 0.75,
-    borderRadius: 8,
-    marginBottom: 8,
+    width: 65.625,
+    height: 85.9375,
+    borderRadius: 4,
   },
-  gridBookTitle: {
-    fontSize: 14,
-    fontWeight: "500" as const,
-    color: "#333",
-    textAlign: "center" as const,
-    marginBottom: 4,
-    width: "100%" as const,
-  },
-  gridBookAuthor: {
-    fontSize: 12,
-    color: "#666",
-    textAlign: "center" as const,
-    marginBottom: 2,
-    width: "100%" as const,
-  },
-  gridBookCategory: {
-    fontSize: 10,
-    color: "#4CAF50",
-    backgroundColor: "#E8F5E8",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-    alignSelf: "center" as const,
-  },
-  // 列表布局（保留原来的样式以备不时之需）
-  listContainer: {
-    paddingHorizontal: 15,
-    paddingBottom: 20,
-  },
-  bookItemContainer: {
-    marginBottom: 15,
-  },
-  bookItem: {
-    flexDirection: "row" as const,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    borderRadius: 12,
-    padding: 12,
-  },
-  bookCover: {
-    width: 80,
-    height: 120,
-    borderRadius: 6,
-  },
-  bookInfo: {
-    flex: 1,
-    marginLeft: 12,
+  gridBookInfo: {
+    marginLeft: 6.25,
+    height: 85.9375,
+    flex: 1, // 占用剩余空间
     justifyContent: "space-between" as const,
   },
-  bookTitle: {
-    fontSize: 16,
-    fontWeight: "600" as const,
-    color: "#333",
-    marginBottom: 4,
+  gridBookTitle: {
+    fontSize: 10.15625,
+    fontWeight: "bold" as const,
+    color: "#000000",
+    textAlign: "left" as const,
   },
-  bookAuthor: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 4,
+  gridBookAuthor: {
+    fontSize: 7.8125,
+    color: "#1D1D1D8C",
+    textAlign: "left" as const,
+    marginBottom: 2,
+    flexShrink: 1, // 允许收缩
   },
-  bookDesc: {
-    fontSize: 12,
-    color: "#999",
-    lineHeight: 18,
-    marginBottom: 8,
-  },
-  bookCategory: {
-    fontSize: 10,
-    color: "#4CAF50",
-    backgroundColor: "#E8F5E8",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-    alignSelf: "flex-start" as const,
+  gridBookCategory: {
+    backgroundColor: "#2734A70F",
+    paddingHorizontal: 2,
+    paddingVertical: 4,
+    borderRadius: 4,
   },
   loadingContainer: {
     flex: 1,

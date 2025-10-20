@@ -54,9 +54,17 @@ export class RouteGuard {
       // 没有权限，重定向到登录页
       console.log("🔐 没有访问权限，重定向到登录页")
 
-      // 使用setTimeout确保导航发生在组件挂载后
-      setTimeout(() => {
-        router.replace("/login")
+      // 使用登录弹窗替代页面跳转
+      setTimeout(async () => {
+        const { showLoginModal } = await import("../utils/loginUtils")
+        showLoginModal({
+          onSuccess: () => {
+            console.log("🔐 用户登录成功，可以访问受保护的路由")
+          },
+          onCancel: () => {
+            console.log("🔐 用户取消登录，停留在当前页面")
+          },
+        })
       }, 0)
 
       return false
@@ -77,9 +85,17 @@ export class RouteGuard {
 
       // 只有在应用已挂载的情况下才执行导航
       if (this.isMounted) {
-        // 使用setTimeout确保导航发生在组件挂载后
-        setTimeout(() => {
-          router.replace("/login")
+        // 使用登录弹窗替代页面跳转
+        setTimeout(async () => {
+          const { showLoginModal } = await import("../utils/loginUtils")
+          showLoginModal({
+            onSuccess: () => {
+              console.log("🔐 用户重新登录成功")
+            },
+            onCancel: () => {
+              console.log("🔐 用户取消登录")
+            },
+          })
         }, 0)
       } else {
         console.log("应用未挂载，暂不执行导航")

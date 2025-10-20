@@ -1,8 +1,9 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useMemo } from "react"
 import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useFocusEffect, useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
+import { InteractionManager } from "react-native"
 
 import { StatusBar } from "../../components/StatusBar"
 import { ProductDetailPopup, OrderConfirmPopup } from "../../components/points-mall"
@@ -27,11 +28,18 @@ export default function PointsMallScreen() {
   const [showProductDetail, setShowProductDetail] = useState(false)
   const [showOrderConfirm, setShowOrderConfirm] = useState(false)
   const [currentProduct, setCurrentProduct] = useState<ProductDetailResponse | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
   const pageSize = 18
 
   const categories = ["热点推荐", "积分可兑", "学习文具", "亲子娱乐"]
 
-  // 获取积分余额
+  // 预计算分类选项，避免重复创建
+  const categoryOptions = useMemo(() => 
+    categories.map((category, index) => ({ label: category, value: index })),
+    [categories]
+  )
+
+  // 获取积分余额 - 优化版本
   const fetchPointsBalance = useCallback(async () => {
     try {
       const res: PointsBalanceData = await getPointsBalance()
@@ -136,12 +144,28 @@ export default function PointsMallScreen() {
     }
   }, [hasMore, loadingMore, getProducts])
 
-  // 页面获得焦点时刷新数据
+  // 初始化数据 - 使用InteractionManager优化
+  useEffect(() => {
+    if (!isInitialized) {
+      InteractionManager.runAfterInteractions(async () => {
+        // 并行加载积分余额和商品列表
+        await Promise.all([
+          fetchPointsBalance(),
+          getProducts()
+        ])
+        setIsInitialized(true)
+      })
+    }
+  }, [isInitialized, fetchPointsBalance, getProducts])
+
+  // 页面显示时只加载积分余额（商品列表已预加载）
   useFocusEffect(
     useCallback(() => {
-      getProducts()
-      fetchPointsBalance()
-    }, []),
+      if (isInitialized) {
+        // 只在需要时刷新积分余额
+        fetchPointsBalance()
+      }
+    }, [isInitialized, fetchPointsBalance]),
   )
 
   return (
@@ -198,8 +222,17 @@ export default function PointsMallScreen() {
         </View>
       </View>
 
+      {/* 加载状态 */}
+      {!isInitialized && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#1890ff" />
+          <Text style={styles.loadingText}>正在加载商品...</Text>
+        </View>
+      )}
+
       {/* 商品网格列表 */}
-      <ScrollView
+      {isInitialized && (
+        <ScrollView
         style={styles.productScroll}
         onScroll={({ nativeEvent }) => {
           const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
@@ -258,7 +291,8 @@ export default function PointsMallScreen() {
             <Text style={styles.noMoreText}>没有更多商品了</Text>
           </View>
         )}
-      </ScrollView>
+        </ScrollView>
+      )}
 
       {/* 商品详情弹窗 */}
       <ProductDetailPopup

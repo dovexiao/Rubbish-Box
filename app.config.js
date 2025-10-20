@@ -1,18 +1,9 @@
-import { ExpoConfig, ConfigContext } from "@expo/config"
-
 /**
- * Use ts-node here so we can use TypeScript for our Config Plugins
- * and not have to compile them to JavaScript
+ * Expo Configuration
+ * JavaScript version for EAS Build compatibility
  */
-require("ts-node/register")
 
-/**
- * @param config ExpoConfig coming from the static config app.json if it exists
- *
- * You can read more about Expo's Configuration Resolution Rules here:
- * https://docs.expo.dev/workflow/configuration/#configuration-resolution-rules
- */
-module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
+module.exports = ({ config }) => {
   const existingPlugins = config.plugins ?? []
 
   return {
@@ -34,6 +25,21 @@ module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
         ],
       },
     },
+    android: {
+      ...config.android,
+      edgeToEdgeEnabled: false,
+    },
+    // Expo Updates 配置 - 生产环境启用
+    updates: {
+      enabled: true,
+      checkAutomatically: "ON_LOAD",
+      fallbackToCacheTimeout: 0,
+    },
+    // 运行时版本配置 - 使用appVersion策略
+    runtimeVersion: {
+      policy: "appVersion"
+    },
+    // EAS Build配置将在初始化后自动添加
     plugins: [...existingPlugins, "expo-font"],
   }
 }

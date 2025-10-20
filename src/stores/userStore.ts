@@ -12,17 +12,29 @@ const STORAGE_KEYS = {
 
 // 用户信息接口
 interface User {
-  id?: string
+  user_id: string
   username: string
-  avatar?: string
-  nickname?: string
+  profile_picture?: string | null
+  area?: string | null
+  birthday?: string
+  city?: string
+  district?: string
+  educational_system?: string
+  gender?: boolean // true男 false女
   grade?: string
+  grade_stage?: string
+  height?: number
+  member_switch?: boolean
+  phone?: string
   points?: number
+  province?: string
   rank?: string
-  total_duration?: number
+  rank_icon?: string | null
+  rank_level?: number
   rank_required?: number
+  school?: string
   study_days?: number
-  gender?: number // 0男 1女
+  total_duration?: number
   [key: string]: any
 }
 
@@ -31,7 +43,6 @@ interface UserState {
   token: string | null
   isLoggedIn: boolean
   isLoading: boolean
-  showLoginPopup: boolean
   error: string | null
 
   // 操作方法
@@ -42,8 +53,6 @@ interface UserState {
   login: (username: string, password: string) => Promise<void>
   logout: () => void
   getUserInfo: () => Promise<User>
-  showLoginModal: () => void
-  closeLoginPopup: () => void
 }
 
 // 安全地获取存储值的辅助函数
@@ -136,10 +145,18 @@ export const useUserStore = create<UserState>((set, get) => ({
         device_code: "mobile",
       })
 
-      const { user, token } = response
+      if (!response || typeof response !== 'object') {
+        throw new Error("登录失败: 返回数据格式不正确")
+      }
 
+      const { token } = response
+      
+      if (!token) {
+        throw new Error("登录失败: 未获取到token")
+      }
+
+      // 先设置token
       set({
-        user,
         token,
         isLoggedIn: true,
         isLoading: false,
@@ -148,8 +165,18 @@ export const useUserStore = create<UserState>((set, get) => ({
 
       // 保存token到持久化存储
       storage.set(STORAGE_KEYS.TOKEN, token)
-      // 保存用户信息
-      storage.set(STORAGE_KEYS.USER_INFO, JSON.stringify(user))
+      
+      try {
+        // 登录成功后获取用户信息
+        const { getUserInfo } = get()
+        const userInfo = await getUserInfo()
+        
+        // 用户信息已在getUserInfo中保存到store和storage
+        return
+      } catch (userError) {
+        console.warn("登录成功但获取用户信息失败:", userError)
+        // 登录成功但获取用户信息失败，不影响登录状态
+      }
     } catch (error: any) {
       set({
         error: error.message || "登录失败",
@@ -179,18 +206,51 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     // 如果有token但没有用户信息，尝试从存储中获取
     if (token) {
+      try {
+        // 先尝试从存储中获取
       const storedUserInfo = storage.getString(STORAGE_KEYS.USER_INFO)
       if (storedUserInfo) {
+          try {
         const parsedUser = JSON.parse(storedUserInfo)
+            // 验证解析的用户信息是否符合User接口
+            if (parsedUser && parsedUser.user_id && parsedUser.username) {
         set({ user: parsedUser, isLoggedIn: true })
         return parsedUser
+            }
+          } catch (e) {
+            console.warn("Failed to parse stored user info:", e)
+            // 解析失败继续尝试从服务器获取
+          }
+        }
+
+        // 如果本地没有或解析失败，从服务器获取
+        const { post: apiPost } = await import("../services/api")
+        const response = await apiPost("/AppStart/UserInformation/user_information/", {}, { token })
+        
+        if (response && typeof response === 'object') {
+          // 确保response符合User接口
+          const userData: User = {
+            ...response,
+            // 确保必填字段存在
+            user_id: response.user_id || '',
+            username: response.username || '未知用户'
+          }
+          
+          // 保存用户信息
+          set({ user: userData, isLoggedIn: true })
+          // 保存到存储
+          storage.set(STORAGE_KEYS.USER_INFO, JSON.stringify(userData))
+          return userData
+        }
+        throw new Error("获取用户信息失败: 返回数据格式不正确")
+      } catch (error: any) {
+        console.error("获取用户信息失败:", error)
+        throw error
       }
     }
 
-    // 如果没有用户信息，抛出错误
+    // 如果没有token，抛出错误
     throw new Error("用户未登录")
   },
 
-  showLoginModal: () => set({ showLoginPopup: true }),
-  closeLoginPopup: () => set({ showLoginPopup: false }),
 }))

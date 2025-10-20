@@ -1,5 +1,6 @@
 import { router } from "expo-router"
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
+import { Platform, Alert } from "react-native"
 
 import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS, UPLOAD_API_URL } from "../config/api"
 import { IS_DEV } from "../config/env"
@@ -49,6 +50,28 @@ const formatLogData = (data: any): string => {
 const safeLog = (message: string, ...args: any[]) => {
   if (LOG_CONFIG.ENABLED) {
     console.log(message, ...args)
+  }
+}
+
+/**
+ * 显示Toast消息
+ */
+const showToast = (message: string, type: 'error' | 'success' | 'warning' = 'error') => {
+  if (Platform.OS === 'android') {
+    // Android使用ToastAndroid
+    const ToastAndroid = require('react-native').ToastAndroid
+    if (type === 'error') {
+      ToastAndroid.show(message, ToastAndroid.LONG)
+    } else {
+      ToastAndroid.show(message, ToastAndroid.SHORT)
+    }
+  } else {
+    // iOS使用Alert
+    Alert.alert(
+      type === 'error' ? '错误' : type === 'success' ? '成功' : '提示',
+      message,
+      [{ text: '确定' }]
+    )
   }
 }
 
@@ -193,7 +216,16 @@ apiClient.interceptors.response.use(
         userStore.logout()
         safeLog("🔐 用户未授权，已清除token")
 
-        router.replace("/login")
+        // 使用登录弹窗替代页面跳转
+        const { showLoginModal } = await import("../utils/loginUtils")
+        showLoginModal({
+          onSuccess: () => {
+            safeLog("🔐 用户重新登录成功")
+          },
+          onCancel: () => {
+            safeLog("🔐 用户取消登录")
+          },
+        })
       } catch (error) {
         safeLog("⚠️ 处理未授权错误:", error)
       }
@@ -208,6 +240,8 @@ apiClient.interceptors.response.use(
 
     // 处理业务状态码错误
     safeLog("⚠️ 业务错误:", res.code, res.message)
+    // 显示toast错误信息
+    showToast(res.message || "请求失败", 'error')
     return Promise.reject(new Error(res.message || "请求失败"))
   },
   (error) => {
@@ -223,12 +257,21 @@ apiClient.interceptors.response.use(
       // 处理未授权情况
       try {
         import("../stores/userStore")
-          .then(({ useUserStore }) => {
+          .then(async ({ useUserStore }) => {
             const userStore = useUserStore.getState()
             userStore.logout()
             safeLog("🔐 已清除本地token")
 
-            router.replace("/login")
+            // 使用登录弹窗替代页面跳转
+            const { showLoginModal } = await import("../utils/loginUtils")
+            showLoginModal({
+              onSuccess: () => {
+                safeLog("🔐 用户重新登录成功")
+              },
+              onCancel: () => {
+                safeLog("🔐 用户取消登录")
+              },
+            })
           })
           .catch((e) => {
             safeLog("⚠️ 清除token失败:", e)
@@ -250,6 +293,18 @@ apiClient.interceptors.response.use(
       safeLog("🕐 错误时间:", new Date().toLocaleTimeString())
       safeLog("🔍 完整错误:", error)
       safeLog("===============================================")
+    }
+
+    // 处理网络错误和其他错误
+    if (error.response?.data?.message) {
+      // 如果有具体的错误消息，显示toast
+      showToast(error.response.data.message, 'error')
+    } else if (error.message) {
+      // 显示通用错误消息
+      showToast(error.message, 'error')
+    } else {
+      // 显示默认错误消息
+      showToast("网络请求失败，请检查网络连接", 'error')
     }
 
     return Promise.reject(error)

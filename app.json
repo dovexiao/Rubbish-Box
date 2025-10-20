@@ -2,36 +2,61 @@
   "expo": {
     "name": "xhtx",
     "slug": "xhtx",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "orientation": "landscape",
     "icon": "./assets/app/icons/1024x1024.png",
     "scheme": "xhtx",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash-screen.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/images/splash-screen-cropped.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.xhtx.app"
+      "bundleIdentifier": "com.xhtx.app",
+      "buildNumber": "10000"
     },
     "android": {
       "package": "com.xhtx.app",
       "jsEngine": "hermes",
+      "versionCode": 10000,
       "enableSeparateBuildPerCPUArchitecture": false,
       "targetSdkVersion": 33,
       "compileSdkVersion": 33,
       "buildToolsVersion": "33.0.0",
-      "abiFilters": ["arm64-v8a"],
+      "abiFilters": [
+        "arm64-v8a"
+      ],
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.REQUEST_INSTALL_PACKAGES"
       ],
+      "networkSecurityConfig": "./android/app/src/main/res/xml/network_security_config.xml",
       "softwareKeyboardLayoutMode": "pan",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "file",
+              "mimeType": "application/vnd.android.package-archive"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
       "statusBar": {
         "hidden": true,
         "translucent": true,
@@ -57,10 +82,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-screen.png",
+          "image": "./assets/images/splash-screen-cropped.png",
           "imageWidth": 200,
-          "resizeMode": "cover",
-          "backgroundColor": "#ffffff"
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
         }
       ]
     ],
@@ -73,8 +98,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "781589ef-0937-4906-a236-5deac80db17b"
       }
-    }
+    },
+    "owner": "zhoudabo"
   }
 }

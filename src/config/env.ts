@@ -36,12 +36,12 @@ const API_URLS = {
   [Environment.TESTING]: "http://192.168.31.169:8080",
   // [Environment.TESTING]: "http://8.135.11.47:8000",
 
-  // 生产环境（当前使用阿里云）
+  // 生产环境（使用IP地址，域名未配置好）
   [Environment.PRODUCTION]: "http://8.135.11.47:8000",
 
   // 开发环境
-  // [Environment.DEVELOPMENT]: "http://8.135.11.47:8000",
-  [Environment.DEVELOPMENT]: "http://192.168.31.169:8080",
+  [Environment.DEVELOPMENT]: "http://8.135.11.47:8000",
+  // [Environment.DEVELOPMENT]: "http://192.168.31.169:8080",
 }
 
 // 上传地址配置

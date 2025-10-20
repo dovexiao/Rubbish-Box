@@ -58,7 +58,10 @@ export interface Classic {
   id: number
   title: string
   cover_url: string
+  introduction?: string
+  description?: string
   authors: ClassicAuthor[]
+  categories: Category[]
 }
 
 export interface ClassicAuthor {
@@ -70,7 +73,10 @@ export interface Hot {
   id: number
   title: string
   cover_url: string
+  introduction?: string
+  description?: string
   authors: HotAuthor[]
+  categories: Category[]
 }
 
 export interface HotAuthor {
@@ -82,7 +88,10 @@ export interface NewBook {
   id: number
   title: string
   cover_url: string
+  introduction?: string
+  description?: string
   authors: NewBookAuthor[]
+  categories: Category[]
 }
 
 export interface NewBookAuthor {
@@ -94,10 +103,18 @@ export interface Science {
   id: number
   title: string
   cover_url: string
+  introduction?: string
+  description?: string
   authors: ScienceAuthor[]
+  categories: Category[]
 }
 
 export interface ScienceAuthor {
+  id: number
+  name: string
+}
+
+export interface Category {
   id: number
   name: string
 }
@@ -106,6 +123,9 @@ export interface WeekHot {
   id: number
   title: string
   cover_url: string
+  introduction: string
+  description?: string
+  categories: Category[]
   authors: WeekHotAuthor[]
 }
 

@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions, Platform } from "react-native"
 
 // 设计稿尺寸配置
 const DESIGN_WIDTH_RPX = 750 // 设计稿宽度转rpx
-const DESIGN_HEIGHT_RPX = 468.75 // 设计稿高度转rpx (1200 * 750 / 1920)
+const DESIGN_HEIGHT_RPX = 400 // 设计稿高度转rpx (1200 * 750 / 1920)
 
 // 获取屏幕尺寸
 const getScreenDimensions = () => {

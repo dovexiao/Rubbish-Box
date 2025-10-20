@@ -13,11 +13,22 @@ export default function AuthLayout() {
   const segments = useSegments()
 
   useEffect(() => {
-    // 如果用户未登录且尝试访问需要认证的页面，重定向到登录页
+    // 如果用户未登录且尝试访问需要认证的页面，显示登录弹窗
     if (!isLoggedIn) {
-      router.replace("/login")
+      // 动态导入登录工具函数
+      import("../../utils/loginUtils").then(({ showLoginModal }) => {
+        showLoginModal({
+          onSuccess: () => {
+            console.log("🔐 用户登录成功，可以访问认证页面")
+          },
+          onCancel: () => {
+            console.log("🔐 用户取消登录，返回上一页")
+            router.back()
+          },
+        })
+      })
     }
-  }, [isLoggedIn, segments])
+  }, [isLoggedIn, segments, router])
 
   return (
     <Stack
