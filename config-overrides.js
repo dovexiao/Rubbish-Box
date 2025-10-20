@@ -56,7 +56,7 @@ module.exports = function override(config, env) {
       /react-native-moengage/, // 客服相关
       /react-native-fs/, // 文件上传
       /react-native-adjust/, // 文件上传
-      // /react-native-pager-view/, // Adjust SDK
+      /react-native-pager-view/, // Adjust SDK
       // 排除react-native-update在web环境下的问题模块
       /react-native-update\/src\/NativePushy/,
     ].map(resourceRegExp => new webpack.IgnorePlugin({resourceRegExp})),

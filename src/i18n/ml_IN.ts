@@ -61,7 +61,9 @@ export default {
       'free-lottery': 'ഫ്രീ ലോട്ടറി',
       referral: 'റഫറൽ',
       agent: 'ഏജന്റ്',
-      promotion: 'പ്രമോഷൻ',
+      promotion: 'Promotion',
+      dailyRewards: 'ഡെയിലി റിവാർഡ്സ് ',
+      earnMoney: 'Earn Money',
     },
     luckyspin: {
       add: 'ചേർക്കുക',
@@ -79,9 +81,9 @@ export default {
     user: {
       userId: 'ഉബയോക്താവിൻ്റെ ഐഡി',
       moreExciting: 'ലോഗിൻ ചെയ്തതിന് ശേഷം കൂടുതൽ വിവരങ്ങൾ',
-      login: 'ലോഗിൻ ചെയ്യുക',
+      login: 'ലോഗിൻ',
       loginUpper: 'ലോഗിൻ',
-      registerUpper: 'രജിസ്റ്റർ',
+      registerUpper: 'സൈൻ അപ്പ് ',
     },
     money: {
       totalWallet: 'ആകെ വാലറ്റ്',

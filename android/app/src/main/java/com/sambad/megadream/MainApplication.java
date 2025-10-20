@@ -74,7 +74,7 @@ public class MainApplication extends Application implements ReactApplication {
   }
   // private void initAdjust() {
   //       // 1. 获取App Token（从meta-data中读取或直接硬编码）
-  //       String appToken = "3meh2m59zif4";
+  //       String appToken = "n6zcg598o6bk";
 
   //       // 2. 设置环境（测试：SANDBOX / 生产：PRODUCTION）
   //       // String environment = AdjustConfig.ENVIRONMENT_SANDBOX; // 测试环境
