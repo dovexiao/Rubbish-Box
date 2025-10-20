@@ -45,6 +45,7 @@ export default {
     copied: 'Copy successfully, please share with friends',
     tip: {
       beforDownload: 'Please register or login',
+      copied: 'Copy successfully, please share with friends',
     },
   },
   alert: {

@@ -12,9 +12,9 @@ import {Tooltip} from '@rneui/themed';
 import globalStore from '@/services/global.state';
 
 const closeIcon = require('@assets/icons/home/button-close.png');
-const progressBgIcon = require('@assets/icons/home/button-close.png');
-const progressIcon = require('@assets/icons/home/button-close.png');
-const questionIcon = require('@assets/icons/home/button-close.png');
+// const progressBgIcon = require('@assets/icons/home/button-close.png');
+// const progressIcon = require('@assets/icons/home/button-close.png');
+const questionIcon = require('@assets/icons/about-w.webp');
 
 const TouchableOpacity = globalStore.isWeb
   ? WebTouchableOpacity
@@ -57,6 +57,16 @@ export function useLotteryModal(copiedCallback: () => void) {
     tooltip: {
       height: 'auto',
     },
+    claimeds: {
+      top: -265,
+      right: 30,
+      zIndex: 1,
+    },
+    question: {
+      top: -265,
+      right: 5,
+      zIndex: 1,
+    }
   });
 
   const copy = () => {
@@ -88,10 +98,10 @@ export function useLotteryModal(copiedCallback: () => void) {
             ]}>
             <Text
               fontSize={13}
-              style={[theme.font.white, theme.font.bold, theme.margin.rightm]}>
+              style={[theme.font.white, theme.font.bold, theme.margin.rightm, theme.position.abs, styles.claimeds]}>
               Claimed:{current}/{total}
             </Text>
-            <LazyImageBackground
+            {/* <LazyImageBackground
               occupancy={'transparent'}
               imageUrl={progressBgIcon}
               width={129}
@@ -104,7 +114,7 @@ export function useLotteryModal(copiedCallback: () => void) {
                 imageUrl={progressIcon}
                 style={[theme.position.abs]}
               />
-            </LazyImageBackground>
+            </LazyImageBackground> */}
             <Tooltip
               visible={tooltipVisible}
               onOpen={() => setTooltipVisible(true)}
@@ -135,10 +145,11 @@ export function useLotteryModal(copiedCallback: () => void) {
                 </View>
               }>
               <LazyImage
+                style={[styles.question]}
                 occupancy={'transparent'}
                 imageUrl={questionIcon}
-                width={23}
-                height={23}
+                width={18}
+                height={18}
               />
             </Tooltip>
           </View>
