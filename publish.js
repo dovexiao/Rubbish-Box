@@ -3,13 +3,13 @@ const fs = require('fs');
 const {exit} = require('process');
 const { setBuildEnv } = require('./build-scripts.js');
 const mainPackage = [
-  {
-    title: 'prodgobet',
-    channelList:[
-      // 'gbFB01',
-      'gobet758'
-    ]
-  },
+  // {
+  //   title: 'prodgobet',
+  //   channelList:[
+  //     // 'gbFB01',
+  //     'gobet758'
+  //   ]
+  // },
   // {
   //   title: 'prodlotteryindia',
   //   channelList:[

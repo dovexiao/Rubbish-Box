@@ -25,10 +25,6 @@ import {useFocusEffect} from '@react-navigation/native'; //, useRoute
 import {LazyImageLGBackground} from '@basicComponents/image';
 import Button from '@/components/basic/button';
 
-const agentRuleImg1 = require('@/assets/imgs/proxy/agentrule1.webp'); // <-- 引入图片
-const agentRuleImg2 = require('@/assets/imgs/proxy/agentrule2.webp'); // <-- 引入图片
-const agentRuleImg3 = require('@/assets/imgs/proxy/agentrule3.webp'); // <-- 引入图片
-
 const ProxyHome = () => {
   const {
     size: {screenHeight},
@@ -140,18 +136,18 @@ const ProxyHome = () => {
         /> */}
         <View style={styles.bottomImgView}>
           <Image
-            source={agentRuleImg1}
+            source={{uri: 'https://www.staticimg007.com/static/agent1.png'}}
             style={{width: '100%', height: 746 * percent}}
             resizeMode="cover"
           />
           <Image
-            source={agentRuleImg2}
-            style={{width: '100%', height: 1009 * percent}}
+            source={{uri: 'https://www.staticimg007.com/static/agent2.png'}}
+            style={{width: '100%', height: 1071 * percent}}
             resizeMode="cover"
           />
           <Image
-            source={agentRuleImg3}
-            style={{width: '100%', height: 1000 * percent}}
+            source={{uri: 'https://www.staticimg007.com/static/agent3.png'}}
+            style={{width: '100%', height: 1066 * percent}}
             resizeMode="cover"
           />
           <View

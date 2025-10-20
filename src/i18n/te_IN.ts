@@ -61,6 +61,8 @@ export default {
       referral: 'రిఫరల్',
       agent: 'ఏజెంట్',
       promotion: 'ప్రమోషన్',
+      dailyRewards: 'డైలీ రివార్డ్స్',
+      earnMoney: 'Earn Money',
     },
     luckyspin: {
       add: 'ఆడ్',
@@ -80,7 +82,7 @@ export default {
       moreExciting: 'లాగిన్ చేసిన తర్వాత ఇంకా చాలా ఉత్తేజకరం చేస్తుంది',
       login: 'లాగిన్',
       loginUpper: 'లాగిన్',
-      registerUpper: 'నమోదు',
+      registerUpper: 'సైన్ అప్',
     },
     money: {
       totalWallet: 'టోటల్ వాలెట్',

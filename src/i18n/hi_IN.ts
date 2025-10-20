@@ -61,6 +61,9 @@ export default {
       'free-lottery': 'फ्री लॉटरी',
       referral: 'रेफरल',
       agent: 'एजेंट',
+      promotion: 'Promotion',
+      dailyRewards: 'दैनिक इनाम',
+      earnMoney: 'पैसे कमाओ',
     },
     luckyspin: {
       add: 'जोड़ें',
@@ -76,11 +79,11 @@ export default {
     },
     new: 'नया',
     user: {
-      userId: 'यूजर आईडी',
+      userId: 'लॉग इन',
       moreExciting: 'लॉगिन करने के बाद और रोमांचक',
       login: 'लॉग इन करें',
-      loginUpper: 'लॉगिन',
-      registerUpper: 'पंजीकरण करवाना',
+      loginUpper: 'लॉग इन करें',
+      registerUpper: 'साइन अप',
     },
     money: {
       totalWallet: 'टोटल वॉलेट',
