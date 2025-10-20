@@ -50,7 +50,6 @@ const PopList = ({
         theme.fill.fill,
         theme.borderRadius.s,
         theme.overflow.hidden,
-        theme.background.primary,
       ]}
     >
       <LazyImageBackground
