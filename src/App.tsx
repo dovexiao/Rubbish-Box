@@ -574,6 +574,8 @@ function App(): JSX.Element {
             width: popImageWidth,
             height: popImageWidth * imageRatio + addHeight,
             backgroundColor: theme.basicColor.newTransparent,
+            shadowOpacity: 0, // 取消阴影透明度
+            elevation: 0
           },
         ]}>
         <GestureHandlerRootView style={{flex: 1}}>
