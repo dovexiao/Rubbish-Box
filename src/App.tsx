@@ -530,16 +530,20 @@ function App(): JSX.Element {
         ]}>
         <View style={[theme.fill.fill]}>
           <NavigationContainer
+            ref={navigationRef}
+            linking={linking}
+            onReady={() => {
+              const currentRoute = navigationRef.getCurrentRoute()?.name ?? '';
+              routeNameRef.current = currentRoute;
+              setCurrentRouteName(currentRoute);
+            }}
             onStateChange={() => {
-              const previousRouteName = routeNameRef.current;
-              const currentRoute = navigationRef!.getCurrentRoute()!.name;
-              if (previousRouteName !== '') {
+              const currentRoute = navigationRef.getCurrentRoute()?.name ?? '';
+              if (routeNameRef.current !== currentRoute) {
+                routeNameRef.current = currentRoute;
                 setCurrentRouteName(currentRoute);
               }
-              routeNameRef.current = currentRouteName;
-            }}
-            ref={navigationRef}
-            linking={linking}>
+            }}>
             <Stack.Navigator
               screenOptions={{
                 headerShown: false,
@@ -572,52 +576,53 @@ function App(): JSX.Element {
       <DialogLoading isVisible={globalLoading} />
       {renderToast}
       {versionModal.versionModal.renderModal}
-      <Overlay
-        isVisible={popVisible}
-        overlayStyle={[
-          theme.padding.zorro,
-          theme.flex.centerByCol,
-          {
-            width: popImageWidth,
-            height: popImageWidth * imageRatio + addHeight,
-            backgroundColor: theme.basicColor.newTransparent,
-            shadowOpacity: 0, // 取消阴影透明度
-            elevation: 0,
-          },
-        ]}>
-        <GestureHandlerRootView style={{flex: 1}}>
-          <View
-            style={{
+      {popVisible && ['Home', 'Index'].includes(currentRouteName) && (
+        <Overlay
+          isVisible={popVisible}
+          overlayStyle={[
+            theme.padding.zorro,
+            theme.flex.centerByCol,
+            {
               width: popImageWidth,
               height: popImageWidth * imageRatio + addHeight,
-              overflow: 'hidden',
-            }}>
-            <PopList
-              type={2}
-              bannerList={bannerList}
-              bannerWidth={popImageWidth}
-              bannerHeight={popImageWidth * imageRatio + addHeight}
-              bannerOverlaySize="small"
-              currentIndex={currentBannerIndex}
-              onClose={() => setPopVisible(false)}
+              backgroundColor: theme.basicColor.newTransparent,
+              shadowOpacity: 0, // 取消阴影透明度
+              elevation: 0,
+            },
+          ]}>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <View
+              style={{
+                width: popImageWidth,
+                height: popImageWidth * imageRatio + addHeight,
+                overflow: 'hidden',
+              }}>
+              <PopList
+                type={2}
+                bannerList={bannerList}
+                bannerWidth={popImageWidth}
+                bannerHeight={popImageWidth * imageRatio + addHeight}
+                bannerOverlaySize="small"
+                currentIndex={currentBannerIndex}
+                onClose={() => setPopVisible(false)}
+              />
+            </View>
+          </GestureHandlerRootView>
+
+          {/* 关闭按钮 */}
+          <NativeTouchableOpacity
+            style={{
+              right: -110 * basePx,
+              bottom: 470 * basePx,
+            }}
+            onPress={handleCloseBanner}>
+            <Image
+              style={[theme.icon.xxl, theme.position.abs]}
+              source={require('@assets/icons/home/button-close.png')}
             />
-          </View>
-        </GestureHandlerRootView>
-
-        {/* 关闭按钮 */}
-        <NativeTouchableOpacity
-          style={{
-            right: -110 * basePx,
-            bottom: 470 * basePx,
-          }}
-          onPress={handleCloseBanner}>
-          <Image
-            style={[theme.icon.xxl, theme.position.abs]}
-            source={require('@assets/icons/home/button-close.png')}
-          />
-        </NativeTouchableOpacity>
-      </Overlay>
-
+          </NativeTouchableOpacity>
+        </Overlay>
+      )}
       {!loading && renderLanguageModal}
     </SafeAreaProvider>
   );
