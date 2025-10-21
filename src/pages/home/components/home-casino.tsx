@@ -61,10 +61,24 @@ const HomeCasino: React.FC<HomeCasinoProps> = ({
   };
 
   const getUrl = async (name: string, id: number, provider: string) => {
+    // 静态数据（gameId 为负数时候为插入的静态数据）
+    if (id < 0) {
+      if (id === -1) {
+        goTo('GameWebView', {type: 'color'});
+      } else if (id === -2) {
+        goTo('GameWebView', {type: 'dice', params: 'configId=16'});
+      } else if (id === -3) {
+        goTo('GameWebView', {type: 'quick3d', params: 'id=103'});
+      }
+      return;
+    }
+
+    // 正常数据逻辑
     if (!globalStore.token) {
       goTo('Login');
       return;
     }
+
     toUrlGame(name, id.toString(), provider);
   };
 
@@ -107,6 +121,47 @@ const HomeCasino: React.FC<HomeCasinoProps> = ({
     </TouchableOpacity>
   );
 
+  // 在渲染前处理数据
+  let finalData = data;
+
+  // 当 tab 为 Hot 时，在第 9 条后插入三条静态数据
+  if (selectedTab === 'Hot') {
+    const staticItems: CasinoGameItem[] = [
+      {
+        gameId: -1,
+        gameName: 'Wingo',
+        gamePic: 'https://www.staticimg007.com/static/d98760f988b6427d83259f4911768ace.webp',
+        provider: '',
+        tripartiteUniqueness: '',
+      },
+      {
+        gameId: -2,
+        gameName: 'Dice',
+        gamePic: 'https://www.staticimg007.com/static/ff2ae110187d4f7aa4e1f0312011bf59.webp',
+        provider: '',
+        tripartiteUniqueness: '',
+      },
+      {
+        gameId: -3,
+        gameName: '3D',
+        gamePic: 'https://www.staticimg007.com/static/b345db05cb764e83bed974585dec78d9.webp',
+        provider: '',
+        tripartiteUniqueness: '',
+      },
+    ];
+
+    const insertIndex = 9;
+    if (finalData.length > insertIndex) {
+      finalData = [
+        ...finalData.slice(0, insertIndex),
+        ...staticItems,
+        ...finalData.slice(insertIndex),
+      ];
+    } else {
+      finalData = [...finalData, ...staticItems];
+    }
+  }
+
   if (!loading && data.length === 0) {
     return <NoData />;
   }
@@ -125,10 +180,10 @@ const HomeCasino: React.FC<HomeCasinoProps> = ({
           {tabs.map((tab, index) => renderTab(tab, index))}
         </ScrollView>
       </View>
-      
+
       {/* 游戏列表 - 使用 View 而不是 FlatList */}
       <View style={styles.cardsWrapper}>
-        {data.map((item, index) => (
+        {finalData.map((item, index) => (
           <View key={`${item.gameId}-${index}`} style={styles.card}>
             <TouchableOpacity onPress={() => getUrl(item.gameName, item.gameId, item.provider)}>
               <LazyImage
@@ -147,7 +202,7 @@ const HomeCasino: React.FC<HomeCasinoProps> = ({
             </View> */}
           </View>
         ))}
-        
+
         {/* 加载状态 */}
         {loadingMore && (
           <View style={styles.loadingMore}>
@@ -155,7 +210,7 @@ const HomeCasino: React.FC<HomeCasinoProps> = ({
             <Text style={styles.loadingText}>{i18n.t('loading')}</Text>
           </View>
         )}
-        
+
         {!hasMore && data.length > 0 && (
           <View style={styles.noMoreData}>
             <Text style={styles.noMoreText}>{i18n.t('defaultPage.noMore')}</Text>
