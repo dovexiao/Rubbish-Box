@@ -60,7 +60,7 @@ import PopList from '@/components/basic/swiper/pop-list';
 import dayjs from 'dayjs';
 import {appPayWaster} from '@services/global.service';
 import {UpdateProvider, Pushy} from 'react-native-update'; //useUpdate
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 const pushyClient = new Pushy({
   appKey: 'pzyfXnB4qhPsH6JtPfW3_sI-',
   updateStrategy: 'silentAndLater', //-----关闭pushy自带热更新
@@ -363,28 +363,35 @@ function App(): JSX.Element {
         //   !timeCode ||
         //   timeCode < new Date(new Date().toLocaleDateString()).getTime()
         // ) {
-          setTimeout(() => {
-            checkPop().then(popInfo => {
-              if (popInfo?.length > 0) {
-                // 先获取第一张图片真实尺寸
-                Image.getSize(popInfo[0].bannerImg, (width, height) => {
+        setTimeout(() => {
+          checkPop().then(popInfo => {
+            if (popInfo?.length > 0) {
+              // 先获取第一张图片真实尺寸
+              Image.getSize(
+                popInfo[0].bannerImg,
+                (width, height) => {
                   setImageRatio(height / width);
                   setBannerList(popInfo); // 设置弹窗列表
                   setPopVisible(true); // 延迟显示弹窗，确保高度正确
                   setCurrentBannerIndex(0); // 显示第一张
-                }, (error) => {
+                },
+                error => {
                   // 如果获取失败，使用默认比例显示
                   setImageRatio(281 / 360);
                   setBannerList(popInfo);
                   setPopVisible(true);
                   setCurrentBannerIndex(0);
-                });
-              } else {
-                setBannerList([]); // 没有弹窗图片
-              }
-              globalStore.asyncSetItem('last_check_pop', new Date().getTime() + '');
-            });
-          }, 1000);
+                },
+              );
+            } else {
+              setBannerList([]); // 没有弹窗图片
+            }
+            globalStore.asyncSetItem(
+              'last_check_pop',
+              new Date().getTime() + '',
+            );
+          });
+        }, 1000);
         // }
       });
     },
@@ -575,7 +582,7 @@ function App(): JSX.Element {
             height: popImageWidth * imageRatio + addHeight,
             backgroundColor: theme.basicColor.newTransparent,
             shadowOpacity: 0, // 取消阴影透明度
-            elevation: 0
+            elevation: 0,
           },
         ]}>
         <GestureHandlerRootView style={{flex: 1}}>
@@ -585,22 +592,22 @@ function App(): JSX.Element {
               height: popImageWidth * imageRatio + addHeight,
               overflow: 'hidden',
             }}>
-              <PopList
-                type={2}
-                bannerList={bannerList}
-                bannerWidth={popImageWidth}
-                bannerHeight={popImageWidth * imageRatio + addHeight}
-                bannerOverlaySize="small"
-                currentIndex={currentBannerIndex}
-                onClose={() => setPopVisible(false)}
-              />
+            <PopList
+              type={2}
+              bannerList={bannerList}
+              bannerWidth={popImageWidth}
+              bannerHeight={popImageWidth * imageRatio + addHeight}
+              bannerOverlaySize="small"
+              currentIndex={currentBannerIndex}
+              onClose={() => setPopVisible(false)}
+            />
           </View>
         </GestureHandlerRootView>
 
         {/* 关闭按钮 */}
         <NativeTouchableOpacity
           style={{
-            right: - 110 * basePx,
+            right: -110 * basePx,
             bottom: 470 * basePx,
           }}
           onPress={handleCloseBanner}>
