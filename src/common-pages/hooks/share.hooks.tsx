@@ -9,7 +9,7 @@ import i18n from '@/i18n';
 
 export function useShare(_autoInit = false) {
   const [code, setCode] = useState<string>('');
-  const [invateText, setInviteText] = useState('');
+  const [inviteText, setInviteText] = useState('');
   const throttleRef = useRef(false);
 
   const copy = (content: string, tip: SafeAny = '') => {
@@ -30,6 +30,7 @@ export function useShare(_autoInit = false) {
       throttleRef.current = false;
     }, 300);
     try {
+      console.log('share', message);
       const result = await Share.share({
         message,
       });
@@ -56,13 +57,13 @@ export function useShare(_autoInit = false) {
     // }
     if (globalStore.isAndroid) {
       // onShare(`${invateText}?code=${code}`);
-      onShare(`${invateText}`);
+      onShare(`${inviteText}`);
     } else {
       copyShareLink(tip);
     }
   };
 
-  const copyShareLink = (tip = '') => copy(`${invateText}`, tip);
+  const copyShareLink = (tip = '') => copy(`${inviteText}`, tip);
 
   const initShare = () => {
     return getShareInfo().then(data => {
@@ -82,6 +83,10 @@ export function useShare(_autoInit = false) {
   //   }
   // }, [autoInit]);
 
+  const getInviteText = () => {
+    return inviteText;
+  };
+
   return {
     initShare,
     doShare,
@@ -89,5 +94,6 @@ export function useShare(_autoInit = false) {
     refreshCode,
     copyShareLink,
     copy,
+    getInviteText,
   };
 }

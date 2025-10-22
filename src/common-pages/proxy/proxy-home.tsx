@@ -7,9 +7,9 @@ import {
   ScrollView,
   RefreshControl,
   Image,
-  StyleSheet,
+  StyleSheet, Linking,
 } from 'react-native';
-import {toAgentApply, goBack} from '@utils'; //
+import {toAgentApply, goBack, errorLog} from '@utils'; //
 import {goToUrl} from '@/common-pages/game-navigate';
 import InvitationCode from './components/invitation-code';
 // import SubEntry from './components/sub-entry';
@@ -24,6 +24,10 @@ import DetailNavTitle from '@/components/business/detail-nav-title';
 import {useFocusEffect} from '@react-navigation/native'; //, useRoute
 import {LazyImageLGBackground} from '@basicComponents/image';
 import Button from '@/components/basic/button';
+import SharePanel from '@businessComponents/share-panel/new-share-panel';
+import Clipboard from '@react-native-clipboard/clipboard';
+import Drawer from '@basicComponents/drawer';
+import {DrawerRef} from '@basicComponents/drawer/drawer';
 
 const ProxyHome = () => {
   const {
@@ -32,8 +36,9 @@ const ProxyHome = () => {
   } = useInnerStyle();
   // const route = useRoute();
   const [agentInfo, setAgentInfo] = useState<AgentInfo>();
-  const {code, refreshCode, doShare, initShare, copy} = useShare();
+  const {code, refreshCode, initShare, copy, getInviteText} = useShare();
   const [refreshing, setRefreshing] = useState(false);
+  const panelRef = React.useRef<DrawerRef>(null);
   const inviteCode = useMemo(() => {
     return code.split('').join('  ');
   }, [code]);
@@ -127,7 +132,10 @@ const ProxyHome = () => {
         <InvitationCode
           code={inviteCode}
           onRefresh={handleUpdateInviteCode}
-          onShare={doShare}
+          onShare={() => {
+            // doShare();
+            panelRef.current?.open();
+          }}
           onCopy={() => copy(code)}
         />
         {/* <SubEntry
@@ -228,6 +236,37 @@ const ProxyHome = () => {
         {/*<EarningsChart user={topUser} me={resultTopMe} />*/}
         <View style={[theme.fill.fillW, whiteAreaStyle.area]} />
       </ScrollView>
+      <Drawer mode="bottom" ref={panelRef} contentBackgroundColor="transparent">
+        <SharePanel
+          onClose={() => panelRef.current?.close()}
+          onItemPress={platform => {
+            panelRef.current?.close();
+            const inviteText = getInviteText();
+            // 复制到剪贴板作为备用
+            Clipboard.setString(inviteText);
+            switch (platform) {
+              case 'Facebook':
+                Linking.openURL('fb://messaging').catch(e => errorLog(e));
+                break;
+              case 'Telegram':
+                const encodedText = encodeURIComponent(inviteText);
+                Linking.openURL(`tg://msg_url?text=${encodedText}`).catch(e =>
+                  errorLog(e),
+                );
+                break;
+              case 'Whatsapp':
+                const whatsappText = encodeURIComponent(inviteText);
+                Linking.openURL(`https://wa.me?text=${whatsappText}`).catch(e =>
+                  errorLog(e),
+                );
+                break;
+              case 'Instagram':
+                Linking.openURL('instagram://media').catch(e => errorLog(e));
+                break;
+            }
+          }}
+        />
+      </Drawer>
     </LazyImageLGBackground>
   );
 };

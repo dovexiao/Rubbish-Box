@@ -29,17 +29,17 @@ const ErrorInvitePage: React.FC<ErrorInvitePageProps> = ({
       <Text white size="medium" style={[theme.font.center, theme.margin.btml]}>
         {content}
       </Text>
-      {buttonTitle && (
-        <Button
-          type="linear-primary"
-          size="large"
-          titleBold
-          width={(174 * screenWidth) / designWidth}
-          buttonStyle={{width: (174 * screenWidth) / designWidth}}
-          title={buttonTitle}
-          onPress={onClick}
-        />
-      )}
+      {/*{buttonTitle && (*/}
+      {/*  <Button*/}
+      {/*    type="linear-primary"*/}
+      {/*    size="large"*/}
+      {/*    titleBold*/}
+      {/*    width={(174 * screenWidth) / designWidth}*/}
+      {/*    buttonStyle={{width: (174 * screenWidth) / designWidth}}*/}
+      {/*    title={buttonTitle}*/}
+      {/*    onPress={onClick}*/}
+      {/*  />*/}
+      {/*)}*/}
     </ErrorPage>
   );
 };

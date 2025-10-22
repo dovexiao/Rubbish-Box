@@ -1,7 +1,7 @@
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import theme from '@/style';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {View} from 'react-native';
+import {Linking, View} from 'react-native';
 import {useInnerStyle} from '../invitation.style.hooks';
 import Animated, {
   Extrapolation,
@@ -32,6 +32,10 @@ import InvitationRecordModal, {
   InvitationRecordModalRef,
 } from '../invitation-record-modal';
 import {LazyImageLGBackground} from '@basicComponents/image';
+import Drawer from '@/components/basic/drawer';
+import SharePanel from '@/components/business/share-panel/new-share-panel';
+import {DrawerRef} from '@basicComponents/drawer/drawer';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 const Invitation = () => {
   const {
@@ -50,10 +54,11 @@ const Invitation = () => {
   const [userList, setUserList] = useState<UserListItem[]>();
   const [userTotal, setUserTotal] = useState<UserTotal>();
   const recordModalRef = useRef<InvitationRecordModalRef>(null);
-  const {code, refreshCode, doShare, initShare} = useShare();
+  const {code, refreshCode, initShare, getInviteText} = useShare();
   const route = useRoute();
   /** Invite的时候不要返回按钮 */
   const [hideBack] = useState(route.name === 'Invite');
+  const panelRef = React.useRef<DrawerRef>(null);
   useFocusEffect(
     useCallback(() => {
       try {
@@ -143,11 +148,13 @@ const Invitation = () => {
     goTo('InvitationRecord');
   };
   const handleGoComplete = () => {
-    doShare(t('invitation.home.copy-text'));
+    // doShare(t('invitation.home.copy-text'));
+    panelRef.current?.open();
   };
 
   const handleShare = () => {
-    doShare(t('invitation.home.copy-text'));
+    // doShare(t('invitation.home.copy-text'));
+    panelRef.current?.open();
   };
 
   const handleUserRecordModal = (options?: InvitationModalShowOption) => {
@@ -210,7 +217,10 @@ const Invitation = () => {
         <View style={[homeStyle.contentContainer, theme.padding.lrl]}>
           <InvitationCode
             code={code}
-            onCopy={() => doShare()}
+            onCopy={() => {
+              // doShare();
+              panelRef.current?.open();
+            }}
             onRefreshCode={handleRefresh}
           />
           <InvitationInfo
@@ -235,6 +245,37 @@ const Invitation = () => {
         </View>
       </Animated.ScrollView>
       <InvitationRecordModal ref={recordModalRef} onShare={handleShare} />
+      <Drawer mode="bottom" ref={panelRef} contentBackgroundColor="transparent">
+        <SharePanel
+          onClose={() => panelRef.current?.close()}
+          onItemPress={platform => {
+            panelRef.current?.close();
+            const inviteText = getInviteText();
+            // 复制到剪贴板作为备用
+            Clipboard.setString(inviteText);
+            switch (platform) {
+              case 'Facebook':
+                Linking.openURL('fb://messaging').catch(e => errorLog(e));
+                break;
+              case 'Telegram':
+                const encodedText = encodeURIComponent(inviteText);
+                Linking.openURL(`tg://msg_url?text=${encodedText}`).catch(e =>
+                  errorLog(e),
+                );
+                break;
+              case 'Whatsapp':
+                const whatsappText = encodeURIComponent(inviteText);
+                Linking.openURL(`https://wa.me?text=${whatsappText}`).catch(e =>
+                  errorLog(e),
+                );
+                break;
+              case 'Instagram':
+                Linking.openURL('instagram://media').catch(e => errorLog(e));
+                break;
+            }
+          }}
+        />
+      </Drawer>
     </LazyImageLGBackground>
   );
 };
