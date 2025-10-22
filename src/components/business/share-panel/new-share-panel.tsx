@@ -43,6 +43,15 @@ const SHARES = [
       />
     ),
   },
+  {
+    label: 'CopyLink',
+    icon: () => (
+      <Image
+        style={[styles.itemIcon]}
+        source={require('@components/assets/icons/copyLink.webp')}
+      />
+    ),
+  },
 ];
 
 const SharePanel = ({

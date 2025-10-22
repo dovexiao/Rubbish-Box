@@ -263,6 +263,10 @@ const ProxyHome = () => {
               case 'Instagram':
                 Linking.openURL('instagram://media').catch(e => errorLog(e));
                 break;
+              case 'CopyLink':
+                globalStore.globalSucessTotal(i18n.t('share.copy-success'));
+              default:
+                break;
             }
           }}
         />

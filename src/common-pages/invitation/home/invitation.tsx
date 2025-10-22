@@ -36,6 +36,7 @@ import Drawer from '@/components/basic/drawer';
 import SharePanel from '@/components/business/share-panel/new-share-panel';
 import {DrawerRef} from '@basicComponents/drawer/drawer';
 import Clipboard from '@react-native-clipboard/clipboard';
+import i18n from '@i18n';
 
 const Invitation = () => {
   const {
@@ -271,6 +272,10 @@ const Invitation = () => {
                 break;
               case 'Instagram':
                 Linking.openURL('instagram://media').catch(e => errorLog(e));
+                break;
+              case 'CopyLink':
+                globalStore.globalSucessTotal(i18n.t('share.copy-success'));
+              default:
                 break;
             }
           }}
