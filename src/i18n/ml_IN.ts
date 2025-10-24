@@ -5,14 +5,27 @@ export default {
   home: {
     tab: {
       home: 'ഹോം',
+      wallet: 'വാലറ്റ്',
       result: 'ഫലം',
       casino: 'കാസിനോ',
       scratch: 'സ്ക്രാച്ച്',
+      scratchOff: 'സ്ക്രാച്ച് ഓഫ്',
       referral: 'റഫറൽ',
       me: 'ഞാൻ',
       live: 'ലൈവ്',
       liveCasino: 'ലൈവ് കാസിനോ',
+      sports: 'സ്പോർട്സ്',
+      fishing: 'ഫിഷിംഗ്',
       lottery: 'ലോട്ടറി',
+      game: 'ഗെയിമുകൾ',
+      promotions: 'പ്രമോഷനുകൾ',
+      menu: 'മെനു',
+      invite: 'ഏജൻസി',
+      promotion: 'പ്രമോഷൻ',
+      welfare: 'ക്ഷേമം',
+      deposit: 'ഡെപോസിറ്റ്',
+      notification: 'അറിയിപ്പ്',
+      article: 'ലേഖന വിശദാംശം',
     },
     scratch: {
       free: 'സൗജന്യം',
@@ -28,15 +41,26 @@ export default {
     },
     worldDigit: {
       title: 'വർൾഡ് ഒഫിഷ്യൽ 3 ഡിജിറ്റ് ഗേം',
-      booking: 'Time for Next Booking',
-      ticket: 'Ticket',
+      booking: 'അടുത്ത ബുക്കിംഗിനുള്ള സമയം',
+      ticket: 'ടിക്കറ്റ്',
+    },
+    stateLottery: {
+      title: 'സ്റ്റേറ്റ് ലോട്ടറി',
+      booking: 'അടുത്ത ബുക്കിംഗിനുള്ള സമയം',
+      ticket: 'ടിക്കറ്റ്',
+    },
+    quickdigit: {
+      title: 'ക്വിക്ക് 3ഡിജിറ്റ്',
+      booking: 'അടുത്ത ബുക്കിംഗിനുള്ള സമയം',
+      ticket: 'ടിക്കറ്റ്',
     },
     dice: {
       title: 'ഡൈസ് ഗെയിം',
       play: ' കളിക്കുക',
     },
     color: {
-      title: 'കളർ പ്രെഡിക്ഷൻ',
+      title: 'WIN GO',
+      play: 'ഇപ്പോൾ കളിക്കുക',
     },
     matka: {
       bid: 'ബെറ്റ്',
@@ -45,12 +69,25 @@ export default {
       close: 'അടയ്ക്കുക',
       title: 'സട്ട മഡ്ക്ക',
     },
+    casino: {
+      title: 'കാസിനോ ',
+      play: 'ഇപ്പോൾ കളിക്കുക',
+    },
+    live: {
+      title: 'ലൈവ് കാസിനോ ',
+      play: 'ഇപ്പോൾ കളിക്കുക',
+    },
     'live-casino': {
       title: 'ലൈവ് കാസിനോ',
     },
+    car: {
+      title: 'ക്വിക്ക് റേസ്',
+      min: 'മിനിറ്റ്',
+      text: 'അടുത്ത ഡ്രോ ആരംഭിക്കുന്നു',
+    },
     tip: {
-      downTips1: 'Receive surprise rewards',
-      downTips2: 'Start using exclusive services',
+      downTips1: 'ആശ്ചര്യകരമായ പ്രതിഫലങ്ങൾ നേടുക',
+      downTips2: '888 രൂപ വരെ നേടുക - ഇപ്പോൾ ഡൗൺലോഡ് ചെയ്യുക',
     },
     label: {
       menu: 'മെനു',
@@ -60,10 +97,11 @@ export default {
       rebate: 'ബെറ്റ് കെട്ടുക',
       'free-lottery': 'ഫ്രീ ലോട്ടറി',
       referral: 'റഫറൽ',
+      referFriend: 'സുഹൃത്തിനെ റഫർ ചെയ്യുക',
       agent: 'ഏജന്റ്',
-      promotion: 'Promotion',
+      promotion: 'പ്രമോഷൻ',
       dailyRewards: 'ഡെയിലി റിവാർഡ്സ് ',
-      earnMoney: 'Earn Money',
+      earnMoney: 'പണം നേടുക',
     },
     luckyspin: {
       add: 'ചേർക്കുക',
@@ -96,6 +134,7 @@ export default {
     },
     bottom: {
       recharge: 'റീചാർജ്',
+      deposit: 'ഡെപോസിറ്റ്',
       withdraw: 'വിത_DRAW',
       transfer: 'മാറ്റം',
       records: 'റെക്കോർഡുകൾ',
@@ -116,6 +155,8 @@ export default {
       shop: 'ഷോപ്പ്',
       coupon: 'എന്റെ കൂപ്പൺ',
       giftCode: 'ഗിഫ്റ്റ് കോഡ്',
+      enterYourGiftCode: 'നിങ്ങളുടെ ഗിഫ്റ്റ് കോഡ് നൽകുക',
+      exchange: 'എക്സ്ചേഞ്ച്',
     },
     description: {
       couponDescription: 'നിങ്ങളുടെ ലഭിച്ച കൂപ്പണുകൾ ഇവിടെ ഉണ്ട്',
@@ -154,6 +195,16 @@ export default {
   article: {
     detail: {
       title: 'ലേഖനത്തിൻ്റെ വിശദാംശം',
+    },
+  },
+  agentfranchise: {
+    detail: {
+      title: 'ഏജന്റ് ഫ്രാൻചൈസ്',
+    },
+  },
+  vipclub: {
+    detail: {
+      title: 'വിഐപി ക്ലബ്',
     },
   },
   other: {
@@ -273,12 +324,18 @@ export default {
     invite: 'ക്ഷണിക്കുക',
     userPhone: 'ഉപയോക്താവിന്റെ ഫോൺ',
     home: 'ഹോം',
+    lobby: 'ലോബി',
+    popular: 'ജനപ്രിയം',
+    fish: 'മത്സ്യം',
+    my: 'എന്റെ',
     lottery: 'ലോട്ടറി',
     casino: 'കാസിനോ',
+    game: 'ഗെയിം',
+    slots: 'സ്ലോട്ടുകൾ',
     live: 'ലൈവ്',
     sport: 'സ്പോർട്',
+    support: 'പിന്തുണ',
     register: 'രജിസ്റ്റർ',
-    game: 'ഗെയിം',
     home1: 'സൗകര്യപ്രദമായ നിക്ഷേപവും പിന്‍വലിക്കലും',
     home2: '24/7 പിന്തുണ',
     home3: ' ഉത്തരവാദിത്തമായ ഗെയിമിംഗ്',
@@ -286,5 +343,9 @@ export default {
     unlock: 'അൺലോക്ക് ചെയ്യുക',
     vipLevel: 'വിപി ലെവൽ',
     earn: 'സമ്പാദിക്കുക',
+    color: 'കളർ',
+    dice: 'ക്വിക്ക്3ഡി',
+    digits: '3ഡിജിറ്റുകൾ',
+    kerala: 'കേരളം',
   },
 };

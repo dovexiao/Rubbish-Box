@@ -4,18 +4,30 @@ export default {
   home: {
     tab: {
       home: 'होम',
+      wallet: 'वॉलेट',
       result: 'रिजल्ट',
       casino: 'कैसीनो',
       scratch: 'स्क्रैच',
+      scratchOff: 'स्क्रैच ऑफ',
       referral: 'रेफरल',
       me: 'मुझे',
       live: 'लाइव',
       liveCasino: 'लाइव कैसीनो',
+      sports: 'स्पोर्ट्स',
+      fishing: 'फिशिंग',
       lottery: 'लॉटरी',
+      game: 'गेम्स',
+      promotions: 'प्रमोशन्स',
+      menu: 'मेन्यू',
+      invite: 'एजेंसी',
       promotion: 'पदोन्नति',
       welfare: 'कल्याण',
+      deposit: 'डिपॉजिट',
       notification: 'संदेश',
-      invite: 'आमंत्रित करना',
+      article: 'लेख विस्तार',
+    },
+    scratch: {
+      free: 'फ्री',
     },
     kerala: {
       title: 'केरल राज्य लॉटरी',
@@ -28,15 +40,26 @@ export default {
     },
     worldDigit: {
       title: 'वर्ल्ड ऑफिशियल 3 डिजिट गेम',
-      booking: 'Time for Next Booking',
-      ticket: 'Ticket',
+      booking: 'अगली बुकिंग का समय',
+      ticket: 'टिकट',
+    },
+    stateLottery: {
+      title: 'स्टेट लॉटरी',
+      booking: 'अगली बुकिंग का समय',
+      ticket: 'टिकट',
+    },
+    quickdigit: {
+      title: 'क्विक 3डिजिट',
+      booking: 'अगली बुकिंग का समय',
+      ticket: 'टिकट',
     },
     dice: {
       title: 'डाइस गेम',
       play: 'अभी खेलें',
     },
     color: {
-      title: 'कलर प्रिडिक्शन',
+      title: 'WIN GO',
+      play: 'अभी खेलें',
     },
     matka: {
       bid: 'बिड',
@@ -45,12 +68,25 @@ export default {
       close: 'क्लोज',
       title: 'सट्टा मटका',
     },
+    casino: {
+      title: 'कैसीनो ',
+      play: 'अभी खेलें',
+    },
+    live: {
+      title: 'लाइव कैसीनो ',
+      play: 'अभी खेलें',
+    },
     'live-casino': {
       title: 'लाइव कैसीनो',
     },
+    car: {
+      title: 'क्विक रेस',
+      min: 'मिन',
+      text: 'अगला ड्रॉ शुरू होगा',
+    },
     tip: {
-      downTips1: 'Receive surprise rewards',
-      downTips2: 'Start using exclusive services',
+      downTips1: 'आश्चर्यजनक पुरस्कार प्राप्त करें',
+      downTips2: '888 रुपये तक पाएं - अभी डाउनलोड करें',
     },
     label: {
       menu: 'मेन्यू',
@@ -60,8 +96,9 @@ export default {
       rebate: 'रिबेट',
       'free-lottery': 'फ्री लॉटरी',
       referral: 'रेफरल',
+      referFriend: 'दोस्त को रेफर करें',
       agent: 'एजेंट',
-      promotion: 'Promotion',
+      promotion: 'प्रमोशन',
       dailyRewards: 'दैनिक इनाम',
       earnMoney: 'पैसे कमाओ',
     },
@@ -79,7 +116,7 @@ export default {
     },
     new: 'नया',
     user: {
-      userId: 'लॉग इन',
+      userId: 'यूजर आईडी',
       moreExciting: 'लॉगिन करने के बाद और रोमांचक',
       login: 'लॉग इन करें',
       loginUpper: 'लॉग इन करें',
@@ -96,10 +133,11 @@ export default {
     },
     bottom: {
       recharge: 'रिचार्ज',
+      deposit: 'डिपॉजिट',
       withdraw: 'विड्रॉल',
       transfer: 'ट्रांसफर',
       records: 'अभिलेख',
-      proxy: 'प्रॉक्सी सेंटर',
+      proxy: 'एजेंसी सेंटर',
       logout: 'लॉग आउट',
       resultHistory: 'रिजल्ट हिस्ट्री',
       myBets: 'माय बेट्स',
@@ -116,6 +154,8 @@ export default {
       shop: 'दुकान',
       coupon: 'मेरा कूपन',
       giftCode: 'गिफ़्ट कोड',
+      enterYourGiftCode: 'अपना गिफ्ट कोड दर्ज करें',
+      exchange: 'एक्सचेंज',
     },
     description: {
       couponDescription: 'आपके कूपन यहाँ हैं',
@@ -168,6 +208,16 @@ export default {
   article: {
     detail: {
       title: 'लेख विस्तार',
+    },
+  },
+  agentfranchise: {
+    detail: {
+      title: 'एजेंट फ्रैंचाइज़',
+    },
+  },
+  vipclub: {
+    detail: {
+      title: 'वीआईपी क्लब',
     },
   },
 
@@ -307,12 +357,18 @@ export default {
     invite: 'आमंत्रित करें',
     userPhone: 'उपयोगकर्ता फ़ोन',
     home: 'होम',
+    lobby: 'लॉबी',
+    popular: 'लोकप्रिय',
+    fish: 'मछली',
+    my: 'मेरा',
     lottery: 'लॉटरी',
     casino: 'कैसिनो',
+    game: 'खेल',
+    slots: 'स्लॉट्स',
     live: 'लाइव',
     sport: 'खेल',
+    support: 'सहायता',
     register: 'रजिस्टर करें',
-    game: 'खेल',
     home1: 'सुविधाजनक जमा और निकासी',
     home2: '24/7 सहायता',
     home3: 'जिम्मेदार गेमिंग',
@@ -320,5 +376,9 @@ export default {
     unlock: 'अनलॉक करें',
     vipLevel: 'वीआईपी स्तर',
     earn: 'कमाएं',
+    color: 'कलर',
+    dice: 'क्विक3डी',
+    digits: '3डिजिट्स',
+    kerala: 'केरल',
   },
 };

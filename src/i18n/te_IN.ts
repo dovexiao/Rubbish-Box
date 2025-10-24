@@ -4,14 +4,27 @@ export default {
   home: {
     tab: {
       home: 'హోమ్',
+      wallet: 'వాలెట్',
       result: 'రిజల్ట్',
       casino: 'కాసినో',
       scratch: 'స్క్రాచ్',
+      scratchOff: 'స్క్రాచ్ ఆఫ్',
       referral: 'రిఫరల్',
       me: 'మీ',
       live: 'లైవ్',
       liveCasino: 'ప్రత్యక్ష క్యాసినో',
+      sports: 'స్పోర్ట్స్',
+      fishing: 'ఫిషింగ్',
       lottery: 'లాటరీ',
+      game: 'గేమ్స్',
+      promotions: 'ప్రమోషన్స్',
+      menu: 'మెను',
+      invite: 'ఏజెన్సీ',
+      promotion: 'ప్రమోషన్',
+      welfare: 'కల్యాణం',
+      deposit: 'డిపాజిట్',
+      notification: 'నోటిఫికేషన్',
+      article: 'వ్యాసం వివరాలు',
     },
     scratch: {
       free: 'ఫ్రీ',
@@ -27,15 +40,26 @@ export default {
     },
     worldDigit: {
       title: 'వరల్డ్ అధికారిక 3 అంకెల ఆట',
-      booking: 'Time for Next Booking',
-      ticket: 'Ticket',
+      booking: 'తదుపరి బుకింగ్ కోసం సమయం',
+      ticket: 'టికెట్',
+    },
+    stateLottery: {
+      title: 'స్టేట్ లాటరీ',
+      booking: 'తదుపరి బుకింగ్ కోసం సమయం',
+      ticket: 'టికెట్',
+    },
+    quickdigit: {
+      title: 'క్విక్ 3డిజిట్',
+      booking: 'తదుపరి బుకింగ్ కోసం సమయం',
+      ticket: 'టికెట్',
     },
     dice: {
       title: 'డైస్ గేమ్',
       play: 'ప్లే నౌ',
     },
     color: {
-      title: 'కలర్ ప్రెడిక్షన్',
+      title: 'WIN GO',
+      play: 'ఇప్పుడు ఆడండి',
     },
     matka: {
       bid: 'బిడ్',
@@ -44,25 +68,39 @@ export default {
       close: 'క్లోజ్',
       title: 'సట్టా మట్కా',
     },
+    casino: {
+      title: 'కాసినో ',
+      play: 'ఇప్పుడు ఆడండి',
+    },
+    live: {
+      title: 'లైవ్ కాసినో ',
+      play: 'ఇప్పుడు ఆడండి',
+    },
     'live-casino': {
       title: 'లైవ్ క్యాసినో',
     },
+    car: {
+      title: 'క్విక్ రేస్',
+      min: 'నిమిషం',
+      text: 'తదుపరి డ్రా ప్రారంభమవుతుంది',
+    },
     tip: {
-      downTips1: 'Receive surprise rewards',
-      downTips2: 'Start using exclusive services',
+      downTips1: 'ఆశ్చర్యకరమైన బహుమతులను పొందండి',
+      downTips2: '888 రూపాయల వరకు పొందండి - ఇప్పుడు డౌన్లోడ్ చేయండి',
     },
     label: {
       menu: 'మెను',
-      viewAll: 'వీయూ ఆల్',
-      buyNow: 'బయ్ నౌ',
+      viewAll: 'అన్నీ చూడండి',
+      buyNow: 'ఇప్పుడు కొనండి',
       'lucky-spin': 'లకీ స్పిన్',
       rebate: 'రీబేట్',
       'free-lottery': 'ఫ్రీ లాటరీ',
       referral: 'రిఫరల్',
+      referFriend: 'స్నేహితుడిని రిఫర్ చేయండి',
       agent: 'ఏజెంట్',
       promotion: 'ప్రమోషన్',
       dailyRewards: 'డైలీ రివార్డ్స్',
-      earnMoney: 'Earn Money',
+      earnMoney: 'డబ్బు సంపాదించండి',
     },
     luckyspin: {
       add: 'ఆడ్',
@@ -95,6 +133,7 @@ export default {
     },
     bottom: {
       recharge: 'రీచార్జ్',
+      deposit: 'డిపాజిట్',
       withdraw: 'వాపసు పొందండి',
       transfer: 'మార్పు',
       records: 'రికార్డులు',
@@ -115,6 +154,8 @@ export default {
       shop: 'షాప్',
       coupon: 'నా కూపన్',
       giftCode: 'గిఫ్ట్ కోడ్',
+      enterYourGiftCode: 'మీ గిఫ్ట్ కోడ్ నమోదు చేయండి',
+      exchange: 'ఎక్స్ఛేంజ్',
     },
     description: {
       couponDescription: 'మీకు లభించిన కూపన్లు ఇక్కడ ఉన్నాయి',
@@ -152,6 +193,16 @@ export default {
   article: {
     detail: {
       title: 'వ్యాసం వివరాలు',
+    },
+  },
+  agentfranchise: {
+    detail: {
+      title: 'ఏజెంట్ ఫ్రాంచైజ్',
+    },
+  },
+  vipclub: {
+    detail: {
+      title: 'విఐపీ క్లబ్',
     },
   },
 
@@ -291,12 +342,18 @@ export default {
     invite: 'ఆహ్వానం',
     userPhone: 'వినియోగదారు ఫోన్',
     home: 'హోమ్',
+    lobby: 'లాబీ',
+    popular: 'జనప్రియమైన',
+    fish: 'చేప',
+    my: 'నా',
     lottery: 'లాటరీ',
     casino: 'కాసినో',
+    game: 'ఆట',
+    slots: 'స్లాట్స్',
     live: 'ప్రత్యక్ష',
     sport: 'క్రీడ',
+    support: 'మద్దతు',
     register: 'నమోదు చేయండి',
-    game: 'ఆట',
     home1: 'సులభమైన డిపాజిట్ మరియు నగదు తిరిగి పొందడం',
     home2: '24/7 మద్దతు',
     home3: 'సమస్యపూర్వకమైన ఆట',
@@ -304,5 +361,9 @@ export default {
     unlock: 'తెరవండి',
     vipLevel: 'విఐపీ స్థాయి',
     earn: 'సంపాదించండి',
+    color: 'కలర్',
+    dice: 'క్విక్3డి',
+    digits: '3డిజిట్స్',
+    kerala: 'కేరళ',
   },
 };
