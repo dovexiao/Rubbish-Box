@@ -11,6 +11,7 @@ import style from './style';
 import {CardContent, CardItemProps} from '../basic-components/card-item';
 import {useInnerStyle} from '../proxy.hooks';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
+import {goToUrl} from '@/common-pages/game-navigate';
 interface IProps {
   code: string;
   onRefresh?: () => void;
@@ -115,19 +116,47 @@ const DirectSubordinates = (props: IProps) => {
           </NativeTouchableOpacity>
         </ImageBackground>
         <LinearGradient
-          colors={theme.basicColor.newButtonLinear}
-          style={[{borderRadius: 30}]}>
+          colors={theme.basicColor.newButtonYellow2}
+          style={[{borderRadius: 22}]}>
           <Button
             onPress={() => onShare?.()}
-            radius={30}
+            radius={22}
             color={theme.basicColor.newTransparent}
             width={width - theme.paddingSize.l * 4}
             size="large"
             title={i18n.t('newProxy.home.invitation-link')}
             titleBold={true}
-            titleColor={theme.fontColor.white}
+            titleColor={'#E02020'}
           />
         </LinearGradient>
+        <View
+          style={[
+            theme.flex.row,
+            theme.flex.center,
+            {
+              marginTop: 12,
+              justifyContent: 'space-between',
+            },
+          ]}>
+          <Button
+            radius={22}
+            color={'#FF493A'}
+            width={(width - theme.paddingSize.l * 5) / 2}
+            size="large"
+            title="Join Telegtam"
+            titleBold={true}
+            onPress={() => goToUrl('https://t.me/eve1_official')}
+          />
+          <Button
+            radius={22}
+            color={'#F7B500'}
+            width={(width - theme.paddingSize.l * 5) / 2}
+            size="large"
+            title="Join Whatsapp"
+            titleBold={true}
+            onPress={() => goToUrl('https://api.whatsapp.com/send/?phone=919332094811&text&type=phone_number&app_absent=0&wame_ctl=1')}
+          />
+        </View>
       </View>
     </View>
   );

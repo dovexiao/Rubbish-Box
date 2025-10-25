@@ -8,6 +8,7 @@ import {
   RefreshControl,
   Image,
   StyleSheet, Linking,
+  TouchableOpacity,
 } from 'react-native';
 import {toAgentApply, goBack, errorLog} from '@utils'; //
 import {goToUrl} from '@/common-pages/game-navigate';
@@ -30,6 +31,7 @@ import Drawer from '@basicComponents/drawer';
 import {DrawerRef} from '@basicComponents/drawer/drawer';
 
 const ProxyHome = () => {
+  const basePx = globalStore.screenWidth / 375;
   const {
     size: {screenHeight},
     whiteAreaStyle,
@@ -114,6 +116,21 @@ const ProxyHome = () => {
         iconColor="white"
         titleColor={theme.fontColor.white}
       />
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => goToUrl('https://t.me/eve1_official')}
+        style={{
+          overflow: 'hidden',
+        }}>
+        <Image
+          source={require('@components/assets/imgs/proxy/Agency-top.webp')}
+          style={{
+            width: '100%',
+            height: 49 * basePx,
+          }}
+          resizeMode="cover"
+        />
+      </TouchableOpacity>
       <ScrollView
         style={[theme.flex.col]}
         refreshControl={

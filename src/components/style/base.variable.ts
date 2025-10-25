@@ -81,6 +81,7 @@ export const basicColor = {
   // 按钮颜色
   newButtonLinear: ['#FF493A', '#F7B500'], //大部分情况为大型按钮(从左到右渐变),标签（从下到上渐变）配色
   newButtonYellow: '#F7B500', //大部分情况为小型按钮配色,选中边框配色等等
+  newButtonYellow2: ['#FFE573','#FFE573'],
 
   // 标签颜色（tag）,例如展示数量的tag
   newTagYellow: '#FF921A',
