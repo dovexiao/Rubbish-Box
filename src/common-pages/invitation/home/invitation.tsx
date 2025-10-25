@@ -1,7 +1,7 @@
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import theme from '@/style';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Linking, View} from 'react-native';
+import {Linking, View, Image} from 'react-native';
 import {useInnerStyle} from '../invitation.style.hooks';
 import Animated, {
   Extrapolation,
@@ -39,6 +39,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import i18n from '@i18n';
 
 const Invitation = () => {
+  const basePx = globalStore.screenWidth / 375;
   const {
     size: {screenHeight, screenWidth, designWidth},
     homeStyle,
@@ -215,6 +216,15 @@ const Invitation = () => {
             />
           </Animated.View>
         </View>
+        <Image
+          source={require('@assets/icons/common/Invite-friends-top.webp')}
+          style={{
+            width: '100%',
+            height: 212 * basePx,
+            marginBottom: - 40 * basePx,
+          }}
+          resizeMode="cover"
+        />
         <View style={[homeStyle.contentContainer, theme.padding.lrl]}>
           <InvitationCode
             code={code}

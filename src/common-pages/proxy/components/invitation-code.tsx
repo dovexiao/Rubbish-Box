@@ -132,30 +132,35 @@ const DirectSubordinates = (props: IProps) => {
         <View
           style={[
             theme.flex.row,
-            theme.flex.center,
             {
               marginTop: 12,
               justifyContent: 'space-between',
             },
           ]}>
-          <Button
-            radius={22}
-            color={'#FF493A'}
-            width={(width - theme.paddingSize.l * 5) / 2}
-            size="large"
-            title="Join Telegtam"
-            titleBold={true}
-            onPress={() => goToUrl('https://t.me/eve1_official')}
-          />
-          <Button
-            radius={22}
-            color={'#F7B500'}
-            width={(width - theme.paddingSize.l * 5) / 2}
-            size="large"
-            title="Join Whatsapp"
-            titleBold={true}
-            onPress={() => goToUrl('https://api.whatsapp.com/send/?phone=919332094811&text&type=phone_number&app_absent=0&wame_ctl=1')}
-          />
+          <View style={{flexBasis: '48%'}}>
+            <Button
+              radius={22}
+              color={'#FF493A'}
+              size="large"
+              title="Join Telegtam"
+              titleBold={true}
+              onPress={() => goToUrl('https://t.me/eve1_official')}
+            />
+          </View>
+          <View style={{flexBasis: '48%'}}>
+            <Button
+              radius={22}
+              color={'#F7B500'}
+              size="large"
+              title="Join Whatsapp"
+              titleBold={true}
+              onPress={() =>
+                goToUrl(
+                  'https://api.whatsapp.com/send/?phone=919332094811&text&type=phone_number&app_absent=0&wame_ctl=1',
+                )
+              }
+            />
+          </View>
         </View>
       </View>
     </View>

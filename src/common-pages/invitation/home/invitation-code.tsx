@@ -1,12 +1,12 @@
 import theme from '@/style';
-import {View} from 'react-native';
+import {View, ImageBackground} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Text from '@/components/basic/text';
-// import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
+import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import React, {useMemo} from 'react';
 import {scaleSize} from '@utils';
-// import LazyImage from '@basicComponents/image';
-import Button from '@/components/basic/button';
+import LazyImage from '@basicComponents/image';
+import LinearGradient from '@/components/basic/linear-gradient';
 
 export interface InvitationCodeProps {
   code?: string;
@@ -16,20 +16,21 @@ export interface InvitationCodeProps {
 
 const InvitationCode: React.FC<InvitationCodeProps> = ({
   code,
-  // onRefreshCode,
+  onRefreshCode,
   onCopy,
 }) => {
   const i18n = useTranslation();
-
   const renderCode = useMemo(() => {
     const finallyCode = code || '--------';
     return finallyCode.split('').map((c, i) => (
       <Text
-        fontSize={theme.fontSize.xl}
-        color={theme.fontColor.white}
-        blod
+        fontSize={15}
+        color={theme.fontColor.black}
         key={i}
-        style={[theme.font.center]}>
+        style={[
+          theme.font.center,
+          {fontWeight: '900', marginHorizontal: 4}, // 给字母之间增加间隙
+        ]}>
         {c}
       </Text>
     ));
@@ -38,54 +39,96 @@ const InvitationCode: React.FC<InvitationCodeProps> = ({
     <View style={[theme.flex.col, theme.margin.btml, theme.borderRadius.l]}>
       <View
         style={[
-          theme.flex.row,
-          theme.flex.centerByCol,
-          theme.flex.between,
+          // theme.flex.row,
+          // theme.flex.centerByCol,
+          // theme.flex.between,
           theme.border.primary50,
-          theme.borderRadius.s,
-          {height: 80, paddingLeft: 25, backgroundColor: theme.basicColor.newBgInTwo},
+          theme.borderRadius.xxxl,
+          {
+            padding: 10,
+            backgroundColor: theme.basicColor.newBgInTwo,
+          },
         ]}>
-        <View style={[{width: scaleSize(170)}]}>
-          <Text white fontSize={theme.fontSize.m}>
+        <View style={[theme.flex.row, theme.flex.between]}>
+          <Text white fontSize={15} fontWeight="700">
             {i18n.t('invitation.home.code-title')}
           </Text>
-          <View
+          <NativeTouchableOpacity
+            activeOpacity={0.8}
+            onPress={onRefreshCode}
             style={[
               theme.flex.row,
+              theme.flex.between,
               theme.flex.centerByCol,
-              theme.margin.topxs,
+              {
+                paddingHorizontal: 9,
+                paddingVertical: 4.5,
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: 12,
+              },
             ]}>
+            <LazyImage
+              occupancy={'transparent'}
+              imageUrl={require('@assets/icons/refresh2.webp')}
+              width={scaleSize(12)}
+              height={scaleSize(11)}
+            />
+            <Text
+              color={theme.fontColor.white}
+              fontSize={12}
+              style={theme.margin.leftxxs}>
+              {i18n.t('proxy.home.reset-link')}
+            </Text>
+          </NativeTouchableOpacity>
+        </View>
+        <ImageBackground
+          source={require('@components/assets/imgs/proxy/invitation-code-bg.webp')}
+          resizeMode="stretch"
+          style={[
+            theme.flex.flex,
+            theme.flex.row,
+            theme.flex.between,
+            theme.flex.centerByCol,
+            {height: 76, marginTop: 11},
+          ]}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <View
-              style={[
-                theme.flex.centerByCol,
-                theme.flex.between,
-                theme.flex.row,
-                theme.padding.topxxs,
-                theme.flex.flex1,
-              ]}>
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 4,
+              }}>
               {renderCode}
             </View>
-            {/*<NativeTouchableOpacity*/}
-            {/*  activeOpacity={0.8}*/}
-            {/*  onPress={onRefreshCode}*/}
-            {/*  style={[theme.margin.leftm]}>*/}
-            {/*  <LazyImage*/}
-            {/*    occupancy={'transparent'}*/}
-            {/*    imageUrl={require('@assets/icons/refresh.webp')}*/}
-            {/*    width={scaleSize(24)}*/}
-            {/*    height={scaleSize(24)}*/}
-            {/*  />*/}
-            {/*</NativeTouchableOpacity>*/}
+            <Text color={'#666666'} fontSize={12} style={{textAlign: 'center'}}>
+              My invitation code
+            </Text>
           </View>
-        </View>
-        <Button
-          style={[theme.margin.rightl]}
-          radius={30}
-          size="small"
-          title={i18n.t('label.copy')}
-          type={'linear-primary-gold'}
-          onPress={onCopy}
-        />
+          <LinearGradient
+            colors={theme.basicColor.newButtonLinear}
+            start={{x: 0, y: 0.5}}
+            end={{x: 1, y: 0.5}}
+            style={[
+              theme.flex.centerByCol,
+              theme.flex.centerByRow,
+              {borderRadius: 13, height: 26, width: 77, marginRight: 13},
+            ]}>
+            <NativeTouchableOpacity onPress={onCopy}>
+              <Text
+                fontSize={theme.fontSize.m}
+                color={theme.basicColor.white}
+                style={[{fontWeight: '900'}]}>
+                {i18n.t('label.copy')}
+              </Text>
+            </NativeTouchableOpacity>
+          </LinearGradient>
+        </ImageBackground>
       </View>
     </View>
   );

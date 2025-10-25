@@ -138,6 +138,7 @@ export default {
       count: 'Total Invited Count',
       record: 'Invitation \nrecord',
       'reward-rules': 'Invitation \nreward rules',
+      'activity-rules': 'Activity Rules',
       bouns: 'Bouns',
       join: 'Join Agency',
       'join-tip': 'Be an agent and earn more commission.',

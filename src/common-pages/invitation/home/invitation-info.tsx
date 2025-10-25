@@ -7,7 +7,6 @@ import {
   invitationPeopleIcon,
   invitationRecordIcon,
   invitationRulesIcon,
-  rightIcon,
 } from '../invitation.variables';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -42,25 +41,29 @@ const InvitationInfo: React.FC<InvitationInfoProps> = ({
         theme.flex.col,
         theme.padding.xxl,
         theme.borderRadius.l,
+        theme.border.primary50,
         {backgroundColor: theme.basicColor.newBgInTwo},
       ]}>
-      <View style={[theme.flex.col, homeStyle.infoUpItem]}>
+      <View style={[theme.flex.col]}>
         <View
           style={[theme.flex.row, theme.flex.centerByCol, theme.margin.btml]}>
           <View
             style={[theme.flex.flex1, theme.flex.row, theme.flex.alignStart]}>
             <LazyImage
               imageUrl={invitationImcomeIcon}
-              width={33}
-              height={33}
+              width={45}
+              height={45}
               occupancy="#0000"
             />
             <View style={[theme.flex.flex1]}>
-              <Text color={theme.fontColor.white} style={[theme.margin.lefts]}>
+              <Text
+                fontSize={12}
+                color={theme.fontColor.white}
+                style={[theme.margin.lefts]}>
                 {t('invitation.home.income')}
               </Text>
               <Text
-                fontSize={theme.fontSize.xl}
+                fontSize={theme.fontSize.l1}
                 blod
                 white
                 style={[theme.margin.lefts]}
@@ -75,8 +78,10 @@ const InvitationInfo: React.FC<InvitationInfoProps> = ({
           <View
             style={{
               width: 1,
-              height: 32,
-              backgroundColor: theme.basicColor.border,
+              height: 46,
+              opacity: 0.44,
+              backgroundColor: '#dc8e4a',
+              marginHorizontal: 2,
             }}
           />
           <View
@@ -84,24 +89,25 @@ const InvitationInfo: React.FC<InvitationInfoProps> = ({
               theme.flex.flex1,
               homeStyle.infoUpSubItemRight,
               theme.flex.row,
-              theme.padding.leftl,
             ]}>
             <LazyImage
               imageUrl={invitationPeopleIcon}
-              width={33}
-              height={33}
+              width={45}
+              height={45}
               occupancy="#0000"
             />
             <View style={[theme.flex.flex1]}>
-              <Text color={theme.fontColor.white} style={[theme.margin.lefts]}>
+              <Text
+                fontSize={12}
+                color={theme.fontColor.white}
+                style={[theme.margin.lefts]}>
                 {t('invitation.home.count')}
               </Text>
               <Text
-                fontSize={theme.fontSize.xl}
+                fontSize={theme.fontSize.l1}
                 white
-                blod
                 fontFamily="fontDin"
-                style={[theme.margin.lefts]}>
+                style={[theme.margin.lefts, {fontWeight: 700}]}>
                 {userTotal?.invitedNumberTotal || 0}
               </Text>
             </View>
@@ -128,53 +134,59 @@ const InvitationInfo: React.FC<InvitationInfoProps> = ({
         )}
       </View>
 
-      <View style={[theme.flex.row, theme.flex.between, theme.margin.topl]}>
+      <View style={[theme.flex.row, theme.flex.between]}>
         <NativeTouchableOpacity
-          style={[theme.flex.row, theme.flex.flex1, theme.flex.centerByCol]}
+          style={[
+            theme.flex.row,
+            theme.flex.flex1,
+            theme.flex.center,
+            theme.border.primary50,
+            {
+              height: 35,
+              backgroundColor: '#450602',
+              borderRadius: 6,
+              marginRight: 8,
+            },
+          ]}
           onPress={onRecord}>
           <LazyImage
             imageUrl={invitationRecordIcon}
-            width={24}
-            height={24}
+            width={18}
+            height={18}
             occupancy="#0000"
           />
           <Text
             color={theme.fontColor.white}
-            style={[theme.margin.lrs, homeStyle.infoBottomText]}>
-            {t('invitation.home.record')}
+            numberOfLines={1}
+            style={{flexShrink: 1, marginLeft: 5}}>
+            Invitation record
           </Text>
-          <LazyImage
-            imageUrl={rightIcon}
-            width={14}
-            height={14}
-            occupancy="#0000"
-          />
         </NativeTouchableOpacity>
         <NativeTouchableOpacity
           style={[
             theme.flex.row,
             theme.flex.flex1,
-            theme.flex.centerByCol,
-            theme.padding.leftl,
+            theme.flex.center,
+            theme.border.primary50,
+            {
+              height: 35,
+              backgroundColor: '#450602',
+              borderRadius: 6,
+            },
           ]}
           onPress={onRule}>
           <LazyImage
             imageUrl={invitationRulesIcon}
-            width={24}
-            height={24}
+            width={18}
+            height={18}
             occupancy="#0000"
           />
           <Text
             color={theme.fontColor.white}
-            style={[theme.margin.lrs, homeStyle.infoBottomText]}>
-            {t('invitation.home.reward-rules')}
+            numberOfLines={1}
+            style={{flexShrink: 1, marginLeft: 5}}>
+            {t('invitation.home.activity-rules')}
           </Text>
-          <LazyImage
-            imageUrl={rightIcon}
-            width={14}
-            height={14}
-            occupancy="#0000"
-          />
         </NativeTouchableOpacity>
       </View>
     </View>
