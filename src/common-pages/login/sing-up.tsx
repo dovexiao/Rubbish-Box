@@ -47,8 +47,8 @@ const SingUp = (props: NavigatorScreenProps) => {
     globalStore.isWeb ? localStorage.getItem('invitationCode') || '' : '',
   );
   // const [invitaCode, setInvitaCode] = React.useState('');
-  const [is18, setIs18] = React.useState(false);
-  const [agree, setAgree] = React.useState(false);
+  const [is18, setIs18] = React.useState(true);
+  const [agree, setAgree] = React.useState(true);
   const [blured, setBlured] = React.useState(true);
   const [userPhoneCode, setUserPhoneCode] = React.useState(
     globalStore.defaultPhoneCode,
@@ -242,7 +242,14 @@ const SingUp = (props: NavigatorScreenProps) => {
                 !agree
               }>
               <Text
-                color={theme.basicColor.white}
+                color={
+                  userPhone.length !== 10 ||
+                  OTPCode.length !== 6 ||
+                  !is18 ||
+                  !agree
+                    ? '#888888'
+                    : theme.basicColor.white
+                }
                 size="large"
                 fontWeight="700">
                 {i18n.t('login.label.next')}

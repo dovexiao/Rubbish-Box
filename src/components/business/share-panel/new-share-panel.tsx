@@ -73,7 +73,7 @@ const SharePanel = ({
           <Image source={closeIcon} style={[styles.closeIcon]} />
         </NativeTouchableOpacity>
       </View>
-      <ScrollView horizontal contentContainerStyle={[styles.listContainer]}>
+      <View style={[styles.horizontalContainer]}>
         {SHARES.map((item, index) => (
           <NativeTouchableOpacity
             onPress={() => onItemPress(item.label)}
@@ -83,7 +83,18 @@ const SharePanel = ({
             <Text style={[theme.margin.topxxs]}>{item.label}</Text>
           </NativeTouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
+      {/*<ScrollView horizontal contentContainerStyle={[styles.listContainer]}>*/}
+      {/*  {SHARES.map((item, index) => (*/}
+      {/*    <NativeTouchableOpacity*/}
+      {/*      onPress={() => onItemPress(item.label)}*/}
+      {/*      style={styles.item}*/}
+      {/*      key={index}>*/}
+      {/*      {item.icon()}*/}
+      {/*      <Text style={[theme.margin.topxxs]}>{item.label}</Text>*/}
+      {/*    </NativeTouchableOpacity>*/}
+      {/*  ))}*/}
+      {/*</ScrollView>*/}
     </View>
   );
 };
@@ -107,16 +118,22 @@ const styles = StyleSheet.create({
   },
   item: {
     alignItems: 'center',
-    marginLeft: 24,
+    // marginLeft: 24,
   },
   itemIcon: {
     width: 48,
     height: 48,
   },
-  listContainer: {
+  horizontalContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     paddingVertical: 24,
-    marginRight: 24,
   },
+  // listContainer: {
+  //   paddingVertical: 24,
+  //   marginRight: 24,
+  // },
 });
 
 export default SharePanel;

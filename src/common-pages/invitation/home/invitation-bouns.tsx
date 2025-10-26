@@ -163,7 +163,7 @@ const InvitationBouns: React.FC<InvitationBounsProps> = ({
         </View>
         <LinearGradient
           colors={theme.basicColor.newButtonLinear}
-          style={[{borderRadius: 30}]}>
+          style={[{borderRadius: 30, overflow: 'hidden'}]}>
           <Button
             titleBold
             size="middle"

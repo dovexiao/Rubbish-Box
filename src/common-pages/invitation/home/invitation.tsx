@@ -178,43 +178,64 @@ const Invitation = () => {
         {height: screenHeight},
         theme.overflow.hidden,
       ]}>
+      <DetailNavTitle
+        onBack={hideBack ? undefined : goBack}
+        hideAmount
+        hideServer
+        title={t('invitation.home.title')}
+        rightNode={
+          <NativeTouchableOpacity
+            style={[theme.flex.row, theme.flex.centerByCol]}
+            onPress={toRules}>
+            <RecordIcon
+              width={[theme.iconSize.l]}
+              height={[theme.iconSize.l]}
+              fill={theme.fontColor.white}
+            />
+            <Text white style={theme.margin.lefts}>
+              {t('invitation.home.rules')}
+            </Text>
+          </NativeTouchableOpacity>
+        }
+      />
       <Animated.ScrollView
         style={[homeStyle.scrollView, theme.position.rel, theme.flex.col]}
         scrollEventThrottle={16}
         onScroll={scrollHandler}
         stickyHeaderIndices={[0]}>
-        <View style={[theme.position.rel, theme.flex.col, homeStyle.nav]}>
-          <Animated.View
-            style={[theme.position.abs, theme.fill.fill, normalNavStyle]}>
-            <NormalNav
-              hideBack={hideBack}
-              title={t('invitation.home.title')}
-              onRules={toRules}
-            />
-          </Animated.View>
-          <Animated.View
-            style={[theme.position.abs, theme.fill.fill, detailNavStyle]}>
-            <DetailNavTitle
-              onBack={hideBack ? undefined : goBack}
-              hideAmount
-              hideServer
-              title={t('invitation.home.title')}
-              rightNode={
-                <NativeTouchableOpacity
-                  style={[theme.flex.row, theme.flex.centerByCol]}
-                  onPress={toRules}>
-                  <RecordIcon
-                    width={[theme.iconSize.l]}
-                    height={[theme.iconSize.l]}
-                    fill={theme.fontColor.white}
-                  />
-                  <Text white style={theme.margin.lefts}>
-                    {t('invitation.home.rules')}
-                  </Text>
-                </NativeTouchableOpacity>
-              }
-            />
-          </Animated.View>
+        {/*<View style={[theme.position.rel, theme.flex.col, homeStyle.nav]}>*/}
+        <View style={[theme.position.rel, theme.flex.col]}>
+          {/*<Animated.View*/}
+          {/*  style={[theme.position.abs, theme.fill.fill, normalNavStyle]}>*/}
+          {/*  <NormalNav*/}
+          {/*    hideBack={hideBack}*/}
+          {/*    title={t('invitation.home.title')}*/}
+          {/*    onRules={toRules}*/}
+          {/*  />*/}
+          {/*</Animated.View>*/}
+          {/*<Animated.View*/}
+          {/*  style={[theme.position.abs, theme.fill.fill, detailNavStyle]}>*/}
+          {/*  <DetailNavTitle*/}
+          {/*    onBack={hideBack ? undefined : goBack}*/}
+          {/*    hideAmount*/}
+          {/*    hideServer*/}
+          {/*    title={t('invitation.home.title')}*/}
+          {/*    rightNode={*/}
+          {/*      <NativeTouchableOpacity*/}
+          {/*        style={[theme.flex.row, theme.flex.centerByCol]}*/}
+          {/*        onPress={toRules}>*/}
+          {/*        <RecordIcon*/}
+          {/*          width={[theme.iconSize.l]}*/}
+          {/*          height={[theme.iconSize.l]}*/}
+          {/*          fill={theme.fontColor.white}*/}
+          {/*        />*/}
+          {/*        <Text white style={theme.margin.lefts}>*/}
+          {/*          {t('invitation.home.rules')}*/}
+          {/*        </Text>*/}
+          {/*      </NativeTouchableOpacity>*/}
+          {/*    }*/}
+          {/*  />*/}
+          {/*</Animated.View>*/}
         </View>
         <Image
           source={require('@assets/icons/common/Invite-friends-top.webp')}

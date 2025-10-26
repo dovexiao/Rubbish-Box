@@ -132,7 +132,7 @@ export default {
       },
     },
     home: {
-      title: 'Invite Friends',
+      title: 'Earn Money',
       'code-title': 'My invitation code',
       income: 'Cumulative income',
       count: 'Total Invited Count',

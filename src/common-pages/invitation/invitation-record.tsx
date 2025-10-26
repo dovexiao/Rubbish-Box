@@ -32,6 +32,7 @@ import {useShare} from '../hooks/share.hooks';
 import {goWhatsAppChat} from '@/utils';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {LazyImageLGBackground} from '@basicComponents/image';
+import theme from '@/style';
 
 const InvitationRecord = () => {
   const [dateRange, setDateRange] = useState<string[] | null>();
@@ -157,6 +158,7 @@ const RenderItem: ListRenderItem<RecordListItem> = ({item, index}) => {
         borderRadius.m,
         padding.l,
         margin.btms,
+        {backgroundColor: theme.basicColor.newBgInTwo},
       ]}>
       <View style={[flex.row, flex.between, flex.flex1]}>
         <View style={[flex.row, flex.centerByCol]}>
@@ -169,7 +171,7 @@ const RenderItem: ListRenderItem<RecordListItem> = ({item, index}) => {
           <Text
             style={[margin.s]}
             fontSize={12}
-            color={fontColor.main}
+            color={fontColor.white}
             fontWeight="bold">
             {item?.inviteUserPhone}
           </Text>
@@ -185,23 +187,23 @@ const RenderItem: ListRenderItem<RecordListItem> = ({item, index}) => {
         </NativeTouchableOpacity>
       </View>
       <View style={[flex.row, flex.between, flex.flex1]}>
-        <Text style={[margin.tops]} fontSize={12} color={fontColor.second}>
+        <Text style={[margin.tops]} fontSize={12} color={fontColor.white}>
           {i18n.t('invitation-record.status')}
         </Text>
         <Text
           style={[margin.tops]}
           fontSize={12}
-          color={item?.status === 0 ? basicColor.primary : fontColor.main}
+          color={item?.status === 0 ? fontColor.secAccent : fontColor.primary}
           fontWeight={'bold'}>
           {item?.status === 0 ? 'Incomplete' : 'Completed'}
         </Text>
       </View>
       <View style={[flex.row, flex.between, flex.flex1]}>
-        <Text style={[margin.tops]} fontSize={12} color={fontColor.second}>
+        <Text style={[margin.tops]} fontSize={12} color={fontColor.white}>
           {i18n.t('invitation-record.registration-time')}
         </Text>
 
-        <Text style={[margin.tops]} fontSize={12} color={fontColor.main}>
+        <Text style={[margin.tops]} fontSize={12} color={fontColor.white}>
           {dayjs(item?.createTime).format('YYYY-MM-DD HH:mm:ss A')}
         </Text>
       </View>
