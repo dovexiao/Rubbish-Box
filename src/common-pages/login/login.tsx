@@ -108,6 +108,7 @@ const Login = (props: NavigatorScreenProps) => {
       <LazyImageLGBackground locations={[0, 1]} showBottomBG>
         <ScrollView keyboardShouldPersistTaps="always" style={[flex.flex1]}>
           <NavTitle
+            title={i18n.t('login.title.login')}
             onClose={() => {
               if (
                 globalStore.isWeb &&

@@ -251,6 +251,10 @@ const Invitation = () => {
             code={code}
             onCopy={() => {
               // doShare();
+              if (!globalStore.token) {
+                goTo('Login');
+                return;
+              }
               panelRef.current?.open();
             }}
             onRefreshCode={handleRefresh}

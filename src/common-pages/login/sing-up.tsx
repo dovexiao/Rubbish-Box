@@ -103,7 +103,7 @@ const SingUp = (props: NavigatorScreenProps) => {
       showBottomBG
       locations={[0, 1]}
       style={[theme.fill.fill, theme.flex.col]}>
-      <NavTitle onClose={goBack} />
+      <NavTitle title={i18n.t('login.title.sign')} onClose={goBack} />
       <ScrollView style={{zIndex: 10}}>
         <View
           // onLayout={handleLayout}

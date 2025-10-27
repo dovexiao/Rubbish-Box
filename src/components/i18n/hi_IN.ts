@@ -341,6 +341,10 @@ export default {
     },
   },
   login: {
+    title: {
+      login: 'लॉग इन',
+      sign: 'साइन अप करें',
+    },
     label: {
       login: 'लॉग इन',
       skip: 'छोड़ें',

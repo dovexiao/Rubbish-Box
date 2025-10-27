@@ -718,6 +718,10 @@ export default {
     },
   },
   login: {
+    title: {
+      login: 'உள்நுழைய',
+      sign: 'பதிவு செய்யவும்',
+    },
     label: {
       login: 'உள்நுழைய',
       skip: 'தவிர்க்கவும்',

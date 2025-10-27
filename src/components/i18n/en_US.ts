@@ -598,6 +598,10 @@ export default {
     title: 'Casino',
   },
   login: {
+    title: {
+      login: 'Login',
+      sign: 'Sign Up',
+    },
     label: {
       login: 'LOGIN',
       skip: 'Skip',

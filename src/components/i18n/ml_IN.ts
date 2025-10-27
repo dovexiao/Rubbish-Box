@@ -791,6 +791,10 @@ export default {
     },
   },
   login: {
+    title: {
+      login: 'ലോഗിൻ',
+      sign: 'സൈൻ അപ്പ്',
+    },
     label: {
       login: 'ലോഗിൻ',
       skip: 'സ്കിപ്പ്',
