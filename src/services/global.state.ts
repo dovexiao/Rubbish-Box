@@ -131,6 +131,17 @@ class GlobalStore {
     this._isNewUser = newUser;
     this.asyncSetItem('isNewUser', newUser);
   }
+
+  /** Adjust 生成的唯一 ID */
+  private _adjustId: string = null!;
+  get adjustId() {
+    return this._adjustId;
+  }
+  set adjustId(adjustId: string) {
+    this._adjustId = adjustId;
+    this.asyncSetItem('adjustId', adjustId);
+  }
+
   /** 用户信息 */
   private _userInfo: BasicObject | null = null;
   get userInfo() {

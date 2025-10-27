@@ -296,6 +296,7 @@ const Login = (props: NavigatorScreenProps) => {
                       if (Platform.OS !== 'android') {
                         deviceCode = localStorage.getItem('gps_adid') || '';
                       }
+                      const adjustId = globalStore.adjustId || '';
                       (switchIndex === 1
                         ? userLogin(
                             (globalStore.sendPhoneCode ? userPhoneCode : '') +
@@ -305,6 +306,7 @@ const Login = (props: NavigatorScreenProps) => {
                             inviteCode,
                             equipmentType,
                             systemType,
+                            adjustId,
                             '',
                             false,
                           )
@@ -316,6 +318,7 @@ const Login = (props: NavigatorScreenProps) => {
                             inviteCode,
                             equipmentType,
                             systemType,
+                            adjustId
                           )
                       )
                         .then(res => {
