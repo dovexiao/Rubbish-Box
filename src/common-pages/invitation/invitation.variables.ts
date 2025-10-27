@@ -18,7 +18,7 @@ export const invitationColors = {
   codeLinear: ['#FFD523', 'rgba(255, 213, 35, 0.00)'],
   line: '#E8EAEE',
   bounsItem: theme.basicColor.primary10,
-  disabled: '#DCDCE5',
+  disabled: '#9E9E9E',
   ...theme.invitationBaseColors,
 };
 export const invitationApplyColor = {

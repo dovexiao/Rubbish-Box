@@ -141,7 +141,7 @@ const DirectSubordinates = (props: IProps) => {
             <Button
               radius={22}
               color={'#FF493A'}
-              size="large"
+              // size="large"
               title="Join Telegtam"
               titleBold={true}
               onPress={() => goToUrl('https://t.me/eve1_official')}
@@ -151,7 +151,7 @@ const DirectSubordinates = (props: IProps) => {
             <Button
               radius={22}
               color={'#F7B500'}
-              size="large"
+              // size="large"
               title="Join Whatsapp"
               titleBold={true}
               onPress={() =>
