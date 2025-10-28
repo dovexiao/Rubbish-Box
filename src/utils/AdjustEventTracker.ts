@@ -54,8 +54,8 @@ let isInitialized = false;
 
 // 应用配置（请替换为实际的应用令牌）
 const APP_CONFIG = {
-  android: {appToken: 'n6zcg598o6bk'},
-  web: {appToken: 'n6zcg598o6bk'},
+  android: {appToken: 'kkwoiyprm0ow'},
+  web: {appToken: 'kkwoiyprm0ow'},
   // environment: 'sandbox' as 'sandbox' | 'production',
   environment: ENV_CONFIG.REACT_APP_ENV === 'prod' ? 'production' : 'sandbox',
   logLevel: 'verbose' as 'verbose' | 'info' | 'warning' | 'error' | 'none',

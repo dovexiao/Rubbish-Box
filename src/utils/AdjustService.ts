@@ -40,6 +40,27 @@ class AdjustService {
 
     Adjust.trackEvent(event);
   }
+
+  /**
+ * 获取 Adjust 设备 ID（adid）
+ */
+  static async getAdid(): Promise<string> {
+    if (Platform.OS === 'web') return '';
+
+    const { Adjust } = await import('react-native-adjust');
+
+    return new Promise(resolve => {
+      try {
+        (Adjust as any).getAdid((adid: string) => {
+          console.log('[AdjustService] 获取 adid 成功：', adid);
+          resolve(adid || '');
+        });
+      } catch (error) {
+        console.warn('[AdjustService] 获取 adid 失败:', error);
+        resolve('');
+      }
+    });
+  }
 }
 
 export default AdjustService;
