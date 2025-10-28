@@ -149,12 +149,15 @@ const Home = () => {
     }
   };
   const [firstShow, setFirstShow] = useState(0);
-  const [dynamicUrl, setDynamicUrl] = useState('');
+  const [menuImgUrl, setMenuImgUrl] = useState('');
+  const [rechargeImgUrl, setRechargeImgUrl] = useState('');
   const [login, setLogin] = useState(false);
   const getRecharge = async () => {
     const data = await getFirstRechargeV1();
+    console.log('[getFirstRechargeV1 data]', data);
     setFirstShow(data?.isRecharge || 0);
-    setDynamicUrl(data?.rechargeImg || '');
+    setMenuImgUrl(data?.menuImg || '');
+    setRechargeImgUrl(data?.rechargeImg || '');
   };
   const onFocusEffect = useCallback(() => {
     const sub = globalStore.tokenSubject.subscribe(token => {
@@ -359,7 +362,8 @@ const Home = () => {
             <HomeService
               isLogin={login}
               firstShow={firstShow}
-              dynamicUrl={dynamicUrl}
+              menuImgUrl={menuImgUrl}
+              dynamicUrl={rechargeImgUrl}
               spinShow={showModal}
             />
             {renderSpin}

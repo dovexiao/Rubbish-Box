@@ -11,11 +11,13 @@ import HomePopTwo from './home-pop-two';
 const HomeService = ({
   spinShow,
   firstShow,
+  menuImgUrl,
   dynamicUrl,
   isLogin,
 }: {
   spinShow: () => void;
   firstShow?: number;
+  menuImgUrl?: string;
   isLogin?: boolean;
   dynamicUrl?: string;
 }) => {
@@ -36,7 +38,26 @@ const HomeService = ({
           imageUrl={require('@assets/icons/luckyspin.gif')}
         />
       </TouchableOpacity>
-      {(firstShow === 1 || !isLogin) && (
+      {/*{(firstShow === 1 || !isLogin) && (*/}
+      {/*  <TouchableOpacity*/}
+      {/*    style={{marginBottom: 8}}*/}
+      {/*    onPress={() => {*/}
+      {/*      if (!isLogin) {*/}
+      {/*        goTo('Login');*/}
+      {/*        return;*/}
+      {/*      }*/}
+      {/*      toggleModal();*/}
+      {/*    }}>*/}
+      {/*    <LazyImage*/}
+      {/*      width={60}*/}
+      {/*      height={60}*/}
+      {/*      // imageUrl={require('@assets/gif/first-recharge.gif')}*/}
+      {/*      imageUrl={menuImgUrl || ''}*/}
+      {/*    />*/}
+      {/*  </TouchableOpacity>*/}
+      {/*)}*/}
+
+      {isLogin && (
         <TouchableOpacity
           style={{marginBottom: 8}}
           onPress={() => {
@@ -49,7 +70,8 @@ const HomeService = ({
           <LazyImage
             width={60}
             height={60}
-            imageUrl={require('@assets/gif/first-recharge.gif')}
+            // imageUrl={require('@assets/gif/first-recharge.gif')}
+            imageUrl={menuImgUrl || ''}
           />
         </TouchableOpacity>
       )}
