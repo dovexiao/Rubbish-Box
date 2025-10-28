@@ -19,6 +19,7 @@
     "start:web:uat": "dotenv -e .env.uat react-app-rewired start --stats-children",
     "start:web:prod": "dotenv -e .env.prod react-app-rewired start --stats-children",
     "build": "cd android && export ENVFILE=.env.dev && ./gradlew assembleRelease && cd ../",
+    "build:test9": "rm -rf android/app/build && cd android && export ENVFILE=.env.dev && ./gradlew assembleSupbetRelease && cd ../",
     "build:win": "cd android && SET ENVFILE=.env.prod && gradlew assembleRelease ",
     "build:debug": "cd android && export ENVFILE=.env.test && ./gradlew assembleDebug && cd ../",
     "boundlejs": "react-native bundle --entry-file index.js --platform android --dev false --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
