@@ -140,9 +140,9 @@ const CusTab = (props: BottomTabBarProps) => {
                   theme.icon.l,
                   index === 2
                     ? {
-                        marginTop: -25,
-                        width: 87,
-                        height: 87,
+                        // marginTop: -10,
+                        width: 100,
+                        height: 100,
                       }
                     : {},
                 ]}
