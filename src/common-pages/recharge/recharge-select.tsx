@@ -53,7 +53,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
         // theme.borderRadius.m,
         theme.padding.l,
         // backgroundColor: theme.basicColor.newBgInOne
-        {marginTop: 12, paddingBottom: 0},
+        {paddingBottom: 0},
       ]}>
       <View style={styleSheet.title}>
         <View style={styleSheet.titleIcon}></View>
@@ -81,7 +81,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
               key={index}
               style={[selectStyles.item, theme.flex.col, {marginBottom: 12,}]}
               onPress={() => onChangeBalance(bl.balance + '')}>
-               {bl.balance + '' !== balance ? (
+              {bl.balance + '' !== balance ? (
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 0, y: 1}}
@@ -94,7 +94,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                   theme.borderRadius.s,
                   selectStyles.item,
                 ]}>
-                {bl.giveBalance != 0 && (
+                {bl.giveBalance !== 0 && (
                   <ImageBackground
                     style={[
                       {
@@ -118,7 +118,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                         showCurrency: false,
                         thousands: true,
                       })}
-                      %
+                      {/*%*/}
                     </Text>
                   </ImageBackground>
                 )}
@@ -145,7 +145,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                   selectStyles.item,
                   theme.borderRadius.s,
                 ]}>
-                {bl.giveBalance != 0 && (
+                {bl.giveBalance !== 0 && (
                   <ImageBackground
                     style={[
                       {
@@ -169,7 +169,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                         showCurrency: false,
                         thousands: true,
                       })}
-                      %
+                      {/*%*/}
                     </Text>
                   </ImageBackground>
                 )}

@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {useMemo, useState, useEffect, useCallback} from 'react';
 import {ScrollView, View} from 'react-native';
@@ -31,6 +30,7 @@ import {Success, upiPayment} from '@/utils';
 import useCouponStore from '@/store/useCouponStore';
 // 导入Adjust事件跟踪函数
 import { trackFirstDeposit, trackRecharge, trackDepositAll } from '@/utils/AdjustEventTracker';
+import RechargeCheckBoxes from './recharge-checkboxes';
 // import { background, backgroundColor } from '@/components/style';
 
 const Recharge = () => {
@@ -105,7 +105,7 @@ const Recharge = () => {
             getPayMethod(),
             getAdjustParams() // 新增：调用getAdjustParams获取参数
           ]);
-          
+
           setBalanceList(balances);
           setPaymethodList(methods);
           if (balances.length > 0) {
@@ -114,7 +114,7 @@ const Recharge = () => {
           if (methods.length > 0) {
             setPayMethodId(methods[0].id);
           }
-          
+
           // 新增：处理Adjust参数并上报
           const adjustParams = adjustParamsResponse as AdjustParams;
           if (adjustParams) {
@@ -126,7 +126,7 @@ const Recharge = () => {
                 console.log('上报首充事件成功');
               }
             }
-            
+
             // 上报总充值事件
             if ('Deposit' in adjustParams) {
               const amount = adjustParams.Deposit ? parseFloat(String(adjustParams.Deposit)) : 0;
@@ -135,7 +135,7 @@ const Recharge = () => {
                 console.log('上报总充值事件成功');
               }
             }
-            
+
             // 上报复充事件
             if ('Recharge' in adjustParams) {
               const amount = adjustParams.Recharge ? parseFloat(String(adjustParams.Recharge)) : 0;
@@ -151,15 +151,15 @@ const Recharge = () => {
           setLoading(false);
         }
       };
-  
+
       fetchData();
-  
+
       // 订阅逻辑（保持不变）
       const sub = globalStore.amountChanged.subscribe(res => {
         setAmount(res.current);
         setLoading(false);
       });
-  
+
       return () => {
         sub.unsubscribe(); // 页面失焦时取消订阅
       };
@@ -297,6 +297,7 @@ const Recharge = () => {
               />
             </View>
             <View style={[theme.padding.lrl]}>
+              <RechargeCheckBoxes />
               <RechargeSelect
                 min={payMethodItem?.minAmount || 0}
                 max={payMethodItem?.maxAmount || 0}

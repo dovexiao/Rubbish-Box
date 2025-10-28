@@ -111,3 +111,10 @@ export interface AdjustParams {
 export const getAdjustParams = () => {
   return http.post<AdjustParams>('app/pay/adjust/notice');
 };
+
+// 查看用户充值类型展示
+export const getUserRechargeType = () => {
+  return http.post<null, number>(
+    'app/business/ActivitySigninRecord/payImgUser',
+  );
+};
