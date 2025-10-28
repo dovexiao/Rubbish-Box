@@ -197,13 +197,13 @@ const SingUp = (props: NavigatorScreenProps) => {
             <Button
               type="linear-primary"
               radius={theme.borderRadiusSize.l}
-              onPress={() => {
+              onPress={async () => {
                 globalStore.globalLoading.next(true);
                 let deviceCode = '';
                 if (Platform.OS !== 'android') {
                   deviceCode = localStorage.getItem('gps_adid') || '';
                 }
-                const adjustId = globalStore.adjustId || '';
+                const adjustId = await AdjustService.getAdid();
                 userLogin(
                   userPhone,
                   OTPCode,

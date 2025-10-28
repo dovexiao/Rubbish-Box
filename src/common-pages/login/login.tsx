@@ -26,6 +26,7 @@ import {LazyImageLGBackground} from '@basicComponents/image';
 // const icon = require('../../assets/icons/login/login-botttom.webp');
 import Clipboard from '@react-native-clipboard/clipboard';
 import DeviceInfo from 'react-native-device-info';
+import AdjustService from '@/utils/AdjustService';
 const Login = (props: NavigatorScreenProps) => {
   const {i18n} = useTranslation();
     const {setToken} = useUserActions();
@@ -272,7 +273,7 @@ const Login = (props: NavigatorScreenProps) => {
                     type="linear-primary"
                     buttonStyle={[styles.loginButton, theme.overflow.hidden]}
                     radius={theme.borderRadiusSize.l}
-                    onPress={() => {
+                    onPress={async () => {
                       if (userPhone === '') {
                         globalStore.globalWaringTotal(
                           i18n.t('login.tip.no-phone'),
@@ -296,7 +297,7 @@ const Login = (props: NavigatorScreenProps) => {
                       if (Platform.OS !== 'android') {
                         deviceCode = localStorage.getItem('gps_adid') || '';
                       }
-                      const adjustId = globalStore.adjustId || '';
+                      const adjustId = await AdjustService.getAdid();
                       (switchIndex === 1
                         ? userLogin(
                             (globalStore.sendPhoneCode ? userPhoneCode : '') +
