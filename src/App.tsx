@@ -434,6 +434,10 @@ function App(): JSX.Element {
       adjustConfig.setLogLevel(AdjustConfig.LogLevelVerbose);
       // 初始化SDK
       Adjust.create(adjustConfig);
+      // 获取adid
+      Adjust.getAdid((adid: string) => {
+        globalStore.adjustId = adid
+      });
     } else {
       const Adjust = require('@adjustcom/adjust-web-sdk');
       Adjust.initSdk({

@@ -340,7 +340,7 @@ const InvitationApply = (props: SafeAny) => {
                         if (Platform.OS !== 'android') {
                           deviceCode = localStorage.getItem('gps_adid') || '';
                         }
-                        userLogin(userPhone, OTPCode, deviceCode, '', '', '', invitaCode)
+                        userLogin(userPhone, OTPCode, deviceCode, '', '', '', '', invitaCode)
                           .then((res: SafeAny) => {
                             globalStore.globalTotal.next({
                               type: 'success',

@@ -203,6 +203,7 @@ const SingUp = (props: NavigatorScreenProps) => {
                 if (Platform.OS !== 'android') {
                   deviceCode = localStorage.getItem('gps_adid') || '';
                 }
+                const adjustId = globalStore.adjustId || '';
                 userLogin(
                   userPhone,
                   OTPCode,
@@ -210,6 +211,7 @@ const SingUp = (props: NavigatorScreenProps) => {
                   inviteCode,
                   equipmentType,
                   systemType,
+                  adjustId,
                   invitaCode,
                   false,
                 )

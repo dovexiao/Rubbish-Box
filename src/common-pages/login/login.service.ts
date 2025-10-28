@@ -23,6 +23,7 @@ export const userLogin = async (
   inviteCode: string,
   equipmentType: string,
   systemType: string,
+  adjustId: string,
   userInviteCode?: string,
   isLogin: boolean = true,
 ) => {
@@ -35,6 +36,7 @@ export const userLogin = async (
     inviteCode,
     equipmentType,
     systemType,
+    adjustId,
     userInviteCode,
   };
   if (!isLogin && globalStore.isWeb && !userInviteCode) {
@@ -56,6 +58,7 @@ export const passwordLogin = async (
   inviteCode: string,
   equipmentType: string,
   systemType: string,
+  adjustId: string,
 ) => {
   const manufacturer = myAppType;
   const id = await getUuid(manufacturer);
@@ -66,6 +69,7 @@ export const passwordLogin = async (
     inviteCode,
     equipmentType,
     systemType,
+    adjustId
   });
 };
 
