@@ -261,7 +261,7 @@ const SingUp = (props: NavigatorScreenProps) => {
           <AccountTip
             tip="login.tip.has-account"
             linkTip="login.tip.sign-in"
-            onPressLink={() => goTo('Login')}
+            onPressLink={() => goTo('Login', { from: 'register' })}
           />
         </View>
         {/* {globalStore.packageId === 2 && (

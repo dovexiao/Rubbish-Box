@@ -332,7 +332,14 @@ const Login = (props: NavigatorScreenProps) => {
                             setToken(res.token);
                             globalStore.isNewUser = String(res.isNewUser);
                           }
-                          goBack();
+                          const from = (props.route.params as BasicObject)?.from;
+                          if (from === 'register') {
+                            // 从注册页过来，登录成功直接去首页
+                            goTo('Home');
+                          } else {
+                            // 其他页面照旧返回
+                            goBack();
+                          }
                           globalStore.globalLoading.next(false);
                         })
                         .catch(() => {
