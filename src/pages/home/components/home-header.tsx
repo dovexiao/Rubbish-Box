@@ -7,7 +7,7 @@ import globalStore from '@/services/global.state';
 import {goTo, toPriceStr} from '@/utils';
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import {combineLatest, distinctUntilChanged} from 'rxjs';
-import {postUserInfo} from '@services/global.service';
+import {postUserInfo, getBalance} from '@services/global.service';
 import {useTranslation} from 'react-i18next';
 import {useFocusEffect} from '@react-navigation/native';
 import {getAllRemind} from '@/pages/home/home.service';
@@ -45,6 +45,16 @@ const HomeHeader = () => {
     fetchRemind(); // 调用函数
   }, []); // 依赖空数组，确保只在组件加载时调用一次
 
+  // 获取余额
+  const fetchBalance = async () => {
+    try {
+      const res = await getBalance();
+      setAmount(res || 0);
+    } catch (err) {
+      console.error('获取余额失败', err);
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       const sub = combineLatest([
@@ -60,6 +70,7 @@ const HomeHeader = () => {
             setUserName(res.userName || res.userPhone);
             setUserAvatar(res.userAvatar);
           });
+          fetchBalance();
         }
       });
       const amountSub = globalStore.amountChanged.subscribe(res => {
