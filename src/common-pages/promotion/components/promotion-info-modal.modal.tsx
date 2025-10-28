@@ -1,0 +1,133 @@
+import React from 'react';
+import {Modal, TouchableOpacity, View, StyleSheet} from 'react-native';
+import Text from '@basicComponents/text';
+import theme from '@style';
+
+export interface PromotionInfoModalProps {
+  visible: boolean;
+  onClose: () => void;
+  type: 0 | 1; // 0: Extra Recharge Bonus, 1: Daily Continuous Recharge Bonus
+  i18n: any;
+  currentReacgarge: any;
+  currentReacgarge1: any;
+  currentReacgarge2: any;
+  currentReacgarge3: any;
+}
+
+const PromotionInfoModal: React.FC<PromotionInfoModalProps> = ({
+  visible,
+  onClose,
+  type,
+  i18n,
+  currentReacgarge,
+  currentReacgarge1,
+  currentReacgarge2,
+  currentReacgarge3,
+}) => {
+  return (
+    <Modal
+      animationType="none"
+      transparent
+      visible={visible}
+      onRequestClose={onClose}>
+      <View style={modalStyles.overlay}>
+        {type === 0 ? (
+          <View
+            style={[
+              modalStyles.container,
+              {backgroundColor: theme.basicColor.newBgInTwo},
+            ]}>
+            <Text style={modalStyles.message}>Extra Recharge Bonus(After the first recharge)</Text>
+            <Text style={modalStyles.message}>
+              2nd recharge → +{currentReacgarge?.ratio || ''}, Max ₹{currentReacgarge?.max_amount || ''}
+            </Text>
+            <Text style={modalStyles.message}>
+              3rd recharge → +{currentReacgarge1?.ratio || ''}, Max ₹{currentReacgarge1?.max_amount || ''}
+            </Text>
+            <Text style={modalStyles.message}>
+              4th recharge → +{currentReacgarge2?.ratio || ''}, Max ₹{currentReacgarge2?.max_amount || ''}
+            </Text>
+            <Text style={modalStyles.message}>
+              5th recharge → +{currentReacgarge3?.ratio || ''}, Max ₹{currentReacgarge3?.max_amount || ''}
+            </Text>
+            <Text style={modalStyles.message}>
+              Note :The bonus applies only once per recharge count. Higher top-ups won’t increase the bonus beyond the maximum limit.
+            </Text>
+            <View style={modalStyles.buttonRow}>
+              <TouchableOpacity style={modalStyles.button} onPress={onClose}>
+                <Text style={modalStyles.confirmText}>
+                  {i18n.t('label.cancel')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <View
+            style={[
+              modalStyles.container,
+              {backgroundColor: theme.basicColor.newBgInTwo},
+            ]}>
+            <Text style={modalStyles.message}>
+              Daily Continuous Recharge Bonus
+            </Text>
+            <Text style={modalStyles.message}>Day 1 → ₹10 Bonus</Text>
+            <Text style={modalStyles.message}>Day 2 → ₹20 Bonus</Text>
+            <Text style={modalStyles.message}>Day 3 → ₹30 Bonus</Text>
+            <Text style={modalStyles.message}>Day 4 → ₹40 Bonus</Text>
+            <Text style={modalStyles.message}>Day 5 → ₹50 Bonus</Text>
+            <Text style={modalStyles.message}>Day 6 → ₹60 Bonus</Text>
+            <Text style={modalStyles.message}>Day 7 → ₹100 Bonus</Text>
+            <Text style={modalStyles.message}>
+              Note (small text below): Recharge every day without missing! If you skip one day ,cycle restarts from Day 1
+            </Text>
+            <View style={modalStyles.buttonRow}>
+              <TouchableOpacity style={modalStyles.button} onPress={onClose}>
+                <Text style={modalStyles.confirmText}>
+                  {i18n.t('label.cancel')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </View>
+    </Modal>
+  );
+};
+
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    width: '85%',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  message: {
+    width: '100%',
+    fontSize: 16,
+    textAlign: 'left',
+    marginBottom: 20,
+    color: theme.fontColor.white,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
+  button: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  confirmText: {
+    color: theme.basicColor.newFontYellow,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
+
+export default PromotionInfoModal;

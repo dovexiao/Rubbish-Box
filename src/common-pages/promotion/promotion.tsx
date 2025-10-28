@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import DetailNavTitle from '@businessComponents/detail-nav-title';
 import React, {useRef, useState, useEffect, useCallback, useMemo} from 'react';
 import {useInnerStyle} from './promotion.hooks';
@@ -11,66 +10,84 @@ import {
   View,
   Animated,
   Easing,
-  Image,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  Platform,
 } from 'react-native';
-import Card from '@basicComponents/card';
 import {NoMoreData} from '@/components/basic/default-page';
 import {
   PromotionListItem,
   getPromotionList,
-  getReceiveSevenDayReward,
   getListRecharge,
   getSevenDayRewards,
+  getReceiveSevenDayReward,
+  getActivityPromotionImage,
+  getActivityRechargeList,
+  getActivityWeekSignInList,
+  getActivityReceiveReward,
 } from './promotion.service';
 import globalStore from '@/services/global.state';
 import NoData from '@/components/basic/error-pages/no-data';
-import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import {useTranslation} from 'react-i18next';
 import {goToUrl} from '@/common-pages/game-navigate';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
 import {goTo, goToWithLogin} from '@/utils';
-import Text from '@basicComponents/text';
-import LinearGradient from '@/components/basic/linear-gradient';
-import GetBonusModal from './components/get-bonus-modal';
-import LazyImage from '@/components/basic/image/lazy-image';
 import DeviceInfo from 'react-native-device-info';
-import CountDown from './components/count-down';
 import {appPromotionImage} from '@/services/global.service';
+import {
+  RechargeBonusCard,
+  SevenDayBonusCard,
+  PromotionInfoModal,
+  renderPromotionListItem,
+} from './components';
+import GetBonusModal from '@/common-pages/promotion/components/get-bonus-modal';
 
-const proNew = require('@/assets/imgs/promotion/promotion-new.webp');
-const proWhy = require('@/assets/imgs/promotion/pro-right-why.webp');
-const amountClaim = require('@/assets/imgs/promotion/claim.webp');
-const proAmountSevenTopImages = [
-  require('@/assets/imgs/promotion/pro-amount.webp'),
-  require('@/assets/imgs/promotion/pro-amount.webp'),
-  require('@/assets/imgs/promotion/pro-amount.webp'),
-  require('@/assets/imgs/promotion/pro-amount.webp'),
-  require('@/assets/imgs/promotion/pro-amount.webp'),
-  require('@/assets/imgs/promotion/pro-amount.webp'),
-  require('@/assets/imgs/promotion/box_80.webp'),
-];
-const boxScaleIcon = require('@/assets/imgs/promotion/box_50.webp');
 const Promotion = () => {
-  const [proAmountImages, setProAmountImages] = useState([]);
-  const [proAmountSevenImages, setProAmountSevenImages] = useState([]);
-  useEffect(() => {
-    const getDeviceBrand = async () => {
-      const data: any = await appPromotionImage();
-      setProAmountImages(data?.recharge.images || []);
-      setProAmountSevenImages(data?.continuous_rinse.images || []);
-    };
-    getDeviceBrand();
-  }, []);
   const {i18n} = useTranslation();
+
   const {
     size: {itemImgWidth, signImgHeight}, //itemImgHeight,
     listStyle,
   } = useInnerStyle();
+
+  const {screenHeight} = useSettingWindowDimensions();
+
+  const [visible, setVisible] = useState(false);
+  const [sevenInfo, setSevenInfo] = useState<any>([]);
+  const [canGetNum, setCanGetNum] = useState(0); //可领取数量
+  const [rechargeInfo, setRechargeInfo] = useState<any>({});
+  const [currentTime, setCurrentTime] = useState(0);
+  const [modalType, setModalType] = useState(0);
+  const [isCountdownExpired, setIsCountdownExpired] = useState(false);
+  const [isImageVisible, setIsImageVisible] = useState(false);
+  // 七日连冲
+  const [canGetAmount, setCanGetAmount] = useState(0); //可领取数量
+  const bounceAnim = useRef(new Animated.Value(2)).current;
+
+  // 滑动列表项相关
+  const [refreshing, setRefreshing] = useState(false);
+  const pageNo = useRef(1);
+  const totalPage = useRef(1);
+  const [promotionList, setPromotionList] = useState<PromotionListItem[]>([]);
+  const tagIndex: number = 0;
+
+  // 动画相关
+  const countHideAnim = useRef(new Animated.Value(1)).current;
+  const [_countdown, setCountdown] = useState(36); // 初始倒计时秒数
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  // 获取首充-每日充值图片配置
+  const [proAmountImages, setProAmountImages] = useState([]);
+  const [proAmountSevenImages, setProAmountSevenImages] = useState([]);
+  useEffect(() => {
+    const getDeviceBrand = async () => {
+      // const data: any = await appPromotionImage();
+      const data: any = await getActivityPromotionImage();
+      setProAmountImages(data?.first_recharge.images || []);
+      setProAmountSevenImages(data?.daily_recharge.images || []);
+    };
+    getDeviceBrand();
+  }, []);
+
+  // 获取设备品牌和登录状态
   const [isXiaomi, setIsXiaomi] = useState(false);
   const [login, setLogin] = useState(false);
   useEffect(() => {
@@ -84,15 +101,8 @@ const Promotion = () => {
       setLogin(!!token);
     });
   }, []);
-  const [refreshing, setRefreshing] = useState(false);
-  const pageNo = useRef(1);
-  const totalPage = useRef(1);
-  const [promotionList, setPromotionList] = useState<PromotionListItem[]>([]);
-  const tagIndex = 0;
-  const [isImageVisible, setIsImageVisible] = useState(false);
 
-  const {screenHeight} = useSettingWindowDimensions();
-
+  // 滑动列表项相关
   const fetchPageData = useCallback(
     async (isMore = false) => {
       try {
@@ -104,12 +114,11 @@ const Promotion = () => {
           totalPage.current = pageInfo.totalPages;
         }
       } catch (e) {
-        console.error('Error fetching promotions:', e);
+        console.error('Error fetching promotions PageData:', e);
       }
     },
     [tagIndex],
   );
-
   const refreshPage = useCallback(async () => {
     globalStore.globalLoading.next(true);
     pageNo.current = 1;
@@ -117,7 +126,6 @@ const Promotion = () => {
     globalStore.globalLoading.next(false);
     setRefreshing(false);
   }, [fetchPageData]);
-
   const loadNextPage = useCallback(async () => {
     if (pageNo.current < totalPage.current) {
       pageNo.current++;
@@ -126,11 +134,9 @@ const Promotion = () => {
       globalStore.globalLoading.next(false);
     }
   }, [fetchPageData]);
-
   useEffect(() => {
     refreshPage();
   }, [refreshPage]);
-
   const onPressItemTo = (item: PromotionListItem) => {
     if (!item?.activityUrl) {
       goTo('PromotionDetail', {id: item?.id});
@@ -138,8 +144,8 @@ const Promotion = () => {
       goToUrl(item.activityUrl, item.activityTitle);
     }
   };
-  const [_countdown, setCountdown] = useState(36); // 初始倒计时秒数
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  // 动画相关
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -162,29 +168,6 @@ const Promotion = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-  const [visible, setVisible] = useState(false);
-  const [sevenInfo, setSevenInfo] = useState<any>([]);
-  const [canGetNum, setCanGetNum] = useState(0); //可领取数量
-  const [rechargeInfo, setRechargeInfo] = useState<any>({});
-  const [currentTime, setCurrentTime] = useState(0);
-  const [modalType, setModalType] = useState(0);
-  const [isCountdownExpired, setIsCountdownExpired] = useState(false);
-  const fetchSevenInfo = useCallback(async () => {
-    //七日
-    try {
-      const sevenRes = await getSevenDayRewards();
-      if (sevenRes?.length) {
-        setSevenInfo(sevenRes);
-        setCanGetNum(
-          sevenRes.filter((item: any) => item?.finished && !item?.received)
-            .length,
-        );
-      }
-    } catch (e) {
-      console.error('Error fetching promotions:', e);
-    }
-  }, []);
-  const countHideAnim = useRef(new Animated.Value(1)).current;
   useEffect(() => {
     if (currentTime <= 0 && currentTime !== 0) {
       // 倒计时结束，触发隐藏动画
@@ -202,309 +185,6 @@ const Promotion = () => {
       });
     }
   }, [currentTime, countHideAnim]);
-  const fetchRechargeInfo = useCallback(async () => {
-    //查看复充列表
-    try {
-      const rechargeInfo = await getListRecharge();
-      if (rechargeInfo?.countdownTimestamp) {
-        const futureTimestamp = rechargeInfo?.countdownTimestamp; // 目标时间戳（毫秒）
-        const currentTimestamp = Date.now();
-        const remainingTimeInMillis = futureTimestamp - currentTimestamp;
-        setCurrentTime(remainingTimeInMillis);
-
-        // 检查是否已经过期
-        if (remainingTimeInMillis <= 0) {
-          setIsCountdownExpired(true);
-          countHideAnim.setValue(0);
-        }
-      }
-      setRechargeInfo(rechargeInfo);
-    } catch (e) {
-      console.error('111111111Error fetching promotions:', e);
-    }
-  }, [countHideAnim]);
-  useFocusEffect(
-    useCallback(() => {
-      // 启动动画效果
-      fadeAnim.setValue(0);
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 500,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-      // 调用接口获取数据
-      fetchSevenInfo();
-      fetchRechargeInfo();
-    }, [fetchSevenInfo, fetchRechargeInfo, fadeAnim]),
-  );
-  // 复充
-  const onPressGoDeposit = useCallback(() => {
-    goToWithLogin(i18n.t('home.tab.deposit'));
-  }, [i18n]);
-  const renderRedBonusCard = useMemo(() => {
-    return (
-      <View
-        style={{
-          marginTop: 10,
-          marginBottom: 2,
-        }}>
-        <LinearGradient
-          colors={['#FA1C1B', '#A1251D']}
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
-          style={{
-            borderRadius: 16,
-            position: 'relative',
-            padding: 16,
-            paddingBottom: 4,
-            shadowColor: '#000',
-            shadowOffset: {width: 0, height: 4},
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            elevation: 8,
-          }}>
-          {/* "New"图标标签 */}
-          <View
-            style={{
-              position: 'absolute',
-              top: -3,
-              left: -1,
-              borderTopLeftRadius: 16,
-              borderBottomRightRadius: 20,
-              elevation: 100,
-              zIndex: 10,
-              backgroundColor: 'transparent',
-            }}>
-            <Image
-              source={proNew}
-              style={{
-                width: 56,
-                height: 56,
-                resizeMode: 'contain',
-              }}
-            />
-          </View>
-          <NativeTouchableOpacity
-            style={{
-              position: 'absolute',
-              right: 0,
-              top: 0,
-              borderTopRightRadius: 16,
-              borderBottomLeftRadius: 20,
-              elevation: 100,
-              zIndex: 10,
-              width: 40,
-              height: 22,
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onPressIn={() => {
-              setModalType(0);
-              setVisible(true);
-            }}>
-            <View>
-              <Image
-                source={proWhy}
-                style={{
-                  width: 12,
-                  height: 12,
-                  resizeMode: 'contain',
-                  backgroundColor: 'transparent',
-                }}
-              />
-            </View>
-          </NativeTouchableOpacity>
-          {/* <NativeTouchableOpacity onPress={() => onPressItemTo(item)}> */}
-          {/* 标题和倒计时行 */}
-          <View style={{marginTop: 10, marginBottom: 10}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: login ? 'space-between' : 'center',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: '#fff',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  flex: 1,
-                  marginRight: 12,
-                  display: 'flex',
-                  justifyContent: login ? 'flex-start' : 'center',
-                  alignItems: 'center',
-                  textAlign: login ? 'left' : 'center',
-                }}>
-                {i18n.t('promotion.continueBonus')}
-              </Text>
-              {/* 倒计时 */}
-              {login && (
-                <CountDown
-                  remain={currentTime ? Math.round(currentTime / 1000) : 0}
-                />
-              )}
-            </View>
-          </View>
-          {/* 奖励图标行 */}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 8,
-              paddingHorizontal: 8,
-              position: 'relative',
-              backgroundColor: 'transparent',
-            }}>
-            {proAmountImages.length > 0 &&
-              [1000, 2000, 3000, 4000].map((_amt, idx) => {
-                const logs = rechargeInfo?.rechargeLogs || [];
-                const currentReItem = logs[idx];
-                const currentImg: any = proAmountImages[idx];
-                return (
-                  <View key={idx} style={{alignItems: 'center', flex: 1}}>
-                    {/* 金币图标 */}
-                    <View
-                      style={{
-                        width: 54,
-                        height: 63,
-                        position: 'relative',
-                        left: 3,
-                        top: idx === 0 ? 3 : 0,
-                      }}>
-                      <Image
-                        source={{uri: currentImg?.image}}
-                        style={{
-                          width: 54,
-                          height: 63,
-                          resizeMode: 'contain',
-                          zIndex: 10,
-                          backgroundColor: 'transparent',
-                        }}
-                      />
-                    </View>
-
-                    {/* 完成状态勾选 */}
-                    <View
-                      style={{
-                        width: 16,
-                        height: 16,
-                        borderRadius: 8,
-                        // backgroundColor: '#9932CC',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginBottom: 4,
-                        position: 'relative',
-                        zIndex: 10,
-                        backgroundColor: 'transparent',
-                      }}>
-                      {currentReItem?.succeseFlag ? (
-                        <Image
-                          source={amountClaim}
-                          style={{
-                            width: 16,
-                            height: 16,
-                            zIndex: 10,
-                            transform: [{scale: 1}],
-                          }}
-                        />
-                      ) : (
-                        <View style={styles.checkmark} />
-                      )}
-                    </View>
-                    <Text
-                      style={{color: '#fff', fontSize: 11, fontWeight: '500'}}>
-                      {idx === 0
-                        ? '2nd'
-                        : idx === 1
-                        ? '3st'
-                        : idx === 2
-                        ? '4st'
-                        : '5st'}
-                    </Text>
-                  </View>
-                );
-              })}
-            {/* 紫色进度条 */}
-            <View
-              style={[
-                styles.progressSection,
-                {
-                  bottom: Platform.select({
-                    web: 22,
-                    android: isXiaomi ? 28 : 24,
-                  }),
-                },
-              ]}>
-              <View style={styles.progressBarContainer}>
-                <View style={styles.progressBarBg}>
-                  <LinearGradient
-                    colors={['#C803FF', '#FF0085']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}
-                    style={[
-                      styles.progressBarFill,
-                      {
-                        width: `${Math.min(1 * 100, 100)}%`,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-          {/* 获取奖励按钮 */}
-          <NativeTouchableOpacity
-            onPress={() => onPressGoDeposit()}
-            style={{
-              alignItems: 'center',
-            }}>
-            <LinearGradient
-              colors={['#FE8A1A', '#FEBC0A']}
-              start={{x: 0, y: 0}}
-              end={{x: 0, y: 1}}
-              style={{
-                position: 'relative',
-                alignItems: 'center',
-                marginBottom: 8,
-                width: '80%',
-                borderRadius: 25,
-                paddingVertical: 12,
-                shadowColor: '#FF6347',
-                shadowOffset: {width: 0, height: 4},
-                shadowOpacity: 0.4,
-                shadowRadius: 6,
-                elevation: 6,
-              }}>
-              <Text
-                numberOfLines={1}
-                style={{
-                  color: theme.fontColor.white,
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                }}>
-                {i18n.t('rebate.go-get-bonus')}
-              </Text>
-            </LinearGradient>
-          </NativeTouchableOpacity>
-          {/* </NativeTouchableOpacity> */}
-        </LinearGradient>
-      </View>
-    );
-  }, [
-    currentTime,
-    i18n,
-    isXiaomi,
-    login,
-    onPressGoDeposit,
-    proAmountImages,
-    rechargeInfo?.rechargeLogs,
-  ]);
-  // 七日连冲
-  const [canGetAmount, setCanGetAmount] = useState(0); //可领取数量
-  const bounceAnim = useRef(new Animated.Value(2)).current;
   useFocusEffect(
     useCallback(() => {
       const createBounceAnimation = () => {
@@ -578,28 +258,81 @@ const Promotion = () => {
       };
     }, [btnAnim]),
   );
+
+  // 获取7天活动信息
+  const fetchSevenInfo = useCallback(async () => {
+    try {
+      // const sevenRes = await getSevenDayRewards();
+      const sevenRes = await getActivityWeekSignInList();
+      if (sevenRes?.length) {
+        setSevenInfo(sevenRes);
+        setCanGetNum(
+          sevenRes.filter((item: any) => item?.finished && !item?.received)
+            .length,
+        );
+      }
+    } catch (e) {
+      console.error('Error fetching Seven Day:', e);
+    }
+  }, []);
+
+  // 获取复充信息
+  const fetchRechargeInfo = useCallback(async () => {
+    //查看复充列表
+    try {
+      // const rechargeData = await getListRecharge();
+      const rechargeRes = await getActivityRechargeList();
+      console.log('复充列表', rechargeRes);
+      // if (rechargeData?.countdownTimestamp) {
+      //   const futureTimestamp = rechargeData?.countdownTimestamp; // 目标时间戳（毫秒）
+      //   const currentTimestamp = Date.now();
+      //   const remainingTimeInMillis = futureTimestamp - currentTimestamp;
+      //   setCurrentTime(remainingTimeInMillis);
+      //
+      //   // 检查是否已经过期
+      //   if (remainingTimeInMillis <= 0) {
+      //     setIsCountdownExpired(true);
+      //     countHideAnim.setValue(0);
+      //   }
+      // }
+      setRechargeInfo(rechargeRes);
+    } catch (e) {
+      console.error('Error fetching promotions Recharge:', e);
+    }
+  }, []);
+
+  // 跳转充值页面
+  const onPressGoDeposit = useCallback(() => {
+    goToWithLogin(i18n.t('home.tab.deposit'));
+  }, [i18n]);
+
+  // 领取7天活动当天奖励
   const getSevenContinuousBonus = useCallback(
     (item: any) => {
-      if (item?.finished && !item?.received) {
+      if (item?.status === 0) {
         let arr = [];
         arr.push(item?.id);
-        getReceiveSevenDayReward(arr)
+        getActivityReceiveReward(arr)
           .then(() => {
+            console.log('当天领取成功');
             fetchSevenInfo();
-            setCanGetAmount(item?.amount || 0);
+            setCanGetAmount(item?.rewardAmount || 0);
             setIsImageVisible(true);
           })
-          .catch(() => {});
+          .catch((e: unknown) => {
+            console.error('Error fetching ContinuousBonus:', e);
+          });
       }
     },
     [fetchSevenInfo],
   );
-  const onPressGetBonus1 = useCallback(() => {
+
+  // 7天活动领取金额
+  const onPressGetBonus = useCallback(() => {
     const arr = sevenInfo.filter(
       (item: any) => item?.finished && !item?.received,
     );
     if (arr.length <= 0) {
-      console.log('没有可领取的');
       onPressGoDeposit();
       return;
     }
@@ -611,6 +344,7 @@ const Promotion = () => {
     if (idList.length > 0) {
       getReceiveSevenDayReward(idList)
         .then(() => {
+          console.log('领取成功');
           fetchSevenInfo();
           setCanGetAmount(amt);
           setIsImageVisible(true);
@@ -618,462 +352,99 @@ const Promotion = () => {
         .catch(() => {});
     }
   }, [onPressGoDeposit, fetchSevenInfo, sevenInfo]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // 启动动画效果
+      fadeAnim.setValue(0);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+      // 调用接口获取数据
+      fetchSevenInfo();
+      fetchRechargeInfo();
+    }, [fetchSevenInfo, fetchRechargeInfo, fadeAnim]),
+  );
+
+  const renderRedBonusCard = useMemo(() => {
+    return (
+      <RechargeBonusCard
+        login={login}
+        currentTime={currentTime}
+        isXiaomi={isXiaomi}
+        proAmountImages={proAmountImages}
+        rechargeInfo={rechargeInfo}
+        onPressGoDeposit={onPressGoDeposit}
+        onPressWhy={() => {
+          setModalType(0);
+          setVisible(true);
+        }}
+        i18n={i18n}
+      />
+    );
+  }, [
+    login,
+    currentTime,
+    isXiaomi,
+    proAmountImages,
+    rechargeInfo,
+    onPressGoDeposit,
+    i18n,
+  ]);
+
   const renderSevenContinuousBonusCard = useMemo(() => {
     return (
-      <View
-        style={{
-          marginBottom: 2,
-          marginTop: 10,
-        }}>
-        <LinearGradient
-          colors={['#FA1C1B', '#A1251D']}
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
-          style={{
-            borderRadius: 16,
-            position: 'relative',
-            paddingBottom: 4,
-            shadowColor: '#000',
-            shadowOffset: {width: 0, height: 4},
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            elevation: 8,
-          }}>
-          {/* "New"图标标签 */}
-          <View
-            style={{
-              position: 'absolute',
-              top: -3,
-              left: -1,
-              borderTopLeftRadius: 16,
-              borderBottomRightRadius: 20,
-              elevation: 100,
-              zIndex: 10,
-              backgroundColor: 'transparent',
-            }}>
-            <Image
-              source={proNew}
-              style={{
-                width: 56,
-                height: 56,
-                resizeMode: 'contain',
-                // opacity: fadeAnim,
-                // transform: [
-                //   {
-                //     scale: fadeAnim.interpolate({
-                //       inputRange: [0, 1],
-                //       outputRange: [0.95, 1],
-                //     }),
-                //   },
-                // ],
-              }}
-            />
-          </View>
-          <NativeTouchableOpacity
-            onPressIn={() => {
-              setModalType(1);
-              setVisible(true);
-            }}
-            style={{
-              position: 'absolute',
-              right: 0,
-              top: 0,
-              borderTopRightRadius: 16,
-              borderBottomLeftRadius: 20,
-              elevation: 100,
-              zIndex: 10,
-              width: 40,
-              height: 22,
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <View>
-              <Image
-                source={proWhy}
-                style={{
-                  width: 12,
-                  height: 12,
-                  resizeMode: 'contain',
-                  backgroundColor: 'transparent',
-                }}
-              />
-            </View>
-          </NativeTouchableOpacity>
-          <View style={{marginTop: 12, marginBottom: 17}}>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                elevation: 101,
-                zIndex: 11,
-              }}>
-              <Text
-                style={{
-                  color: '#fff',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  flex: 1,
-                }}>
-                {i18n.t('promotion.sevenContinueBonus')}
-              </Text>
-            </View>
-          </View>
-
-          {/* 领取连充奖励图标行 */}
-          <View key={'first-row'} style={{alignItems: 'center', flex: 1}}>
-            {/* 7天连充奖励网格布局 */}
-            <View
-              style={{
-                width: '100%',
-                marginBottom: 6,
-                flexDirection: 'row',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                paddingLeft: 5,
-                paddingRight: 5,
-              }}>
-              {proAmountSevenImages.map((img: any, index) => {
-                const imgW = 28;
-                const currentItem = sevenInfo[index] || {};
-                return (
-                  <View
-                    key={`seven-day${index + 1}`}
-                    style={{
-                      flexBasis:
-                        index !== proAmountSevenImages.length - 1
-                          ? '25%'
-                          : '50%',
-                    }}>
-                    {/* 跳动时领取 */}
-                    <NativeTouchableOpacity
-                      onPressIn={() => {
-                        getSevenContinuousBonus(currentItem);
-                      }}>
-                      <LinearGradient
-                        key={`day${index + 1}`}
-                        colors={
-                          !currentItem?.finished && !currentItem?.received
-                            ? ['#CF2730', '#A11116']
-                            : ['#C803FF', '#FF0085']
-                        }
-                        start={{x: 0, y: 0}}
-                        end={{x: 0, y: 1}}
-                        style={{
-                          borderRadius: 12,
-                          marginLeft: 5,
-                          marginRight: 5,
-                          marginBottom: 8,
-                          height: 80,
-                        }}>
-                        <View
-                          style={{
-                            backgroundColor: currentItem?.finished
-                              ? '#C803FF'
-                              : '#999999',
-                            borderTopLeftRadius: 12,
-                            borderTopRightRadius: 12,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            paddingTop: 4,
-                            paddingBottom: 4,
-                          }}>
-                          <Text
-                            style={{
-                              color: '#FFFFFF',
-                              fontSize: 10,
-                            }}>
-                            Day{index + 1}
-                          </Text>
-                        </View>
-                        {/* 两张图片垂直排列 */}
-                        {index !== proAmountSevenImages.length - 1 ? (
-                          <View
-                            style={{
-                              flex: 1,
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                            }}>
-                            <Animated.Image
-                              source={
-                                currentItem?.finished && !currentItem?.received
-                                  ? boxScaleIcon
-                                  : proAmountSevenTopImages[index]
-                              }
-                              style={{
-                                width: imgW,
-                                height: imgW,
-                                resizeMode: 'contain',
-                                transform: [
-                                  {
-                                    scale:
-                                      currentItem?.finished &&
-                                      !currentItem?.received
-                                        ? bounceAnim
-                                        : 1,
-                                  },
-                                ],
-                              }}
-                            />
-                            {currentItem?.finished && !currentItem?.received ? (
-                              <View
-                                style={{
-                                  position: 'relative',
-                                  backgroundColor: 'transparent',
-                                }}>
-                                <LazyImage
-                                  // imageUrl={proAmountSevenImages[index]}
-                                  imageUrl={img?.image}
-                                  width={38}
-                                  height={18}
-                                  style={{
-                                    backgroundColor: 'transparent',
-                                  }}
-                                />
-                                <Animated.Image
-                                  source={require('@/assets/imgs/promotion/pro_btn_bg.webp')}
-                                  // width={66}
-                                  // height={22}
-                                  style={{
-                                    width: 66,
-                                    height: 22,
-                                    zIndex: -1,
-                                    position: 'absolute',
-                                    left: -14,
-                                    transform: [
-                                      {
-                                        scale:
-                                          currentItem?.finished &&
-                                          !currentItem?.received
-                                            ? btnAnim
-                                            : 1,
-                                      },
-                                    ],
-                                  }}
-                                />
-                              </View>
-                            ) : (
-                              <Animated.Image
-                                source={{uri: img?.image}}
-                                // source={proAmountSevenImages[index]}
-                                style={{
-                                  width: 38,
-                                  height: 18,
-                                  resizeMode: 'contain',
-                                  transform: [
-                                    {
-                                      scale: 1,
-                                    },
-                                  ],
-                                }}
-                              />
-                            )}
-                          </View>
-                        ) : (
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                            }}>
-                            <Animated.Image
-                              source={proAmountSevenTopImages[index]}
-                              style={{
-                                width: imgW,
-                                height: imgW,
-                                resizeMode: 'contain',
-                                transform: [
-                                  {
-                                    // scale: 2,
-                                    scale:
-                                      currentItem?.finished &&
-                                      !currentItem?.received
-                                        ? bounceAnim
-                                        : 2,
-                                  },
-                                ],
-                              }}
-                            />
-                            {currentItem?.finished && !currentItem?.received ? (
-                              <View
-                                style={{
-                                  position: 'relative',
-                                  backgroundColor: 'transparent',
-                                  marginLeft: 30,
-                                }}>
-                                <LazyImage
-                                  imageUrl={img?.image}
-                                  width={40}
-                                  height={18}
-                                  style={{
-                                    backgroundColor: 'transparent',
-                                    transform: [
-                                      {
-                                        scale: 1.3,
-                                      },
-                                    ],
-                                  }}
-                                />
-                                <Animated.Image
-                                  source={require('@/assets/imgs/promotion/pro_btn_bg.webp')}
-                                  width={66}
-                                  height={22}
-                                  style={{
-                                    zIndex: -1,
-                                    position: 'absolute',
-                                    left: -13,
-                                    top: -1,
-                                    transform: [
-                                      {
-                                        scale:
-                                          currentItem?.finished &&
-                                          !currentItem?.received
-                                            ? btnAnim
-                                            : 1,
-                                      },
-                                    ],
-                                  }}
-                                />
-                              </View>
-                            ) : (
-                              <Image
-                                source={{uri: img?.image}}
-                                style={{
-                                  width: 40,
-                                  height: 18,
-                                  resizeMode: 'contain',
-                                  marginLeft: 30,
-                                  transform: [
-                                    {
-                                      scale: 1.5,
-                                    },
-                                  ],
-                                }}
-                              />
-                            )}
-                          </View>
-                        )}
-                        {currentItem?.received && (
-                          <View
-                            style={{
-                              position: 'absolute',
-                              bottom: 4,
-                              right: 4,
-                            }}>
-                            <LazyImage
-                              imageUrl={require('@/assets/imgs/promotion/selected.webp')}
-                              width={15}
-                              height={15}
-                            />
-                          </View>
-                        )}
-                      </LinearGradient>
-                    </NativeTouchableOpacity>
-                  </View>
-                );
-              })}
-            </View>
-          </View>
-          {/* 获取奖励按钮 */}
-          <NativeTouchableOpacity
-            onPress={() => onPressGetBonus1()}
-            // disabled={canGetNum <= 0}
-            style={{
-              alignItems: 'center',
-            }}>
-            <LinearGradient
-              colors={['#FE8A1A', '#FEBC0A']}
-              start={{x: 0, y: 0}}
-              end={{x: 0, y: 1}}
-              style={{
-                position: 'relative',
-                alignItems: 'center',
-                marginBottom: 8,
-                width: '80%',
-                borderRadius: 25,
-                paddingVertical: 12,
-                shadowColor: '#FF6347',
-                shadowOffset: {width: 0, height: 4},
-                shadowOpacity: 0.4,
-                shadowRadius: 6,
-                elevation: 6,
-              }}>
-              <Text
-                style={{
-                  color: theme.fontColor.white,
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                }}>
-                {canGetNum > 1
-                  ? i18n.t('rebate.get-all-bonus')
-                  : canGetNum <= 0
-                  ? i18n.t('rebate.go-get-bonus')
-                  : i18n.t('rebate.get-bonus')}
-              </Text>
-            </LinearGradient>
-          </NativeTouchableOpacity>
-        </LinearGradient>
-      </View>
+      <SevenDayBonusCard
+        proAmountSevenImages={proAmountSevenImages}
+        sevenInfo={sevenInfo}
+        canGetNum={canGetNum}
+        bounceAnim={bounceAnim}
+        btnAnim={btnAnim}
+        onPressWhy={() => {
+          setModalType(1);
+          setVisible(true);
+        }}
+        onPressGetAll={onPressGetBonus}
+        onPressGetSingle={getSevenContinuousBonus}
+      />
     );
   }, [
-    bounceAnim,
-    canGetNum,
-    getSevenContinuousBonus,
-    i18n,
-    onPressGetBonus1,
     proAmountSevenImages,
     sevenInfo,
+    canGetNum,
+    bounceAnim,
     btnAnim,
+    onPressGetBonus,
+    getSevenContinuousBonus,
   ]);
+
+  // 列表项
   const renderItem = ({item}: ListRenderItemInfo<PromotionListItem>) => {
-    return (
-      <View
-        style={[
-          // theme.border.primary50,
-          theme.borderRadius.m,
-          theme.margin.bottomMd,
-          // {backgroundColor: theme.basicColor.newBgInOne},
-        ]}>
-        <Card>
-          <NativeTouchableOpacity onPress={() => onPressItemTo(item)}>
-            <Card.Image
-              style={[
-                theme.flex.centerByCol,
-                theme.borderRadius.m,
-                theme.position.rel,
-              ]}
-              width={itemImgWidth}
-              height={item.activityType === 'signin' ? signImgHeight : 122}
-              imageUrl={item.activityIcon}
-            />
-          </NativeTouchableOpacity>
-        </Card>
-      </View>
-    );
+    return renderPromotionListItem({item} as any, {
+      itemImgWidth,
+      signImgHeight,
+      onPressItemTo,
+    });
   };
 
+  // 列表头
   const renderListHeader = useCallback(() => {
-    if (rechargeInfo?.showFlag && !isCountdownExpired) {
-      return (
-        <View>
-          {renderSevenContinuousBonusCard}
-          {renderRedBonusCard}
-        </View>
-      );
-    } else {
-      return renderSevenContinuousBonusCard;
-    }
-  }, [
-    rechargeInfo?.showFlag,
-    renderRedBonusCard,
-    renderSevenContinuousBonusCard,
-    isCountdownExpired,
-  ]);
+    return (
+      <View>
+        {renderSevenContinuousBonusCard}
+        {rechargeInfo?.flagShow && renderRedBonusCard}
+      </View>
+    );
+  }, [rechargeInfo, renderRedBonusCard, renderSevenContinuousBonusCard]);
+
   const currentReacgarge: any = proAmountImages[0] || {};
   const currentReacgarge1: any = proAmountImages[1] || {};
   const currentReacgarge2: any = proAmountImages[2] || {};
   const currentReacgarge3: any = proAmountImages[3] || {};
+
   return (
     <LazyImageLGBackground style={{height: screenHeight}}>
       <DetailNavTitle title={i18n.t('promotion.title')} hideServer />
@@ -1110,183 +481,18 @@ const Promotion = () => {
         amount={canGetAmount || 0}
         setIsImageVisible={setIsImageVisible}
       />
-      <Modal
-        animationType="none"
-        transparent
+      <PromotionInfoModal
         visible={visible}
-        onRequestClose={() => {
-          setVisible(false);
-        }}>
-        <View style={modalStyles.overlay}>
-          {modalType === 0 ? (
-            <View
-              style={[
-                modalStyles.container,
-                {backgroundColor: theme.basicColor.newBgInTwo},
-              ]}>
-              <Text style={modalStyles.message}>
-                Extra Recharge Bonus(After the first recharge)
-              </Text>
-              <Text style={modalStyles.message}>
-                2nd recharge → +{currentReacgarge.ratio || ''}, Max ₹
-                {currentReacgarge.max_amount || ''}
-              </Text>
-              <Text style={modalStyles.message}>
-                3rd recharge → +{currentReacgarge1.ratio || ''}, Max ₹
-                {currentReacgarge1.max_amount || ''}
-              </Text>
-              <Text style={modalStyles.message}>
-                4th recharge → +{currentReacgarge2.ratio || ''}, Max ₹
-                {currentReacgarge2.max_amount || ''}
-              </Text>
-              <Text style={modalStyles.message}>
-                5th recharge → +{currentReacgarge3.ratio || ''}, Max ₹
-                {currentReacgarge3.max_amount || ''}
-              </Text>
-              <Text style={modalStyles.message}>
-                Note :The bonus applies only once per recharge count. Higher
-                top-ups won’t increase the bonus beyond the maximum limit.
-              </Text>
-              <View style={modalStyles.buttonRow}>
-                <TouchableOpacity
-                  style={modalStyles.button}
-                  onPress={() => {
-                    setVisible(false);
-                  }}>
-                  <Text style={modalStyles.confirmText}>
-                    {i18n.t('label.cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ) : (
-            <View
-              style={[
-                modalStyles.container,
-                {backgroundColor: theme.basicColor.newBgInTwo},
-              ]}>
-              <Text style={modalStyles.message}>
-                Daily Continuous Recharge Bonus
-              </Text>
-              <Text style={modalStyles.message}>Day 1 → ₹10 Bonus</Text>
-              <Text style={modalStyles.message}>Day 2 → ₹20 Bonus</Text>
-              <Text style={modalStyles.message}>Day 3 → ₹30 Bonus</Text>
-              <Text style={modalStyles.message}>Day 4 → ₹40 Bonus</Text>
-              <Text style={modalStyles.message}>Day 5 → ₹50 Bonus</Text>
-              <Text style={modalStyles.message}>Day 6 → ₹60 Bonus</Text>
-              <Text style={modalStyles.message}>Day 7 → ₹100 Bonus</Text>
-              <Text style={modalStyles.message}>
-                Note (small text below): Recharge every day without missing! If
-                you skip one day ,cycle restarts from Day 1
-              </Text>
-              <View style={modalStyles.buttonRow}>
-                <TouchableOpacity
-                  style={modalStyles.button}
-                  onPress={() => {
-                    setVisible(false);
-                  }}>
-                  <Text style={modalStyles.confirmText}>
-                    {i18n.t('label.cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        </View>
-      </Modal>
+        onClose={() => setVisible(false)}
+        type={modalType as 0 | 1}
+        i18n={i18n}
+        currentReacgarge={currentReacgarge}
+        currentReacgarge1={currentReacgarge1}
+        currentReacgarge2={currentReacgarge2}
+        currentReacgarge3={currentReacgarge3}
+      />
     </LazyImageLGBackground>
   );
 };
-const modalStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    width: '85%',
-    borderRadius: 12,
-    padding: 20,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
-    color: theme.fontColor.white,
-  },
-  message: {
-    width: '100%',
-    fontSize: 16,
-    textAlign: 'left',
-    marginBottom: 20,
-    color: theme.fontColor.white,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    width: '100%',
-  },
-  button: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-  },
-  cancelText: {
-    color: '#999',
-    fontSize: 16,
-  },
-  confirmText: {
-    color: theme.basicColor.newFontYellow,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
-const styles = StyleSheet.create({
-  checkmark: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: theme.fontColor.white60,
-  },
-  progressSection: {
-    alignItems: 'center',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    zIndex: -1,
-    elevation: 1,
-  },
-  progressLabel: {
-    marginBottom: theme.paddingSize.xxs,
-  },
-  progressBarContainer: {
-    width: '100%',
-    alignItems: 'center',
-    paddingLeft: 15,
-    paddingRight: 20,
-  },
-  progressBarBg: {
-    width: '100%',
-    height: 6,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    borderRadius: theme.borderRadiusSize.xs,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: theme.borderRadiusSize.xs,
-  },
-  progressBarText: {
-    marginTop: 8,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'relative',
-    paddingLeft: 15,
-    paddingRight: 20,
-  },
-});
 
 export default Promotion;

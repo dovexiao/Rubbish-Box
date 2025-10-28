@@ -546,15 +546,26 @@ export default {
     },
   },
   promotion: {
-    label: {
-      promotion: 'பதவி உயர்வு',
-      promotions: 'பதவி உயர்வுகள்',
-      activePromotions: 'செயலில் உள்ள பதவி உயர்வுகள்',
-      expiredPromotions: 'காலாவதியான பதவி உயர்வுகள்',
-    },
-    tip: {
-      promotionInfo: 'பதவி உயர்வு தகவல்',
-      promotionDesc: 'பதவி உயர்வு விளக்கம்',
+    title: 'ப்ரமோஷன்',
+    go: 'செல்லவும்',
+    playNow: 'இப்போது விளையாடவும்',
+    view: 'பார்க்கவும்',
+    detail: 'செயல்பாட்டு விவரங்கள்',
+    join: 'சேரவும்',
+    checkin: 'செக்-இன்',
+    checkinDescription: 'தினமும் செக்-இன் செய்து பல வெகுமதிகளைப் பெறுங்கள்',
+    continueBonus: 'புதிய பயனர் ரீசார்ஜ் செயல்பாடு',
+    sevenContinueBonus: {
+      title: 'தினசரி தொடர்ச்சியான ரீசார்ஜ் போனஸ்',
+      week: [
+        'திங்கள்',
+        'செவ்வாய்',
+        'புதன்',
+        'வியாழன்',
+        'வெள்ளி',
+        'சனி',
+        'ஞாயிறு',
+      ],
     },
   },
   feedback: {

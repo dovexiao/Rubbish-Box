@@ -913,8 +913,19 @@ export default {
     join: 'Join',
     checkin: 'Check in',
     checkinDescription: 'Check in daily to get a lot of rewards',
-    continueBonus: 'Continuous recharge bonus',
-    sevenContinueBonus: 'Daily Continuous recharge bonus',
+    continueBonus: 'New User recharge activity',
+    sevenContinueBonus: {
+      title: 'Daily Continuous recharge bonus',
+      week: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+      ],
+    },
   },
   feedback: {
     title: 'FeedBack',

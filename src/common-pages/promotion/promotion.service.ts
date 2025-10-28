@@ -66,3 +66,24 @@ export function getReceiveSevenDayReward(arr: any) {
     ids: arr,
   });
 }
+// 查看首充-每日充值图片配置
+export function getActivityPromotionImage() {
+  return http.post<{}, any>('app/business/ActivitySigninRecord/listImg');
+}
+// 获取本周签到活动列表
+export function getActivityWeekSignInList() {
+  return http.post<{}, any>('app/business/ActivitySigninRecord/signinList');
+}
+// 获取首充列表
+export function getActivityRechargeList() {
+  return http.post<{}, any>('app/business/ActivitySigninRecord/listRecharge');
+}
+// 领取新活动奖励金额
+export function getActivityReceiveReward(arr: any) {
+  return http.post<{}, any>(
+    'app/business/ActivitySigninRecord/receiveSevenDayReward',
+    {
+      ids: arr,
+    },
+  );
+}
