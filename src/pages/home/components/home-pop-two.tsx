@@ -1,5 +1,5 @@
-import React from 'react';
-import {Image, Modal, StyleSheet, View} from 'react-native'; //Text
+import React, {useEffect, useState} from 'react';
+import {Image, Modal, StyleSheet, View} from 'react-native';
 import theme from '@style';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 import {goToWithLogin} from '@utils';
@@ -18,46 +18,73 @@ const HomePopTwo: React.FC<HomePopTwoProps> = ({
   dynamicUrl,
 }) => {
   const {i18n} = useTranslation();
-  const {screenWidth} = useScreenSize();
-  // Modal关闭
+  const {screenWidth, screenHeight} = useScreenSize();
+  const [imgRatio, setImgRatio] = useState(1);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [canClick, setCanClick] = useState(false);
+
+  // 每次打开 Modal 时执行
+  useEffect(() => {
+    if (isImageVisible && dynamicUrl) {
+      setIsLoaded(false);
+      setCanClick(false);
+
+      // 延迟允许点击，避免首次渲染误触
+      const timer = setTimeout(() => setCanClick(true), 300);
+
+      Image.getSize(
+        dynamicUrl,
+        (width, height) => {
+          if (width && height) setImgRatio(height / width);
+          setIsLoaded(true);
+        },
+        () => setIsLoaded(true),
+      );
+
+      return () => clearTimeout(timer);
+    } else {
+      // 每次关闭时重置状态
+      setIsLoaded(false);
+      setCanClick(false);
+    }
+  }, [isImageVisible, dynamicUrl]);
+
   const closeImage = () => {
     setIsImageVisible(false);
   };
-  // 点击图片
+
   const onImage = () => {
+    if (!canClick || !isLoaded) return;
     closeImage();
     goToWithLogin(i18n.t('home.tab.deposit'));
   };
+
   return (
     <Modal
-      transparent={true}
+      transparent
       visible={isImageVisible}
       onRequestClose={closeImage}
       animationType="fade">
       <View style={styles.modalOverlay}>
-        <NativeTouchableOpacity
-          onPress={onImage}
-          style={[{marginBottom: screenWidth * 0.13}]}>
-          <Image
-            style={[
-              {
-                width: screenWidth * 0.85,
-                height: screenWidth * 0.98,
-              },
-            ]}
-            source={{
-              uri: dynamicUrl,
-            }}
-          />
-          {/* <LazyImage
-            imageUrl={{uri: dynamicUrl}}
-            width={screenWidth * 0.85}
-            height={screenWidth * 0.98}
-          /> */}
-        </NativeTouchableOpacity>
+        {isLoaded && (
+          <NativeTouchableOpacity activeOpacity={0.9} onPress={onImage}>
+            <Image
+              source={{uri: dynamicUrl}}
+              resizeMode="contain"
+              style={{
+                width: screenWidth * 0.95,
+                height: Math.min(
+                  screenWidth * 0.95 * imgRatio,
+                  screenHeight * 0.9,
+                ),
+              }}
+            />
+          </NativeTouchableOpacity>
+        )}
+
         <NativeTouchableOpacity
           onPress={closeImage}
-          style={[styles.closeButton, {marginBottom: screenWidth * 0.08}]}>
+          style={[styles.closeButton, {marginTop: 25}]}>
           <Image
             style={[theme.icon.xxl]}
             source={require('@assets/icons/home/button-close.png')}
@@ -76,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   closeButton: {
-    backgroundColor: 'none',
+    backgroundColor: 'transparent',
   },
 });
 
