@@ -155,9 +155,12 @@ const Home = () => {
   const getRecharge = async () => {
     const data = await getFirstRechargeV1();
     console.log('[getFirstRechargeV1 data]', data);
+
+    const ts = Date.now(); // 防缓存时间戳
+
     setFirstShow(data?.isRecharge || 0);
-    setMenuImgUrl(data?.menuImg || '');
-    setRechargeImgUrl(data?.rechargeImg || '');
+    setMenuImgUrl(data?.menuImg ? `${data.menuImg}?t=${ts}` : '');
+    setRechargeImgUrl(data?.rechargeImg ? `${data.rechargeImg}?t=${ts}` : '');
   };
   const onFocusEffect = useCallback(() => {
     const sub = globalStore.tokenSubject.subscribe(token => {
@@ -360,6 +363,7 @@ const Home = () => {
           </Animated.ScrollView>
           <View style={{position: 'absolute', bottom: 60, left: 0, right: 0}}>
             <HomeService
+              key={menuImgUrl + rechargeImgUrl} // 强制刷新关键
               isLogin={login}
               firstShow={firstShow}
               menuImgUrl={menuImgUrl}
