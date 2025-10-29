@@ -28,7 +28,7 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
   const rechargeStyle = StyleSheet.create({
     button: {
       width: rechargeButtonWidth,
-      height: 57,
+      height: 48,
     },
     buttonWrap: {
       // backgroundColor: theme.basicColor.newBgInTwo,
@@ -50,7 +50,7 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
         colors={theme.basicColor.newButtonBgOne}
         style={[rechargeStyle.button, {borderRadius: 45}]}>
         <Button
-          // size="large"
+          size="large"
           type={type}
           radius={5}
           color="transparent"
@@ -68,7 +68,7 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
               style={{textAlign: 'center', fontWeight: 'bold'}}>
               {i18n.t('label.recharge')}
             </Text>
-            {'\n' + text}
+            {`(${text})`}
           </Text>
         </Button>
       </LinearGradient>
