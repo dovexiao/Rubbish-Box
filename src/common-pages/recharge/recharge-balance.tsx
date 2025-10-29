@@ -148,7 +148,8 @@ const styleSheet = StyleSheet.create({
   recordButton: {
     width: 121,
     height: 25,
-    backgroundColor: theme.basicColor.newButtonYellow,
+    // backgroundColor: theme.basicColor.newButtonYellow,
+    backgroundColor: '#E24D00',
     borderRadius: 16,
     display: 'flex',
     alignItems: 'center',
