@@ -44,14 +44,14 @@ const RechargeCheckBoxes = () => {
     </View>
   );
 
-  const isFirstRecharge = rechargeInfo && 'first_recharge' in rechargeInfo;
+  // const isFirstRecharge = rechargeInfo && 'first_recharge' in rechargeInfo;
 
-  const firstRechargeImg = useMemo(() => {
-    if (isFirstRecharge) {
-      return rechargeInfo.first_recharge?.image || '';
-    }
-    return '';
-  }, [rechargeInfo, isFirstRecharge]);
+  // const firstRechargeImg = useMemo(() => {
+  //   if (isFirstRecharge) {
+  //     return rechargeInfo.first_recharge?.image || '';
+  //   }
+  //   return '';
+  // }, [rechargeInfo, isFirstRecharge]);
 
   const rechargeImg = useMemo(() => {
     if (rechargeInfo) {
@@ -63,26 +63,28 @@ const RechargeCheckBoxes = () => {
   const renderBonusCard = () => {
     return (
       <>
-        {isFirstRecharge && (
-          <NativeTouchableOpacity activeOpacity={0.8}>
-            <View
-              style={[
-                styles.contentContainer,
-                isFirstRecharge && styles.selectedBorder,
-              ]}>
-              <LazyImage imageUrl={firstRechargeImg} width={140} height={80} />
-              {isFirstRecharge && renderTriangleIndicator()}
-            </View>
-          </NativeTouchableOpacity>
-        )}
+        {/*{isFirstRecharge && (*/}
+        {/*  <NativeTouchableOpacity activeOpacity={0.8}>*/}
+        {/*    <View*/}
+        {/*      style={[*/}
+        {/*        styles.contentContainer,*/}
+        {/*        isFirstRecharge && styles.selectedBorder,*/}
+        {/*      ]}>*/}
+        {/*      <LazyImage imageUrl={firstRechargeImg} width={140} height={80} />*/}
+        {/*      {isFirstRecharge && renderTriangleIndicator()}*/}
+        {/*    </View>*/}
+        {/*  </NativeTouchableOpacity>*/}
+        {/*)}*/}
         <NativeTouchableOpacity activeOpacity={0.8}>
           <View
             style={[
               styles.contentContainer,
-              !isFirstRecharge && styles.selectedBorder,
+              // !isFirstRecharge && styles.selectedBorder,
+              styles.selectedBorder,
             ]}>
             <LazyImage imageUrl={rechargeImg} width={140} height={80} />
-            {!isFirstRecharge && renderTriangleIndicator()}
+            {/*{!isFirstRecharge && renderTriangleIndicator()}*/}
+            {renderTriangleIndicator()}
           </View>
         </NativeTouchableOpacity>
       </>

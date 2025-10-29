@@ -5,13 +5,11 @@ import {useTranslation} from 'react-i18next';
 import theme from '@/style';
 import {goTo, goBack} from '@/utils';//goBack,
 import globalStore from '@/services/global.state';
-
 import {LazyImageLGBackground} from '@/components/basic/image';
 import DetailNavTitle from '@/components/business/detail-nav-title';
 import RechargeBalance from './recharge-balance';
 import RechargeSelect from './recharge-select';
 import RechargeChannel from './recharge-channel';
-import RechargeButton from '@/components/business/recharge-button';
 import Spin from '@/components/basic/spin';
 import RechargeRule from './recharge-rule';
 import { useFocusEffect } from '@react-navigation/native';
@@ -31,6 +29,7 @@ import useCouponStore from '@/store/useCouponStore';
 // 导入Adjust事件跟踪函数
 import { trackFirstDeposit, trackRecharge, trackDepositAll } from '@/utils/AdjustEventTracker';
 import RechargeCheckBoxes from './recharge-checkboxes';
+import RechargeButton from '@/common-pages/recharge/RechargeButton';
 // import { background, backgroundColor } from '@/components/style';
 
 const Recharge = () => {
@@ -56,32 +55,6 @@ const Recharge = () => {
     };
   }, []);
 
-  const bBalance: number = Number(balance);
-  let exResult: number = 0;
-  const sortedBalanceList = [...balanceList].sort(
-    (a, b) => a.balance - b.balance,
-  );
-  for (let i = 0; i < sortedBalanceList.length - 1; i++) {
-    if (
-      sortedBalanceList[i].balance <= bBalance &&
-      bBalance < sortedBalanceList[i + 1].balance
-    ) {
-      exResult = (sortedBalanceList[i].giveBalance / 100) * bBalance;
-      // exResult = (sortedBalanceList[i].giveBalance);
-      break; // 找到后退出循环
-    }
-
-    // 在循环内直接处理大于或等于最大值的情况
-    if (
-      i === sortedBalanceList.length - 2 &&
-      bBalance >= sortedBalanceList[i + 1].balance
-    ) {
-      const lastItem = sortedBalanceList[i + 1];
-      exResult = (lastItem.giveBalance / 100) * bBalance;
-      // exResult = (lastItem.giveBalance);
-      break;
-    }
-  }
   const payMethodItem = useMemo(
     () => paymethodList.find(p => p.id === payMethodId),
     [paymethodList, payMethodId]
@@ -277,6 +250,41 @@ const Recharge = () => {
     }
   };
   const payMethodStr = payMethodItem?.payName ? `${payMethodItem?.payName}(${`Limit: ${payMethodItem.minAmount} - ${payMethodItem.maxAmount}`})` : '';
+
+  const exResult = useMemo(() => {
+    if (!balance || !balanceList || balanceList.length === 0) {
+      return 0;
+    }
+
+    const bBalance: number = Number(balance);
+
+    // 排序balanceList按照balance属性做升序
+    const sortedBalanceList = [...balanceList].sort(
+      (a, b) => a.balance - b.balance,
+    );
+
+    if (bBalance < balanceList[0].balance) {
+      return 0;
+    }
+
+    // 找到第一个balance属性大于bBalance的项
+    const targetIndex = sortedBalanceList.findIndex(item => item.balance > bBalance);
+
+    if (targetIndex > 0) {
+      // 取前一个项的giveBalance
+      const previousItem = sortedBalanceList[targetIndex - 1];
+      return previousItem.giveBalance;
+    }
+
+    // 如果没有找到大于bBalance的项，说明bBalance大于等于所有项，取最后一个项
+    if (sortedBalanceList.length > 0) {
+      const lastItem = sortedBalanceList[sortedBalanceList.length - 1];
+      return lastItem.giveBalance;
+    }
+
+    return 0;
+  }, [balance, balanceList]);
+
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle
@@ -288,15 +296,21 @@ const Recharge = () => {
       <Spin loading={loading} style={[theme.flex.flex1, theme.flex.col, {backgroundColor: theme.basicColor.newBgInTwo}]}>
         <View style={[theme.flex.flex1, theme.flex.basis0]}>
           <ScrollView>
-            <View style={[{backgroundColor: theme.basicColor.newBgInThree}]}>
+            {/*<View style={[{backgroundColor: theme.basicColor.newBgInThree}]}>*/}
+            {/*  <RechargeBalance*/}
+            {/*    balance={amount}*/}
+            {/*    payMethod={payMethodStr}*/}
+            {/*    onRefresh={handleRefresh}*/}
+            {/*    onGotoRecords={handleGotoRecords}*/}
+            {/*  />*/}
+            {/*</View>*/}
+            <View style={[theme.padding.lrl]}>
               <RechargeBalance
                 balance={amount}
                 payMethod={payMethodStr}
                 onRefresh={handleRefresh}
                 onGotoRecords={handleGotoRecords}
               />
-            </View>
-            <View style={[theme.padding.lrl]}>
               <RechargeCheckBoxes />
               <RechargeSelect
                 min={payMethodItem?.minAmount || 0}
@@ -322,11 +336,9 @@ const Recharge = () => {
           disabled={balance === '' || +balance <= 0}
           onRecharge={handleRecharge}
           text={
-            i18n.t('label.recharge') +
             (exResult > 0
-              ? '( ' +
-                i18n.t('recharge-page.extra') +
-                ` +₹${exResult.toFixed(2).toString()} )`
+              ? i18n.t('recharge-page.extra') +
+                ` +₹ ${exResult.toFixed(2).toString()}`
               : '')
           }
         />
