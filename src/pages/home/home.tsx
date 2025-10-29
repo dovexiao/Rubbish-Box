@@ -164,10 +164,11 @@ const Home = () => {
   };
   const onFocusEffect = useCallback(() => {
     const sub = globalStore.tokenSubject.subscribe(token => {
-      setLogin(!!token);
-      if (token) {
-        getRecharge();
-      }
+      // setLogin(!!token);
+      // if (token) {
+      //   getRecharge();
+      // }
+      getRecharge();
     });
     const msgSub = globalStore.notificationSubject.subscribe(_countInfo => {});
     return () => {
