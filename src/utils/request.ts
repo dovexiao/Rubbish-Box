@@ -148,36 +148,35 @@ const createHTTP = ({
 
   // 响应拦截器
   http.interceptors.response.use(
-    <T>(response: AxiosResponse<{data: T; code: number; msg: string}>) => {
+    <T>(response: AxiosResponse<{ data: T; code: number; msg: string }>) => {
       if (response.status === 200) {
-        if (
-          response.data.code === -1
-          // TODO 授权失败返回-1
-          // 授权失败导致的登录一律返回首页
-          // 应该尽可能避免被接口触发,而应该通过前端逻辑或者路由守卫
-          // response.data.msg === 'Authorization failed!'
-        ) {
+        const { code, data } = response.data;
+
+        if (code === -1) {
+          // 授权失败，不提示错误文案，只做登出和跳转
           globalStore.token = null;
           globalStore.userInfo = null;
           useUserStore.getState().loginOut();
-          goTo('Login', {
-            backPage: globalStore.homePage,
-          });
-        } else if (response.data.code === 0) {
-          return response.data.data;
-        } else if (response.data.code === 14) {
-          // TODO 这里专门为代理接口处理异常,应该使用新的接口后删除这段逻辑
-          return response.data.data;
-        } else {
-          return rejectResponse(response);
+          goTo('Login', { backPage: globalStore.homePage });
+          // 直接返回一个被中断的 Promise，不触发错误提示
+          return Promise.reject(null);
         }
+
+        if (code === 0 || code === 14) {
+          // 正常情况
+          return data;
+        }
+
+        // 其他错误情况统一走错误提示
+        return rejectResponse(response);
       }
+
       return rejectResponse(response);
     },
     error => {
       globalStore.globalTotal.next({
         type: 'warning',
-        message: error.message,
+        message: error?.message || 'Network Error',
         backgroundColor: '#A1251C',
       });
       errorLog('响应拦截器错误:', error);
