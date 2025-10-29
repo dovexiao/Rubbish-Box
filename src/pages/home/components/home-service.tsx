@@ -57,22 +57,24 @@ const HomeService = ({
       {/*  </TouchableOpacity>*/}
       {/*)}*/}
 
-      <TouchableOpacity
-        style={{marginBottom: 8}}
-        onPress={() => {
-          // if (!isLogin) {
-          //   goTo('Login');
-          //   return;
-          // }
-          toggleModal();
-        }}>
-        <LazyImage
-          width={60}
-          height={60}
-          // imageUrl={require('@assets/gif/first-recharge.gif')}
-          imageUrl={menuImgUrl || ''}
-        />
-      </TouchableOpacity>
+      {menuImgUrl && (
+        <TouchableOpacity
+          style={{marginBottom: 8}}
+          onPress={() => {
+            // if (!isLogin) {
+            //   goTo('Login');
+            //   return;
+            // }
+            toggleModal();
+          }}>
+          <LazyImage
+            width={60}
+            height={60}
+            // imageUrl={require('@assets/gif/first-recharge.gif')}
+            imageUrl={menuImgUrl || ''}
+          />
+        </TouchableOpacity>
+      )}
 
       {Platform.OS !== 'web' ? (
         <TouchableOpacity onPress={goCS}>
