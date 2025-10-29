@@ -20,12 +20,12 @@ const mainPackage = [
   {
     title: 'prodluckyone',
     channelList:[
-      'luFB01',
-      'luFB02',
-      'luFB03',
-      'luFB04',
-      'luFB05',
-      'luFB06',
+      // 'luFB01',
+      // 'luFB02',
+      // 'luFB03',
+      // 'luFB04',
+      // 'luFB05',
+      // 'luFB06',
       'lucky101'
     ]
   },
@@ -62,18 +62,18 @@ const mainPackage = [
       'spins007'
     ]
   },
-  {
-    title: 'prodsupbetone',
-    channelList:[
-      // 'sboFB01',
-      // 'sboFB02',
-      // 'sboFB03',
-      // 'sboFB04',
-      // 'sboFB05',
-      // 'sboFB06',
-      'supbet001'
-    ]
-  },
+  // {
+  //   title: 'prodsupbetone',
+  //   channelList:[
+  //     // 'sboFB01',
+  //     // 'sboFB02',
+  //     // 'sboFB03',
+  //     // 'sboFB04',
+  //     // 'sboFB05',
+  //     // 'sboFB06',
+  //     'supbet001'
+  //   ]
+  // },
   {
     title: 'prodsupbetseven',
     channelList:[
