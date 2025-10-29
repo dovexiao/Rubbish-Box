@@ -39,7 +39,7 @@ export default StyleSheet.create({
   },
   vipNavsItem: {
     paddingTop: 3,
-    height: (81 * globalStore.screenWidth) / 375,
+    height: (81 * globalStore.screenWidth) / 375 + 2,
     alignItems: 'center',
     position: 'relative',
   },
