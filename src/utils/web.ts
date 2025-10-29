@@ -185,12 +185,12 @@ export const downloadApk = () => {
   //     `);
   //   }
   // }
-  if (channelId === 'winlucky001') {
+  if (channelId === 'supbet001') {
     // location.href = envConfig.downloadUrl || '';
-    location.href = 'https://www.staticimg007.com/apk/winlucky001.apk';
+    location.href = 'https://www.staticimg007.com/apk/supbet001.apk';
   } else {
     // location.href = envConfig.downloadChannelUrl || '';
 
-    location.href = `https://www.staticimg007.com/apk/winlucky001_${channelId}.apk`;
+    location.href = `https://www.staticimg007.com/apk/supbet001_${channelId}.apk`;
   }
 };

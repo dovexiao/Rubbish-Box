@@ -203,8 +203,8 @@ const RechargeBonusCard: React.FC<RechargeBonusCardProps> = ({
                     : index === 1
                     ? '2nd'
                     : index === 2
-                    ? '3st'
-                    : '4st'}
+                    ? '3rd'
+                    : '4th'}
                 </Text>
               </View>
             );
