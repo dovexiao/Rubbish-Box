@@ -335,7 +335,7 @@ function App(): JSX.Element {
   //   }
   // }, [codeInited]);
 
-  const popImageWidth = screenWidth;
+  const popImageWidth = screenWidth * 0.8;
   const [popVisible, setPopVisible] = React.useState(false);
   const [bannerList, setBannerList] = useState<any[]>([]);
   // const [overlayState, setOverlayState] = useState<
@@ -377,7 +377,7 @@ function App(): JSX.Element {
                 },
                 error => {
                   // 如果获取失败，使用默认比例显示
-                  setImageRatio(281 / 360);
+                  setImageRatio(948 / 712);
                   setBannerList(popInfo);
                   setPopVisible(true);
                   setCurrentBannerIndex(0);
