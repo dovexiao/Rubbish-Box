@@ -78,11 +78,12 @@ const RechargeQipao: React.FC<RechargeQipaoProps> = ({
   }, [scale]);
 
   // 应用动画样式
+  // 添加依赖数组以支持 Web 环境
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: scale.value}],
     };
-  });
+  }, [scale]);
 
   // 气泡样式：左下角为直角，其他三个角使用半角值
   const bubbleStyle: ViewStyle = {
