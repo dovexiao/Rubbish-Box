@@ -5,6 +5,7 @@ import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 import {goToWithLogin} from '@utils';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
+import LazyImage from '@basicComponents/image/lazy-image';
 
 interface HomePopTwoProps {
   isImageVisible: boolean;
@@ -65,19 +66,25 @@ const HomePopTwo: React.FC<HomePopTwoProps> = ({
       visible={isImageVisible}
       onRequestClose={closeImage}
       animationType="fade">
-      <View style={styles.modalOverlay}>
+      <View style={[styles.modalOverlay]}>
         {isLoaded && (
           <NativeTouchableOpacity activeOpacity={0.9} onPress={onImage}>
-            <Image
-              source={{uri: dynamicUrl}}
-              resizeMode="contain"
-              style={{
-                width: screenWidth * 0.95,
-                height: Math.min(
-                  screenWidth * 0.95 * imgRatio,
-                  screenHeight * 0.9,
-                ),
-              }}
+            {/*<Image*/}
+            {/*  source={{uri: dynamicUrl}}*/}
+            {/*  resizeMode="contain"*/}
+            {/*  style={{*/}
+            {/*    width: screenWidth,*/}
+            {/*    height: screenWidth * imgRatio,*/}
+            {/*    // height: Math.min(*/}
+            {/*    //   screenWidth * 0.95 * imgRatio,*/}
+            {/*    //   screenHeight * 0.9,*/}
+            {/*    // ),*/}
+            {/*  }}*/}
+            {/*/>*/}
+            <LazyImage
+              width={screenWidth}
+              height={screenWidth * imgRatio}
+              imageUrl={dynamicUrl || ''}
             />
           </NativeTouchableOpacity>
         )}
