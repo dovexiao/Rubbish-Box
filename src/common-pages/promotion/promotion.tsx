@@ -264,6 +264,7 @@ const Promotion = () => {
     try {
       // const sevenRes = await getSevenDayRewards();
       const sevenRes = await getActivityWeekSignInList();
+      // console.log('7天活动信息', sevenRes);
       if (sevenRes?.length) {
         setSevenInfo(sevenRes);
         setCanGetNum(
@@ -282,7 +283,7 @@ const Promotion = () => {
     try {
       // const rechargeData = await getListRecharge();
       const rechargeRes = await getActivityRechargeList();
-      console.log('复充列表', rechargeRes);
+      // console.log('复充列表', rechargeRes);
       // if (rechargeData?.countdownTimestamp) {
       //   const futureTimestamp = rechargeData?.countdownTimestamp; // 目标时间戳（毫秒）
       //   const currentTimestamp = Date.now();

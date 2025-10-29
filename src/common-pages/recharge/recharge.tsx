@@ -326,10 +326,10 @@ const Recharge = () => {
                 balance={balance}
               />
             </View>
-              <View style={[theme.padding.lrxxl]}>
-                <RechargeRule />
-              </View>
-              {/* <View style={[{height: 30}]}></View> */}
+            <View style={[theme.padding.lrxxl]}>
+              <RechargeRule />
+            </View>
+            {/* <View style={[{height: 30}]}></View> */}
           </ScrollView>
         </View>
         <RechargeButton

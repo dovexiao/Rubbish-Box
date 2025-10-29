@@ -11,6 +11,7 @@ import {useInnerStyle} from './recharge.hooks';
 import LinearGradient from '@/components/basic/linear-gradient';
 // import globalStore from '@/services/global.state';
 import {BalanceListItem} from './recharge.service';
+import RechargeQipao from '@/common-pages/recharge/recharge-qipao';
 
 export interface RechargeSelectProps {
   min: number;
@@ -75,119 +76,125 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
         {balanceList.map((bl, index) => {
           // const isSelected = bl.balance + '' === balance;
           // const bonusValue = (bl.balance * bl.giveBalance) / 100;
-
           return (
             <NativeTouchableOpacity
               key={index}
               style={[selectStyles.item, theme.flex.col, {marginBottom: 12,}]}
               onPress={() => onChangeBalance(bl.balance + '')}>
               {bl.balance + '' !== balance ? (
-              <LinearGradient
-                start={{x: 0, y: 0}}
-                end={{x: 0, y: 1}}
-                // colors={[
-                //   theme.basicColor.newBgInOne,
-                //   theme.basicColor.newBgInOne,
-                // ]}
-                colors={['#5B0101', '#5B0101']}
-                style={[
-                  theme.flex.center,
-                  theme.borderRadius.s,
-                  selectStyles.item,
-                ]}>
-                {bl.giveBalance !== 0 && (
-                  <ImageBackground
-                    style={[
-                      {
-                        width: 60,
-                        height: 17.6,
-                        position: 'absolute',
-                        top: -8,
-                        right: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      },
-                    ]}
-                    source={require('@assets/icons/wallet/qipao.webp')}>
-                    <Text
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 0, y: 1}}
+                  // colors={[
+                  //   theme.basicColor.newBgInOne,
+                  //   theme.basicColor.newBgInOne,
+                  // ]}
+                  colors={['#5B0101', '#5B0101']}
+                  style={[
+                    theme.flex.center,
+                    theme.borderRadius.s,
+                    selectStyles.item,
+                  ]}>
+                  {bl.giveBalance !== 0 && (
+                    // <ImageBackground
+                    //   style={[
+                    //     {
+                    //       width: 60,
+                    //       height: 17.6,
+                    //       position: 'absolute',
+                    //       top: -8,
+                    //       right: 0,
+                    //       display: 'flex',
+                    //       justifyContent: 'center',
+                    //       alignItems: 'center',
+                    //     },
+                    //   ]}
+                    //   source={require('@assets/icons/wallet/qipao.webp')}>
+                    //   <Text
+                    //     fontSize={theme.fontSize.xs}
+                    //     color={theme.basicColor.white}>
+                    //     {i18n.t('recharge-page.extra')}+
+                    //     {toPriceStr(bl.giveBalance, {
+                    //       fixed: 0,
+                    //       showCurrency: false,
+                    //       thousands: true,
+                    //     })}
+                    //   </Text>
+                    // </ImageBackground>
+                    <RechargeQipao
+                      height={18}
+                      text={
+                        i18n.t('recharge-page.extra') + '+' +
+                        toPriceStr(bl.giveBalance, {
+                          fixed: 0,
+                          showCurrency: false,
+                          thousands: true,
+                        })
+                      }
                       fontSize={theme.fontSize.xs}
-                      color={theme.basicColor.white}>
-                      {i18n.t('recharge-page.extra')}+
-                      {toPriceStr(bl.giveBalance, {
-                        fixed: 0,
-                        showCurrency: false,
-                        thousands: true,
-                      })}
-                      {/*%*/}
-                    </Text>
-                  </ImageBackground>
-                )}
+                      color={theme.basicColor.white}
+                      gradientColors={theme.basicColor.newButtonLinear}
+                      borderRadius={9}
+                      top={-9}
+                      right={0}
+                    />
+                  )}
 
-                <Text
-                  fontSize={17}
-                  color={theme.basicColor.newFontWhite}
-                  style={[{fontWeight: '900'}]}>
-                  ₹{' '}
-                  {toPriceStr(bl.balance, {
-                    fixed: 0,
-                    showCurrency: false,
-                    thousands: true,
-                  })}
-                </Text>
-              </LinearGradient>
-            ) : (
-              <LinearGradient
-                start={{x: 0.5, y: 1}} // 起点：底部中间
-                end={{x: 0.5, y: 0}} // 终点：顶部中间
-                colors={theme.basicColor.newButtonLinear}
-                style={[
-                  theme.flex.center,
-                  selectStyles.item,
-                  theme.borderRadius.s,
-                ]}>
-                {bl.giveBalance !== 0 && (
-                  <ImageBackground
-                    style={[
-                      {
-                        width: 60,
-                        height: 17.6,
-                        position: 'absolute',
-                        top: -8,
-                        right: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      },
-                    ]}
-                    source={require('@assets/icons/wallet/qipao.webp')}>
-                    <Text
+                  <Text
+                    fontSize={17}
+                    color={theme.basicColor.newFontWhite}
+                    style={[{fontWeight: '900'}]}>
+                    ₹{' '}
+                    {toPriceStr(bl.balance, {
+                      fixed: 0,
+                      showCurrency: false,
+                      thousands: true,
+                    })}
+                  </Text>
+                </LinearGradient>
+              ) : (
+                <LinearGradient
+                  start={{x: 0.5, y: 1}} // 起点：底部中间
+                  end={{x: 0.5, y: 0}} // 终点：顶部中间
+                  colors={theme.basicColor.newButtonLinear}
+                  style={[
+                    theme.flex.center,
+                    selectStyles.item,
+                    theme.borderRadius.s,
+                  ]}>
+                  {bl.giveBalance !== 0 && (
+                    <RechargeQipao
+                      height={18}
+                      text={
+                        i18n.t('recharge-page.extra') + '+' +
+                        toPriceStr(bl.giveBalance, {
+                          fixed: 0,
+                          showCurrency: false,
+                          thousands: true,
+                        })
+                      }
                       fontSize={theme.fontSize.xs}
-                      color={theme.basicColor.white}>
-                      {i18n.t('recharge-page.extra')}+{' '}
-                      {toPriceStr(bl.giveBalance, {
-                        fixed: 0,
-                        showCurrency: false,
-                        thousands: true,
-                      })}
-                      {/*%*/}
-                    </Text>
-                  </ImageBackground>
-                )}
+                      color={theme.basicColor.white}
+                      gradientColors={theme.basicColor.newButtonLinear}
+                      borderRadius={9}
+                      top={-8}
+                      right={0}
+                    />
+                  )}
 
-                <Text
-                  fontSize={17}
-                  color={theme.basicColor.white}
-                  style={[{fontWeight: '900'}]}>
-                  ₹{' '}
-                  {toPriceStr(bl.balance, {
-                    fixed: 0,
-                    showCurrency: false,
-                    thousands: true,
-                  })}
-                </Text>
-              </LinearGradient>
-            )}
+                  <Text
+                    fontSize={17}
+                    color={theme.basicColor.white}
+                    style={[{fontWeight: '900'}]}>
+                    ₹{' '}
+                    {toPriceStr(bl.balance, {
+                      fixed: 0,
+                      showCurrency: false,
+                      thousands: true,
+                    })}
+                  </Text>
+                </LinearGradient>
+              )}
             </NativeTouchableOpacity>
           );
         })}
@@ -201,7 +208,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
             theme.borderRadius.xs,
             theme.margin.btms,
             theme.border.main,
-            {backgroundColor: '#5B0101'}
+            {backgroundColor: '#5B0101'},
           ]}>
           <Input
             containerStyle={[theme.padding.lrm, inputStyles.container]}

@@ -8,6 +8,7 @@ import {useTranslation} from 'react-i18next';
 import {useResponsiveDimensions} from '@/utils';
 // import globalStore from '@/services/global.state';
 import LinearGradient from '@/components/basic/linear-gradient';
+import RechargeQipao from '@/common-pages/recharge/recharge-qipao';
 export interface RechargeButtonProps {
   disabled?: boolean;
   type?: ButtonType;
@@ -68,9 +69,18 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
               style={{textAlign: 'center', fontWeight: 'bold'}}>
               {i18n.t('label.recharge')}
             </Text>
-            {`(${text})`}
           </Text>
         </Button>
+        <RechargeQipao
+          height={24}
+          text={text || ''}
+          fontSize={theme.fontSize.s}
+          color={theme.basicColor.white}
+          gradientColors={theme.basicColor.newButtonLinear}
+          borderRadius={11}
+          top={-8}
+          right={60}
+        />
       </LinearGradient>
     </View>
   );
