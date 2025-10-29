@@ -335,7 +335,7 @@ function App(): JSX.Element {
   //   }
   // }, [codeInited]);
 
-  const popImageWidth = screenWidth * 0.75;
+  const popImageWidth = screenWidth;
   const [popVisible, setPopVisible] = React.useState(false);
   const [bannerList, setBannerList] = useState<any[]>([]);
   // const [overlayState, setOverlayState] = useState<
@@ -352,7 +352,7 @@ function App(): JSX.Element {
   //   title: '',
   //   imageRatio: 281 / 360,
   // });
-  const [imageRatio, setImageRatio] = useState(281 / 360);
+  const [imageRatio, setImageRatio] = useState(948 / 712);
   const versionModal = useVersionModal(
     false,
     () => {
@@ -583,6 +583,7 @@ function App(): JSX.Element {
       {popVisible && ['Home', 'Index'].includes(currentRouteName) && (
         <Overlay
           isVisible={popVisible}
+          backdropStyle={[{backgroundColor: 'rgba(0,0,0,0.60)'}]}
           overlayStyle={[
             theme.padding.zorro,
             theme.flex.centerByCol,
@@ -617,7 +618,7 @@ function App(): JSX.Element {
           <NativeTouchableOpacity
             style={{
               right: -110 * basePx,
-              bottom: 470 * basePx,
+              bottom: 532 * basePx,
             }}
             onPress={handleCloseBanner}>
             <Image

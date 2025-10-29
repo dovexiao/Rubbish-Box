@@ -85,10 +85,11 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 0, y: 1}}
-                colors={[
-                  theme.basicColor.newBgInOne,
-                  theme.basicColor.newBgInOne,
-                ]}
+                // colors={[
+                //   theme.basicColor.newBgInOne,
+                //   theme.basicColor.newBgInOne,
+                // ]}
+                colors={['#5B0101', '#5B0101']}
                 style={[
                   theme.flex.center,
                   theme.borderRadius.s,
@@ -200,6 +201,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
             theme.borderRadius.xs,
             theme.margin.btms,
             theme.border.main,
+            {backgroundColor: '#5B0101'}
           ]}>
           <Input
             containerStyle={[theme.padding.lrm, inputStyles.container]}

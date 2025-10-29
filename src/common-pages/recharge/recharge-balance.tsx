@@ -51,14 +51,24 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
               </Text>
             </View>
             <View
-              style={[theme.flex.row, theme.flex.alignEnd, theme.margin.topm]}>
-              <Text style={styleSheet.balance}>
-                {toPriceStr(balance, {
-                  thousands: true,
-                  spacing: true,
-                  currency: globalStore.currency,
-                })}
-              </Text>
+              style={[
+                theme.flex.row,
+                theme.flex.alignEnd,
+                theme.margin.topm,
+                {alignItems: 'center', width: '100%'},
+              ]}>
+              <View style={{maxWidth: '85%'}}>
+                <Text
+                  style={styleSheet.balance}
+                  numberOfLines={1}
+                  ellipsizeMode={'tail'}>
+                  {toPriceStr(balance, {
+                    thousands: true,
+                    spacing: true,
+                    currency: globalStore.currency,
+                  })}
+                </Text>
+              </View>
               <NativeTouchableOpacity
                 activeOpacity={0.8}
                 onPress={onRefresh}
@@ -72,23 +82,30 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
               </NativeTouchableOpacity>
             </View>
           </View>
-          <NativeTouchableOpacity
-            activeOpacity={0.8}
-            style={[theme.flex.row, theme.flex.centerByCol]}
-            onPress={onGotoRecords}>
-            <View style={styleSheet.recordButton}>
-              <Text style={styleSheet.recordButtonText}>
-                {i18n.t('recharge-page.rechargeRecords')}
-              </Text>
-            </View>
-          </NativeTouchableOpacity>
+          <View style={{position: 'absolute', right: 16, top: 11}}>
+            <NativeTouchableOpacity
+              activeOpacity={0.8}
+              style={[theme.flex.row, theme.flex.centerByCol]}
+              onPress={onGotoRecords}>
+              <View style={styleSheet.recordButton}>
+                <Text style={styleSheet.recordButtonText}>
+                  {i18n.t('recharge-page.rechargeRecords')}
+                </Text>
+              </View>
+            </NativeTouchableOpacity>
+          </View>
         </View>
-        <View style={[theme.padding.lrl, theme.padding.tbs]}>
+        <View
+          style={[
+            // theme.padding.lrl,
+            // theme.padding.tbs,
+            {position: 'absolute', bottom: 7, left: 12},
+          ]}>
           <Text
             style={styleSheet.tips}
             fontSize={globalStore.isAndroid ? 10 : 12}>
             {i18n.t('recharge-page.currentMethod')} :
-            <Text style={styleSheet.tips}> {payMethod}</Text>
+            <Text style={styleSheet.tips}>{payMethod}</Text>
           </Text>
           <Text
             style={styleSheet.tips}
@@ -123,14 +140,14 @@ const styleSheet = StyleSheet.create({
     marginLeft: 6,
   },
   balance: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: '700',
     color: '#ffffff',
     fontFamily: 'Helvetica, Helvetica-Bold',
   },
   recordButton: {
     width: 121,
-    height: 30,
+    height: 25,
     backgroundColor: theme.basicColor.newButtonYellow,
     borderRadius: 16,
     display: 'flex',

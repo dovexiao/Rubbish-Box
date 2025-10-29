@@ -95,8 +95,9 @@ export function useInnerStyle() {
     },
     container: {
       height: scaleSize(143),
-      borderTopLeftRadius: theme.borderRadiusSize.l,
-      borderTopRightRadius: theme.borderRadiusSize.l,
+      borderRadius: theme.borderRadiusSize.l,
+      // borderTopLeftRadius: theme.borderRadiusSize.l,
+      // borderTopRightRadius: theme.borderRadiusSize.l,
       overflow: 'hidden',
     },
     bgBox: {
