@@ -335,7 +335,7 @@ function App(): JSX.Element {
   //   }
   // }, [codeInited]);
 
-  const popImageWidth = screenWidth * 0.8;
+  const popImageWidth = screenWidth * 0.85;
   const [popVisible, setPopVisible] = React.useState(false);
   const [bannerList, setBannerList] = useState<any[]>([]);
   // const [overlayState, setOverlayState] = useState<
@@ -618,7 +618,7 @@ function App(): JSX.Element {
           <NativeTouchableOpacity
             style={{
               right: -110 * basePx,
-              bottom: 532 * basePx,
+              bottom: 535 * basePx,
             }}
             onPress={handleCloseBanner}>
             <Image
