@@ -74,6 +74,7 @@ export default function EpubReader() {
   const [bookChapters, setBookChapters] = useState<Chapter[]>([])
   const [currentChapter, setCurrentChapter] = useState<Chapter | null>(null)
   const [chapterContent, setChapterContent] = useState("")
+  const [savedProgress, setSavedProgress] = useState<number>(0) // 从服务器获取的进度（0-1）
 
   // 分页相关状态
   const [allPages, setAllPages] = useState<string[]>([])
@@ -220,9 +221,8 @@ export default function EpubReader() {
     fontSize,
     theme,
     formatContentForPagination,
-    updateCurrentPageContent,
     currentChapter,
-  ])
+  ]) // 移除 updateCurrentPageContent 依赖，使用直接调用
 
   // 更新当前页面内容
   const updateCurrentPageContent = useCallback(
@@ -323,7 +323,7 @@ export default function EpubReader() {
         showInfo("已经是第一页")
       }
     }
-  }, [currentPageIndex, jumpToPage, bookChapters, currentChapter, jumpToChapter])
+  }, [currentPageIndex, jumpToPage, bookChapters, currentChapter]) // jumpToChapter 会在下面定义
 
   // 下一页
   const nextPage = useCallback(() => {
@@ -350,7 +350,7 @@ export default function EpubReader() {
         showInfo("已经是最后一页")
       }
     }
-  }, [currentPageIndex, totalPages, jumpToPage, bookChapters, currentChapter, jumpToChapter])
+  }, [currentPageIndex, totalPages, jumpToPage, bookChapters, currentChapter]) // jumpToChapter 会在下面定义
 
   // 加载章节内容
   const loadChapterContent = useCallback(
@@ -447,16 +447,30 @@ export default function EpubReader() {
       // 加载第一章或恢复阅读位置
       if (bookData.reading_history && bookData.chapters.length > 0) {
         const lastChapterId = bookData.reading_history.chapter
+        const lastProgress = bookData.reading_history.progress || 0 // 0-1 的小数
         const lastChapter = bookData.chapters.find((c) => c.id === lastChapterId)
 
+        console.log(`📖 [EPUB阅读器] 📚 恢复阅读记录:`, {
+          chapterId: lastChapterId,
+          chapterTitle: lastChapter?.title,
+          progress: lastProgress,
+          progressPercent: Math.round(lastProgress * 100) + '%',
+        })
+
+        // 保存服务器返回的进度
+        setSavedProgress(lastProgress)
+        
         if (lastChapter) {
           setCurrentChapter(lastChapter)
           await loadChapterContent(lastChapter.id)
+          // 注意：跳转到具体页码会在分页完成后的 useEffect 中处理
         } else if (bookData.chapters.length > 0) {
           setCurrentChapter(bookData.chapters[0])
           await loadChapterContent(bookData.chapters[0].id)
         }
       } else if (bookData.chapters.length > 0) {
+        console.log(`📖 [EPUB阅读器] 📚 没有阅读记录，从第一章开始`)
+        setSavedProgress(0)
         setCurrentChapter(bookData.chapters[0])
         await loadChapterContent(bookData.chapters[0].id)
       }
@@ -566,14 +580,64 @@ export default function EpubReader() {
     }
   }, [fontSize, currentTheme, chapterContent, pageWidth, pageHeight]) // 移除 paginateContent 依赖
 
-  // 页面隐藏时保存进度
+  // 分页完成后恢复阅读进度
   useEffect(() => {
-    const handleAppStateChange = () => {
-      saveProgressImmediately(currentChapter?.id, currentProgress)
+    if (totalPages > 0 && savedProgress > 0) {
+      // 根据进度计算页码（savedProgress 是 0-1 的小数）
+      const targetPageIndex = Math.floor(savedProgress * (totalPages - 1))
+      const clampedIndex = Math.max(0, Math.min(targetPageIndex, totalPages - 1))
+      
+      // 双页模式，确保是偶数页码（左页）
+      const evenPageIndex = clampedIndex % 2 === 0 ? clampedIndex : clampedIndex - 1
+      
+      console.log(`📖 [EPUB阅读器] 📄 恢复到页面:`, {
+        savedProgress,
+        totalPages,
+        targetPageIndex,
+        evenPageIndex,
+        pageNumber: evenPageIndex + 1,
+      })
+      
+      // 跳转到对应页面
+      setCurrentPageIndex(evenPageIndex)
+      updateCurrentPageContent(evenPageIndex)
+      
+      // 清除 savedProgress，避免重复跳转
+      setSavedProgress(0)
     }
+  }, [totalPages, savedProgress, updateCurrentPageContent])
 
-    return handleAppStateChange
-  }, [currentChapter, currentProgress, saveProgressImmediately])
+  // 使用 ref 保存最新的章节和进度，供组件卸载时使用
+  const currentChapterRef = useRef(currentChapter)
+  const currentProgressRef = useRef(currentProgress)
+  
+  useEffect(() => {
+    currentChapterRef.current = currentChapter
+    currentProgressRef.current = currentProgress
+  }, [currentChapter, currentProgress])
+  
+  // 组件卸载时保存进度
+  useEffect(() => {
+    // 返回 cleanup 函数，在组件卸载时执行
+    return () => {
+      console.log('📖 [EPUB阅读器] 🚪 组件卸载，保存阅读进度')
+      const chapterId = currentChapterRef.current?.id
+      const progress = currentProgressRef.current
+      
+      if (chapterId && progress >= 0) {
+        console.log('📖 [EPUB阅读器] 💾 保存进度:', {
+          chapterId,
+          progress,
+          chapterTitle: currentChapterRef.current?.title,
+        })
+        // 注意：cleanup 中不能使用 await，直接调用异步函数
+        saveProgressImmediately(chapterId, progress)
+      } else {
+        console.log('📖 [EPUB阅读器] ⚠️ 无有效进度可保存')
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // 空依赖数组，确保只在组件卸载时执行一次
 
   if (loading && !chapterContent) {
     return (

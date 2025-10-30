@@ -194,9 +194,9 @@ export default function MyScreen() {
     )
   }
 
-  // 处理编辑用户信息
+  // 处理编辑用户信息 - 跳转到编辑模式的完善信息页面
   const handleUserEditClick = () => {
-    router.push("/my/edit")
+    router.push("/complete-info?type=edit")
   }
 
   // 处理勋章点击

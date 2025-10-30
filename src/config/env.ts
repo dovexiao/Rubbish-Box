@@ -42,6 +42,8 @@ const API_URLS = {
   // 开发环境
   // [Environment.DEVELOPMENT]: "http://8.135.11.47:8000",
   [Environment.DEVELOPMENT]: "http://192.168.31.22:8080",
+    // [Environment.DEVELOPMENT]: "https://xiaohetx.cn",
+
 }
 
 // 上传地址配置

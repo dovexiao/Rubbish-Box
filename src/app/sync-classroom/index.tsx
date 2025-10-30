@@ -46,6 +46,7 @@ export default function SyncClassroomScreen() {
   const [expandedCourses, setExpandedCourses] = useState<Set<number>>(new Set())
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
+  const [isGradeInitialized, setIsGradeInitialized] = useState(false) // 防止重复初始化
 
   // 年级选项
   const gradeOptions = [
@@ -69,11 +70,62 @@ export default function SyncClassroomScreen() {
     "九年级-下册",
   ]
 
-  // 初始化用户年级
-  const initUserGrade = useCallback(() => {
-    const userGrade = userStore.userInfo?.grade || "一年级"
-    setSelectedGrade(`${userGrade}-上册`)
-  }, [userStore.userInfo?.grade])
+  // 初始化用户年级 - 移除 useCallback 避免无限循环
+  const initUserGrade = async () => {
+    // 防止重复初始化
+    if (isGradeInitialized) {
+      console.log('⏭️ 年级已初始化，跳过')
+      return
+    }
+    
+    try {
+      // 先获取最新的用户信息
+      const userInfo = await userStore.getUserInfo()
+      const userGrade = userInfo?.grade || "一年级"
+      const educationalSystem = userInfo?.educational_system || "六三" // 五四 or 六三
+      const gradeStage = userInfo?.grade_stage || "小学" // 小学 or 初中
+      
+      console.log('📚 获取用户年级信息:', { userGrade, educationalSystem, gradeStage })
+      
+      // 转换年级：初一/初二/初三/初四 → 对应的数字年级
+      let convertedGrade = userGrade
+      
+      if (gradeStage === "初中") {
+        // 初中年级需要转换
+        const gradeMapping: { [key: string]: { [key: string]: string } } = {
+          "六三": {
+            "初一": "七年级",
+            "初二": "八年级",
+            "初三": "九年级",
+          },
+          "五四": {
+            "初一": "六年级",
+            "初二": "七年级",
+            "初三": "八年级",
+            "初四": "九年级",
+          }
+        }
+        
+        convertedGrade = gradeMapping[educationalSystem]?.[userGrade] || userGrade
+      }
+      // 小学年级（一年级～六年级）直接使用，不需要转换
+      
+      console.log('📚 年级转换结果:', {
+        原始年级: userGrade,
+        学制: educationalSystem,
+        学段: gradeStage,
+        转换后年级: convertedGrade,
+        最终选项: `${convertedGrade}-上册`
+      })
+      
+      setSelectedGrade(`${convertedGrade}-上册`)
+      setIsGradeInitialized(true) // 标记已初始化
+    } catch (error) {
+      console.error('获取用户信息失败，使用默认年级:', error)
+      setSelectedGrade("一年级-上册")
+      setIsGradeInitialized(true) // 即使失败也标记已初始化
+    }
+  }
 
   // 获取科目列表
   const fetchSubjectList = useCallback(async () => {
@@ -399,10 +451,11 @@ export default function SyncClassroomScreen() {
     }))
   }, [courseResource.grouped_course_resources, expandedCourses])
 
-  // 初始化
+  // 初始化 - 只在组件挂载时执行一次
   useEffect(() => {
     initUserGrade()
-  }, [initUserGrade])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // 空依赖数组，只执行一次
 
   useEffect(() => {
     if (selectedGrade) {

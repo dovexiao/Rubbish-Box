@@ -18,6 +18,8 @@ interface PracticeQuestion {
   options: string[]
   correct_answer: number
   explanation?: string
+  student_answer?: number | string // 学生选择的答案
+  question_index?: number // 题号
 }
 
 /**
@@ -181,8 +183,15 @@ export default function AIPracticeScreen() {
       return answer === questions[index]?.correct_answer ? "correct" : "wrong"
     })
 
+    // 合并学生答案到题目数据中
+    const questionsWithAnswers = questions.map((question, index) => ({
+      ...question,
+      student_answer: selectedAnswers[index] !== undefined ? selectedAnswers[index] : "",
+      question_index: index + 1, // 添加题号
+    }))
+
     // 保存到AsyncStorage供详情页使用
-    await AsyncStorage.setItem("practiveList", JSON.stringify(questions))
+    await AsyncStorage.setItem("practiveList", JSON.stringify(questionsWithAnswers))
 
     // 直接跳转到结果页面
     router.replace({

@@ -35,7 +35,7 @@ export default function AIResultScreen() {
         if (params.id) {
           setType("作文")
           const res = await getCompositionCorrectionRecordDetails({ id: Number(params.id) })
-          setCompositionInfo(res)
+          setCompositionInfo(res.ai_response)
         }
         // 作文批改
         else if (params.resData) {
@@ -80,7 +80,7 @@ export default function AIResultScreen() {
         <NavBar title={type === "作文" ? "作文批改" : "试题批改"} leftArrow goBackDelta={1} />
       </View>
 
-      {/* 🔴 加载中状态 */}
+      {/* 加载状态 */}
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#4891FF" />
@@ -109,6 +109,16 @@ const styles = createStyles({
   header: {
     flexShrink: 0,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 10,
+    color: "#666",
+  },
   scrollContent: {
     flex: 1,
     height: 0,
@@ -116,17 +126,5 @@ const styles = createStyles({
   content: {
     paddingHorizontal: 15.625, // 20rpx转rpx
     paddingBottom: 15.625,
-  },
-  // 🔴 加载中样式
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
-    paddingVertical: 60,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 14,
-    color: "#666",
   },
 })

@@ -130,8 +130,9 @@ export function OrderConfirmPopup({
         onConfirm()
       }, 1500)
     } catch (error: any) {
-      showSnackbar(error.message || "兑换失败，请重试", "error")
+      // API层已经通过showError显示了错误，这里不再重复显示
       console.error("兑换失败:", error)
+      // 只需要记录错误日志即可
     }
   }
 

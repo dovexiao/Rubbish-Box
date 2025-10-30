@@ -34,6 +34,7 @@ export default function ErrorDetailScreen() {
       try {
         // 从AsyncStorage获取练习题列表
         const storedData = await AsyncStorage.getItem("practiveList")
+        console.log('practiveList', storedData )
         if (storedData) {
           const list = JSON.parse(storedData)
           setPractiveList(list)
@@ -42,7 +43,6 @@ export default function ErrorDetailScreen() {
         console.error("加载题目详情失败:", error)
       }
     }
-
     loadQuestionDetail()
   }, [params.index])
 
@@ -92,24 +92,41 @@ export default function ErrorDetailScreen() {
           <View style={styles.optionsList}>
             {currentQuestion.options &&
               currentQuestion.options.map((option, index) => {
-                const isCorrect = index.toString() === currentQuestion.correct_answer
-                const isStudentAnswer = index.toString() === currentQuestion.student_answer
-                const isWrong = isStudentAnswer && !isCorrect
+                // 转换 correct_answer 为数字类型进行比较
+                const correctAnswerIndex = typeof currentQuestion.correct_answer === 'number' 
+                  ? currentQuestion.correct_answer 
+                  : Number(currentQuestion.correct_answer)
+                
+                // 判断是否为正确答案
+                const isCorrectAnswer = index === correctAnswerIndex
+                
+                // 判断是否为学生选择的答案（排除空字符串、null、undefined）
+                const hasStudentAnswer = currentQuestion.student_answer !== "" && 
+                                        currentQuestion.student_answer != null
+                const studentAnswerIndex = hasStudentAnswer 
+                  ? (typeof currentQuestion.student_answer === 'number' 
+                      ? currentQuestion.student_answer 
+                      : Number(currentQuestion.student_answer))
+                  : -1
+                const isStudentAnswer = hasStudentAnswer && index === studentAnswerIndex
+                
+                // 判断学生答案是否错误
+                const isWrong = isStudentAnswer && !isCorrectAnswer
 
                 return (
                   <View key={index} style={styles.optionRow}>
                     <View
                       style={[
                         styles.optionLabel,
-                        isCorrect && styles.optionLabelCorrect,
+                        isCorrectAnswer && styles.optionLabelCorrect,
                         isWrong && styles.optionLabelWrong,
-                        !isCorrect && !isWrong && styles.optionLabelNeutral,
+                        !isCorrectAnswer && !isWrong && styles.optionLabelNeutral,
                       ]}
                     >
                       <Text
                         style={[
                           styles.optionLabelText,
-                          (isCorrect || isWrong) && styles.optionLabelTextActive,
+                          (isCorrectAnswer || isWrong) && styles.optionLabelTextActive,
                         ]}
                       >
                         {getOptionLabel(index)}
