@@ -21,9 +21,8 @@ import { useNetworkStatus } from "../hooks/useNetworkStatus"
 // 导入P1重要功能Hooks
 import { useSystemKeyListener } from "../hooks/useSystemKeyListener"
 import { useUpdateManager } from "../hooks/useUpdateManager"
-// 🔴 临时注释：坐姿检测功能
-// import { usePostureStore } from "../stores/postureStore"
-// import { useGlobalPostureMonitor } from "../hooks/useGlobalPostureMonitor"
+import { usePostureStore } from "../stores/postureStore"
+import { useGlobalPostureMonitor } from "../hooks/useGlobalPostureMonitor"
 import { useUserStore } from "../stores/userStore"
 import { createStyles, getScreenInfo } from "../utils/rpxStyleSheet"
 import RouteGuard from "../services/routeGuard"
@@ -125,9 +124,8 @@ export default function RootLayout() {
 
   // P1重要功能Hooks
   const { checkForUpdatesOnShow } = useUpdateManager()
-  // 🔴 临时注释：坐姿检测功能
-  // const postureStore = usePostureStore()
-  // const { startMonitoring: startPostureMonitoring, stopMonitoring: stopPostureMonitoring } = useGlobalPostureMonitor()
+  const postureStore = usePostureStore()
+  const { startMonitoring: startPostureMonitoring, stopMonitoring: stopPostureMonitoring } = useGlobalPostureMonitor()
 
   // 系统键监听回调 - 100%还原UniApp逻辑
   const systemKeyCallbacks = useMemo(() => ({
@@ -154,13 +152,12 @@ export default function RootLayout() {
     onAppLaunch: async () => {
       console.log("App Launch - 应用启动")
 
-      // 🔴 临时注释：坐姿检测功能
       // 初始化坐姿监测（还原UniApp逻辑）
-      // postureStore.initPoseMonitor()
+      postureStore.initPoseMonitor()
       
       // 启动全局坐姿监控
-      // console.log("🚀 启动全局坐姿监控")
-      // await startPostureMonitoring()
+      console.log("🚀 启动全局坐姿监控")
+      await startPostureMonitoring()
 
       // 登录页面不需要验证设备授权
       const currentPath = "/" + segments.join("/")
@@ -191,10 +188,9 @@ export default function RootLayout() {
         // P1功能：系统键监听的兜底处理
         systemKeyHandleAppShow()
 
-        // 🔴 临时注释：坐姿检测功能
         // 🔴 关键：每次回到前台都重新启动坐姿监控
-        // console.log("📱 恢复坐姿监控")
-        // await startPostureMonitoring()
+        console.log("📱 恢复坐姿监控")
+        await startPostureMonitoring()
       })
     },
 
@@ -209,12 +205,11 @@ export default function RootLayout() {
     onAppExit: async () => {
       console.log("应用退出")
       
-      // 🔴 临时注释：坐姿检测功能
       // 🔴 关键：应用退出时必须停止后台相机服务
-      // console.log("🛑 停止坐姿监控服务")
-      // await stopPostureMonitoring()
+      console.log("🛑 停止坐姿监控服务")
+      await stopPostureMonitoring()
     },
-  }), [segments, ensureDeviceAuth, checkForUpdatesOnShow, systemKeyHandleAppShow]) // 🔴 临时移除：postureStore, startPostureMonitoring, stopPostureMonitoring
+  }), [postureStore, startPostureMonitoring, stopPostureMonitoring, segments, ensureDeviceAuth, checkForUpdatesOnShow, systemKeyHandleAppShow])
 
   // 网络状态回调 - 100%还原UniApp逻辑
   const networkCallbacks = useMemo(() => ({

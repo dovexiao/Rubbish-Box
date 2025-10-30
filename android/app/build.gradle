@@ -89,12 +89,25 @@ android {
 
     namespace 'com.xhtx.app'
     defaultConfig {
-        applicationId 'com.xhtx.app'
+        applicationId 'com.xhtx.app.dev'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 10001
-        versionName "1.0.1"
+        versionName "1.0.1-dev"
+        
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", "false"
+        buildConfigField "boolean", "IS_HERMES_ENABLED", "true"
     }
+     sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets', '../../assets/audio', '../../assets/models']
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+    
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -181,4 +194,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    
+    // TensorFlow Lite for native pose detection (CPU + NNAPI only)
+    implementation 'org.tensorflow:tensorflow-lite:2.14.0'
 }

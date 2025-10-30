@@ -11,6 +11,13 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+  <!-- 前台服务权限 (Android 9+) -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+  <!-- 前台服务相机类型 (Android 10+) -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA"/>
+  <!-- 相机特性声明 -->
+  <uses-feature android:name="android.hardware.camera" android:required="false" />
+  <uses-feature android:name="android.hardware.camera.front" android:required="false" />
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
@@ -48,5 +55,12 @@
         <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
+    
+    <!-- 坐姿监控前台服务 -->
+    <service
+      android:name=".posture.PostureMonitorService"
+      android:enabled="true"
+      android:exported="false"
+      android:foregroundServiceType="camera" />
   </application>
 </manifest>

@@ -1,4 +1,5 @@
 import { get, post } from "./api"
+import { getDeviceCode } from "../utils/deviceInfo"
 
 // 使用统一的API配置，无需单独配置拦截器
 
@@ -84,4 +85,43 @@ export interface SaveMointorDataParams {
 
 export const saveMointorData = async (params: SaveMointorDataParams) => {
   return await post("/AppStart/UserInformation/add_study_duration/", params)
+}
+
+// 添加积分接口（坐姿奖励）
+export interface AddPointsParams {
+  points: string // 积分数（字符串格式）
+  devices: string // 设备唯一标识
+}
+
+export interface AddPointsResponse {
+  success: boolean
+  message?: string
+  points?: number
+}
+
+/**
+ * 添加积分接口
+ * 100%还原 UniApp 逻辑
+ */
+export const addPoints = async (points: number): Promise<AddPointsResponse> => {
+  try {
+    // 获取设备唯一标识
+    const deviceId = await getDeviceCode()
+    
+    console.log('📊 调用积分接口，设备ID:', deviceId, '积分:', points)
+    
+    const params: AddPointsParams = {
+      points: points.toString(), // 转换为字符串
+      devices: deviceId,
+    }
+    
+    const response = await post<AddPointsResponse>('/AppStart/Protected/add_points/', params)
+    
+    console.log('✅ 积分接口调用成功:', response)
+    
+    return response
+  } catch (error) {
+    console.error('❌ 调用积分接口失败:', error)
+    throw error
+  }
 }

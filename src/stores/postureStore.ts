@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { addPoints } from "../services/app"
 
 type PostureStatus =
   | "good"
@@ -148,22 +149,21 @@ export const usePostureStore = create<PostureState>((set, get) => ({
   // 处理奖励事件（100%还原UniApp逻辑）
   handlePostureReward: async (): Promise<boolean> => {
     try {
-      console.log("处理坐姿奖励事件")
+      console.log("🎁 处理坐姿奖励事件")
 
-      // 这里应该调用积分添加接口
-      // 暂时返回true，实际应该调用API
-      // const success = await addPoints(get().rewardConfig.rewardPoints);
-      const success = true // 模拟成功
+      // 🔴 调用真实的积分添加接口
+      const points = get().rewardConfig.rewardPoints
+      const response = await addPoints(points)
 
-      if (success) {
-        console.log("积分添加成功")
+      if (response && (response.success || response.points)) {
+        console.log("✅ 积分添加成功，获得积分:", points)
         return true
       } else {
-        console.error("积分添加失败")
+        console.error("❌ 积分添加失败:", response)
         return false
       }
     } catch (error) {
-      console.error("处理奖励失败:", error)
+      console.error("❌ 处理奖励失败:", error)
       return false
     }
   },

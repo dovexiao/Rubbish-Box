@@ -1,0 +1,93 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 1000;
+  padding: 0 10px;
+}
+
+#toolbar button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#toolbar button:hover {
+  background-color: #45a049;
+}
+
+#toolbar button:active {
+  background-color: #3d8b40;
+}
+
+#pageInfo {
+  color: white;
+  font-size: 14px;
+  margin: 0 10px;
+}
+
+#viewerContainer {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+  background-color: #f5f5f5;
+  padding-top: 40px;
+}
+
+.txtViewer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.content {
+  max-width: 800px;
+  width: 100%;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #333;
+}
+
+/* 横屏样式 */
+@media screen and (orientation: landscape) {
+  .content {
+    max-width: 1200px;
+  }
+}
+
+/* 竖屏样式 */
+@media screen and (orientation: portrait) {
+  .content {
+    max-width: 100%;
+  }
+}

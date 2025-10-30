@@ -9,7 +9,6 @@ import * as Brightness from "expo-brightness"
 
 import { StatusBar } from "../../components/StatusBar"
 import { NoticeBar } from "../../components/NoticeBar"
-// 🔴 临时注释：坐姿检测功能
 import { usePostureStore } from "../../stores/postureStore"
 import { useUserStore } from "../../stores/userStore"
 import { getLatestVideo, getNotifications, getHomeRanks } from "../../services/app"
@@ -33,7 +32,6 @@ const Text = ({ children, style, ...props }: any) => {
  * 100%还原UniApp项目中的pages/index/index
  */
 export default function HomeScreen() {
-  // 🔴 临时注释：坐姿检测功能
   // 只订阅需要的状态，避免不必要的重渲染
   const postureStatus = usePostureStore((state) => state.nowStatus)
   const [showSettingsPanel, setShowSettingsPanel] = useState(false)
@@ -70,7 +68,6 @@ export default function HomeScreen() {
     // globalImmersive.forceRestore()
   })
 
-  // 🔴 临时注释：坐姿检测功能
   // 获取坐姿状态文本
   const getPostureStatusText = () => {
     if (postureStatus === "no_person") return "正在检测"
@@ -84,11 +81,6 @@ export default function HomeScreen() {
 
   // 切换系统设置面板
   const toggleSettingsPanel = async () => {
-    // 🔴 临时注释：坐姿检测功能
-    // 临时测试：跳转到姿势检测页面
-    // router.push('/posture-test' as any)
-    // return
-    
     // 如果要打开面板，先获取当前亮度和音量
     if (!showSettingsPanel) {
       await getCurrentBrightness()
@@ -423,22 +415,8 @@ const openVolumeSettings = async () => {
 
         {/* 顶部工具栏 */}
         <View style={styles.topBar}>
-          {/* 🔴 临时注释：坐姿检测功能 */}
           {/* 左侧坐姿状态 */}
-          {/* <View style={styles.postureStatus}>
-            <View
-              style={[
-                styles.statusIndicator,
-                postureStatus === "good"
-                  ? styles.statusGood
-                  : postureStatus === "detecting" || postureStatus === "no_person"
-                    ? styles.statusDetecting
-                    : styles.statusBad,
-              ]}
-            />
-            <Text style={styles.statusText}>{getPostureStatusText()}</Text>
-          </View> */}
-            <View style={styles.postureStatus}>
+          <View style={styles.postureStatus}>
             <View
               style={[
                 styles.statusIndicator,

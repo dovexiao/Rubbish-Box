@@ -15,8 +15,12 @@ import {
   stopPostureMonitorService,
   postureMonitorEmitter 
 } from '../modules/PostureMonitorModule';
+import { saveMointorData } from '../services/app';
 
 const BAD_POSTURE_REMINDER_INTERVAL_SECONDS = 30; // 不良姿势每30秒提醒一次
+const HOUR_IN_SECONDS = 60 * 60; // 1小时 = 3600秒
+const REWARD_INTERVAL_SECONDS = 10 * 60; // 10分钟 = 600秒
+const DETECTION_INTERVAL_SECONDS = 10; // Native层每10秒发送一次状态
 
 export function useGlobalPostureMonitor() {
   const postureStore = usePostureStore();
@@ -24,6 +28,10 @@ export function useGlobalPostureMonitor() {
   const storage = useRef<PostureStorageService | null>(null);
   
   const detectionIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // 🔴 奖励计数器（独立于统计，用于奖励判断）
+  const rewardAccumulatedSeconds = useRef(0);
+  
   const statisticsRef = useRef<PostureStatistics>({
     good: 0,
     shouldersNotLevel: 0,
@@ -167,70 +175,131 @@ export function useGlobalPostureMonitor() {
   };
 
   /**
-   * 更新统计数据
+   * 更新统计数据（简化逻辑：直接累加时间）
    */
-  const updateStatistics = (status: PostureStatus) => {
-    const now = Date.now();
+  const updateStatistics = async (status: PostureStatus) => {
     const stats = statisticsRef.current;
 
     // 检查是否需要每日重置
     const today = new Date().setHours(0, 0, 0, 0);
     if (stats.dailyResetTime < today) {
+      stats.good = 0;
+      stats.shouldersNotLevel = 0;
+      stats.headNotCentered = 0;
+      stats.headNotUp = 0;
+      stats.total = 0;
       stats.goodPostureDuration = 0;
       stats.badPostureDuration = 0;
       stats.totalDuration = 0;
       stats.dailyResetTime = today;
+      rewardAccumulatedSeconds.current = 0; // 每日重置奖励计数
     }
 
-    // 计算时间差（秒）
-    const duration = (now - stats.lastUpdateTime) / 1000;
-    stats.totalDuration += duration;
+    // 🔴 简化逻辑：根据状态直接累加时间（Native每10秒发送一次）
+    switch (status) {
+      case 'good':
+        stats.good += DETECTION_INTERVAL_SECONDS; // 累加10秒
+        rewardAccumulatedSeconds.current += DETECTION_INTERVAL_SECONDS; // 奖励计数器也累加
+        postureStore.incrementGoodTime(DETECTION_INTERVAL_SECONDS);
+        break;
+      case 'shoulders_not_level':
+        stats.shouldersNotLevel += DETECTION_INTERVAL_SECONDS;
+        rewardAccumulatedSeconds.current += DETECTION_INTERVAL_SECONDS; // 所有有效状态都计入奖励
+        postureStore.incrementShoulderTiltTime(DETECTION_INTERVAL_SECONDS);
+        break;
+      case 'head_not_centered':
+        stats.headNotCentered += DETECTION_INTERVAL_SECONDS;
+        rewardAccumulatedSeconds.current += DETECTION_INTERVAL_SECONDS; // 所有有效状态都计入奖励
+        postureStore.incrementHeadTiltTime(DETECTION_INTERVAL_SECONDS);
+        break;
+      case 'head_not_up':
+        stats.headNotUp += DETECTION_INTERVAL_SECONDS;
+        rewardAccumulatedSeconds.current += DETECTION_INTERVAL_SECONDS; // 所有有效状态都计入奖励
+        postureStore.incrementHeadDownTime(DETECTION_INTERVAL_SECONDS);
+        break;
+      case 'no_person':
+      case 'detecting':
+        // 检测不到人或检测中，不增加计数
+        return; // 直接返回，不执行后续检查
+    }
 
-    if (status === 'good') {
-      stats.goodPostureDuration += duration;
-      postureStore.incrementGoodTime(duration);
-    } else if (status !== 'no_person' && status !== 'detecting') {
-      stats.badPostureDuration += duration;
+    // 🔴 计算总时长（所有状态的时间总和）
+    stats.total = stats.good + stats.shouldersNotLevel + stats.headNotCentered + stats.headNotUp;
+    stats.goodPostureDuration = stats.good;
+    stats.badPostureDuration = stats.shouldersNotLevel + stats.headNotCentered + stats.headNotUp;
+    stats.totalDuration = stats.total;
 
-      // 更新具体的不良姿势时间
-      if (status === 'head_not_centered') {
-        postureStore.incrementHeadTiltTime(duration);
-      } else if (status === 'head_not_up') {
-        postureStore.incrementHeadDownTime(duration);
-      } else if (status === 'shoulders_not_level') {
-        postureStore.incrementShoulderTiltTime(duration);
+    console.log(`📊 累计时间: 总计=${stats.total}秒, 良好=${stats.good}秒, 奖励累计=${rewardAccumulatedSeconds.current}秒`);
+
+    // 🔴 检查是否达到奖励阈值（600秒 = 10分钟）
+    if (rewardAccumulatedSeconds.current >= REWARD_INTERVAL_SECONDS) {
+      console.log(`✅ 达到奖励阈值: ${rewardAccumulatedSeconds.current}秒 >= ${REWARD_INTERVAL_SECONDS}秒`);
+      handleReward();
+      rewardAccumulatedSeconds.current = 0; // 🔴 重置奖励计数器，开始新一轮
+    }
+
+    // 🔴 检查是否达到1小时阈值（总时长 >= 3600秒）
+    if (stats.total >= HOUR_IN_SECONDS) {
+      console.log(`⏰ 达到1小时阈值(${HOUR_IN_SECONDS}秒)，上报学习时长并重置统计`);
+      
+      // 🔴 先调用接口上报学习时长（在重置之前）
+      try {
+        await saveMointorData({
+          correct_sitting_posture_time: stats.good, // 坐姿正确时间（秒）
+          head_tilt_time: stats.headNotCentered, // 头部倾斜时间（秒）
+          lowering_the_head_time: stats.headNotUp, // 低头时间（秒）
+          shoulder_tilt_time: stats.shouldersNotLevel, // 肩膀倾斜时间（秒）
+        });
+        console.log(`✅ 学习时长上报成功:`, {
+          正确坐姿: stats.good + '秒',
+          头部倾斜: stats.headNotCentered + '秒',
+          低头: stats.headNotUp + '秒',
+          肩膀倾斜: stats.shouldersNotLevel + '秒',
+        });
+      } catch (error) {
+        console.error('❌ 学习时长上报失败:', error);
+      }
+      
+      // 然后重置所有统计
+      stats.good = 0;
+      stats.shouldersNotLevel = 0;
+      stats.headNotCentered = 0;
+      stats.headNotUp = 0;
+      stats.total = 0;
+      stats.goodPostureDuration = 0;
+      stats.badPostureDuration = 0;
+      stats.totalDuration = 0;
+      
+      // 保存重置后的数据
+      if (storage.current) {
+        storage.current.saveStatistics(stats);
       }
     }
 
-    stats.lastUpdateTime = now;
-
-    // 每分钟保存一次统计数据
-    if (storage.current && Math.floor(stats.totalDuration) % 60 === 0) {
+    // 每600秒（10分钟）保存一次统计数据
+    if (storage.current && stats.total > 0 && stats.total % 600 === 0) {
       storage.current.saveStatistics(stats);
     }
 
-    // 检查是否达到奖励阈值
-    if (
-      stats.goodPostureDuration > 0 &&
-      stats.goodPostureDuration % postureStore.rewardConfig.goodPostureCount === 0
-    ) {
-      handleReward();
-    }
+    stats.lastUpdateTime = Date.now();
   };
 
   /**
-   * 处理奖励
+   * 处理奖励（学习 UniApp）
    */
   const handleReward = async () => {
-    const minutes = Math.floor(postureStore.rewardConfig.goodPostureCount / 60);
+    const seconds = postureStore.rewardConfig.goodPostureCount;
+    const minutes = Math.floor(seconds / 60);
     const points = postureStore.rewardConfig.rewardPoints;
+    
+    console.log(`🎉 触发奖励: 累计${seconds}秒(${minutes}分钟)，奖励${points}积分`);
     
     // 后台自动领取奖励
     const success = await postureStore.handlePostureReward();
     
     if (success) {
       // 使用 toast 显示奖励提示
-      showInfo(`🎉 太棒了！保持良好坐姿 ${minutes} 分钟，获得 ${points} 积分`);
+      showInfo(`🎉 太棒了！累计学习 ${minutes} 分钟，获得 ${points} 积分`);
     }
   };
 
