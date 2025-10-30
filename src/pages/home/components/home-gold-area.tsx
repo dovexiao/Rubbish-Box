@@ -98,7 +98,7 @@ const HomeGoldArea = ({
           <View style={[theme.flex.flex1]}>
             <Image
               style={styles.vipNavsItemImg}
-              source={require('@assets/gif/daily-rewards.webp')}
+              source={require('@assets/gif/daily-rewards.gif')}
             />
           </View>
           <Text fontFamily="fontInter" fontSize={12} second style={styles.text}>
@@ -116,7 +116,7 @@ const HomeGoldArea = ({
           <View style={[theme.flex.flex1]}>
             <Image
               style={styles.vipNavsItemImg}
-              source={require('@assets/gif/earn-money.webp')}
+              source={require('@assets/gif/earn-money.gif')}
             />
           </View>
           <Text fontFamily="fontInter" fontSize={12} second style={styles.text}>
@@ -140,7 +140,7 @@ const HomeGoldArea = ({
           <View style={[theme.flex.flex1]}>
             <Image
               style={styles.vipNavsItemImg}
-              source={require('@assets/gif/lucky.webp')}
+              source={require('@assets/gif/lucky.gif')}
               resizeMode={'contain'}
             />
           </View>
@@ -155,7 +155,7 @@ const HomeGoldArea = ({
           <View style={[theme.flex.flex1]}>
             <Image
               style={styles.vipNavsItemImg}
-              source={require('@assets/gif/lottery.webp')}
+              source={require('@assets/gif/lottery.gif')}
             />
           </View>
           <Text second style={styles.text} fontSize={12} fontFamily="fontInter">
