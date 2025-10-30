@@ -153,16 +153,19 @@ export interface PointsDetailResponse {
  * 收货地址单个项目
  */
 export interface AddressItem {
-  city: string
-  city_text: string
+  city: string // 城市文本
+  city_text: string // 城市文本（备用）
+  city_code?: string // 城市编码（可选）
   detail_address: string
-  district: string
-  district_text: string
+  district: string // 区县文本
+  district_text: string // 区县文本（备用）
+  district_code?: string // 区县编码（可选）
   id: number
   is_default: boolean
   phone: string
-  province: string
-  province_text: string
+  province: string // 省份文本
+  province_text: string // 省份文本（备用）
+  province_code?: string // 省份编码（可选）
   receiver_name: string
   user: string
 }

@@ -188,7 +188,6 @@ const styles = createStyles({
     marginTop: 8,
     backgroundColor: "#fff",
     height: "100%",
-    overflow: "hidden",
   },
   contentScroll: {
     height: "100%",
@@ -323,6 +322,7 @@ const styles = createStyles({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+ 
   },
   actionBtn: {
     backgroundColor: "#4891FF",

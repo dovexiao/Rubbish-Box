@@ -1,15 +1,17 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { Slot, useSegments } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import * as ScreenOrientation from "expo-screen-orientation"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { Provider as PaperProvider } from "react-native-paper"
-import { InteractionManager } from "react-native"
+import { InteractionManager, Platform, Modal, View, Text, TouchableOpacity } from "react-native"
 
 import ImmersiveWrapper from "../components/ImmersiveMode"
 import GlobalLoginManager from "../components/GlobalLoginManager"
 import GlobalUpdateDialog from "../components/GlobalUpdateDialog"
+import { GlobalToast } from "../components/GlobalToast"
+import { GlobalDialog } from "../components/GlobalDialog"
 // 导入P0核心功能Hooks
 import { useAppLifecycle } from "../hooks/useAppLifecycle"
 import { useDataSync } from "../hooks/useDataSync"
@@ -19,7 +21,9 @@ import { useNetworkStatus } from "../hooks/useNetworkStatus"
 // 导入P1重要功能Hooks
 import { useSystemKeyListener } from "../hooks/useSystemKeyListener"
 import { useUpdateManager } from "../hooks/useUpdateManager"
-import { usePostureStore } from "../stores/postureStore"
+// 🔴 临时注释：坐姿检测功能
+// import { usePostureStore } from "../stores/postureStore"
+// import { useGlobalPostureMonitor } from "../hooks/useGlobalPostureMonitor"
 import { useUserStore } from "../stores/userStore"
 import { createStyles, getScreenInfo } from "../utils/rpxStyleSheet"
 import RouteGuard from "../services/routeGuard"
@@ -38,6 +42,26 @@ export default function RootLayout() {
   // 路由守卫 - 使用ref跟踪组件是否已挂载
   const isMounted = React.useRef(false)
 
+  // 网络提示 Modal 状态
+  const [showNetworkModal, setShowNetworkModal] = useState(false)
+
+  // 打开系统网络设置
+  const openNetworkSettings = async () => {
+    setShowNetworkModal(false) // 先关闭弹窗
+    if (Platform.OS === "android") {
+      try {
+        // 使用 expo-intent-launcher 打开 Android 系统 WiFi 设置
+        const IntentLauncher = await import("expo-intent-launcher")
+        await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.WIFI_SETTINGS)
+        console.log("已打开系统 WiFi 设置")
+      } catch (error) {
+        console.error("打开系统 WiFi 设置失败:", error)
+      }
+    } else if (Platform.OS === "ios") {
+      // iOS 不允许直接打开系统设置，提示用户手动打开
+      console.log("iOS 平台，需要用户手动打开设置")
+    }
+  }
   useEffect(() => {
     // 第一次渲染时，标记组件为已挂载
     isMounted.current = true
@@ -101,10 +125,12 @@ export default function RootLayout() {
 
   // P1重要功能Hooks
   const { checkForUpdatesOnShow } = useUpdateManager()
-  const postureStore = usePostureStore()
+  // 🔴 临时注释：坐姿检测功能
+  // const postureStore = usePostureStore()
+  // const { startMonitoring: startPostureMonitoring, stopMonitoring: stopPostureMonitoring } = useGlobalPostureMonitor()
 
   // 系统键监听回调 - 100%还原UniApp逻辑
-  const systemKeyCallbacks = {
+  const systemKeyCallbacks = useMemo(() => ({
     onHomeKey: () => {
       console.log("Home键被按下")
       // Home键处理逻辑
@@ -118,18 +144,23 @@ export default function RootLayout() {
       // 还原UniApp逻辑：阻止退出应用，给个提示或跳首页
       return true // 返回true阻止默认行为
     },
-  }
+  }), [])
 
   // 使用系统键监听Hook
   const { handleAppShow: systemKeyHandleAppShow } = useSystemKeyListener(systemKeyCallbacks)
 
   // 应用生命周期回调 - 100%还原UniApp逻辑
-  const appLifecycleCallbacks = {
+  const appLifecycleCallbacks = useMemo(() => ({
     onAppLaunch: async () => {
       console.log("App Launch - 应用启动")
 
+      // 🔴 临时注释：坐姿检测功能
       // 初始化坐姿监测（还原UniApp逻辑）
-      postureStore.initPoseMonitor()
+      // postureStore.initPoseMonitor()
+      
+      // 启动全局坐姿监控
+      // console.log("🚀 启动全局坐姿监控")
+      // await startPostureMonitoring()
 
       // 登录页面不需要验证设备授权
       const currentPath = "/" + segments.join("/")
@@ -160,25 +191,33 @@ export default function RootLayout() {
         // P1功能：系统键监听的兜底处理
         systemKeyHandleAppShow()
 
-        // 这里可以添加其他进入前台时的逻辑
-        // 比如恢复监测等
+        // 🔴 临时注释：坐姿检测功能
+        // 🔴 关键：每次回到前台都重新启动坐姿监控
+        // console.log("📱 恢复坐姿监控")
+        // await startPostureMonitoring()
       })
     },
 
     onAppHide: () => {
       console.log("应用进入后台")
-      // 这里可以添加进入后台时的逻辑
-      // 比如停止监测、保存数据等
+      
+      // 注意：坐姿监控会在 useGlobalPostureMonitor 中自动处理
+      // 当应用进入后台时会自动暂停检测，回到前台时会自动恢复
+      console.log("📱 应用进入后台，监控状态会自动处理")
     },
 
-    onAppExit: () => {
+    onAppExit: async () => {
       console.log("应用退出")
-      // 应用退出时的清理逻辑
+      
+      // 🔴 临时注释：坐姿检测功能
+      // 🔴 关键：应用退出时必须停止后台相机服务
+      // console.log("🛑 停止坐姿监控服务")
+      // await stopPostureMonitoring()
     },
-  }
+  }), [segments, ensureDeviceAuth, checkForUpdatesOnShow, systemKeyHandleAppShow]) // 🔴 临时移除：postureStore, startPostureMonitoring, stopPostureMonitoring
 
   // 网络状态回调 - 100%还原UniApp逻辑
-  const networkCallbacks = {
+  const networkCallbacks = useMemo(() => ({
     onNetworkConnected: async () => {
       console.log("网络已连接")
       // 使用InteractionManager优化网络恢复性能
@@ -190,13 +229,14 @@ export default function RootLayout() {
 
     onNetworkDisconnected: () => {
       console.log("网络已断开")
-      // 网络断开时的处理逻辑
+      // 显示网络提示 Modal
+      setShowNetworkModal(true)
     },
 
     onNetworkChange: (isConnected: boolean, networkType: string) => {
       console.log("网络状态变化:", { isConnected, networkType })
     },
-  }
+  }), [reverifyDeviceAuthorization])
 
   // 使用应用生命周期Hook
   useAppLifecycle(appLifecycleCallbacks)
@@ -255,8 +295,44 @@ export default function RootLayout() {
           <GlobalLoginManager />
           {/* 全局更新对话框 */}
           <GlobalUpdateDialog />
+          {/* 全局 Toast 提示 */}
+          <GlobalToast />
+          {/* 全局 Dialog 对话框 */}
+          <GlobalDialog />
         </SafeAreaProvider>
       </PaperProvider>
+
+      {/* 网络断开提示 Modal - 放在最外层确保在登录框之上 */}
+      <Modal
+        visible={showNetworkModal}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => setShowNetworkModal(false)}
+      >
+        <View style={styles.networkModalOverlay}>
+          <View style={styles.networkModalContent}>
+            <Text style={styles.networkModalTitle}>网络未连接</Text>
+            <Text style={styles.networkModalMessage}>
+              当前网络不可用，请检查网络设置后重试
+            </Text>
+            <View style={styles.networkModalButtons}>
+              <TouchableOpacity
+                style={[styles.networkModalButton, styles.networkModalCancelButton]}
+                onPress={() => setShowNetworkModal(false)}
+              >
+                <Text style={styles.networkModalCancelText}>知道了</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.networkModalButton, styles.networkModalConfirmButton]}
+                onPress={openNetworkSettings}
+              >
+                <Text style={styles.networkModalConfirmText}>去设置</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </GestureHandlerRootView>
   )
 }
@@ -267,5 +343,67 @@ const styles = createStyles({
     flex: 1,
     width: "100%" as const,
     height: "100%" as const,
+  },
+  // 网络提示 Modal 样式
+  networkModalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+  },
+  networkModalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 24,
+    width: 400,
+    maxWidth: 400,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 24,
+  },
+  networkModalTitle: {
+    fontSize: 18,
+    fontWeight: "bold" as const,
+    color: "#333",
+    marginBottom: 12,
+    textAlign: "center" as const,
+  },
+  networkModalMessage: {
+    fontSize: 14,
+    color: "#666",
+    lineHeight: 22,
+    marginBottom: 24,
+    textAlign: "center" as const,
+  },
+  networkModalButtons: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    gap: 12,
+  },
+  networkModalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  networkModalCancelButton: {
+    backgroundColor: "#f5f5f5",
+  },
+  networkModalConfirmButton: {
+    backgroundColor: "#4891FF",
+  },
+  networkModalCancelText: {
+    fontSize: 14,
+    color: "#666",
+    fontWeight: "500" as const,
+  },
+  networkModalConfirmText: {
+    fontSize: 14,
+    color: "#fff",
+    fontWeight: "500" as const,
   },
 })

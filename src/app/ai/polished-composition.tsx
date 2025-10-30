@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { View, ScrollView, Text, Alert, ActivityIndicator } from "react-native"
+import { View, ScrollView, Text, ActivityIndicator } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useLocalSearchParams, router } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -8,6 +8,7 @@ import { NavBar } from "../../components/NavBar"
 import { StatusBar } from "../../components/StatusBar"
 import { CompositionCanvas } from "../../components/CompositionCanvas"
 import { createStyles } from "../../utils/rpxStyleSheet"
+import { showError, showWarning } from "../../utils/toast"
 
 /**
  * 润色后作文页面
@@ -32,7 +33,7 @@ export default function PolishedCompositionScreen() {
 
         if (!tempDataStr) {
           setLoading(false)
-          Alert.alert("提示", "暂无润色内容")
+          showWarning("暂无润色内容")
           router.back()
           return
         }
@@ -44,7 +45,7 @@ export default function PolishedCompositionScreen() {
         const now = Date.now()
         if (now - tempData.timestamp > 3600000) {
           setLoading(false)
-          Alert.alert("提示", "数据已过期，请重新查看")
+          showWarning("数据已过期，请重新查看")
           await AsyncStorage.removeItem("temp_polished_data")
           router.back()
           return
@@ -61,7 +62,7 @@ export default function PolishedCompositionScreen() {
       } catch (error) {
         console.error("加载数据失败:", error)
         setLoading(false)
-        Alert.alert("错误", "加载数据失败")
+        showError("加载数据失败")
         router.back()
       }
     }

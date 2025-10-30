@@ -270,8 +270,8 @@ const styles = createStyles({
   },
   recordItem: {
     position: "relative",
-    width: 200,
-    marginRight: 30,
+    width: 212.2,
+    marginRight: 10,
     marginBottom: 30,
     borderRadius: 5.8,
     overflow: "hidden",
@@ -285,8 +285,8 @@ const styles = createStyles({
     elevation: 2,
   },
   recordImage: {
-    width: 200,
-    height: 200,
+    width: 212.2,
+    height: 212.2,
   },
   scoreBadge: {
     position: "absolute",

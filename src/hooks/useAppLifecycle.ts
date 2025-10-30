@@ -23,12 +23,18 @@ interface AppLifecycleCallbacks {
 export const useAppLifecycle = (callbacks: AppLifecycleCallbacks) => {
   const appState = useRef(AppState.currentState)
   const isFirstLaunch = useRef(true)
+  const callbacksRef = useRef(callbacks)
+
+  // 更新 callbacks ref
+  useEffect(() => {
+    callbacksRef.current = callbacks
+  }, [callbacks])
 
   useEffect(() => {
     // 应用首次启动时调用onAppLaunch
-    if (isFirstLaunch.current && callbacks.onAppLaunch) {
+    if (isFirstLaunch.current && callbacksRef.current.onAppLaunch) {
       console.log("App Launch - 应用启动")
-      callbacks.onAppLaunch()
+      callbacksRef.current.onAppLaunch()
       isFirstLaunch.current = false
     }
 
@@ -38,14 +44,14 @@ export const useAppLifecycle = (callbacks: AppLifecycleCallbacks) => {
       if (appState.current.match(/inactive|background/) && nextAppState === "active") {
         // 应用从后台进入前台
         console.log("应用进入前台")
-        if (callbacks.onAppShow) {
-          callbacks.onAppShow()
+        if (callbacksRef.current.onAppShow) {
+          callbacksRef.current.onAppShow()
         }
       } else if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
         // 应用从前台进入后台
         console.log("应用进入后台")
-        if (callbacks.onAppHide) {
-          callbacks.onAppHide()
+        if (callbacksRef.current.onAppHide) {
+          callbacksRef.current.onAppHide()
         }
       }
 
@@ -55,15 +61,15 @@ export const useAppLifecycle = (callbacks: AppLifecycleCallbacks) => {
     // 监听应用状态变化
     const subscription = AppState.addEventListener("change", handleAppStateChange)
 
-    // 清理函数
+    // 清理函数 - 只在组件卸载时调用
     return () => {
       console.log("应用生命周期清理")
-      if (callbacks.onAppExit) {
-        callbacks.onAppExit()
+      if (callbacksRef.current.onAppExit) {
+        callbacksRef.current.onAppExit()
       }
       subscription?.remove()
     }
-  }, [callbacks])
+  }, [])
 
   return {
     currentAppState: appState.current,

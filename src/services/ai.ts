@@ -225,8 +225,8 @@ export async function getQuestion(params: { cache_key: string }): Promise<Questi
 export async function getCompositionCorrectionRecordDetails(params: {
   id: number
 }): Promise<CompositionDetails> {
-  return await get<CompositionDetails>(
-    "/AppStart/Protected/composition_correction_record_details/",
+  return await post<CompositionDetails>(
+    "/AppStart/Protected/original_json/",
     params,
   )
 }
@@ -294,8 +294,19 @@ export interface SubjectQuestionsParams {
  * 错题列表响应
  */
 export interface SubjectQuestionsResponse {
-  /** 总共有多少道题目 */
-  count: number
+ 
+  /** 总题数 */
+  total_questions: number
+  /** 总页数 */
+  total_pages: number
+  /** 当前页 */
+  current_page: number
+  /** 每页大小 */
+  page_size: number
+  /** 是否有下一页 */
+  has_next: boolean
+  /** 是否有上一页 */
+  has_previous: boolean
   /** 学科 */
   subject: string
   /** 错题列表 */

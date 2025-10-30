@@ -5,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  Alert,
   ActivityIndicator,
   ScrollView,
   RefreshControl,
@@ -18,6 +17,7 @@ import { LinearGradient } from "expo-linear-gradient"
 import { Ionicons } from "@expo/vector-icons"
 
 import { StatusBar } from "../../components/StatusBar"
+import { showWarning, showError } from "../../utils/toast"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import {
   getBooksList,
@@ -59,6 +59,7 @@ export default function ReaderIndex() {
   // 分类页面状态
   const [books, setBooks] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+  const [categoryLoading, setCategoryLoading] = useState(false) // 分类切换加载状态
   const [initialLoading, setInitialLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [hasMore, setHasMore] = useState(true)
@@ -74,7 +75,7 @@ export default function ReaderIndex() {
   const [pageSize] = useState(20)
 
   // 筛选选项
-  const sorts = ["综合", "热门", "最新"]
+  // const sorts = ["综合", "热门", "最新"]
 
   // 获取书籍封面图片
   const getBookCover = useCallback((book: any) => {
@@ -102,7 +103,7 @@ export default function ReaderIndex() {
 
       if (!book.id) {
         console.log(`📚 [阅读器] ❌ 书籍信息不完整，缺少ID`)
-        Alert.alert("提示", "书籍信息不完整")
+        showWarning("书籍信息不完整")
         return
       }
 
@@ -118,7 +119,7 @@ export default function ReaderIndex() {
         })
       } catch (error) {
         console.error("📚 [阅读器] ❌ 开始阅读失败:", error)
-        Alert.alert("提示", "开始阅读失败，请重试")
+        showError("开始阅读失败，请重试")
       } finally {
         setLoading(false)
       }
@@ -194,9 +195,12 @@ export default function ReaderIndex() {
         setHasMore(response.total > response.page * response.page_size)
       } catch (error) {
         console.error("获取书籍列表失败:", error)
-        Alert.alert("提示", "获取失败，请重试")
+        showError("获取失败，请重试")
       } finally {
         setLoading(false)
+        if (isRefresh) {
+          setCategoryLoading(false) // 分类切换加载完成
+        }
         setInitialLoading(false)
         setRefreshing(false)
       }
@@ -241,6 +245,7 @@ export default function ReaderIndex() {
   const handleCategoryChange = useCallback(
     (idx: number) => {
       setActiveCategory(idx)
+      setCategoryLoading(true) // 开始分类切换加载
       resetBookList()
       InteractionManager.runAfterInteractions(() => {
         getBooks(true)
@@ -558,9 +563,11 @@ export default function ReaderIndex() {
               {item.introduction || ""}
         </Text>
           </View>
-          <Text style={styles.gridBookCategory}>
-          {item.category || "经典文学"}
-        </Text>
+          {item.categories && item.categories.length > 0 && (
+            <Text style={styles.gridBookCategory}>
+              {item.categories.map((category: any) => category.name).join(", ")}
+            </Text>
+          )}
         </View> 
       </TouchableOpacity>
     ),
@@ -573,9 +580,9 @@ export default function ReaderIndex() {
       <View style={styles.categoryPageContainer}>
         {/* 筛选条件 */}
         <View style={styles.filters}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
+          {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
             {renderFilterButton(sorts, activeSort, handleSortChange, styles.sortButton)}
-          </ScrollView>
+          </ScrollView> */}
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
             {renderFilterButton(
@@ -601,7 +608,7 @@ export default function ReaderIndex() {
           onEndReachedThreshold={0.1}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={() =>
-            initialLoading ? (
+            initialLoading || categoryLoading ? (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#007AFF" />
                 <Text style={styles.loadingText}>加载中...</Text>
@@ -618,7 +625,7 @@ export default function ReaderIndex() {
     )
   }, [
     books,
-    sorts,
+    // sorts,
     activeSort,
     handleSortChange,
     categoryNames,
@@ -630,6 +637,7 @@ export default function ReaderIndex() {
     refreshing,
     loadMore,
     initialLoading,
+    categoryLoading,
   ])
 
   // 使用并行预加载Hook - 立即显示页面，然后异步加载数据
@@ -865,6 +873,7 @@ const styles = createStyles({
     fontSize: 7.03125,
     color: "#7050018C",
     marginBottom: 8,
+    maxWidth: '60%',
     flex: 1,
   },
   weekHotLabel: {
@@ -1070,7 +1079,7 @@ const styles = createStyles({
     // paddingVertical: 10,
   },
   filterScroll: {
-    marginBottom: 4.8,
+    marginBottom: 12.8,
   },
   filterRow: {
     flexDirection: "row" as const,

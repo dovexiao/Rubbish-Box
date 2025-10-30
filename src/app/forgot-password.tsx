@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -15,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { createStyles, rpx } from "../utils/rpxStyleSheet"
 import { router } from "expo-router"
 import { AuthService } from "../services/authService"
+import { showSuccess, showError, showWarning } from "../utils/toast"
 
 /**
  * 忘记密码页面
@@ -31,19 +31,19 @@ export default function ForgotPasswordScreen() {
   // 发送验证码
   const handleSendSMS = async () => {
     if (!phone) {
-      Alert.alert("提示", "请输入手机号")
+      showWarning("请输入手机号")
       return
     }
 
     if (!/^1[3-9]\d{9}$/.test(phone)) {
-      Alert.alert("提示", "请输入正确的手机号")
+      showWarning("请输入正确的手机号")
       return
     }
 
     try {
       setLoading(true)
       await AuthService.sendSMS(phone)
-      Alert.alert("提示", "验证码已发送")
+      showSuccess("验证码已发送")
 
       // 开始倒计时
       setCountdown(60)
@@ -57,7 +57,7 @@ export default function ForgotPasswordScreen() {
         })
       }, 1000)
     } catch (error: any) {
-      Alert.alert("错误", error.message || "发送验证码失败")
+      showError(error.message || "发送验证码失败")
     } finally {
       setLoading(false)
     }
@@ -66,26 +66,24 @@ export default function ForgotPasswordScreen() {
   // 重置密码
   const handleResetPassword = async () => {
     if (!phone || !smsCode || !newPassword) {
-      Alert.alert("提示", "请填写完整信息")
+      showWarning("请填写完整信息")
       return
     }
 
     if (newPassword.length < 8) {
-      Alert.alert("提示", "密码至少8个字符，不能全是字母或数字")
+      showWarning("密码至少8个字符，不能全是字母或数字")
       return
     }
 
     try {
       setLoading(true)
       await AuthService.resetPassword(phone, smsCode, newPassword)
-      Alert.alert("成功", "密码重置成功", [
-        {
-          text: "确定",
-          onPress: () => router.back(),
-        },
-      ])
+      showSuccess("密码重置成功")
+      setTimeout(() => {
+        router.back()
+      }, 1000)
     } catch (error: any) {
-      Alert.alert("错误", error.message || "密码重置失败")
+      showError(error.message || "密码重置失败")
     } finally {
       setLoading(false)
     }

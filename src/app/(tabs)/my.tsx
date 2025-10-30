@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
-  Alert,
   ScrollView,
-  ActivityIndicator,
 } from "react-native"
 import { useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
@@ -18,9 +16,12 @@ import { useFocusEffect } from "expo-router"
 
 import { StatusBar } from "../../components/StatusBar"
 import { NavBar } from "../../components/NavBar"
+import { WeeklyStudyChart } from "../../components/WeeklyStudyChart"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { useUserStore } from "../../stores/userStore"
 import { useUpdateManager } from "../../hooks/useUpdateManager"
+import { showSuccess, showError, showWarning, showInfo } from "../../utils/toast"
+import { showConfirm, showMessage } from "../../utils/dialog"
 import {
   getUserBadges,
   getUserStudyData,
@@ -57,22 +58,37 @@ export default function MyScreen() {
 
   // 获取所有数据 - 优化版本
   const fetchAllData = useCallback(async () => {
+    // 检查是否有token，没有则直接返回
+    const token = userStore.token
+    if (!token) {
+      console.log("未找到token，跳过我的页面数据加载")
+      return
+    }
+
     try {
       // 并行加载所有数据
-      const [userInfoData, badgesData, todayData, studyDataResult] = await Promise.all([
-        (userStore as any).getUserInfo?.().catch(() => null),
-        getUserBadges().catch(() => ({ medal_list: [] })),
-        getUserTodayQuestionData().catch(() => ({ total_wrong_questions: 0, total_corrected_questions: 0 })),
-        getUserStudyData().catch(() => ({ daily_data: [] }))
+      const [badgesData, todayData, studyDataResult] = await Promise.all([
+        getUserBadges().catch((err) => {
+          console.error("获取徽章失败:", err)
+          return { medal_list: [] }
+        }),
+        getUserTodayQuestionData().catch((err) => {
+          console.error("获取今日错题数据失败:", err)
+          return { total_wrong_questions: 0, total_corrected_questions: 0 }
+        }),
+        getUserStudyData().catch((err) => {
+          console.error("获取学习数据失败:", err)
+          return { daily_data: [] }
+        })
       ])
 
       // 批量更新状态
-      if (userInfoData) {
-        setUserInfo(userInfoData)
-      }
+      setUserInfo(userStore.user) // 使用 store 中已更新的用户信息
       setBadges(badgesData.medal_list || [])
       setTodayQuestionData(todayData)
       setWeeklyStudyData(studyDataResult.daily_data || [])
+      
+      console.log("✅ 我的页面数据加载完成")
     } catch (error) {
       console.error("获取数据失败:", error)
     }
@@ -82,53 +98,100 @@ export default function MyScreen() {
   useEffect(() => {
     if (!isInitialized) {
       InteractionManager.runAfterInteractions(async () => {
+        try {
+          // 先获取用户信息
+          await userStore.getUserInfo()
+          // 再获取其他数据
         await fetchAllData()
+        } catch (error) {
+          console.error("初始化数据失败:", error)
+        } finally {
         setIsInitialized(true)
+        }
       })
     }
-  }, [isInitialized, fetchAllData])
+  }, [isInitialized, fetchAllData, userStore])
 
-  // 页面显示时只刷新用户信息（其他数据已预加载）
+  // 页面显示时刷新所有数据
   useFocusEffect(
     useCallback(() => {
-      if (isInitialized) {
-        // 只刷新用户信息，其他数据保持不变
-        (userStore as any).getUserInfo?.().then((userInfoData: any) => {
-          if (userInfoData) {
-            setUserInfo(userInfoData)
+      if (!isInitialized) return
+      
+      let isCancelled = false
+      
+      // 刷新用户信息和所有数据
+      const refreshData = async () => {
+        if (isCancelled) return
+        
+        try {
+          // 1. 先调用 getUserInfo 获取最新用户数据
+          await userStore.getUserInfo()
+          
+          if (isCancelled) return
+          
+          // 2. 刷新其他数据
+          const token = userStore.token
+          if (!token) return
+          
+          const [badgesData, todayData, studyDataResult] = await Promise.all([
+            getUserBadges().catch((err) => {
+              console.error("获取徽章失败:", err)
+              return { medal_list: [] }
+            }),
+            getUserTodayQuestionData().catch((err) => {
+              console.error("获取今日错题数据失败:", err)
+              return { total_wrong_questions: 0, total_corrected_questions: 0 }
+            }),
+            getUserStudyData().catch((err) => {
+              console.error("获取学习数据失败:", err)
+              return { daily_data: [] }
+            })
+          ])
+          
+          if (!isCancelled) {
+            setUserInfo(userStore.user)
+            setBadges(badgesData.medal_list || [])
+            setTodayQuestionData(todayData)
+            setWeeklyStudyData(studyDataResult.daily_data || [])
           }
-        }).catch(() => {})
+        } catch (error) {
+          console.error("刷新数据失败:", error)
+        }
       }
-    }, [isInitialized, userStore]),
+      
+      refreshData()
+      
+      return () => {
+        isCancelled = true
+      }
+    }, [isInitialized]) // 只依赖 isInitialized
   )
 
   // 处理会员点击
   const handleVipClick = () => {
-    Alert.alert("提示", "会员功能开发中")
+    showInfo("会员功能开发中")
   }
 
   // 处理切换账号
   const handleSwitchAccount = () => {
-    Alert.alert("切换账号", "确认要切换账号吗？当前账号信息将被清除", [
-      { text: "取消", style: "cancel" },
-      {
-        text: "确定",
-        onPress: () => {
-          userStore.logout()
-          // 使用新的登录弹窗系统
-          import("../../utils/loginUtils").then(({ showLoginModal }) => {
-            showLoginModal({
-              onSuccess: () => {
-                console.log("🔐 切换账号成功")
-              },
-              onCancel: () => {
-                console.log("🔐 用户取消登录")
-              },
-            })
+    showConfirm(
+      "切换账号",
+      "确认要切换账号吗？当前账号信息将被清除",
+      () => {
+        userStore.logout()
+        // 使用新的登录弹窗系统
+        import("../../utils/loginUtils").then(({ showLoginModal }) => {
+          showLoginModal({
+            onSuccess: () => {
+              console.log("🔐 切换账号成功")
+            },
+            onCancel: () => {
+              console.log("🔐 用户取消登录")
+            },
           })
-        },
-      },
-    ])
+        })
+      }
+    )
   }
 
   // 处理编辑用户信息
@@ -148,9 +211,9 @@ export default function MyScreen() {
 
   // 渲染今日错题圆形进度条
   const renderTodayProgressCircle = () => {
-    const size = 70
-    const strokeWidth = 10.54
-    const radius = 29
+    const size = 180
+    const strokeWidth = 14.54
+    const radius = 80
     const center = size / 2
     const circumference = 2 * Math.PI * radius
 
@@ -222,17 +285,8 @@ export default function MyScreen() {
     >
       <StatusBar theme="dark" />
 
-      {/* 加载状态 */}
-      {!isInitialized && (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#1890ff" />
-          <Text style={styles.loadingText}>正在加载个人信息...</Text>
-        </View>
-      )}
-
       {/* 内容区域 */}
-      {isInitialized && (
-        <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* 用户信息头部 */}
         <View style={styles.userHeader}>
           <TouchableOpacity
@@ -254,18 +308,21 @@ export default function MyScreen() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.switchAccountBtn}
-            onPress={handleSwitchAccount}
-            activeOpacity={0.8}
-          >
-            <Ionicons
-              name="swap-horizontal"
-              size={rpx(12)}
-              color="rgba(13, 92, 245, 0.83)"
-              style={styles.switchIcon}
-            />
-            <Text style={styles.switchText}>切换账号</Text>
+          <TouchableOpacity onPress={handleSwitchAccount} activeOpacity={0.8}>
+            <LinearGradient
+              colors={["rgba(255, 255, 255, 0.14)", "#ffffff"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.switchAccountBtn}
+            >
+              <Ionicons
+                name="swap-horizontal"
+                size={rpx(12)}
+                color="rgba(13, 92, 245, 0.83)"
+                style={styles.switchIcon}
+              />
+              <Text style={styles.switchText}>切换账号</Text>
+            </LinearGradient>
           </TouchableOpacity>
 
           {/* 测试更新功能按钮 - 仅开发环境显示 */}
@@ -315,7 +372,12 @@ export default function MyScreen() {
             </ImageBackground>
 
             {/* 我的勋章 */}
-            <View style={styles.badgesCard}>
+            <LinearGradient
+              colors={["rgba(255, 255, 255, 0.6)", "rgba(255, 255, 255, 0.264)"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.badgesCard}
+            >
               <View style={styles.badgesHeader}>
                 <View style={styles.badgesTitle}>
                   <Text style={styles.badgesTitleText}>我的勋章</Text>
@@ -328,14 +390,35 @@ export default function MyScreen() {
               </View>
               {badges && badges.length > 0 && (
                 <View style={styles.badgesGrid}>
-                  {badges.slice(0, 3).map((badge, index) => (
+                  {badges.slice(0, 3).map((badge, index) => {
+                    // 检查并修复图片 URL
+                    let imageUrl = badge.image_url
+                    if (imageUrl && !imageUrl.startsWith('http')) {
+                      // 如果不是完整 URL，添加域名
+                      const baseUrl = 'http://8.135.11.47:8080'
+                      imageUrl = imageUrl.startsWith('/') ? `${baseUrl}${imageUrl}` : `${baseUrl}/${imageUrl}`
+                    }
+                    
+                    console.log('徽章图片 URL:', imageUrl)
+                    
+                    return (
                     <View key={index} style={styles.badgeItem}>
                       <View style={styles.badgeCircle}>
+                          {imageUrl ? (
                         <Image
-                          source={{ uri: badge.image_url }}
+                              source={{ uri: imageUrl }}
                           style={styles.badgeImage}
                           resizeMode="contain"
-                        />
+                              onError={(error) => {
+                                console.log(`徽章[${badge.name}]图片加载失败:`, imageUrl, error.nativeEvent.error)
+                              }}
+                              onLoad={() => {
+                                console.log(`徽章[${badge.name}]图片加载成功`)
+                              }}
+                            />
+                          ) : (
+                            <Text style={{ fontSize: 10, color: '#999' }}>无图片</Text>
+                          )}
                       </View>
                       <Text
                         style={[
@@ -346,16 +429,22 @@ export default function MyScreen() {
                         {badge.name}
                       </Text>
                     </View>
-                  ))}
+                    )
+                  })}
                 </View>
               )}
-            </View>
+            </LinearGradient>
           </View>
 
           {/* 右侧列 */}
           <View style={styles.rightColumn}>
             {/* 我的数据卡片 */}
-            <View style={styles.dataCard}>
+            <LinearGradient
+              colors={["rgba(255, 255, 255, 0.4)", "rgba(255, 255, 255, 0.176)"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.dataCard}
+            >
               <View style={styles.dataHeader}>
                 <View style={styles.dataTitle}>
                   <Text style={styles.dataTitleText}>我的数据</Text>
@@ -397,43 +486,38 @@ export default function MyScreen() {
                     <Text style={styles.weeklyTitleText}>本周学习时长</Text>
                     <Text style={styles.weeklyUnit}>单位: 分钟</Text>
                   </View>
-                  {/* TODO: 使用WeeklyStudyChart组件 */}
-                  <View style={styles.chartPlaceholder}>
-                    <Text style={styles.chartPlaceholderText}>图表开发中</Text>
-                  </View>
+                  <WeeklyStudyChart weekData={weeklyStudyData} />
                 </View>
               </View>
-            </View>
+            </LinearGradient>
           </View>
         </View>
-        </ScrollView>
-      )}
+      </ScrollView>
     </LinearGradient>
   )
 }
 
 const styles = createStyles({
   pageContainer: {
-    width: "100%",
-    height: "100%",
+    width: "100%" as const,
+    height: "100%" as const,
     minWidth: 750,
-    minHeight: "100%",
-    overflowX: "hidden",
+    minHeight: "100%" as const,
   },
   // 用户信息头部
   userHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 39.625,
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
+    marginTop: 38.625,
     marginBottom: 15.625,
     paddingHorizontal: 29,
   },
   userBasic: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     width: 400,
-    position: "relative",
+    position: "relative" as const,
   },
   userAvatar: {
     width: 46.875,
@@ -441,10 +525,10 @@ const styles = createStyles({
     borderRadius: 23.4375,
     borderWidth: 1.953,
     borderColor: "#789EFF",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    position: "relative" as const,
     zIndex: 2,
   },
   avatarImage: {
@@ -453,8 +537,8 @@ const styles = createStyles({
     borderRadius: 21,
   },
   userDetails: {
-    flexDirection: "column",
-    justifyContent: "center",
+    flexDirection: "column" as const,
+    justifyContent: "center" as const,
     gap: 1.953125,
     height: 39.063,
     borderRadius: 35.156,
@@ -464,24 +548,22 @@ const styles = createStyles({
     paddingLeft: 42.969,
     paddingRight: 13.281,
     left: 7.813,
-    position: "absolute",
+    position: "absolute" as const,
   },
   userName: {
     fontSize: 10.9375,
     color: "rgba(13, 92, 245, 0.83)",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   userGrade: {
     fontSize: 8.375,
     color: "rgba(13, 92, 245, 0.7)",
   },
   switchAccountBtn: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     paddingHorizontal: 7.8125,
     paddingVertical: 3.90625,
-    // Note: Use LinearGradient component for gradient background
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.5)",
     borderRadius: 19.531,
@@ -492,20 +574,20 @@ const styles = createStyles({
     elevation: 2,
   },
   testUpdateBtn: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     paddingHorizontal: 7.8125,
     paddingVertical: 3.90625,
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.5)",
     borderRadius: 19.531,
-    shadowColor: "#FFFFFF",
-    shadowOffset: { width: 3.516, height: -1.953 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4.67,
-    elevation: 2,
-    marginTop: 7.8125,
+    // shadowColor: "#FFFFFF",
+    // shadowOffset: { width: 3.516, height: -1.953 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 4.67,
+    // elevation: 2,
+    // marginTop: 7.8125,
   },
   switchIcon: {
     marginRight: 4,
@@ -516,13 +598,13 @@ const styles = createStyles({
   },
   // 主要内容区域
   mainContent: {
-    flexDirection: "row",
+    flexDirection: "row" as const,
     gap: 15.625,
     paddingHorizontal: 29,
   },
   leftColumn: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "column" as const,
     gap: 9.375,
   },
   rightColumn: {},
@@ -531,24 +613,24 @@ const styles = createStyles({
     borderRadius: 11.71875,
     paddingHorizontal: 15.625,
     paddingVertical: 15.625,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
     height: 73.4375,
     width: 267.1875,
-    overflow: "hidden",
-    shadowColor: "#AFACD0",
-    shadowOffset: { width: 0, height: 8.6 },
-    shadowOpacity: 0.47,
-    shadowRadius: 8.4,
-    elevation: 5,
+    overflow: "hidden" as const,
+    // shadowColor: "#AFACD0",
+    // shadowOffset: { width: 0, height: 8.6 },
+    // shadowOpacity: 0.47,
+    // shadowRadius: 8.4,
+    // elevation: 5,
   },
   memberCardImage: {
     borderRadius: 11.71875,
   },
   memberContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
   },
   crownImage: {
     width: 19,
@@ -556,7 +638,7 @@ const styles = createStyles({
   },
   memberTitle: {
     fontSize: 11.71875,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     color: "#fff",
     marginLeft: 8,
   },
@@ -565,8 +647,8 @@ const styles = createStyles({
     borderRadius: 11.71875,
     paddingHorizontal: 7.8125,
     paddingVertical: 3.90625,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
   },
   actionBtnText: {
     fontSize: 8.6,
@@ -574,73 +656,72 @@ const styles = createStyles({
   },
   // 我的勋章
   badgesCard: {
-    // Note: Use LinearGradient component for gradient background
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
     borderWidth: 0.5,
     borderColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 11.71875,
     padding: 15.625,
     width: 267.1875,
     height: 132.03125,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3.90625 },
-    shadowOpacity: 0.05,
-    shadowRadius: 7.8125,
-    elevation: 2,
+    overflow: "hidden" as const,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 3.90625 },
+    // shadowOpacity: 0.05,
+    // shadowRadius: 7.8125,
+    // elevation: 2,
   },
   badgesHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 11.71875,
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "flex-start" as const,
   },
   badgesTitle: {
-    width: "100%",
-    height: 40,
-    position: "relative",
+    width: "100%" as const,
+    height: 25,
+    position: "relative" as const,
   },
   badgesTitleText: {
     fontSize: 9.375,
     color: "#333",
-    fontWeight: "bold",
-    position: "relative",
+    fontWeight: "bold" as const,
+    position: "relative" as const,
     zIndex: 2,
   },
   titleBgImage: {
-    position: "absolute",
+    position: "absolute" as const,
     left: -2,
-    bottom: 0,
+    top:5,
     width: 53.90625,
   },
   badgesGrid: {
-    flexDirection: "row",
+    flexDirection: "row" as const,
     gap: 18.71875,
   },
   badgeItem: {
-    flexDirection: "column",
-    alignItems: "center",
+    flexDirection: "column" as const,
+    alignItems: "center" as const,
     gap: 3.90625,
   },
   badgeCircle: {
     width: 57.8125,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
+    height: 57.8125,
+    borderRadius: 28.90625,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    overflow: "hidden" as const,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   badgeImage: {
-    width: "100%",
-    height: "100%",
+    width: 57.8125,
+    height: 57.8125,
   },
   badgeLabel: {
-    textAlign: "center",
-    fontSize: 8.6,
-    fontWeight: "bold",
-    lineHeight: 1.2 * 8.6,
+    textAlign: "center" as const,
+    fontSize: 10,
+    fontWeight: "bold" as const,
+    lineHeight: 14,
     width: 62.5,
-    whiteSpace: "nowrap",
-    overflow: "hidden",
+    marginTop: 4,
   },
   badgeLabelUnlocked: {
     color: "#42508D",
@@ -652,35 +733,32 @@ const styles = createStyles({
   dataCard: {
     width: 401.5625,
     height: 214.0625,
-    // Note: Use LinearGradient component for gradient background
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
     borderRadius: 11.71875,
     padding: 15.625,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3.90625 },
-    shadowOpacity: 0.05,
-    shadowRadius: 7.8125,
-    elevation: 2,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 3.90625 },
+    // shadowOpacity: 0.05,
+    // shadowRadius: 7.8125,
+    // elevation: 2,
   },
   dataHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 11.71875,
+    // flexDirection: "row" as const,
+    // justifyContent: "start" as const,
+    // alignItems: "center" as const,
   },
   dataTitle: {
-    position: "relative",
-    height: 40,
+    position: "relative" as const,
+    height: 30,
   },
   dataTitleText: {
     fontSize: 9.375,
     color: "#333",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     zIndex: 2,
-    position: "relative",
+    position: "relative" as const,
   },
   studyDataContainer: {
-    flexDirection: "row",
+    flexDirection: "row" as const,
     gap: 15.625,
   },
   // 今日错题
@@ -689,11 +767,11 @@ const styles = createStyles({
     borderRadius: 7.8125,
     padding: 11.71875,
     flex: 1,
-    width: "45%",
+    width: "45%" as const,
   },
   todayTitle: {
     fontSize: 8.6,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     color: "#000",
     marginBottom: 7.8125,
   },
@@ -702,25 +780,25 @@ const styles = createStyles({
     color: "#666",
   },
   questionStats: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     marginTop: 8,
     marginBottom: 7.8125,
   },
   progressCircleWrapper: {
-    position: "relative",
+    position: "relative" as const,
     width: 70,
     height: 70,
     marginTop: 12,
   },
   questionNumbers: {
-    flexDirection: "column",
+    flexDirection: "column" as const,
     gap: 7.8125,
     marginLeft: 20,
   },
   questionItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
     width: 63.75,
   },
   questionLabel: {
@@ -737,43 +815,21 @@ const styles = createStyles({
     borderRadius: 7.8125,
     padding: 11.71875,
     flex: 1,
-    width: "45%",
+    width: "45%" as const,
   },
   weeklyTitle: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
     marginBottom: 7.8125,
   },
   weeklyTitleText: {
     fontSize: 8.6,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     color: "#000",
   },
   weeklyUnit: {
     fontSize: 7.8125,
-    color: "#666",
-  },
-  chartPlaceholder: {
-    height: 80,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 8,
-  },
-  chartPlaceholderText: {
-    fontSize: 10,
-    color: "#999",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 50,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 14,
     color: "#666",
   },
 })

@@ -297,6 +297,7 @@ const styles = createStyles({
     shadowOpacity: 0.05,
     shadowRadius: 7.8125,
     elevation: 2,
+    marginBottom: 50,
   },
   // 答案部分
   answerSection: {

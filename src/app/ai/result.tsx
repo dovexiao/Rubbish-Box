@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { View, ScrollView } from "react-native"
+import { View, ScrollView, ActivityIndicator, Text } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useLocalSearchParams } from "expo-router"
 
@@ -24,33 +24,45 @@ export default function AIResultScreen() {
   const [type, setType] = useState("")
   const [data, setData] = useState<any>({})
   const [compositionInfo, setCompositionInfo] = useState<AiResponse>({})
+  const [isLoading, setIsLoading] = useState(true) // 🔴 添加加载状态
 
   useEffect(() => {
-    // 是作文收录来的
-    if (params.id) {
-      setType("作文")
-      getCompositionCorrectionRecordDetails({ id: Number(params.id) }).then((res) => {
-        if (res.ai_response) {
-          setCompositionInfo(res.ai_response)
+    const loadData = async () => {
+      setIsLoading(true)
+      
+      try {
+        // 是作文收录来的
+        if (params.id) {
+          setType("作文")
+          const res = await getCompositionCorrectionRecordDetails({ id: Number(params.id) })
+          setCompositionInfo(res)
         }
-      })
-    }
-    // 作文批改
-    else if (params.resData) {
-      const parsedData = JSON.parse(params.resData as string)
-      setData(parsedData)
-      setType(parsedData.select)
-      if (parsedData.select === "作文" && parsedData.ai_response) {
-        setCompositionInfo(parsedData.ai_response)
+        // 作文批改
+        else if (params.resData) {
+          const parsedData = JSON.parse(params.resData as string)
+          setData(parsedData)
+          setType(parsedData.select)
+          if (parsedData.select === "作文" && parsedData.ai_response) {
+            setCompositionInfo(parsedData.ai_response)
+          }
+        }
+        // 题目批改
+        else if (params.cache_key) {
+          const res = await getQuestion({ cache_key: params.cache_key as string })
+          setType("题目")
+          setData(res)
+        }
+        
+        // 🔴 等待一小段时间，让 React 完成初始渲染
+        await new Promise(resolve => setTimeout(resolve, 100))
+      } catch (error) {
+        console.error("加载数据失败:", error)
+      } finally {
+        setIsLoading(false)
       }
     }
-    // 题目批改
-    else if (params.cache_key) {
-      getQuestion({ cache_key: params.cache_key as string }).then((res) => {
-        setType("题目")
-        setData(res)
-      })
-    }
+    
+    loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id, params.resData, params.cache_key])
 
@@ -68,13 +80,21 @@ export default function AIResultScreen() {
         <NavBar title={type === "作文" ? "作文批改" : "试题批改"} leftArrow goBackDelta={1} />
       </View>
 
-      {/* 滚动内容 */}
-      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          {type === "题目" && <QuestionResult data={data} />}
-          {type === "作文" && <CompositionResult compositionInfo={compositionInfo} />}
+      {/* 🔴 加载中状态 */}
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#4891FF" />
+          <Text style={styles.loadingText}>正在加载批改结果...</Text>
         </View>
-      </ScrollView>
+      ) : (
+        /* 滚动内容 */
+        <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.content}>
+            {type === "题目" && <QuestionResult data={data} />}
+            {type === "作文" && <CompositionResult compositionInfo={compositionInfo} />}
+          </View>
+        </ScrollView>
+      )}
     </LinearGradient>
   )
 }
@@ -96,5 +116,17 @@ const styles = createStyles({
   content: {
     paddingHorizontal: 15.625, // 20rpx转rpx
     paddingBottom: 15.625,
+  },
+  // 🔴 加载中样式
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    paddingVertical: 60,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 14,
+    color: "#666",
   },
 })

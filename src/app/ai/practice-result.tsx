@@ -220,7 +220,6 @@ const styles = createStyles({
   mainContent: {
     flex: 1,
     paddingHorizontal: 29,
-    marginTop: 32,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",

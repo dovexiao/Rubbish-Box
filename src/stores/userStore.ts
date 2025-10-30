@@ -113,20 +113,34 @@ export const useUserStore = create<UserState>((set, get) => ({
       const storedToken = getStorageValue(STORAGE_KEYS.TOKEN)
       const storedUserInfo = getStorageValue(STORAGE_KEYS.USER_INFO)
 
+      console.log("🔍 从存储读取的数据:", {
+        storedToken: storedToken ? `存在(${storedToken.length}字符)` : "不存在",
+        storedUserInfo: storedUserInfo ? "存在" : "不存在"
+      })
+
       let user = null
       if (storedUserInfo) {
         try {
           user = JSON.parse(storedUserInfo)
+          console.log("📱 解析的用户信息:", user)
         } catch (_e) {
           console.warn("Failed to parse stored user info")
         }
       }
 
-      set({
+      const newState = {
         token: storedToken,
         user,
         isLoggedIn: !!storedToken,
+      }
+      
+      console.log("🔄 设置新的 userStore 状态:", {
+        token: newState.token ? `存在(${newState.token.length}字符)` : "不存在",
+        user: newState.user,
+        isLoggedIn: newState.isLoggedIn
       })
+
+      set(newState)
     } catch (error) {
       console.warn("Failed to initialize from storage:", error)
     }
@@ -160,7 +174,6 @@ export const useUserStore = create<UserState>((set, get) => ({
         token,
         isLoggedIn: true,
         isLoading: false,
-        showLoginPopup: false,
       })
 
       // 保存token到持久化存储
@@ -199,33 +212,22 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   getUserInfo: async () => {
-    const { user, token } = get()
+    const { token } = get()
 
-    // 如果已有用户信息，直接返回
-    if (user) return user
+    console.log("🔍 getUserInfo 被调用")
+    console.log("🔍 当前token:", token ? "已存在" : "不存在")
 
-    // 如果有token但没有用户信息，尝试从存储中获取
+    // 每次都从服务器获取最新的用户信息
+    console.log("🌐 从服务器获取最新用户信息")
+
+    // 如果有token，从服务器获取最新用户信息
     if (token) {
       try {
-        // 先尝试从存储中获取
-      const storedUserInfo = storage.getString(STORAGE_KEYS.USER_INFO)
-      if (storedUserInfo) {
-          try {
-        const parsedUser = JSON.parse(storedUserInfo)
-            // 验证解析的用户信息是否符合User接口
-            if (parsedUser && parsedUser.user_id && parsedUser.username) {
-        set({ user: parsedUser, isLoggedIn: true })
-        return parsedUser
-            }
-          } catch (e) {
-            console.warn("Failed to parse stored user info:", e)
-            // 解析失败继续尝试从服务器获取
-          }
-        }
-
-        // 如果本地没有或解析失败，从服务器获取
+        console.log("🌐 开始调用用户信息接口")
         const { post: apiPost } = await import("../services/api")
-        const response = await apiPost("/AppStart/UserInformation/user_information/", {}, { token })
+        const response = await apiPost("/AppStart/UserInformation/user_information/", {})
+        
+        console.log("🌐 用户信息接口响应:", response)
         
         if (response && typeof response === 'object') {
           // 确保response符合User接口
@@ -233,12 +235,11 @@ export const useUserStore = create<UserState>((set, get) => ({
             ...response,
             // 确保必填字段存在
             user_id: response.user_id || '',
-            username: response.username || '未知用户'
+            username: response.username || ''
           }
           
-          // 保存用户信息
+          // 保存用户信息到store和存储
           set({ user: userData, isLoggedIn: true })
-          // 保存到存储
           storage.set(STORAGE_KEYS.USER_INFO, JSON.stringify(userData))
           return userData
         }

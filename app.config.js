@@ -31,15 +31,17 @@ module.exports = ({ config }) => {
     },
     // Expo Updates 配置 - 生产环境启用
     updates: {
+      url: "https://u.expo.dev/781589ef-0937-4906-a236-5deac80db17b",
       enabled: true,
       checkAutomatically: "ON_LOAD",
       fallbackToCacheTimeout: 0,
     },
-    // 运行时版本配置 - 使用appVersion策略
-    runtimeVersion: {
-      policy: "appVersion"
-    },
+    // 运行时版本配置 - bare workflow需要手动设置版本号
+    runtimeVersion: "1.0.1",
     // EAS Build配置将在初始化后自动添加
-    plugins: [...existingPlugins, "expo-font"],
+    plugins: [
+      ...existingPlugins, 
+      "expo-font"
+    ],
   }
 }

@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from "react-native"
+import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native"
 import { useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
 
 import { StatusBar } from "../../components/StatusBar"
 import { NavBar } from "../../components/NavBar"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
+import { showInfo } from "../../utils/toast"
 
 interface Badge {
   title: string
@@ -81,10 +82,10 @@ export default function BadgesScreen() {
   const handleBadgeClick = (index: number) => {
     if (index < earnedCount) {
       // 已获得的勋章可以查看详情
-      Alert.alert("提示", "查看勋章详情")
+      showInfo("查看勋章详情")
     } else {
       // 未获得的勋章显示获取条件
-      Alert.alert("提示", "查看获取条件")
+      showInfo("查看获取条件")
     }
   }
 

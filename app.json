@@ -2,7 +2,7 @@
   "expo": {
     "name": "xhtx",
     "slug": "xhtx",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "landscape",
     "icon": "./assets/app/icons/1024x1024.png",
     "scheme": "xhtx",
@@ -18,16 +18,17 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.xhtx.app",
-      "buildNumber": "10000"
+      "buildNumber": "10001"
     },
     "android": {
       "package": "com.xhtx.app",
       "jsEngine": "hermes",
-      "versionCode": 10000,
+      "versionCode": 10001,
       "enableSeparateBuildPerCPUArchitecture": false,
       "targetSdkVersion": 33,
       "compileSdkVersion": 33,
       "buildToolsVersion": "33.0.0",
+      "usesCleartextTraffic": true,
       "abiFilters": [
         "arm64-v8a"
       ],
@@ -36,6 +37,7 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.REQUEST_INSTALL_PACKAGES"
@@ -86,6 +88,17 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#000000"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true,
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33,
+            "buildToolsVersion": "33.0.0"
+          }
         }
       ]
     ],

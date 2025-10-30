@@ -4,19 +4,18 @@ import {
   Text as RNText,
   TouchableOpacity,
   Image,
-  Alert,
   Dimensions,
   StatusBar as RNStatusBar,
 } from "react-native"
 import { StatusBar } from "../../components/StatusBar"
 import { CameraView, useCameraPermissions } from "expo-camera"
-import * as FileSystem from "expo-file-system"
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router"
 
 import { LoadingOverlay } from "../../components/LoadingOverlay"
 import { NavBar } from "../../components/NavBar"
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles } from "../../utils/rpxStyleSheet"
+import { showError, showWarning } from "../../utils/toast"
 
 const Text = RNText
 
@@ -147,7 +146,7 @@ export default function CameraScreen() {
   // 拍照
   const takePhoto = async () => {
     if (photos.length >= 6) {
-      Alert.alert("提示", "最多拍摄6张照片")
+      showWarning("最多拍摄6张照片")
       return
     }
 
@@ -169,7 +168,7 @@ export default function CameraScreen() {
       }
     } catch (error) {
       console.error("拍照失败:", error)
-      Alert.alert("错误", "拍照失败，请重试")
+      showError("拍照失败，请重试")
     }
   }
 
@@ -195,7 +194,7 @@ export default function CameraScreen() {
   // 提交照片进行AI批改
   const submitPhotos = async () => {
     if (photos.length === 0) {
-      Alert.alert("提示", "请先拍摄照片")
+      showWarning("请先拍摄照片")
       return
     }
 
@@ -218,16 +217,17 @@ export default function CameraScreen() {
     } catch (error) {
       console.error("上传照片失败:", error)
       setUploadLoading(false)
-      Alert.alert("错误", "上传照片失败，请重试")
+      showError("上传照片失败，请重试")
       _setIsSubmitting(false)
     }
   }
 
-  // 上传照片
+  // 上传照片 - 使用 axios 实现
   const uploadPhotos = async (): Promise<string> => {
     try {
       const { useUserStore } = require("../../stores/userStore")
       const { API_BASE_URL } = require("../../config/api")
+      const axios = require("axios").default
 
       const userStore = useUserStore.getState()
       const token = userStore.token || "" // 直接从 userStore.token 获取
@@ -243,27 +243,39 @@ export default function CameraScreen() {
         console.log(`📤 上传第 ${i + 1}/${photos.length} 张照片...`)
         setUploadProgress(`正在上传第 ${i + 1}/${photos.length} 张照片...`)
 
-        const uploadResult = await FileSystem.uploadAsync(uploadUrl, photo.path, {
-          fieldName: "images",
-          httpMethod: "POST",
-          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-          parameters: {
-            type: "correct",
-            ...(batchId ? { batch_id: batchId } : {}),
-          },
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        })
+        // 创建 FormData
+        const formData = new FormData()
+        
+        // 添加文件
+        formData.append('images', {
+          uri: photo.path,
+          type: 'image/jpeg',
+          name: `photo_${i + 1}.jpg`,
+        } as any)
+        
+        // 添加参数
+        formData.append('type', 'correct')
+        if (batchId) {
+          formData.append('batch_id', batchId)
+        }
 
         console.log("📤 上传URL:", uploadUrl)
         console.log("🔑 Token:", token ? "存在 (长度:" + token.length + ")" : "不存在")
         console.log("📋 Authorization:", token ? `Bearer ${token.substring(0, 20)}...` : "空")
 
-        console.log("✅ 上传结果:", uploadResult.status, uploadResult.body)
+        // 使用 axios 上传
+        const response = await axios.post(uploadUrl, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': token ? `Bearer ${token}` : "",
+          },
+          timeout: 180000, // 180秒超时
+        })
 
-        if (uploadResult.status === 200) {
-          const data = JSON.parse(uploadResult.body)
+        console.log("✅ 上传结果:", response.status, response.data)
+
+        if (response.status === 200) {
+          const data = response.data
           if (data.code === 200 || data.code === 201) {
             if (!batchId) {
               batchId = data.data.batch_id
@@ -273,7 +285,7 @@ export default function CameraScreen() {
             throw new Error(data.message || "上传失败")
           }
         } else {
-          throw new Error(`HTTP错误: ${uploadResult.status}`)
+          throw new Error(`HTTP错误: ${response.status}`)
         }
       }
 
@@ -312,7 +324,7 @@ export default function CameraScreen() {
         </View>
 
         {/* 拍照按钮 - 右侧 */}
-        <View style={[styles.sideBtns, { top: screenHeight * 0.475 }]}>
+        <View style={[styles.sideBtns, { top: screenHeight * 0.845 }]}>
           <TouchableOpacity
             style={[styles.iconBtn, _isAnimating && styles.btnAnimate]}
             onPress={handleTap}

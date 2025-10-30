@@ -48,14 +48,19 @@ export function CompositionCanvas({ title, score, isChinese, content }: Props) {
   const renderTitleAndScore = () => {
     if (title === "续") return null
 
+    // 计算标题居中时的起始位置（左边需要空几个格子）
+    const titleLength = title.length
+    const emptyGridsLeft = Math.floor((GRID_COLUMNS - titleLength) / 2)
+    const leftPadding = rpx(emptyGridsLeft * 16) // 手动转换 rpx，避免二次转换
+
     return (
-      <View style={[styles.titleRow, { top: 16.8 }]}>
+      <View style={[styles.titleRow, { top: rpx(16.8) }]}>
         {/* 标题按格子显示，每个字符在单独的格子里 */}
-        <View style={styles.titleGridContainer}>
+        <View style={[styles.titleGridContainer, { paddingLeft: leftPadding }]}>
           {Array.from(title).map((char, charIndex) => (
-            <Text key={charIndex} style={styles.titleChar}>
-              {char}
-            </Text>
+            <View key={charIndex} style={styles.titleCharContainer}>
+              <Text style={styles.titleChar}>{char}</Text>
+            </View>
           ))}
         </View>
         {score > 0 && <Text style={styles.scoreText}>{score}</Text>}
@@ -66,6 +71,7 @@ export function CompositionCanvas({ title, score, isChinese, content }: Props) {
   // 渲染内容
   const renderContent = () => {
     const startRow = title !== "续" ? 1 : 0
+    const contentTop = rpx(16.8 + 16 * startRow + 4 * startRow) // 手动计算并转换 rpx
 
     if (isChinese) {
       // 中文：每行13个字符
@@ -73,17 +79,15 @@ export function CompositionCanvas({ title, score, isChinese, content }: Props) {
         <View
           style={[
             styles.contentContainer,
-            { 
-              top: 16.8 + GRID_SIZE * startRow + LINE_GAP * startRow // 加上OUTER_PADDING
-            },
+            { top: contentTop },
           ]}
         >
           {content.map((line, index) => (
             <View key={index} style={styles.chineseLineContainer}>
               {Array.from(line).map((char, charIndex) => (
-                <Text key={charIndex} style={styles.chineseChar}>
-                  {char}
-                </Text>
+                <View key={charIndex} style={styles.chineseCharContainer}>
+                  <Text style={styles.chineseChar}>{char}</Text>
+                </View>
               ))}
             </View>
           ))}
@@ -95,9 +99,7 @@ export function CompositionCanvas({ title, score, isChinese, content }: Props) {
         <View
           style={[
             styles.contentContainer,
-            { 
-              top: 16.8 + GRID_SIZE * startRow + LINE_GAP * startRow // 加上OUTER_PADDING
-            },
+            { top: contentTop },
           ]}
         >
           {content.map((line, index) => (
@@ -177,27 +179,29 @@ const styles = createStyles({
     width: 208, // 13列 × 16rpx = 208rpx，与网格背景保持一致
     height: 16, // GRID_SIZE
     flexDirection: "row",
-    justifyContent: "space-between", // UniApp使用space-between
     alignItems: "center",
     zIndex: 1,
   },
   titleGridContainer: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "flex-start", // 从左边开始排列，通过 paddingLeft 来实现居中对齐到格子
     alignItems: "center",
-    flex: 1,
+    flex: 1, // 占据剩余空间，让分数能正确显示
+  },
+  titleCharContainer: {
+    width: 16, // 每个格子的宽度，正好对齐网格
+    height: 16, // 每个格子的高度，正好对齐网格
+    justifyContent: "center", // 垂直居中
+    alignItems: "center", // 水平居中
   },
   titleChar: {
-    width: 16, // 每个格子的宽度
-    height: 16, // 每个格子的高度
-    fontSize: 10, // 10rpx
+    fontSize: 10, // 字号适中，确保在格子内显示
     fontWeight: "bold",
     color: "#000000",
+    includeFontPadding: false, // 移除额外的字体padding
     textAlign: "center",
-    lineHeight: 16, // 垂直居中
-    overflow: "hidden",
-    includeFontPadding: false,
-    textAlignVertical: "center",
+    padding: 0, // 移除所有内边距
+    margin: 0, // 移除所有外边距
   },
   scoreText: {
     position: "absolute",
@@ -218,18 +222,19 @@ const styles = createStyles({
     height: 16, // GRID_SIZE
     marginBottom: 4, // LINE_GAP
   },
+  chineseCharContainer: {
+    width: 16, // GRID_SIZE，正好对齐网格
+    height: 16, // 正好对齐网格
+    justifyContent: "center", // 垂直居中
+    alignItems: "center", // 水平居中
+  },
   chineseChar: {
-    width: 16, // GRID_SIZE
-    height: 16,
-    fontSize: 10, // 10rpx
+    fontSize: 10, // 字号适中，确保在格子内显示
     color: "#000000",
+    includeFontPadding: false, // 移除额外的字体padding
     textAlign: "center",
-    lineHeight: 16, // 垂直居中
-    // 确保文字不会溢出格子
-    overflow: "hidden",
-    // 文字垂直居中
-    includeFontPadding: false,
-    textAlignVertical: "center",
+    padding: 0, // 移除所有内边距
+    margin: 0, // 移除所有外边距
   },
   englishLineContainer: {
     height: 16, // GRID_SIZE
@@ -237,9 +242,11 @@ const styles = createStyles({
     justifyContent: "center",
   },
   englishText: {
-    fontSize: 8.5, // 8.5rpx
+    fontSize: 9, // 增大字号
     color: "#000000",
     lineHeight: 16,
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
 })
 

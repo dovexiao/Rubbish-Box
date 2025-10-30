@@ -5,6 +5,7 @@ import { Platform, Alert } from "react-native"
 import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS, UPLOAD_API_URL } from "../config/api"
 import { IS_DEV } from "../config/env"
 import { getDeviceInfoForAPI } from "../utils/deviceInfo"
+import { showError, showSuccess, showWarning } from "../utils/toast"
 /**
  * 扩展AxiosRequestConfig类型，添加metadata字段
  */
@@ -50,28 +51,6 @@ const formatLogData = (data: any): string => {
 const safeLog = (message: string, ...args: any[]) => {
   if (LOG_CONFIG.ENABLED) {
     console.log(message, ...args)
-  }
-}
-
-/**
- * 显示Toast消息
- */
-const showToast = (message: string, type: 'error' | 'success' | 'warning' = 'error') => {
-  if (Platform.OS === 'android') {
-    // Android使用ToastAndroid
-    const ToastAndroid = require('react-native').ToastAndroid
-    if (type === 'error') {
-      ToastAndroid.show(message, ToastAndroid.LONG)
-    } else {
-      ToastAndroid.show(message, ToastAndroid.SHORT)
-    }
-  } else {
-    // iOS使用Alert
-    Alert.alert(
-      type === 'error' ? '错误' : type === 'success' ? '成功' : '提示',
-      message,
-      [{ text: '确定' }]
-    )
   }
 }
 
@@ -240,8 +219,8 @@ apiClient.interceptors.response.use(
 
     // 处理业务状态码错误
     safeLog("⚠️ 业务错误:", res.code, res.message)
-    // 显示toast错误信息
-    showToast(res.message || "请求失败", 'error')
+    // 显示美观的错误提示
+    showError(res.message || "请求失败")
     return Promise.reject(new Error(res.message || "请求失败"))
   },
   (error) => {
@@ -297,14 +276,14 @@ apiClient.interceptors.response.use(
 
     // 处理网络错误和其他错误
     if (error.response?.data?.message) {
-      // 如果有具体的错误消息，显示toast
-      showToast(error.response.data.message, 'error')
+      // 如果有具体的错误消息，显示美观的错误提示
+      showError(error.response.data.message)
     } else if (error.message) {
       // 显示通用错误消息
-      showToast(error.message, 'error')
+      showError(error.message)
     } else {
       // 显示默认错误消息
-      showToast("网络请求失败，请检查网络连接", 'error')
+      showError("网络请求失败，请检查网络连接")
     }
 
     return Promise.reject(error)

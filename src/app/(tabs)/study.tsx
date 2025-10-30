@@ -1,4 +1,4 @@
-import { Alert, Image, ImageBackground, Text, TouchableOpacity, View, ActivityIndicator } from "react-native"
+import { Alert, Image, ImageBackground, Text, TouchableOpacity, View } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useState, useEffect } from "react"
 import { InteractionManager } from "react-native"
@@ -7,6 +7,7 @@ import { StatusBar } from "../../components/StatusBar"
 import { Images } from "../../constants/Assets"
 import { createStyles } from "../../utils/rpxStyleSheet"
 import { useRouter } from "expo-router"
+import { showInfo } from "../../utils/toast"
 
 /**
  * 学习首页
@@ -42,8 +43,9 @@ export default function StudyScreen() {
 
   // 跳转到小褐阅读页面
   const goToReader = () => {
-    console.log("跳转到阅读页面")
-    router.push("/reader")
+    // console.log("跳转到阅读页面")
+    // showInfo("阅读器暂时不可用，马上回来，请等待更新", 3000)
+    router.push("/reader") // 暂时注释掉，等服务器开发好后再打开
   }
 
   // 跳转到同步课堂页面
@@ -88,17 +90,8 @@ export default function StudyScreen() {
 
       {/* 功能卡片区域 */}
       <View style={styles.mainContent}>
-        {/* 加载状态 */}
-        {isLoading && !isContentLoaded && (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#1890ff" />
-            <Text style={styles.loadingText}>正在加载...</Text>
-          </View>
-        )}
-        
         {/* 内容区域 */}
-        {isContentLoaded && (
-          <>
+        <>
           <View style={styles.leftColumn}>
           {/* AI批改大卡片 */}
           <View style={styles.cardShadowWrapper}>
@@ -243,8 +236,7 @@ export default function StudyScreen() {
             </ImageBackground>
           </View>
         </View>
-          </>
-          )}
+        </>
       </View>
     </LinearGradient>
   )
@@ -612,16 +604,5 @@ const styles = createStyles({
 
   classroomArrow: {
     width: 7.375,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 50,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 14,
-    color: "#666",
   },
 })

@@ -1,4 +1,4 @@
-import { View, Text, Image, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from "react-native"
+import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useState, useCallback } from "react"
 import { useFocusEffect } from "expo-router"
@@ -11,6 +11,8 @@ import {
   deleteExchangeRecord,
   type ExchangeRecordItem,
 } from "../../services/pointsMall"
+import { showSuccess, showError, showInfo } from "../../utils/toast"
+import { showDanger } from "../../utils/dialog"
 
 export default function ExchangeRecordScreen() {
   const [exchangeRecords, setExchangeRecords] = useState<ExchangeRecordItem[]>([])
@@ -45,7 +47,7 @@ export default function ExchangeRecordScreen() {
         }
       } catch (error) {
         console.error("获取兑换记录失败:", error)
-        Alert.alert("提示", "获取数据失败")
+        showError("获取数据失败")
       } finally {
         setLoading(false)
       }
@@ -70,37 +72,28 @@ export default function ExchangeRecordScreen() {
   // 取消订单
   const cancelOrder = useCallback(
     (item: ExchangeRecordItem) => {
-      Alert.alert("确认取消", "确定要取消订单？", [
-        {
-          text: "取消",
-          style: "cancel",
-        },
-        {
-          text: "确定",
-          onPress: async () => {
-            try {
-              await deleteExchangeRecord({
-                record_id: item.id,
-              })
+      showDanger("确认取消", "确定要取消订单？", async () => {
+        try {
+          await deleteExchangeRecord({
+            record_id: item.id,
+          })
 
-              setExchangeRecords((prev) => prev.filter((record) => record.id !== item.id))
-              Alert.alert("提示", "订单已取消")
-              setCurrentPage(1)
-              loadExchangeRecords()
-            } catch (error) {
-              console.error("取消订单失败:", error)
-              Alert.alert("提示", "取消失败，请重试")
-            }
-          },
-        },
-      ])
+          setExchangeRecords((prev) => prev.filter((record) => record.id !== item.id))
+          showSuccess("订单已取消")
+          setCurrentPage(1)
+          loadExchangeRecords()
+        } catch (error) {
+          console.error("取消订单失败:", error)
+          showError("取消失败，请重试")
+        }
+      })
     },
     [loadExchangeRecords],
   )
 
   // 查看物流
   const trackOrder = useCallback((_item: ExchangeRecordItem) => {
-    Alert.alert("提示", "查看物流功能开发中")
+    showInfo("查看物流功能开发中")
   }, [])
 
   // 页面获得焦点时加载数据

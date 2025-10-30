@@ -3,7 +3,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
   ActivityIndicator,
   Pressable,
 } from "react-native"
@@ -32,8 +32,14 @@ export default function ErrorQuestionsScreen() {
   const currentSubject = params.subject as string
   const initialType = params.type as string
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false) // 🔴 修复：改为 false，避免首次加载时被 loading 检查拦截
   const [questionList, setQuestionList] = useState<WrongQuestion[]>([])
+  const [totalQuestions, setTotalQuestions] = useState(0) // 🔴 修复：正确的 useState 用法
+  
+  // 分页相关
+  const [page, setPage] = useState(1)
+  const [pageSize] = useState(5)
+  const [hasMore, setHasMore] = useState(true)
 
   // 筛选相关
   const [showFilter, setShowFilter] = useState(false)
@@ -61,24 +67,42 @@ export default function ErrorQuestionsScreen() {
   ]
 
   // 获取错题列表
-  const fetchSubjectQuestions = useCallback(async () => {
-    if (!currentSubject) return
+  const fetchSubjectQuestions = useCallback(async (isRefresh = false) => {
+    if (!currentSubject || loading) return
 
     try {
       setLoading(true)
+      const currentPage = isRefresh ? 1 : page
+      
       const res = await getSubjectQuestions({
         subject: currentSubject,
         is_corrected: selectedCorrectStatus,
         this_week_only: selectTimeSort,
         order_by_error_count: selectedErrorCount,
+        page: currentPage,
+        page_size: pageSize,
       })
-      setQuestionList(res.wrong_questions || [])
+      
+      // 刷新时重置列表，否则追加
+      if (isRefresh) {
+        setQuestionList(res.wrong_questions || [])
+        setPage(2)
+      } else {
+        setQuestionList(prev => [...prev, ...(res.wrong_questions || [])])
+        setPage(prev => prev + 1)
+      }
+      console.log('res.total_questions', res.total_questions)
+      setTotalQuestions(res.total_questions || 0) // 🔴 修复：使用 setState 函数更新状态
+      // 使用后端返回的 has_next 判断是否还有更多数据
+      setHasMore(res.has_next || false)
+      
     } catch (error) {
       console.error("获取错题列表失败:", error)
     } finally {
       setLoading(false)
     }
-  }, [currentSubject, selectedCorrectStatus, selectTimeSort, selectedErrorCount])
+  }, [currentSubject, selectedCorrectStatus, selectTimeSort, selectedErrorCount, page, pageSize])
+
 
   // 初始化：根据type参数设置初始筛选条件
   useEffect(() => {
@@ -93,8 +117,9 @@ export default function ErrorQuestionsScreen() {
 
   // 加载数据
   useEffect(() => {
-    fetchSubjectQuestions()
-  }, [fetchSubjectQuestions])
+    fetchSubjectQuestions(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSubject])
 
   // 显示筛选弹窗
   const showFilterPopup = () => setShowFilter(true)
@@ -129,8 +154,15 @@ export default function ErrorQuestionsScreen() {
 
   // 应用筛选
   const applyFilters = async () => {
-    await fetchSubjectQuestions()
+    await fetchSubjectQuestions(true) // 重新加载第一页
     setShowFilter(false)
+  }
+  
+  // 加载更多
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      fetchSubjectQuestions(false)
+    }
   }
 
   // 查看解析
@@ -158,8 +190,8 @@ export default function ErrorQuestionsScreen() {
       <StatusBar theme="dark" />
       <NavBar title={`错题—${currentSubject}`} leftArrow />
 
-      {!loading && (
-        <View style={styles.mainContent}>
+      {/* 🔴 修复：移除 !loading 条件，避免加载下一页时页面空白 */}
+      <View style={styles.mainContent}>
           {/* 筛选栏 */}
           <View style={styles.filterSection}>
             <TouchableOpacity style={styles.filterTrigger} onPress={showFilterPopup}>
@@ -184,14 +216,16 @@ export default function ErrorQuestionsScreen() {
 
           {/* 题目总数 */}
           <View style={styles.questionCount}>
-            <Text style={styles.questionCountText}>{questionList.length}道错题</Text>
+            <Text style={styles.questionCountText}>{totalQuestions}道错题</Text>
           </View>
 
           {/* 错题列表 */}
           <View style={styles.questionListContainer}>
-            <ScrollView style={styles.questionList} showsVerticalScrollIndicator={false}>
-              {questionList.map((question, index) => (
-                <View key={question.id} style={styles.questionCard}>
+            <FlatList
+              data={questionList}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item: question, index }) => (
+                <View style={styles.questionCard}>
                   {/* 日期和答错次数 */}
                   <View style={styles.questionHeader}>
                     <Text style={styles.questionDate}>{question.created_at}</Text>
@@ -250,22 +284,36 @@ export default function ErrorQuestionsScreen() {
                     )}
                   </View>
                 </View>
-              ))}
-
-              {/* 空状态 */}
-              {!loading && questionList.length === 0 && (
-                <View style={styles.emptyState}>
-                  <Text style={styles.emptyIcon}>📚</Text>
-                  <Text style={styles.emptyText}>暂无符合条件的错题</Text>
-                  <Text style={styles.emptyHint}>调整筛选条件试试看</Text>
-                </View>
               )}
-            </ScrollView>
+              ListEmptyComponent={
+                !loading && questionList.length === 0 ? (
+                  <View style={styles.emptyState}>
+                    <Text style={styles.emptyIcon}>📚</Text>
+                    <Text style={styles.emptyText}>暂无符合条件的错题</Text>
+                    <Text style={styles.emptyHint}>调整筛选条件试试看</Text>
+                  </View>
+                ) : null
+              }
+              ListFooterComponent={
+                questionList.length > 0 ? (
+                  <View style={styles.loadMoreContainer}>
+                    {loading ? (
+                      <ActivityIndicator size="small" color="#007AFF" />
+                    ) : !hasMore ? (
+                      <Text style={styles.noMoreText}>没有更多数据了</Text>
+                    ) : null}
+                  </View>
+                ) : null
+              }
+              onEndReached={loadMore}
+              onEndReachedThreshold={0.1}
+              showsVerticalScrollIndicator={false}
+              style={styles.questionList}
+            />
           </View>
         </View>
-      )}
 
-      {/* 加载中 */}
+      {/* 🔴 修复：初次加载时的全屏加载指示器 */}
       {loading && questionList.length === 0 && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1571FC" />
@@ -568,6 +616,16 @@ const styles = createStyles({
   emptyHint: {
     fontSize: 9.375,
     color: "#ccc",
+  },
+  // 加载更多
+  loadMoreContainer: {
+    paddingVertical: 20,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  noMoreText: {
+    fontSize: 11,
+    color: "#999",
   },
   // 加载中
   loadingContainer: {

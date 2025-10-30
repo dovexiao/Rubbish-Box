@@ -1,5 +1,5 @@
-import { View, Text, Image, ScrollView, TouchableOpacity, Alert } from "react-native"
-import { Modal, Portal } from "react-native-paper"
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native"
+import { Modal, Portal, Snackbar } from "react-native-paper"
 import { useState, useEffect } from "react"
 import { Ionicons } from "@expo/vector-icons"
 
@@ -11,6 +11,9 @@ import {
   type AddressItem,
 } from "../../services/pointsMall"
 import { useUserStore } from "../../stores/userStore"
+import { AddressListPopup } from "./AddressListPopup"
+import { AddAddressPopup } from "./AddAddressPopup"
+import { EditAddressPopup } from "./EditAddressPopup"
 
 interface OrderConfirmPopupProps {
   visible: boolean
@@ -31,7 +34,13 @@ export function OrderConfirmPopup({
 }: OrderConfirmPopupProps) {
   const userStore = useUserStore()
   const [selectedAddress, setSelectedAddress] = useState<AddressItem | null>(null)
-  const [_showAddressListPopup, _setShowAddressListPopup] = useState(false)
+  const [showAddressListPopup, setShowAddressListPopup] = useState(false)
+  const [showAddAddressPopup, setShowAddAddressPopup] = useState(false)
+  const [showEditAddressPopup, setShowEditAddressPopup] = useState(false)
+  const [editAddressData, setEditAddressData] = useState<AddressItem | null>(null)
+  const [snackbarVisible, setSnackbarVisible] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState("")
+  const [snackbarType, setSnackbarType] = useState<"success" | "error" | "info">("info")
 
   // 加载地址列表
   useEffect(() => {
@@ -39,6 +48,13 @@ export function OrderConfirmPopup({
       loadAddressList()
     }
   }, [visible])
+
+  // 显示 Snackbar 提示
+  const showSnackbar = (message: string, type: "success" | "error" | "info" = "info") => {
+    setSnackbarMessage(message)
+    setSnackbarType(type)
+    setSnackbarVisible(true)
+  }
 
   const loadAddressList = async () => {
     try {
@@ -58,19 +74,44 @@ export function OrderConfirmPopup({
     onClose()
   }
 
-  const _handleAddressSelect = (address: AddressItem) => {
+  // 处理地址选择
+  const handleAddressSelect = (address: AddressItem) => {
     setSelectedAddress(address)
-    _setShowAddressListPopup(false)
+    setShowAddressListPopup(false)
+  }
+
+  // 处理新增地址成功
+  const handleAddAddressSuccess = () => {
+    setShowAddAddressPopup(false)
+    loadAddressList() // 重新加载地址列表
+  }
+
+  // 处理编辑地址成功
+  const handleEditAddressSuccess = () => {
+    setShowEditAddressPopup(false)
+    setEditAddressData(null)
+    loadAddressList() // 重新加载地址列表
+  }
+
+  // 点击选择地址区域
+  const handleAddressCardClick = () => {
+    if (selectedAddress) {
+      // 有地址，打开地址列表
+      setShowAddressListPopup(true)
+    } else {
+      // 没有地址，直接打开新增地址弹窗
+      setShowAddAddressPopup(true)
+    }
   }
 
   const confirmExchange = async () => {
     if (!productData) {
-      Alert.alert("提示", "商品信息缺失")
+      showSnackbar("商品信息缺失", "error")
       return
     }
 
     if (!selectedAddress) {
-      Alert.alert("提示", "请选择收货地址")
+      showSnackbar("请选择收货地址", "info")
       return
     }
 
@@ -83,11 +124,13 @@ export function OrderConfirmPopup({
       // 刷新用户信息
       await userStore.getUserInfo()
 
-      Alert.alert("成功", "兑换成功")
-      handleClose()
-      onConfirm()
+      showSnackbar("兑换成功", "success")
+      setTimeout(() => {
+        handleClose()
+        onConfirm()
+      }, 1500)
     } catch (error: any) {
-      Alert.alert("失败", error.message || "兑换失败，请重试")
+      showSnackbar(error.message || "兑换失败，请重试", "error")
       console.error("兑换失败:", error)
     }
   }
@@ -111,7 +154,7 @@ export function OrderConfirmPopup({
             {/* 收货地址 */}
             <TouchableOpacity
               style={styles.addressCard}
-              onPress={() => _setShowAddressListPopup(true)}
+              onPress={handleAddressCardClick}
               activeOpacity={0.7}
             >
               <View style={styles.addressInfo}>
@@ -217,7 +260,47 @@ export function OrderConfirmPopup({
         </View>
       </Modal>
 
-      {/* 地址列表弹窗（TODO: 需要实现）*/}
+      {/* 地址列表弹窗 */}
+      <AddressListPopup
+        visible={showAddressListPopup}
+        onClose={() => setShowAddressListPopup(false)}
+        onSelect={handleAddressSelect}
+      />
+
+      {/* 新增地址弹窗 */}
+      <AddAddressPopup
+        visible={showAddAddressPopup}
+        onClose={() => setShowAddAddressPopup(false)}
+        onSuccess={handleAddAddressSuccess}
+      />
+
+      {/* 编辑地址弹窗 */}
+      <EditAddressPopup
+        visible={showEditAddressPopup}
+        addressData={editAddressData}
+        onClose={() => {
+          setShowEditAddressPopup(false)
+          setEditAddressData(null)
+        }}
+        onSuccess={handleEditAddressSuccess}
+      />
+
+      {/* Snackbar 提示 */}
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        action={{
+          label: "关闭",
+          onPress: () => setSnackbarVisible(false),
+        }}
+        style={{
+          backgroundColor:
+            snackbarType === "success" ? "#52C41A" : snackbarType === "error" ? "#FF4D4F" : "#4891FF",
+        }}
+      >
+        {snackbarMessage}
+      </Snackbar>
     </Portal>
   )
 }

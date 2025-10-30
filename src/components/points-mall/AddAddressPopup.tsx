@@ -1,10 +1,12 @@
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Alert } from "react-native"
-import { Modal, Portal } from "react-native-paper"
-import { useState } from "react"
+import { View, Text, TextInput, ScrollView, TouchableOpacity } from "react-native"
+import { Modal, Portal, Snackbar } from "react-native-paper"
+import { useState, useCallback, useEffect } from "react"
 import { Ionicons } from "@expo/vector-icons"
 
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { addAddress } from "../../services/pointsMall"
+import CascadeSelector from "../CascadeSelector"
+import api from "../../services/api"
 
 interface AddAddressPopupProps {
   visible: boolean
@@ -13,9 +15,9 @@ interface AddAddressPopupProps {
 }
 
 /**
- * 添加地址弹窗组件（简化版）
+ * 添加地址弹窗组件
  * 基于UniApp项目 /src/pages/pointsMall/components/AddAddressPopup.vue
- * 注意：由于React Native没有直接等价的级联地区选择器，此处简化为文本输入
+ * 100%还原UniApp项目
  */
 export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopupProps) {
   const [formData, setFormData] = useState({
@@ -26,6 +28,87 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
     district: "",
     detail_address: "",
   })
+
+  const [selectedRegionValues, setSelectedRegionValues] = useState<string[]>([])
+  const [regionOptions, setRegionOptions] = useState<any[]>([])
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState("")
+  const [snackbarType, setSnackbarType] = useState<"success" | "error" | "info">("info")
+
+  const showSnackbar = (message: string, type: "success" | "error" | "info" = "info") => {
+    setSnackbarMessage(message)
+    setSnackbarType(type)
+    setSnackbarVisible(true)
+  }
+
+  // 初始化地区数据
+  const initRegionData = useCallback(async () => {
+    try {
+      const response = await api.post("/AppStart/AddressView/get_provinces/")
+      const provinces = (response || []).map((item: any) => ({
+        value: item.value,
+        label: item.text,
+        children: [], // 懒加载子级数据
+      }))
+      setRegionOptions(provinces)
+    } catch (error) {
+      console.error("获取省份数据失败:", error)
+      showSnackbar("获取省份数据失败", "error")
+    }
+  }, [])
+
+  // 懒加载地区子级数据
+  const loadRegionChildren = useCallback(async (parentValue: string, level: number) => {
+    try {
+      if (level === 0) {
+        // 加载城市数据
+        const cityRes: any = await api.post("/AppStart/AddressView/get_cities/", {
+          province_code: parentValue,
+        })
+        return (cityRes || []).map((item: any) => ({
+          value: item.value,
+          label: item.text,
+          children: [], // 懒加载区县数据
+        }))
+      } else if (level === 1) {
+        // 加载区县数据
+        const districtRes: any = await api.post("/AppStart/AddressView/get_counties/", {
+          city_code: parentValue,
+        })
+        return (districtRes || []).map((item: any) => ({
+          value: item.value,
+          label: item.text,
+        }))
+      }
+      return []
+    } catch (error) {
+      console.error("加载地区子级数据失败:", error)
+      return []
+    }
+  }, [])
+
+  // 处理地区选择
+  const handleRegionSelect = useCallback((values: string[], labels: string[]) => {
+    setSelectedRegionValues(values)
+    
+    // 更新表单数据（保存编码到 province/city/district）
+    if (values.length === 3) {
+      setFormData(prev => ({
+        ...prev,
+        province: values[0] || "", // 保存编码，而不是文本
+        city: values[1] || "",
+        district: values[2] || "",
+      }))
+    }
+  }, [])
+
+  // 初始化地区数据
+  useEffect(() => {
+    if (visible) {
+      initRegionData()
+    }
+  }, [visible, initRegionData])
 
   const handleClose = () => {
     resetForm()
@@ -41,32 +124,33 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
       district: "",
       detail_address: "",
     })
+    setSelectedRegionValues([])
   }
 
   const validateForm = (): boolean => {
     if (!formData.receiver_name.trim()) {
-      Alert.alert("提示", "请输入收货人姓名")
+      showSnackbar("请输入收货人姓名", "info")
       return false
     }
 
     if (!formData.phone.trim()) {
-      Alert.alert("提示", "请输入手机号")
+      showSnackbar("请输入手机号", "info")
       return false
     }
 
     const phoneRegex = /^1[3-9]\d{9}$/
     if (!phoneRegex.test(formData.phone)) {
-      Alert.alert("提示", "请输入正确的手机号")
+      showSnackbar("请输入正确的手机号", "info")
       return false
     }
 
     if (!formData.province.trim() || !formData.city.trim() || !formData.district.trim()) {
-      Alert.alert("提示", "请输入完整的地区信息")
+      showSnackbar("请输入完整的地区信息", "info")
       return false
     }
 
     if (!formData.detail_address.trim()) {
-      Alert.alert("提示", "请输入详细地址")
+      showSnackbar("请输入详细地址", "info")
       return false
     }
 
@@ -80,11 +164,13 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
 
     try {
       await addAddress(formData)
-      Alert.alert("成功", "保存成功")
-      onSuccess()
-      handleClose()
+      showSnackbar("保存成功", "success")
+      setTimeout(() => {
+        onSuccess()
+        handleClose()
+      }, 1000)
     } catch (_error) {
-      Alert.alert("失败", "保存失败，请重试")
+      showSnackbar("保存失败，请重试", "error")
     }
   }
 
@@ -132,45 +218,21 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
               </View>
             </View>
 
-            {/* 省份 */}
+            {/* 地区选择 */}
             <View style={styles.formCard}>
-              <View style={styles.formItem}>
-                <Text style={styles.formLabel}>省份</Text>
-                <TextInput
-                  style={styles.formInput}
-                  value={formData.province}
-                  onChangeText={(text) => setFormData({ ...formData, province: text })}
-                  placeholder="如：广东省"
-                  placeholderTextColor="#999"
-                />
-              </View>
-            </View>
-
-            {/* 城市 */}
-            <View style={styles.formCard}>
-              <View style={styles.formItem}>
-                <Text style={styles.formLabel}>城市</Text>
-                <TextInput
-                  style={styles.formInput}
-                  value={formData.city}
-                  onChangeText={(text) => setFormData({ ...formData, city: text })}
-                  placeholder="如：深圳市"
-                  placeholderTextColor="#999"
-                />
-              </View>
-            </View>
-
-            {/* 区县 */}
-            <View style={styles.formCard}>
-              <View style={styles.formItem}>
-                <Text style={styles.formLabel}>区县</Text>
-                <TextInput
-                  style={styles.formInput}
-                  value={formData.district}
-                  onChangeText={(text) => setFormData({ ...formData, district: text })}
-                  placeholder="如：南山区"
-                  placeholderTextColor="#999"
-                />
+              <View style={[styles.formItem, styles.regionSelectorItem]}>
+                <Text style={styles.formLabel}>地区</Text>
+                <View style={styles.regionSelectorWrapper}>
+                  <CascadeSelector
+                    options={regionOptions}
+                    selectedValues={selectedRegionValues}
+                    onSelect={handleRegionSelect}
+                    onLoadChildren={loadRegionChildren}
+                    placeholder="选择省/市/区"
+                    title="选择地区"
+                    style={styles.cascadeSelector}
+                  />
+                </View>
               </View>
             </View>
 
@@ -200,6 +262,21 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
           </View>
         </View>
       </Modal>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        action={{
+          label: "关闭",
+          onPress: () => setSnackbarVisible(false),
+        }}
+        style={{
+          backgroundColor:
+            snackbarType === "success" ? "#52C41A" : snackbarType === "error" ? "#FF4D4F" : "#4891FF",
+        }}
+      >
+        {snackbarMessage}
+      </Snackbar>
     </Portal>
   )
 }
@@ -253,6 +330,9 @@ const styles = createStyles({
   detailAddressItem: {
     alignItems: "flex-start",
   },
+  regionSelectorItem: {
+    alignItems: "center",
+  },
   formLabel: {
     flexShrink: 0,
     width: 70,
@@ -266,6 +346,18 @@ const styles = createStyles({
     color: "#333",
     paddingLeft: 10,
     height: 30,
+  },
+  regionSelectorWrapper: {
+    flex: 1,
+    paddingLeft: 10,
+  },
+  cascadeSelector: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    width: "100%",
+    padding: 0,
+    fontSize: 11.71875,
+    color: "#333",
   },
   formTextarea: {
     flex: 1,

@@ -92,8 +92,8 @@ android {
         applicationId 'com.xhtx.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10000
-        versionName "1.0.0"
+        versionCode 10001
+        versionName "1.0.1"
     }
     signingConfigs {
         debug {
@@ -129,9 +129,8 @@ android {
     // AAPT2 configuration for large images
     aaptOptions {
         noCompress 'png', 'jpg', 'jpeg', 'gif', 'webp'
-        additionalParameters '--max-resource-size', '20MB'
-        additionalParameters '--timeout', '12000000'
-        additionalParameters '--max-memory', '8g'
+        cruncherEnabled = false
+        useNewCruncher = false
     }
 }
 

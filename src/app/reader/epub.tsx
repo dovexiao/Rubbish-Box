@@ -4,9 +4,9 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Alert,
   ActivityIndicator,
   Dimensions,
+  Animated,
 } from "react-native"
 import { PanGestureHandler, State } from "react-native-gesture-handler"
 import { useRouter, useLocalSearchParams } from "expo-router"
@@ -26,6 +26,7 @@ import {
   BookDetailResponse,
   ChapterDetailResponse,
 } from "../../services/reader"
+import { showInfo, showError } from "../../utils/toast"
 
 // 定义本地使用的类型
 interface Chapter {
@@ -95,6 +96,14 @@ export default function EpubReader() {
   // 分页器实例
   const paginatorRef = useRef<EpubPaginator | null>(null)
   const chapterCacheRef = useRef<Map<number, { content: string; pages: string[] }>>(new Map())
+  
+  // 翻页动画值
+  const pageTranslateX = useRef(new Animated.Value(0)).current
+  const pageOpacity = useRef(new Animated.Value(1)).current
+  
+  // 防止手势重复触发
+  const gestureTriggeredRef = useRef(false)
+  const isAnimatingRef = useRef(false)
 
   // 计算页面尺寸
   const calculatePageSize = useCallback(() => {
@@ -168,33 +177,23 @@ export default function EpubReader() {
 
       const options: PaginationOptions = {
         containerWidth: pageWidth,
-        containerHeight: pageHeight,
+        containerHeight: pageHeight - 40, // 减去页码占用的空间（页码高度约30px + 安全边距10px）
         fontSize,
         fontFamily: "'Source Han Serif', 'Noto Serif SC', '方正书宋', serif",
         lineHeight: 1.8,
-        padding: 30,
+        padding: 20, // 与 styles.leftPage/rightPage 的 padding 保持一致
         textColor: theme.textColor,
         backgroundColor: theme.bgColor,
       }
 
-      console.log(`📖 [EPUB阅读器] 📄 分页参数:`, options)
 
       if (paginatorRef.current) {
         paginatorRef.current.updateOptions(options)
-        console.log(`📖 [EPUB阅读器] 📄 更新分页器选项`)
       } else {
         paginatorRef.current = new EpubPaginator(options)
-        console.log(`📖 [EPUB阅读器] 📄 创建新分页器`)
       }
 
       const result = await paginatorRef.current.paginate(formattedText)
-
-      console.log(`📖 [EPUB阅读器] ✅ 分页完成:`, {
-        totalPages: result.totalPages,
-        averageCharsPerPage: result.debugInfo.averageCharsPerPage,
-        containerSize: result.debugInfo.containerSize,
-        effectiveSize: result.debugInfo.effectiveSize,
-      })
 
       setAllPages(result.pages)
       setTotalPages(result.totalPages)
@@ -232,8 +231,11 @@ export default function EpubReader() {
       const leftIndex = pageIndex
       const rightIndex = pageIndex + 1
 
-      setLeftPageContent(pagesArray[leftIndex] || "")
-      setRightPageContent(pagesArray[rightIndex] || "")
+      const leftContent = pagesArray[leftIndex] || ""
+      const rightContent = pagesArray[rightIndex] || ""
+
+      setLeftPageContent(leftContent)
+      setRightPageContent(rightContent)
       setCurrentPageNumber(leftIndex + 1)
 
       // 只更新本地进度，不立即保存到服务器
@@ -244,17 +246,60 @@ export default function EpubReader() {
     [allPages, updateProgress],
   )
 
-  // 跳转到指定页面
+  // 跳转到指定页面（带动画）
   const jumpToPage = useCallback(
-    (pageIndex: number) => {
+    (pageIndex: number, direction: "left" | "right" = "right") => {
+      // 防止动画进行中重复触发
+      if (isAnimatingRef.current) {
+        console.log(`📖 [EPUB阅读器] ⏭️ 动画进行中，跳过`)
+        return
+      }
+      
       const clampedIndex = Math.max(0, Math.min(pageIndex, totalPages - 1))
       console.log(
         `📖 [EPUB阅读器] 📄 跳转到页面: ${pageIndex} -> ${clampedIndex} (总页数: ${totalPages})`,
       )
-      setCurrentPageIndex(clampedIndex)
-      updateCurrentPageContent(clampedIndex)
+      
+      isAnimatingRef.current = true
+      
+      // 动画：淡出 + 滑动
+      Animated.parallel([
+        Animated.timing(pageOpacity, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pageTranslateX, {
+          toValue: direction === "right" ? -300 : 300,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // 更新页面内容
+        setCurrentPageIndex(clampedIndex)
+        updateCurrentPageContent(clampedIndex)
+        
+        // 重置位置并淡入
+        pageTranslateX.setValue(direction === "right" ? 300 : -300)
+        
+        Animated.parallel([
+          Animated.timing(pageOpacity, {
+            toValue: 1,
+            duration: 150,
+            useNativeDriver: true,
+          }),
+          Animated.spring(pageTranslateX, {
+            toValue: 0,
+            tension: 65,
+            friction: 10,
+            useNativeDriver: true,
+          }),
+        ]).start(() => {
+          isAnimatingRef.current = false
+        })
+      })
     },
-    [totalPages, updateCurrentPageContent],
+    [totalPages, updateCurrentPageContent, pageOpacity, pageTranslateX],
   )
 
   // 上一页
@@ -263,7 +308,7 @@ export default function EpubReader() {
 
     if (currentPageIndex > 0) {
       console.log(`📖 [EPUB阅读器] ⬅️ 翻到上一页`)
-      jumpToPage(currentPageIndex - 2) // 双页模式，每次翻2页
+      jumpToPage(currentPageIndex - 2, "left") // 双页模式，每次翻2页，向左翻
     } else {
       // 尝试跳转到上一章
       const currentIndex = bookChapters.findIndex((c) => c.id === currentChapter?.id)
@@ -275,7 +320,7 @@ export default function EpubReader() {
         jumpToChapter(prevChapter)
       } else {
         console.log(`📖 [EPUB阅读器] ⬅️ 已经是第一页`)
-        Alert.alert("提示", "已经是第一页")
+        showInfo("已经是第一页")
       }
     }
   }, [currentPageIndex, jumpToPage, bookChapters, currentChapter, jumpToChapter])
@@ -288,7 +333,7 @@ export default function EpubReader() {
 
     if (currentPageIndex + 2 < totalPages) {
       console.log(`📖 [EPUB阅读器] ➡️ 翻到下一页`)
-      jumpToPage(currentPageIndex + 2) // 双页模式，每次翻2页
+      jumpToPage(currentPageIndex + 2, "right") // 双页模式，每次翻2页，向右翻
     } else {
       // 尝试跳转到下一章
       const currentIndex = bookChapters.findIndex((c) => c.id === currentChapter?.id)
@@ -302,7 +347,7 @@ export default function EpubReader() {
         jumpToChapter(nextChapter)
       } else {
         console.log(`📖 [EPUB阅读器] ➡️ 已经是最后一页`)
-        Alert.alert("提示", "已经是最后一页")
+        showInfo("已经是最后一页")
       }
     }
   }, [currentPageIndex, totalPages, jumpToPage, bookChapters, currentChapter, jumpToChapter])
@@ -367,7 +412,7 @@ export default function EpubReader() {
         console.log(`📖 [EPUB阅读器] 💾 章节内容已缓存`)
       } catch (error) {
         console.error("📖 [EPUB阅读器] ❌ 加载章节内容失败:", error)
-        Alert.alert("提示", "加载章节内容失败")
+        showError("加载章节内容失败")
       } finally {
         setLoading(false)
       }
@@ -417,7 +462,7 @@ export default function EpubReader() {
       }
     } catch (error) {
       console.error("加载书籍详情失败:", error)
-      Alert.alert("提示", "加载书籍详情失败")
+      showError("加载书籍详情失败")
     } finally {
       setLoading(false)
     }
@@ -430,11 +475,31 @@ export default function EpubReader() {
 
       console.log(`📖 [手势] 状态: ${state}, 位移: ${translationX}`)
 
+      // 手势开始时重置标志（检测位移接近0表示新手势开始）
+      if (state === State.BEGAN || state === 2 || Math.abs(translationX) < 5) {
+        if (gestureTriggeredRef.current && Math.abs(translationX) < 5) {
+          // 如果之前已触发过，且位移接近0，说明是新手势，重置标志
+          gestureTriggeredRef.current = false
+          console.log(`📖 [手势] 检测到新手势，重置触发标志`)
+        }
+        if (state === State.BEGAN || state === 2) {
+          gestureTriggeredRef.current = false
+          console.log(`📖 [手势] 手势开始，重置触发标志`)
+          return
+        }
+      }
+
+      // 防止重复触发
+      if (gestureTriggeredRef.current) {
+        console.log(`📖 [手势] 已触发过，跳过`)
+        return
+      }
+
       // State.END = 5, State.CANCELLED = 3, State.FAILED = 1
-      // 但由于ScrollView拦截，可能收不到END状态，所以在ACTIVE状态下也处理
       if (state === State.END || state === 5) {
         console.log(`📖 [手势] 手势结束，位移: ${translationX}`)
         if (Math.abs(translationX) > 50) {
+          gestureTriggeredRef.current = true
           if (translationX > 0) {
             console.log(`📖 [手势] 右滑，上一页`)
             prevPage()
@@ -446,8 +511,9 @@ export default function EpubReader() {
           console.log(`📖 [手势] 位移不足，忽略`)
         }
       } else if (state === State.ACTIVE || state === 4) {
-        // 在滑动过程中，如果位移足够大，也触发翻页
+        // 在滑动过程中，如果位移足够大，也触发翻页（但只触发一次）
         if (Math.abs(translationX) > 150) {
+          gestureTriggeredRef.current = true
           console.log(`📖 [手势] ACTIVE状态触发翻页，位移: ${translationX}`)
           if (translationX > 0) {
             console.log(`📖 [手势] 右滑，上一页`)
@@ -533,11 +599,23 @@ export default function EpubReader() {
             onPress={toggleControls}
             activeOpacity={1}
           >
-            {/* 双页布局 */}
-            <View style={styles.dualPageLayout}>
+            {/* 双页布局 - 带翻页动画 */}
+            <Animated.View 
+              style={[
+                styles.dualPageLayout,
+                {
+                  opacity: pageOpacity,
+                  transform: [{ translateX: pageTranslateX }],
+                },
+              ]}
+            >
               {/* 左页 */}
               <View style={[styles.leftPage, { width: pageWidth, height: pageHeight }]}>
-                <ScrollView style={styles.pageScrollView} showsVerticalScrollIndicator={false}>
+                <ScrollView 
+                  style={styles.pageScrollView} 
+                  contentContainerStyle={styles.pageScrollContent}
+                  showsVerticalScrollIndicator={false}
+                >
                   <Text
                     style={[
                       styles.pageContent,
@@ -560,7 +638,11 @@ export default function EpubReader() {
 
               {/* 右页 */}
               <View style={[styles.rightPage, { width: pageWidth, height: pageHeight }]}>
-                <ScrollView style={styles.pageScrollView} showsVerticalScrollIndicator={false}>
+                <ScrollView 
+                  style={styles.pageScrollView} 
+                  contentContainerStyle={styles.pageScrollContent}
+                  showsVerticalScrollIndicator={false}
+                >
                   <Text
                     style={[
                       styles.pageContent,
@@ -580,7 +662,7 @@ export default function EpubReader() {
                   </Text>
                 )}
               </View>
-            </View>
+            </Animated.View>
           </TouchableOpacity>
         </View>
       </PanGestureHandler>
@@ -771,6 +853,9 @@ const styles = createStyles({
   pageScrollView: {
     flex: 1,
   },
+  pageScrollContent: {
+    paddingBottom: 40, // 为底部页码预留空间
+  },
   pageContent: {
     textAlign: "justify" as const,
     letterSpacing: 0.5,
@@ -778,9 +863,11 @@ const styles = createStyles({
   pageNumber: {
     position: "absolute" as const,
     bottom: 10,
-    right: 15,
+    left: 0,
+    right: 0,
     fontSize: 12,
     opacity: 0.6,
+    textAlign: "center" as const,
   },
   controlsOverlay: {
     position: "absolute" as const,

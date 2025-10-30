@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Alert,
   Modal,
 } from "react-native"
 import { useRouter, useLocalSearchParams } from "expo-router"
@@ -17,6 +16,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { StatusBar } from "../../components/StatusBar"
 import { NavBar } from "../../components/NavBar"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
+import { showSuccess, showInfo, showWarning } from "../../utils/toast"
+import { showConfirm, showDanger } from "../../utils/dialog"
 
 interface PhotoInfo {
   path: string
@@ -95,7 +96,7 @@ export default function PhotoManagerScreen() {
 
     const permission = await ImagePicker.requestCameraPermissionsAsync()
     if (!permission.granted) {
-      Alert.alert("提示", "需要相机权限才能拍照")
+      showWarning("需要相机权限才能拍照")
       return
     }
 
@@ -136,19 +137,12 @@ export default function PhotoManagerScreen() {
 
   // 删除照片
   const deletePhoto = async (index: number) => {
-    Alert.alert("确认删除", "确定要删除这张照片吗？", [
-      { text: "取消", style: "cancel" },
-      {
-        text: "删除",
-        style: "destructive",
-        onPress: async () => {
-          const newPhotos = photos.filter((_, i) => i !== index)
-          setPhotos(newPhotos)
-          await AsyncStorage.setItem("temp_photos", JSON.stringify(newPhotos))
-          Alert.alert("提示", "已删除")
-        },
-      },
-    ])
+    showDanger("确认删除", "确定要删除这张照片吗？", async () => {
+      const newPhotos = photos.filter((_, i) => i !== index)
+      setPhotos(newPhotos)
+      await AsyncStorage.setItem("temp_photos", JSON.stringify(newPhotos))
+      showSuccess("已删除")
+    })
   }
 
   // 删除当前预览的照片
@@ -172,39 +166,26 @@ export default function PhotoManagerScreen() {
 
   // 清空所有照片
   const clearAllPhotos = () => {
-    Alert.alert("确认清空", "确定要清空所有照片吗？此操作不可恢复。", [
-      { text: "取消", style: "cancel" },
-      {
-        text: "清空",
-        style: "destructive",
-        onPress: async () => {
-          setPhotos([])
-          await AsyncStorage.removeItem("temp_photos")
-          Alert.alert("提示", "已清空")
-        },
-      },
-    ])
+    showDanger("确认清空", "确定要清空所有照片吗？此操作不可恢复。", async () => {
+      setPhotos([])
+      await AsyncStorage.removeItem("temp_photos")
+      showSuccess("已清空")
+    })
   }
 
   // 提交照片进行AI批改
   const submitPhotos = () => {
     if (photos.length === 0) {
-      Alert.alert("提示", "请先拍摄照片")
+      showWarning("请先拍摄照片")
       return
     }
 
-    Alert.alert("确认提交", `确定要提交 ${photos.length} 张照片进行AI批改吗？`, [
-      { text: "取消", style: "cancel" },
-      {
-        text: "确定",
-        onPress: async () => {
-          setIsSubmitting(true)
-          await AsyncStorage.removeItem("temp_photos")
-          // TODO: 上传照片并跳转到AI加载页面
-          Alert.alert("提示", "上传功能开发中")
-        },
-      },
-    ])
+    showConfirm("确认提交", `确定要提交 ${photos.length} 张照片进行AI批改吗？`, async () => {
+      setIsSubmitting(true)
+      await AsyncStorage.removeItem("temp_photos")
+      // TODO: 上传照片并跳转到AI加载页面
+      showInfo("上传功能开发中")
+    })
   }
 
   return (

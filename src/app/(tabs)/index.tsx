@@ -1,18 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Image, TouchableOpacity, ImageBackground, Platform, Alert, ActivityIndicator } from "react-native"
+import { View, Image, TouchableOpacity, ImageBackground, Platform } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import Slider from "@react-native-community/slider"
 import { useFocusEffect, useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
 import { InteractionManager } from "react-native"
+import * as Brightness from "expo-brightness"
 
 import { StatusBar } from "../../components/StatusBar"
 import { NoticeBar } from "../../components/NoticeBar"
+// 🔴 临时注释：坐姿检测功能
 import { usePostureStore } from "../../stores/postureStore"
 import { useUserStore } from "../../stores/userStore"
 import { getLatestVideo, getNotifications, getHomeRanks } from "../../services/app"
 import { Images } from "../../constants/Assets"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
+import { showError, showWarning, showInfo } from "../../utils/toast"
 
 // 自定义Text组件，避免lint错误
 const Text = ({ children, style, ...props }: any) => {
@@ -30,8 +33,9 @@ const Text = ({ children, style, ...props }: any) => {
  * 100%还原UniApp项目中的pages/index/index
  */
 export default function HomeScreen() {
-  const userStore = useUserStore()
-  const postureStore = usePostureStore()
+  // 🔴 临时注释：坐姿检测功能
+  // 只订阅需要的状态，避免不必要的重渲染
+  const postureStatus = usePostureStore((state) => state.nowStatus)
   const [showSettingsPanel, setShowSettingsPanel] = useState(false)
   const [brightness, setBrightness] = useState(50)
   const [volume, setVolume] = useState(50)
@@ -50,12 +54,15 @@ export default function HomeScreen() {
     rsname: "",
     rspname: "",
     record_time: 0,
-    cover_v: "",
+    cover_v: "", // 课程封面图
+    referer_img: "", // 图片 Referer（如需要）
   })
   const [notifications, setNotifications] = useState<string[]>([])
   const [ranks, setRanks] = useState<any[]>([])
   const [isDataLoaded, setIsDataLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const isLoadingRef = useRef(false) // 使用 ref 防止重复调用
+  
 
   // 页面获得焦点时恢复沉浸式模式
   useFocusEffect(() => {
@@ -63,20 +70,25 @@ export default function HomeScreen() {
     // globalImmersive.forceRestore()
   })
 
+  // 🔴 临时注释：坐姿检测功能
   // 获取坐姿状态文本
   const getPostureStatusText = () => {
-    const stats = postureStore.nowStatus
-    if (stats === "no_person") return "正在检测"
-    if (stats === "shoulders_not_level") return "肩膀倾斜"
-    if (stats === "good") return "坐姿正确"
-    if (stats === "head_not_centered") return "头部倾斜"
-    if (stats === "head_not_up") return "低头"
-    if (stats === "detecting") return "正在检测"
+    if (postureStatus === "no_person") return "正在检测"
+    if (postureStatus === "shoulders_not_level") return "肩膀倾斜"
+    if (postureStatus === "good") return "坐姿正确"
+    if (postureStatus === "head_not_centered") return "头部倾斜"
+    if (postureStatus === "head_not_up") return "低头"
+    if (postureStatus === "detecting") return "正在检测"
     return "正在检测"
   }
 
   // 切换系统设置面板
   const toggleSettingsPanel = async () => {
+    // 🔴 临时注释：坐姿检测功能
+    // 临时测试：跳转到姿势检测页面
+    // router.push('/posture-test' as any)
+    // return
+    
     // 如果要打开面板，先获取当前亮度和音量
     if (!showSettingsPanel) {
       await getCurrentBrightness()
@@ -87,8 +99,16 @@ export default function HomeScreen() {
   // 获取当前系统亮度
   const getCurrentBrightness = async () => {
     try {
-      const { getBrightnessAsync } = await import("expo-brightness")
-      const currentBrightness = await getBrightnessAsync()
+      // Android 需要请求权限
+      if (Platform.OS === 'android') {
+        const { status } = await Brightness.requestPermissionsAsync()
+        if (status !== 'granted') {
+          console.warn('未获得修改亮度权限')
+          return
+        }
+      }
+      
+      const currentBrightness = await Brightness.getBrightnessAsync()
       setBrightness(Math.round(currentBrightness * 100))
       console.log("当前亮度:", currentBrightness * 100)
     } catch (error) {
@@ -107,120 +127,164 @@ const openVolumeSettings = async () => {
       );
     } catch (error) {
       console.error('无法打开音量设置:', error);
-      Alert.alert('错误', '无法打开系统音量设置');
+      showError('无法打开系统音量设置');
     }
       } else {
     // iOS 不允许直接跳转到音量设置
-    Alert.alert(
-      '提示', 
-      'iOS 不支持直接跳转到音量设置，请手动打开：设置 > 声音与触感',
-      [{ text: '确定' }]
-    );
+    showInfo('iOS 不支持直接跳转到音量设置，请手动打开：设置 > 声音与触感');
   }
 };
 
-  // 加载数据 - 优化版本：先切换页面再加载内容
-  const loadData = async () => {
-    if (isLoading || isDataLoaded) return
+  // 加载数据 - 每次点击tabbar都刷新
+  const loadData = useCallback(async () => {
+    console.log("🔄 loadData 被调用")
     
+    // 使用 ref 防止重复调用
+    if (isLoadingRef.current) {
+      console.log("⏳ 正在加载中，跳过重复调用")
+      return
+    }
+    
+    // ⚠️ 重要：直接从 store 获取最新状态，而不是使用闭包捕获的值
+    const currentUserStore = useUserStore.getState()
+    
+    // 打印 userStore 中的用户信息
+    console.log("📱 userStore 完整状态:", {
+      token: currentUserStore.token ? `存在(${currentUserStore.token.length}字符)` : "不存在",
+      user: currentUserStore.user,
+      isLoggedIn: currentUserStore.isLoggedIn,
+      isLoading: currentUserStore.isLoading,
+      error: currentUserStore.error
+    })
+    
+    // 检查是否有token，没有则直接返回
+    const token = currentUserStore.token
+    console.log("🔑 当前token状态:", token ? `存在(${token.length}字符)` : "不存在")
+    
+    if (!token) {
+      console.log("❌ 未找到token，跳过数据加载")
+      setIsDataLoaded(true) // 即使没有token也要显示内容
+      return
+    }
+    
+    console.log("✅ 开始加载首页数据...")
+    isLoadingRef.current = true
     setIsLoading(true)
+    
     try {
-      console.log("正在加载首页数据...")
+      // 并行加载所有数据
+      const [latestVideoData, notificationsData, ranksData] = await Promise.all([
+        getLatestVideo().catch((err) => {
+          console.error("获取最近学习视频失败:", err)
+          return null
+        }),
+        getNotifications().catch((err) => {
+          console.error("获取通知失败:", err)
+          return null
+        }),
+        getHomeRanks().catch((err) => {
+          console.error("获取排行榜失败:", err)
+          return null
+        }),
+      ])
 
-      // 使用InteractionManager确保页面切换完成后再加载数据
-      InteractionManager.runAfterInteractions(async () => {
-        // 并行加载所有数据
-        const [userInfoData, latestVideoData, notificationsData, ranksData] = await Promise.all([
-          userStore.getUserInfo().catch((err) => {
-            console.error("获取用户信息失败:", err)
-            return null
-          }),
-          getLatestVideo().catch((err) => {
-            console.error("获取最近学习视频失败:", err)
-            return null
-          }),
-          getNotifications().catch((err) => {
-            console.error("获取通知失败:", err)
-            return null
-          }),
-          getHomeRanks().catch((err) => {
-            console.error("获取排行榜失败:", err)
-            return null
-          }),
-        ])
+      // 设置用户信息 - 直接使用store中的用户信息
+      if (currentUserStore.user) {
+        console.log("✅ 用户信息加载成功:", currentUserStore.user.username)
+        console.log("📱 设置用户信息到状态:", currentUserStore.user)
+         currentUserStore.getUserInfo().then(res => {
+             setUserInfo(res)  
+         })
+      } else {
+        console.warn("❌ 用户信息为空，可能需要登录")
+      }
 
-        // 设置用户信息
-        if (userInfoData) {
-          console.log("用户信息加载成功:", userInfoData.username)
-          setUserInfo(userInfoData)
-        } else {
-          console.warn("用户信息为空，可能需要登录")
-        }
+      // 设置最近学习视频
+      if (latestVideoData) {
+        console.log("✅ 最近学习视频加载成功:", latestVideoData?.rsname || "")
+        console.log("📱 设置视频信息到状态:", latestVideoData)
+        setLatestVideo(latestVideoData)
+      } else {
+        console.warn("❌ 最近学习视频为空")
+      }
 
-        // 设置最近学习视频
-        if (latestVideoData) {
-          console.log("最近学习视频加载成功:", latestVideoData?.rsname || "")
-          setLatestVideo(latestVideoData)
-        }
+      // 设置通知
+      if (notificationsData && notificationsData.notifications) {
+        console.log("✅ 通知加载成功:", notificationsData.notifications.length)
+        const notificationTitles = notificationsData.notifications.map((item: any) => item.title)
+        console.log("📱 设置通知到状态:", notificationTitles)
+        setNotifications(notificationTitles)
+      } else {
+        console.warn("❌ 通知数据为空")
+      }
 
-        // 设置通知
-        if (notificationsData && notificationsData.notifications) {
-          console.log("通知加载成功:", notificationsData.notifications.length)
-          setNotifications(notificationsData.notifications.map((item: any) => item.title))
-        }
+      // 设置排行榜
+      if (ranksData && ranksData.ranking_list) {
+        console.log("✅ 排行榜加载成功:", ranksData.ranking_list.length)
 
-        // 设置排行榜
-        if (ranksData && ranksData.ranking_list) {
-          console.log("排行榜加载成功:", ranksData.ranking_list.length)
-
-          let hasCurrentUser = false
-          const rankList = ranksData.ranking_list.map((item: any) => {
-            if (item.is_current_user) {
-              hasCurrentUser = true
-            }
-            return item
-          })
-
-          // 如果没有当前用户，默认将第一个设为当前用户
-          if (!hasCurrentUser && rankList.length > 0) {
-            rankList[0].is_current_user = true
+        let hasCurrentUser = false
+        const rankList = ranksData.ranking_list.map((item: any) => {
+          if (item.is_current_user) {
+            hasCurrentUser = true
           }
+          return item
+        })
 
-          setRanks(rankList)
+        // 如果没有当前用户，默认将第一个设为当前用户
+        if (!hasCurrentUser && rankList.length > 0) {
+          rankList[0].is_current_user = true
         }
 
-        setIsDataLoaded(true)
-        console.log("首页数据加载完成")
-      })
+        console.log("📱 设置排行榜到状态:", rankList)
+        setRanks(rankList)
+      } else {
+        console.warn("❌ 排行榜数据为空")
+      }
+
+      console.log("✅ 首页数据加载完成")
     } catch (error) {
       console.error("首页数据加载失败:", error)
     } finally {
+      isLoadingRef.current = false
       setIsLoading(false)
+      setIsDataLoaded(true) // 无论成功失败都标记数据已加载，允许显示内容
     }
-  }
+  }, []) // 空依赖数组，loadData 永远不会重新创建
 
-  // 页面加载时获取数据
+  // 页面加载时直接加载数据
   useEffect(() => {
-    loadData()
+    console.log("🚀 首页初始化，直接加载数据")
+    // 使用 InteractionManager 等待初始化完成
+   InteractionManager.runAfterInteractions(async () => {
+  // 等待一小段时间确保 _layout.tsx 中的 initializeFromStorage 完成
+  await new Promise(resolve => setTimeout(resolve, 100))
+  
+  console.log("🚀 开始加载首页数据")
+  loadData()
+})
 
     // 清理函数：组件卸载时清除定时器
     return () => {
       if (brightnessTimeoutRef.current) {
         clearTimeout(brightnessTimeoutRef.current)
       }
-      
     }
-  }, [])
+  }, []) // 只在首次加载时调用
 
-  // 页面获得焦点时重新加载数据（仅在需要时）
+  // 页面获得焦点时重新加载数据（每次点击tabbar都刷新）
   useFocusEffect(
     useCallback(() => {
-      if (!isDataLoaded) {
+      console.log("🎯 首页获得焦点，准备加载数据")
+     // 使用 InteractionManager 等待初始化完成
+      InteractionManager.runAfterInteractions(async () => {
+        // 等待一小段时间确保 _layout.tsx 中的 initializeFromStorage 完成
+        await new Promise(resolve => setTimeout(resolve, 100))
+        console.log("🚀 开始加载首页数据")
         loadData()
-      }
+      })
       // 恢复沉浸式模式
       // globalImmersive.forceRestore()
-    }, [isDataLoaded]),
+    }, []), // 空依赖，loadData 不会变化
   )
 
   const router = useRouter()
@@ -228,7 +292,7 @@ const openVolumeSettings = async () => {
   // 播放视频
   const playVideo = () => {
     if (!latestVideo || !latestVideo.rsid) {
-      Alert.alert("提示", "无法获取视频信息")
+      showWarning("无法获取视频信息")
       return
     }
 
@@ -255,6 +319,7 @@ const openVolumeSettings = async () => {
     })
   }
 
+
   // 跳转到排行榜页面
   // 注释掉未使用的函数，保留功能以备将来实现
   // const goToRanking = () => {
@@ -271,11 +336,11 @@ const openVolumeSettings = async () => {
         console.log("已打开系统WiFi设置")
       } catch (error) {
         console.error("打开系统WiFi设置失败:", error)
-        Alert.alert("提示", "无法打开WiFi设置")
+        showError("无法打开WiFi设置")
       }
     } else if (Platform.OS === "ios") {
       // iOS不允许直接打开系统设置，提示用户手动打开
-      Alert.alert("提示", "请手动打开系统设置 > WiFi", [{ text: "确定" }])
+      showInfo("请手动打开系统设置 > WiFi")
     }
   }
 
@@ -289,16 +354,16 @@ const openVolumeSettings = async () => {
         console.log("已打开系统蓝牙设置")
       } catch (error) {
         console.error("打开系统蓝牙设置失败:", error)
-        Alert.alert("提示", "无法打开蓝牙设置")
+        showError("无法打开蓝牙设置")
       }
     } else if (Platform.OS === "ios") {
       // iOS不允许直接打开系统设置，提示用户手动打开
-      Alert.alert("提示", "请手动打开系统设置 > 蓝牙", [{ text: "确定" }])
+      showInfo("请手动打开系统设置 > 蓝牙")
     }
   }
 
   // 亮度调节防抖定时器
-  const brightnessTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const brightnessTimeoutRef = useRef<any>(null)
 
   // 亮度调节
   const onBrightnessChange = useCallback((value: number) => {
@@ -314,17 +379,35 @@ const openVolumeSettings = async () => {
     brightnessTimeoutRef.current = setTimeout(async () => {
       try {
         console.log("开始设置亮度:", value)
-        const { setSystemBrightnessAsync } = await import("expo-brightness")
-        await setSystemBrightnessAsync(value / 100)
+        
+        // Android 需要请求权限
+        if (Platform.OS === 'android') {
+          const { status } = await Brightness.requestPermissionsAsync()
+          if (status !== 'granted') {
+            console.warn('未获得修改亮度权限')
+            showWarning('需要系统设置权限才能修改亮度')
+            return
+          }
+        }
+        
+        await Brightness.setSystemBrightnessAsync(value / 100)
         console.log("亮度设置成功:", value)
       } catch (error) {
         console.error("设置亮度失败:", error)
-        // 不显示弹窗，避免频繁打扰用户
-        // Alert.alert("提示", "设置亮度失败")
+        showError('设置亮度失败')
       }
     }, 300)
   }, [])
 
+  // 调试：打印当前状态值
+  console.log("🎨 渲染首页 - 当前状态值:", {
+    userInfo: userInfo,
+    latestVideo: latestVideo,
+    notifications: notifications,
+    ranks: ranks,
+    isLoading: isLoading,
+    isDataLoaded: isDataLoaded
+  })
 
   return (
     <LinearGradient
@@ -340,14 +423,28 @@ const openVolumeSettings = async () => {
 
         {/* 顶部工具栏 */}
         <View style={styles.topBar}>
+          {/* 🔴 临时注释：坐姿检测功能 */}
           {/* 左侧坐姿状态 */}
-          <View style={styles.postureStatus}>
+          {/* <View style={styles.postureStatus}>
             <View
               style={[
                 styles.statusIndicator,
-                postureStore.nowStatus === "good"
+                postureStatus === "good"
                   ? styles.statusGood
-                  : postureStore.nowStatus === "detecting" || postureStore.nowStatus === "no_person"
+                  : postureStatus === "detecting" || postureStatus === "no_person"
+                    ? styles.statusDetecting
+                    : styles.statusBad,
+              ]}
+            />
+            <Text style={styles.statusText}>{getPostureStatusText()}</Text>
+          </View> */}
+            <View style={styles.postureStatus}>
+            <View
+              style={[
+                styles.statusIndicator,
+                postureStatus === "good"
+                  ? styles.statusGood
+                  : postureStatus === "detecting" || postureStatus === "no_person"
                     ? styles.statusDetecting
                     : styles.statusBad,
               ]}
@@ -396,6 +493,19 @@ const openVolumeSettings = async () => {
                   <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
                 </Text>
               </TouchableOpacity>
+
+              {/* 声音设置 */}
+                <TouchableOpacity style={styles.settingItem} onPress={openVolumeSettings}>
+                <View style={styles.settingItemLeft}>
+                  <View style={styles.settingIconContainer}>
+                    <Ionicons name="volume-high" size={rpx(10.9)} color="#fff" />
+                  </View>
+                  <Text style={styles.settingText}>声音</Text>
+                </View>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
+              </TouchableOpacity>
             </View>
 
             {/* 亮度调节 */}
@@ -424,49 +534,13 @@ const openVolumeSettings = async () => {
                 />
               )}
             </View>
-
-            {/* 音量调节 */}
-            <View style={styles.sliderContainer}>
-              <Text style={styles.sliderLabel}>系统音量</Text>
-              {Platform.OS === "ios" ? (
-                <Slider
-                  style={styles.slider}
-                  minimumValue={0}
-                  maximumValue={100}
-                  value={volume}
-                  onValueChange={openVolumeSettings}
-                  minimumTrackTintColor="#4891FF"
-                  maximumTrackTintColor="rgba(255,255,255,0.8)"
-                />
-              ) : (
-                <Slider
-                  style={styles.slider}
-                  minimumValue={0}
-                  maximumValue={100}
-                  value={volume}
-                  onValueChange={openVolumeSettings}
-                  minimumTrackTintColor="#4891FF"
-                  maximumTrackTintColor="rgba(255,255,255,0.8)"
-                  thumbTintColor="#FFFFFF"
-                />
-              )}
-            </View>
           </View>
         )}
 
         {/* 主内容区 */}
         <View style={styles.mainContent}>
-          {/* 加载状态 */}
-          {isLoading && !isDataLoaded && (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#1890ff" />
-              <Text style={styles.loadingText}>正在加载数据...</Text>
-            </View>
-          )}
-          
-          {/* 内容区域 */}
-          {isDataLoaded && (
-            <View style={styles.contentContainer}>
+          {/* 内容区域 - 直接显示，不等待加载完成 */}
+          <View style={styles.contentContainer}>
             {/* 用户信息卡片 */}
             <View style={styles.userInfoCard}>
               <ImageBackground
@@ -552,6 +626,11 @@ const openVolumeSettings = async () => {
               <View style={styles.cardsContainer}>
                 {/* 同步课堂 */}
                 <TouchableOpacity style={styles.syncClassCard} onPress={playVideo}>
+                    <Image
+                    source={Images.indexClassRoomBg}
+                    style={styles.syncClassBg}
+                    resizeMode="cover"
+                  />
                   <View style={styles.syncClassHeader}>
                     <View style={styles.syncClassInfo}>
                       <Text style={styles.syncClassTitle}>同步课堂</Text>
@@ -565,10 +644,24 @@ const openVolumeSettings = async () => {
                         <Text style={styles.studyButtonText}>
                           {latestVideo.type === 2 ? "继续学习" : "去学习"}
                         </Text>
-                        <Text style={styles.studyButtonArrow}>›</Text>
+                        <Ionicons name="chevron-forward" size={rpx(10)} color="#fff" style={styles.studyButtonArrow} />
                       </LinearGradient>
                     </View>
-                    <Image source={Images.book1} style={styles.bookCover} resizeMode="contain" />
+                    {/* 使用接口数据的封面图，如果没有则使用默认图片 */}
+                    {latestVideo.cover_v ? (
+                      <Image 
+                        source={{ uri: latestVideo.cover_v }} 
+                        style={styles.bookCover} 
+                        resizeMode="contain"
+                        defaultSource={Images.book1}
+                      />
+                    ) : (
+                      <Image 
+                        source={Images.book1} 
+                        style={styles.bookCover} 
+                        resizeMode="contain" 
+                      />
+                    )}
                   </View>
 
                   <View style={styles.syncClassFooter}>
@@ -583,11 +676,7 @@ const openVolumeSettings = async () => {
                     </View>
                   </View>
 
-                  <Image
-                    source={Images.indexClassRoomBg}
-                    style={styles.syncClassBg}
-                    resizeMode="cover"
-                  />
+                
                 </TouchableOpacity>
 
                 {/* 学习时长排行榜 */}
@@ -621,13 +710,13 @@ const openVolumeSettings = async () => {
               </View>
             )}
           </View>
-          )}
         </View>
 
         {/* AI按钮 */}
         <TouchableOpacity style={styles.aiButton} onPress={goToAI}>
           <Image source={Images.indexAiBtn} style={styles.aiButtonImage} resizeMode="contain" />
         </TouchableOpacity>
+
       </ImageBackground>
     </LinearGradient>
   )
@@ -709,7 +798,7 @@ const styles = createStyles({
   },
   settingsPanelTop: {
     width: 152.34735,
-    height: 64.0625,
+    height: 96.1625,
     borderRadius: 8.6,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     padding: 6.25,
@@ -853,7 +942,7 @@ const styles = createStyles({
     width: 17.1875,
     height: 17.1875,
     position: "absolute" as const,
-    left: 0,
+    right: 0,
     bottom: 0,
   },
   rankText: {
@@ -1026,9 +1115,7 @@ const styles = createStyles({
     fontSize: 8.2,
   },
   studyButtonArrow: {
-    color: "#fff",
-    fontSize: 8,
-    marginTop: 1,
+    marginLeft: 2,
   },
   bookCover: {
     width: 54.6875,
@@ -1068,6 +1155,7 @@ const styles = createStyles({
     bottom: 0,
     left: 0,
     width: "100%",
+    height: 70, // 添加高度，可根据设计调整
     zIndex: 1,
   },
   rankingCard: {
@@ -1146,15 +1234,5 @@ const styles = createStyles({
     fontWeight: "bold",
     marginTop: 4,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 50,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 14,
-    color: "#666",
-  },
+
 })

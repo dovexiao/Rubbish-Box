@@ -43,18 +43,18 @@ export const useNetworkStatus = (callbacks?: NetworkStatusCallbacks) => {
       console.log("当前网络类型:", state.type)
       console.log("网络连接状态:", state.isConnected)
 
-      if (!state.isConnected) {
-        // 延迟弹窗，避免阻塞页面切换
-        setTimeout(() => {
-          Alert.alert("网络提示", "您未连接网络，是否去设置？", [
-            { text: "取消", style: "cancel" },
-            { text: "去设置", onPress: openSystemWifiSettings },
-          ])
-        }, 300)
-      }
+      // 注释掉这里的弹窗，统一使用 _layout.tsx 中的 GlobalDialog
+      // 这样可以保证弹窗显示在登录框上方，并且样式更统一
+      // if (!state.isConnected) {
+      //   setTimeout(() => {
+      //     Alert.alert("网络提示", "您未连接网络，是否去设置？", [
+      //       { text: "取消", style: "cancel" },
+      //       { text: "去设置", onPress: openSystemWifiSettings },
+      //     ])
+      //   }, 300)
+      // }
     })
   }, [openSystemWifiSettings])
-
   // 处理网络状态变化
   const handleNetworkChange = useCallback(
     (state: NetInfoState) => {

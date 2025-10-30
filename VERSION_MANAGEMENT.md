@@ -15,6 +15,9 @@ major.minor.patch
 | `package.json` | `version` | 项目版本号 | `"1.0.0"` |
 | `app.json` | `expo.android.versionCode` | Android版本代码 | `10000` |
 | `app.json` | `expo.ios.buildNumber` | iOS构建号 | `"10000"` |
+| `app.config.js` | `runtimeVersion` | EAS更新运行时版本 | `"1.0.0"` |
+| `android/app/build.gradle` | `versionCode` | Android原生构建版本代码 | `10000` |
+| `android/app/build.gradle` | `versionName` | Android原生构建版本名称 | `"1.0.0"` |
 
 ### 版本代码计算规则
 ```
@@ -126,7 +129,7 @@ npm run build:android:prod
 ```bash
 # 查看当前版本
 npm run version:show
-# 输出: 用户版本号: 1.0.0, Android版本代码: 10000, iOS构建号: 10000
+# 输出: 用户版本号: 1.0.0, Android版本代码: 10000, iOS构建号: 10000, App.config.js runtimeVersion: 1.0.0
 
 # 更新到补丁版本
 npm run version:patch

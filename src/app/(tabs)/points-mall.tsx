@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react"
-import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native"
+import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useFocusEffect, useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
@@ -8,6 +8,8 @@ import { InteractionManager } from "react-native"
 import { StatusBar } from "../../components/StatusBar"
 import { ProductDetailPopup, OrderConfirmPopup } from "../../components/points-mall"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
+import { showError } from "../../utils/toast"
+import { useUserStore } from "../../stores/userStore"
 import {
   getPointsBalance,
   getMallList,
@@ -41,6 +43,13 @@ export default function PointsMallScreen() {
 
   // 获取积分余额 - 优化版本
   const fetchPointsBalance = useCallback(async () => {
+    // 检查是否有token，没有则直接返回
+    const token = useUserStore.getState().token
+    if (!token) {
+      console.log("未找到token，跳过积分余额获取")
+      return
+    }
+
     try {
       const res: PointsBalanceData = await getPointsBalance()
       if (res.points !== undefined) {
@@ -54,6 +63,13 @@ export default function PointsMallScreen() {
   // 获取商品列表
   const getProducts = useCallback(async () => {
     if (loadingMore || !hasMore) return
+
+    // 检查是否有token，没有则直接返回
+    const token = useUserStore.getState().token
+    if (!token) {
+      console.log("未找到token，跳过商品列表获取")
+      return
+    }
 
     setLoadingMore(true)
     try {
@@ -76,7 +92,7 @@ export default function PointsMallScreen() {
       }
     } catch (error) {
       console.error("获取商品列表失败:", error)
-      Alert.alert("提示", "获取商品列表失败，请重试")
+      showError("获取商品列表失败，请重试")
     } finally {
       setLoadingMore(false)
     }
@@ -222,17 +238,8 @@ export default function PointsMallScreen() {
         </View>
       </View>
 
-      {/* 加载状态 */}
-      {!isInitialized && (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#1890ff" />
-          <Text style={styles.loadingText}>正在加载商品...</Text>
-        </View>
-      )}
-
       {/* 商品网格列表 */}
-      {isInitialized && (
-        <ScrollView
+      <ScrollView
         style={styles.productScroll}
         onScroll={({ nativeEvent }) => {
           const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
@@ -291,8 +298,7 @@ export default function PointsMallScreen() {
             <Text style={styles.noMoreText}>没有更多商品了</Text>
           </View>
         )}
-        </ScrollView>
-      )}
+      </ScrollView>
 
       {/* 商品详情弹窗 */}
       <ProductDetailPopup

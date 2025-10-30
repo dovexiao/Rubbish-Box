@@ -20,6 +20,8 @@ class VersionManager {
   constructor() {
     this.appJsonPath = 'app.json';
     this.packageJsonPath = 'package.json';
+    this.appConfigPath = 'app.config.js';
+    this.buildGradlePath = 'android/app/build.gradle';
   }
 
   // 读取配置文件
@@ -27,9 +29,37 @@ class VersionManager {
     const appConfig = JSON.parse(fs.readFileSync(this.appJsonPath, 'utf8'));
     const packageConfig = JSON.parse(fs.readFileSync(this.packageJsonPath, 'utf8'));
     
+    // 读取 app.config.js
+    let appConfigJs = null;
+    if (fs.existsSync(this.appConfigPath)) {
+      const appConfigContent = fs.readFileSync(this.appConfigPath, 'utf8');
+      // 提取 runtimeVersion 值
+      const runtimeVersionMatch = appConfigContent.match(/runtimeVersion:\s*["']([^"']+)["']/);
+      appConfigJs = {
+        runtimeVersion: runtimeVersionMatch ? runtimeVersionMatch[1] : null,
+        content: appConfigContent
+      };
+    }
+    
+    // 读取 build.gradle
+    let buildGradle = null;
+    if (fs.existsSync(this.buildGradlePath)) {
+      const buildGradleContent = fs.readFileSync(this.buildGradlePath, 'utf8');
+      // 提取 versionCode 和 versionName
+      const versionCodeMatch = buildGradleContent.match(/versionCode\s+(\d+)/);
+      const versionNameMatch = buildGradleContent.match(/versionName\s+["']([^"']+)["']/);
+      buildGradle = {
+        versionCode: versionCodeMatch ? parseInt(versionCodeMatch[1]) : null,
+        versionName: versionNameMatch ? versionNameMatch[1] : null,
+        content: buildGradleContent
+      };
+    }
+    
     return {
       app: appConfig,
-      package: packageConfig
+      package: packageConfig,
+      appConfigJs: appConfigJs,
+      buildGradle: buildGradle
     };
   }
 
@@ -37,6 +67,35 @@ class VersionManager {
   writeConfig(config) {
     fs.writeFileSync(this.appJsonPath, JSON.stringify(config.app, null, 2));
     fs.writeFileSync(this.packageJsonPath, JSON.stringify(config.package, null, 2));
+    
+    // 更新 app.config.js 中的 runtimeVersion
+    if (config.appConfigJs && config.appConfigJs.content) {
+      const newContent = config.appConfigJs.content.replace(
+        /runtimeVersion:\s*["'][^"']+["']/,
+        `runtimeVersion: "${config.app.expo.version}"`
+      );
+      fs.writeFileSync(this.appConfigPath, newContent);
+    }
+    
+    // 更新 build.gradle 中的 versionCode 和 versionName
+    if (config.buildGradle && config.buildGradle.content) {
+      let newContent = config.buildGradle.content;
+      
+      // 更新 versionCode
+      newContent = newContent.replace(
+        /versionCode\s+\d+/,
+        `versionCode ${config.app.expo.android.versionCode}`
+      );
+      
+      // 更新 versionName
+      newContent = newContent.replace(
+        /versionName\s+["'][^"']+["']/,
+        `versionName "${config.app.expo.version}"`
+      );
+      
+      fs.writeFileSync(this.buildGradlePath, newContent);
+      console.log(`✅ 已更新 ${this.buildGradlePath}`);
+    }
   }
 
   // 解析版本号
@@ -129,6 +188,15 @@ class VersionManager {
     console.log(`📦 package.json version: ${packageVersion}`);
     console.log(`🤖 Android versionCode: ${androidVersionCode}`);
     console.log(`🍎 iOS buildNumber: ${iosBuildNumber}`);
+    
+    if (config.appConfigJs && config.appConfigJs.runtimeVersion) {
+      console.log(`⚙️  app.config.js runtimeVersion: ${config.appConfigJs.runtimeVersion}`);
+    }
+    
+    if (config.buildGradle) {
+      console.log(`🔧 build.gradle versionCode: ${config.buildGradle.versionCode}`);
+      console.log(`🔧 build.gradle versionName: ${config.buildGradle.versionName}`);
+    }
 
     const issues = [];
     
@@ -139,12 +207,26 @@ class VersionManager {
     if (androidVersionCode !== parseInt(iosBuildNumber)) {
       issues.push(`Android versionCode 和 iOS buildNumber 不一致: ${androidVersionCode} vs ${iosBuildNumber}`);
     }
+    
+    if (config.appConfigJs && config.appConfigJs.runtimeVersion && config.appConfigJs.runtimeVersion !== appVersion) {
+      issues.push(`app.config.js runtimeVersion 和 app.json version 不一致: ${config.appConfigJs.runtimeVersion} vs ${appVersion}`);
+    }
+    
+    if (config.buildGradle) {
+      if (config.buildGradle.versionName !== appVersion) {
+        issues.push(`build.gradle versionName 和 app.json version 不一致: ${config.buildGradle.versionName} vs ${appVersion}`);
+      }
+      if (config.buildGradle.versionCode !== androidVersionCode) {
+        issues.push(`build.gradle versionCode 和 app.json versionCode 不一致: ${config.buildGradle.versionCode} vs ${androidVersionCode}`);
+      }
+    }
 
     if (issues.length === 0) {
       console.log('✅ 版本号一致性检查通过!');
     } else {
       console.log('❌ 发现版本号不一致问题:');
       issues.forEach(issue => console.log(`   - ${issue}`));
+      console.log('\n💡 运行 "npm run version:sync" 来同步所有版本号');
     }
 
     return issues.length === 0;
@@ -181,6 +263,19 @@ class VersionManager {
     console.log(`🤖 Android版本代码: ${androidVersionCode}`);
     console.log(`🍎 iOS构建号: ${iosBuildNumber}`);
     console.log(`📦 项目版本号: ${config.package.version}`);
+    
+    if (config.appConfigJs && config.appConfigJs.runtimeVersion) {
+      console.log(`⚙️  App.config.js runtimeVersion: ${config.appConfigJs.runtimeVersion}`);
+    } else {
+      console.log(`⚙️  App.config.js runtimeVersion: 未找到`);
+    }
+    
+    if (config.buildGradle) {
+      console.log(`🔧 build.gradle versionCode: ${config.buildGradle.versionCode}`);
+      console.log(`🔧 build.gradle versionName: ${config.buildGradle.versionName}`);
+    } else {
+      console.log(`🔧 build.gradle: 未找到`);
+    }
   }
 }
 

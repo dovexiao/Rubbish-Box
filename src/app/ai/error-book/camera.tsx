@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react"
-import { View, Text, TouchableOpacity, Image, Alert, Dimensions, ScrollView, StatusBar as RNStatusBar } from "react-native"
+import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, StatusBar as RNStatusBar } from "react-native"
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera"
 import { useRouter, useFocusEffect } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
@@ -10,6 +10,7 @@ import { NavBar } from "../../../components/NavBar"
 import { LoadingOverlay } from "../../../components/LoadingOverlay"
 import { globalImmersive } from "../../../utils/globalImmersive"
 import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
+import { showError, showWarning } from "../../../utils/toast"
 
 interface PhotoInfo {
   path: string
@@ -116,7 +117,7 @@ export default function ErrorCameraScreen() {
       }
     } catch (error) {
       console.error("拍照失败:", error)
-      Alert.alert("错误", "拍照失败，请重试")
+      showError("拍照失败，请重试")
     } finally {
       setTimeout(() => setIsAnimating(false), 300)
     }
@@ -187,7 +188,7 @@ export default function ErrorCameraScreen() {
   // 提交照片
   const submitPhotos = useCallback(async () => {
     if (photos.length === 0) {
-      Alert.alert("提示", "请先拍照")
+      showWarning("请先拍照")
       return
     }
 
@@ -215,7 +216,7 @@ export default function ErrorCameraScreen() {
     } catch (error: any) {
       console.error("上传照片失败:", error)
       setUploadLoading(false)
-      Alert.alert("错误", error.message || "上传失败")
+      showError(error.message || "上传失败")
       setIsSubmitting(false)
     }
   }, [photos, isSubmitting, router])

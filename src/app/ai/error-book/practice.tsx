@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native"
+import { View, Text, TouchableOpacity, Image } from "react-native"
 import { useRouter, useLocalSearchParams } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
@@ -10,6 +10,7 @@ import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
 import { parseContent } from "../../../utils/mathmlParser"
 import { getQuestionsMore, getCourseQuestions } from "../../../services/ai"
 import { generatePracticeQuestions } from "../../../services/classroom"
+import { showConfirm } from "../../../utils/dialog"
 
 interface PracticeQuestion {
   id: number
@@ -212,14 +213,9 @@ export default function AIPracticeScreen() {
   // 返回
   const goBack = useCallback(() => {
     if (selectedAnswers.some((a) => a !== undefined)) {
-      Alert.alert("提示", "确定要退出练习吗？未提交的答案将丢失。", [
-        { text: "取消", style: "cancel" },
-        {
-          text: "确定",
-          style: "destructive",
-          onPress: () => router.back(),
-        },
-      ])
+      showConfirm("提示", "确定要退出练习吗？未提交的答案将丢失。", () => {
+        router.back()
+      })
     } else {
       router.back()
     }

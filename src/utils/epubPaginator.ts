@@ -62,7 +62,9 @@ export class EpubPaginator {
     }
 
     // 简化的文本宽度估算（React Native环境）
-    return text.length * (this.options.fontSize * 0.6)
+    // 中文字符宽度约等于 fontSize，英文字符约为 fontSize * 0.6
+    // 这里简化为统一使用 fontSize（偏保守，适合中文为主的内容）
+    return text.length * this.options.fontSize
   }
 
   // 计算有效区域尺寸
@@ -76,7 +78,9 @@ export class EpubPaginator {
   // 计算每行可容纳的字符数
   private getCharsPerLine(): number {
     const effectiveWidth = this.getEffectiveSize().width
-    const avgCharWidth = this.options.fontSize * 0.6 // 简化估算
+    // 中文字符宽度约等于 fontSize，但需要考虑 letterSpacing 和实际渲染差异
+    // 使用 1.1 倍作为安全系数
+    const avgCharWidth = this.options.fontSize * 1.1
     return Math.floor(effectiveWidth / avgCharWidth)
   }
 
@@ -84,7 +88,8 @@ export class EpubPaginator {
   private getLinesPerPage(): number {
     const effectiveHeight = this.getEffectiveSize().height
     const lineHeight = this.options.fontSize * this.options.lineHeight
-    return Math.floor(effectiveHeight / lineHeight)
+    // 减少 10% 作为安全边距，防止内容溢出
+    return Math.floor(effectiveHeight / lineHeight * 0.9)
   }
 
   // 分页处理

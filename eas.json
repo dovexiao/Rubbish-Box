@@ -25,26 +25,39 @@
       "ios": {
         "buildConfiguration": "Debug",
         "simulator": false
-      }
+      },
+      "channel": "development-device"
     },
     "preview": {
       "extends": "production",
       "distribution": "internal",
       "channel": "preview",
-      "ios": { "simulator": true },
-      "android": { "buildType": "apk" }
+      "ios": {
+        "simulator": true
+      },
+      "android": {
+        "buildType": "apk"
+      }
     },
     "preview:device": {
       "extends": "preview",
-      "ios": { "simulator": false }
+      "ios": {
+        "simulator": false
+      },
+      "channel": "preview-device"
     },
     "production": {
       "channel": "production",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
       },
       "ios": {
         "buildConfiguration": "Release"
+      },
+      "env": {
+        "EXPO_TARGET": "bare",
+        "NODE_ENV": "production"
       }
     }
   },

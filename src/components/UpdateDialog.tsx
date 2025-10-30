@@ -200,22 +200,22 @@ export function UpdateDialog({
     >
       <View style={styles.overlay}>
         <View style={styles.fullUpdateDialog}>
-          {/* 背景图片 */}
-          <Image
-            source={require('../../assets/images/updateDlg-1.png')}
-            style={styles.fullUpdateBg}
-            resizeMode="cover"
-          />
-          <Image
-            source={require('../../assets/images/updateDlg-2.png')}
-            style={styles.fullUpdateDecor1}
-            resizeMode="contain"
-          />
-          <Image
-            source={require('../../assets/images/updateDlg-3.png')}
-            style={styles.fullUpdateDecor2}
-            resizeMode="contain"
-          />
+            {/* 背景图片 */}
+            <Image
+              source={require('../../assets/images/updateDlg-1.png')}
+              style={styles.fullUpdateBg}
+              resizeMode="cover"
+            />
+            <Image
+              source={require('../../assets/images/updateDlg-2.png')}
+              style={styles.fullUpdateDecor1}
+              resizeMode="contain"
+            />
+            <Image
+              source={require('../../assets/images/updateDlg-3.png')}
+              style={styles.fullUpdateDecor2}
+              resizeMode="contain"
+            />
 
           <View style={styles.fullUpdateContent}>
             <Text style={styles.fullVersionText}>
@@ -322,6 +322,7 @@ const styles = createStyles({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     alignItems: 'center',
     justifyContent: 'center',
+    // 允许内容溢出显示
   },
   
   // 热更新弹窗样式
@@ -355,17 +356,20 @@ const styles = createStyles({
   },
   
   // 整包更新弹窗样式
+  // 整包更新弹窗样式
   fullUpdateDialog: {
     width: 300,
     minHeight: 250,
     borderRadius: 12,
     position: 'relative',
-    overflow: 'hidden',
+    overflow: 'visible', // 按照UniApp方式，允许图片溢出显示
   },
   fullUpdateBg: {
     width: '100%',
     height: '100%',
     position: 'absolute',
+    borderRadius: 12,
+    overflow: 'hidden',
     top: 0,
     left: 0,
   },
@@ -373,8 +377,8 @@ const styles = createStyles({
     width: 120,
     height: 120,
     position: 'absolute',
-    top: -40,
-    right: -12,
+    top: -25, // 按照UniApp的定位值
+    right: -8, // 按照UniApp的定位值
   },
   fullUpdateDecor2: {
     width: 90,
@@ -566,6 +570,7 @@ const styles = createStyles({
     paddingBottom: 22,
     paddingHorizontal: 20,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   
   // 热更新按钮
@@ -583,7 +588,7 @@ const styles = createStyles({
   },
   updateBtn: {
     minWidth: 110,
-    paddingVertical: 12,
+    paddingVertical: 33.6,
     backgroundColor: '#1890ff',
     borderRadius: 24,
     alignItems: 'center',
@@ -608,15 +613,16 @@ const styles = createStyles({
     color: '#666',
   },
   fullUpdateBtn: {
-    width: 200,
-    height: 40,
-    borderRadius: 20,
+    width: 168, // 168rpx转换为px
+    height: 27.34, // 27.34375rpx转换为px
+    borderRadius: 12, // 15.625rpx转换为px
     overflow: 'hidden',
     shadowColor: '#0162FF',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 3 }, // 4.2rpx转换为px
     shadowOpacity: 0.41,
-    shadowRadius: 6,
+    shadowRadius: 5, // 6.6rpx转换为px
     elevation: 8,
+    marginTop: 50, // 22rpx转换为px
   },
   fullUpdateBtnGradient: {
     flex: 1,
@@ -624,7 +630,7 @@ const styles = createStyles({
     justifyContent: 'center',
   },
   fullUpdateBtnText: {
-    fontSize: 14,
+    fontSize: 9, // 11.8175rpx转换为px
     color: '#fff',
     fontWeight: 'bold',
   },

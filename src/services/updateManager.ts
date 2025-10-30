@@ -4,7 +4,6 @@ import * as Application from "expo-application"
 import * as FileSystem from "expo-file-system"
 import * as IntentLauncher from "expo-intent-launcher"
 import RNFS from "react-native-fs"
-import ReactNativeBlobUtil from "react-native-blob-util"
 import { checkAppUpdate } from "./appUpdateService"
 import { useUpdateStore } from "../stores/updateStore"
 import { easUpdateService } from "./easUpdateService"
@@ -159,32 +158,40 @@ export class UpdateManager {
     try {
       console.log(`开始检测更新，来源: ${source}`)
 
-      // 优先使用EAS更新服务（仅在生产构建中）
+      // 步骤1：优先检测整包更新（通过服务端API）
+      console.log("步骤1: 检测整包更新（APK）")
+      const appInfo = await this.getCurrentAppInfo()
+      console.log("当前应用信息:", appInfo)
+
+      try {
+        const updateResponse = await this.requestUpdateCheck(appInfo)
+        
+        if (updateResponse.code === 200 && updateResponse.data.needUpdate) {
+          console.log("发现整包更新，优先处理整包更新")
+          const updateData = this.convertApiResponseToUpdateData(updateResponse.data)
+          
+          // 如果是整包更新，直接处理，不再检测 OTA
+          if (updateData.updateType === UpdateType.FULL) {
+            await this.handleUpdateAvailable(updateData, silent)
+            // 更新最后检测时间
+            await AsyncStorage.setItem("last_update_check", Date.now().toString())
+            return
+          }
+        }
+      } catch (apiError) {
+        console.warn("整包更新检测失败，将继续检测 OTA 更新:", apiError)
+      }
+
+      // 步骤2：如果没有整包更新，检测 EAS OTA 更新（仅在生产构建中）
       if (Updates && Updates.isEnabled && !__DEV__) {
-        console.log("使用EAS更新服务检测更新")
+        console.log("步骤2: 检测 EAS OTA 更新")
         await easUpdateService.checkForUpdates({
           silent,
           forceCheck,
           source,
         })
-        return
-      }
-
-      // 如果EAS更新不可用，使用传统API更新
-      console.log("EAS更新不可用，使用传统API更新")
-
-      // 获取当前应用信息
-      const appInfo = await this.getCurrentAppInfo()
-      console.log("当前应用信息:", appInfo)
-
-      // 请求服务端检查更新
-      const updateResponse = await this.requestUpdateCheck(appInfo)
-      
-      if (updateResponse.code === 200 && updateResponse.data.needUpdate) {
-        // 转换API响应为UpdateData格式
-        const updateData = this.convertApiResponseToUpdateData(updateResponse.data)
-        await this.handleUpdateAvailable(updateData, silent)
       } else if (!silent) {
+        console.log("没有可用更新")
         this.showNoUpdateMessage()
       }
 
@@ -504,14 +511,9 @@ export class UpdateManager {
         }
       }
       
-      // 尝试使用react-native-blob-util
-      if (ReactNativeBlobUtil && ReactNativeBlobUtil.fs) {
-        console.log("使用react-native-blob-util下载")
-        await this.downloadWithBlobUtil(updateData)
-      } else {
-        console.log("react-native-blob-util不可用，回退到expo-file-system")
-        await this.downloadWithFileSystem(updateData)
-      }
+      // 优先使用expo-file-system下载
+      console.log("使用expo-file-system下载")
+      await this.downloadWithFileSystem(updateData)
       
     } catch (error) {
       console.error("APK下载安装失败:", error)
@@ -538,76 +540,12 @@ export class UpdateManager {
     }
   }
 
-  /**
-   * 使用react-native-blob-util下载
-   */
-  private async downloadWithBlobUtil(updateData: UpdateData): Promise<void> {
-    // 设置下载路径
-    const fileName = `app_update_${updateData.version}.apk`
-    const downloadPath = `${ReactNativeBlobUtil.fs.dirs.DownloadDir}/${fileName}`
-    
-    console.log("APK下载路径:", downloadPath)
-    
-    // 先获取文件大小（如果服务器提供）
-    let totalSize = updateData.fileSize || 0
-    if (!totalSize) {
-      try {
-        const headResponse = await ReactNativeBlobUtil.fetch('GET', updateData.downloadUrl, {
-          'Range': 'bytes=0-0'
-        })
-        const contentLength = headResponse.info().headers['content-length']
-        if (contentLength) {
-          totalSize = parseInt(contentLength, 10)
-          console.log("从服务器获取文件大小:", totalSize)
-        }
-      } catch (error) {
-        console.warn("无法获取文件大小:", error)
-      }
-    }
-    
-    // 设置初始进度状态
-    this.updateDownloadProgress(0, 0, totalSize)
-    
-    // 开始下载（带进度回调）
-    const downloadTask = ReactNativeBlobUtil.config({
-      path: downloadPath,
-      fileCache: true,
-      addAndroidDownloads: {
-        useDownloadManager: true,
-        notification: true,
-        title: `下载更新包 ${updateData.version}`,
-        description: '正在下载应用更新...',
-        mime: 'application/vnd.android.package-archive',
-      }
-    }).fetch('GET', updateData.downloadUrl)
-    
-    // 监听下载进度
-    downloadTask.progress((received: string, total: string) => {
-      const receivedBytes = parseInt(received, 10)
-      const totalBytes = parseInt(total, 10)
-      console.log(`下载进度: ${receivedBytes}/${totalBytes} bytes`)
-      const percent = totalBytes > 0 ? Math.round((receivedBytes / totalBytes) * 100) : 0
-      this.updateDownloadProgress(percent, receivedBytes, totalBytes)
-    })
-    
-    // 等待下载完成
-    const response = await downloadTask
-    
-    if (response.info().status === 200) {
-      console.log("APK下载完成:", response.path())
-      
-      // 安装APK
-      await this.installApkOptimized(response.path())
-    } else {
-      throw new Error(`下载失败，状态码: ${response.info().status}`)
-    }
-  }
 
   /**
-   * 使用expo-file-system下载（回退方案）
+   * 使用expo-file-system下载
    */
   private async downloadWithFileSystem(updateData: UpdateData): Promise<void> {
-    // 使用 expo-file-system 下载（带进度回调）
+    // 使用 expo-file-system 下载
     const downloadDir = FileSystem.documentDirectory + 'downloads/'
     const fileName = `app_update_${updateData.version}.apk`
     const fileUri = downloadDir + fileName
@@ -617,29 +555,82 @@ export class UpdateManager {
     // 确保下载目录存在
     await FileSystem.makeDirectoryAsync(downloadDir, { intermediates: true })
     
+    // 检查并删除已存在的文件
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(fileUri)
+      if (fileInfo.exists) {
+        console.log("删除已存在的APK文件")
+        await FileSystem.deleteAsync(fileUri)
+      }
+    } catch (error) {
+      // 文件不存在，忽略错误
+    }
+    
+    // 尝试获取文件大小
+    let totalSize = updateData.fileSize || 0
+    if (!totalSize) {
+      try {
+        console.log("尝试从服务器获取文件大小...")
+        const headResponse = await fetch(updateData.downloadUrl, { method: 'HEAD' })
+        const contentLength = headResponse.headers.get('content-length')
+        if (contentLength) {
+          totalSize = parseInt(contentLength, 10)
+          console.log("从服务器获取文件大小:", totalSize, "bytes")
+        }
+      } catch (error) {
+        console.warn("无法获取文件大小:", error)
+      }
+    }
+    
     // 设置初始进度状态
-    const totalSize = updateData.fileSize || 0
     this.updateDownloadProgress(0, 0, totalSize)
     
-    // 开始下载（带进度回调）
-    const downloadResult = await FileSystem.downloadAsync(
+    console.log("开始下载APK...")
+    
+    // 使用 FileSystem.createDownloadResumable 实现带进度的下载
+    const callback = (downloadProgress: any) => {
+      const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite
+      const percent = Math.round(progress * 100)
+      console.log(`下载进度: ${percent}% (${downloadProgress.totalBytesWritten}/${downloadProgress.totalBytesExpectedToWrite} bytes)`)
+      this.updateDownloadProgress(percent, downloadProgress.totalBytesWritten, downloadProgress.totalBytesExpectedToWrite)
+    }
+
+    const downloadResumable = FileSystem.createDownloadResumable(
       updateData.downloadUrl,
       fileUri,
-      {
-        onProgress: (progress) => {
-          const percent = Math.round((progress.totalBytesWritten / progress.totalBytesExpectedToWrite) * 100)
-          this.updateDownloadProgress(percent, progress.totalBytesWritten, progress.totalBytesExpectedToWrite)
-        }
-      }
+      {},
+      callback
     )
-    
-    if (downloadResult.status === 200) {
-      console.log("APK下载完成:", downloadResult.uri)
+
+    try {
+      const result = await downloadResumable.downloadAsync()
+      
+      if (!result) {
+        throw new Error("下载被取消")
+      }
+      
+      console.log("APK下载完成:", result.uri)
+      
+      // 获取实际文件大小
+      try {
+        const fileInfo = await FileSystem.getInfoAsync(result.uri)
+        if (fileInfo.exists && fileInfo.size) {
+          const actualSize = fileInfo.size
+          console.log("实际下载文件大小:", actualSize, "bytes")
+          
+          // 设置最终进度
+          this.updateDownloadProgress(100, actualSize, actualSize)
+        }
+      } catch (error) {
+        console.warn("无法获取下载文件大小:", error)
+      }
       
       // 安装APK
-      await this.installApkOptimized(downloadResult.uri)
-    } else {
-      throw new Error(`下载失败，状态码: ${downloadResult.status}`)
+      await this.installApkOptimized(result.uri)
+      
+    } catch (error) {
+      console.error("下载过程中出错:", error)
+      throw error
     }
   }
 

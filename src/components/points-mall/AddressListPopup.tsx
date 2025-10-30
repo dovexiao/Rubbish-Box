@@ -1,10 +1,12 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, Clipboard } from "react-native"
-import { Modal, Portal } from "react-native-paper"
+import { View, Text, ScrollView, TouchableOpacity, Clipboard } from "react-native"
+import { Modal, Portal, Snackbar, Dialog, Button } from "react-native-paper"
 import { useState, useEffect } from "react"
 import { Ionicons } from "@expo/vector-icons"
 
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { getAddressList, deleteAddress, type AddressItem } from "../../services/pointsMall"
+import { AddAddressPopup } from "./AddAddressPopup"
+import { EditAddressPopup } from "./EditAddressPopup"
 
 interface AddressListPopupProps {
   visible: boolean
@@ -18,9 +20,22 @@ interface AddressListPopupProps {
  */
 export function AddressListPopup({ visible, onClose, onSelect }: AddressListPopupProps) {
   const [addressList, setAddressList] = useState<AddressItem[]>([])
-  const [_showAddAddressPopup, _setShowAddAddressPopup] = useState(false)
-  const [_showEditAddressPopup, _setShowEditAddressPopup] = useState(false)
-  const [_editAddressData, _setEditAddressData] = useState<AddressItem | null>(null)
+  const [showAddAddressPopup, setShowAddAddressPopup] = useState(false)
+  const [showEditAddressPopup, setShowEditAddressPopup] = useState(false)
+  const [editAddressData, setEditAddressData] = useState<AddressItem | null>(null)
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState("")
+  const [snackbarType, setSnackbarType] = useState<"success" | "error" | "info">("info")
+
+  const [confirmDialogVisible, setConfirmDialogVisible] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<AddressItem | null>(null)
+
+  const showSnackbar = (message: string, type: "success" | "error" | "info" = "info") => {
+    setSnackbarMessage(message)
+    setSnackbarType(type)
+    setSnackbarVisible(true)
+  }
 
   useEffect(() => {
     if (visible) {
@@ -31,6 +46,7 @@ export function AddressListPopup({ visible, onClose, onSelect }: AddressListPopu
   const loadAddressList = async () => {
     try {
       const result = await getAddressList()
+      console.log("地址列表完整数据:", JSON.stringify(result, null, 2))
       setAddressList(result || [])
     } catch (error) {
       console.error("获取地址列表失败:", error)
@@ -52,48 +68,44 @@ export function AddressListPopup({ visible, onClose, onSelect }: AddressListPopu
 
     try {
       Clipboard.setString(addressText)
-      Alert.alert("成功", "地址已复制")
+      showSnackbar("地址已复制", "success")
     } catch (_error) {
-      Alert.alert("失败", "复制失败")
+      showSnackbar("复制失败", "error")
     }
   }
 
   const editAddress = (address: AddressItem) => {
-    _setEditAddressData(address)
-    _setShowEditAddressPopup(true)
+    setEditAddressData(address)
+    setShowEditAddressPopup(true)
   }
 
   const deleteAddressConfirm = (address: AddressItem) => {
-    Alert.alert("确认删除", "确定要删除这个收货地址吗？", [
-      {
-        text: "取消",
-        style: "cancel",
-      },
-      {
-        text: "确定",
-        onPress: () => deleteAddressAction(address),
-      },
-    ])
+    setDeleteTarget(address)
+    setConfirmDialogVisible(true)
   }
 
-  const deleteAddressAction = async (address: AddressItem) => {
+  const deleteAddressAction = async () => {
+    if (!deleteTarget) return
+
     try {
-      await deleteAddress({ address_id: address.id })
-      Alert.alert("成功", "删除成功")
+      await deleteAddress({ address_id: deleteTarget.id })
+      showSnackbar("删除成功", "success")
       loadAddressList()
+      setConfirmDialogVisible(false)
+      setDeleteTarget(null)
     } catch (_error) {
-      Alert.alert("失败", "删除失败")
+      showSnackbar("删除失败", "error")
     }
   }
 
-  const _handleAddSuccess = () => {
-    _setShowAddAddressPopup(false)
+  const handleAddSuccess = () => {
+    setShowAddAddressPopup(false)
     loadAddressList()
   }
 
-  const _handleEditSuccess = () => {
-    _setShowEditAddressPopup(false)
-    _setEditAddressData(null)
+  const handleEditSuccess = () => {
+    setShowEditAddressPopup(false)
+    setEditAddressData(null)
     loadAddressList()
   }
 
@@ -179,7 +191,7 @@ export function AddressListPopup({ visible, onClose, onSelect }: AddressListPopu
           <View style={styles.footer}>
             <TouchableOpacity
               style={styles.addButton}
-              onPress={() => _setShowAddAddressPopup(true)}
+              onPress={() => setShowAddAddressPopup(true)}
               activeOpacity={0.8}
             >
               <Text style={styles.addButtonText}>新增地址</Text>
@@ -188,7 +200,57 @@ export function AddressListPopup({ visible, onClose, onSelect }: AddressListPopu
         </View>
       </Modal>
 
-      {/* AddAddressPopup 和 EditAddressPopup 组件 (TODO: 需要实现) */}
+      {/* 删除确认对话框 */}
+      <Dialog
+        visible={confirmDialogVisible}
+        onDismiss={() => setConfirmDialogVisible(false)}
+        style={styles.dialog}
+      >
+        <Dialog.Title>确认删除</Dialog.Title>
+        <Dialog.Content>
+          <Text>确定要删除这个收货地址吗？</Text>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={() => setConfirmDialogVisible(false)} textColor="#666">
+            取消
+          </Button>
+          <Button onPress={deleteAddressAction} textColor="#FF4D4F">
+            确定
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
+
+      {/* Snackbar 提示 */}
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        action={{
+          label: "关闭",
+          onPress: () => setSnackbarVisible(false),
+        }}
+        style={{
+          backgroundColor:
+            snackbarType === "success" ? "#52C41A" : snackbarType === "error" ? "#FF4D4F" : "#4891FF",
+        }}
+      >
+        {snackbarMessage}
+      </Snackbar>
+
+      {/* 新增地址弹窗 */}
+      <AddAddressPopup
+        visible={showAddAddressPopup}
+        onClose={() => setShowAddAddressPopup(false)}
+        onSuccess={handleAddSuccess}
+      />
+
+      {/* 编辑地址弹窗 */}
+      <EditAddressPopup
+        visible={showEditAddressPopup}
+        addressData={editAddressData}
+        onClose={() => setShowEditAddressPopup(false)}
+        onSuccess={handleEditSuccess}
+      />
     </Portal>
   )
 }
@@ -299,5 +361,9 @@ const styles = createStyles({
     fontSize: 14.0625,
     fontWeight: "bold",
     color: "#fff",
+  },
+  dialog: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
   },
 })

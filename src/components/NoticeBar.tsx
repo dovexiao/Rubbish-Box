@@ -13,6 +13,9 @@ const Text = ({ children, style, ...props }: any) => {
   )
 }
 
+// 创建可动画的Text组件
+const AnimatedText = Animated.createAnimatedComponent(RNText)
+
 interface NoticeBarProps {
   texts: string[]
   delay?: number
@@ -73,20 +76,20 @@ export function NoticeBar({
       <Image source={Images.tipsIcon} style={styles.icon} resizeMode="contain" />
       <View style={styles.textContainer}>
         {/* 当前显示的文本 */}
-        <Animated.Text
+        <AnimatedText
           style={[styles.text, { color }, { transform: [{ translateY }] }]}
           numberOfLines={1}
         >
           {texts[currentIndex]}
-        </Animated.Text>
+        </AnimatedText>
 
         {/* 下一个要显示的文本（从下方进入） */}
-        <Animated.Text
+        <AnimatedText
           style={[styles.text, styles.nextText, { color }, { transform: [{ translateY }] }]}
           numberOfLines={1}
         >
           {texts[(currentIndex + 1) % texts.length]}
-        </Animated.Text>
+        </AnimatedText>
       </View>
     </View>
   )
@@ -121,6 +124,10 @@ const styles = createStyles({
   text: {
     fontSize: 8.6,
     lineHeight: 16.40625,
+  },
+  nextText: {
+    position: "absolute" as const,
+    top: 16.40625, // 放在下方，等待上滑进入
   },
 })
 

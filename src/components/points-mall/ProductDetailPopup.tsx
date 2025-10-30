@@ -41,6 +41,13 @@ export function ProductDetailPopup({
         product_id: productId.toString(),
       })
       if (res) {
+        console.log("商品详情数据:", {
+          主图: res.main_image,
+          详情图数量: res.detail_image?.length || 0,
+          详情图: res.detail_image?.map((img) => img.url),
+          宣传图数量: res.host_graph?.length || 0,
+          宣传图: res.host_graph?.map((img) => img.url),
+        })
         setProductDetail(res)
         setCurrentImageIndex(0)
       }
@@ -93,21 +100,59 @@ export function ProductDetailPopup({
                   }}
                   scrollEventThrottle={16}
                 >
-                  {swiperImages.map((img, index) => (
+                  {swiperImages.map((img, index) => {
+                    // 检查URL是否有效 http://8.135.11.47:8080/media/points_products/gallery/O1CN01KjMuPB2LY25BHaXkp_3937219703-0-C2M_GTDy1bO.jpg_q50.jpg
+                    const imageUrl = img.url && img.url.trim() !== "" ? img.url : null
+                    return imageUrl ? (
                     <Image
                       key={index}
-                      source={{ uri: img.url }}
+                        source={{ 
+                          uri: imageUrl,
+                          cache: 'reload' // 强制重新加载
+                        }}
                       style={styles.swiperImage}
                       resizeMode="contain"
-                    />
-                  ))}
+                        onLoadStart={() => {
+                          console.log("开始加载:", imageUrl)
+                        }}
+                        onLoad={() => {
+                          console.log("✅ 加载成功:", imageUrl)
+                        }}
+                        onError={(error) => {
+                          console.log("❌ 加载失败:", imageUrl)
+                          console.log("错误详情:", JSON.stringify(error.nativeEvent))
+                        }}
+                      />
+                    ) : (
+                      <View key={index} style={styles.swiperImage}>
+                        <Text style={{ textAlign: "center", color: "#999" }}>暂无图片</Text>
+                      </View>
+                    )
+                  })}
                 </ScrollView>
-              ) : (
+              ) : productDetail.main_image && productDetail.main_image.trim() !== "" ? (
                 <Image
-                  source={{ uri: productDetail.main_image }}
+                  source={{ 
+                    uri: productDetail.main_image,
+                    cache: 'reload'
+                  }}
                   style={styles.swiperImage}
                   resizeMode="contain"
+                  onLoadStart={() => {
+                    console.log("开始加载主图:", productDetail.main_image)
+                  }}
+                  onLoad={() => {
+                    console.log("✅ 主图加载成功")
+                  }}
+                  onError={(error) => {
+                    console.log("❌ 主图加载失败:", productDetail.main_image)
+                    console.log("错误详情:", JSON.stringify(error.nativeEvent))
+                  }}
                 />
+              ) : (
+                <View style={styles.swiperImage}>
+                  <Text style={{ textAlign: "center", color: "#999" }}>暂无图片</Text>
+                </View>
               )}
               {/* 指示器 */}
               {swiperImages.length > 1 && (
@@ -154,14 +199,34 @@ export function ProductDetailPopup({
             {/* 商品详情图 */}
             {productDetail.host_graph && productDetail.host_graph.length > 0 && (
               <View style={styles.detailImages}>
-                {productDetail.host_graph.map((item, index) => (
-                  <Image
-                    key={index}
-                    source={{ uri: item.url }}
-                    style={styles.detailImage}
-                    resizeMode="contain"
-                  />
-                ))}
+                {productDetail.host_graph.map((item, index) => {
+                  const imageUrl = item.url && item.url.trim() !== "" ? item.url : null
+                  return imageUrl ? (
+                    <Image
+                      key={index}
+                      source={{ 
+                        uri: imageUrl,
+                        cache: 'reload'
+                      }}
+                      style={styles.detailImage}
+                      resizeMode="contain"
+                      onLoadStart={() => {
+                        console.log(`开始加载详情图[${index}]:`, imageUrl)
+                      }}
+                      onLoad={() => {
+                        console.log(`✅ 详情图[${index}]加载成功`)
+                      }}
+                      onError={(error) => {
+                        console.log(`❌ 详情图[${index}]加载失败:`, imageUrl)
+                        console.log("错误详情:", JSON.stringify(error.nativeEvent))
+                      }}
+                    />
+                  ) : (
+                    <View key={index} style={styles.detailImage}>
+                      <Text style={{ textAlign: "center", color: "#999" }}>暂无图片</Text>
+                    </View>
+                  )
+                })}
               </View>
             )}
           </ScrollView>
@@ -222,6 +287,8 @@ const styles = createStyles({
     width: 164.0625,
     height: 164.0625,
     marginTop: 2.6875,
+    justifyContent: "center",
+    alignItems: "center",
   },
   indicator: {
     position: "absolute",
@@ -303,6 +370,8 @@ const styles = createStyles({
     width: "100%",
     height: 200,
     marginBottom: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   footer: {
     backgroundColor: "#fff",

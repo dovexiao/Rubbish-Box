@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Image, Alert, StatusBar as RNStatusBar } from "react-native"
+import { View, Image, StatusBar as RNStatusBar } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router"
 
@@ -8,6 +8,7 @@ import { Images } from "../../constants/Assets"
 import { aiOcr } from "../../services/ai"
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles } from "../../utils/rpxStyleSheet"
+import { showError, showWarning } from "../../utils/toast"
 
 /**
  * AI加载页面
@@ -42,7 +43,7 @@ export default function AILoadingScreen() {
     }
 
     if (!params.imguuid) {
-      Alert.alert("提示", "参数缺失")
+      showWarning("参数缺失")
       setTimeout(() => {
         router.back()
       }, 1500)
@@ -87,7 +88,7 @@ export default function AILoadingScreen() {
         console.log("❌ OCR识别失败:", err)
         hasCalledOCR.current = false
         const errorMsg = err?.data || "AI识别失败，请重试"
-        Alert.alert("错误", errorMsg)
+        showError(errorMsg)
         setTimeout(() => {
           router.back()
         }, 2000)

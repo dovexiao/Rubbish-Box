@@ -45,7 +45,7 @@ export const READER_THEMES: ReaderTheme[] = [
  */
 export const useReaderTheme = (bookId?: number) => {
   const [currentTheme, setCurrentTheme] = useState(0)
-  const [fontSize, setFontSize] = useState(16)
+  const [fontSize, setFontSize] = useState(20)
 
   // 获取当前主题对象
   const theme = READER_THEMES[currentTheme] || READER_THEMES[0]
@@ -73,7 +73,7 @@ export const useReaderTheme = (bookId?: number) => {
 
       if (settingsStr) {
         const settings = JSON.parse(settingsStr)
-        setFontSize(settings.fontSize || 16)
+        setFontSize(settings.fontSize || 20)
         setCurrentTheme(settings.theme || 0)
         console.log("阅读设置加载成功:", settings)
       }

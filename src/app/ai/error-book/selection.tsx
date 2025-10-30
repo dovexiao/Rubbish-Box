@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from "react-native"
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native"
 import { useRouter, useLocalSearchParams } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
 import { Ionicons } from "@expo/vector-icons"
@@ -13,6 +13,8 @@ import {
   confirmWrongTransfer,
   type WrongQuestion,
 } from "../../../services/ai"
+import { showSuccess, showError, showWarning } from "../../../utils/toast"
+import { showConfirm } from "../../../utils/dialog"
 
 /**
  * 错题录入选择页面
@@ -33,7 +35,7 @@ export default function ErrorSelectionScreen() {
   // 获取错题列表
   const fetchQuestionList = useCallback(async () => {
     if (!imguuid) {
-      Alert.alert("提示", "缺少必要参数")
+      showWarning("缺少必要参数")
       setLoading(false)
       return
     }
@@ -46,7 +48,7 @@ export default function ErrorSelectionScreen() {
         setCacheId(res.cache_id)
       }
     } catch (err: any) {
-      Alert.alert("错误", err.message || "获取错题列表失败")
+      showError(err.message || "获取错题列表失败")
     } finally {
       setLoading(false)
     }
@@ -73,37 +75,31 @@ export default function ErrorSelectionScreen() {
   // 确认选择
   const confirmSelection = useCallback(async () => {
     if (selectedQuestions.length === 0) {
-      Alert.alert("提示", "请至少选择一道错题")
+      showWarning("请至少选择一道错题")
       return
     }
 
-    Alert.alert("确认", `已选${selectedQuestions.length}道错题，加入后将进行自动分类`, [
-      { text: "取消", style: "cancel" },
-      {
-        text: "确定",
-        onPress: async () => {
-          try {
-            await confirmWrongTransfer({
-              batch_id: imguuid,
-              cache_id: cacheId,
-              selected_indices: selectedQuestions,
-            })
-            Alert.alert("成功", "添加成功", [
-              {
-                text: "确定",
-                onPress: () => {
-                  // 返回到错题本页面
-                  router.back()
-                  router.back()
-                },
-              },
-            ])
-          } catch (err: any) {
-            Alert.alert("错误", err.message || "提交失败，请重试")
-          }
-        },
-      },
-    ])
+    showConfirm(
+      "确认",
+      `已选${selectedQuestions.length}道错题，加入后将进行自动分类`,
+      async () => {
+        try {
+          await confirmWrongTransfer({
+            batch_id: imguuid,
+            cache_id: cacheId,
+            selected_indices: selectedQuestions,
+          })
+          showSuccess("添加成功")
+          setTimeout(() => {
+            // 返回到错题本页面
+            router.back()
+            router.back()
+          }, 500)
+        } catch (err: any) {
+          showError(err.message || "提交失败，请重试")
+        }
+      }
+    )
   }, [selectedQuestions, imguuid, cacheId, router])
 
   // 返回拍照页面
@@ -343,8 +339,8 @@ const styles = createStyles({
   questionItem: {
     backgroundColor: "#FFFFFF",
     borderRadius: 9.375,
-    paddingHorizontal: 23.4375,
-    paddingVertical: 23.4375,
+    paddingHorizontal: 13.4375,
+    paddingVertical: 3.4375,
     marginBottom: 11.71875,
     flexDirection: "row",
     alignItems: "center",
@@ -392,7 +388,7 @@ const styles = createStyles({
   optionsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 16,
+    marginTop: 6,
   },
   optionItem: {
     marginRight: 18,
@@ -409,10 +405,10 @@ const styles = createStyles({
   },
   // 底部操作栏
   bottomBar: {
-    height: 70.3125,
+    height: 50.3125,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 9.375,
-    marginTop: 15.625,
+    marginBottom: 10.625,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

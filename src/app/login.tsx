@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -18,6 +17,7 @@ import { Images } from "../constants/Assets"
 import { router } from "expo-router"
 import { AuthService } from "../services/authService"
 import { useUserStore } from "../stores/userStore"
+import { showSuccess, showError, showWarning } from "../utils/toast"
 
 type LoginMode = "sms" | "password"
 
@@ -40,19 +40,19 @@ export default function LoginScreen() {
   // 发送验证码
   const handleSendSMS = async () => {
     if (!phone) {
-      Alert.alert("提示", "请输入手机号")
+      showWarning("请输入手机号")
       return
     }
 
     if (!/^1[3-9]\d{9}$/.test(phone)) {
-      Alert.alert("提示", "请输入正确的手机号")
+      showWarning("请输入正确的手机号")
       return
     }
 
     try {
       setLoading(true)
       const result = await AuthService.sendSMS(phone)
-      Alert.alert("提示", "验证码已发送")
+      showSuccess("验证码已发送")
 
       // 开始倒计时
       setCountdown(60)
@@ -66,7 +66,7 @@ export default function LoginScreen() {
         })
       }, 1000)
     } catch (error: any) {
-      Alert.alert("错误", error.message || "发送验证码失败")
+      showError(error.message || "发送验证码失败")
     } finally {
       setLoading(false)
     }
@@ -74,15 +74,22 @@ export default function LoginScreen() {
 
   // 短信登录
   const handleSMSLogin = async () => {
+    console.log("🚀 LoginPage - handleSMSLogin 被调用")
+    console.log("📱 输入信息:", { phone, smsCode, agreeTerms })
+    
     if (!phone || !smsCode) {
-      Alert.alert("提示", "请输入手机号和验证码")
+      console.log("❌ 手机号或验证码为空")
+      showWarning("请输入手机号和验证码")
       return
     }
 
     if (!agreeTerms) {
+      console.log("❌ 未同意用户协议")
       setShowPrivacyModal(true)
       return
     }
+    
+    console.log("✅ 所有条件检查通过，开始登录")
 
     try {
       setLoading(true)
@@ -95,14 +102,25 @@ export default function LoginScreen() {
         userInfo: result.user_info,
       })
 
-      Alert.alert("成功", "登录成功", [
-        {
-          text: "确定",
-          onPress: () => router.replace("/(tabs)"),
-        },
-      ])
+      showSuccess("登录成功")
+      
+      // 延迟导航，让用户看到成功提示
+      setTimeout(() => {
+        // 如果用户名为空，引导用户完善信息
+        console.log("🔍 登录成功后的用户信息:", result.user_info)
+        console.log("🔍 username值:", result.user_info?.username)
+        console.log("🔍 username是否为空:", !result.user_info?.username)
+        
+        if (!result.user_info?.username) {
+          console.log("📝 跳转到完善信息页面")
+          router.replace("/complete-info")
+        } else {
+          console.log("🏠 跳转到主页")
+          router.replace("/(tabs)")
+        }
+      }, 1000)
     } catch (error: any) {
-      Alert.alert("错误", error.message || "登录失败")
+      showError(error.message || "登录失败")
     } finally {
       setLoading(false)
     }
@@ -111,7 +129,7 @@ export default function LoginScreen() {
   // 密码登录
   const handlePasswordLogin = async () => {
     if (!phone || !password) {
-      Alert.alert("提示", "请输入手机号和密码")
+      showWarning("请输入手机号和密码")
       return
     }
 
@@ -131,14 +149,25 @@ export default function LoginScreen() {
         userInfo: result.user_info,
       })
 
-      Alert.alert("成功", "登录成功", [
-        {
-          text: "确定",
-          onPress: () => router.replace("/(tabs)"),
-        },
-      ])
+      showSuccess("登录成功")
+      
+      // 延迟导航，让用户看到成功提示
+      setTimeout(() => {
+        // 如果用户名为空，引导用户完善信息
+        console.log("🔍 登录成功后的用户信息:", result.user_info)
+        console.log("🔍 username值:", result.user_info?.username)
+        console.log("🔍 username是否为空:", !result.user_info?.username)
+        
+        if (!result.user_info?.username) {
+          console.log("📝 跳转到完善信息页面")
+          router.replace("/complete-info")
+        } else {
+          console.log("🏠 跳转到主页")
+          router.replace("/(tabs)")
+        }
+      }, 1000)
     } catch (error: any) {
-      Alert.alert("错误", error.message || "登录失败")
+      showError(error.message || "登录失败")
     } finally {
       setLoading(false)
     }
@@ -295,7 +324,7 @@ export default function LoginScreen() {
                 <View style={styles.logoContainer}>
                   <Image source={Images.loginLogo} style={styles.logo} resizeMode="contain" />
                 </View>
-                <Text style={styles.title}>Hello！欢迎使用小橘同学智能学习桌</Text>
+                <Text style={styles.title}>Hello！欢迎使用小褐同学智能学习桌</Text>
               </View>
 
               {/* 登录表单 */}

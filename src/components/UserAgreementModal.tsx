@@ -61,18 +61,18 @@ export const UserAgreementModal = React.memo(function UserAgreementModal({
 
               {/* 协议内容 */}
               <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
-                <Text style={styles.agreementTitle}>小橘同学智能学习桌用户服务协议</Text>
+                <Text style={styles.agreementTitle}>小褐同学智能学习桌用户服务协议</Text>
 
                 <Text style={styles.updateTime}>更新时间：2024年12月</Text>
 
                 <Text style={styles.sectionTitle}>1. 协议的范围</Text>
                 <Text style={styles.content}>
-                  本协议是您与小橘同学智能学习桌（以下简称"我们"）之间关于您使用小橘同学智能学习桌产品及相关服务所订立的协议。
+                  本协议是您与小褐同学智能学习桌（以下简称"我们"）之间关于您使用小褐同学智能学习桌产品及相关服务所订立的协议。
                 </Text>
 
                 <Text style={styles.sectionTitle}>2. 服务内容</Text>
                 <Text style={styles.content}>
-                  小橘同学智能学习桌为用户提供智能学习辅导、学习数据分析、学习计划制定、护眼提醒等功能服务。我们有权根据业务发展需要对服务内容进行调整。
+                  小褐同学智能学习桌为用户提供智能学习辅导、学习数据分析、学习计划制定、护眼提醒等功能服务。我们有权根据业务发展需要对服务内容进行调整。
                 </Text>
 
                 <Text style={styles.sectionTitle}>3. 用户注册与账号</Text>
@@ -98,7 +98,7 @@ export const UserAgreementModal = React.memo(function UserAgreementModal({
 
                 <Text style={styles.sectionTitle}>6. 知识产权</Text>
                 <Text style={styles.content}>
-                  小橘同学智能学习桌的所有知识产权均归我们所有。用户仅获得使用权，不得进行复制、修改、传播等侵犯知识产权的行为。
+                  小褐同学智能学习桌的所有知识产权均归我们所有。用户仅获得使用权，不得进行复制、修改、传播等侵犯知识产权的行为。
                 </Text>
 
                 <Text style={styles.sectionTitle}>7. 免责声明</Text>

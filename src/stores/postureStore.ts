@@ -85,7 +85,12 @@ export const usePostureStore = create<PostureState>((set, get) => ({
   showRewardModal: false,
   rewardNotificationData: null,
 
-  setStatus: (status) => set({ nowStatus: status }),
+  setStatus: (status) => {
+    // 只有状态改变时才更新，避免不必要的重渲染
+    if (get().nowStatus !== status) {
+      set({ nowStatus: status })
+    }
+  },
 
   incrementGoodTime: (seconds) => set((state) => ({ goodTime: state.goodTime + seconds })),
 

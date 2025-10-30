@@ -3,13 +3,14 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Alert,
   StatusBar as RNStatusBar,
   Dimensions,
+  PanResponder,
 } from "react-native"
 import { Video, ResizeMode } from "expo-av"
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
+import * as Brightness from "expo-brightness"
 
 import {
   getVideoBasicInfo,
@@ -20,6 +21,7 @@ import {
 import { useUserStore } from "../../stores/userStore"
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
+import { showError } from "../../utils/toast"
 
 interface VideoParams {
   videoCode?: string
@@ -73,6 +75,30 @@ export default function VideoPlayerScreen() {
 
   // 拖拽状态
   const [_isDragging, _setIsDragging] = useState(false)
+  
+  // 进度条宽度
+  const [progressBarWidth, setProgressBarWidth] = useState(0)
+
+  // 音量和亮度控制
+  const [volume, setVolume] = useState(1.0) // 0.0 - 1.0
+  const [brightness, setBrightness] = useState(1.0) // 0.0 - 1.0
+  const [showVolumeIndicator, setShowVolumeIndicator] = useState(false)
+  const [showBrightnessIndicator, setShowBrightnessIndicator] = useState(false)
+  const volumeTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const brightnessTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // 初始化亮度
+  useEffect(() => {
+    const initBrightness = async () => {
+      try {
+        const currentBrightness = await Brightness.getBrightnessAsync()
+        setBrightness(currentBrightness)
+      } catch (error) {
+        console.log("获取亮度失败:", error)
+      }
+    }
+    initBrightness()
+  }, [])
 
   // 视频页面强制隐藏状态栏和三大金刚 - 使用原生StatusBar API
   useEffect(() => {
@@ -197,7 +223,7 @@ export default function VideoPlayerScreen() {
       setLoading(false)
     } catch (error) {
       console.error("获取视频信息失败:", error)
-      Alert.alert("错误", "视频加载失败")
+      showError("视频加载失败")
 
       // 降级处理：使用模拟数据
       console.log("使用降级模拟数据")
@@ -286,6 +312,14 @@ export default function VideoPlayerScreen() {
       if (isPlaying) {
         await videoRef.current?.pauseAsync()
       } else {
+        // 如果视频已播放完成，从头开始播放
+        if (currentTime >= totalDuration && totalDuration > 0) {
+          await videoRef.current?.setPositionAsync(0)
+          setCurrentTime(0)
+          setProgressPercent(0)
+          setIsCompleted(false)
+          setShowCompleteTip(false)
+        }
         await videoRef.current?.playAsync()
       }
       setShowControls(true)
@@ -341,14 +375,13 @@ export default function VideoPlayerScreen() {
 
   // 进度条点击处理
   const onProgressClick = (event: any) => {
-    if (!totalDuration || !videoRef.current) return
+    if (!totalDuration || !videoRef.current || !progressBarWidth) return
 
     const { locationX } = event.nativeEvent
-    const progressBarWidth = Dimensions.get("window").width - 40 // 减去左右边距
     const clickX = Math.max(0, Math.min(progressBarWidth, locationX))
     const percent = clickX / progressBarWidth
     const newTime = percent * totalDuration
-    const seekTime = Math.floor(Math.max(0, Math.min(totalDuration - 1, newTime)))
+    const seekTime = Math.floor(Math.max(0, Math.min(totalDuration, newTime))) // 允许跳到最后
 
     try {
       videoRef.current.setPositionAsync(seekTime * 1000)
@@ -374,8 +407,20 @@ export default function VideoPlayerScreen() {
     router.back()
   }
 
-  const continueWatch = () => {
+  const continueWatch = async () => {
     setShowCompleteTip(false)
+    // 跳转到开头重新播放
+    try {
+      if (videoRef.current) {
+        await videoRef.current.setPositionAsync(0)
+        await videoRef.current.playAsync()
+        setCurrentTime(0)
+        setProgressPercent(0)
+        setIsCompleted(false)
+      }
+    } catch (error) {
+      console.error("重新播放失败:", error)
+    }
   }
 
   const startPractice = () => {
@@ -396,7 +441,7 @@ export default function VideoPlayerScreen() {
       timer = setTimeout(() => {
         setShowControls(false)
       }, 3000)
-      _setControlsTimer(timer)
+      _setControlsTimer(timer as any)
     }
     return () => {
       if (timer) clearTimeout(timer)
@@ -408,6 +453,81 @@ export default function VideoPlayerScreen() {
     if (isFullscreen) return
     setShowControls(!showControls)
   }
+
+  // 手势控制
+  const screenWidth = Dimensions.get("window").width
+  const screenHeight = Dimensions.get("window").height
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false, // 不拦截开始触摸
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        // 只有垂直滑动距离 > 10px 时才认为是滑动手势
+        return Math.abs(gestureState.dy) > 10
+      },
+      onPanResponderGrant: (evt) => {
+        const locationX = evt.nativeEvent.locationX || evt.nativeEvent.pageX
+        // 判断控制类型
+        ;(panResponder as any).gestureType =
+          locationX < screenWidth / 2 ? "brightness" : "volume"
+        ;(panResponder as any).initialBrightness = brightness
+        ;(panResponder as any).initialVolume = volume
+        console.log("手势开始:", (panResponder as any).gestureType, "位置:", locationX)
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        const { dy } = gestureState
+
+        // 灵敏度：滑动150px = 100%变化
+        const delta = -dy / 150
+
+        if ((panResponder as any).gestureType === "brightness") {
+          // 左侧：控制亮度
+          const newBrightness = Math.max(
+            0,
+            Math.min(1, (panResponder as any).initialBrightness + delta),
+          )
+          setBrightness(newBrightness)
+          setShowBrightnessIndicator(true)
+
+          Brightness.setBrightnessAsync(newBrightness).catch((error) => {
+            console.log("设置亮度失败:", error)
+          })
+        } else {
+          // 右侧：控制音量
+          const newVolume = Math.max(0, Math.min(1, (panResponder as any).initialVolume + delta))
+          setVolume(newVolume)
+          setShowVolumeIndicator(true)
+
+          if (videoRef.current) {
+            videoRef.current.setVolumeAsync(newVolume).catch((error) => {
+              console.log("设置音量失败:", error)
+            })
+          }
+        }
+      },
+      onPanResponderRelease: () => {
+        console.log("手势结束")
+        // 延迟隐藏指示器
+        if ((panResponder as any).gestureType === "brightness") {
+          if (brightnessTimerRef.current) {
+            clearTimeout(brightnessTimerRef.current as any)
+          }
+          brightnessTimerRef.current = setTimeout(() => {
+            setShowBrightnessIndicator(false)
+          }, 1000) as any
+        } else if ((panResponder as any).gestureType === "volume") {
+          if (volumeTimerRef.current) {
+            clearTimeout(volumeTimerRef.current as any)
+          }
+          volumeTimerRef.current = setTimeout(() => {
+            setShowVolumeIndicator(false)
+          }, 1000) as any
+        }
+
+        ;(panResponder as any).gestureType = null
+      },
+    }),
+  ).current
 
   return (
     <View style={styles.container}>
@@ -426,48 +546,87 @@ export default function VideoPlayerScreen() {
       {/* 视频区域 */}
       <View style={styles.videoMain}>
         {/* 视频容器 */}
-        <TouchableOpacity
+        <View
           style={styles.videoContainer}
-          activeOpacity={1}
-          onPress={handleVideoClick}
+          {...panResponder.panHandlers}
         >
-          {videoUrl && !loading ? (
-            <Video
-              ref={videoRef}
-              style={styles.video}
-              source={{
-                uri: videoUrl,
-                headers: {
-                  Authorization: `Bearer ${(userStore as any).userInfo?.token || ""}`,
-                  Referer: videoInfo?.Referer_video || "",
-                },
-              }}
-              resizeMode={ResizeMode.CONTAIN}
-              shouldPlay={isPlaying}
-              isLooping={false}
-              onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-              onError={(error) => {
-                console.error("视频播放错误:", error)
-                Alert.alert("错误", "视频播放失败")
-              }}
-            />
-          ) : loading ? (
-            <View style={styles.loading}>
-              <Text style={styles.loadingText}>正在加载视频信息...</Text>
-            </View>
-          ) : (
-            <View style={styles.loading}>
-              <Text style={styles.loadingText}>视频加载失败</Text>
+          <TouchableOpacity
+            style={styles.videoTouchArea}
+            activeOpacity={1}
+            onPress={handleVideoClick}
+          >
+            {videoUrl && !loading ? (
+              <Video
+                ref={videoRef}
+                style={styles.video}
+                source={{
+                  uri: videoUrl,
+                  headers: {
+                    Authorization: `Bearer ${(userStore as any).userInfo?.token || ""}`,
+                    Referer: videoInfo?.Referer_video || "",
+                  },
+                }}
+                resizeMode={ResizeMode.CONTAIN}
+                shouldPlay={isPlaying}
+                isLooping={false}
+                onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+                onError={(error) => {
+                  console.error("视频播放错误:", error)
+                  showError("视频播放失败")
+                }}
+              />
+            ) : loading ? (
+              <View style={styles.loading}>
+                <Text style={styles.loadingText}>正在加载视频信息...</Text>
+              </View>
+            ) : (
+              <View style={styles.loading}>
+                <Text style={styles.loadingText}>视频加载失败</Text>
+              </View>
+            )}
+
+            {/* 中央播放按钮 */}
+            {!isPlaying && !isFullscreen && !loading && videoUrl && (
+              <TouchableOpacity style={styles.centerPlayBtn} onPress={togglePlay}>
+                <Ionicons name="play" size={rpx(48)} color="#fff" />
+              </TouchableOpacity>
+            )}
+          </TouchableOpacity>
+
+          {/* 亮度指示器 - 屏幕中间 */}
+          {showBrightnessIndicator && (
+            <View style={styles.brightnessIndicator}>
+              <View style={styles.indicatorHeader}>
+                <Ionicons name="sunny" size={rpx(20)} color="#fff" />
+                <Text style={styles.indicatorText}>{Math.round(brightness * 100)}%</Text>
+              </View>
+              <View style={styles.indicatorBarHorizontal}>
+                <View style={styles.indicatorBgHorizontal} />
+                <View
+                  style={[styles.indicatorFillHorizontal, { width: `${brightness * 100}%` }]}
+                />
+              </View>
             </View>
           )}
 
-          {/* 中央播放按钮 */}
-          {!isPlaying && !isFullscreen && !loading && videoUrl && (
-            <TouchableOpacity style={styles.centerPlayBtn} onPress={togglePlay}>
-              <Ionicons name="play" size={rpx(48)} color="#fff" />
-            </TouchableOpacity>
+          {/* 音量指示器 - 屏幕中间 */}
+          {showVolumeIndicator && (
+            <View style={styles.volumeIndicator}>
+              <View style={styles.indicatorHeader}>
+                <Ionicons
+                  name={volume === 0 ? "volume-mute" : volume < 0.5 ? "volume-low" : "volume-high"}
+                  size={rpx(20)}
+                  color="#fff"
+                />
+                <Text style={styles.indicatorText}>{Math.round(volume * 100)}%</Text>
+              </View>
+              <View style={styles.indicatorBarHorizontal}>
+                <View style={styles.indicatorBgHorizontal} />
+                <View style={[styles.indicatorFillHorizontal, { width: `${volume * 100}%` }]} />
+              </View>
+            </View>
           )}
-        </TouchableOpacity>
+        </View>
 
         {/* 视频控制栏 */}
         {!loading && !isFullscreen && showControls && (
@@ -478,6 +637,10 @@ export default function VideoPlayerScreen() {
               <TouchableOpacity
                 style={styles.progressBar}
                 onPress={onProgressClick}
+                onLayout={(event) => {
+                  const { width } = event.nativeEvent.layout
+                  setProgressBarWidth(width)
+                }}
                 activeOpacity={1}
               >
                 <View style={styles.progressBg} />
@@ -586,6 +749,12 @@ const styles = createStyles({
     justifyContent: "center",
     alignItems: "center",
   },
+  videoTouchArea: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   video: {
     width: "100%",
     height: "100%",
@@ -660,24 +829,24 @@ const styles = createStyles({
   },
   progressBar: {
     flex: 1,
-    height: 4,
+    height: 20,
     position: "relative",
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 2,
+    justifyContent: "center",
   },
   progressBg: {
     width: "100%",
-    height: "100%",
+    height: 4,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 2,
   },
   progressFill: {
     position: "absolute",
-    top: 0,
+    top: "50%",
     left: 0,
-    height: "100%",
+    height: 4,
     backgroundColor: "#4891FF",
     borderRadius: 2,
+    transform: [{ translateY: -2 }],
   },
   progressHandle: {
     position: "absolute",
@@ -819,5 +988,69 @@ const styles = createStyles({
   btnText: {
     color: "#fff",
     fontSize: 10,
+  },
+  // 亮度指示器 - 屏幕中间
+  brightnessIndicator: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: [{ translateX: -100 }, { translateY: -30 }],
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    minWidth: 200,
+    zIndex: 900,
+  },
+  // 音量指示器 - 屏幕中间
+  volumeIndicator: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: [{ translateX: -100 }, { translateY: -30 }],
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    minWidth: 200,
+    zIndex: 900,
+  },
+  // 指示器头部
+  indicatorHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 0,
+    marginBottom: 10,
+  },
+  // 横向进度条
+  indicatorBarHorizontal: {
+    width: "100%",
+    height: 6,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 3,
+    position: "relative",
+    overflow: "hidden",
+  },
+  indicatorBgHorizontal: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+  },
+  indicatorFillHorizontal: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: "#4891FF",
+    borderRadius: 3,
+  },
+  indicatorText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold" as const,
+    minWidth: 40,
   },
 })

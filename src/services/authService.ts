@@ -45,7 +45,22 @@ export class AuthService {
         code: code,
         device_code: "mobile",
       })
-      return response
+      console.log("response_sms_login:", response)
+      // 先保存 token 到 userStore
+      const { useUserStore } = await import("../stores/userStore")
+      const userStore = useUserStore.getState()
+      userStore.setToken(response.access_token)
+      
+      // 登录成功后，获取用户信息（现在有 token 了）
+      const userInfoResponse = await post("/AppStart/UserInformation/user_information/", {
+        device_code: "mobile",
+      })
+      console.log("userInfoResponse:", userInfoResponse)
+      return {
+        access_token: response.access_token,
+        refresh_token: response.refresh_token,
+        user_info: userInfoResponse, // 直接使用用户信息接口返回的数据
+      }
     } catch (error) {
       console.error("短信登录失败:", error)
       throw error
@@ -62,7 +77,22 @@ export class AuthService {
         password: password,
         device_code: "mobile",
       })
-      return response
+      
+      // 先保存 token 到 userStore
+      const { useUserStore } = await import("../stores/userStore")
+      const userStore = useUserStore.getState()
+      userStore.setToken(response.access_token)
+      
+      // 登录成功后，获取用户信息（现在有 token 了）
+      const userInfoResponse = await post("/AppStart/UserInformation/user_information/", {
+        device_code: "mobile",
+      })
+      
+      return {
+        access_token: response.access_token,
+        refresh_token: response.refresh_token,
+        user_info: userInfoResponse, // 直接使用用户信息接口返回的数据
+      }
     } catch (error) {
       console.error("密码登录失败:", error)
       throw error
