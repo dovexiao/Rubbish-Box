@@ -70,7 +70,6 @@ npm run version:major
 npm run version:set 1.2.3
 # 设置为 1.2.3
 ```
-
 ## 🔄 版本号更新流程
 
 ### 热更新流程
