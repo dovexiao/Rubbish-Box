@@ -40,8 +40,11 @@ import {useFocusEffect} from '@react-navigation/native';
 
 import {getCasinoList, getCasinoType} from './home.service';
 import HomeGoldArea from './components/home-gold-area';
+import {useHomeServiceStore} from '@/pages/home/components/home-service-store';
 
 const Home = () => {
+  const {setOldMenuImgUrl} = useHomeServiceStore();
+
   // const basePx = globalStore.screenWidth / 375;
   const [selectedGame, setSelectedGame] = useState<number>(1);
   const [refreshing, setRefreshing] = useState(false);
@@ -160,6 +163,7 @@ const Home = () => {
 
     setFirstShow(data?.isRecharge || 0);
     setMenuImgUrl(data?.menuImg ? `${data.menuImg}?t=${ts}` : '');
+    setOldMenuImgUrl(data?.menuImg);
     setRechargeImgUrl(data?.rechargeImg ? `${data.rechargeImg}?t=${ts}` : '');
   };
   const onFocusEffect = useCallback(() => {

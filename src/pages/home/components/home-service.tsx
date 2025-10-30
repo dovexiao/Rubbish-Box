@@ -7,6 +7,7 @@ import {goCS, goTo} from '@/utils';
 import LazyImage from '@basicComponents/image/lazy-image';
 import {View} from 'react-native';
 import HomePopTwo from './home-pop-two';
+import {useHomeServiceStore} from '@/pages/home/components/home-service-store';
 
 const HomeService = ({
   spinShow,
@@ -25,6 +26,9 @@ const HomeService = ({
   const toggleModal = () => {
     setIsImageVisible(!isImageVisible);
   };
+
+  const {oldMenuImgUrl} = useHomeServiceStore();
+
   return (
     <View
       style={[theme.position.abs, homeServiceStyle.service, theme.flex.center]}>
@@ -57,7 +61,7 @@ const HomeService = ({
       {/*  </TouchableOpacity>*/}
       {/*)}*/}
 
-      {menuImgUrl && (
+      {menuImgUrl && oldMenuImgUrl && (
         <TouchableOpacity
           style={{marginBottom: 8}}
           onPress={() => {
@@ -71,7 +75,7 @@ const HomeService = ({
             width={60}
             height={60}
             // imageUrl={require('@assets/gif/first-recharge.gif')}
-            imageUrl={menuImgUrl || ''}
+            imageUrl={oldMenuImgUrl || menuImgUrl || ''}
           />
         </TouchableOpacity>
       )}
