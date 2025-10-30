@@ -201,7 +201,7 @@ android {
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodgobet\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodgobet"  // 资源目录隔离
             versionCode 1         // ← 独立 versionCode
-            versionName "2.1.3"    // ← 独立 versionName
+            versionName "3.10.4"    // ← 独立 versionName
         }
         "prodlotteryindia" {
             dimension "environment"
@@ -214,7 +214,7 @@ android {
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodlotteryindia\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodlotteryindia"  // 资源目录隔离
             versionCode 2        // ← 独立 versionCode
-            versionName "2.2.3"    // ← 独立 versionName
+            versionName "3.10.2"    // ← 独立 versionName
         }
         "prodluckyone" {
             dimension "environment"
@@ -227,7 +227,7 @@ android {
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodluckyone\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodluckyone"  // 资源目录隔离
             versionCode 3        // ← 独立 versionCode
-            versionName "2.3.3"    // ← 独立 versionName
+            versionName "3.10.8"    // ← 独立 versionName
         }
         "prodmybetfive" {
             dimension "environment"
@@ -240,7 +240,7 @@ android {
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodmybetfive\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodmybetfive"  // 资源目录隔离
             versionCode 4        // ← 独立 versionCode
-            versionName "2.4.3"    // ← 独立 versionName
+            versionName "3.10.5"    // ← 独立 versionName
         }
         "prodmybetnine" {
             dimension "environment"
@@ -253,7 +253,7 @@ android {
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodmybetnine\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodmybetnine"  // 资源目录隔离
             versionCode 5        // ← 独立 versionCode
-            versionName "2.5.3"    // ← 独立 versionName
+            versionName "3.10.6"    // ← 独立 versionName
         }
         "prodspinsnine" {
             dimension "environment"
@@ -266,7 +266,7 @@ android {
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodspinsnine\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodspinsnine"  // 资源目录隔离
             versionCode 6        // ← 独立 versionCode
-            versionName "2.6.3"    // ← 独立 versionName
+            versionName "3.10.10"    // ← 独立 versionName
         }
         "prodspinsseven" {
             dimension "environment"
@@ -279,7 +279,7 @@ android {
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodspinsseven\""  // 目录名与flavor一致
             resValue "string", "code_push_hash_dir", "prodspinsseven"  // 资源目录隔离
             versionCode 7        // ← 独立 versionCode
-            versionName "2.7.3"    // ← 独立 versionName
+            versionName "3.10.0"    // ← 独立 versionName
         }
         "prodsupbetone" {
             dimension "environment"
@@ -290,9 +290,9 @@ android {
             resValue "string", "app_name", "Supbet001"
             resValue "string", "env_config_path", ".env.prodsupbetone"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodsupbetone\""  // 目录名与flavor一致
-            resValue "string", "code_push_hash_dir", "prodsupbetone"  // 资源目录隔离   
+            resValue "string", "code_push_hash_dir", "prodsupbetone"  // 资源目录隔离
             versionCode 8        // ← 独立 versionCode
-            versionName "2.8.3"    // ← 独立 versionName
+            versionName "3.10.3"    // ← 独立 versionName
         }
         "prodsupbetseven" {
             dimension "environment"
@@ -303,9 +303,9 @@ android {
             resValue "string", "app_name", "Supbet007"
             resValue "string", "env_config_path", ".env.prodsupbetseven"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodsupbetseven\""  // 目录名与flavor一致
-            resValue "string", "code_push_hash_dir", "prodsupbetseven"  // 资源目录隔离   
+            resValue "string", "code_push_hash_dir", "prodsupbetseven"  // 资源目录隔离
             versionCode 9        // ← 独立 versionCode
-            versionName "2.9.3"    // ← 独立 versionName
+            versionName "3.10.1"    // ← 独立 versionName
         }
         "prodwinlucky" {
             dimension "environment"
@@ -316,9 +316,9 @@ android {
             resValue "string", "app_name", "Winlucky001"
             resValue "string", "env_config_path", ".env.prodwinlucky"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"prodwinlucky\""  // 目录名与flavor一致
-            resValue "string", "code_push_hash_dir", "prodwinlucky"  // 资源目录隔离   
+            resValue "string", "code_push_hash_dir", "prodwinlucky"  // 资源目录隔离
             versionCode 10        // ← 独立 versionCode
-            versionName "2.10.3"    // ← 独立 versionName
+            versionName "3.10.7"    // ← 独立 versionName
         }
         "supbet" {
             dimension "environment"
@@ -329,9 +329,9 @@ android {
             resValue "string", "app_name", "Supbet"
             resValue "string", "env_config_path", ".env.supbet"
             buildConfigField "String", "CODE_PUSH_FILE_DIR", "\"supbet\""  // 目录名与flavor一致
-            resValue "string", "code_push_hash_dir", "supbet"  // 资源目录隔离   
+            resValue "string", "code_push_hash_dir", "supbet"  // 资源目录隔离
             versionCode 11        // ← 独立 versionCode
-            versionName "2.11.3"    // ← 独立 versionName
+            versionName "9.0.1"    // ← 独立 versionName
         }
     }
     signingConfigs {

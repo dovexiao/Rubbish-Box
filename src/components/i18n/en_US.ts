@@ -915,7 +915,7 @@ export default {
     checkinDescription: 'Check in daily to get a lot of rewards',
     continueBonus: 'New User recharge activity',
     sevenContinueBonus: {
-      title: 'Daily Continuous recharge bonus',
+      title: 'Daily Sign-in Bonus',
       week: [
         'Monday',
         'Tuesday',

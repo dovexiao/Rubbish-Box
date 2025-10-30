@@ -185,12 +185,12 @@ export const downloadApk = () => {
   //     `);
   //   }
   // }
-  if (channelId === 'supbet001') {
+  if (channelId === 'lucky101') {
     // location.href = envConfig.downloadUrl || '';
-    location.href = 'https://www.staticimg007.com/apk/supbet001.apk';
+    location.href = 'https://www.staticimg007.com/apk/lucky101.apk';
   } else {
     // location.href = envConfig.downloadChannelUrl || '';
 
-    location.href = `https://www.staticimg007.com/apk/supbet001_${channelId}.apk`;
+    location.href = `https://www.staticimg007.com/apk/lucky101_${channelId}.apk`;
   }
 };
