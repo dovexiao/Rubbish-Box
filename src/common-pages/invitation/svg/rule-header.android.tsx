@@ -12,6 +12,10 @@ const RuleHeaderIcon: React.FC<RuleHeaderIconProps> = ({
   height,
   linear = theme.linearGradientColor.primaryLinearGradient,
 }) => {
+  // const [startColor, endColor] = linear;
+
+  const [startColor, endColor] = ['#F7B500', '#F7B500'];
+
   const xml = `<svg
     width="218"
     height="32"
@@ -30,12 +34,12 @@ const RuleHeaderIcon: React.FC<RuleHeaderIconProps> = ({
         x2="9.19634"
         y2="62.6501"
         gradientUnits="userSpaceOnUse">
-        <stop stop-color="${linear[0]}" />
-        <stop offset="1" stop-color="${linear[1]}" />
+        <stop stop-color="${startColor}" />
+        <stop offset="1" stop-color="${endColor}" />
       </linearGradient>
     </defs>
   </svg>`;
-  return <SvgXml xml={xml} width={width} height={height} />;
+  return <SvgXml xml={xml} width={width ?? 218} height={height ?? 32} />;
 };
 
 export default RuleHeaderIcon;
