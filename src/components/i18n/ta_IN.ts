@@ -567,6 +567,7 @@ export default {
         'ஞாயிறு',
       ],
     },
+    expiredFeedbackWord: 'இப்போது கிளெயிம் செய்ய முடியாது.',
   },
   feedback: {
     label: {

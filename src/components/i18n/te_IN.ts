@@ -849,6 +849,7 @@ export default {
         'ఆదివారం',
       ],
     },
+    expiredFeedbackWord: 'ప్రస్తుతం క్లెయిమ్ అందుబాటులో లేదు.',
   },
   feedback: {
     title: 'கருத்து',

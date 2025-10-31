@@ -524,6 +524,7 @@ export default {
         'रविवार',
       ],
     },
+    expiredFeedbackWord: 'अभी दावा उपलब्ध नहीं है।',
   },
   'withdraw-page': {
     label: {

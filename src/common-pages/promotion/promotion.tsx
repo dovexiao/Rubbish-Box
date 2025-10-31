@@ -39,6 +39,7 @@ import {
   renderPromotionListItem,
 } from './components';
 import GetBonusModal from '@/common-pages/promotion/components/get-bonus-modal';
+import {useToast} from '@basicComponents/modal';
 
 const Promotion = () => {
   const {i18n} = useTranslation();
@@ -49,6 +50,7 @@ const Promotion = () => {
   } = useInnerStyle();
 
   const {screenHeight} = useSettingWindowDimensions();
+  const {renderModal: renderToastModal, show: showToast} = useToast();
 
   const [visible, setVisible] = useState(false);
   const [sevenInfo, setSevenInfo] = useState<any>([]);
@@ -323,9 +325,14 @@ const Promotion = () => {
           .catch((e: unknown) => {
             console.error('Error fetching ContinuousBonus:', e);
           });
+      } else if (item?.status === -1) {
+        showToast({
+          type: 'warning',
+          message: `${i18n.t('promotion.expiredFeedbackWord')}`,
+        });
       }
     },
-    [fetchSevenInfo],
+    [fetchSevenInfo, i18n, showToast],
   );
 
   // 7天活动领取金额
@@ -492,6 +499,7 @@ const Promotion = () => {
         currentReacgarge2={currentReacgarge2}
         currentReacgarge3={currentReacgarge3}
       />
+      {renderToastModal}
     </LazyImageLGBackground>
   );
 };
