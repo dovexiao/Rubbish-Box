@@ -61,7 +61,8 @@
     "lint": "eslint .",
     "test": "jest",
     "web": "webpack serve --config webpack.config.js --mode development",
-    "web:build": "webpack --config webpack.config.js --mode production"
+    "web:build": "webpack --config webpack.config.js --mode production",
+    "install:apk": "adb -s LNFMBEDYEEOR4PBY install android/app/build/outputs/apk/supbet/release/app-supbet-release.apk"
   },
   "dependencies": {
     "@adjustcom/adjust-web-sdk": "^5.7.2",
@@ -92,6 +93,7 @@
     "react-native-config": "^1.5.1",
     "react-native-countdown-component": "^2.7.1",
     "react-native-device-info": "^10.11.0",
+    "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-image-picker": "^7.0.2",
     "react-native-linear-gradient": "^2.8.0",
@@ -146,7 +148,9 @@
     "react-native-svg-transformer": "^1.1.0",
     "react-test-renderer": "18.2.0",
     "typescript": "4.8.4",
-    "webpack": "^5.88.2"
+    "webpack": "^5.88.2",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   },
   "engines": {
     "node": ">=16"

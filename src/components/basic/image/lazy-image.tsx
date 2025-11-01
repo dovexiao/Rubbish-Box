@@ -2,14 +2,16 @@ import {errorLog} from '@utils'; // convertImgToObscureUrl,convertImgToWidthUrl,
 import React, {useState, useEffect, memo, useMemo} from 'react';
 import {
   DimensionValue,
-  ImageResizeMode,
   View,
   Image,
   ImageURISource,
   StyleSheet,
   ImageRequireSource,
   ViewProps,
+  Platform,
 } from 'react-native';
+
+import FastImage, {ResizeMode} from 'react-native-fast-image';
 
 import {ImageUrlType} from './index.type';
 // import theme from '@style';
@@ -23,7 +25,7 @@ export interface LazyImageProps extends ViewProps {
   imageUrl: ImageUrlType;
   // 圆角
   radius?: number;
-  resizeMode?: ImageResizeMode;
+  resizeMode?: ResizeMode;
   // 占位背景色
   occupancy?: string;
   tintColor?: string;
@@ -127,6 +129,32 @@ const LazyImage: React.FC<LazyImageProps> = props => {
     return require('@/assets/imgs/image-loading.webp');
   }, [width, height, imageUrl]);
 
+  if (Platform.OS === 'web') {
+    return (
+      <View
+        style={[
+          styles.view,
+          innerStyle.view,
+          {
+            backgroundColor: transparent,
+          },
+          otherProps?.style,
+        ]}>
+        <Image
+          defaultSource={defaultSourceImage}
+          tintColor={tintColor}
+          style={[innerStyle.image, styles.realImageFloat]}
+          resizeMode={resizeMode}
+          source={source}
+          onLoad={() => {
+            // setShowBlur(false);
+            // setLoading(false);
+          }}
+        />
+      </View>
+    );
+  }
+
   return (
     <View
       style={[
@@ -140,16 +168,12 @@ const LazyImage: React.FC<LazyImageProps> = props => {
       {/* {blurredImageUrl && showBlur && (
         <Image style={[innerStyle.image]} source={{uri: blurredImageUrl}} />
       )} */}
-      <Image
+      <FastImage
         defaultSource={defaultSourceImage}
         tintColor={tintColor}
         style={[innerStyle.image, styles.realImageFloat]}
         resizeMode={resizeMode}
         source={source}
-        onLoad={() => {
-          // setShowBlur(false);
-          // setLoading(false);
-        }}
       />
     </View>
   );
