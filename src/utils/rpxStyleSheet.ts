@@ -4,10 +4,76 @@ import { StyleSheet, Dimensions, Platform } from "react-native"
 const DESIGN_WIDTH_RPX = 750 // 设计稿宽度转rpx
 const DESIGN_HEIGHT_RPX = 400 // 设计稿高度转rpx (1200 * 750 / 1920)
 
+// 设备专用配置 - 可手动调节每个设备的缩放比
+const DEVICE_CONFIGS = [
+  {
+    name: '1920×1200',
+    physicalWidth: 1920,
+    physicalHeight: 1200,
+    // 手动设置缩放比，调大则元素变大，调小则元素变小
+    scaleRatio: 1.28, // 默认基于逻辑像素 600/400=1.5
+    baseRpx: 400, // 横屏基于高度
+  },
+  {
+    name: '1920×1080',
+    physicalWidth: 1920,
+    physicalHeight: 1080,
+    // 1920×1080 的逻辑像素可能是 960×540
+    scaleRatio: 2.56, // 540/400=1.35
+    baseRpx: 400,
+  },
+  {
+    name: '960×600 (逻辑)',
+    logicalWidth: 960,
+    logicalHeight: 600,
+    // 当检测到逻辑像素时的缩放
+    scaleRatio: 1.5, // 600/400=1.5
+    baseRpx: 400,
+  },
+]
+
+// 缓存屏幕尺寸信息
+let cachedDimensions: {
+  width: number
+  height: number
+  scale: number
+  physicalWidth: number
+  physicalHeight: number
+} | null = null
+
 // 获取屏幕尺寸
 const getScreenDimensions = () => {
-  const { width, height } = Dimensions.get("window")
-  return { width, height }
+  // 如果已缓存，直接返回
+  if (cachedDimensions) {
+    return cachedDimensions
+  }
+  
+  // React Native 使用逻辑像素（DIP），直接用于布局计算
+  const screen = Dimensions.get("screen")
+  const window = Dimensions.get("window")
+  
+  const scale = screen.scale || window.scale || 1
+  
+  // 计算物理像素（仅用于调试和设备识别）
+  const physicalWidth = screen.width * scale
+  const physicalHeight = screen.height * scale
+  
+  // 缓存结果
+  cachedDimensions = { 
+    width: screen.width, 
+    height: screen.height, 
+    scale,
+    physicalWidth,
+    physicalHeight
+  }
+  
+  // 首次调用时输出调试信息
+  console.log("=== 屏幕信息（首次初始化）===")
+  console.log("逻辑像素:", screen.width, "×", screen.height)
+  console.log("物理像素:", physicalWidth, "×", physicalHeight)
+  console.log("scale:", scale)
+  
+  return cachedDimensions
 }
 
 // 判断是否为横屏
@@ -26,45 +92,46 @@ const isTablet = (): boolean => {
 
 // 获取设备类型和适配策略
 const getDeviceAdaptationStrategy = () => {
-  const { width, height } = getScreenDimensions()
+  const dimensions = getScreenDimensions()
+  const { width, height } = dimensions
   const landscape = isLandscape()
   
   // 标准化尺寸（确保width > height为横屏）
   const screenWidth = landscape ? width : height
   const screenHeight = landscape ? height : width
   
-  // 定义支持的平板尺寸和对应的适配策略
-  const tabletConfigs = [
-    {
-      name: '1920×1200',
-      width: 1920,
-      height: 1200,
-      scaleRatio: 2.56, 
-      baseRpx: 750
-    },
-    {
-      name: '1920×1080', 
-      width: 1920,
-      height: 1080,
-      scaleRatio: 2.56, 
-      baseRpx: 750
-    },
-    {
-      name: '1280×800',
-      width: 1280,
-      height: 800,
-      scaleRatio: 1.7067, 
-      baseRpx: 750 
+  const physicalWidth = dimensions.physicalWidth || 0
+  const physicalHeight = dimensions.physicalHeight || 0
+  
+  // 1. 优先通过物理像素匹配设备配置
+  let matchedConfig = DEVICE_CONFIGS.find(config => {
+    if (config.physicalWidth && config.physicalHeight) {
+      const widthMatch = Math.abs(physicalWidth - config.physicalWidth) <= 50
+      const heightMatch = Math.abs(physicalHeight - config.physicalHeight) <= 50
+      return widthMatch && heightMatch
     }
-  ]
+    return false
+  })
   
-  // 查找匹配的配置
-  const matchedConfig = tabletConfigs.find(config => 
-    Math.abs(screenWidth - config.width) <= 10 && 
-    Math.abs(screenHeight - config.height) <= 10
-  )
+  // 2. 如果没匹配到，尝试通过逻辑像素匹配
+  if (!matchedConfig) {
+    matchedConfig = DEVICE_CONFIGS.find(config => {
+      if (config.logicalWidth && config.logicalHeight) {
+        const widthMatch = Math.abs(width - config.logicalWidth) <= 10
+        const heightMatch = Math.abs(height - config.logicalHeight) <= 10
+        return widthMatch && heightMatch
+      }
+      return false
+    })
+  }
   
+  // 3. 使用匹配到的配置
   if (matchedConfig) {
+    // 只在首次调用时输出
+    if (!cachedDimensions) {
+      console.log("✓ 匹配到设备配置:", matchedConfig.name)
+      console.log("  使用缩放比:", matchedConfig.scaleRatio)
+    }
     return {
       deviceName: matchedConfig.name,
       scaleRatio: matchedConfig.scaleRatio,
@@ -73,10 +140,15 @@ const getDeviceAdaptationStrategy = () => {
     }
   }
   
-  // 默认策略
+  // 4. 未匹配到配置，使用默认计算
+  const scaleRatio = landscape ? screenHeight / DESIGN_HEIGHT_RPX : screenWidth / DESIGN_WIDTH_RPX
+  if (!cachedDimensions) {
+    console.log("✗ 未匹配到配置，使用默认缩放比:", scaleRatio)
+  }
+  
   return {
-    deviceName: 'Unknown',
-    scaleRatio: landscape ? screenHeight / DESIGN_HEIGHT_RPX : screenWidth / DESIGN_WIDTH_RPX,
+    deviceName: `${physicalWidth}×${physicalHeight} (未配置)`,
+    scaleRatio,
     baseRpx: landscape ? DESIGN_HEIGHT_RPX : DESIGN_WIDTH_RPX,
     isCustom: false
   }
@@ -139,19 +211,23 @@ export const getScaleRatio = (): number => {
  * 获取屏幕信息（用于调试）
  */
 export const getScreenInfo = () => {
-  const { width, height } = getScreenDimensions()
+  const dimensions = getScreenDimensions()
+  const { width, height, physicalWidth, physicalHeight } = dimensions
   const landscape = isLandscape()
   const tablet = isTablet()
   const strategy = getDeviceAdaptationStrategy()
-  const scale = getScaleRatio()
+  const scaleRatio = getScaleRatio()
   
   return {
-    width,
-    height,
+    width, // 逻辑像素（用于布局）
+    height, // 逻辑像素（用于布局）
+    physicalWidth, // 物理像素（仅供参考）
+    physicalHeight, // 物理像素（仅供参考）
+    scale: dimensions.scale,
     isLandscape: landscape,
     isTablet: tablet,
     deviceName: strategy.deviceName,
-    scaleRatio: scale.toFixed(4),
+    scaleRatio: scaleRatio.toFixed(4),
     baseRpx: strategy.baseRpx,
     isCustomAdaptation: strategy.isCustom,
     platform: Platform.OS,
