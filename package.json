@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "private": true,
   "scripts": {
-    "patch-install": "patch-package",
+    "postinstall": "patch-package",
     "clean": "cd android && ./gradlew clean && cd ../ && npm run rewatch",
     "clean:win": "cd android && .\\gradlew clean && cd ..\\ && npm run rewatch",
     "clean:web": "rm -rf node_modules/.cache",
@@ -56,12 +56,14 @@
     "upgrade:android:uuuuuuat": "appcenter codepush release-react -d Uat -a ziencinacabos-gmail.com/MegaDream -t 1.0.0",
     "upgrade:android:pro": "appcenter codepush release-react -a 15201335016-163.com/Indra-Lottery-1 -d Production -t 2.1.2 -m",
     "upgrade:android:test": "appcenter codepush release-react -d Dev -a ziencinacabos-gmail.com/MegaDream -t 1.0.0",
+    "build:patch": "node publish",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "test": "jest",
     "web": "webpack serve --config webpack.config.js --mode development",
-    "web:build": "webpack --config webpack.config.js --mode production"
+    "web:build": "webpack --config webpack.config.js --mode production",
+    "install:apk": "adb -s LNFMBEDYEEOR4PBY install android/app/build/outputs/apk/supbet/release/app-supbet-release.apk"
   },
   "dependencies": {
     "@adjustcom/adjust-web-sdk": "^5.7.2",
@@ -77,6 +79,7 @@
     "@react-navigation/stack": "^6.3.17",
     "@rneui/base": "^4.0.0-rc.7",
     "@rneui/themed": "^4.0.0-rc.8",
+    "@sparkfabrik/react-native-idfa-aaid": "^1.2.0",
     "axios": "^1.4.0",
     "dayjs": "^1.11.9",
     "dotenv": "^16.4.7",
@@ -92,6 +95,7 @@
     "react-native-config": "^1.5.1",
     "react-native-countdown-component": "^2.7.1",
     "react-native-device-info": "^10.11.0",
+    "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-image-picker": "^7.0.2",
     "react-native-linear-gradient": "^2.8.0",
@@ -146,7 +150,9 @@
     "react-native-svg-transformer": "^1.1.0",
     "react-test-renderer": "18.2.0",
     "typescript": "4.8.4",
-    "webpack": "^5.88.2"
+    "webpack": "^5.88.2",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   },
   "engines": {
     "node": ">=16"

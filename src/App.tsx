@@ -436,7 +436,7 @@ function App(): JSX.Element {
       Adjust.create(adjustConfig);
       // 获取adid
       Adjust.getAdid((adid: string) => {
-        globalStore.adjustId = adid
+        globalStore.adjustId = adid;
       });
     } else {
       const Adjust = require('@adjustcom/adjust-web-sdk');
