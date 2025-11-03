@@ -6,7 +6,7 @@ import {getSlotegratorGameStart, postUserInfo} from '@/services/global.service';
 import {postLiveAuthorize} from '@/common-pages/game-navigate';
 // import {Linking} from 'react-native';
 // import envConfig from '@/utils/env.config';
-import {NativeModules} from 'react-native';
+import {NativeModules, Platform} from 'react-native';
 
 declare var window: any;
 
@@ -123,8 +123,20 @@ export async function callNativeAction(user: SafeAny) {
   // 调用 showToast
   // NativeActionManager.performNativeAction('showToast', {});
   const userInfo = user || {};
-  // 调用 openSaleSmarty
-  NativeActionManager.performNativeAction('openSaleSmarty', userInfo);
+
+  if (Platform.OS !== 'web') {
+    // 调用 openSaleSmarty
+    NativeActionManager.performNativeAction('openSaleSmarty', userInfo);
+  } else {
+    if (!window.ssq) {
+      console.warn('SaleSmartly SDK 尚未加载，请稍后再试。');
+      return;
+    }
+
+    window.ssq.push('setLoginInfo', userInfo);
+    // 打开客服聊天窗口
+    window.ssq.push('chatOpen');
+  }
 
   // 调用 claseSaleSmarty (注意拼写，原生代码中是 claseSaleSmarty)
   // NativeActionManager.performNativeAction('claseSaleSmarty', {});
@@ -152,6 +164,7 @@ export const goCS = () => {
     email: `packageId@${orderUserInfo.packageId || selfInfo.packageId || ''}`,
     desc: globalStore.currentOrder || 'iphone user',
   };
+
   if (userInfo.username) {
     callNativeAction(userInfo);
   } else {

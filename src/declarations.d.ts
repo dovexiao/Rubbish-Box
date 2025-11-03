@@ -5,3 +5,16 @@ declare module '*.svg' {
   export default content;
   export {ReactComponent};
 }
+
+declare global {
+  interface Window {
+    // SaleSmartly SDK 全局对象
+    ssq: {
+      push: (...args: any[]) => void;
+    };
+    // License 或其他全局配置
+    __ssc?: {
+      license?: string;
+    };
+  }
+}
