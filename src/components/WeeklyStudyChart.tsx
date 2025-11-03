@@ -15,7 +15,7 @@ export function WeeklyStudyChart({ weekData }: WeeklyStudyChartProps) {
   // 如果没有数据，显示空状态
   if (!weekData || weekData.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
+      <View style={styles.emptyContainer as any}>
         <Text style={styles.emptyText}>暂无学习数据</Text>
       </View>
     )
@@ -25,22 +25,89 @@ export function WeeklyStudyChart({ weekData }: WeeklyStudyChartProps) {
   const chartWidth = 160 // rpx
   const chartHeight = 100 // rpx
   const barWidth = 15 // rpx
-  const maxValue = Math.max(...weekData.map((d) => d.duration), 60) // 最小60分钟
-  const spacing = (chartWidth - barWidth * weekData.length) / (weekData.length + 1)
+  const leftMargin = 20 // 左边距，用于显示纵轴刻度
+  const actualChartWidth = chartWidth - leftMargin // 实际图表宽度
+  
+  // 动态计算最大值：取数据最大值的1.2倍，至少为5
+  const dataMax = Math.max(...weekData.map((d) => d.duration), 1)
+  const maxValue = Math.max(Math.ceil(dataMax * 1.2), 5)
+  
+  const spacing = (actualChartWidth - barWidth * weekData.length) / (weekData.length + 1)
+  
+  // 计算纵轴刻度（5个刻度）
+  const yAxisTicks = [0, maxValue * 0.25, maxValue * 0.5, maxValue * 0.75, maxValue]
 
-  // 从日期提取星期
+  // 从日期提取星期（如果接口没有提供weekday字段）
   const getWeekDay = (dateStr: string) => {
-    const date = new Date(dateStr)
-    const days = ["日", "一", "二", "三", "四", "五", "六"]
-    return days[date.getDay()]
+    // 尝试解析 MM/DD 格式的日期
+    const [month, day] = dateStr.split('/').map(Number)
+    if (month && day) {
+      const year = new Date().getFullYear()
+      const date = new Date(year, month - 1, day)
+      const days = ["日", "一", "二", "三", "四", "五", "六"]
+      return days[date.getDay()]
+    }
+    return dateStr
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container as any}>
       <Svg width={rpx(chartWidth)} height={rpx(chartHeight)}>
+        {/* 纵轴线 */}
+        <Line
+          x1={rpx(leftMargin)}
+          y1={rpx(10)}
+          x2={rpx(leftMargin)}
+          y2={rpx(chartHeight - 20)}
+          stroke="#E5E5E5"
+          strokeWidth={1}
+        />
+        
+        {/* 纵轴刻度、标签和网格线 */}
+        {yAxisTicks.map((tick, index) => {
+          const y = chartHeight - 20 - (tick / maxValue) * (chartHeight - 30)
+          return (
+            <View key={`tick-${index}`}>
+              {/* 水平网格线（虚线效果） */}
+              {index > 0 && (
+                <Line
+                  x1={rpx(leftMargin)}
+                  y1={rpx(y)}
+                  x2={rpx(chartWidth)}
+                  y2={rpx(y)}
+                  stroke="#F0F0F0"
+                  strokeWidth={0.5}
+                  strokeDasharray="2,2"
+                />
+              )}
+              {/* 刻度线 */}
+              <Line
+                x1={rpx(leftMargin - 3)}
+                y1={rpx(y)}
+                x2={rpx(leftMargin)}
+                y2={rpx(y)}
+                stroke="#E5E5E5"
+                strokeWidth={1}
+              />
+              {/* 刻度标签 */}
+              <SvgText
+                x={rpx(leftMargin - 5)}
+                y={rpx(y)}
+                fontSize={rpx(5)}
+                fill="#999"
+                textAnchor="end"
+                alignmentBaseline="middle"
+              >
+                {Math.round(tick)}
+              </SvgText>
+            </View>
+          )
+        })}
+        
+        {/* 数据柱状图 */}
         {weekData.map((item, index) => {
           const barHeight = (item.duration / maxValue) * (chartHeight - 30)
-          const x = spacing * (index + 1) + barWidth * index
+          const x = leftMargin + spacing * (index + 1) + barWidth * index
           const y = chartHeight - 20 - barHeight
 
           return (
@@ -76,7 +143,7 @@ export function WeeklyStudyChart({ weekData }: WeeklyStudyChartProps) {
                 fill="#999"
                 textAnchor="middle"
               >
-                {getWeekDay(item.date)}
+                {item.weekday || getWeekDay(item.date)}
               </SvgText>
             </View>
           )
@@ -84,7 +151,7 @@ export function WeeklyStudyChart({ weekData }: WeeklyStudyChartProps) {
 
         {/* 底部基线 */}
         <Line
-          x1={rpx(0)}
+          x1={rpx(leftMargin)}
           y1={rpx(chartHeight - 20)}
           x2={rpx(chartWidth)}
           y2={rpx(chartHeight - 20)}
@@ -101,7 +168,8 @@ const styles = createStyles({
     width: "100%",
     height: 100,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start", // 左对齐，因为有纵轴
+    paddingLeft: 5, // 给纵轴标签留出空间
   },
   emptyContainer: {
     height: 80,

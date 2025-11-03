@@ -22,7 +22,7 @@ export class AudioService {
   private audioEnabled = true;
   private vibrationEnabled = true;
   private lastPlayTime = 0;
-  private readonly MIN_PLAY_INTERVAL = 30000; // 30秒最小间隔
+  private readonly MIN_PLAY_INTERVAL = 30000; // 30秒最小间隔（避免过于频繁）
 
   constructor() {
     // 设置音频类别
@@ -33,14 +33,18 @@ export class AudioService {
    * 播放音频
    */
   async play(audioType: AudioType): Promise<void> {
+    console.log('🎵 AudioService.play() 调用:', audioType);
+    
     // 检查是否启用
     if (!this.audioEnabled) {
+      console.log('⚠️ 音频已禁用');
       return;
     }
 
     // 防止频繁播放
     const now = Date.now();
     if (now - this.lastPlayTime < this.MIN_PLAY_INTERVAL) {
+      console.log(`⚠️ 音频播放间隔过短 (${now - this.lastPlayTime}ms < ${this.MIN_PLAY_INTERVAL}ms)`);
       return;
     }
 
@@ -50,9 +54,11 @@ export class AudioService {
 
       const fileName = AUDIO_FILES[audioType];
       if (!fileName) {
-        console.warn(`Unknown audio type: ${audioType}`);
+        console.warn(`❌ 未知音频类型: ${audioType}`);
         return;
       }
+
+      console.log('📂 加载音频文件:', fileName);
 
       // 创建新音频对象
       this.currentSound = new Sound(
@@ -60,14 +66,18 @@ export class AudioService {
         Sound.MAIN_BUNDLE,
         (error) => {
           if (error) {
-            console.error("Failed to load sound", error);
+            console.error("❌ 音频加载失败:", error);
             return;
           }
+
+          console.log('✅ 音频加载成功，开始播放');
 
           // 播放音频
           this.currentSound?.play((success) => {
             if (!success) {
-              console.warn("Sound playback failed");
+              console.warn("⚠️ 音频播放失败");
+            } else {
+              console.log("✅ 音频播放完成");
             }
             this.cleanup();
           });
@@ -76,7 +86,7 @@ export class AudioService {
 
       this.lastPlayTime = now;
     } catch (error) {
-      console.error("Error playing audio:", error);
+      console.error("❌ 播放音频异常:", error);
       this.cleanup();
     }
   }

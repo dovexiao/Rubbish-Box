@@ -1,97 +1,92 @@
 /**
  * 全局坐姿监控 Hook
- * 用于在应用全局范围内启动和管理坐姿检测
+ * Native层统计时间，JS层只负责UI反馈和接口调用
  */
 
 import { useEffect, useRef, useCallback } from 'react';
 import { AppState, AppStateStatus, Platform } from 'react-native';
 import { usePostureStore } from '../stores/postureStore';
 import { AudioService } from '../services/audioService';
-import { PostureStorageService } from '../services/postureStorage';
 import { showWarning, showInfo } from '../utils/toast';
-import type { PostureStatistics, PostureStatus } from '../types/posture';
+import type { PostureStatus } from '../types/posture';
 import { 
   startPostureMonitorService, 
   stopPostureMonitorService,
-  postureMonitorEmitter 
+  postureMonitorEmitter,
+  type PostureStatusEvent,
+  type PostureRewardEvent 
 } from '../modules/PostureMonitorModule';
 import { saveMointorData } from '../services/app';
 
 const BAD_POSTURE_REMINDER_INTERVAL_SECONDS = 30; // 不良姿势每30秒提醒一次
-const HOUR_IN_SECONDS = 60 * 60; // 1小时 = 3600秒
-const REWARD_INTERVAL_SECONDS = 10 * 60; // 10分钟 = 600秒
-const DETECTION_INTERVAL_SECONDS = 10; // Native层每10秒发送一次状态
 
 export function useGlobalPostureMonitor() {
   const postureStore = usePostureStore();
   const audioService = useRef<AudioService | null>(null);
-  const storage = useRef<PostureStorageService | null>(null);
   
-  const detectionIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // 使用 ref 来避免 useEffect 依赖问题
+  const startMonitoringRef = useRef<(() => Promise<void>) | null>(null);
+  const stopMonitoringRef = useRef<(() => Promise<void>) | null>(null);
   
-  // 🔴 奖励计数器（独立于统计，用于奖励判断）
-  const rewardAccumulatedSeconds = useRef(0);
-  
-  const statisticsRef = useRef<PostureStatistics>({
-    good: 0,
-    shouldersNotLevel: 0,
-    headNotCentered: 0,
-    headNotUp: 0,
-    total: 0,
-    rewardCount: 0,
-    lastUpdateTime: Date.now(),
-    totalDuration: 0,
-    goodPostureDuration: 0,
-    badPostureDuration: 0,
-    dailyResetTime: new Date().setHours(0, 0, 0, 0),
-  });
   /**
    * 启动监控
    */
   const startMonitoring = useCallback(async () => {
-    if (detectionIntervalRef.current) {
-      console.log('⚠️ 监控已在运行中');
-      return;
-    }
-
     console.log('🚀 启动全局坐姿监控...');
 
     try {
-      // 懒加载初始化服务（避免应用启动时过早初始化）
+      // 懒加载初始化音频服务
       if (!audioService.current) {
         audioService.current = new AudioService();
-      }
-      if (!storage.current) {
-        storage.current = new PostureStorageService();
-      }
-
-      // 加载统计数据
-      const savedStats = await storage.current.loadStatistics();
-      if (savedStats) {
-        statisticsRef.current = savedStats;
-        console.log('📊 已加载统计数据:', savedStats);
       }
 
       // 启动后台相机服务 (仅 Android)
       if (Platform.OS === 'android') {
         const serviceStarted = await startPostureMonitorService();
         if (serviceStarted) {
-          console.log('✅ 后台相机服务已启动（原生层 AI 检测）');
+          console.log('✅ 后台相机服务已启动（Native层统计时间，每10秒检测一次）');
           
-          // 监听坐姿状态事件（原生层已完成 AI 检测）
+          // 先移除旧的监听器，防止重复添加
           if (postureMonitorEmitter) {
-            postureMonitorEmitter.addListener('onPostureStatus', (event: { status: string; timestamp: number }) => {
-              console.log('📊 收到坐姿状态:', event.status);
+            console.log('🧹 移除旧的事件监听器');
+            postureMonitorEmitter.removeAllListeners('onPostureStatus');
+            postureMonitorEmitter.removeAllListeners('onPostureReward');
+            postureMonitorEmitter.removeAllListeners('onRestReminder');
+          }
+          
+          // 监听坐姿状态事件（Native已完成统计）
+          if (postureMonitorEmitter) {
+            console.log('📡 添加新的事件监听器');
+            postureMonitorEmitter.addListener('onPostureStatus', (event: PostureStatusEvent) => {
+              console.log('📊 收到Native统计数据:', {
+                status: event.status,
+                type: event.type,
+                reward: event.reward_accumulated_seconds,
+                total: event.total
+              });
               
-              // 直接使用原生层检测的状态
-              const status = event.status as PostureStatus;
-              postureStore.setStatus(status);
-              
-              // 更新统计
-              updateStatistics(status);
+              // 更新 store 状态
+              postureStore.setStatus(event.status as PostureStatus);
               
               // 音频提醒和弹窗
-              handlePostureFeedback(event.status);
+              handlePostureFeedback(event);
+              
+              // 🎯 核心逻辑2：检查1小时上报
+              if (event.type === 'updateTime') {
+                handleHourlyReport(event);
+              }
+            });
+            
+            // 监听奖励事件
+            postureMonitorEmitter.addListener('onPostureReward', (event: PostureRewardEvent) => {
+              console.log('🎉 收到Native奖励通知:', event.message);
+              handleReward(event);
+            });
+            
+            // 监听45分钟休息提醒事件
+            postureMonitorEmitter.addListener('onRestReminder', (event: any) => {
+              console.log('⏰ 收到45分钟休息提醒:', event.message);
+              handleRestReminder(event);
             });
           }
         } else {
@@ -112,11 +107,6 @@ export function useGlobalPostureMonitor() {
    * 停止监控
    */
   const stopMonitoring = useCallback(async () => {
-    if (detectionIntervalRef.current) {
-      clearInterval(detectionIntervalRef.current);
-      detectionIntervalRef.current = null;
-    }
-
     // 停止后台相机服务 (仅 Android)
     if (Platform.OS === 'android') {
       await stopPostureMonitorService();
@@ -124,12 +114,9 @@ export function useGlobalPostureMonitor() {
       // 移除事件监听
       if (postureMonitorEmitter) {
         postureMonitorEmitter.removeAllListeners('onPostureStatus');
+        postureMonitorEmitter.removeAllListeners('onPostureReward');
+        postureMonitorEmitter.removeAllListeners('onRestReminder');
       }
-    }
-
-    // 保存统计数据
-    if (storage.current) {
-      await storage.current.saveStatistics(statisticsRef.current);
     }
 
     postureStore.stopMonitoring();
@@ -139,211 +126,183 @@ export function useGlobalPostureMonitor() {
   /**
    * 处理坐姿反馈（音频提醒和弹窗）
    */
-  const handlePostureFeedback = (status: string) => {
-    // 音频提醒和弹窗
+  const handlePostureFeedback = (event: PostureStatusEvent) => {
+    const { status, head_not_up, shoulders_tilted, head_tilted } = event;
+    
+    console.log('🔔 处理坐姿反馈:', { 
+      status, 
+      head_not_up, 
+      shoulders_tilted, 
+      head_tilted,
+      提醒间隔: BAD_POSTURE_REMINDER_INTERVAL_SECONDS
+    });
+    
+    // 音频提醒和弹窗（根据当前状态的持续时间判断，每30秒提醒一次）
     if (status !== 'good' && status !== 'no_person' && status !== 'detecting') {
-      const badPostureDuration = statisticsRef.current.badPostureDuration;
-      if (badPostureDuration > 0 && Math.floor(badPostureDuration) % BAD_POSTURE_REMINDER_INTERVAL_SECONDS === 0) {
-        if (audioService.current) {
-          audioService.current.play('adjust_posture');
-        }
-        
-        let warningMessage = '';
+      let currentStateDuration = 0;
+      let audioType: 'adjust_posture' | 'head_not_up' | 'head_not_centered' | 'shoulders_not_level' = 'adjust_posture';
+      let warningMessage = '';
+      
+      // 根据当前状态获取对应的持续时间和音频类型
         if (status === 'head_not_centered') {
+        currentStateDuration = head_tilted;
+        audioType = 'head_not_centered';
           warningMessage = '检测到头部偏移，请调整坐姿保持头部居中';
         } else if (status === 'head_not_up') {
+        currentStateDuration = head_not_up;
+        audioType = 'head_not_up';
           warningMessage = '检测到低头，请抬起头部保持正确坐姿';
         } else if (status === 'shoulders_not_level') {
+        currentStateDuration = shoulders_tilted;
+        audioType = 'shoulders_not_level';
           warningMessage = '检测到肩膀倾斜，请调整坐姿保持肩膀水平';
+      }
+      
+      console.log('📊 音频提醒检查:', {
+        当前状态: status,
+        持续时间: currentStateDuration + '秒',
+        音频类型: audioType,
+        模30结果: currentStateDuration % BAD_POSTURE_REMINDER_INTERVAL_SECONDS,
+        是否触发: currentStateDuration > 0 && currentStateDuration % BAD_POSTURE_REMINDER_INTERVAL_SECONDS === 0
+      });
+      
+      // 每30秒提醒一次（10秒检测间隔，所以30、60、90...秒时触发）
+      if (currentStateDuration > 0 && currentStateDuration % BAD_POSTURE_REMINDER_INTERVAL_SECONDS === 0) {
+        console.log('✅ 触发音频播放:', audioType);
+        
+        if (audioService.current) {
+          console.log('🔊 调用 audioService.play():', audioType);
+          audioService.current.play(audioType).catch(err => {
+            console.error('❌ 音频播放失败:', err);
+          });
+        } else {
+          console.warn('⚠️ audioService 未初始化');
         }
-        showWarning(warningMessage);
+        
+        // 🔇 暂时注释掉弹窗提示，只保留音频
+        // showWarning(warningMessage);
+      } else {
+        console.log('⏭️ 未达到提醒条件，跳过');
       }
-    }
-    
-    // 奖励处理
-    if (status === 'good') {
-      handleReward();
+    } else {
+      console.log('⏭️ 状态正常或检测中，无需提醒:', status);
     }
   };
 
   /**
-   * 检测并评估姿势（旧版，保留用于兼容）
+   * 🎯 核心逻辑1：处理10分钟奖励（Native层触发）
    */
-  const detectAndEvaluate = async () => {
-    // 现在由后台服务处理，这个函数不再需要
-    // 保留是为了避免其他地方的调用报错
-  };
-
-  /**
-   * 更新统计数据（简化逻辑：直接累加时间）
-   */
-  const updateStatistics = async (status: PostureStatus) => {
-    const stats = statisticsRef.current;
-
-    // 检查是否需要每日重置
-    const today = new Date().setHours(0, 0, 0, 0);
-    if (stats.dailyResetTime < today) {
-      stats.good = 0;
-      stats.shouldersNotLevel = 0;
-      stats.headNotCentered = 0;
-      stats.headNotUp = 0;
-      stats.total = 0;
-      stats.goodPostureDuration = 0;
-      stats.badPostureDuration = 0;
-      stats.totalDuration = 0;
-      stats.dailyResetTime = today;
-      rewardAccumulatedSeconds.current = 0; // 每日重置奖励计数
-    }
-
-    // 🔴 简化逻辑：根据状态直接累加时间（Native每10秒发送一次）
-    switch (status) {
-      case 'good':
-        stats.good += DETECTION_INTERVAL_SECONDS; // 累加10秒
-        rewardAccumulatedSeconds.current += DETECTION_INTERVAL_SECONDS; // 奖励计数器也累加
-        postureStore.incrementGoodTime(DETECTION_INTERVAL_SECONDS);
-        break;
-      case 'shoulders_not_level':
-        stats.shouldersNotLevel += DETECTION_INTERVAL_SECONDS;
-        rewardAccumulatedSeconds.current += DETECTION_INTERVAL_SECONDS; // 所有有效状态都计入奖励
-        postureStore.incrementShoulderTiltTime(DETECTION_INTERVAL_SECONDS);
-        break;
-      case 'head_not_centered':
-        stats.headNotCentered += DETECTION_INTERVAL_SECONDS;
-        rewardAccumulatedSeconds.current += DETECTION_INTERVAL_SECONDS; // 所有有效状态都计入奖励
-        postureStore.incrementHeadTiltTime(DETECTION_INTERVAL_SECONDS);
-        break;
-      case 'head_not_up':
-        stats.headNotUp += DETECTION_INTERVAL_SECONDS;
-        rewardAccumulatedSeconds.current += DETECTION_INTERVAL_SECONDS; // 所有有效状态都计入奖励
-        postureStore.incrementHeadDownTime(DETECTION_INTERVAL_SECONDS);
-        break;
-      case 'no_person':
-      case 'detecting':
-        // 检测不到人或检测中，不增加计数
-        return; // 直接返回，不执行后续检查
-    }
-
-    // 🔴 计算总时长（所有状态的时间总和）
-    stats.total = stats.good + stats.shouldersNotLevel + stats.headNotCentered + stats.headNotUp;
-    stats.goodPostureDuration = stats.good;
-    stats.badPostureDuration = stats.shouldersNotLevel + stats.headNotCentered + stats.headNotUp;
-    stats.totalDuration = stats.total;
-
-    console.log(`📊 累计时间: 总计=${stats.total}秒, 良好=${stats.good}秒, 奖励累计=${rewardAccumulatedSeconds.current}秒`);
-
-    // 🔴 检查是否达到奖励阈值（600秒 = 10分钟）
-    if (rewardAccumulatedSeconds.current >= REWARD_INTERVAL_SECONDS) {
-      console.log(`✅ 达到奖励阈值: ${rewardAccumulatedSeconds.current}秒 >= ${REWARD_INTERVAL_SECONDS}秒`);
-      handleReward();
-      rewardAccumulatedSeconds.current = 0; // 🔴 重置奖励计数器，开始新一轮
-    }
-
-    // 🔴 检查是否达到1小时阈值（总时长 >= 3600秒）
-    if (stats.total >= HOUR_IN_SECONDS) {
-      console.log(`⏰ 达到1小时阈值(${HOUR_IN_SECONDS}秒)，上报学习时长并重置统计`);
-      
-      // 🔴 先调用接口上报学习时长（在重置之前）
-      try {
-        await saveMointorData({
-          correct_sitting_posture_time: stats.good, // 坐姿正确时间（秒）
-          head_tilt_time: stats.headNotCentered, // 头部倾斜时间（秒）
-          lowering_the_head_time: stats.headNotUp, // 低头时间（秒）
-          shoulder_tilt_time: stats.shouldersNotLevel, // 肩膀倾斜时间（秒）
-        });
-        console.log(`✅ 学习时长上报成功:`, {
-          正确坐姿: stats.good + '秒',
-          头部倾斜: stats.headNotCentered + '秒',
-          低头: stats.headNotUp + '秒',
-          肩膀倾斜: stats.shouldersNotLevel + '秒',
-        });
-      } catch (error) {
-        console.error('❌ 学习时长上报失败:', error);
-      }
-      
-      // 然后重置所有统计
-      stats.good = 0;
-      stats.shouldersNotLevel = 0;
-      stats.headNotCentered = 0;
-      stats.headNotUp = 0;
-      stats.total = 0;
-      stats.goodPostureDuration = 0;
-      stats.badPostureDuration = 0;
-      stats.totalDuration = 0;
-      
-      // 保存重置后的数据
-      if (storage.current) {
-        storage.current.saveStatistics(stats);
-      }
-    }
-
-    // 每600秒（10分钟）保存一次统计数据
-    if (storage.current && stats.total > 0 && stats.total % 600 === 0) {
-      storage.current.saveStatistics(stats);
-    }
-
-    stats.lastUpdateTime = Date.now();
-  };
-
-  /**
-   * 处理奖励（学习 UniApp）
-   */
-  const handleReward = async () => {
-    const seconds = postureStore.rewardConfig.goodPostureCount;
-    const minutes = Math.floor(seconds / 60);
+  const handleReward = async (event: PostureRewardEvent) => {
+    const minutes = Math.floor(event.duration / 60);
     const points = postureStore.rewardConfig.rewardPoints;
     
-    console.log(`🎉 触发奖励: 累计${seconds}秒(${minutes}分钟)，奖励${points}积分`);
+    console.log(`🎉 Native触发奖励: ${event.message}`);
+    
+    // 🔇 注释掉音频播放：奖励是针对学习时长，不管当前是什么坐姿
+    // 播放"坐姿正确"音频会与当前显示的状态不一致
+    // if (audioService.current) {
+    //   console.log('🔊 播放奖励音频');
+    //   audioService.current.play('good_posture').catch(err => {
+    //     console.error('❌ 奖励音频播放失败:', err);
+    //   });
+    // }
     
     // 后台自动领取奖励
     const success = await postureStore.handlePostureReward();
     
     if (success) {
-      // 使用 toast 显示奖励提示
-      showInfo(`🎉 太棒了！累计学习 ${minutes} 分钟，获得 ${points} 积分`);
+      // 使用 toast 显示奖励提示（1.5秒）
+      showInfo(`🎉 太棒了！累计学习10分钟，获得 ${points} 积分`, 1500);
     }
   };
 
+  /**
+   * 处理45分钟休息提醒
+   */
+  const handleRestReminder = async (event: any) => {
+    console.log('⏰ 处理45分钟休息提醒');
+    
+    // 播放休息提醒音频
+    if (audioService.current) {
+      console.log('🔊 播放休息提醒音频');
+      audioService.current.play('rest_reminder').catch(err => {
+        console.error('❌ 休息提醒音频播放失败:', err);
+      });
+    }
+    
+    // 显示休息提醒弹窗
+    showInfo('⏰ 您已持续学习45分钟，建议休息一下，保护视力！', 3000);
+  };
+
+  /**
+   * 🎯 核心逻辑2：处理1小时数据上报（Native层触发）
+   */
+  const handleHourlyReport = async (event: PostureStatusEvent) => {
+    console.log(`⏰ Native触发1小时上报:`, {
+      正确坐姿: event.good + '秒',
+      头部倾斜: event.head_tilted + '秒',
+      低头: event.head_not_up + '秒',
+      肩膀倾斜: event.shoulders_tilted + '秒',
+    });
+    
+    try {
+      await saveMointorData({
+        correct_sitting_posture_time: event.good, // 坐姿正确时间（秒）
+        head_tilt_time: event.head_tilted, // 头部倾斜时间（秒）
+        lowering_the_head_time: event.head_not_up, // 低头时间（秒）
+        shoulder_tilt_time: event.shoulders_tilted, // 肩膀倾斜时间（秒）
+      });
+      console.log(`✅ 学习时长上报成功`);
+    } catch (error) {
+      console.error('❌ 学习时长上报失败:', error);
+    }
+  };
+
+  // 更新 refs
+  useEffect(() => {
+    startMonitoringRef.current = startMonitoring;
+    stopMonitoringRef.current = stopMonitoring;
+  }, [startMonitoring, stopMonitoring]);
 
   /**
    * 监听应用状态变化
+   * 注意：坐姿检测是后台服务，应用进入后台时不应停止
    */
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
       console.log(`App状态变化: ${AppState.currentState} -> ${nextAppState}`);
 
       if (nextAppState === 'active') {
-        // 应用进入前台，恢复监控
+        // 应用回到前台，确保监控正常运行
         if (postureStore.isMonitoring) {
-          console.log('📱 应用回到前台，恢复监控');
-          startMonitoring();
+          console.log('📱 应用回到前台，监控继续运行');
+          // 不需要重新启动，Native后台服务会持续运行
         }
       } else if (nextAppState === 'background') {
-        // 应用进入后台，暂停监控（节省资源）
-        console.log('📱 应用进入后台，暂停监控');
-        stopMonitoring();
+        // 应用进入后台，但坐姿监控继续运行（这是后台服务的核心功能）
+        console.log('📱 应用进入后台，坐姿监控继续在后台运行');
+        // ⚠️ 不要停止监控！这是后台服务，应该继续运行
       }
     });
 
     return () => {
       subscription.remove();
     };
-  }, [postureStore.isMonitoring]);
+  }, [postureStore.isMonitoring]); // 只依赖 isMonitoring
 
   /**
    * 组件卸载时清理
    */
   useEffect(() => {
     return () => {
-      stopMonitoring();
+      stopMonitoringRef.current?.();
     };
-  }, []);
+  }, []); // 空依赖数组，只在卸载时执行一次
 
   return {
     startMonitoring,
     stopMonitoring,
     isMonitoring: postureStore.isMonitoring,
     currentStatus: postureStore.nowStatus,
-    statistics: statisticsRef.current,
   };
 }
-

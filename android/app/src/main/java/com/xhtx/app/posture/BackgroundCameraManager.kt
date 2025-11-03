@@ -40,9 +40,9 @@ class BackgroundCameraManager(
     private val cameraThread = HandlerThread("CameraThread").apply { start() }
     private val cameraHandler = Handler(cameraThread.looper)
     
-    // 帧率控制：每秒只处理1帧（避免性能问题）
+    // 帧率控制：每10秒处理1帧（性能优化）
     private var lastProcessTime = 0L
-    private val PROCESS_INTERVAL_MS = 10000L // 10秒处理一次（性能优化）
+    private val PROCESS_INTERVAL_MS = 10000L // 10秒处理一次（避免卡顿）
     
     private val cameraManager: CameraManager by lazy {
         context.getSystemService(Context.CAMERA_SERVICE) as CameraManager

@@ -87,9 +87,19 @@ export const usePostureStore = create<PostureState>((set, get) => ({
   rewardNotificationData: null,
 
   setStatus: (status) => {
+    const currentStatus = get().nowStatus;
+    console.log('🔄 setStatus 被调用:', { 
+      oldStatus: currentStatus, 
+      newStatus: status,
+      willUpdate: currentStatus !== status 
+    });
+    
     // 只有状态改变时才更新，避免不必要的重渲染
-    if (get().nowStatus !== status) {
-      set({ nowStatus: status })
+    if (currentStatus !== status) {
+      set({ nowStatus: status });
+      console.log('✅ 坐姿状态已更新:', status);
+    } else {
+      console.log('⏭️ 状态未变化，跳过更新');
     }
   },
 

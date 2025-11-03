@@ -197,9 +197,9 @@ export default function RootLayout() {
     onAppHide: () => {
       console.log("应用进入后台")
       
-      // 注意：坐姿监控会在 useGlobalPostureMonitor 中自动处理
-      // 当应用进入后台时会自动暂停检测，回到前台时会自动恢复
-      console.log("📱 应用进入后台，监控状态会自动处理")
+      // 注意：坐姿监控是后台服务，应用进入后台时会继续运行
+      // Native层的后台服务会持续进行坐姿检测和时间统计
+      console.log("📱 应用进入后台，坐姿监控继续在后台运行")
     },
 
     onAppExit: async () => {

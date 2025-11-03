@@ -14,6 +14,31 @@ interface PostureMonitorModuleType {
   EVENT_FRAME_CAPTURED: string;
 }
 
+// Native层发送的坐姿状态事件数据结构
+export interface PostureStatusEvent {
+  status: string;
+  timestamp: number;
+  type: 'update' | 'updateTime';
+  
+  // 🎯 核心逻辑1：10分钟奖励计时器
+  reward_accumulated_seconds: number;
+  
+  // 🎯 核心逻辑2：1小时上报统计
+  good: number;
+  shoulders_tilted: number;
+  head_tilted: number;
+  head_not_up: number;
+  total: number;
+}
+
+// Native层发送的奖励事件数据结构
+export interface PostureRewardEvent {
+  message: string;
+  duration: number;
+  timestamp: number;
+  type: 'reward';
+}
+
 const PostureMonitor: PostureMonitorModuleType | null = Platform.OS === 'android' ? PostureMonitorModule : null;
 
 // 创建事件发射器

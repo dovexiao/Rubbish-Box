@@ -57,6 +57,8 @@ export interface DailyStudyData {
   date: string
   /** 学习时长（分钟） */
   duration: number
+  /** 星期（可选，用于显示） */
+  weekday?: string
 }
 
 /**
@@ -85,10 +87,23 @@ export async function getUserBadges(): Promise<BadgeResponse> {
  * 获取用户学习数据（最近7天）
  */
 export async function getUserStudyData(): Promise<StudyDataResponse> {
-  return await post<StudyDataResponse>(
+  const response = await post<any>(
     "/AppStart/UserInformation/get_last_seven_days_study_duration/",
     {},
   )
+  
+  // 转换接口返回的数据格式
+  // 接口返回：minutes, formatted_date, weekday
+  // 组件期望：duration, date, weekday
+  if (response.daily_data && Array.isArray(response.daily_data)) {
+    response.daily_data = response.daily_data.map((item: any) => ({
+      date: item.formatted_date || item.date, // formatted_date → date
+      duration: item.minutes ?? item.duration ?? 0, // minutes → duration
+      weekday: item.weekday, // 保留星期字段
+    }))
+  }
+  
+  return response as StudyDataResponse
 }
 
 /**
