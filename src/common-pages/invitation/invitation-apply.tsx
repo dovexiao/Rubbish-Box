@@ -27,7 +27,6 @@ import {
   padding,
   position,
 } from '@/components/style';
-import LazyImage from '@/components/basic/image';
 import { PhoneIcon, SaveIcon } from './svg.variables';
 import { NativeTouchableOpacity } from '@/components/basic/touchable-opacity';
 import { sendCode, userLogin } from '../login/login.service';
@@ -37,20 +36,83 @@ import baseVariable from '@/style/base.variable';
 import { goTo, useResponsiveDimensions } from '@/utils';
 import theme from '@/style';
 import envConfig from '@/utils/env.config';
+import {LazyImageBackground} from '@basicComponents/image';
 
 const outline: SafeAny = { outline: 0 };
 
 const InvitationApply = (props: SafeAny) => {
+  const { route } = props;
+  const { width: screenWidth, height: screenHeight } = useResponsiveDimensions();
+
   const [userPhone, setUserPhone] = useState('');
   const [OTPCode, setOTPCode] = useState('');
   const OTPTimeRef = useRef(59);
-  const InvitationApplyModalRef: SafeAny = useRef(null);
   const [OTPTime, setOTPTime] = useState(59);
-  const [hasOTP, setOTP] = useState(false);
+  const [hasOTP, setHasOTP] = useState(false);
   const [OTPLoading, setOTPLoading] = React.useState(false);
-  const { route } = props;
-  const [invitaCode] = React.useState((route.params as BasicObject)?.code);
-  const { width: screenWidth, height: screenHeight } = useResponsiveDimensions();
+  const [inviteCode] = React.useState((route.params as BasicObject)?.code);
+  const InvitationApplyModalRef: SafeAny = useRef(null);
+
+  // 以设计稿为主，样式响应式临时方案
+  // 页面头高
+  const headerHeight: number = screenWidth * 73 / 750;
+  // 邀请广告尺寸
+  const iApplyImageSize = React.useMemo(() => {
+    return {
+      width: screenWidth * 0.9,
+      height: screenWidth * 0.9 * 273 / 1013,
+    };
+  }, [screenWidth]);
+  // 邀请背景尺寸
+  const iApplyBgSize = React.useMemo(() => {
+    return {
+      width: screenWidth,
+      height: screenWidth * 386 / 750,
+    };
+  }, [screenWidth]);
+  // 操作卡片背景尺寸
+  const cardBgSize = React.useMemo(() => {
+    return {
+      width: screenWidth - theme.paddingSize.l * 2,
+      height: (screenWidth - theme.paddingSize.l * 2) * 718 / 690,
+    };
+  }, [screenWidth]);
+  // 卡片内部尺寸集
+  const cardSizes = React.useMemo(() => {
+    return {
+      header: {
+        width: cardBgSize.width * 360 / 690,
+        marginLeft: cardBgSize.width * 61 / 690,
+        marginTop: cardBgSize.width * 43 / 690,
+      },
+      content: {
+        paddingHorizontal: cardBgSize.width * 46 / 690,
+      },
+      phoneInput: {
+        marginTop: cardBgSize.width * 77 / 690,
+        height: cardBgSize.width * 88 / 690,
+      },
+      otpInput: {
+        marginTop: cardBgSize.width * 20 / 690,
+        height: cardBgSize.width * 88 / 690,
+      },
+      button: {
+        marginTop: cardBgSize.width * 57 / 690,
+        height: cardBgSize.width * 88 / 690,
+        borderRadius: cardBgSize.width * 88 / 690 / 2,
+      },
+      tip: {
+        width: cardBgSize.width * 460 / 690,
+        marginTop: cardBgSize.width * 20 / 690,
+      },
+      gift: {
+        width: cardBgSize.width * 246 / 690,
+        height: cardBgSize.width * 267 / 690,
+        translateY: -cardBgSize.width * 76 / 690,
+      },
+      inputIconSize: cardBgSize.width * 40 / 690
+    };
+  }, [cardBgSize])
 
   // 用 Animated 实现平滑上移
   const translateY = useRef(new Animated.Value(0)).current;
@@ -71,8 +133,8 @@ const InvitationApply = (props: SafeAny) => {
     }).start();
   };
 
-  const setHasOTP = () => {
-    setOTP(true);
+  const startOTPCountdown = () => {
+    setHasOTP(true);
     OTPTimeRef.current = 59;
     setOTPTime(OTPTimeRef.current);
   };
@@ -86,36 +148,13 @@ const InvitationApply = (props: SafeAny) => {
         }, 1000);
       } else {
         clearInterval(timer);
-        setOTP(false);
+        setHasOTP(false);
       }
     }, 1000);
     return () => {
       timer && clearInterval(timer);
     };
   }, [hasOTP]);
-
-  const fromBgSize = React.useMemo(() => {
-    const calc = screenWidth / 350;
-    return {
-      formBox: {
-        width: screenWidth - theme.paddingSize.l * 2,
-        height: ((screenWidth - theme.paddingSize.l * 2) / 351) * 372,
-      },
-      formTitleBg: {
-        height:
-          ((screenWidth - (theme.paddingSize.l + theme.paddingSize.s) * 2) /
-            335) *
-          67,
-        paddingLeft: calc * 25,
-      },
-      titlsSize: {
-        width: calc * 200,
-      },
-      button: {
-        height: calc * 48,
-      },
-    };
-  }, [screenWidth]);
 
   return (
     <View
@@ -144,12 +183,12 @@ const InvitationApply = (props: SafeAny) => {
           >
             <Image
               style={{
-                width: screenWidth / 1.11,
-                height: screenWidth / 4.12,
+                width: iApplyImageSize.width,
+                height: iApplyImageSize.height,
                 position: 'absolute',
-                top: 40,
-                right: '50%',
-                transform: [{ translateX: screenWidth / 1.11 / 2 }],
+                top: headerHeight,
+                left: '50%',
+                transform: [{ translateX: -iApplyImageSize.width / 2 }],
                 zIndex: 2,
               }}
               source={{
@@ -158,181 +197,176 @@ const InvitationApply = (props: SafeAny) => {
             />
             <Image
               style={{
-                width: screenWidth,
-                height: screenWidth / 1.94,
+                width: iApplyBgSize.width,
+                height: iApplyBgSize.height,
                 marginLeft: 'auto',
                 marginRight: 'auto',
                 position: 'absolute',
-                marginTop: 40,
+                marginTop: headerHeight,
               }}
-              source={require('@assets/imgs/invitation/invitation-2.png')}
+              source={require('@assets/imgs/invitation/invitation-apply-header-background.webp')}
             />
 
             <View
               style={[
-                {
-                  marginTop: screenWidth / 1.5,
-                },
                 theme.fill.fillW,
                 padding.lrl,
+                {
+                  marginTop: iApplyBgSize.height + headerHeight,
+                },
               ]}
             >
-              <LazyImage
+              <LazyImageBackground
                 imageUrl={CardOuterBg}
-                occupancy="#0000"
-                width={'100%'}
-                height={fromBgSize.formBox.height}
-              />
-              <View style={[position.abs, fromBgSize.formBox]}>
-                <View style={[theme.fill.fill, theme.padding.tbs]}>
-                  <View style={[fromBgSize.formTitleBg, theme.flex.centerByRow]}>
-                    <Text
-                      fontSize={20}
-                      calc
-                      color={basicColor.newFontWhite}
-                      style={[
-                        {
-                          width: fromBgSize.titlsSize.width,
-                        },
-                      ]}
-                      fontFamily="fontInterBold"
-                    >
-                      {i18n.t('referral.label.title')}
-                    </Text>
-                  </View>
-
+                occupancy="#000"
+                width={cardBgSize.width}
+                height={cardBgSize.height}
+              >
+                {/*头部标题*/}
+                <View style={cardSizes.header}>
+                  <Text
+                    fontSize={20}
+                    calc
+                    color={basicColor.newFontWhite}
+                    fontFamily="fontInterBold"
+                  >
+                    {i18n.t('referral.label.title')}
+                  </Text>
+                </View>
+                {/*内容*/}
+                <View style={cardSizes.content}>
+                  {/*phone输入框*/}
                   <View
                     style={[
-                      padding.lrl,
-                      padding.btml,
-                      margin.lrs,
-                      theme.flex.flex1,
                       {
-                        borderEndEndRadius: theme.borderRadiusSize.xl,
-                        borderEndStartRadius: theme.borderRadiusSize.xl,
-                        backgroundColor: theme.basicColor.newBgInOne,
+                        height: cardSizes.phoneInput.height,
+                        marginTop: cardSizes.phoneInput.marginTop,
+                        borderWidth: 1,
+                        borderColor: invitationApplyColor.borderColor,
+                        backgroundColor:
+                        invitationApplyColor.backgroundColor,
                       },
+                      padding.lrl,
+                      theme.fill.fillW,
+                      borderRadius.m,
+                      flex.row,
+                      flex.centerByCol,
                     ]}
                   >
-                    <View style={[theme.flex.flex1, theme.flex.center]}>
-                      <View
-                        style={[
-                          {
-                            height: fromBgSize.button.height,
-                            borderWidth: 1,
-                            borderColor: invitationApplyColor.borderColor,
-                            backgroundColor:
-                              invitationApplyColor.backgroundColor,
-                          },
-                          padding.lrl,
-                          theme.fill.fillW,
-                          borderRadius.m,
-                          flex.row,
-                          flex.centerByCol,
-                        ]}
+                    <PhoneIcon width={cardSizes.inputIconSize} height={cardSizes.inputIconSize} />
+                    <TextInput
+                      placeholder="Phone number"
+                      style={[
+                        {
+                          height: cardSizes.phoneInput.height,
+                          marginLeft: 16,
+                          borderWidth: 0,
+                          fontSize: 18,
+                        },
+                        flex.flex1,
+                        outline,
+                      ]}
+                      value={userPhone}
+                      maxLength={10}
+                      keyboardType="numeric"
+                      placeholderTextColor={baseVariable.fontColor.secAccent}
+                      // onFocus={() => handleFocus(150)} // 聚焦时上移
+                      // onBlur={handleBlur}
+                      onChangeText={(v) => setUserPhone(v)}
+                    />
+                  </View>
+                  {/*otp输入框*/}
+                  <View
+                    style={[
+                      {
+                        height: cardSizes.otpInput.height,
+                        marginTop: cardSizes.otpInput.marginTop,
+                        borderWidth: 1,
+                        borderColor: invitationApplyColor.borderColor,
+                        backgroundColor:
+                        invitationApplyColor.backgroundColor,
+                      },
+                      padding.lrl,
+                      theme.fill.fillW,
+                      borderRadius.m,
+                      flex.row,
+                      flex.centerByCol,
+                    ]}
+                  >
+                    <SaveIcon width={cardSizes.inputIconSize} height={cardSizes.inputIconSize} />
+                    <TextInput
+                      placeholder="OTP"
+                      underlineColorAndroid={'transparent'}
+                      style={[
+                        {
+                          height: cardSizes.otpInput.height,
+                          marginLeft: 16,
+                          borderWidth: 0,
+                          fontSize: 16,
+                        },
+                        flex.flex1,
+                        outline,
+                      ]}
+                      value={OTPCode}
+                      maxLength={6}
+                      keyboardType="numeric"
+                      placeholderTextColor={baseVariable.fontColor.secAccent}
+                      // onFocus={() => handleFocus(250)} // 聚焦时上移更多
+                      // onBlur={handleBlur}
+                      onChangeText={(v) => {
+                        if (/^[0-9]*$/.test(v)) setOTPCode(v);
+                      }}
+                    />
+                    {hasOTP ? (
+                      <Text
+                        fontSize={fontSize.s}
+                        accent
+                        style={{ lineHeight: fontSize.s }}
+                        textAlign="center"
+                        blod
                       >
-                        <PhoneIcon width={24} height={24} />
-                        <TextInput
-                          placeholder="Phone number"
-                          style={[
-                            {
-                              height: fromBgSize.button.height,
-                              marginLeft: 16,
-                              borderWidth: 0,
-                            },
-                            flex.flex1,
-                            outline,
-                          ]}
-                          value={userPhone}
-                          maxLength={10}
-                          keyboardType="numeric"
-                          placeholderTextColor={baseVariable.fontColor.secAccent}
-                          onFocus={() => handleFocus(150)} // 聚焦时上移
-                          onBlur={handleBlur}
-                          onChangeText={(v) => setUserPhone(v)}
-                        />
-                      </View>
-
-                      <View
-                        style={[
-                          {
-                            height: fromBgSize.button.height,
-                            borderWidth: 1,
-                            borderColor: invitationApplyColor.borderColor,
-                            backgroundColor:
-                              invitationApplyColor.backgroundColor,
-                          },
-                          padding.lrl,
-                          theme.fill.fillW,
-                          borderRadius.m,
-                          flex.row,
-                          flex.centerByCol,
-                          margin.topl,
-                        ]}
+                        {OTPTime}s
+                      </Text>
+                    ) : (
+                      <NativeTouchableOpacity
+                        onPress={() => {
+                          if (!userPhone || OTPLoading) return;
+                          setOTPLoading(true);
+                          sendCode(userPhone)
+                            .then(() => {
+                              startOTPCountdown();
+                              globalStore.globalTotal.next({
+                                type: 'success',
+                                message: i18n.t('tip.success'),
+                              });
+                            })
+                            .finally(() => setOTPLoading(false));
+                        }}
                       >
-                        <SaveIcon width={24} height={24} />
-                        <TextInput
-                          placeholder="OTP"
-                          underlineColorAndroid={'transparent'}
-                          style={[
-                            {
-                              height: fromBgSize.button.height / 2,
-                              marginLeft: 16,
-                              borderWidth: 0,
-                              fontSize: 15,
-                            },
-                            flex.flex1,
-                            outline,
-                          ]}
-                          value={OTPCode}
-                          maxLength={6}
-                          keyboardType="numeric"
-                          placeholderTextColor={baseVariable.fontColor.secAccent}
-                          onFocus={() => handleFocus(250)} // 聚焦时上移更多
-                          onBlur={handleBlur}
-                          onChangeText={(v) => {
-                            if (/^[0-9]*$/.test(v)) setOTPCode(v);
-                          }}
-                        />
-                        {hasOTP ? (
-                          <Text
-                            fontSize={fontSize.s}
-                            accent
-                            style={{ lineHeight: fontSize.s }}
-                            textAlign="center"
-                            blod
-                          >
-                            {OTPTime}s
-                          </Text>
-                        ) : (
-                          <NativeTouchableOpacity
-                            onPress={() => {
-                              if (!userPhone || OTPLoading) return;
-                              setOTPLoading(true);
-                              sendCode(userPhone)
-                                .then(() => {
-                                  setHasOTP();
-                                  globalStore.globalTotal.next({
-                                    type: 'success',
-                                    message: i18n.t('tip.success'),
-                                  });
-                                })
-                                .finally(() => setOTPLoading(false));
-                            }}
-                          >
-                            <Text
-                              color={basicColor.newFontRed}
-                              fontSize={15}
-                              fontWeight="bold"
-                            >
-                              Send
-                            </Text>
-                          </NativeTouchableOpacity>
-                        )}
-                      </View>
-                    </View>
-
+                        <Text
+                          color={basicColor.newFontRed}
+                          fontSize={16}
+                          fontWeight="bold"
+                        >
+                          Send
+                        </Text>
+                      </NativeTouchableOpacity>
+                    )}
+                  </View>
+                  {/*按钮*/}
+                  <View
+                    style={[
+                      cardSizes.button,
+                      { backgroundColor: '#D7281E' }
+                    ]}
+                  >
                     <NativeTouchableOpacity
+                      style={[
+                        flex.flex1,
+                        theme.fill.fillW,
+                        flex.center,
+                        { height: cardSizes.button.height }
+                      ]}
                       onPress={() => {
                         if (OTPLoading || !userPhone || !OTPCode) return;
                         globalStore.globalLoading.next(true);
@@ -340,7 +374,7 @@ const InvitationApply = (props: SafeAny) => {
                         if (Platform.OS !== 'android') {
                           deviceCode = localStorage.getItem('gps_adid') || '';
                         }
-                        userLogin(userPhone, OTPCode, deviceCode, '', '', '', '', invitaCode)
+                        userLogin(userPhone, OTPCode, deviceCode, '', '', '', '', inviteCode)
                           .then((res: SafeAny) => {
                             globalStore.globalTotal.next({
                               type: 'success',
@@ -353,46 +387,44 @@ const InvitationApply = (props: SafeAny) => {
                           .finally(() => globalStore.globalLoading.next(false));
                       }}
                     >
-                      <View
-                        style={[
-                          flex.flex1,
-                          {
-                            borderRadius: fromBgSize.button.height / 2,
-                          },
-                        ]}
+                      <Text
+                        fontSize={17}
+                        color={basicColor.newFontWhite}
+                        fontFamily="fontInterBold"
                       >
-                        <LinearGradient
-                          style={[fromBgSize.button, theme.fill.fillW, flex.center]}
-                          start={{ x: 0, y: 0.5 }}
-                          end={{ x: 1, y: 0.5 }}
-                          colors={basicColor.newButtonLinear}
-                        >
-                          <View>
-                            <Text
-                              fontSize={16}
-                              color={basicColor.newFontWhite}
-                              fontFamily="fontInterBold"
-                            >
-                              {i18n.t('label.logIn')}
-                            </Text>
-                          </View>
-                        </LinearGradient>
-                      </View>
+                        {i18n.t('label.logIn')}
+                      </Text>
                     </NativeTouchableOpacity>
-
+                  </View>
+                  {/*tip*/}
+                  <View style={{
+                    marginTop: cardSizes.tip.marginTop,
+                    alignItems: 'center',
+                  }} >
                     <Text
                       accent
                       size="small"
                       calc
                       textAlign="center"
-                      color={basicColor.newFontWhite}
-                      style={[margin.tops]}
+                      color={'#76797D'}
+                      style={{ width: cardSizes.tip.width }}
                     >
                       {i18n.t('referral.tip.desc')}
                     </Text>
                   </View>
                 </View>
-              </View>
+                <Image
+                  style={{
+                    width: cardSizes.gift.width,
+                    height: cardSizes.gift.height,
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    transform: [{ translateY: cardSizes.gift.translateY }]
+                  }}
+                  source={require('@assets/imgs/invitation/gift.webp')}
+                />
+              </LazyImageBackground>
             </View>
             <InvitationApplyModal ref={InvitationApplyModalRef} />
           </ScrollView>
