@@ -926,6 +926,7 @@ export default {
         'Sunday',
       ],
     },
+    expiredFeedbackWord: 'Claim not yet available.',
   },
   feedback: {
     title: 'FeedBack',

@@ -891,6 +891,7 @@ export default {
         'ഞായർ',
       ],
     },
+    expiredFeedbackWord: 'ഇപ്പോൾ ക്ലെയിം ലഭ്യമല്ല.',
   },
   feedback: {
     title: 'പ്രതികരണം',

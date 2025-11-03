@@ -382,42 +382,44 @@ const VipClubListAndroid: React.FC<VipClubListProps> = ({
                 zIndex: index === activeIndex ? 10 : 1,
                 elevation: index === activeIndex ? 10 : 1,
               }}>
-              <Animated.View
-                style={{
-                  transform: [{scale: animatedIndicators[index].scale}],
-                  opacity: animatedIndicators[index].opacity,
-                  position: 'absolute',
-                  top: 0,
-                  left: 7,
-                  marginLeft: -8,
-                  zIndex: 10,
-                }}>
-                <LinearGradient
-                  colors={['#fff9b2', '#e8b138']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
+              {checkIndex !== undefined && index === checkIndex && (
+                <Animated.View
                   style={{
-                    width: 100,
-                    height: 22,
-                    borderRadius: 12,
-                    borderTopRightRadius: 0,
-                    borderBottomLeftRadius: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    transform: [{scale: animatedIndicators[index].scale}],
+                    opacity: animatedIndicators[index].opacity,
+                    position: 'absolute',
+                    top: 0,
+                    left: 7,
+                    marginLeft: -8,
+                    zIndex: 10,
                   }}>
-                  <Text
-                    style={[
-                      {
-                        fontSize: 11,
-                        fontWeight: '500',
-                        color: theme.basicColor.newRed,
-                      },
-                    ]}>
-                    {i18n.t('vip.currentLevel')}
-                  </Text>
-                </LinearGradient>
-              </Animated.View>
+                  <LinearGradient
+                    colors={['#fff9b2', '#e8b138']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    style={{
+                      width: 100,
+                      height: 22,
+                      borderRadius: 12,
+                      borderTopRightRadius: 0,
+                      borderBottomLeftRadius: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={[
+                        {
+                          fontSize: 11,
+                          fontWeight: '500',
+                          color: theme.basicColor.newRed,
+                        },
+                      ]}>
+                      {i18n.t('vip.currentLevel')}
+                    </Text>
+                  </LinearGradient>
+                </Animated.View>
+              )}
               <Image
                 source={vipTop as ImageSourcePropType}
                 style={{

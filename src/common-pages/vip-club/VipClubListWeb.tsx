@@ -529,7 +529,7 @@ const VipClubList: React.FC<VipClubListProps> = ({
                 // index === vipConfigList.length - 1 ? activeStyleRight : null,
                 // index === vipConfigList.length - 2 ? activeStyleRight : null,
               ]}>
-              {index === activeIndex && (
+              {checkIndex !== undefined && index === checkIndex && (
                 <LinearGradient
                   colors={['#fff9b2', '#e8b138']}
                   start={{x: 0, y: 0}}

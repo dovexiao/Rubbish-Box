@@ -151,9 +151,10 @@ const SevenDayBonusCard: React.FC<SevenDayBonusCardProps> = ({
                   style={{flexBasis: !isLast ? '25%' : '50%'}}>
                   <NativeTouchableOpacity
                     onPressIn={() => {
-                      if (canClaim) {
-                        onPressGetSingle(currentItem);
-                      }
+                      // if (canClaim) {
+                      //   onPressGetSingle(currentItem);
+                      // }
+                      onPressGetSingle(currentItem);
                     }}>
                     <LinearGradient
                       key={`day${index + 1}`}

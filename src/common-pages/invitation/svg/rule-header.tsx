@@ -1,6 +1,7 @@
 import theme from '@/style';
 import React from 'react';
 import {View} from 'react-native';
+// Web uses native <svg>; Android has a separate .android.tsx
 
 export interface RuleHeaderIconProps {
   width?: number;
@@ -12,6 +13,10 @@ const RuleHeaderIcon: React.FC<RuleHeaderIconProps> = ({
   height,
   linear = theme.linearGradientColor.primaryLinearGradient,
 }) => {
+  // const [startColor, endColor] = linear;
+
+  const [startColor, endColor] = ['#F7B500', '#F7B500'];
+
   return (
     <View style={{width, height}}>
       <svg
@@ -32,8 +37,8 @@ const RuleHeaderIcon: React.FC<RuleHeaderIconProps> = ({
             x2="9.19634"
             y2="62.6501"
             gradientUnits="userSpaceOnUse">
-            <stop stopColor={linear[0]} />
-            <stop offset="1" stop-color={linear[1]} />
+            <stop stopColor={startColor} />
+            <stop offset="1" stopColor={endColor} />
           </linearGradient>
         </defs>
       </svg>

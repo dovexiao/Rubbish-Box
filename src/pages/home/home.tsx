@@ -41,6 +41,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {getCasinoList, getCasinoType} from './home.service';
 import HomeGoldArea from './components/home-gold-area';
 import {useHomeServiceStore} from '@/pages/home/components/home-service-store';
+import LinearGradient from '@basicComponents/linear-gradient';
 
 const Home = () => {
   const {setOldMenuImgUrl} = useHomeServiceStore();
@@ -292,44 +293,48 @@ const Home = () => {
   return (
     <LazyImageLGBackground style={[theme.flex.col, theme.fill.fill]}>
       <Spin loading={pageLoading} style={[theme.flex.col, theme.fill.fill]}>
-        <View style={[theme.fill.fill, theme.flex.col]}>
-          <HomeHeader />
-          {globalStore.isWeb && !globalStore.viewType && <Download />}
-          <Animated.ScrollView
-            ref={scrollViewRef}
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-            onScroll={Animated.event(
-              [{nativeEvent: {contentOffset: {y: scrollAnim}}}],
-              {useNativeDriver: true, listener: handleMainScroll},
-            )}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={() => {
-                  setRefreshing(true);
-                  selectedGame === 2
-                    ? getGame2List()
-                    : getBannerList(2)
-                        .then(setbannerList)
-                        .finally(() => setRefreshing(false));
-                }}
-              />
-            }>
-            <View
-              onLayout={e => {
-                topHeight.current = e.nativeEvent.layout.height;
-              }}>
-              <HomeBanner bannerList={bannerList} />
-              <HomeGoldArea
-                noticeMap={noticeMap}
-                onNotice={() => doNotice(globalStore.token)}
-                spinShow={spinShow}
-              />
-              <HomeGameList setSelectedGame={setSelectedGame} />
-              {selectedGame === 2 && <HomeGameTop />}
-            </View>
-            {/* {selectedGame === 2 && showTabs ? (
+        <LinearGradient
+          colors={['#620505', '#620505', '#230402']}
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}>
+          <View style={[theme.fill.fill, theme.flex.col]}>
+            <HomeHeader />
+            {globalStore.isWeb && !globalStore.viewType && <Download />}
+            <Animated.ScrollView
+              ref={scrollViewRef}
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              onScroll={Animated.event(
+                [{nativeEvent: {contentOffset: {y: scrollAnim}}}],
+                {useNativeDriver: true, listener: handleMainScroll},
+              )}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    setRefreshing(true);
+                    selectedGame === 2
+                      ? getGame2List()
+                      : getBannerList(2)
+                          .then(setbannerList)
+                          .finally(() => setRefreshing(false));
+                  }}
+                />
+              }>
+              <View
+                onLayout={e => {
+                  topHeight.current = e.nativeEvent.layout.height;
+                }}>
+                <HomeBanner bannerList={bannerList} />
+                <HomeGoldArea
+                  noticeMap={noticeMap}
+                  onNotice={() => doNotice(globalStore.token)}
+                  spinShow={spinShow}
+                />
+                <HomeGameList setSelectedGame={setSelectedGame} />
+                {selectedGame === 2 && <HomeGameTop />}
+              </View>
+              {/* {selectedGame === 2 && showTabs ? (
               <View
                 style={{
                   height: basePx * 72 + 20,
@@ -341,43 +346,44 @@ const Home = () => {
               <View style={{height: 0}} />
             )} */}
 
-            {selectedGame === 1 && (
-              <HomeCasino
-                tabs={casinoTabs}
-                selectedTab={selectedCasinoTab}
-                onTabChange={setSelectedCasinoTab}
-                data={casinoData}
-                loading={casinoLoading}
-                loadingMore={casinoLoadingMore}
-                hasMore={casinoHasMore}
+              {selectedGame === 1 && (
+                <HomeCasino
+                  tabs={casinoTabs}
+                  selectedTab={selectedCasinoTab}
+                  onTabChange={setSelectedCasinoTab}
+                  data={casinoData}
+                  loading={casinoLoading}
+                  loadingMore={casinoLoadingMore}
+                  hasMore={casinoHasMore}
+                />
+              )}
+              {selectedGame === 2 && (
+                <HomeTabListContent
+                  // digitList={digitList}
+                  keralaList={keralaList}
+                  onMeasure={(index, anchor) => {
+                    measures.current[index] = anchor;
+                    measures.current = [...measures.current];
+                  }}
+                />
+              )}
+              {selectedGame === 3 && <HomeLive />}
+              {selectedGame === 4 && <HomeFish />}
+              <NoMoreData text="" />
+            </Animated.ScrollView>
+            <View style={{position: 'absolute', bottom: 60, left: 0, right: 0}}>
+              <HomeService
+                key={menuImgUrl + rechargeImgUrl} // 强制刷新关键
+                isLogin={login}
+                firstShow={firstShow}
+                menuImgUrl={menuImgUrl}
+                dynamicUrl={rechargeImgUrl}
+                spinShow={showModal}
               />
-            )}
-            {selectedGame === 2 && (
-              <HomeTabListContent
-                // digitList={digitList}
-                keralaList={keralaList}
-                onMeasure={(index, anchor) => {
-                  measures.current[index] = anchor;
-                  measures.current = [...measures.current];
-                }}
-              />
-            )}
-            {selectedGame === 3 && <HomeLive />}
-            {selectedGame === 4 && <HomeFish />}
-            <NoMoreData text="" />
-          </Animated.ScrollView>
-          <View style={{position: 'absolute', bottom: 60, left: 0, right: 0}}>
-            <HomeService
-              key={menuImgUrl + rechargeImgUrl} // 强制刷新关键
-              isLogin={login}
-              firstShow={firstShow}
-              menuImgUrl={menuImgUrl}
-              dynamicUrl={rechargeImgUrl}
-              spinShow={showModal}
-            />
-            {renderSpin}
+              {renderSpin}
+            </View>
           </View>
-        </View>
+        </LinearGradient>
       </Spin>
     </LazyImageLGBackground>
   );

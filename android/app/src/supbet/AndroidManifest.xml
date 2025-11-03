@@ -63,7 +63,7 @@
                 android:resource="@xml/freshchat_file_provider_paths" />
             <meta-data
                 android:name="com.adjust.sdk.appToken"
-                android:value="kkwoiyprm0ow" />
+                android:value="33z3sllv0cqo" />
                 <!-- 安装引用接收器（可选，用于跟踪Google Play安装来源） -->
                 <!-- <receiver
                     android:name="com.adjust.sdk.AdjustReferrerReceiver"

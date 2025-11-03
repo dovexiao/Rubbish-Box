@@ -425,7 +425,7 @@ function App(): JSX.Element {
       // ios的在TS文件中已调用start方法，这边在调用就会多次触发
       const {Adjust, AdjustConfig} = require('react-native-adjust');
       const adjustConfig = new AdjustConfig(
-        'kkwoiyprm0ow',
+        '33z3sllv0cqo',
         __DEV__
           ? AdjustConfig.EnvironmentSandbox
           : AdjustConfig.EnvironmentProduction,
@@ -436,12 +436,12 @@ function App(): JSX.Element {
       Adjust.create(adjustConfig);
       // 获取adid
       Adjust.getAdid((adid: string) => {
-        globalStore.adjustId = adid
+        globalStore.adjustId = adid;
       });
     } else {
       const Adjust = require('@adjustcom/adjust-web-sdk');
       Adjust.initSdk({
-        appToken: 'kkwoiyprm0ow',
+        appToken: '33z3sllv0cqo',
         environment: __DEV__ ? 'sandbox' : 'production', // 或'production'
         logLevel: 'verbose', // 可选
       });
