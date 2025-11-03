@@ -13,7 +13,7 @@ import {
 import {NativeTouchableOpacity} from '@basicComponents/touchable-opacity';
 import React, {useCallback, useRef, useState} from 'react';
 import theme from '@style';
-import {goTo} from '@utils'; //toAgentApply,
+import {goCS, goTo} from '@utils'; //toAgentApply,
 import Text from '@basicComponents/text';
 // import {VipProgress} from '@businessComponents/vip';
 import {
@@ -25,7 +25,7 @@ import {
   updateIcon,
   passwordIcon,
   languagesIcon,
-  // customerServiceIcon,
+  customerServiceIcon,
   rebateIcon,
 } from '@businessComponents/list-item';
 import {useConfirm} from '@basicComponents/modal';
@@ -48,7 +48,7 @@ import useUserStore, {useUserActions, useUserInfo} from '@/store/useUserStore';
 import useNotificationStore from '@/store/useNotificationStore';
 import {useShallow} from 'zustand/react/shallow';
 import GiftPop from '@/common-pages/gift-code/gift-pop';
-import { getGiftCodeAmount } from '@/pages/me/me.service';
+import {getGiftCodeAmount} from '@/pages/me/me.service';
 import {ToastType, useToast} from '@basicComponents/modal';
 // import { useRebateSuccessToast } from '@/common-pages/rebate/rebate-toast.hooks';
 import LinearGradient from '@/components/basic/linear-gradient';
@@ -63,7 +63,7 @@ const Me = () => {
     const fetchPayEventNotice = async () => {
       try {
         const res = await getPayEventNotice();
-        console.log('返回res',res)
+        console.log('返回res', res);
         if (res > 0) {
           AdjustService.track('recharge', res, 'INR');
         }
@@ -75,7 +75,6 @@ const Me = () => {
       fetchPayEventNotice();
     }
   }, []);
-
 
   const {renderModal, show} = useToast();
   const {i18n} = useTranslation();
@@ -189,7 +188,6 @@ const Me = () => {
 
   const [isGiftPopVisible, setGiftPopVisible] = useState(false);
 
-
   const handleOpenPop = () => {
     setGiftPopVisible(true);
   };
@@ -301,78 +299,85 @@ const Me = () => {
             />
           }>
           <View>
-              <View style={[{height: 85, paddingTop: Platform.OS === 'ios' ? 40 : 20}, theme.padding.lrl]}>
-                <MeUser
+            <View
+              style={[
+                {height: 85, paddingTop: Platform.OS === 'ios' ? 40 : 20},
+                theme.padding.lrl,
+              ]}>
+              <MeUser
+                login={login}
+                user={user}
+                level={level}
+                onUser={handleUser}
+                showNoMenu={false}
+              />
+            </View>
+            <View style={[theme.padding.lrxl]}>
+              <ImageBackground
+                source={require('@assets/icons/me/card-backimg.webp')}
+                resizeMode="stretch"
+                style={[
+                  // theme.padding.lrl,
+                  // theme.padding.topl,
+                  theme.flex.flex1,
+                  theme.flex.between,
+                  theme.background.transparent,
+                  {height: 104, width: '100%', paddingBottom: 38},
+                ]}>
+                <MeAmount
                   login={login}
-                  user={user}
-                  level={level}
-                  onUser={handleUser}
-                  showNoMenu={false}
+                  mtFlag={false}
+                  onLayout={handleMoneyLayout}
+                  // topBlockWidth={topBlockWidth}
+                  // user={user}
+                  // onRecharge={toRecharge}
+                  // onWithdraw={toWithdraw}
+                  onRefresh={handleRefresh}
                 />
-              </View>
-              <View style={[theme.padding.lrxl]}>
-                <ImageBackground
-                  source={require('@assets/icons/me/card-backimg.webp')}
-                  resizeMode="stretch"
-                  style={[
-                    // theme.padding.lrl,
-                    // theme.padding.topl,
-                    theme.flex.flex1,
-                    theme.flex.between,
-                    theme.background.transparent,
-                    {height: 104, width: '100%',paddingBottom: 38},
-                  ]}>
-                  <MeAmount
-                    login={login}
-                    mtFlag={false}
-                    onLayout={handleMoneyLayout}
-                    // topBlockWidth={topBlockWidth}
-                    // user={user}
-                    // onRecharge={toRecharge}
-                    // onWithdraw={toWithdraw}
-                    onRefresh={handleRefresh}
-                  />
-                </ImageBackground>
-              </View>
-              <View style={{
+              </ImageBackground>
+            </View>
+            <View
+              style={{
                 height: 70,
               }}>
-                <ImageBackground
-                  source={require('@assets/icons/me/card-back-tio.webp')}
-                  resizeMode="cover"
-                  style={[
-                    theme.flex.flex1,
-                    theme.flex.between,
-                    theme.background.transparent,
-                    {height: 70, width: globalStore.screenWidth, zIndex: 1},
-                    {
-                      position: 'relative',
-                      top: -45,
-                    }
-                  ]}>
-                    <View style={{height: 70}}></View>
-                  </ImageBackground>
-                    <View style={{
-                      position: 'absolute', top: 0, zIndex: 1,
-                      left: 12,
-                      right: 18,
-                    }}>
-
-                  <NativeTouchableOpacity
-                    onPress={toVip}
-                    style={[{position: 'relative'}]}>
-                    <Image
-                      source={require('@assets/icons/me/acount-vip.png')}
-                      style={[
-                        {
-                          width: globalStore.screenWidth - 24,
-                          height: (globalStore.screenWidth * 65) / 375,
-                          borderRadius: 12,
-                        },
-                      ]}
-                    />
-                  </NativeTouchableOpacity>
-                      {/* <MeVip
+              <ImageBackground
+                source={require('@assets/icons/me/card-back-tio.webp')}
+                resizeMode="cover"
+                style={[
+                  theme.flex.flex1,
+                  theme.flex.between,
+                  theme.background.transparent,
+                  {height: 70, width: globalStore.screenWidth, zIndex: 1},
+                  {
+                    position: 'relative',
+                    top: -45,
+                  },
+                ]}>
+                <View style={{height: 70}}></View>
+              </ImageBackground>
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  zIndex: 1,
+                  left: 12,
+                  right: 18,
+                }}>
+                <NativeTouchableOpacity
+                  onPress={toVip}
+                  style={[{position: 'relative'}]}>
+                  <Image
+                    source={require('@assets/icons/me/acount-vip.png')}
+                    style={[
+                      {
+                        width: globalStore.screenWidth - 24,
+                        height: (globalStore.screenWidth * 65) / 375,
+                        borderRadius: 12,
+                      },
+                    ]}
+                  />
+                </NativeTouchableOpacity>
+                {/* <MeVip
                         level={level}
                         onPress={toVip}
                         nextLevelValue={nextValue}
@@ -387,17 +392,22 @@ const Me = () => {
                           />
                         }
                       /> */}
-                    </View>
               </View>
+            </View>
           </View>
           <View style={[theme.padding.lrl]}>
             <MeRowMenu />
             <View style={[]}>
               {/* 列表区域 */}
-              <View style={[borderRadius.m, overflow.hidden, margin.topl,
+              <View
+                style={[
+                  borderRadius.m,
+                  overflow.hidden,
+                  margin.topl,
                   {
                     backgroundColor: theme.basicColor.newBgInOne,
-                  }]}>
+                  },
+                ]}>
                 {/*<MeListItem*/}
                 {/*  icon={gamesIcon}*/}
                 {/*  title={i18n.t('me.bottom.games')}*/}
@@ -446,7 +456,7 @@ const Me = () => {
                   margin.topl,
                   {
                     backgroundColor: theme.basicColor.newBgInOne,
-                  }
+                  },
                 ]}>
                 {/*<MeListItem*/}
                 {/*  containerStyle={[theme.padding.tbl]}*/}
@@ -496,16 +506,16 @@ const Me = () => {
                   title={i18n.t('me.bottom.lang')}
                   onPress={toLanguage}
                 />
-                {/*<MeListItem*/}
-                {/*  // containerStyle={[theme.padding.tbl]}*/}
-                {/*  // mt={0}*/}
-                {/*  iconSize={18}*/}
-                {/*  icon={customerServiceIcon}*/}
-                {/*  title={i18n.t('me.bottom.customer')}*/}
-                {/*  onPress={goCS}*/}
-                {/*  // btmBorder={Platform.OS === 'android' ? true : false}*/}
-                {/*  hideBottomBorder={Platform.OS === 'android' ? false : true}*/}
-                {/*/>*/}
+                <MeListItem
+                  // containerStyle={[theme.padding.tbl]}
+                  // mt={0}
+                  iconSize={18}
+                  icon={customerServiceIcon}
+                  title={i18n.t('me.bottom.customer')}
+                  onPress={goCS}
+                  // btmBorder={Platform.OS === 'android' ? true : false}
+                  hideBottomBorder={Platform.OS === 'android' ? false : true}
+                />
                 {Platform.OS === 'android' && (
                   <MeListItem
                     // containerStyle={[theme.padding.tbl]}
@@ -515,7 +525,9 @@ const Me = () => {
                     // btmBorder={false}
                     title={i18n.t('me.bottom.update')}
                     rightContent={
-                      <Text style={[font.secAccent, font.s]}>{getVersion()}</Text>
+                      <Text style={[font.secAccent, font.s]}>
+                        {getVersion()}
+                      </Text>
                     }
                     onPress={toUpdate}
                   />
@@ -524,18 +536,19 @@ const Me = () => {
               {login && (
                 <NativeTouchableOpacity onPress={doLogout}>
                   <LinearGradient
-                      style={[
-                        padding.lrm,
-                        padding.tbl,
-                        borderRadius.m,
-                        overflow.hidden,
-                        margin.topl,
-                      ]}
-                      start={{x: 0, y: 1}}
-                      end={{x: 0, y: 1}}
-                      colors={theme.linearGradientColor.linearGradientBtnColor}>
+                    style={[
+                      padding.lrm,
+                      padding.tbl,
+                      borderRadius.m,
+                      overflow.hidden,
+                      margin.topl,
+                    ]}
+                    start={{x: 0, y: 1}}
+                    end={{x: 0, y: 1}}
+                    colors={theme.linearGradientColor.linearGradientBtnColor}>
                     <View>
-                      <Text style={[font.white, font.m, font.bold, font.center]}>
+                      <Text
+                        style={[font.white, font.m, font.bold, font.center]}>
                         {i18n.t('me.bottom.logout')}
                       </Text>
                     </View>
