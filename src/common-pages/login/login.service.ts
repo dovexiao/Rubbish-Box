@@ -48,7 +48,7 @@ export const userLogin = async (
     gaid = await getAdId();
   }
 
-  const date = {
+  const data = {
     userPhone,
     code,
     deviceCode: id,
@@ -61,15 +61,16 @@ export const userLogin = async (
     gaid,
   };
   if (!isLogin && globalStore.isWeb && !userInviteCode) {
-    date.userInviteCode = localStorage.getItem('invitationCode') || undefined;
+    data.userInviteCode = localStorage.getItem('invitationCode') || undefined;
   }
+
   return http.post<
     null,
     {
       token: string;
       isNewUser: boolean;
     }
-  >('app/userLoginNew', date);
+  >('app/userLoginNew', data);
 };
 
 export const passwordLogin = async (
