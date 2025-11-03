@@ -59,6 +59,7 @@ module.exports = function override(config, env) {
       /react-native-pager-view/, // Adjust SDK
       // 排除react-native-update在web环境下的问题模块
       /react-native-update\/src\/NativePushy/,
+      /react-native-fast-image/,
     ].map(resourceRegExp => new webpack.IgnorePlugin({resourceRegExp})),
     new Dotenv(),
   );
