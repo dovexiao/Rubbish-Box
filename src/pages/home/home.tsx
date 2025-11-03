@@ -41,7 +41,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {getCasinoList, getCasinoType} from './home.service';
 import HomeGoldArea from './components/home-gold-area';
 import {useHomeServiceStore} from '@/pages/home/components/home-service-store';
-import LinearGradient from '@basicComponents/linear-gradient';
+import LinearGradient from '@/components/basic/linear-gradient';
 
 const Home = () => {
   const {setOldMenuImgUrl} = useHomeServiceStore();
@@ -293,34 +293,34 @@ const Home = () => {
   return (
     <LazyImageLGBackground style={[theme.flex.col, theme.fill.fill]}>
       <Spin loading={pageLoading} style={[theme.flex.col, theme.fill.fill]}>
-        <LinearGradient
-          colors={['#620505', '#620505', '#230402']}
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}>
-          <View style={[theme.fill.fill, theme.flex.col]}>
-            <HomeHeader />
-            {globalStore.isWeb && !globalStore.viewType && <Download />}
-            <Animated.ScrollView
-              ref={scrollViewRef}
-              scrollEventThrottle={16}
-              showsVerticalScrollIndicator={false}
-              onScroll={Animated.event(
-                [{nativeEvent: {contentOffset: {y: scrollAnim}}}],
-                {useNativeDriver: true, listener: handleMainScroll},
-              )}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    setRefreshing(true);
-                    selectedGame === 2
-                      ? getGame2List()
-                      : getBannerList(2)
-                          .then(setbannerList)
-                          .finally(() => setRefreshing(false));
-                  }}
-                />
-              }>
+        <View style={[theme.fill.fill, theme.flex.col]}>
+          <HomeHeader />
+          {globalStore.isWeb && !globalStore.viewType && <Download />}
+          <Animated.ScrollView
+            ref={scrollViewRef}
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {y: scrollAnim}}}],
+              {useNativeDriver: true, listener: handleMainScroll},
+            )}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => {
+                  setRefreshing(true);
+                  selectedGame === 2
+                    ? getGame2List()
+                    : getBannerList(2)
+                        .then(setbannerList)
+                        .finally(() => setRefreshing(false));
+                }}
+              />
+            }>
+            <LinearGradient
+              colors={['#620505', '#620505', '#230402']}
+              start={{x: 0, y: 0}}
+              end={{x: 0, y: 1}}>
               <View
                 onLayout={e => {
                   topHeight.current = e.nativeEvent.layout.height;
@@ -370,20 +370,20 @@ const Home = () => {
               {selectedGame === 3 && <HomeLive />}
               {selectedGame === 4 && <HomeFish />}
               <NoMoreData text="" />
-            </Animated.ScrollView>
-            <View style={{position: 'absolute', bottom: 60, left: 0, right: 0}}>
-              <HomeService
-                key={menuImgUrl + rechargeImgUrl} // 强制刷新关键
-                isLogin={login}
-                firstShow={firstShow}
-                menuImgUrl={menuImgUrl}
-                dynamicUrl={rechargeImgUrl}
-                spinShow={showModal}
-              />
-              {renderSpin}
-            </View>
+            </LinearGradient>
+          </Animated.ScrollView>
+          <View style={{position: 'absolute', bottom: 60, left: 0, right: 0}}>
+            <HomeService
+              key={menuImgUrl + rechargeImgUrl} // 强制刷新关键
+              isLogin={login}
+              firstShow={firstShow}
+              menuImgUrl={menuImgUrl}
+              dynamicUrl={rechargeImgUrl}
+              spinShow={showModal}
+            />
+            {renderSpin}
           </View>
-        </LinearGradient>
+        </View>
       </Spin>
     </LazyImageLGBackground>
   );
