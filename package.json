@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "private": true,
   "scripts": {
-    "patch-install": "patch-package",
+    "postinstall": "patch-package",
     "clean": "cd android && ./gradlew clean && cd ../ && npm run rewatch",
     "clean:win": "cd android && .\\gradlew clean && cd ..\\ && npm run rewatch",
     "clean:web": "rm -rf node_modules/.cache",
@@ -56,6 +56,7 @@
     "upgrade:android:uuuuuuat": "appcenter codepush release-react -d Uat -a ziencinacabos-gmail.com/MegaDream -t 1.0.0",
     "upgrade:android:pro": "appcenter codepush release-react -a 15201335016-163.com/Indra-Lottery-1 -d Production -t 2.1.2 -m",
     "upgrade:android:test": "appcenter codepush release-react -d Dev -a ziencinacabos-gmail.com/MegaDream -t 1.0.0",
+    "build:patch": "node publish",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
