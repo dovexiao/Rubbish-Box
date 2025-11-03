@@ -20,9 +20,11 @@ const HomePopTwo: React.FC<HomePopTwoProps> = ({
 }) => {
   const {i18n} = useTranslation();
   const {screenWidth, screenHeight} = useScreenSize();
-  const [imgRatio, setImgRatio] = useState(1);
+  const [imgRatio, setImgRatio] = useState(948 / 712);
   const [isLoaded, setIsLoaded] = useState(false);
   const [canClick, setCanClick] = useState(false);
+
+  const popImageWidth = screenWidth * 0.85;
 
   // 每次打开 Modal 时执行
   useEffect(() => {
@@ -82,8 +84,8 @@ const HomePopTwo: React.FC<HomePopTwoProps> = ({
             {/*  }}*/}
             {/*/>*/}
             <LazyImage
-              width={screenWidth}
-              height={screenWidth * imgRatio}
+              width={popImageWidth}
+              height={popImageWidth * imgRatio + 50}
               imageUrl={dynamicUrl || ''}
             />
           </NativeTouchableOpacity>
