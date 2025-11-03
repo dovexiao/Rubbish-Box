@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Text, TouchableOpacity, Image } from "react-native"
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native"
 import { useRouter, useLocalSearchParams } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
@@ -310,7 +310,11 @@ export default function AIPracticeScreen() {
                 </View>
 
                 {/* 选择题选项 */}
-                <View style={styles.optionsContainer}>
+                <ScrollView 
+                  style={styles.optionsScrollContainer}
+                  contentContainerStyle={styles.optionsContainer}
+                  showsVerticalScrollIndicator={true}
+                >
                   {currentQuestion.options &&
                     currentQuestion.options.map((option, index) => {
                       const isSelected = selectedAnswers[currentQuestionIndex] === index
@@ -340,7 +344,7 @@ export default function AIPracticeScreen() {
                         </TouchableOpacity>
                       )
                     })}
-                </View>
+                </ScrollView>
               </>
             )}
           </View>
@@ -527,7 +531,11 @@ const styles = createStyles({
     color: "#000",
     lineHeight: 21.27,
   },
-  // 选项
+  // 选项滚动容器
+  optionsScrollContainer: {
+    maxHeight: rpx(400), // 设置最大高度，超出后可滚动
+  },
+  // 选项容器
   optionsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -538,6 +546,8 @@ const styles = createStyles({
     marginBottom: 15.6,
     borderRadius: 8,
     minWidth: "40%",
+    flexBasis: "40%",
+    flexGrow: 1,
     marginLeft: 12,
     shadowColor: "#85afff",
     shadowOffset: { width: 0, height: 0 },
@@ -571,6 +581,7 @@ const styles = createStyles({
     fontSize: 8.6,
     color: "#333",
     lineHeight: 15.48,
+    flexShrink: 1,
   },
   // 底部导航
   bottomNavigation: {
