@@ -41,11 +41,11 @@ export const userLogin = async (
   const manufacturer = myAppType;
   const id = await getUuid(manufacturer);
   let androidId = '';
-  let advertisingId: string = '';
+  let gaid: string = '';
 
   if (Platform.OS === 'android') {
     androidId = await DeviceInfo.getAndroidId();
-    advertisingId = await getAdId();
+    gaid = await getAdId();
   }
 
   const date = {
@@ -57,8 +57,8 @@ export const userLogin = async (
     systemType,
     adjustId,
     userInviteCode,
-    aid: androidId ?? '',
-    gaid: advertisingId,
+    androidId,
+    gaid,
   };
   if (!isLogin && globalStore.isWeb && !userInviteCode) {
     date.userInviteCode = localStorage.getItem('invitationCode') || undefined;
