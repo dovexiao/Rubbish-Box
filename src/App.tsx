@@ -131,6 +131,7 @@ function App(): JSX.Element {
   // const [codeInited, setCodeInited] = React.useState(false);
   const [available, _setAvailable] = React.useState(0);
   const {height} = useWindowDimensions();
+  const [bodyHeight, setBodyHeight] = useState(height);
   // const initChat = () => {
   //   const chatModule = require('@components/chat');
   //   const freshchatConfig = new chatModule.FreshchatConfig(
@@ -453,6 +454,23 @@ function App(): JSX.Element {
     initAdjust();
   }, []);
 
+  React.useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const updateHeight = () => {
+      const vh = viewport.height;
+      setBodyHeight(height + window.innerHeight - vh);
+    };
+    updateHeight();
+    viewport.addEventListener('resize', updateHeight);
+    viewport.addEventListener('scroll', updateHeight);
+    return () => {
+      viewport.removeEventListener('resize', updateHeight);
+      viewport.removeEventListener('scroll', updateHeight);
+    };
+  }, []);
+
   const getWaterString = (list: any[], paramKey: string) => {
     return list
       .map((item: any) => {
@@ -523,7 +541,7 @@ function App(): JSX.Element {
         style={[
           globalStore.isWeb &&
             ({
-              height: `${height}px`,
+              height: `${bodyHeight}px`,
               width: '100vw',
               maxWidth: '500px',
               marginHorizontal: 'auto',

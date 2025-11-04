@@ -9,14 +9,12 @@ import {
   ScrollView,
   Dimensions,
   Animated,
+  KeyboardAvoidingView,
 } from 'react-native';
-import {
-  CardOuterBg,
-  invitationApplyColor,
-} from './invitation.variables';
+import {CardOuterBg, invitationApplyColor} from './invitation.variables';
 import Text from '@basicComponents/text';
 import LinearGradient from '@basicComponents/linear-gradient';
-import { BasicObject, SafeAny } from '@/types';
+import {BasicObject, SafeAny} from '@/types';
 import InvitationApplyModal from './invitation-apply-modal';
 import {
   basicColor,
@@ -27,22 +25,24 @@ import {
   padding,
   position,
 } from '@/components/style';
-import { PhoneIcon, SaveIcon } from './svg.variables';
-import { NativeTouchableOpacity } from '@/components/basic/touchable-opacity';
-import { sendCode, userLogin } from '../login/login.service';
+import {PhoneIcon, SaveIcon} from './svg.variables';
+import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
+import {sendCode, userLogin} from '../login/login.service';
 import globalStore from '@/services/global.state';
 import i18n from '@/i18n';
 import baseVariable from '@/style/base.variable';
-import { goTo, useResponsiveDimensions } from '@/utils';
+import {goTo, useResponsiveDimensions} from '@/utils';
 import theme from '@/style';
 import envConfig from '@/utils/env.config';
 import {LazyImageBackground} from '@basicComponents/image';
+import {getDeviceInfo} from '@/utils/device';
 
-const outline: SafeAny = { outline: 0 };
+const outline: SafeAny = {outline: 0};
+const {os} = getDeviceInfo();
 
 const InvitationApply = (props: SafeAny) => {
-  const { route } = props;
-  const { width: screenWidth, height: screenHeight } = useResponsiveDimensions();
+  const {route} = props;
+  const {width: screenWidth, height: screenHeight} = useResponsiveDimensions();
 
   const [userPhone, setUserPhone] = useState('');
   const [OTPCode, setOTPCode] = useState('');
@@ -55,82 +55,86 @@ const InvitationApply = (props: SafeAny) => {
 
   // 以设计稿为主，样式响应式临时方案
   // 页面头高
-  const headerHeight: number = screenWidth * 73 / 750;
+  const headerHeight: number = (screenWidth * 73) / 750;
   // 邀请广告尺寸
   const iApplyImageSize = React.useMemo(() => {
     return {
       width: screenWidth * 0.9,
-      height: screenWidth * 0.9 * 273 / 1013,
+      height: (screenWidth * 0.9 * 273) / 1013,
     };
   }, [screenWidth]);
   // 邀请背景尺寸
   const iApplyBgSize = React.useMemo(() => {
     return {
       width: screenWidth,
-      height: screenWidth * 386 / 750,
+      height: (screenWidth * 386) / 750,
     };
   }, [screenWidth]);
   // 操作卡片背景尺寸
   const cardBgSize = React.useMemo(() => {
     return {
       width: screenWidth - theme.paddingSize.l * 2,
-      height: (screenWidth - theme.paddingSize.l * 2) * 718 / 690,
+      height: ((screenWidth - theme.paddingSize.l * 2) * 718) / 690,
     };
   }, [screenWidth]);
   // 卡片内部尺寸集
   const cardSizes = React.useMemo(() => {
     return {
       header: {
-        width: cardBgSize.width * 360 / 690,
-        marginLeft: cardBgSize.width * 61 / 690,
-        marginTop: cardBgSize.width * 43 / 690,
+        width: (cardBgSize.width * 360) / 690,
+        marginLeft: (cardBgSize.width * 61) / 690,
+        marginTop: (cardBgSize.width * 43) / 690,
       },
       content: {
-        paddingHorizontal: cardBgSize.width * 46 / 690,
+        paddingHorizontal: (cardBgSize.width * 46) / 690,
       },
       phoneInput: {
-        marginTop: cardBgSize.width * 77 / 690,
-        height: cardBgSize.width * 88 / 690,
+        marginTop: (cardBgSize.width * 77) / 690,
+        height: (cardBgSize.width * 88) / 690,
       },
       otpInput: {
-        marginTop: cardBgSize.width * 20 / 690,
-        height: cardBgSize.width * 88 / 690,
+        marginTop: (cardBgSize.width * 20) / 690,
+        height: (cardBgSize.width * 88) / 690,
       },
       button: {
-        marginTop: cardBgSize.width * 57 / 690,
-        height: cardBgSize.width * 88 / 690,
-        borderRadius: cardBgSize.width * 88 / 690 / 2,
+        marginTop: (cardBgSize.width * 57) / 690,
+        height: (cardBgSize.width * 88) / 690,
+        borderRadius: (cardBgSize.width * 88) / 690 / 2,
       },
       tip: {
-        width: cardBgSize.width * 460 / 690,
-        marginTop: cardBgSize.width * 20 / 690,
+        width: (cardBgSize.width * 460) / 690,
+        marginTop: (cardBgSize.width * 20) / 690,
       },
       gift: {
-        width: cardBgSize.width * 246 / 690,
-        height: cardBgSize.width * 267 / 690,
-        translateY: -cardBgSize.width * 76 / 690,
+        width: (cardBgSize.width * 246) / 690,
+        height: (cardBgSize.width * 267) / 690,
+        translateY: (-cardBgSize.width * 76) / 690,
       },
-      inputIconSize: cardBgSize.width * 40 / 690
+      inputIconSize: (cardBgSize.width * 40) / 690,
     };
-  }, [cardBgSize])
+  }, [cardBgSize]);
 
   // 用 Animated 实现平滑上移
   const translateY = useRef(new Animated.Value(0)).current;
 
   const handleFocus = (offset: number) => {
-    Animated.timing(translateY, {
-      toValue: -offset,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    if (os === 'android') {
+      Animated.timing(translateY, {
+        toValue: -offset,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   const handleBlur = () => {
-    Animated.timing(translateY, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    if (os === 'android') {
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   const startOTPCountdown = () => {
@@ -163,24 +167,20 @@ const InvitationApply = (props: SafeAny) => {
         height: Dimensions.get('window').height,
         position: 'relative',
         overflow: 'hidden',
-      }}
-    >
+      }}>
       <LinearGradient
         colors={theme.basicColor.newBgOne}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 1, y: 0.92 }}
-        style={[theme.position.rel, { height: '100%' }]}
-      >
+        start={{x: 0.2, y: 0}}
+        end={{x: 1, y: 0.92}}
+        style={[theme.position.rel, {height: '100%'}]}>
         <Animated.View
           style={{
-            transform: [{ translateY }],
+            transform: [{translateY}],
             flex: 1,
-          }}
-        >
+          }}>
           <ScrollView
             keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
+            showsVerticalScrollIndicator={false}>
             <Image
               style={{
                 width: iApplyImageSize.width,
@@ -188,7 +188,7 @@ const InvitationApply = (props: SafeAny) => {
                 position: 'absolute',
                 top: headerHeight,
                 left: '50%',
-                transform: [{ translateX: -iApplyImageSize.width / 2 }],
+                transform: [{translateX: -iApplyImageSize.width / 2}],
                 zIndex: 2,
               }}
               source={{
@@ -214,22 +214,19 @@ const InvitationApply = (props: SafeAny) => {
                 {
                   marginTop: iApplyBgSize.height + headerHeight,
                 },
-              ]}
-            >
+              ]}>
               <LazyImageBackground
                 imageUrl={CardOuterBg}
                 occupancy="#000"
                 width={cardBgSize.width}
-                height={cardBgSize.height}
-              >
+                height={cardBgSize.height}>
                 {/*头部标题*/}
                 <View style={cardSizes.header}>
                   <Text
                     fontSize={20}
                     calc
                     color={basicColor.newFontWhite}
-                    fontFamily="fontInterBold"
-                  >
+                    fontFamily="fontInterBold">
                     {i18n.t('referral.label.title')}
                   </Text>
                 </View>
@@ -243,17 +240,18 @@ const InvitationApply = (props: SafeAny) => {
                         marginTop: cardSizes.phoneInput.marginTop,
                         borderWidth: 1,
                         borderColor: invitationApplyColor.borderColor,
-                        backgroundColor:
-                        invitationApplyColor.backgroundColor,
+                        backgroundColor: invitationApplyColor.backgroundColor,
                       },
                       padding.lrl,
                       theme.fill.fillW,
                       borderRadius.m,
                       flex.row,
                       flex.centerByCol,
-                    ]}
-                  >
-                    <PhoneIcon width={cardSizes.inputIconSize} height={cardSizes.inputIconSize} />
+                    ]}>
+                    <PhoneIcon
+                      width={cardSizes.inputIconSize}
+                      height={cardSizes.inputIconSize}
+                    />
                     <TextInput
                       placeholder="Phone number"
                       style={[
@@ -270,9 +268,9 @@ const InvitationApply = (props: SafeAny) => {
                       maxLength={10}
                       keyboardType="numeric"
                       placeholderTextColor={baseVariable.fontColor.secAccent}
-                      // onFocus={() => handleFocus(150)} // 聚焦时上移
-                      // onBlur={handleBlur}
-                      onChangeText={(v) => setUserPhone(v)}
+                      onFocus={() => handleFocus(150)} // 聚焦时上移
+                      onBlur={handleBlur}
+                      onChangeText={v => setUserPhone(v)}
                     />
                   </View>
                   {/*otp输入框*/}
@@ -283,17 +281,18 @@ const InvitationApply = (props: SafeAny) => {
                         marginTop: cardSizes.otpInput.marginTop,
                         borderWidth: 1,
                         borderColor: invitationApplyColor.borderColor,
-                        backgroundColor:
-                        invitationApplyColor.backgroundColor,
+                        backgroundColor: invitationApplyColor.backgroundColor,
                       },
                       padding.lrl,
                       theme.fill.fillW,
                       borderRadius.m,
                       flex.row,
                       flex.centerByCol,
-                    ]}
-                  >
-                    <SaveIcon width={cardSizes.inputIconSize} height={cardSizes.inputIconSize} />
+                    ]}>
+                    <SaveIcon
+                      width={cardSizes.inputIconSize}
+                      height={cardSizes.inputIconSize}
+                    />
                     <TextInput
                       placeholder="OTP"
                       underlineColorAndroid={'transparent'}
@@ -311,9 +310,9 @@ const InvitationApply = (props: SafeAny) => {
                       maxLength={6}
                       keyboardType="numeric"
                       placeholderTextColor={baseVariable.fontColor.secAccent}
-                      // onFocus={() => handleFocus(250)} // 聚焦时上移更多
-                      // onBlur={handleBlur}
-                      onChangeText={(v) => {
+                      onFocus={() => handleFocus(250)} // 聚焦时上移更多
+                      onBlur={handleBlur}
+                      onChangeText={v => {
                         if (/^[0-9]*$/.test(v)) setOTPCode(v);
                       }}
                     />
@@ -321,10 +320,9 @@ const InvitationApply = (props: SafeAny) => {
                       <Text
                         fontSize={fontSize.s}
                         accent
-                        style={{ lineHeight: fontSize.s }}
+                        style={{lineHeight: fontSize.s}}
                         textAlign="center"
-                        blod
-                      >
+                        blod>
                         {OTPTime}s
                       </Text>
                     ) : (
@@ -341,13 +339,11 @@ const InvitationApply = (props: SafeAny) => {
                               });
                             })
                             .finally(() => setOTPLoading(false));
-                        }}
-                      >
+                        }}>
                         <Text
                           color={basicColor.newFontRed}
                           fontSize={16}
-                          fontWeight="bold"
-                        >
+                          fontWeight="bold">
                           Send
                         </Text>
                       </NativeTouchableOpacity>
@@ -355,17 +351,13 @@ const InvitationApply = (props: SafeAny) => {
                   </View>
                   {/*按钮*/}
                   <View
-                    style={[
-                      cardSizes.button,
-                      { backgroundColor: '#D7281E' }
-                    ]}
-                  >
+                    style={[cardSizes.button, {backgroundColor: '#D7281E'}]}>
                     <NativeTouchableOpacity
                       style={[
                         flex.flex1,
                         theme.fill.fillW,
                         flex.center,
-                        { height: cardSizes.button.height }
+                        {height: cardSizes.button.height},
                       ]}
                       onPress={() => {
                         if (OTPLoading || !userPhone || !OTPCode) return;
@@ -374,7 +366,16 @@ const InvitationApply = (props: SafeAny) => {
                         if (Platform.OS !== 'android') {
                           deviceCode = localStorage.getItem('gps_adid') || '';
                         }
-                        userLogin(userPhone, OTPCode, deviceCode, '', '', '', '', inviteCode)
+                        userLogin(
+                          userPhone,
+                          OTPCode,
+                          deviceCode,
+                          '',
+                          '',
+                          '',
+                          '',
+                          inviteCode,
+                        )
                           .then((res: SafeAny) => {
                             globalStore.globalTotal.next({
                               type: 'success',
@@ -385,30 +386,28 @@ const InvitationApply = (props: SafeAny) => {
                             goTo(globalStore.homePage);
                           })
                           .finally(() => globalStore.globalLoading.next(false));
-                      }}
-                    >
+                      }}>
                       <Text
                         fontSize={17}
                         color={basicColor.newFontWhite}
-                        fontFamily="fontInterBold"
-                      >
+                        fontFamily="fontInterBold">
                         {i18n.t('label.logIn')}
                       </Text>
                     </NativeTouchableOpacity>
                   </View>
                   {/*tip*/}
-                  <View style={{
-                    marginTop: cardSizes.tip.marginTop,
-                    alignItems: 'center',
-                  }} >
+                  <View
+                    style={{
+                      marginTop: cardSizes.tip.marginTop,
+                      alignItems: 'center',
+                    }}>
                     <Text
                       accent
                       size="small"
                       calc
                       textAlign="center"
                       color={'#76797D'}
-                      style={{ width: cardSizes.tip.width }}
-                    >
+                      style={{width: cardSizes.tip.width}}>
                       {i18n.t('referral.tip.desc')}
                     </Text>
                   </View>
@@ -420,7 +419,7 @@ const InvitationApply = (props: SafeAny) => {
                     position: 'absolute',
                     top: 0,
                     right: 0,
-                    transform: [{ translateY: cardSizes.gift.translateY }]
+                    transform: [{translateY: cardSizes.gift.translateY}],
                   }}
                   source={require('@assets/imgs/invitation/gift.webp')}
                 />

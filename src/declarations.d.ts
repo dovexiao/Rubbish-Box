@@ -16,5 +16,8 @@ declare global {
     __ssc?: {
       license?: string;
     };
+    // TODO: 类型声明了，但是不生效
+    opera?: any;
+    MSStream?: any;
   }
 }
