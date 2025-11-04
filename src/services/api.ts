@@ -268,25 +268,57 @@ apiClient.interceptors.response.use(
       safeLog("📊 错误状态:", error.response?.status || "网络错误")
       safeLog("📋 错误信息:", error.message)
       safeLog("📄 错误响应:", formatLogData(error.response?.data))
+      safeLog("📄 错误响应类型:", typeof error.response?.data)
       safeLog("⏱️ 请求耗时:", duration + "ms")
       safeLog("🕐 错误时间:", new Date().toLocaleTimeString())
       safeLog("🔍 完整错误:", error)
       safeLog("===============================================")
     }
 
-    // 处理网络错误和其他错误
-    if (error.response?.data?.message) {
-      // 如果有具体的错误消息，显示美观的错误提示
-      showError(error.response.data.message)
-    } else if (error.message) {
-      // 显示通用错误消息
-      showError(error.message)
-    } else {
-      // 显示默认错误消息
-      showError("网络请求失败，请检查网络连接")
+    // 尝试解析错误响应
+    let errorData = error.response?.data
+    let errorMessage = ""
+
+    // 如果响应数据是字符串，尝试解析为JSON
+    if (typeof errorData === "string") {
+      try {
+        errorData = JSON.parse(errorData)
+        safeLog("✅ 成功解析错误响应为JSON:", errorData)
+      } catch (e) {
+        safeLog("⚠️ 错误响应不是有效的JSON，原始数据:", errorData)
+      }
     }
 
-    return Promise.reject(error)
+    // 提取错误消息
+    if (errorData?.message) {
+      errorMessage = errorData.message
+    } else if (errorData?.msg) {
+      errorMessage = errorData.msg
+    } else if (errorData?.error) {
+      errorMessage = errorData.error
+    } else if (typeof errorData === "string") {
+      errorMessage = errorData
+    } else if (error.message) {
+      errorMessage = error.message
+    } else {
+      errorMessage = "网络请求失败，请检查网络连接"
+    }
+
+    // 显示错误消息
+    showError(errorMessage)
+
+    // 创建一个新的 Error 对象，使用解析后的错误消息
+    const newError: any = new Error(errorMessage)
+    
+    // 保留原始错误的一些有用信息
+    newError.response = error.response
+    newError.status = error.response?.status
+    newError.data = errorData
+    newError.originalError = error
+
+    safeLog("✅ 已创建新的错误对象，消息:", errorMessage)
+
+    return Promise.reject(newError)
   },
 )
 

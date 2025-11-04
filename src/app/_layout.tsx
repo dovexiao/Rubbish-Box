@@ -26,6 +26,7 @@ import { useGlobalPostureMonitor } from "../hooks/useGlobalPostureMonitor"
 import { useUserStore } from "../stores/userStore"
 import { createStyles, getScreenInfo } from "../utils/rpxStyleSheet"
 import RouteGuard from "../services/routeGuard"
+import { post } from "../services/api"
 
 // 防止闪屏
 SplashScreen.preventAutoHideAsync()
@@ -113,7 +114,7 @@ export default function RootLayout() {
   const {
     getAndCacheDeviceUUID: _getAndCacheDeviceUUID,
     reverifyDeviceAuthorization,
-    ensureDeviceAuth,
+   ensureDeviceAuth ,
     clearDeviceUUID,
   } = useDeviceAuth()
   const {
@@ -152,6 +153,10 @@ export default function RootLayout() {
     onAppLaunch: async () => {
       console.log("App Launch - 应用启动")
 
+      // 🔴 关键：必须先获取设备序列号，因为设备授权验证需要它
+      const deviceCode = await _getAndCacheDeviceUUID()
+      console.log("📱 设备序列号:", deviceCode || '(无)')
+
       // 初始化坐姿监测（还原UniApp逻辑）
       postureStore.initPoseMonitor()
       
@@ -159,21 +164,23 @@ export default function RootLayout() {
       console.log("🚀 启动全局坐姿监控")
       await startPostureMonitoring()
 
-      // 登录页面不需要验证设备授权
-      const currentPath = "/" + segments.join("/")
-      const isLoginPage = currentPath === "/login" || currentPath === "/"
-
-      if (!isLoginPage) {
-        // 只在非登录页面进行设备授权校验
+      // 🔴 每次进应用都调用设备授权验证接口（在所有请求之前）
+      if (deviceCode) {
         try {
-          const isVerified = await ensureDeviceAuth()
-          if (!isVerified) {
-            console.log("设备未授权，阻止用户交互")
-            // 设备授权失败的处理逻辑已在useDeviceAuth中实现
-          }
+          console.log("🔐 开始设备授权验证，设备码:", deviceCode)
+          
+          // 直接调用接口，使用 api.ts 的 post 方法（会自动添加设备信息）
+          const response = await post("/AppStart/verify-device-code/", {
+            device_code: 'dffklw11p',
+          })
+          
+          console.log("📡 设备授权接口响应:", response)
+          console.log("✅ 设备授权验证接口调用成功")
         } catch (error) {
-          console.error("设备授权验证失败:", error)
+          console.error("❌ 设备授权验证接口调用失败:", error)
         }
+      } else {
+        console.warn("⚠️ 未获取到设备序列号，跳过设备授权验证")
       }
     },
 
@@ -188,9 +195,13 @@ export default function RootLayout() {
         // P1功能：系统键监听的兜底处理
         systemKeyHandleAppShow()
 
-        // 🔴 关键：每次回到前台都重新启动坐姿监控
-        console.log("📱 恢复坐姿监控")
-        await startPostureMonitoring()
+        // 检查坐姿监控状态（后台服务应该持续运行，这里只是确保状态正常）
+        if (!postureStore.isMonitoring) {
+          console.log("📱 检测到监控未运行，重新启动")
+          await startPostureMonitoring()
+        } else {
+          console.log("📱 坐姿监控正常运行中")
+        }
       })
     },
 
@@ -209,7 +220,7 @@ export default function RootLayout() {
       console.log("🛑 停止坐姿监控服务")
       await stopPostureMonitoring()
     },
-  }), [postureStore, startPostureMonitoring, stopPostureMonitoring, segments, ensureDeviceAuth, checkForUpdatesOnShow, systemKeyHandleAppShow])
+  }), [_getAndCacheDeviceUUID, postureStore, startPostureMonitoring, stopPostureMonitoring, checkForUpdatesOnShow, systemKeyHandleAppShow])
 
   // 网络状态回调 - 100%还原UniApp逻辑
   const networkCallbacks = useMemo(() => ({

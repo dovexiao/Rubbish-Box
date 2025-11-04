@@ -137,6 +137,9 @@ const openVolumeSettings = async () => {
       return
     }
     
+    // 等待 100ms，确保 token 已经设置完成
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
     // ⚠️ 重要：直接从 store 获取最新状态，而不是使用闭包捕获的值
     const currentUserStore = useUserStore.getState()
     
@@ -247,13 +250,10 @@ const openVolumeSettings = async () => {
   useEffect(() => {
     console.log("🚀 首页初始化，直接加载数据")
     // 使用 InteractionManager 等待初始化完成
-   InteractionManager.runAfterInteractions(async () => {
-  // 等待一小段时间确保 _layout.tsx 中的 initializeFromStorage 完成
-  await new Promise(resolve => setTimeout(resolve, 100))
-  
-  console.log("🚀 开始加载首页数据")
-  loadData()
-})
+    InteractionManager.runAfterInteractions(() => {
+      console.log("🚀 开始加载首页数据")
+      loadData()
+    })
 
     // 清理函数：组件卸载时清除定时器
     return () => {
@@ -267,10 +267,8 @@ const openVolumeSettings = async () => {
   useFocusEffect(
     useCallback(() => {
       console.log("🎯 首页获得焦点，准备加载数据")
-     // 使用 InteractionManager 等待初始化完成
-      InteractionManager.runAfterInteractions(async () => {
-        // 等待一小段时间确保 _layout.tsx 中的 initializeFromStorage 完成
-        await new Promise(resolve => setTimeout(resolve, 100))
+      // 使用 InteractionManager 等待初始化完成
+      InteractionManager.runAfterInteractions(() => {
         console.log("🚀 开始加载首页数据")
         loadData()
       })

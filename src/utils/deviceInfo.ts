@@ -5,15 +5,7 @@
 
 import DeviceInfo from 'react-native-device-info'
 import { Platform } from 'react-native'
-import { MMKV } from 'react-native-mmkv'
-
-// 创建存储实例
-const storage = new MMKV()
-
-/**
- * 存储键名
- */
-const DEVICE_CODE_KEY = 'device_code'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 /**
  * 设备信息接口
@@ -34,57 +26,28 @@ export interface DeviceInfoData {
 }
 
 /**
- * 生成设备唯一标识码
- * 参考UniApp的device_code实现
+ * 生成设备唯一标识码（已废弃，仅保留用于向后兼容）
+ * 现在统一使用 useDeviceAuth 中的真实设备序列号
  */
 const generateDeviceCode = async (): Promise<string> => {
-  try {
-    // 优先使用设备唯一ID
-    let deviceCode = await DeviceInfo.getUniqueId()
-    
-    // 如果获取失败，使用其他方式生成
-    if (!deviceCode) {
-      const deviceId = await DeviceInfo.getDeviceId()
-      const brand = await DeviceInfo.getBrand()
-      const model = await DeviceInfo.getModel()
-      const timestamp = Date.now().toString()
-      
-      // 组合生成唯一标识
-      deviceCode = `${Platform.OS}_${brand}_${model}_${deviceId}_${timestamp}`
-    }
-    
-    return deviceCode
-  } catch (error) {
-    console.error('生成设备码失败:', error)
-    // 兜底方案：使用时间戳和随机数
-    const timestamp = Date.now().toString()
-    const random = Math.random().toString(36).substring(2, 15)
-    return `${Platform.OS}_${timestamp}_${random}`
-  }
+  console.warn('generateDeviceCode() 已废弃，应使用 useDeviceAuth 获取真实序列号')
+  return '' // 返回空字符串
 }
 
 /**
  * 获取设备码
- * 如果本地存储中有，直接返回；否则生成新的并存储
+ * 仅使用 useDeviceAuth 中缓存的真实设备序列号，获取不到返回空字符串
  */
 export const getDeviceCode = async (): Promise<string> => {
   try {
-    // 先从本地存储获取
-    let deviceCode = storage.getString(DEVICE_CODE_KEY)
+    // 从 AsyncStorage 获取真实设备序列号（由 useDeviceAuth 设置）
+    const deviceCode = await AsyncStorage.getItem('deviceUUID')
     
-    if (!deviceCode) {
-      // 生成新的设备码
-      deviceCode = await generateDeviceCode()
-      // 存储到本地
-      storage.set(DEVICE_CODE_KEY, deviceCode)
-      console.log('生成新设备码:', deviceCode)
-    }
-    
-    return deviceCode
+    // 返回序列号或空字符串
+    return deviceCode || ''
   } catch (error) {
     console.error('获取设备码失败:', error)
-    // 返回默认设备码
-    return `${Platform.OS}_default_${Date.now()}`
+    return '' // 返回空字符串
   }
 }
 
@@ -142,7 +105,7 @@ export const getDeviceInfo = async (): Promise<DeviceInfoData> => {
     
     // 返回默认设备信息
     return {
-      deviceCode: await getDeviceCode() == 'unknown' ? 'sadajsg123' : await getDeviceCode(),
+      deviceCode: await getDeviceCode(),
       deviceId: 'unknown',
       deviceName: 'unknown',
       systemName: Platform.OS,
@@ -160,11 +123,11 @@ export const getDeviceInfo = async (): Promise<DeviceInfoData> => {
 
 /**
  * 重置设备码
- * 清除本地存储的设备码，下次获取时会重新生成
+ * 清除本地存储的设备码，下次获取时会重新请求权限并获取真实序列号
  */
-export const resetDeviceCode = (): void => {
+export const resetDeviceCode = async (): Promise<void> => {
   try {
-    storage.delete(DEVICE_CODE_KEY)
+    await AsyncStorage.removeItem('deviceUUID')
     console.log('设备码已重置')
   } catch (error) {
     console.error('重置设备码失败:', error)
@@ -179,7 +142,7 @@ export const getDeviceInfoForAPI = async () => {
   const deviceInfo = await getDeviceInfo()
   
   return {
-    device_code: deviceInfo.deviceCode,
+    device_code: deviceInfo.deviceCode || 'ujyy78',
     device_id: deviceInfo.deviceId,
     device_name: deviceInfo.deviceName,
     system_name: deviceInfo.systemName,

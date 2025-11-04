@@ -1,5 +1,8 @@
 import { Portal, Dialog, Button, Text } from "react-native-paper"
+import { Dimensions } from "react-native"
 import { createStyles } from "../utils/rpxStyleSheet"
+
+const SCREEN_WIDTH = Dimensions.get("window").width
 
 interface ConfirmDialogProps {
   visible: boolean
@@ -34,18 +37,37 @@ export function ConfirmDialog({
 
   return (
     <Portal>
-      <Dialog visible={visible} onDismiss={handleCancel} style={styles.dialog}>
+      <Dialog 
+        visible={visible} 
+        onDismiss={handleCancel} 
+        style={[
+          styles.dialog,
+          { 
+            width: SCREEN_WIDTH * 0.5, 
+            maxWidth: SCREEN_WIDTH * 0.5,
+            alignSelf: "center" as const,
+          }
+        ]}
+      >
         <Dialog.Title style={styles.title}>{title}</Dialog.Title>
-        <Dialog.Content>
+        <Dialog.Content style={styles.content}>
           <Text style={styles.message}>{message}</Text>
         </Dialog.Content>
-        <Dialog.Actions>
+        <Dialog.Actions style={styles.actions}>
           {onCancel && (
-            <Button onPress={handleCancel} textColor="#666">
+            <Button 
+              onPress={handleCancel} 
+              textColor="#666"
+              labelStyle={styles.buttonLabel}
+            >
               {cancelText}
             </Button>
           )}
-          <Button onPress={handleConfirm} textColor="#4891FF">
+          <Button 
+            onPress={handleConfirm} 
+            textColor="#4891FF"
+            labelStyle={styles.buttonLabel}
+          >
             {confirmText}
           </Button>
         </Dialog.Actions>
@@ -58,16 +80,35 @@ const styles = createStyles({
   dialog: {
     backgroundColor: "#fff",
     borderRadius: 12,
+    zIndex: 9999, // 确保在其他组件之上
+    elevation: 24, // Android 阴影层级
   },
   title: {
     fontSize: 16,
     fontWeight: "bold" as const,
     color: "#333",
+    lineHeight: 22,
+    paddingBottom: 8,
+  },
+  content: {
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    minHeight: 0,
   },
   message: {
     fontSize: 14,
     color: "#666",
-    lineHeight: 20,
+    lineHeight: 22,
+  },
+  actions: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minHeight: 0,
+  },
+  buttonLabel: {
+    fontSize: 14,
+    lineHeight: 22,
+    marginVertical: 0,
   },
 })
 

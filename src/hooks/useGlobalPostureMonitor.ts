@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import { AppState, AppStateStatus, Platform } from 'react-native';
+import { AppState, AppStateStatus, Platform, PermissionsAndroid, Alert } from 'react-native';
 import { usePostureStore } from '../stores/postureStore';
 import { AudioService } from '../services/audioService';
 import { showWarning, showInfo } from '../utils/toast';
@@ -32,6 +32,12 @@ export function useGlobalPostureMonitor() {
    * 启动监控
    */
   const startMonitoring = useCallback(async () => {
+    // 如果已经在监控中，不重复启动
+    if (postureStore.isMonitoring) {
+      console.log('⚠️ 坐姿监控已在运行中，跳过重复启动');
+      return;
+    }
+    
     console.log('🚀 启动全局坐姿监控...');
 
     try {
@@ -42,6 +48,35 @@ export function useGlobalPostureMonitor() {
 
       // 启动后台相机服务 (仅 Android)
       if (Platform.OS === 'android') {
+        // 🔐 Android 15+ (API 35+) 需要先请求相机权限才能启动前台服务
+        try {
+          const cameraPermission = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: '需要相机权限',
+              message: '坐姿监控需要使用相机来检测您的姿势',
+              buttonNeutral: '稍后询问',
+              buttonNegative: '取消',
+              buttonPositive: '允许',
+            }
+          );
+
+          if (cameraPermission !== PermissionsAndroid.RESULTS.GRANTED) {
+            console.warn('❌ 相机权限被拒绝，无法启动坐姿监控');
+            Alert.alert(
+              '权限被拒绝',
+              '需要相机权限才能启动坐姿监控服务。请在设置中授予相机权限。',
+              [{ text: '确定' }]
+            );
+            return;
+          }
+
+          console.log('✅ 相机权限已授予');
+        } catch (error) {
+          console.error('❌ 请求相机权限失败:', error);
+          return;
+        }
+
         const serviceStarted = await startPostureMonitorService();
         if (serviceStarted) {
           console.log('✅ 后台相机服务已启动（Native层统计时间，每10秒检测一次）');
@@ -212,7 +247,7 @@ export function useGlobalPostureMonitor() {
     
     if (success) {
       // 使用 toast 显示奖励提示（1.5秒）
-      showInfo(`🎉 太棒了！累计学习10分钟，获得 ${points} 积分`, 1500);
+      showInfo(`🎉 太棒了！累计学习10分钟，获得 ${points} 积分`, 2000);
     }
   };
 
@@ -231,7 +266,7 @@ export function useGlobalPostureMonitor() {
     }
     
     // 显示休息提醒弹窗
-    showInfo('⏰ 您已持续学习45分钟，建议休息一下，保护视力！', 3000);
+    showInfo('⏰ 您已持续学习45分钟，建议休息一下，保护视力！', 2000);
   };
 
   /**
@@ -292,10 +327,15 @@ export function useGlobalPostureMonitor() {
 
   /**
    * 组件卸载时清理
+   * 注意：由于这个Hook在 _layout.tsx 根组件中使用，
+   * 只有在应用真正退出时才应该停止监控
+   * 路由变化不应该触发停止
    */
   useEffect(() => {
     return () => {
-      stopMonitoringRef.current?.();
+      // 不自动停止，让 onAppExit 显式控制停止时机
+      console.log('⚠️ useGlobalPostureMonitor 清理函数被调用（但不停止监控）');
+      // stopMonitoringRef.current?.();
     };
   }, []); // 空依赖数组，只在卸载时执行一次
 

@@ -44,8 +44,8 @@ export interface ExchangeRecordsResponse {
  * 兑换记录请求参数
  */
 export interface ExchangeRecordsParams {
-  page: number
-  per_page: number
+  page: string
+  per_page: string
 }
 
 /**

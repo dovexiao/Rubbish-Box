@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient"
 import { InteractionManager } from "react-native"
 
 import { StatusBar } from "../../components/StatusBar"
-import { ProductDetailPopup, OrderConfirmPopup } from "../../components/points-mall"
+import { ProductDetailPopup, OrderConfirmPopup, CurrencyGuidePopup } from "../../components/points-mall"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError } from "../../utils/toast"
 import { useUserStore } from "../../stores/userStore"
@@ -31,6 +31,7 @@ export default function PointsMallScreen() {
   const [showOrderConfirm, setShowOrderConfirm] = useState(false)
   const [currentProduct, setCurrentProduct] = useState<ProductDetailResponse | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [showCurrencyGuide, setShowCurrencyGuide] = useState(false)
   const pageSize = 18
 
   const categories = ["热点推荐", "积分可兑", "学习文具", "亲子娱乐"]
@@ -116,6 +117,21 @@ export default function PointsMallScreen() {
   const goToPointsDetail = useCallback(() => {
     router.push("/points-mall/points-detail")
   }, [router])
+
+  // 跳转到兑换记录
+  const goToExchangeRecord = useCallback(() => {
+    router.push("/points-mall/exchange-record")
+  }, [router])
+
+  // 显示货币指南
+  const handleShowCurrencyGuide = useCallback(() => {
+    setShowCurrencyGuide(true)
+  }, [])
+
+  // 关闭货币指南
+  const handleCloseCurrencyGuide = useCallback(() => {
+    setShowCurrencyGuide(false)
+  }, [])
 
   // 显示商品详情
   const handleShowProductDetail = useCallback((id: number) => {
@@ -214,6 +230,11 @@ export default function PointsMallScreen() {
               <Text style={styles.currencyAmount}>{pointsBalance || 0}</Text>
               <Text style={styles.currencyLabel}>货币</Text>
               <Ionicons name="chevron-forward" size={rpx(12)} color="rgba(255, 144, 0, 1)" style={styles.arrowIcon} />
+            </TouchableOpacity>
+
+            {/* 兑换记录按钮 */}
+            <TouchableOpacity style={styles.exchangeRecordBtn} onPress={goToExchangeRecord}>
+              <Text style={styles.exchangeRecordText}>兑换记录</Text>
             </TouchableOpacity>
           </View>
         </LinearGradient>
@@ -315,6 +336,28 @@ export default function PointsMallScreen() {
         onClose={handleCloseOrderConfirm}
         onConfirm={handleOrderConfirmSuccess}
       />
+
+      {/* 货币指南弹窗 */}
+      <CurrencyGuidePopup
+        visible={showCurrencyGuide}
+        onClose={handleCloseCurrencyGuide}
+      />
+
+      {/* 货币指南浮动按钮 */}
+      <TouchableOpacity
+        style={styles.currencyGuideButton}
+        onPress={handleShowCurrencyGuide}
+        activeOpacity={0.8}
+      >
+        <View style={styles.currencyGuideIconWrapper}>
+          <Image
+  source={require("../../../assets/images/currency-guide-icon.png")}
+  style={styles.currencyGuideIcon}
+  resizeMode="contain"
+/>
+        </View>
+  
+      </TouchableOpacity>
     </LinearGradient>
   )
 }
@@ -332,7 +375,11 @@ const styles = createStyles({
   topCurrencySection: {
     paddingTop: 45.3125,
     paddingLeft: 31.25,
+    paddingRight: 31.25,
     paddingBottom: 13.671875,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   currencyCard: {
     flexDirection: "row",
@@ -363,6 +410,17 @@ const styles = createStyles({
   },
   arrowIcon: {
     marginLeft: 4,
+  },
+  exchangeRecordBtn: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 8,
+  },
+  exchangeRecordText: {
+    fontSize: 8.6,
+    color: "#FF9000",
+    fontWeight: "500",
   },
   categorySection: {
     flexDirection: "row",
@@ -467,5 +525,30 @@ const styles = createStyles({
   noMoreText: {
     fontSize: 8.6,
     color: "#999",
+  },
+  currencyGuideButton: {
+    position: "absolute" as const,
+    top: 105,
+    right: 20,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "rgba(255, 250, 236, 0.95)",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    shadow: "0px 2px 8px 0px rgba(255, 193, 91, 0.3)",
+    elevation: 5,
+  },
+  currencyGuideIconWrapper: {
+    width: 32,
+    height: 32,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    marginBottom: 2,
+  },
+  currencyGuideText: {
+    fontSize: 7,
+    color: "#FF9000",
+    fontWeight: "500" as const,
   },
 })

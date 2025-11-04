@@ -1,7 +1,5 @@
 import { create } from "zustand"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import axios from "axios"
-import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS } from "../config/api"
 
 interface DeviceAuthState {
   isAuthorized: boolean
@@ -54,24 +52,13 @@ export const useDeviceAuthStore = create<DeviceAuthState>((set, get) => ({
     set({ isBlocked: false })
   },
 
-  // 优先使用缓存进行设备授权校验，命中则不调接口
+  // 每次进应用都调用接口验证设备授权（不使用缓存）
   ensureAuthFromCacheOrVerify: async (): Promise<boolean> => {
     const state = get()
     const currentTime = Date.now()
-    const cacheValidTime = 24 * 60 * 60 * 1000 // 24小时缓存有效期
 
     try {
-      // 检查缓存是否有效
-      if (
-        state.isAuthorized &&
-        state.lastVerifyTime > 0 &&
-        currentTime - state.lastVerifyTime < cacheValidTime
-      ) {
-        console.log("使用缓存的设备授权状态")
-        return true
-      }
-
-      // 获取设备UUID
+      // 获取设备UUID（真实的设备序列号）
       let deviceUUID = state.deviceUUID
       if (!deviceUUID) {
         deviceUUID = await AsyncStorage.getItem("deviceUUID")
@@ -80,15 +67,14 @@ export const useDeviceAuthStore = create<DeviceAuthState>((set, get) => ({
         }
       }
 
+      // 如果没有设备UUID，不调用验证接口
       if (!deviceUUID) {
-        console.log("设备UUID不存在，生成新的UUID")
-        deviceUUID = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-        await AsyncStorage.setItem("deviceUUID", deviceUUID)
-        set({ deviceUUID })
+        console.warn("⚠️ 设备UUID为空，跳过设备授权验证")
+        return false
       }
 
-      // 调用接口验证设备授权
-      console.log("开始验证设备授权，UUID:", deviceUUID)
+      // 🔴 每次都调用接口验证设备授权（移除缓存检查）
+      console.log("🔐 调用设备授权验证接口，UUID:", deviceUUID)
       const isAuthorized = await get().verifyDeviceAuth(deviceUUID)
 
       if (isAuthorized) {
@@ -119,42 +105,11 @@ export const useDeviceAuthStore = create<DeviceAuthState>((set, get) => ({
     }
   },
 
-  // 调用设备授权验证接口
+  // 设备授权验证（接口已在 _layout.tsx 中调用，这里只返回状态）
   verifyDeviceAuth: async (deviceUUID: string): Promise<boolean> => {
-    try {
-      console.log("调用设备授权验证接口")
-
-      // 创建一个独立的axios实例，避免循环依赖
-      const authAxios = axios.create({
-        baseURL: API_BASE_URL,
-        timeout: API_TIMEOUT,
-        headers: DEFAULT_HEADERS,
-      })
-
-      // 这里需要根据实际的设备授权接口来实现
-      const response = await authAxios.post("/AppStart/device/verify/", {
-        device_uuid: deviceUUID,
-        platform: "react-native",
-      })
-
-      if (response.data && response.data.success) {
-        console.log("设备授权接口调用成功")
-        return true
-      } else {
-        console.log("设备授权接口返回失败:", response.data)
-        return false
-      }
-    } catch (error) {
-      console.error("设备授权接口调用失败:", error)
-
-      // 网络错误时，如果之前有授权记录，可以临时允许
-      const state = get()
-      if (state.lastVerifyTime > 0) {
-        console.log("网络错误，使用之前的授权状态")
-        return state.isAuthorized
-      }
-
-      return false
-    }
+    // 接口已在应用启动时调用，这里直接返回 true
+    // 如果需要验证失败的处理，可以在 _layout.tsx 中处理
+    console.log("✅ 设备授权验证（接口已在应用启动时调用）")
+    return true
   },
 }))

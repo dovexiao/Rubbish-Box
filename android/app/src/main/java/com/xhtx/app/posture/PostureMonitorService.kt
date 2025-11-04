@@ -7,10 +7,12 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.modules.core.DeviceEventManagerModule
@@ -124,9 +126,39 @@ class PostureMonitorService : Service() {
         loadStatistics()
         
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, createNotification())
         
-        isRunning = true
+        // 🔐 Android 15+ (API 35+) 需要检查 FOREGROUND_SERVICE_CAMERA 权限
+        if (Build.VERSION.SDK_INT >= 35) {
+            val hasPermission = ContextCompat.checkSelfPermission(
+                this,
+                "android.permission.FOREGROUND_SERVICE_CAMERA"
+            ) == PackageManager.PERMISSION_GRANTED
+            
+            if (!hasPermission) {
+                Log.e(TAG, "❌ 缺少 FOREGROUND_SERVICE_CAMERA 权限，无法启动前台服务")
+                // 尝试检查 CAMERA 权限作为备选
+                val hasCameraPermission = ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+                
+                if (!hasCameraPermission) {
+                    Log.e(TAG, "❌ 也缺少 CAMERA 权限，停止服务")
+                    stopSelf()
+                    return
+                }
+            }
+        }
+        
+        // 尝试启动前台服务，如果失败则捕获异常
+        try {
+            startForeground(NOTIFICATION_ID, createNotification())
+            isRunning = true
+        } catch (e: SecurityException) {
+            Log.e(TAG, "❌ 启动前台服务失败（权限不足）: ${e.message}", e)
+            // 权限不足时停止服务
+            stopSelf()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

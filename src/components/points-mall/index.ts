@@ -8,4 +8,5 @@ export { OrderConfirmPopup } from "./OrderConfirmPopup"
 export { AddressListPopup } from "./AddressListPopup"
 export { AddAddressPopup } from "./AddAddressPopup"
 export { EditAddressPopup } from "./EditAddressPopup"
+export { CurrencyGuidePopup } from "./CurrencyGuidePopup"
 
