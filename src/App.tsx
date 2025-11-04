@@ -23,6 +23,7 @@ import {
   getUrlParams,
   navigationRef,
   envConfig,
+  ensureDeviceIds,
   // fetchPushy,
 } from '@utils';
 import globalStore from './services/global.state';
@@ -287,6 +288,9 @@ function App(): JSX.Element {
          */
         console.log('pushClicked', notificationPayload);
       });
+
+      // 同步最新的 Android Id 与 Google Advetising Id
+      ensureDeviceIds();
     } else if (globalStore.isWeb) {
       globalStore.asyncGetItem('channel').then(channel => {
         globalStore.channel = channel || getUrlParams().channel;
@@ -579,7 +583,7 @@ function App(): JSX.Element {
       </SafeAreaView>
       <DialogLoading isVisible={globalLoading} />
       {renderToast}
-      {versionModal.versionModal.renderModal}
+      {/* {versionModal.versionModal.renderModal} */}
       {popVisible && ['Home', 'Index'].includes(currentRouteName) && (
         <Overlay
           isVisible={popVisible}

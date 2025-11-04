@@ -2,9 +2,8 @@ import globalStore from '@/services/global.state';
 import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {http} from '@utils';
-import DeviceInfo from 'react-native-device-info';
-import ReactNativeIdfaAaid from '@sparkfabrik/react-native-idfa-aaid';
 import {Platform} from 'react-native';
+import {getCachedAdId, getCachedAndroidId} from '@/utils/deviceInfo';
 
 export const sendCode = (userPhone: string) => {
   return http.post('app/sendCode', {userPhone});
@@ -20,13 +19,7 @@ const getUuid = async (manufacturer: string) => {
     return getStorage;
   }
 };
-/**
- * 获取广告ID信息
- */
-export const getAdId = async () => {
-  const {id} = await ReactNativeIdfaAaid.getAdvertisingInfo();
-  return id ?? '';
-};
+
 export const userLogin = async (
   userPhone: string,
   code: string,
@@ -44,8 +37,8 @@ export const userLogin = async (
   let gaid: string = '';
 
   if (Platform.OS === 'android') {
-    androidId = await DeviceInfo.getAndroidId();
-    gaid = await getAdId();
+    androidId = await getCachedAndroidId();
+    gaid = await getCachedAdId();
   }
 
   const data = {
@@ -60,6 +53,7 @@ export const userLogin = async (
     androidId,
     gaid,
   };
+
   if (!isLogin && globalStore.isWeb && !userInviteCode) {
     data.userInviteCode = localStorage.getItem('invitationCode') || undefined;
   }

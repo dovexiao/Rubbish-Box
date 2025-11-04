@@ -22,7 +22,7 @@ import {LazyImageLGBackground} from '@basicComponents/image';
 import Clipboard from '@react-native-clipboard/clipboard';
 import DeviceInfo from 'react-native-device-info';
 
-import { trackRegister } from '@utils/AdjustEventTracker';
+import {trackRegister} from '@utils/AdjustEventTracker';
 import AdjustService from '@/utils/AdjustService';
 // import LazyImage from '@/components/basic/image';
 // const icon = require('../../assets/icons/login/login-botttom.webp');
@@ -115,7 +115,11 @@ const SingUp = (props: NavigatorScreenProps) => {
               padding: theme.paddingSize.l * 2,
             },
           ]}>
-          <Text fontSize={20} blod color={theme.basicColor.newFontYellow} style={[{marginBottom: 10}]}>
+          <Text
+            fontSize={20}
+            blod
+            color={theme.basicColor.newFontYellow}
+            style={[{marginBottom: 10}]}>
             {i18n.t('login.label.sign')}
           </Text>
           <PhoneInput
@@ -218,7 +222,6 @@ const SingUp = (props: NavigatorScreenProps) => {
                   .then(res => {
                     if (res.isNewUser === true) {
                       AdjustService.track('register');
-                      console.log('上报成功');
                     }
                     if (globalStore.channel === 'hipfc01') {
                       const url =
@@ -261,7 +264,7 @@ const SingUp = (props: NavigatorScreenProps) => {
           <AccountTip
             tip="login.tip.has-account"
             linkTip="login.tip.sign-in"
-            onPressLink={() => goTo('Login', { from: 'register' })}
+            onPressLink={() => goTo('Login', {from: 'register'})}
           />
         </View>
         {/* {globalStore.packageId === 2 && (
