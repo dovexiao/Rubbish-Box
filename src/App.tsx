@@ -462,7 +462,7 @@ function App(): JSX.Element {
       const vh = viewport.height;
       setBodyHeight(height + window.innerHeight - vh);
     };
-    updateHeight();
+
     viewport.addEventListener('resize', updateHeight);
     viewport.addEventListener('scroll', updateHeight);
     return () => {
@@ -542,6 +542,7 @@ function App(): JSX.Element {
           globalStore.isWeb &&
             ({
               height: `${bodyHeight}px`,
+              // height: `${height}px`,
               width: '100vw',
               maxWidth: '500px',
               marginHorizontal: 'auto',
