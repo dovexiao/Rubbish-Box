@@ -49,6 +49,11 @@
   ],
   "exclude": [
     "node_modules",
-    "test/**/*"
+    "test/**/*",
+    "**/*.js",
+    "**/app-service.js",
+    "dist/**/*",
+    "build/**/*",
+    ".expo/**/*"
   ]
 }

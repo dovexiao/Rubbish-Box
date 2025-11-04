@@ -105,13 +105,16 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
         activeOpacity={0.7}
       >
         <View style={styles.selectorGradient}>
-          <Text style={[styles.selectorText, !selectedOption && styles.placeholderText]}>
+          <Text 
+            style={[styles.selectorText, !selectedOption && styles.placeholderText]}
+            numberOfLines={1}
+          >
             {selectedOption ? selectedOption.label : placeholder}
           </Text>
           <View style={styles.arrowContainer}>
             <Ionicons
               name={isOpen ? "chevron-down" : "chevron-forward"}
-              size={rpx(10.625)}
+              size={rpx(7.625)}
               color="#8C8D92"
             />
           </View>
@@ -175,17 +178,14 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
 
 const styles = StyleSheet.create({
   selector: {
-    borderRadius: 24, // 24rpx
-    overflow: "hidden",
-    alignSelf: "flex-start",
-    minWidth: 120, // 120rpx
-    maxWidth: 200, // 200rpx
+    alignSelf: "flex-start", // 允许容器自适应内容宽度
   },
   selectorGradient: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12, // 12rpx
     paddingVertical: 6, // 6rpx
+    paddingRight: 12, // 确保右侧有足够padding
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 24, // 24rpx
   },
@@ -199,9 +199,11 @@ const styles = StyleSheet.create({
     color: "#999999",
   },
   arrowContainer: {
-    width: 15.625, // 15.625rpx
+    width: 20, // 再增加宽度
+    height: 20, // 设置高度
     alignItems: "center",
     justifyContent: "center",
+    flexShrink: 0, // 防止箭头容器被压缩
   },
   disabled: {
     opacity: 0.6,

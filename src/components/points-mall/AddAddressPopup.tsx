@@ -170,7 +170,7 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
         handleClose()
       }, 1000)
     } catch (_error) {
-      showSnackbar("保存失败，请重试", "error")
+      // showSnackbar("保存失败，请重试", "error")
     }
   }
 

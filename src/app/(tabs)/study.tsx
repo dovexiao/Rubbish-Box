@@ -5,7 +5,7 @@ import { InteractionManager } from "react-native"
 
 import { StatusBar } from "../../components/StatusBar"
 import { Images } from "../../constants/Assets"
-import { createStyles } from "../../utils/rpxStyleSheet"
+import { createStyles, getScreenInfo, rpx } from "../../utils/rpxStyleSheet"
 import { useRouter } from "expo-router"
 import { showInfo } from "../../utils/toast"
 
@@ -26,6 +26,44 @@ export default function StudyScreen() {
       timeoutId = setTimeout(() => func(...args), delay)
     }
   }
+
+  // 调试：输出屏幕信息（只在开发环境显示）
+  useEffect(() => {
+    if (__DEV__) {
+      const screenInfo = getScreenInfo()
+      const cardAiWidth = rpx(359)
+      const cardReaderWidth = rpx(310.9375)
+      const marginHorizontal = rpx(31.25)
+      const marginBetween = rpx(18.75)
+      const totalWidth = cardAiWidth + cardReaderWidth + marginHorizontal * 2 + marginBetween
+      const availableWidth = screenInfo.width - marginHorizontal * 2
+      const widthDiff = availableWidth - totalWidth
+      
+      const debugInfo = [
+        `逻辑像素: ${screenInfo.width}×${screenInfo.height}`,
+        `物理像素: ${screenInfo.physicalWidth}×${screenInfo.physicalHeight}`,
+        `scale: ${screenInfo.scale}`,
+        `设备: ${screenInfo.deviceName}`,
+        `rpx缩放比: ${screenInfo.scaleRatio}`,
+        `左卡片: ${cardAiWidth.toFixed(2)}dp`,
+        `右卡片: ${cardReaderWidth.toFixed(2)}dp`,
+        `边距: ${(marginHorizontal * 2).toFixed(2)}dp`,
+        `间距: ${marginBetween.toFixed(2)}dp`,
+        `总需求: ${totalWidth.toFixed(2)}dp`,
+        `可用宽度: ${availableWidth.toFixed(2)}dp`,
+        `差值: ${widthDiff.toFixed(2)}dp`,
+      ].join('\n')
+      
+      console.log("=== 布局调试信息 ===")
+      console.log(debugInfo)
+      console.log("==================")
+      
+      // 延迟显示，避免干扰初始渲染
+      setTimeout(() => {
+        Alert.alert("布局调试信息", debugInfo)
+      }, 1000)
+    }
+  }, [])
 
   // 模拟内容加载
   useEffect(() => {
@@ -261,7 +299,7 @@ const styles = createStyles({
 
   // 左列
   leftColumn: {
-    flex: 1,
+    // flex: 1,
   },
 
   // 右列

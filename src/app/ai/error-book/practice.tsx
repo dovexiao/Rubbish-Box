@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Text, TouchableOpacity, Image } from "react-native"
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native"
 import { useRouter, useLocalSearchParams } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
@@ -18,6 +18,8 @@ interface PracticeQuestion {
   options: string[]
   correct_answer: number
   explanation?: string
+  student_answer?: number | string // 学生选择的答案
+  question_index?: number // 题号
 }
 
 /**
@@ -181,8 +183,15 @@ export default function AIPracticeScreen() {
       return answer === questions[index]?.correct_answer ? "correct" : "wrong"
     })
 
+    // 合并学生答案到题目数据中
+    const questionsWithAnswers = questions.map((question, index) => ({
+      ...question,
+      student_answer: selectedAnswers[index] !== undefined ? selectedAnswers[index] : "",
+      question_index: index + 1, // 添加题号
+    }))
+
     // 保存到AsyncStorage供详情页使用
-    await AsyncStorage.setItem("practiveList", JSON.stringify(questions))
+    await AsyncStorage.setItem("practiveList", JSON.stringify(questionsWithAnswers))
 
     // 直接跳转到结果页面
     router.replace({
@@ -301,7 +310,11 @@ export default function AIPracticeScreen() {
                 </View>
 
                 {/* 选择题选项 */}
-                <View style={styles.optionsContainer}>
+                <ScrollView 
+                  style={styles.optionsScrollContainer}
+                  contentContainerStyle={styles.optionsContainer}
+                  showsVerticalScrollIndicator={true}
+                >
                   {currentQuestion.options &&
                     currentQuestion.options.map((option, index) => {
                       const isSelected = selectedAnswers[currentQuestionIndex] === index
@@ -331,7 +344,7 @@ export default function AIPracticeScreen() {
                         </TouchableOpacity>
                       )
                     })}
-                </View>
+                </ScrollView>
               </>
             )}
           </View>
@@ -518,7 +531,11 @@ const styles = createStyles({
     color: "#000",
     lineHeight: 21.27,
   },
-  // 选项
+  // 选项滚动容器
+  optionsScrollContainer: {
+    maxHeight: rpx(400), // 设置最大高度，超出后可滚动
+  },
+  // 选项容器
   optionsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -529,6 +546,8 @@ const styles = createStyles({
     marginBottom: 15.6,
     borderRadius: 8,
     minWidth: "40%",
+    flexBasis: "40%",
+    flexGrow: 1,
     marginLeft: 12,
     shadowColor: "#85afff",
     shadowOffset: { width: 0, height: 0 },
@@ -562,6 +581,7 @@ const styles = createStyles({
     fontSize: 8.6,
     color: "#333",
     lineHeight: 15.48,
+    flexShrink: 1,
   },
   // 底部导航
   bottomNavigation: {

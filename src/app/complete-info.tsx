@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { useRouter } from "expo-router"
+import { useRouter, useLocalSearchParams } from "expo-router"
 import { StatusBar } from "../components/StatusBar"
 import { NavBar } from "../components/NavBar"
 import CascadeSelector from "../components/CascadeSelector"
@@ -45,7 +45,9 @@ interface UserInfo {
  */
 export default function CompleteInfoScreen() {
   const router = useRouter()
+  const params = useLocalSearchParams()
   const userStore = useUserStore()
+  const isEditMode = params.type === 'edit' // 是否为编辑模式
   
   const [userInfo, setUserInfo] = useState<UserInfo>({
     username: "",
@@ -67,6 +69,7 @@ export default function CompleteInfoScreen() {
   const [gradeOptions, setGradeOptions] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [isDataLoaded, setIsDataLoaded] = useState(false) // 防止重复加载
 
   // 性别选项
   const genderOptions = [
@@ -118,8 +121,8 @@ export default function CompleteInfoScreen() {
     { value: "3", label: "初三", text: "初三" },
   ]
 
-  // 初始化地区数据
-  const initRegionData = useCallback(async () => {
+  // 初始化地区数据 - 移除 useCallback 避免依赖问题
+  const initRegionData = async () => {
     try {
       const response = await api.post("/AppStart/AddressView/get_provinces/")
       console.log('API返回的省份数据:', response)
@@ -134,10 +137,10 @@ export default function CompleteInfoScreen() {
       console.error("获取省份数据失败:", error)
       showError("获取省份数据失败")
     }
-  }, [])
+  }
 
-  // 初始化年级数据
-  const initGradeData = useCallback(() => {
+  // 初始化年级数据 - 移除 useCallback 避免依赖问题
+  const initGradeData = () => {
     const gradeData = [
       {
         value: "5.4",
@@ -173,7 +176,7 @@ export default function CompleteInfoScreen() {
       },
     ]
     setGradeOptions(gradeData)
-  }, [])
+  }
 
   // 懒加载地区子级数据
   const loadRegionChildren = useCallback(async (parentValue: string, level: number) => {
@@ -226,7 +229,118 @@ export default function CompleteInfoScreen() {
     setSelectedGradeValues(values)
   }, [])
 
-  // 完善信息
+  // 加载编辑模式的用户数据
+  const loadUserDataForEdit = async () => {
+    try {
+      const currentUserInfo = await userStore.getUserInfo()
+      console.log('编辑模式：加载用户信息', currentUserInfo)
+      
+      // 设置基本信息
+      // 性别处理：布尔值或数字转为字符串 (false/0 -> "0", true/1 -> "1")
+      const genderValue = currentUserInfo.gender !== undefined && currentUserInfo.gender !== null
+        ? (currentUserInfo.gender ? "1" : "0")
+        : ""
+      
+      setUserInfo({
+        username: currentUserInfo.username || "",
+        region: "",
+        gender: genderValue,
+        school: currentUserInfo.school || "",
+        grade: currentUserInfo.grade || "",
+        height: currentUserInfo.height?.toString() || "",
+        educational_system: currentUserInfo.educational_system || "",
+        grade_stage: currentUserInfo.grade_stage || "",
+        province: currentUserInfo.province || "",
+        city: currentUserInfo.city || "",
+        district: currentUserInfo.district || "",
+      })
+      
+      console.log('性别回显值:', { 
+        原始值: currentUserInfo.gender, 
+        转换后: genderValue 
+      })
+
+      // 设置年级回显
+      const systemValue = currentUserInfo.educational_system === "六三" ? "6.3" : "5.4"
+      const stageValue = currentUserInfo.grade_stage === "小学" ? "primary" : "middle"
+      
+      // 年级映射
+      const gradeMapping: { [key: string]: string } = {
+        "一年级": "1",
+        "二年级": "2",
+        "三年级": "3",
+        "四年级": "4",
+        "五年级": "5",
+        "六年级": "6",
+        "初一": "1",
+        "初二": "2",
+        "初三": "3",
+        "初四": "4",
+      }
+      const gradeValue = (currentUserInfo.grade && gradeMapping[currentUserInfo.grade]) || "1"
+      
+      setSelectedGradeValues([systemValue, stageValue, gradeValue])
+      console.log('年级回显:', [systemValue, stageValue, gradeValue])
+
+      // 设置地区回显
+      if (currentUserInfo.province && currentUserInfo.city && currentUserInfo.district) {
+        setSelectedRegionValues([
+          currentUserInfo.province,
+          currentUserInfo.city,
+          currentUserInfo.district,
+        ])
+        console.log('地区回显:', [
+          currentUserInfo.province,
+          currentUserInfo.city,
+          currentUserInfo.district,
+        ])
+
+        // 预加载城市和区县数据
+        await loadRegionDataForEdit(
+          currentUserInfo.province,
+          currentUserInfo.city,
+          currentUserInfo.district
+        )
+      }
+    } catch (error) {
+      console.error('加载用户信息失败:', error)
+      showError('加载用户信息失败')
+    }
+  }
+
+  // 预加载地区数据用于编辑模式回显
+  const loadRegionDataForEdit = async (
+    provinceCode: string,
+    cityCode: string,
+    districtCode: string
+  ) => {
+    try {
+      // 加载城市数据
+      const cityRes: any = await api.post("/AppStart/AddressView/get_cities/", {
+        province_code: provinceCode,
+      })
+      const cities = (cityRes || []).map((item: any) => ({
+        value: item.value,
+        label: item.text,
+        children: [],
+      }))
+
+      // 加载区县数据
+      const districtRes: any = await api.post("/AppStart/AddressView/get_counties/", {
+        city_code: cityCode,
+      })
+      const districts = (districtRes || []).map((item: any) => ({
+        value: item.value,
+        label: item.text,
+      }))
+
+      console.log('预加载地区数据完成:', { cities: cities.length, districts: districts.length })
+    } catch (error) {
+      console.error('预加载地区数据失败:', error)
+    }
+  }
+
+  // 完善/更新信息
   const completeInfo = async () => {
     // 验证必填字段
     if (!userInfo.username || !userInfo.school || !userInfo.height || !userInfo.gender) {
@@ -268,7 +382,7 @@ export default function CompleteInfoScreen() {
       }
 
       // 提交数据 - 与UniApp完全一致
-      const res = await api.post("/AppStart/users/user_from/", {
+      await api.post("/AppStart/users/user_from/", {
         username: userInfo.username,
         grade: gradeLabel,
         GradeStage: stageLabel,
@@ -281,27 +395,55 @@ export default function CompleteInfoScreen() {
         height: userInfo.height,
       })
 
-      showSuccess("信息完善成功")
+      // 刷新用户信息
+      await userStore.getUserInfo()
+
+      showSuccess(isEditMode ? "信息更新成功" : "信息完善成功")
       setTimeout(() => {
-        router.replace("/(tabs)")
+        if (isEditMode) {
+          router.back()
+        } else {
+          router.replace("/(tabs)")
+        }
       }, 1000)
     } catch (error: any) {
       console.error("完善信息失败:", error)
-      showError(error.message || "完善信息失败")
+      showError(error.message || "操作失败")
     } finally {
       setLoading(false)
     }
   }
 
-  // 初始化
+  // 初始化 - 避免无限依赖循环
   useEffect(() => {
+    // 使用 isDataLoaded 标记防止重复加载
+    if (isDataLoaded) return
+
     const init = async () => {
-      await initRegionData()
-      initGradeData()
-      setIsInitialized(true)
+      try {
+        console.log('开始初始化，编辑模式:', isEditMode)
+        
+        // 1. 加载基础数据（省份、年级选项）
+        await initRegionData()
+        initGradeData()
+        
+        // 2. 如果是编辑模式，加载用户数据并回显
+        if (isEditMode) {
+          await loadUserDataForEdit()
+        }
+        
+        setIsDataLoaded(true) // 标记数据已加载
+        setIsInitialized(true)
+        console.log('初始化完成')
+      } catch (error) {
+        console.error('初始化失败:', error)
+        showError('初始化失败，请重试')
+      }
     }
+    
     init()
-  }, [initRegionData, initGradeData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // 空依赖数组，只在组件挂载时执行一次
 
   if (!isInitialized) {
     return (
@@ -330,7 +472,7 @@ export default function CompleteInfoScreen() {
       style={styles.container}
     >
       <StatusBar theme="dark" />
-      <NavBar title="完善信息" leftArrow />
+      <NavBar title={isEditMode ? "编辑信息" : "完善信息"} leftArrow />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.formWrapper}>
@@ -448,7 +590,7 @@ export default function CompleteInfoScreen() {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.startButtonText}>开始学习</Text>
+            <Text style={styles.startButtonText}>{isEditMode ? "保存" : "开始学习"}</Text>
           )}
         </TouchableOpacity>
       </ScrollView>

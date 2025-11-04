@@ -79,6 +79,11 @@ export default function VideoPlayerScreen() {
   // 进度条宽度
   const [progressBarWidth, setProgressBarWidth] = useState(0)
 
+  // 自动播放标记 - 防止重复触发
+  const hasAutoPlayedRef = useRef(false)
+  // 是否已设置初始位置
+  const hasSetInitialPositionRef = useRef(false)
+
   // 音量和亮度控制
   const [volume, setVolume] = useState(1.0) // 0.0 - 1.0
   const [brightness, setBrightness] = useState(1.0) // 0.0 - 1.0
@@ -158,33 +163,46 @@ export default function VideoPlayerScreen() {
   // 加载视频信息和生成练习题
   useEffect(() => {
     if (pointId && !videoUrl) {
+      console.log("🎬 开始加载视频信息和生成练习题...")
       fetchVideoInfo()
       getGeneratePracticeQuestions()
     }
-  }, [pointId, videoUrl, fetchVideoInfo, getGeneratePracticeQuestions])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pointId])
 
   // 视频加载完成后自动播放
   useEffect(() => {
-    if (videoUrl && !loading && videoRef.current && totalDuration > 0) {
-      console.log("视频准备完成，自动播放")
+    // 只有在视频URL存在、未加载中、且还没有尝试过自动播放时才执行
+    if (videoUrl && !loading && videoRef.current && !hasAutoPlayedRef.current) {
+      console.log("视频准备完成，开始自动播放流程")
+      hasAutoPlayedRef.current = true // 标记已尝试自动播放
+      
       // 延迟一下确保video组件已渲染
-      const timer = setTimeout(() => {
-        videoRef.current
-          ?.playAsync()
-          .then(() => {
-            setIsPlaying(true)
-            // 如果有上次播放位置，跳转过去
-            if (lastSavedTime > 0 && lastSavedTime < totalDuration) {
-              videoRef.current?.setPositionAsync(lastSavedTime * 1000)
-            }
-          })
-          .catch((err) => {
-            console.log("自动播放失败:", err)
-          })
+      const timer = setTimeout(async () => {
+        try {
+          // 关键：先设置播放位置，再播放
+          if (lastSavedTime > 0) {
+            console.log(`⏩ 设置播放位置到历史记录: ${lastSavedTime}秒`)
+            await videoRef.current?.setPositionAsync(lastSavedTime * 1000)
+            hasSetInitialPositionRef.current = true
+          } else {
+            console.log("📍 没有历史记录，从0秒开始播放")
+          }
+          
+          console.log("▶️ 开始播放...")
+          await videoRef.current?.playAsync()
+          console.log("✅ 自动播放成功")
+          setIsPlaying(true)
+        } catch (err) {
+          console.error("❌ 自动播放失败:", err)
+          hasAutoPlayedRef.current = false // 失败后允许重试
+        }
       }, 500)
+      
       return () => clearTimeout(timer)
     }
-  }, [videoUrl, loading, totalDuration, lastSavedTime])
+    return undefined
+  }, [videoUrl, loading, lastSavedTime])
 
   // 格式化时间为 HH:MM:SS
   const formatTime = (seconds: number): string => {
@@ -256,15 +274,28 @@ export default function VideoPlayerScreen() {
   // 视频状态更新
   const onPlaybackStatusUpdate = (status: any) => {
     if (status.isLoaded) {
-      setIsPlaying(status.isPlaying)
       const currentSeconds = Math.floor((status.positionMillis || 0) / 1000)
       const durationSeconds = Math.floor((status.durationMillis || 0) / 1000)
 
-      setCurrentTime(currentSeconds)
-      setTotalDuration(durationSeconds)
+      // 只在状态真正改变时更新，避免频繁触发重新渲染
+      if (status.isPlaying !== isPlaying) {
+        setIsPlaying(status.isPlaying)
+      }
+      
+      if (currentSeconds !== currentTime) {
+        setCurrentTime(currentSeconds)
+      }
+      
+      if (durationSeconds > 0 && durationSeconds !== totalDuration) {
+        setTotalDuration(durationSeconds)
+        console.log(`📏 视频总时长: ${durationSeconds}秒`)
+      }
 
       if (durationSeconds > 0) {
-        setProgressPercent((currentSeconds / durationSeconds) * 100)
+        const newPercent = (currentSeconds / durationSeconds) * 100
+        if (Math.abs(newPercent - progressPercent) > 0.1) {
+          setProgressPercent(newPercent)
+        }
       }
 
       // 检查是否播放结束
@@ -275,33 +306,6 @@ export default function VideoPlayerScreen() {
         setCurrentTime(durationSeconds)
         setShowCompleteTip(true)
         setIsCompleted(true)
-      }
-
-      // 监听全屏状态变化
-      if (status.fullscreenUpdate !== undefined) {
-        const isInFullscreen =
-          status.fullscreenUpdate === 1 || // FULLSCREEN_UPDATE_PLAYER_WILL_PRESENT
-          status.fullscreenUpdate === 2 // FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
-
-        const isExitingFullscreen =
-          status.fullscreenUpdate === 3 || // FULLSCREEN_UPDATE_PLAYER_WILL_DISMISS
-          status.fullscreenUpdate === 4 // FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
-
-        if (isInFullscreen) {
-          setIsFullscreen(true)
-          // 全屏状态变化后恢复沉浸式模式
-          setTimeout(() => {
-            RNStatusBar.setHidden(true, "none")
-            globalImmersive.forceRestore()
-          }, 100)
-        } else if (isExitingFullscreen) {
-          setIsFullscreen(false)
-          // 退出全屏状态变化后恢复沉浸式模式
-          setTimeout(() => {
-            RNStatusBar.setHidden(true, "none")
-            globalImmersive.forceRestore()
-          }, 100)
-        }
       }
     }
   }
@@ -348,6 +352,7 @@ export default function VideoPlayerScreen() {
       if (videoRef.current) {
         if (!isFullscreen) {
           // 进入全屏
+          console.log("📺 进入全屏模式")
           await videoRef.current.presentFullscreenPlayer()
           setIsFullscreen(true)
 
@@ -358,8 +363,10 @@ export default function VideoPlayerScreen() {
           }, 100)
         } else {
           // 退出全屏
+          console.log("📺 退出全屏模式")
           await videoRef.current.dismissFullscreenPlayer()
           setIsFullscreen(false)
+          setShowControls(true) // 退出全屏后强制显示控制器
 
           // 退出全屏后立即恢复沉浸式模式
           setTimeout(() => {
@@ -369,7 +376,10 @@ export default function VideoPlayerScreen() {
         }
       }
     } catch (error) {
-      console.log("全屏操作失败:", error)
+      console.error("❌ 全屏操作失败:", error)
+      // 如果操作失败，确保状态正确
+      setIsFullscreen(false)
+      setShowControls(true)
     }
   }
 
@@ -425,7 +435,7 @@ export default function VideoPlayerScreen() {
 
   const startPractice = () => {
     router.push({
-      pathname: "/ai/camera",
+      pathname: "/ai/error-book/practice",
       params: {
         mode: "multiple",
         type: "course",
@@ -450,8 +460,14 @@ export default function VideoPlayerScreen() {
 
   // 视频点击事件
   const handleVideoClick = () => {
-    if (isFullscreen) return
-    setShowControls(!showControls)
+    console.log(`🖱️ 视频点击 - 当前全屏状态: ${isFullscreen}, 控制器显示: ${showControls}`)
+    if (isFullscreen) {
+      console.log("⚠️ 全屏模式下不切换控制器")
+      return
+    }
+    const newShowControls = !showControls
+    console.log(`🎮 切换控制器显示: ${showControls} -> ${newShowControls}`)
+    setShowControls(newShowControls)
   }
 
   // 手势控制
@@ -567,11 +583,39 @@ export default function VideoPlayerScreen() {
                   },
                 }}
                 resizeMode={ResizeMode.CONTAIN}
-                shouldPlay={isPlaying}
+                shouldPlay={false}
                 isLooping={false}
                 onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+                onFullscreenUpdate={(event) => {
+                  const { fullscreenUpdate } = event
+                  console.log(`📺 [onFullscreenUpdate] 全屏状态更新: ${fullscreenUpdate}`)
+                  
+                  // 进入全屏: 0 = WILL_PRESENT, 1 = DID_PRESENT
+                  if (fullscreenUpdate === 0 || fullscreenUpdate === 1) {
+                    console.log("✅ [onFullscreenUpdate] 进入全屏")
+                    setIsFullscreen(true)
+                  }
+                  // 退出全屏: 2 = WILL_DISMISS, 3 = DID_DISMISS
+                  else if (fullscreenUpdate === 2 || fullscreenUpdate === 3) {
+                    console.log("✅ [onFullscreenUpdate] 退出全屏")
+                    setIsFullscreen(false)
+                    setShowControls(true)
+                    
+                    // 恢复沉浸式模式
+                    setTimeout(() => {
+                      RNStatusBar.setHidden(true, "none")
+                      globalImmersive.forceRestore()
+                    }, 100)
+                  }
+                }}
+                onLoad={() => {
+                  console.log("✅ 视频加载完成，准备播放")
+                }}
+                onReadyForDisplay={() => {
+                  console.log("✅ 视频准备好显示")
+                }}
                 onError={(error) => {
-                  console.error("视频播放错误:", error)
+                  console.error("❌ 视频播放错误:", error)
                   showError("视频播放失败")
                 }}
               />
