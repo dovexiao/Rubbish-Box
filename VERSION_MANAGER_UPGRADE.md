@@ -191,4 +191,54 @@ A: 先运行 `npm run version:check` 查看哪些文件不一致，然后用 `np
 **现在你再也不用手动修改版本号了！** 🎉
 
 
+// app.json
+{
+  "expo": {
+    "version": "1.0.2",
+    "runtimeVersion": "1.0.2",  // ⚠️ 关键：必须和 version 对应
+    "android": {
+      "versionCode": 10002
+    }
+  }
+}
+// android/app/build.gradle
+defaultConfig {
+    versionCode 10002
+    versionName "1.0.2"  // 线上版本改为 1.0.2
+}
 
+# 构建 1.0.2
+eas build --profile production --platform android
+步骤 2：发布 OTA 更新
+为 1.0.1 发布 OTA：
+eas update \
+  --branch production \
+  --message "Hotfix for v1.0.1 users" \
+  --runtime-version 1.0.1
+为 1.0.2 发布 OTA：
+eas update \
+  --branch production \
+  --message "Update for v1.0.2 users" \
+  --runtime-version 1.0.2
+
+
+# ========== 打包 1.0.2 ==========
+# 1. 修改 app.json 版本为 1.0.2，runtimeVersion 为 1.0.2
+# 2. 修改 android/app/build.gradle versionCode 为 10002, versionName 为 "1.0.2"
+# 3. 构建
+eas build --profile production --platform android
+
+# ========== 发布到 EAS ==========
+eas submit --platform android
+
+# ========== 为 1.0.1 修复 bug ==========
+# 1. 切换代码到 1.0.1 分支（或者基于 1.0.1 的代码）
+# 2. 修复 bug
+# 3. 发布 OTA
+eas update --branch production --message "Fix login bug for v1.0.1" --runtime-version 1.0.1
+
+# ========== 为 1.0.2 发布新功能 ==========
+# 1. 切换到 1.0.2 代码
+# 2. 开发新功能
+# 3. 发布 OTA
+eas update --branch production --message "New feature for v1.0.2" --runtime-version 1.0.2

@@ -22,6 +22,7 @@ class VersionManager {
     this.packageJsonPath = 'package.json';
     this.appConfigPath = 'app.config.js';
     this.buildGradlePath = 'android/app/build.gradle';
+    this.stringsXmlPath = 'android/app/src/main/res/values/strings.xml';  // ✨ 新增
   }
 
   // 读取配置文件
@@ -55,11 +56,24 @@ class VersionManager {
       };
     }
     
+    // ✨ 新增：读取 strings.xml
+    let stringsXml = null;
+    if (fs.existsSync(this.stringsXmlPath)) {
+      const stringsXmlContent = fs.readFileSync(this.stringsXmlPath, 'utf8');
+      // 提取 expo_runtime_version
+      const runtimeVersionMatch = stringsXmlContent.match(/<string name="expo_runtime_version">([^<]+)<\/string>/);
+      stringsXml = {
+        runtimeVersion: runtimeVersionMatch ? runtimeVersionMatch[1] : null,
+        content: stringsXmlContent
+      };
+    }
+    
     return {
       app: appConfig,
       package: packageConfig,
       appConfigJs: appConfigJs,
-      buildGradle: buildGradle
+      buildGradle: buildGradle,
+      stringsXml: stringsXml  // ✨ 新增
     };
   }
 
@@ -95,6 +109,16 @@ class VersionManager {
       
       fs.writeFileSync(this.buildGradlePath, newContent);
       console.log(`✅ 已更新 ${this.buildGradlePath}`);
+    }
+    
+    // ✨ 新增：更新 strings.xml 中的 expo_runtime_version
+    if (config.stringsXml && config.stringsXml.content) {
+      const newContent = config.stringsXml.content.replace(
+        /<string name="expo_runtime_version">.*<\/string>/,
+        `<string name="expo_runtime_version">${config.app.expo.version}</string>`
+      );
+      fs.writeFileSync(this.stringsXmlPath, newContent);
+      console.log(`✅ 已更新 ${this.stringsXmlPath}`);
     }
   }
 
@@ -197,6 +221,11 @@ class VersionManager {
       console.log(`🔧 build.gradle versionCode: ${config.buildGradle.versionCode}`);
       console.log(`🔧 build.gradle versionName: ${config.buildGradle.versionName}`);
     }
+    
+    // ✨ 新增：显示 strings.xml
+    if (config.stringsXml && config.stringsXml.runtimeVersion) {
+      console.log(`📄 strings.xml expo_runtime_version: ${config.stringsXml.runtimeVersion}`);
+    }
 
     const issues = [];
     
@@ -219,6 +248,11 @@ class VersionManager {
       if (config.buildGradle.versionCode !== androidVersionCode) {
         issues.push(`build.gradle versionCode 和 app.json versionCode 不一致: ${config.buildGradle.versionCode} vs ${androidVersionCode}`);
       }
+    }
+    
+    // ✨ 新增：检查 strings.xml
+    if (config.stringsXml && config.stringsXml.runtimeVersion && config.stringsXml.runtimeVersion !== appVersion) {
+      issues.push(`strings.xml expo_runtime_version 和 app.json version 不一致: ${config.stringsXml.runtimeVersion} vs ${appVersion}`);
     }
 
     if (issues.length === 0) {
@@ -275,6 +309,13 @@ class VersionManager {
       console.log(`🔧 build.gradle versionName: ${config.buildGradle.versionName}`);
     } else {
       console.log(`🔧 build.gradle: 未找到`);
+    }
+    
+    // ✨ 新增：显示 strings.xml
+    if (config.stringsXml && config.stringsXml.runtimeVersion) {
+      console.log(`📄 strings.xml expo_runtime_version: ${config.stringsXml.runtimeVersion}`);
+    } else {
+      console.log(`📄 strings.xml: 未找到`);
     }
   }
 }
