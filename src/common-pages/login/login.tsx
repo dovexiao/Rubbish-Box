@@ -29,7 +29,7 @@ import DeviceInfo from 'react-native-device-info';
 import AdjustService from '@/utils/AdjustService';
 const Login = (props: NavigatorScreenProps) => {
   const {i18n} = useTranslation();
-    const {setToken} = useUserActions();
+  const {setToken} = useUserActions();
   /** 直接返回的目标页面,避免原页面加载就需要token */
   const backPage =
     ((props.route.params as BasicObject)?.backPage as string) || null;
@@ -229,6 +229,7 @@ const Login = (props: NavigatorScreenProps) => {
               style={[
                 theme.borderRadius.l,
                 theme.padding.lrl,
+                theme.padding.topxxl,
                 {
                   backgroundColor: theme.basicColor.newBgInTwo,
                   borderTopLeftRadius:
@@ -320,7 +321,7 @@ const Login = (props: NavigatorScreenProps) => {
                             inviteCode,
                             equipmentType,
                             systemType,
-                            adjustId
+                            adjustId,
                           )
                       )
                         .then(res => {
@@ -332,7 +333,8 @@ const Login = (props: NavigatorScreenProps) => {
                             setToken(res.token);
                             globalStore.isNewUser = String(res.isNewUser);
                           }
-                          const from = (props.route.params as BasicObject)?.from;
+                          const from = (props.route.params as BasicObject)
+                            ?.from;
                           if (from === 'register') {
                             // 从注册页过来，登录成功直接去首页
                             goTo('Home');
