@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Image} from 'react-native';
 
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import LinearGradient from '@/components/basic/linear-gradient';
@@ -10,7 +10,6 @@ import {RechargeTypeListItem} from './recharge.service';
 import {useInnerStyle} from './recharge.hooks';
 import CustomTitle from './custom-title';
 import {useTranslation} from 'react-i18next';
-import FastImage from 'react-native-fast-image';
 
 export interface RechargeTypeProps {
   typeList: RechargeTypeListItem[];
@@ -47,7 +46,7 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
               borderColor,
             },
           ]}>
-          <FastImage
+          <Image
             source={{uri: item.payIcon}}
             style={{
               width: 24,

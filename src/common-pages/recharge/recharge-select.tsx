@@ -119,7 +119,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
           theme.padding.topxl,
           theme.flex.row,
           theme.flex.wrap,
-          {columnGap: 16, rowGap: 18},
+          {columnGap: 16, rowGap: 18, marginTop: 6},
         ]}>
         {balanceList.map((bl, index) => {
           // const isSelected = bl.balance + '' === balance;

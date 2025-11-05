@@ -418,6 +418,10 @@ export default {
     rechargeRecords: 'रिचार्ज रिकॉर्ड',
     depositAmount: 'जमा राशि',
     rechargeType: 'रिचार्ज प्रकार',
+    depositEvent: 'जमा इवेंट',
+    requiresDepositBonus: 'जमा बोनस आवश्यक है',
+    afterEventTip:
+      'इस कार्यक्रम में भाग लेने के बाद, आपकी निकासी के लिए जमा राशि का 3 गुना दांव लगाने की आवश्यकता होगी। यदि आपको बोनस की आवश्यकता नहीं है, तो आप इसे रद्द कर सकते हैं।',
     extra: 'अतिरिक्त',
     label: {
       records: 'रिकॉर्ड्स',

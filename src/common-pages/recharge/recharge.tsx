@@ -35,6 +35,7 @@ import {
 import RechargeCheckBoxes from './recharge-checkboxes';
 import RechargeButton from '@/common-pages/recharge/RechargeButton';
 import RechargeType, {RechargeTypeProps} from './recharge-type';
+import RechargeDepositEvent from './recharge-deposit-event';
 
 const Recharge = () => {
   const {i18n} = useTranslation();
@@ -49,6 +50,8 @@ const Recharge = () => {
   const [rechargetTypeList, setRechargetTypeList] = useState<
     RechargeTypeListItem[]
   >([]);
+
+  const [isAgreedNotice, setIsAgreedNotice] = useState(false);
 
   const selectedCoupon = useCouponStore(state => state.selectedCoupon);
 
@@ -230,6 +233,14 @@ const Recharge = () => {
 
   // ✅ 发起充值流程
   const handleRecharge = async () => {
+    if (!isAgreedNotice) {
+      globalStore.globalWaringTotal(
+        i18n.t('recharge-page.tip.agreed-notice-error'),
+      );
+
+      return;
+    }
+
     const {minAmount, maxAmount} = payMethodItem || {};
     if (
       !balance ||
@@ -401,6 +412,10 @@ const Recharge = () => {
                 onPayMethodChange={setPayMethodId}
                 payMethodId={payMethodId}
                 balance={balance}
+              />
+              <RechargeDepositEvent
+                checked={isAgreedNotice}
+                onToggle={setIsAgreedNotice}
               />
             </View>
             <View style={[theme.padding.lrxxl]}>

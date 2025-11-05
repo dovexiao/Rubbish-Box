@@ -679,6 +679,10 @@ export default {
     rechargeRecords: 'Recharge records',
     depositAmount: 'Deposit amount',
     rechargeType: 'Recharge type',
+    depositEvent: 'Deposit event',
+    requiresDepositBonus: 'Requires deposit bonus',
+    afterEventTip:
+      "After participating in this event, your withdrawal will require a wagering requirement of 3 times the deposit amount. You can cancel if you don't need the bonus.",
     extra: 'Extra',
     label: {
       records: 'records',
