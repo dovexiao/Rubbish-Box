@@ -285,7 +285,12 @@ const Swiper: React.FC<SwiperProps> = props => {
   return (
     <View style={[styles.swiper]} onLayout={handleLayout}>
       <ScrollView
-        style={{width: scrollViewWidth || screenWidth - 24, height: height}}
+        style={{
+          width: scrollViewWidth || screenWidth - 24,
+          height: height,
+          borderRadius: itemRadius,
+          overflow: 'hidden',
+        }}
         horizontal={true}
         scrollEventThrottle={16}
         showsHorizontalScrollIndicator={false}
@@ -308,7 +313,6 @@ const Swiper: React.FC<SwiperProps> = props => {
                 theme.position.rel,
                 styles.swiperItem,
                 {
-                  borderRadius: itemRadius,
                   width: pictureWidth,
                   height: height,
                 },

@@ -72,85 +72,103 @@ const BannerSwiper = ({
     [bannerList.length, bannerWidth, currentIndex],
   );
 
-  if (globalStore.isWeb) {
-    return (
-      <Swiper
-        pictureWidth={bannerWidth}
-        seamless={true}
-        paddingRight={theme.paddingSize.l}
-        height={bannerHeight}
-        autoPlay={true}
-        hasIndicator={true}
-        pictures={bannerList?.map(item => ({
-          uri: item.bannerImg,
-          videoUri: item?.bannerVideo || '',
-        }))}
-        itemRadius={theme.borderRadiusSize.s}
-        onItemPress={index => {
-          onPressBanner(bannerList[index]);
-        }}
-        renderOverlayComponent={index => {
-          const bannerItem = bannerList[index];
-          return renderOverlayLinkComponent({
-            item: bannerItem,
-            onPress: () => onPressBanner(bannerItem),
-            sizeHeight: bannerHeight,
-            sizeWidth: bannerWidth,
-            size: bannerOverlaySize,
-          });
-        }}
-      />
-    );
-  }
-
   return (
-    <View style={[theme.position.rel]}>
-      <Carousel
-        loop
-        style={[theme.borderRadius.m, theme.overflow.hidden]}
-        width={bannerWidth}
-        height={bannerHeight}
-        autoPlay={true}
-        autoPlayInterval={3000}
-        scrollAnimationDuration={1000}
-        data={bannerList}
-        onProgressChange={onProgressChange}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            style={[theme.fill.fill, {bottom: 8}]}
-            onPress={() => onPressBanner(item)}>
-            <View
-              style={[
-                theme.fill.fill,
-                theme.borderRadius.s,
-                theme.overflow.hidden,
-                theme.background.primary,
-              ]}>
-              <LazyImageBackground
-                occupancy={theme.backgroundColor.palegrey}
-                imageUrl={item.bannerImg}
-                height={bannerHeight}
-                width={bannerWidth}>
-                {renderOverlayLinkComponent({
-                  item,
-                  onPress: () => onPressBanner(item),
-                  sizeHeight: bannerHeight,
-                  sizeWidth: bannerWidth,
-                  size: bannerOverlaySize,
-                })}
-              </LazyImageBackground>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
+    <View style={[theme.position.rel, {marginBottom: theme.paddingSize.s}]}>
+      {globalStore.isWeb ? (
+        <Swiper
+          pictureWidth={bannerWidth}
+          seamless={true}
+          paddingRight={theme.paddingSize.l}
+          height={bannerHeight}
+          autoPlay={true}
+          hasIndicator={true}
+          pictures={bannerList?.map(item => ({
+            uri: item.bannerImg,
+            videoUri: item?.bannerVideo || '',
+          }))}
+          itemRadius={theme.borderRadiusSize.m}
+          onItemPress={index => {
+            onPressBanner(bannerList[index]);
+          }}
+          renderOverlayComponent={index => {
+            const bannerItem = bannerList[index];
+            return renderOverlayLinkComponent({
+              item: bannerItem,
+              onPress: () => onPressBanner(bannerItem),
+              sizeHeight: bannerHeight,
+              sizeWidth: bannerWidth,
+              size: bannerOverlaySize,
+            });
+          }}
+        />
+      ) : (
+        <>
+          <Carousel
+            loop
+            style={[theme.borderRadius.m, theme.overflow.hidden]}
+            width={bannerWidth}
+            height={bannerHeight}
+            autoPlay={true}
+            autoPlayInterval={3000}
+            scrollAnimationDuration={1000}
+            data={bannerList}
+            onProgressChange={onProgressChange}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={[
+                  theme.fill.fill,
+                  // {bottom: 8}
+                ]}
+                onPress={() => onPressBanner(item)}>
+                <View
+                  style={[
+                    theme.fill.fill,
+                    theme.borderRadius.m,
+                    theme.overflow.hidden,
+                    theme.background.primary,
+                  ]}>
+                  <LazyImageBackground
+                    occupancy={theme.backgroundColor.palegrey}
+                    imageUrl={item.bannerImg}
+                    height={bannerHeight}
+                    width={bannerWidth}>
+                    {renderOverlayLinkComponent({
+                      item,
+                      onPress: () => onPressBanner(item),
+                      sizeHeight: bannerHeight,
+                      sizeWidth: bannerWidth,
+                      size: bannerOverlaySize,
+                    })}
+                  </LazyImageBackground>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+          <View
+            style={[
+              theme.position.abs,
+              theme.fill.fillW,
+              theme.flex.row,
+              theme.flex.center,
+              styles.idotBox,
+            ]}>
+            {bannerList.map((_v, i) => (
+              <View
+                key={i}
+                style={[styles.idot, currentIndex === i && styles.idotActive]}
+              />
+            ))}
+          </View>
+        </>
+      )}
       {!bannerList?.length && (
         <View
           style={[
             {
               height: bannerHeight,
               width: bannerWidth,
-              left: 12,
-              top: 8,
+              // left: 12,
+              // top: 8,
             },
             theme.borderRadius.m,
             theme.position.abs,
@@ -158,21 +176,6 @@ const BannerSwiper = ({
           ]}
         />
       )}
-      <View
-        style={[
-          theme.position.abs,
-          theme.fill.fillW,
-          theme.flex.row,
-          theme.flex.center,
-          styles.idotBox,
-        ]}>
-        {bannerList.map((_v, i) => (
-          <View
-            key={i}
-            style={[styles.idot, currentIndex === i && styles.idotActive]}
-          />
-        ))}
-      </View>
     </View>
   );
 };
