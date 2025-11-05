@@ -86,6 +86,8 @@ export interface RechargeTypeListItem {
   payName: string;
   /** 支付标签 */
   payTag: string;
+  /** 支付图标 */
+  payIcon?: string;
 }
 
 export interface PayMethodV2Params {

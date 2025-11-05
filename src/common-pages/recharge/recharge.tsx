@@ -100,6 +100,8 @@ const Recharge = () => {
             fetchPayMethodById(rechargeTypes[0].id + '');
           }
 
+          console.log('==========rechargeTypes===========', rechargeTypes);
+
           // 新增：处理Adjust参数并上报
           const adjustParams = adjustParamsResponse as AdjustParams;
           if (adjustParams) {

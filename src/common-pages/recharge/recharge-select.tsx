@@ -68,7 +68,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
             theme.borderRadius.xs,
             theme.margin.btms,
             theme.border.main,
-            {backgroundColor: '#5B0101'},
+            {backgroundColor: '#5A0000'},
           ]}>
           <Input
             containerStyle={[theme.padding.lrm, inputStyles.container]}
@@ -79,6 +79,17 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
             inputMode="numeric"
             value={balance}
             onChangeText={handleInputChange}
+            leftIcon={
+              <Text
+                style={{
+                  color: '#FFBD37',
+                  fontSize: 18,
+                  paddingRight: 10,
+                  fontWeight: 'bold',
+                }}>
+                ₹
+              </Text>
+            }
             placeholder={i18n.t('recharge-page.label.enter')}
           />
         </View>
@@ -122,15 +133,15 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                 <LinearGradient
                   start={{x: 0, y: 0}}
                   end={{x: 0, y: 1}}
-                  // colors={[
-                  //   theme.basicColor.newBgInOne,
-                  //   theme.basicColor.newBgInOne,
-                  // ]}
-                  colors={['#5B0101', '#5B0101']}
+                  colors={['#5A0000', '#5A0000']}
                   style={[
                     theme.flex.center,
-                    theme.borderRadius.s,
+                    theme.borderRadius.l,
                     selectStyles.item,
+                    {
+                      borderWidth: StyleSheet.hairlineWidth,
+                      borderColor: 'transparent',
+                    },
                   ]}>
                   {bl.giveBalance !== 0 && (
                     <RechargeQipao
@@ -149,7 +160,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                       gradientColors={theme.basicColor.newButtonLinear}
                       borderRadius={9}
                       top={-9}
-                      right={0}
+                      left={0}
                     />
                   )}
 
@@ -169,11 +180,15 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                 <LinearGradient
                   start={{x: 0.5, y: 1}} // 起点：底部中间
                   end={{x: 0.5, y: 0}} // 终点：顶部中间
-                  colors={theme.basicColor.newButtonLinear}
+                  colors={['#AF5704', '#713702']}
                   style={[
                     theme.flex.center,
                     selectStyles.item,
-                    theme.borderRadius.s,
+                    theme.borderRadius.l,
+                    {
+                      borderWidth: StyleSheet.hairlineWidth,
+                      borderColor: '#FFBD37',
+                    },
                   ]}>
                   {bl.giveBalance !== 0 && (
                     <RechargeQipao
@@ -192,7 +207,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                       gradientColors={theme.basicColor.newButtonLinear}
                       borderRadius={9}
                       top={-8}
-                      right={0}
+                      left={0}
                     />
                   )}
 
@@ -247,6 +262,6 @@ const styleSheet = StyleSheet.create({
     width: 14,
     height: 14,
   },
-  tipsText: {fontSize: 12, color: theme.basicColor.newFontPink},
+  tipsText: {fontSize: 12, color: 'rgba(255, 255, 255, 0.8)'},
 });
 export default RechargeSelect;

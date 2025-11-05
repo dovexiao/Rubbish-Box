@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import LinearGradient from '@/components/basic/linear-gradient';
@@ -10,6 +10,7 @@ import {RechargeTypeListItem} from './recharge.service';
 import {useInnerStyle} from './recharge.hooks';
 import CustomTitle from './custom-title';
 import {useTranslation} from 'react-i18next';
+import FastImage from 'react-native-fast-image';
 
 export interface RechargeTypeProps {
   typeList: RechargeTypeListItem[];
@@ -23,10 +24,8 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
 
   const renderItem = (item: RechargeTypeListItem) => {
     const isSelected = item.id + '' === value;
-
-    const colors = isSelected
-      ? theme.basicColor.newButtonLinear
-      : ['#5B0101', '#5B0101'];
+    const colors = isSelected ? ['#AF5704', '#713702'] : ['#5A0000', '#5A0000'];
+    const borderColor = isSelected ? '#FFBD37' : 'transparent';
 
     return (
       <NativeTouchableOpacity
@@ -34,14 +33,34 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
         style={[selectStyles.item, theme.flex.col, {width: '30%'}]}
         onPress={() => onChange?.(String(item.id))}>
         <LinearGradient
-          start={{x: 0.5, y: isSelected ? 1 : 0}}
-          end={{x: 0.5, y: isSelected ? 0 : 1}}
+          start={{x: 0, y: isSelected ? 0.5 : 0}}
+          end={{x: 1, y: isSelected ? 0.5 : 1}}
           colors={colors}
-          style={[theme.flex.center, selectStyles.item, theme.borderRadius.s]}>
+          style={[
+            theme.flex.row,
+            theme.flex.center,
+            selectStyles.item,
+            theme.borderRadius.l,
+            {
+              columnGap: 6,
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor,
+            },
+          ]}>
+          <FastImage
+            source={{uri: item.payIcon}}
+            style={{
+              width: 24,
+              height: 24,
+              borderRadius: 20,
+              backgroundColor: '#FFFFFF',
+            }}
+            resizeMode="contain"
+          />
           <Text
-            fontSize={17}
+            fontSize={14}
             color={theme.basicColor.white}
-            style={{fontWeight: '900', paddingHorizontal: 4}}
+            style={{fontWeight: '900'}}
             numberOfLines={2}>
             {item.payName}
           </Text>
@@ -60,12 +79,7 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
       ]}>
       <CustomTitle name={i18n.t('recharge-page.rechargeType')} />
       <View
-        style={[
-          theme.flex.row,
-          theme.borderRadius.s,
-          theme.flex.wrap,
-          {columnGap: 16, rowGap: 18},
-        ]}>
+        style={[theme.flex.row, theme.flex.wrap, {columnGap: 16, rowGap: 14}]}>
         {typeList.map(renderItem)}
       </View>
     </View>
