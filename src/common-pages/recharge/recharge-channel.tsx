@@ -8,6 +8,7 @@ import {useInnerStyle} from './recharge.hooks';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
 import Ok from '../svg/ok';
+import CustomTitle from './custom-title';
 
 export interface RechargeChannelProps {
   payMethodList: PayMethod[];
@@ -29,22 +30,13 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
     <View
       style={[
         theme.flex.col,
-        // theme.margin.topl,
+        theme.margin.topxxxxl,
         theme.borderRadius.s,
         {
           paddingHorizontal: 16,
-          paddingVertical: 12,
-          paddingTop: 0,
-          // backgroundColor: theme.basicColor.newBgInOne,
         },
       ]}>
-      <View style={styleSheet.title}>
-        <View style={styleSheet.titleIcon}></View>
-        <Text style={styleSheet.titleText}>
-          {' '}
-          {i18n.t('recharge-page.label.channel')}
-        </Text>
-      </View>
+      <CustomTitle name={i18n.t('recharge-page.label.channel')} />
 
       {payMethodList.map(payMethod => {
         const isDisabled =

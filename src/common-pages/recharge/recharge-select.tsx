@@ -12,6 +12,7 @@ import LinearGradient from '@/components/basic/linear-gradient';
 // import globalStore from '@/services/global.state';
 import {BalanceListItem} from './recharge.service';
 import RechargeQipao from '@/common-pages/recharge/recharge-qipao';
+import CustomTitle from './custom-title';
 
 export interface RechargeSelectProps {
   min: number;
@@ -51,27 +52,63 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
     <View
       style={[
         theme.flex.col,
-        // theme.borderRadius.m,
-        theme.padding.l,
-        // backgroundColor: theme.basicColor.newBgInOne
-        {paddingBottom: 0},
+        theme.margin.topxxxxl,
+        theme.borderRadius.s,
+        {
+          paddingHorizontal: 16,
+        },
       ]}>
-      <View style={styleSheet.title}>
-        <View style={styleSheet.titleIcon}></View>
-        <Text style={styleSheet.titleText}>
-          {i18n.t('recharge-page.depositAmount')}
+      <CustomTitle name={i18n.t('recharge-page.depositAmount')} />
+      {/* 输入框区域 */}
+      <View style={[theme.flex.col]}>
+        <View
+          style={[
+            theme.flex.col,
+            selectStyles.inputWrap,
+            theme.borderRadius.xs,
+            theme.margin.btms,
+            theme.border.main,
+            {backgroundColor: '#5B0101'},
+          ]}>
+          <Input
+            containerStyle={[theme.padding.lrm, inputStyles.container]}
+            inputContainerStyle={inputStyles.inputContainer}
+            style={inputStyle}
+            errorStyle={inputStyles.error}
+            keyboardType="numeric"
+            inputMode="numeric"
+            value={balance}
+            onChangeText={handleInputChange}
+            placeholder={i18n.t('recharge-page.label.enter')}
+          />
+        </View>
+      </View>
+      {/* 最小最大金额显示 */}
+      <View style={[styleSheet.tips]}>
+        <Image
+          source={require('@/assets/icons/wallet/recharge-tishi.webp')}
+          style={styleSheet.tipsImg}
+        />
+        <Text style={styleSheet.tipsText}>
+          {i18n.t('recharge-page.label.min')}
+        </Text>
+        <Text style={[theme.margin.leftxxs, styleSheet.tipsText]}>
+          {min ? toPriceStr(min, {fixed: 0, thousands: true}) : '--'}
+        </Text>
+        <Text style={[theme.margin.leftxxl, styleSheet.tipsText]}>
+          {i18n.t('recharge-page.label.max')}
+        </Text>
+        <Text style={[theme.margin.leftxxs, styleSheet.tipsText]}>
+          {max ? toPriceStr(max, {fixed: 0, thousands: true}) : '--'}
         </Text>
       </View>
       {/* 快捷金额选择区域 */}
       <View
         style={[
-          theme.padding.tops,
+          theme.padding.topxl,
           theme.flex.row,
           theme.flex.wrap,
-          theme.flex.between,
-          {
-            marginBottom: 12,
-          }
+          {columnGap: 16, rowGap: 18},
         ]}>
         {balanceList.map((bl, index) => {
           // const isSelected = bl.balance + '' === balance;
@@ -79,7 +116,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
           return (
             <NativeTouchableOpacity
               key={index}
-              style={[selectStyles.item, theme.flex.col, {marginBottom: 12,}]}
+              style={[selectStyles.item, theme.flex.col, {width: '30%'}]}
               onPress={() => onChangeBalance(bl.balance + '')}>
               {bl.balance + '' !== balance ? (
                 <LinearGradient
@@ -96,35 +133,11 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                     selectStyles.item,
                   ]}>
                   {bl.giveBalance !== 0 && (
-                    // <ImageBackground
-                    //   style={[
-                    //     {
-                    //       width: 60,
-                    //       height: 17.6,
-                    //       position: 'absolute',
-                    //       top: -8,
-                    //       right: 0,
-                    //       display: 'flex',
-                    //       justifyContent: 'center',
-                    //       alignItems: 'center',
-                    //     },
-                    //   ]}
-                    //   source={require('@assets/icons/wallet/qipao.webp')}>
-                    //   <Text
-                    //     fontSize={theme.fontSize.xs}
-                    //     color={theme.basicColor.white}>
-                    //     {i18n.t('recharge-page.extra')}+
-                    //     {toPriceStr(bl.giveBalance, {
-                    //       fixed: 0,
-                    //       showCurrency: false,
-                    //       thousands: true,
-                    //     })}
-                    //   </Text>
-                    // </ImageBackground>
                     <RechargeQipao
                       height={18}
                       text={
-                        i18n.t('recharge-page.extra') + '+' +
+                        i18n.t('recharge-page.extra') +
+                        '+' +
                         toPriceStr(bl.giveBalance, {
                           fixed: 0,
                           showCurrency: false,
@@ -166,7 +179,8 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                     <RechargeQipao
                       height={18}
                       text={
-                        i18n.t('recharge-page.extra') + '+' +
+                        i18n.t('recharge-page.extra') +
+                        '+' +
                         toPriceStr(bl.giveBalance, {
                           fixed: 0,
                           showCurrency: false,
@@ -199,49 +213,6 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
           );
         })}
       </View>
-      {/* 输入框区域 */}
-      <View style={[theme.flex.col, theme.margin.bts]}>
-        <View
-          style={[
-            theme.flex.col,
-            selectStyles.inputWrap,
-            theme.borderRadius.xs,
-            theme.margin.btms,
-            theme.border.main,
-            {backgroundColor: '#5B0101'},
-          ]}>
-          <Input
-            containerStyle={[theme.padding.lrm, inputStyles.container]}
-            inputContainerStyle={inputStyles.inputContainer}
-            style={inputStyle}
-            errorStyle={inputStyles.error}
-            keyboardType="numeric"
-            inputMode="numeric"
-            value={balance}
-            onChangeText={handleInputChange}
-            placeholder={i18n.t('recharge-page.label.enter')}
-          />
-        </View>
-      </View>
-        {/* 最小最大金额显示 */}
-        <View style={styleSheet.tips}>
-          <Image
-            source={require('@/assets/icons/wallet/recharge-tishi.webp')}
-            style={styleSheet.tipsImg}
-          />
-          <Text style={styleSheet.tipsText}>
-            {i18n.t('recharge-page.label.min')}
-          </Text>
-          <Text style={[theme.margin.leftxxs, styleSheet.tipsText]}>
-            {min ? toPriceStr(min, {fixed: 0, thousands: true}) : '--'}
-          </Text>
-          <Text style={[theme.margin.leftxxl, styleSheet.tipsText]}>
-            {i18n.t('recharge-page.label.max')}
-          </Text>
-          <Text style={[theme.margin.leftxxs, styleSheet.tipsText]}>
-            {max ? toPriceStr(max, {fixed: 0, thousands: true}) : '--'}
-          </Text>
-        </View>
     </View>
   );
 };
@@ -268,7 +239,6 @@ const styleSheet = StyleSheet.create({
   },
   tips: {
     ...theme.flex.row,
-    justifyContent: 'center',
     alignItems: 'center',
     height: 20,
   },

@@ -417,6 +417,7 @@ export default {
     currentMethod: 'वर्तमान विधि',
     rechargeRecords: 'रिचार्ज रिकॉर्ड',
     depositAmount: 'जमा राशि',
+    rechargeType: 'रिचार्ज प्रकार',
     extra: 'अतिरिक्त',
     label: {
       records: 'रिकॉर्ड्स',

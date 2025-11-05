@@ -678,6 +678,7 @@ export default {
     currentMethod: 'Current Method',
     rechargeRecords: 'Recharge records',
     depositAmount: 'Deposit amount',
+    rechargeType: 'Recharge type',
     extra: 'Extra',
     label: {
       records: 'records',

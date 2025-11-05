@@ -77,6 +77,21 @@ export interface PayMethod {
   minAmount: number;
 }
 
+export interface RechargeTypeListItem {
+  /** ID */
+  id: string;
+  maxAmount: number;
+  minAmount: number;
+  /** 支付名称 */
+  payName: string;
+  /** 支付标签 */
+  payTag: string;
+}
+
+export interface PayMethodV2Params {
+  modeId: string;
+}
+
 export const getBalanceList = () => {
   return http.post<null, BalanceListItem[]>('app/pay/balance/list');
 };
@@ -116,5 +131,24 @@ export const getAdjustParams = () => {
 export const getUserRechargeType = () => {
   return http.post<null, number>(
     'app/business/ActivitySigninRecord/payImgUser',
+  );
+};
+
+/**
+ * 获取充值类型
+ */
+export const getRechargeTypeList = () => {
+  return http.post<SafeAny, RechargeTypeListItem[]>('app/pay/type/list02');
+};
+
+/**
+ * 获取支付通道
+ *
+ * @param PayMethodV2Params
+ */
+export const getPayMethodV2 = (params: PayMethodV2Params) => {
+  return http.post<PayMethodV2Params, PayMethod[]>(
+    'app/pay/deposit/channel02',
+    params,
   );
 };
