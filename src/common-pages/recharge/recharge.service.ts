@@ -75,6 +75,8 @@ export interface PayMethod {
   payTag: string;
   maxAmount: number;
   minAmount: number;
+  /** 支付类型ID - 有多个，逗号分隔 */
+  remarks: string;
 }
 
 export interface RechargeTypeListItem {

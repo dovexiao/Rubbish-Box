@@ -1,4 +1,4 @@
-import React, {useMemo, useState, useEffect, useCallback} from 'react';
+import React, {useMemo, useState, useEffect, useCallback, useRef} from 'react';
 import {ScrollView, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import theme from '@/style';
@@ -35,6 +35,8 @@ import {
 import RechargeCheckBoxes from './recharge-checkboxes';
 import RechargeButton from '@/common-pages/recharge/RechargeButton';
 import RechargeType, {RechargeTypeProps} from './recharge-type';
+import RechargeModal from './recharge-modal';
+import {useSkipTodayModal} from './recharge.hooks';
 
 const Recharge = () => {
   const {i18n} = useTranslation();
@@ -49,6 +51,10 @@ const Recharge = () => {
   const [rechargetTypeList, setRechargetTypeList] = useState<
     RechargeTypeListItem[]
   >([]);
+
+  const allPaymethodListRef = useRef<PayMethod[]>([]);
+  const [isShowRechargeModal, setIsShowRechargeModal] = useState(false);
+  const {checkShouldShow} = useSkipTodayModal('recharge');
 
   const selectedCoupon = useCouponStore(state => state.selectedCoupon);
 
@@ -81,9 +87,10 @@ const Recharge = () => {
         setLoading(true);
         try {
           // 调用getBalanceList和getPayMethod
-          const [balances, adjustParamsResponse, rechargeTypes] =
+          const [balances, allMethods, adjustParamsResponse, rechargeTypes] =
             await Promise.all([
               getBalanceList(),
+              getPayMethodV2({modeId: '1'}),
               getAdjustParams(), // 新增：调用getAdjustParams获取参数
               getRechargeTypeList(),
             ]);
@@ -95,12 +102,14 @@ const Recharge = () => {
             setBalance(balances[0].balance + '');
           }
 
-          if (rechargeTypes.length > 0) {
-            setSelectedRechargeTypeId(rechargeTypes[0].id + '');
-            fetchPayMethodById(rechargeTypes[0].id + '');
+          if (allMethods.length > 0) {
+            allPaymethodListRef.current = allMethods;
           }
 
-          console.log('==========rechargeTypes===========', rechargeTypes);
+          if (rechargeTypes.length > 0) {
+            setSelectedRechargeTypeId(rechargeTypes[0].id + '');
+            getPayMethodByRechargeTypeId(rechargeTypes[0].id + '');
+          }
 
           // 新增：处理Adjust参数并上报
           const adjustParams = adjustParamsResponse as AdjustParams;
@@ -330,39 +339,56 @@ const Recharge = () => {
    * @param {string} id
    */
   const onRechargeTypeChange: RechargeTypeProps['onChange'] = id => {
-    setLoading(true);
-
     setSelectedRechargeTypeId(id);
-    fetchPayMethodById(id);
+    getPayMethodByRechargeTypeId(id);
   };
 
   /**
    * 根据支付类型获取支付通道
    *
-   * @param {string} id
+   * @param {string} id - 支付类型 ID
    */
-  const fetchPayMethodById = async (id: string) => {
-    try {
-      const methods = await getPayMethodV2({
-        modeId: id,
-      });
+  const getPayMethodByRechargeTypeId = async (id: string) => {
+    const target = String(id).trim();
 
-      setPaymethodList(methods);
+    // 过滤出所有 remarks 中包含该 id 的项
+    const result = allPaymethodListRef.current.filter(method => {
+      if (!method.remarks) return false;
 
-      if (methods.length > 0) {
-        setPayMethodId(methods[0].id);
-      }
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    } finally {
-      setLoading(false);
+      const remarkIds = method.remarks
+        .split(',')
+        .map(r => r.trim())
+        .filter(r => r.length > 0);
+
+      return remarkIds.includes(target);
+    });
+
+    setPaymethodList(result);
+
+    if (result.length > 0) {
+      setPayMethodId(result[0].id);
     }
   };
+
+  /**
+   * 返回时候显示弹窗
+   */
+  const handleNavTitleBack = async () => {
+    const shouldShowModal = await checkShouldShow();
+
+    if (shouldShowModal) {
+      setIsShowRechargeModal(true);
+    } else {
+      goBack();
+    }
+  };
+
+  console.log('=========balanceList=======', allPaymethodListRef.current);
 
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle
-        onBack={goBack}
+        onBack={handleNavTitleBack}
         hideAmount
         serverRight
         title={i18n.t('home.tab.deposit')}
@@ -410,9 +436,6 @@ const Recharge = () => {
 
               <RechargeRule />
             </View>
-            {/* <View style={[theme.padding.lrxxl]}>
-              <RechargeRule />
-            </View> */}
           </ScrollView>
         </View>
         <RechargeButton
@@ -426,6 +449,15 @@ const Recharge = () => {
           }
         />
       </Spin>
+      <RechargeModal
+        visible={isShowRechargeModal}
+        onClose={() => setIsShowRechargeModal(false)}
+        amount={
+          balanceList.length > 0
+            ? balanceList[balanceList.length - 1].giveBalance
+            : 0
+        }
+      />
     </LazyImageLGBackground>
   );
 };
