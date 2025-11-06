@@ -188,11 +188,12 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                   colors={['#AF5704', '#713702']}
                   style={[
                     theme.flex.center,
-                    selectStyles.item,
+                    // selectStyles.item,
                     theme.borderRadius.l,
                     {
                       borderWidth: 2,
                       borderColor: '#FFBD37',
+                      paddingVertical: scaleSize(12),
                     },
                   ]}>
                   {bl.giveBalance !== 0 && (
