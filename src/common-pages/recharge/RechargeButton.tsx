@@ -1,5 +1,5 @@
 import theme from '@/style';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ImageBackground} from 'react-native';
 import Button from '@/components/basic/button';
 import Text from '@/components/basic/text';
 import React from 'react';
@@ -9,6 +9,11 @@ import {useResponsiveDimensions} from '@/utils';
 // import globalStore from '@/services/global.state';
 import LinearGradient from '@/components/basic/linear-gradient';
 import RechargeQipao from '@/common-pages/recharge/recharge-qipao';
+import {
+  LazyImageBackground,
+  LazyImageLGBackground,
+} from '@/components/basic/image';
+// import { BackgroundImage } from '@rneui/base';
 export interface RechargeButtonProps {
   disabled?: boolean;
   type?: ButtonType;
@@ -29,31 +34,23 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
   const rechargeStyle = StyleSheet.create({
     button: {
       width: rechargeButtonWidth,
-      height: 48,
+      height: 60,
     },
     buttonWrap: {
-      // backgroundColor: theme.basicColor.newBgInTwo,
       paddingTop: theme.paddingSize.m,
-      paddingBottom: theme.paddingSize.m,
-      // paddingBottom: globalStore.isAndroid
-      //   ? (56 * width) / designWidth + 10
-      //   : 66,
-      // backgroundColor: `linear-gradient(180deg, ${theme.basicColor.newButtonBgOne})`,
+      paddingBottom: theme.paddingSize.xxl,
     },
   });
   return (
-    // <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}></LazyImageLGBackground>
     <View
       style={[theme.flex.center, theme.fill.fillW, rechargeStyle.buttonWrap]}>
-      <LinearGradient
-        start={{x: 0, y: 1}}
-        end={{x: 0, y: 1}}
-        colors={theme.basicColor.newButtonBgOne}
-        style={[rechargeStyle.button, {borderRadius: 45}]}>
+      <ImageBackground
+        source={require('@/assets/icons/recharge/button-background.webp')}
+        resizeMode="contain">
         <Button
           size="large"
           type={type}
-          radius={5}
+          radius={30}
           color="transparent"
           disabled={disabled}
           width={rechargeButtonWidth}
@@ -67,21 +64,11 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
               fontSize={theme.fontSize.xl}
               color={theme.basicColor.white}
               style={{textAlign: 'center', fontWeight: 'bold'}}>
-              {i18n.t('label.recharge')}
+              {i18n.t('label.recharge')} {text && `(${text})`}
             </Text>
           </Text>
         </Button>
-        <RechargeQipao
-          height={24}
-          text={text || ''}
-          fontSize={theme.fontSize.s}
-          color={theme.basicColor.white}
-          gradientColors={theme.basicColor.newButtonLinear}
-          borderRadius={11}
-          top={-8}
-          right={60}
-        />
-      </LinearGradient>
+      </ImageBackground>
     </View>
   );
 };

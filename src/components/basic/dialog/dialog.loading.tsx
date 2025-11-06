@@ -11,7 +11,7 @@ const DialogLoading = (props: {isVisible: boolean}) => {
         backgroundColor: theme.basicColor.transparentP10,
         shadowColor: theme.basicColor.transparentP10,
       }}>
-      <Dialog.Loading />
+      <Dialog.Loading loadingProps={{color: '#F49E2D'}} />
     </Dialog>
   );
 };

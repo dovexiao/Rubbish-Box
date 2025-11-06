@@ -23,7 +23,6 @@ const Spin = ({
             theme.fill.fill,
             theme.flex.center,
             theme.position.abs,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               top: 0,
               left: 0,
@@ -31,7 +30,7 @@ const Spin = ({
             },
             overlayStyle,
           ]}>
-          <Dialog.Loading />
+          <Dialog.Loading loadingProps={{color: '#F49E2D'}} />
         </View>
       )}
     </View>

@@ -22,7 +22,7 @@ const RechargeCheckBoxes = () => {
     try {
       const userRechargeTypeRes = await getUserRechargeType();
       setRechargeInfo(userRechargeTypeRes as RechargeInfo);
-      console.log('[用户充值类型展示]:', userRechargeTypeRes);
+      // console.log('[用户充值类型展示]:', userRechargeTypeRes);
     } catch (e: unknown) {
       console.error('Error fetching RechargeType', e);
     }
