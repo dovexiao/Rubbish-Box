@@ -39,7 +39,7 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
       <ImageBackground
         resizeMode="contain"
         source={require('@assets/imgs/recharge/card-background.webp')}
-        style={[theme.margin.topxxl, styles.container]}>
+        style={[styles.container, {height: scaleSize(150)}]}>
         <View style={[theme.flex.between, theme.flex.flex1]}>
           <View style={styleSheet.rechargeTop}>
             <View style={[theme.flex.flex1]}>

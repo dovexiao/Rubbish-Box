@@ -1,8 +1,8 @@
 import React, {useMemo, useState, useEffect, useCallback, useRef} from 'react';
-import {ScrollView, View} from 'react-native';
+import {BackHandler, Platform, ScrollView, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import theme from '@/style';
-import {goTo, goBack} from '@/utils'; //goBack,
+import {goTo, goBack, toPriceStr} from '@/utils'; //goBack,
 import globalStore from '@/services/global.state';
 import {LazyImageLGBackground} from '@/components/basic/image';
 import DetailNavTitle from '@/components/business/detail-nav-title';
@@ -73,6 +73,29 @@ const Recharge = () => {
     () => paymethodList.find(p => p.id === payMethodId),
     [paymethodList, payMethodId],
   );
+
+  useEffect(() => {
+    const backAction = () => {
+      // 自定义返回键按下时的行为
+      handleNavTitleBack();
+
+      return true; // 阻止默认返回行为
+    };
+
+    // 添加返回键监听
+    if (Platform.OS !== 'web') {
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+      // window.addEventListener('popstate', backAction);
+    }
+
+    // 在组件卸载时移除监听
+    return () => {
+      if (Platform.OS !== 'web') {
+        BackHandler.removeEventListener('hardwareBackPress', backAction);
+        // window.removeEventListener('popstate', backAction);
+      }
+    };
+  }, []);
 
   const balanceId = useMemo(() => {
     const item = balanceList.find(b => b.balance === +balance);
@@ -444,7 +467,11 @@ const Recharge = () => {
           text={
             exResult > 0
               ? i18n.t('recharge-page.extra') +
-                ` +₹ ${exResult.toFixed(2).toString()}`
+                ` +₹ ${toPriceStr(exResult, {
+                  fixed: 0,
+                  showCurrency: false,
+                  thousands: true,
+                })}`
               : ''
           }
         />

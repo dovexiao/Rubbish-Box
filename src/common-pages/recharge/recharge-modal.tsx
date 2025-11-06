@@ -7,7 +7,7 @@ import LazyImage from '@/components/basic/image';
 import theme from '@/style';
 
 import Text from '@basicComponents/text';
-import {goBack, scaleSize} from '@/utils';
+import {goBack, scaleSize, toPriceStr} from '@/utils';
 import {useSkipTodayModal} from './recharge.hooks';
 
 export interface RechargeModalProps {
@@ -88,7 +88,12 @@ const RechargeModal = ({
               textAlign="center"
               color="#ffee32"
               style={{fontWeight: 'bold'}}>
-              {amount} Bonus!
+              {toPriceStr(amount, {
+                fixed: 0,
+                showCurrency: false,
+                thousands: true,
+              })}{' '}
+              Bonus!
             </Text>
           </View>
         </NativeTouchableOpacity>
@@ -112,7 +117,7 @@ const RechargeModal = ({
             }}
           />
           <Text white fontSize={scaleSize(14)}>
-            Don't show again today
+            {i18n.t('recharge-page.dontShowAgain')}
           </Text>
         </NativeTouchableOpacity>
         <NativeTouchableOpacity
