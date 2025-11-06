@@ -139,7 +139,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                     theme.borderRadius.l,
                     selectStyles.item,
                     {
-                      borderWidth: StyleSheet.hairlineWidth,
+                      borderWidth: 2,
                       borderColor: 'transparent',
                     },
                   ]}>
@@ -186,7 +186,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                     selectStyles.item,
                     theme.borderRadius.l,
                     {
-                      borderWidth: StyleSheet.hairlineWidth,
+                      borderWidth: 2,
                       borderColor: '#FFBD37',
                     },
                   ]}>

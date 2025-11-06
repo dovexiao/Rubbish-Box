@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   titleText: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: '700',
     color: theme.basicColor.newFontWhite,
     fontFamily: 'Arial, Arial-Bold',

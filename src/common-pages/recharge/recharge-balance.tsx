@@ -34,88 +34,88 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
   const refreshIconSize = (24 * screenWidth) / designWidth;
 
   return (
-    <ImageBackground
-      resizeMode={'cover'}
-      source={require('@assets/imgs/recharge-card-background-image.webp')}
-      style={[theme.margin.lrxxl, theme.margin.topxxl, styles.container]}>
-      <View style={[theme.flex.between, theme.flex.flex1]}>
-        <View style={styleSheet.rechargeTop}>
-          <View style={[theme.flex.flex1]}>
-            <View style={styleSheet.wallet}>
-              <Image
-                source={require('@/assets/icons/wallet/wallet-icon.webp')}
-                style={styleSheet.walletImg}
-              />
-              <Text color={theme.fontColor.white} style={styleSheet.walletText}>
-                {i18n.t('me.money.totalWallet')}
-              </Text>
-            </View>
-            <View
-              style={[
-                theme.flex.row,
-                theme.flex.alignEnd,
-                theme.margin.topm,
-                {alignItems: 'center', width: '100%'},
-              ]}>
-              <View style={{maxWidth: '85%'}}>
+    <View style={[theme.padding.lrm]}>
+      <ImageBackground
+        resizeMode="contain"
+        source={require('@assets/imgs/recharge/card-background.webp')}
+        style={[theme.margin.topxxl, styles.container]}>
+        <View style={[theme.flex.between, theme.flex.flex1]}>
+          <View style={styleSheet.rechargeTop}>
+            <View style={[theme.flex.flex1]}>
+              <View style={styleSheet.wallet}>
                 <Text
-                  style={styleSheet.balance}
-                  numberOfLines={1}
-                  ellipsizeMode={'tail'}>
-                  {toPriceStr(balance, {
-                    thousands: true,
-                    spacing: true,
-                    currency: globalStore.currency,
-                  })}
+                  color={theme.fontColor.white}
+                  style={styleSheet.walletText}>
+                  {i18n.t('me.money.totalWallet')}
                 </Text>
               </View>
+              <View
+                style={[
+                  theme.flex.row,
+                  theme.flex.alignEnd,
+                  theme.margin.topm,
+                  {alignItems: 'center', width: '100%'},
+                ]}>
+                <View style={{maxWidth: '85%'}}>
+                  <Text
+                    style={styleSheet.balance}
+                    numberOfLines={1}
+                    ellipsizeMode={'tail'}>
+                    {toPriceStr(balance, {
+                      thousands: true,
+                      spacing: true,
+                      currency: globalStore.currency,
+                    })}
+                  </Text>
+                </View>
+                <NativeTouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={onRefresh}
+                  style={[theme.margin.leftm]}>
+                  <LazyImage
+                    occupancy={'transparent'}
+                    imageUrl={require('@assets/icons/wallet/recharge-refresh.webp')}
+                    width={refreshIconSize}
+                    height={refreshIconSize}
+                  />
+                </NativeTouchableOpacity>
+              </View>
+            </View>
+            <View style={{position: 'absolute', right: 16, top: 11}}>
               <NativeTouchableOpacity
                 activeOpacity={0.8}
-                onPress={onRefresh}
-                style={[theme.margin.leftm]}>
-                <LazyImage
-                  occupancy={'transparent'}
-                  imageUrl={require('@assets/icons/wallet/recharge-refresh.webp')}
-                  width={refreshIconSize}
-                  height={refreshIconSize}
-                />
+                style={[theme.flex.row, theme.flex.centerByCol]}
+                onPress={onGotoRecords}>
+                <View style={styleSheet.recordButton}>
+                  <Text style={styleSheet.recordButtonText}>
+                    {i18n.t('recharge-page.rechargeRecords')}
+                  </Text>
+                </View>
               </NativeTouchableOpacity>
             </View>
           </View>
-          <View style={{position: 'absolute', right: 16, top: 11}}>
-            <NativeTouchableOpacity
-              activeOpacity={0.8}
-              style={[theme.flex.row, theme.flex.centerByCol]}
-              onPress={onGotoRecords}>
-              <View style={styleSheet.recordButton}>
-                <Text style={styleSheet.recordButtonText}>
-                  {i18n.t('recharge-page.rechargeRecords')}
-                </Text>
-              </View>
-            </NativeTouchableOpacity>
+          <View
+            style={[
+              // theme.padding.lrl,
+              // theme.padding.tbs,
+              {position: 'absolute', bottom: 18, left: 12},
+            ]}>
+            <Text
+              white
+              style={[{fontWeight: 'bold'}]}
+              fontSize={globalStore.isAndroid ? 10 : 12}>
+              {i18n.t('recharge-page.currentMethod')} : {payMethod}
+            </Text>
+            <Text
+              style={styleSheet.tips}
+              numberOfLines={1}
+              fontSize={globalStore.isAndroid ? 10 : 12}>
+              {tip}
+            </Text>
           </View>
         </View>
-        <View
-          style={[
-            // theme.padding.lrl,
-            // theme.padding.tbs,
-            {position: 'absolute', bottom: 7, left: 12},
-          ]}>
-          <Text
-            style={styleSheet.tips}
-            fontSize={globalStore.isAndroid ? 10 : 12}>
-            {i18n.t('recharge-page.currentMethod')} :
-            <Text style={styleSheet.tips}>{payMethod}</Text>
-          </Text>
-          <Text
-            style={styleSheet.tips}
-            numberOfLines={1}
-            fontSize={globalStore.isAndroid ? 10 : 12}>
-            {tip}
-          </Text>
-        </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </View>
   );
 };
 
@@ -137,7 +137,6 @@ const styleSheet = StyleSheet.create({
   walletText: {
     fontSize: 13,
     fontFamily: 'Arial, Arial-Regular',
-    marginLeft: 6,
   },
   balance: {
     fontSize: 30,
@@ -149,7 +148,7 @@ const styleSheet = StyleSheet.create({
     width: 121,
     height: 25,
     // backgroundColor: theme.basicColor.newButtonYellow,
-    backgroundColor: '#E24D00',
+    backgroundColor: '#F7B900',
     borderRadius: 16,
     display: 'flex',
     alignItems: 'center',
@@ -163,7 +162,7 @@ const styleSheet = StyleSheet.create({
   },
   tips: {
     fontFamily: 'Arial, Arial-Regular',
-    color: '#ffffff',
+    color: 'rgba(255, 255, 255, 0.8)',
   },
 });
 

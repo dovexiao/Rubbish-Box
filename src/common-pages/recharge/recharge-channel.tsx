@@ -52,7 +52,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
             theme.borderRadius.l,
             {
               paddingVertical: 12,
-              borderWidth: StyleSheet.hairlineWidth,
+              borderWidth: 2,
               borderColor,
             },
           ]}>

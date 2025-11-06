@@ -95,7 +95,9 @@ export function useInnerStyle() {
     },
     container: {
       height: scaleSize(143),
-      borderRadius: theme.borderRadiusSize.l,
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      // borderRadius: theme.borderRadiusSize.l,
       // borderTopLeftRadius: theme.borderRadiusSize.l,
       // borderTopRightRadius: theme.borderRadiusSize.l,
       overflow: 'hidden',

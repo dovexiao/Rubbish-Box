@@ -35,7 +35,6 @@ import {
 import RechargeCheckBoxes from './recharge-checkboxes';
 import RechargeButton from '@/common-pages/recharge/RechargeButton';
 import RechargeType, {RechargeTypeProps} from './recharge-type';
-import RechargeDepositEvent from './recharge-deposit-event';
 
 const Recharge = () => {
   const {i18n} = useTranslation();
@@ -50,8 +49,6 @@ const Recharge = () => {
   const [rechargetTypeList, setRechargetTypeList] = useState<
     RechargeTypeListItem[]
   >([]);
-
-  const [isAgreedNotice, setIsAgreedNotice] = useState(false);
 
   const selectedCoupon = useCouponStore(state => state.selectedCoupon);
 
@@ -233,14 +230,6 @@ const Recharge = () => {
 
   // ✅ 发起充值流程
   const handleRecharge = async () => {
-    if (!isAgreedNotice) {
-      globalStore.globalWaringTotal(
-        i18n.t('recharge-page.tip.agreed-notice-error'),
-      );
-
-      return;
-    }
-
     const {minAmount, maxAmount} = payMethodItem || {};
     if (
       !balance ||
@@ -377,6 +366,7 @@ const Recharge = () => {
         hideAmount
         serverRight
         title={i18n.t('home.tab.deposit')}
+        style={{backgroundColor: theme.basicColor.newBgInTwo}}
       />
       <Spin
         loading={loading}
@@ -387,7 +377,7 @@ const Recharge = () => {
         ]}>
         <View style={[theme.flex.flex1, theme.flex.basis0]}>
           <ScrollView>
-            <View style={[theme.padding.lrl]}>
+            <View style={[theme.padding.lrxs]}>
               <RechargeBalance
                 balance={amount}
                 payMethod={payMethodStr}
@@ -413,14 +403,16 @@ const Recharge = () => {
                 payMethodId={payMethodId}
                 balance={balance}
               />
-              <RechargeDepositEvent
+              {/* <RechargeDepositEvent
                 checked={isAgreedNotice}
                 onToggle={setIsAgreedNotice}
-              />
-            </View>
-            <View style={[theme.padding.lrxxl]}>
+              /> */}
+
               <RechargeRule />
             </View>
+            {/* <View style={[theme.padding.lrxxl]}>
+              <RechargeRule />
+            </View> */}
           </ScrollView>
         </View>
         <RechargeButton

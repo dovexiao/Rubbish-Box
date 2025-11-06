@@ -34,8 +34,8 @@ const RechargeDepositEvent = ({
         <Image
           source={
             checked
-              ? require('@/assets/icons/common/checked.png')
-              : require('@/assets/icons/common/checked.png')
+              ? require('@/assets/icons/checked.webp')
+              : require('@/assets/icons/unchecked.webp')
           }
           style={{
             width: 14,
@@ -48,7 +48,7 @@ const RechargeDepositEvent = ({
       </NativeTouchableOpacity>
 
       <View style={{marginTop: 6}}>
-        <Text style={{color: '#FFEB00', fontSize: 12}}>
+        <Text style={{color: '#FFEB00', fontSize: 12, lineHeight: 20}}>
           {i18n.t('recharge-page.afterEventTip')}
         </Text>
       </View>
