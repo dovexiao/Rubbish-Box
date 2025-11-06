@@ -9,6 +9,7 @@ import {useInnerStyle} from './recharge.hooks';
 import {useScreenSize} from '../hooks/size.hooks';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
+import {scaleSize} from '@/utils';
 export interface RechargeBalanceProps {
   balance?: number;
   payMethod?: string;
@@ -34,7 +35,7 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
   const refreshIconSize = (24 * screenWidth) / designWidth;
 
   return (
-    <View style={[theme.padding.lrm]}>
+    <View style={[{paddingHorizontal: scaleSize(12)}]}>
       <ImageBackground
         resizeMode="contain"
         source={require('@assets/imgs/recharge/card-background.webp')}
@@ -53,8 +54,12 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
                 style={[
                   theme.flex.row,
                   theme.flex.alignEnd,
-                  theme.margin.topm,
-                  {alignItems: 'center', width: '100%'},
+                  // theme.margin.topm,
+                  {
+                    alignItems: 'center',
+                    width: '100%',
+                    marginTop: scaleSize(4),
+                  },
                 ]}>
                 <View style={{maxWidth: '85%'}}>
                   <Text
@@ -81,7 +86,12 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
                 </NativeTouchableOpacity>
               </View>
             </View>
-            <View style={{position: 'absolute', right: 16, top: 11}}>
+            <View
+              style={{
+                position: 'absolute',
+                right: scaleSize(16),
+                top: scaleSize(11),
+              }}>
               <NativeTouchableOpacity
                 activeOpacity={0.8}
                 style={[theme.flex.row, theme.flex.centerByCol]}
@@ -98,7 +108,11 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
             style={[
               // theme.padding.lrl,
               // theme.padding.tbs,
-              {position: 'absolute', bottom: 18, left: 12},
+              {
+                position: 'absolute',
+                bottom: scaleSize(18),
+                left: scaleSize(12),
+              },
             ]}>
             <Text
               white
@@ -121,7 +135,7 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
 
 const styleSheet = StyleSheet.create({
   rechargeTop: {
-    padding: 14,
+    padding: scaleSize(14),
     display: 'flex',
     flexDirection: 'row',
   },
@@ -139,7 +153,7 @@ const styleSheet = StyleSheet.create({
     fontFamily: 'Arial, Arial-Regular',
   },
   balance: {
-    fontSize: 30,
+    fontSize: scaleSize(28),
     fontWeight: '700',
     color: '#ffffff',
     fontFamily: 'Helvetica, Helvetica-Bold',

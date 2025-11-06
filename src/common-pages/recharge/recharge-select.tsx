@@ -4,7 +4,7 @@ import {View, ImageBackground, Image, StyleSheet} from 'react-native'; //Dimensi
 import {Input} from '@rneui/themed';
 import {useTranslation} from 'react-i18next';
 import theme from '@/style';
-import {toPriceStr} from '@/utils';
+import {scaleSize, toPriceStr} from '@/utils';
 import Text from '@basicComponents/text';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useInnerStyle} from './recharge.hooks';
@@ -119,7 +119,11 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
           theme.padding.topxl,
           theme.flex.row,
           theme.flex.wrap,
-          {columnGap: 16, rowGap: 18, marginTop: 6},
+          {
+            columnGap: scaleSize(8),
+            rowGap: scaleSize(18),
+            marginTop: scaleSize(6),
+          },
         ]}>
         {balanceList.map((bl, index) => {
           // const isSelected = bl.balance + '' === balance;
@@ -127,7 +131,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
           return (
             <NativeTouchableOpacity
               key={index}
-              style={[selectStyles.item, theme.flex.col, {width: '30%'}]}
+              style={[theme.flex.col, {width: '31%'}]}
               onPress={() => onChangeBalance(bl.balance + '')}>
               {bl.balance + '' !== balance ? (
                 <LinearGradient
@@ -137,10 +141,11 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                   style={[
                     theme.flex.center,
                     theme.borderRadius.l,
-                    selectStyles.item,
+                    // selectStyles.item,
                     {
                       borderWidth: 2,
                       borderColor: 'transparent',
+                      paddingVertical: scaleSize(12),
                     },
                   ]}>
                   {bl.giveBalance !== 0 && (

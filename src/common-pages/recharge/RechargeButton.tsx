@@ -46,7 +46,7 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
       style={[theme.flex.center, theme.fill.fillW, rechargeStyle.buttonWrap]}>
       <ImageBackground
         source={require('@/assets/icons/recharge/button-background.webp')}
-        resizeMode="cover">
+        resizeMode="contain">
         <Button
           size="large"
           type={type}

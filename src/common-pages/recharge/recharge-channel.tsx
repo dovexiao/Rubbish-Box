@@ -8,6 +8,7 @@ import {useTranslation} from 'react-i18next';
 import Ok from '../svg/ok';
 import CustomTitle from './custom-title';
 import LinearGradient from '@/components/basic/linear-gradient';
+import {scaleSize} from '@/utils';
 
 export interface RechargeChannelProps {
   payMethodList: PayMethod[];
@@ -39,7 +40,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
         onPress={() => onPayMethodChange(item.id)}
         style={[
           {
-            width: '48%',
+            width: '47%',
           },
           isDisabled && {opacity: 0.6},
         ]}>
@@ -51,7 +52,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
             theme.flex.center,
             theme.borderRadius.l,
             {
-              paddingVertical: 12,
+              paddingVertical: scaleSize(16),
               borderWidth: 2,
               borderColor,
             },
@@ -68,7 +69,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
             white
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={{paddingTop: 5}}>
+            style={{paddingTop: scaleSize(8)}}>
             {`Balance: ${item.minAmount} - ${item.maxAmount}`}
           </Text>
         </LinearGradient>
@@ -90,9 +91,8 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
       <View
         style={[
           theme.flex.row,
-          theme.borderRadius.s,
           theme.flex.wrap,
-          {columnGap: 13, rowGap: 14},
+          {columnGap: scaleSize(13), rowGap: scaleSize(14)},
         ]}>
         {payMethodList.map(renderItem)}
       </View>

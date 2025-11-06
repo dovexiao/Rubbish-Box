@@ -10,6 +10,7 @@ import {RechargeTypeListItem} from './recharge.service';
 import {useInnerStyle} from './recharge.hooks';
 import CustomTitle from './custom-title';
 import {useTranslation} from 'react-i18next';
+import {scaleSize} from '@/utils';
 
 export interface RechargeTypeProps {
   typeList: RechargeTypeListItem[];
@@ -29,7 +30,7 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
     return (
       <NativeTouchableOpacity
         key={item.id}
-        style={[selectStyles.item, theme.flex.col, {width: '30%'}]}
+        style={[selectStyles.item, theme.flex.col, {width: '31%'}]}
         onPress={() => onChange?.(String(item.id))}>
         <LinearGradient
           start={{x: 0, y: isSelected ? 0.5 : 0}}
@@ -38,26 +39,27 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
           style={[
             theme.flex.row,
             theme.flex.center,
-            selectStyles.item,
+            // selectStyles.item,
             theme.borderRadius.l,
             {
               columnGap: 6,
               borderWidth: 2,
+              paddingVertical: scaleSize(12),
               borderColor,
             },
           ]}>
           <Image
             source={{uri: item.payIcon}}
             style={{
-              width: 24,
-              height: 24,
-              borderRadius: 20,
+              width: scaleSize(20),
+              height: scaleSize(20),
+              borderRadius: scaleSize(20),
               backgroundColor: '#FFFFFF',
             }}
             resizeMode="contain"
           />
           <Text
-            fontSize={14}
+            fontSize={scaleSize(12)}
             color={theme.basicColor.white}
             style={{fontWeight: '900'}}
             numberOfLines={2}>
@@ -72,13 +74,16 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
     <View
       style={[
         theme.flex.col,
-        theme.borderRadius.s,
         theme.margin.topxxxxl,
-        {paddingHorizontal: 16},
+        {paddingHorizontal: scaleSize(16)},
       ]}>
       <CustomTitle name={i18n.t('recharge-page.paymentType')} />
       <View
-        style={[theme.flex.row, theme.flex.wrap, {columnGap: 16, rowGap: 14}]}>
+        style={[
+          theme.flex.row,
+          theme.flex.wrap,
+          {columnGap: scaleSize(8), rowGap: scaleSize(14)},
+        ]}>
         {typeList.map(renderItem)}
       </View>
     </View>
