@@ -44,7 +44,7 @@ const NewWebViewGame = () => {
       navGoBack();
     }
     if (dataObj?.type === 'router' && dataObj?.msg === 'Recharge') {
-      goToWithLogin(i18n.t('home.tab.deposit'));
+      goToWithLogin('Deposit');
     }
     if (dataObj?.type === 'router' && dataObj?.msg === 'Login') {
       goTo('Login');

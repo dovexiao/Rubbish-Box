@@ -306,8 +306,8 @@ const Promotion = () => {
 
   // 跳转充值页面
   const onPressGoDeposit = useCallback(() => {
-    goToWithLogin(i18n.t('home.tab.deposit'));
-  }, [i18n]);
+    goToWithLogin('Deposit');
+  }, []);
 
   // 领取7天活动当天奖励
   const getSevenContinuousBonus = useCallback(

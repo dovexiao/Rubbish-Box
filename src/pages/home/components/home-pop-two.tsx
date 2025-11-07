@@ -59,7 +59,7 @@ const HomePopTwo: React.FC<HomePopTwoProps> = ({
   const onImage = () => {
     if (!canClick || !isLoaded) return;
     closeImage();
-    goToWithLogin(i18n.t('home.tab.deposit'));
+    goToWithLogin('Deposit');
   };
 
   return (

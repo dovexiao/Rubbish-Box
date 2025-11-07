@@ -406,8 +406,6 @@ const Recharge = () => {
     }
   };
 
-  console.log('=========balanceList=======', allPaymethodListRef.current);
-
   return (
     <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}>
       <DetailNavTitle

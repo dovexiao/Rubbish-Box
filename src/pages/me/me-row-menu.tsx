@@ -14,7 +14,7 @@ export interface MeRowMenuProps {}
 const MeRowMenu: React.FC<MeRowMenuProps> = () => {
   const {i18n} = useTranslation();
 
-  const toRecharge = () => goToWithLogin(i18n.t('home.tab.deposit'));
+  const toRecharge = () => goToWithLogin('Deposit');
   const toWithdraw = () => goToWithLogin('Withdraw');
 
   const renderItem = ({
