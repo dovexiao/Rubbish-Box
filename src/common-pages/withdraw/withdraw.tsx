@@ -25,6 +25,7 @@ import {postUserInfo, IUserInfo} from '@/services/global.service';
 import {onTransfer} from '../transfer/transfer-service';
 import {plus, times} from '@/components/utils/number-precision';
 import WithdrawActualReceived from './withdraw-actual-received';
+import ExitIntentModal from './component/exit-intent-modal';
 
 const Withdraw = () => {
   const {i18n} = useTranslation();
@@ -218,7 +219,7 @@ const Withdraw = () => {
           />
         </Spin>
       )}
-
+      <ExitIntentModal visible={true} />
       <BottomSheet isVisible={showCard}>
         <SelectCards
           list={cardList}
@@ -228,7 +229,6 @@ const Withdraw = () => {
           onAddBank={onGoAddBank}
         />
       </BottomSheet>
-
       <BottomSheet isVisible={showTransfer}>
         <WithdrawTransfer
           inputAmount={amount}

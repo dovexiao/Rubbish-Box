@@ -68,7 +68,7 @@ const WithdrawActualReceived = ({}: WithdrawActualReceivedProps) => {
     };
 
     fetchWithdrawRule();
-  }, []);
+  }, [i18n]);
 
   return (
     <View style={[theme.padding.lrl, theme.padding.bl, theme.margin.lrl]}>
