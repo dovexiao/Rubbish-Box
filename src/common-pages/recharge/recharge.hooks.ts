@@ -95,9 +95,9 @@ export function useInnerStyle() {
       position: 'absolute',
     },
     container: {
-      height: scaleSize(143),
-      paddingHorizontal: 20,
-      paddingTop: 20,
+      // height: scaleSize(113),
+      paddingHorizontal: scaleSize(20),
+      paddingTop: scaleSize(12),
       // borderRadius: theme.borderRadiusSize.l,
       // borderTopLeftRadius: theme.borderRadiusSize.l,
       // borderTopRightRadius: theme.borderRadiusSize.l,

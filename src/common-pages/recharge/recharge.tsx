@@ -38,6 +38,19 @@ import RechargeType, {RechargeTypeProps} from './recharge-type';
 import RechargeModal from './recharge-modal';
 import {useSkipTodayModal} from './recharge.hooks';
 
+function findMatchingData(balance: number, data: PayMethod[]) {
+  if (data.length > 0) {
+    const matchedData =
+      data.find(
+        item => balance >= item.minAmount && balance <= item.maxAmount,
+      ) || data[0];
+
+    console.log('===========matchedData==========', balance, matchedData);
+
+    return matchedData;
+  }
+}
+
 const Recharge = () => {
   const {i18n} = useTranslation();
 
@@ -45,6 +58,7 @@ const Recharge = () => {
   const [paymethodList, setPaymethodList] = useState<PayMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState<string>(''); // 金额输入
+  const balanceRef = useRef('');
   const [payMethodId, setPayMethodId] = useState<number>();
   const [incomeInfo, setIncomeInfo] = useState({upiId: '', orderNo: ''});
   const [selectedRechargeTypeId, setSelectedRechargeTypeId] = useState('');
@@ -101,6 +115,10 @@ const Recharge = () => {
     const item = balanceList.find(b => b.balance === +balance);
     return item ? item.id + '' : '';
   }, [balanceList, balance]);
+
+  useEffect(() => {
+    balanceRef.current = balance;
+  }, [balance]);
 
   // ✅ 初始化获取充值选项并调用getAdjustParams
   useFocusEffect(
@@ -389,7 +407,11 @@ const Recharge = () => {
     setPaymethodList(result);
 
     if (result.length > 0) {
-      setPayMethodId(result[0].id);
+      const data = findMatchingData(Number(balanceRef.current), result);
+
+      if (data) {
+        setPayMethodId(data.id);
+      }
     }
   };
 
@@ -472,6 +494,7 @@ const Recharge = () => {
                 })}`
               : ''
           }
+          type="linear-primary"
         />
       </Spin>
       <RechargeModal

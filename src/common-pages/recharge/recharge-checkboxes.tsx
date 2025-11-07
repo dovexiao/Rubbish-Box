@@ -4,6 +4,7 @@ import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import theme from '@/style';
 import LazyImage from '@basicComponents/image/lazy-image';
 import {getUserRechargeType} from '@/common-pages/recharge/recharge.service';
+import {scaleSize} from '@/utils';
 
 interface RechargeInfo {
   first_recharge?: {
@@ -92,12 +93,7 @@ const RechargeCheckBoxes = () => {
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        theme.padding.l,
-        {marginTop: 12, paddingBottom: 0},
-      ]}>
+    <View style={[styles.container, theme.padding.m, {paddingBottom: 0}]}>
       {renderBonusCard()}
     </View>
   );

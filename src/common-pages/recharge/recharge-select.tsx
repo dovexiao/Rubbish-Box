@@ -52,10 +52,10 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
     <View
       style={[
         theme.flex.col,
-        theme.margin.topxxxxl,
+        theme.margin.topm,
         theme.borderRadius.s,
         {
-          paddingHorizontal: 16,
+          paddingHorizontal: scaleSize(8),
         },
       ]}>
       <CustomTitle name={i18n.t('recharge-page.depositAmount')} />
@@ -67,7 +67,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
             selectStyles.inputWrap,
             theme.borderRadius.xs,
             theme.margin.btms,
-            theme.border.main,
+            // theme.border.main,
             {backgroundColor: '#5A0000'},
           ]}>
           <Input
@@ -116,12 +116,12 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
       {/* 快捷金额选择区域 */}
       <View
         style={[
-          theme.padding.topxl,
+          theme.padding.tops,
           theme.flex.row,
           theme.flex.wrap,
           {
-            columnGap: scaleSize(8),
-            rowGap: scaleSize(18),
+            columnGap: scaleSize(4),
+            rowGap: scaleSize(12),
             marginTop: scaleSize(6),
           },
         ]}>
@@ -131,7 +131,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
           return (
             <NativeTouchableOpacity
               key={index}
-              style={[theme.flex.col, {width: '31%'}]}
+              style={[theme.flex.col, {width: '24%'}]}
               onPress={() => onChangeBalance(bl.balance + '')}>
               {bl.balance + '' !== balance ? (
                 <LinearGradient
@@ -145,7 +145,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                     {
                       borderWidth: 2,
                       borderColor: 'transparent',
-                      paddingVertical: scaleSize(12),
+                      paddingVertical: scaleSize(10),
                     },
                   ]}>
                   {bl.giveBalance !== 0 && (
@@ -193,7 +193,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                     {
                       borderWidth: 2,
                       borderColor: '#FFBD37',
-                      paddingVertical: scaleSize(12),
+                      paddingVertical: scaleSize(10),
                     },
                   ]}>
                   {bl.giveBalance !== 0 && (

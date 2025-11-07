@@ -7,6 +7,7 @@ import Text from '@basicComponents/text';
 import CustomTitle from './custom-title';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
+import {scaleSize} from '@/utils';
 
 export interface RechargeDepositEventProps {
   /** 是否选中 */
@@ -24,8 +25,8 @@ const RechargeDepositEvent = ({
     <View
       style={[
         theme.borderRadius.s,
-        theme.margin.topxxxxl,
-        {paddingHorizontal: 16},
+        theme.margin.topxl,
+        {paddingHorizontal: scaleSize(8)},
       ]}>
       <CustomTitle name={i18n.t('recharge-page.depositEvent')} />
       <NativeTouchableOpacity

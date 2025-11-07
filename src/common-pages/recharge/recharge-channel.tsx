@@ -52,7 +52,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
             theme.flex.center,
             theme.borderRadius.l,
             {
-              paddingVertical: scaleSize(16),
+              paddingVertical: scaleSize(6),
               borderWidth: 2,
               borderColor,
             },
@@ -69,7 +69,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
             white
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={{paddingTop: scaleSize(8)}}>
+            style={{paddingTop: scaleSize(5)}}>
             {`Balance: ${item.minAmount} - ${item.maxAmount}`}
           </Text>
         </LinearGradient>
@@ -81,9 +81,9 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
     <View
       style={[
         theme.flex.col,
-        theme.margin.topxxxxl,
+        theme.margin.topm,
         {
-          paddingHorizontal: 16,
+          paddingHorizontal: scaleSize(8),
         },
       ]}>
       <CustomTitle name={i18n.t('recharge-page.label.channel')} />
@@ -92,7 +92,7 @@ const RechargeChannel: React.FC<RechargeChannelProps> = ({
         style={[
           theme.flex.row,
           theme.flex.wrap,
-          {columnGap: scaleSize(13), rowGap: scaleSize(14)},
+          {columnGap: scaleSize(13), rowGap: scaleSize(8)},
         ]}>
         {payMethodList.map(renderItem)}
       </View>

@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '500',
     color: theme.basicColor.newFontWhite,
     fontFamily: 'Arial, Arial-Bold',
   },

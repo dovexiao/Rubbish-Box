@@ -5,7 +5,7 @@ import Text from '@/components/basic/text';
 import React from 'react';
 import {ButtonType} from '@/components/basic/button/button';
 import {useTranslation} from 'react-i18next';
-import {useResponsiveDimensions} from '@/utils';
+import {scaleSize, useResponsiveDimensions} from '@/utils';
 // import globalStore from '@/services/global.state';
 import LinearGradient from '@/components/basic/linear-gradient';
 import RechargeQipao from '@/common-pages/recharge/recharge-qipao';
@@ -34,7 +34,7 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
   const rechargeStyle = StyleSheet.create({
     button: {
       width: rechargeButtonWidth,
-      height: 60,
+      height: scaleSize(42),
     },
     buttonWrap: {
       paddingTop: theme.paddingSize.m,
@@ -44,31 +44,27 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
   return (
     <View
       style={[theme.flex.center, theme.fill.fillW, rechargeStyle.buttonWrap]}>
-      <ImageBackground
-        source={require('@/assets/icons/recharge/button-background.webp')}
-        resizeMode="contain">
-        <Button
-          size="large"
-          type={type}
-          radius={30}
-          color="transparent"
-          disabled={disabled}
-          width={rechargeButtonWidth}
-          buttonStyle={[{backgroundColor: 'transparent'}, rechargeStyle.button]}
-          onPress={onRecharge}>
+      <Button
+        size="large"
+        type={type}
+        radius={30}
+        color="transparent"
+        disabled={disabled}
+        width={rechargeButtonWidth}
+        buttonStyle={[{backgroundColor: 'transparent'}, rechargeStyle.button]}
+        onPress={onRecharge}>
+        <Text
+          fontSize={theme.fontSize.m}
+          color={theme.basicColor.white}
+          style={{textAlign: 'center'}}>
           <Text
-            fontSize={theme.fontSize.m}
+            fontSize={theme.fontSize.l}
             color={theme.basicColor.white}
-            style={{textAlign: 'center'}}>
-            <Text
-              fontSize={theme.fontSize.xl}
-              color={theme.basicColor.white}
-              style={{textAlign: 'center', fontWeight: 'bold'}}>
-              {i18n.t('label.recharge')} {text && `(${text})`}
-            </Text>
+            style={{textAlign: 'center', fontWeight: 'bold'}}>
+            {i18n.t('label.recharge')} {text && `(${text})`}
           </Text>
-        </Button>
-      </ImageBackground>
+        </Text>
+      </Button>
     </View>
   );
 };

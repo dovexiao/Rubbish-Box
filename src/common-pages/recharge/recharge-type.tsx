@@ -39,10 +39,9 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
           style={[
             theme.flex.row,
             theme.flex.center,
-            // selectStyles.item,
             theme.borderRadius.l,
             {
-              columnGap: 6,
+              columnGap: scaleSize(6),
               borderWidth: 2,
               paddingVertical: scaleSize(12),
               borderColor,
@@ -74,15 +73,15 @@ const RechargeType = ({typeList = [], value, onChange}: RechargeTypeProps) => {
     <View
       style={[
         theme.flex.col,
-        theme.margin.topxxxxl,
-        {paddingHorizontal: scaleSize(16)},
+        theme.margin.topm,
+        {paddingHorizontal: scaleSize(8)},
       ]}>
       <CustomTitle name={i18n.t('recharge-page.paymentType')} />
       <View
         style={[
           theme.flex.row,
           theme.flex.wrap,
-          {columnGap: scaleSize(8), rowGap: scaleSize(14)},
+          {columnGap: scaleSize(8), rowGap: scaleSize(8)},
         ]}>
         {typeList.map(renderItem)}
       </View>
