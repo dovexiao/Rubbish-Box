@@ -5,7 +5,7 @@ import Text from '@/components/basic/text';
 import React from 'react';
 import {ButtonType} from '@/components/basic/button/button';
 import {useTranslation} from 'react-i18next';
-import {useResponsiveDimensions} from '@/utils';
+import {scaleSize, useResponsiveDimensions} from '@/utils';
 import globalStore from '@/services/global.state';
 
 export interface RechargeButtonProps {
@@ -49,7 +49,7 @@ const WithdrawButton: React.FC<RechargeButtonProps> = ({
       <Button
         size="large"
         type={type}
-        radius={5}
+        radius={scaleSize(45)}
         color={theme.fontColor.primary}
         disabled={disabled}
         width={rechargeButtonWidth}

@@ -11,7 +11,6 @@ export interface WithdrawActualReceivedProps {}
 
 const WithdrawActualReceived = ({}: WithdrawActualReceivedProps) => {
   const {i18n} = useTranslation();
-
   const [ruleList, setRuleList] = useState<
     {
       label: string;
@@ -24,7 +23,7 @@ const WithdrawActualReceived = ({}: WithdrawActualReceivedProps) => {
     },
     {
       label: i18n.t('withdraw-page.actualAmount.rule.withdrawalFees'),
-      value: 0,
+      value: '--',
     },
     {
       label: i18n.t('withdraw-page.actualAmount.rule.dailyWithdrawalTimes'),
@@ -81,14 +80,14 @@ const WithdrawActualReceived = ({}: WithdrawActualReceivedProps) => {
           theme.borderRadius.m,
           styles.contentContainer,
         ]}>
-        {ruleList.map(item => {
+        {ruleList.map((item, index) => {
           return (
-            <View style={styles.cell}>
+            <View style={styles.cell} key={index}>
               <Text white style={styles.text} fontSize={scaleSize(14)}>
                 {item.label}
               </Text>
               <Text white style={styles.text} fontSize={scaleSize(14)}>
-                {item.value}
+                {item.value ?? '--'}
               </Text>
             </View>
           );
@@ -159,7 +158,6 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     fontSize: scaleSize(12),
     lineHeight: scaleSize(22),
-    // color: '#ffffff',
   },
 });
 
