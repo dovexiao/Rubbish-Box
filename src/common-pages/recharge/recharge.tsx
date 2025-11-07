@@ -54,6 +54,7 @@ const Recharge = () => {
 
   const [balanceList, setBalanceList] = useState<BalanceListItem[]>([]);
   const [paymethodList, setPaymethodList] = useState<PayMethod[]>([]);
+  const paymethodListRef = useRef<PayMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState<string>(''); // 金额输入
   const balanceRef = useRef('');
@@ -116,6 +117,20 @@ const Recharge = () => {
 
   useEffect(() => {
     balanceRef.current = balance;
+
+    // NOTE: 切换金额时默认选中有效支付通道
+    if (paymethodListRef.current.length > 0) {
+      const data = findMatchingData(
+        Number(balanceRef.current),
+        paymethodListRef.current,
+      );
+
+      if (data) {
+        setPayMethodId(data.id);
+      } else {
+        setPayMethodId(undefined);
+      }
+    }
   }, [balance]);
 
   // ✅ 初始化获取充值选项并调用getAdjustParams
@@ -403,7 +418,9 @@ const Recharge = () => {
     });
 
     setPaymethodList(result);
+    paymethodListRef.current = result;
 
+    // NOTE: 切换支付类型时默认选中有效支付通道
     if (result.length > 0) {
       const data = findMatchingData(Number(balanceRef.current), result);
 
