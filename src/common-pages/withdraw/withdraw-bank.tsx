@@ -7,7 +7,7 @@ import LazyImage from '@/components/basic/image';
 import BankListItem from './component/bank-list-item';
 import {useTranslation} from 'react-i18next';
 import {CardListItemType} from './withdraw.service';
-import CustomTitle from '../recharge/custom-title';
+import CustomTitle from '@/components/business/custom-title';
 const rightIcon = require('@components/assets/icons/me-list-item/right-icon.webp');
 const addIcon = require('@assets/icons/withdraw/add.webp');
 

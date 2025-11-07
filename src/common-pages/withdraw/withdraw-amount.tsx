@@ -1,12 +1,12 @@
 import React from 'react';
-import {useTranslation, Trans} from 'react-i18next';
-import {View, StyleSheet} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {View} from 'react-native';
 import Text from '@/components/basic/text';
 import theme from '@/style';
 import {TextInput} from '@/components/basic/input-field';
 import globalStore from '@/services/global.state';
-import CustomTitle from '../recharge/custom-title';
 import {scaleSize} from '@/utils';
+import CustomTitle from '@/components/business/custom-title';
 
 export interface WithdrawAmountType {
   amount: string;

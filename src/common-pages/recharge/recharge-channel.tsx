@@ -1,14 +1,13 @@
 import React from 'react';
 import Text from '@basicComponents/text';
-import {View, StyleSheet} from 'react-native';
+import {View} from 'react-native';
 import theme from '@style';
 import {PayMethod} from './recharge.service';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
-import Ok from '../svg/ok';
-import CustomTitle from './custom-title';
 import LinearGradient from '@/components/basic/linear-gradient';
 import {scaleSize} from '@/utils';
+import CustomTitle from '@/components/business/custom-title';
 
 export interface RechargeChannelProps {
   payMethodList: PayMethod[];

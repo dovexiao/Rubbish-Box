@@ -1,11 +1,11 @@
 import React, {memo, useEffect, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import CustomTitle from '../recharge/custom-title';
 import theme from '@/style';
 import {scaleSize} from '@/utils';
 import Text from '@/components/basic/text';
 import {Trans, useTranslation} from 'react-i18next';
 import {getWithdrawRule} from './withdraw.service';
+import CustomTitle from '@/components/business/custom-title';
 
 export interface WithdrawActualReceivedProps {}
 

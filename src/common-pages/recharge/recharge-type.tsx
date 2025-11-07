@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image} from 'react-native';
+import {View, Image} from 'react-native';
 
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import LinearGradient from '@/components/basic/linear-gradient';
@@ -8,9 +8,9 @@ import theme from '@/style';
 
 import {RechargeTypeListItem} from './recharge.service';
 import {useInnerStyle} from './recharge.hooks';
-import CustomTitle from './custom-title';
 import {useTranslation} from 'react-i18next';
 import {scaleSize} from '@/utils';
+import CustomTitle from '@/components/business/custom-title';
 
 export interface RechargeTypeProps {
   typeList: RechargeTypeListItem[];
