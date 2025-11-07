@@ -55,7 +55,11 @@ const WithdrawButton: React.FC<RechargeButtonProps> = ({
         width={rechargeButtonWidth}
         buttonStyle={[rechargeStyle.button]}
         onPress={onRecharge}>
-        <Text fontSize={theme.fontSize.m} blod color={theme.basicColor.white}>
+        <Text
+          fontSize={theme.fontSize.l}
+          blod
+          color={theme.basicColor.white}
+          style={{fontWeight: 'bold'}}>
           {text || i18n.t('home.tab.deposit')}
         </Text>
       </Button>

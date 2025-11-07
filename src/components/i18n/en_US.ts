@@ -777,6 +777,15 @@ export default {
       addCard: 'Please add a bank card first',
       addAmount: 'Please enter the amount',
     },
+    actualAmount: {
+      subTitle: 'Withdrawal instructions',
+      rule: {
+        dailyWithdrawalLimit: 'Daily withdrawal limit',
+        withdrawalFees: 'Withdrawal fees',
+        dailyWithdrawalTimes: 'Daily withdrawal times',
+        minimumWithdrawal: 'Minimum Withdrawal',
+      },
+    },
   },
   'bank-page': {
     label: {

@@ -568,6 +568,15 @@ export default {
       addCard: 'कृपया पहले बैंक कार्ड जोड़ें',
       addAmount: 'कृपया राशि दर्ज करें',
     },
+    actualAmount: {
+      subTitle: 'निकासी निर्देश',
+      rule: {
+        dailyWithdrawalLimit: 'दैनिक निकासी सीमा',
+        withdrawalFees: 'निकासी शुल्क',
+        dailyWithdrawalTimes: 'दैनिक निकासी बार',
+        minimumWithdrawal: 'न्यूनतम निकासी',
+      },
+    },
   },
   'bank-page': {
     label: {

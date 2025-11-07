@@ -6,7 +6,8 @@ import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import LazyImage from '@/components/basic/image';
 import BankListItem from './component/bank-list-item';
 import {useTranslation} from 'react-i18next';
-import {CardListItemType} from './withdraw-service';
+import {CardListItemType} from './withdraw.service';
+import CustomTitle from '../recharge/custom-title';
 const rightIcon = require('@components/assets/icons/me-list-item/right-icon.webp');
 const addIcon = require('@assets/icons/withdraw/add.webp');
 
@@ -20,22 +21,14 @@ const WithdrawBank = (props: WithdrawBankProps) => {
   const {i18n} = useTranslation();
   const {bankInfo = {}, onAddBank = () => {}, onSelectBank = () => {}} = props;
   return (
-    <View
-      style={[
-        theme.margin.topl,
-        theme.padding.l,
-        theme.border.main,
-        theme.background.newBgInTwo,
-        theme.margin.lrl,
-        theme.borderRadius.s,
-      ]}>
-      <Text style={[theme.margin.btms]} white size="medium">
-        {i18n.t('withdraw-page.label.transferTo')}
-      </Text>
+    <View style={[theme.margin.tops, theme.padding.l, theme.margin.lrl]}>
+      <CustomTitle name={i18n.t('withdraw-page.label.transferTo')} />
       {bankInfo!.id ? (
         <BankListItem
           cardInfo={bankInfo}
           onItemPress={onSelectBank}
+          backgroundColor={theme.basicColor.primary}
+          style={{borderColor: 'transparent'}}
           rightIcon={
             <LazyImage
               occupancy={'transparent'}

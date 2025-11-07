@@ -20,14 +20,11 @@ import WithdrawTransfer from './withdraw-transfer';
 import SelectCards from './select-cards';
 import WithdrawButton from '@businessComponents/recharge-button/withdraw-button';
 
-import {
-  getBankList,
-  CardListItemType,
-  onWithdraw,
-} from './withdraw-service';
+import {getBankList, CardListItemType, onWithdraw} from './withdraw.service';
 import {postUserInfo, IUserInfo} from '@/services/global.service';
 import {onTransfer} from '../transfer/transfer-service';
 import {plus, times} from '@/components/utils/number-precision';
+import WithdrawActualReceived from './withdraw-actual-received';
 
 const Withdraw = () => {
   const {i18n} = useTranslation();
@@ -109,13 +106,9 @@ const Withdraw = () => {
   const actualReceived = useMemo(() => {
     const max = user?.canWithdrawAmount || 0;
     const num = Number(amount);
-    if (
-      !isNaN(num) &&
-      user?.withdrawalFreeConfigs?.length &&
-      num <= max
-    ) {
+    if (!isNaN(num) && user?.withdrawalFreeConfigs?.length && num <= max) {
       const config = user.withdrawalFreeConfigs.find(
-        (c: { minValue: number; maxValue: number; pct: number }) =>
+        (c: {minValue: number; maxValue: number; pct: number}) =>
           num >= c.minValue && num <= c.maxValue,
       );
       if (config) {
@@ -125,18 +118,20 @@ const Withdraw = () => {
     return 0;
   }, [amount, user]);
 
-
-  const onGoAddBank = useCallback((cardInfo?: CardListItemType) => {
-    setShowCard(false);
-    if (!globalStore.token) {
-      goTo('Login', {backPage: 'Home'});
-      return;
-    }
-    goTo('AddBank', {
-      isFirst: cardList.length === 0 ? '1' : '0',
-      cardInfo,
-    });
-  }, [cardList]);
+  const onGoAddBank = useCallback(
+    (cardInfo?: CardListItemType) => {
+      setShowCard(false);
+      if (!globalStore.token) {
+        goTo('Login', {backPage: 'Home'});
+        return;
+      }
+      goTo('AddBank', {
+        isFirst: cardList.length === 0 ? '1' : '0',
+        cardInfo,
+      });
+    },
+    [cardList],
+  );
 
   const onWithdrawSubmit = async () => {
     if (!selectedCard) {
@@ -213,11 +208,12 @@ const Withdraw = () => {
                 amount={price}
                 onAmountChange={setPrice}
               />
+              <WithdrawActualReceived />
             </ScrollView>
           </View>
           <WithdrawButton
             onRecharge={onWithdrawSubmit}
-            type="linear-primary-gold"
+            type="linear-primary"
             text={i18n.t('other.withdraw')}
           />
         </Spin>

@@ -7,7 +7,7 @@ import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import LazyImage from '@/components/basic/image';
 import Add from '../svg/add';
 import BankListItem from './component/bank-list-item';
-import {CardListItemType} from './withdraw-service';
+import {CardListItemType} from './withdraw.service';
 const closeIcon = require('@/assets/icons/close-white.webp');
 
 const {height} = Dimensions.get('window');
