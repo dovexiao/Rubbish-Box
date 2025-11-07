@@ -43,9 +43,7 @@ function findMatchingData(balance: number, data: PayMethod[]) {
     const matchedData =
       data.find(
         item => balance >= item.minAmount && balance <= item.maxAmount,
-      ) || data[0];
-
-    console.log('===========matchedData==========', balance, matchedData);
+      ) || null;
 
     return matchedData;
   }
@@ -411,6 +409,8 @@ const Recharge = () => {
 
       if (data) {
         setPayMethodId(data.id);
+      } else {
+        setPayMethodId(undefined);
       }
     }
   };
