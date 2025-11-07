@@ -369,7 +369,7 @@ export function useLuckySpinModal({
                   goTo('Login');
                   return;
                 }
-                goToWithLogin(i18n.t('home.tab.deposit'));
+                goToWithLogin('Deposit');
                 handleHide();
               }}>
               <LinearGradient

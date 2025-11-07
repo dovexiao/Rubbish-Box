@@ -409,7 +409,7 @@ const LuckySpinPage = () => {
                   goTo('Login');
                   return;
                 }
-                goToWithLogin(i18n.t('home.tab.deposit'));
+                goToWithLogin('Deposit');
               }}>
               <LinearGradient
                 start={{x: 0, y: 0}}

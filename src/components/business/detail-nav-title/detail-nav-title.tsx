@@ -147,7 +147,7 @@ const DetailNavTitle = (
                 <NativeTouchableOpacity
                   onPress={() => {
                     globalStore.token
-                      ? goToWithLogin(i18n.t('home.tab.deposit'))
+                      ? goToWithLogin('Deposit')
                       : goTo('Login');
                   }}>
                   {globalStore.isWeb ? (
