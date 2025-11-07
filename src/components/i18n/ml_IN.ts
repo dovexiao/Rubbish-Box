@@ -330,6 +330,8 @@ export default {
     'commission-card': {
       commission: 'കമ്മീഷൻ തുക',
     },
+    'join-Telegram': 'Join Telegram',
+    'join-Whatsapp': 'Join Whatsapp',
   },
   newProxy: {
     title: 'എന്റെ ടീം വിവരങ്ങൾ',

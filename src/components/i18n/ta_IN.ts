@@ -323,6 +323,8 @@ export default {
     'commission-card': {
       commission: 'கமிஷன் தொகை',
     },
+    'join-Telegram': 'Join Telegram',
+    'join-Whatsapp': 'Join Whatsapp',
   },
   'invitation-record': {
     'invitation-record': 'அழைப்பு பதிவு',

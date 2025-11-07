@@ -326,6 +326,8 @@ export default {
     'commission-card': {
       commission: 'Commission Amount',
     },
+    'join-Telegram': 'Join Telegram',
+    'join-Whatsapp': 'Join Whatsapp',
   },
   newProxy: {
     title: 'My Teams Info',

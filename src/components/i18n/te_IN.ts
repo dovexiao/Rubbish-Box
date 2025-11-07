@@ -331,6 +331,8 @@ export default {
     'commission-card': {
       commission: 'கமிஷன் தொகை',
     },
+    'join-Telegram': 'Join Telegram',
+    'join-Whatsapp': 'Join Whatsapp',
   },
   newProxy: {
     title: 'எனது அணி தகவல்கள்',

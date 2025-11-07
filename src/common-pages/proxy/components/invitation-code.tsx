@@ -17,9 +17,11 @@ interface IProps {
   onRefresh?: () => void;
   onShare?: () => void;
   onCopy?: () => void;
+  onJoinTelegram?: () => void;
+  onJoinWhatsapp?: () => void;
 }
 const DirectSubordinates = (props: IProps) => {
-  const {code, onRefresh, onShare, onCopy} = props;
+  const {code, onRefresh, onShare, onCopy, onJoinTelegram, onJoinWhatsapp} = props;
   const {
     size: {screenWidth: width},
     homeInvitationStyle,
@@ -142,9 +144,9 @@ const DirectSubordinates = (props: IProps) => {
               radius={22}
               color={'#FF493A'}
               // size="large"
-              title="Join Telegtam"
+              title={i18n.t('proxy.join-Telegram')}
               titleBold={true}
-              onPress={() => goToUrl('https://t.me/eve1_official')}
+              onPress={() => onJoinTelegram()}
             />
           </View>
           <View style={{flexBasis: '48%'}}>
@@ -152,13 +154,9 @@ const DirectSubordinates = (props: IProps) => {
               radius={22}
               color={'#F7B500'}
               // size="large"
-              title="Join Whatsapp"
+              title={i18n.t('proxy.join-Whatsapp')}
               titleBold={true}
-              onPress={() =>
-                goToUrl(
-                  'https://api.whatsapp.com/send/?phone=919332094811&text&type=phone_number&app_absent=0&wame_ctl=1',
-                )
-              }
+              onPress={() => onJoinWhatsapp()}
             />
           </View>
         </View>

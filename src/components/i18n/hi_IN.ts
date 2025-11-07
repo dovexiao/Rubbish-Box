@@ -339,6 +339,8 @@ export default {
     'commission-card': {
       commission: 'कमीशन राशि',
     },
+    'join-Telegram': 'Join Telegram',
+    'join-Whatsapp': 'Join Whatsapp',
   },
   login: {
     title: {
