@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleSize(12),
     minHeight: scaleSize(100),
     paddingBottom: scaleSize(12),
+    backgroundColor: '#A1251C',
   },
   cell: {
     flexDirection: 'row',

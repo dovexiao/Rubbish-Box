@@ -23,7 +23,10 @@ const WithdrawAmount = (props: WithdrawAmountType) => {
       <CustomTitle name={i18n.t('withdraw-page.label.withdrawAmount')} />
       <TextInput
         value={amount}
-        style={[theme.border.primary]}
+        style={[
+          theme.border.primary,
+          { backgroundColor: '#A1251C' },
+        ]}
         onValueChange={value => {
           const regex = /^[0-9\b]+$/;
           if (
