@@ -72,7 +72,7 @@ const WithdrawNoticeBanner: React.FC<WithdrawNoticeBannerProps> = ({
     return {
       transform: [{translateX: translateX.value}],
     };
-  });
+  }, [translateX]);
 
   return (
     <View style={[styles.container]}>
@@ -83,7 +83,7 @@ const WithdrawNoticeBanner: React.FC<WithdrawNoticeBannerProps> = ({
           height={iconSize}
         />
       </View>
-      <ScrollView style={styles.textContainer} horizontal={true}>
+      <Animated.ScrollView style={styles.textContainer} horizontal={true}>
         <Animated.View style={[styles.scrollWrapper, animatedStyle]}>
           {/* 第一个 Text：用于测量宽度和显示 */}
           {/* 使用 View 包裹 Text，让 Text 自然布局完整文字内容，不设置任何限制属性 */}
@@ -95,7 +95,7 @@ const WithdrawNoticeBanner: React.FC<WithdrawNoticeBannerProps> = ({
             <Text style={styles.text}>{textContent}</Text>
           </View>
         </Animated.View>
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 };
