@@ -5,6 +5,7 @@ import theme from '@/style';
 import Spin from '@/components/basic/spin';
 import {
   get3D,
+  getCasinoData,
   getColor,
   getDice,
   getKerala,
@@ -120,19 +121,23 @@ const BetsList = (props: {
           // 0未中奖1已中奖2未开奖 3全部
           res = (await getSatta(normalParams)) || [];
           break;
+        case 'Casino':
+          const queryDate = formatDate(currentDate, 'yyyyMMdd');
+
+          res =
+            (await getCasinoData({
+              ...normalParams,
+              queryDate,
+              gameType: 2,
+            })) || [];
+
+          break;
         case 'Quick Race':
         case 'Scratch off':
-        case 'Casino':
         case 'Live':
           // 1=中奖 0=已使用 2=未使用 3全部
           const gameType =
-            game === 'Scratch off'
-              ? 1
-              : game === 'Casino'
-              ? 2
-              : game === 'Quick Race'
-              ? 5
-              : 3;
+            game === 'Scratch off' ? 1 : game === 'Quick Race' ? 5 : 3;
           res =
             (await getScratchAndCasino({
               ...normalParams,

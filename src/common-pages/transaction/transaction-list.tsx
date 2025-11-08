@@ -17,6 +17,7 @@ export interface TransactionListType {
   index: number | 0;
   tabs: TabType[];
   isActive?: boolean;
+  currentDate?: Date;
 }
 
 const pageSize = 10;
@@ -25,11 +26,17 @@ const TransactionList = (props: TransactionListType) => {
   const pageRef = React.useRef(1);
   const hasMores = React.useRef(false);
   const [list, setList] = React.useState<SafeAny[]>([]);
-  const [currentDate] = React.useState<Date>(new Date());
+  // const [currentDate] = React.useState<Date>(new Date());
   const [loading, setLoading] = React.useState(false);
   const [firstLoad, setFirstLoad] = React.useState(true);
   const [moreLoading, setMoreLoading] = React.useState(false);
-  const {type, index, tabs = [], isActive = false} = props;
+  const {
+    type,
+    index,
+    tabs = [],
+    isActive = false,
+    currentDate = new Date(),
+  } = props;
 
   const {onEndReachedCalledDuringMomentum} = useInfiniteScroll(
     `transaction-id-${index}`,
@@ -57,14 +64,14 @@ const TransactionList = (props: TransactionListType) => {
       setMoreLoading(true);
     }
 
-    const yearMonth = dayjs(date).format('YYYYMM');
+    const queryDate = dayjs(date).format('YYYYMMDD');
 
     try {
       const res = await getList({
         pageNo: pageRef.current,
         pageSize,
         changeDesc: type,
-        yearMonth,
+        queryDate,
       });
 
       if (res) {

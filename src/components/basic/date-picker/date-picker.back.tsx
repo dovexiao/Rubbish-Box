@@ -151,8 +151,8 @@ const DatePicker = ({
   const handlePress = () => {
     const selectedDate =
       type === 'day'
-        ? dayjs(`${year}-${month}-${day}`, 'YYYY-MM-DD')
-        : dayjs(`${year}-${month}`, 'YYYY-MM');
+        ? dayjs(`${year}${month}${day}`, 'YYYYMMDD')
+        : dayjs(`${year}${month}`, 'YYYYMM');
 
     // NOTE:暂时先这么处理，后面再优化
     // 如果设置了最大选择天数限制，验证当前选择的日期

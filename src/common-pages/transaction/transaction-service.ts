@@ -15,8 +15,10 @@ export const getList = (data: {
   pageNo: number | 1;
   pageSize?: number | 10;
   changeDesc: string;
-  yearMonth: string;
+  queryDate?: string;
 }) => {
-  return http.post<null, SafeAny[]>('app/user/wallet/detail/list', data);
+  // return http.post<null, SafeAny[]>('app/user/wallet/detail/list', data);
   // return http.post<null, SafeAny[]>('app/user/balance', data);
+
+  return http.post<null, SafeAny[]>('app/user/wallet/detail/daily/list', data);
 };

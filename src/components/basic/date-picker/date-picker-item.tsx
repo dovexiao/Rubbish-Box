@@ -5,17 +5,22 @@ import dayjs from 'dayjs';
 import Text from '@/components/basic/text';
 import theme from '@/style';
 import DatePicker from '@/components/basic/date-picker';
+import {DatePickerProps} from './date-picker';
 const calendar = require('@assets/icons/calendar.webp');
 const triangle = require('@/assets/icons/down-primary.webp');
-export interface SelectDateType {
+export interface SelectDateType
+  extends Omit<DatePickerProps, 'open' | 'setOpen'> {
   containerStyle?: StyleProp<ViewStyle>;
   value?: Date;
   onChange?: (v: Date) => void;
 }
 
 const DatePickerItem = (props: SelectDateType) => {
-  const {containerStyle, value, onChange} = props;
+  const {containerStyle, value, onChange, type, ...datePickerProps} = props;
   const [showDate, setShowDate] = React.useState(false);
+
+  const dateFormat = type === 'day' ? 'YYYY-MM-DD' : 'YYYY-MM';
+
   return (
     <DatePicker
       titleRender={
@@ -47,7 +52,7 @@ const DatePickerItem = (props: SelectDateType) => {
               blod
               size="medium"
               style={[theme.margin.leftl, theme.font.white]}>
-              {dayjs(value).format('YYYY-MM')}
+              {dayjs(value).format(dateFormat)}
             </Text>
           </View>
           <LazyImage
@@ -60,9 +65,10 @@ const DatePickerItem = (props: SelectDateType) => {
       }
       open={showDate}
       setOpen={setShowDate}
-      type="month"
+      type={type}
       value={value}
       onValueChange={onChange}
+      {...datePickerProps}
     />
   );
 };

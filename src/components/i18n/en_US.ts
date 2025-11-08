@@ -55,6 +55,7 @@ export default {
   warning: {
     unopen: 'Not yet enabled',
     initializin: 'Initializing, please wait',
+    selectDateInLastDays: 'Please select a date within the past {{days}} days',
   },
   notification: {
     title: 'Message',

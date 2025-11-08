@@ -52,6 +52,7 @@ export default {
   warning: {
     unopen: 'अभी तक चालू नहीं किया गया है',
     initializin: 'प्रारंभ हो रहा है, कृपया प्रतीक्षा करें',
+    selectDateInLastDays: 'कृपया पिछले {{days}} दिनों के भीतर एक तिथि चुनें',
   },
   notification: {
     title: 'नोटिफिकेशन',
@@ -453,6 +454,21 @@ export default {
       title: 'महत्वपूर्ण नोट्स',
       note1:
         'कृपया भुगतान राशि में कोई बदलाव न करें। एक ही क्यूआर कोड या UPI खाते का कई बार उपयोग करने से बचें।',
+    },
+  },
+  'bets-page': {
+    label: {
+      share: 'साझा करें',
+      result: 'परिणाम',
+      bettingTime: 'बैठक समय',
+      shareAwards: 'इनाम के लिए साझा करें',
+      drawTime: 'लॉटरी समय',
+      playNow: 'अब खेलें',
+    },
+    status: {
+      won: 'जीता',
+      noWin: 'कोई जीत नहीं',
+      toBe: 'अभी तक अनौपचारिक...',
     },
   },
   datePicker: {

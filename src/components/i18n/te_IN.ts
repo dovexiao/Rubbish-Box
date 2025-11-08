@@ -55,6 +55,7 @@ export default {
   warning: {
     unopen: 'இது இன்னும் செயல்படவில்லை',
     initializin: 'தயாராகிறது, தயவுசெய்து காத்திருக்கவும்',
+    selectDateInLastDays: 'దయచేసి గత {{days}} రోజుల్లోని ఒక తేదీని ఎంచుకోండి',
   },
   notification: {
     title: 'செய்தி',
@@ -604,17 +605,17 @@ export default {
   },
   'bets-page': {
     label: {
-      share: 'பகிரவும்',
-      result: 'முடிவு',
-      bettingTime: 'பந்தய நேரம்',
-      shareAwards: 'வெகுமதிக்காக பகிரவும்',
-      drawTime: 'டிரா நேரம்',
-      playNow: 'இப்போது விளையாடவும்',
+      share: 'పంచుకోండి',
+      result: 'ఫలితం',
+      bettingTime: 'పందెం సమయం',
+      shareAwards: 'బహుమతికి పంచుకోండి',
+      drawTime: 'ఆన్ లైన్ టైమ్',
+      playNow: 'ఇప్పుడు ఆడండి',
     },
     status: {
-      won: 'வெற்றி',
-      noWin: 'வெற்றி இல்லை',
-      toBe: 'டிரா செய்யப்படுகிறது...',
+      won: 'విజయం',
+      noWin: 'జయించలేదు',
+      toBe: 'తమశాఖ వద్ద...',
     },
   },
   'bets-detail': {
