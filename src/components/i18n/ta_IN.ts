@@ -520,6 +520,15 @@ export default {
       addCard: 'தயவுசெய்து முதலில் வங்கி கார்டை சேர்க்கவும்',
       addAmount: 'தயவுசெய்து தொகையை உள்ளிடவும்',
     },
+    actualAmount: {
+      subTitle: 'பின்வலிப்பு அறிவுறுத்தல்கள்',
+      rule: {
+        dailyWithdrawalLimit: 'தினசரி பின்வலிப்பு வரம்பு',
+        withdrawalFees: 'பின்வலிப்பு கட்டணங்கள்',
+        dailyWithdrawalTimes: 'தினசரி பின்வலிப்பு நேரங்கள்',
+        minimumWithdrawal: 'குறைந்தபட்ச பின்வலிப்பு',
+      },
+    },
   },
   login: {
     title: {

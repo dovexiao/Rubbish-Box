@@ -1,6 +1,5 @@
-/* eslint-disable prettier/prettier */
 import React from 'react';
-import {View, ImageBackground, Image, StyleSheet} from 'react-native'; //Dimensions,
+import {View, Image, StyleSheet} from 'react-native'; //Dimensions,
 import {Input} from '@rneui/themed';
 import {useTranslation} from 'react-i18next';
 import theme from '@/style';
@@ -12,7 +11,7 @@ import LinearGradient from '@/components/basic/linear-gradient';
 // import globalStore from '@/services/global.state';
 import {BalanceListItem} from './recharge.service';
 import RechargeQipao from '@/common-pages/recharge/recharge-qipao';
-import CustomTitle from './custom-title';
+import CustomTitle from '@/components/business/custom-title';
 
 export interface RechargeSelectProps {
   min: number;

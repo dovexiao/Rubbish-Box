@@ -1,11 +1,11 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ImageBackground} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
 import theme from '@/style';
 import Text from '@/components/basic/text';
 import Button from '@/components/basic/button';
-import {toPriceStr} from '@/utils';
+import {scaleSize, toPriceStr} from '@/utils';
 import globalStore from '@/services/global.state';
 
 export interface WithdrawBalanceProps {
@@ -20,26 +20,22 @@ const WithdrawBalance: React.FC<WithdrawBalanceProps> = props => {
   const {i18n} = useTranslation();
 
   return (
-    <View
-      style={[
-        theme.margin.lrl,
-        styles.container,
-        theme.border.main,
-        theme.borderRadius.m,
-      ]}>
-      <View
+    <View style={[theme.margin.lrl]}>
+      <ImageBackground
+        source={require('@/assets/imgs/withdraw/card-background.webp')}
+        resizeMode="contain"
         style={[styles.balanceContainer, theme.flex.row, theme.flex.between]}>
         <View style={theme.flex.flex1}>
-          <Text color={theme.fontColor.primaryMain} style={styles.opacity}>
+          <Text color={theme.fontColor.white} style={styles.opacity}>
             {i18n.t('withdraw-page.label.withdrawAmount')}
           </Text>
           <View style={[theme.flex.row, theme.flex.alignEnd]}>
             <Text
               fontFamily="fontInter"
-              blod
-              fontSize={20}
+              fontSize={scaleSize(25)}
               allowFontScaling={false}
-              style={theme.font.white}>
+              style={{fontWeight: 'bold'}}
+              white>
               {toPriceStr(balance, {
                 thousands: true,
                 spacing: true,
@@ -51,11 +47,13 @@ const WithdrawBalance: React.FC<WithdrawBalanceProps> = props => {
         <Button
           size="small"
           style={styles.button}
+          titleColor="#E02020"
           title={`${i18n.t('other.withdraw')} ${i18n.t('other.records')}`}
-          type="linear-primary"
+          type="linear-secondary-gold"
+          radius={scaleSize(20)}
           onPress={onGotoRecords}
         />
-      </View>
+      </ImageBackground>
     </View>
   );
 };
@@ -67,13 +65,15 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   balanceContainer: {
-    paddingTop: 20,
+    height: scaleSize(89),
+    paddingTop: scaleSize(20),
+    paddingHorizontal: scaleSize(17),
   },
   opacity: {
-    opacity: 0.7,
+    opacity: 0.9,
   },
   button: {
-    marginLeft: 12,
+    marginLeft: scaleSize(12),
   },
 });
 

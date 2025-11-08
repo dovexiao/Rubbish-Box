@@ -781,6 +781,15 @@ export default {
       addCard: 'ദയവായി ആദ്യം ബാങ്ക് കാർഡ് ചേർക്കുക',
       addAmount: 'ദയവായി തുക നൽകുക',
     },
+    actualAmount: {
+      subTitle: 'നിക്ഷേപ നിർദേശങ്ങൾ',
+      rule: {
+        dailyWithdrawalLimit: 'ദൈനംദിന പിൻവലിക്കൽ പരിധി',
+        withdrawalFees: 'പിൻവലിക്കൽ ഫീസുകൾ',
+        dailyWithdrawalTimes: 'ദൈനംദിന പിൻവലിക്കൽ സമയം',
+        minimumWithdrawal: 'കുറഞ്ഞ പിൻവലിക്കൽ',
+      },
+    },
   },
   'error-pages': {
     refresh: {

@@ -752,6 +752,15 @@ export default {
       addCard: 'தயவுசெய்து முதலில் வங்கி கார்டை சேர்க்கவும்',
       addAmount: 'தயவுசெய்து தொகையை உள்ளிடவும்',
     },
+    actualAmount: {
+      subTitle: 'ముగింపు సూచనలు',
+      rule: {
+        dailyWithdrawalLimit: 'డైలీ విడత ఆవరపు',
+        withdrawalFees: 'విడత ఫీజులు',
+        dailyWithdrawalTimes: 'డైలీ విడత సమయాలు',
+        minimumWithdrawal: 'కనిష్ఠ విడత',
+      },
+    },
   },
   login: {
     title: {

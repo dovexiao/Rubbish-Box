@@ -20,14 +20,13 @@ import WithdrawTransfer from './withdraw-transfer';
 import SelectCards from './select-cards';
 import WithdrawButton from '@businessComponents/recharge-button/withdraw-button';
 
-import {
-  getBankList,
-  CardListItemType,
-  onWithdraw,
-} from './withdraw-service';
+import {getBankList, CardListItemType, onWithdraw} from './withdraw.service';
 import {postUserInfo, IUserInfo} from '@/services/global.service';
 import {onTransfer} from '../transfer/transfer-service';
 import {plus, times} from '@/components/utils/number-precision';
+import WithdrawActualReceived from './withdraw-actual-received';
+import ExitIntentModal from './component/exit-intent-modal';
+import WithdrawNoticeBanner from './component/withdraw-notice-banner';
 
 const Withdraw = () => {
   const {i18n} = useTranslation();
@@ -109,13 +108,9 @@ const Withdraw = () => {
   const actualReceived = useMemo(() => {
     const max = user?.canWithdrawAmount || 0;
     const num = Number(amount);
-    if (
-      !isNaN(num) &&
-      user?.withdrawalFreeConfigs?.length &&
-      num <= max
-    ) {
+    if (!isNaN(num) && user?.withdrawalFreeConfigs?.length && num <= max) {
       const config = user.withdrawalFreeConfigs.find(
-        (c: { minValue: number; maxValue: number; pct: number }) =>
+        (c: {minValue: number; maxValue: number; pct: number}) =>
           num >= c.minValue && num <= c.maxValue,
       );
       if (config) {
@@ -125,18 +120,20 @@ const Withdraw = () => {
     return 0;
   }, [amount, user]);
 
-
-  const onGoAddBank = useCallback((cardInfo?: CardListItemType) => {
-    setShowCard(false);
-    if (!globalStore.token) {
-      goTo('Login', {backPage: 'Home'});
-      return;
-    }
-    goTo('AddBank', {
-      isFirst: cardList.length === 0 ? '1' : '0',
-      cardInfo,
-    });
-  }, [cardList]);
+  const onGoAddBank = useCallback(
+    (cardInfo?: CardListItemType) => {
+      setShowCard(false);
+      if (!globalStore.token) {
+        goTo('Login', {backPage: 'Home'});
+        return;
+      }
+      goTo('AddBank', {
+        isFirst: cardList.length === 0 ? '1' : '0',
+        cardInfo,
+      });
+    },
+    [cardList],
+  );
 
   const onWithdrawSubmit = async () => {
     if (!selectedCard) {
@@ -153,25 +150,11 @@ const Withdraw = () => {
         cardId: selectedCard,
         price: Number(price),
       });
+      handleRefresh();
       setShowSuccess(true);
     } catch (err) {
       console.error('提现失败', err);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const onSubmitTransfer = async () => {
-    setShowTransfer(false);
-    setLoading(true);
-    try {
-      await onTransfer(Number(amount));
-      await fetchUserAndBanks();
-      globalStore.globalSucessTotal(i18n.t('transfer-page.tip.success'));
-    } catch (err) {
-      console.error('转账失败', err);
-    } finally {
-      setAmount('');
       setLoading(false);
     }
   };
@@ -184,6 +167,7 @@ const Withdraw = () => {
         hideAmount
         title={i18n.t('other.withdraw')}
       />
+      <WithdrawNoticeBanner />
       {showSuccess ? (
         <WithdrawSuccess
           amount={Number(getReceive)}
@@ -194,7 +178,13 @@ const Withdraw = () => {
           }}
         />
       ) : (
-        <Spin loading={loading} style={[theme.flex.flex1, theme.flex.col]}>
+        <Spin
+          loading={loading}
+          style={[
+            theme.flex.flex1,
+            theme.flex.col,
+            { backgroundColor: '#820709' }
+          ]}>
           <View style={[theme.flex.flex1]}>
             <ScrollView style={[theme.flex.flex1]}>
               <WithdrawBalance
@@ -213,16 +203,16 @@ const Withdraw = () => {
                 amount={price}
                 onAmountChange={setPrice}
               />
+              <WithdrawActualReceived />
             </ScrollView>
           </View>
           <WithdrawButton
             onRecharge={onWithdrawSubmit}
-            type="linear-primary-gold"
+            type="linear-primary"
             text={i18n.t('other.withdraw')}
           />
         </Spin>
       )}
-
       <BottomSheet isVisible={showCard}>
         <SelectCards
           list={cardList}
@@ -230,20 +220,6 @@ const Withdraw = () => {
           onChange={setSelectedCard}
           onClose={() => setShowCard(false)}
           onAddBank={onGoAddBank}
-        />
-      </BottomSheet>
-
-      <BottomSheet isVisible={showTransfer}>
-        <WithdrawTransfer
-          inputAmount={amount}
-          onInputChange={setAmount}
-          withdrawAmount={user?.canWithdrawAmount || 0}
-          receiveAmount={actualReceived}
-          onClose={() => {
-            setAmount('');
-            setShowTransfer(false);
-          }}
-          onConfirm={onSubmitTransfer}
         />
       </BottomSheet>
     </LazyImageLGBackground>

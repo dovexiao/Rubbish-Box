@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, ImageBackground, Image, StyleSheet} from 'react-native';
+import {View, ImageBackground, StyleSheet} from 'react-native';
 import Text from '@/components/basic/text';
 import theme from '@/style';
 import {toPriceStr} from '@/components/utils';
