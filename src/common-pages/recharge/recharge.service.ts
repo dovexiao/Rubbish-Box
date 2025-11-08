@@ -15,6 +15,11 @@ export interface BalanceListItem {
   status: number;
 }
 
+export interface BalanceListParams {
+  /** 是否显示金额为300的项 - 显示: 1或者不传; 不显示: 2*/
+  remark?: string;
+}
+
 export interface IncomeModel {
   /**
    * 金额充值ID
@@ -96,8 +101,8 @@ export interface PayMethodV2Params {
   modeId: string;
 }
 
-export const getBalanceList = () => {
-  return http.post<null, BalanceListItem[]>('app/pay/balance/list');
+export const getBalanceList = (params?: BalanceListParams) => {
+  return http.post<null, BalanceListItem[]>('app/pay/balance/list', params);
 };
 
 export const goIncome = (incomeData: IncomeModel) => {
@@ -151,8 +156,5 @@ export const getRechargeTypeList = () => {
  * @param PayMethodV2Params
  */
 export const getPayMethodV2 = (params: PayMethodV2Params) => {
-  return http.post<PayMethodV2Params, PayMethod[]>(
-    'app/pay/deposit/channel02',
-    params,
-  );
+  return http.post<SafeAny, PayMethod[]>('app/pay/deposit/channel02', params);
 };

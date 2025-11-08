@@ -143,7 +143,7 @@ const Recharge = () => {
           // 调用getBalanceList和getPayMethod
           const [balances, allMethods, adjustParamsResponse, rechargeTypes] =
             await Promise.all([
-              getBalanceList(),
+              getBalanceList({remark: '2'}),
               getPayMethodV2({modeId: '1'}),
               getAdjustParams(), // 新增：调用getAdjustParams获取参数
               getRechargeTypeList(),
