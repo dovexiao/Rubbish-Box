@@ -16,7 +16,13 @@ export interface SelectDateType
 }
 
 const DatePickerItem = (props: SelectDateType) => {
-  const {containerStyle, value, onChange, type, ...datePickerProps} = props;
+  const {
+    containerStyle,
+    value,
+    onChange,
+    type = 'month',
+    ...datePickerProps
+  } = props;
   const [showDate, setShowDate] = React.useState(false);
 
   const dateFormat = type === 'day' ? 'YYYY-MM-DD' : 'YYYY-MM';

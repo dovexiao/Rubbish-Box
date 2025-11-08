@@ -30,7 +30,7 @@ const DatePicker = ({
   setOpen,
   titleRender,
   value,
-  type = 'day',
+  type = 'month',
   onValueChange,
   maxSelectableDaysAgo = 0,
   minDate,
