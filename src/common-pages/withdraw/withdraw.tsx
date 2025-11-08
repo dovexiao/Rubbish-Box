@@ -186,7 +186,10 @@ const Withdraw = () => {
             { backgroundColor: '#820709' }
           ]}>
           <View style={[theme.flex.flex1]}>
-            <ScrollView style={[theme.flex.flex1]}>
+            <ScrollView
+              style={[theme.flex.flex1]}
+              showsVerticalScrollIndicator={false}
+            >
               <WithdrawBalance
                 onGotoRecords={handleGotoRecords}
                 balance={user?.canWithdrawAmount || 0}
