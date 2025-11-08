@@ -33,7 +33,7 @@ const TransactionTab = (props: {tabs: TabType[]; amount?: number | 0}) => {
         type="day"
         value={currentDate}
         onChange={setCurrentDate}
-        maxSelectableDaysAgo={7}
+        maxSelectableDaysAgo={6}
       />
       <TabView
         value={active}

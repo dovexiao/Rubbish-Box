@@ -61,7 +61,7 @@ const Bets = () => {
       />
       <DatePickerItem
         type="day"
-        maxSelectableDaysAgo={7}
+        maxSelectableDaysAgo={6}
         value={currentDate}
         maxDate={dayjs().toDate()}
         onChange={setCurrentDate}

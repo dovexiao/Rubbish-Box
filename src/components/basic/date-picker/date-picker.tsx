@@ -21,7 +21,7 @@ export interface DatePickerProps {
   minDate?: Date;
   /** 最大日期 */
   maxDate?: Date;
-  /** 可选择的最大天数范围（例如，7 表示最多选择过去7天的日期） */
+  /** 可选择的最大天数范围，包含了当天（例如，7 表示最多选择过去7天的日期） */
   maxSelectableDaysAgo?: number;
 }
 
@@ -168,7 +168,7 @@ const DatePicker = ({
       globalStore.globalTotal.next({
         type: 'warning',
         message: i18n.t('warning.selectDateInLastDays', {
-          days: maxSelectableDaysAgo,
+          days: maxSelectableDaysAgo + 1,
         }),
       });
       return;
