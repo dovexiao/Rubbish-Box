@@ -7,16 +7,14 @@ import {TextInput} from '@/components/basic/input-field';
 import globalStore from '@/services/global.state';
 import {scaleSize} from '@/utils';
 import CustomTitle from '@/components/business/custom-title';
+import useWithdrawStore, {useSetWithdrawPrice} from './withdraw.store';
 
-export interface WithdrawAmountType {
-  amount: string;
-  receiveAmount: string;
-  onAmountChange: (v: string) => void;
-}
+export interface WithdrawAmountType {}
 
 const WithdrawAmount = (props: WithdrawAmountType) => {
   const {i18n} = useTranslation();
-  const {amount = '', onAmountChange, receiveAmount = ''} = props;
+
+  const { price: amount, receive: receiveAmount } = useWithdrawStore();
 
   return (
     <View style={[theme.padding.lrl, theme.padding.bl, theme.margin.l]}>
@@ -33,7 +31,7 @@ const WithdrawAmount = (props: WithdrawAmountType) => {
             value === '' ||
             (regex.test(value) && value[0] !== '0' && Number(value) <= 1000000)
           ) {
-            onAmountChange(value);
+            useSetWithdrawPrice(value);
           }
         }}
         leftElement={

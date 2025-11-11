@@ -35,3 +35,20 @@ export const onWithdraw = (data: {cardId: string; price: number}) => {
 export const getWithdrawRule = () => {
   return http.post<null, WithdrawRule>('app/user/paidrule');
 };
+
+/**
+ * 创建分享记录
+ */
+export const createShareRecord = (deviceId: string, deviceType: string) => {
+  return http.post<{}, any>('app/user/share/record/create', {
+    shareDeviceId: deviceId,
+    shareDeviceType: deviceType,
+  });
+}
+
+/**
+ * 获取分享倒计时
+ */
+export const getShareRecordCountdown = () => {
+  return http.post<{}, any>('app/user/share/record/countdown');
+}

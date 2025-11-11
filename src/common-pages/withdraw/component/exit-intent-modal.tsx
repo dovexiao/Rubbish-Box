@@ -1,39 +1,34 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
-import {useTranslation} from 'react-i18next';
 import {Image, Modal, StyleSheet, View} from 'react-native';
-import LazyImage from '@/components/basic/image';
+import {LazyImageBackground} from '@/components/basic/image';
 import theme from '@/style';
 
-import Text from '@basicComponents/text';
-import {goBack, scaleSize, toPriceStr} from '@/utils';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
-import CountDownTimer from '@/components/business/count-down-timer';
+import RedPacketCountdown from './red-packet-countdown';
+import {useSetRedPacketVisible} from './red-packet-float-button.store';
+import useRedPacketFloatButtonStore from './red-packet-float-button.store';
 
 export interface ExitIntentModalProps {
   visible?: boolean;
-  amount?: number;
+  onPress?: () => void;
   onClose?: () => void;
 }
 
 const ExitIntentModal = ({
   visible = false,
-  amount = 0,
+  onPress,
   onClose,
 }: ExitIntentModalProps) => {
-  const {i18n} = useTranslation();
-  const {screenWidth, screenHeight} = useScreenSize();
-  const [imgRatio, setImgRatio] = useState(948 / 712);
-  const [skipToday, setSkipToday] = useState(false);
-
-  const popImageWidth = screenWidth * 0.85;
+  const {calcActualSize} = useScreenSize();
+  const {endTimestamp} = useRedPacketFloatButtonStore();
 
   const closeImage = async () => {
     onClose?.();
-    goBack();
   };
 
   const onImage = () => {
+    onPress?.();
     onClose?.();
   };
 
@@ -45,32 +40,30 @@ const ExitIntentModal = ({
       animationType="fade">
       <View style={[styles.modalOverlay]}>
         <NativeTouchableOpacity activeOpacity={0.9} onPress={onImage}>
-          <LazyImage
-            width={popImageWidth}
-            height={popImageWidth * imgRatio + 50}
+          <LazyImageBackground
+            width={calcActualSize(336)}
+            height={calcActualSize(452)}
             imageUrl={require('@assets/imgs/withdraw/exit-intent-background.webp')}
-          />
-          <View
-            style={{
-              position: 'absolute',
-              left: 0,
-              bottom: scaleSize(110),
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: popImageWidth,
-              columnGap: scaleSize(8),
-            }}>
-            <CountDownTimer initialTime={60} />
-            {/* <Text
-              white
-              fontSize={scaleSize(36)}
-              textAlign="center"
-              color="#000000"
-              style={{fontWeight: 'bold'}}>
-              0 Bonus!
-            </Text> */}
-          </View>
+          >
+            <View
+              style={{
+                position: 'absolute',
+                left: 0,
+                bottom: calcActualSize(112),
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+              }}>
+              <RedPacketCountdown
+                endTimestamp={endTimestamp ?? Date.now()} 
+                onFinish={() => {
+                  onClose?.();
+                  useSetRedPacketVisible(false);
+                }}
+              />
+            </View>
+          </LazyImageBackground>
         </NativeTouchableOpacity>
 
         <NativeTouchableOpacity
