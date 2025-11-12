@@ -1,19 +1,21 @@
 import React from 'react';
-import {Dialog, LinearProgress} from '@rneui/themed';
+import {Dialog} from '@rneui/themed';
 import Text from '@basicComponents/text';
 import theme from '@/style';
-import {Image, View, StyleSheet} from 'react-native';
+import {Image, View} from 'react-native';
 import {NavigatorScreenProps} from '@/types';
 import {useTranslation} from 'react-i18next';
 import LinearGradient from '@/components/basic/linear-gradient';
-/** 这是一个加载页 */
+import ProgressBar from '@/components/basic/progress-bar';
 
 export interface SplashProps {
   available?: number;
+  received: number;
+  total: number;
 }
 
 const Splash = (props: Partial<NavigatorScreenProps> & SplashProps) => {
-  const {available = 0} = props;
+  const {available = 0, received = 0, total = 0} = props;
   const [loading, setLoading] = React.useState(true);
   const {i18n} = useTranslation();
   React.useEffect(() => {
@@ -21,6 +23,9 @@ const Splash = (props: Partial<NavigatorScreenProps> & SplashProps) => {
       setLoading(false);
     };
   }, []);
+
+  const progress = total ? received / total : 0;
+
   return (
     <Dialog
       isVisible={loading}
@@ -46,7 +51,6 @@ const Splash = (props: Partial<NavigatorScreenProps> & SplashProps) => {
           <Image
             source={require('@assets/icons/common/common.webp')}
             style={[
-              // eslint-disable-next-line react-native/no-inline-styles
               {
                 width: 300,
                 height: 300,
@@ -72,27 +76,12 @@ const Splash = (props: Partial<NavigatorScreenProps> & SplashProps) => {
               {available === 1 && i18n.t('splash.tip.downloading')}
               {available === 2 && i18n.t('splash.tip.checkingResources')}
             </Text>
-            <LinearProgress
-              style={styleSheet.linearProgress}
-              color={'#F7D85D'}
-              trackColor={'#152A36'}
-            />
+            <ProgressBar progress={progress} />
           </View>
         </View>
       </LinearGradient>
     </Dialog>
   );
 };
-
-const styleSheet = StyleSheet.create({
-  image: {
-    width: '80%',
-    aspectRatio: 1,
-  },
-  linearProgress: {
-    height: 19,
-    borderRadius: 16,
-  },
-});
 
 export default Splash;
