@@ -9,20 +9,32 @@ import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
 import envConfig from '@/utils/env.config';
 import AdjustService from '@/utils/AdjustService';
+import usePWAInstall from '@/hooks/usePWAInstall';
 
 const Download: React.FC = () => {
   const {i18n} = useTranslation();
   const [show] = React.useState(true); //setShow
+  const {canInstall, isInstalled, showInstallPrompt} = usePWAInstall();
+
   const toDownload = () => {
     // if (!globalStore.token) {
     //   globalStore.globalWaringTotal(i18n.t('home.tip.beforDownload'));
     //   goTo('Login');
     //   return;
     // }
-    AdjustService.track('download');
-    console.log('上报成功');
-    downloadApk();
+    // AdjustService.track('download');
+    // console.log('上报成功');
+    // downloadApk();
+
+    console.log('============download=========');
+
+    if (isInstalled) {
+      alert('==========+已经安装=========');
+    } else {
+      showInstallPrompt();
+    }
   };
+
   const heightZoom = 50 / 375;
   const bannerHeight = globalStore.screenWidth * heightZoom;
   const downloadSizeH = (30 * globalStore.screenWidth) / 375;
