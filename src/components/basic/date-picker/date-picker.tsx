@@ -1,5 +1,5 @@
 import theme from '@/style';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Image, View} from 'react-native';
 import Text from '../text';
 import {NativeTouchableOpacity} from '../touchable-opacity';
@@ -8,16 +8,21 @@ import DatePickerList from './date-picker-list';
 import Button from '../button';
 import dayjs from 'dayjs';
 import {useTranslation} from 'react-i18next';
+import globalStore from '@/services/global.state';
 
 export interface DatePickerProps {
   titleRender?: React.JSX.Element;
   open: boolean;
   setOpen: (open: boolean) => void;
-  /** 默认当天/当月 */
   value?: Date;
-  /** 类型,默认精确到天 */
   type?: 'month' | 'day';
   onValueChange?: (value: Date) => void;
+  /** 最小日期 */
+  minDate?: Date;
+  /** 最大日期 */
+  maxDate?: Date;
+  /** 可选择的最大天数范围，包含了当天（例如，7 表示最多选择过去7天的日期） */
+  maxSelectableDaysAgo?: number;
 }
 
 const DatePicker = ({
@@ -25,69 +30,153 @@ const DatePicker = ({
   setOpen,
   titleRender,
   value,
-  type = 'day',
+  type = 'month',
   onValueChange,
+  maxSelectableDaysAgo = 0,
+  minDate,
+  maxDate,
 }: DatePickerProps) => {
   const {i18n} = useTranslation();
-  const currentDate = value ? new Date(value) : new Date();
-  const [year, setYear] = useState(currentDate.getFullYear());
-  const years = Array(new Date().getFullYear() - 2020)
-    .fill('')
-    .map((v, i) => 2020 + i + 1);
-  const [month, setMonth] = useState(currentDate.getMonth() + 1);
+  const currentDate = value ? dayjs(value) : dayjs();
+  const [year, setYear] = useState(currentDate.year());
+  const [month, setMonth] = useState(currentDate.month() + 1); // month is 0-indexed in dayjs
+  const [day, setDay] = useState(type === 'day' ? currentDate.date() : 1);
 
   // 修复外部值变动，内部状态不同步问题
-  React.useEffect(() => {
-    const current = value ? new Date(value) : new Date();
-    setMonth(current.getMonth() + 1);
-    setYear(current.getFullYear());
+  useEffect(() => {
+    const current = value ? dayjs(value) : dayjs();
+    setYear(current.year());
+    setMonth(current.month() + 1); // month is 0-indexed in dayjs
+    if (type === 'day') {
+      setDay(current.date());
+    }
   }, [value]);
 
-  const getMonth = (y = year) => {
-    const today = new Date();
-    let len = 12;
-    if (y === today.getFullYear()) {
-      len = today.getMonth() + 1;
+  // 获取可选年份范围
+  const getYearRange = () => {
+    let startYear = 2020;
+    let endYear = dayjs().year();
+
+    if (minDate && dayjs(minDate).year() > startYear) {
+      startYear = dayjs(minDate).year();
     }
-    return Array(len)
+    if (maxDate && dayjs(maxDate).year() < endYear) {
+      endYear = dayjs(maxDate).year();
+    }
+
+    return Array(endYear - startYear + 1)
       .fill('')
-      .map((v, i) => i + 1);
+      .map((v, i) => startYear + i);
   };
-  const [months, setMonths] = useState(getMonth());
-  const [day, setDay] = useState(type === 'day' ? currentDate.getDate() : 1);
+
+  const [yearsList, setYearsList] = useState(getYearRange());
+
+  // 获取可选月份范围
+  const getMonth = (y = year) => {
+    let months = [];
+    const today = dayjs();
+
+    if (minDate && y === dayjs(minDate).year()) {
+      // 如果年份是最小年份，月份限制为minDate之后的月份
+      months = Array.from(
+        {length: 12 - dayjs(minDate).month()},
+        (_, i) => dayjs(minDate).month() + i + 1,
+      );
+    } else if (maxDate && y === dayjs(maxDate).year()) {
+      // 如果年份是最大年份，月份限制为maxDate之前的月份
+      months = Array.from(
+        {length: dayjs(maxDate).month() + 1},
+        (_, i) => i + 1,
+      );
+    } else {
+      // 否则所有月份都可选
+      months = Array.from({length: 12}, (_, i) => i + 1);
+    }
+
+    return months;
+  };
+
+  const [months, setMonths] = useState(getMonth(year));
+
+  // 获取可选天数范围
   const getDays = (y = year, m = month) => {
     if (type === 'month') {
       return [];
     }
-    const nextMonth = m === 12 ? 1 : m + 1;
-    const currentTime = new Date(`${y} ${nextMonth}`);
-    currentTime.setDate(0);
-    return Array(currentTime.getDate())
-      .fill('')
-      .map((v, i) => i + 1);
-  };
-  const [days, setDays] = useState<number[]>(
-    getDays(year, currentDate.getMonth() + 1),
-  );
-  React.useEffect(() => {
-    if (type === 'month') {
-      return;
+
+    const currentTime = dayjs(`${y}-${m}`).endOf('month');
+    let maxDays = currentTime.date(); // 默认最大天数为该月最大天数
+
+    // 处理minDate和maxDate对天数的限制
+    if (
+      minDate &&
+      y === dayjs(minDate).year() &&
+      m === dayjs(minDate).month() + 1
+    ) {
+      maxDays = Math.max(dayjs(minDate).date(), maxDays); // minDate限制
     }
+    if (
+      maxDate &&
+      y === dayjs(maxDate).year() &&
+      m === dayjs(maxDate).month() + 1
+    ) {
+      maxDays = Math.min(dayjs(maxDate).date(), maxDays); // maxDate限制
+    }
+
+    return Array.from({length: maxDays}, (_, i) => i + 1); // 返回该月实际可选的天数
+  };
+
+  const [days, setDays] = useState<number[]>(getDays(year, month));
+
+  // 更新天数范围，保证天数有效
+  useEffect(() => {
+    if (type === 'month') return;
+
     const _days = getDays(year, month);
     setDays(_days);
-    if (day > _days.length - 1) {
-      setDay(_days.length);
+    if (day > _days.length) {
+      setDay(_days.length); // 保证选中的天数在有效范围内
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [month, year]);
-  React.useEffect(() => {
+
+  // 更新月份范围
+  useEffect(() => {
     const _months = getMonth(year);
     setMonths(_months);
-    if (month > _months.length - 1) {
-      setMonth(_months.length);
+    if (month > _months.length) {
+      setMonth(_months.length); // 保证选中的月数在有效范围内
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year]);
+
+  const handlePress = () => {
+    const selectedDate =
+      type === 'day'
+        ? dayjs(`${year}-${month}-${day}`, 'YYYY-MM-DD')
+        : dayjs(`${year}-${month}`, 'YYYY-MM');
+
+    // NOTE:暂时先这么处理，后面再优化
+    // 如果设置了最大选择天数限制，验证当前选择的日期
+    if (
+      type === 'day' &&
+      maxSelectableDaysAgo &&
+      selectedDate.isBefore(
+        dayjs().subtract(maxSelectableDaysAgo, 'day'),
+        'day',
+      )
+    ) {
+      // 如果选择的日期超过了最大允许的天数，提示用户，并直接返回
+      globalStore.globalTotal.next({
+        type: 'warning',
+        message: i18n.t('warning.selectDateInLastDays', {
+          days: maxSelectableDaysAgo + 1,
+        }),
+      });
+      return;
+    }
+
+    onValueChange?.(selectedDate.toDate());
+    setOpen(false);
+  };
 
   return (
     <NativeTouchableOpacity
@@ -97,7 +186,7 @@ const DatePicker = ({
         titleRender
       ) : (
         <View style={[theme.padding.l]}>
-          <Text main>{currentDate.toLocaleDateString()}</Text>
+          <Text main>{currentDate.format('YYYY-MM-DD')}</Text>
         </View>
       )}
       <BottomSheet
@@ -109,7 +198,6 @@ const DatePicker = ({
             theme.background.newBgPop,
             theme.flex.col,
             theme.borderRadius.m,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderBottomRightRadius: 0,
               borderBottomLeftRadius: 0,
@@ -140,30 +228,20 @@ const DatePicker = ({
             ]}>
             <DatePickerList
               value={year}
-              style={[
-                // eslint-disable-next-line react-native/no-inline-styles
-                {width: '33%'},
-              ]}
-              list={years}
+              style={{width: '33%'}}
+              list={yearsList}
               setValue={setYear}
             />
             <DatePickerList
               value={month}
-              style={[
-                theme.margin.lrxxl,
-                // eslint-disable-next-line react-native/no-inline-styles
-                {width: '33%'},
-              ]}
+              style={[theme.margin.lrxxl, {width: '33%'}]}
               list={months}
               setValue={setMonth}
             />
             {type === 'day' && (
               <DatePickerList
                 value={day}
-                style={[
-                  // eslint-disable-next-line react-native/no-inline-styles
-                  {width: '33%'},
-                ]}
+                style={{width: '33%'}}
                 list={days}
                 setValue={setDay}
               />
@@ -179,16 +257,7 @@ const DatePicker = ({
                 backgroundColor: theme.basicColor.newButtonYellow,
               },
             ]}
-            onPress={() => {
-              if (type === 'day') {
-                onValueChange?.(
-                  dayjs(`${year}${month}${day}`, 'YYYYMMDD').toDate(),
-                );
-              } else {
-                onValueChange?.(dayjs(`${year}${month}`, 'YYYYMM').toDate());
-              }
-              setOpen(false);
-            }}
+            onPress={handlePress}
           />
         </View>
       </BottomSheet>

@@ -10,83 +10,83 @@ const mainPackage = [
   //     'gobet758'
   //   ]
   // },
-  // {
-  //   title: 'prodlotteryindia',
-  //   channelList:[
-  //     // 'liFB01',
-  //     'lotteryindia'
-  //   ]
-  // },
-  // {
-  //   title: 'prodluckyone',
-  //   channelList:[
-  //     // 'luFB01',
-  //     // 'luFB02',
-  //     // 'luFB03',
-  //     // 'luFB04',
-  //     // 'luFB05',
-  //     // 'luFB06',
-  //     'lucky101'
-  //   ]
-  // },
-  // {
-  //   title: 'prodmybetfive',
-  //   channelList:[
-  //     'mybet758',
-  //     // 'mbfFB01'
-  //   ]
-  // },
-  // {
-  //   title: 'prodmybetnine',
-  //   channelList:[
-  //     // 'mbnFB01',
-  //     // 'mbnFB02',
-  //     // 'mbnFB03',
-  //     // 'mbnFB04',
-  //     // 'mbnFB05',
-  //     'mybet798'
-  //   ]
-  // },
-  // {
-  //   title: 'prodspinsnine',
-  //   channelList:[
-  //     // 'spnFB01',
-  //     // 'spnFB02',
-  //     'spins999'
-  //   ]
-  // },
-  // {
-  //   title: 'prodspinsseven',
-  //   channelList:[
-  //     // 'spsB01',
-  //     'spins007'
-  //   ]
-  // },
-  // {
-  //   title: 'prodsupbetone',
-  //   channelList:[
-  //     // 'sboFB01',
-  //     // 'sboFB02',
-  //     // 'sboFB03',
-  //     // 'sboFB04',
-  //     // 'sboFB05',
-  //     // 'sboFB06',
-  //     'supbet001'
-  //   ]
-  // },
-  // {
-  //   title: 'prodsupbetseven',
-  //   channelList:[
-  //     // 'sbsFB01',
-  //     // 'sbsFB02',
-  //     'supbet007'
-  //   ]
-  // },
+  {
+    title: 'prodlotteryindia',
+    channelList:[
+      // 'liFB01',
+      'lotteryindia'
+    ]
+  },
+  {
+    title: 'prodluckyone',
+    channelList:[
+      // 'luFB01',
+      // 'luFB02',
+      // 'luFB03',
+      // 'luFB04',
+      // 'luFB05',
+      // 'luFB06',
+      'lucky101'
+    ]
+  },
+  {
+    title: 'prodmybetfive',
+    channelList:[
+      'mybet758',
+      // 'mbfFB01'
+    ]
+  },
+  {
+    title: 'prodmybetnine',
+    channelList:[
+      // 'mbnFB01',
+      // 'mbnFB02',
+      // 'mbnFB03',
+      // 'mbnFB04',
+      // 'mbnFB05',
+      'mybet798'
+    ]
+  },
+  {
+    title: 'prodspinsnine',
+    channelList:[
+      // 'spnFB01',
+      // 'spnFB02',
+      'spins999'
+    ]
+  },
+  {
+    title: 'prodspinsseven',
+    channelList:[
+      // 'spsB01',
+      'spins007'
+    ]
+  },
+  {
+    title: 'prodsupbetone',
+    channelList:[
+      // 'sboFB01',
+      // 'sboFB02',
+      // 'sboFB03',
+      // 'sboFB04',
+      // 'sboFB05',
+      // 'sboFB06',
+      'supbet001'
+    ]
+  },
+  {
+    title: 'prodsupbetseven',
+    channelList:[
+      // 'sbsFB01',
+      // 'sbsFB02',
+      'supbet007'
+    ]
+  },
   {
     title: 'prodwinlucky',
     channelList:[
-      'wlHD01', 'wlHD02', 'wlHD03', 'wlHD04', 'wlHD05',
-      'wlHD06', 'wlHD07', 'wlHD08', 'wlHD09', 'wlHD10',
+      // 'wlHD01', 'wlHD02', 'wlHD03', 'wlHD04', 'wlHD05',
+      // 'wlHD06', 'wlHD07', 'wlHD08', 'wlHD09', 'wlHD10',
       // 'wlFB06', 'wlFB07', 'wlFB08', 'wlFB09', 'wlFB10',
       // 'wlFB11', 'wlFB12', 'wlFB13', 'wlFB14', 'wlFB15',
       // 'wlFB16', 'wlFB17', 'wlFB18', 'wlFB19', 'wlFB20',
@@ -97,19 +97,24 @@ const mainPackage = [
       // 'wlFB41', 'wlFB42', 'wlFB43', 'wlFB44', 'wlFB45',
       // 'wlFB46', 'wlFB47', 'wlFB48',
       // 'wlFB49', 'wlFB50',
-      // 'wlFB51', 'wlFB52', 'wlFB53', 'wlFB54', 'wlFB55',
-      // 'wlFB56', 'wlFB57', 'wlFB58', 'wlFB59', 'wlFB60',
-      // 'wlFB61', 'wlFB62', 'wlFB63', 'wlFB64', 'wlFB65',
-      // 'wlFB66', 'wlFB67', 'wlFB68', 'wlFB69', 'wlFB70',
+      'wlFB22', 'wlFB100', 'wlFB101', 'wlFB102', 'wlFB103',
+      'wlFB104', 'wlFB105', 'wlFB106', 'wlFB107', 'wlFB108',
+      'wlFB109', 'wlFB110', 'wlFB111', 'wlFB112', 'wlFB113',
+      'wlFB114', 'wlFB114', 'wlFB115', 'wlFB116', 'wlFB117',
+      'wlFB118', 'wlFB119', 'wlFB120', 'wlFB121', 'wlFB122',
+      'wlFB123', 'wlFB124', 'wlFB125', 'wlFB126',
+
+      // 'wlFB127', 'wlFB128', 'wlFB129', 'wlFB130', 'wlFB131',
+      // 'wlFB132', 'wlFB133', 'wlFB134', 'wlFB135', 'wlFB136',
       'winlucky001'
     ]
   },
-  // {
-  //   title: 'supbet',
-  //   channelList: [
-  //     'supbet', // 默认渠道
-  //   ]
-  // }
+  {
+    title: 'supbet',
+    channelList: [
+      'supbet', // 默认渠道
+    ]
+  }
 ];
 // package 包名
 async function startRewriteEnv(channel, package) {

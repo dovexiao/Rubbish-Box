@@ -602,7 +602,7 @@ function App(): JSX.Element {
       </SafeAreaView>
       <DialogLoading isVisible={globalLoading} />
       {renderToast}
-      {/* {versionModal.versionModal.renderModal} */}
+      {versionModal.versionModal.renderModal}
       {popVisible && ['Home', 'Index'].includes(currentRouteName) && (
         <Overlay
           isVisible={popVisible}

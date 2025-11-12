@@ -100,7 +100,7 @@ const HomeRegister = () => {
             activeOpacity={1}
             onPress={() => {
               if (isLogin) {
-                goToWithLogin(i18n.t('home.tab.deposit'));
+                goToWithLogin('Deposit');
               } else {
                 goTo('Login');
               }

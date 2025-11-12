@@ -5,10 +5,8 @@ import Text from '@/components/basic/text';
 import React from 'react';
 import {ButtonType} from '@/components/basic/button/button';
 import {useTranslation} from 'react-i18next';
-import {useResponsiveDimensions} from '@/utils';
-// import globalStore from '@/services/global.state';
-import LinearGradient from '@/components/basic/linear-gradient';
-import RechargeQipao from '@/common-pages/recharge/recharge-qipao';
+import {scaleSize, useResponsiveDimensions} from '@/utils';
+
 export interface RechargeButtonProps {
   disabled?: boolean;
   type?: ButtonType;
@@ -29,59 +27,37 @@ const RechargeButton: React.FC<RechargeButtonProps> = ({
   const rechargeStyle = StyleSheet.create({
     button: {
       width: rechargeButtonWidth,
-      height: 48,
+      height: scaleSize(42),
     },
     buttonWrap: {
-      // backgroundColor: theme.basicColor.newBgInTwo,
       paddingTop: theme.paddingSize.m,
-      paddingBottom: theme.paddingSize.m,
-      // paddingBottom: globalStore.isAndroid
-      //   ? (56 * width) / designWidth + 10
-      //   : 66,
-      // backgroundColor: `linear-gradient(180deg, ${theme.basicColor.newButtonBgOne})`,
+      paddingBottom: theme.paddingSize.xxl,
     },
   });
   return (
-    // <LazyImageLGBackground style={[theme.fill.fill, theme.flex.col]}></LazyImageLGBackground>
     <View
       style={[theme.flex.center, theme.fill.fillW, rechargeStyle.buttonWrap]}>
-      <LinearGradient
-        start={{x: 0, y: 1}}
-        end={{x: 0, y: 1}}
-        colors={theme.basicColor.newButtonBgOne}
-        style={[rechargeStyle.button, {borderRadius: 45}]}>
-        <Button
-          size="large"
-          type={type}
-          radius={5}
-          color="transparent"
-          disabled={disabled}
-          width={rechargeButtonWidth}
-          buttonStyle={[{backgroundColor: 'transparent'}, rechargeStyle.button]}
-          onPress={onRecharge}>
-          <Text
-            fontSize={theme.fontSize.m}
-            color={theme.basicColor.white}
-            style={{textAlign: 'center'}}>
-            <Text
-              fontSize={theme.fontSize.xl}
-              color={theme.basicColor.white}
-              style={{textAlign: 'center', fontWeight: 'bold'}}>
-              {i18n.t('label.recharge')}
-            </Text>
-          </Text>
-        </Button>
-        <RechargeQipao
-          height={24}
-          text={text || ''}
-          fontSize={theme.fontSize.s}
+      <Button
+        size="large"
+        type={type}
+        radius={30}
+        color="transparent"
+        disabled={disabled}
+        width={rechargeButtonWidth}
+        buttonStyle={[{backgroundColor: 'transparent'}, rechargeStyle.button]}
+        onPress={onRecharge}>
+        <Text
+          fontSize={theme.fontSize.m}
           color={theme.basicColor.white}
-          gradientColors={theme.basicColor.newButtonLinear}
-          borderRadius={11}
-          top={-8}
-          right={60}
-        />
-      </LinearGradient>
+          style={{textAlign: 'center'}}>
+          <Text
+            fontSize={theme.fontSize.l}
+            color={theme.basicColor.white}
+            style={{textAlign: 'center', fontWeight: 'bold'}}>
+            {i18n.t('label.recharge')} {text && `(${text})`}
+          </Text>
+        </Text>
+      </Button>
     </View>
   );
 };

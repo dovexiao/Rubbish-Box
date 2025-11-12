@@ -12,6 +12,7 @@ import {BasicObject} from '@/types';
 import {LazyImageLGBackground} from '@basicComponents/image';
 import {DatePickerItem} from '@/components/basic/date-picker';
 import {NOW_DATE} from '@/constants';
+import dayjs from 'dayjs';
 
 const Bets = () => {
   const {tag} = (useRoute().params as BasicObject) || {};
@@ -58,7 +59,13 @@ const Bets = () => {
         changeActive={setActive}
         onChangeFilter={setActiveTag}
       />
-      <DatePickerItem value={currentDate} onChange={setCurrentDate} />
+      <DatePickerItem
+        type="day"
+        maxSelectableDaysAgo={6}
+        value={currentDate}
+        maxDate={dayjs().toDate()}
+        onChange={setCurrentDate}
+      />
       <TabView
         containerStyle={[theme.overflow.hidden]}
         value={active}

@@ -1,10 +1,11 @@
 import globalStore from '@/services/global.state';
 import theme from '@/style';
 import {BasicObject} from '@/types';
-import {useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {scaleSize} from '@utils';
 import {useSettingWindowDimensions} from '@/store/useSettingStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function useSize() {
   const {screenWidth, screenHeight, designWidth, calculateItemWidth} =
@@ -94,8 +95,10 @@ export function useInnerStyle() {
       position: 'absolute',
     },
     container: {
-      height: scaleSize(143),
-      borderRadius: theme.borderRadiusSize.l,
+      // height: scaleSize(113),
+      paddingHorizontal: scaleSize(20),
+      paddingTop: scaleSize(12),
+      // borderRadius: theme.borderRadiusSize.l,
       // borderTopLeftRadius: theme.borderRadiusSize.l,
       // borderTopRightRadius: theme.borderRadiusSize.l,
       overflow: 'hidden',
@@ -147,5 +150,42 @@ export function useInnerStyle() {
     selectStyles,
     payMethodStyles,
     balanceStyles,
+  };
+}
+
+/**
+ * 弹窗“今日不再显示”逻辑 Hook
+ * @param key 每个弹窗唯一的 key（防止多个弹窗冲突）
+ */
+export function useSkipTodayModal(key: string) {
+  const STORAGE_KEY = `skipToday_${key}`;
+
+  /**
+   * 检查是否应该显示弹窗
+   */
+  const checkShouldShow = async (): Promise<boolean> => {
+    // await AsyncStorage.removeItem(STORAGE_KEY);
+
+    try {
+      const today = new Date().toDateString();
+      const skipDate = await AsyncStorage.getItem(STORAGE_KEY);
+
+      return skipDate !== today; // 不等于今天 → 应该显示
+    } catch (error) {
+      console.warn('[checkShouldShow] failed to read AsyncStorage:', error);
+      // 如果出错，默认显示弹窗
+      return true;
+    }
+  };
+
+  // 勾选“今日不显示”时调用
+  const handleSkipToday = async () => {
+    const today = new Date().toDateString();
+    await AsyncStorage.setItem(STORAGE_KEY, today);
+  };
+
+  return {
+    checkShouldShow,
+    handleSkipToday,
   };
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, ImageBackground, Image, StyleSheet} from 'react-native';
+import {View, ImageBackground, StyleSheet} from 'react-native';
 import Text from '@/components/basic/text';
 import theme from '@/style';
 import {toPriceStr} from '@/components/utils';
@@ -9,6 +9,7 @@ import {useInnerStyle} from './recharge.hooks';
 import {useScreenSize} from '../hooks/size.hooks';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
+import {scaleSize} from '@/utils';
 export interface RechargeBalanceProps {
   balance?: number;
   payMethod?: string;
@@ -34,94 +35,106 @@ const RechargeBalance: React.FC<RechargeBalanceProps> = props => {
   const refreshIconSize = (24 * screenWidth) / designWidth;
 
   return (
-    <ImageBackground
-      resizeMode={'cover'}
-      source={require('@assets/imgs/recharge-card-background-image.webp')}
-      style={[theme.margin.lrxxl, theme.margin.topxxl, styles.container]}>
-      <View style={[theme.flex.between, theme.flex.flex1]}>
-        <View style={styleSheet.rechargeTop}>
-          <View style={[theme.flex.flex1]}>
-            <View style={styleSheet.wallet}>
-              <Image
-                source={require('@/assets/icons/wallet/wallet-icon.webp')}
-                style={styleSheet.walletImg}
-              />
-              <Text color={theme.fontColor.white} style={styleSheet.walletText}>
-                {i18n.t('me.money.totalWallet')}
-              </Text>
-            </View>
-            <View
-              style={[
-                theme.flex.row,
-                theme.flex.alignEnd,
-                theme.margin.topm,
-                {alignItems: 'center', width: '100%'},
-              ]}>
-              <View style={{maxWidth: '85%'}}>
+    <View
+      style={[{paddingHorizontal: scaleSize(12), paddingTop: scaleSize(2)}]}>
+      <ImageBackground
+        resizeMode="contain"
+        source={require('@assets/imgs/recharge-card-background-image.webp')}
+        style={[styles.container, {height: scaleSize(113)}]}>
+        <View style={[theme.flex.between, theme.flex.flex1]}>
+          <View style={styleSheet.rechargeTop}>
+            <View style={[theme.flex.flex1]}>
+              <View style={styleSheet.wallet}>
                 <Text
-                  style={styleSheet.balance}
-                  numberOfLines={1}
-                  ellipsizeMode={'tail'}>
-                  {toPriceStr(balance, {
-                    thousands: true,
-                    spacing: true,
-                    currency: globalStore.currency,
-                  })}
+                  color={theme.fontColor.white}
+                  style={styleSheet.walletText}>
+                  {i18n.t('me.money.totalWallet')}
                 </Text>
               </View>
+              <View
+                style={[
+                  theme.flex.row,
+                  theme.flex.alignEnd,
+                  // theme.margin.topm,
+                  {
+                    alignItems: 'center',
+                    width: '100%',
+                    marginTop: scaleSize(2),
+                  },
+                ]}>
+                <View style={{maxWidth: '90%'}}>
+                  <Text
+                    style={styleSheet.balance}
+                    numberOfLines={1}
+                    ellipsizeMode={'tail'}>
+                    {toPriceStr(balance, {
+                      thousands: true,
+                      spacing: true,
+                      currency: globalStore.currency,
+                    })}
+                  </Text>
+                </View>
+                <NativeTouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={onRefresh}
+                  style={[theme.margin.leftm]}>
+                  <LazyImage
+                    occupancy={'transparent'}
+                    imageUrl={require('@assets/icons/wallet/recharge-refresh.webp')}
+                    width={refreshIconSize}
+                    height={refreshIconSize}
+                  />
+                </NativeTouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                // top: scaleSize(11),
+              }}>
               <NativeTouchableOpacity
                 activeOpacity={0.8}
-                onPress={onRefresh}
-                style={[theme.margin.leftm]}>
-                <LazyImage
-                  occupancy={'transparent'}
-                  imageUrl={require('@assets/icons/wallet/recharge-refresh.webp')}
-                  width={refreshIconSize}
-                  height={refreshIconSize}
-                />
+                style={[theme.flex.row, theme.flex.centerByCol]}
+                onPress={onGotoRecords}>
+                <View style={styleSheet.recordButton}>
+                  <Text style={styleSheet.recordButtonText}>
+                    {i18n.t('recharge-page.rechargeRecords')}
+                  </Text>
+                </View>
               </NativeTouchableOpacity>
             </View>
           </View>
-          <View style={{position: 'absolute', right: 16, top: 11}}>
-            <NativeTouchableOpacity
-              activeOpacity={0.8}
-              style={[theme.flex.row, theme.flex.centerByCol]}
-              onPress={onGotoRecords}>
-              <View style={styleSheet.recordButton}>
-                <Text style={styleSheet.recordButtonText}>
-                  {i18n.t('recharge-page.rechargeRecords')}
-                </Text>
-              </View>
-            </NativeTouchableOpacity>
+          <View
+            style={[
+              {
+                position: 'absolute',
+                bottom: scaleSize(8),
+              },
+            ]}>
+            <Text
+              white
+              style={[{fontWeight: 'bold'}]}
+              fontSize={globalStore.isAndroid ? 10 : 12}>
+              {i18n.t('recharge-page.currentMethod')} : {payMethod}
+            </Text>
+            <Text
+              style={styleSheet.tips}
+              numberOfLines={1}
+              fontSize={globalStore.isAndroid ? 10 : 12}>
+              {tip}
+            </Text>
           </View>
         </View>
-        <View
-          style={[
-            // theme.padding.lrl,
-            // theme.padding.tbs,
-            {position: 'absolute', bottom: 7, left: 12},
-          ]}>
-          <Text
-            style={styleSheet.tips}
-            fontSize={globalStore.isAndroid ? 10 : 12}>
-            {i18n.t('recharge-page.currentMethod')} :
-            <Text style={styleSheet.tips}>{payMethod}</Text>
-          </Text>
-          <Text
-            style={styleSheet.tips}
-            numberOfLines={1}
-            fontSize={globalStore.isAndroid ? 10 : 12}>
-            {tip}
-          </Text>
-        </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </View>
   );
 };
 
 const styleSheet = StyleSheet.create({
   rechargeTop: {
-    padding: 14,
+    // padding: scaleSize(14),
     display: 'flex',
     flexDirection: 'row',
   },
@@ -137,10 +150,9 @@ const styleSheet = StyleSheet.create({
   walletText: {
     fontSize: 13,
     fontFamily: 'Arial, Arial-Regular',
-    marginLeft: 6,
   },
   balance: {
-    fontSize: 30,
+    fontSize: scaleSize(26),
     fontWeight: '700',
     color: '#ffffff',
     fontFamily: 'Helvetica, Helvetica-Bold',
@@ -163,7 +175,7 @@ const styleSheet = StyleSheet.create({
   },
   tips: {
     fontFamily: 'Arial, Arial-Regular',
-    color: '#ffffff',
+    color: 'rgba(255, 255, 255, 0.8)',
   },
 });
 

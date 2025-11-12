@@ -52,6 +52,16 @@ export const getScratchAndCasino = (
   );
 };
 
+export const getCasinoData = (data: {
+  orderStatus: string | '0' | '1' | '2' | '3';
+  pageNo: number;
+  pageSize: number;
+  gameType: number;
+  queryDate: string;
+}) => {
+  return http.post<null, SafeAny[]>('app/casion/getOrderList', data);
+};
+
 export const getSports = (data: {
   orderStatus: string | '0' | '1' | '2' | '3';
   pageNo: number;

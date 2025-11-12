@@ -15,6 +15,11 @@ export interface BalanceListItem {
   status: number;
 }
 
+export interface BalanceListParams {
+  /** 是否显示金额为300的项 - 显示: 1或者不传; 不显示: 2*/
+  remark?: string;
+}
+
 export interface IncomeModel {
   /**
    * 金额充值ID
@@ -75,10 +80,29 @@ export interface PayMethod {
   payTag: string;
   maxAmount: number;
   minAmount: number;
+  /** 支付类型ID - 有多个，逗号分隔 */
+  remarks: string;
 }
 
-export const getBalanceList = () => {
-  return http.post<null, BalanceListItem[]>('app/pay/balance/list');
+export interface RechargeTypeListItem {
+  /** ID */
+  id: string;
+  maxAmount: number;
+  minAmount: number;
+  /** 支付名称 */
+  payName: string;
+  /** 支付标签 */
+  payTag: string;
+  /** 支付图标 */
+  payIcon?: string;
+}
+
+export interface PayMethodV2Params {
+  modeId: string;
+}
+
+export const getBalanceList = (params?: BalanceListParams) => {
+  return http.post<null, BalanceListItem[]>('app/pay/balance/list', params);
 };
 
 export const goIncome = (incomeData: IncomeModel) => {
@@ -117,4 +141,20 @@ export const getUserRechargeType = () => {
   return http.post<null, number>(
     'app/business/ActivitySigninRecord/payImgUser',
   );
+};
+
+/**
+ * 获取充值类型
+ */
+export const getRechargeTypeList = () => {
+  return http.post<SafeAny, RechargeTypeListItem[]>('app/pay/type/list02');
+};
+
+/**
+ * 获取支付通道
+ *
+ * @param PayMethodV2Params
+ */
+export const getPayMethodV2 = (params: PayMethodV2Params) => {
+  return http.post<SafeAny, PayMethod[]>('app/pay/deposit/channel02', params);
 };

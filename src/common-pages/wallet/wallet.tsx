@@ -30,7 +30,7 @@ const Wallet: React.FC<WalletProps> = ({theme: walletTheme = 'light'}) => {
   return (
     <NativeTouchableOpacity
       onPress={() => {
-        goToWithLogin(i18n.t('home.tab.deposit'));
+        goToWithLogin('Deposit');
       }}
       style={[theme.flex.row, theme.flex.centerByCol]}>
       <View style={[theme.flex.col, theme.margin.rights]}>

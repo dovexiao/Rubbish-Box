@@ -309,7 +309,7 @@ android {
         }
         "prodwinlucky" {
             dimension "environment"
-            applicationId "com.sambad.prodwinlucky"
+            applicationId "com.sambad.prodwl.app"
             manifestPlaceholders = [
                 appIcon: "@mipmap/ic_launcher_10"
             ]

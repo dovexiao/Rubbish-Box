@@ -1,17 +1,21 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import TabBar from './components/transaction-tabBar';
 import {TabView} from '@rneui/themed';
 import TransactionList from './transaction-list';
 import {TabType} from './transaction-service';
 import theme from '@/style';
+import {DatePickerItem} from '@/components/basic/date-picker';
+import {NOW_DATE} from '@/constants';
+import dayjs from 'dayjs';
 
 const TransactionTab = (props: {tabs: TabType[]; amount?: number | 0}) => {
-  const [active, setActive] = React.useState(0);
+  const [active, setActive] = useState(0);
   const {tabs = [], amount} = props;
 
   // 记录已经激活过的 tabs，用于懒加载
-  const [loadedTabs, setLoadedTabs] = React.useState<number[]>([0]);
+  const [loadedTabs, setLoadedTabs] = useState<number[]>([0]);
+  const [currentDate, setCurrentDate] = useState(NOW_DATE);
 
   const handleChange = (index: number) => {
     setActive(index);
@@ -24,6 +28,13 @@ const TransactionTab = (props: {tabs: TabType[]; amount?: number | 0}) => {
   return (
     <>
       <TabBar routers={tabs} value={active} onChange={handleChange} />
+      <DatePickerItem
+        maxDate={dayjs().toDate()}
+        type="day"
+        value={currentDate}
+        onChange={setCurrentDate}
+        maxSelectableDaysAgo={6}
+      />
       <TabView
         value={active}
         containerStyle={[theme.overflow.hidden]}
@@ -45,6 +56,7 @@ const TransactionTab = (props: {tabs: TabType[]; amount?: number | 0}) => {
                     index={index}
                     type={item.type}
                     amount={amount}
+                    currentDate={currentDate}
                   />
                 )}
               </View>

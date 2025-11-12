@@ -74,10 +74,11 @@ const ProxyHome = () => {
       .finally(() => loading && globalStore.globalLoading.next(false));
   };
   const onPressButton = (type: number) => {
-    if (type === 2) {
-      goToUrl(link.wsLink);
-    } else {
+    if (type == 1 && !!link.tgLInk) {
       goToUrl(link.tgLInk);
+    }
+    if (type === 2 && !!link.wsLink) {
+      goToUrl(link.wsLink);
     }
   };
   const isFrist = React.useRef(false);
@@ -118,7 +119,7 @@ const ProxyHome = () => {
       />
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => goToUrl('https://t.me/eve1_official')}
+        onPress={() => onPressButton(1)}
         style={{
           overflow: 'hidden',
         }}>
@@ -154,6 +155,8 @@ const ProxyHome = () => {
             panelRef.current?.open();
           }}
           onCopy={() => copy(code)}
+          onJoinTelegram={() => onPressButton(1)}
+          onJoinWhatsapp={() => onPressButton(2)}
         />
         {/* <SubEntry
           userId={agentInfo?.userId}
@@ -218,7 +221,7 @@ const ProxyHome = () => {
                       fontWeight: '700',
                     },
                   ]}>
-                  Join Telegtam
+                  {i18n.t('proxy.join-Telegram')}
                 </Text>
               </Button>
               <Button
@@ -244,7 +247,7 @@ const ProxyHome = () => {
                       fontWeight: '700',
                     },
                   ]}>
-                  Join Whatsapp
+                  {i18n.t('proxy.join-Whatsapp')}
                 </Text>
               </Button>
             </View>

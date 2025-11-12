@@ -122,7 +122,7 @@ const Vip = () => {
       goTo('Login');
       return;
     }
-    goToWithLogin(i18n.t('home.tab.deposit'));
+    goToWithLogin('Deposit');
   };
   return (
     <LazyImageLGBackground
