@@ -289,7 +289,6 @@ const Swiper: React.FC<SwiperProps> = props => {
           width: scrollViewWidth || screenWidth - 24,
           height: height,
           borderRadius: itemRadius,
-          overflow: 'hidden',
         }}
         horizontal={true}
         scrollEventThrottle={16}
