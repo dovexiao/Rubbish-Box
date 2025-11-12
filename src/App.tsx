@@ -1,14 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useCallback, useEffect} from 'react';
 import {
-  // Alert,
   Image,
-  // Linking,
   StatusBar,
   View,
   useWindowDimensions,
   Platform,
-  Alert,
 } from 'react-native';
 import {
   CardStyleInterpolators,
@@ -124,8 +121,8 @@ function App(): JSX.Element {
   // const remoteBundleRef = React.useRef<null | SafeAny>();
   // const downloadLock = React.useRef<boolean>(false);
   const [currentRouteName, setCurrentRouteName] = React.useState('');
-  // const [loading, _setLoading] = React.useState(!globalStore.isWeb);
-  const [loading, _setLoading] = React.useState(false);
+  const [loading, _setLoading] = React.useState(!globalStore.isWeb);
+  // const [loading, _setLoading] = React.useState(false);
   const [globalLoading, setGlobalLoading] = React.useState(false);
   const {renderModal: renderToast, show: toastShow} = useToast();
   const {updateWindowDimensions, screenWidth} = useSettingWindowDimensions();
@@ -242,9 +239,12 @@ function App(): JSX.Element {
       if (ok) {
         _setAvailable(2);
         switchVersion();
+        _setLoading(false);
       }
     } else {
-      _setLoading(false);
+      setTimeout(() => {
+        _setLoading(false);
+      }, 1000);
     }
   };
 
