@@ -335,17 +335,17 @@ const Home = () => {
                 <HomeGameList setSelectedGame={setSelectedGame} />
                 {selectedGame === 2 && <HomeGameTop />}
               </View>
-              {/*{selectedGame === 2 && showTabs ? (*/}
-              {/*  <View*/}
-              {/*    style={{*/}
-              {/*      height: basePx * 72 + 20,*/}
-              {/*      marginTop: -1,*/}
-              {/*      marginBottom: 2,*/}
-              {/*    }}*/}
-              {/*  />*/}
-              {/*) : (*/}
-              {/*  <View style={{height: 0}} />*/}
-              {/*)}*/}
+              {/* {selectedGame === 2 && showTabs ? (
+               <View
+                 style={{
+                   height: basePx * 72 + 20,
+                   marginTop: -1,
+                   marginBottom: 2,
+                 }}
+               />
+              ) : (
+               <View style={{height: 0}} />
+              )} */}
 
               {selectedGame === 1 && (
                 <HomeCasino

@@ -73,6 +73,7 @@ const pushyClient = new Pushy({
 });
 // import StartLoadingWeb from './common-pages/start-loading';
 setVisitor(getUUID());
+import DailyRewardsModal from '@/pages/home/components/daily-rewards';
 
 const Stack = createStackNavigator();
 const params = getUrlParams();
@@ -652,6 +653,7 @@ function App(): JSX.Element {
         </Overlay>
       )}
       {!loading && renderLanguageModal}
+      <DailyRewardsModal />
     </SafeAreaProvider>
   );
 }
