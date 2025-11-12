@@ -63,7 +63,7 @@ import {appPayWaster} from '@services/global.service';
 import {UpdateProvider, Pushy, useUpdate} from 'react-native-update'; //useUpdate
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 const pushyClient = new Pushy({
-  appKey: 'JGxMXDZRtbDh4ot6QvY6iSGb',
+  appKey: 'Niqp04e8lXCB00qCenr50sH-',
   // updateStrategy: 'silentAndLater', //-----关闭pushy自带热更新
   updateStrategy: null, //-----关闭pushy自带热更新
   checkStrategy: 'onAppStart',
