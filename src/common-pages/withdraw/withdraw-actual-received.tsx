@@ -6,6 +6,7 @@ import Text from '@/components/basic/text';
 import {Trans, useTranslation} from 'react-i18next';
 import {getWithdrawRule} from './withdraw.service';
 import CustomTitle from '@/components/business/custom-title';
+import {useSetWithdrawPer} from './withdraw.store';
 
 export interface WithdrawActualReceivedProps {}
 
@@ -62,6 +63,7 @@ const WithdrawActualReceived = ({}: WithdrawActualReceivedProps) => {
             value: minAmount,
           },
         ]);
+        useSetWithdrawPer(per);
       } catch (error) {
       } finally {
       }

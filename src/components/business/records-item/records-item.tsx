@@ -285,7 +285,9 @@ const RecordItem = (props: RecordItemType) => {
         <View>
           {moreData.map((item, index) => (
             <View style={styles.itemOrder} key={index}>
-              <Text color={theme.fontColor.white}>{item.key}</Text>
+              <View style={styles.itemOrderKey}>
+                <Text color={theme.fontColor.white}>{item.key}</Text>
+              </View>
               {React.isValidElement(item.value) ? (
                 item.value
               ) : (
@@ -317,18 +319,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   itemOrder: {
-    height: 40,
+    minHeight: 40,
     paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  itemOrderKey: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
   itemOrderView: {
+    flex: 1,
     color: theme.fontColor.white,
     fontSize: theme.fontSize.s,
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   progress: {
     borderTopLeftRadius: 6,

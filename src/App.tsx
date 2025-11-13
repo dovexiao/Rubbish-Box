@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
-  // Alert,
   Image,
-  // Linking,
   StatusBar,
   View,
   useWindowDimensions,
@@ -24,7 +22,6 @@ import {
   navigationRef,
   envConfig,
   ensureDeviceIds,
-  // fetchPushy,
 } from '@utils';
 import globalStore from './services/global.state';
 import {BasicObject} from '@types';
@@ -60,12 +57,13 @@ import {useSettingWindowDimensions} from './store/useSettingStore';
 import PopList from '@/components/basic/swiper/pop-list';
 import dayjs from 'dayjs';
 import {appPayWaster} from '@services/global.service';
-import {UpdateProvider, Pushy} from 'react-native-update'; //useUpdate
+import {UpdateProvider, Pushy, useUpdate} from 'react-native-update'; //useUpdate
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 const pushyClient = new Pushy({
-  appKey: 'pzyfXnB4qhPsH6JtPfW3_sI-',
-  updateStrategy: 'silentAndLater', //-----关闭pushy自带热更新
-  // checkStrategy: null,
+  appKey: 'Niqp04e8lXCB00qCenr50sH-',
+  // updateStrategy: 'silentAndLater', //-----关闭pushy自带热更新
+  updateStrategy: null, //-----关闭pushy自带热更新
+  checkStrategy: 'onAppStart',
   // 注意，默认情况下，在开发环境中不会检查更新
   // 如需在开发环境中调试更新，请设置debug为true
   // 但即便打开此选项，也仅能检查、下载热更，并不能实际应用热更。实际应用热更必须在release包中进行。
@@ -93,20 +91,20 @@ function App(): JSX.Element {
       setCurrentBannerIndex(0); // 重置
     }
   };
-  // const {
-  //   // client,
-  //   checkUpdate,
-  //   downloadUpdate,
-  //   // downloadAndInstallApk
-  //   switchVersionLater,
-  //   // switchVersion,
-  //   // updateInfo,
-  //   // markSuccess,
-  //   // packageVersion,
-  //   // currentHash,
-  //   // progress: {received, total} = {},
-  //   // restartApp,
-  // } = useUpdate();
+  const {
+    // client,
+    checkUpdate,
+    downloadUpdate,
+    // downloadAndInstallApk
+    switchVersionLater,
+    switchVersion,
+    updateInfo,
+    // markSuccess,
+    // packageVersion,
+    // currentHash,
+    progress: {received, total} = {received: 0, total: 0},
+    // restartApp,
+  } = useUpdate();
   if (params.channel) {
     globalStore.channel = params.channel;
   }
@@ -124,8 +122,8 @@ function App(): JSX.Element {
   // const remoteBundleRef = React.useRef<null | SafeAny>();
   // const downloadLock = React.useRef<boolean>(false);
   const [currentRouteName, setCurrentRouteName] = React.useState('');
-  // const [loading, _setLoading] = React.useState(!globalStore.isWeb);
-  const [loading, _setLoading] = React.useState(false);
+  const [loading, _setLoading] = React.useState(!globalStore.isWeb);
+  // const [loading, _setLoading] = React.useState(false);
   const [globalLoading, setGlobalLoading] = React.useState(false);
   const {renderModal: renderToast, show: toastShow} = useToast();
   const {updateWindowDimensions, screenWidth} = useSettingWindowDimensions();
@@ -214,60 +212,43 @@ function App(): JSX.Element {
       }
     });
   };
-  // const checkUpdateVersion = async () => {
-  //   try {
-  //     const res = await checkUpdate();
-  //     const info = res;
-  //     if (info?.expired) {
-  //       Alert.alert(
-  //         'The version is too old',
-  //         'Please download the latest version later',
-  //         [
-  //           {
-  //             text: i18n.t('splash.tip.sure'),
-  //             onPress: () => {
-  //               setLoading(false);
-  //             },
-  //           },
-  //         ],
-  //       );
-  //     } else if (info?.update) {
-  //       // 强制更新
-  //       Alert.alert(
-  //         i18n.t('splash.tip.alertTitle'),
-  //         i18n.t('splash.tip.alertContent'),
-  //         [
-  //           {
-  //             text: i18n.t('splash.tip.download'),
-  //             onPress: async () => {
-  //               setAvailable(1);
-  //               const ok = await downloadUpdate();
-  //               if (ok) {
-  //                 switchVersionLater();
-  //                 Alert.alert(
-  //                   'Update completed',
-  //                   'The next startup will automatically apply the new version',
-  //                   [
-  //                     {
-  //                       text: i18n.t('splash.tip.sure'),
-  //                       onPress: () => {
-  //                         setLoading(false);
-  //                       },
-  //                     },
-  //                   ],
-  //                 );
-  //               }
-  //             },
-  //           },
-  //         ],
-  //       );
-  //     } else {
-  //       setLoading(false);
-  //     }
-  //   } catch (error) {
-  //     setLoading(false);
-  //   }
-  // };
+
+  useEffect(() => {
+    const checkForUpdate = async () => {
+      try {
+        await checkUpdate();
+      } catch (error) {
+        _setLoading(false);
+      }
+    };
+
+    // 等待更新信息更新
+    if (updateInfo) {
+      handleUpdateInfo();
+    }
+
+    checkForUpdate();
+  }, [updateInfo]);
+
+  const handleUpdateInfo = async () => {
+    if (updateInfo?.update) {
+      // 强制更新
+      _setLoading(true);
+      _setAvailable(1);
+
+      const ok = await downloadUpdate();
+      if (ok) {
+        _setAvailable(2);
+        switchVersion();
+        _setLoading(false);
+      }
+    } else {
+      setTimeout(() => {
+        _setLoading(false);
+      }, 1000);
+    }
+  };
+
   const initApp = () => {
     setToken();
     setUserInfo();
@@ -276,11 +257,11 @@ function App(): JSX.Element {
     dailyRecord();
     if (globalStore.isAndroid) {
       // fetchPushy().then(flag => {
-      //   if (flag) {
-      //     checkUpdateVersion();
-      //   } else {
-      //     setLoading(false);
-      //   }
+      // if (flag) {
+      //   checkUpdateVersion();
+      // } else {
+      //   _setLoading(false);
+      // }
       // });
       versionModal.handleUpdate();
       const ReactMoE = require('react-native-moengage').default;
@@ -538,6 +519,7 @@ function App(): JSX.Element {
     }
   }, [globalStore.currentOrder, globalStore.currentOrderInfo]);
   const addHeight = Platform.OS === 'web' ? 50 : 50;
+
   return (
     <SafeAreaProvider style={[theme.position.rel]}>
       {/* <StartLoadingWeb /> */}
@@ -581,7 +563,14 @@ function App(): JSX.Element {
               }}>
               {loading ? (
                 <Stack.Screen name="Splash">
-                  {props => <Splash {...props} available={available} />}
+                  {props => (
+                    <Splash
+                      {...props}
+                      available={available}
+                      received={received}
+                      total={total}
+                    />
+                  )}
                 </Stack.Screen>
               ) : (
                 <>

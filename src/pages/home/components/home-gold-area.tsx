@@ -49,11 +49,11 @@ const HomeGoldArea = ({
   useEffect(() => {
     const sub = globalStore.tokenSubject.subscribe(token => {
       login.current = !!token;
-      if (token) {
-        postGetFreeLottery().then(lotteryInfo =>
-          Image.prefetch(lotteryInfo.imgUrl),
-        );
-      }
+      // if (token) {
+      //   postGetFreeLottery().then(lotteryInfo =>
+      //     Image.prefetch(lotteryInfo.imgUrl),
+      //   );
+      // }
     });
     const sub2 = globalStore.doNotices.subscribe(() => {
       doNotice();

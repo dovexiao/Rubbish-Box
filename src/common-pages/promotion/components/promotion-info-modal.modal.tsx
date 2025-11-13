@@ -39,16 +39,16 @@ const PromotionInfoModal: React.FC<PromotionInfoModalProps> = ({
             ]}>
             <Text style={modalStyles.message}>Extra Recharge Bonus</Text>
             <Text style={modalStyles.message}>
-              1st recharge → +30%, Max ₹4,000
+              1st recharge → +{currentReacgarge?.ratio || ''}, Max ₹{currentReacgarge?.max_amount || ''}
             </Text>
             <Text style={modalStyles.message}>
-              2nd recharge → +20%, Max ₹3,000
+              2nd recharge → +{currentReacgarge1?.ratio || ''}, Max ₹{currentReacgarge1?.max_amount || ''}
             </Text>
             <Text style={modalStyles.message}>
-              3rd recharge → +15%, Max ₹2,000
+              3rd recharge → +{currentReacgarge2?.ratio || ''}, Max ₹{currentReacgarge2?.max_amount || ''}
             </Text>
             <Text style={modalStyles.message}>
-              4th recharge → +10%, Max ₹1,000
+              4th recharge → +{currentReacgarge3?.ratio || ''}, Max ₹{currentReacgarge3?.max_amount || ''}
             </Text>
             <Text style={modalStyles.message}>
               Note :The bonus applies only once per recharge count. Higher top-ups won’t increase the bonus beyond the maximum limit.
