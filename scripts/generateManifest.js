@@ -5,18 +5,27 @@ const env = process.env.REACT_APP_API_CHANNEL_ID;
 
 const configs = {
   supbet: {
+    id: 'supbet',
+    scope: '/supbet/',
+    start_url: '/?app=supbet',
     name: 'supbet',
     theme_color: '#ffffff',
     iconDir: 'supbet',
     background_color: '#000000',
   },
   winlucky001: {
+    id: 'winlucky001',
+    scope: '/winlucky001/',
+    start_url: '/?app=winlucky001',
     name: 'winlucky001',
     theme_color: '#ffffff',
     iconDir: 'winlucky001',
     background_color: '#000000',
   },
   lucky101: {
+    id: 'lucky101',
+    scope: '/lucky101/',
+    start_url: '/?app=lucky101',
     name: 'lucky101',
     theme_color: '#ffffff',
     iconDir: 'lucky101',
