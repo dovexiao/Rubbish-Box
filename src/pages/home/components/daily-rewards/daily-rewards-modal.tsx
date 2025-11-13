@@ -318,6 +318,10 @@ const DailyRewardsModal: React.FC = () => {
         onClose={() => setPromotionInfoModalVisible(false)}
         type={1}
         i18n={i18n}
+        currentReacgarge={null}
+        currentReacgarge1={null}
+        currentReacgarge2={null}
+        currentReacgarge3={null}
       />
     </>
   );
