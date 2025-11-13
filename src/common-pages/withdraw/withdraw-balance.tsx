@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 import theme from '@/style';
 import Text from '@/components/basic/text';
 import Button from '@/components/basic/button';
-import {scaleSize, toPriceStr} from '@/utils';
+import {toPriceStr} from '@/utils';
 import globalStore from '@/services/global.state';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 
@@ -43,7 +43,7 @@ const WithdrawBalance: React.FC<WithdrawBalanceProps> = props => {
           <View style={[theme.flex.row, theme.flex.alignEnd]}>
             <Text
               fontFamily="fontInter"
-              fontSize={scaleSize(25)}
+              fontSize={calcActualSize(25)}
               allowFontScaling={false}
               style={{fontWeight: 'bold'}}
               white>
@@ -55,15 +55,21 @@ const WithdrawBalance: React.FC<WithdrawBalanceProps> = props => {
             </Text>
           </View>
         </View>
-        <Button
-          size="small"
-          style={styles.button}
-          titleColor="#E02020"
-          title={`${i18n.t('other.withdraw')} ${i18n.t('other.records')}`}
-          type="linear-secondary-gold"
-          radius={scaleSize(20)}
-          onPress={onGotoRecords}
-        />
+        <View
+          style={{
+            position: 'absolute',
+            right: calcActualSize(10),
+            top: calcActualSize(10),
+          }}>
+          <Button
+            size="small"
+            titleColor="#E02020"
+            title={`${i18n.t('other.withdraw')} ${i18n.t('other.records')}`}
+            type="linear-secondary-gold"
+            radius={calcActualSize(20)}
+            onPress={onGotoRecords}
+          />
+        </View>
       </ImageBackground>
     </View>
   );
@@ -76,15 +82,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   balanceContainer: {
-    height: scaleSize(89),
-    paddingTop: scaleSize(20),
-    paddingHorizontal: scaleSize(17),
+    // sizes are set dynamically via calcActualSize in render
   },
   opacity: {
     opacity: 0.9,
-  },
-  button: {
-    marginLeft: scaleSize(12),
   },
 });
 
