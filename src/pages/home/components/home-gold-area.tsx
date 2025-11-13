@@ -93,6 +93,10 @@ const HomeGoldArea = ({
         activeOpacity={0.8}
         onPress={() => {
           // goTo('Promotion');
+          if (!login.current) {
+            goTo('Login');
+            return;
+          }
           useShowDailyRewards();
         }}>
         <View style={[styles.vipNavsItem, theme.flex.col, theme.flex.center]}>
