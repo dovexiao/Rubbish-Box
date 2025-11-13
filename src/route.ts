@@ -65,9 +65,10 @@ import CouponPage from './common-pages/coupon';
 import FeedBackPage from './common-pages/feedback';
 import FeedBackRecordPage from './common-pages/feedback/record';
 import CasinoGameWeb from './common-pages/casino-game-web/casino-game-web';
-import NewWebViewGame from "@/common-pages/new-webview-game/new-webview-game";
+import NewWebViewGame from '@/common-pages/new-webview-game/new-webview-game';
 
 import NotifyNew from '@/common-pages/notify-new/notify-new';
+import AppDetails from './common-pages/app-store/app-details';
 
 type Routes = {
   name: string;
@@ -373,6 +374,11 @@ const routes: Routes[] = [
     name: 'CasinoGameWeb',
     component: CasinoGameWeb,
     link: 'casino-game-web',
+  },
+  {
+    name: 'AppStoreDetails',
+    component: AppDetails,
+    link: 'app-store-details',
   },
 ];
 
