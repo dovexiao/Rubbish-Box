@@ -19,6 +19,7 @@ import {getActivityWeekSignInList, getActivityReceiveReward} from './daily-rewar
 import {useTranslation} from 'react-i18next';
 import {goTo, goToWithLogin} from '@/utils';
 import GetBonusModal from '@/common-pages/promotion/components/get-bonus-modal';
+import PromotionInfoModal from '@/common-pages/promotion/components/promotion-info-modal.modal';
 
 const Days = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -31,6 +32,7 @@ const DailyRewardsModal: React.FC = () => {
   const [canGetBonus, setCanGetBonus] = useState(false);
   const [bonusAmount, setBonusAmount] = useState(0);
   const [isImageVisible, setIsImageVisible] = useState(false);
+  const [promotionInfoModalVisible, setPromotionInfoModalVisible] = useState(false);
 
   // 创建缩放动画值，初始值为1（正常大小）
   const coinScale = useSharedValue(1);
@@ -205,6 +207,7 @@ const DailyRewardsModal: React.FC = () => {
             <View style={dynamicStyles.content}>
               {/* 规则按钮 */}
               <NativeTouchableOpacity
+                onPress={() => setPromotionInfoModalVisible(true)}
                 style={[styles.ruleContainer, dynamicStyles.ruleContainer]}>
                 <Image
                   source={require('@assets/imgs/promotion/rule-icon.webp')}
@@ -309,6 +312,12 @@ const DailyRewardsModal: React.FC = () => {
         isImageVisible={isImageVisible}
         amount={bonusAmount || 0}
         setIsImageVisible={setIsImageVisible}
+      />
+      <PromotionInfoModal
+        visible={promotionInfoModalVisible}
+        onClose={() => setPromotionInfoModalVisible(false)}
+        type={1}
+        i18n={i18n}
       />
     </>
   );
