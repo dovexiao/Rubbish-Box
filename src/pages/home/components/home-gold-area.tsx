@@ -12,6 +12,7 @@ import {postGetFreeLottery} from '../home.service';
 import {goTo} from '@/utils'; //toAgentApply
 import theme from '@style';
 import BreatheImage from '@/components/basic/animations/breatheImage';
+import {useShowDailyRewards} from './daily-rewards/daily-rewards.store';
 
 const getNavTag = (num?: number) =>
   num && num !== 0 ? (
@@ -91,7 +92,8 @@ const HomeGoldArea = ({
       <NativeTouchableOpacity
         activeOpacity={0.8}
         onPress={() => {
-          goTo('Promotion');
+          // goTo('Promotion');
+          useShowDailyRewards();
         }}>
         <View style={[styles.vipNavsItem, theme.flex.col, theme.flex.center]}>
           <BreatheImage />
