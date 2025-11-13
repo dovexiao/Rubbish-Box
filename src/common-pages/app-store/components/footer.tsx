@@ -69,7 +69,7 @@ const Footer: React.FC<FooterProps> = () => {
             },
           ]}>
           <Image
-            source={require('../static/uk.webp')}
+            source={require('../images/uk.webp')}
             style={styles.footerLanguageFlag}
           />
           <Text style={styles.footerLanguageText}>

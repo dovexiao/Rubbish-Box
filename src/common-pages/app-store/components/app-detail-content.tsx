@@ -13,29 +13,23 @@ interface AppDetailContentProps {}
 const AppDetailContent: React.FC<AppDetailContentProps> = () => {
   const [selectedDevice, setSelectedDevice] = useState('Ponsel');
 
-  const screenshots = [
-    require('../static/1.png'),
-    require('../static/2.png'),
-    require('../static/3.png'),
-    require('../static/4.png'),
-    require('../static/5.png'),
-  ];
+  const screenshots = envConfig.getScreenShorts;
 
   const popularGames = [
-    {name: 'Mahjong2', icon: require('../static/game.webp'), rating: 4.9},
-    {name: 'Wild Bounty', icon: require('../static/game1.webp'), rating: 4.9},
+    {name: 'Mahjong2', icon: require('../images/game.webp'), rating: 4.9},
+    {name: 'Wild Bounty', icon: require('../images/game1.webp'), rating: 4.9},
     {
       name: 'Gates of Olympus',
-      icon: require('../static/game2.webp'),
+      icon: require('../images/game2.webp'),
       rating: 4.8,
     },
-    {name: 'Wild Bandito', icon: require('../static/game3.webp'), rating: 4.8},
+    {name: 'Wild Bandito', icon: require('../images/game3.webp'), rating: 4.8},
     {
       name: 'Starlight Princess',
-      icon: require('../static/game4.webp'),
+      icon: require('../images/game4.webp'),
       rating: 4.7,
     },
-    {name: 'Aztec', icon: require('../static/game5.webp'), rating: 4.7},
+    {name: 'Aztec', icon: require('../images/game5.webp'), rating: 4.7},
   ];
 
   const handleShare = () => {
@@ -90,7 +84,7 @@ const AppDetailContent: React.FC<AppDetailContentProps> = () => {
             <View style={styles.divider} />
             <View style={styles.statItem}>
               <Image
-                source={require('../static/18.png')}
+                source={require('../images/18.png')}
                 style={styles.ratingIcon}
               />
               <Text style={styles.statLabel}>Rating 18+</Text>
@@ -129,7 +123,7 @@ const AppDetailContent: React.FC<AppDetailContentProps> = () => {
             {screenshots.map((screenshot, index) => (
               <View key={index} style={styles.screenshotItem}>
                 <Image
-                  source={screenshot}
+                  source={{uri: screenshot}}
                   style={styles.screenshot}
                   resizeMode="contain"
                 />
@@ -194,7 +188,7 @@ const AppDetailContent: React.FC<AppDetailContentProps> = () => {
           <View style={styles.securityCard}>
             <View style={styles.securityItem}>
               <Image
-                source={require('../static/unnamed.webp')}
+                source={require('../images/unnamed.webp')}
                 style={styles.securityIcon}
               />
               <View style={styles.securityContent}>
@@ -208,7 +202,7 @@ const AppDetailContent: React.FC<AppDetailContentProps> = () => {
             </View>
             <View style={styles.securityItem}>
               <Image
-                source={require('../static/unnamed1.webp')}
+                source={require('../images/unnamed1.webp')}
                 style={styles.securityIcon}
               />
               <View style={styles.securityContent}>
@@ -222,7 +216,7 @@ const AppDetailContent: React.FC<AppDetailContentProps> = () => {
             </View>
             <View style={styles.securityItem}>
               <Image
-                source={require('../static/unnamed2.webp')}
+                source={require('../images/unnamed2.webp')}
                 style={styles.securityIcon}
               />
               <Text style={styles.securityText}>
@@ -231,7 +225,7 @@ const AppDetailContent: React.FC<AppDetailContentProps> = () => {
             </View>
             <View style={styles.securityItem}>
               <Image
-                source={require('../static/unnamed3.webp')}
+                source={require('../images/unnamed3.webp')}
                 style={styles.securityIcon}
               />
               <Text style={styles.securityText}>
@@ -337,7 +331,7 @@ const AppDetailContent: React.FC<AppDetailContentProps> = () => {
             <View style={styles.reviewHeader}>
               <View style={styles.reviewAuthor}>
                 <Image
-                  source={require('../static/avtar.webp')}
+                  source={require('../images/avtar.webp')}
                   style={styles.reviewAvatar}
                 />
                 <Text style={styles.reviewAuthorName}>Adri Viljoen</Text>

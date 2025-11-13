@@ -21,6 +21,11 @@ const ENV_CONFIG = (IS_WEB ? process.env : RNConfig) as {
   REACT_APP_API_LOGO_URL_V2?: string;
   REACT_APP_API_INVITATION_APPLY?: string;
   REACT_APP_API_LAUNCH_SCREEN_URL?: string;
+  REACT_APP_SCREEN_SHORT_1: string;
+  REACT_APP_SCREEN_SHORT_2: string;
+  REACT_APP_SCREEN_SHORT_3: string;
+  REACT_APP_SCREEN_SHORT_4: string;
+  REACT_APP_SCREEN_SHORT_5: string;
   [k: string]: string | number | undefined;
 };
 
@@ -94,11 +99,25 @@ class Config {
   }
   private _getInvitationApply = '';
   get getInvitationApply() {
-    return this._getInvitationApply || ENV_CONFIG.REACT_APP_API_INVITATION_APPLY;
+    return (
+      this._getInvitationApply || ENV_CONFIG.REACT_APP_API_INVITATION_APPLY
+    );
   }
   private _getLaunchScreen = '';
   get getLaunchScreen() {
     return this._getLaunchScreen || ENV_CONFIG.REACT_APP_API_LAUNCH_SCREEN_URL;
+  }
+  private _getScreenShorts: string[] = [];
+  get getScreenShorts() {
+    return (
+      this._getScreenShorts || [
+        ENV_CONFIG.REACT_APP_SCREEN_SHORT_1,
+        ENV_CONFIG.REACT_APP_SCREEN_SHORT_2,
+        ENV_CONFIG.REACT_APP_SCREEN_SHORT_3,
+        ENV_CONFIG.REACT_APP_SCREEN_SHORT_4,
+        ENV_CONFIG.REACT_APP_SCREEN_SHORT_5,
+      ]
+    );
   }
   constructor() {
     this._downloadUrl = ENV_CONFIG.REACT_APP_API_DOWNLOAD_URL || '';
@@ -131,6 +150,13 @@ class Config {
         : ENV_CONFIG.REACT_APP_ENV === 'dev'
         ? 'thrIu6I2ol73h8tusOJ8GcbtQd9BXkqgRTTEEp'
         : '';
+    this._getScreenShorts = [
+      ENV_CONFIG.REACT_APP_SCREEN_SHORT_1,
+      ENV_CONFIG.REACT_APP_SCREEN_SHORT_2,
+      ENV_CONFIG.REACT_APP_SCREEN_SHORT_3,
+      ENV_CONFIG.REACT_APP_SCREEN_SHORT_4,
+      ENV_CONFIG.REACT_APP_SCREEN_SHORT_5,
+    ];
   }
 }
 

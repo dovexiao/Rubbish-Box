@@ -9,7 +9,7 @@ interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
   const navItems = ['Game', 'Aplikasi', 'Film', 'Buku', 'Anak-anak'];
-  const [activeNav, setActiveNav] = React.useState('Aplikasi');
+  const [activeNav] = React.useState('Aplikasi');
 
   return (
     <View style={styles.header}>
@@ -24,16 +24,14 @@ const Header: React.FC<HeaderProps> = () => {
         </View>
         <View style={styles.headerRight}>
           <NativeTouchableOpacity style={styles.iconButton}>
-            {/* <Text style={styles.icon}>🔍</Text> */}
             <SearchIcon size={24} />
           </NativeTouchableOpacity>
           <NativeTouchableOpacity style={styles.iconButton}>
-            {/* <Text style={styles.icon}>❓</Text> */}
             <QuestionIcon size={24} />
           </NativeTouchableOpacity>
           <NativeTouchableOpacity style={styles.iconButton}>
             <Image
-              source={require('../static/logo_avatar_anonymous_color_1x_web_32dp.png')}
+              source={require('../images/logo_avatar_anonymous_color_1x_web_32dp.png')}
               style={styles.avatar}
             />
           </NativeTouchableOpacity>
@@ -44,7 +42,8 @@ const Header: React.FC<HeaderProps> = () => {
           <NativeTouchableOpacity
             key={item}
             style={styles.mobileNavItem}
-            onPress={() => setActiveNav(item)}>
+            // onPress={() => setActiveNav(item)}
+            onPress={() => {}}>
             <Text
               style={[
                 styles.mobileNavText,
