@@ -7,7 +7,7 @@ export function getActivityWeekSignInList() {
 // 领取新活动奖励金额
 export function getActivityReceiveReward(arr: any) {
   return http.post<{}, any>(
-    'app/business/ActivitySigninRecord/receiveSigninReward',
+    'app/business/ActivitySigninRecord/receiveSevenDayReward',
     {
       ids: arr,
     },
