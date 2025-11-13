@@ -10,22 +10,27 @@ import Animated, {
 } from 'react-native-reanimated';
 import Text from '@basicComponents/text';
 import LinearGradient from '@/components/basic/linear-gradient';
-import useDailyRewardsStore from './daily-rewards.store';
+import useDailyRewardsStore, {useHideDailyRewards} from './daily-rewards.store';
 import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 import {LazyImageBackground} from '@/components/basic/image';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import theme from '@/style';
-import {getActivityWeekSignInList} from './daily-rewards.service';
+import {getActivityWeekSignInList, getActivityReceiveReward} from './daily-rewards.service';
+import {useTranslation} from 'react-i18next';
+import {goTo, goToWithLogin} from '@/utils';
+import GetBonusModal from '@/common-pages/promotion/components/get-bonus-modal';
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const Days = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 const DailyRewardsModal: React.FC = () => {
   const {calcActualSize} = useScreenSize();
+  const {i18n} = useTranslation();
   const visible = useDailyRewardsStore(state => state.visible);
-  const hide = useDailyRewardsStore(state => state.hide);
 
   const [sevenInfo, setSevenInfo] = useState([]);
   const [canGetBonus, setCanGetBonus] = useState(false);
+  const [bonusAmount, setBonusAmount] = useState(0);
+  const [isImageVisible, setIsImageVisible] = useState(false);
 
   // 创建缩放动画值，初始值为1（正常大小）
   const coinScale = useSharedValue(1);
@@ -128,6 +133,10 @@ const DailyRewardsModal: React.FC = () => {
       marginTop: calcActualSize(10),
       borderRadius: calcActualSize(24),
     },
+    selectedIcon: {
+      width: calcActualSize(35),
+      height: calcActualSize(30),
+    },
     buttonText: {
       fontSize: calcActualSize(14),
     },
@@ -153,6 +162,26 @@ const DailyRewardsModal: React.FC = () => {
     }
   }, []);
 
+  // 领取当天签到奖励
+  const getDailyRewards = useCallback(async () => {
+    try {
+      const canGetBonusItems: any[] = sevenInfo.filter((item: any) => item?.status === 0);
+      let ids: any[] = [];
+      if (canGetBonusItems.length === 1 && canGetBonusItems[0].id) {
+        ids.push(canGetBonusItems[0].id);
+      } else {
+        return;
+      }
+      const res = await getActivityReceiveReward(ids);
+      console.log('领取当天签到奖励', res);
+      fetchSevenInfo();
+      setBonusAmount(canGetBonusItems[0]?.rewardAmount || 0);
+      setIsImageVisible(true);
+    } catch (error: unknown) {
+      console.error('领取当天签到奖励失败', error);
+    }
+  }, [sevenInfo]);
+
   useEffect(() => {
     if (visible) {
       fetchSevenInfo();
@@ -162,101 +191,126 @@ const DailyRewardsModal: React.FC = () => {
   if (!visible) return null;
 
   return (
-    <Modal
-      transparent
-      visible={visible}
-      onRequestClose={hide}
-      animationType="fade">
-      <View style={styles.overlay}>
-        <LazyImageBackground
-          width={dynamicStyles.backgroundImage.width}
-          height={dynamicStyles.backgroundImage.height}
-          imageUrl={require('@assets/imgs/promotion/daily-rewards-bg.webp')}>
-          <View style={dynamicStyles.content}>
-            {/* 规则按钮 */}
-            <NativeTouchableOpacity
-              style={[styles.ruleContainer, dynamicStyles.ruleContainer]}>
-              <Image
-                source={require('@assets/imgs/promotion/rule-icon.webp')}
-                style={dynamicStyles.ruleIcon}
-              />
-              <Text style={[styles.ruleText, dynamicStyles.ruleText]}>Rule</Text>
-            </NativeTouchableOpacity>
+    <>
+      <Modal
+        transparent
+        visible={visible}
+        onRequestClose={useHideDailyRewards}
+        animationType="fade">
+        <View style={styles.overlay}>
+          <LazyImageBackground
+            width={dynamicStyles.backgroundImage.width}
+            height={dynamicStyles.backgroundImage.height}
+            imageUrl={require('@assets/imgs/promotion/daily-rewards-bg.webp')}>
+            <View style={dynamicStyles.content}>
+              {/* 规则按钮 */}
+              <NativeTouchableOpacity
+                style={[styles.ruleContainer, dynamicStyles.ruleContainer]}>
+                <Image
+                  source={require('@assets/imgs/promotion/rule-icon.webp')}
+                  style={dynamicStyles.ruleIcon}
+                />
+                <Text style={[styles.ruleText, dynamicStyles.ruleText]}>Rule</Text>
+              </NativeTouchableOpacity>
 
-            {/* 标题 */}
-            <View style={dynamicStyles.titleContainer}>
-              <Text style={[styles.title, dynamicStyles.title]}>
-                DAILY CHECK-IN REWARDS
-              </Text>
-            </View>
+              {/* 标题 */}
+              <View style={dynamicStyles.titleContainer}>
+                <Text style={[styles.title, dynamicStyles.title]}>
+                  DAILY CHECK-IN REWARDS
+                </Text>
+              </View>
 
-            {/* 奖励列表 */}
-            <View style={[styles.rewardsContainer, dynamicStyles.rewardsContainer]}>
-              {DAYS.map((day, index) => (
+              {/* 奖励列表 */}
+              <View style={[styles.rewardsContainer, dynamicStyles.rewardsContainer]}>
+                {sevenInfo.map((item: any, index: number) => (
+                  <LinearGradient
+                    key={index}
+                    colors={item.status === 0 ? ['#F7E851', '#F19D09'] : ['#474747', '#2B2B2D']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 0, y: 1}}
+                    style={[
+                      styles.rewardItem,
+                      dynamicStyles.rewardItem,
+                      Days[item.weekDay] === 'Sunday'
+                        ? {
+                            width:
+                              dynamicStyles.rewardItem.width * 2 +
+                              dynamicStyles.rewardsContainer.columnGap,
+                          }
+                        : {},
+                    ]}>
+                    <Text style={[styles.dayText, dynamicStyles.dayText]}>
+                      {Days[item.weekDay]}
+                    </Text>
+                    <View style={dynamicStyles.coinContainer}>
+                      <Animated.Image
+                        source={require('@assets/imgs/promotion/coin-icon.webp')}
+                        style={[dynamicStyles.coinIcon, (item.status === 0 || item.status === -1) && coinAnimatedStyle]}
+                      />
+                    </View>
+                    <Text style={[styles.amountText, dynamicStyles.amountText]}>
+                      +{item.rewardAmount}Rs
+                    </Text>
+                    {item?.status === 1 && (
+                      <View style={styles.rewardItemFinished} >
+                        <Image
+                          source={require('@assets/imgs/promotion/daily-rewards-selected.webp')}
+                          style={dynamicStyles.selectedIcon}
+                        />
+                      </View>
+                    )}
+                  </LinearGradient>
+                ))}
+              </View>
+
+              {/* 跳转充值或领取当天签到奖励按钮 */}
+              <NativeTouchableOpacity
+                style={[styles.buttonContainer, dynamicStyles.buttonContainer]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  if (canGetBonus) {
+                    getDailyRewards();
+                  } else {
+                    useHideDailyRewards();
+                    goToWithLogin('Deposit');
+                  }
+                }}>
                 <LinearGradient
-                  key={day}
-                  colors={['#474747', '#2B2B2D']}
+                  colors={['#FF0000', '#CE0A02']}
                   start={{x: 0, y: 0}}
                   end={{x: 0, y: 1}}
-                  style={[
-                    styles.rewardItem,
-                    dynamicStyles.rewardItem,
-                    day === 'Sunday'
-                      ? {
-                          width:
-                            dynamicStyles.rewardItem.width * 2 +
-                            dynamicStyles.rewardsContainer.columnGap,
-                        }
-                      : {},
-                  ]}>
-                  <Text style={[styles.dayText, dynamicStyles.dayText]}>
-                    {day}
-                  </Text>
-                  <View style={dynamicStyles.coinContainer}>
-                    <Animated.Image
-                      source={require('@assets/imgs/promotion/coin-icon.webp')}
-                      style={[dynamicStyles.coinIcon, coinAnimatedStyle]}
-                    />
-                  </View>
-                  <Text style={[styles.amountText, dynamicStyles.amountText]}>
-                    +10Rs
+                  locations={[0, 0.8]}
+                  style={styles.button}>
+                  <Text style={[styles.buttonText, dynamicStyles.buttonText]}>
+                    {canGetBonus
+                    ? i18n.t('rebate.get-bonus')
+                    : i18n.t('rebate.go-get-bonus')}
                   </Text>
                 </LinearGradient>
-              ))}
+              </NativeTouchableOpacity>
             </View>
+          </LazyImageBackground>
 
-            {/* 跳转充值按钮 */}
-            <NativeTouchableOpacity
-              style={[styles.buttonContainer, dynamicStyles.buttonContainer]}
-              activeOpacity={0.8}>
-              <LinearGradient
-                colors={['#FF0000', '#CE0A02']}
-                start={{x: 0, y: 0}}
-                end={{x: 0, y: 1}}
-                locations={[0, 0.8]}
-                style={styles.button}>
-                <Text style={[styles.buttonText, dynamicStyles.buttonText]}>
-                  Recharge Now Get Bonus
-                </Text>
-              </LinearGradient>
-            </NativeTouchableOpacity>
-          </View>
-        </LazyImageBackground>
+          {/* 关闭按钮 */}
+          <NativeTouchableOpacity
+            onPress={useHideDailyRewards}
+            style={[styles.closeButton]}>
+            <Image
+              style={[dynamicStyles.closeIcon, theme.margin.topl,]}
+              source={require('@assets/imgs/promotion/daily-rewards-close.webp')}
+            />
+          </NativeTouchableOpacity>
 
-        {/* 关闭按钮 */}
-        <NativeTouchableOpacity
-          onPress={hide}
-          style={[styles.closeButton]}>
-          <Image
-            style={[dynamicStyles.closeIcon, theme.margin.topl,]}
-            source={require('@assets/imgs/promotion/daily-rewards-close.webp')}
-          />
-        </NativeTouchableOpacity>
-
-        {/* 设计稿背景图资源高了一块高度为44dp的空白，补充一个空白视图已使布局垂直方向上平衡 */}
-        <View style={{ height: calcActualSize(44) }} />
-      </View>
-    </Modal>
+          {/* 设计稿背景图资源高了一块高度为44dp的空白，补充一个空白视图已使布局垂直方向上平衡 */}
+          <View style={{ height: calcActualSize(44) }} />
+        </View>
+      </Modal>
+      <GetBonusModal
+        isImageVisible={isImageVisible}
+        amount={bonusAmount || 0}
+        setIsImageVisible={setIsImageVisible}
+      />
+    </>
   );
 };
 
@@ -290,9 +344,22 @@ const styles = StyleSheet.create({
   rewardItem: {
     alignItems: 'center',
     justifyContent: 'flex-start',
+    overflow: 'hidden',
   },
   dayText: {
     color: '#FFFFFF',
+  },
+  rewardItemFinished: {
+    flex:1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(105, 3, 3, 0.75)',
+    zIndex: 1,
   },
   amountText: {
     color: '#FFFFFF',

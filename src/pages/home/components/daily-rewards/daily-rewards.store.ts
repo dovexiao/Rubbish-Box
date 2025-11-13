@@ -15,5 +15,6 @@ const useDailyRewardsStore = create<DailyRewardsStoreState>()(set => ({
 }));
 
 export const useShowDailyRewards = useDailyRewardsStore.getState().show;
+export const useHideDailyRewards = useDailyRewardsStore.getState().hide;
 export default useDailyRewardsStore;
 
