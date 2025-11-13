@@ -152,7 +152,7 @@ const DailyRewardsModal: React.FC = () => {
   const fetchSevenInfo = useCallback(async () => {
     try {
       const sevenRes = await getActivityWeekSignInList();
-      console.log('7天活动信息', sevenRes);
+      // console.log('7天活动信息', sevenRes);
       if (sevenRes?.length) {
         setSevenInfo(sevenRes);
         setCanGetBonus(
@@ -175,7 +175,7 @@ const DailyRewardsModal: React.FC = () => {
         return;
       }
       const res = await getActivityReceiveReward(ids);
-      console.log('领取当天签到奖励', res);
+      // console.log('领取当天签到奖励', res);
       fetchSevenInfo();
       setBonusAmount(canGetBonusItems[0]?.rewardAmount || 0);
       setIsImageVisible(true);
