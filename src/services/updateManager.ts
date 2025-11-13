@@ -166,7 +166,7 @@ export class UpdateManager {
       try {
         const updateResponse = await this.requestUpdateCheck(appInfo)
         
-        if (updateResponse.code === 200 && updateResponse.data.needUpdate) {
+        if (updateResponse.code === 200 && updateResponse.data.设备上needUpdate) {
           console.log("发现整包更新，优先处理整包更新")
           const updateData = this.convertApiResponseToUpdateData(updateResponse.data)
           
@@ -1080,12 +1080,6 @@ export class UpdateManager {
     try {
       console.log("应用进入前台，检查更新")
       
-      // 优先使用EAS更新服务（仅在生产构建中）
-      if (Updates && Updates.isEnabled && !__DEV__) {
-        await easUpdateService.checkForUpdatesOnShow()
-        return
-      }
-      
       // 检查是否正在安装APK
       const installPending = await AsyncStorage.getItem("apk_install_pending")
       const installStartTime = await AsyncStorage.getItem("install_start_time")
@@ -1112,6 +1106,7 @@ export class UpdateManager {
         return
       }
 
+      // 使用统一的检查流程：先整包，后EAS（修复旧版本逻辑）
       await this.checkForUpdates({
         silent: true,
         source: "app_show",
@@ -1128,13 +1123,7 @@ export class UpdateManager {
     try {
       console.log("手动检查更新")
       
-      // 优先使用EAS更新服务（仅在生产构建中）
-      if (Updates && Updates.isEnabled && !__DEV__) {
-        await easUpdateService.manualCheckForUpdates()
-        return
-      }
-      
-      // 使用传统更新检测（开发构建和生产构建都支持）
+      // 使用统一的检查流程：先整包，后EAS
       await this.checkForUpdates({
         silent: false,
         forceCheck: true,

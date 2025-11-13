@@ -155,9 +155,41 @@ export const getDeviceInfoForAPI = async () => {
   }
 }
 
+/**
+ * 判断是否为平板设备（非学习桌）
+ * 学习桌支持同时使用两个相机，平板不支持
+ * 
+ * 判断规则：
+ * - brand === 'rockchip' → 学习桌（支持双相机）
+ * - brand !== 'rockchip' → 平板（需要暂停坐姿检测）
+ */
+export const isTabletDevice = async (): Promise<boolean> => {
+  try {
+    const brand = await DeviceInfo.getBrand()
+    const model = await DeviceInfo.getModel()
+    const deviceName = await DeviceInfo.getDeviceName()
+    
+    console.log('📱 检测设备类型:', { brand, model, deviceName })
+    
+    // 根据 brand 字段判断
+    // brand === 'rockchip' → 学习桌（支持双相机）
+    const isLearningDesk = brand.toLowerCase() === 'rockchip'
+    const isTablet = !isLearningDesk
+    
+    console.log('📱 设备判断结果:', isTablet ? '平板（单相机限制）' : '学习桌（支持双相机，brand=rockchip）')
+    
+    return isTablet
+  } catch (error) {
+    console.error('检测设备类型失败:', error)
+    // 出错时默认认为是平板，更安全
+    return true
+  }
+}
+
 export default {
   getDeviceCode,
   getDeviceInfo,
   getDeviceInfoForAPI,
-  resetDeviceCode
+  resetDeviceCode,
+  isTabletDevice
 }

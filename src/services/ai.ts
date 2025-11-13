@@ -223,7 +223,8 @@ export async function getQuestion(params: { cache_key: string }): Promise<Questi
  * 获取作文批改详情
  */
 export async function getCompositionCorrectionRecordDetails(params: {
-  id: number
+  id?: number
+  batch_id?: string
 }): Promise<CompositionDetails> {
   return await post<CompositionDetails>(
     "/AppStart/Protected/original_json/",

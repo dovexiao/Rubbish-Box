@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Text, ScrollView, StatusBar as RNStatusBar, ActivityIndicator } from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
+import { View, Text, ScrollView, StatusBar as RNStatusBar, ActivityIndicator, ImageBackground, Animated } from "react-native"
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router"
 
 import { globalImmersive } from "../../utils/globalImmersive"
@@ -17,15 +16,18 @@ import { useUserStore } from "../../stores/userStore"
 export default function AILoadingScreen() {
   const router = useRouter()
   const params = useLocalSearchParams()
-  const [streamContent, setStreamContent] = useState("") // 流式内容
+  const [streamContent, setStreamContent] = useState("") // 显示的流式内容
   const [isStreaming, setIsStreaming] = useState(false) // 是否正在流式输出
   const [isCompleted, setIsCompleted] = useState(false) // 是否完成
   const hasStartedStream = useRef(false)
   const scrollViewRef = useRef<ScrollView>(null)
+  const cursorOpacity = useRef(new Animated.Value(1)).current // 光标闪烁动画
+  const contentBuffer = useRef("") // 接收数据的缓冲区
+  const displayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null) // 显示定时器
 
   // 打印组件加载日志
-  console.log("🎯 AILoadingScreen 组件已加载")
-  console.log("📦 接收到的参数:", params)
+  // console.log("🎯 AILoadingScreen 组件已加载")
+  // console.log("📦 接收到的参数:", params)
 
   // 确保全屏沉浸式
   useFocusEffect(
@@ -54,14 +56,6 @@ export default function AILoadingScreen() {
 
     console.log("📝 UUID:", uuid)
     console.log("📝 类型:", correctionType)
-
-    // 只处理作文类型
-    if (correctionType !== "composition") {
-      console.error("❌ 不支持的类型:", correctionType)
-      showWarning("当前仅支持作文流式输出")
-      setTimeout(() => router.back(), 1500)
-      return
-    }
 
     try {
       setIsStreaming(true)
@@ -123,7 +117,7 @@ export default function AILoadingScreen() {
               // 跳过空数据
               if (!jsonStr) continue
               
-              console.log("🔍 提取到JSON:", jsonStr.substring(0, 100))
+              // console.log("🔍 提取到JSON:", jsonStr.substring(0, 100))
               
               try {
                 const json = JSON.parse(jsonStr)
@@ -141,13 +135,68 @@ export default function AILoadingScreen() {
                 }
                 
                 if (content) {
-                  console.log("✅ 添加内容:", content)
-                  setStreamContent((prev) => prev + content)
+                  // console.log("📥 接收到原始内容:", content)
+                  
+                  // ✂️ 新策略：只保留包含中文的内容 + 数学符号
+                  // 完全过滤掉纯英文字段名和 JSON 结构
+                  
+                  // 1. 跳过纯 JSON 结构字符
+                  if (/^[\[\]{},":\s]+$/.test(content)) {
+                    console.log("⏭️ 跳过纯JSON结构:", content)
+                    return
+                  }
+                  
+                  // 2. 跳过纯英文单词（字段名）
+                  // 但保留数学表达式（包含数字和运算符）
+                  if (/^[a-zA-Z_]+$/.test(content)) {
+                    console.log("⏭️ 跳过英文字段名:", content)
+                    return
+                  }
+                  
+                  // 3. 跳过 ANSI 转义序列和 Unicode 编码
+                  if (/\\u[0-9a-f]{4}|\\u001b\[/i.test(content)) {
+                    console.log("⏭️ 跳过转义序列:", content)
+                    return
+                  }
+                  
+                  // 4. 跳过布尔值和单独的冒号
+                  if (/^(true|false|null)$/i.test(content) || /^:\s*$/.test(content)) {
+                    console.log("⏭️ 跳过布尔/冒号:", content)
+                    return
+                  }
+                  
+                  // 5. 处理换行符
+                  let processedContent = content
+                    .replace(/\\n/g, '\n')   // 转换换行符
+                    .replace(/\r\n/g, '\n')
+                    .replace(/\r/g, '\n')
+                  
+                  // 6. 清理首尾的 JSON 字符
+                  processedContent = processedContent
+                    .replace(/^[\[\]{},"]+/, '')
+                    .replace(/[\[\]{},"]+$/, '')
+                    .replace(/\\u[0-9a-f]{4}/gi, '')  // 移除 Unicode 转义
+                    .trim()
+                  
+                  // 7. 只保留包含中文、数字或数学符号的内容
+                  // 过滤掉纯英文（但保留包含中文的混合内容）
+                  if (processedContent.length > 0) {
+                    // 如果是纯英文（不含中文、数字、标点），跳过
+                    if (/^[a-zA-Z\s]+$/.test(processedContent)) {
+                      console.log("⏭️ 跳过纯英文内容:", processedContent)
+                      return
+                    }
+                    
+                    // console.log("✅ 添加到缓冲区:", processedContent)
+                    contentBuffer.current += processedContent
+                    // console.log("📊 当前缓冲区长度:", contentBuffer.current.length)
+                  }
+                  // console.log("─────────────────────────")
                 }
                 
                 // 检查完成标记
                 if (json.status === "done" || json.done || json.finished) {
-                  console.log("🎉 JSON中包含完成标记")
+                  // console.log("🎉 JSON中包含完成标记")
                   setIsCompleted(true)
                   setIsStreaming(false)
                 }
@@ -169,10 +218,10 @@ export default function AILoadingScreen() {
             previousLength = fullText.length
             
             chunkCount++
-            console.log(`\n📦 收到第 ${chunkCount} 个数据块`)
-            console.log(`📏 新增长度: ${newChunk.length} 字符`)
-            console.log(`📏 总长度: ${fullText.length} 字符`)
-            console.log(`📄 新增内容:`, newChunk.substring(0, 200))
+            // console.log(`\n📦 收到第 ${chunkCount} 个数据块`)
+            // console.log(`📏 新增长度: ${newChunk.length} 字符`)
+            // console.log(`📏 总长度: ${fullText.length} 字符`)
+            // console.log(`📄 新增内容:`, newChunk.substring(0, 200))
             
             // 处理新增的数据
             processChunk(newChunk)
@@ -180,14 +229,14 @@ export default function AILoadingScreen() {
         }
         
         xhr.onload = () => {
-          console.log("✅ 流式输出完成，共接收", chunkCount, "个数据块")
-          console.log("📊 总数据长度:", xhr.responseText.length)
+          // console.log("✅ 流式输出完成，共接收", chunkCount, "个数据块")
+          // console.log("📊 总数据长度:", xhr.responseText.length)
           
           // 确保处理完所有剩余数据
           if (previousLength < xhr.responseText.length) {
             const remaining = xhr.responseText.substring(previousLength)
             if (remaining.trim()) {
-              console.log("📦 处理剩余数据:", remaining.substring(0, 100))
+              // console.log("📦 处理剩余数据:", remaining.substring(0, 100))
               processChunk(remaining)
             }
           }
@@ -235,45 +284,141 @@ export default function AILoadingScreen() {
     }
   }, [startStreamingOCR])
 
+  // 光标闪烁动画
+  useEffect(() => {
+    if (isStreaming && !isCompleted) {
+      // 启动闪烁动画
+      const blinkAnimation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(cursorOpacity, {
+            toValue: 0,
+            duration: 530,
+            useNativeDriver: true,
+          }),
+          Animated.timing(cursorOpacity, {
+            toValue: 1,
+            duration: 530,
+            useNativeDriver: true,
+          }),
+        ])
+      )
+      blinkAnimation.start()
+      
+      return () => {
+        blinkAnimation.stop()
+      }
+    }
+    
+    // 停止闪烁，隐藏光标
+    cursorOpacity.setValue(0)
+    return undefined
+  }, [isStreaming, isCompleted, cursorOpacity])
+
+  // 逐字符显示效果：每10ms从缓冲区取1-3个字符显示
+  useEffect(() => {
+    // 只有开始流式输出后才启动定时器
+    if (!isStreaming && !isCompleted) return
+
+    displayIntervalRef.current = setInterval(() => {
+      if (contentBuffer.current.length > 0) {
+        // 每次取1-3个字符
+        const charsToAdd = Math.min(3, contentBuffer.current.length)
+        const nextChars = contentBuffer.current.substring(0, charsToAdd)
+        contentBuffer.current = contentBuffer.current.substring(charsToAdd)
+        
+        setStreamContent(prev => {
+          const newContent = prev + nextChars
+          // 每隔一段时间打印一次当前显示的内容
+          if (newContent.length % 100 === 0) {
+            console.log("💬 当前页面显示内容 (最后100字符):", newContent.slice(-100))
+          }
+          return newContent
+        })
+      } else if (isCompleted) {
+        // 缓冲区为空且已完成，清除定时器并跳转
+        if (displayIntervalRef.current) {
+          clearInterval(displayIntervalRef.current)
+          displayIntervalRef.current = null
+          
+          console.log("✅ 分析完成且缓冲区已清空，准备跳转到结果页")
+          // 延迟500ms后跳转，让用户看到完成状态
+          setTimeout(() => {
+            const imguuid = params.imguuid as string
+            const type = params.type as string
+            console.log("🔄 跳转到结果页，参数:", { batch_id: imguuid, type })
+            router.replace({
+              pathname: "/ai/result",
+              params: {
+                batch_id: imguuid,
+                type: type,
+              },
+            })
+          }, 500)
+        }
+      }
+    }, 10) // 每10ms更新一次
+
+    return () => {
+      if (displayIntervalRef.current) {
+        clearInterval(displayIntervalRef.current)
+        displayIntervalRef.current = null
+      }
+    }
+  }, [isStreaming, isCompleted, params.imguuid, params.type, router])
+  
   // 自动滚动到底部
   useEffect(() => {
-    console.log("📜 streamContent 更新，长度:", streamContent.length)
+    // console.log("📜 streamContent 更新，长度:", streamContent.length)
     if (streamContent && scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: true })
+      scrollViewRef.current.scrollToEnd({ animated: false })
     }
   }, [streamContent])
 
   return (
-    <LinearGradient
-      colors={["#93abff", "#e4f4ff", "#ecf8ff", "#ffffff"]}
-      locations={[-0.1128, 0.1494, 0.8474, 1.0586]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+    <ImageBackground
+      source={require("../../../assets/images/al-loading-bg.png")}
       style={styles.loadingContainer}
+      resizeMode="cover"
     >
       <View style={styles.contentContainer}>
         {/* 标题 */}
-        <Text style={styles.title}>AI 正在分析中...</Text>
+        <Text style={styles.title}>
+          {params.type === "composition" ? "AI 正在批改作文..." : "AI 正在批改作业..."}
+        </Text>
 
         {/* 流式内容显示区域 */}
-        <ScrollView
-          ref={scrollViewRef}
-          style={styles.streamContainer}
-          contentContainerStyle={styles.streamContent}
-          showsVerticalScrollIndicator={true}
-        >
+        <View style={styles.streamContainer}>
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.scrollView}
+            contentContainerStyle={styles.streamContent}
+            showsVerticalScrollIndicator={true}
+          >
           {streamContent ? (
-            <Text style={styles.streamText}>{streamContent}</Text>
+            <View style={styles.textWithCursor}>
+              <Text style={styles.streamText}>{streamContent}</Text>
+              {(isStreaming || !isCompleted) && (
+                <Animated.Text 
+                  style={[
+                    styles.cursor,
+                    { opacity: cursorOpacity }
+                  ]}
+                >
+                  ▌
+                </Animated.Text>
+              )}
+            </View>
           ) : (
             <View style={styles.loadingPlaceholder}>
-              <ActivityIndicator size="large" color="#4891FF" />
-              <Text style={styles.loadingText}>等待 AI 响应...</Text>
+              <ActivityIndicator size="large" color="#fff" />
+              <Text style={styles.loadingText}>准备开始批改...</Text>
             </View>
           )}
-        </ScrollView>
+          </ScrollView>
+        </View>
 
         {/* 状态指示器 */}
-        {isStreaming && (
+        {/* {isStreaming && (
           <View style={styles.statusBar}>
             <ActivityIndicator size="small" color="#4891FF" />
             <Text style={styles.statusText}>正在接收数据...</Text>
@@ -284,9 +429,9 @@ export default function AILoadingScreen() {
           <View style={styles.statusBar}>
             <Text style={styles.completedText}>✓ 分析完成</Text>
           </View>
-        )}
+        )} */}
       </View>
-    </LinearGradient>
+    </ImageBackground>
   )
 }
 
@@ -308,26 +453,39 @@ const styles = createStyles({
     textAlign: "center" as const,
   },
   streamContainer: {
+    alignSelf: "center" as const,
+    width: 400,
+    height: 155,
+    marginTop: -60,
+    marginLeft: -15,
+    color:  '#FFFFFF' as const,
+  },
+  scrollView: {
     flex: 1,
-    alignSelf: "stretch" as const,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
   },
   streamContent: {
     flexGrow: 1,
   },
+  textWithCursor: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+  },
   streamText: {
+    fontSize: 8.375,
+    lineHeight: 16,
+       color:  '#FFFFFF' as const,
+  },
+  cursor: {
     fontSize: 9.375,
     lineHeight: 28,
-    color: "#333",
+    color: "#4891FF",
+    fontWeight: "bold" as const,
   },
   loadingPlaceholder: {
     flex: 1,
     justifyContent: "center" as const,
     alignItems: "center" as const,
-    minHeight: 200,
+    minHeight: 100,
   },
   loadingText: {
     marginTop: 16,

@@ -2,7 +2,7 @@
   "expo": {
     "name": "xhtx",
     "slug": "xhtx",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "landscape",
     "icon": "./assets/app/icons/1024x1024.png",
     "scheme": "xhtx",
@@ -18,12 +18,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.xhtx.app",
-      "buildNumber": "10001"
+      "buildNumber": "10002"
     },
     "android": {
       "package": "com.xhtx.app",
       "jsEngine": "hermes",
-      "versionCode": 10001,
+      "versionCode": 10002,
       "enableSeparateBuildPerCPUArchitecture": false,
       "targetSdkVersion": 33,
       "compileSdkVersion": 33,

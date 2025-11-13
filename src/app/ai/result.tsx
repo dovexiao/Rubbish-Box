@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { View, ScrollView, ActivityIndicator, Text } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { useLocalSearchParams } from "expo-router"
+import { useLocalSearchParams, useRouter } from "expo-router"
 
 import { CompositionResult } from "../../components/CompositionResult"
 import { NavBar } from "../../components/NavBar"
@@ -13,6 +13,7 @@ import {
   type AiResponse,
 } from "../../services/ai"
 import { createStyles } from "../../utils/rpxStyleSheet"
+import { showError } from "../../utils/toast"
 
 /**
  * AI结果页面
@@ -21,42 +22,56 @@ import { createStyles } from "../../utils/rpxStyleSheet"
  */
 export default function AIResultScreen() {
   const params = useLocalSearchParams()
+  const router = useRouter()
   const [type, setType] = useState("")
   const [data, setData] = useState<any>({})
   const [compositionInfo, setCompositionInfo] = useState<AiResponse>({})
-  const [isLoading, setIsLoading] = useState(true) // 🔴 添加加载状态
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true)
       
       try {
-        // 是作文收录来的
-        if (params.id) {
-          setType("作文")
-          const res = await getCompositionCorrectionRecordDetails({ id: Number(params.id) })
-          setCompositionInfo(res.ai_response)
-        }
-        // 作文批改
-        else if (params.resData) {
-          const parsedData = JSON.parse(params.resData as string)
-          setData(parsedData)
-          setType(parsedData.select)
-          if (parsedData.select === "作文" && parsedData.ai_response) {
-            setCompositionInfo(parsedData.ai_response)
+        // 从 AI 分析页面跳转过来（通过 batch_id）
+        if (params.batch_id) {
+          console.log("📦 通过 batch_id 查询结果:", params.batch_id)
+          const correctionType = params.type as string
+          setType(correctionType === "composition" ? "作文" : "题目")
+          
+          const res = await getCompositionCorrectionRecordDetails({ 
+            batch_id: params.batch_id as string 
+          })
+          if (correctionType === "composition") {
+             setCompositionInfo(res.ai_response)
+          } else {
+             setData(res)
           }
         }
-        // 题目批改
-        else if (params.cache_key) {
-          const res = await getQuestion({ cache_key: params.cache_key as string })
-          setType("题目")
-          setData(res)
+        // 是作文收录来的
+        else if (params.id) {
+          setType("作文")
+          const res = await getCompositionCorrectionRecordDetails({ id: Number(params.id) })
+          
+          if (!res || !res.ai_response) {
+            throw new Error("批改结果数据格式错误")
+          }
+          
+          setCompositionInfo(res.ai_response)
         }
-        
-        // 🔴 等待一小段时间，让 React 完成初始渲染
+        // 等待一小段时间，让 React 完成初始渲染
         await new Promise(resolve => setTimeout(resolve, 100))
-      } catch (error) {
+      } catch (error: any) {
         console.error("加载数据失败:", error)
+        const errorMessage = error?.message || "加载批改结果失败，请重试"
+        
+        // 显示错误提示
+        showError(errorMessage)
+        
+        // 2秒后返回上一页
+        setTimeout(() => {
+          router.back()
+        }, 2000)
       } finally {
         setIsLoading(false)
       }
@@ -64,7 +79,7 @@ export default function AIResultScreen() {
     
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id, params.resData, params.cache_key])
+  }, [params.id, params.resData, params.cache_key, params.batch_id, params.type])
 
   return (
     <LinearGradient

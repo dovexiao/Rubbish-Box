@@ -30,8 +30,23 @@ const DEVICE_CONFIGS = [
     scaleRatio: 1.5, // 600/400=1.5
     baseRpx: 400,
   },
+   {
+    name: '1280×800',
+    logicalWidth: 1280,
+    logicalHeight: 800,
+    // 当检测到逻辑像素时的缩放
+    scaleRatio: 1.68, // 600/400=1.5
+    baseRpx: 400,
+  },
+  {
+    name: '1280×720',
+    logicalWidth: 1280,
+    logicalHeight: 720,
+    // 当检测到逻辑像素时的缩放
+    scaleRatio: 1.68, // 600/400=1.5
+    baseRpx: 400,
+  },
 ]
-
 // 缓存屏幕尺寸信息
 let cachedDimensions: {
   width: number
@@ -40,6 +55,9 @@ let cachedDimensions: {
   physicalWidth: number
   physicalHeight: number
 } | null = null
+
+// 标记是否已输出匹配日志
+let hasLoggedMatch = false
 
 // 获取屏幕尺寸
 const getScreenDimensions = () => {
@@ -103,22 +121,22 @@ const getDeviceAdaptationStrategy = () => {
   const physicalWidth = dimensions.physicalWidth || 0
   const physicalHeight = dimensions.physicalHeight || 0
   
-  // 1. 优先通过物理像素匹配设备配置
+  // 1. 优先通过逻辑像素匹配设备配置（React Native 使用逻辑像素布局）
   let matchedConfig = DEVICE_CONFIGS.find(config => {
-    if (config.physicalWidth && config.physicalHeight) {
-      const widthMatch = Math.abs(physicalWidth - config.physicalWidth) <= 50
-      const heightMatch = Math.abs(physicalHeight - config.physicalHeight) <= 50
+    if (config.logicalWidth && config.logicalHeight) {
+      const widthMatch = Math.abs(width - config.logicalWidth) <= 10
+      const heightMatch = Math.abs(height - config.logicalHeight) <= 10
       return widthMatch && heightMatch
     }
     return false
   })
   
-  // 2. 如果没匹配到，尝试通过逻辑像素匹配
+  // 2. 如果没匹配到，尝试通过物理像素匹配
   if (!matchedConfig) {
     matchedConfig = DEVICE_CONFIGS.find(config => {
-      if (config.logicalWidth && config.logicalHeight) {
-        const widthMatch = Math.abs(width - config.logicalWidth) <= 10
-        const heightMatch = Math.abs(height - config.logicalHeight) <= 10
+      if (config.physicalWidth && config.physicalHeight) {
+        const widthMatch = Math.abs(physicalWidth - config.physicalWidth) <= 50
+        const heightMatch = Math.abs(physicalHeight - config.physicalHeight) <= 50
         return widthMatch && heightMatch
       }
       return false
@@ -128,9 +146,10 @@ const getDeviceAdaptationStrategy = () => {
   // 3. 使用匹配到的配置
   if (matchedConfig) {
     // 只在首次调用时输出
-    if (!cachedDimensions) {
+    if (!hasLoggedMatch) {
       console.log("✓ 匹配到设备配置:", matchedConfig.name)
       console.log("  使用缩放比:", matchedConfig.scaleRatio)
+      hasLoggedMatch = true
     }
     return {
       deviceName: matchedConfig.name,
@@ -142,8 +161,11 @@ const getDeviceAdaptationStrategy = () => {
   
   // 4. 未匹配到配置，使用默认计算
   const scaleRatio = landscape ? screenHeight / DESIGN_HEIGHT_RPX : screenWidth / DESIGN_WIDTH_RPX
-  if (!cachedDimensions) {
+  if (!hasLoggedMatch) {
     console.log("✗ 未匹配到配置，使用默认缩放比:", scaleRatio)
+    console.log("  当前逻辑像素:", width, "×", height)
+    console.log("  当前物理像素:", physicalWidth, "×", physicalHeight)
+    hasLoggedMatch = true
   }
   
   return {

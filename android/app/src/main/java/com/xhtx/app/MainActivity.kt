@@ -4,6 +4,7 @@ import expo.modules.splashscreen.SplashScreenManager
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import android.media.AudioManager
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -26,6 +27,9 @@ class MainActivity : ReactActivity() {
     SplashScreenManager.registerOnActivity(this)
     // @generated end expo-splashscreen
     super.onCreate(null)
+    
+    // 设置音频流类型 - 确保音频可以播放
+    volumeControlStream = AudioManager.STREAM_MUSIC
     
     // 设置全屏模式
     setupFullscreen()

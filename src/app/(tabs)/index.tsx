@@ -316,6 +316,25 @@ const openVolumeSettings = async () => {
   //   router.push("/ranking")
   // }
 
+  // 打开系统设置（总设置页面）
+  const openSystemSettings = async () => {
+    if (Platform.OS === "android") {
+      try {
+        // 使用IntentLauncher打开Android系统设置主页
+        const IntentLauncher = await import("expo-intent-launcher")
+        await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.SETTINGS)
+        console.log("已打开系统设置")
+      } catch (error) {
+        console.error("打开系统设置失败:", error)
+        showError("无法打开系统设置")
+      }
+    } else if (Platform.OS === "ios") {
+      // iOS打开设置
+      const { Linking } = require("react-native")
+      Linking.openURL("app-settings:")
+    }
+  }
+
   // 打开系统WiFi设置
   const openSystemWifiSettings = async () => {
     if (Platform.OS === "android") {
@@ -442,6 +461,19 @@ const openVolumeSettings = async () => {
         {showSettingsPanel && (
           <View style={styles.settingsPanel}>
             <View style={styles.settingsPanelTop}>
+              {/* 系统设置 - 紧急逃生入口 */}
+              <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
+                <View style={styles.settingItemLeft}>
+                  <View style={styles.settingIconContainer}>
+                    <Ionicons name="settings" size={rpx(10.9)} color="#fff" />
+                  </View>
+                  <Text style={styles.settingText}>系统设置</Text>
+                </View>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
+              </TouchableOpacity>
+
               {/* WiFi设置 */}
               <TouchableOpacity style={styles.settingItem} onPress={openSystemWifiSettings}>
                 <View style={styles.settingItemLeft}>
@@ -774,7 +806,7 @@ const styles = createStyles({
   },
   settingsPanelTop: {
     width: 152.34735,
-    height: 96.1625,
+    height: 128.216,
     borderRadius: 8.6,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     padding: 6.25,

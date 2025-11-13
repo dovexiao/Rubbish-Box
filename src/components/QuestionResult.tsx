@@ -17,13 +17,83 @@ import { createStyles } from "../utils/rpxStyleSheet"
 const Text = RNText
 
 /**
- * 将MathML和HTML混合内容转换为可读文本
+ * 解析LaTeX数学公式为可读文本
+ * 支持常见LaTeX命令：\frac, \times, \left, \right等
+ */
+const parseLatex = (latex: string): string => {
+  if (!latex) return ""
+
+  let result = latex
+    // 分数：\frac{a}{b} → (a/b)
+    .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, "($1/$2)")
+    // 括号：\left( \right) → ()
+    .replace(/\\left\(/g, "(")
+    .replace(/\\right\)/g, ")")
+    .replace(/\\left\[/g, "[")
+    .replace(/\\right\]/g, "]")
+    .replace(/\\left\{/g, "{")
+    .replace(/\\right\}/g, "}")
+    // 乘法：\times → ×
+    .replace(/\\times/g, "×")
+    // 除法：\div → ÷
+    .replace(/\\div/g, "÷")
+    // 点乘：\cdot → ·
+    .replace(/\\cdot/g, "·")
+    // 加减：\pm → ±
+    .replace(/\\pm/g, "±")
+    // 上标：^{n} → ^n 或 x^2
+    .replace(/\^\{([^}]+)\}/g, "^$1")
+    // 下标：_{n} → _n
+    .replace(/\_\{([^}]+)\}/g, "_$1")
+    // 根号：\sqrt{x} → √(x)
+    .replace(/\\sqrt\{([^}]+)\}/g, "√($1)")
+    // 比较符号
+    .replace(/\\le/g, "≤")
+    .replace(/\\ge/g, "≥")
+    .replace(/\\ne/g, "≠")
+    .replace(/\\lt/g, "<")
+    .replace(/\\gt/g, ">")
+    // 希腊字母
+    .replace(/\\pi/g, "π")
+    .replace(/\\alpha/g, "α")
+    .replace(/\\beta/g, "β")
+    .replace(/\\gamma/g, "γ")
+    .replace(/\\delta/g, "δ")
+    .replace(/\\Delta/g, "Δ")
+    .replace(/\\theta/g, "θ")
+    .replace(/\\lambda/g, "λ")
+    .replace(/\\mu/g, "μ")
+    .replace(/\\sigma/g, "σ")
+    .replace(/\\Sigma/g, "Σ")
+    .replace(/\\omega/g, "ω")
+    // 空格命令
+    .replace(/\\quad/g, "  ")
+    .replace(/\\,/g, " ")
+    // 移除剩余的反斜杠命令
+    .replace(/\\[a-zA-Z]+/g, "")
+    // 清理多余空格
+    .replace(/\s+/g, " ")
+    .trim()
+
+  return result
+}
+
+/**
+ * 将MathML、LaTeX和HTML混合内容转换为可读文本
  * 支持常见数学公式：分数、幂次、根号、上下标等
  */
 const parseContent = (html: string): string => {
   if (!html) return ""
 
   let result = html
+
+  // 0. 处理LaTeX数学公式（内联: $...$ 和 块级: $$...$$）
+  result = result.replace(/\$\$([^$]+)\$\$/g, (match, latex) => {
+    return "\n" + parseLatex(latex) + "\n"
+  })
+  result = result.replace(/\$([^$]+)\$/g, (match, latex) => {
+    return parseLatex(latex)
+  })
 
   // 1. 处理MathML数学公式
   result = result.replace(/<math[^>]*>(.*?)<\/math>/gis, (match, content) => {
@@ -160,10 +230,21 @@ interface GradingResult {
   feedback: string
 }
 
+interface SummaryData {
+  total_score: number
+  full_score: number
+  accuracy: number
+  grade: string
+  overall_feedback: string
+  correct_count: number
+  total_questions: number
+  wrong_count: number
+}
+
 interface QuestionData {
   original_image?: { url: string }
   grading_results?: GradingResult[]
-  total_questions?: number
+  summary?: SummaryData
   completed_questions?: number
   is_streaming?: boolean
 }
@@ -186,6 +267,7 @@ export function QuestionResult({ data }: Props) {
   // 根据筛选类型过滤题目
   const filteredQuestions = useMemo(() => {
     const results = data.grading_results || []
+    
     if (filterType === "wrong") {
       return results.filter((q) => q.status === "答错了")
     } else if (filterType === "unanswered") {
@@ -202,11 +284,23 @@ export function QuestionResult({ data }: Props) {
 
   // 统计信息
   const statistics = useMemo(() => {
+    // 安全检查：确保 data 和 grading_results 存在
+    if (!data || !data.grading_results) {
+      return {
+        total_questions: 0,
+        correct_count: 0,
+        wrong_count: 0,
+        unanswered_count: 0,
+        accuracy: 0,
+      }
+    }
+    
+    // 如果没有 summary，则自己计算
     const results = data.grading_results || []
-    const total = data.total_questions || results.length
-    const correct = results.filter((q) => q.status === "答对了").length
+    const total = data.summary?.full_score || results.length || 0
+    const  unanswered = results.filter((q) => q.status === "未作答").length
     const wrong = results.filter((q) => q.status === "答错了").length
-    const unanswered = total - correct - wrong
+    const correct = total - unanswered - wrong
 
     return {
       total_questions: total,
@@ -222,7 +316,7 @@ export function QuestionResult({ data }: Props) {
     () =>
       statistics.wrong_count === 0 &&
       statistics.unanswered_count === 0 &&
-      statistics.total_questions > 0,
+      statistics.total_questions  > 0,
     [statistics],
   )
 
@@ -259,6 +353,15 @@ export function QuestionResult({ data }: Props) {
     router.push("/(tabs)/study")
     tabbarStore.setCurIdx(1)
   }, [router, tabbarStore])
+
+  // 数据为空时显示提示
+  if (!data || !data.grading_results || data.grading_results.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>暂无批改结果</Text>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.questionResultUI}>
@@ -302,7 +405,7 @@ export function QuestionResult({ data }: Props) {
               </View>
               <View style={styles.topSummaryItem}>
                 <Text style={styles.summaryText}>共</Text>
-                <Text style={styles.summaryBoldText}>{statistics.total_questions}</Text>
+                <Text style={styles.summaryBoldText}>{statistics.total_questions }</Text>
                 <Text style={styles.summaryText}>题</Text>
               </View>
               <View style={styles.topSummaryItem}>
@@ -388,7 +491,7 @@ export function QuestionResult({ data }: Props) {
                 {filteredQuestions.length > 0 ? (
                   filteredQuestions.map((q, idx) => (
                   <TouchableWithoutFeedback
-                    key={q.question_index}
+                    key={idx}
                     onPress={() => handleQuestionChange(idx)}
                   >
                     <View
@@ -486,6 +589,16 @@ export function QuestionResult({ data }: Props) {
 }
 
 const styles = createStyles({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    paddingVertical: 50,
+  },
+  emptyText: {
+    fontSize: 12,
+    color: "#999",
+  },
   questionResultUI: {
     marginHorizontal: 38.48, // 38.48rpx - UniApp原值
   },

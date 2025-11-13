@@ -9,6 +9,7 @@ import { usePostureStore } from '../stores/postureStore';
 import { AudioService } from '../services/audioService';
 import { showWarning, showInfo } from '../utils/toast';
 import type { PostureStatus } from '../types/posture';
+import { usePathname } from 'expo-router';
 import { 
   startPostureMonitorService, 
   stopPostureMonitorService,
@@ -23,6 +24,16 @@ const BAD_POSTURE_REMINDER_INTERVAL_SECONDS = 30; // 不良姿势每30秒提醒�
 export function useGlobalPostureMonitor() {
   const postureStore = usePostureStore();
   const audioService = useRef<AudioService | null>(null);
+  const pathname = usePathname();
+  const previousPathnameRef = useRef<string | null>(null); // 记录上一个路径
+  const wasInAIModuleRef = useRef(false); // 记录是否之前在 AI 模块
+  
+  const isRouteSuppressed = useCallback(() => {
+    // AI 模块内禁止自动启动/恢复坐姿检测
+    // 包括: /ai/camera, /ai/loading, /ai/result, /ai/error-book 等所有 AI 相关页面
+    if (!pathname) return false;
+    return pathname.startsWith('/ai/');
+  }, [pathname]);
   
   // 使用 ref 来避免 useEffect 依赖问题
   const startMonitoringRef = useRef<(() => Promise<void>) | null>(null);
@@ -32,6 +43,10 @@ export function useGlobalPostureMonitor() {
    * 启动监控
    */
   const startMonitoring = useCallback(async () => {
+    if (isRouteSuppressed()) {
+      console.log('📵 路由白名单命中（相机/拍照页面），跳过启动坐姿监控');
+      return;
+    }
     // 如果已经在监控中，不重复启动
     if (postureStore.isMonitoring) {
       console.log('⚠️ 坐姿监控已在运行中，跳过重复启动');
@@ -160,6 +175,7 @@ export function useGlobalPostureMonitor() {
 
   /**
    * 处理坐姿反馈（音频提醒和弹窗）
+   * ⚠️ Native 层每 30 秒更新一次，直接尝试播放，由 AudioService 内部的 MIN_PLAY_INTERVAL 控制间隔
    */
   const handlePostureFeedback = (event: PostureStatusEvent) => {
     const { status, head_not_up, shoulders_tilted, head_tilted } = event;
@@ -168,41 +184,39 @@ export function useGlobalPostureMonitor() {
       status, 
       head_not_up, 
       shoulders_tilted, 
-      head_tilted,
-      提醒间隔: BAD_POSTURE_REMINDER_INTERVAL_SECONDS
+      head_tilted
     });
     
-    // 音频提醒和弹窗（根据当前状态的持续时间判断，每30秒提醒一次）
+    // 音频提醒和弹窗（Native 层每 30 秒更新一次，直接尝试播放）
     if (status !== 'good' && status !== 'no_person' && status !== 'detecting') {
       let currentStateDuration = 0;
       let audioType: 'adjust_posture' | 'head_not_up' | 'head_not_centered' | 'shoulders_not_level' = 'adjust_posture';
       let warningMessage = '';
       
       // 根据当前状态获取对应的持续时间和音频类型
-        if (status === 'head_not_centered') {
+      if (status === 'head_not_centered') {
         currentStateDuration = head_tilted;
         audioType = 'head_not_centered';
-          warningMessage = '检测到头部偏移，请调整坐姿保持头部居中';
-        } else if (status === 'head_not_up') {
+        warningMessage = '检测到头部偏移，请调整坐姿保持头部居中';
+      } else if (status === 'head_not_up') {
         currentStateDuration = head_not_up;
         audioType = 'head_not_up';
-          warningMessage = '检测到低头，请抬起头部保持正确坐姿';
-        } else if (status === 'shoulders_not_level') {
+        warningMessage = '检测到低头，请抬起头部保持正确坐姿';
+      } else if (status === 'shoulders_not_level') {
         currentStateDuration = shoulders_tilted;
         audioType = 'shoulders_not_level';
-          warningMessage = '检测到肩膀倾斜，请调整坐姿保持肩膀水平';
+        warningMessage = '检测到肩膀倾斜，请调整坐姿保持肩膀水平';
       }
       
       console.log('📊 音频提醒检查:', {
         当前状态: status,
-        持续时间: currentStateDuration + '秒',
-        音频类型: audioType,
-        模30结果: currentStateDuration % BAD_POSTURE_REMINDER_INTERVAL_SECONDS,
-        是否触发: currentStateDuration > 0 && currentStateDuration % BAD_POSTURE_REMINDER_INTERVAL_SECONDS === 0
+        累计持续时间: currentStateDuration + '秒',
+        音频类型: audioType
       });
       
-      // 每30秒提醒一次（10秒检测间隔，所以30、60、90...秒时触发）
-      if (currentStateDuration > 0 && currentStateDuration % BAD_POSTURE_REMINDER_INTERVAL_SECONDS === 0) {
+      // Native 层每 30 秒更新一次，每次更新都尝试播放
+      // AudioService 内部有 MIN_PLAY_INTERVAL (30秒) 限制，会自动控制播放间隔
+      if (currentStateDuration > 0) {
         console.log('✅ 触发音频播放:', audioType);
         
         if (audioService.current) {
@@ -217,7 +231,7 @@ export function useGlobalPostureMonitor() {
         // 🔇 暂时注释掉弹窗提示，只保留音频
         // showWarning(warningMessage);
       } else {
-        console.log('⏭️ 未达到提醒条件，跳过');
+        console.log('⏭️ 持续时间为0，跳过');
       }
     } else {
       console.log('⏭️ 状态正常或检测中，无需提醒:', status);
@@ -312,6 +326,9 @@ export function useGlobalPostureMonitor() {
         if (postureStore.isMonitoring) {
           console.log('📱 应用回到前台，监控继续运行');
           // 不需要重新启动，Native后台服务会持续运行
+        } else if (!isRouteSuppressed()) {
+          // 如果当前不在相机/拍照页面且未在运行，可选择在此保活（按需）
+          // startMonitoringRef.current?.();
         }
       } else if (nextAppState === 'background') {
         // 应用进入后台，但坐姿监控继续运行（这是后台服务的核心功能）
@@ -324,6 +341,30 @@ export function useGlobalPostureMonitor() {
       subscription.remove();
     };
   }, [postureStore.isMonitoring]); // 只依赖 isMonitoring
+
+  /**
+   * 监听路由变化：当用户离开 AI 模块时，恢复坐姿服务
+   */
+  useEffect(() => {
+    const currentInAI = pathname?.startsWith('/ai/') ?? false;
+    const previousInAI = wasInAIModuleRef.current;
+    
+    // 检测：从 AI 模块离开（previousInAI=true, currentInAI=false）
+    if (previousInAI && !currentInAI && previousPathnameRef.current) {
+      console.log(`🔄 检测到从 AI 模块（${previousPathnameRef.current}）离开到（${pathname}），尝试恢复坐姿服务`);
+      // 延迟 2 秒恢复，确保相机资源已释放
+      setTimeout(() => {
+        if (!postureStore.isMonitoring && !isRouteSuppressed()) {
+          console.log('🔄 恢复坐姿服务...');
+          startMonitoringRef.current?.();
+        }
+      }, 2000);
+    }
+    
+    // 更新状态
+    wasInAIModuleRef.current = currentInAI;
+    previousPathnameRef.current = pathname;
+  }, [pathname, postureStore.isMonitoring]);
 
   /**
    * 组件卸载时清理

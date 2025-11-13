@@ -16,6 +16,11 @@ import { NavBar } from "../../components/NavBar"
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles } from "../../utils/rpxStyleSheet"
 import { showError, showWarning } from "../../utils/toast"
+import { 
+  stopPostureMonitorService, 
+  startPostureMonitorService,
+  isPostureServiceRunning 
+} from "../../modules/PostureMonitorModule"
 
 const Text = RNText
 
@@ -41,6 +46,7 @@ export default function CameraScreen() {
   const [uploadProgress, setUploadProgress] = useState("")
   const [cameraKey, setCameraKey] = useState(0) // 用于强制重新挂载相机
   const cameraRef = useRef<CameraView>(null)
+  const wasPostureRunningRef = useRef(false) // 记录进入页面前坐姿检测是否在运行
 
   const { width: screenWidth, height: screenHeight } = Dimensions.get("screen")
 

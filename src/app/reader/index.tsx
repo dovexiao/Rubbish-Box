@@ -11,7 +11,6 @@ import {
   InteractionManager,
   Pressable,
 } from "react-native"
-import { NavBar } from "../../components/NavBar"
 import { useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
 import { Ionicons } from "@expo/vector-icons"
@@ -30,6 +29,7 @@ import {
 import { SERVER_BASE_URL } from "../../config/env"
 import { Images } from "../../constants/Assets"
 import { useParallelPreload } from "../../hooks/usePagePreload"
+import { useThrottle } from "../../hooks/useThrottle"
 
 // 导航图标图片
 const NAV_IMAGES = {
@@ -640,6 +640,11 @@ export default function ReaderIndex() {
     categoryLoading,
   ])
 
+  // 节流处理搜索跳转
+  const handleSearchPress = useThrottle(() => {
+    router.push("/reader/search")
+  }, 500)
+
   // 使用并行预加载Hook - 立即显示页面，然后异步加载数据
   const { data: preloadData, loading: preloadLoading } = useParallelPreload({
     categories: getCategories,
@@ -662,7 +667,27 @@ export default function ReaderIndex() {
       style={styles.container}
     >
       <StatusBar />
-      <NavBar title="小褐阅读" leftArrow onBackPress={() => router.navigate("/(tabs)/study")} />
+
+      
+      {/* 顶部栏：返回按钮 + 搜索框 */}
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.navigate("/(tabs)/study")}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chevron-back" size={48} color="#1E90FF" />
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.searchBar}
+          activeOpacity={0.7}
+          onPress={handleSearchPress}
+        >
+            <Ionicons name="search" size={18} color="#999"  />
+          <Text style={styles.searchPlaceholder}>搜索书名、作者</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* 内容区域 */}
       <View style={styles.contentContainer}>
@@ -727,6 +752,37 @@ const styles = createStyles({
     width: "100%" as const,
     height: "100%" as const,
 
+  },
+  // 顶部栏：返回 + 搜索
+  topBar: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    paddingTop: 42,
+    paddingLeft: 20,
+    paddingBottom: 12,
+    gap: 12,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  searchBar: {
+    flex: 1,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    borderRadius: 10,
+    paddingVertical: 6,
+    marginRight: 48,
+    paddingLeft: 10,
+    backgroundColor: "#fff",
+  },
+  searchPlaceholder: {
+    fontSize: 14,
+    paddingLeft: 5,
+    color: "#999",
+    marginLeft: 8,
   },
   contentContainer: {
     flex: 1,
@@ -873,7 +929,6 @@ const styles = createStyles({
     fontSize: 7.03125,
     color: "#7050018C",
     marginBottom: 8,
-    maxWidth: '60%',
     flex: 1,
   },
   weekHotLabel: {

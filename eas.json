@@ -57,7 +57,11 @@
       },
       "env": {
         "EXPO_TARGET": "bare",
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "RCT_NEW_ARCH_ENABLED": "1",
+        "RCT_FABRIC_ENABLED": "1",
+        "REACT_NATIVE_DISABLE_INTEROP": "true",
+        "REACT_NATIVE_STRIP_DEBUG": "true"
       }
     }
   },

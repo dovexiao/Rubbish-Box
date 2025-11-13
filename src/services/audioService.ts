@@ -8,13 +8,14 @@ import Sound from "react-native-sound";
 import { AudioType } from "../types/posture";
 
 // 音频文件映射
+// ⚠️ Android raw 资源不要包含扩展名！
 const AUDIO_FILES: Record<AudioType, string> = {
-  good_posture: "good_posture.mp3",
-  shoulders_not_level: "shoulders_not_level.mp3",
-  head_not_centered: "head_not_centered.mp3",
-  head_not_up: "head_not_up.mp3",
-  adjust_posture: "adjust_posture.mp3",
-  rest_reminder: "rest_reminder.mp3",
+  good_posture: "good_posture",
+  shoulders_not_level: "shoulders_not_level",
+  head_not_centered: "head_not_centered",
+  head_not_up: "head_not_up",
+  adjust_posture: "adjust_posture",
+  rest_reminder: "rest_reminder",
 };
 
 export class AudioService {
@@ -25,8 +26,18 @@ export class AudioService {
   private readonly MIN_PLAY_INTERVAL = 30000; // 30秒最小间隔（避免过于频繁）
 
   constructor() {
-    // 设置音频类别
-    Sound.setCategory("Playback");
+    // 设置音频类别和模式
+    // Android 上使用 'Playback' 模式，iOS 上使用 'Ambient'
+    if (Platform.OS === 'android') {
+      Sound.setCategory('Playback', true); // 第二个参数 true 表示混音模式
+    } else {
+      Sound.setCategory('Playback');
+    }
+    
+    // 启用 Sound 库
+    Sound.setMode('Default');
+    
+    console.log('🔊 AudioService 初始化完成, Platform:', Platform.OS);
   }
 
   /**
@@ -58,7 +69,7 @@ export class AudioService {
         return;
       }
 
-      console.log('📂 加载音频文件:', fileName);
+      console.log('📂 加载音频文件:', fileName, 'from', Sound.MAIN_BUNDLE);
 
       // 创建新音频对象
       this.currentSound = new Sound(
@@ -67,17 +78,29 @@ export class AudioService {
         (error) => {
           if (error) {
             console.error("❌ 音频加载失败:", error);
+            console.error("❌ 错误详情:", JSON.stringify(error));
             return;
           }
 
-          console.log('✅ 音频加载成功，开始播放');
+          console.log('✅ 音频加载成功');
+          console.log('📊 音频信息:', {
+            duration: this.currentSound?.getDuration(),
+            numberOfChannels: this.currentSound?.getNumberOfChannels(),
+            volume: this.currentSound?.getVolume(),
+            isLoaded: this.currentSound?.isLoaded(),
+          });
+
+          // 设置音量为最大
+          this.currentSound?.setVolume(1.0);
+          
+          console.log('🔊 开始播放音频...');
 
           // 播放音频
           this.currentSound?.play((success) => {
             if (!success) {
-              console.warn("⚠️ 音频播放失败");
+              console.warn("⚠️ 音频播放失败，success=false");
             } else {
-              console.log("✅ 音频播放完成");
+              console.log("✅ 音频播放完成，success=true");
             }
             this.cleanup();
           });

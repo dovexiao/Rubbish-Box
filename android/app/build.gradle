@@ -92,11 +92,12 @@ android {
         applicationId 'com.xhtx.app.dev'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10001
-        versionName "1.0.1-dev"
+        versionCode 10002
+        versionName "1.0.2-dev"
         
-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", "false"
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", "true"  // ✨ 启用新架构
         buildConfigField "boolean", "IS_HERMES_ENABLED", "true"
+        buildConfigField "boolean", "REACT_NATIVE_UNSTABLE_USE_RUNTIME_SCHEDULER_ALWAYS", "true"  // ✨ 强制新架构
     }
      sourceSets {
         main {
@@ -124,16 +125,32 @@ android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
-            shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
-            minifyEnabled enableProguardInReleaseBuilds
+            shrinkResources true  // ✨ 启用资源压缩
+            minifyEnabled true    // ✨ 启用代码混淆
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            crunchPngs (findProperty('android.enablePngCrunchInReleaseBuilds')?.toBoolean() ?: true)
+            crunchPngs false      // ✨ 禁用 PNG 压缩（已有优化）
+            
+            // ✨ 移除调试符号减小包大小
+            ndk {
+                debugSymbolLevel 'NONE'
+            }
         }
     }
     packagingOptions {
         jniLibs {
             useLegacyPackaging (findProperty('expo.useLegacyPackaging')?.toBoolean() ?: false)
         }
+        
+        // ✨ 排除旧架构相关文件减小包大小
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+        exclude '**/libreact_legacy*'
+        exclude '**/libbridge*'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
     }
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
@@ -170,6 +187,9 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    
+    // Kotlin Coroutines for camera health manager
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";

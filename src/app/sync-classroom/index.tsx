@@ -18,6 +18,7 @@ import {
   type GroupedCourseResource,
 } from "../../services/classroom"
 import { useUserStore } from "../../stores/userStore"
+import { useThrottle } from "../../hooks/useThrottle"
 
 /**
  * 同步课堂首页
@@ -434,6 +435,11 @@ export default function SyncClassroomScreen() {
     setCurrentPage((prev) => prev + 1)
   }, [hasMore, isLoadingMore])
 
+  // 节流处理搜索跳转
+  const handleSearchPress = useThrottle(() => {
+    router.push("/sync-classroom/search")
+  }, 500)
+
   // 当前课程列表
   const currentCourses = useMemo(() => {
     return courseResource.grouped_course_resources.map((group) => ({
@@ -478,7 +484,11 @@ export default function SyncClassroomScreen() {
       style={styles.pageContainer}
     >
       <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
-      <NavBar title="同步课堂" leftArrow onBackPress={() => router.navigate("/(tabs)/study")} />
+      <NavBar 
+        title="同步课程" 
+        leftArrow 
+        onBackPress={() => router.navigate("/(tabs)/study")}
+      />
 
       {/* 学科选择标签 */}
       <View style={styles.subjectTabs}>
@@ -522,7 +532,16 @@ export default function SyncClassroomScreen() {
             placeholder="选择年级"
             style={styles.gradeSelector}
           />
+           {/* 搜索 */}
+         <TouchableOpacity
+            onPress={handleSearchPress}
+            activeOpacity={0.7}
+            style={styles.searchContent}
+          >
+            <Ionicons name="search" size={18} color="#00000066" />
+          </TouchableOpacity>
         </View>
+       
       </View>
 
       {/* 主内容区 */}
@@ -670,7 +689,6 @@ const styles = createStyles({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 23.4375, // 23.4375rpx
-    marginTop: 12, // 12rpx
   },
   subjectTabsLeft: {
     flexDirection: "row",
@@ -869,4 +887,10 @@ const styles = createStyles({
     fontSize: 13.28125, // 13.28125rpx
     color: "#999",
   },
+  searchContent: {
+   backgroundColor: 'rgba(255, 255, 255, 0.5)',
+   padding: 4,
+   borderRadius: '50%'             
+
+  }
 })

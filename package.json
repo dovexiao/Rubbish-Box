@@ -1,6 +1,6 @@
 {
   "name": "xhtx",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -37,7 +37,10 @@
     "version:set": "node version-manager.js set",
     "version:check": "node version-manager.js check",
     "version:sync": "node version-manager.js sync",
-    "version:show": "node version-manager.js show"
+    "version:show": "node version-manager.js show",
+    "clean:android": "cd android && ./gradlew clean && cd ..",
+    "rebuild:android": "npm run clean:android && npm run android",
+    "rebuild:android:prod": "npm run clean:android && npm run build:android:prod"
   },
   "dependencies": {
     "@expo-google-fonts/space-grotesk": "^0.4.0",
@@ -53,6 +56,7 @@
     "apisauce": "3.1.1",
     "axios": "^1.12.2",
     "babel-plugin-module-resolver": "^5.0.2",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "date-fns": "^4.1.0",
     "expo": "^53.0.15",
     "expo-application": "~6.1.5",
@@ -143,5 +147,13 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "codegenConfig": {
+    "name": "XhtxSpec",
+    "type": "modules",
+    "jsSrcsDir": "src/modules",
+    "android": {
+      "javaPackageName": "com.xhtx.app.posture.codegen"
+    }
   }
 }
