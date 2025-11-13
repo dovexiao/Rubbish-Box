@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {View, Image, StyleSheet, TouchableOpacity, Modal} from 'react-native';
+import React, {useEffect, useCallback, useState} from 'react';
+import {View, Image, StyleSheet, Modal} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -15,6 +15,7 @@ import {useScreenSize} from '@/common-pages/hooks/size.hooks';
 import {LazyImageBackground} from '@/components/basic/image';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import theme from '@/style';
+import {getActivityWeekSignInList} from './daily-rewards.service';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -22,6 +23,9 @@ const DailyRewardsModal: React.FC = () => {
   const {calcActualSize} = useScreenSize();
   const visible = useDailyRewardsStore(state => state.visible);
   const hide = useDailyRewardsStore(state => state.hide);
+
+  const [sevenInfo, setSevenInfo] = useState([]);
+  const [canGetBonus, setCanGetBonus] = useState(false);
 
   // 创建缩放动画值，初始值为1（正常大小）
   const coinScale = useSharedValue(1);
@@ -132,6 +136,28 @@ const DailyRewardsModal: React.FC = () => {
       height: calcActualSize(38),
     },
   };
+
+  // 获取7天活动信息
+  const fetchSevenInfo = useCallback(async () => {
+    try {
+      const sevenRes = await getActivityWeekSignInList();
+      console.log('7天活动信息', sevenRes);
+      if (sevenRes?.length) {
+        setSevenInfo(sevenRes);
+        setCanGetBonus(
+          sevenRes.some((item: any) => item?.status === 0)
+        );
+      }
+    } catch (error: unknown) {
+      console.error('获取7天活动信息失败', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (visible) {
+      fetchSevenInfo();
+    }
+  }, [fetchSevenInfo, visible]);
 
   if (!visible) return null;
 
