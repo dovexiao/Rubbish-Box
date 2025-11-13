@@ -43,7 +43,7 @@ const ExitIntentModal = ({
           <LazyImageBackground
             width={calcActualSize(336)}
             height={calcActualSize(452)}
-            imageUrl={require('@assets/imgs/withdraw/exit-intent-background.webp')}
+            imageUrl={require('@assets/imgs/withdraw/exit-intent-background.png')}
           >
             <View
               style={{
@@ -56,7 +56,7 @@ const ExitIntentModal = ({
                 width: '100%',
               }}>
               <RedPacketCountdown
-                endTimestamp={endTimestamp ?? Date.now()} 
+                endTimestamp={endTimestamp ?? Date.now()}
                 onFinish={() => {
                   onClose?.();
                   useSetRedPacketVisible(false);
