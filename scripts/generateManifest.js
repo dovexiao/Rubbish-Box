@@ -49,11 +49,11 @@ const manifest = {
       sizes: '192x192',
       type: 'image/png',
     },
-    {
-      src: `assets/icons/${cfg.iconDir}/icon-384.png`,
-      sizes: '384x384',
-      type: 'image/png',
-    },
+    // {
+    //   src: `assets/icons/${cfg.iconDir}/icon-384.png`,
+    //   sizes: '384x384',
+    //   type: 'image/png',
+    // },
     {
       src: `assets/icons/${cfg.iconDir}/icon-512.png`,
       sizes: '512x512',
@@ -67,7 +67,7 @@ fs.writeFileSync('./public/manifest.json', JSON.stringify(manifest, null, 2));
 console.log(`✅ Generated manifest for ${env}`);
 
 // 可选：复制对应图标到 public 根目录（如果构建工具需要）
-['icon-192.png', 'icon-384.png', 'icon-512.png'].forEach(file => {
+['icon-192.png', 'icon-512.png'].forEach(file => {
   fs.copyFileSync(
     path.join(__dirname, `../public/assets/icons/${cfg.iconDir}/${file}`),
     path.join(__dirname, `../public/${file}`),
