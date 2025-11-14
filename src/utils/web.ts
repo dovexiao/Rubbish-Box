@@ -198,13 +198,13 @@ export const downloadApk = () => {
   //     `);
   //   }
   // }
-  if (channelId === 'lucky101') {
+  if (channelId === 'winlucky001') {
     // location.href = envConfig.downloadUrl || '';
-    location.href = 'https://www.staticimg007.com/apk/lucky101.apk';
+    location.href = 'https://cdn.wlplay.org/app/winlucky001.apk';
   } else {
     // location.href = envConfig.downloadChannelUrl || '';
 
-    location.href = `https://www.staticimg007.com/apk/lucky101_${channelId}.apk`;
+    location.href = `https://cdn.wlplay.org/app/winlucky001_${channelId}.apk`;
   }
 };
 
