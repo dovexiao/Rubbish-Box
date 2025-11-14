@@ -40,7 +40,7 @@ export interface IncomeModel {
   couponRecordId: number;
 
   // 是否同意条款
-  waterCrossingSign: number;
+  waterCrossingSign: string;
 }
 
 export interface IncomeResModel {

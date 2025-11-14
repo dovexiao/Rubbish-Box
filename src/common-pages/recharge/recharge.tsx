@@ -322,7 +322,7 @@ const Recharge = () => {
         payTypeId: payMethodId + '',
         rechargeBalance: balanceId ? 0 : balance,
         couponRecordId: selectedCoupon?.id || 0,
-        waterCrossingSign: isAgreedNotice ? 1 : 0,
+        waterCrossingSign: isAgreedNotice ? '1' : '0',
       });
 
       if (typeof res === 'string') {
