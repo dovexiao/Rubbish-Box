@@ -42,8 +42,9 @@ export default function AIResultScreen() {
           const res = await getCompositionCorrectionRecordDetails({ 
             batch_id: params.batch_id as string 
           })
+          
           if (correctionType === "composition") {
-             setCompositionInfo(res.ai_response)
+             setCompositionInfo(res)
           } else {
              setData(res)
           }
@@ -52,12 +53,7 @@ export default function AIResultScreen() {
         else if (params.id) {
           setType("作文")
           const res = await getCompositionCorrectionRecordDetails({ id: Number(params.id) })
-          
-          if (!res || !res.ai_response) {
-            throw new Error("批改结果数据格式错误")
-          }
-          
-          setCompositionInfo(res.ai_response)
+          setCompositionInfo(res)
         }
         // 等待一小段时间，让 React 完成初始渲染
         await new Promise(resolve => setTimeout(resolve, 100))

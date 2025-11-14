@@ -297,7 +297,7 @@ export function QuestionResult({ data }: Props) {
     
     // 如果没有 summary，则自己计算
     const results = data.grading_results || []
-    const total = data.summary?.full_score || results.length || 0
+    const total = data.summary?.totalQuestions || results.length || 0
     const  unanswered = results.filter((q) => q.status === "未作答").length
     const wrong = results.filter((q) => q.status === "答错了").length
     const correct = total - unanswered - wrong
@@ -502,7 +502,7 @@ export function QuestionResult({ data }: Props) {
                     >
                       <Text style={styles.qIndex}>{idx + 1}.</Text>
                         <Text style={styles.questionText} numberOfLines={2} ellipsizeMode="tail">
-                          {parseContent(q.question_text || "")}
+                          {parseContent(q.questionText || "")}
                         </Text>
                       </View>
                     </TouchableWithoutFeedback>
@@ -550,7 +550,7 @@ export function QuestionResult({ data }: Props) {
                           <Text style={styles.scratchHint}>点击查看答案</Text>
                         ) : (
                           <Text style={styles.answerText}>
-                            {parseContent(currentQuestion.correct_answer || "")}
+                            {parseContent(currentQuestion.correctAnswer || "")}
                           </Text>
                         )}
                       </View>

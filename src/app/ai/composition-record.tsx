@@ -145,7 +145,14 @@ export default function CompositionRecordScreen() {
                                   style={styles.recordImage}
                                   resizeMode="cover"
                                 />
-                                <Text style={styles.scoreBadge}>{item.rating}</Text>
+                                <View style={styles.scoreBadge}>
+                                  <Text style={styles.scoreText}>{item.rating}</Text>
+                                  <Image 
+                                    source={require("../../../assets/images/Frame 2090059169.png")} 
+                                    style={styles.scoreLine}
+                                    resizeMode="contain"
+                                  />
+                                </View>
                                 <View style={styles.recordInfo}>
                                   <View style={styles.recordType}>
                                     <Text style={styles.recordTypeText}>
@@ -292,9 +299,17 @@ const styles = createStyles({
     position: "absolute",
     top: 4,
     right: 8,
+    alignItems: "center",
+  },
+  scoreText: {
     color: "#FF2828",
     fontSize: 11.7,
     fontWeight: "bold",
+  },
+  scoreLine: {
+    width: 14, // 横线宽度
+    height: 4.4, // 图片高度
+    marginTop: -2, // 分数和横线之间的间距
   },
   recordInfo: {
     flexDirection: "row",

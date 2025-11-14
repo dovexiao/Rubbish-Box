@@ -11,6 +11,7 @@ import { post } from "./api"
 export interface SubjectListRequest {
   grade: string
   volume: string
+  educational_system: string
 }
 
 /** 科目列表响应 */
@@ -21,6 +22,7 @@ export interface VersionListRequest {
   grade: string
   volume: string
   subject: string
+  educational_system: string
 }
 
 /** 版本列表响应 */
@@ -34,6 +36,7 @@ export interface CourseResourceRequest {
   version: string
   page: number
   page_size: number
+  educational_system: string
 }
 
 /** 课程资源响应 */
@@ -114,6 +117,8 @@ export interface CourseVideoInfoResponse {
 export interface SaveStudyProgressRequest {
   video_code: string
   record: string
+  educational_system: string
+  grade_stage: string
 }
 
 /** 保存学习进度响应 */
@@ -121,6 +126,25 @@ export interface SaveStudyProgressResponse {
   success: boolean
   message: string
 }
+
+/** 课程历史记录响应 */
+export interface ProgramResourcesHistoryResponse {
+  user_grade: string
+  volume: string
+  first_subject: string
+  version: string
+  educational_system: string
+  grade_stage: string
+}
+
+/** 高中学期列表请求参数 */
+export interface HighSchoolVolumeListRequest {
+  grade: string
+  educational_system: string
+}
+
+/** 高中学期列表响应 */
+export type HighSchoolVolumeListResponse = string[]
 
 // ==================== API方法 ====================
 
@@ -187,5 +211,29 @@ export async function generatePracticeQuestions(params: {
   video_code: string
 }): Promise<any> {
   return await post("/AppStart/ProgramResources/api_generate_practice_questions/", params)
+}
+
+/**
+ * 获取课程资源历史记录
+ * 用于获取用户最后使用的年级、学期、科目、版本等信息
+ */
+export async function getProgramResourcesHistory(): Promise<ProgramResourcesHistoryResponse> {
+  return await post<ProgramResourcesHistoryResponse>(
+    "/AppStart/ProgramResources/history/",
+    {}
+  )
+}
+
+/**
+ * 获取高中学期列表
+ * 高中的学期不固定为上下册，需要动态获取
+ */
+export async function getHighSchoolVolumeList(
+  params: HighSchoolVolumeListRequest
+): Promise<HighSchoolVolumeListResponse> {
+  return await post<HighSchoolVolumeListResponse>(
+    "/AppStart/ProgramResources/query_grade_get_volume_high_school_list/",
+    params
+  )
 }
 

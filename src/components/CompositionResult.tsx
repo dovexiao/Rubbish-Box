@@ -36,12 +36,16 @@ export function CompositionResult({ compositionInfo }: Props) {
   // 提取作文原文数组
   const originalTextArray = useMemo(() => {
     const originalText = compositionInfo?.originalText || ""
+    console.log("📝 原文内容:", originalText ? `${originalText.substring(0, 100)}...` : "空")
+    
     if (originalText) {
       // 分割成段落，保留有效段落
-      return originalText
+      const result = originalText
         .split(/\n+/)
         .map((p: string) => p.trim())
         .filter((p: string) => p.length > 0)
+      console.log("📝 分段后数量:", result.length)
+      return result
     }
     return []
   }, [compositionInfo])
@@ -53,8 +57,10 @@ export function CompositionResult({ compositionInfo }: Props) {
 
   // 检查是否是英文作文
   const isChinese = useMemo(() => {
-    return compositionInfo?.compositionLanguage !== "english"
-  }, [compositionInfo])
+    // 兼容大小写，统一转为小写比较
+    const lang = compositionInfo?.compositionLanguage?.toLowerCase()
+    return lang !== "english"
+  }, [compositionInfo?.compositionLanguage])
 
   // 分页处理作文内容
   const compositionPages = useMemo(() => {
@@ -233,20 +239,30 @@ export function CompositionResult({ compositionInfo }: Props) {
 
   // 提取分句点评
   const sentenceReviews = useMemo<SentenceReview[]>(() => {
+    console.log("=============== 调试信息 ===============")
+    console.log("1. compositionInfo:", compositionInfo)
+    console.log("2. compositionInfo 的 keys:", compositionInfo ? Object.keys(compositionInfo) : [])
+    
     const sentenceReview = compositionInfo?.sentenceReview || []
-
-    console.log("原始sentenceReview数据:", sentenceReview)
+    console.log("3. 原始sentenceReview数据:", sentenceReview)
+    console.log("4. sentenceReview 类型:", Array.isArray(sentenceReview) ? "数组" : typeof sentenceReview)
+    console.log("5. sentenceReview 长度:", sentenceReview.length)
 
     if (!Array.isArray(sentenceReview) || sentenceReview.length === 0) {
-      // 如果没有分句点评数据，返回空数组
+      console.log("6. ⚠️ sentenceReview为空，返回空数组")
       return []
     }
 
-      return sentenceReview.map((review: any) => ({
+    const result = sentenceReview.map((review: any) => ({
       sentence: review.originalSentence || review.sentence || "",
       advantage: review.advantages || review.advantage || "",
       suggestion: review.improvements || review.suggestion || "",
-      }))
+    }))
+    
+    console.log("7. ✅ 处理后的sentenceReviews:", result)
+    console.log("=======================================")
+    
+    return result
   }, [compositionInfo])
 
   // 点评颜色
@@ -551,7 +567,11 @@ export function CompositionResult({ compositionInfo }: Props) {
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={true}
           >
-            {commentCardData.map((item) => renderCommentItem({ item }))}
+            {commentCardData.map((item) => (
+              <View key={item.id}>
+                {renderCommentItem({ item })}
+              </View>
+            ))}
           </ScrollView>
         </View>
       </View>

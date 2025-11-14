@@ -8,12 +8,14 @@ import { StatusBar } from "../../components/StatusBar"
 import { NavBar } from "../../components/NavBar"
 import { Loading } from "../../components/Loading"
 import CustomSelector from "../../components/CustomSelector"
+import { GradeSelector, type GradeSelection } from "../../components/GradeSelector"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { Images } from "../../constants/Assets"
 import {
   getSubjectList,
   getVersionList,
   getCourseResource,
+  getProgramResourcesHistory,
   type CourseResourceResponse,
   type GroupedCourseResource,
 } from "../../services/classroom"
@@ -30,7 +32,7 @@ export default function SyncClassroomScreen() {
 
   // 状态管理
   const [currentSubject, setCurrentSubject] = useState(0)
-  const [selectedGrade, setSelectedGrade] = useState("")
+  const [selectedGrade, setSelectedGrade] = useState("") // 年级格式：初一-上册（不需要转换）
   const [selectedVersion, setSelectedVersion] = useState("")
   const [loading, setLoading] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -48,6 +50,15 @@ export default function SyncClassroomScreen() {
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [isGradeInitialized, setIsGradeInitialized] = useState(false) // 防止重复初始化
+  
+  // 年级选择弹窗状态
+  const [showGradeSelector, setShowGradeSelector] = useState(false)
+  const [gradeSelection, setGradeSelection] = useState<GradeSelection>({
+    educationalSystem: "六三",
+    gradeStage: "小学",
+    grade: "一年级",
+    semester: "上册",
+  })
 
   // 年级选项
   const gradeOptions = [
@@ -71,7 +82,7 @@ export default function SyncClassroomScreen() {
     "九年级-下册",
   ]
 
-  // 初始化用户年级 - 移除 useCallback 避免无限循环
+  // 初始化用户年级
   const initUserGrade = async () => {
     // 防止重复初始化
     if (isGradeInitialized) {
@@ -80,51 +91,29 @@ export default function SyncClassroomScreen() {
     }
     
     try {
-      // 先获取最新的用户信息
-      const userInfo = await userStore.getUserInfo()
-      const userGrade = userInfo?.grade || "一年级"
-      const educationalSystem = userInfo?.educational_system || "六三" // 五四 or 六三
-      const gradeStage = userInfo?.grade_stage || "小学" // 小学 or 初中
+      // 调用新接口获取课程历史记录
+      const history = await getProgramResourcesHistory()
       
-      console.log('📚 获取用户年级信息:', { userGrade, educationalSystem, gradeStage })
+      console.log('📚 获取课程历史记录:', history)
       
-      // 转换年级：初一/初二/初三/初四 → 对应的数字年级
-      let convertedGrade = userGrade
+      // 直接使用接口返回的值，不需要转换
+      const { user_grade, volume, educational_system, grade_stage } = history
       
-      if (gradeStage === "初中") {
-        // 初中年级需要转换
-        const gradeMapping: { [key: string]: { [key: string]: string } } = {
-          "六三": {
-            "初一": "七年级",
-            "初二": "八年级",
-            "初三": "九年级",
-          },
-          "五四": {
-            "初一": "六年级",
-            "初二": "七年级",
-            "初三": "八年级",
-            "初四": "九年级",
-          }
-        }
-        
-        convertedGrade = gradeMapping[educationalSystem]?.[userGrade] || userGrade
-      }
-      // 小学年级（一年级～六年级）直接使用，不需要转换
-      
-      console.log('📚 年级转换结果:', {
-        原始年级: userGrade,
-        学制: educationalSystem,
-        学段: gradeStage,
-        转换后年级: convertedGrade,
-        最终选项: `${convertedGrade}-上册`
+      // 设置年级选择器的初始值
+      setGradeSelection({
+        educationalSystem: educational_system as "六三" | "五四",
+        gradeStage: grade_stage as "小学" | "初中" | "高中",
+        grade: user_grade,
+        semester: volume,
       })
       
-      setSelectedGrade(`${convertedGrade}-上册`)
-      setIsGradeInitialized(true) // 标记已初始化
+      // 直接设置年级，不需要转换
+      setSelectedGrade(`${user_grade}-${volume}`)
+      setIsGradeInitialized(true)
     } catch (error) {
-      console.error('获取用户信息失败，使用默认年级:', error)
+      console.error('获取课程历史记录失败，使用默认年级:', error)
       setSelectedGrade("一年级-上册")
-      setIsGradeInitialized(true) // 即使失败也标记已初始化
+      setIsGradeInitialized(true)
     }
   }
 
@@ -133,7 +122,11 @@ export default function SyncClassroomScreen() {
     try {
       setLoading(true)
       const [grade, volume] = selectedGrade.split("-")
-      const response = await getSubjectList({ grade, volume })
+      const response = await getSubjectList({ 
+        grade, 
+        volume,
+        educational_system: gradeSelection.educationalSystem
+      })
 
       if (Array.isArray(response)) {
         setSubjects(response)
@@ -143,7 +136,12 @@ export default function SyncClassroomScreen() {
         if (response.length > 0) {
           // 立即获取版本列表
           const subject = response[0]
-          const versionResponse = await getVersionList({ grade, volume, subject })
+          const versionResponse = await getVersionList({ 
+            grade, 
+            volume, 
+            subject,
+            educational_system: gradeSelection.educationalSystem
+          })
 
           if (Array.isArray(versionResponse)) {
             setVersionOptions(versionResponse)
@@ -158,6 +156,7 @@ export default function SyncClassroomScreen() {
                 version: versionResponse[0],
                 page: 1,
                 page_size: 10,
+                educational_system: gradeSelection.educationalSystem,
               })
 
               if (courseResponse && courseResponse.grouped_course_resources) {
@@ -180,7 +179,7 @@ export default function SyncClassroomScreen() {
     } finally {
       setLoading(false)
     }
-  }, [selectedGrade])
+  }, [selectedGrade, gradeSelection.educationalSystem])
 
   // 获取版本列表（支持传入subjectIndex）
   const fetchVersionList = useCallback(
@@ -199,7 +198,12 @@ export default function SyncClassroomScreen() {
           return
         }
 
-        const response = await getVersionList({ grade, volume, subject })
+        const response = await getVersionList({ 
+          grade, 
+          volume, 
+          subject,
+          educational_system: gradeSelection.educationalSystem
+        })
         console.log("✅ 版本列表响应:", response)
 
         if (Array.isArray(response)) {
@@ -215,6 +219,7 @@ export default function SyncClassroomScreen() {
               version: response[0],
               page: 1,
               page_size: 10,
+              educational_system: gradeSelection.educationalSystem,
             })
 
             if (courseResponse && courseResponse.grouped_course_resources) {
@@ -230,14 +235,14 @@ export default function SyncClassroomScreen() {
             }
           }
         }
-      } catch (error) {
-        console.error("获取版本列表失败:", error)
-      } finally {
-        setLoading(false) // 结束loading
-      }
-    },
-    [selectedGrade, subjects, currentSubject],
-  )
+    } catch (error) {
+      console.error("获取版本列表失败:", error)
+    } finally {
+      setLoading(false) // 结束loading
+    }
+  },
+  [selectedGrade, subjects, currentSubject, gradeSelection.educationalSystem],
+)
 
   // 获取课程资源
   const fetchCourseResource = useCallback(
@@ -262,6 +267,7 @@ export default function SyncClassroomScreen() {
           version,
           page: currentPage,
           page_size: 10,
+          educational_system: gradeSelection.educationalSystem,
         })
 
         if (response && response.grouped_course_resources) {
@@ -286,15 +292,15 @@ export default function SyncClassroomScreen() {
           })
           setExpandedCourses(newExpanded)
         }
-      } catch (error) {
-        console.error("获取课程资源失败:", error)
-      } finally {
-        setLoading(false)
-        setIsLoadingMore(false)
-      }
-    },
-    [selectedGrade, subjects, currentSubject, selectedVersion, currentPage, expandedCourses],
-  )
+    } catch (error) {
+      console.error("获取课程资源失败:", error)
+    } finally {
+      setLoading(false)
+      setIsLoadingMore(false)
+    }
+  },
+  [selectedGrade, subjects, currentSubject, selectedVersion, currentPage, expandedCourses, gradeSelection.educationalSystem],
+)
 
   // 重置分页
   const resetPagination = useCallback(() => {
@@ -331,7 +337,26 @@ export default function SyncClassroomScreen() {
     [resetPagination, fetchVersionList, subjects],
   )
 
-  // 选择年级
+  // 选择年级（通过弹窗）
+  const handleGradeConfirm = useCallback(
+    async (selection: GradeSelection) => {
+      console.log("📚 年级选择确认:", selection)
+      setGradeSelection(selection)
+      
+      // 直接使用选择的年级，不需要转换
+      const gradeString = `${selection.grade}-${selection.semester}`
+      console.log("📚 选择的年级:", gradeString)
+      
+      setSelectedGrade(gradeString)
+      resetPagination()
+      setSelectedVersion("")
+      setVersionOptions([])
+      await fetchSubjectList()
+    },
+    [resetPagination, fetchSubjectList],
+  )
+  
+  // 旧的年级选择方法（保留兼容）
   const selectGrade = useCallback(
     async (grade: string) => {
       setSelectedGrade(grade)
@@ -363,6 +388,7 @@ export default function SyncClassroomScreen() {
           version,
           page: 1,
           page_size: 10,
+          educational_system: gradeSelection.educationalSystem,
         })
 
         if (courseResponse && courseResponse.grouped_course_resources) {
@@ -376,14 +402,14 @@ export default function SyncClassroomScreen() {
           })
           setExpandedCourses(newExpanded)
         }
-      } catch (error) {
-        console.error("获取课程资源失败:", error)
-      } finally {
-        setLoading(false)
-      }
-    },
-    [selectedGrade, subjects, currentSubject, resetPagination],
-  )
+    } catch (error) {
+      console.error("获取课程资源失败:", error)
+    } finally {
+      setLoading(false)
+    }
+  },
+  [selectedGrade, subjects, currentSubject, resetPagination, gradeSelection.educationalSystem],
+)
 
   // 点击课程（展开/收起）
   const toggleCourse = useCallback((courseId: number) => {
@@ -408,10 +434,12 @@ export default function SyncClassroomScreen() {
           title: encodeURIComponent(point.title),
           Duration: point.record,
           totalDuration: point.duration,
+          educational_system: gradeSelection.educationalSystem,
+          grade_stage: gradeSelection.gradeStage,
         },
       })
     },
-    [router, subjects, currentSubject],
+    [router, subjects, currentSubject, gradeSelection.educationalSystem, gradeSelection.gradeStage],
   )
 
   // 开始练习
@@ -524,14 +552,18 @@ export default function SyncClassroomScreen() {
             style={styles.versionSelector}
           />
 
-          {/* 年级选择 */}
-          <CustomSelector
-            options={gradeOptions.map((grade) => ({ label: grade, value: grade }))}
-            selectedValue={selectedGrade}
-            onSelect={(value) => selectGrade(value as string)}
-            placeholder="选择年级"
-            style={styles.gradeSelector}
-          />
+          {/* 年级选择 - 新样式弹窗 */}
+          <TouchableOpacity
+            style={styles.gradeButton}
+            onPress={() => setShowGradeSelector(true)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.gradeButtonText}>
+              {selectedGrade || "选择年级"}
+            </Text>
+            <Ionicons name="chevron-down" size={16} color="#666" />
+          </TouchableOpacity>
+          
            {/* 搜索 */}
          <TouchableOpacity
             onPress={handleSearchPress}
@@ -674,6 +706,14 @@ export default function SyncClassroomScreen() {
           </>
         )}
       </View>
+
+      {/* 年级选择弹窗 */}
+      <GradeSelector
+        visible={showGradeSelector}
+        onClose={() => setShowGradeSelector(false)}
+        currentSelection={gradeSelection}
+        onConfirm={handleGradeConfirm}
+      />
     </LinearGradient>
   )
 }
@@ -726,13 +766,26 @@ const styles = createStyles({
   gradeSelector: {
     marginRight: 0,
   },
-  selectorText: {
-    fontSize: 12.5, // 12.5rpx
+  gradeButton: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 12,
+    gap: 4,
+  },
+  gradeButtonText: {
+    fontSize: 7.6,
     color: "#8C8D92",
   },
+  selectorText: {
+    fontSize: 7.6,
+    color: "#6A94FF",
+  },
   selectorIcon: {
-    fontSize: 10,
-    color: "#333",
+    fontSize: 16,
+    color: "#6A94FF",
   },
   mainContent: {
     flex: 1,

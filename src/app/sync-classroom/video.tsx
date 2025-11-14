@@ -6,8 +6,9 @@ import {
   StatusBar as RNStatusBar,
   Dimensions,
   PanResponder,
+  AppState,
 } from "react-native"
-import { Video, ResizeMode } from "expo-av"
+import { Video, ResizeMode, Audio } from "expo-av"
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import * as Brightness from "expo-brightness"
@@ -28,6 +29,8 @@ interface VideoParams {
   title?: string
   Duration?: string
   totalDuration?: string
+  educational_system?: string
+  grade_stage?: string
 }
 
 /**
@@ -124,10 +127,23 @@ export default function VideoPlayerScreen() {
     // }
   }, [])
 
-  // 页面获得焦点时恢复沉浸式模式
+  // 页面获得焦点时恢复沉浸式模式并配置音频
   useFocusEffect(
     useCallback(() => {
-      console.log("视频页面获得焦点，恢复沉浸式模式")
+      console.log("视频页面获得焦点，恢复沉浸式模式并配置音频")
+
+      // 🔊 立即配置音频模式，确保视频能获取音频焦点
+      Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: false,
+        staysActiveInBackground: true,
+      }).then(() => {
+        console.log("✅ 页面音频模式已配置")
+      }).catch((err) => {
+        console.error("❌ 配置音频模式失败:", err)
+      })
 
       RNStatusBar.setHidden(true, "none")
       globalImmersive.forceRestore()
@@ -177,9 +193,30 @@ export default function VideoPlayerScreen() {
       console.log("视频准备完成，开始自动播放流程")
       hasAutoPlayedRef.current = true // 标记已尝试自动播放
       
-      // 延迟一下确保video组件已渲染
+      // 延迟一下确保video组件已渲染并等待应用完全进入前台
       const timer = setTimeout(async () => {
         try {
+          // 检查应用是否在前台
+          const currentState = AppState.currentState
+          console.log("📱 当前应用状态:", currentState)
+          
+          if (currentState !== 'active') {
+            console.log("⚠️ 应用不在前台，延迟自动播放")
+            hasAutoPlayedRef.current = false // 允许重试
+            return
+          }
+          
+          // 🔊 配置音频模式 - 强制获取音频焦点
+          console.log("🔊 配置视频音频模式...")
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: false,
+            playsInSilentModeIOS: true,
+            shouldDuckAndroid: false, // 不允许混音，强制获取焦点
+            playThroughEarpieceAndroid: false,
+            staysActiveInBackground: true,
+          })
+          console.log("✅ 音频模式配置完成")
+          
           // 关键：先设置播放位置，再播放
           if (lastSavedTime > 0) {
             console.log(`⏩ 设置播放位置到历史记录: ${lastSavedTime}秒`)
@@ -197,7 +234,7 @@ export default function VideoPlayerScreen() {
           console.error("❌ 自动播放失败:", err)
           hasAutoPlayedRef.current = false // 失败后允许重试
         }
-      }, 500)
+      }, 2000) // 增加延迟到2000ms，确保坐姿检测音频焦点完全释放
       
       return () => clearTimeout(timer)
     }
@@ -316,6 +353,22 @@ export default function VideoPlayerScreen() {
       if (isPlaying) {
         await videoRef.current?.pauseAsync()
       } else {
+        // 检查应用是否在前台
+        const currentState = AppState.currentState
+        if (currentState !== 'active') {
+          console.log("⚠️ 应用不在前台，无法播放")
+          return
+        }
+        
+        // 🔊 配置音频模式
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: false,
+          playThroughEarpieceAndroid: false,
+          staysActiveInBackground: true,
+        })
+        
         // 如果视频已播放完成，从头开始播放
         if (currentTime >= totalDuration && totalDuration > 0) {
           await videoRef.current?.setPositionAsync(0)
@@ -409,6 +462,8 @@ export default function VideoPlayerScreen() {
       saveStudyProgress({
         video_code: pointId,
         record: formatTime(currentTime),
+        educational_system: params.educational_system || "六三",
+        grade_stage: params.grade_stage || "小学",
       }).catch((error) => {
         console.error("保存学习进度失败:", error)
       })
@@ -421,6 +476,22 @@ export default function VideoPlayerScreen() {
     setShowCompleteTip(false)
     // 跳转到开头重新播放
     try {
+      // 检查应用是否在前台
+      const currentState = AppState.currentState
+      if (currentState !== 'active') {
+        console.log("⚠️ 应用不在前台，无法播放")
+        return
+      }
+      
+      // 🔊 配置音频模式
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: false,
+        playThroughEarpieceAndroid: false,
+        staysActiveInBackground: true,
+      })
+      
       if (videoRef.current) {
         await videoRef.current.setPositionAsync(0)
         await videoRef.current.playAsync()

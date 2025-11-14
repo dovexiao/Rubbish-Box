@@ -1,4 +1,4 @@
-import { View, Text } from "react-native"
+import { View, Text, Image } from "react-native"
 import { createStyles, rpx } from "../utils/rpxStyleSheet"
 
 interface Props {
@@ -32,7 +32,8 @@ export function CompositionCanvas({ title, score, isChinese, content }: Props) {
               style={[
                 styles.gridCell,
                 {
-                  // 只在中文模式下显示边框
+                  // 只在中文模式下显示竖线边框
+                  borderLeftWidth: isChinese ? 0.5 : 0,
                   borderRightWidth: isChinese ? 0.5 : 0,
                 },
               ]}
@@ -48,22 +49,36 @@ export function CompositionCanvas({ title, score, isChinese, content }: Props) {
   const renderTitleAndScore = () => {
     if (title === "续") return null
 
-    // 计算标题居中时的起始位置（左边需要空几个格子）
-    const titleLength = title.length
-    const emptyGridsLeft = Math.floor((GRID_COLUMNS - titleLength) / 2)
-    const leftPadding = rpx(emptyGridsLeft * 16) // 手动转换 rpx，避免二次转换
-
     return (
       <View style={[styles.titleRow, { top: rpx(16.8) }]}>
-        {/* 标题按格子显示，每个字符在单独的格子里 */}
-        <View style={[styles.titleGridContainer, { paddingLeft: leftPadding }]}>
-          {Array.from(title).map((char, charIndex) => (
-            <View key={charIndex} style={styles.titleCharContainer}>
-              <Text style={styles.titleChar}>{char}</Text>
+        {/* 中文：标题按格子显示，每个字符在单独的格子里 */}
+        {isChinese ? (
+          <>
+            {/* 计算标题居中时的起始位置（左边需要空几个格子） */}
+            <View style={[styles.titleGridContainer, { paddingLeft: rpx(Math.floor((GRID_COLUMNS - title.length) / 2) * 16) }]}>
+              {Array.from(title).map((char, charIndex) => (
+                <View key={charIndex} style={styles.titleCharContainer}>
+                  <Text style={styles.titleChar}>{char}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-        {score > 0 && <Text style={styles.scoreText}>{score}</Text>}
+          </>
+        ) : (
+          /* 英文：标题整体居中显示 */
+          <Text style={styles.englishTitle}>{title}</Text>
+        )}
+        
+        {score > 0 && (
+          <View style={styles.scoreContainer}>
+            <Text style={styles.scoreText}>{score}</Text>
+            {/* 分数下面的横线图片 */}
+            <Image 
+              source={require("../../assets/images/Frame 2090059169.png")} 
+              style={styles.scoreLine}
+              resizeMode="contain"
+            />
+          </View>
+        )}
       </View>
     )
   }
@@ -169,7 +184,6 @@ const styles = createStyles({
   gridCell: {
     width: 16, // GRID_SIZE 16rpx
     height: 16,
-    borderLeftWidth: 0.5,
     borderColor: "#D6D6D6",
   },
   titleRow: {
@@ -203,12 +217,27 @@ const styles = createStyles({
     padding: 0, // 移除所有内边距
     margin: 0, // 移除所有外边距
   },
-  scoreText: {
+  englishTitle: {
+    fontSize: 10, // 与中文标题字号一致
+    fontWeight: "bold",
+    color: "#000000",
+    textAlign: "center",
+    flex: 1, // 占据剩余空间，让标题居中，分数能正确显示
+  },
+  scoreContainer: {
     position: "absolute",
     right: 10, // 调整右侧位置，适应新的标题行宽度
+    alignItems: "center",
+  },
+  scoreText: {
     fontSize: 24, // 24rpx
     fontWeight: "bold",
     color: "#FF0000",
+  },
+  scoreLine: {
+    width: 30, // 横线宽度
+    height: 8.8, // 图片高度
+    marginTop: -4, // 分数和横线之间的间距
   },
   contentContainer: {
     position: "absolute",

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react"
-import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native"
+import { View, Text, Image, ScrollView, FlatList, TouchableOpacity, ActivityIndicator } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useFocusEffect, useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
@@ -260,66 +260,70 @@ export default function PointsMallScreen() {
       </View>
 
       {/* 商品网格列表 */}
-      <ScrollView
+      <FlatList
+        data={products}
+        keyExtractor={(item, index) => `product-${item.id}-${index}`}
+        numColumns={6}
         style={styles.productScroll}
-        onScroll={({ nativeEvent }) => {
-          const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
-          const paddingToBottom = 100
-          if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
-            loadMoreProducts()
-          }
-        }}
-        scrollEventThrottle={400}
-      >
-        <View style={styles.productGrid}>
-          {products.map((product, index) => (
-            <TouchableOpacity
-              key={`product-${product.id}-${index}`}
-              style={styles.productItem}
-              onPress={() => handleShowProductDetail(product.id)}
-              activeOpacity={0.8}
-            >
-              {/* 商品图片区域 */}
-              <Image
-                source={{
-                  uri: product.image || "/static/images/product-placeholder.png",
-                }}
-                style={styles.productImage}
-                resizeMode="cover"
-              />
+        contentContainerStyle={styles.productListContent}
+        columnWrapperStyle={styles.productColumnWrapper}
+        showsVerticalScrollIndicator={false}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={12}
+        updateCellsBatchingPeriod={50}
+        initialNumToRender={18}
+        windowSize={5}
+        onEndReached={loadMoreProducts}
+        onEndReachedThreshold={0.5}
+        renderItem={({ item: product }) => (
+          <TouchableOpacity
+            style={styles.productItem}
+            onPress={() => handleShowProductDetail(product.id)}
+            activeOpacity={0.8}
+          >
+            {/* 商品图片区域 */}
+            <Image
+              source={{
+                uri: product.image || "/static/images/product-placeholder.png",
+              }}
+              style={styles.productImage}
+              resizeMode="cover"
+            />
 
-              {/* 商品信息区域 */}
-              <View style={styles.productInfoArea}>
-                <Text style={styles.productName} numberOfLines={1}>
-                  {product.name}
-                </Text>
-                <View style={styles.priceRow}>
-                  <View style={styles.currentPriceSection}>
-                    <Ionicons name="logo-usd" size={rpx(10)} color="#333" />
-                    <Text style={styles.currentPrice}>{product.price}</Text>
-                  </View>
-                  <Text style={styles.originalPrice}>{product.original_points}</Text>
+            {/* 商品信息区域 */}
+            <View style={styles.productInfoArea}>
+              <Text style={styles.productName} numberOfLines={1}>
+                {product.name}
+              </Text>
+              <View style={styles.priceRow}>
+                <View style={styles.currentPriceSection}>
+                  <Ionicons name="logo-usd" size={rpx(10)} color="#333" />
+                  <Text style={styles.currentPrice}>{product.price}</Text>
                 </View>
+                <Text style={styles.originalPrice}>{product.original_points}</Text>
               </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* 加载状态 */}
-        {loadingMore && (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color="#666" />
-            <Text style={styles.loadingText}>正在加载...</Text>
-          </View>
+            </View>
+          </TouchableOpacity>
         )}
+        ListFooterComponent={
+          <>
+            {/* 加载状态 */}
+            {loadingMore && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color="#666" />
+                <Text style={styles.loadingText}>正在加载...</Text>
+              </View>
+            )}
 
-        {/* 没有更多数据 */}
-        {!hasMore && products.length > 0 && (
-          <View style={styles.noMoreContainer}>
-            <Text style={styles.noMoreText}>没有更多商品了</Text>
-          </View>
-        )}
-      </ScrollView>
+            {/* 没有更多数据 */}
+            {!hasMore && products.length > 0 && (
+              <View style={styles.noMoreContainer}>
+                <Text style={styles.noMoreText}>没有更多商品了</Text>
+              </View>
+            )}
+          </>
+        }
+      />
 
       {/* 商品详情弹窗 */}
       <ProductDetailPopup
@@ -455,12 +459,14 @@ const styles = createStyles({
   productScroll: {
     flex: 1,
   },
-  productGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+  productListContent: {
     paddingHorizontal: 15.625,
+    paddingBottom: 20,
+  },
+  productColumnWrapper: {
+    justifyContent: "center" as const,
     gap: 8,
-    justifyContent: "center",
+    marginBottom: 8,
   },
   productItem: {
     width: 109,
