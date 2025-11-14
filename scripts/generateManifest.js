@@ -20,7 +20,7 @@ const configs = {
     name: 'winlucky001',
     theme_color: '#ffffff',
     iconDir: 'winlucky001',
-    background_color: '#000000',
+    background_color: '#210118',
   },
   lucky101: {
     id: 'lucky101',
@@ -50,6 +50,11 @@ const manifest = {
       type: 'image/png',
     },
     {
+      src: `assets/icons/${cfg.iconDir}/icon-384.png`,
+      sizes: '384x384',
+      type: 'image/png',
+    },
+    {
       src: `assets/icons/${cfg.iconDir}/icon-512.png`,
       sizes: '512x512',
       type: 'image/png',
@@ -62,7 +67,7 @@ fs.writeFileSync('./public/manifest.json', JSON.stringify(manifest, null, 2));
 console.log(`✅ Generated manifest for ${env}`);
 
 // 可选：复制对应图标到 public 根目录（如果构建工具需要）
-['icon-192.png', 'icon-512.png'].forEach(file => {
+['icon-192.png', 'icon-384.png', 'icon-512.png'].forEach(file => {
   fs.copyFileSync(
     path.join(__dirname, `../public/assets/icons/${cfg.iconDir}/${file}`),
     path.join(__dirname, `../public/${file}`),
