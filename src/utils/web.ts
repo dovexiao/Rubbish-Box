@@ -207,3 +207,19 @@ export const downloadApk = () => {
     location.href = `https://www.staticimg007.com/apk/lucky101_${channelId}.apk`;
   }
 };
+
+/**
+ * 是否运行在 PWA 模式
+ */
+export function isRunningAsPWA() {
+  // Chrome / Android / Edge
+  const standalone = window.matchMedia('(display-mode: standalone)').matches;
+
+  // iOS Safari
+  const iosStandalone = (window.navigator as any).standalone === true;
+
+  // Other possible fallback (rarely needed)
+  const isFullscreen = window.matchMedia('(display-mode: fullscreen)').matches;
+
+  return standalone || iosStandalone || isFullscreen;
+}

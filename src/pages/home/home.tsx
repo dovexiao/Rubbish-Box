@@ -22,7 +22,7 @@ import {
   CasinoTypeItem,
 } from './home.type';
 import HomeGameList from './components/home-game-list';
-import {setDataForSettled, debounce} from '@/utils';
+import {setDataForSettled, debounce, isRunningAsPWA} from '@/utils';
 import HomeService from './components/home-service';
 import {NoMoreData} from '@basicComponents/default-page';
 import Spin from '@basicComponents/spin';
@@ -295,7 +295,9 @@ const Home = () => {
       <Spin loading={pageLoading} style={[theme.flex.col, theme.fill.fill]}>
         <View style={[theme.fill.fill, theme.flex.col]}>
           <HomeHeader />
-          {globalStore.isWeb && !globalStore.viewType && <Download />}
+          {globalStore.isWeb && !globalStore.viewType && !isRunningAsPWA() && (
+            <Download />
+          )}
           <LinearGradient
             style={{flex: 1}}
             colors={['#620505', '#620505', '#230402']}
