@@ -46,14 +46,14 @@ const HomeHeader = () => {
   }, []); // 依赖空数组，确保只在组件加载时调用一次
 
   // 获取余额
-  const fetchBalance = async () => {
-    try {
-      const res = await getBalance();
-      setAmount(res || 0);
-    } catch (err) {
-      console.error('获取余额失败', err);
-    }
-  };
+  // const fetchBalance = async () => {
+  //   try {
+  //     const res = await getBalance();
+  //     setAmount(res || 0);
+  //   } catch (err) {
+  //     console.error('获取余额失败', err);
+  //   }
+  // };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -69,8 +69,9 @@ const HomeHeader = () => {
             globalStore.userInfo = res;
             setUserName(res.userName || res.userPhone);
             setUserAvatar(res.userAvatar);
+            setAmount(res.userBalance || 0);
           });
-          fetchBalance();
+          // fetchBalance();
         }
       });
       const amountSub = globalStore.amountChanged.subscribe(res => {
