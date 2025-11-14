@@ -146,7 +146,7 @@ const DirectSubordinates = (props: IProps) => {
               // size="large"
               title={i18n.t('proxy.join-Telegram')}
               titleBold={true}
-              onPress={() => onJoinTelegram()}
+              onPress={() => onJoinTelegram?.()}
             />
           </View>
           <View style={{flexBasis: '48%'}}>
@@ -156,7 +156,7 @@ const DirectSubordinates = (props: IProps) => {
               // size="large"
               title={i18n.t('proxy.join-Whatsapp')}
               titleBold={true}
-              onPress={() => onJoinWhatsapp()}
+              onPress={() => onJoinWhatsapp?.()}
             />
           </View>
         </View>

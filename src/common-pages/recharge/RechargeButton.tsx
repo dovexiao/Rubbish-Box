@@ -1,19 +1,12 @@
 import theme from '@/style';
-import {View, StyleSheet, ImageBackground} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import Button from '@/components/basic/button';
 import Text from '@/components/basic/text';
 import React from 'react';
 import {ButtonType} from '@/components/basic/button/button';
 import {useTranslation} from 'react-i18next';
 import {scaleSize, useResponsiveDimensions} from '@/utils';
-// import globalStore from '@/services/global.state';
-import LinearGradient from '@/components/basic/linear-gradient';
-import RechargeQipao from '@/common-pages/recharge/recharge-qipao';
-import {
-  LazyImageBackground,
-  LazyImageLGBackground,
-} from '@/components/basic/image';
-// import { BackgroundImage } from '@rneui/base';
+
 export interface RechargeButtonProps {
   disabled?: boolean;
   type?: ButtonType;

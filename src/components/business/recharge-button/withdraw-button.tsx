@@ -5,7 +5,7 @@ import Text from '@/components/basic/text';
 import React from 'react';
 import {ButtonType} from '@/components/basic/button/button';
 import {useTranslation} from 'react-i18next';
-import {useResponsiveDimensions} from '@/utils';
+import {scaleSize, useResponsiveDimensions} from '@/utils';
 import globalStore from '@/services/global.state';
 
 export interface RechargeButtonProps {
@@ -49,13 +49,17 @@ const WithdrawButton: React.FC<RechargeButtonProps> = ({
       <Button
         size="large"
         type={type}
-        radius={5}
+        radius={scaleSize(45)}
         color={theme.fontColor.primary}
         disabled={disabled}
         width={rechargeButtonWidth}
         buttonStyle={[rechargeStyle.button]}
         onPress={onRecharge}>
-        <Text fontSize={theme.fontSize.m} blod color={theme.basicColor.white}>
+        <Text
+          fontSize={theme.fontSize.l}
+          blod
+          color={theme.basicColor.white}
+          style={{fontWeight: 'bold'}}>
           {text || i18n.t('home.tab.deposit')}
         </Text>
       </Button>

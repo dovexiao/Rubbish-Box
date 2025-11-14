@@ -55,6 +55,7 @@ export default {
   warning: {
     unopen: 'Not yet enabled',
     initializin: 'Initializing, please wait',
+    selectDateInLastDays: 'Please select a date within the past {{days}} days',
   },
   notification: {
     title: 'Message',
@@ -778,6 +779,15 @@ export default {
     error: {
       addCard: 'Please add a bank card first',
       addAmount: 'Please enter the amount',
+    },
+    actualAmount: {
+      subTitle: 'Withdrawal instructions',
+      rule: {
+        dailyWithdrawalLimit: 'Daily withdrawal limit',
+        withdrawalFees: 'Withdrawal fees',
+        dailyWithdrawalTimes: 'Daily withdrawal times',
+        minimumWithdrawal: 'Minimum Withdrawal',
+      },
     },
   },
   'bank-page': {

@@ -3,7 +3,7 @@ import React from 'react';
 import {View, StyleSheet, ViewStyle, StyleProp} from 'react-native';
 import Text from '@/components/basic/text';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
-import {CardListItemType} from '../withdraw-service';
+import {CardListItemType} from '../withdraw.service';
 import LazyImage from '@/components/basic/image';
 import EditIcon from '../../svg/edit';
 import {formatNumberGroup} from '@/components/utils';

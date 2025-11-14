@@ -27,14 +27,14 @@ const BreatheImage = () => {
   return (
     <Animated.Image
       source={require('@/assets/gif/daillybonus.gif')}
-      style={[styles.icon, {transform: [{translateX: 5}, {scale}], zIndex: 10}]}
+      style={[styles.icon, {transform: [{translateX: 2}, {scale}], zIndex: 10}]}
     />
   );
 };
 
 const styles = StyleSheet.create({
   icon: {
-    width: 48,
+    width: 50,
     height: 16,
     position: 'absolute',
     top: -5,

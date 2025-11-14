@@ -48,7 +48,8 @@ export type ButtonType =
   | 'border'
   | 'primary'
   | 'linear-primary'
-  | 'linear-primary-gold';
+  | 'linear-primary-gold'
+  | 'linear-secondary-gold';
 
 const buttonPropsMap: Record<ButtonType, Partial<ButtonProps>> = {
   border: {
@@ -71,6 +72,14 @@ const buttonPropsMap: Record<ButtonType, Partial<ButtonProps>> = {
       start: {x: 0.5, y: 0},
       end: {x: 0.5, y: 1},
       colors: ['#FEEB68', '#E19E00'],
+    },
+  },
+  'linear-secondary-gold': {
+    ViewComponent: LinearGradient as SafeAny,
+    linearGradientProps: {
+      start: {x: 0, y: 0},
+      end: {x: 0, y: 1},
+      colors: ['#feea68', '#f7b500'],
     },
   },
 };

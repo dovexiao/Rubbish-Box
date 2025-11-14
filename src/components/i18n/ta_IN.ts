@@ -53,6 +53,8 @@ export default {
   warning: {
     unopen: 'இது இன்னும் செயல்படவில்லை',
     initializin: 'தயாராகிறது, தயவுசெய்து காத்திருக்கவும்',
+    selectDateInLastDays:
+      'கடந்த {{days}} நாட்களில் உள்ள ஒரு தேதியை தேர்வு செய்யவும்',
   },
   notification: {
     title: 'செய்தி',
@@ -426,6 +428,21 @@ export default {
         'கட்டணத் தொகையை மாற்ற வேண்டாம். சேமிக்கப்பட்ட QR குறியீடுகள் அல்லது UPI கணக்குகளை பல முறை பயன்படுத்துவதை தவிர்க்கவும்.',
     },
   },
+  'bets-page': {
+    label: {
+      share: 'பகிர்',
+      result: 'விளைவு',
+      bettingTime: 'பந்தய நேரம்',
+      shareAwards: 'விருதுக்காக பகிருங்கள்',
+      drawTime: 'விளையாட்டுத் நேரம்',
+      playNow: 'இப்போது விளையாடுங்கள்',
+    },
+    status: {
+      won: 'வெற்றி',
+      noWin: 'வெற்றி இல்லை',
+      toBe: 'இன்னும் வரை திடமானது...',
+    },
+  },
   'bank-page': {
     label: {
       accountName: 'கணக்கு பெயர்',
@@ -502,6 +519,15 @@ export default {
     error: {
       addCard: 'தயவுசெய்து முதலில் வங்கி கார்டை சேர்க்கவும்',
       addAmount: 'தயவுசெய்து தொகையை உள்ளிடவும்',
+    },
+    actualAmount: {
+      subTitle: 'பின்வலிப்பு அறிவுறுத்தல்கள்',
+      rule: {
+        dailyWithdrawalLimit: 'தினசரி பின்வலிப்பு வரம்பு',
+        withdrawalFees: 'பின்வலிப்பு கட்டணங்கள்',
+        dailyWithdrawalTimes: 'தினசரி பின்வலிப்பு நேரங்கள்',
+        minimumWithdrawal: 'குறைந்தபட்ச பின்வலிப்பு',
+      },
     },
   },
   login: {

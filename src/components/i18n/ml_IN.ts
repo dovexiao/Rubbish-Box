@@ -53,6 +53,8 @@ export default {
   warning: {
     unopen: 'ഇനി പ്രവർത്തനക്ഷമമല്ല',
     initializin: 'ആരംഭിക്കുന്നു, ദയവായി കാത്തിരിക്കുക',
+    selectDateInLastDays:
+      'ദയവായി കഴിഞ്ഞ {{days}} ദിവസത്തിനുള്ളിൽ ഒരു തിയതി തിരഞ്ഞെടുക്കുക',
   },
   notification: {
     title: 'സന്ദേശം',
@@ -597,6 +599,22 @@ export default {
         'ദയവായി പേയ്മെന്റ് തുക മാറ്റരുത്. സംരക്ഷിച്ച QR കോഡുകളോ UPI അക്കൗണ്ടുകളോ ഒന്നിലധികം പേയ്മെന്റുകൾക്കായി പുനരുപയോഗിക്കുന്നത് ഒഴിവാക്കുക.',
     },
   },
+  'bets-page': {
+    label: {
+      share: 'പങ്കുവെക്കുക',
+      result: 'ഫലമാണ്',
+      bettingTime: 'പന്തയം സമയത്ത്',
+      shareAwards: 'ബഹുമതിക്ക് പങ്കുവെക്കുക',
+      drawTime: 'പോയിന്റ് സമയം',
+      playNow: 'ഇപ്പോൾ കളിക്കുക',
+    },
+    status: {
+      won: 'ജയിക്കുക',
+      noWin: 'വിജയം ഇല്ല',
+      toBe: 'കൂടുതല് തീരവായിരിക്കും...',
+    },
+  },
+
   'bank-page': {
     label: {
       accountName: 'അക്കൗണ്ട് പേര്',
@@ -762,6 +780,15 @@ export default {
     error: {
       addCard: 'ദയവായി ആദ്യം ബാങ്ക് കാർഡ് ചേർക്കുക',
       addAmount: 'ദയവായി തുക നൽകുക',
+    },
+    actualAmount: {
+      subTitle: 'നിക്ഷേപ നിർദേശങ്ങൾ',
+      rule: {
+        dailyWithdrawalLimit: 'ദൈനംദിന പിൻവലിക്കൽ പരിധി',
+        withdrawalFees: 'പിൻവലിക്കൽ ഫീസുകൾ',
+        dailyWithdrawalTimes: 'ദൈനംദിന പിൻവലിക്കൽ സമയം',
+        minimumWithdrawal: 'കുറഞ്ഞ പിൻവലിക്കൽ',
+      },
     },
   },
   'error-pages': {

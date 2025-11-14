@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {Input, InputProps} from '@rneui/themed';
 import {View, ViewProps, StyleSheet} from 'react-native';
 import theme from '@/style';
@@ -10,6 +10,7 @@ export interface TextInputProps {
   style?: ViewProps;
   onMaxPress?: (value: string) => void;
   rightElement?: React.ReactElement<{}>;
+  leftElement?: React.ReactElement;
   onValueChange?: (value: string) => void;
 }
 
@@ -18,12 +19,14 @@ const TextInput: React.FC<InputProps & TextInputProps> = props => {
     value = '',
     onValueChange = () => {},
     placeholder,
+    leftElement,
     rightElement,
     hasMax = false,
+    style,
   } = props;
 
   return (
-    <View style={[styles.container, theme.border.primary50]}>
+    <View style={[styles.container, theme.border.primary50, style]}>
       <Input
         containerStyle={[theme.padding.lrm, styles.inputContainer]}
         inputContainerStyle={styles.inputContainerStyle}
@@ -43,6 +46,7 @@ const TextInput: React.FC<InputProps & TextInputProps> = props => {
             onValueChange('');
           }
         }}
+        leftIcon={leftElement}
         rightIcon={hasMax ? rightElement : undefined}
         placeholder={placeholder}
       />

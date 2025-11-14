@@ -4,9 +4,9 @@ import {View, Image} from 'react-native';
 
 import Text from '@basicComponents/text';
 
-import CustomTitle from './custom-title';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 import {useTranslation} from 'react-i18next';
+import CustomTitle from '@/components/business/custom-title';
 import {scaleSize} from '@/utils';
 
 export interface RechargeDepositEventProps {

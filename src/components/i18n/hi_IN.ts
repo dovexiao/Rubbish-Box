@@ -52,6 +52,7 @@ export default {
   warning: {
     unopen: 'अभी तक चालू नहीं किया गया है',
     initializin: 'प्रारंभ हो रहा है, कृपया प्रतीक्षा करें',
+    selectDateInLastDays: 'कृपया पिछले {{days}} दिनों के भीतर एक तिथि चुनें',
   },
   notification: {
     title: 'नोटिफिकेशन',
@@ -455,6 +456,21 @@ export default {
         'कृपया भुगतान राशि में कोई बदलाव न करें। एक ही क्यूआर कोड या UPI खाते का कई बार उपयोग करने से बचें।',
     },
   },
+  'bets-page': {
+    label: {
+      share: 'साझा करें',
+      result: 'परिणाम',
+      bettingTime: 'बैठक समय',
+      shareAwards: 'इनाम के लिए साझा करें',
+      drawTime: 'लॉटरी समय',
+      playNow: 'अब खेलें',
+    },
+    status: {
+      won: 'जीता',
+      noWin: 'कोई जीत नहीं',
+      toBe: 'अभी तक अनौपचारिक...',
+    },
+  },
   datePicker: {
     label: {
       select: 'तारीख चुनें',
@@ -569,6 +585,15 @@ export default {
     error: {
       addCard: 'कृपया पहले बैंक कार्ड जोड़ें',
       addAmount: 'कृपया राशि दर्ज करें',
+    },
+    actualAmount: {
+      subTitle: 'निकासी निर्देश',
+      rule: {
+        dailyWithdrawalLimit: 'दैनिक निकासी सीमा',
+        withdrawalFees: 'निकासी शुल्क',
+        dailyWithdrawalTimes: 'दैनिक निकासी बार',
+        minimumWithdrawal: 'न्यूनतम निकासी',
+      },
     },
   },
   'bank-page': {

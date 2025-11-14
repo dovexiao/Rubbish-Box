@@ -442,7 +442,7 @@ const Promotion = () => {
   const renderListHeader = useCallback(() => {
     return (
       <View>
-        {renderSevenContinuousBonusCard}
+        {/* {renderSevenContinuousBonusCard} */}
         {rechargeInfo?.flagShow && renderRedBonusCard}
       </View>
     );

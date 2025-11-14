@@ -70,6 +70,7 @@ export const basicColor = {
   newAmountColor: '#8E5B18', //常用于金额字体颜色
   newAmountColorLight: '#8E5C1A', //常用于浅色金额字体颜色
   newRed: '#E02020', //常用于字体颜色
+  lightWhite: 'rgba(255, 255, 255, 0.6)', // 用于浅色白色字体颜色
   // 纯黑纯白
   newFontWhite: '#FFFFFF', //常用于字体颜色
   newFontBlack: '#000000', //常用于字体颜色
@@ -81,7 +82,7 @@ export const basicColor = {
   // 按钮颜色
   newButtonLinear: ['#FF493A', '#F7B500'], //大部分情况为大型按钮(从左到右渐变),标签（从下到上渐变）配色
   newButtonYellow: '#F7B500', //大部分情况为小型按钮配色,选中边框配色等等
-  newButtonYellow2: ['#FFE573','#FFE573'],
+  newButtonYellow2: ['#FFE573', '#FFE573'],
 
   // 标签颜色（tag）,例如展示数量的tag
   newTagYellow: '#FF921A',
