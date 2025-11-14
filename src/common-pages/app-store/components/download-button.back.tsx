@@ -4,7 +4,8 @@ import usePWAInstall from '@/hooks/usePWAInstall';
 import {NativeTouchableOpacity} from '@/components/basic/touchable-opacity';
 
 const DownloadButton: React.FC = () => {
-  const {canInstall, isInstalled, showInstallPrompt} = usePWAInstall();
+  const {canInstall, isInstalling, isInstalled, showInstallPrompt} =
+    usePWAInstall();
 
   const handleDownload = async () => {
     if (isInstalled) {
@@ -22,9 +23,15 @@ const DownloadButton: React.FC = () => {
 
   return (
     <NativeTouchableOpacity
-      style={[styles.downloadButton]}
-      onPress={handleDownload}>
-      <Text style={styles.downloadButtonText}>Install</Text>
+      style={[
+        styles.downloadButton,
+        (!canInstall || isInstalling || isInstalled) && styles.disabledButton,
+      ]}
+      onPress={handleDownload}
+      disabled={!canInstall || isInstalling || isInstalled}>
+      <Text style={styles.downloadButtonText}>
+        {isInstalled ? 'Installed' : isInstalling ? 'Installing...' : 'Install'}
+      </Text>
     </NativeTouchableOpacity>
   );
 };
