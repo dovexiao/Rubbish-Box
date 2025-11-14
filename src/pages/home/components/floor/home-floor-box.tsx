@@ -35,8 +35,6 @@ interface HomeFloorBoxProps<listItemT> {
   onPressViewAll?: () => void;
   type?: string;
 }
-// const huoIcon = require('@assets/animated/fire.gif');
-
 class HomeFloorBox<listItemT> extends Component<
   HomeFloorBoxProps<listItemT>,
   {
