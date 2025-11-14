@@ -38,6 +38,9 @@ export interface IncomeModel {
   payTag: string;
 
   couponRecordId: number;
+
+  // 是否同意条款
+  waterCrossingSign: string;
 }
 
 export interface IncomeResModel {

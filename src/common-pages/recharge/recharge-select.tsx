@@ -20,6 +20,7 @@ export interface RechargeSelectProps {
   onChangeBalance: (balance: string) => void;
   balanceList?: BalanceListItem[];
   bounsComponent?: any;
+  isAgreedNotice: boolean;
 }
 
 // const screenWidth = Dimensions.get('window').width;
@@ -31,6 +32,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
   balanceList = [],
   min,
   max,
+  isAgreedNotice,
 }) => {
   const {i18n} = useTranslation();
   const {inputStyle, inputStyles, selectStyles} = useInnerStyle();
@@ -147,7 +149,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                       paddingVertical: scaleSize(10),
                     },
                   ]}>
-                  {bl.giveBalance !== 0 && (
+                  {bl.giveBalance !== 0 && isAgreedNotice && (
                     <RechargeQipao
                       height={18}
                       text={
@@ -195,7 +197,7 @@ const RechargeSelect: React.FC<RechargeSelectProps> = ({
                       paddingVertical: scaleSize(10),
                     },
                   ]}>
-                  {bl.giveBalance !== 0 && (
+                  {bl.giveBalance !== 0 && isAgreedNotice && (
                     <RechargeQipao
                       height={18}
                       text={

@@ -19,10 +19,6 @@ const PromotionInfoModal: React.FC<PromotionInfoModalProps> = ({
   onClose,
   type,
   i18n,
-  currentReacgarge,
-  currentReacgarge1,
-  currentReacgarge2,
-  currentReacgarge3,
 }) => {
   return (
     <Modal
@@ -39,19 +35,20 @@ const PromotionInfoModal: React.FC<PromotionInfoModalProps> = ({
             ]}>
             <Text style={modalStyles.message}>Extra Recharge Bonus</Text>
             <Text style={modalStyles.message}>
-              1st recharge → +30%, Max ₹4,000
+              1st recharge → +10%, Max ₹1,000
             </Text>
             <Text style={modalStyles.message}>
-              2nd recharge → +20%, Max ₹3,000
+              2nd recharge → +15%, Max ₹2,000
             </Text>
             <Text style={modalStyles.message}>
-              3rd recharge → +15%, Max ₹2,000
+              3rd recharge → +20%, Max ₹3,000
             </Text>
             <Text style={modalStyles.message}>
-              4th recharge → +10%, Max ₹1,000
+              4th recharge → +30%, Max ₹4,000
             </Text>
             <Text style={modalStyles.message}>
-              Note :The bonus applies only once per recharge count. Higher top-ups won’t increase the bonus beyond the maximum limit.
+              Note :The bonus applies only once per recharge count. Higher
+              top-ups won’t increase the bonus beyond the maximum limit.
             </Text>
             <View style={modalStyles.buttonRow}>
               <TouchableOpacity style={modalStyles.button} onPress={onClose}>
@@ -67,9 +64,7 @@ const PromotionInfoModal: React.FC<PromotionInfoModalProps> = ({
               modalStyles.container,
               {backgroundColor: theme.basicColor.newBgInTwo},
             ]}>
-            <Text style={modalStyles.message}>
-              Daily Sign-in Bonus
-            </Text>
+            <Text style={modalStyles.message}>Daily Sign-in Bonus</Text>
             <Text style={modalStyles.message}>Monday → ₹1 Bonus</Text>
             <Text style={modalStyles.message}>TuesDay → ₹2 Bonus</Text>
             <Text style={modalStyles.message}>Wednesday → ₹3 Bonus</Text>
@@ -78,10 +73,14 @@ const PromotionInfoModal: React.FC<PromotionInfoModalProps> = ({
             <Text style={modalStyles.message}>Saturday → ₹6 Bonus</Text>
             <Text style={modalStyles.message}>Sunday → ₹10 Bonus</Text>
             <Text style={modalStyles.message}>
-              You can check in and claim the remaining free rewards by recharging once a week.
+              You can check in and claim the remaining free rewards by
+              recharging once a week.
             </Text>
             <Text style={modalStyles.message}>
-              You can only claim your reward once a day, and you must claim it before 00:00. Rewards expire after that time (all free rewards reset every Sunday at 12:00 AM! If you want to claim all rewards, you must recharge on Monday).
+              You can only claim your reward once a day, and you must claim it
+              before 00:00. Rewards expire after that time (all free rewards
+              reset every Sunday at 12:00 AM! If you want to claim all rewards,
+              you must recharge on Monday).
             </Text>
             <View style={modalStyles.buttonRow}>
               <TouchableOpacity style={modalStyles.button} onPress={onClose}>

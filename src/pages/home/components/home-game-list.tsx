@@ -57,37 +57,38 @@ const HomeGameList: React.FC<{
     },
   ];
   // 获取游戏排序
-  const getGameOrder = async () => {
-    try {
-      const response = await getHomeTabCheck();
-      if (response === 1) {
-        // 返回1，保持原始顺序
-        setGameData([...data]);
-      } else if (response === 2) {
-        // 返回2，将id为2的项放在第一位
-        const id2Item = data.find(item => item.id === 2);
-        const otherItems = data.filter(item => item.id !== 2);
-
-        if (id2Item) {
-          setGameData([id2Item, ...otherItems]);
-        } else {
-          setGameData([...data]);
-        }
-        setSelectedBox(id2Item?.id || 1);
-        setSelectedGame(id2Item?.id || 1);
-      } else {
-        // 其他情况保持原始顺序
-        setGameData([...data]);
-      }
-    } catch (error) {
-      console.error('Failed to fetch game order:', error);
-      // 出错时使用原始数据
-      setGameData([...data]);
-    }
-  };
+  // const getGameOrder = async () => {
+  //   try {
+  //     const response = await getHomeTabCheck();
+  //     if (response === 1) {
+  //       // 返回1，保持原始顺序
+  //       setGameData([...data]);
+  //     } else if (response === 2) {
+  //       // 返回2，将id为2的项放在第一位
+  //       const id2Item = data.find(item => item.id === 2);
+  //       const otherItems = data.filter(item => item.id !== 2);
+  //
+  //       if (id2Item) {
+  //         setGameData([id2Item, ...otherItems]);
+  //       } else {
+  //         setGameData([...data]);
+  //       }
+  //       setSelectedBox(id2Item?.id || 1);
+  //       setSelectedGame(id2Item?.id || 1);
+  //     } else {
+  //       // 其他情况保持原始顺序
+  //       setGameData([...data]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to fetch game order:', error);
+  //     // 出错时使用原始数据
+  //     setGameData([...data]);
+  //   }
+  // };
 
   useEffect(() => {
-    getGameOrder();
+    // getGameOrder();
+    setGameData([...data]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {

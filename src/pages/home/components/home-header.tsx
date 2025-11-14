@@ -37,12 +37,27 @@ const HomeHeader = () => {
   const [remind, setRemind] = React.useState('');
   React.useEffect(() => {
     // 在组件加载时调用接口并更新状态
-    const fetchRemind = async () => {
-      const response = await getAllRemind(); // 调用接口
-      setRemind(String(response)); // 将返回的数据存储到状态中
-    };
+    // const fetchRemind = async () => {
+    //   const response = await getAllRemind(); // 调用接口
+    //   setRemind(String(response)); // 将返回的数据存储到状态中
+    // };
+    // 订阅全局的tokenSubject, 在登录时更新remind状态
+    const subFetchRemind = globalStore.tokenSubject.subscribe(token => {
+      const isLogin = !!token;
+      if (isLogin) {
+        getAllRemind().then(response => {
+          setRemind(String(response)); // 将返回的数据存储到状态中
+        });
+      } else {
+        setRemind('');
+      }
+    });
 
-    fetchRemind(); // 调用函数
+    // fetchRemind(); // 调用函数
+
+    return () => {
+      subFetchRemind.unsubscribe();
+    };
   }, []); // 依赖空数组，确保只在组件加载时调用一次
 
   // 获取余额

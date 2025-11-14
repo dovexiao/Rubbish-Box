@@ -72,7 +72,7 @@ const Me = () => {
       }
     };
     if (globalStore.token) {
-      fetchPayEventNotice();
+      // fetchPayEventNotice();
     }
   }, []);
 

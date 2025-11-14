@@ -42,11 +42,11 @@ const AddBank = () => {
         return;
       }
       const params = {
-        cardName,
-        cardNumber: cardNumber,
-        ifsCode,
-        email,
-        upiId,
+        cardName: cardName.trim(),
+        cardNumber: cardNumber.trim(),
+        ifsCode: ifsCode.trim(),
+        email: email.trim(),
+        upiId: upiId.trim(),
       } as BankInfo;
       if (cardInfo) {
         params.id = cardInfo.id;
@@ -75,19 +75,19 @@ const AddBank = () => {
     const resObj = {} as BasicObject;
 
     if (cardName) {
-      const res = testName(cardName);
+      const res = testName(cardName.trim());
       if (!res) {
         resObj.accountName = 'error';
       }
     }
     if (ifsCode) {
-      const res = testIfsc(ifsCode);
+      const res = testIfsc(ifsCode.trim());
       if (!res) {
         resObj.code = 'error';
       }
     }
     if (cardNumber) {
-      const res = testCardNumber(cardNumber);
+      const res = testCardNumber(cardNumber.trim());
       if (!res) {
         resObj.cardNumber = 'error';
       }

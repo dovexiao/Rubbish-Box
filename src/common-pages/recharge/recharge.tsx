@@ -37,6 +37,7 @@ import RechargeButton from '@/common-pages/recharge/RechargeButton';
 import RechargeType, {RechargeTypeProps} from './recharge-type';
 import RechargeModal from './recharge-modal';
 import {useSkipTodayModal} from './recharge.hooks';
+import RechargeDepositEvent from './recharge-deposit-event';
 
 function findMatchingData(balance: number, data: PayMethod[]) {
   if (data.length > 0) {
@@ -70,6 +71,8 @@ const Recharge = () => {
   const {checkShouldShow} = useSkipTodayModal('recharge');
 
   const selectedCoupon = useCouponStore(state => state.selectedCoupon);
+
+  const [isAgreedNotice, setIsAgreedNotice] = useState(true);
 
   const [amount, setAmount] = useState<number>(0);
   useEffect(() => {
@@ -319,6 +322,7 @@ const Recharge = () => {
         payTypeId: payMethodId + '',
         rechargeBalance: balanceId ? 0 : balance,
         couponRecordId: selectedCoupon?.id || 0,
+        waterCrossingSign: isAgreedNotice ? '1' : '0',
       });
 
       if (typeof res === 'string') {
@@ -477,6 +481,7 @@ const Recharge = () => {
                 balance={balance}
                 balanceList={balanceList}
                 onChangeBalance={setBalance}
+                isAgreedNotice={isAgreedNotice}
               />
               <RechargeType
                 typeList={rechargetTypeList}
@@ -489,10 +494,10 @@ const Recharge = () => {
                 payMethodId={payMethodId}
                 balance={balance}
               />
-              {/* <RechargeDepositEvent
+              <RechargeDepositEvent
                 checked={isAgreedNotice}
                 onToggle={setIsAgreedNotice}
-              /> */}
+              />
 
               <RechargeRule />
             </View>
@@ -502,7 +507,7 @@ const Recharge = () => {
           disabled={balance === '' || +balance <= 0}
           onRecharge={handleRecharge}
           text={
-            exResult > 0
+            exResult > 0 && isAgreedNotice
               ? i18n.t('recharge-page.extra') +
                 ` +₹ ${toPriceStr(exResult, {
                   fixed: 0,
