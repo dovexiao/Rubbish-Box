@@ -80,6 +80,9 @@ const Recharge = () => {
       setAmount(res.current);
       setLoading(false);
     });
+
+    // NOTE: 玩游戏后，点击物理键返回，充值页面的金额没有更新，手动调用接口，确保金额更新
+    globalStore.updateAmount.next();
     return () => {
       sub.unsubscribe();
     };
