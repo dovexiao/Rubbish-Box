@@ -208,7 +208,10 @@ function App(): JSX.Element {
         globalStore.lang = res;
         i18n.changeLanguage(res);
       } else {
-        languageShow();
+        // NOTE: 由于web端首次直接访问/app-store-details会出现显示多语言选择弹窗，所以 web 端不处理
+        if (Platform.OS !== 'web') {
+          languageShow();
+        }
       }
     });
   };
