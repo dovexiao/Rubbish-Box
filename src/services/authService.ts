@@ -8,6 +8,8 @@ export interface LoginResponse {
     phone: string
     username?: string
     avatar?: string
+    password_exists?: boolean
+    username_exists?: boolean
   }
 }
 
@@ -40,26 +42,25 @@ export class AuthService {
    */
   static async loginWithSMS(phone: string, code: string): Promise<LoginResponse> {
     try {
-      const response = await post("/AppStart/SignInPhoneid/", {
+      const response = await post("/AppStart/SignUp/login/", {
         phoneid: phone,
         code: code,
         device_code: "mobile",
       })
       console.log("response_sms_login:", response)
-      // 先保存 token 到 userStore
-      const { useUserStore } = await import("../stores/userStore")
-      const userStore = useUserStore.getState()
-      userStore.setToken(response.access_token)
       
-      // 登录成功后，获取用户信息（现在有 token 了）
-      const userInfoResponse = await post("/AppStart/UserInformation/user_information/", {
-        device_code: "mobile",
-      })
-      console.log("userInfoResponse:", userInfoResponse)
+      // 直接使用登录接口返回的数据，包含 username_exists 和 password_exists
       return {
         access_token: response.access_token,
         refresh_token: response.refresh_token,
-        user_info: userInfoResponse, // 直接使用用户信息接口返回的数据
+        user_info: {
+          id: response.user_id || "",
+          phone: phone,
+          username: response.username,
+          avatar: response.avatar,
+          password_exists: response.password_exists,
+          username_exists: response.username_exists,
+        }
       }
     } catch (error) {
       console.error("短信登录失败:", error)
@@ -72,26 +73,25 @@ export class AuthService {
    */
   static async loginWithPassword(phone: string, password: string): Promise<LoginResponse> {
     try {
-      const response = await post("/AppStart/SignInPassword/", {
+      const response = await post("/AppStart/SignUp/login/", {
         phoneid: phone,
         password: password,
         device_code: "mobile",
       })
+      console.log("response_password_login:", response)
       
-      // 先保存 token 到 userStore
-      const { useUserStore } = await import("../stores/userStore")
-      const userStore = useUserStore.getState()
-      userStore.setToken(response.access_token)
-      
-      // 登录成功后，获取用户信息（现在有 token 了）
-      const userInfoResponse = await post("/AppStart/UserInformation/user_information/", {
-        device_code: "mobile",
-      })
-      
+      // 直接使用登录接口返回的数据，包含 username_exists 和 password_exists
       return {
         access_token: response.access_token,
         refresh_token: response.refresh_token,
-        user_info: userInfoResponse, // 直接使用用户信息接口返回的数据
+        user_info: {
+          id: response.user_id || "",
+          phone: phone,
+          username: response.username,
+          avatar: response.avatar,
+          password_exists: response.password_exists,
+          username_exists: response.username_exists,
+        }
       }
     } catch (error) {
       console.error("密码登录失败:", error)
@@ -100,14 +100,30 @@ export class AuthService {
   }
 
   /**
-   * 重置密码
+   * 设置密码（首次设置）
    */
-  static async resetPassword(phone: string, code: string, newPassword: string): Promise<void> {
+  static async setPassword(firstPassword: string, secondPassword: string): Promise<void> {
     try {
-      await post("/AppStart/ResetPassword/", {
+      await post("/AppStart/SetPassword/set_password/", {
+        the_first_time_password: firstPassword,
+        the_second_time_password: secondPassword,
+      })
+    } catch (error) {
+      console.error("设置密码失败:", error)
+      throw error
+    }
+  }
+
+  /**
+   * 重置密码（忘记密码）
+   */
+  static async resetPassword(phone: string, code: string, newPassword: string, confirmPassword: string): Promise<void> {
+    try {
+      await post("/AppStart/SignUp/forgot-password/", {
         phoneid: phone,
         code: code,
-        password: newPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
       })
     } catch (error) {
       console.error("重置密码失败:", error)

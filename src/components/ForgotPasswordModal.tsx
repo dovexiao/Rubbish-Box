@@ -35,7 +35,9 @@ export const ForgotPasswordModal = React.memo(function ForgotPasswordModal({
   const [phone, setPhone] = useState("")
   const [smsCode, setSmsCode] = useState("")
   const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [countdown, setCountdown] = useState(0)
   const [loading, setLoading] = useState(false)
 
@@ -76,7 +78,7 @@ export const ForgotPasswordModal = React.memo(function ForgotPasswordModal({
 
   // 重置密码
   const handleResetPassword = async () => {
-    if (!phone || !smsCode || !newPassword) {
+    if (!phone || !smsCode || !newPassword || !confirmPassword) {
       showWarning("请填写完整信息")
       return
     }
@@ -86,9 +88,22 @@ export const ForgotPasswordModal = React.memo(function ForgotPasswordModal({
       return
     }
 
+    const hasLetter = /[a-zA-Z]/.test(newPassword)
+    const hasNumber = /[0-9]/.test(newPassword)
+    
+    if (!hasLetter || !hasNumber) {
+      showWarning("密码不能全是字母或数字")
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      showWarning("两次输入的密码不一致")
+      return
+    }
+
     try {
       setLoading(true)
-      await AuthService.resetPassword(phone, smsCode, newPassword)
+      await AuthService.resetPassword(phone, smsCode, newPassword, confirmPassword)
       showSuccess("密码重置成功")
       setTimeout(() => {
         onSuccess?.()
@@ -191,12 +206,32 @@ export const ForgotPasswordModal = React.memo(function ForgotPasswordModal({
                       value={newPassword}
                       onChangeText={setNewPassword}
                       secureTextEntry={!showPassword}
+                      maxLength={20}
                     />
                     <TouchableOpacity
                       style={styles.eyeButton}
                       onPress={() => setShowPassword(!showPassword)}
                     >
                       <Ionicons name={showPassword ? "eye" : "eye-off"} size={20} color="#999" />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* 确认密码输入 */}
+                  <View style={styles.inputWrapper}>
+                    <TextInput
+                      style={styles.passwordInput}
+                      placeholder="确认新密码"
+                      placeholderTextColor="#999"
+                      value={confirmPassword}
+                      onChangeText={setConfirmPassword}
+                      secureTextEntry={!showConfirmPassword}
+                      maxLength={20}
+                    />
+                    <TouchableOpacity
+                      style={styles.eyeButton}
+                      onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      <Ionicons name={showConfirmPassword ? "eye" : "eye-off"} size={20} color="#999" />
                     </TouchableOpacity>
                   </View>
 
@@ -251,7 +286,7 @@ const styles = createStyles({
     borderRadius: 11.71857,
     marginHorizontal: 15.625,
     width: 320.3125,
-    height: 320,
+    height: 360,
     alignSelf: "center" as const,
     shadowColor: "#000",
     overflow: "hidden" as const,

@@ -165,9 +165,11 @@ export class UpdateManager {
 
       try {
         const updateResponse = await this.requestUpdateCheck(appInfo)
+        console.log("整包更新检测API响应:", JSON.stringify(updateResponse, null, 2))
         
-        if (updateResponse.code === 200 && updateResponse.data.设备上needUpdate) {
-          console.log("发现整包更新，优先处理整包更新")
+        if (updateResponse.code === 200 && updateResponse.data.needUpdate) {
+          console.log("✅ 发现整包更新，优先处理整包更新")
+          console.log("更新数据:", updateResponse.data)
           const updateData = this.convertApiResponseToUpdateData(updateResponse.data)
           
           // 如果是整包更新，直接处理，不再检测 OTA

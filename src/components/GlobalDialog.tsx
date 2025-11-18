@@ -10,7 +10,12 @@ const SCREEN_WIDTH = Dimensions.get("window").width
  * 集成到应用的根布局中，全局显示对话框
  */
 export function GlobalDialog() {
-  const { visible, title, message, buttons, hideDialog } = useDialogStore()
+  // 按照 Zustand 官方文档，每个状态使用单独的 selector
+  const visible = useDialogStore((state) => state.visible)
+  const title = useDialogStore((state) => state.title)
+  const message = useDialogStore((state) => state.message)
+  const buttons = useDialogStore((state) => state.buttons)
+  const hideDialog = useDialogStore((state) => state.hideDialog)
 
   const handleButtonPress = (buttonIndex: number) => {
     const button = buttons[buttonIndex]

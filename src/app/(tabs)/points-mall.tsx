@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react"
+import { useState, useCallback, useEffect, useMemo, useRef } from "react"
 import { View, Text, Image, ScrollView, FlatList, TouchableOpacity, ActivityIndicator } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useFocusEffect, useRouter } from "expo-router"
@@ -33,6 +33,11 @@ export default function PointsMallScreen() {
   const [isInitialized, setIsInitialized] = useState(false)
   const [showCurrencyGuide, setShowCurrencyGuide] = useState(false)
   const pageSize = 18
+  
+  // 使用 ref 防止重复请求
+  const isLoadingRef = useRef(false)
+  const hasMoreRef = useRef(true)
+  const currentPageRef = useRef(1)
 
   const categories = ["热点推荐", "积分可兑", "学习文具", "亲子娱乐"]
 
@@ -63,7 +68,14 @@ export default function PointsMallScreen() {
 
   // 获取商品列表
   const getProducts = useCallback(async () => {
-    if (loadingMore || !hasMore) return
+    // 使用 ref 进行严格的防重复检查
+    if (isLoadingRef.current || !hasMoreRef.current) {
+      console.log("🚫 阻止重复请求:", { 
+        isLoading: isLoadingRef.current, 
+        hasMore: hasMoreRef.current 
+      })
+      return
+    }
 
     // 检查是否有token，没有则直接返回
     const token = useUserStore.getState().token
@@ -72,45 +84,78 @@ export default function PointsMallScreen() {
       return
     }
 
+    // 立即标记为正在加载
+    isLoadingRef.current = true
     setLoadingMore(true)
+    
+    const currentPage = currentPageRef.current
+    console.log("📄 开始加载第", currentPage, "页")
+
     try {
       const res = await getMallList({
-        page: pageNum.toString(),
+        page: currentPage.toString(),
         per_page: pageSize.toString(),
       })
 
+      console.log("✅ 第", currentPage, "页数据返回:", {
+        itemsCount: res.items?.length || 0,
+        hasNext: res.pagination.has_next,
+        currentPage: res.pagination.current_page,
+        totalPages: res.pagination.total_pages
+      })
+
       if (res.items && res.items.length > 0) {
-        if (pageNum === 1) {
+        if (currentPage === 1) {
           setProducts(res.items)
         } else {
           setProducts((prev) => [...prev, ...res.items])
         }
 
-        setPageNum((prev) => prev + 1)
-        setHasMore(res.pagination.has_next)
+        // 更新 hasMore 状态
+        const hasNext = res.pagination.has_next
+        hasMoreRef.current = hasNext
+        setHasMore(hasNext)
+        
+        // 只有当有下一页时才增加页码
+        if (hasNext) {
+          currentPageRef.current = currentPage + 1
+          setPageNum(currentPage + 1)
+          console.log("➡️ 页码更新为:", currentPage + 1)
+        } else {
+          console.log("🏁 已到达最后一页")
+        }
       } else {
+        hasMoreRef.current = false
         setHasMore(false)
+        console.log("🏁 没有更多数据")
       }
     } catch (error) {
-      console.error("获取商品列表失败:", error)
+      console.error("❌ 获取商品列表失败:", error)
       showError("获取商品列表失败，请重试")
     } finally {
+      isLoadingRef.current = false
       setLoadingMore(false)
     }
-  }, [pageNum, loadingMore, hasMore, pageSize])
+  }, [pageSize])
 
   // 切换分类
   const switchCategory = useCallback(
     (index: number) => {
-      console.log("切换分类:", index, categories[index])
+      console.log("🔄 切换分类:", index, categories[index])
       setActiveCategory(index)
       setProducts([])
+      
+      // 重置所有分页相关状态和 ref
       setPageNum(1)
       setHasMore(true)
+      currentPageRef.current = 1
+      hasMoreRef.current = true
+      isLoadingRef.current = false
+      
       // 由于重置了pageNum，需要在下一次渲染时调用getProducts
       setTimeout(() => getProducts(), 0)
     },
-    [categories],
+    [categories, getProducts],
   )
 
   // 跳转到积分明细
@@ -164,17 +209,30 @@ export default function PointsMallScreen() {
     // 刷新积分余额和商品列表
     fetchPointsBalance()
     setProducts([])
+    
+    // 重置所有分页相关状态和 ref
     setPageNum(1)
     setHasMore(true)
+    currentPageRef.current = 1
+    hasMoreRef.current = true
+    isLoadingRef.current = false
+    
     setTimeout(() => getProducts(), 0)
-  }, [fetchPointsBalance])
+  }, [fetchPointsBalance, getProducts])
 
   // 加载更多商品
   const loadMoreProducts = useCallback(() => {
-    if (hasMore && !loadingMore) {
+    // 使用 ref 进行检查，避免状态更新延迟导致的重复请求
+    if (hasMoreRef.current && !isLoadingRef.current) {
+      console.log("📜 触发加载更多")
       getProducts()
+    } else {
+      console.log("🚫 loadMoreProducts 阻止请求:", {
+        hasMore: hasMoreRef.current,
+        isLoading: isLoadingRef.current
+      })
     }
-  }, [hasMore, loadingMore, getProducts])
+  }, [getProducts])
 
   // 初始化数据 - 使用InteractionManager优化
   useEffect(() => {

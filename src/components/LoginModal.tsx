@@ -19,6 +19,7 @@ import { AuthService } from "../services/authService"
 import { useUserStore } from "../stores/userStore"
 import { UserAgreementModal } from "./UserAgreementModal"
 import { PrivacyPolicyModal } from "./PrivacyPolicyModal"
+import { SetPasswordModal } from "./SetPasswordModal"
 import { showSuccess, showError, showWarning } from "../utils/toast"
 import { showConfirm } from "../utils/dialog"
 
@@ -53,6 +54,7 @@ export const LoginModal = React.memo(function LoginModal({
   const [showPrivacyModal, setShowPrivacyModal] = useState(false)
   const [showUserAgreementModal, setShowUserAgreementModal] = useState(false)
   const [showPrivacyPolicyModal, setShowPrivacyPolicyModal] = useState(false)
+  const [showSetPasswordModal, setShowSetPasswordModal] = useState(false)
   const [loading, setLoading] = useState(false)
 
   // 发送验证码
@@ -140,18 +142,33 @@ export const LoginModal = React.memo(function LoginModal({
 
       showSuccess("登录成功")
       
-      // 如果用户名为空，引导用户完善信息
+      // 检查登录后的状态
       console.log("🔍 LoginModal - 登录成功后的用户信息:", result.user_info)
-      console.log("🔍 LoginModal - username值:", result.user_info?.username)
-      console.log("🔍 LoginModal - username是否为空:", !result.user_info?.username)
+      console.log("🔍 LoginModal - password_exists 值:", result.user_info?.password_exists)
+      console.log("🔍 LoginModal - password_exists 类型:", typeof result.user_info?.password_exists)
+      console.log("🔍 LoginModal - password_exists === false:", result.user_info?.password_exists === false)
+      console.log("🔍 LoginModal - username_exists 值:", result.user_info?.username_exists)
+      console.log("🔍 LoginModal - username_exists 类型:", typeof result.user_info?.username_exists)
+      console.log("🔍 LoginModal - username_exists === false:", result.user_info?.username_exists === false)
       
       setTimeout(() => {
-        if (!result.user_info?.username) {
-          console.log("📝 LoginModal - 跳转到完善信息页面")
+        // 优先判断是否设置密码
+        console.log("⚡ 开始判断逻辑...")
+        if (result.user_info?.password_exists === false) {
+          console.log("🔐 LoginModal - password_exists === false，需要设置密码")
+          // 不要关闭登录弹窗，直接显示设置密码弹窗
+          setShowSetPasswordModal(true)
+          return
+        }
+        console.log("✓ password_exists 检查通过，继续判断 username_exists")
+        
+        // 然后判断是否完善信息
+        if (result.user_info?.username_exists === false) {
+          console.log("📝 LoginModal - username_exists === false，跳转到完善信息页面")
           onSuccess?.() // 先关闭弹窗
           router.replace("/complete-info")
         } else {
-          console.log("🏠 LoginModal - 跳转到主页")
+          console.log("🏠 LoginModal - 所有检查通过，跳转到主页")
           onSuccess?.()
         }
       }, 500)
@@ -190,18 +207,31 @@ export const LoginModal = React.memo(function LoginModal({
 
       showSuccess("登录成功")
       
-      // 如果用户名为空，引导用户完善信息
-      console.log("🔍 LoginModal - 登录成功后的用户信息:", result.user_info)
-      console.log("🔍 LoginModal - username值:", result.user_info?.username)
-      console.log("🔍 LoginModal - username是否为空:", !result.user_info?.username)
+      // 检查登录后的状态
+      console.log("🔍 LoginModal - 密码登录成功后的用户信息:", result.user_info)
+      console.log("🔍 LoginModal - password_exists 值:", result.user_info?.password_exists)
+      console.log("🔍 LoginModal - password_exists === false:", result.user_info?.password_exists === false)
+      console.log("🔍 LoginModal - username_exists 值:", result.user_info?.username_exists)
+      console.log("🔍 LoginModal - username_exists === false:", result.user_info?.username_exists === false)
       
       setTimeout(() => {
-        if (!result.user_info?.username) {
-          console.log("📝 LoginModal - 跳转到完善信息页面")
+        // 优先判断是否设置密码（密码登录一般不会出现这种情况，但保持一致）
+        console.log("⚡ 开始判断逻辑（密码登录）...")
+        if (result.user_info?.password_exists === false) {
+          console.log("🔐 LoginModal - password_exists === false，需要设置密码")
+          // 不要关闭登录弹窗，直接显示设置密码弹窗
+          setShowSetPasswordModal(true)
+          return
+        }
+        console.log("✓ password_exists 检查通过，继续判断 username_exists")
+        
+        // 然后判断是否完善信息
+        if (result.user_info?.username_exists === false) {
+          console.log("📝 LoginModal - username_exists === false，跳转到完善信息页面")
           onSuccess?.() // 先关闭弹窗
           router.replace("/complete-info")
         } else {
-          console.log("🏠 LoginModal - 跳转到主页")
+          console.log("🏠 LoginModal - 所有检查通过，跳转到主页")
           onSuccess?.()
         }
       }, 500)
@@ -278,13 +308,13 @@ export const LoginModal = React.memo(function LoginModal({
       </TouchableOpacity>
 
       {/* 底部链接 */}
-      <View style={styles.bottomLinks}>
+      <View style={styles.bottomLinksCode}>
         <TouchableOpacity onPress={() => setLoginMode("password")}>
           <Text style={styles.linkText}>账号密码登录</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleForgotPassword}>
+        {/* <TouchableOpacity onPress={handleForgotPassword}>
           <Text style={styles.linkText}>忘记密码?</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   )
@@ -293,6 +323,7 @@ export const LoginModal = React.memo(function LoginModal({
     <View style={styles.formContainer}>
       {/* 手机号输入 */}
       <View style={styles.inputWrapper}>
+         <Text style={styles.countryCode}>+86</Text>
         <TextInput
           style={styles.fullInput}
           placeholder="请输入手机号"
@@ -336,6 +367,7 @@ export const LoginModal = React.memo(function LoginModal({
     </View>
   )
   return (
+    <>
     <Modal
       visible={visible}
       animationType="fade"
@@ -450,6 +482,34 @@ export const LoginModal = React.memo(function LoginModal({
       />
 
     </Modal>
+
+    {/* 设置密码弹窗 - 独立的 Modal，不嵌套在 LoginModal 内 */}
+    <SetPasswordModal
+      visible={showSetPasswordModal}
+      onSuccess={() => {
+        console.log("🔐 设置密码成功")
+        setShowSetPasswordModal(false)
+        
+        // 设置密码成功后，检查是否需要完善信息
+        const user = userStore.user
+        console.log("🔍 设置密码成功后的用户信息:", user)
+        console.log("🔍 username_exists:", (user as any)?.username_exists)
+        
+        if ((user as any)?.username_exists === false) {
+          console.log("📝 设置密码成功 - 需要完善信息，跳转到完善信息页面")
+          onSuccess?.() // 关闭登录弹窗
+          router.replace("/complete-info")
+        } else {
+          console.log("🏠 设置密码成功 - 已完成所有流程，关闭弹窗")
+          onSuccess?.() // 关闭登录弹窗
+        }
+      }}
+      onCancel={() => {
+        console.log("❌ 取消设置密码")
+        setShowSetPasswordModal(false)
+      }}
+    />
+  </>
   )
 })
 
@@ -591,6 +651,14 @@ const styles = createStyles({
     fontSize: 10.9375,
     fontWeight: "600" as const,
     color: "#fff",
+  },
+  bottomLinksCode: {
+      flexDirection: "row" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    marginTop: 6.25,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   bottomLinks: {
     flexDirection: "row" as const,

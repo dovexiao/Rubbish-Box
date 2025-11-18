@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Image, TouchableOpacity, ImageBackground, Platform } from "react-native"
+import { View, Image, TouchableOpacity, ImageBackground, Platform, Linking } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import Slider from "@react-native-community/slider"
 import { useFocusEffect, useRouter } from "expo-router"
@@ -11,6 +11,7 @@ import { StatusBar } from "../../components/StatusBar"
 import { NoticeBar } from "../../components/NoticeBar"
 import { usePostureStore } from "../../stores/postureStore"
 import { useUserStore } from "../../stores/userStore"
+import { useDialogStore } from "../../stores/dialogStore"
 import { getLatestVideo, getNotifications, getHomeRanks } from "../../services/app"
 import { Images } from "../../constants/Assets"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
@@ -34,6 +35,7 @@ const Text = ({ children, style, ...props }: any) => {
 export default function HomeScreen() {
   // 只订阅需要的状态，避免不必要的重渲染
   const postureStatus = usePostureStore((state) => state.nowStatus)
+  const showDialog = useDialogStore((state) => state.showDialog)
   const [showSettingsPanel, setShowSettingsPanel] = useState(false)
   const [brightness, setBrightness] = useState(50)
   const [volume, setVolume] = useState(50)
@@ -309,12 +311,43 @@ const openVolumeSettings = async () => {
     })
   }
 
+  // 跳转到AI练口语页面
+  // const goToAiSpeaking = () => {
+  //   router.push("/ai/speaking")
+  // }
+
 
   // 跳转到排行榜页面
   // 注释掉未使用的函数，保留功能以备将来实现
   // const goToRanking = () => {
   //   router.push("/ranking")
   // }
+
+  // 重新启动应用
+  const handleRestartApp = () => {
+    showDialog(
+      "重新启动应用",
+      "确定要重新启动应用吗？",
+      [
+        {
+          text: "取消",
+          style: "cancel"
+        },
+        {
+          text: "确定",
+          onPress: async () => {
+            try {
+              const Updates = await import("expo-updates")
+              await Updates.reloadAsync()
+            } catch (error) {
+              console.error("重启应用失败:", error)
+              showError("重启应用失败")
+            }
+          },
+        },
+      ]
+    )
+  }
 
   // 打开系统设置（总设置页面）
   const openSystemSettings = async () => {
@@ -459,8 +492,28 @@ const openVolumeSettings = async () => {
 
         {/* 系统设置面板 */}
         {showSettingsPanel && (
-          <View style={styles.settingsPanel}>
+          <>
+            {/* 蒙版层 - 点击关闭 */}
+            <TouchableOpacity 
+              style={styles.settingsMask} 
+              activeOpacity={1}
+              onPress={() => setShowSettingsPanel(false)}
+            />
+            <View style={styles.settingsPanel}>
             <View style={styles.settingsPanelTop}>
+              {/* 重启应用 */}
+              {/* <TouchableOpacity style={styles.settingItem} onPress={handleRestartApp}>
+                <View style={styles.settingItemLeft}>
+                  <View style={styles.settingIconContainer}>
+                    <Ionicons name="refresh" size={rpx(10.9)} color="#fff" />
+                  </View>
+                  <Text style={styles.settingText}>重启应用</Text>
+                </View>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
+              </TouchableOpacity> */}
+
               {/* 系统设置 - 紧急逃生入口 */}
               <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
                 <View style={styles.settingItemLeft}>
@@ -543,6 +596,7 @@ const openVolumeSettings = async () => {
               )}
             </View>
           </View>
+          </>
         )}
 
         {/* 主内容区 */}
@@ -721,9 +775,16 @@ const openVolumeSettings = async () => {
         </View>
 
         {/* AI按钮 */}
-        <TouchableOpacity style={styles.aiButton} onPress={goToAI}>
+        {/* <TouchableOpacity style={styles.aiButton} onPress={goToAI}>
           <Image source={Images.indexAiBtn} style={styles.aiButtonImage} resizeMode="contain" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+
+        {/* AI练口语按钮 */}
+        {/* <TouchableOpacity style={styles.aiSpeakingButton} onPress={goToAiSpeaking}>
+          <View style={styles.aiSpeakingButtonContent}>
+            <Text style={styles.aiSpeakingButtonText}>AI练口语</Text>
+          </View>
+        </TouchableOpacity> */}
 
       </ImageBackground>
     </LinearGradient>
@@ -790,6 +851,14 @@ const styles = createStyles({
     width: "100%",
     height: "100%",
   },
+  settingsMask: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 99,
+  },
   settingsPanel: {
     position: "absolute" as const,
     top: 70,
@@ -806,7 +875,7 @@ const styles = createStyles({
   },
   settingsPanelTop: {
     width: 152.34735,
-    height: 128.216,
+    height: 126.216, // 增加高度以容纳新的"重启应用"选项
     borderRadius: 8.6,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     padding: 6.25,
@@ -1216,6 +1285,32 @@ const styles = createStyles({
   aiButtonImage: {
     width: "100%",
     height: "100%",
+  },
+  aiSpeakingButton: {
+    position: "absolute",
+    right: 26.5625,
+    top: 160,
+    width: 80,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(108, 99, 255, 0.9)",
+    shadowColor: "#6C63FF",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+  },
+  aiSpeakingButtonContent: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  aiSpeakingButtonText: {
+    fontSize: 12,
+    color: "#FFFFFF",
+    fontWeight: "600" as const,
   },
   readerButton: {
     position: "absolute",

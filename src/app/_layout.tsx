@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo, useCallback } from "react"
 import { Slot, useSegments } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import * as ScreenOrientation from "expo-screen-orientation"
@@ -12,11 +12,13 @@ import GlobalLoginManager from "../components/GlobalLoginManager"
 import GlobalUpdateDialog from "../components/GlobalUpdateDialog"
 import { GlobalToast } from "../components/GlobalToast"
 import { GlobalDialog } from "../components/GlobalDialog"
+// import { DeviceAuthBlocker } from "../components/DeviceAuthBlocker"
 // 导入P0核心功能Hooks
 import { useAppLifecycle } from "../hooks/useAppLifecycle"
 import { useDataSync } from "../hooks/useDataSync"
 import { useDeviceAuth } from "../hooks/useDeviceAuth"
-import { useNetworkStatus } from "../hooks/useNetworkStatus"
+import { useNetworkMonitor, useNetwork } from "../stores/networkStore"
+import { useDeviceAuthStore } from "../stores/deviceAuthStore"
 
 // 导入P1重要功能Hooks
 import { useSystemKeyListener } from "../hooks/useSystemKeyListener"
@@ -36,7 +38,6 @@ SplashScreen.preventAutoHideAsync()
  * 包含全局沉浸式模式配置
  */
 export default function RootLayout() {
-  const initializeFromStorage = useUserStore((state) => state.initializeFromStorage)
   const segments = useSegments()
 
   // 路由守卫 - 使用ref跟踪组件是否已挂载
@@ -44,10 +45,13 @@ export default function RootLayout() {
 
   // 网络提示 Modal 状态
   const [showNetworkModal, setShowNetworkModal] = useState(false)
+  // 假连接提示 Modal 状态
+  const [showFakeConnectionModal, setShowFakeConnectionModal] = useState(false)
 
   // 打开系统网络设置
   const openNetworkSettings = async () => {
     setShowNetworkModal(false) // 先关闭弹窗
+    setShowFakeConnectionModal(false) // 先关闭假连接弹窗
     if (Platform.OS === "android") {
       try {
         // 使用 expo-intent-launcher 打开 Android 系统 WiFi 设置
@@ -110,6 +114,13 @@ export default function RootLayout() {
     })
   }, [segments])
 
+  // 🔴 P0最高优先级：网络监测 - 必须第一个初始化
+  // 初始化全局网络监听（单例模式）
+  useNetworkMonitor()
+  
+  // 获取网络状态
+  const { isConnected, isInternetReachable, networkType, isInitialized } = useNetwork()
+
   // P0核心功能Hooks
   const {
     getAndCacheDeviceUUID: _getAndCacheDeviceUUID,
@@ -153,9 +164,22 @@ export default function RootLayout() {
     onAppLaunch: async () => {
       console.log("App Launch - 应用启动")
 
+      // 🔴 P0最高优先级：输出网络状态（网络监测已在组件初始化时完成）
+      console.log("==================")
+      console.log("📡 网络状态检测完成")
+      console.log(`🌐 网络连接: ${isConnected ? "已连接" : "未连接"}`)
+      console.log(`🌍 互联网访问: ${isInternetReachable === null ? "检测中" : isInternetReachable ? "可访问" : "不可访问"}`)
+      console.log(`📶 网络类型: ${networkType}`)
+      console.log("==================")
+
       // 🔴 关键：必须先获取设备序列号，因为设备授权验证需要它
       const deviceCode = await _getAndCacheDeviceUUID()
       console.log("📱 设备序列号:", deviceCode || '(无)')
+      
+      // 将设备码保存到 store 中，供弹窗显示使用
+      if (deviceCode) {
+        useDeviceAuthStore.getState().setDeviceUUID(deviceCode)
+      }
 
       // 初始化坐姿监测（还原UniApp逻辑）
       postureStore.initPoseMonitor()
@@ -165,23 +189,42 @@ export default function RootLayout() {
       await startPostureMonitoring()
 
       // 🔴 每次进应用都调用设备授权验证接口（在所有请求之前）
-      if (deviceCode) {
-        try {
-          console.log("🔐 开始设备授权验证，设备码:", deviceCode)
-          
-          // 直接调用接口，使用 api.ts 的 post 方法（会自动添加设备信息）
-          const response = await post("/AppStart/verify-device-code/", {
-            device_code: 'dffklw11p',
-          })
-          
-          console.log("📡 设备授权接口响应:", response)
-          console.log("✅ 设备授权验证接口调用成功")
-        } catch (error) {
-          console.error("❌ 设备授权验证接口调用失败:", error)
-        }
-      } else {
-        console.warn("⚠️ 未获取到设备序列号，跳过设备授权验证")
-      }
+      // 注释：暂时禁用设备授权验证
+      // if (deviceCode) {
+      //   try {
+      //     console.log("🔐 开始设备授权验证，设备码:", deviceCode)
+      //     
+      //     // 直接调用接口，使用 api.ts 的 post 方法（会自动添加设备信息）
+      //     const response = await post("/AppStart/verify-device-code/", {
+      //       device_code: 'dffklw11p',
+      //     })
+      //     
+      //     console.log("📡 设备授权接口响应:", response)
+      //     
+      //     // 🔴 根据接口响应处理授权状态
+      //     // if (response && typeof response === 'object' && 'exists' in response) {
+      //     //   if (response.exists === false) {
+      //     //     console.log("❌ 设备未授权 (exists: false)，阻止用户操作")
+      //     //     // 直接调用 store 的 blockUserInteractions 方法
+      //     //     useDeviceAuthStore.getState().blockUserInteractions()
+      //     //   } else {
+      //     //     console.log("✅ 设备已授权 (exists: true)")
+      //     //     // 解除阻止（如果之前被阻止了）
+      //     //     useDeviceAuthStore.getState().setAuthorized(true)
+      //     //     useDeviceAuthStore.getState().unblockUserInteractions()
+      //     //   }
+      //     // }
+      //     
+      //     console.log("✅ 设备授权验证接口调用成功")
+      //   } catch (error) {
+      //     console.error("❌ 设备授权验证接口调用失败:", error)
+      //     // 接口调用失败也应该阻止用户操作
+      //     console.log("❌ 接口调用失败，阻止用户操作")
+      //     useDeviceAuthStore.getState().blockUserInteractions()
+      //   }
+      // } else {
+      //   console.warn("⚠️ 未获取到设备序列号，跳过设备授权验证")
+      // }
     },
 
     onAppShow: async () => {
@@ -220,12 +263,14 @@ export default function RootLayout() {
       console.log("🛑 停止坐姿监控服务")
       await stopPostureMonitoring()
     },
-  }), [_getAndCacheDeviceUUID, postureStore, startPostureMonitoring, stopPostureMonitoring, checkForUpdatesOnShow, systemKeyHandleAppShow])
+  }), [_getAndCacheDeviceUUID, postureStore, startPostureMonitoring, stopPostureMonitoring, checkForUpdatesOnShow, systemKeyHandleAppShow, isConnected, isInternetReachable, networkType])
 
   // 网络状态回调 - 100%还原UniApp逻辑
   const networkCallbacks = useMemo(() => ({
     onNetworkConnected: async () => {
       console.log("网络已连接")
+      // 关闭假连接弹窗（如果正在显示）
+      setShowFakeConnectionModal(false)
       // 使用InteractionManager优化网络恢复性能
       InteractionManager.runAfterInteractions(async () => {
         // 网络恢复后触发一次设备授权复验（缓存优先）
@@ -237,24 +282,74 @@ export default function RootLayout() {
       console.log("网络已断开")
       // 显示网络提示 Modal
       setShowNetworkModal(true)
+      // 关闭假连接弹窗（如果正在显示）
+      setShowFakeConnectionModal(false)
     },
 
     onNetworkChange: (isConnected: boolean, networkType: string) => {
       console.log("网络状态变化:", { isConnected, networkType })
+    },
+
+    onFakeConnection: () => {
+      console.log("⚠️ 检测到假连接：已连接网络但无法访问互联网")
+      // 显示假连接提示 Modal
+      setShowFakeConnectionModal(true)
+      // 关闭普通网络断开弹窗（如果正在显示）
+      setShowNetworkModal(false)
     },
   }), [reverifyDeviceAuthorization])
 
   // 使用应用生命周期Hook
   useAppLifecycle(appLifecycleCallbacks)
 
-  // 使用网络状态监控Hook
-  const { isConnected, networkType } = useNetworkStatus(networkCallbacks)
+  // 使用 ref 跟踪之前的网络状态，避免重复触发
+  const prevNetworkState = React.useRef({
+    isConnected,
+    isInternetReachable,
+    isInitialized: false,
+  })
+
+  // 监听网络状态变化并触发回调（只在真正变化时触发）
+  useEffect(() => {
+    // 跳过初始化时的触发
+    if (!isInitialized || !prevNetworkState.current.isInitialized) {
+      prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
+      return
+    }
+
+    const prev = prevNetworkState.current
+
+    // 检测网络断开
+    if (prev.isConnected && !isConnected) {
+      console.log("🔴 网络状态变化：断开 → 触发回调")
+      networkCallbacks.onNetworkDisconnected()
+    }
+
+    // 检测网络恢复
+    if (!prev.isConnected && isConnected) {
+      console.log("🟢 网络状态变化：恢复 → 触发回调")
+      networkCallbacks.onNetworkConnected()
+    }
+
+    // 检测假连接（从能访问变为不能访问）
+    if (
+      isConnected &&
+      prev.isInternetReachable !== false &&
+      isInternetReachable === false
+    ) {
+      console.log("🟠 网络状态变化：假连接 → 触发回调")
+      networkCallbacks.onFakeConnection?.()
+    }
+
+    // 更新 ref
+    prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
+  }, [isConnected, isInternetReachable, isInitialized, networkCallbacks])
 
   useEffect(() => {
     // 使用InteractionManager优化初始化性能
     InteractionManager.runAfterInteractions(async () => {
-      // 初始化用户存储数据
-      await initializeFromStorage()
+      // 初始化用户存储数据 - 直接调用 store 的方法
+      await useUserStore.getState().initializeFromStorage()
       // 加载完成后检查token状态
       const token = useUserStore.getState().token
       console.log("用户数据初始化完成，token状态:", token ? "已存在" : "不存在")
@@ -282,12 +377,11 @@ export default function RootLayout() {
     console.log(`缩放比例: ${screenInfo.scaleRatio}`)
     console.log(`转换基准: ${screenInfo.baseRpx}rpx`)
     console.log(`平台: ${screenInfo.platform}`)
-    console.log(`网络状态: ${isConnected ? "已连接" : "未连接"} (${networkType})`)
     console.log("==================")
 
     // 立即隐藏闪屏（无动画）
     SplashScreen.hideAsync()
-  }, [initializeFromStorage, isConnected, networkType])
+  }, [])
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -305,6 +399,8 @@ export default function RootLayout() {
           <GlobalToast />
           {/* 全局 Dialog 对话框 */}
           <GlobalDialog />
+          {/* 设备授权阻止弹窗 */}
+          {/* <DeviceAuthBlocker /> */}
         </SafeAreaProvider>
       </PaperProvider>
 
@@ -331,6 +427,39 @@ export default function RootLayout() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.networkModalButton, styles.networkModalConfirmButton]}
+                onPress={openNetworkSettings}
+              >
+                <Text style={styles.networkModalConfirmText}>去设置</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 假连接提示 Modal - 已连接但无法访问互联网 */}
+      <Modal
+        visible={showFakeConnectionModal}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => setShowFakeConnectionModal(false)}
+      >
+        <View style={styles.networkModalOverlay}>
+          <View style={[styles.networkModalContent, styles.fakeConnectionModalContent]}>
+            <Text style={styles.networkModalTitle}>⚠️ 网络异常</Text>
+            <Text style={styles.networkModalMessage}>
+              已连接到WiFi/移动网络，但无法访问互联网{"\n"}
+              请检查路由器或数据流量设置
+            </Text>
+            <View style={styles.networkModalButtons}>
+              <TouchableOpacity
+                style={[styles.networkModalButton, styles.networkModalCancelButton]}
+                onPress={() => setShowFakeConnectionModal(false)}
+              >
+                <Text style={styles.networkModalCancelText}>知道了</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.networkModalButton, styles.fakeConnectionConfirmButton]}
                 onPress={openNetworkSettings}
               >
                 <Text style={styles.networkModalConfirmText}>去设置</Text>
@@ -369,6 +498,10 @@ const styles = createStyles({
     shadowRadius: 8,
     elevation: 24,
   },
+  fakeConnectionModalContent: {
+    borderWidth: 2,
+    borderColor: "#FF9500",
+  },
   networkModalTitle: {
     fontSize: 18,
     fontWeight: "bold" as const,
@@ -401,6 +534,9 @@ const styles = createStyles({
   },
   networkModalConfirmButton: {
     backgroundColor: "#4891FF",
+  },
+  fakeConnectionConfirmButton: {
+    backgroundColor: "#FF9500",
   },
   networkModalCancelText: {
     fontSize: 14,

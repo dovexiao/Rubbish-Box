@@ -71,6 +71,10 @@ export const Images = {
   frame2090059194: require("../../assets/images/Frame-2090059194.png"),
   frame2090059962: require("../../assets/images/Frame-2090059962.png"),
   rectangle1312320903: require("../../assets/images/Rectangle 1312320903.png"),
+  aiSpeaking1: require("../../assets/images/speaking-1.png"),
+  aiSpeaking2: require("../../assets/images/speaking-2.png"),
+  aiSpeaking3: require("../../assets/images/speaking-3.png"),
+
 
   // 课堂相关
   classroomBcj: require("../../assets/images/classroom/bcj.png"),

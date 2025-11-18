@@ -37,7 +37,7 @@ module.exports = ({ config }) => {
       fallbackToCacheTimeout: 0,
     },
     // 运行时版本配置 - bare workflow需要手动设置版本号
-    runtimeVersion: "1.0.2",
+    runtimeVersion: "1.0.3",
     // EAS Build配置将在初始化后自动添加
     plugins: [
       ...existingPlugins, 

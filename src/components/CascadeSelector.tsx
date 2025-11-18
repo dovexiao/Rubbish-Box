@@ -105,7 +105,16 @@ const CascadeSelector: React.FC<CascadeSelectorProps> = ({
   }
 
   // 关闭选择器
-  const closeSelector = () => {
+  const closeSelector = (shouldSave = false) => {
+    // 如果需要保存，且有临时值，则保存
+    if (shouldSave) {
+      const finalValues = tempValues.filter(v => v !== "")
+      const finalLabels = tempLabels.filter(l => l !== "")
+      if (finalValues.length > 0) {
+        onSelect(finalValues, finalLabels)
+      }
+    }
+    
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -176,59 +185,11 @@ const CascadeSelector: React.FC<CascadeSelectorProps> = ({
     }
   }
 
-  // 确认选择 - 只有选择完最后一级才能确认
+  // 确认选择
   const confirmSelection = () => {
-    const finalValues = tempValues.filter(v => v !== "")
-    const finalLabels = tempLabels.filter(l => l !== "")
-    
-    // 检查是否选择了最后一级
-    if (finalValues.length === 0) {
-      return // 没有选择任何项
-    }
-    
-    // 检查最后选择的选项是否有子级
-    let currentOpts = options
-    let lastOption = null
-    
-    for (let i = 0; i < finalValues.length; i++) {
-      const option = currentOpts.find(opt => opt.value === finalValues[i])
-      if (option) {
-        lastOption = option
-        if (option.children) {
-          currentOpts = option.children
-        }
-      }
-    }
-    
-    // 如果最后选择的选项没有子级，或者子级为空，则可以确认
-    if (!lastOption || !lastOption.children || lastOption.children.length === 0) {
-      onSelect(finalValues, finalLabels)
-      closeSelector()
-    }
+    closeSelector(true)
   }
 
-  // 检查是否可以确认（是否选择了最后一级）
-  const canConfirm = () => {
-    const finalValues = tempValues.filter(v => v !== "")
-    if (finalValues.length === 0) return false
-    
-    // 检查最后选择的选项是否有子级
-    let currentOpts = options
-    let lastOption = null
-    
-    for (let i = 0; i < finalValues.length; i++) {
-      const option = currentOpts.find(opt => opt.value === finalValues[i])
-      if (option) {
-        lastOption = option
-        if (option.children) {
-          currentOpts = option.children
-        }
-      }
-    }
-    
-    // 如果最后选择的选项没有子级，或者子级为空，则可以确认
-    return !lastOption || !lastOption.children || lastOption.children.length === 0
-  }
 
   // 获取显示文本
   const getDisplayText = () => {
@@ -241,6 +202,12 @@ const CascadeSelector: React.FC<CascadeSelectorProps> = ({
     return text
   }
 
+  // 从 style prop 中提取文本样式
+  const textStyle = style ? {
+    fontSize: style.fontSize || 14,
+    color: style.color || "#333",
+  } : {}
+
   return (
     <>
       <TouchableOpacity
@@ -250,7 +217,11 @@ const CascadeSelector: React.FC<CascadeSelectorProps> = ({
         activeOpacity={0.7}
       >
         <View style={styles.selectorGradient}>
-          <Text style={[styles.selectorText, tempLabels.length === 0 && styles.placeholderText]}>
+          <Text style={[
+            styles.selectorText,
+            textStyle,
+            tempLabels.length === 0 && styles.placeholderText
+          ]}>
             {getDisplayText()}
           </Text>
           <View style={styles.arrowContainer}>
@@ -267,9 +238,9 @@ const CascadeSelector: React.FC<CascadeSelectorProps> = ({
         visible={isOpen}
         transparent={true}
         animationType="none"
-        onRequestClose={closeSelector}
+        onRequestClose={() => closeSelector(true)}
       >
-        <TouchableWithoutFeedback onPress={closeSelector}>
+        <TouchableWithoutFeedback onPress={() => closeSelector(true)}>
           <View style={styles.modalOverlay}>
             <Animated.View
               style={[
@@ -289,18 +260,17 @@ const CascadeSelector: React.FC<CascadeSelectorProps> = ({
             >
               {/* 标题栏 */}
               <View style={styles.header}>
-                <TouchableOpacity onPress={closeSelector} style={styles.headerButton}>
+                <TouchableOpacity onPress={() => closeSelector(false)} style={styles.headerButton}>
                   <Text style={styles.headerButtonText}>取消</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>{title}</Text>
                 <TouchableOpacity 
                   onPress={confirmSelection} 
-                  style={[styles.headerButton, !canConfirm() && styles.disabledButton]}
-                  disabled={!canConfirm()}
+                  style={styles.headerButton}
                 >
                   <Text style={[
                     styles.headerButtonText, 
-                    canConfirm() ? styles.confirmButton : styles.disabledButtonText
+                    styles.confirmButton
                   ]}>
                     确定
                   </Text>
@@ -383,26 +353,29 @@ const styles = StyleSheet.create({
   selectorGradient: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 8, // 减少左右padding
+    paddingLeft: 8,
+    paddingRight: 4,
     paddingVertical: 6,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 24,
   },
   selectorText: {
     fontSize: 14,
-    color: "#8C8D92",
-    fontWeight: "500",
+    color: "#333",
+    fontWeight: "normal",
     marginRight: 4, // 减少右边距
     flex: 1,
     textAlign: "left",
   },
   placeholderText: {
-    color: "#999999",
+    color: "#cecece",
   },
   arrowContainer: {
-    width: 12, // 减少箭头容器宽度
+    width: 40,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
+    marginLeft: 4,
   },
   disabled: {
     opacity: 0.6,

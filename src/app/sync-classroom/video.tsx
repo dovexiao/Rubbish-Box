@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import {
   View,
   Text,
@@ -87,26 +87,36 @@ export default function VideoPlayerScreen() {
   // 是否已设置初始位置
   const hasSetInitialPositionRef = useRef(false)
 
-  // 音量和亮度控制
-  const [volume, setVolume] = useState(1.0) // 0.0 - 1.0
-  const [brightness, setBrightness] = useState(1.0) // 0.0 - 1.0
-  const [showVolumeIndicator, setShowVolumeIndicator] = useState(false)
-  const [showBrightnessIndicator, setShowBrightnessIndicator] = useState(false)
-  const volumeTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const brightnessTimerRef = useRef<NodeJS.Timeout | null>(null)
+  // ==================== 音量和亮度控制（已注释，改为快进快退）====================
+  // const [volume, setVolume] = useState(1.0) // 0.0 - 1.0
+  // const [brightness, setBrightness] = useState(1.0) // 0.0 - 1.0
+  // const [showVolumeIndicator, setShowVolumeIndicator] = useState(false)
+  // const [showBrightnessIndicator, setShowBrightnessIndicator] = useState(false)
+  // const volumeTimerRef = useRef<NodeJS.Timeout | null>(null)
+  // const brightnessTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // 初始化亮度
-  useEffect(() => {
-    const initBrightness = async () => {
-      try {
-        const currentBrightness = await Brightness.getBrightnessAsync()
-        setBrightness(currentBrightness)
-      } catch (error) {
-        console.log("获取亮度失败:", error)
-      }
-    }
-    initBrightness()
-  }, [])
+  // // 初始化亮度
+  // useEffect(() => {
+  //   const initBrightness = async () => {
+  //     try {
+  //       const currentBrightness = await Brightness.getBrightnessAsync()
+  //       setBrightness(currentBrightness)
+  //     } catch (error) {
+  //       console.log("获取亮度失败:", error)
+  //     }
+  //   }
+  //   initBrightness()
+  // }, [])
+  
+  // ==================== 快进快退控制 ====================
+  const [showSeekIndicator, setShowSeekIndicator] = useState(false)
+  const [seekDelta, setSeekDelta] = useState(0) // 快进/快退的秒数（正数为快进，负数为快退）
+  const [previewTime, setPreviewTime] = useState(0) // 预览时间位置
+  const seekTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const seekStartTimeRef = useRef(0) // 滑动开始时的时间位置
+  const previewTimeRef = useRef(0) // ✅ 用 ref 存储最新的 previewTime
+  const currentTimeRef = useRef(0) // ✅ 用 ref 存储最新的 currentTime，避免闭包陷阱
+  const totalDurationRef = useRef(0) // ✅ 用 ref 存储最新的 totalDuration
 
   // 视频页面强制隐藏状态栏和三大金刚 - 使用原生StatusBar API
   useEffect(() => {
@@ -314,13 +324,21 @@ export default function VideoPlayerScreen() {
       const currentSeconds = Math.floor((status.positionMillis || 0) / 1000)
       const durationSeconds = Math.floor((status.durationMillis || 0) / 1000)
 
+      // ✅ 无论如何都要更新 ref，避免闭包陷阱
+      currentTimeRef.current = currentSeconds
+      if (durationSeconds > 0) {
+        totalDurationRef.current = durationSeconds
+      }
+
       // 只在状态真正改变时更新，避免频繁触发重新渲染
       if (status.isPlaying !== isPlaying) {
         setIsPlaying(status.isPlaying)
+        console.log(`📹 视频播放状态: ${status.isPlaying ? "播放中" : "暂停"}`)
       }
       
       if (currentSeconds !== currentTime) {
         setCurrentTime(currentSeconds)
+        console.log(`⏱️ 视频时间更新: ${currentSeconds}秒 / ${durationSeconds}秒`)
       }
       
       if (durationSeconds > 0 && durationSeconds !== totalDuration) {
@@ -541,80 +559,83 @@ export default function VideoPlayerScreen() {
     setShowControls(newShowControls)
   }
 
-  // 手势控制
+  // ==================== 手势控制 - 快进快退 ====================
   const screenWidth = Dimensions.get("window").width
   const screenHeight = Dimensions.get("window").height
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => false, // 不拦截开始触摸
+  const panResponder = useMemo(() => PanResponder.create({
+      onStartShouldSetPanResponder: () => true, // ✅ 改为 true，优先捕获触摸
+      onStartShouldSetPanResponderCapture: () => false,
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        // 只有垂直滑动距离 > 10px 时才认为是滑动手势
-        return Math.abs(gestureState.dy) > 10
+        // 只有水平滑动距离 > 10px 时才认为是快进快退手势
+        const shouldHandle = Math.abs(gestureState.dx) > 10
+        console.log(`🎬 手势检测: dx=${gestureState.dx.toFixed(0)}, dy=${gestureState.dy.toFixed(0)}, shouldHandle=${shouldHandle}`)
+        return shouldHandle
       },
-      onPanResponderGrant: (evt) => {
-        const locationX = evt.nativeEvent.locationX || evt.nativeEvent.pageX
-        // 判断控制类型
-        ;(panResponder as any).gestureType =
-          locationX < screenWidth / 2 ? "brightness" : "volume"
-        ;(panResponder as any).initialBrightness = brightness
-        ;(panResponder as any).initialVolume = volume
-        console.log("手势开始:", (panResponder as any).gestureType, "位置:", locationX)
+      onMoveShouldSetPanResponderCapture: (_, gestureState) => {
+        // 水平滑动优先于垂直滑动
+        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && Math.abs(gestureState.dx) > 10
       },
-      onPanResponderMove: (evt, gestureState) => {
-        const { dy } = gestureState
+      onPanResponderGrant: () => {
+        // 记录滑动开始时的时间位置
+        const currentTimeValue = currentTimeRef.current // ✅ 从 ref 读取最新值
+        seekStartTimeRef.current = currentTimeValue
+        setPreviewTime(currentTimeValue) // 初始化预览时间为当前时间
+        previewTimeRef.current = currentTimeValue // ✅ 同步更新 ref
+        setSeekDelta(0) // 重置偏移量
+        setShowSeekIndicator(true)
+        console.log("🎬 快进快退手势开始，当前时间:", currentTimeValue, "秒，总时长:", totalDurationRef.current, "秒")
+      },
+      onPanResponderMove: (_, gestureState) => {
+        const { dx } = gestureState
+        const totalDurationValue = totalDurationRef.current // ✅ 从 ref 读取最新值
 
-        // 灵敏度：滑动150px = 100%变化
-        const delta = -dy / 150
-
-        if ((panResponder as any).gestureType === "brightness") {
-          // 左侧：控制亮度
-          const newBrightness = Math.max(
-            0,
-            Math.min(1, (panResponder as any).initialBrightness + delta),
-          )
-          setBrightness(newBrightness)
-          setShowBrightnessIndicator(true)
-
-          Brightness.setBrightnessAsync(newBrightness).catch((error) => {
-            console.log("设置亮度失败:", error)
-          })
+        // 灵敏度：滑动100px = 10秒
+        // 正数为快进（向右滑），负数为快退（向左滑）
+        const delta = Math.round((dx / 100) * 10)
+        
+        // 计算预览时间（限制在0到总时长之间）
+        const newTime = Math.max(0, Math.min(totalDurationValue, seekStartTimeRef.current + delta))
+        
+        console.log(`🎬 滑动: dx=${dx.toFixed(0)}px, delta=${delta}秒, 开始时间=${seekStartTimeRef.current}秒, 预览时间=${newTime}秒, 总时长=${totalDurationValue}秒, 进度=${totalDurationValue > 0 ? ((newTime / totalDurationValue) * 100).toFixed(1) : 0}%`)
+        
+        setSeekDelta(delta)
+        setPreviewTime(newTime)
+        previewTimeRef.current = newTime // ✅ 同步更新 ref
+      },
+      onPanResponderRelease: async () => {
+        const finalTime = previewTimeRef.current // ✅ 从 ref 读取最新值
+        const totalDurationValue = totalDurationRef.current
+        
+        console.log("🎬 快进快退手势结束，跳转到:", finalTime, "秒")
+        console.log(`🔍 检查条件: videoRef.current=${!!videoRef.current}, totalDuration=${totalDurationValue}, finalTime=${finalTime}`)
+        
+        // 真正跳转到目标时间
+        if (videoRef.current && totalDurationValue > 0) {
+          try {
+            console.log(`🎯 开始执行跳转: ${finalTime * 1000}ms`)
+            await videoRef.current.setPositionAsync(finalTime * 1000)
+            setCurrentTime(finalTime)
+            currentTimeRef.current = finalTime // ✅ 同步更新
+            setProgressPercent((finalTime / totalDurationValue) * 100)
+            console.log(`✅ 视频已跳转到: ${finalTime}秒`)
+          } catch (error) {
+            console.error("❌ 跳转失败:", error)
+          }
         } else {
-          // 右侧：控制音量
-          const newVolume = Math.max(0, Math.min(1, (panResponder as any).initialVolume + delta))
-          setVolume(newVolume)
-          setShowVolumeIndicator(true)
-
-          if (videoRef.current) {
-            videoRef.current.setVolumeAsync(newVolume).catch((error) => {
-              console.log("设置音量失败:", error)
-            })
-          }
+          console.warn(`⚠️ 跳转条件不满足: videoRef=${!!videoRef.current}, totalDuration=${totalDurationValue}`)
         }
-      },
-      onPanResponderRelease: () => {
-        console.log("手势结束")
+
         // 延迟隐藏指示器
-        if ((panResponder as any).gestureType === "brightness") {
-          if (brightnessTimerRef.current) {
-            clearTimeout(brightnessTimerRef.current as any)
-          }
-          brightnessTimerRef.current = setTimeout(() => {
-            setShowBrightnessIndicator(false)
-          }, 1000) as any
-        } else if ((panResponder as any).gestureType === "volume") {
-          if (volumeTimerRef.current) {
-            clearTimeout(volumeTimerRef.current as any)
-          }
-          volumeTimerRef.current = setTimeout(() => {
-            setShowVolumeIndicator(false)
-          }, 1000) as any
+        if (seekTimerRef.current) {
+          clearTimeout(seekTimerRef.current)
         }
-
-        ;(panResponder as any).gestureType = null
+        seekTimerRef.current = setTimeout(() => {
+          setShowSeekIndicator(false)
+          setSeekDelta(0)
+        }, 500) as any
       },
-    }),
-  ).current
+    }), [])
 
   return (
     <View style={styles.container}>
@@ -708,8 +729,8 @@ export default function VideoPlayerScreen() {
             )}
           </TouchableOpacity>
 
-          {/* 亮度指示器 - 屏幕中间 */}
-          {showBrightnessIndicator && (
+          {/* ==================== 音量和亮度指示器（已注释）==================== */}
+          {/* {showBrightnessIndicator && (
             <View style={styles.brightnessIndicator}>
               <View style={styles.indicatorHeader}>
                 <Ionicons name="sunny" size={rpx(20)} color="#fff" />
@@ -722,10 +743,9 @@ export default function VideoPlayerScreen() {
                 />
               </View>
             </View>
-          )}
+          )} */}
 
-          {/* 音量指示器 - 屏幕中间 */}
-          {showVolumeIndicator && (
+          {/* {showVolumeIndicator && (
             <View style={styles.volumeIndicator}>
               <View style={styles.indicatorHeader}>
                 <Ionicons
@@ -738,6 +758,43 @@ export default function VideoPlayerScreen() {
               <View style={styles.indicatorBarHorizontal}>
                 <View style={styles.indicatorBgHorizontal} />
                 <View style={[styles.indicatorFillHorizontal, { width: `${volume * 100}%` }]} />
+              </View>
+            </View>
+          )} */}
+
+          {/* 快进快退指示器 - 屏幕中间 */}
+          {showSeekIndicator && (
+            <View style={styles.seekIndicator}>
+              <View style={styles.seekContent}>
+                {/* 图标：快进或快退 */}
+                <Ionicons
+                  name={seekDelta >= 0 ? "play-forward" : "play-back"}
+                  size={rpx(32)}
+                  color="#fff"
+                />
+                
+                {/* 时间变化显示 */}
+                <Text style={styles.seekDeltaText}>
+                  {seekDelta > 0 ? `+${seekDelta}秒` : seekDelta < 0 ? `${seekDelta}秒` : '0秒'}
+                </Text>
+                
+                {/* 预览时间 */}
+                <View style={styles.seekTimeContainer}>
+                  <Text style={styles.seekTimeText}>
+                    {formatTime(previewTime)} / {formatTime(totalDuration)}
+                  </Text>
+                </View>
+                
+                {/* 进度预览条 */}
+                <View style={styles.seekProgressBar}>
+                  <View style={styles.seekProgressBg} />
+                  <View
+                    style={[
+                      styles.seekProgressFill,
+                      { width: `${totalDuration > 0 ? (previewTime / totalDuration) * 100 : 0}%` }
+                    ]}
+                  />
+                </View>
               </View>
             </View>
           )}
@@ -1104,68 +1161,129 @@ const styles = createStyles({
     color: "#fff",
     fontSize: 10,
   },
-  // 亮度指示器 - 屏幕中间
-  brightnessIndicator: {
-    position: "absolute",
+  // ==================== 音量和亮度指示器样式（已注释）====================
+  // brightnessIndicator: {
+  //   position: "absolute",
+  //   left: "50%",
+  //   top: "50%",
+  //   transform: [{ translateX: -100 }, { translateY: -30 }],
+  //   backgroundColor: "rgba(0, 0, 0, 0.8)",
+  //   borderRadius: 10,
+  //   paddingHorizontal: 20,
+  //   paddingVertical: 15,
+  //   minWidth: 200,
+  //   zIndex: 900,
+  // },
+  // volumeIndicator: {
+  //   position: "absolute",
+  //   left: "50%",
+  //   top: "50%",
+  //   transform: [{ translateX: -100 }, { translateY: -30 }],
+  //   backgroundColor: "rgba(0, 0, 0, 0.8)",
+  //   borderRadius: 10,
+  //   paddingHorizontal: 20,
+  //   paddingVertical: 15,
+  //   minWidth: 200,
+  //   zIndex: 900,
+  // },
+  // indicatorHeader: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   gap: 0,
+  //   marginBottom: 10,
+  // },
+  // indicatorBarHorizontal: {
+  //   width: "100%",
+  //   height: 6,
+  //   backgroundColor: "rgba(255, 255, 255, 0.3)",
+  //   borderRadius: 3,
+  //   position: "relative",
+  //   overflow: "hidden",
+  // },
+  // indicatorBgHorizontal: {
+  //   position: "absolute",
+  //   left: 0,
+  //   right: 0,
+  //   top: 0,
+  //   bottom: 0,
+  //   backgroundColor: "rgba(255, 255, 255, 0.3)",
+  // },
+  // indicatorFillHorizontal: {
+  //   position: "absolute",
+  //   left: 0,
+  //   top: 0,
+  //   bottom: 0,
+  //   backgroundColor: "#4891FF",
+  //   borderRadius: 3,
+  // },
+  // indicatorText: {
+  //   color: "#fff",
+  //   fontSize: 14,
+  //   fontWeight: "bold" as const,
+  //   minWidth: 40,
+  // },
+  
+  // ==================== 快进快退指示器样式 ====================
+  seekIndicator: {
+    position: "absolute" as const,
     left: "50%",
     top: "50%",
-    transform: [{ translateX: -100 }, { translateY: -30 }],
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    minWidth: 200,
+    transform: [{ translateX: -120 }, { translateY: -70 }],
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    borderRadius: 12,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    minWidth: 240,
     zIndex: 900,
+    alignItems: "center" as const,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  // 音量指示器 - 屏幕中间
-  volumeIndicator: {
-    position: "absolute",
-    left: "50%",
-    top: "50%",
-    transform: [{ translateX: -100 }, { translateY: -30 }],
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    minWidth: 200,
-    zIndex: 900,
-  },
-  // 指示器头部
-  indicatorHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 0,
-    marginBottom: 10,
-  },
-  // 横向进度条
-  indicatorBarHorizontal: {
+  seekContent: {
+    alignItems: "center" as const,
     width: "100%",
-    height: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 3,
-    position: "relative",
-    overflow: "hidden",
   },
-  indicatorBgHorizontal: {
-    position: "absolute",
+  seekDeltaText: {
+    color: "#4891FF",
+    fontSize: 24,
+    fontWeight: "bold" as const,
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  seekTimeContainer: {
+    marginVertical: 8,
+  },
+  seekTimeText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "500" as const,
+  },
+  seekProgressBar: {
+    width: "100%",
+    height: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 2,
+    position: "relative" as const,
+    overflow: "hidden" as const,
+    marginTop: 12,
+  },
+  seekProgressBg: {
+    position: "absolute" as const,
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
-  indicatorFillHorizontal: {
-    position: "absolute",
+  seekProgressFill: {
+    position: "absolute" as const,
     left: 0,
     top: 0,
     bottom: 0,
     backgroundColor: "#4891FF",
-    borderRadius: 3,
-  },
-  indicatorText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "bold" as const,
-    minWidth: 40,
+    borderRadius: 2,
   },
 })

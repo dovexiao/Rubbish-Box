@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from "react"
 import { View, Platform, StatusBar as RNStatusBar, Text } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { Ionicons, MaterialIcons } from "@expo/vector-icons"
 import { createStyles, rpx } from "../utils/rpxStyleSheet"
+import { useNetwork } from "../stores/networkStore"
 
 interface StatusBarProps {
   theme?: "light" | "dark"
@@ -20,6 +21,14 @@ export function StatusBar({
   translucent = true,
 }: StatusBarProps) {
   const [currentTime, setCurrentTime] = useState("")
+  
+  // 获取网络状态和信号强度（共享全局状态）
+  const { 
+    isConnected, 
+    isInternetReachable, 
+    networkType, 
+    networkDetails 
+  } = useNetwork()
 
   // 更新时间
   const updateTime = useCallback(() => {
@@ -49,6 +58,97 @@ export function StatusBar({
     return () => clearTimeout(timer)
   }, [theme, translucent])
 
+  // 渲染网络信号图标
+  const renderNetworkIcon = () => {
+    const iconColor = theme === "dark" ? "#fff" : "#000"
+    const iconSize = rpx(16.25)
+
+    // 未连接网络
+    if (!isConnected) {
+      return (
+        <Ionicons
+          name="wifi-outline"
+          size={iconSize}
+          color="#999"
+          style={styles.wifiIcon}
+        />
+      )
+    }
+
+    // 假连接：已连接但无法访问互联网
+    if (isInternetReachable === false) {
+      return (
+        <View style={styles.signalContainer}>
+          <Ionicons
+            name="warning"
+            size={iconSize}
+            color="#FF9500"
+            style={styles.wifiIcon}
+          />
+        </View>
+      )
+    }
+
+    // WiFi 网络 - 根据信号强度显示
+    if (networkType === "wifi") {
+      const strength = networkDetails.strength ?? 100
+      let wifiIconName: "wifi-outline" | "wifi" = "wifi"
+      
+      if (strength < 30) {
+        wifiIconName = "wifi-outline" // 弱信号
+      } else if (strength < 70) {
+        wifiIconName = "wifi" // 中等信号
+      } else {
+        wifiIconName = "wifi" // 强信号
+      }
+
+      return (
+        <View style={styles.signalContainer}>
+          <Ionicons
+            name={wifiIconName}
+            size={iconSize}
+            color={iconColor}
+            style={styles.wifiIcon}
+          />
+        </View>
+      )
+    }
+
+    // 蜂窝网络 - 显示网络代数
+    if (networkType === "cellular") {
+      const generation = networkDetails.cellularGeneration
+      
+      return (
+        <View style={styles.signalContainer}>
+          <MaterialIcons
+            name="signal-cellular-alt"
+            size={iconSize}
+            color={iconColor}
+            style={styles.cellularIcon}
+          />
+          {generation && (
+            <Text style={[
+              styles.networkGeneration,
+              theme === "dark" ? styles.darkText : styles.lightText
+            ]}>
+              {generation.toUpperCase()}
+            </Text>
+          )}
+        </View>
+      )
+    }
+
+    // 其他网络类型 - 显示默认 WiFi 图标
+    return (
+      <Ionicons
+        name="wifi"
+        size={iconSize}
+        color={iconColor}
+        style={styles.wifiIcon}
+      />
+    )
+  }
+
   return (
     <View
       style={[
@@ -65,13 +165,8 @@ export function StatusBar({
       </View>
       <View style={styles.statusBarRight}>
         <View style={styles.iconGroup}>
-          {/* WiFi图标 - 使用Ionicons */}
-          <Ionicons
-            name="wifi"
-            size={rpx(16.25)} // 使用rpx函数转换16.25rpx
-            color={theme === "dark" ? "#fff" : "#000"}
-            style={styles.wifiIcon}
-          />
+          {/* 网络信号图标 - 根据网络状态和信号强度动态显示 */}
+          {renderNetworkIcon()}
         </View>
       </View>
     </View>
@@ -80,36 +175,50 @@ export function StatusBar({
 
 const styles = createStyles({
   statusBarContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
+    width: "100%" as const,
     height: 38.28125, // 98px转rpx = 98 * 750 / 1920 = 38.28125rpx
     backgroundColor: "transparent",
     paddingHorizontal: 20.3125,
-    position: "absolute",
+    position: "absolute" as const,
     top: 0,
     left: 0,
     zIndex: 9998, // 降低z-index，避免与NavBar重叠
   },
   statusBarLeft: {
-    alignItems: "center",
+    alignItems: "center" as const,
   },
   statusBarRight: {
-    alignItems: "center",
+    alignItems: "center" as const,
   },
   iconGroup: {
-    alignItems: "center",
-    flexDirection: "row",
+    alignItems: "center" as const,
+    flexDirection: "row" as const,
+  },
+  signalContainer: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    marginLeft: 8,
   },
   time: {
     fontSize: 15.625,
     lineHeight: 18,
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-    fontWeight: "600", // 增加字重确保清晰显示
+    fontWeight: "600" as const, // 增加字重确保清晰显示
   },
   wifiIcon: {
-    marginLeft: 8,
+    // WiFi 图标样式
+  },
+  cellularIcon: {
+    marginRight: 2,
+  },
+  networkGeneration: {
+    fontSize: 10,
+    lineHeight: 12,
+    fontWeight: "600" as const,
+    marginLeft: 2,
   },
   lightText: {
     color: "#000",

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native"
+import { View, Text, TouchableOpacity, Image, ScrollView, ActivityIndicator } from "react-native"
 import { useRouter, useLocalSearchParams } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
@@ -256,11 +256,10 @@ export default function AIPracticeScreen() {
             style={styles.loadingBoyImage}
             resizeMode="contain"
           />
-          <Image
-            source={require("../../../../assets/images/question-loading-text.png")}
-            style={styles.loadingTextImage}
-            resizeMode="contain"
-          />
+          {/* Loading 图标 */}
+          <ActivityIndicator size="large" color="#5B9DFF" style={styles.loadingSpinner} />
+          {/* 加载文字 */}
+          <Text style={styles.loadingText}>试题正在努力加载中请稍候.....</Text>
         </View>
       </LinearGradient>
     )
@@ -443,11 +442,16 @@ const styles = createStyles({
   },
   loadingBoyImage: {
     width: 88.28125,
-    marginBottom: 12,
+    marginBottom: 24,
     marginTop: -100,
   },
-  loadingTextImage: {
-    width: 265.625,
+  loadingSpinner: {
+    marginBottom: 15.6,
+  },
+  loadingText: {
+    fontSize: 12.5,
+    color: "#5B9DFF",
+    textAlign: "center" as const,
   },
   // 顶部导航栏
   practiceNavbar: {

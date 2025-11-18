@@ -59,6 +59,30 @@ const safeLog = (message: string, ...args: any[]) => {
  * 对应UniApp项目中的utils/http.ts和utils/request.ts
  */
 
+// 重试配置
+const RETRY_CONFIG = {
+  MAX_RETRIES: 3, // 最大重试次数
+  RETRY_DELAY: 1000, // 初始重试延迟（毫秒）
+  RETRY_STATUS_CODES: [408, 500, 502, 503, 504], // 需要重试的HTTP状态码
+  BACKOFF_MULTIPLIER: 2, // 指数退避倍数
+}
+
+// 检测是否是数据库连接错误
+const isDatabaseConnectionError = (error: any): boolean => {
+  const errorMessage = error?.response?.data || error?.message || ""
+  const errorString = typeof errorMessage === "string" ? errorMessage : JSON.stringify(errorMessage)
+  
+  return (
+    errorString.includes("Too many connections") ||
+    errorString.includes("OperationalError") ||
+    errorString.includes("Database connection failed") ||
+    errorString.includes("Connection pool exhausted")
+  )
+}
+
+// 延迟函数
+const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
+
 // 创建axios实例
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -223,7 +247,7 @@ apiClient.interceptors.response.use(
     showError(res.message || "请求失败")
     return Promise.reject(new Error(res.message || "请求失败"))
   },
-  (error) => {
+  async (error) => {
     // 计算请求耗时
     const duration = error.config?.metadata?.startTime
       ? Date.now() - error.config.metadata.startTime
@@ -261,6 +285,58 @@ apiClient.interceptors.response.use(
       return Promise.reject(new Error("登录已失效，请重新登录"))
     }
 
+    // 检测数据库连接错误
+    if (isDatabaseConnectionError(error)) {
+      safeLog("🔴 检测到数据库连接错误（Too many connections）")
+      
+      // 获取重试次数
+      const retryCount = error.config.__retryCount || 0
+      
+      if (retryCount < RETRY_CONFIG.MAX_RETRIES) {
+        // 计算重试延迟（指数退避）
+        const retryDelay = RETRY_CONFIG.RETRY_DELAY * Math.pow(RETRY_CONFIG.BACKOFF_MULTIPLIER, retryCount)
+        
+        safeLog(`🔄 服务器繁忙，${retryDelay}ms后进行第${retryCount + 1}次重试...`)
+        
+        // 增加重试计数
+        error.config.__retryCount = retryCount + 1
+        
+        // 延迟后重试
+        await delay(retryDelay)
+        
+        safeLog(`♻️ 开始第${retryCount + 1}次重试请求: ${error.config.url}`)
+        return apiClient(error.config)
+      } else {
+        safeLog("❌ 已达到最大重试次数，停止重试")
+        showError("服务器繁忙，请稍后再试")
+        
+        const newError: any = new Error("服务器繁忙，请稍后再试")
+        newError.response = error.response
+        newError.status = error.response?.status
+        newError.isDatabaseError = true
+        return Promise.reject(newError)
+      }
+    }
+
+    // 检测其他可重试的错误（网络超时、服务器错误等）
+    const status = error.response?.status
+    const retryCount = error.config.__retryCount || 0
+    
+    if (
+      retryCount < RETRY_CONFIG.MAX_RETRIES &&
+      (RETRY_CONFIG.RETRY_STATUS_CODES.includes(status) || error.code === "ECONNABORTED")
+    ) {
+      const retryDelay = RETRY_CONFIG.RETRY_DELAY * Math.pow(RETRY_CONFIG.BACKOFF_MULTIPLIER, retryCount)
+      
+      safeLog(`🔄 请求失败（状态码: ${status || "超时"}），${retryDelay}ms后进行第${retryCount + 1}次重试...`)
+      
+      error.config.__retryCount = retryCount + 1
+      await delay(retryDelay)
+      
+      safeLog(`♻️ 开始第${retryCount + 1}次重试请求: ${error.config.url}`)
+      return apiClient(error.config)
+    }
+
     // 打印错误详细信息
     if (LOG_CONFIG.ENABLED && LOG_CONFIG.SHOW_ERROR) {
       safeLog("❌ API请求失败 ===================================")
@@ -271,6 +347,7 @@ apiClient.interceptors.response.use(
       safeLog("📄 错误响应类型:", typeof error.response?.data)
       safeLog("⏱️ 请求耗时:", duration + "ms")
       safeLog("🕐 错误时间:", new Date().toLocaleTimeString())
+      safeLog("🔢 重试次数:", retryCount)
       safeLog("🔍 完整错误:", error)
       safeLog("===============================================")
     }

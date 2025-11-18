@@ -78,6 +78,12 @@ export default function StudyScreen() {
     router.push("/ai/composition-record")
   }, 300)
 
+  // 跳转到AI练口语页面
+  // const goToAiSpeaking = debounce(() => {
+  //   console.log("跳转到AI练口语")
+  //   router.push("/ai/speaking")
+  // }, 300)
+
   return (
     <LinearGradient
       colors={["#CDF7FF", "#CDF7FF", "#FDFEFF", "#BCD4FF"]}
@@ -234,6 +240,34 @@ export default function StudyScreen() {
               </TouchableOpacity>
             </ImageBackground>
           </View>
+
+          {/* AI练口语卡片 */}
+          {/* <View style={styles.cardShadowWrapper}>
+            <ImageBackground
+              source={Images.studyBg23} // 临时使用阅读卡片背景
+              style={[styles.functionCardSpeaking, { backgroundColor: "transparent" }]}
+              resizeMode="stretch"
+              imageStyle={styles.speakingCardImageStyle}
+            >
+              <Image
+                source={Images.studyBg24} // 临时使用装饰图
+                style={styles.speakingTopImage}
+                resizeMode="contain"
+              />
+              <View style={styles.speakingContent}>
+                <Text style={styles.speakingTitle}>AI练口语</Text>
+                <Text style={styles.speakingSubtitle}>趣味对话轻松练</Text>
+              </View>
+              <TouchableOpacity style={styles.speakingButton} onPress={goToAiSpeaking}>
+                <Text style={styles.speakingButtonText}>立即练习</Text>
+                <Image
+                  source={Images.studyPolygon} // 箭头图标
+                  style={styles.speakingArrow}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            </ImageBackground>
+          </View> */}
         </View>
         </>
       </View>
@@ -602,6 +636,68 @@ const styles = createStyles({
   },
 
   classroomArrow: {
+    width: 7.375,
+  },
+
+  // AI练口语卡片
+  functionCardSpeaking: {
+    width: 310.9375,
+    height: 120.3125,
+    borderRadius: 15.625,
+    backgroundColor: "transparent",
+    marginTop: 15.625,
+  },
+
+  speakingCardImageStyle: {
+    borderRadius: 15.625,
+    width: 310.9375,
+    height: 120.3125,
+    overflow: "hidden" as const,
+  },
+
+  speakingTopImage: {
+    width: 106.25,
+    position: "absolute" as const,
+    top: -8,
+    right: -8,
+  },
+
+  speakingContent: {
+    paddingLeft: 12.5,
+    paddingTop: 10.7,
+  },
+
+  speakingTitle: {
+    color: "#1C2A33",
+    fontSize: 17.1875,
+    fontFamily: "Kingnam-Bobo",
+    fontWeight: "600" as const,
+  },
+
+  speakingSubtitle: {
+    color: "#1C2A33",
+    fontSize: 10.9375,
+  },
+
+  speakingButton: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    marginTop: 32.8125,
+    justifyContent: "center" as const,
+    marginHorizontal: 12.5,
+    backgroundColor: "#6C63FF",
+    borderRadius: 6.25,
+    width: 67.1875,
+    height: 23.4375,
+  },
+
+  speakingButtonText: {
+    fontSize: 10.9375,
+    marginRight: 4,
+    color: "#FFFFFF",
+  },
+
+  speakingArrow: {
     width: 7.375,
   },
 })

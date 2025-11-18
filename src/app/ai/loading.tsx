@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Text, ScrollView, StatusBar as RNStatusBar, ActivityIndicator, ImageBackground, Animated } from "react-native"
+import { View, Text as RNText, StatusBar as RNStatusBar, ActivityIndicator, ImageBackground, Animated } from "react-native"
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router"
+import { WebView } from "react-native-webview"
 
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles } from "../../utils/rpxStyleSheet"
@@ -9,43 +10,166 @@ import { API_BASE_URL } from "../../config/api"
 import { getDeviceInfoForAPI } from "../../utils/deviceInfo"
 import { useUserStore } from "../../stores/userStore"
 
+// 生成初始 HTML（只生成一次）
+const generateInitialHTML = () => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.0/marked.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background-color: transparent;
+      color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      padding: 8px;
+      overflow-x: hidden;
+    }
+    #content { word-wrap: break-word; overflow-wrap: break-word; }
+    h1, h2, h3 { color: #FFFFFF; font-weight: bold; margin: 12px 0 8px; }
+    h1 { font-size: 22px; } h2 { font-size: 20px; } h3 { font-size: 18px; }
+    p { margin: 4px 0; color: #FFFFFF; }
+    strong { color: #FFD700; font-weight: bold; }
+    code { background: rgba(255,255,255,0.2); padding: 2px 4px; border-radius: 4px; color: #00FF00; font-size: 14px; }
+    pre { background: rgba(255,255,255,0.1); padding: 8px; border-radius: 4px; margin: 4px 0; overflow-x: auto; }
+    ul, ol { margin: 4px 0; padding-left: 20px; }
+    .katex { font-size: 16px; color: #FFFFFF !important; }
+    .katex-display { margin: 8px 0; text-align: center; }
+    .katex-display .katex { font-size: 18px; }
+    .katex * { color: #FFFFFF !important; }
+  </style>
+</head>
+<body>
+  <div id="content"></div>
+  <script>
+    // 等待所有资源加载完成
+    window.addEventListener('load', function() {
+      console.log('✅ 所有资源加载完成，通知 React Native');
+      // 通知 React Native WebView 已就绪
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage('WEBVIEW_READY');
+      }
+    });
+    
+    marked.setOptions({ breaks: true, gfm: true });
+    
+    function renderContent(text) {
+      try {
+        console.log('📝 WebView 收到内容 (前100字符):', text.substring(0, 100));
+        
+        // 先用 Markdown 渲染
+        const html = marked.parse(text);
+        document.getElementById('content').innerHTML = html;
+        
+        // 再用 KaTeX 渲染公式
+        console.log('🔍 开始渲染公式，原始内容前100字符:', text.substring(0, 100));
+        console.log('🔍 查找公式格式: \\( ... \\) 和 \\[ ... \\]');
+        
+        renderMathInElement(document.getElementById('content'), {
+          delimiters: [
+            {left: '\\[', right: '\\]', display: true},   // \[ \] - 块级
+            {left: '$$', right: '$$', display: true},      // $$ $$ - 块级
+            {left: '\\(', right: '\\)', display: false},   // \( \) - 行内
+            {left: '$', right: '$', display: false}        // $ $ - 行内
+          ],
+          throwOnError: false,
+          errorCallback: function(msg, err) {
+            console.error('❌ KaTeX 渲染错误:', msg, err);
+          }
+        });
+        
+        console.log('✅ 公式渲染完成');
+        
+        // 自动滚动到底部
+        window.scrollTo(0, document.body.scrollHeight);
+      } catch (e) {
+        console.error('❌ 渲染错误:', e);
+      }
+    }
+    
+    // 监听来自 React Native 的消息
+    // React Native WebView 使用 document 而不是 window
+    document.addEventListener('message', function(event) {
+      console.log('📨 document 收到消息:', event.data);
+      const data = event.data;
+      if (typeof data === 'string') {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.type === 'update' && parsed.content) {
+            renderContent(parsed.content);
+          }
+        } catch (e) {
+          console.log('⚠️ 非 JSON 消息，直接渲染:', e);
+          // 如果不是 JSON，直接作为内容渲染
+          renderContent(data);
+        }
+      }
+    });
+    
+    // 同时也监听 window.addEventListener（兼容性）
+    window.addEventListener('message', function(event) {
+      console.log('📨 window 收到消息:', event.data);
+      const data = event.data;
+      if (typeof data === 'string') {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.type === 'update' && parsed.content) {
+            renderContent(parsed.content);
+          }
+        } catch (e) {
+          console.log('⚠️ 非 JSON 消息，直接渲染:', e);
+          renderContent(data);
+        }
+      }
+    });
+    
+    console.log('✅ 消息监听器已设置');
+    
+    // 初始化空内容
+    renderContent('');
+  </script>
+</body>
+</html>
+  `.trim()
+}
+
 /**
- * AI加载页面 - 流式输出版本
- * 使用 SSE 流式接收 AI 分析结果
+ * AI加载页面 - 使用统一 WebView 渲染
  */
 export default function AILoadingScreen() {
   const router = useRouter()
   const params = useLocalSearchParams()
-  const [streamContent, setStreamContent] = useState("") // 显示的流式内容
-  const [isStreaming, setIsStreaming] = useState(false) // 是否正在流式输出
-  const [isCompleted, setIsCompleted] = useState(false) // 是否完成
+  const [streamContent, setStreamContent] = useState("") 
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [isCompleted, setIsCompleted] = useState(false)
+  const [webViewReady, setWebViewReady] = useState(false) // 新增：WebView 就绪状态
   const hasStartedStream = useRef(false)
-  const scrollViewRef = useRef<ScrollView>(null)
-  const cursorOpacity = useRef(new Animated.Value(1)).current // 光标闪烁动画
-  const contentBuffer = useRef("") // 接收数据的缓冲区
-  const displayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null) // 显示定时器
-
-  // 打印组件加载日志
-  // console.log("🎯 AILoadingScreen 组件已加载")
-  // console.log("📦 接收到的参数:", params)
+  const cursorOpacity = useRef(new Animated.Value(1)).current
+  const contentBuffer = useRef("") 
+  const displayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const xhrRef = useRef<XMLHttpRequest | null>(null)
+  const webViewRef = useRef<WebView>(null)
+  const pendingContentRef = useRef<string>("") // 新增：暂存等待发送的内容
 
   // 确保全屏沉浸式
   useFocusEffect(
     useCallback(() => {
-      console.log("👁️ 页面获得焦点")
       RNStatusBar.setHidden(true, "none")
       globalImmersive.forceRestore()
     }, []),
   )
 
-  // 流式接收 AI 分析结果
+  // 流式接收 AI 分析结果（保持原有逻辑）
   const startStreamingOCR = useCallback(async () => {
-    console.log("🎬 startStreamingOCR 函数被调用")
-    console.log("📋 params.imguuid:", params.imguuid)
-    console.log("📋 params.type:", params.type)
-
     if (!params.imguuid) {
-      console.error("❌ 参数缺失：imguuid")
       showWarning("参数缺失")
       setTimeout(() => router.back(), 1500)
       return
@@ -54,219 +178,98 @@ export default function AILoadingScreen() {
     const uuid = params.imguuid as string
     const correctionType = params.type as string
 
-    console.log("📝 UUID:", uuid)
-    console.log("📝 类型:", correctionType)
-
     try {
       setIsStreaming(true)
-      console.log("🚀 开始流式接收 AI 分析...")
-
-      // 获取设备信息
       const deviceInfo = await getDeviceInfoForAPI()
-      
-      // 获取 Token
       const token = useUserStore.getState().token
-      
       const url = `${API_BASE_URL}/AppStart/aiStream/ai_ocr_stream/`
-      console.log("📍 请求URL:", url)
+      const requestBody = { imguuid: uuid, type: correctionType, ...deviceInfo }
       
-      const requestBody = {
-        imguuid: uuid,
-        type: correctionType,
-        ...deviceInfo, // 添加设备信息
-      }
-      console.log("📝 请求体:", JSON.stringify(requestBody))
-      
-      // 使用 XMLHttpRequest 实现流式响应（React Native 的 fetch 不支持 ReadableStream）
       return new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest()
+        xhrRef.current = xhr
         
         let previousLength = 0
-        let chunkCount = 0
         let chunkBuffer = ""
         
-        // 处理数据块的函数
         const processChunk = (newData: string) => {
           chunkBuffer += newData
-          
-          // 处理 SSE 格式的数据流
-          // 格式：data: {...}\n\n
           const lines = chunkBuffer.split("\n")
-          
-          // 保留最后一行（可能不完整）
           chunkBuffer = lines.pop() || ""
           
           for (const line of lines) {
             const trimmedLine = line.trim()
-            
-            // 跳过空行
             if (!trimmedLine) continue
             
-            // 检查 [DONE] 标记
             if (trimmedLine === "[DONE]" || trimmedLine === "data: [DONE]") {
-              console.log("🎉 接收到 [DONE] 完成标记")
               setIsCompleted(true)
               setIsStreaming(false)
               continue
             }
             
-            // 处理 SSE 格式：data: {...}
             if (trimmedLine.startsWith("data:")) {
               const jsonStr = trimmedLine.substring(5).trim()
-              
-              // 跳过空数据
               if (!jsonStr) continue
-              
-              // console.log("🔍 提取到JSON:", jsonStr.substring(0, 100))
               
               try {
                 const json = JSON.parse(jsonStr)
-                
-                // 提取内容
-                let content = ""
-                if (json.content) {
-                  content = json.content
-                } else if (json.text) {
-                  content = json.text
-                } else if (json.data) {
-                  content = json.data
-                } else if (json.message) {
-                  content = json.message
-                }
+                let content = json.content || json.text || json.data || json.message || ""
                 
                 if (content) {
-                  // console.log("📥 接收到原始内容:", content)
-                  
-                  // ✂️ 新策略：只保留包含中文的内容 + 数学符号
-                  // 完全过滤掉纯英文字段名和 JSON 结构
-                  
-                  // 1. 跳过纯 JSON 结构字符
-                  if (/^[\[\]{},":\s]+$/.test(content)) {
-                    console.log("⏭️ 跳过纯JSON结构:", content)
-                    return
-                  }
-                  
-                  // 2. 跳过纯英文单词（字段名）
-                  // 但保留数学表达式（包含数字和运算符）
-                  if (/^[a-zA-Z_]+$/.test(content)) {
-                    console.log("⏭️ 跳过英文字段名:", content)
-                    return
-                  }
-                  
-                  // 3. 跳过 ANSI 转义序列和 Unicode 编码
-                  if (/\\u[0-9a-f]{4}|\\u001b\[/i.test(content)) {
-                    console.log("⏭️ 跳过转义序列:", content)
-                    return
-                  }
-                  
-                  // 4. 跳过布尔值和单独的冒号
-                  if (/^(true|false|null)$/i.test(content) || /^:\s*$/.test(content)) {
-                    console.log("⏭️ 跳过布尔/冒号:", content)
-                    return
-                  }
-                  
-                  // 5. 处理换行符
-                  let processedContent = content
-                    .replace(/\\n/g, '\n')   // 转换换行符
-                    .replace(/\r\n/g, '\n')
-                    .replace(/\r/g, '\n')
-                  
-                  // 6. 清理首尾的 JSON 字符
-                  processedContent = processedContent
-                    .replace(/^[\[\]{},"]+/, '')
-                    .replace(/[\[\]{},"]+$/, '')
-                    .replace(/\\u[0-9a-f]{4}/gi, '')  // 移除 Unicode 转义
-                    .trim()
-                  
-                  // 7. 只保留包含中文、数字或数学符号的内容
-                  // 过滤掉纯英文（但保留包含中文的混合内容）
-                  if (processedContent.length > 0) {
-                    // 如果是纯英文（不含中文、数字、标点），跳过
-                    if (/^[a-zA-Z\s]+$/.test(processedContent)) {
-                      console.log("⏭️ 跳过纯英文内容:", processedContent)
-                      return
-                    }
-                    
-                    // console.log("✅ 添加到缓冲区:", processedContent)
-                    contentBuffer.current += processedContent
-                    // console.log("📊 当前缓冲区长度:", contentBuffer.current.length)
-                  }
-                  // console.log("─────────────────────────")
+                  contentBuffer.current += content
                 }
                 
-                // 检查完成标记
                 if (json.status === "done" || json.done || json.finished) {
-                  // console.log("🎉 JSON中包含完成标记")
                   setIsCompleted(true)
                   setIsStreaming(false)
                 }
               } catch (e) {
-                console.error("❌ JSON解析失败:", e)
-                console.error("❌ 字符串:", jsonStr.substring(0, 100))
+                console.error("JSON解析失败:", e)
               }
             }
           }
         }
         
         xhr.onprogress = () => {
-          // 获取当前接收到的所有文本
           const fullText = xhr.responseText
-          
-          // 只处理新增的部分
           if (fullText.length > previousLength) {
             const newChunk = fullText.substring(previousLength)
             previousLength = fullText.length
-            
-            chunkCount++
-            // console.log(`\n📦 收到第 ${chunkCount} 个数据块`)
-            // console.log(`📏 新增长度: ${newChunk.length} 字符`)
-            // console.log(`📏 总长度: ${fullText.length} 字符`)
-            // console.log(`📄 新增内容:`, newChunk.substring(0, 200))
-            
-            // 处理新增的数据
             processChunk(newChunk)
           }
         }
         
         xhr.onload = () => {
-          // console.log("✅ 流式输出完成，共接收", chunkCount, "个数据块")
-          // console.log("📊 总数据长度:", xhr.responseText.length)
-          
-          // 确保处理完所有剩余数据
           if (previousLength < xhr.responseText.length) {
             const remaining = xhr.responseText.substring(previousLength)
             if (remaining.trim()) {
-              // console.log("📦 处理剩余数据:", remaining.substring(0, 100))
               processChunk(remaining)
             }
           }
           
           setIsCompleted(true)
           setIsStreaming(false)
+          xhrRef.current = null
           resolve()
         }
         
         xhr.onerror = (error) => {
-          console.error("❌ XHR 请求失败:", error)
+          console.error("XHR 请求失败:", error)
           setIsStreaming(false)
+          xhrRef.current = null
           showError("AI 分析失败，请重试")
           setTimeout(() => router.back(), 2000)
           reject(error)
         }
         
-        // 配置并发送请求
         xhr.open("POST", url, true)
         xhr.setRequestHeader("Content-Type", "application/json")
         if (token) {
           xhr.setRequestHeader("Authorization", `Bearer ${token}`)
-          console.log("🔐 已添加Token")
         }
-        
-        console.log("📤 发送XHR请求...")
         xhr.send(JSON.stringify(requestBody))
       })
     } catch (error) {
-      console.error("❌ 流式接收失败:", error)
       setIsStreaming(false)
       showError("AI 分析失败，请重试")
       setTimeout(() => router.back(), 2000)
@@ -274,89 +277,67 @@ export default function AILoadingScreen() {
   }, [params.imguuid, params.type, router])
 
   useEffect(() => {
-    console.log("🔄 useEffect 触发，hasStartedStream:", hasStartedStream.current)
     if (!hasStartedStream.current) {
-      console.log("✅ 准备开始流式接收")
       hasStartedStream.current = true
       startStreamingOCR()
-    } else {
-      console.log("⏭️ 已经开始过流式接收，跳过")
+    }
+    
+    return () => {
+      if (xhrRef.current) {
+        xhrRef.current.abort()
+        xhrRef.current = null
+      }
     }
   }, [startStreamingOCR])
 
   // 光标闪烁动画
   useEffect(() => {
     if (isStreaming && !isCompleted) {
-      // 启动闪烁动画
       const blinkAnimation = Animated.loop(
         Animated.sequence([
-          Animated.timing(cursorOpacity, {
-            toValue: 0,
-            duration: 530,
-            useNativeDriver: true,
-          }),
-          Animated.timing(cursorOpacity, {
-            toValue: 1,
-            duration: 530,
-            useNativeDriver: true,
-          }),
+          Animated.timing(cursorOpacity, { toValue: 0, duration: 530, useNativeDriver: true }),
+          Animated.timing(cursorOpacity, { toValue: 1, duration: 530, useNativeDriver: true }),
         ])
       )
       blinkAnimation.start()
-      
-      return () => {
-        blinkAnimation.stop()
-      }
+      return () => blinkAnimation.stop()
     }
     
-    // 停止闪烁，隐藏光标
     cursorOpacity.setValue(0)
     return undefined
   }, [isStreaming, isCompleted, cursorOpacity])
 
-  // 逐字符显示效果：每10ms从缓冲区取1-3个字符显示
+  // 逐字符显示效果
   useEffect(() => {
-    // 只有开始流式输出后才启动定时器
     if (!isStreaming && !isCompleted) return
 
     displayIntervalRef.current = setInterval(() => {
       if (contentBuffer.current.length > 0) {
-        // 每次取1-3个字符
-        const charsToAdd = Math.min(3, contentBuffer.current.length)
+        const charsToAdd = Math.min(5, contentBuffer.current.length)
         const nextChars = contentBuffer.current.substring(0, charsToAdd)
         contentBuffer.current = contentBuffer.current.substring(charsToAdd)
         
         setStreamContent(prev => {
           const newContent = prev + nextChars
-          // 每隔一段时间打印一次当前显示的内容
-          if (newContent.length % 100 === 0) {
-            console.log("💬 当前页面显示内容 (最后100字符):", newContent.slice(-100))
+          // 每50个字符打印一次
+          if (newContent.length % 50 === 0) {
+            console.log(`📊 当前内容长度: ${newContent.length}, 最后50字符:`, newContent.slice(-50))
           }
           return newContent
         })
       } else if (isCompleted) {
-        // 缓冲区为空且已完成，清除定时器并跳转
         if (displayIntervalRef.current) {
           clearInterval(displayIntervalRef.current)
           displayIntervalRef.current = null
           
-          console.log("✅ 分析完成且缓冲区已清空，准备跳转到结果页")
-          // 延迟500ms后跳转，让用户看到完成状态
           setTimeout(() => {
             const imguuid = params.imguuid as string
             const type = params.type as string
-            console.log("🔄 跳转到结果页，参数:", { batch_id: imguuid, type })
-            router.replace({
-              pathname: "/ai/result",
-              params: {
-                batch_id: imguuid,
-                type: type,
-              },
-            })
+            router.replace({ pathname: "/ai/result", params: { batch_id: imguuid, type } })
           }, 500)
         }
       }
-    }, 10) // 每10ms更新一次
+    }, 30)
 
     return () => {
       if (displayIntervalRef.current) {
@@ -365,14 +346,38 @@ export default function AILoadingScreen() {
       }
     }
   }, [isStreaming, isCompleted, params.imguuid, params.type, router])
-  
-  // 自动滚动到底部
+
+  // 实时更新 WebView 内容
   useEffect(() => {
-    // console.log("📜 streamContent 更新，长度:", streamContent.length)
-    if (streamContent && scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: false })
+    if (streamContent) {
+      pendingContentRef.current = streamContent
+      
+      // 只有在 WebView 就绪后才发送
+      if (webViewReady && webViewRef.current) {
+        console.log(`🔄 发送内容到 WebView, 长度: ${streamContent.length}`)
+        console.log(`📝 内容示例 (前200字符):`, streamContent.substring(0, 200))
+        
+        // 使用 postMessage 发送更新
+        webViewRef.current.postMessage(JSON.stringify({
+          type: 'update',
+          content: streamContent
+        }))
+      } else {
+        console.log(`⏳ WebView 未就绪，暂存内容: ${streamContent.length} 字符`)
+      }
     }
-  }, [streamContent])
+  }, [streamContent, webViewReady])
+  
+  // WebView 就绪后发送暂存的内容
+  useEffect(() => {
+    if (webViewReady && pendingContentRef.current && webViewRef.current) {
+      console.log(`✅ WebView 已就绪，发送暂存内容: ${pendingContentRef.current.length} 字符`)
+      webViewRef.current.postMessage(JSON.stringify({
+        type: 'update',
+        content: pendingContentRef.current
+      }))
+    }
+  }, [webViewReady])
 
   return (
     <ImageBackground
@@ -381,55 +386,56 @@ export default function AILoadingScreen() {
       resizeMode="cover"
     >
       <View style={styles.contentContainer}>
-        {/* 标题 */}
-        <Text style={styles.title}>
+        <RNText style={styles.title}>
           {params.type === "composition" ? "AI 正在批改作文..." : "AI 正在批改作业..."}
-        </Text>
+        </RNText>
 
-        {/* 流式内容显示区域 */}
         <View style={styles.streamContainer}>
-          <ScrollView
-            ref={scrollViewRef}
-            style={styles.scrollView}
-            contentContainerStyle={styles.streamContent}
-            showsVerticalScrollIndicator={true}
-          >
-          {streamContent ? (
-            <View style={styles.textWithCursor}>
-              <Text style={styles.streamText}>{streamContent}</Text>
+          {isStreaming || isCompleted || streamContent ? (
+            <>
+              <WebView
+                ref={webViewRef}
+                originWhitelist={['*']}
+                source={{ html: generateInitialHTML() }}
+                style={styles.webView}
+                scrollEnabled={true}
+                showsVerticalScrollIndicator={true}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                startInLoadingState={false}
+                androidLayerType="hardware"
+                onLoad={() => {
+                  console.log('✅ WebView 加载完成')
+                  setWebViewReady(true)
+                }}
+                onMessage={(event) => {
+                  const message = event.nativeEvent.data
+                  console.log('📨 WebView 消息:', message)
+                  
+                  // 监听 WebView 资源加载完成消息
+                  if (message === 'WEBVIEW_READY') {
+                    console.log('✅ WebView 资源已就绪（来自 WebView 内部）')
+                    setWebViewReady(true)
+                  }
+                }}
+                onError={(syntheticEvent) => {
+                  const { nativeEvent } = syntheticEvent
+                  console.error('❌ WebView 加载错误:', nativeEvent)
+                }}
+              />
               {(isStreaming || !isCompleted) && (
-                <Animated.Text 
-                  style={[
-                    styles.cursor,
-                    { opacity: cursorOpacity }
-                  ]}
-                >
+                <Animated.Text style={[styles.cursor, { opacity: cursorOpacity }]}>
                   ▌
                 </Animated.Text>
               )}
-            </View>
+            </>
           ) : (
             <View style={styles.loadingPlaceholder}>
               <ActivityIndicator size="large" color="#fff" />
-              <Text style={styles.loadingText}>准备开始批改...</Text>
+              <RNText style={styles.loadingText}>准备开始批改...</RNText>
             </View>
           )}
-          </ScrollView>
         </View>
-
-        {/* 状态指示器 */}
-        {/* {isStreaming && (
-          <View style={styles.statusBar}>
-            <ActivityIndicator size="small" color="#4891FF" />
-            <Text style={styles.statusText}>正在接收数据...</Text>
-          </View>
-        )}
-
-        {isCompleted && (
-          <View style={styles.statusBar}>
-            <Text style={styles.completedText}>✓ 分析完成</Text>
-          </View>
-        )} */}
       </View>
     </ImageBackground>
   )
@@ -458,28 +464,19 @@ const styles = createStyles({
     height: 155,
     marginTop: -60,
     marginLeft: -15,
-    color:  '#FFFFFF' as const,
   },
-  scrollView: {
+  webView: {
     flex: 1,
-  },
-  streamContent: {
-    flexGrow: 1,
-  },
-  textWithCursor: {
-    flexDirection: "row" as const,
-    flexWrap: "wrap" as const,
-  },
-  streamText: {
-    fontSize: 8.375,
-    lineHeight: 16,
-       color:  '#FFFFFF' as const,
+    width: 400,
+    backgroundColor: "transparent",
   },
   cursor: {
-    fontSize: 9.375,
-    lineHeight: 28,
+    fontSize: 12.375,
+    lineHeight: 20,
     color: "#4891FF",
     fontWeight: "bold" as const,
+    marginLeft: 2,
+    marginTop: 4,
   },
   loadingPlaceholder: {
     flex: 1,
@@ -492,22 +489,5 @@ const styles = createStyles({
     fontSize: 9.375,
     color: "#666",
   },
-  statusBar: {
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 24,
-    gap: 8,
-  },
-  statusText: {
-    fontSize: 9.375,
-    color: "#4891FF",
-  },
-  completedText: {
-    fontSize: 9.375,
-    color: "#52C41A",
-    fontWeight: "500" as const,
-  },
 })
+
