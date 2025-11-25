@@ -17,6 +17,7 @@ import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
 import com.xhtx.app.posture.PostureMonitorPackage
+import com.xhtx.app.ShutdownPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -28,6 +29,8 @@ class MainApplication : Application(), ReactApplication {
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(MyReactNativePackage())
             packages.add(PostureMonitorPackage())
+            packages.add(ShutdownPackage())
+            packages.add(NativeCameraPackage())
             return packages
           }
 

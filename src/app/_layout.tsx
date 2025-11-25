@@ -121,6 +121,20 @@ export default function RootLayout() {
   // 获取网络状态
   const { isConnected, isInternetReachable, networkType, isInitialized } = useNetwork()
 
+  // 监听 API 层的网络错误事件
+  useEffect(() => {
+    const { networkEventManager } = require("../utils/networkEvents")
+    
+    const unsubscribe = networkEventManager.addListener(() => {
+      console.log("🌐 收到 API 网络错误事件，显示网络弹窗")
+      setShowNetworkModal(true)
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
+
   // P0核心功能Hooks
   const {
     getAndCacheDeviceUUID: _getAndCacheDeviceUUID,
@@ -437,7 +451,7 @@ export default function RootLayout() {
       </Modal>
 
       {/* 假连接提示 Modal - 已连接但无法访问互联网 */}
-      <Modal
+      {/* <Modal
         visible={showFakeConnectionModal}
         transparent
         animationType="fade"
@@ -467,7 +481,7 @@ export default function RootLayout() {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </GestureHandlerRootView>
   )
 }

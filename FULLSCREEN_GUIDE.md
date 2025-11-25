@@ -381,6 +381,16 @@ android.enableJetifier=true
 
 
 
+ adb logcat -c && echo "日志已清空，准备重启..." && adb reboot && sleep 5 && echo "设备重启中，开始抓取日志..." && adb wait-for-device && adb logcat > ~/Desktop/xhtx-app/xhtx/src/app/ai/boot_rotation_log1.txt
+
+
+
+cd /Users/zhoudabo/Desktop/xhtx-app/xhtx && adb shell dumpsys media.camera | grep -A 5 -B 5 "122.*V4L2\|Current V4L2.*122"
+
+cd /Users/zhoudabo/Desktop/xhtx-app/xhtx && adb shell dumpsys media.camera | grep -A 5 -B 5 "120\|device.*120\|camera.*120"
+
+
+
 
 
 

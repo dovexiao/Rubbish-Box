@@ -319,9 +319,9 @@ const openVolumeSettings = async () => {
 
   // 跳转到排行榜页面
   // 注释掉未使用的函数，保留功能以备将来实现
-  // const goToRanking = () => {
-  //   router.push("/ranking")
-  // }
+  const goToRanking = () => {
+    // router.push("/ranking")
+  }
 
   // 重新启动应用
   const handleRestartApp = () => {
@@ -342,6 +342,58 @@ const openVolumeSettings = async () => {
             } catch (error) {
               console.error("重启应用失败:", error)
               showError("重启应用失败")
+            }
+          },
+        },
+      ]
+    )
+  }
+
+  // 关机/重启选择
+  const handleShutdown = () => {
+    showDialog(
+      "电源选项",
+      "请选择操作",
+      [
+        {
+          text: "取消",
+          style: "cancel"
+        },
+        {
+          text: "重启",
+          onPress: async () => {
+            try {
+              const { NativeModules } = await import("react-native")
+              const { ShutdownModule } = NativeModules
+              
+              if (ShutdownModule) {
+                await ShutdownModule.reboot()
+                console.log("重启命令已发送")
+              } else {
+                showError("重启功能不可用")
+              }
+            } catch (error) {
+              console.error("重启失败:", error)
+              showError("重启失败")
+            }
+          },
+        },
+        {
+          text: "关机",
+          onPress: async () => {
+            try {
+              const { NativeModules } = await import("react-native")
+              const { ShutdownModule } = NativeModules
+              
+              if (ShutdownModule) {
+                await ShutdownModule.shutdown()
+                console.log("关机命令已发送")
+              } else {
+                showError("关机功能不可用")
+              }
+            } catch (error) {
+              console.error("关机失败:", error)
+              showError("关机失败")
             }
           },
         },
@@ -501,18 +553,18 @@ const openVolumeSettings = async () => {
             />
             <View style={styles.settingsPanel}>
             <View style={styles.settingsPanelTop}>
-              {/* 重启应用 */}
-              {/* <TouchableOpacity style={styles.settingItem} onPress={handleRestartApp}>
+              {/* 关机 */}
+              <TouchableOpacity style={styles.settingItem} onPress={handleShutdown}>
                 <View style={styles.settingItemLeft}>
                   <View style={styles.settingIconContainer}>
-                    <Ionicons name="refresh" size={rpx(10.9)} color="#fff" />
+                    <Ionicons name="power-outline" size={rpx(10.9)} color="#fff" />
                   </View>
-                  <Text style={styles.settingText}>重启应用</Text>
+                  <Text style={styles.settingText}>关机</Text>
                 </View>
                 <Text style={styles.settingArrow}>
                   <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
                 </Text>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
 
               {/* 系统设置 - 紧急逃生入口 */}
               <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
@@ -742,9 +794,14 @@ const openVolumeSettings = async () => {
                 </TouchableOpacity>
 
                 {/* 学习时长排行榜 */}
+                <TouchableOpacity 
+                  activeOpacity={0.8} 
+                  onPress={goToRanking}
+                  style={styles.rankingCard}
+                >
                 <ImageBackground
                   source={Images.indexRankBg2}
-                  style={styles.rankingCard}
+                    style={styles.rankingCardImage}
                   resizeMode="cover"
                 >
                   {ranks && ranks.length > 0 && (
@@ -769,6 +826,7 @@ const openVolumeSettings = async () => {
                     </View>
                   )}
                 </ImageBackground>
+                </TouchableOpacity>
               </View>
             )}
           </View>
@@ -1244,6 +1302,9 @@ const styles = createStyles({
     shadowOffset: { width: 0, height: 3.90625 },
     shadowOpacity: 1,
     shadowRadius: 7.8125,
+  },
+  rankingCardImage: {
+    flex: 1,
   },
   rankingList: {
     marginTop: 40,

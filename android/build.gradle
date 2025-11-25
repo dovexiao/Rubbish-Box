@@ -2,10 +2,6 @@
 
 buildscript {
   repositories {
-    // 阿里云 Maven 镜像（加速国内下载）
-    maven { url 'https://maven.aliyun.com/repository/public' }
-    maven { url 'https://maven.aliyun.com/repository/google' }
-    maven { url 'https://maven.aliyun.com/repository/jcenter' }
     google()
     mavenCentral()
   }
@@ -31,10 +27,12 @@ allprojects {
       url(reactNativeAndroidDir)
     }
 
-    // 阿里云 Maven 镜像（加速国内下载）
-    maven { url 'https://maven.aliyun.com/repository/public' }
+    // 优先使用国内镜像源（阿里云）
     maven { url 'https://maven.aliyun.com/repository/google' }
-    maven { url 'https://maven.aliyun.com/repository/jcenter' }
+    maven { url 'https://maven.aliyun.com/repository/central' }
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    
     google()
     mavenCentral()
     maven { url 'https://www.jitpack.io' }

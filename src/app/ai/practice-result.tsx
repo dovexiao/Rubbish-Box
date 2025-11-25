@@ -80,6 +80,28 @@ export default function PracticeResultScreen() {
     return () => clearTimeout(timer)
   }, [practiceType, questionId, questionType, correctRate])
 
+  // 自定义返回逻辑
+  const handleBack = () => {
+    console.log("🔙 返回按钮点击")
+    console.log("  - practiceType:", practiceType)
+    console.log("  - params.practiceType:", params.practiceType)
+    console.log("  - canGoBack:", router.canGoBack?.())
+    
+    if (practiceType === "error") {
+      // 从错题本练习返回，使用 replace 回到错题本首页
+      console.log("✅ 错题本练习，replace 到错题本首页")
+      router.replace("/ai/error-book")
+    } else {
+      // 其他情况使用默认返回
+      console.log("⚠️ 其他练习类型")
+      if (router.canGoBack?.()) {
+        router.back()
+      } else {
+        router.navigate("/(tabs)/study")
+      }
+    }
+  }
+
   return (
     <LinearGradient
       colors={["#93ABFF", "#E4F4FF", "#ECF8FF", "#FFFFFF"]}
@@ -89,7 +111,7 @@ export default function PracticeResultScreen() {
       style={styles.practiceResultContainer}
     >
       <StatusBar theme="dark" />
-      <NavBar title="" leftArrow />
+      <NavBar title="" leftArrow onBackPress={handleBack} />
 
       <View style={styles.mainContent}>
         {/* 左右布局 */}

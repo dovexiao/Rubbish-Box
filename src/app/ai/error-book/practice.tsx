@@ -193,7 +193,7 @@ export default function AIPracticeScreen() {
     // 保存到AsyncStorage供详情页使用
     await AsyncStorage.setItem("practiveList", JSON.stringify(questionsWithAnswers))
 
-    // 直接跳转到结果页面
+    // 直接跳转到结果页面（使用 replace 跳过当前页面）
     router.replace({
       pathname: "/ai/practice-result",
       params: {

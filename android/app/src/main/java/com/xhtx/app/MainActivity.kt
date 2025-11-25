@@ -33,6 +33,19 @@ class MainActivity : ReactActivity() {
     
     // 设置全屏模式
     setupFullscreen()
+    
+    // 设置全局异常处理器，忽略 Modal 清理时的异常
+    val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+    Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+      if (throwable is IllegalArgumentException && 
+          throwable.message?.contains("not attached to window manager") == true) {
+        // 忽略 React Native Modal 清理时的异常
+        android.util.Log.w("MainActivity", "忽略 Modal 清理异常: ${throwable.message}")
+      } else {
+        // 其他异常使用默认处理
+        defaultHandler?.uncaughtException(thread, throwable)
+      }
+    }
   }
 
   /**

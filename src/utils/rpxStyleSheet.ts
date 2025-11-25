@@ -27,7 +27,7 @@ const DEVICE_CONFIGS = [
     logicalWidth: 960,
     logicalHeight: 600,
     // 当检测到逻辑像素时的缩放
-    scaleRatio: 1.5, // 600/400=1.5
+    scaleRatio: 1.28, // 600/400=1.5
     baseRpx: 400,
   },
    {

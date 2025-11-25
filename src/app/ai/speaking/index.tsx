@@ -152,7 +152,14 @@ export default function AiSpeakingScreen() {
   const startPractice = () => {
     console.log("开始练习:", selectedPracticeMode)
     setPracticeModeModalVisible(false)
-    // TODO: 跳转到对应的练习页面
+    router.push({
+      pathname: "/ai/speaking/practice",
+      params: {
+        mode: selectedPracticeMode,
+        level: currentLevel,
+        // TODO: 传递选中的话题信息
+      }
+    })
   }
 
   // 点击话题卡片

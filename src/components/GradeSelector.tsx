@@ -51,6 +51,14 @@ export function GradeSelector({ visible, onClose, currentSelection, onConfirm }:
   const [tempSelection, setTempSelection] = useState<GradeSelection>(currentSelection)
   const [highSchoolSemesters, setHighSchoolSemesters] = useState<string[]>(["上册", "下册"]) // 高中学期列表（动态获取）
 
+  // 当弹窗打开时，同步 currentSelection 到 tempSelection
+  useEffect(() => {
+    if (visible) {
+      console.log("📚 弹窗打开，同步 currentSelection:", currentSelection)
+      setTempSelection(currentSelection)
+    }
+  }, [visible, currentSelection])
+
   // 根据学制和学段获取年级列表
   const getGradeOptions = (
     system: EducationalSystem,

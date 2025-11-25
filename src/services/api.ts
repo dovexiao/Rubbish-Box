@@ -6,6 +6,7 @@ import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS, UPLOAD_API_URL } from "../c
 import { IS_DEV } from "../config/env"
 import { getDeviceInfoForAPI } from "../utils/deviceInfo"
 import { showError, showSuccess, showWarning } from "../utils/toast"
+import { triggerNetworkError } from "../utils/networkEvents"
 /**
  * 扩展AxiosRequestConfig类型，添加metadata字段
  */
@@ -82,6 +83,36 @@ const isDatabaseConnectionError = (error: any): boolean => {
 
 // 延迟函数
 const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * 验证网络连接是否真实可用
+ * 通过请求百度首页来判断
+ * @returns true表示网络可用，false表示网络不可用
+ */
+const verifyNetworkConnection = async (): Promise<boolean> => {
+  try {
+    safeLog("🌐 开始验证网络连接（请求百度）...")
+    
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000) // 5秒超时
+    
+    const response = await fetch("https://www.baidu.com", {
+      method: "HEAD",
+      signal: controller.signal,
+      cache: "no-cache",
+    })
+    
+    clearTimeout(timeoutId)
+    
+    const isSuccess = response.status === 200
+    safeLog(`🌐 网络验证结果: ${isSuccess ? "网络可用✅" : "网络不可用❌"} (状态码: ${response.status})`)
+    
+    return isSuccess
+  } catch (error: any) {
+    safeLog("🌐 网络验证失败（无法连接百度）:", error.message)
+    return false
+  }
+}
 
 // 创建axios实例
 const apiClient: AxiosInstance = axios.create({
@@ -381,8 +412,35 @@ apiClient.interceptors.response.use(
       errorMessage = "网络请求失败，请检查网络连接"
     }
 
-    // 显示错误消息
-    showError(errorMessage)
+    // 检测是否为网络错误
+    const isNetworkError = 
+      !error.response || // 没有响应（网络不可达）
+      error.message === "Network Error" || // axios 网络错误
+      error.code === "ERR_NETWORK" || // 网络错误代码
+      error.code === "ECONNABORTED" || // 连接中止/超时
+      error.message.includes("timeout") || // 超时错误
+      error.message.includes("网络")  // 包含"网络"关键字
+
+    // 如果是网络错误，先验证网络是否真的不可用
+    if (isNetworkError) {
+      safeLog("🌐 检测到疑似网络错误，开始验证网络连接...")
+      
+      // 异步验证网络并触发弹窗（不阻塞当前错误处理）
+      verifyNetworkConnection().then((isConnected) => {
+        if (!isConnected) {
+          // 网络真的不可用，触发网络错误弹窗
+          safeLog("🌐 网络验证失败，触发网络弹窗")
+          triggerNetworkError()
+        } else {
+          // 网络可用，但API请求失败，说明是服务器问题，显示toast
+          safeLog("🌐 网络可用，API服务器问题，显示错误提示")
+          showError(errorMessage)
+        }
+      })
+    } else {
+      // 非网络错误才显示 toast
+      showError(errorMessage)
+    }
 
     // 创建一个新的 Error 对象，使用解析后的错误消息
     const newError: any = new Error(errorMessage)

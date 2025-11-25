@@ -73,18 +73,36 @@ class BackgroundCameraManager(
 
     fun stopCamera() {
         try {
-            captureSession?.close()
-            captureSession = null
+            if (captureSession != null) {
+                try {
+                    captureSession?.close()
+                } catch (e: Exception) {
+                    Log.e(TAG, "关闭 CaptureSession 失败: ${e.message}")
+                }
+                captureSession = null
+            }
             
-            cameraDevice?.close()
-            cameraDevice = null
+            if (cameraDevice != null) {
+                try {
+                    cameraDevice?.close()
+                } catch (e: Exception) {
+                    Log.e(TAG, "关闭 CameraDevice 失败: ${e.message}")
+                }
+                cameraDevice = null
+            }
             
-            imageReader?.close()
-            imageReader = null
+            if (imageReader != null) {
+                try {
+                    imageReader?.close()
+                } catch (e: Exception) {
+                    Log.e(TAG, "关闭 ImageReader 失败: ${e.message}")
+                }
+                imageReader = null
+            }
             
             Log.d(TAG, "相机已停止")
         } catch (e: Exception) {
-            Log.e(TAG, "停止相机失败: ${e.message}", e)
+            Log.e(TAG, "停止相机过程发生未知错误: ${e.message}", e)
         }
     }
 
