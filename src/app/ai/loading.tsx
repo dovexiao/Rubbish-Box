@@ -18,10 +18,34 @@ const generateInitialHTML = () => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" onerror="console.error('KaTeX CSS 加载失败')">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" onerror="console.error('KaTeX JS 加载失败')"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onerror="console.error('KaTeX auto-render 加载失败')"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.0/marked.min.js" onerror="console.error('Marked 加载失败')"></script>
+  <script>
+    // 辅助函数：同时打印到 console 和发送到 React Native
+    // 提前定义，确保在资源加载事件中可用
+    function logToRN(message) {
+      console.log(message);
+      if (window.ReactNativeWebView) {
+        try {
+          window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'log', message: message }));
+        } catch (e) {
+          console.error('发送日志失败:', e);
+        }
+      }
+    }
+    
+    var webviewStartTime = Date.now();
+  </script>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.16.9/katex.min.css" 
+    onload="if(typeof logToRN==='function'){var loadTime=Date.now();var elapsed=loadTime-webviewStartTime;logToRN('✅ KaTeX CSS 加载成功 ('+elapsed+'ms)');}else{var loadTime=Date.now();console.log('✅ KaTeX CSS 加载成功 ('+(loadTime-webviewStartTime)+'ms)');}" 
+    onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ KaTeX CSS 加载失败 ('+elapsed+'ms)');}else{var errorTime=Date.now();console.error('❌ KaTeX CSS 加载失败 ('+(errorTime-webviewStartTime)+'ms)');}">
+  <script src="https://cdn.staticfile.org/KaTeX/0.16.9/katex.min.js" defer 
+    onload="if(typeof logToRN==='function'){var loadTime=Date.now();var elapsed=loadTime-webviewStartTime;logToRN('✅ KaTeX JS 加载成功 ('+elapsed+'ms)');}else{var loadTime=Date.now();console.log('✅ KaTeX JS 加载成功 ('+(loadTime-webviewStartTime)+'ms)');}" 
+    onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ KaTeX JS 加载失败 ('+elapsed+'ms)');}else{var errorTime=Date.now();console.error('❌ KaTeX JS 加载失败 ('+(errorTime-webviewStartTime)+'ms)');}"></script>
+  <script src="https://cdn.staticfile.org/KaTeX/0.16.9/contrib/auto-render.min.js" defer 
+    onload="if(typeof logToRN==='function'){var loadTime=Date.now();var elapsed=loadTime-webviewStartTime;logToRN('✅ KaTeX auto-render 加载成功 ('+elapsed+'ms)');}else{var loadTime=Date.now();console.log('✅ KaTeX auto-render 加载成功 ('+(loadTime-webviewStartTime)+'ms)');}" 
+    onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ KaTeX auto-render 加载失败 ('+elapsed+'ms)');}else{var errorTime=Date.now();console.error('❌ KaTeX auto-render 加载失败 ('+(errorTime-webviewStartTime)+'ms)');}"></script>
+  <script src="https://cdn.staticfile.org/marked/11.1.0/marked.min.js" defer 
+    onload="if(typeof logToRN==='function'){var loadTime=Date.now();var elapsed=loadTime-webviewStartTime;logToRN('✅ Marked 加载成功 ('+elapsed+'ms)');}else{var loadTime=Date.now();console.log('✅ Marked 加载成功 ('+(loadTime-webviewStartTime)+'ms)');}" 
+    onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ Marked 加载失败 ('+elapsed+'ms)');}else{var errorTime=Date.now();console.error('❌ Marked 加载失败 ('+(errorTime-webviewStartTime)+'ms)');}"></script>
     <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -50,29 +74,91 @@ const generateInitialHTML = () => {
 <body>
   <div id="content"></div>
   <script>
-    var webviewStartTime = Date.now();
-    console.log('🚀 WebView 脚本开始执行, 时间戳:', webviewStartTime);
+    // logToRN 已在 head 中定义
     
-    // 立即通知 React Native（不等待外部资源）
-    setTimeout(function() {
-      var timeoutTime = Date.now();
-      console.log('⏰ 超时触发(' + (timeoutTime - webviewStartTime) + 'ms)，立即通知 React Native');
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage('WEBVIEW_READY');
-      }
-    }, 500); // 500ms 后强制就绪
+    // 立即发送测试消息
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage('SCRIPT_START');
+    }
     
-    // 等待所有资源加载完成（备用）
-    window.addEventListener('load', function() {
-      var loadTime = Date.now();
-      console.log('✅ 所有资源加载完成 (' + (loadTime - webviewStartTime) + 'ms)');
+    // webviewStartTime 已在 head 中定义
+    logToRN('🚀 WebView 脚本开始执行, 时间戳: ' + webviewStartTime);
+    logToRN('📍 document.readyState: ' + document.readyState);
+    
+    // 监控文档加载状态
+    document.addEventListener('DOMContentLoaded', function() {
+      var elapsed = Date.now() - webviewStartTime;
+      logToRN('📄 DOMContentLoaded 触发 (' + elapsed + 'ms)');
     });
     
-    // 检查依赖是否加载成功
+    // 监控所有资源加载
+    window.addEventListener('load', function() {
+      var loadTime = Date.now();
+      var elapsed = loadTime - webviewStartTime;
+      logToRN('✅ window.load 事件触发：所有资源加载完成 (' + elapsed + 'ms)');
+    });
+    
+    // 监控资源加载错误
+    window.addEventListener('error', function(e) {
+      console.error('❌ 资源加载错误:', e.target.tagName, e.target.src || e.target.href);
+    }, true);
+    
+    // 立即检查依赖
+    logToRN('🔍 立即检查依赖: marked=' + (typeof marked !== 'undefined') + ', katex=' + (typeof katex !== 'undefined') + ', renderMathInElement=' + (typeof renderMathInElement !== 'undefined'));
+    
+    // 100ms 后再检查一次
     setTimeout(function() {
       var checkTime = Date.now();
-      console.log('🔍 检查依赖(' + (checkTime - webviewStartTime) + 'ms): marked=' + (typeof marked !== 'undefined') + ', katex=' + (typeof katex !== 'undefined'));
+      var elapsed = checkTime - webviewStartTime;
+      logToRN('🔍 100ms后检查依赖(' + elapsed + 'ms): marked=' + (typeof marked !== 'undefined') + ', katex=' + (typeof katex !== 'undefined') + ', renderMathInElement=' + (typeof renderMathInElement !== 'undefined'));
     }, 100);
+    
+    // 重试机制：尝试发送 WEBVIEW_READY 消息
+    var readyMessageSent = false;
+    var maxRetries = 20; // 最多重试20次（总共约2秒）
+    var retryCount = 0;
+    
+    function trySendReadyMessage() {
+      retryCount++;
+      var currentTime = Date.now();
+      var elapsed = currentTime - webviewStartTime;
+      
+      if (readyMessageSent) {
+        return; // 已经发送成功，不再重试
+      }
+      
+      logToRN('⏰ 尝试发送 WEBVIEW_READY (第' + retryCount + '次, ' + elapsed + 'ms)');
+      logToRN('🔍 最终依赖状态: marked=' + (typeof marked !== 'undefined') + ', katex=' + (typeof katex !== 'undefined'));
+      logToRN('🔍 检查 window.ReactNativeWebView 是否存在: ' + typeof window.ReactNativeWebView);
+      
+      if (window.ReactNativeWebView) {
+        try {
+        window.ReactNativeWebView.postMessage('WEBVIEW_READY');
+          readyMessageSent = true;
+          logToRN('✅ window.ReactNativeWebView 存在，发送 WEBVIEW_READY 消息成功 (第' + retryCount + '次尝试)');
+          logToRN('✅ postMessage(WEBVIEW_READY) 已调用');
+        } catch (e) {
+          logToRN('❌ postMessage 调用失败: ' + e.toString());
+          // 继续重试
+          if (retryCount < maxRetries) {
+            setTimeout(trySendReadyMessage, 100);
+      } else {
+            logToRN('❌ 达到最大重试次数，停止重试');
+          }
+        }
+      } else {
+        logToRN('⚠️ window.ReactNativeWebView 不存在 (第' + retryCount + '次尝试)');
+        // 继续重试
+        if (retryCount < maxRetries) {
+          setTimeout(trySendReadyMessage, 100);
+        } else {
+          logToRN('❌ 达到最大重试次数，window.ReactNativeWebView 仍未就绪');
+        }
+      }
+    }
+    
+    // 500ms 后开始第一次尝试（不等待 CDN）
+    setTimeout(trySendReadyMessage, 500);
     
     // 安全初始化 marked
     if (typeof marked !== 'undefined') {
@@ -118,10 +204,12 @@ const generateInitialHTML = () => {
         var renderEnd = Date.now();
         if (firstRenderTime === 0 && text.length > 0) {
           firstRenderTime = renderEnd;
-          console.log('🎨 首次渲染完成 (' + (renderEnd - webviewStartTime) + 'ms from start, ' + (renderEnd - renderStart) + 'ms render time)');
+          var elapsedFromStart = renderEnd - webviewStartTime;
+          var renderTime = renderEnd - renderStart;
+          logToRN('🎨 首次渲染完成 (' + elapsedFromStart + 'ms from start, ' + renderTime + 'ms render time)');
         }
       } catch (e) {
-        console.error('❌ 渲染错误:', e);
+        logToRN('❌ 渲染错误: ' + e.toString());
         // 最后的降级方案：直接显示文本
         document.getElementById('content').textContent = text;
       }
@@ -163,7 +251,7 @@ const generateInitialHTML = () => {
       }
     });
     
-    console.log('✅ 消息监听器已设置');
+    logToRN('✅ 消息监听器已设置');
     
     // 初始化空内容
     renderContent('');
@@ -192,13 +280,19 @@ export default function AILoadingScreen() {
   const webViewRef = useRef<WebView>(null)
   const canStartDisplay = useRef(false) // 是否可以开始显示（WebView 就绪 + 有内容）
   const isFormattingRef = useRef(false) // 是否在格式化阶段（用于停止接收内容）
+  const webViewReadyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null) // WebView 就绪超时定时器
+  const webViewReadyFallbackTriggered = useRef(false) // 是否已触发降级机制
+  const webViewRetryCount = useRef(0) // WebView 重试次数
+  const MAX_WEBVIEW_RETRIES = 2 // 最大重试次数
   
   const MAX_DISPLAY_LENGTH = 800 // 最大显示字符数
+  const WEBVIEW_READY_TIMEOUT = 2000 // WebView 就绪超时时间（2秒）
   
   // 性能监控时间戳
   const perfTimestamps = useRef({
     pageEnter: Date.now(),
     xhrStart: 0,
+    webviewLoadStart: 0, // WebView 开始加载时间
     webviewHtmlLoaded: 0,
     webviewReady: 0,
     firstDataReceived: 0,
@@ -217,7 +311,68 @@ export default function AILoadingScreen() {
   useEffect(() => {
     console.log('📍 ============ 页面加载开始 ============')
     console.log(`⏱️ 页面进入时间戳: ${perfTimestamps.current.pageEnter}`)
+    console.log(`📊 初始状态: webViewReady=${webViewReady}, isStreaming=${isStreaming}, isCompleted=${isCompleted}`)
   }, [])
+  
+  // 监控关键状态变化
+  useEffect(() => {
+    console.log(`🔄 状态变化: webViewReady=${webViewReady}, isStreaming=${isStreaming}, isCompleted=${isCompleted}`)
+  }, [webViewReady, isStreaming, isCompleted])
+  
+  // 专门监控 webViewReady 状态
+  useEffect(() => {
+    console.log(`📺 WebView 就绪状态变化: webViewReady=${webViewReady}`)
+    if (webViewReady) {
+      console.log('✅✅✅ WebView 已就绪！可以开始显示内容了')
+      // 如果已经就绪，清除超时定时器
+      if (webViewReadyTimeoutRef.current) {
+        clearTimeout(webViewReadyTimeoutRef.current)
+        webViewReadyTimeoutRef.current = null
+      }
+    } else {
+      console.log('⏳⏳⏳ WebView 未就绪，等待中...')
+    }
+  }, [webViewReady])
+
+  // 超时降级机制：如果 2 秒后仍未收到 WEBVIEW_READY，强制标记为就绪
+  useEffect(() => {
+    // 基于 WebView 开始加载或 HTML 加载完成时间启动超时（哪个先有就用哪个）
+    const webViewStartTime = perfTimestamps.current.webviewHtmlLoaded > 0 
+      ? perfTimestamps.current.webviewHtmlLoaded 
+      : perfTimestamps.current.webviewLoadStart
+    
+    if (webViewStartTime > 0 && !webViewReady && !webViewReadyFallbackTriggered.current) {
+      const elapsed = Date.now() - webViewStartTime
+      const remainingTimeout = Math.max(0, WEBVIEW_READY_TIMEOUT - elapsed)
+      
+      console.log(`⏰ 启动 WebView 就绪超时降级机制，${remainingTimeout}ms 后强制标记为就绪 (已等待 ${elapsed}ms)`)
+      
+      webViewReadyTimeoutRef.current = setTimeout(() => {
+        if (!webViewReady) {
+          webViewReadyFallbackTriggered.current = true
+          perfTimestamps.current.webviewReady = Date.now()
+          console.log('⚠️ WebView 就绪超时，启用降级机制：强制标记为就绪')
+          if (perfTimestamps.current.webviewHtmlLoaded > 0) {
+            logDuration('WebView HTML 加载 → 降级就绪', 'webviewHtmlLoaded', perfTimestamps.current.webviewReady)
+          } else {
+            logDuration('WebView 开始加载 → 降级就绪', 'webviewLoadStart', perfTimestamps.current.webviewReady)
+          }
+          logDuration('页面进入 → WebView 降级就绪', 'pageEnter', perfTimestamps.current.webviewReady)
+          setWebViewReady(true)
+          console.log('✅ setWebViewReady(true) 已调用（降级机制）')
+        }
+      }, remainingTimeout)
+      
+      return () => {
+        if (webViewReadyTimeoutRef.current) {
+          clearTimeout(webViewReadyTimeoutRef.current)
+          webViewReadyTimeoutRef.current = null
+        }
+      }
+    }
+    
+    return undefined
+  }, [perfTimestamps.current.webviewLoadStart, perfTimestamps.current.webviewHtmlLoaded, webViewReady])
 
   // 确保全屏沉浸式
   useFocusEffect(
@@ -295,13 +450,16 @@ export default function AILoadingScreen() {
                 
                 // 格式化阶段不处理内容
                 if (isFormattingRef.current) {
+                  console.log('⚠️ 格式化阶段，跳过内容处理')
                   return
                 }
                 
                 let content = json.content || json.text || json.data || json.message || ""
                 
                 if (content) {
+                  const beforeLength = contentBuffer.current.length
                   contentBuffer.current += content
+                  const afterLength = contentBuffer.current.length
                   
                   // 记录第一次接收数据
                   if (perfTimestamps.current.firstDataReceived === 0) {
@@ -310,10 +468,12 @@ export default function AILoadingScreen() {
                     logDuration('XHR 开始 → 首次接收数据', 'xhrStart', perfTimestamps.current.firstDataReceived)
                   }
                   
-                  // 每500字符打印一次
-                  if (contentBuffer.current.length % 500 < content.length) {
-                    console.log(`📥 已接收 ${contentBuffer.current.length} 字符`)
+                  // 每500字符打印一次，或者每次添加内容时打印（前几次）
+                  if (contentBuffer.current.length % 500 < content.length || contentBuffer.current.length < 100) {
+                    console.log(`📥 已接收 ${contentBuffer.current.length} 字符 (本次添加 ${content.length} 字符, 从 ${beforeLength} 到 ${afterLength})`)
                   }
+                } else {
+                  console.log('⚠️ JSON 中无内容字段:', JSON.stringify(json).substring(0, 100))
                 }
               } catch (e) {
                 console.error("❌ JSON解析失败:", e)
@@ -350,7 +510,7 @@ export default function AILoadingScreen() {
         }
         
         xhr.onerror = (error) => {
-          console.error("XHR 请求失败:", error)
+          console.error("AI 分析请求失败:", error)
           setIsStreaming(false)
           xhrRef.current = null
           showError("AI 分析失败，请重试")
@@ -431,6 +591,8 @@ export default function AILoadingScreen() {
 
   // 逐字符显示效果（只在 WebView 就绪后执行）
   useEffect(() => {
+    console.log(`🔍 显示条件检查: webViewReady=${webViewReady}, isStreaming=${isStreaming}, isCompleted=${isCompleted}`)
+    
     // 必须 WebView 就绪才能开始
     if (!webViewReady) {
       console.log('⏳ WebView 未就绪，等待...')
@@ -438,30 +600,36 @@ export default function AILoadingScreen() {
     }
     
     if (!isStreaming && !isCompleted) {
-      // console.log('⏳ 等待流式开始或完成...')
+      console.log('⏳ 等待流式开始或完成...')
       return
     }
 
-    // console.log('🚀 开始逐字符显示定时器')
+    console.log('🚀 开始逐字符显示定时器')
     displayIntervalRef.current = setInterval(() => {
-      // 格式化阶段不再显示新内容
-      if (isFormattingRef.current) {
+      const bufferLength = contentBuffer.current.length
+      const isFormatting = isFormattingRef.current
+      
+      // 格式化阶段时，如果 contentBuffer 有内容，继续显示；如果没有内容，才暂停
+      if (isFormatting && bufferLength === 0) {
+        // console.log('⏸️ 格式化阶段，buffer为空，暂停显示')
         return
       }
       
-      if (contentBuffer.current.length > 0) {
-        const charsToAdd = Math.min(5, contentBuffer.current.length)
+      if (bufferLength > 0) {
+        const charsToAdd = Math.min(5, bufferLength)
         const nextChars = contentBuffer.current.substring(0, charsToAdd)
         contentBuffer.current = contentBuffer.current.substring(charsToAdd)
         
-        // 减少日志频率
-        if (contentBuffer.current.length % 500 === 0) {
-          // console.log(`📝 显示进度: buffer剩余 ${contentBuffer.current.length} 字符`)
+        // 减少日志频率，但前几次和每500字符时打印
+        if (contentBuffer.current.length % 500 === 0 || contentBuffer.current.length < 100) {
+          console.log(`📝 显示进度: buffer剩余 ${contentBuffer.current.length} 字符 (取出了 ${charsToAdd} 字符, 格式化阶段: ${isFormatting})`)
         }
         
         setStreamContent(prev => {
           // 本地保存完整内容（不删除）
           const newContent = prev + nextChars
+          
+          // console.log(`📝 setStreamContent: prev长度=${prev.length}, 新增=${nextChars.length}, 总长度=${newContent.length}`)
           
           // 记录第一次显示内容
           if (prev.length === 0 && newContent.length > 0 && perfTimestamps.current.firstContentDisplayed === 0) {
@@ -474,7 +642,15 @@ export default function AILoadingScreen() {
           // 返回完整内容（不截取）
           return newContent
         })
-      } else if (isCompleted) {
+      } else {
+        // buffer 为空，但还没完成
+        // 每100次打印一次，避免日志过多
+        if (Math.random() < 0.01) {
+          console.log(`⏳ buffer为空，等待数据 (格式化阶段: ${isFormattingRef.current}, isStreaming: ${isStreaming}, isCompleted: ${isCompleted})`)
+        }
+      }
+      
+      if (isCompleted) {
         if (displayIntervalRef.current) {
           clearInterval(displayIntervalRef.current)
           displayIntervalRef.current = null
@@ -498,7 +674,12 @@ export default function AILoadingScreen() {
 
   // 实时更新 WebView 内容（只在 WebView 就绪后发送，并限制长度）
   useEffect(() => {
-    if (!streamContent) return
+    // console.log(`🔍 WebView 发送检查: streamContent长度=${streamContent.length}, webViewReady=${webViewReady}, webViewRef存在=${!!webViewRef.current}`)
+    
+    if (!streamContent) {
+      console.log('⚠️ streamContent 为空，跳过发送')
+      return
+    }
     
     // 只有在 WebView 就绪后才发送
     if (webViewReady && webViewRef.current) {
@@ -507,11 +688,11 @@ export default function AILoadingScreen() {
         ? streamContent.slice(-MAX_DISPLAY_LENGTH) 
         : streamContent
       
-      // 只在发送时打印（减少日志）
-      // if (streamContent.length % 200 === 0 || streamContent.length < 100) {
-      //   console.log(`🔄 发送到 WebView: 总${streamContent.length}字符, 显示${displayContent.length}字符`)
-      //   console.log(`📝 显示内容前100字符:`, displayContent.substring(0, 100))
-      // }
+      // 每次都打印发送信息（调试用）
+      if (streamContent.length % 100 < 10 || streamContent.length < 100) {
+        // console.log(`🔄 发送到 WebView: 总${streamContent.length}字符, 显示${displayContent.length}字符`)
+        // console.log(`📝 显示内容前100字符:`, displayContent.substring(0, 100))
+      }
       
       // 使用 postMessage 发送更新
       webViewRef.current.postMessage(JSON.stringify({
@@ -519,7 +700,7 @@ export default function AILoadingScreen() {
         content: displayContent
       }))
     } else {
-      console.log(`⏳ WebView 未就绪，等待加载完成...`)
+      console.log(`⏳ WebView 未就绪(${webViewReady})，内容长度: ${streamContent.length}`)
     }
   }, [streamContent, webViewReady])
 
@@ -539,7 +720,7 @@ export default function AILoadingScreen() {
           <WebView
             ref={webViewRef}
             originWhitelist={['*']}
-            source={{ html: generateInitialHTML() }}
+            source={{ html: generateInitialHTML(), baseUrl: 'https://xiaohetx.cn' }}
             style={styles.webView}
             scrollEnabled={true}
             showsVerticalScrollIndicator={true}
@@ -547,27 +728,229 @@ export default function AILoadingScreen() {
             domStorageEnabled={true}
             startInLoadingState={false}
             androidLayerType="hardware"
+            mixedContentMode="always"
+            allowFileAccess={true}
+            allowUniversalAccessFromFileURLs={true}
+            cacheEnabled={false}
+            incognito={true}
+            onLoadStart={() => {
+              perfTimestamps.current.webviewLoadStart = Date.now()
+              console.log('🌐 WebView onLoadStart: 开始加载 HTML')
+              logDuration('页面进入 → WebView 开始加载', 'pageEnter', perfTimestamps.current.webviewLoadStart)
+              
+              // 立即启动超时降级机制（不等待 useEffect）
+              if (!webViewReady && !webViewReadyFallbackTriggered.current && !webViewReadyTimeoutRef.current) {
+                console.log(`⏰ 在 onLoadStart 中启动 WebView 就绪超时降级机制，${WEBVIEW_READY_TIMEOUT}ms 后强制标记为就绪`)
+                
+                webViewReadyTimeoutRef.current = setTimeout(() => {
+                  if (!webViewReady) {
+                    webViewReadyFallbackTriggered.current = true
+                    perfTimestamps.current.webviewReady = Date.now()
+                    console.log('⚠️ WebView 就绪超时，启用降级机制：强制标记为就绪')
+                    logDuration('WebView 开始加载 → 降级就绪', 'webviewLoadStart', perfTimestamps.current.webviewReady)
+                    logDuration('页面进入 → WebView 降级就绪', 'pageEnter', perfTimestamps.current.webviewReady)
+                    setWebViewReady(true)
+                    console.log('✅ setWebViewReady(true) 已调用（降级机制）')
+                  }
+                }, WEBVIEW_READY_TIMEOUT)
+              }
+            }}
             onLoad={() => {
               perfTimestamps.current.webviewHtmlLoaded = Date.now()
-              console.log('🔄 WebView HTML 加载完成，等待资源就绪...')
+              console.log('🔄 WebView onLoad 触发：HTML 加载完成，等待资源就绪...')
               logDuration('页面进入 → WebView HTML 加载', 'pageEnter', perfTimestamps.current.webviewHtmlLoaded)
+              
+              // 如果超时机制还没启动，基于 onLoad 时间启动（更准确）
+              if (!webViewReady && !webViewReadyFallbackTriggered.current && !webViewReadyTimeoutRef.current) {
+                const elapsed = Date.now() - perfTimestamps.current.webviewHtmlLoaded
+                const remainingTimeout = Math.max(0, WEBVIEW_READY_TIMEOUT - elapsed)
+                console.log(`⏰ 在 onLoad 中启动 WebView 就绪超时降级机制，${remainingTimeout}ms 后强制标记为就绪 (已等待 ${elapsed}ms)`)
+                
+                webViewReadyTimeoutRef.current = setTimeout(() => {
+                  if (!webViewReady) {
+                    webViewReadyFallbackTriggered.current = true
+                    perfTimestamps.current.webviewReady = Date.now()
+                    console.log('⚠️ WebView 就绪超时，启用降级机制：强制标记为就绪')
+                    logDuration('WebView HTML 加载 → 降级就绪', 'webviewHtmlLoaded', perfTimestamps.current.webviewReady)
+                    logDuration('页面进入 → WebView 降级就绪', 'pageEnter', perfTimestamps.current.webviewReady)
+                    setWebViewReady(true)
+                    console.log('✅ setWebViewReady(true) 已调用（降级机制）')
+                  }
+                }, remainingTimeout)
+              }
             }}
+            onLoadEnd={() => {
+              console.log('🌐 WebView onLoadEnd: HTML 加载结束')
+              
+              // onLoadEnd 时，如果还没收到 WEBVIEW_READY，尝试通过 injectedJavaScript 触发
+              // 这是一个额外的保障机制
+              if (!webViewReady && webViewRef.current) {
+                console.log('🔄 onLoadEnd: 尝试通过 injectedJavaScript 触发就绪检测')
+                // 通过注入 JavaScript 来触发就绪检测
+                webViewRef.current.injectJavaScript(`
+                  (function() {
+                    if (window.ReactNativeWebView) {
+                      try {
+                        window.ReactNativeWebView.postMessage('WEBVIEW_READY_FROM_INJECT');
+                        console.log('✅ injectedJavaScript 发送 WEBVIEW_READY_FROM_INJECT');
+                      } catch (e) {
+                        console.error('❌ injectedJavaScript postMessage 失败:', e);
+                      }
+                    } else {
+                      console.error('❌ injectedJavaScript: window.ReactNativeWebView 不存在');
+                    }
+                  })();
+                  true; // 必须返回 true
+                `)
+              }
+            }}
+            injectedJavaScript={`
+              // 立即尝试发送就绪消息（在页面加载时）
+              (function() {
+                var attempts = 0;
+                var maxAttempts = 10;
+                
+                function trySendReady() {
+                  attempts++;
+                  if (window.ReactNativeWebView) {
+                    try {
+                      window.ReactNativeWebView.postMessage('WEBVIEW_READY_FROM_INJECT');
+                      console.log('✅ injectedJavaScript 发送 WEBVIEW_READY_FROM_INJECT (尝试 ' + attempts + ')');
+                      return true;
+                    } catch (e) {
+                      console.error('❌ injectedJavaScript postMessage 失败:', e);
+                      if (attempts < maxAttempts) {
+                        setTimeout(trySendReady, 100);
+                      }
+                      return false;
+                    }
+                  } else {
+                    if (attempts < maxAttempts) {
+                      setTimeout(trySendReady, 100);
+                    } else {
+                      console.error('❌ injectedJavaScript: window.ReactNativeWebView 不存在 (尝试 ' + attempts + ' 次后放弃)');
+                    }
+                    return false;
+                  }
+                }
+                
+                // 立即尝试
+                trySendReady();
+                
+                // 监听 DOMContentLoaded
+                if (document.readyState === 'loading') {
+                  document.addEventListener('DOMContentLoaded', trySendReady);
+                } else {
+                  trySendReady();
+                }
+                
+                // 监听 window.load
+                window.addEventListener('load', function() {
+                  setTimeout(trySendReady, 100);
+                });
+              })();
+              true; // 必须返回 true
+            `}
             onMessage={(event) => {
               const message = event.nativeEvent.data
-              console.log('📨 收到 WebView 消息:', message)
               
-              // 只有收到 WEBVIEW_READY 消息才认为真正就绪（确保 KaTeX 等库已加载）
-              if (message === 'WEBVIEW_READY') {
+              // 处理日志消息
+              try {
+                const parsed = JSON.parse(message)
+                if (parsed.type === 'log') {
+                  console.log('📱 [WebView]', parsed.message)
+                  return
+                }
+              } catch (e) {
+                // 不是 JSON，继续处理其他消息
+              }
+              
+              console.log('📨 WebView onMessage 收到消息:', message)
+              
+              // 收到 WEBVIEW_READY 或 WEBVIEW_READY_FROM_INJECT 消息都认为就绪
+              if (message === 'WEBVIEW_READY' || message === 'WEBVIEW_READY_FROM_INJECT') {
+                if (message === 'WEBVIEW_READY_FROM_INJECT') {
+                  console.log('✅ 收到 injectedJavaScript 发送的就绪消息')
+                }
+                // 清除超时定时器
+                if (webViewReadyTimeoutRef.current) {
+                  clearTimeout(webViewReadyTimeoutRef.current)
+                  webViewReadyTimeoutRef.current = null
+                }
+                
                 perfTimestamps.current.webviewReady = Date.now()
-                console.log('✅ WebView 所有资源已就绪，可以开始渲染内容')
+                console.log('✅ WebView 收到 WEBVIEW_READY，设置 webViewReady=true')
                 logDuration('WebView HTML 加载 → 资源就绪', 'webviewHtmlLoaded', perfTimestamps.current.webviewReady)
                 logDuration('页面进入 → WebView 资源就绪', 'pageEnter', perfTimestamps.current.webviewReady)
                 setWebViewReady(true)
+                console.log('✅ setWebViewReady(true) 已调用')
+              } else {
+                console.log('⚠️ WebView 收到非 WEBVIEW_READY 消息，忽略')
               }
             }}
             onError={(syntheticEvent) => {
               const { nativeEvent } = syntheticEvent
-              console.error('❌ WebView 加载错误:', nativeEvent)
+              console.error('❌ WebView onError 加载错误:', nativeEvent)
+              
+              // 错误恢复：如果 WebView 未就绪且未超过最大重试次数，尝试重新加载
+              if (!webViewReady && webViewRetryCount.current < MAX_WEBVIEW_RETRIES) {
+                webViewRetryCount.current++
+                console.log(`🔄 WebView 错误恢复：尝试重新加载 (第 ${webViewRetryCount.current}/${MAX_WEBVIEW_RETRIES} 次)`)
+                
+                // 延迟重新加载，避免立即重试
+                setTimeout(() => {
+                  if (webViewRef.current && !webViewReady) {
+                    console.log('🔄 执行 WebView 重新加载...')
+                    webViewRef.current.reload()
+                  }
+                }, 500)
+              } else if (!webViewReady) {
+                console.error('❌ WebView 错误恢复失败：已达到最大重试次数，启用降级机制')
+                // 如果重试失败，启用降级机制
+                if (!webViewReadyFallbackTriggered.current) {
+                  webViewReadyFallbackTriggered.current = true
+                  perfTimestamps.current.webviewReady = Date.now()
+                  setWebViewReady(true)
+                  console.log('✅ setWebViewReady(true) 已调用（错误恢复降级）')
+                }
+              }
+            }}
+            onHttpError={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent
+              console.error('❌ WebView HTTP 错误:', nativeEvent)
+              
+              // HTTP 错误通常是 CDN 资源加载失败，不影响基本功能，可以降级处理
+              if (!webViewReady && !webViewReadyFallbackTriggered.current) {
+                console.log('⚠️ CDN 资源加载失败，但可以降级使用基本功能')
+                // 不立即降级，等待超时机制处理
+              }
+            }}
+            onRenderProcessGone={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent
+              console.error('❌ WebView 渲染进程崩溃:', nativeEvent)
+              
+              // 渲染进程崩溃是最严重的情况，需要重新初始化
+              if (!webViewReady && webViewRetryCount.current < MAX_WEBVIEW_RETRIES) {
+                webViewRetryCount.current++
+                console.log(`🔄 WebView 渲染进程崩溃恢复：尝试重新初始化 (第 ${webViewRetryCount.current}/${MAX_WEBVIEW_RETRIES} 次)`)
+                
+                // 延迟重新加载
+                setTimeout(() => {
+                  if (webViewRef.current && !webViewReady) {
+                    console.log('🔄 执行 WebView 重新初始化...')
+                    webViewRef.current.reload()
+                  }
+                }, 1000)
+              } else if (!webViewReady) {
+                console.error('❌ WebView 渲染进程崩溃恢复失败：已达到最大重试次数，启用降级机制')
+                // 如果重试失败，启用降级机制
+                if (!webViewReadyFallbackTriggered.current) {
+                  webViewReadyFallbackTriggered.current = true
+                  perfTimestamps.current.webviewReady = Date.now()
+                  setWebViewReady(true)
+                  console.log('✅ setWebViewReady(true) 已调用（崩溃恢复降级）')
+                }
+              }
             }}
           />
           

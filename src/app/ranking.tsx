@@ -2,12 +2,13 @@ import { useState, useEffect, useCallback } from "react"
 import {
   View,
   Text,
-  FlatList,
   ActivityIndicator,
   TouchableOpacity,
   RefreshControl,
   Image,
   ScrollView,
+  Modal,
+  TouchableWithoutFeedback,
 } from "react-native"
 import { useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
@@ -22,12 +23,6 @@ import { figmaDesignTokens } from "../constants/figma-design-tokens"
 const getColor = (key: string): string => {
   return figmaDesignTokens.colors[key] || key
 }
-
-/**
- * 排行榜页面
- * 100%还原Figma设计
- * 包含：选择器、领奖台（前三名）、列表（第4名及以后）
- */
 
 interface RankingItem {
   id: string
@@ -49,6 +44,16 @@ const RANK_LEVELS = {
   platinum: { name: "铂金", color: "#39a05a" },
 }
 
+// 城市数据模拟
+const PROVINCES = ["北京市", "天津市", "河北省", "山西省", "山东省"]
+const CITIES: Record<string, string[]> = {
+  "北京市": ["东城区", "西城区", "朝阳区", "海淀区"],
+  "天津市": ["和平区", "河东区", "河西区", "南开区"],
+  "河北省": ["石家庄市", "唐山市", "秦皇岛市", "邯郸市", "邢台市", "保定市", "张家口市", "承德市", "沧州市", "廊坊市", "衡水市", "燕郊"],
+  "山西省": ["太原市", "大同市", "阳泉市", "长治市"],
+  "山东省": ["济南市", "青岛市", "淄博市", "枣庄市"],
+}
+
 export default function RankingScreen() {
   const router = useRouter()
   const [state, setState] = useState<PageState>("loading")
@@ -56,6 +61,11 @@ export default function RankingScreen() {
   const [rankingList, setRankingList] = useState<RankingItem[]>([])
   const [topThree, setTopThree] = useState<RankingItem[]>([])
   const [refreshing, setRefreshing] = useState(false)
+  
+  // 城市选择相关状态
+  const [showCityPicker, setShowCityPicker] = useState(false)
+  const [selectedProvince, setSelectedProvince] = useState("河北省")
+  const [selectedCity, setSelectedCity] = useState("廊坊市")
 
   // 模拟API调用
   const fetchRankingData = useCallback(async (isRefresh = false) => {
@@ -102,113 +112,124 @@ export default function RankingScreen() {
     fetchRankingData(true)
   }, [fetchRankingData])
 
+  // 切换城市选择器
+  const toggleCityPicker = () => {
+    if (filterType !== "city") {
+      setFilterType("city")
+      setShowCityPicker(true)
+    } else {
+      setShowCityPicker(!showCityPicker)
+    }
+  }
+
   // 渲染领奖台（前三名）
   const renderPodium = () => {
     if (topThree.length === 0) return null
 
-    const podiumHeights = [355, 284, 228] // 根据Figma设计的高度
-
     return (
-      <View style={styles.podiumContainer}>
-        {/* 第二名 */}
-        {topThree[1] && (
-          <View style={[styles.podiumItem, { height: podiumHeights[1] }]}>
-            <View style={styles.podiumBase}>
-              <View style={styles.podiumNumberContainer}>
-                <Text style={styles.podiumNumber}>2</Text>
-              </View>
-            </View>
-            <View style={styles.podiumUserInfo}>
-              <View style={[styles.podiumAvatar, { backgroundColor: "#fee1fb" }]}>
-                <View style={styles.podiumAvatarBadge}>
-                  <Text style={styles.podiumAvatarBadgeText}>2</Text>
+      <View style={styles.podiumWrapper}>
+        {/* 顶部装饰：彩带/灯光 */}
+        <Image 
+          source={require("../../assets/images/ranking/spotlight.png")} 
+          style={styles.podiumConfetti} 
+          resizeMode="contain"
+        />
+
+        {/* 领奖台用户信息区域 - 绝对定位在台子上方 */}
+        <View style={styles.podiumUsersContainer}>
+          {/* 第二名 (左侧) */}
+          {topThree[1] && (
+            <View style={[styles.podiumUserItem, styles.podiumUserSecond]}>
+              <View style={styles.avatarContainer}>
+                 <Image source={require("../../assets/images/crown.png")} style={styles.crownSilver} resizeMode="contain" />
+                <View style={[styles.podiumAvatar, { borderColor: "#e6e6e6" }]}>
+                  <Image 
+                    source={topThree[1].avatar ? { uri: topThree[1].avatar } : require("../../assets/images/user-avatar-boy.png")} 
+                    style={styles.podiumAvatarImage} 
+                  />
                 </View>
               </View>
               <Text style={styles.podiumUserName}>{topThree[1].name}</Text>
-              <View style={styles.podiumStudyTime}>
-                <Text style={styles.podiumStudyTimeValue}>{topThree[1].studyTime}</Text>
-                <Text style={styles.podiumStudyTimeUnit}>分钟</Text>
-              </View>
+              <Text style={styles.podiumStudyTimeText}>{topThree[1].studyTime} 分钟</Text>
             </View>
-          </View>
-        )}
+          )}
 
-        {/* 第一名 */}
-        {topThree[0] && (
-          <View style={[styles.podiumItem, styles.podiumFirst, { height: podiumHeights[0] }]}>
-            <View style={styles.podiumBase}>
-              <View style={styles.podiumNumberContainer}>
-                <Text style={styles.podiumNumber}>1</Text>
-              </View>
-            </View>
-            <View style={styles.podiumUserInfo}>
-              <View style={[styles.podiumAvatar, { backgroundColor: "#bfdcff" }]}>
-                <View style={styles.podiumAvatarBadge}>
-                  <Text style={styles.podiumAvatarBadgeText}>1</Text>
+          {/* 第一名 (中间) */}
+          {topThree[0] && (
+            <View style={[styles.podiumUserItem, styles.podiumUserFirst]}>
+              <View style={styles.avatarContainer}>
+                <Image source={require("../../assets/images/crown.png")} style={styles.crownGold} resizeMode="contain" />
+                <View style={[styles.podiumAvatar, { borderColor: "#ffd700", borderWidth: 3 }]}>
+                  <Image 
+                    source={topThree[0].avatar ? { uri: topThree[0].avatar } : require("../../assets/images/user-avatar-boy.png")} 
+                    style={styles.podiumAvatarImage} 
+                  />
                 </View>
               </View>
-              <Text style={styles.podiumUserName}>{topThree[0].name}</Text>
-              <View style={styles.podiumStudyTime}>
-                <Text style={styles.podiumStudyTimeValue}>{topThree[0].studyTime}</Text>
-                <Text style={styles.podiumStudyTimeUnit}>分钟</Text>
-              </View>
+              <Text style={styles.podiumUserNameFirst}>{topThree[0].name}</Text>
+              <Text style={styles.podiumStudyTimeTextFirst}>{topThree[0].studyTime} 分钟</Text>
             </View>
-          </View>
-        )}
+          )}
 
-        {/* 第三名 */}
-        {topThree[2] && (
-          <View style={[styles.podiumItem, { height: podiumHeights[2] }]}>
-            <View style={styles.podiumBase}>
-              <View style={styles.podiumNumberContainer}>
-                <Text style={styles.podiumNumber}>3</Text>
-              </View>
-            </View>
-            <View style={styles.podiumUserInfo}>
-              <View style={[styles.podiumAvatar, { backgroundColor: "#fee1fb" }]}>
-                <View style={styles.podiumAvatarBadge}>
-                  <Text style={styles.podiumAvatarBadgeText}>3</Text>
+          {/* 第三名 (右侧) */}
+          {topThree[2] && (
+            <View style={[styles.podiumUserItem, styles.podiumUserThird]}>
+              <View style={styles.avatarContainer}>
+                <Image source={require("../../assets/images/crown.png")} style={styles.crownBronze} resizeMode="contain" />
+                <View style={[styles.podiumAvatar, { borderColor: "#f3bca8" }]}>
+                  <Image 
+                    source={topThree[2].avatar ? { uri: topThree[2].avatar } : require("../../assets/images/user-avatar-boy.png")} 
+                    style={styles.podiumAvatarImage} 
+                  />
                 </View>
               </View>
               <Text style={styles.podiumUserName}>{topThree[2].name}</Text>
-              <View style={styles.podiumStudyTime}>
-                <Text style={styles.podiumStudyTimeValue}>{topThree[2].studyTime}</Text>
-                <Text style={styles.podiumStudyTimeUnit}>分钟</Text>
-              </View>
+              <Text style={styles.podiumStudyTimeText}>{topThree[2].studyTime} 分钟</Text>
             </View>
-          </View>
-        )}
+          )}
+        </View>
+
+        {/* 领奖台底座图片 */}
+        <Image 
+          source={require("../../assets/images/ranking/podium.png")} 
+          style={styles.podiumBaseImage} 
+          resizeMode="contain"
+        />
       </View>
     )
   }
 
   // 渲染列表项（第4名及以后）
-  const renderListItem = ({ item }: { item: RankingItem }) => {
+  const renderListItem = ({ item, index }: { item: RankingItem, index: number }) => {
     const rankLevel = RANK_LEVELS[item.rankLevel]
-
+    const isLastItem = index === rankingList.length - 1
+    
+    // 如果是最后一条（当前用户），rank 显示 "-"
+    const rankText = item.rank === 9 ? "-" : item.rank
+    
     return (
-      <View style={[styles.listItem, item.rank === 9 && styles.listItemLast]}>
-        <Text style={styles.listRank}>{item.rank}</Text>
+      <View style={[styles.listItem, isLastItem && styles.listItemLast]}>
+        <Text style={styles.listRank}>{rankText}</Text>
+        
         <View style={styles.listUserInfo}>
-          <View style={styles.listAvatarContainer}>
-            <View style={[styles.listAvatar, { backgroundColor: "#bfdcff" }]}>
-              {item.avatar ? (
-                <Image source={{ uri: item.avatar }} style={styles.listAvatarImage} />
-              ) : (
-                <Ionicons name="person" size={40} color={getColor("7")} />
-              )}
-            </View>
+          <View style={[styles.listAvatar, { backgroundColor: "#bfdcff" }]}>
+            <Image 
+              source={item.avatar ? { uri: item.avatar } : require("../../assets/images/user-avatar-boy.png")} 
+              style={styles.listAvatarImage} 
+            />
           </View>
+          
           <View style={styles.listUserDetails}>
             <Text style={styles.listUserName}>{item.name}</Text>
             <View style={styles.listRankLevel}>
-              <View style={[styles.rankLevelDot, { backgroundColor: rankLevel.color }]} />
+              <Image source={require("../../assets/images/rank/gold.png")} style={styles.rankIcon} resizeMode="contain"/>
               <Text style={[styles.rankLevelText, { color: rankLevel.color }]}>
                 {rankLevel.name}段位
               </Text>
             </View>
           </View>
         </View>
+        
         <View style={styles.listStudyTime}>
           <Text style={styles.listStudyTimeLabel}>学习时长</Text>
           <View style={styles.listStudyTimeValue}>
@@ -226,7 +247,10 @@ export default function RankingScreen() {
       <View style={styles.filterContainer}>
         <TouchableOpacity
           style={[styles.filterItem, filterType === "all" && styles.filterItemActive]}
-          onPress={() => setFilterType("all")}
+          onPress={() => {
+            setFilterType("all")
+            setShowCityPicker(false)
+          }}
         >
           <Text style={[styles.filterText, filterType === "all" && styles.filterTextActive]}>
             全国
@@ -234,18 +258,58 @@ export default function RankingScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.filterItem, filterType === "city" && styles.filterItemActive]}
-          onPress={() => setFilterType("city")}
+          onPress={toggleCityPicker}
         >
           <Text style={[styles.filterText, filterType === "city" && styles.filterTextActive]}>
-            城市
+            {selectedCity}
           </Text>
           <Ionicons
-            name="chevron-down"
-            size={20}
-            color={filterType === "city" ? getColor("7") : getColor("60")}
+            name={showCityPicker ? "caret-up" : "caret-down"}
+            size={12}
+            color={filterType === "city" ? "#4080FF" : "#999"}
             style={styles.filterIcon}
           />
         </TouchableOpacity>
+        
+        {/* 城市选择弹窗 */}
+        {showCityPicker && (
+          <View style={styles.cityPickerContainer}>
+            <View style={styles.cityPickerContent}>
+              {/* 省份列表 */}
+              <ScrollView style={styles.provinceList} showsVerticalScrollIndicator={false}>
+                {PROVINCES.map(province => (
+                  <TouchableOpacity 
+                    key={province} 
+                    style={[styles.pickerItem, selectedProvince === province && styles.pickerItemActive]}
+                    onPress={() => setSelectedProvince(province)}
+                  >
+                    <Text style={[styles.pickerItemText, selectedProvince === province && styles.pickerItemTextActive]}>
+                      {province}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              
+              {/* 城市列表 */}
+              <ScrollView style={styles.cityList} showsVerticalScrollIndicator={false}>
+                {(CITIES[selectedProvince] || []).map(city => (
+                  <TouchableOpacity 
+                    key={city} 
+                    style={[styles.pickerItem, selectedCity === city && styles.pickerItemActive]}
+                    onPress={() => {
+                      setSelectedCity(city)
+                      setShowCityPicker(false)
+                    }}
+                  >
+                    <Text style={[styles.pickerItemText, selectedCity === city && styles.pickerItemTextActive]}>
+                      {city}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </View>
+        )}
       </View>
     )
   }
@@ -276,7 +340,7 @@ export default function RankingScreen() {
     </View>
   )
 
-  // 渲染内容
+  // 渲染内容 - 左右布局
   const renderContent = () => {
     switch (state) {
       case "loading":
@@ -287,18 +351,28 @@ export default function RankingScreen() {
         return renderError()
       case "success":
         return (
-          <ScrollView
-            style={styles.scrollView}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          >
-            {renderPodium()}
-            {renderFilter()}
-            <View style={styles.listContainer}>
-              {rankingList.map((item) => (
-                <View key={item.id}>{renderListItem({ item })}</View>
-              ))}
+          <View style={styles.contentRow}>
+            {/* 左侧：筛选 + 领奖台 */}
+            <View style={styles.leftColumn}>
+              {renderFilter()}
+              {renderPodium()}
             </View>
-          </ScrollView>
+            
+            {/* 右侧：列表卡片 */}
+            <View style={styles.rightColumn}>
+              <View style={styles.listCard}>
+                <ScrollView 
+                  style={styles.listScrollView}
+                  showsVerticalScrollIndicator={false}
+                  refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                >
+                  {rankingList.map((item, index) => (
+                    <View key={item.id}>{renderListItem({ item, index })}</View>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+          </View>
         )
       default:
         return renderLoading()
@@ -307,14 +381,21 @@ export default function RankingScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar theme="dark" />
+      <StatusBar theme="light" />
       <LinearGradient
-        colors={["#93abff", "#e4f4ff", "#cdedff", "#ffffff"]}
+        colors={["#D5E6FF", "#F0F7FF", "#F5F9FF"]}
         style={styles.gradient}
       >
         <NavBar title="排行榜" onBackPress={() => router.back()} />
         {renderContent()}
       </LinearGradient>
+      
+      {/* 点击外部关闭城市选择器 */}
+      {showCityPicker && (
+        <TouchableWithoutFeedback onPress={() => setShowCityPicker(false)}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+      )}
     </View>
   )
 }
@@ -326,6 +407,23 @@ const styles = createStyles({
   gradient: {
     flex: 1,
   },
+  // 左右布局容器
+  contentRow: {
+    flex: 1,
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  leftColumn: {
+    flex: 1, // 左侧占1份
+    marginRight: 20,
+    zIndex: 10, // 确保下拉菜单在最上层
+  },
+  rightColumn: {
+    width: 360, // 右侧固定宽度，或者使用 flex: 0.8
+    paddingTop: 20,
+  },
+  
   centerContainer: {
     flex: 1,
     justifyContent: "center" as const,
@@ -353,210 +451,325 @@ const styles = createStyles({
     fontSize: 28,
     color: getColor("1"),
   },
-  scrollView: {
-    flex: 1,
-  },
-  // 领奖台样式
-  podiumContainer: {
-    flexDirection: "row" as const,
-    justifyContent: "center" as const,
-    alignItems: "flex-end" as const,
-    paddingHorizontal: 40,
-    paddingTop: 20,
-    paddingBottom: 40,
-  },
-  podiumItem: {
-    width: 251,
-    alignItems: "center" as const,
-  },
-  podiumFirst: {
-    marginHorizontal: 20,
-  },
-  podiumBase: {
-    width: 251,
-    height: 35,
-    backgroundColor: "#ead9bd",
-    borderRadius: 4,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
-  },
-  podiumNumberContainer: {
-    width: 79,
-    height: 42,
-    backgroundColor: getColor("7"),
-    borderRadius: 4,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
-  },
-  podiumNumber: {
-    fontSize: 120,
-    fontWeight: "600" as const,
-    color: getColor("1"),
-  },
-  podiumUserInfo: {
-    marginTop: 20,
-    alignItems: "center" as const,
-  },
-  podiumAvatar: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
-    marginBottom: 16,
-  },
-  podiumAvatarBadge: {
-    width: 78,
-    height: 71,
-    backgroundColor: getColor("7"),
-    borderRadius: 39,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
-  },
-  podiumAvatarBadgeText: {
-    fontSize: 32,
-    fontWeight: "600" as const,
-    color: getColor("1"),
-  },
-  podiumUserName: {
-    fontSize: 26,
-    fontWeight: "500" as const,
-    color: getColor("7"),
-    marginBottom: 8,
-  },
-  podiumStudyTime: {
-    flexDirection: "row" as const,
-    alignItems: "baseline" as const,
-  },
-  podiumStudyTimeValue: {
-    fontSize: 28,
-    fontWeight: "500" as const,
-    color: getColor("69"),
-  },
-  podiumStudyTimeUnit: {
-    fontSize: 20,
-    color: getColor("69"),
-    marginLeft: 4,
-  },
+  
   // 选择器样式
   filterContainer: {
     flexDirection: "row" as const,
-    paddingHorizontal: 40,
-    paddingVertical: 20,
-    backgroundColor: getColor("1"),
-    marginHorizontal: 40,
-    marginBottom: 20,
-    borderRadius: 8,
+    alignSelf: "center" as const,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 4,
+    marginTop: 20,
+    marginBottom: 10,
+    shadowColor: "#4080FF",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    position: "relative" as const,
+    zIndex: 20,
   },
   filterItem: {
-    flex: 1,
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    justifyContent: "center" as const,
-    paddingVertical: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+    borderRadius: 16,
   },
   filterItemActive: {
-    backgroundColor: getColor("2009"),
-    borderRadius: 8,
+    backgroundColor: "#E6F0FF",
   },
   filterText: {
-    fontSize: 30,
-    color: getColor("60"),
+    fontSize: 16,
+    color: "#666",
+    fontWeight: "500" as const,
   },
   filterTextActive: {
-    color: getColor("7"),
+    color: "#4080FF",
     fontWeight: "600" as const,
   },
   filterIcon: {
-    marginLeft: 8,
+    marginLeft: 4,
+    marginTop: 2,
   },
-  // 列表样式
-  listContainer: {
-    paddingHorizontal: 40,
-    paddingBottom: 40,
+  
+  // 城市选择器弹窗
+  cityPickerContainer: {
+    position: "absolute" as const,
+    top: 50,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 10,
+    height: 240,
+    zIndex: 100,
+    overflow: "hidden" as const,
+  },
+  cityPickerContent: {
+    flexDirection: "row" as const,
+    height: "100%",
+  },
+  provinceList: {
+    flex: 1,
+    backgroundColor: "#F7F8FA",
+  },
+  cityList: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  pickerItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: "center" as const,
+  },
+  pickerItemActive: {
+    backgroundColor: "#fff",
+  },
+  pickerItemText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  pickerItemTextActive: {
+    color: "#4080FF",
+    fontWeight: "600" as const,
+  },
+  overlay: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+
+  // 领奖台区域
+  podiumWrapper: {
+    flex: 1,
+    alignItems: "center" as const,
+    justifyContent: "flex-end" as const,
+    position: "relative" as const,
+    paddingBottom: 20,
+  },
+  podiumConfetti: {
+    position: "absolute" as const,
+    top: 0,
+    width: "100%" as unknown as number,
+    height: "80%" as unknown as number,
+    zIndex: 0,
+  },
+  podiumBaseImage: {
+    width: 340,
+    height: 160,
+    position: "absolute" as const,
+    bottom: 0,
+    zIndex: 1,
+  },
+  podiumUsersContainer: {
+    flexDirection: "row" as const,
+    justifyContent: "center" as const,
+    alignItems: "flex-end" as const,
+    width: "100%" as unknown as number,
+    height: 300, // 控制整体高度
+    marginBottom: 20, // 为底座留出空间
+    zIndex: 2,
+    paddingHorizontal: 20,
+  },
+  podiumUserItem: {
+    alignItems: "center" as const,
+    justifyContent: "flex-end" as const,
+    paddingBottom: 10,
+  },
+  podiumUserSecond: {
+    marginBottom: 110, // 调整以对齐左侧台阶
+    marginRight: 10,
+  },
+  podiumUserFirst: {
+    marginBottom: 150, // 调整以对齐中间最高台阶
+    zIndex: 3,
+  },
+  podiumUserThird: {
+    marginBottom: 80, // 调整以对齐右侧台阶
+    marginLeft: 10,
+  },
+  avatarContainer: {
+    alignItems: "center" as const,
+    marginBottom: 8,
+    position: "relative" as const,
+  },
+  podiumAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: "#fff",
+    overflow: "hidden" as const,
+    backgroundColor: "#fff",
+  },
+  podiumAvatarImage: {
+    width: "100%" as unknown as number,
+    height: "100%" as unknown as number,
+  },
+  crownGold: {
+    width: 40,
+    height: 32,
+    position: "absolute" as const,
+    top: -28,
+    zIndex: 1,
+    transform: [{ rotate: '-15deg' }]
+  },
+  crownSilver: {
+    width: 30,
+    height: 24,
+    position: "absolute" as const,
+    top: -20,
+    left: -10,
+    zIndex: 1,
+    transform: [{ rotate: '-25deg' }],
+    tintColor: "#C0C0C0"
+  },
+  crownBronze: {
+    width: 28,
+    height: 22,
+    position: "absolute" as const,
+    top: -18,
+    left: -8,
+    zIndex: 1,
+    transform: [{ rotate: '-25deg' }],
+    tintColor: "#CD7F32"
+  },
+  podiumUserName: {
+    fontSize: 14,
+    fontWeight: "600" as const,
+    color: "#333",
+    marginBottom: 2,
+  },
+  podiumUserNameFirst: {
+    fontSize: 16,
+    fontWeight: "bold" as const,
+    color: "#333",
+    marginBottom: 2,
+  },
+  podiumStudyTimeText: {
+    fontSize: 12,
+    color: "#4080FF",
+    fontWeight: "500" as const,
+  },
+  podiumStudyTimeTextFirst: {
+    fontSize: 13,
+    color: "#4080FF",
+    fontWeight: "600" as const,
+  },
+
+  // 右侧列表卡片
+  listCard: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    padding: 4,
+    shadowColor: "#4080FF",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+    overflow: "hidden" as const,
+  },
+  listScrollView: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
   listItem: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    backgroundColor: getColor("1"),
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F5F5F5",
   },
   listItemLast: {
-    backgroundColor: "#f1f7ff",
+    borderBottomWidth: 0,
+    marginTop: 10,
+    paddingTop: 20,
+    borderTopWidth: 8,
+    borderTopColor: "#F7F8FA", // 分隔条效果
   },
   listRank: {
-    width: 44,
-    fontSize: 36,
-    fontWeight: "500" as const,
-    color: getColor("0"),
+    width: 30,
+    fontSize: 20,
+    fontWeight: "600" as const,
+    color: "#666",
     textAlign: "center" as const,
+    marginRight: 12,
   },
   listUserInfo: {
     flex: 1,
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    marginLeft: 20,
-  },
-  listAvatarContainer: {
-    marginRight: 16,
   },
   listAvatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F0F7FF",
+    marginRight: 12,
+    overflow: "hidden" as const,
   },
   listAvatarImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: "100%" as unknown as number,
+    height: "100%" as unknown as number,
   },
   listUserDetails: {
     flex: 1,
+    justifyContent: "center" as const,
   },
   listUserName: {
-    fontSize: 28,
-    fontWeight: "500" as const,
-    color: getColor("0"),
-    marginBottom: 8,
+    fontSize: 14,
+    fontWeight: "600" as const,
+    color: "#333",
+    marginBottom: 4,
   },
   listRankLevel: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
+    backgroundColor: "#FFF4E5",
+    alignSelf: "flex-start" as const,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
   },
-  rankLevelDot: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    marginRight: 8,
+  rankIcon: {
+    width: 10,
+    height: 10,
+    marginRight: 4,
   },
   rankLevelText: {
-    fontSize: 19,
+    fontSize: 9,
     fontWeight: "500" as const,
   },
   listStudyTime: {
     alignItems: "flex-end" as const,
   },
   listStudyTimeLabel: {
-    fontSize: 20,
-    color: getColor("0"),
-    marginBottom: 4,
+    fontSize: 10,
+    color: "#999",
+    marginBottom: 2,
   },
   listStudyTimeValue: {
     flexDirection: "row" as const,
     alignItems: "baseline" as const,
   },
   listStudyTimeNumber: {
-    fontSize: 26,
-    fontWeight: "500" as const,
-    color: getColor("200"),
+    fontSize: 14,
+    fontWeight: "bold" as const,
+    color: "#4080FF",
   },
   listStudyTimeUnit: {
-    fontSize: 20,
-    color: getColor("200"),
-    marginLeft: 4,
+    fontSize: 10,
+    color: "#4080FF",
+    marginLeft: 2,
   },
 })

@@ -60,6 +60,14 @@ export interface RankingList {
   username: string
 }
 
+// 首页背景图响应接口
+export interface HomeBgResponse {
+  /**
+   * 背景图URL
+   */
+  image_url: string
+}
+
 // 最近学习视频接口
 export const getLatestVideo = async () => {
   return await post("/AppStart/UserInformation/latest_video/")
@@ -73,6 +81,11 @@ export const getNotifications = async (): Promise<NotificationsResponse> => {
 // 获取排行榜接口
 export const getHomeRanks = async (): Promise<RankResponse> => {
   return await post("/AppStart/UserRanking/home_ranking/")
+}
+
+// 获取首页背景图接口
+export const getHomeBgImage = async (): Promise<HomeBgResponse> => {
+  return await get("/AppStart/home/image-carousel")
 }
 
 // 保存用户坐姿数据

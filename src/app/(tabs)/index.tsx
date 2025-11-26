@@ -12,7 +12,7 @@ import { NoticeBar } from "../../components/NoticeBar"
 import { usePostureStore } from "../../stores/postureStore"
 import { useUserStore } from "../../stores/userStore"
 import { useDialogStore } from "../../stores/dialogStore"
-import { getLatestVideo, getNotifications, getHomeRanks } from "../../services/app"
+import { getLatestVideo, getNotifications, getHomeRanks, getHomeBgImage } from "../../services/app"
 import { Images } from "../../constants/Assets"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError, showWarning, showInfo } from "../../utils/toast"
@@ -62,6 +62,7 @@ export default function HomeScreen() {
   const [isDataLoaded, setIsDataLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const isLoadingRef = useRef(false) // 使用 ref 防止重复调用
+  const [homeBgSource, setHomeBgSource] = useState<any>(Images.homeBg1)
   
 
   // 页面获得焦点时恢复沉浸式模式
@@ -170,7 +171,7 @@ const openVolumeSettings = async () => {
     
     try {
       // 并行加载所有数据
-      const [latestVideoData, notificationsData, ranksData] = await Promise.all([
+      const [latestVideoData, notificationsData, ranksData, homeBgData] = await Promise.all([
         getLatestVideo().catch((err) => {
           console.error("获取最近学习视频失败:", err)
           return null
@@ -183,7 +184,31 @@ const openVolumeSettings = async () => {
           console.error("获取排行榜失败:", err)
           return null
         }),
+        getHomeBgImage().catch((err) => {
+          console.error("获取首页背景图失败:", err)
+          return null
+        }),
       ])
+
+      // 处理首页背景图
+      if (homeBgData && homeBgData.image_url) {
+        const newUrl = homeBgData.image_url
+        setHomeBgSource((prev: any) => {
+          const currentUri = (prev && typeof prev === 'object' && prev.uri) ? prev.uri : null
+          
+          if (currentUri === newUrl) {
+            console.log("🖼️ 首页背景图未变，不更新")
+            return prev
+          }
+          
+          console.log("🖼️ 更新首页背景图:", newUrl)
+          return { uri: newUrl }
+        })
+      } else {
+        // 获取失败或为空，如果当前没有背景图（比如初始状态），保持默认 Images.homeBg1
+        // 这里不做操作，保留当前状态（如果是初始的 Images.homeBg1 则继续使用）
+        console.log("⚠️ 未获取到背景图，使用默认背景")
+      }
 
       // 设置用户信息 - 直接使用store中的用户信息
       if (currentUserStore.user) {
@@ -511,7 +536,7 @@ const openVolumeSettings = async () => {
       end={{ x: 1, y: 1 }}
       style={styles.pageContainer}
     >
-      <ImageBackground source={Images.homeBg1} style={styles.backgroundImage} resizeMode="cover">
+      <ImageBackground source={homeBgSource} style={styles.backgroundImage} resizeMode="cover">
         {/* 自定义状态栏 */}
         <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
 
@@ -707,7 +732,7 @@ const openVolumeSettings = async () => {
                     </View>
                     <View style={styles.progressTextContainer}>
                       <Text style={styles.progressValue}>{userInfo.total_duration || 0}</Text>
-                      <Text style={styles.progressTotal}>/{userInfo.rank_required || 0}</Text>
+                      <Text style={styles.progressTotal}>/{userInfo.rank_required || 0}h</Text>
                     </View>
                   </View>
                 </View>
@@ -1119,8 +1144,9 @@ const styles = createStyles({
     fontWeight: "bold" as const,
   },
   progressTotal: {
-    fontSize: 7.4218,
+    fontSize: 9.375,
     color: "#D08F04",
+    fontWeight: "bold" as const,
   },
   studyDaysWrap: {
     width: 346.875,
