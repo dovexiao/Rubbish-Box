@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient"
 import { StatusBar } from "../../components/StatusBar"
 import { NavBar } from "../../components/NavBar"
 import { createStyles } from "../../utils/rpxStyleSheet"
-import { parseContent } from "../../utils/mathmlParser"
+import { MixedContent } from "../../components/MixedContent"
 import { getQuestionDetails } from "../../services/ai"
 
 /**
@@ -81,9 +81,10 @@ export default function QuestionAnalysisScreen() {
         <ScrollView style={styles.contentScroll} showsVerticalScrollIndicator={false}>
           {/* 题目内容 */}
           <View style={styles.questionContent}>
-            <Text style={styles.questionText}>
-              {parseContent(questionDetail.question_text || "")}
-            </Text>
+            <MixedContent 
+              content={questionDetail.question_text || ""} 
+              style={styles.questionText}
+            />
           </View>
 
           {/* 选项列表 */}
@@ -124,9 +125,10 @@ export default function QuestionAnalysisScreen() {
                           {getOptionLabel(index)}
                         </Text>
                       </View>
-                      <Text style={styles.optionTextWrapper}>
-                        {parseContent(option.text || "")}
-                      </Text>
+                      <MixedContent 
+                        content={option.text || ""} 
+                        style={styles.optionText}
+                      />
                     </View>
                   )
                 })}
@@ -140,10 +142,15 @@ export default function QuestionAnalysisScreen() {
               <Text style={styles.sectionTitle}>答案</Text>
             </View>
             <View style={styles.answerContent}>
-              <Text style={styles.answerText}>
-                {questionDetail.options[questionDetail.correct_answer]?.letter}.{" "}
-                {parseContent(questionDetail.options[questionDetail.correct_answer]?.text || "")}
-              </Text>
+              <View style={styles.answerTextWrapper}>
+                <Text style={styles.answerLabel}>
+                  {questionDetail.options[questionDetail.correct_answer]?.letter}.{" "}
+                </Text>
+                <MixedContent 
+                  content={questionDetail.options[questionDetail.correct_answer]?.text || ""} 
+                  style={styles.answerText}
+                />
+              </View>
             </View>
           </View>
 
@@ -154,9 +161,10 @@ export default function QuestionAnalysisScreen() {
               <Text style={styles.sectionTitle}>解析</Text>
             </View>
             <View style={styles.analysisContentWrapper}>
-              <Text style={styles.analysisText}>
-                {parseContent(questionDetail.explanation || "")}
-              </Text>
+              <MixedContent 
+                content={questionDetail.explanation || ""} 
+                style={styles.analysisText}
+              />
             </View>
           </View>
 
@@ -262,11 +270,22 @@ const styles = createStyles({
   optionLabelTextActive: {
     color: "#fff",
   },
-  optionTextWrapper: {
-    flex: 1,
+  optionText: {
     fontSize: 9.375,
     color: "#333",
     lineHeight: 16.875,
+    flexShrink: 1,
+  },
+  optionTextWrapper: {
+    flex: 1,
+  },
+  answerTextWrapper: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  answerLabel: {
+    fontSize: 9.375,
+    color: "#333",
   },
   // 答案部分
   answerSection: {

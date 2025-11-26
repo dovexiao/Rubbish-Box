@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { StatusBar } from "../../../components/StatusBar"
 import { NavBar } from "../../../components/NavBar"
 import { createStyles } from "../../../utils/rpxStyleSheet"
-import { parseContent } from "../../../utils/mathmlParser"
+import { MixedContent } from "../../../components/MixedContent"
 import type { WrongQuestion } from "../../../services/ai"
 
 /**
@@ -83,9 +83,10 @@ export default function ErrorDetailScreen() {
           {/* 题目内容 */}
           <View style={styles.questionContent}>
             <Text style={styles.questionType}>选择题</Text>
-            <Text style={styles.questionText}>
-              {parseContent(currentQuestion.question_text || "")}
-            </Text>
+            <MixedContent 
+              content={currentQuestion.question_text || ""} 
+              style={styles.questionText}
+            />
           </View>
 
           {/* 选项列表 */}
@@ -132,9 +133,10 @@ export default function ErrorDetailScreen() {
                         {getOptionLabel(index)}
                       </Text>
                     </View>
-                    <Text style={styles.optionTextWrapper}>
-                      {parseContent(typeof option === 'string' ? option : option.text || "")}
-                    </Text>
+                    <MixedContent 
+                      content={typeof option === 'string' ? option : option.text || ""} 
+                      style={styles.optionText}
+                    />
                   </View>
                 )
               })}
@@ -163,14 +165,19 @@ export default function ErrorDetailScreen() {
                 <Text style={styles.sectionTitle}>答案</Text>
               </View>
               <View style={styles.answerContent}>
-                <Text style={styles.answerText}>
-                  {getOptionLabel(Number(currentQuestion.correct_answer))}.{" "}
-                  {parseContent(
-                    typeof currentQuestion.options[Number(currentQuestion.correct_answer)] === 'string'
-                      ? currentQuestion.options[Number(currentQuestion.correct_answer)]
-                      : currentQuestion.options[Number(currentQuestion.correct_answer)]?.text || ""
-                  )}
-                </Text>
+                <View style={styles.answerTextWrapper}>
+                  <Text style={styles.answerLabel}>
+                    {getOptionLabel(Number(currentQuestion.correct_answer))}.{" "}
+                  </Text>
+                  <MixedContent 
+                    content={
+                      typeof currentQuestion.options[Number(currentQuestion.correct_answer)] === 'string'
+                        ? currentQuestion.options[Number(currentQuestion.correct_answer)]
+                        : currentQuestion.options[Number(currentQuestion.correct_answer)]?.text || ""
+                    }
+                    style={styles.answerText}
+                  />
+                </View>
               </View>
             </View>
 
@@ -181,9 +188,10 @@ export default function ErrorDetailScreen() {
                 <Text style={styles.sectionTitle}>解析</Text>
               </View>
               <View style={styles.analysisContentWrapper}>
-                <Text style={styles.analysisText}>
-                  {parseContent(currentQuestion.explanation || "")}
-                </Text>
+                <MixedContent 
+                  content={currentQuestion.explanation || ""} 
+                  style={styles.analysisText}
+                />
               </View>
             </View>
           </View>
@@ -267,11 +275,14 @@ const styles = createStyles({
   optionLabelTextActive: {
     color: "#fff",
   },
-  optionTextWrapper: {
-    flex: 1,
+  optionText: {
     fontSize: 8.6,
     color: "#333",
     lineHeight: 15.48,
+    flexShrink: 1,
+  },
+  optionTextWrapper: {
+    flex: 1,
   },
   // 答题状态图例
   answerStatus: {
@@ -345,9 +356,23 @@ const styles = createStyles({
     borderLeftWidth: 3,
     borderLeftColor: "#4891FF",
   },
+  answerTextWrapper: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  answerLabel: {
+    fontSize: 9.375,
+    color: "#333",
+  },
   answerText: {
     fontSize: 9.375,
     color: "#333",
+  },
+  optionText: {
+    fontSize: 9.375,
+    color: "#333",
+    lineHeight: 16.875,
+    flexShrink: 1,
   },
   // 解析部分
   analysisSection: {

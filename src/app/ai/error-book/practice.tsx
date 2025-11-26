@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 
 import { StatusBar } from "../../../components/StatusBar"
 import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
-import { parseContent } from "../../../utils/mathmlParser"
+import { MixedContent } from "../../../components/MixedContent"
 import { getQuestionsMore, getCourseQuestions } from "../../../services/ai"
 import { generatePracticeQuestions } from "../../../services/classroom"
 import { showConfirm } from "../../../utils/dialog"
@@ -303,9 +303,10 @@ export default function AIPracticeScreen() {
             {currentQuestion && (
               <>
                 <View style={styles.questionTextWrapper}>
-                  <Text style={styles.questionText}>
-                    {parseContent(currentQuestion.question_text || "")}
-                  </Text>
+                  <MixedContent 
+                    content={currentQuestion.question_text || ""} 
+                    style={styles.questionText}
+                  />
                 </View>
 
                 {/* 选择题选项 */}
@@ -336,10 +337,13 @@ export default function AIPracticeScreen() {
                           disabled={showResult}
                           activeOpacity={0.8}
                         >
-                          <Text style={styles.optionTextWrapper}>
+                          <View style={styles.optionTextWrapper}>
                             <Text style={styles.optionLabel}>{getOptionLabel(index)}. </Text>
-                            {parseContent(typeof option === "string" ? option : option || "")}
-                          </Text>
+                            <MixedContent 
+                              content={typeof option === "string" ? option : option || ""} 
+                              style={styles.optionText}
+                            />
+                          </View>
                         </TouchableOpacity>
                       )
                     })}
@@ -581,10 +585,20 @@ const styles = createStyles({
     fontSize: 8.6,
     color: "#333",
   },
-  optionTextWrapper: {
+  optionText: {
     fontSize: 8.6,
     color: "#333",
     lineHeight: 15.48,
+  },
+  optionText: {
+    fontSize: 8.6,
+    color: "#333",
+    lineHeight: 15.48,
+    flexShrink: 1,
+  },
+  optionTextWrapper: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     flexShrink: 1,
   },
   // 底部导航

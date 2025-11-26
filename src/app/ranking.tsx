@@ -158,7 +158,7 @@ export default function RankingScreen() {
           {topThree[0] && (
             <View style={[styles.podiumUserItem, styles.podiumUserFirst]}>
               <View style={styles.avatarContainer}>
-                <Image source={require("../../assets/images/crown.png")} style={styles.crownGold} resizeMode="contain" />
+                <Image source={require("../../assets/ranking-image/little-1.png")} style={styles.crownGold} resizeMode="contain" />
                 <View style={[styles.podiumAvatar, { borderColor: "#ffd700", borderWidth: 3 }]}>
                   <Image 
                     source={topThree[0].avatar ? { uri: topThree[0].avatar } : require("../../assets/images/user-avatar-boy.png")} 
@@ -266,7 +266,7 @@ export default function RankingScreen() {
           <Ionicons
             name={showCityPicker ? "caret-up" : "caret-down"}
             size={12}
-            color={filterType === "city" ? "#4080FF" : "#999"}
+            color={filterType === "city" ? "#5F83F7" : "#5F83F7"}
             style={styles.filterIcon}
           />
         </TouchableOpacity>
@@ -456,36 +456,34 @@ const styles = createStyles({
   filterContainer: {
     flexDirection: "row" as const,
     alignSelf: "center" as const,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 4,
-    marginTop: 20,
+   background: '#FFFFFF57',
+    borderRadius: 16.4,
+    padding: 3,
+    height: 28.9,
+    // marginTop: 10,
     marginBottom: 10,
-    shadowColor: "#4080FF",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: "#FFFFFF78",
     position: "relative" as const,
     zIndex: 20,
   },
   filterItem: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    paddingHorizontal: 24,
-    paddingVertical: 8,
-    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 0,
+    borderRadius: 15.625,
   },
   filterItemActive: {
-    backgroundColor: "#E6F0FF",
+    backgroundColor: "#F2F7FF",
   },
   filterText: {
-    fontSize: 16,
-    color: "#666",
-    fontWeight: "500" as const,
+    fontSize: 11.875,
+    color: "#5F83F7",
+    fontWeight: "600" as const,
   },
   filterTextActive: {
-    color: "#4080FF",
+    color: "#5F83F7",
     fontWeight: "600" as const,
   },
   filterIcon: {
@@ -496,17 +494,18 @@ const styles = createStyles({
   // 城市选择器弹窗
   cityPickerContainer: {
     position: "absolute" as const,
-    top: 50,
-    left: 0,
+    top: 30,
+    // left: 0,
     right: 0,
     backgroundColor: "#fff",
-    borderRadius: 12,
+    borderRadius: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 10,
     height: 240,
+    width: 184.375,
     zIndex: 100,
     overflow: "hidden" as const,
   },
@@ -557,9 +556,9 @@ const styles = createStyles({
   },
   podiumConfetti: {
     position: "absolute" as const,
-    top: 0,
-    width: "100%" as unknown as number,
-    height: "80%" as unknown as number,
+    top: -112,
+    width: 291.4,
+    height: 246.875,
     zIndex: 0,
   },
   podiumBaseImage: {
@@ -615,8 +614,8 @@ const styles = createStyles({
     height: "100%" as unknown as number,
   },
   crownGold: {
-    width: 40,
-    height: 32,
+    width: 25,
+    height: 20.3125,
     position: "absolute" as const,
     top: -28,
     zIndex: 1,

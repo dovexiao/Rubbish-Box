@@ -14,7 +14,7 @@ import { LinearGradient } from "expo-linear-gradient"
 import { StatusBar } from "../../../components/StatusBar"
 import { NavBar } from "../../../components/NavBar"
 import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
-import { parseContent } from "../../../utils/mathmlParser"
+import { MixedContent } from "../../../components/MixedContent"
 import {
   getSubjectQuestions,
   type SubjectQuestionsParams,
@@ -236,9 +236,10 @@ export default function ErrorQuestionsScreen() {
                   {/* 题目内容 */}
                   <View style={styles.questionContent}>
                     <Text style={styles.questionIndex}>{index + 1}.</Text>
-                    <Text style={styles.questionTextWrapper}>
-                      {parseContent(question.question_text || "")}
-                    </Text>
+                    <MixedContent 
+                      content={question.question_text || ""} 
+                      style={styles.questionText}
+                    />
                   </View>
 
                   {/* 选项 */}
@@ -246,10 +247,13 @@ export default function ErrorQuestionsScreen() {
                     {question.options &&
                       question.options.map((option, optIndex) => (
                         <View key={optIndex} style={styles.optionItem}>
-                          <Text style={styles.optionText}>
+                          <View style={styles.optionTextWrapper}>
                             <Text style={styles.optionLetter}>{option.letter}. </Text>
-                            {parseContent(option.text || "")}
-                          </Text>
+                            <MixedContent 
+                              content={option.text || ""} 
+                              style={styles.optionText}
+                            />
+                          </View>
                         </View>
                       ))}
                   </View>
@@ -559,6 +563,12 @@ const styles = createStyles({
     fontSize: 9.375,
     color: "#000000",
     lineHeight: 14,
+    flexShrink: 1,
+  },
+  optionTextWrapper: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    flexShrink: 1,
   },
   // 底部操作按钮
   questionActions: {

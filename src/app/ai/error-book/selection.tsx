@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { StatusBar } from "../../../components/StatusBar"
 import { NavBar } from "../../../components/NavBar"
 import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
-import { parseContent } from "../../../utils/mathmlParser"
+import { MixedContent } from "../../../components/MixedContent"
 import {
   getWrongTransferSelection,
   confirmWrongTransfer,
@@ -211,9 +211,10 @@ export default function ErrorSelectionScreen() {
                 {/* 题目内容 */}
                 <View style={styles.questionContentWrapper}>
                   <View style={styles.questionTextContainer}>
-                    <Text style={styles.questionText}>
-                      {parseContent(item.question_text || "")}
-                    </Text>
+                    <MixedContent 
+                      content={item.question_text || ""} 
+                      style={styles.questionText}
+                    />
                   </View>
 
                   {/* 选项 */}
@@ -227,20 +228,26 @@ export default function ErrorSelectionScreen() {
                           const option = optionText as any
                           return (
                             <View key={optIndex} style={styles.optionItem}>
-                              <Text style={styles.optionText}>
+                              <View style={styles.optionTextWrapper}>
                                 <Text style={styles.optionLetter}>{option.letter}. </Text>
-                                {parseContent(option.text || "")}
-                              </Text>
+                                <MixedContent 
+                                  content={option.text || ""} 
+                                  style={styles.optionText}
+                                />
+                              </View>
                             </View>
                           )
                         }
                         // 如果是字符串格式 ["选项内容1", "选项内容2"]
                         return (
                           <View key={optIndex} style={styles.optionItem}>
-                            <Text style={styles.optionText}>
+                            <View style={styles.optionTextWrapper}>
                               <Text style={styles.optionLetter}>{optionLetter}. </Text>
-                              {parseContent(optionText as string)}
-                            </Text>
+                              <MixedContent 
+                                content={optionText as string} 
+                                style={styles.optionText}
+                              />
+                            </View>
                           </View>
                         )
                       })}
@@ -402,6 +409,12 @@ const styles = createStyles({
     fontSize: 9.375,
     color: "#000000",
     lineHeight: 16.875,
+    flexShrink: 1,
+  },
+  optionTextWrapper: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    flexShrink: 1,
   },
   // 底部操作栏
   bottomBar: {

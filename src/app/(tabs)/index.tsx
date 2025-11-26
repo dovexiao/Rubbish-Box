@@ -345,7 +345,7 @@ const openVolumeSettings = async () => {
   // 跳转到排行榜页面
   // 注释掉未使用的函数，保留功能以备将来实现
   const goToRanking = () => {
-    // router.push("/ranking")
+    router.push("/ranking")
   }
 
   // 重新启动应用
@@ -1423,6 +1423,32 @@ const styles = createStyles({
     color: "#fff",
     fontWeight: "bold",
     marginTop: 4,
+  },
+  testMathButton: {
+    position: "absolute",
+    right: 26.5625,
+    top: 160,
+    width: 90,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(72, 145, 255, 0.9)",
+    shadowColor: "#4891FF",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+  },
+  testMathButtonContent: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  testMathButtonText: {
+    fontSize: 13,
+    color: "#FFFFFF",
+    fontWeight: "600" as const,
   },
 
 })
