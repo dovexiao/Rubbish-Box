@@ -78,7 +78,7 @@
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-          "recordAudioAndroid": false // 禁用音频录制，减少Android 14兼容性问题
+          "recordAudioAndroid": false
         }
       ],
       [
