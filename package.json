@@ -5,9 +5,11 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "NODE_ENV=development expo start",
+    "start:win": "set NODE_ENV=development && expo start",
     "debug": "NODE_ENV=development expo start --dev-client --host lan",
     "start:ip": "NODE_ENV=development expo start --dev-client --host lan",
     "android": "NODE_ENV=development expo run:android",
+    "android:win": "set NODE_ENV=development && expo run:android",
     "ios": "NODE_ENV=development expo run:ios",
     "web": "NODE_ENV=development expo start --web",
     "bundle:web": "NODE_ENV=production npx expo export --platform web",
