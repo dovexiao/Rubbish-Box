@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Image,
   ScrollView,
+  FlatList,
   Modal,
   TouchableWithoutFeedback,
 } from "react-native"
@@ -18,23 +19,116 @@ import { StatusBar } from "../components/StatusBar"
 import { NavBar } from "../components/NavBar"
 import { createStyles } from "../utils/rpxStyleSheet"
 import { figmaDesignTokens } from "../constants/figma-design-tokens"
+import { post } from "../services/api"
 
 // 辅助函数：获取颜色
 const getColor = (key: string): string => {
   return figmaDesignTokens.colors[key] || key
 }
 
+// 接口类型定义
+interface RankingRequest {
+  /**
+   * "" ｜ "710000",全国 ｜ 省的区号
+   */
+  areae_market: string
+  [property: string]: any
+}
+
+interface CurrentUserProvince {
+  /**
+   * 邮编
+   */
+  postal_code: string
+  /**
+   * 省，中文
+   */
+  province: string
+  [property: string]: any
+}
+
+interface CurrentUserRank {
+  rank_description: string
+  rank_icon: null
+  rank_level: number
+  /**
+   * 段位名字
+   */
+  rank_name: string
+  [property: string]: any
+}
+
+interface RankingListItem {
+  /**
+   * 头像
+   */
+  avatar: null | string
+  is_current_user: boolean
+  rank_description: string
+  rank_icon: null
+  rank_level: number
+  /**
+   * 段位
+   */
+  rank_name: string
+  /**
+   * 当前排行榜排名情况
+   */
+  ranking: number
+  /**
+   * 学习时长
+   */
+  total_duration: number
+  /**
+   * 用户名
+   */
+  username: string
+  [property: string]: any
+}
+
+interface RankingData {
+  /**
+   * 当前用户头像
+   */
+  current_user_avatar: null | string
+  /**
+   * 当前用户名
+   */
+  current_user_name: string
+  /**
+   * 当前用户所在地区
+   */
+  current_user_province: CurrentUserProvince
+  /**
+   * 当前用户段位
+   */
+  current_user_rank: CurrentUserRank
+  /**
+   * 当前用户所在排名
+   */
+  current_user_ranking: number
+  /**
+   * 当前用户学习时长
+   */
+  current_user_total_duration: number
+  ranking_list: RankingListItem[]
+  total_users: number
+  [property: string]: any
+}
+
+// 内部使用的数据结构
 interface RankingItem {
   id: string
   rank: number
-  avatar: string
+  avatar: string | null
   name: string
   studyTime: number // 学习时长（分钟）
   rankLevel: "bronze" | "silver" | "gold" | "platinum" // 段位
+  isCurrentUser?: boolean
 }
 
 type PageState = "loading" | "empty" | "success" | "error"
-type FilterType = "all" | "city" // 全部/城市
+type FilterType = "all" | "province" // 全国/省份
 
 // 段位配置
 const RANK_LEVELS = {
@@ -44,14 +138,13 @@ const RANK_LEVELS = {
   platinum: { name: "铂金", color: "#39a05a" },
 }
 
-// 城市数据模拟
-const PROVINCES = ["北京市", "天津市", "河北省", "山西省", "山东省"]
-const CITIES: Record<string, string[]> = {
-  "北京市": ["东城区", "西城区", "朝阳区", "海淀区"],
-  "天津市": ["和平区", "河东区", "河西区", "南开区"],
-  "河北省": ["石家庄市", "唐山市", "秦皇岛市", "邯郸市", "邢台市", "保定市", "张家口市", "承德市", "沧州市", "廊坊市", "衡水市", "燕郊"],
-  "山西省": ["太原市", "大同市", "阳泉市", "长治市"],
-  "山东省": ["济南市", "青岛市", "淄博市", "枣庄市"],
+// 段位映射（将接口返回的段位名称映射到内部使用的段位类型）
+const mapRankLevel = (rankName: string): "bronze" | "silver" | "gold" | "platinum" => {
+  if (rankName.includes("青铜")) return "bronze"
+  if (rankName.includes("白银")) return "silver"
+  if (rankName.includes("黄金")) return "gold"
+  if (rankName.includes("铂金")) return "platinum"
+  return "bronze" // 默认
 }
 
 export default function RankingScreen() {
@@ -60,51 +153,98 @@ export default function RankingScreen() {
   const [filterType, setFilterType] = useState<FilterType>("all")
   const [rankingList, setRankingList] = useState<RankingItem[]>([])
   const [topThree, setTopThree] = useState<RankingItem[]>([])
+  const [currentUser, setCurrentUser] = useState<RankingItem | null>(null)
   const [refreshing, setRefreshing] = useState(false)
+  const [userProvince, setUserProvince] = useState<string>("") // 用户所在省份（中文名）
+  const [userProvinceCode, setUserProvinceCode] = useState<string>("") // 用户所在省份区号（postal_code）
   
-  // 城市选择相关状态
-  const [showCityPicker, setShowCityPicker] = useState(false)
-  const [selectedProvince, setSelectedProvince] = useState("河北省")
-  const [selectedCity, setSelectedCity] = useState("廊坊市")
+  // 城市选择相关状态（已注释，暂时不使用）
+  // const [showCityPicker, setShowCityPicker] = useState(false)
+  // const [selectedProvince, setSelectedProvince] = useState("河北省")
+  // const [selectedCity, setSelectedCity] = useState("廊坊市")
 
-  // 模拟API调用
+  // 获取排行榜数据
   const fetchRankingData = useCallback(async (isRefresh = false) => {
     try {
       if (!isRefresh) {
         setState("loading")
       }
 
-      // 模拟API请求
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // 构建请求参数
+      const params: RankingRequest = {
+        areae_market: filterType === "all" ? "" : userProvinceCode, // 全国传空字符串，省份传区号（postal_code）
+      }
 
-      // 模拟数据
-      const mockData: RankingItem[] = [
-        { id: "1", rank: 1, avatar: "", name: "小茗同学", studyTime: 4700, rankLevel: "gold" },
-        { id: "2", rank: 2, avatar: "", name: "小茗同学", studyTime: 4700, rankLevel: "gold" },
-        { id: "3", rank: 3, avatar: "", name: "小茗同学", studyTime: 4700, rankLevel: "gold" },
-        { id: "4", rank: 4, avatar: "", name: "小茗同学", studyTime: 4700, rankLevel: "gold" },
-        { id: "5", rank: 5, avatar: "", name: "小茗同学", studyTime: 4700, rankLevel: "gold" },
-        { id: "6", rank: 6, avatar: "", name: "小茗同学", studyTime: 4700, rankLevel: "gold" },
-        { id: "7", rank: 7, avatar: "", name: "小茗同学", studyTime: 4700, rankLevel: "gold" },
-        { id: "8", rank: 8, avatar: "", name: "小茗同学", studyTime: 4700, rankLevel: "gold" },
-        { id: "9", rank: 9, avatar: "", name: "小茗同学", studyTime: 200, rankLevel: "gold" },
-      ]
+      // 调用接口（POST请求）
+      const data: RankingData = await post<RankingData>("/AppStart/UserRanking/details_ranking/", params)
+
+      // 保存用户省份信息（只在第一次加载时保存）
+      if (data.current_user_province?.province && !userProvince) {
+        setUserProvince(data.current_user_province.province)
+        setUserProvinceCode(data.current_user_province.postal_code)
+      }
+
+      // 转换数据格式
+      const allRankingItems: RankingItem[] = data.ranking_list.map((item, index) => ({
+        id: `ranking_${item.ranking}_${index}`,
+        rank: item.ranking,
+        avatar: item.avatar,
+        name: item.username,
+        studyTime: item.total_duration,
+        rankLevel: mapRankLevel(item.rank_name),
+        isCurrentUser: item.is_current_user,
+      }))
 
       // 分离前三名和列表
-      setTopThree(mockData.slice(0, 3))
-      setRankingList(mockData.slice(3))
-      setState("success")
+      const topThreeItems = allRankingItems.filter(item => item.rank <= 3).sort((a, b) => a.rank - b.rank)
+      setTopThree(topThreeItems)
+
+      // 找到当前用户
+      const currentUserItem = allRankingItems.find(item => item.isCurrentUser) || 
+        (data.current_user_ranking > 0 ? {
+          id: "current_user",
+          rank: data.current_user_ranking,
+          avatar: data.current_user_avatar,
+          name: data.current_user_name,
+          studyTime: data.current_user_total_duration,
+          rankLevel: mapRankLevel(data.current_user_rank?.rank_name || ""),
+          isCurrentUser: true,
+        } : null)
+
+      if (currentUserItem) {
+        setCurrentUser(currentUserItem as RankingItem)
+        // 从列表中移除当前用户
+        setRankingList(allRankingItems.filter(item => !item.isCurrentUser && item.rank > 3))
+      } else {
+        setCurrentUser(null)
+        setRankingList(allRankingItems.filter(item => item.rank > 3))
+      }
+
+      // 判断是否有数据
+      if (allRankingItems.length === 0) {
+        setState("empty")
+      } else {
+        setState("success")
+      }
     } catch (error: any) {
+      console.error("获取排行榜数据失败:", error)
       setState("error")
     } finally {
       setRefreshing(false)
     }
-  }, [])
+  }, [filterType, userProvince])
 
   // 初始化加载
   useEffect(() => {
     fetchRankingData()
-  }, [fetchRankingData])
+  }, [])
+
+  // 当筛选类型改变时重新加载数据
+  useEffect(() => {
+    if (userProvinceCode || filterType === "all") {
+      fetchRankingData()
+    }
+  }, [filterType, userProvinceCode])
 
   // 下拉刷新
   const onRefresh = useCallback(() => {
@@ -112,14 +252,9 @@ export default function RankingScreen() {
     fetchRankingData(true)
   }, [fetchRankingData])
 
-  // 切换城市选择器
-  const toggleCityPicker = () => {
-    if (filterType !== "city") {
-      setFilterType("city")
-      setShowCityPicker(true)
-    } else {
-      setShowCityPicker(!showCityPicker)
-    }
+  // 切换筛选类型（全国/省份）
+  const toggleFilter = () => {
+    setFilterType(filterType === "all" ? "province" : "all")
   }
 
   // 渲染领奖台（前三名）
@@ -141,9 +276,9 @@ export default function RankingScreen() {
           {topThree[1] && (
             <View style={[styles.podiumUserItem, styles.podiumUserSecond]}>
               <View style={styles.avatarContainer}>
-                 <Image source={require("../../assets/images/crown.png")} style={styles.crownSilver} resizeMode="contain" />
-                <View style={[styles.podiumAvatar, { borderColor: "#e6e6e6" }]}>
-                  <Image 
+                 <Image source={require("../../assets/ranking-image/little-2.png")} style={styles.crownSilver} resizeMode="contain" />
+                <View style={[styles.podiumAvatar, { borderColor: "#FF9E55" }]}>
+                  <Image
                     source={topThree[1].avatar ? { uri: topThree[1].avatar } : require("../../assets/images/user-avatar-boy.png")} 
                     style={styles.podiumAvatarImage} 
                   />
@@ -159,7 +294,7 @@ export default function RankingScreen() {
             <View style={[styles.podiumUserItem, styles.podiumUserFirst]}>
               <View style={styles.avatarContainer}>
                 <Image source={require("../../assets/ranking-image/little-1.png")} style={styles.crownGold} resizeMode="contain" />
-                <View style={[styles.podiumAvatar, { borderColor: "#ffd700", borderWidth: 3 }]}>
+                <View style={[styles.podiumAvatar1, { borderColor: "#FF9E55", borderWidth: 3 }]}>
                   <Image 
                     source={topThree[0].avatar ? { uri: topThree[0].avatar } : require("../../assets/images/user-avatar-boy.png")} 
                     style={styles.podiumAvatarImage} 
@@ -175,8 +310,8 @@ export default function RankingScreen() {
           {topThree[2] && (
             <View style={[styles.podiumUserItem, styles.podiumUserThird]}>
               <View style={styles.avatarContainer}>
-                <Image source={require("../../assets/images/crown.png")} style={styles.crownBronze} resizeMode="contain" />
-                <View style={[styles.podiumAvatar, { borderColor: "#f3bca8" }]}>
+                <Image source={require("../../assets/ranking-image/little-3.png")} style={styles.crownBronze} resizeMode="contain" />
+                <View style={[styles.podiumAvatar, { borderColor: "#FF9E55" }]}>
                   <Image 
                     source={topThree[2].avatar ? { uri: topThree[2].avatar } : require("../../assets/images/user-avatar-boy.png")} 
                     style={styles.podiumAvatarImage} 
@@ -199,17 +334,13 @@ export default function RankingScreen() {
     )
   }
 
-  // 渲染列表项（第4名及以后）
+  // 渲染列表项（第4名及以后，不包括当前用户）
   const renderListItem = ({ item, index }: { item: RankingItem, index: number }) => {
     const rankLevel = RANK_LEVELS[item.rankLevel]
-    const isLastItem = index === rankingList.length - 1
-    
-    // 如果是最后一条（当前用户），rank 显示 "-"
-    const rankText = item.rank === 9 ? "-" : item.rank
     
     return (
-      <View style={[styles.listItem, isLastItem && styles.listItemLast]}>
-        <Text style={styles.listRank}>{rankText}</Text>
+      <View style={styles.listItem}>
+        <Text style={styles.listRank}>{item.rank}</Text>
         
         <View style={styles.listUserInfo}>
           <View style={[styles.listAvatar, { backgroundColor: "#bfdcff" }]}>
@@ -247,35 +378,27 @@ export default function RankingScreen() {
       <View style={styles.filterContainer}>
         <TouchableOpacity
           style={[styles.filterItem, filterType === "all" && styles.filterItemActive]}
-          onPress={() => {
-            setFilterType("all")
-            setShowCityPicker(false)
-          }}
+          onPress={() => setFilterType("all")}
         >
           <Text style={[styles.filterText, filterType === "all" && styles.filterTextActive]}>
             全国
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterItem, filterType === "city" && styles.filterItemActive]}
-          onPress={toggleCityPicker}
-        >
-          <Text style={[styles.filterText, filterType === "city" && styles.filterTextActive]}>
-            {selectedCity}
-          </Text>
-          <Ionicons
-            name={showCityPicker ? "caret-up" : "caret-down"}
-            size={12}
-            color={filterType === "city" ? "#5F83F7" : "#5F83F7"}
-            style={styles.filterIcon}
-          />
-        </TouchableOpacity>
+        {userProvince && (
+          <TouchableOpacity
+            style={[styles.filterItem, filterType === "province" && styles.filterItemActive]}
+            onPress={() => setFilterType("province")}
+          >
+            <Text style={[styles.filterText, filterType === "province" && styles.filterTextActive]}>
+              {userProvince}
+            </Text>
+          </TouchableOpacity>
+        )}
         
-        {/* 城市选择弹窗 */}
-        {showCityPicker && (
+        {/* 城市选择弹窗（已注释，暂时不使用） */}
+        {/* {showCityPicker && (
           <View style={styles.cityPickerContainer}>
             <View style={styles.cityPickerContent}>
-              {/* 省份列表 */}
               <ScrollView style={styles.provinceList} showsVerticalScrollIndicator={false}>
                 {PROVINCES.map(province => (
                   <TouchableOpacity 
@@ -290,7 +413,6 @@ export default function RankingScreen() {
                 ))}
               </ScrollView>
               
-              {/* 城市列表 */}
               <ScrollView style={styles.cityList} showsVerticalScrollIndicator={false}>
                 {(CITIES[selectedProvince] || []).map(city => (
                   <TouchableOpacity 
@@ -309,7 +431,7 @@ export default function RankingScreen() {
               </ScrollView>
             </View>
           </View>
-        )}
+        )} */}
       </View>
     )
   }
@@ -361,15 +483,49 @@ export default function RankingScreen() {
             {/* 右侧：列表卡片 */}
             <View style={styles.rightColumn}>
               <View style={styles.listCard}>
-                <ScrollView 
-                  style={styles.listScrollView}
+                <FlatList
+                  data={rankingList}
+                  renderItem={({ item, index }) => renderListItem({ item, index })}
+                  keyExtractor={(item) => item.id}
                   showsVerticalScrollIndicator={false}
                   refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                >
-                  {rankingList.map((item, index) => (
-                    <View key={item.id}>{renderListItem({ item, index })}</View>
-                  ))}
-                </ScrollView>
+                  contentContainerStyle={styles.listContentContainer}
+                />
+                {/* 当前用户固定在底部 */}
+                {currentUser && (
+                  <View style={styles.currentUserFixed}>
+                    <View style={styles.listItem}>
+                      <Text style={styles.listRank}>-</Text>
+                      
+                      <View style={styles.listUserInfo}>
+                        <View style={[styles.listAvatar, { backgroundColor: "#bfdcff" }]}>
+                          <Image 
+                            source={currentUser.avatar ? { uri: currentUser.avatar } : require("../../assets/images/user-avatar-boy.png")} 
+                            style={styles.listAvatarImage} 
+                          />
+                        </View>
+                        
+                        <View style={styles.listUserDetails}>
+                          <Text style={styles.listUserName}>{currentUser.name}</Text>
+                          <View style={styles.listRankLevel}>
+                            <Image source={require("../../assets/images/rank/gold.png")} style={styles.rankIcon} resizeMode="contain"/>
+                            <Text style={[styles.rankLevelText, { color: RANK_LEVELS[currentUser.rankLevel].color }]}>
+                              {RANK_LEVELS[currentUser.rankLevel].name}段位
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      
+                      <View style={styles.listStudyTime}>
+                        <Text style={styles.listStudyTimeLabel}>学习时长</Text>
+                        <View style={styles.listStudyTimeValue}>
+                          <Text style={styles.listStudyTimeNumber}>{currentUser.studyTime}</Text>
+                          <Text style={styles.listStudyTimeUnit}>分钟</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                )}
               </View>
             </View>
           </View>
@@ -390,12 +546,12 @@ export default function RankingScreen() {
         {renderContent()}
       </LinearGradient>
       
-      {/* 点击外部关闭城市选择器 */}
-      {showCityPicker && (
+      {/* 点击外部关闭城市选择器（已注释，暂时不使用） */}
+      {/* {showCityPicker && (
         <TouchableWithoutFeedback onPress={() => setShowCityPicker(false)}>
           <View style={styles.overlay} />
         </TouchableWithoutFeedback>
-      )}
+      )} */}
     </View>
   )
 }
@@ -416,19 +572,21 @@ const styles = createStyles({
   },
   leftColumn: {
     flex: 1, // 左侧占1份
-    marginRight: 20,
+    marginRight: 50,
     zIndex: 10, // 确保下拉菜单在最上层
   },
   rightColumn: {
-    width: 360, // 右侧固定宽度，或者使用 flex: 0.8
-    paddingTop: 20,
+    width: 282.8125, // 右侧固定宽度，或者使用 flex: 0.8
+    marginRight: 20,
+    
+    // paddingTop: 20,
   },
   
   centerContainer: {
     flex: 1,
     justifyContent: "center" as const,
     alignItems: "center" as const,
-    paddingHorizontal: 40,
+    paddingHorizontal: 80,
   },
   emptyText: {
     marginTop: 20,
@@ -460,7 +618,7 @@ const styles = createStyles({
     borderRadius: 16.4,
     padding: 3,
     height: 28.9,
-    // marginTop: 10,
+    marginTop: 30,
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "#FFFFFF78",
@@ -557,15 +715,15 @@ const styles = createStyles({
   podiumConfetti: {
     position: "absolute" as const,
     top: -112,
-    width: 291.4,
+    width: 303.9,
     height: 246.875,
     zIndex: 0,
   },
   podiumBaseImage: {
-    width: 340,
-    height: 160,
+    width: 295.3125,
+    height: 138.671875,
     position: "absolute" as const,
-    bottom: 0,
+    bottom: 30,
     zIndex: 1,
   },
   podiumUsersContainer: {
@@ -584,16 +742,16 @@ const styles = createStyles({
     paddingBottom: 10,
   },
   podiumUserSecond: {
-    marginBottom: 110, // 调整以对齐左侧台阶
-    marginRight: 10,
+    marginBottom: 108, // 调整以对齐左侧台阶
+    marginRight: 30,
   },
   podiumUserFirst: {
-    marginBottom: 150, // 调整以对齐中间最高台阶
+    marginBottom: 140, // 调整以对齐中间最高台阶
     zIndex: 3,
   },
   podiumUserThird: {
-    marginBottom: 80, // 调整以对齐右侧台阶
-    marginLeft: 10,
+    marginBottom: 120, // 调整以对齐右侧台阶
+    marginLeft: 30,
   },
   avatarContainer: {
     alignItems: "center" as const,
@@ -609,6 +767,15 @@ const styles = createStyles({
     overflow: "hidden" as const,
     backgroundColor: "#fff",
   },
+   podiumAvatar1: {
+    width: 72.65625,
+    height:72.65625,
+    borderRadius: 36.328125,
+    borderWidth: 2,
+    borderColor: "#fff",
+    overflow: "hidden" as const,
+    backgroundColor: "#fff",
+  },
   podiumAvatarImage: {
     width: "100%" as unknown as number,
     height: "100%" as unknown as number,
@@ -617,29 +784,30 @@ const styles = createStyles({
     width: 25,
     height: 20.3125,
     position: "absolute" as const,
-    top: -28,
+     top: -4,
+    left: -2,
     zIndex: 1,
-    transform: [{ rotate: '-15deg' }]
+    transform: [{ rotate: '-10deg' }]
   },
   crownSilver: {
-    width: 30,
-    height: 24,
+    width: 25,
+    height: 20.3125,
     position: "absolute" as const,
-    top: -20,
-    left: -10,
+     top: -8,
+    left: -2,
     zIndex: 1,
-    transform: [{ rotate: '-25deg' }],
-    tintColor: "#C0C0C0"
+    transform: [{ rotate: '-10deg' }],
+ 
   },
   crownBronze: {
-    width: 28,
-    height: 22,
+    width: 25,
+    height: 20.3125,
     position: "absolute" as const,
-    top: -18,
-    left: -8,
+     top: -8,
+    left: -2,
     zIndex: 1,
-    transform: [{ rotate: '-25deg' }],
-    tintColor: "#CD7F32"
+    transform: [{ rotate: '-10deg' }],
+
   },
   podiumUserName: {
     fontSize: 14,
@@ -668,24 +836,34 @@ const styles = createStyles({
   listCard: {
     flex: 1,
     backgroundColor: "#fff",
-    borderRadius: 24,
-    padding: 4,
+    borderRadius: 16,
+    // padding: 0,
     shadowColor: "#4080FF",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 5,
     overflow: "hidden" as const,
+    marginBottom: 30,
+    marginTop: 30,
   },
-  listScrollView: {
-    flex: 1,
+  listContentContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 70, // 为底部固定的当前用户留出空间
+  },
+  currentUserFixed: {
+    position: "absolute" as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
     paddingHorizontal: 16,
   },
   listItem: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    paddingVertical: 16,
-    paddingHorizontal: 10,
+    paddingVertical: 12.4375,
+    paddingHorizontal: 4,
     borderBottomWidth: 1,
     borderBottomColor: "#F5F5F5",
   },
@@ -698,7 +876,7 @@ const styles = createStyles({
   },
   listRank: {
     width: 30,
-    fontSize: 20,
+    fontSize: 11.75,
     fontWeight: "600" as const,
     color: "#666",
     textAlign: "center" as const,
@@ -710,11 +888,11 @@ const styles = createStyles({
     alignItems: "center" as const,
   },
   listAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#F0F7FF",
-    marginRight: 12,
+    width: 39.0625,
+    height: 39.0625,
+    borderRadius: 19.53125,
+    backgroundColor: "#BFDCFF",
+    marginRight: 4,
     overflow: "hidden" as const,
   },
   listAvatarImage: {
@@ -726,9 +904,9 @@ const styles = createStyles({
     justifyContent: "center" as const,
   },
   listUserName: {
-    fontSize: 14,
+    fontSize: 10.9375,
     fontWeight: "600" as const,
-    color: "#333",
+    color: "#000",
     marginBottom: 4,
   },
   listRankLevel: {

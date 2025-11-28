@@ -317,6 +317,9 @@ export default function AILoadingScreen() {
   // 监控关键状态变化
   useEffect(() => {
     console.log(`🔄 状态变化: webViewReady=${webViewReady}, isStreaming=${isStreaming}, isCompleted=${isCompleted}`)
+    if (isCompleted) {
+      console.log('🎯🎯🎯 isCompleted 状态变为 true，应该触发跳转检查')
+    }
   }, [webViewReady, isStreaming, isCompleted])
   
   // 专门监控 webViewReady 状态
@@ -414,11 +417,15 @@ export default function AILoadingScreen() {
           
           for (const line of lines) {
             const trimmedLine = line.trim()
+            console.log('trimmedLine', trimmedLine)
             if (!trimmedLine) continue
             
             if (trimmedLine === "[DONE]" || trimmedLine === "data: [DONE]") {
+               console.log('✅ 流式接收完成1')
+              console.log('🔄 准备设置 isCompleted=true, isStreaming=false')
               setIsCompleted(true)
               setIsStreaming(false)
+              console.log('✅ setIsCompleted(true) 已调用')
               continue
             }
             
@@ -428,14 +435,16 @@ export default function AILoadingScreen() {
               
               try {
                 const json = JSON.parse(jsonStr)
-                
+                console.log('json', json)
                 // 优先检测 done 信号（无论什么阶段都要处理）
                 if (json.status === "done" || json.done || json.finished) {
-                  console.log('✅ 流式接收完成')
+                  console.log('✅ 流式接收完成2') 
+                  console.log('🔄 准备设置 isCompleted=true (JSON done信号)')
                   isFormattingRef.current = false
                   setIsCompleted(true)
                   setIsStreaming(false)
                   setIsFormatting(false)
+                  console.log('✅ setIsCompleted(true) 已调用 (JSON done信号)')
                   return
                 }
                 
@@ -496,6 +505,7 @@ export default function AILoadingScreen() {
         }
         
         xhr.onload = () => {
+          console.log('📡 XHR onload 触发')
           if (previousLength < xhr.responseText.length) {
             const remaining = xhr.responseText.substring(previousLength)
             if (remaining.trim()) {
@@ -503,9 +513,11 @@ export default function AILoadingScreen() {
             }
           }
           
+          console.log('🔄 XHR onload: 准备设置 isCompleted=true')
           setIsCompleted(true)
           setIsStreaming(false)
           xhrRef.current = null
+          console.log('✅ XHR onload: setIsCompleted(true) 已调用')
           resolve()
         }
         
@@ -605,9 +617,34 @@ export default function AILoadingScreen() {
     }
 
     console.log('🚀 开始逐字符显示定时器')
+    console.log(`📊 定时器创建时状态: isCompleted=${isCompleted}, isStreaming=${isStreaming}, buffer长度=${contentBuffer.current.length}`)
     displayIntervalRef.current = setInterval(() => {
       const bufferLength = contentBuffer.current.length
       const isFormatting = isFormattingRef.current
+      
+      // 🔍 优先检查 isCompleted，如果已完成，立即跳转（不处理 buffer）
+      if (isCompleted) {
+        console.log('🎯🎯🎯 定时器检测到 isCompleted=true, buffer长度=' + bufferLength + ', 立即准备跳转')
+        if (displayIntervalRef.current) {
+          console.log('🛑 清除定时器，准备跳转')
+          clearInterval(displayIntervalRef.current)
+          displayIntervalRef.current = null
+          console.log('✅ 定时器已清除')
+          
+          const imguuid = params.imguuid as string
+          const type = params.type as string
+          console.log(`🚀 准备跳转到 /ai/result, imguuid=${imguuid}, type=${type}`)
+          
+          setTimeout(() => {
+            console.log('⏰ 500ms延迟后执行跳转')
+            router.replace({ pathname: "/ai/result", params: { batch_id: imguuid, type } })
+            console.log('✅ router.replace 已调用')
+          }, 500)
+        } else {
+          console.log('⚠️ displayIntervalRef.current 为 null，无法清除定时器')
+        }
+        return // 立即返回，不处理 buffer
+      }
       
       // 格式化阶段时，如果 contentBuffer 有内容，继续显示；如果没有内容，才暂停
       if (isFormatting && bufferLength === 0) {
@@ -649,25 +686,16 @@ export default function AILoadingScreen() {
           console.log(`⏳ buffer为空，等待数据 (格式化阶段: ${isFormattingRef.current}, isStreaming: ${isStreaming}, isCompleted: ${isCompleted})`)
         }
       }
-      
-      if (isCompleted) {
-        if (displayIntervalRef.current) {
-          clearInterval(displayIntervalRef.current)
-          displayIntervalRef.current = null
-          
-          setTimeout(() => {
-            const imguuid = params.imguuid as string
-            const type = params.type as string
-            router.replace({ pathname: "/ai/result", params: { batch_id: imguuid, type } })
-          }, 500)
-        }
-      }
     }, 30)
 
     return () => {
+      console.log('🧹 useEffect cleanup: 清除定时器, isCompleted=' + isCompleted)
       if (displayIntervalRef.current) {
         clearInterval(displayIntervalRef.current)
         displayIntervalRef.current = null
+        console.log('✅ 定时器已清除 (cleanup)')
+      } else {
+        console.log('⚠️ displayIntervalRef.current 为 null (cleanup)')
       }
     }
   }, [webViewReady, isStreaming, isCompleted, params.imguuid, params.type, router])

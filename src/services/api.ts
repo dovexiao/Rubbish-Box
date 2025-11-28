@@ -15,6 +15,7 @@ declare module "axios" {
     metadata?: {
       startTime: number
     }
+    __retryCount?: number
   }
 }
 
@@ -119,6 +120,22 @@ const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: API_TIMEOUT,
   headers: DEFAULT_HEADERS,
+  // 确保数据正确序列化
+  transformRequest: [
+    (data, headers) => {
+      // 如果数据已经是字符串（可能是重试时已经序列化的），直接返回
+      if (typeof data === "string") {
+        headers["Content-Type"] = "application/json"
+        return data
+      }
+      // 如果数据是对象，确保正确序列化
+      if (data && typeof data === "object" && !(data instanceof FormData)) {
+        headers["Content-Type"] = "application/json"
+        return JSON.stringify(data)
+      }
+      return data
+    },
+  ],
 })
 
 // 请求拦截器
@@ -126,6 +143,19 @@ apiClient.interceptors.request.use(
   async (config) => {
     // 添加请求开始时间
     config.metadata = { startTime: Date.now() }
+    
+    // 如果是重试请求且 data 是字符串，说明已经被序列化过
+    // 需要先解析回对象，以便添加设备信息
+    if (config.data && typeof config.data === "string") {
+      try {
+        config.data = JSON.parse(config.data)
+        safeLog("🔄 请求拦截器：已解析序列化的数据（可能是重试请求）")
+      } catch (e) {
+        safeLog("⚠️ 请求拦截器：无法解析数据，保持原始字符串")
+        // 如果解析失败，直接返回，不添加设备信息
+        return config
+      }
+    }
 
     // 添加设备信息到请求参数中
     try {
@@ -139,8 +169,8 @@ apiClient.interceptors.request.use(
           ...deviceInfo,
         }
       } else {
-        // POST/PUT等请求添加到data
-        if (config.data && typeof config.data === "object") {
+        // POST/PUT等请求添加到data（此时 data 应该是对象）
+        if (config.data && typeof config.data === "object" && !(config.data instanceof FormData)) {
           config.data = {
             ...config.data,
             ...deviceInfo,
@@ -148,7 +178,7 @@ apiClient.interceptors.request.use(
         } else {
           config.data = {
             ...deviceInfo,
-            ...config.data,
+            ...(config.data || {}),
           }
         }
       }
@@ -165,7 +195,18 @@ apiClient.interceptors.request.use(
       safeLog("📋 请求方法:", config.method?.toUpperCase())
       safeLog("📦 请求头:", formatLogData(config.headers))
       safeLog("📄 请求参数:", formatLogData(config.params))
-      safeLog("📝 请求数据:", formatLogData(config.data))
+      // 检查数据格式，避免错误序列化
+      if (config.data && typeof config.data === "string") {
+        safeLog("⚠️ 警告：请求数据是字符串类型，可能已被错误序列化")
+        try {
+          const parsed = JSON.parse(config.data)
+          safeLog("📝 请求数据（解析后）:", formatLogData(parsed))
+        } catch {
+          safeLog("📝 请求数据（原始字符串）:", config.data.substring(0, 200))
+        }
+      } else {
+        safeLog("📝 请求数据:", formatLogData(config.data))
+      }
       safeLog("⏱️ 超时时间:", config.timeout + "ms")
       safeLog("🕐 请求时间:", new Date().toLocaleTimeString())
       safeLog("===============================================")
@@ -332,6 +373,14 @@ apiClient.interceptors.response.use(
         // 增加重试计数
         error.config.__retryCount = retryCount + 1
         
+        // 如果 data 是字符串（已被序列化），需要确保它保持字符串格式
+        if (error.config.data && typeof error.config.data === "string") {
+          if (!error.config.headers) {
+            error.config.headers = {}
+          }
+          error.config.headers["Content-Type"] = "application/json"
+        }
+        
         // 延迟后重试
         await delay(retryDelay)
         
@@ -362,6 +411,17 @@ apiClient.interceptors.response.use(
       safeLog(`🔄 请求失败（状态码: ${status || "超时"}），${retryDelay}ms后进行第${retryCount + 1}次重试...`)
       
       error.config.__retryCount = retryCount + 1
+      
+      // 如果 data 是字符串（已被序列化），需要确保它保持字符串格式
+      // transformRequest 会正确处理字符串
+      if (error.config.data && typeof error.config.data === "string") {
+        // 确保 Content-Type 正确
+        if (!error.config.headers) {
+          error.config.headers = {}
+        }
+        error.config.headers["Content-Type"] = "application/json"
+      }
+      
       await delay(retryDelay)
       
       safeLog(`♻️ 开始第${retryCount + 1}次重试请求: ${error.config.url}`)
