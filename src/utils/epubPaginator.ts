@@ -70,7 +70,7 @@ export class EpubPaginator {
   // 计算有效区域尺寸
   private getEffectiveSize() {
     return {
-      width: this.options.containerWidth - this.options.padding * 2,
+      width: this.options.containerWidth,
       height: this.options.containerHeight - this.options.padding * 2,
     }
   }
@@ -89,7 +89,7 @@ export class EpubPaginator {
     const effectiveHeight = this.getEffectiveSize().height
     const lineHeight = this.options.fontSize * this.options.lineHeight
     // 减少 10% 作为安全边距，防止内容溢出
-    return Math.floor(effectiveHeight / lineHeight * 0.9)
+    return Math.floor(effectiveHeight / lineHeight * 0.95)
   }
 
   // 分页处理
@@ -99,33 +99,70 @@ export class EpubPaginator {
     const linesPerPage = this.getLinesPerPage()
     const charsPerPage = charsPerLine * linesPerPage
 
+    console.log('📖 [EPUB阅读器] 📏 每行可容纳的字符数:', charsPerLine);
+    console.log('📖 [EPUB阅读器] 📏 每页可容纳的行数:', linesPerPage);
+    console.log('📖 [EPUB阅读器] 📏 每页可容纳的字符数:', charsPerPage);
+
     // 清理和格式化内容
     const cleanContent = this.formatContent(content)
     const paragraphs = cleanContent.split("\n").filter((p) => p.trim())
 
     let currentPage = ""
-    let currentPageChars = 0
+    let currentPageLines = 0
 
     for (const paragraph of paragraphs) {
       const paragraphWithIndent = "　　" + paragraph.trim()
 
-      // 检查当前段落是否能放入当前页
-      if (currentPageChars + paragraphWithIndent.length > charsPerPage && currentPage) {
-        // 当前页已满，开始新页
-        pages.push(currentPage.trim())
-        currentPage = paragraphWithIndent + "\n"
-        currentPageChars = paragraphWithIndent.length + 1
+      const paragraphLines = this.calculateParagraphLines(paragraphWithIndent);
+
+      if (currentPageLines + paragraphLines > linesPerPage) {
+          const { remainingText, newPageText } = this.splitParagraphAcrossPages(paragraphWithIndent, linesPerPage - currentPageLines);
+          currentPage += remainingText;
+          pages.push(currentPage)
+          console.log('📖 [EPUB阅读器] 📏 最后一段:', {
+            '剩余文本': remainingText,
+            '新页文本': newPageText,
+            '页未处理最后一段行数': currentPageLines,
+            '每页行数': linesPerPage,
+            '字体大小': this.options.fontSize,
+            '当前页内容:': currentPage,
+            '每页计算容纳行数': linesPerPage,
+            '每行计算容纳字符数': charsPerLine,
+            '总页新加': pages[pages.length - 1],
+          });
+          currentPageLines = 0
+          currentPage = newPageText + "\n"
+          currentPageLines += this.calculateParagraphLines(newPageText)
       } else {
-        // 添加到当前页
         currentPage += paragraphWithIndent + "\n"
-        currentPageChars += paragraphWithIndent.length + 1
+        currentPageLines += paragraphLines
       }
+
+      // // 检查当前段落是否能放入当前页
+      // if (currentPageChars + paragraphWithIndent.length > charsPerPage && currentPage) {
+      //   // 当前页已满，开始新页
+      //   pages.push(currentPage)
+      //   currentPage = paragraphWithIndent + "\n"
+      //   currentPageChars = paragraphWithIndent.length + 1
+      // } else {
+      //   // 添加到当前页
+      //   currentPage += paragraphWithIndent + "\n"
+      //   currentPageChars += paragraphWithIndent.length + 1
+      // }
     }
 
     // 添加最后一页
-    if (currentPage.trim()) {
-      pages.push(currentPage.trim())
+    if (currentPage) {
+      pages.push(currentPage)
+      console.log('📖 [EPUB阅读器] 📏 最后一段:', {
+        '页未处理最后一段行数': currentPageLines,
+        '每页行数': linesPerPage,
+        '字体大小': this.options.fontSize,
+        '当前页内容:': currentPage,
+      });
     }
+
+    console.log('📖 [EPUB阅读器] 📏 最后章节总页:', pages);
 
     const effectiveSize = this.getEffectiveSize()
     const debugInfo = {
@@ -176,6 +213,95 @@ export class EpubPaginator {
       .replace(/\r/g, "\n")
       .replace(/\n\s*\n/g, "\n") // 合并多个空行
       .replace(/^\s+|\s+$/g, "") // 去除开头和结尾空白
+  }
+
+  // 计算段落会占用多少行
+  private calculateParagraphLines(text: string): number {
+    // 实际可用宽度（已经扣除了 padding）
+    const { width: effectiveWidth } = this.getEffectiveSize()
+    if (!text || effectiveWidth <= 0) {
+      return 0
+    }
+
+    // 参考 getCharsPerLine：使用字号并叠加安全系数
+    const baseCharWidth = this.options.fontSize * 1.1 // 非标点的基准宽度
+    const punctuationFactor = 0.6 // 标点字符占用宽度比例（相对于完整字号）
+
+    let visualWidth = 0
+
+    for (const ch of text) {
+      const isPunctuation = this.isPunctuation(ch)
+      const charWidth = isPunctuation ? baseCharWidth * punctuationFactor : baseCharWidth
+      visualWidth += charWidth
+    }
+
+    // 再给一层整体安全系数，避免边缘溢出
+    const safeWidth = effectiveWidth * 0.95
+    if (safeWidth <= 0) {
+      return 1
+    }
+
+    // 段落“总宽度” ÷ 实际可用宽度，向上取整得到估算行数
+    return Math.max(1, Math.ceil(visualWidth / safeWidth))
+  }
+
+  // 判断是否为标点符号（不区分中英文，只要是符号就按较小宽度处理）
+  private isPunctuation(char: string): boolean {
+    // 常见中英文标点 + 空格类字符
+    return /[，。,．、？！：；“”‘’（）【】《》〈〉「」『』〔〕…—\-·,.!?;:'"(){}\[\]\s]/.test(char)
+  }
+
+  // 跨页分割段落（考虑标点宽度与剩余行数）
+  private splitParagraphAcrossPages(
+    text: string,
+    remainingLines: number,
+  ): { remainingText: string; newPageText: string } {
+    const { width: effectiveWidth } = this.getEffectiveSize()
+    if (!text || remainingLines <= 0 || effectiveWidth <= 0) {
+      return {
+        remainingText: "",
+        newPageText: text,
+      }
+    }
+
+    // 与 calculateParagraphLines 相同的宽度模型
+    const baseCharWidth = this.options.fontSize * 1.1
+    const punctuationFactor = 0.6
+
+    // 当前页剩余可用“总宽度” = 每行可用宽度 * 剩余行数
+    const perLineSafeWidth = effectiveWidth * 0.95
+    const maxVisualWidth = perLineSafeWidth * remainingLines
+
+    let visualWidth = 0
+    let breakIndex = 0
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i]
+      const isPunc = this.isPunctuation(ch)
+      const charWidth = isPunc ? baseCharWidth * punctuationFactor : baseCharWidth
+
+      // 如果再加当前字符就会超过剩余空间，则在当前索引处截断
+      if (visualWidth + charWidth > maxVisualWidth) {
+        breakIndex = i
+        break
+      }
+
+      visualWidth += charWidth
+      breakIndex = i + 1
+    }
+
+    // 如果整段都放得下，全部留在当前页
+    if (breakIndex >= text.length) {
+      return {
+        remainingText: text,
+        newPageText: "",
+      }
+    }
+
+    return {
+      remainingText: text.slice(0, breakIndex),
+      newPageText: text.slice(breakIndex),
+    }
   }
 
   // 销毁分页器

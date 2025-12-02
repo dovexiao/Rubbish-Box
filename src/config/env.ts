@@ -33,7 +33,7 @@ export const CURRENT_ENV = __DEV__ ? Environment.DEVELOPMENT : Environment.PRODU
 // API服务器地址配置
 const API_URLS = {
   // 测试环境
-  [Environment.TESTING]: "http://192.168.31.22:8080",
+  [Environment.TESTING]: "http://192.168.31.252:8080",
   // [Environment.TESTING]: "http://8.135.11.47:8000",
 
   // 生产环境（使用IP地址，域名未配置好）
@@ -46,7 +46,7 @@ const API_URLS = {
   // 开发环境
   // [Environment.DEVELOPMENT]: "http://8.135.11.47:8000",
     // [Environment.DEVELOPMENT]: "http://47.112.206.205:8000",
-  [Environment.DEVELOPMENT]: "http://192.168.31.22:8080",
+  [Environment.DEVELOPMENT]: "http://192.168.31.252:8080",
   // [Environment.DEVELOPMENT]: "https://xiaohetx.cn",
 
 }

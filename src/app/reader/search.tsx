@@ -99,7 +99,7 @@ export default function ReaderSearchScreen() {
 
     // 跳转到阅读页面
     router.push({
-      pathname: '/reader/epub',
+      pathname: '/reader/epub-new',
       params: {
         bookId: bookId,
         title: encodeURIComponent(item.title),

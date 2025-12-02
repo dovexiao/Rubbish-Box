@@ -45,7 +45,7 @@ export const READER_THEMES: ReaderTheme[] = [
  */
 export const useReaderTheme = (bookId?: number) => {
   const [currentTheme, setCurrentTheme] = useState(0)
-  const [fontSize, setFontSize] = useState(20)
+  const [fontSize, setFontSize] = useState(30)
 
   // 获取当前主题对象
   const theme = READER_THEMES[currentTheme] || READER_THEMES[0]
@@ -73,7 +73,7 @@ export const useReaderTheme = (bookId?: number) => {
 
       if (settingsStr) {
         const settings = JSON.parse(settingsStr)
-        setFontSize(settings.fontSize || 20)
+        setFontSize(settings.fontSize || 30)
         setCurrentTheme(settings.theme || 0)
         console.log("阅读设置加载成功:", settings)
       }
@@ -112,9 +112,9 @@ export const useReaderTheme = (bookId?: number) => {
   }, [])
 
   // 初始化时加载设置
-  useEffect(() => {
-    loadReaderSettings()
-  }, [loadReaderSettings])
+  // useEffect(() => {
+  //   loadReaderSettings()
+  // }, [loadReaderSettings])
 
   // 设置变化时自动保存
   useEffect(() => {
@@ -123,7 +123,7 @@ export const useReaderTheme = (bookId?: number) => {
     }, 500) // 防抖保存
 
     return () => clearTimeout(timer)
-  }, [fontSize, currentTheme, saveReaderSettings])
+  }, [fontSize, currentTheme])
 
   return {
     // 主题相关
