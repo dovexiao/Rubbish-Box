@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useEffect, useCallback} from 'react';
 import {View, StyleSheet, Image, TouchableOpacity, Text, ImageSourcePropType, ViewStyle} from 'react-native';
 import Animated, {
   Easing,
@@ -19,6 +19,8 @@ export interface BookOperationPanelProps {
   operateIconSource?: ImageSourcePropType;
   /** 容器样式，用于覆盖 operationPanelContainer 的默认样式 */
   containerStyle?: ViewStyle;
+  /** 是否显示操作面板，由外部控制 */
+  visible: boolean;
 }
 
 const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
@@ -26,10 +28,13 @@ const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
   onThemePress,
   operateIconSource = Images.operateIcon,
   containerStyle,
+  visible,
 }) => {
-  // 操作项显示状态
-  const [showOperationItems, setShowOperationItems] = useState(false);
-  
+  // 操作按钮动画值（跃入式显示 / 淡出）
+  const operateOpacity = useSharedValue(0);
+  const operateScale = useSharedValue(0.8);
+  const operateTranslateY = useSharedValue(20);
+
   // 目录按钮动画值（延迟更少，先出现）
   const catalogOpacity = useSharedValue(0);
   const catalogScale = useSharedValue(0.8);
@@ -40,13 +45,26 @@ const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
   const themeScale = useSharedValue(0.8);
   const themeTranslateY = useSharedValue(20);
 
-  // 切换操作项显示/隐藏
-  const toggleOperationItems = useCallback(() => {
-    const isShowing = showOperationItems;
-    setShowOperationItems(!isShowing);
-    
-    if (!isShowing) {
-      // 进场动画：醒目 - 从下往上、放大、淡入
+  // 根据 visible 控制操作按钮与两个操作项的进出场动画
+  useEffect(() => {
+    if (visible) {
+      // 操作按钮跃入
+      operateOpacity.value = 0;
+      operateScale.value = 0.8;
+      operateTranslateY.value = 20;
+      operateOpacity.value = withTiming(1, {
+        duration: 260,
+        easing: Easing.out(Easing.cubic),
+      });
+      operateScale.value = withTiming(1, {
+        duration: 260,
+        easing: Easing.out(Easing.back(1.2)),
+      });
+      operateTranslateY.value = withTiming(0, {
+        duration: 260,
+        easing: Easing.out(Easing.cubic),
+      });
+
       // 目录按钮先出现
       catalogOpacity.value = withTiming(1, {
         duration: 300,
@@ -75,8 +93,21 @@ const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
         easing: Easing.out(Easing.cubic),
       }));
     } else {
-      // 退场动画：低调 - 淡出、轻微缩小
-      // 两个按钮同时淡出
+      // 操作按钮淡出
+      operateOpacity.value = withTiming(0, {
+        duration: 200,
+        easing: Easing.in(Easing.ease),
+      });
+      operateScale.value = withTiming(0.95, {
+        duration: 200,
+        easing: Easing.in(Easing.ease),
+      });
+      operateTranslateY.value = withTiming(10, {
+        duration: 200,
+        easing: Easing.in(Easing.ease),
+      });
+
+      // 两个操作项同时淡出
       catalogOpacity.value = withTiming(0, {
         duration: 200,
         easing: Easing.in(Easing.ease),
@@ -103,7 +134,18 @@ const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
         easing: Easing.in(Easing.ease),
       });
     }
-  }, [showOperationItems, catalogOpacity, catalogScale, catalogTranslateY, themeOpacity, themeScale, themeTranslateY]);
+  }, [
+    visible,
+    operateOpacity,
+    operateScale,
+    operateTranslateY,
+    catalogOpacity,
+    catalogScale,
+    catalogTranslateY,
+    themeOpacity,
+    themeScale,
+    themeTranslateY,
+  ]);
 
   // 目录按钮动画样式
   const catalogAnimatedStyle = useAnimatedStyle(() => ({
@@ -111,6 +153,15 @@ const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
     transform: [
       { scale: catalogScale.value },
       { translateY: catalogTranslateY.value },
+    ],
+  }));
+
+  // 操作按钮动画样式（仅针对 operateButton）
+  const operateAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: operateOpacity.value,
+    transform: [
+      { scale: operateScale.value },
+      { translateY: operateTranslateY.value },
     ],
   }));
   
@@ -140,16 +191,14 @@ const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
   return (
     <View style={[styles.operationPanelContainer, containerStyle]}>
       {/* 操作开关按钮 */}
-      <TouchableOpacity 
-        activeOpacity={0.8} 
-        style={styles.operateButton}
-        onPress={toggleOperationItems}
+      <Animated.View  
+        style={[styles.operateButton, operateAnimatedStyle]}
       >
         <Image
           source={operateIconSource}
           style={styles.operateIcon}
         />
-      </TouchableOpacity>
+      </Animated.View>
       
       {/* 目录操作项 */}
       <Animated.View 
@@ -157,7 +206,6 @@ const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
           styles.operationItem, 
           styles.operationItemTop144,
           catalogAnimatedStyle,
-          { pointerEvents: showOperationItems ? 'auto' : 'none' },
         ]}
       >
         <TouchableOpacity
@@ -179,7 +227,6 @@ const BookOperationPanel: React.FC<BookOperationPanelProps> = ({
           styles.operationItem, 
           styles.operationItemTop72,
           themeAnimatedStyle,
-          { pointerEvents: showOperationItems ? 'auto' : 'none' },
         ]}
       >
         <TouchableOpacity 

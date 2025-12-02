@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
-import {useReaderTheme} from '../../../hooks/useReaderTheme';
+import {useReaderThemeStore} from '../store/useReaderTheme';
 import {useBookStore} from '../store/useBookStore';
 import {createStyles, rpx} from '../../../utils/rpxStyleSheet';
 
 export interface CatalogPanelProps {
   /** 是否显示目录面板 */
   visible: boolean;
+  /** 点击章节回调 */
+  onChapterPress: () => void;
   /** 关闭目录面板回调 */
   onClose: () => void;
-  /** 书籍ID，用于获取主题 */
-  bookId?: number;
 }
 
 /**
@@ -20,20 +20,23 @@ export interface CatalogPanelProps {
  */
 const CatalogPanel: React.FC<CatalogPanelProps> = ({
   visible,
+  onChapterPress,
   onClose,
-  bookId,
 }) => {
   // 从 store 获取章节数据
   const bookChapters = useBookStore(state => state.bookChapters);
   const currentChapter = useBookStore(state => state.currentChapter);
-  const loadChapterContent = useBookStore(state => state.loadChapterContent);
+  const loadChapterContent = useCallback((chapterId: number) => {
+    useBookStore.getState().loadChapterContent(chapterId);
+  }, []);
 
   // 获取主题
-  const {theme} = useReaderTheme(bookId);
+  const {currentThemeIndex, themes} = useReaderThemeStore();
 
   // 处理章节点击
   const handleChapterPress = async (chapterId: number) => {
     try {
+      onChapterPress();
       await loadChapterContent(chapterId);
       onClose();
     } catch (error) {
@@ -46,11 +49,11 @@ const CatalogPanel: React.FC<CatalogPanelProps> = ({
   }
 
   return (
-    <View style={[styles.tocPanel, {backgroundColor: theme.bgColor}]}>
+    <View style={[styles.tocPanel, {backgroundColor: themes[currentThemeIndex].bgColor}]}>
       <View style={styles.tocHeader}>
-        <Text style={[styles.tocTitle, {color: theme.textColor}]}>目录</Text>
+        <Text style={[styles.tocTitle, {color: themes[currentThemeIndex].textColor}]}>目录</Text>
         <TouchableOpacity onPress={onClose}>
-          <Ionicons name="close" size={rpx(24)} color={theme.textColor} />
+          <Ionicons name="close" size={rpx(24)} color={themes[currentThemeIndex].textColor} />
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.tocContent}>
@@ -65,8 +68,8 @@ const CatalogPanel: React.FC<CatalogPanelProps> = ({
             <Text
               style={[
                 styles.tocItemText,
-                {color: theme.textColor},
-                currentChapter?.id === chapter.id && {color: theme.highlightColor},
+                {color: themes[currentThemeIndex].textColor},
+                currentChapter?.id === chapter.id && {color: themes[currentThemeIndex].highlightColor},
               ]}
               numberOfLines={1}
               ellipsizeMode="tail"

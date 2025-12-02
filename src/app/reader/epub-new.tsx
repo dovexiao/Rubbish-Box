@@ -1,5 +1,5 @@
 import React, {useMemo, useState, useCallback, useEffect, useRef} from 'react';
-import {View, StyleSheet, useWindowDimensions, Dimensions, TouchableOpacity, Image, Text} from 'react-native';
+import {View, StyleSheet, Dimensions, TouchableOpacity, Text, ActivityIndicator, Pressable} from 'react-native';
 import Animated, {
   Easing,
   runOnJS,
@@ -12,11 +12,12 @@ import {useRouter, useLocalSearchParams} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBar} from '../../components/StatusBar';
 import {createStyles, rpx} from '../../utils/rpxStyleSheet';
-import {useReaderTheme} from '../../hooks/useReaderTheme';
+import {useReaderThemeStore} from './store/useReaderTheme';
 import {useReadingProgress} from '../../hooks/useReadingProgress';
 import {useBookStore} from './store/useBookStore';
 import BookPage from './components/BookPage';
 import BookOperationPanel from './components/BookOperationPanel';
+import BackButton from './components/BackButton';
 import ThemeSettingsModal from './components/ThemeSettingsModal';
 import CatalogPanel from './components/CatalogPanel';
 import {EpubPaginator, PaginationOptions} from '../../utils/epubPaginator';
@@ -61,11 +62,7 @@ const EpubReader: React.FC = () => {
   }, []);
 
   // 主题和进度管理
-  const {fontSize, theme} = useReaderTheme(bookId);
-
-  useEffect(() => {
-    console.log('📖 [EPUB阅读器] 📏 字体大小变化: ', fontSize);
-  }, [fontSize]);
+  const {fontSize, currentThemeIndex, themes, loadReaderSettings, saveReaderSettings} = useReaderThemeStore();
 
   const {
     currentProgress,
@@ -77,7 +74,8 @@ const EpubReader: React.FC = () => {
 
   // 加载状态，用于等待占位和幂等性处理
   const [loading, setLoading] = useState(false);
-  const loadingRef = useRef(false);
+  const loadingBookDetailRef = useRef(false);
+  const loadingPaginateRef = useRef(false);
 
   // 书页尺寸相关状态与方法
   // const {width: screenWidth, height: screenHeight} = useWindowDimensions();
@@ -89,6 +87,7 @@ const EpubReader: React.FC = () => {
   const pageHeight = useMemo(() => bookHeight, [bookHeight]);
 
   // 书本相关状态与方法
+  const saveBookId = useBookStore(state => state.bookId);
   const currentChapter = useBookStore(state => state.currentChapter);
   const handleBookDetailInitialized = useCallback(async (bookDetail: any) => {
     try {
@@ -124,8 +123,20 @@ const EpubReader: React.FC = () => {
   const setRightShowPageIndex = useCallback(() => {
     useBookStore.getState().setRightShowPageIndex();
   }, []);
-  const leftShowPage = useMemo(() => pages[leftShowPageIndex], [pages, leftShowPageIndex]); // 左书页展示分页内容
-  const rightShowPage = useMemo(() => pages[rightShowPageIndex], [pages, rightShowPageIndex]); // 右书页展示分页内容
+  const leftShowPage = useMemo(() => {
+    return (
+      <View style={[styles.pageSlot, {width: pageWidth}]}>
+        {pages[leftShowPageIndex] && <BookPage page={pages[leftShowPageIndex]} />}
+      </View>
+    )
+  }, [pages, leftShowPageIndex, pageWidth]); // 左书页展示分页内容
+  const rightShowPage = useMemo(() => {
+    return (
+      <View style={[styles.pageSlot, {width: pageWidth}]}>
+        {pages[rightShowPageIndex] && <BookPage page={pages[rightShowPageIndex]} />}
+      </View>
+    )
+  }, [pages, rightShowPageIndex, pageWidth]); // 右书页展示分页内容
   const canForward = useMemo(() => true, []); // 是否可以向前翻页
   const canBackward = useMemo(() => true, []); // 是否可以向后翻页
   const paginatorRef = useRef<EpubPaginator | null>(null); // 分页器实例引用
@@ -197,24 +208,53 @@ const EpubReader: React.FC = () => {
     );
   };
 
+  // 主题设置弹窗状态
+  const [showSettings, setShowSettings] = useState(false);
+  // 目录面板状态
+  const [showToc, setShowToc] = useState(false);
+  // 操作面板显示状态
+  const [showOperationPanel, setShowOperationPanel] = useState(false);
+  // 返回键显示状态
+  const [showBackButton, setShowBackButton] = useState(false);
+
+  // 处理主题设置按钮点击
+  const handleThemePress = useCallback(() => {
+    setShowSettings(true);
+  }, []);
+
+  // 处理目录按钮点击
+  const handleCatalogPress = useCallback(() => {
+    setShowToc(true);
+  }, []);
+
+  // 处理章节点击
+  const handleChapterPress = useCallback(() => {
+    setLoading(true);
+  }, []);
+
   // 分页处理
   const paginateContent = useCallback(async () => {
-    if (!currentChapter?.content || !pageWidth || !pageHeight) {
+    if (!currentChapter?.content || !pageWidth || !pageHeight || !(bookId === saveBookId)) {
       console.log(`📖 [EPUB阅读器] ⚠️ 分页条件不满足:`, {
         hasContent: !!currentChapter?.content,
         pageWidth,
         pageHeight,
+        bookId: bookId,
+        saveBookId: saveBookId,
       });
       return;
     }
 
     // 防止重复分页
-    if (loadingRef.current) {
+    if (loadingPaginateRef.current) {
+      console.log(`📖 [EPUB阅读器] 📏 分页处理中，跳过分页:`, {
+        bookId: bookId,
+        saveBookId: saveBookId,
+        loadingRef: loadingPaginateRef.current,
+      });
       return;
     }
-    // 设置加载状态
-    setLoading(true);
-    loadingRef.current = true;
+    loadingPaginateRef.current = true;
 
     console.log(`📖 [EPUB阅读器] 📄 开始分页处理，内容长度: ${currentChapter.content.length} 字符`);
 
@@ -225,13 +265,13 @@ const EpubReader: React.FC = () => {
       // 屏幕内容相关参数配置用于计算分页
       const options: PaginationOptions = {
         containerWidth: 1920 / 2 - 65 * 2,
-        containerHeight: (pageHeight * 1920 / screenWidth) - 196, // pageHeight = 内容高度 +（页码高度40px + 安全边距上下30px + 移动设备顶部的状态栏96px）
+        containerHeight: (pageHeight * 1920 / screenWidth) - 264, // pageHeight = 内容高度 +（页码高度40px + 安全边距上下30px + 移动设备顶部的状态栏164px）
         fontSize,
         fontFamily: "'Source Han Serif', 'Noto Serif SC', '方正书宋', serif",
         lineHeight: 1.8,
         padding: 0,
-        textColor: theme.textColor,
-        backgroundColor: theme.bgColor,
+        textColor: themes[currentThemeIndex].textColor,
+        backgroundColor: themes[currentThemeIndex].bgColor,
       }
 
       console.log('📖 [EPUB阅读器] 📏 分页选项:', {
@@ -253,20 +293,28 @@ const EpubReader: React.FC = () => {
       console.error('📖 [EPUB阅读器] ❌ 分页处理失败:', error);
       showError('分页处理失败');
     } finally {
+      loadingPaginateRef.current = false;
       setLoading(false);
-      loadingRef.current = false;
     }
-  }, [fontSize, theme, currentChapter, pageWidth, pageHeight])
+  }, [fontSize, currentThemeIndex, themes, currentChapter, pageWidth, pageHeight])
 
   // 加载书本详情
   const loadBookDetail = useCallback(async () => {
     try {
-      // 考虑幂等，防止重复加载
-      if (loadingRef.current) {
+      if (pages && bookId === saveBookId) {
+        console.log(`📖 [EPUB阅读器] 📚 书本详情已加载，跳过加载:`, {
+          bookId: bookId,
+          saveBookId: saveBookId,
+        });
+        setLoading(false);
         return;
       }
-      loadingRef.current = true;
-      setLoading(true);
+      
+      // 考虑幂等，防止重复加载
+      if (loadingBookDetailRef.current) {
+        return;
+      }
+      loadingBookDetailRef.current = true;
 
       const chapterId: number = await handleBookDetailInitialized(bookId);
       if (chapterId !== -1) {
@@ -275,28 +323,60 @@ const EpubReader: React.FC = () => {
         console.error('📖 [EPUB阅读器] ❌ 加载书籍详情失败:', '参数id缺失或无效');
         showError('加载书籍详情失败');
       }
+      loadingBookDetailRef.current = false;
+      console.log(`📖 [EPUB阅读器] 📏 加载书籍详情完成:`, {
+        bookId: bookId,
+        saveBookId: saveBookId,
+        loadingRef: loadingBookDetailRef.current,
+      });
     } catch (error: unknown) {
       console.error('📖 [EPUB阅读器] ❌ 加载书籍详情失败:', error);
       showError('加载书籍详情失败');
     } finally {
-      setLoading(false)
-      loadingRef.current = false;
+      loadingBookDetailRef.current = false;
     }
   }, [bookId]);
 
-  // 监听字体和主题变化，重新分页
-  useEffect(() => {
-    console.log(`📖 [EPUB阅读器] 📏 字体和主题变化:`, {fontSize, currentChapter, pageWidth, pageHeight});
-
-    if (currentChapter?.content && pageWidth && pageHeight) {
-      paginateContent();
-    }
-  }, [fontSize, currentChapter, pageWidth, pageHeight])
-
   // 初始化
   useEffect(() => {
-    loadBookDetail();
+    setLoading(true);
+    loadReaderSettings().then(() => {
+      loadBookDetail();
+    })
   }, []);
+
+  useEffect(() => {
+    saveReaderSettings();
+  }, [fontSize, currentThemeIndex]);
+
+  // 监听字号和章节变化，重新分页
+  useEffect(() => {
+    console.log(`📖 [EPUB阅读器] 📏 字体变化:`, {fontSize, pageWidth, pageHeight});
+
+    if (pages && pages.length > 0 && bookId === saveBookId) {
+      console.log(`📖 [EPUB阅读器] 📏 分页数据已存在，跳过分页:`, {
+        bookId: bookId,
+        saveBookId: saveBookId,
+        pages: pages,
+      });
+      return;
+    }
+
+    const canPaginate = bookId === saveBookId && !!pageWidth && !!pageHeight && !!currentChapter?.content;
+
+    console.log(`📖 [EPUB阅读器] 📏 分页条件判断:`, {
+      bookId: bookId,
+      saveBookId: saveBookId,
+      pageWidth: pageWidth,
+      pageHeight: pageHeight,
+      hasContent: !!currentChapter?.content,
+      canPaginate,
+    });
+
+    if (canPaginate) {
+      paginateContent();
+    }
+  }, [fontSize, pageWidth, pageHeight, bookId, saveBookId, currentChapter])
 
   // 书页翻转手势处理
   const panGesture = Gesture.Pan()
@@ -378,99 +458,125 @@ const EpubReader: React.FC = () => {
       opacity,
     };
   });
-
-  // 主题设置弹窗状态
-  const [showSettings, setShowSettings] = useState(false);
-  // 目录面板状态
-  const [showToc, setShowToc] = useState(false);
-
-  // 处理主题设置按钮点击
-  const handleThemePress = useCallback(() => {
-    setShowSettings(true);
-  }, []);
-
-  // 处理目录按钮点击
-  const handleCatalogPress = useCallback(() => {
-    setShowToc(true);
-  }, []);
+  
+  if (loading) {
+    return (
+      <View style={[styles.spread, { backgroundColor: themes[currentThemeIndex].bgColor }]}>
+        <StatusBar />
+        <TouchableOpacity style={{ marginTop: 100 }} onPress={() => {router.back()}}>
+          <Ionicons name="close-circle" size={24} color="rgba(0, 0, 0, 0.2)" />
+        </TouchableOpacity>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={themes[currentThemeIndex].highlightColor} />
+          <Text style={[styles.loadingText, { color: themes[currentThemeIndex].textColor }]}>加载中...</Text>
+        </View>
+      </View>
+    )
+  }
 
   return (
-    <GestureDetector gesture={panGesture}>
+    <Pressable 
+      onPress={() => {
+        // 点击整屏，控制返回键和操作面板显隐（每次取反）
+        setShowOperationPanel(prev => !prev);
+        setShowBackButton(prev => !prev);
+      }} 
+      style={styles.spread}>
       <View style={styles.spread} onLayout={event => {
         const {width, height} = event.nativeEvent.layout;
         setBookWidth(width);
         setBookHeight(height);
       }}>
-        {/* 状态栏 */}
-        <View style={styles.statusBarContainer}>
-          <TouchableOpacity onPress={() => {router.back()}}>
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
+        <StatusBar />
+        {/* 返回键 */}
+        <BackButton
+          visible={showBackButton}
+          containerStyle={styles.backContainer}
+          onPress={() => {router.back()}}
+        />
+
+        {/* 书页翻动手势 */}
+        <GestureDetector gesture={panGesture}>
+          <View style={styles.pageContainer}>
+            {/* 书页 */}
+            {leftShowPage}
+            {rightShowPage}
+            {/* 书页翻动动画 */}
+            <Animated.View
+              pointerEvents="none"
+              style={[
+                styles.flipContainer,
+                {
+                  width: '100%',
+                  height: '100%',
+                },
+                flipPageSideStyle,
+              ]}>
+              <Animated.View style={[styles.flipSide, frontSideStyle]}>
+                <BookPage page={frontPage} />
+                <Animated.View style={[styles.shade, shadowStyle]} />
+              </Animated.View>
+              <Animated.View style={[styles.flipSide, backSideStyle]}>
+                <BookPage page={backPage} />
+                <Animated.View style={[styles.shade, shadowStyle]} />
+              </Animated.View>
+            </Animated.View>
+          </View>
+        </GestureDetector>
+
         {/* 书页操作面板 */}
         <BookOperationPanel
           containerStyle={styles.Panel}
+          visible={showOperationPanel}
           onCatalogPress={handleCatalogPress}
           onThemePress={handleThemePress}
         />
-        {/* 书页 */}
-        <View style={[styles.pageSlot, {width: pageWidth}]}>
-          <BookPage page={leftShowPage} bookId={bookId} />
-        </View>
-        <View style={[styles.pageSlot, {width: pageWidth}]}>
-          <BookPage page={rightShowPage} bookId={bookId} />
-        </View>
-        {/* 书页翻动动画 */}
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.flipContainer,
-            {
-              width: '100%',
-              height: '100%',
-            },
-            flipPageSideStyle,
-          ]}>
-          <Animated.View style={[styles.flipSide, frontSideStyle]}>
-            <BookPage page={frontPage} />
-            <Animated.View style={[styles.shade, shadowStyle]} />
-          </Animated.View>
-          <Animated.View style={[styles.flipSide, backSideStyle]}>
-            <BookPage page={backPage} />
-            <Animated.View style={[styles.shade, shadowStyle]} />
-          </Animated.View>
-        </Animated.View>
-
+        
         {/* 主题设置弹窗 */}
         <ThemeSettingsModal
           visible={showSettings}
           onClose={() => setShowSettings(false)}
-          bookId={bookId}
         />
 
         {/* 目录面板 */}
         <CatalogPanel
           visible={showToc}
+          onChapterPress={handleChapterPress}
           onClose={() => setShowToc(false)}
-          bookId={bookId}
         />
       </View>
-    </GestureDetector>
+    </Pressable>
   );
 };
 
 const styles = createStyles({
   spread: {
     flex: 1,
+    width: '100%' as const,
     alignSelf: 'center' as const,
     backgroundColor: '#F8F2E6',
-    flexDirection: 'row' as const,
     overflow: 'visible' as const,
   },
-  statusBarContainer: {
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  loadingText: {
+    fontSize: 15.625,
+    marginTop: 15.625,
+  },
+  pageContainer: {
+    flex: 1,
+    width: '100%' as const,
+    height: '100%' as const,
+    overflow: 'visible' as const,
+    flexDirection: 'row' as const,
+  },
+  backContainer: {
     position: 'absolute' as const,
-    top: 0,
-    left: 0,
+    top: 37.109375,
+    left: 25.390625,
     zIndex: 10,
   },
   themeOperationButtonContainer: {

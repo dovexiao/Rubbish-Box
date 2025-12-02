@@ -9,8 +9,6 @@ export interface ThemeSettingsModalProps {
   visible: boolean;
   /** 关闭弹窗回调 */
   onClose: () => void;
-  /** 书籍ID，用于保存设置 */
-  bookId?: number;
 }
 
 /**
@@ -20,7 +18,6 @@ export interface ThemeSettingsModalProps {
 const ThemeSettingsModal: React.FC<ThemeSettingsModalProps> = ({
   visible,
   onClose,
-  bookId,
 }) => {
   // 使用 useReaderTheme hook 获取主题相关功能
   const {
@@ -31,10 +28,6 @@ const ThemeSettingsModal: React.FC<ThemeSettingsModalProps> = ({
     increaseFontSize,
     decreaseFontSize,
   } = useReaderThemeStore();
-
-  useEffect(() => {
-    console.log('📖 [EPUB阅读器] 📏 主题变化: ', currentThemeIndex);
-  }, [currentThemeIndex]);
 
   return (
     <Modal
@@ -78,7 +71,7 @@ const ThemeSettingsModal: React.FC<ThemeSettingsModalProps> = ({
             <TouchableOpacity
               style={styles.fontSizeBtnRight}
               onPress={increaseFontSize}
-              activeOpacity={0.7}
+              activeOpacity={0.8}
             >
               <Text style={styles.fontSizeBtnText}>大</Text>
             </TouchableOpacity>

@@ -66,7 +66,7 @@ export const useReaderThemeStore = create<ReaderThemeState>((set, get) => ({
     saveReaderSettings: async () => {
         try {
             const settings = {
-                currentThemeIndex: get().currentThemeIndex,
+                theme: get().currentThemeIndex,
                 fontSize: get().fontSize,
             }
             await AsyncStorage.setItem('reader_settings_global', JSON.stringify(settings));
@@ -79,8 +79,9 @@ export const useReaderThemeStore = create<ReaderThemeState>((set, get) => ({
             const settings = await AsyncStorage.getItem('reader_settings_global');
             if (settings) {
                 const settingsObj = JSON.parse(settings);
-                set({ currentThemeIndex: settingsObj.currentThemeIndex, fontSize: settingsObj.fontSize });
+                set({ currentThemeIndex: settingsObj.theme, fontSize: settingsObj.fontSize });
             }
+            console.log('阅读设置加载成功:', settings);
         } catch (error) {
             console.error('加载阅读设置失败:', error);
         }

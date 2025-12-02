@@ -92,6 +92,13 @@ export const useBookStore = create<BookState>((set, get) => ({
         })),
       })
 
+      console.log(`📖 [EPUB阅读器] 📚 书本详情初始化成功:`, {
+        bookId: bookId,
+        bookTitle: bookDetail.title ?? '',
+        bookChapters: bookDetail.chapters,
+        readingHistory: bookDetail.reading_history,
+      })
+
       if (bookDetail.reading_history && bookDetail.chapters && bookDetail.chapters?.length > 0) {
         const lastChapterId = bookDetail.reading_history.chapter;
         const lastProgress = bookDetail.reading_history.progress || 0 // 0-1 的小数
@@ -193,6 +200,7 @@ export const useBookStore = create<BookState>((set, get) => ({
           order: chapterDetail.order ?? 0,
           content: processedContent,
         },
+        pages: [],
       })
     } catch (error: unknown) {
       throw error;

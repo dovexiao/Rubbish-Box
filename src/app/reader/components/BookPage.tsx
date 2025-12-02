@@ -2,7 +2,6 @@ import React, { useMemo, useEffect } from 'react';
 import {View, Text} from 'react-native';
 import {createStyles, rpx} from '../../../utils/rpxStyleSheet';
 import {useReaderThemeStore} from '../store/useReaderTheme';
-import {useBookStore} from '../store/useBookStore';
 
 type Page = {
   id: string;
@@ -12,12 +11,10 @@ type Page = {
 
 type BookPageProps = {
   page?: Page;
-  bookId?: number;
 };
 
 const BookPage: React.FC<BookPageProps> = ({
   page,
-  bookId,
 }) => {
   const {fontSize, currentThemeIndex, themes} = useReaderThemeStore();
 
@@ -33,10 +30,6 @@ const BookPage: React.FC<BookPageProps> = ({
       },
     });
   }, [fontSize, currentThemeIndex, themes]);
-
-  useEffect(() => {
-    console.log('📖 [EPUB阅读器] 📏 页面主题变化: ', currentThemeIndex);
-  }, [currentThemeIndex]);
   
   return (
     <View
@@ -86,7 +79,7 @@ const styles = createStyles({
   },
   paragraphContainer: {
     flex: 1,
-    marginTop: 38.28125,
+    marginTop: 64.0625,
     // borderWidth: 1,
     // borderColor: 'red',
   },
