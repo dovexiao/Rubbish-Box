@@ -2,19 +2,26 @@ package com.xhtx.app;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.provider.MediaStore;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.YuvImage;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
@@ -39,7 +46,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
@@ -123,7 +135,16 @@ public class NativeCameraActivity extends Activity {
         btnCapture.setOnClickListener(v -> takePhoto());
         btnSubmit.setOnClickListener(v -> submitPhotos());
         findViewById(R.id.btn_back).setOnClickListener(v -> {
+            Log.d(TAG, "🚫 用户点击返回按钮");
             setResult(RESULT_CANCELED);
+            
+            // 使用静态回调通知取消
+            try {
+                NativeCameraModule.rejectWithError("E_PICKER_CANCELLED", "用户取消");
+            } catch (Exception e) {
+                Log.e(TAG, "❌ 静态回调失败", e);
+            }
+            
             finish();
         });
 
@@ -150,12 +171,25 @@ public class NativeCameraActivity extends Activity {
     }
 
     private void updateUI() {
+        Log.d(TAG, "📍 updateUI() 被调用，线程: " + Thread.currentThread().getName());
+        
         int photoCount = photoPaths.size();
+        Log.d(TAG, "📊 photoPaths.size() = " + photoCount);
+        
         String tipPrefix = "composition".equals(cameraType) ? "把作文第" : "把作业第";
-        tvHint.setText(tipPrefix + (photoCount + 1) + "页对准屏幕中间，点击拍照");
+        String hintText = tipPrefix + (photoCount + 1) + "页对准屏幕中间，点击拍照";
+        Log.d(TAG, "📝 设置提示文本: " + hintText);
+        tvHint.setText(hintText);
 
-        btnCapture.setEnabled(photoCount < MAX_PHOTOS);
-        btnSubmit.setVisibility(photoCount > 0 ? View.VISIBLE : View.GONE);
+        boolean captureEnabled = photoCount < MAX_PHOTOS;
+        Log.d(TAG, "🎯 设置拍照按钮enabled: " + captureEnabled);
+        btnCapture.setEnabled(captureEnabled);
+        
+        int submitVisibility = photoCount > 0 ? View.VISIBLE : View.GONE;
+        Log.d(TAG, "👁️ 设置提交按钮visibility: " + (submitVisibility == View.VISIBLE ? "VISIBLE" : "GONE"));
+        btnSubmit.setVisibility(submitVisibility);
+        
+        Log.d(TAG, "✅ updateUI 完成: 照片数量=" + photoCount + ", 拍照按钮enabled=" + captureEnabled + ", 提交按钮visible=" + (submitVisibility == View.VISIBLE));
     }
 
     /**
@@ -243,15 +277,56 @@ public class NativeCameraActivity extends Activity {
     }
 
     private void submitPhotos() {
+        Log.d(TAG, "📤 [submitPhotos] 开始提交照片");
+        Log.d(TAG, "📤 [submitPhotos] 照片数量: " + photoPaths.size());
+        Log.d(TAG, "📤 [submitPhotos] 当前线程: " + Thread.currentThread().getName());
+        
+        if (photoPaths.isEmpty()) {
+            Log.e(TAG, "❌ [submitPhotos] 照片列表为空，无法提交");
+            return;
+        }
+        
+        // 打印所有照片路径并验证文件
+        Log.d(TAG, "📋 [submitPhotos] ========== 验证照片文件 ==========");
+        for (int i = 0; i < photoPaths.size(); i++) {
+            String path = photoPaths.get(i);
+            File file = new File(path);
+            boolean exists = file.exists();
+            long size = exists ? file.length() : 0;
+            Log.d(TAG, String.format("📷 [submitPhotos] 照片[%d]: %s", i, path));
+            Log.d(TAG, String.format("   ├─ 文件存在: %s", exists ? "✅ 是" : "❌ 否"));
+            Log.d(TAG, String.format("   └─ 文件大小: %d bytes (%.2f MB)", size, size / 1024.0 / 1024.0));
+        }
+        Log.d(TAG, "📋 [submitPhotos] ========================================");
+        
+        // 通过 Intent 返回照片路径给 RN
+        Log.d(TAG, "🔄 [submitPhotos] 准备返回结果给 RN (通过 Intent)");
         Intent resultIntent = new Intent();
         resultIntent.putStringArrayListExtra("photoPaths", photoPaths);
         setResult(RESULT_OK, resultIntent);
+        Log.d(TAG, "✅ [submitPhotos] setResult(RESULT_OK) 已调用");
         
-        // 延迟关闭Activity，给React Native足够时间处理跳转
-        // 避免Activity立即关闭导致系统自动返回到MainActivity
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        // ✅ 使用静态回调（更可靠，避免 onActivityResult 丢失）
+        try {
+            Log.d(TAG, "🔄 [submitPhotos] 调用静态回调 NativeCameraModule.resolveWithPhotos");
+            NativeCameraModule.resolveWithPhotos(photoPaths);
+            Log.d(TAG, "✅ [submitPhotos] 静态回调成功");
+        } catch (Exception e) {
+            Log.e(TAG, "❌ [submitPhotos] 静态回调失败", e);
+            e.printStackTrace();
+        }
+        
+        // 关闭 Activity
+        Log.d(TAG, "🚪 [submitPhotos] 准备关闭 Activity");
+        Log.d(TAG, "🚪 [submitPhotos] Activity hashCode: " + this.hashCode());
+        Log.d(TAG, "🚪 [submitPhotos] Task ID: " + getTaskId());
+        Log.d(TAG, "🚪 [submitPhotos] isFinishing: " + isFinishing());
+        
             finish();
-        }, 500); // 延迟500ms关闭
+        
+        Log.d(TAG, "✅ [submitPhotos] finish() 已调用");
+        Log.d(TAG, "✅ [submitPhotos] isFinishing: " + isFinishing());
+        Log.d(TAG, "📤 [submitPhotos] ========== 提交流程完成 ==========");
     }
 
     private boolean checkPermissions() {
@@ -299,6 +374,14 @@ public class NativeCameraActivity extends Activity {
                 }
             } else {
                 Toast.makeText(this, "需要相机权限", Toast.LENGTH_SHORT).show();
+                
+                // 权限被拒绝，通知 RN
+                try {
+                    NativeCameraModule.rejectWithError("E_PERMISSION_DENIED", "相机权限被拒绝");
+                } catch (Exception e) {
+                    Log.e(TAG, "❌ 静态回调失败", e);
+                }
+                
                 finish();
             }
         }
@@ -345,9 +428,9 @@ public class NativeCameraActivity extends Activity {
                 return;
             }
 
-            // 使用Camera 120（后置相机，性能更好，帧率30fps）
-            // 原来使用的Camera 122（前置相机，只有5-10fps，在Android 14上资源释放有问题）
-            String cameraId = "120"; // 直接指定使用性能更好的相机
+            // 🔥 关键修复：使用 Camera 100（后置相机），与 Camera2 应用保持一致
+            // Camera2 应用使用的就是 Camera 100，已验证能稳定工作
+            String cameraId = "100"; // 与 Camera2 应用一致
             
             // 验证相机是否存在
             boolean cameraExists = false;
@@ -359,11 +442,11 @@ public class NativeCameraActivity extends Activity {
             }
             
             if (!cameraExists) {
-                // 如果Camera 120不存在，使用第一个可用的相机
+                // 如果Camera 100不存在，使用第一个可用的相机
                 cameraId = cameraIds[0];
-                Log.w(TAG, "Camera 120 not found, using fallback: " + cameraId);
+                Log.w(TAG, "Camera 100 not found, using fallback: " + cameraId);
             } else {
-                Log.d(TAG, "Using Camera 120 (30fps, better performance)");
+                Log.d(TAG, "Using Camera 100 (与 Camera2 应用一致)");
             }
 
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
@@ -383,59 +466,22 @@ public class NativeCameraActivity extends Activity {
                     Log.d(TAG, "Camera hardware level: " + hardwareLevel);
                     Log.d(TAG, "Camera capabilities: " + (capabilities != null ? capabilities.length : 0));
                     
-                    // 判断是否为USB相机（通常hardware level为LIMITED或LEGACY）
-                    boolean isUSBCamera = (hardwareLevel != null && 
-                        (hardwareLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED ||
-                         hardwareLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY));
-                    
-                    // 根据相机类型选择合适的分辨率
+                    // 🔥 关键修复：参考可工作的代码，使用 YUV 格式可以支持更高分辨率
+                    // 选择最大分辨率（2592x1944）以获得最佳图片质量
                     Size bestSize = null;
-                    if (isUSBCamera || cameraId.equals("120") || cameraId.equals("122")) {
-                        // USB相机或外接相机：使用1920x1080（平衡清晰度和性能）
-                        Log.d(TAG, "Detected USB/External camera, selecting 1920x1080");
+                    Log.d(TAG, "Selecting maximum resolution for best quality");
+                    
+                    // 选择最大分辨率
                         for (Size size : sizes) {
-                            if (size.getWidth() == 1920 && size.getHeight() == 1080) {
-                                bestSize = size;
-                                break;
-                            }
-                        }
-                        // 如果没有1920x1080，选择最接近的分辨率（限制在1920以内）
-                        if (bestSize == null) {
-                            int targetArea = 1920 * 1080;
-                            int minDiff = Integer.MAX_VALUE;
-                            for (Size size : sizes) {
-                                if (size.getWidth() <= 1920 && size.getHeight() <= 1080) {
-                                    int area = size.getWidth() * size.getHeight();
-                                    int diff = Math.abs(area - targetArea);
-                                    if (diff < minDiff) {
-                                        minDiff = diff;
-                                        bestSize = size;
-                                    }
-                                }
-                            }
-                            // 如果没有小于等于1920x1080的，选择最小的
-                            if (bestSize == null) {
-                                bestSize = sizes[0];
-                                for (Size size : sizes) {
-                                    if (size.getWidth() * size.getHeight() < bestSize.getWidth() * bestSize.getHeight()) {
-                                        bestSize = size;
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        // 普通相机：选择最大分辨率
-                        Log.d(TAG, "Detected standard camera, selecting maximum resolution");
-                        for (Size size : sizes) {
-                            if (bestSize == null || size.getWidth() * size.getHeight() > bestSize.getWidth() * bestSize.getHeight()) {
+                        if (bestSize == null || 
+                            (size.getWidth() * size.getHeight() > bestSize.getWidth() * bestSize.getHeight())) {
                                 bestSize = size;
                             }
-                        }
                     }
                     
-                    // 兜底：如果还没选到，使用中等分辨率
-                    if (bestSize == null) {
-                        bestSize = sizes[sizes.length / 2];
+                    // 兜底：如果没选到，使用第一个
+                    if (bestSize == null && sizes.length > 0) {
+                        bestSize = sizes[0];
                     }
                     
                     previewSize = bestSize;
@@ -443,8 +489,9 @@ public class NativeCameraActivity extends Activity {
                 }
             }
 
+            // 🔥 关键修复：使用 YUV_420_888 格式，性能更好，支持更高分辨率
             imageReader = ImageReader.newInstance(previewSize.getWidth(), previewSize.getHeight(),
-                    android.graphics.ImageFormat.JPEG, 2);
+                    android.graphics.ImageFormat.YUV_420_888, 2);
             imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler);
 
             manager.openCamera(cameraId, stateCallback, backgroundHandler);
@@ -573,81 +620,113 @@ public class NativeCameraActivity extends Activity {
         });
 
         try {
+            // 🔥 关键修复：参考可工作的代码，拍照前先停止预览
+            Log.d(TAG, "📸 停止预览，准备拍照...");
+            captureSession.stopRepeating();
+            
             CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(imageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+            // 设置JPEG方向
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 0);
 
             captureSession.capture(captureBuilder.build(), new CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-                    Log.d(TAG, "Photo captured");
-                    // Resume preview
-                    try {
-                        captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, backgroundHandler);
-                    } catch (CameraAccessException e) {
-                        Log.e(TAG, "Failed to resume preview", e);
-                    }
+                    Log.d(TAG, "📸 Photo captured, restarting preview...");
                     
-                    // 延迟1秒后重新启用按钮（等待图片保存完成）
+                    // 🔥 关键修复：拍照完成后，重新启动预览
+                    startPreview();
+                    
                     new Handler(getMainLooper()).postDelayed(() -> {
                         if (photoPaths.size() < MAX_PHOTOS) {
                             btnCapture.setEnabled(true);
                             btnCapture.setAlpha(1.0f);
+                            Log.d(TAG, "✅ 拍照按钮已重新启用");
                         }
-                    }, 1000);
+                    }, 300);
+                }
+                
+                @Override
+                public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
+                    Log.e(TAG, "❌ 拍照失败: " + failure.getReason());
+                    // 拍照失败，也要恢复预览
+                    startPreview();
+                    runOnUiThread(() -> {
+                        btnCapture.setEnabled(true);
+                        btnCapture.setAlpha(1.0f);
+                        Toast.makeText(NativeCameraActivity.this, "拍照失败，请重试", Toast.LENGTH_SHORT).show();
+                    });
                 }
             }, backgroundHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "takePhoto failed", e);
-            // 发生错误时重新启用按钮
+            // 发生错误时重新启用按钮并恢复预览
+            startPreview();
             runOnUiThread(() -> {
                 btnCapture.setEnabled(true);
                 btnCapture.setAlpha(1.0f);
             });
         }
     }
+    
+    /**
+     * 启动预览
+     */
+    private void startPreview() {
+        if (cameraDevice == null || captureSession == null || previewRequestBuilder == null) {
+            Log.w(TAG, "startPreview: camera not ready");
+            return;
+        }
+        
+        try {
+            captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, backgroundHandler);
+            Log.d(TAG, "✅ Preview restarted");
+        } catch (CameraAccessException e) {
+            Log.e(TAG, "Failed to restart preview", e);
+        }
+    }
 
     private final ImageReader.OnImageAvailableListener onImageAvailableListener = reader -> {
+        // 在新线程中处理图片保存，避免阻塞相机线程
+        new Thread(() -> {
         Image image = null;
         try {
             image = reader.acquireLatestImage();
             if (image != null) {
-                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                byte[] bytes = new byte[buffer.remaining()];
-                buffer.get(bytes);
-
-                String fileName = "IMG_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".jpg";
-                File photoFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), fileName);
-
-                try (FileOutputStream output = new FileOutputStream(photoFile)) {
-                    output.write(bytes);
-                    String photoPath = photoFile.getAbsolutePath();
+                    Log.d(TAG, "📸 Image available, format: " + image.getFormat());
                     
-                    // 检查照片数量限制，防止快速点击导致超过限制
-                    if (photoPaths.size() < MAX_PHOTOS) {
+                    // 检查照片数量限制
+                    if (photoPaths.size() >= MAX_PHOTOS) {
+                        Log.w(TAG, "Photo limit reached: " + MAX_PHOTOS);
+                        runOnUiThread(() -> {
+                            Toast.makeText(NativeCameraActivity.this, "最多只能拍摄" + MAX_PHOTOS + "张照片", Toast.LENGTH_SHORT).show();
+                        });
+                        return;
+                    }
+
+                    // 🔥 关键内存优化：直接将 Image 对象传递给 save 方法，避免中间 byte[] 分配
+                    String photoPath = saveToAppStorage(image);
+                    
+                    if (photoPath != null) {
                         photoPaths.add(photoPath);
                         final int currentCount = photoPaths.size();
                         
-                        Log.d(TAG, "Photo saved: " + photoPath + " (total: " + currentCount + ")");
+                        Log.d(TAG, "📸 Photo saved to app storage: " + photoPath + " (total: " + currentCount + ")");
                         
-                        // 异步更新UI和加载缩略图，避免阻塞
+                        // 异步更新UI和加载缩略图
                         runOnUiThread(() -> {
-                            // Toast.makeText(this, "拍照成功 (" + currentCount + "/" + MAX_PHOTOS + ")", Toast.LENGTH_SHORT).show();
+                            try {
                             updateUI();
-                            addThumbnail(photoPath);  // addThumbnail内部会在后台线程加载图片
+                                addThumbnail(photoPath);
+                            } catch (Exception e) {
+                                Log.e(TAG, "❌ UI 更新异常", e);
+                            }
                         });
                     } else {
-                        // 超过限制，删除刚保存的照片
-                        photoFile.delete();
-                        Log.w(TAG, "Photo limit reached, deleted: " + photoPath);
+                        Log.e(TAG, "Failed to save photo");
                         runOnUiThread(() -> {
-                            Toast.makeText(this, "最多只能拍摄" + MAX_PHOTOS + "张照片", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to save photo", e);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "保存照片失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(NativeCameraActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
                     });
                 }
             }
@@ -656,7 +735,110 @@ public class NativeCameraActivity extends Activity {
                 image.close();
             }
         }
+        }).start();
     };
+    
+    /**
+     * 保存照片到应用私有目录 (内存优化版)
+     * 直接从 Image -> YuvImage -> FileOutputStream，避免中间 byte[] 分配
+     */
+    private String saveToAppStorage(Image image) {
+        File file = null;
+        try {
+            // 获取 YUV 数据
+            ByteBuffer yBuffer = image.getPlanes()[0].getBuffer();
+            ByteBuffer uBuffer = image.getPlanes()[1].getBuffer();
+            ByteBuffer vBuffer = image.getPlanes()[2].getBuffer();
+
+            int ySize = yBuffer.remaining();
+            int uSize = uBuffer.remaining();
+            int vSize = vBuffer.remaining();
+
+            // 这里的 nv21 数组仍然需要分配，但我们省去了后面的 ByteArrayOutputStream
+            // 如果要进一步优化，可以复用这个 buffer (ThreadLocal)
+            byte[] nv21 = new byte[ySize + uSize + vSize];
+
+            // Y
+            yBuffer.get(nv21, 0, ySize);
+            // U and V are swapped
+            vBuffer.get(nv21, ySize, vSize);
+            uBuffer.get(nv21, ySize + vSize, uSize);
+
+            // 转换为 YuvImage
+            YuvImage yuvImage = new YuvImage(
+                    nv21,
+                    ImageFormat.NV21,
+                    image.getWidth(),
+                    image.getHeight(),
+                    null
+            );
+
+            // 创建文件
+            File storageDir = new File(getFilesDir(), "captured_photos");
+            if (!storageDir.exists()) {
+                if (!storageDir.mkdirs()) {
+                    Log.e(TAG, "❌ 无法创建目录: " + storageDir.getAbsolutePath());
+                    storageDir = getCacheDir();
+                }
+            }
+            
+            String fileName = "IMG_" + System.currentTimeMillis() + ".jpg";
+            file = new File(storageDir, fileName);
+            
+            // 直接压缩到文件流
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                yuvImage.compressToJpeg(
+                        new Rect(0, 0, image.getWidth(), image.getHeight()),
+                        90,  // JPEG 质量 90%
+                        fos
+                );
+            }
+            
+            Log.d(TAG, "✅ 文件已保存: " + file.getAbsolutePath());
+            return file.getAbsolutePath();
+            
+        } catch (Exception e) {
+            Log.e(TAG, "❌ 保存文件失败", e);
+            if (file != null && file.exists()) {
+                file.delete();
+            }
+            return null;
+        }
+    }
+
+    /**
+     * 保存照片到应用私有目录
+     * 不需要权限，RN可直接读取
+     */
+    private String saveToAppStorage(byte[] bytes) {
+        try {
+            // 🔥 关键修复：改用内部存储 getFilesDir()，避免 External Storage 的权限问题
+            // 路径示例: /data/user/0/com.xhtx.app.dev/files/captured_photos/
+            File storageDir = new File(getFilesDir(), "captured_photos");
+            
+            if (!storageDir.exists()) {
+                if (!storageDir.mkdirs()) {
+                    Log.e(TAG, "❌ 无法创建目录: " + storageDir.getAbsolutePath());
+                    // 如果创建失败，尝试使用缓存目录
+                    storageDir = getCacheDir();
+                }
+            }
+            
+            // 使用时间戳作为文件名
+            String fileName = "IMG_" + System.currentTimeMillis() + ".jpg";
+            File file = new File(storageDir, fileName);
+            
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bytes);
+            fos.close();
+            
+            Log.d(TAG, "✅ 文件已保存: " + file.getAbsolutePath());
+            return file.getAbsolutePath();
+        } catch (IOException e) {
+            Log.e(TAG, "❌ 保存文件失败", e);
+            return null;
+        }
+    }
 
     private void startBackgroundThread() {
         backgroundThread = new HandlerThread("CameraBackground");

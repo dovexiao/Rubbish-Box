@@ -36,7 +36,7 @@ export const Images = {
   homeSettingIcon: require("../../assets/images/home-setting-icon.png"),
   indexClassRoomBg: require("../../assets/images/index-class-room-bg.png"),
   indexUserinfoBg: require("../../assets/images/index-userinfo-bg.png"),
-  indexRankBg2: require("../../assets/images/index-rank-bg2.png"),
+  indexRankBg2: require("../../assets/images/index-rank-bg1.png"),
   homeBg1: require("../../assets/images/home-bg-1.png"),
   book1: require("../../assets/images/book-1.png"),
   tipsIcon: require("../../assets/images/tips-icon.png"),

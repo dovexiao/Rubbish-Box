@@ -100,13 +100,14 @@ export default function StudyScreen() {
           <View style={styles.leftColumn}>
           {/* AI批改大卡片 */}
           <View style={styles.cardShadowWrapper}>
+           
             <ImageBackground
               source={Images.studyBg21} // AI卡片背景
               style={[styles.functionCardAi, { backgroundColor: "transparent" }]}
               resizeMode="stretch"
               imageStyle={styles.aiCardImageStyle}
             >
-              <Image
+               <Image
                 source={Images.studyBg22} // AI卡片顶部装饰
                 style={styles.aiTopImage}
                 resizeMode="contain"
@@ -313,6 +314,10 @@ const styles = createStyles({
     shadowRadius: 10.05,
     borderRadius: 15.625,
     backgroundColor: "transparent",
+    position: "relative" as const,
+    overflow: "visible" as const, // 允许装饰图片溢出
+    // borderWidth: 1,  // 删除调试边框
+    // borderColor: "red",
   },
 
   // AI批改大卡片 - 对应.function-card-ai
@@ -321,6 +326,7 @@ const styles = createStyles({
     height: 256.25,
     borderRadius: 15.625,
     backgroundColor: "transparent", // 透明背景
+    
   },
 
   // AI卡片背景图片样式
@@ -329,14 +335,17 @@ const styles = createStyles({
     width: 359,
     height: 256.25,
     overflow: "hidden" as const, // 在这里设置圆角裁剪
+    
   },
 
   // AI卡片顶部图片
   aiTopImage: {
     width: 119.53125,
+    height: 100.39, // 控制高度，避免过度遮挡
     position: "absolute" as const,
-    top: -8,
-    right: 8,
+    top: -8, // 向上溢出，部分在卡片外
+    right: 0, // 向右溢出，部分在卡片外
+    zIndex: 10, // 确保在错题本背景之上
   },
 
   // AI卡片头部内容
@@ -527,10 +536,12 @@ const styles = createStyles({
 
   // 阅读卡片顶部图片
   readerTopImage: {
-    width: 106.25,
+    width: 115.2343,
+    height: 109.7656, // 根据卡片高度调整
     position: "absolute" as const,
-    top: -8,
-    right: -8,
+    top: -10, // 稍微向上溢出多一点
+    right: -5, // 稍微向右溢出
+    zIndex: 10,
   },
 
   // 阅读卡片内容
@@ -592,10 +603,11 @@ const styles = createStyles({
 
   // 课堂卡片图片
   classroomImage: {
-    width: 106.25,
+    width: 112.5,
+    height: 90.015, // 根据卡片高度调整
     position: "absolute" as const,
     right: -10.15625,
-    bottom: 10,
+    top: -8,
   },
 
   // 课堂卡片内容

@@ -211,9 +211,9 @@ export default function MyScreen() {
 
   // 渲染今日错题圆形进度条
   const renderTodayProgressCircle = () => {
-    const size = 180
-    const strokeWidth = 14.54
-    const radius = 80
+    const size = 140
+    const strokeWidth = 12.54
+    const radius = 60
     const center = size / 2
     const circumference = 2 * Math.PI * radius
 

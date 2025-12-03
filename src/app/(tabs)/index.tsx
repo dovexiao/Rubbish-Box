@@ -863,10 +863,14 @@ const openVolumeSettings = async () => {
         </TouchableOpacity> */}
 
         {/* AI练口语按钮 */}
-        {/* <TouchableOpacity style={styles.aiSpeakingButton} onPress={goToAiSpeaking}>
+         {/* <TouchableOpacity style={styles.aiSpeakingButton} onPress={goToAiSpeaking}>
           <View style={styles.aiSpeakingButtonContent}>
             <Text style={styles.aiSpeakingButtonText}>AI练口语</Text>
           </View>
+        </TouchableOpacity> */}
+
+        {/* <TouchableOpacity  style={styles.aiSpeakingButton} onPress={() => router.push("/test-camera")}>
+          <Text>测试相机</Text>
         </TouchableOpacity> */}
 
       </ImageBackground>
@@ -1345,7 +1349,7 @@ const styles = createStyles({
     marginBottom: 5,
   },
   rankingNumber: {
-    width: 16,
+    // width: 24,
     color: "rgba(255, 255, 255, 0.8)",
     fontSize: 8.6,
     lineHeight: 25.78125,
@@ -1360,6 +1364,7 @@ const styles = createStyles({
   rankingDuration: {
     color: "rgba(255, 255, 255, 0.8)",
     fontSize: 8.6,
+    marginLeft: 4,
     lineHeight: 25.78125,
   },
   aiButton: {
