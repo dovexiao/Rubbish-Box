@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 export type ReaderTheme =  {
   name: string
   bgColor: string
+  fontWeight: string
   textColor: string
   titleColor: string
   spineColor: string
@@ -14,28 +15,58 @@ export type ReaderTheme =  {
 // 预定义主题
 const READER_THEMES: ReaderTheme[] = [
   {
-    name: "默认",
-    bgColor: "#f8f5e8",
-    textColor: "#333333",
+    name: "原始",
+    bgColor: "#FFFFFF",
+    fontWeight: "normal",
+    textColor: "#252525",
     titleColor: "#2c3e50",
-    spineColor: "rgba(0, 0, 0, 0.1)",
-    highlightColor: "#e67e22",
+    spineColor: "rgba(0, 0, 0, 0.08)", // 浅灰色书脊，与白色背景形成轻微对比
+    highlightColor: "rgba(37, 37, 37, 0.12)", // 浅灰色高亮，深色文字清晰可见
   },
   {
-    name: "护眼",
-    bgColor: "#e8f0e0",
-    textColor: "#3a3a3a",
+    name: "安静",
+    bgColor: "#4A4A4C",
+    fontWeight: "normal",
+    textColor: "#DADADA",
     titleColor: "#2c3e50",
-    spineColor: "rgba(0, 0, 0, 0.05)",
-    highlightColor: "#27ae60",
+    spineColor: "rgba(0, 0, 0, 0.15)", // 更深的灰色书脊，与深灰背景形成对比
+    highlightColor: "rgba(255, 255, 255, 0.12)", // 浅色高亮，浅色文字清晰可见
   },
   {
-    name: "夜间",
-    bgColor: "#1c1c1e",
-    textColor: "#d1d1d6",
+    name: "纸张",
+    bgColor: "#EEEDED",
+    fontWeight: "normal",
+    textColor: "#252525",
     titleColor: "#f1f1f1",
-    spineColor: "rgba(255, 255, 255, 0.1)",
-    highlightColor: "#f39c12",
+    spineColor: "rgba(0, 0, 0, 0.06)", // 浅灰色书脊，与纸张色背景协调
+    highlightColor: "rgba(37, 37, 37, 0.1)", // 浅灰色高亮，深色文字清晰可见
+  },
+  {
+    name: "粗体",
+    bgColor: "#FFFFFF",
+    fontWeight: "bold",
+    textColor: "#252525",
+    titleColor: "#f1f1f1",
+    spineColor: "rgba(0, 0, 0, 0.08)", // 浅灰色书脊，与白色背景形成轻微对比
+    highlightColor: "rgba(37, 37, 37, 0.12)", // 浅灰色高亮，深色文字清晰可见
+  },
+  {
+    name: "安静",
+    bgColor: "#F4E1C6",
+    fontWeight: "normal",
+    textColor: "#1F1F1F",
+    titleColor: "#f1f1f1",
+    spineColor: "rgba(0, 0, 0, 0.05)", // 浅色书脊，与米色背景协调
+    highlightColor: "rgba(31, 31, 31, 0.1)", // 浅米色高亮，深色文字清晰可见
+  },
+  {
+    name: "专注",
+    bgColor: "#FEFCF3",
+    fontWeight: "normal",
+    textColor: "#323232",
+    titleColor: "#f1f1f1",
+    spineColor: "rgba(0, 0, 0, 0.04)", // 极浅色书脊，与米白色背景协调
+    highlightColor: "rgba(50, 50, 50, 0.1)", // 浅米白色高亮，深色文字清晰可见
   },
 ]
 

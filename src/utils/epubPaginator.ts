@@ -16,8 +16,8 @@ export interface PaginationOptions {
 
 export interface PaginationResult {
   pages: string[]
-  totalPages: number
-  debugInfo: {
+  totalPages?: number
+  debugInfo?: {
     averageCharsPerPage: number
     containerSize: string
     effectiveSize: string
@@ -92,8 +92,45 @@ export class EpubPaginator {
     return Math.floor(effectiveHeight / lineHeight * 0.95)
   }
 
+  // 检测是否是 base64 字符串
+  private isBase64String(content: string): boolean {
+    // base64 图片通常很长（至少几百个字符）
+    if (content.length < 100) {
+      return false;
+    }
+
+    // 移除可能的空白字符（换行、空格等）
+    const cleaned = content.replace(/\s+/g, '');
+    
+    // base64 字符集：A-Z, a-z, 0-9, +, /, =
+    // 检查是否主要由 base64 字符组成（允许少量其他字符，但应该主要是 base64）
+    const base64Pattern = /^[A-Za-z0-9+/=]+$/;
+    
+    // 如果清理后的内容长度足够且符合 base64 模式
+    if (cleaned.length >= 100 && base64Pattern.test(cleaned)) {
+      // 进一步验证：base64 字符串中 = 应该只在末尾（填充字符）
+      const equalsCount = (cleaned.match(/=/g) || []).length;
+      const lastEqualsIndex = cleaned.lastIndexOf('=');
+      const hasValidPadding = equalsCount === 0 || 
+        (equalsCount <= 2 && lastEqualsIndex >= cleaned.length - 2);
+      
+      return hasValidPadding;
+    }
+    
+    return false;
+  }
+
   // 分页处理
   async paginate(content: string): Promise<PaginationResult> {
+    // 检测是否是 base64 字符串
+    if (this.isBase64String(content)) {
+      console.log('📖 [EPUB阅读器] 🖼️ 检测到 base64 图片内容，直接返回单页');
+      return {
+        pages: [content],
+        totalPages: 1,
+      };
+    }
+
     const pages: string[] = []
     const charsPerLine = this.getCharsPerLine()
     const linesPerPage = this.getLinesPerPage()

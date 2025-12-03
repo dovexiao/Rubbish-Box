@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {View, TouchableOpacity, Text, Modal} from 'react-native';
+import {View, TouchableOpacity, Text, Modal, TextStyle} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useReaderThemeStore, type ReaderTheme} from '../store/useReaderTheme';
 import {createStyles, rpx} from '../../../utils/rpxStyleSheet';
@@ -109,6 +109,7 @@ const ThemeSettingsModal: React.FC<ThemeSettingsModalProps> = ({
                     <Text
                       style={[
                         styles.themePreviewBig,
+                        {fontWeight: themeOption.fontWeight as TextStyle['fontWeight']},
                         {color: themeOption.textColor},
                       ]}>
                       大
@@ -116,6 +117,7 @@ const ThemeSettingsModal: React.FC<ThemeSettingsModalProps> = ({
                     <Text
                       style={[
                         styles.themePreviewSmall,
+                        {fontWeight: themeOption.fontWeight as TextStyle['fontWeight']},
                         {color: themeOption.textColor},
                       ]}>
                       小
@@ -124,6 +126,7 @@ const ThemeSettingsModal: React.FC<ThemeSettingsModalProps> = ({
                   <Text
                     style={[
                       styles.themeNameText,
+                      {fontWeight: themeOption.fontWeight as TextStyle['fontWeight']},
                       {color: themeOption.textColor, opacity: 0.8},
                     ]}>
                     {themeOption.name}
@@ -260,11 +263,11 @@ const styles = createStyles({
     flexDirection: 'row' as const,
     flexWrap: 'wrap' as const,
     justifyContent: 'space-between' as const,
-    gap: 12.5,
+    gap: 10,
   },
   themeItem: {
-    flex: 1,
-    // width: '30%' as any,
+    // flex: 1,
+    width: '30%' as const,
     aspectRatio: 1.3, // 宽长方形
     borderRadius: 5.859375, // 15 * 750 / 1920
     padding: 3.90625, // 10 * 750 / 1920
