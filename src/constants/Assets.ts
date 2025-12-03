@@ -116,6 +116,8 @@ export const Images = {
   timeProtection: require("../../assets/images/time-protection.png"),
   boyReading: require("../../assets/images/boy-reading.png"),
   cartoonBoy: require("../../assets/images/cartoon-boy.png"),
+  operateIcon: require("../../assets/images/operate-icon.png"),
+  catalogIcon: require("../../assets/images/catalog-icon.png"),
 }
 
 // 统一导出

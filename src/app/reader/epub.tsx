@@ -49,16 +49,17 @@ export default function EpubReader() {
   const _bookUrl = params.bookUrl as string
   const _readRecord = params.readRecord as string
 
-  console.log(`📖 [EPUB阅读器] 页面初始化，接收参数:`, {
-    bookId,
-    bookUrl: _bookUrl,
-    readRecord: _readRecord,
-    decodedBookUrl: _bookUrl ? decodeURIComponent(_bookUrl) : undefined,
-  })
+  useEffect(() => {
+    console.log(`📖 [EPUB阅读器] 页面初始化，接收参数:`, {
+      bookId,
+      bookUrl: _bookUrl,
+      readRecord: _readRecord,
+      decodedBookUrl: _bookUrl ? decodeURIComponent(_bookUrl) : undefined,
+    })
+  }, [])
 
   // 主题和进度管理
-  const { theme, themes, currentTheme, changeTheme, fontSize, increaseFontSize, decreaseFontSize } =
-    useReaderTheme(bookId)
+  const { theme, themes, currentTheme, changeTheme, fontSize, increaseFontSize, decreaseFontSize } = useReaderTheme(bookId)
 
   const {
     currentProgress,
@@ -129,8 +130,7 @@ export default function EpubReader() {
 
   // 格式化内容用于分页
   const formatContentForPagination = useCallback((content: string): string => {
-    const isHtml =
-      content.includes("<!DOCTYPE html") || content.includes("<html") || content.includes("<body")
+    const isHtml = content.includes("<!DOCTYPE html") || content.includes("<html") || content.includes("<body")
 
     let textContent = content
 

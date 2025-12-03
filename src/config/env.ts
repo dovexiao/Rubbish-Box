@@ -49,6 +49,7 @@ export const CURRENT_ENV = getEnvironment()
 // API服务器地址配置
 const API_URLS = {
   // 测试环境
+
   [Environment.TESTING]: "http://192.168.31.37:8000",
   // [Environment.TESTING]: "http://8.135.11.47:8000",
 
