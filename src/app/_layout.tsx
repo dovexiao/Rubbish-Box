@@ -372,7 +372,7 @@ export default function RootLayout() {
     // 锁定横屏模式（还原UniApp逻辑：plus.screen.lockOrientation('landscape-primary')）
     const lockOrientation = async () => {
       try {
-        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT)
         console.log("已锁定横屏模式")
       } catch (error) {
         console.warn("锁定横屏失败:", error)

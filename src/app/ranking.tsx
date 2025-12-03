@@ -32,6 +32,14 @@ interface RankingRequest {
    * "" ｜ "710000",全国 ｜ 省的区号
    */
   areae_market: string
+  /**
+   * 页码，默认1
+   */
+  page: number
+  /**
+   * 每页数量，默认100
+   */
+  page_size: number
   [property: string]: any
 }
 
@@ -122,8 +130,9 @@ interface RankingItem {
   rank: number
   avatar: string | null
   name: string
-  studyTime: number // 学习时长（分钟）
+  studyTime: number // 学习时长（小时）
   rankLevel: "bronze" | "silver" | "gold" | "platinum" // 段位
+  rankIcon: string | null // 段位图标URL
   isCurrentUser?: boolean
 }
 
@@ -173,6 +182,8 @@ export default function RankingScreen() {
       // 构建请求参数
       const params: RankingRequest = {
         areae_market: filterType === "all" ? "" : userProvinceCode, // 全国传空字符串，省份传区号（postal_code）
+        page: 1, // 页码，默认1
+        page_size: 100, // 每页数量，默认100
       }
 
       // 调用接口（POST请求）
@@ -192,6 +203,7 @@ export default function RankingScreen() {
         name: item.username,
         studyTime: item.total_duration,
         rankLevel: mapRankLevel(item.rank_name),
+        rankIcon: item.rank_icon,
         isCurrentUser: item.is_current_user,
       }))
 
@@ -208,6 +220,7 @@ export default function RankingScreen() {
           name: data.current_user_name,
           studyTime: data.current_user_total_duration,
           rankLevel: mapRankLevel(data.current_user_rank?.rank_name || ""),
+          rankIcon: data.current_user_rank?.rank_icon,
           isCurrentUser: true,
         } : null)
 
@@ -284,8 +297,8 @@ export default function RankingScreen() {
                   />
                 </View>
               </View>
-              <Text style={styles.podiumUserName}>{topThree[1].name}</Text>
-              <Text style={styles.podiumStudyTimeText}>{topThree[1].studyTime} 分钟</Text>
+              <Text style={styles.podiumUserName} numberOfLines={1} ellipsizeMode="tail">{topThree[1].name}</Text>
+              <Text style={styles.podiumStudyTimeText}>{topThree[1].studyTime} 小时</Text>
             </View>
           )}
 
@@ -301,8 +314,8 @@ export default function RankingScreen() {
                   />
                 </View>
               </View>
-              <Text style={styles.podiumUserNameFirst}>{topThree[0].name}</Text>
-              <Text style={styles.podiumStudyTimeTextFirst}>{topThree[0].studyTime} 分钟</Text>
+              <Text style={styles.podiumUserNameFirst} numberOfLines={1} ellipsizeMode="tail">{topThree[0].name}</Text>
+              <Text style={styles.podiumStudyTimeTextFirst}>{topThree[0].studyTime} 小时</Text>
             </View>
           )}
 
@@ -318,8 +331,8 @@ export default function RankingScreen() {
                   />
                 </View>
               </View>
-              <Text style={styles.podiumUserName}>{topThree[2].name}</Text>
-              <Text style={styles.podiumStudyTimeText}>{topThree[2].studyTime} 分钟</Text>
+              <Text style={styles.podiumUserName} numberOfLines={1} ellipsizeMode="tail">{topThree[2].name}</Text>
+              <Text style={styles.podiumStudyTimeText}>{topThree[2].studyTime} 小时</Text>
             </View>
           )}
         </View>
@@ -351,13 +364,12 @@ export default function RankingScreen() {
           </View>
           
           <View style={styles.listUserDetails}>
-            <Text style={styles.listUserName}>{item.name}</Text>
-            <View style={styles.listRankLevel}>
-              <Image source={require("../../assets/images/rank/gold.png")} style={styles.rankIcon} resizeMode="contain"/>
-              <Text style={[styles.rankLevelText, { color: rankLevel.color }]}>
-                {rankLevel.name}段位
-              </Text>
-            </View>
+            <Text style={styles.listUserName} numberOfLines={1} ellipsizeMode="tail">{item.name}</Text>
+            <Image 
+              source={item.rankIcon ? { uri: item.rankIcon } : require("../../assets/images/rank/gold.png")} 
+              style={styles.rankIconLarge} 
+              resizeMode="contain"
+            />
           </View>
         </View>
         
@@ -365,7 +377,7 @@ export default function RankingScreen() {
           <Text style={styles.listStudyTimeLabel}>学习时长</Text>
           <View style={styles.listStudyTimeValue}>
             <Text style={styles.listStudyTimeNumber}>{item.studyTime}</Text>
-            <Text style={styles.listStudyTimeUnit}>分钟</Text>
+            <Text style={styles.listStudyTimeUnit}>小时</Text>
           </View>
         </View>
       </View>
@@ -506,13 +518,12 @@ export default function RankingScreen() {
                         </View>
                         
                         <View style={styles.listUserDetails}>
-                          <Text style={styles.listUserName}>{currentUser.name}</Text>
-                          <View style={styles.listRankLevel}>
-                            <Image source={require("../../assets/images/rank/gold.png")} style={styles.rankIcon} resizeMode="contain"/>
-                            <Text style={[styles.rankLevelText, { color: RANK_LEVELS[currentUser.rankLevel].color }]}>
-                              {RANK_LEVELS[currentUser.rankLevel].name}段位
-                            </Text>
-                          </View>
+                          <Text style={styles.listUserName} numberOfLines={1} ellipsizeMode="tail">{currentUser.name}</Text>
+                          <Image 
+                            source={currentUser.rankIcon ? { uri: currentUser.rankIcon } : require("../../assets/images/rank/gold.png")} 
+                            style={styles.rankIconLarge} 
+                            resizeMode="contain"
+                          />
                         </View>
                       </View>
                       
@@ -520,7 +531,7 @@ export default function RankingScreen() {
                         <Text style={styles.listStudyTimeLabel}>学习时长</Text>
                         <View style={styles.listStudyTimeValue}>
                           <Text style={styles.listStudyTimeNumber}>{currentUser.studyTime}</Text>
-                          <Text style={styles.listStudyTimeUnit}>分钟</Text>
+                          <Text style={styles.listStudyTimeUnit}>小时</Text>
                         </View>
                       </View>
                     </View>
@@ -566,7 +577,7 @@ const styles = createStyles({
   // 左右布局容器
   contentRow: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "row" as const,
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
@@ -618,7 +629,7 @@ const styles = createStyles({
     borderRadius: 16.4,
     padding: 3,
     height: 28.9,
-    marginTop: 30,
+    // marginTop: 30,
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "#FFFFFF78",
@@ -714,9 +725,11 @@ const styles = createStyles({
   },
   podiumConfetti: {
     position: "absolute" as const,
-    top: -112,
+    top: -108,
+    left: "50%" as unknown as number,
+    transform: [{ translateX: -151.95 }], // 宽度的一半，实现水平居中
     width: 303.9,
-    height: 246.875,
+    height: 253.125,
     zIndex: 0,
   },
   podiumBaseImage: {
@@ -725,16 +738,19 @@ const styles = createStyles({
     position: "absolute" as const,
     bottom: 30,
     zIndex: 1,
+    left: "50%" as unknown as number,
+    transform: [{ translateX: -147.65625 }], // 295.3125 / 2
   },
   podiumUsersContainer: {
     flexDirection: "row" as const,
     justifyContent: "center" as const,
     alignItems: "flex-end" as const,
-    width: "100%" as unknown as number,
+    alignSelf: "center" as const,
+    width: 303.9, // 与顶部装饰图片宽度一致
     height: 300, // 控制整体高度
     marginBottom: 20, // 为底座留出空间
     zIndex: 2,
-    paddingHorizontal: 20,
+    paddingHorizontal: 0, // 移除左右padding，确保完全居中
   },
   podiumUserItem: {
     alignItems: "center" as const,
@@ -742,16 +758,19 @@ const styles = createStyles({
     paddingBottom: 10,
   },
   podiumUserSecond: {
-    marginBottom: 108, // 调整以对齐左侧台阶
-    marginRight: 30,
+    marginBottom: 120, // 调整以对齐左侧台阶
+    marginRight: 10,
+    width: 80, // 固定宽度确保居中
   },
   podiumUserFirst: {
     marginBottom: 140, // 调整以对齐中间最高台阶
     zIndex: 3,
+    width: 100, // 固定宽度确保居中
   },
   podiumUserThird: {
-    marginBottom: 120, // 调整以对齐右侧台阶
-    marginLeft: 30,
+    marginBottom: 128, // 调整以对齐右侧台阶
+    marginLeft: 10,
+    width: 80, // 固定宽度确保居中
   },
   avatarContainer: {
     alignItems: "center" as const,
@@ -810,24 +829,24 @@ const styles = createStyles({
 
   },
   podiumUserName: {
-    fontSize: 14,
+    fontSize: 10.9375,
     fontWeight: "600" as const,
-    color: "#333",
+   color: "#4080FF",
     marginBottom: 2,
   },
   podiumUserNameFirst: {
-    fontSize: 16,
-    fontWeight: "bold" as const,
-    color: "#333",
+    fontSize: 10.9375,
+    fontWeight: "600" as const,
+     color: "#4080FF",
     marginBottom: 2,
   },
   podiumStudyTimeText: {
-    fontSize: 12,
+     fontSize: 10.9375,
     color: "#4080FF",
     fontWeight: "500" as const,
   },
   podiumStudyTimeTextFirst: {
-    fontSize: 13,
+    fontSize: 10.9375,
     color: "#4080FF",
     fontWeight: "600" as const,
   },
@@ -845,7 +864,7 @@ const styles = createStyles({
     elevation: 5,
     overflow: "hidden" as const,
     marginBottom: 30,
-    marginTop: 30,
+    // marginTop: 30,
   },
   listContentContainer: {
     paddingHorizontal: 16,
@@ -875,12 +894,12 @@ const styles = createStyles({
     borderTopColor: "#F7F8FA", // 分隔条效果
   },
   listRank: {
-    width: 30,
+    width: 20,
     fontSize: 11.75,
     fontWeight: "600" as const,
     color: "#666",
     textAlign: "center" as const,
-    marginRight: 12,
+    marginRight: 6,
   },
   listUserInfo: {
     flex: 1,
@@ -901,7 +920,7 @@ const styles = createStyles({
   },
   listUserDetails: {
     flex: 1,
-    justifyContent: "center" as const,
+    // justifyContent: "center" as const,
   },
   listUserName: {
     fontSize: 10.9375,
@@ -909,23 +928,13 @@ const styles = createStyles({
     color: "#000",
     marginBottom: 4,
   },
-  listRankLevel: {
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    backgroundColor: "#FFF4E5",
+  rankIconLarge: {
+    height: 18.75, // 根据需要调整高度
+    width: 53.125, // 设定一个较大的宽度以适应长条形图标
     alignSelf: "flex-start" as const,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  rankIcon: {
-    width: 10,
-    height: 10,
-    marginRight: 4,
-  },
-  rankLevelText: {
-    fontSize: 9,
-    fontWeight: "500" as const,
+    // borderWidth: 1,
+    // borderColor: "#4080FF",
+   
   },
   listStudyTime: {
     alignItems: "flex-end" as const,

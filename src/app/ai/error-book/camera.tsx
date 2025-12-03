@@ -1,9 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from "react"
-import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, StatusBar as RNStatusBar } from "react-native"
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera"
+import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, StatusBar as RNStatusBar, Platform, PermissionsAndroid, NativeModules } from "react-native"
+import { CameraView, useCameraPermissions } from "expo-camera"
 import { useRouter, useFocusEffect } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
 import * as FileSystem from "expo-file-system"
+import DocumentScanner from "react-native-document-scanner-plugin"
 
 import { StatusBar } from "../../../components/StatusBar"
 import { NavBar } from "../../../components/NavBar"
@@ -27,7 +28,6 @@ export default function ErrorCameraScreen() {
   const router = useRouter()
   const cameraRef = useRef<CameraView>(null)
   const [permission, requestPermission] = useCameraPermissions()
-  const [facing, setFacing] = useState<CameraType>("back")
   const [photos, setPhotos] = useState<PhotoInfo[]>([])
   const [isAnimating, setIsAnimating] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -61,6 +61,15 @@ export default function ErrorCameraScreen() {
     useCallback(() => {
       console.log("错题拍照页面获得焦点，恢复沉浸式模式并重置状态")
 
+      // 🛑 暂停坐姿检测服务，释放相机资源
+      const { PostureMonitorModule } = NativeModules
+      if (PostureMonitorModule) {
+        console.log("🛑 暂停坐姿检测服务，释放相机资源...")
+        PostureMonitorModule.stopMonitoringService()
+          .then(() => console.log("✅ 坐姿检测服务已暂停"))
+          .catch((err: any) => console.error("❌ 暂停坐姿检测服务失败:", err))
+      }
+
       // 重置照片列表和提交状态
       setPhotos([])
       setIsSubmitting(false)
@@ -78,7 +87,17 @@ export default function ErrorCameraScreen() {
         globalImmersive.forceRestore()
       }, 500)
 
-      return () => clearTimeout(timer)
+      return () => {
+        clearTimeout(timer)
+        
+        // ▶️ 离开页面时恢复坐姿检测服务
+        if (PostureMonitorModule) {
+          console.log("▶️ 离开拍照页面，恢复坐姿检测服务...")
+          PostureMonitorModule.startMonitoringService()
+            .then(() => console.log("✅ 坐姿检测服务已恢复"))
+            .catch((err: any) => console.error("❌ 恢复坐姿检测服务失败:", err))
+        }
+      }
     }, []),
   )
 
@@ -97,7 +116,69 @@ export default function ErrorCameraScreen() {
     }
   }, [permission])
 
-  // 拍照
+  // 使用文档扫描器拍照（带自动边缘检测和图像增强）
+  const takePictureWithDocScanner = useCallback(async () => {
+    if (isAnimating || photos.length >= 6) return
+
+    try {
+      setIsAnimating(true)
+      console.log("📸 启动文档扫描器...")
+
+      // Android 需要显式请求相机权限（因为 AndroidManifest.xml 有 CAMERA 权限声明）
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA
+        )
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.log("❌ 相机权限被拒绝")
+          showError("需要相机权限才能使用文档扫描功能")
+          return
+        }
+        console.log("✅ 相机权限已授予")
+      }
+
+      // 调用文档扫描器
+      const { scannedImages, status } = await DocumentScanner.scanDocument({
+        maxNumDocuments: 1, // 每次只扫描一张
+        croppedImageQuality: 100, // 最高质量
+      })
+
+      console.log("📄 扫描结果:", { status, count: scannedImages?.length })
+
+      // 用户取消扫描
+      if (status === "cancel") {
+        console.log("用户取消扫描")
+        return
+      }
+
+      // 扫描成功
+      if (status === "success" && scannedImages && scannedImages.length > 0) {
+        const scannedImageUri = scannedImages[0]
+        console.log("✅ 扫描成功，图片路径:", scannedImageUri)
+
+        const newPhoto: PhotoInfo = {
+          path: scannedImageUri,
+          id: Date.now().toString(),
+          timestamp: Date.now(),
+        }
+        setPhotos((prev) => [...prev, newPhoto])
+      } else {
+        showError("扫描失败，请重试")
+      }
+    } catch (error: any) {
+      console.error("❌ 文档扫描失败:", error)
+      showError(error.message || "扫描失败，请重试")
+    } finally {
+      setTimeout(() => {
+        setIsAnimating(false)
+        // 恢复沉浸式模式
+        RNStatusBar.setHidden(true, "none")
+        globalImmersive.forceRestore()
+      }, 300)
+    }
+  }, [isAnimating, photos.length])
+
+  // 传统拍照（备用方案）
   const takePicture = useCallback(async () => {
     if (!cameraRef.current || isAnimating || photos.length >= 6) return
 
@@ -250,7 +331,7 @@ export default function ErrorCameraScreen() {
           key={cameraKey}
           ref={cameraRef}
           style={[styles.camera, { width: windowWidth, height: windowHeight }]}
-          facing={facing}
+          facing="back"
         >
           {/* 覆盖层 */}
           <View style={styles.coverOverlay}>
@@ -266,11 +347,11 @@ export default function ErrorCameraScreen() {
               <View style={[styles.gridV, styles.gridV2, { top: windowHeight * 0.666, width: windowWidth }]} />
             </View>
 
-            {/* 拍照按钮 */}
+            {/* 拍照按钮 - 使用文档扫描器 */}
             <View style={[styles.sideBtns, { left: windowWidth * 0.475 }]}>
               <TouchableOpacity
                 style={[styles.iconBtn, isAnimating && styles.btnAnimate]}
-                onPress={takePicture}
+                onPress={takePictureWithDocScanner}
                 activeOpacity={0.8}
               />
             </View>

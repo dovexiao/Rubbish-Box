@@ -649,4 +649,28 @@ const styles = createStyles({
     fontSize: 12.5,
     color: "#999",
   },
+  // 上传提示
+  uploadOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  uploadBox: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: rpx(20),
+    padding: rpx(40),
+    alignItems: "center",
+    minWidth: rpx(300),
+  },
+  uploadText: {
+    marginTop: rpx(20),
+    fontSize: rpx(28),
+    color: "#333",
+  },
 })

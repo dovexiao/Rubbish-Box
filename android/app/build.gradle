@@ -104,6 +104,11 @@ android {
             assets.srcDirs = ['src/main/assets', '../../assets/audio', '../../assets/models']
         }
     }
+     repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
 
     buildFeatures {
         buildConfig true
@@ -217,4 +222,7 @@ dependencies {
     
     // TensorFlow Lite for native pose detection (CPU + NNAPI only)
     implementation 'org.tensorflow:tensorflow-lite:2.14.0'
+    
+    // Sherpa-ONNX for high-quality offline TTS (已包含ONNX Runtime，无需额外依赖)
+    implementation(name: 'sherpa-onnx-1.12.18', ext: 'aar')
 }

@@ -87,6 +87,7 @@ export default function CompleteInfoScreen() {
   const gradeCategories = [
     { value: "primary", label: "小学" },
     { value: "middle", label: "初中" },
+     { value: "high", label: "高中" },
   ]
 
   // 五四学制年级
@@ -119,6 +120,18 @@ export default function CompleteInfoScreen() {
     { value: "1", label: "初一", text: "初一" },
     { value: "2", label: "初二", text: "初二" },
     { value: "3", label: "初三", text: "初三" },
+  ]
+
+  const highGrades54 = [
+    { value: "1", label: "高一", text: "高一" },
+    { value: "2", label: "高二", text: "高二" },
+    { value: "3", label: "高三", text: "高三" },
+  ]
+
+  const highGrades63 = [
+    { value: "1", label: "高一", text: "高一" },
+    { value: "2", label: "高二", text: "高二" },
+    { value: "3", label: "高三", text: "高三" },
   ]
 
   // 初始化地区数据 - 移除 useCallback 避免依赖问题
@@ -156,6 +169,11 @@ export default function CompleteInfoScreen() {
             label: "初中",
             children: middleGrades54,
           },
+          {
+            value: "high",
+            label: "高中",
+            children: highGrades54,
+          },
         ],
       },
       {
@@ -171,6 +189,11 @@ export default function CompleteInfoScreen() {
             value: "middle",
             label: "初中",
             children: middleGrades63,
+          },
+          {
+            value: "high",
+            label: "高中",
+            children: highGrades63,
           },
         ],
       },
@@ -262,7 +285,14 @@ export default function CompleteInfoScreen() {
 
       // 设置年级回显
       const systemValue = currentUserInfo.educational_system === "六三" ? "6.3" : "5.4"
-      const stageValue = currentUserInfo.grade_stage === "小学" ? "primary" : "middle"
+      let stageValue = "primary"
+      if (currentUserInfo.grade_stage === "小学") {
+        stageValue = "primary"
+      } else if (currentUserInfo.grade_stage === "初中") {
+        stageValue = "middle"
+      } else if (currentUserInfo.grade_stage === "高中") {
+        stageValue = "high"
+      }
       
       // 年级映射
       const gradeMapping: { [key: string]: string } = {
@@ -276,6 +306,9 @@ export default function CompleteInfoScreen() {
         "初二": "2",
         "初三": "3",
         "初四": "4",
+        "高一": "1",
+        "高二": "2",
+        "高三": "3",
       }
       const gradeValue = (currentUserInfo.grade && gradeMapping[currentUserInfo.grade]) || "1"
       
@@ -372,12 +405,16 @@ export default function CompleteInfoScreen() {
           gradeLabel = primaryGrades54.find(g => g.value === gradeValue)?.label || ""
         } else if (stageValue === "middle") {
           gradeLabel = middleGrades54.find(g => g.value === gradeValue)?.label || ""
+        } else if (stageValue === "high") {
+          gradeLabel = highGrades54.find(g => g.value === gradeValue)?.label || ""
         }
       } else if (systemValue === "6.3") {
         if (stageValue === "primary") {
           gradeLabel = primaryGrades63.find(g => g.value === gradeValue)?.label || ""
         } else if (stageValue === "middle") {
           gradeLabel = middleGrades63.find(g => g.value === gradeValue)?.label || ""
+        } else if (stageValue === "high") {
+          gradeLabel = highGrades63.find(g => g.value === gradeValue)?.label || ""
         }
       }
 

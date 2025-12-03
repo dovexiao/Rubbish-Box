@@ -18,6 +18,8 @@ import expo.modules.ReactNativeHostWrapper
 
 import com.xhtx.app.posture.PostureMonitorPackage
 import com.xhtx.app.ShutdownPackage
+import com.xhtx.app.tts.XfTtsPackage
+import com.xhtx.app.tts.SherpaOnnxTtsPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -31,6 +33,8 @@ class MainApplication : Application(), ReactApplication {
             packages.add(PostureMonitorPackage())
             packages.add(ShutdownPackage())
             packages.add(NativeCameraPackage())
+            packages.add(XfTtsPackage())
+            packages.add(SherpaOnnxTtsPackage())
             return packages
           }
 

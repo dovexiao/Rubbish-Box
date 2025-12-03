@@ -16,13 +16,14 @@ import { useRouter, useLocalSearchParams } from "expo-router"
 import { Ionicons, MaterialIcons, FontAwesome } from "@expo/vector-icons"
 import { Audio } from "expo-av"
 import * as ScreenOrientation from "expo-screen-orientation"
-// import * as Speech from 'expo-speech' // 已替换为 Edge TTS
+import * as Speech from 'expo-speech'
 
 import { StatusBar } from "../../../components/StatusBar"
 import { NavBar } from "../../../components/NavBar"
 import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
 import { Images } from "../../../constants/Assets"
-import { edgeTTS } from "../../../services/edgeTTS"
+import { xfTts, VoiceInfo } from "../../../services/xfTts"
+import { sherpaOnnxTts, SherpaModel } from "../../../services/sherpaOnnxTts"
 
 // 消息类型
 interface Message {
@@ -72,12 +73,81 @@ export default function AiSpeakingPracticeScreen() {
 
   // TTS 是否可用
   const [ttsAvailable, setTtsAvailable] = useState(true)
+  // 可用的TTS语音列表（原生模块）
+  const [availableVoices, setAvailableVoices] = useState<VoiceInfo[]>([])
+  // 当前选中的发音人
+  const [selectedVoice, setSelectedVoice] = useState<string | null>(null)
+  // 发音人选择弹窗
+  const [voiceModalVisible, setVoiceModalVisible] = useState(false)
+  // 语速设置
+  const [speechRate, setSpeechRate] = useState(0.9)
+  // 使用原生TTS模块
+  const useNativeTts = Platform.OS === 'android' && xfTts.isModuleAvailable()
+  // 使用 Sherpa-ONNX
+  const useSherpa = Platform.OS === 'android' && sherpaOnnxTts.isModuleAvailable()
+  // TTS引擎选择：'system' | 'sherpa' - 如果Sherpa可用，优先使用
+  const [ttsEngine, setTtsEngine] = useState<'system' | 'sherpa'>(useSherpa ? 'sherpa' : 'system')
+  // Sherpa-ONNX 模型列表
+  const [sherpaModels, setSherpaModels] = useState<SherpaModel[]>([])
 
-  // 检查 TTS 支持（使用 Edge TTS）
+  // 检查 TTS 支持
   const checkTTSSupport = async () => {
-    console.log('📢 TTS 已启用（使用 Edge TTS - 微软神经网络语音）')
-    setTtsAvailable(true)
-    return true
+    try {
+      // 检查 Sherpa-ONNX 是否可用（已经在Android模块启动时自动初始化）
+      if (useSherpa) {
+        console.log('📢 检测到 Sherpa-ONNX')
+        const models = await sherpaOnnxTts.getAvailableModels()
+        setSherpaModels(models)
+        
+        const downloadedModels = models.filter(m => m.isDownloaded)
+        if (downloadedModels.length > 0) {
+          console.log('✅ 找到已下载的 Sherpa 模型:', downloadedModels.length, downloadedModels.map(m => m.name))
+          // Android模块已在启动时自动初始化，无需再次初始化
+          setTtsAvailable(true)
+          console.log('✅ Sherpa-ONNX 已就绪，使用模型:', downloadedModels[0].name)
+          return true
+        } else {
+          console.log('⚠️ 未找到已下载的 Sherpa 模型，使用系统TTS')
+          setTtsEngine('system')
+        }
+      }
+      
+      // 使用系统TTS（科大讯飞或expo-speech）
+      if (useNativeTts) {
+        console.log('📢 使用原生TTS模块（科大讯飞引擎）')
+        
+        // 获取可用的英语发音人
+        const voices = await xfTts.getRecommendedEnglishVoices()
+        console.log('📢 可用英语发音人:', voices.length)
+        voices.forEach((voice, index) => {
+          console.log(`  ${index + 1}. ${voice.name} (${voice.language}) - ${voice.gender}`)
+        })
+        
+        setAvailableVoices(voices)
+        
+        // 如果有可用语音，默认选择第一个
+        if (voices.length > 0) {
+          setSelectedVoice(voices[0].id)
+          await xfTts.setVoice(voices[0].id)
+        }
+        
+        // 设置默认语速
+        await xfTts.setSpeechRate(speechRate)
+      } else {
+        // iOS或原生模块不可用时，使用expo-speech
+        console.log('📢 使用expo-speech')
+        const voices = await Speech.getAvailableVoicesAsync()
+        const englishVoices = voices.filter(v => v.language.startsWith('en'))
+        console.log('✅ 找到英语语音:', englishVoices.length)
+      }
+      
+      setTtsAvailable(true)
+      return true
+    } catch (error) {
+      console.error('❌ TTS 检查失败:', error)
+      setTtsAvailable(false)
+      return false
+    }
   }
 
   // 初始化对话
@@ -109,8 +179,12 @@ export default function AiSpeakingPracticeScreen() {
       if (sound) {
         sound.unloadAsync()
       }
-      // 清理 TTS 缓存
-      edgeTTS.clearCache()
+      // 停止TTS播放
+      if (useNativeTts) {
+        xfTts.stop()
+      } else {
+        Speech.stop()
+      }
     }
   }, [])
 
@@ -249,7 +323,21 @@ export default function AiSpeakingPracticeScreen() {
     }
   }
 
-  // 使用在线 TTS 播放英文文本
+  // 切换发音人
+  const handleVoiceChange = async (voiceId: string) => {
+    setSelectedVoice(voiceId)
+    
+    if (useNativeTts) {
+      await xfTts.setVoice(voiceId)
+    }
+    
+    setVoiceModalVisible(false)
+    
+    // 播放测试语音
+    speakText("Hello! This is my voice.", 'en-US')
+  }
+
+  // 使用TTS播放英文文本（支持 Sherpa-ONNX / 科大讯飞 / expo-speech）
   async function speakText(text: string, language: string = 'en-US') {
     // 如果 TTS 不可用，直接返回
     if (!ttsAvailable) {
@@ -258,48 +346,65 @@ export default function AiSpeakingPracticeScreen() {
     }
 
     try {
-      // 停止当前播放
-      if (sound) {
-        await sound.stopAsync()
-        await sound.unloadAsync()
-        setSound(undefined)
-      }
-
       console.log('🔊 TTS 播放:', text.substring(0, 50) + (text.length > 50 ? '...' : ''))
 
-      // 使用百度翻译 TTS（免费，国内最稳定，无需 API Key）
-      // lan=en: 英语
-      // spd=5: 语速（0-9，5为正常）
-      // pit=5: 音调（0-9，5为正常）
-      // vol=5: 音量（0-15，5为正常）
-      // per=4: 发音人（0=女声，1=男声，3=情感男声，4=情感女声）
-      const baiduTtsUrl = `https://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(text)}&spd=4&source=web`
-
-      console.log('📡 使用百度 TTS 服务...')
-      
-      // 直接播放在线音频 URL
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri: baiduTtsUrl },
-        { shouldPlay: true, volume: 1.0 }
-      )
-      
-      setSound(newSound)
-      
-      // 监听播放完成
-      newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          console.log('  ✓ TTS 播放完成')
-          newSound.unloadAsync()
-          setSound(undefined)
-        } else if (status.isLoaded === false && (status as any).error) {
-          console.error('  ❌ 播放错误:', (status as any).error)
+      // 优先使用 Sherpa-ONNX（音质最好）
+      if (ttsEngine === 'sherpa' && useSherpa) {
+        console.log('📢 使用 Sherpa-ONNX 播放...')
+        
+        // 停止当前播放
+        await sherpaOnnxTts.stop()
+        
+        // 使用 Sherpa-ONNX 合成并播放
+        await sherpaOnnxTts.speak(text, {
+          speed: speechRate,
+          speakerId: 0,
+        })
+      } 
+      // 使用科大讯飞系统TTS
+      else if (useNativeTts) {
+        // 先停止当前播放
+        const isSpeaking = await xfTts.isSpeaking()
+        if (isSpeaking) {
+          await xfTts.stop()
         }
-      })
 
-      console.log('  ✓ TTS 开始播放')
+        console.log('📢 使用原生TTS模块（科大讯飞）播放...')
+        
+        // 使用原生TTS播放
+        await xfTts.speak(text, {
+          rate: speechRate,
+          pitch: 1.0,
+          language: language,
+        })
+      } 
+      // iOS或原生模块不可用时，使用expo-speech
+      else {
+        const isSpeaking = await Speech.isSpeakingAsync()
+        if (isSpeaking) {
+          await Speech.stop()
+        }
+
+        console.log('📢 使用expo-speech播放...')
+        
+        Speech.speak(text, {
+          language: language,
+          pitch: 1.0,
+          rate: speechRate,
+          onStart: () => {
+            console.log('  ✓ TTS 开始播放')
+          },
+          onDone: () => {
+            console.log('  ✓ TTS 播放完成')
+          },
+          onError: (error) => {
+            console.error('  ❌ TTS 播放错误:', error)
+          },
+        })
+      }
     } catch (error) {
       console.error("❌ TTS 播放失败:", error)
-      Alert.alert('语音播放失败', '在线 TTS 服务暂时不可用')
+      Alert.alert('语音播放失败', 'TTS服务暂时不可用')
     }
   }
 
@@ -457,6 +562,15 @@ export default function AiSpeakingPracticeScreen() {
                <Text style={styles.controlTextSmall}>提示</Text>
              </TouchableOpacity>
 
+             {/* 发音人选择按钮 */}
+             <TouchableOpacity 
+               style={styles.controlButtonSmall} 
+               onPress={() => setVoiceModalVisible(true)}
+             >
+               <Ionicons name="person-circle-outline" size={24} color="#5482FF" />
+               <Text style={styles.controlTextSmall}>发音人</Text>
+             </TouchableOpacity>
+
              <TouchableOpacity 
                style={[styles.speakButton, isListening && styles.speakButtonActive]}
                activeOpacity={0.8}
@@ -599,6 +713,106 @@ export default function AiSpeakingPracticeScreen() {
                    </TouchableOpacity>
                </View>
             </View>
+        </View>
+      </Modal>
+
+      {/* 发音人选择弹窗 */}
+      <Modal
+        visible={voiceModalVisible}
+        transparent
+        animationType="fade"
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.voiceModalContent}>
+            <View style={styles.voiceModalHeader}>
+              <Text style={styles.voiceModalTitle}>选择发音人</Text>
+              <TouchableOpacity onPress={() => setVoiceModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            
+            {/* 语速调节 */}
+            <View style={styles.voiceSettingRow}>
+              <Text style={styles.voiceSettingLabel}>语速</Text>
+              <View style={styles.voiceRateButtons}>
+                {[0.7, 0.9, 1.0, 1.2].map((rate) => (
+                  <TouchableOpacity
+                    key={rate}
+                    style={[
+                      styles.voiceRateBtn,
+                      speechRate === rate && styles.voiceRateBtnActive
+                    ]}
+                    onPress={async () => {
+                      setSpeechRate(rate)
+                      if (useNativeTts) {
+                        await xfTts.setSpeechRate(rate)
+                      }
+                    }}
+                  >
+                    <Text style={[
+                      styles.voiceRateBtnText,
+                      speechRate === rate && styles.voiceRateBtnTextActive
+                    ]}>
+                      {rate === 0.7 ? '慢' : rate === 0.9 ? '适中' : rate === 1.0 ? '正常' : '快'}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <Text style={styles.voiceSectionTitle}>可用发音人</Text>
+            
+            {availableVoices.length === 0 ? (
+              <View style={styles.noVoicesContainer}>
+                <Ionicons name="warning-outline" size={40} color="#FFB800" />
+                <Text style={styles.noVoicesText}>暂无可用发音人</Text>
+                <Text style={styles.noVoicesHint}>
+                  请在系统设置中安装科大讯飞语音引擎，{'\n'}
+                  并下载英语语音包
+                </Text>
+              </View>
+            ) : (
+              <ScrollView style={styles.voiceList}>
+                {availableVoices.map((voice) => (
+                  <TouchableOpacity
+                    key={voice.id}
+                    style={[
+                      styles.voiceItem,
+                      selectedVoice === voice.id && styles.voiceItemSelected
+                    ]}
+                    onPress={() => handleVoiceChange(voice.id)}
+                  >
+                    <View style={styles.voiceItemLeft}>
+                      <View style={[
+                        styles.voiceGenderIcon,
+                        { backgroundColor: voice.gender === 'female' ? '#FF69B4' : '#4169E1' }
+                      ]}>
+                        <Ionicons 
+                          name={voice.gender === 'female' ? 'female' : 'male'} 
+                          size={14} 
+                          color="#FFF" 
+                        />
+                      </View>
+                      <View>
+                        <Text style={styles.voiceName}>{voice.name}</Text>
+                        <Text style={styles.voiceLanguage}>{voice.language}</Text>
+                      </View>
+                    </View>
+                    {selectedVoice === voice.id && (
+                      <Ionicons name="checkmark-circle" size={24} color="#5482FF" />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
+            
+            <TouchableOpacity 
+              style={styles.voiceModalCloseBtn}
+              onPress={() => setVoiceModalVisible(false)}
+            >
+              <Text style={styles.voiceModalCloseBtnText}>确定</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </LinearGradient>
@@ -1068,6 +1282,136 @@ const styles = createStyles({
   },
   reportBtnTextPrimary: {
     color: "#FFFFFF",
+    fontWeight: "600" as const,
+  },
+  
+  // 发音人选择弹窗样式
+  voiceModalContent: {
+    width: 350,
+    maxHeight: "80%" as any,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 20,
+  },
+  voiceModalHeader: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
+    marginBottom: 15,
+  },
+  voiceModalTitle: {
+    fontSize: 18,
+    fontWeight: "bold" as const,
+    color: "#1C2A33",
+  },
+  voiceSettingRow: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    marginBottom: 15,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+  },
+  voiceSettingLabel: {
+    fontSize: 14,
+    color: "#666",
+    marginRight: 15,
+  },
+  voiceRateButtons: {
+    flexDirection: "row" as const,
+    flex: 1,
+    gap: 8,
+  },
+  voiceRateBtn: {
+    flex: 1,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: "#F5F5F5",
+    borderRadius: 15,
+    alignItems: "center" as const,
+  },
+  voiceRateBtnActive: {
+    backgroundColor: "#5482FF",
+  },
+  voiceRateBtnText: {
+    fontSize: 12,
+    color: "#666",
+  },
+  voiceRateBtnTextActive: {
+    color: "#FFFFFF",
+  },
+  voiceSectionTitle: {
+    fontSize: 14,
+    fontWeight: "600" as const,
+    color: "#1C2A33",
+    marginBottom: 10,
+  },
+  noVoicesContainer: {
+    alignItems: "center" as const,
+    paddingVertical: 30,
+  },
+  noVoicesText: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 10,
+  },
+  noVoicesHint: {
+    fontSize: 12,
+    color: "#999",
+    textAlign: "center" as const,
+    marginTop: 8,
+    lineHeight: 18,
+  },
+  voiceList: {
+    maxHeight: 250,
+  },
+  voiceItem: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    backgroundColor: "#F9F9F9",
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  voiceItemSelected: {
+    backgroundColor: "#E8F3FF",
+    borderWidth: 1,
+    borderColor: "#5482FF",
+  },
+  voiceItemLeft: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+  },
+  voiceGenderIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    marginRight: 12,
+  },
+  voiceName: {
+    fontSize: 14,
+    fontWeight: "500" as const,
+    color: "#1C2A33",
+  },
+  voiceLanguage: {
+    fontSize: 11,
+    color: "#8E9AAF",
+    marginTop: 2,
+  },
+  voiceModalCloseBtn: {
+    marginTop: 15,
+    backgroundColor: "#5482FF",
+    paddingVertical: 12,
+    borderRadius: 25,
+    alignItems: "center" as const,
+  },
+  voiceModalCloseBtnText: {
+    color: "#FFFFFF",
+    fontSize: 16,
     fontWeight: "600" as const,
   },
 })

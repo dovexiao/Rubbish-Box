@@ -28,12 +28,28 @@ export enum Environment {
 }
 
 // 当前环境（可以通过构建时设置）
-export const CURRENT_ENV = __DEV__ ? Environment.DEVELOPMENT : Environment.PRODUCTION
+// 优先读取环境变量，如果没有则根据 __DEV__ 判断
+const getEnvironment = (): Environment => {
+  const nodeEnv = process.env.NODE_ENV as string | undefined
+  
+  if (nodeEnv === 'testing') {
+    return Environment.TESTING
+  }
+  
+  if (nodeEnv === 'production') {
+    return Environment.PRODUCTION
+  }
+  
+  // 默认：开发环境或根据 __DEV__ 判断
+  return __DEV__ ? Environment.DEVELOPMENT : Environment.PRODUCTION
+}
+
+export const CURRENT_ENV = getEnvironment()
 
 // API服务器地址配置
 const API_URLS = {
   // 测试环境
-  [Environment.TESTING]: "http://192.168.31.22:8080",
+  [Environment.TESTING]: "http://192.168.31.37:8000",
   // [Environment.TESTING]: "http://8.135.11.47:8000",
 
   // 生产环境（使用IP地址，域名未配置好）
@@ -46,7 +62,7 @@ const API_URLS = {
   // 开发环境
   // [Environment.DEVELOPMENT]: "http://8.135.11.47:8000",
     // [Environment.DEVELOPMENT]: "http://47.112.206.205:8000",
-  [Environment.DEVELOPMENT]: "http://192.168.31.22:8080",
+  [Environment.DEVELOPMENT]: "http://192.168.31.252:8080",
   // [Environment.DEVELOPMENT]: "https://xiaohetx.cn",
 
 }

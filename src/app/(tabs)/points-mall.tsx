@@ -413,9 +413,9 @@ export default function PointsMallScreen() {
       >
         <View style={styles.currencyGuideIconWrapper}>
           <Image
-  source={require("../../../assets/images/currency-guide-icon.png")}
-  style={styles.currencyGuideIcon}
-  resizeMode="contain"
+              source={require("../../../assets/images/currency-guide-icon.png")}
+              style={styles.currencyGuideIcon}
+              resizeMode="contain"
 />
         </View>
   
@@ -594,21 +594,17 @@ const styles = createStyles({
     position: "absolute" as const,
     top: 105,
     right: 20,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-    backgroundColor: "rgba(255, 250, 236, 0.95)",
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 6,
-    shadow: "0px 2px 8px 0px rgba(255, 193, 91, 0.3)",
-    elevation: 5,
   },
   currencyGuideIconWrapper: {
-    width: 32,
-    height: 32,
+    width: 60.9375,
+    height: 71.09375,
     alignItems: "center" as const,
     justifyContent: "center" as const,
     marginBottom: 2,
+  },
+  currencyGuideIcon: {
+     width: 60.9375,
+    height: 71.09375,
   },
   currencyGuideText: {
     fontSize: 7,
