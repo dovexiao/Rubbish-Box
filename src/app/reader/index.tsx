@@ -575,11 +575,13 @@ export default function ReaderIndex() {
                 {item.introduction || ""}
             </Text>
           </View>
-          {item.categories && item.categories.length > 0 && (
-            <Text style={styles.gridBookCategory}>
-              {item.categories.map((category: any) => category.name).join(", ")}
-            </Text>
-          )}
+          <View style={styles.gridBookCategories}>
+            {item.categories.map((category: any) => (
+              <View key={category.id} style={styles.gridBookCategory}>
+                <Text style={styles.gridBookCategoryText}>{category.name}</Text>
+              </View>
+            ))}
+          </View>
         </View> 
       </TouchableOpacity>
     ),
@@ -1190,11 +1192,21 @@ const styles = createStyles({
     marginBottom: 2,
     flexShrink: 1, // 允许收缩
   },
+  gridBookCategories: {
+    flexDirection: "row" as const,
+    gap: 3.90625,
+    flexWrap: "wrap" as const,
+    justifyContent: "flex-start" as const,
+  },
   gridBookCategory: {
     backgroundColor: "#2734A70F",
-    paddingHorizontal: 2,
-    paddingVertical: 4,
-    borderRadius: 4,
+    paddingHorizontal: 3.125,
+    paddingVertical: 3.125,
+    borderRadius: 3.90625,
+  },
+  gridBookCategoryText: {
+    fontSize: 8.59375,
+    color: "#00000060",
   },
   loadingContainer: {
     flex: 1,
