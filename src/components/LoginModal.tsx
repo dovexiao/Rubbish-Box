@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -372,24 +373,56 @@ export const LoginModal = React.memo(function LoginModal({
       visible={visible}
       animationType="fade"
       transparent={true}
-      onRequestClose={onCancel}
+      onRequestClose={() => {
+        console.log("🔐 LoginModal: onRequestClose 被调用")
+        onCancel?.()
+      }}
     >
-      <View style={styles.modalOverlay}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <View 
+        style={styles.modalOverlay}
+        onStartShouldSetResponder={() => {
+          console.log("🔐 LoginModal: 蒙版区域 - onStartShouldSetResponder 返回 true")
+          return true
+        }}
+        onResponderRelease={(e) => {
+          // 检查点击位置是否在内容区域外
+          const { pageX, pageY, target } = e.nativeEvent
+          console.log("🔐 LoginModal: 蒙版区域 - onResponderRelease", { pageX, pageY, target })
+          
+          // 如果点击的是蒙版本身（不是内容区域），则关闭
+          console.log("🔐 LoginModal: 点击蒙版，准备关闭弹窗")
+          onCancel?.()
+        }}
+      >
+        <View
           style={styles.keyboardView}
+          onStartShouldSetResponder={(e) => {
+            // 检查点击是否在内容卡片内
+            const { pageX, pageY } = e.nativeEvent
+            console.log("🔐 LoginModal: 内容区域 - onStartShouldSetResponder 检查", { pageX, pageY })
+            // 不拦截，让事件冒泡到蒙版
+            return false
+          }}
+          onMoveShouldSetResponder={() => {
+            // 不拦截移动事件
+            return false
+          }}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
           >
-            {/* 关闭按钮 */}
-            {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
-              <Ionicons name="close" size={24} color="#666" />
-            </TouchableOpacity> */}
+              <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+              >
+                {/* 关闭按钮 */}
+                {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
+                  <Ionicons name="close" size={24} color="#666" />
+                </TouchableOpacity> */}
 
-            {/* 原封不动的登录内容块 */}
-            <View style={styles.loginCard}>
+                {/* 原封不动的登录内容块 */}
+                <View style={styles.loginCard}>
               <LinearGradient
                 colors={["#92DEFF", "#FFFFFF"]} // 上面蓝色，下面白色
                 locations={[0, 0.3515]} // 0%到55.15%的位置
@@ -467,6 +500,7 @@ export const LoginModal = React.memo(function LoginModal({
             )}
           </ScrollView>
         </KeyboardAvoidingView>
+        </View>
       </View>
 
       {/* 用户协议弹窗 */}

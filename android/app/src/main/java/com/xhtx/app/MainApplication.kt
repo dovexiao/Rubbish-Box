@@ -19,7 +19,8 @@ import expo.modules.ReactNativeHostWrapper
 import com.xhtx.app.posture.PostureMonitorPackage
 import com.xhtx.app.ShutdownPackage
 import com.xhtx.app.tts.XfTtsPackage
-import com.xhtx.app.tts.SherpaOnnxTtsPackage
+// 暂时注释掉Sherpa-ONNX TTS，避免崩溃（库版本不匹配问题）
+// import com.xhtx.app.tts.SherpaOnnxTtsPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -34,7 +35,8 @@ class MainApplication : Application(), ReactApplication {
             packages.add(ShutdownPackage())
             packages.add(NativeCameraPackage())
             packages.add(XfTtsPackage())
-            packages.add(SherpaOnnxTtsPackage())
+            // 暂时注释掉Sherpa-ONNX TTS，避免崩溃（库版本不匹配问题）
+            // packages.add(SherpaOnnxTtsPackage())
             return packages
           }
 

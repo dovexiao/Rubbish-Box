@@ -449,6 +449,7 @@ export default function RootLayout() {
         transparent
         animationType="fade"
         statusBarTranslucent
+        presentationStyle="overFullScreen"
         onRequestClose={() => setShowNetworkModal(false)}
       >
         <View style={styles.networkModalOverlay}>
@@ -543,6 +544,8 @@ const styles = createStyles({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center" as const,
     alignItems: "center" as const,
+    zIndex: 9999,
+    elevation: 9999,
   },
   networkModalContent: {
     width: 302.03125, // 773 * 750/1920

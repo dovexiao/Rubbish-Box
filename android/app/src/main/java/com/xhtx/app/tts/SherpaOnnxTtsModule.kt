@@ -22,10 +22,11 @@ class SherpaOnnxTtsModule(reactContext: ReactApplicationContext) :
     private var isInitialized = false
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     
-    init {
-        // 在模块创建时自动初始化第一个可用模型
-        autoInitialize()
-    }
+    // 暂时注释掉自动初始化，避免崩溃（Sherpa-ONNX库版本不匹配问题）
+    // init {
+    //     // 在模块创建时自动初始化第一个可用模型
+    //     autoInitialize()
+    // }
     
     override fun getName(): String = "SherpaOnnxTts"
     

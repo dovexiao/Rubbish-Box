@@ -11,10 +11,9 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <!-- 相机特性 -->
-  <uses-feature android:name="android.hardware.camera" android:required="true" />
-  <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-  <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
+  <uses-feature android:name="android.hardware.camera" android:required="true"/>
+  <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+  <uses-feature android:name="android.hardware.camera.flash" android:required="false"/>
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
@@ -28,12 +27,7 @@
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://u.expo.dev/781589ef-0937-4906-a236-5deac80db17b"/>
-    <activity
-        android:name=".NativeCameraActivity"
-        android:screenOrientation="landscape"
-        android:launchMode="standard"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-    
+    <activity android:name=".NativeCameraActivity" android:screenOrientation="landscape" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
     <activity android:name=".MainActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustPan" android:theme="@style/Theme.App.SplashScreen" android:exported="true" android:screenOrientation="landscape" android:showWhenLocked="true" android:turnScreenOn="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
