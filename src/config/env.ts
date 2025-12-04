@@ -32,6 +32,7 @@ export enum Environment {
 // 当前环境（可以通过构建时设置）
 // 从 expo-constants 读取环境变量
 const getEnvironment = (): Environment => {
+
   // 从 app.config.js 传递的环境变量读取
   const appEnv = Constants.expoConfig?.extra?.appEnvironment as string | undefined
   
@@ -44,7 +45,7 @@ const getEnvironment = (): Environment => {
   if (appEnv === 'production') {
     return Environment.PRODUCTION
   }
-  
+
   // 默认：开发环境或根据 __DEV__ 判断
   return __DEV__ ? Environment.DEVELOPMENT : Environment.PRODUCTION
 }

@@ -7,7 +7,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {Ionicons} from '@expo/vector-icons';
-import {createStyles} from '../../../utils/rpxStyleSheet';
+import {createStyles, rpx} from '../../../utils/rpxStyleSheet';
+import {useReaderThemeStore} from '../store/useReaderTheme';
 
 export interface BackButtonProps {
   /** 是否显示返回键，由外部控制 */
@@ -23,6 +24,8 @@ const BackButton: React.FC<BackButtonProps> = ({
   containerStyle,
   onPress,
 }) => {
+  const {themes, currentThemeIndex} = useReaderThemeStore();
+
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
   const translateY = useSharedValue(-10);
@@ -75,7 +78,7 @@ const BackButton: React.FC<BackButtonProps> = ({
   return (
     <Animated.View style={[styles.container, containerStyle, animatedStyle]}>
       <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
-        <Ionicons name="close-circle" size={24} color="rgba(0, 0, 0, 0.2)" />
+        <Ionicons name="close-circle" size={rpx(23.4375)} color={themes[currentThemeIndex].textColor + '80'} />
       </TouchableOpacity>
     </Animated.View>
   );

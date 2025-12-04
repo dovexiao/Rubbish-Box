@@ -118,6 +118,10 @@ export const Images = {
   cartoonBoy: require("../../assets/images/cartoon-boy.png"),
   operateIcon: require("../../assets/images/operate-icon.png"),
   catalogIcon: require("../../assets/images/catalog-icon.png"),
+
+  // 网络弹窗相关
+  networkModalTitle: require("../../assets/images/network-modal-title.png"),
+  networkBoy: require("../../assets/images/network-boy.png"),
 }
 
 // 统一导出
