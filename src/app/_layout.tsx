@@ -323,9 +323,32 @@ export default function RootLayout() {
     isInitialized: false,
   })
 
+  // 🔴 关键修复：初始化完成后，如果网络未连接，直接显示弹窗
+  useEffect(() => {
+    // 只在初始化完成时检查一次
+    if (isInitialized && !prevNetworkState.current.isInitialized) {
+      console.log("🔍 网络初始化完成，检查初始网络状态")
+      
+      // 如果初始化完成时网络未连接，直接显示弹窗
+      if (!isConnected) {
+        console.log("🔴 初始化时检测到网络未连接，显示弹窗")
+        setShowNetworkModal(true)
+      }
+      
+      // 如果初始化完成时是假连接，显示假连接弹窗
+      if (isConnected && isInternetReachable === false) {
+        console.log("🟠 初始化时检测到假连接，显示弹窗")
+        setShowFakeConnectionModal(true)
+      }
+      
+      // 更新 ref，标记初始化已完成
+      prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
+    }
+  }, [isInitialized, isConnected, isInternetReachable])
+
   // 监听网络状态变化并触发回调（只在真正变化时触发）
   useEffect(() => {
-    // 跳过初始化时的触发
+    // 跳过初始化时的触发（已在上面单独处理）
     if (!isInitialized || !prevNetworkState.current.isInitialized) {
       prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
       return

@@ -11,6 +11,8 @@
  * 对应UniApp项目中的.env配置
  */
 
+import Constants from 'expo-constants'
+
 // 应用基础配置
 export const APP_CONFIG = {
   TITLE: "xhtx",
@@ -28,23 +30,24 @@ export enum Environment {
 }
 
 // 当前环境（可以通过构建时设置）
-// 优先读取环境变量，如果没有则根据 __DEV__ 判断
+// 从 expo-constants 读取环境变量
 const getEnvironment = (): Environment => {
-  const nodeEnv = process.env.NODE_ENV as string | undefined
+  // 从 app.config.js 传递的环境变量读取
+  const appEnv = Constants.expoConfig?.extra?.appEnvironment as string | undefined
   
-  if (nodeEnv === 'testing') {
+  console.log('🌍 当前环境变量:', appEnv)
+  
+  if (appEnv === 'testing') {
     return Environment.TESTING
   }
   
-  if (nodeEnv === 'production') {
+  if (appEnv === 'production') {
     return Environment.PRODUCTION
   }
   
   // 默认：开发环境或根据 __DEV__ 判断
   return __DEV__ ? Environment.DEVELOPMENT : Environment.PRODUCTION
 }
-
-export const CURRENT_ENV = getEnvironment()
 
 // API服务器地址配置
 const API_URLS = {
@@ -94,9 +97,15 @@ export const PROXY_CONFIG = {
   PREFIX: "/AppStart",
 }
 
+export const CURRENT_ENV = getEnvironment()
+
 // 导出当前环境的配置
 export const SERVER_BASE_URL = API_URLS[CURRENT_ENV]
 export const UPLOAD_BASE_URL = UPLOAD_URLS[CURRENT_ENV]
+
+// 打印当前使用的API地址，方便调试
+console.log('🌍 当前环境:', CURRENT_ENV)
+console.log('📡 API服务器:', SERVER_BASE_URL)
 
 // 微信小程序配置（如果需要）
 export const WEIXIN_CONFIG = {

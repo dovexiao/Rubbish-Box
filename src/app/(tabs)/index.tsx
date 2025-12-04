@@ -962,7 +962,7 @@ const styles = createStyles({
   },
   settingsPanelTop: {
     width: 152.34735,
-    height: 126.216, // 增加高度以容纳新的"重启应用"选项
+    height: 162.216, // 增加高度以容纳新的"重启应用"选项
     borderRadius: 8.6,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     padding: 6.25,
