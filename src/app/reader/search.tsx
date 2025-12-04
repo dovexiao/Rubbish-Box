@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import SearchPage, { SearchResultItem } from '@/components/SearchPage'
 import { post } from '@/services/api'
+import {createStyles, rpx} from '../../utils/rpxStyleSheet';
 
 /**
  * 书籍搜索结果
@@ -39,6 +40,9 @@ const searchBooks = async (keyword: string): Promise<SearchResultItem[]> => {
     const results: BookSearchResult[] = response.results || []
 
     return results.map((item) => ({
+      // 先展开原始数据
+      ...item,
+      // 然后覆盖需要的字段，确保类型正确
       id: String(item.id),
       title: item.title,
       // 简介作为副标题
@@ -49,8 +53,6 @@ const searchBooks = async (keyword: string): Promise<SearchResultItem[]> => {
         ...item.categories?.map(c => c.name) || [],
         ...item.authors?.map(a => a.name) || []
       ].filter(Boolean),
-      // 保留原始数据
-      ...item,
     }))
   } catch (error) {
     console.error('搜索书籍失败:', error)
@@ -210,105 +212,105 @@ export default function ReaderSearchScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles({
   // 简单视图样式（实时搜索的列表形式）
   simpleItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginBottom: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    backgroundColor: '#fff' as const,
+    marginHorizontal: 6.25,
+    marginBottom: 0.390625,
+    paddingHorizontal: 4.6875,
+    paddingVertical: 3.90625,
   },
   simpleIconContainer: {
-    width: 24,
-    alignItems: 'center',
-    marginRight: 8,
+    width: 9.375,
+    alignItems: 'center' as const,
+    marginRight: 3.125,
   },
   simpleCover: {
-    width: 60,
-    height: 80,
-    borderRadius: 4,
-    backgroundColor: '#F0F0F0',
+    width: 23.4375,
+    height: 31.25,
+    borderRadius: 1.5625,
+    backgroundColor: '#F0F0F0' as const,
   },
   simpleInfo: {
     flex: 1,
-    marginLeft: 12,
-    justifyContent: 'center',
+    marginLeft: 4.6875,
+    justifyContent: 'center' as const,
   },
   simpleTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    lineHeight: 22,
-    marginBottom: 6,
+    fontSize: 6.25,
+    fontWeight: '600' as const,
+    color: '#333' as const,
+    lineHeight: 8.59375,
+    marginBottom: 2.34375,
   },
   simpleTagsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    marginBottom: 2.34375,
   },
   simpleTagLabel: {
-    fontSize: 12,
-    color: '#FF9800',
-    backgroundColor: '#FFF5E6',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
+    fontSize: 4.6875,
+    color: '#FF9800' as const,
+    backgroundColor: '#FFF5E6' as const,
+    paddingHorizontal: 3.125,
+    paddingVertical: 0.78125,
+    borderRadius: 1.5625,
   },
   simpleDesc: {
-    fontSize: 12,
-    color: '#999',
-    lineHeight: 18,
+    fontSize: 4.6875,
+    color: '#999' as const,
+    lineHeight: 7.03125,
   },
   
   // 详细视图样式（四列书籍卡片）
   detailItem: {
-    width: '23%',
-    backgroundColor: 'transparent',
-    marginHorizontal: '1%',
-    marginBottom: 16,
+    width: '23%' as const,
+    backgroundColor: 'transparent' as const,
+    marginHorizontal: '1%' as const,
+    marginBottom: 6.25,
   },
   detailImageContainer: {
-    position: 'relative',
-    width: '100%',
+    position: 'relative' as const,
+    width: '100%' as const,
     aspectRatio: 0.75, // 书籍封面比例（宽:高 = 3:4）
-    borderRadius: 8,
-    overflow: 'hidden',
-    backgroundColor: '#F5F5F5',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    borderRadius: 3.125,
+    overflow: 'hidden' as const,
+    backgroundColor: '#F5F5F5' as const,
+    shadowColor: '#000' as const,
+    shadowOffset: { width: 0, height: 0.78125 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 1.5625,
     elevation: 3,
   },
   detailImage: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#E8E8E8',
+    width: '100%' as const,
+    height: '100%' as const,
+    backgroundColor: '#E8E8E8' as const,
   },
   detailInfo: {
-    paddingTop: 8,
-    paddingHorizontal: 4,
+    paddingTop: 3.125,
+    paddingHorizontal: 1.5625,
   },
   detailTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    lineHeight: 20,
-    marginBottom: 4,
+    fontSize: 5.46875,
+    fontWeight: '600' as const,
+    color: '#333' as const,
+    lineHeight: 7.8125,
+    marginBottom: 1.5625,
   },
   detailDesc: {
-    fontSize: 11,
-    color: '#666',
-    lineHeight: 16,
-    marginBottom: 4,
+    fontSize: 4.296875,
+    color: '#666' as const,
+    lineHeight: 6.25,
+    marginBottom: 1.5625,
   },
   detailTags: {
-    fontSize: 10,
-    color: '#999',
-    lineHeight: 14,
+    fontSize: 3.90625,
+    color: '#999' as const,
+    lineHeight: 5.46875,
   },
 })
 

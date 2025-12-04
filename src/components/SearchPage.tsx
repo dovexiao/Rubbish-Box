@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { StatusBar } from '@/components/StatusBar'
+import { createStyles } from '../utils/rpxStyleSheet'
 
 /**
  * 搜索结果项的类型定义
@@ -35,9 +36,9 @@ interface SearchPageProps {
   // 搜索API函数
   onSearch: (keyword: string) => Promise<SearchResultItem[]>
   // 渲染实时搜索结果项（简单视图）
-  renderSimpleItem?: (item: SearchResultItem) => React.ReactNode
+  renderSimpleItem?: ({ item }: { item: SearchResultItem }) => React.ReactElement | null
   // 渲染详细搜索结果项（点击搜索按钮后的卡片视图）
-  renderDetailItem?: (item: SearchResultItem) => React.ReactNode
+  renderDetailItem?: ({ item }: { item: SearchResultItem }) => React.ReactElement | null
   // 点击搜索结果项的回调
   onItemPress: (item: SearchResultItem) => void
   // 占位符文本
@@ -108,7 +109,9 @@ export default function SearchPage({
       setResults([])
       setSearched(false)
       setIsDetailView(false)
+      return undefined
     }
+    return undefined
   }, [keyword, isDetailView, onSearch])
 
   /**
@@ -199,7 +202,7 @@ export default function SearchPage({
       end={{ x: 0, y: 0.3 }}
       style={styles.container}
     >
-      <StatusBar theme="" backgroundColor="transparent" translucent={false} />
+      <StatusBar theme="light" backgroundColor="transparent" translucent={false} />
       {/* 搜索头部 */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -316,7 +319,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 58,
     paddingVertical: 10,
-    marginTop: 90,
+    marginTop: 40,
     backgroundColor: 'transparent',
   },
   backButton: {

@@ -5,7 +5,7 @@ import * as ScreenOrientation from "expo-screen-orientation"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { Provider as PaperProvider } from "react-native-paper"
-import { InteractionManager, Platform, Modal, View, Text, TouchableOpacity } from "react-native"
+import { InteractionManager, Platform, Modal, View, Text, TouchableOpacity, Image } from "react-native"
 
 import ImmersiveWrapper from "../components/ImmersiveMode"
 import GlobalLoginManager from "../components/GlobalLoginManager"
@@ -29,7 +29,8 @@ import { useUserStore } from "../stores/userStore"
 import { createStyles, getScreenInfo } from "../utils/rpxStyleSheet"
 import RouteGuard from "../services/routeGuard"
 import { post } from "../services/api"
-
+import { LinearGradient } from "expo-linear-gradient"
+import { Images } from "../constants/Assets"
 // 防止闪屏
 SplashScreen.preventAutoHideAsync()
 
@@ -420,6 +421,7 @@ export default function RootLayout() {
 
       {/* 网络断开提示 Modal - 放在最外层确保在登录框之上 */}
       <Modal
+        // visible={true}
         visible={showNetworkModal}
         transparent
         animationType="fade"
@@ -427,8 +429,23 @@ export default function RootLayout() {
         onRequestClose={() => setShowNetworkModal(false)}
       >
         <View style={styles.networkModalOverlay}>
-          <View style={styles.networkModalContent}>
-            <Text style={styles.networkModalTitle}>网络未连接</Text>
+          <LinearGradient
+            colors={["#C1E0FF", "#EFF6FE"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 0.4 }}
+            style={styles.networkModalContent}
+          >
+            {/* 绝对定位的男孩图片 */}
+            <Image
+              source={Images.networkBoy}
+              style={styles.networkModalBoyImage}
+              resizeMode="contain"
+            />
+            <Image
+              source={Images.networkModalTitle}
+              style={styles.networkModalTitleImage}
+              resizeMode="contain"
+            />
             <Text style={styles.networkModalMessage}>
               当前网络不可用，请检查网络设置后重试
             </Text>
@@ -439,14 +456,18 @@ export default function RootLayout() {
               >
                 <Text style={styles.networkModalCancelText}>知道了</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.networkModalButton, styles.networkModalConfirmButton]}
-                onPress={openNetworkSettings}
-              >
-                <Text style={styles.networkModalConfirmText}>去设置</Text>
+              <TouchableOpacity onPress={openNetworkSettings}>
+                <LinearGradient
+                  colors={["#AFDCFF", "#4BB1FF"]}
+                  start={{ x: 0.35, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={[styles.networkModalButton, styles.networkModalConfirmButton]}
+                >
+                  <Text style={styles.networkModalConfirmText}>去设置</Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
-          </View>
+          </LinearGradient>
         </View>
       </Modal>
 
@@ -501,65 +522,91 @@ const styles = createStyles({
     alignItems: "center" as const,
   },
   networkModalContent: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 24,
-    width: 400,
-    maxWidth: 400,
+    width: 302.03125, // 773 * 750/1920
+    height: 126.5625, // 324 * 750/1920
+    // backgroundColor: "#fff",
+    borderRadius: 11.71875, // 30 * 750/1920
+    paddingVertical: 15.625, // 40 * 750/1920
+    paddingHorizontal: 15.625, // 40 * 750/1920
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 1.5625 }, // 4 * 750/1920
     shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowRadius: 3.125, // 8 * 750/1920
     elevation: 24,
+    position: "relative" as const,
   },
   fakeConnectionModalContent: {
-    borderWidth: 2,
+    borderWidth: 0.78125, // 2 * 750/1920
     borderColor: "#FF9500",
   },
   networkModalTitle: {
-    fontSize: 18,
+    fontSize: 12.5, // 32 * 750/1920
+    fontFamily: "Kingnam Bobo",
     fontWeight: "bold" as const,
-    color: "#333",
-    marginBottom: 12,
+    color: "#1571FC",
     textAlign: "center" as const,
   },
+  networkModalBoyImage: {
+    position: "absolute" as const,
+    top: -58.59375, // -150 * 750/1920
+    left: -15.625, // -40 * 750/1920
+    width: 97.171875, // 248.76 * 750/1920
+    height: 94.53125, // 242 * 750/1920
+    transform: [{ rotate: "-3.72deg" }],
+  },
+  networkModalTitleImage: {
+    width: 239.453125, // 613 * 750/1920
+    height: 16.40625, // 42 * 750/1920
+    alignSelf: "center" as const,
+  },
   networkModalMessage: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 22,
-    marginBottom: 24,
+    fontSize: 10.9375, // 28 * 750/1920
+    color: "#00000099",
+    lineHeight: 12.5, // 32 * 750/1920
     textAlign: "center" as const,
   },
   networkModalButtons: {
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
-    gap: 12,
+    gap: 12.5, // 32 * 750/1920
   },
   networkModalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    // flex: 1,
+    width: 126.5625,
+    paddingVertical: 7.8125, // 20 * 750/1920
+    // paddingHorizontal: 46.875, // 120 * 750/1920
+    borderRadius: 15.625, // 40 * 750/1920
     alignItems: "center" as const,
     justifyContent: "center" as const,
   },
   networkModalCancelButton: {
-    backgroundColor: "#f5f5f5",
+    borderWidth: 1.171875, // 3 * 750/1920
+    borderColor: "#4BB1FF80",
+    backgroundColor: "#FFFFFF66",
   },
   networkModalConfirmButton: {
-    backgroundColor: "#4891FF",
+    borderWidth: 1.171875, // 3 * 750/1920
+    borderColor: "#FFFFFF",
+    backgroundColor: "transparent",
+    shadowColor: '#3BBDF1',
+    shadowOffset: { width: 0, height: 2.34375 }, // 6 * 750/1920
+    shadowOpacity: 0.51,
+    shadowRadius: 6.25, // 16 * 750/1920
+    elevation: 24,
   },
   fakeConnectionConfirmButton: {
     backgroundColor: "#FF9500",
   },
   networkModalCancelText: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: 10.9375, // 28 * 750/1920
+    color: "#4BB1FF",
     fontWeight: "500" as const,
   },
   networkModalConfirmText: {
-    fontSize: 14,
-    color: "#fff",
+    fontSize: 10.9375, // 28 * 750/1920
+    color: "#FFFFFF",
     fontWeight: "500" as const,
   },
 })
