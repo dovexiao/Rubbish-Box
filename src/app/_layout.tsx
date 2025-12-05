@@ -48,19 +48,51 @@ export default function RootLayout() {
   const [showNetworkModal, setShowNetworkModal] = useState(false)
   // 假连接提示 Modal 状态
   const [showFakeConnectionModal, setShowFakeConnectionModal] = useState(false)
+  // 防止重复打开系统设置
+  const isOpeningSettings = React.useRef(false)
 
   // 打开系统网络设置
   const openNetworkSettings = async () => {
     setShowNetworkModal(false) // 先关闭弹窗
     setShowFakeConnectionModal(false) // 先关闭假连接弹窗
+    
     if (Platform.OS === "android") {
       try {
+        console.log("🔧 准备打开系统 WiFi 设置")
+        
         // 使用 expo-intent-launcher 打开 Android 系统 WiFi 设置
         const IntentLauncher = await import("expo-intent-launcher")
-        await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.WIFI_SETTINGS)
-        console.log("已打开系统 WiFi 设置")
-      } catch (error) {
-        console.error("打开系统 WiFi 设置失败:", error)
+        
+        // 使用 FLAG_ACTIVITY_NEW_TASK 和 FLAG_ACTIVITY_CLEAR_TOP 确保每次都能打开
+        // FLAG_ACTIVITY_NEW_TASK: 在新任务中启动活动
+        // FLAG_ACTIVITY_CLEAR_TOP: 如果活动已存在，清除其上的所有活动
+        await IntentLauncher.startActivityAsync(
+          IntentLauncher.ActivityAction.WIFI_SETTINGS,
+          {
+            flags: 0x10000000 | 0x04000000 // FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TOP
+          }
+        )
+        console.log("✅ 已打开系统 WiFi 设置")
+      } catch (error: any) {
+        console.error("❌ 打开系统 WiFi 设置失败:", error)
+        
+        // 如果是活动已启动的错误，尝试使用 FLAG_ACTIVITY_REORDER_TO_FRONT
+        if (error?.code === 'E_ACTIVITY_ALREADY_STARTED') {
+          try {
+            console.log("🔄 设置页面已打开，尝试将其调到前台")
+            const IntentLauncher = await import("expo-intent-launcher")
+            await IntentLauncher.startActivityAsync(
+              IntentLauncher.ActivityAction.WIFI_SETTINGS,
+              {
+                flags: 0x20000 // FLAG_ACTIVITY_REORDER_TO_FRONT
+              }
+            )
+            console.log("✅ 已将系统设置调到前台")
+          } catch (retryError) {
+            console.error("❌ 重试失败:", retryError)
+            console.log("⚠️ 系统设置页面已打开，请在设置中操作")
+          }
+        }
       }
     } else if (Platform.OS === "ios") {
       // iOS 不允许直接打开系统设置，提示用户手动打开
@@ -485,9 +517,9 @@ export default function RootLayout() {
                   colors={["#AFDCFF", "#4BB1FF"]}
                   start={{ x: 0.35, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                  style={[styles.networkModalButton, styles.networkModalConfirmButton]}
-                >
-                  <Text style={styles.networkModalConfirmText}>去设置</Text>
+                style={[styles.networkModalButton, styles.networkModalConfirmButton]}
+              >
+                <Text style={styles.networkModalConfirmText}>去设置</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -569,7 +601,7 @@ const styles = createStyles({
   },
   networkModalTitle: {
     fontSize: 12.5, // 32 * 750/1920
-    fontFamily: "Kingnam Bobo",
+    fontFamily: "kingnam_bobo",
     fontWeight: "bold" as const,
     color: "#1571FC",
     textAlign: "center" as const,

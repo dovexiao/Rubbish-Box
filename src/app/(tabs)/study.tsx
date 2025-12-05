@@ -358,7 +358,7 @@ const styles = createStyles({
   aiTitle: {
     color: "#1C2A33",
     fontSize: 17.1875,
-    fontFamily: "Kingnam-Bobo", // 需要添加字体
+    fontFamily: "kingnam_bobo", // 需要添加字体
     fontWeight: "600" as const,
   },
 
@@ -472,7 +472,7 @@ const styles = createStyles({
   aiButtonTitle1: {
     color: "#7165FF",
     fontSize: 8.71,
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     fontWeight: "600" as const,
   },
 
@@ -484,7 +484,7 @@ const styles = createStyles({
   aiButtonTitle2: {
     color: "#00ACFC",
     fontSize: 8.71,
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     fontWeight: "600" as const,
   },
 
@@ -496,7 +496,7 @@ const styles = createStyles({
   aiButtonTitle3: {
     color: "#5482FF",
     fontSize: 8.71,
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     fontWeight: "600" as const,
   },
 
@@ -508,7 +508,7 @@ const styles = createStyles({
   aiButtonTitle4: {
     color: "#38D005",
     fontSize: 8.71,
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     fontWeight: "600" as const,
   },
 
@@ -553,7 +553,7 @@ const styles = createStyles({
   readerTitle: {
     color: "#1C2A33",
     fontSize: 17.1875,
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     fontWeight: "600" as const,
   },
 
@@ -620,7 +620,7 @@ const styles = createStyles({
   classroomTitle: {
     color: "#1C2A33",
     fontSize: 17.1875,
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     fontWeight: "600" as const,
   },
 
@@ -682,7 +682,7 @@ const styles = createStyles({
   speakingTitle: {
     color: "#1C2A33",
     fontSize: 17.1875,
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     fontWeight: "600" as const,
   },
 

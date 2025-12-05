@@ -91,7 +91,7 @@ const styles = createStyles({
     color: "#1571fc", // UniApp原值
     fontSize: 15.625, // 15.625rpx - UniApp原值
     fontWeight: "400" as const,
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     flexShrink: 1,
   },
   rightContent: {

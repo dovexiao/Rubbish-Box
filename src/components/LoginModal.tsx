@@ -411,18 +411,18 @@ export const LoginModal = React.memo(function LoginModal({
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{ flex: 1 }}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
           >
-              <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-              >
-                {/* 关闭按钮 */}
-                {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
-                  <Ionicons name="close" size={24} color="#666" />
-                </TouchableOpacity> */}
+            {/* 关闭按钮 */}
+            {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
+              <Ionicons name="close" size={24} color="#666" />
+            </TouchableOpacity> */}
 
-                {/* 原封不动的登录内容块 */}
-                <View style={styles.loginCard}>
+            {/* 原封不动的登录内容块 */}
+            <View style={styles.loginCard}>
               <LinearGradient
                 colors={["#92DEFF", "#FFFFFF"]} // 上面蓝色，下面白色
                 locations={[0, 0.3515]} // 0%到55.15%的位置

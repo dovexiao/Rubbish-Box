@@ -427,23 +427,23 @@ const openVolumeSettings = async () => {
   }
 
   // 打开系统设置（总设置页面）
-  const openSystemSettings = async () => {
-    if (Platform.OS === "android") {
-      try {
-        // 使用IntentLauncher打开Android系统设置主页
-        const IntentLauncher = await import("expo-intent-launcher")
-        await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.SETTINGS)
-        console.log("已打开系统设置")
-      } catch (error) {
-        console.error("打开系统设置失败:", error)
-        showError("无法打开系统设置")
-      }
-    } else if (Platform.OS === "ios") {
-      // iOS打开设置
-      const { Linking } = require("react-native")
-      Linking.openURL("app-settings:")
-    }
-  }
+  // const openSystemSettings = async () => {
+  //   if (Platform.OS === "android") {
+  //     try {
+  //       // 使用IntentLauncher打开Android系统设置主页
+  //       const IntentLauncher = await import("expo-intent-launcher")
+  //       await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.SETTINGS)
+  //       console.log("已打开系统设置")
+  //     } catch (error) {
+  //       console.error("打开系统设置失败:", error)
+  //       showError("无法打开系统设置")
+  //     }
+  //   } else if (Platform.OS === "ios") {
+  //     // iOS打开设置
+  //     const { Linking } = require("react-native")
+  //     Linking.openURL("app-settings:")
+  //   }
+  // }
 
   // 打开系统WiFi设置
   const openSystemWifiSettings = async () => {
@@ -592,7 +592,7 @@ const openVolumeSettings = async () => {
               </TouchableOpacity>
 
               {/* 系统设置 - 紧急逃生入口 */}
-              <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
+              {/* <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
                 <View style={styles.settingItemLeft}>
                   <View style={styles.settingIconContainer}>
                     <Ionicons name="settings" size={rpx(10.9)} color="#fff" />
@@ -602,7 +602,7 @@ const openVolumeSettings = async () => {
                 <Text style={styles.settingArrow}>
                   <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {/* WiFi设置 */}
               <TouchableOpacity style={styles.settingItem} onPress={openSystemWifiSettings}>

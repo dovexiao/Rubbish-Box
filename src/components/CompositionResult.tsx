@@ -802,7 +802,7 @@ const styles = createStyles({
     color: "#fff",
     position: "absolute",
     top: -12.46875, // -12.46875rpx
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
   },
   writingAnalysis: {
     backgroundColor: "#ffffff",
@@ -834,7 +834,7 @@ const styles = createStyles({
     fontSize: 11.7188, // 11.7188rpx
     fontWeight: "bold",
     color: "#1571FC",
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
   },
   titleDecorationRight: {
     height: 11.7188, // 11.7188rpx
@@ -912,7 +912,7 @@ const styles = createStyles({
     fontSize: 11.7188, // 11.7188rpx
     fontWeight: "bold",
     color: "#1571FC",
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
   },
   reviewProgress: {
     flexDirection: "row",
@@ -974,7 +974,7 @@ const styles = createStyles({
     fontSize: 11.7188, // 11.7188rpx
     fontWeight: "bold",
     color: "#1571FC",
-    fontFamily: "Kingnam-Bobo",
+    fontFamily: "kingnam_bobo",
     position: "relative",
     zIndex: 3,
   },
