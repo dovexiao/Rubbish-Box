@@ -61,9 +61,15 @@ class PostureMonitorService : Service() {
         // 保存 ReactContext，用于发送事件
         private var savedReactContext: ReactApplicationContext? = null
         
-        fun start(context: Context, reactContext: ReactApplicationContext?) {
+        // 调试模式标志
+        var debugMode = false
+            private set
+        
+        fun start(context: Context, reactContext: ReactApplicationContext?, enableDebug: Boolean = false) {
             savedReactContext = reactContext
+            debugMode = enableDebug
             val intent = Intent(context, PostureMonitorService::class.java)
+            intent.putExtra("DEBUG_MODE", enableDebug)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {
@@ -80,6 +86,8 @@ class PostureMonitorService : Service() {
     private var cameraManager: BackgroundCameraManager? = null
     private var reactContext: ReactApplicationContext? = null
     private var poseDetector: PoseDetector? = null
+    private var debugOverlay: PostureDebugOverlay? = null
+    private var isDebugMode = false
     
     // 🎯 核心逻辑1：10分钟奖励计时器（秒）
     private var rewardAccumulatedSeconds = 0
@@ -164,6 +172,14 @@ class PostureMonitorService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "服务启动")
         
+        // 检查是否启用调试模式
+        isDebugMode = intent?.getBooleanExtra("DEBUG_MODE", false) ?: false
+        if (isDebugMode) {
+            Log.d(TAG, "🎯 调试模式已启用")
+            debugOverlay = PostureDebugOverlay(this)
+            debugOverlay?.show()
+        }
+        
         // 初始化相机管理器
         initializeCameraManager()
         
@@ -183,6 +199,15 @@ class PostureMonitorService : Service() {
         super.onDestroy()
         Log.d(TAG, "服务销毁")
         
+        // 优先隐藏调试浮窗（确保清理）
+        try {
+            debugOverlay?.hide()
+            debugOverlay = null
+            Log.d(TAG, "✅ 调试浮窗已清理")
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ 清理浮窗失败: ${e.message}", e)
+        }
+        
         // 💾 保存统计数据
         saveStatistics()
         Log.d(TAG, "💾 已保存统计数据")
@@ -192,23 +217,35 @@ class PostureMonitorService : Service() {
         Log.d(TAG, "⏰ 已停止45分钟休息提醒定时器")
         
         // 停止相机
-        cameraManager?.stopCamera()
-        cameraManager = null
+        try {
+            cameraManager?.stopCamera()
+            cameraManager = null
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ 停止相机失败: ${e.message}", e)
+        }
         
         isRunning = false
+    }
+    
+    override fun onTaskRemoved(rootIntent: android.content.Intent?) {
+        super.onTaskRemoved(rootIntent)
+        Log.d(TAG, "任务被移除，停止服务")
+        // App 被杀时自动停止服务
+        stopSelf()
     }
 
     private fun initializeCameraManager() {
         try {
             cameraManager = BackgroundCameraManager(
                 context = this,
+                debugMode = isDebugMode, // 传递调试模式标志
                 onFrameCaptured = { imageData, width, height ->
                     // 在原生层直接进行姿势检测
                     processFrame(imageData, width, height)
                 }
             )
             cameraManager?.startCamera()
-            Log.d(TAG, "相机管理器初始化成功")
+            Log.d(TAG, "相机管理器初始化成功${if (isDebugMode) "（调试模式）" else ""}")
         } catch (e: Exception) {
             Log.e(TAG, "相机管理器初始化失败: ${e.message}", e)
         }
@@ -216,18 +253,42 @@ class PostureMonitorService : Service() {
     
     /**
      * 处理相机帧并进行姿势检测
-     * 每10秒调用一次，进行时间统计（性能优化）
+     * 调试模式：实时检测和显示
+     * 普通模式：每10秒检测一次
      */
     private fun processFrame(imageData: ByteArray, width: Int, height: Int) {
         try {
             val currentTime = System.currentTimeMillis()
             
-            // 使用 TFLite 检测姿势
-            val keypoints = poseDetector?.detectPose(imageData) ?: return
+            // 检测姿势并获取状态
+            val keypoints: Array<FloatArray>
+            val status: String
             
-            // 评估坐姿状态
-            val status = poseDetector?.evaluatePosture(keypoints) ?: "detecting"
-            lastStatus = status
+            if (isDebugMode && (width != 192 || height != 192)) {
+                // 调试模式：先用高分辨率图像更新浮窗，然后缩放用于AI检测
+                val highResBitmap = rgbByteArrayToBitmap(imageData, width, height)
+                
+                // 缩放到192x192用于AI检测
+                val aiImageData = scaleImageDataForAI(imageData, width, height, 192, 192)
+                
+                // 使用 TFLite 检测姿势
+                keypoints = poseDetector?.detectPose(aiImageData) ?: return
+                
+                // 评估坐姿状态
+                status = poseDetector?.evaluatePosture(keypoints) ?: "detecting"
+                lastStatus = status
+                
+                // 更新浮窗显示（使用高分辨率图像）
+                debugOverlay?.updateFrame(highResBitmap, keypoints, status)
+            } else {
+                // 普通模式：直接使用192x192图像
+                // 使用 TFLite 检测姿势
+                keypoints = poseDetector?.detectPose(imageData) ?: return
+                
+                // 评估坐姿状态
+                status = poseDetector?.evaluatePosture(keypoints) ?: "detecting"
+                lastStatus = status
+            }
             
             // 🎯 核心统计逻辑：每10秒累加一次（每次累加10秒）
             when (status) {
@@ -486,6 +547,61 @@ class PostureMonitorService : Service() {
             .putInt(KEY_HEAD_TILTED, headTiltedSeconds)
             .putInt(KEY_HEAD_NOT_UP, headNotUpSeconds)
             .apply()
+    }
+    
+    /**
+     * 将 RGB 字节数组转换为 Bitmap
+     */
+    private fun rgbByteArrayToBitmap(rgbData: ByteArray, width: Int, height: Int): android.graphics.Bitmap {
+        val pixels = IntArray(width * height)
+        for (i in 0 until width * height) {
+            val r = (rgbData[i * 3].toInt() and 0xFF)
+            val g = (rgbData[i * 3 + 1].toInt() and 0xFF)
+            val b = (rgbData[i * 3 + 2].toInt() and 0xFF)
+            pixels[i] = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
+        }
+        
+        val bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+        return bitmap
+    }
+    
+    /**
+     * 缩放图像数据用于AI检测
+     */
+    private fun scaleImageDataForAI(
+        rgbData: ByteArray,
+        srcWidth: Int,
+        srcHeight: Int,
+        targetWidth: Int,
+        targetHeight: Int
+    ): ByteArray {
+        if (srcWidth == targetWidth && srcHeight == targetHeight) {
+            return rgbData
+        }
+        
+        // 创建源 Bitmap
+        val srcBitmap = rgbByteArrayToBitmap(rgbData, srcWidth, srcHeight)
+        
+        // 缩放
+        val scaledBitmap = android.graphics.Bitmap.createScaledBitmap(srcBitmap, targetWidth, targetHeight, true)
+        
+        // 转换回 RGB 字节数组
+        val scaledRgbData = ByteArray(targetWidth * targetHeight * 3)
+        val pixels = IntArray(targetWidth * targetHeight)
+        scaledBitmap.getPixels(pixels, 0, targetWidth, 0, 0, targetWidth, targetHeight)
+        
+        for (i in pixels.indices) {
+            val pixel = pixels[i]
+            scaledRgbData[i * 3] = ((pixel shr 16) and 0xFF).toByte()
+            scaledRgbData[i * 3 + 1] = ((pixel shr 8) and 0xFF).toByte()
+            scaledRgbData[i * 3 + 2] = (pixel and 0xFF).toByte()
+        }
+        
+        srcBitmap.recycle()
+        scaledBitmap.recycle()
+        
+        return scaledRgbData
     }
 }
 

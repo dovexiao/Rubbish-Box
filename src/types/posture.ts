@@ -36,6 +36,7 @@ export type PostureStatus =
   | "shoulders_not_level" // 肩膀不水平
   | "head_not_centered" // 头部不居中
   | "head_not_up" // 头部未抬起
+  | "too_far" // 距离过远
   | "no_person" // 未检测到人
   | "detecting"; // 检测中
 

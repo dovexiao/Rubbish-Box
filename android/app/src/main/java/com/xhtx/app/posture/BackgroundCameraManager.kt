@@ -24,12 +24,15 @@ import java.io.ByteArrayOutputStream
  */
 class BackgroundCameraManager(
     private val context: Context,
-    private val onFrameCaptured: (imageData: ByteArray, width: Int, height: Int) -> Unit
+    private val onFrameCaptured: (imageData: ByteArray, width: Int, height: Int) -> Unit,
+    private val debugMode: Boolean = false // 调试模式标志
 ) {
     companion object {
         private const val TAG = "BackgroundCameraManager"
         private const val IMAGE_WIDTH = 192
         private const val IMAGE_HEIGHT = 192
+        private const val DEBUG_WIDTH = 640  // 调试模式使用更高分辨率
+        private const val DEBUG_HEIGHT = 480
         private const val MAX_IMAGES = 2
     }
 
@@ -40,9 +43,9 @@ class BackgroundCameraManager(
     private val cameraThread = HandlerThread("CameraThread").apply { start() }
     private val cameraHandler = Handler(cameraThread.looper)
     
-    // 帧率控制：每10秒处理1帧（性能优化）
+    // 帧率控制：调试模式实时，普通模式10秒一次
     private var lastProcessTime = 0L
-    private val PROCESS_INTERVAL_MS = 10000L // 10秒处理一次（避免卡顿）
+    private val PROCESS_INTERVAL_MS = if (debugMode) 33L else 10000L // 调试模式30fps，普通模式10秒一次
     
     private val cameraManager: CameraManager by lazy {
         context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -208,22 +211,28 @@ class BackgroundCameraManager(
                 }
                 lastProcessTime = currentTime
                 
-                Log.d(TAG, "📷 处理相机帧: ${image.width}x${image.height}")
-                
                 // 转换 YUV_420_888 到 RGB 字节数组
                 val rgbData = yuv420ToRgb(image)
                 
-                // 缩放到模型期望的尺寸 (192x192)
+                // 根据模式选择不同的目标尺寸
+                val targetWidth = if (debugMode) DEBUG_WIDTH else IMAGE_WIDTH
+                val targetHeight = if (debugMode) DEBUG_HEIGHT else IMAGE_HEIGHT
+                
+                // 缩放到目标尺寸
                 val scaledData = scaleImageData(
                     rgbData, 
                     image.width, 
                     image.height, 
-                    IMAGE_WIDTH, 
-                    IMAGE_HEIGHT
+                    targetWidth, 
+                    targetHeight
                 )
                 
+                if (debugMode) {
+                    Log.d(TAG, "🎨 调试模式帧: ${targetWidth}x${targetHeight}")
+                }
+                
                 // 回调传递帧数据（使用缩放后的尺寸）
-                onFrameCaptured(scaledData, IMAGE_WIDTH, IMAGE_HEIGHT)
+                onFrameCaptured(scaledData, targetWidth, targetHeight)
             }
         } catch (e: Exception) {
             Log.e(TAG, "❌ 处理图像失败: ${e.message}", e)

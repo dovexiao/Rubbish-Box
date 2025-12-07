@@ -134,10 +134,17 @@ class PoseDetector(private val context: Context) {
         val nose = keypoints[NOSE]
         val leftEye = keypoints[LEFT_EYE]
         val rightEye = keypoints[RIGHT_EYE]
+        val leftHip = keypoints[LEFT_HIP]
+        val rightHip = keypoints[RIGHT_HIP]
         
         // 检查关键点置信度
         if (leftShoulder[2] < 0.3 || rightShoulder[2] < 0.3) {
             return "detecting"
+        }
+        
+        // 🎯 新增：检查距离是否过远
+        if (isTooFarAway(keypoints)) {
+            return "too_far"
         }
         
         // 1. 检查肩膀是否水平
@@ -171,6 +178,48 @@ class PoseDetector(private val context: Context) {
         }
         
         return "good"
+    }
+    
+    /**
+     * 判断人是否距离过远
+     * 使用多个指标综合判断，避免误判
+     */
+    private fun isTooFarAway(keypoints: Array<FloatArray>): Boolean {
+        val leftShoulder = keypoints[LEFT_SHOULDER]
+        val rightShoulder = keypoints[RIGHT_SHOULDER]
+        val nose = keypoints[NOSE]
+        val leftHip = keypoints[LEFT_HIP]
+        val rightHip = keypoints[RIGHT_HIP]
+        
+        // 指标1：肩宽（最可靠）
+        // 正常学习距离（40-60cm），肩宽应该在 0.18-0.35 之间
+        val shoulderWidth = kotlin.math.abs(leftShoulder[1] - rightShoulder[1])
+        if (shoulderWidth < 0.15f) {
+            Log.d(TAG, "⚠️ 距离判断：肩宽过小 ($shoulderWidth < 0.15)，距离过远")
+            return true
+        }
+        
+        // 指标2：上半身高度（头到髋部的距离）
+        val hipY = (leftHip[0] + rightHip[0]) / 2f
+        val torsoHeight = kotlin.math.abs(nose[0] - hipY)
+        if (torsoHeight < 0.25f) {
+            Log.d(TAG, "⚠️ 距离判断：上半身高度过小 ($torsoHeight < 0.25)，距离过远")
+            return true
+        }
+        
+        // 指标3：关键点平均置信度
+        // 距离太远会导致关键点模糊
+        val upperBodyKeypoints = listOf(
+            nose, leftShoulder, rightShoulder, leftHip, rightHip
+        )
+        val avgConfidence = upperBodyKeypoints.map { it[2] }.average()
+        if (avgConfidence < 0.5f) {
+            Log.d(TAG, "⚠️ 距离判断：关键点置信度过低 ($avgConfidence < 0.5)，距离过远")
+            return true
+        }
+        
+        Log.d(TAG, "✅ 距离判断：正常 (肩宽=$shoulderWidth, 上半身高度=$torsoHeight, 置信度=$avgConfidence)")
+        return false
     }
     
     /**

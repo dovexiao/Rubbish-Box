@@ -22,7 +22,7 @@ const generateInitialHTML = () => {
     // 辅助函数：同时打印到 console 和发送到 React Native
     // 提前定义，确保在资源加载事件中可用
     function logToRN(message) {
-      console.log(message);
+      // console.log(message);
       if (window.ReactNativeWebView) {
         try {
           window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'log', message: message }));
@@ -417,15 +417,15 @@ export default function AILoadingScreen() {
           
           for (const line of lines) {
             const trimmedLine = line.trim()
-            console.log('trimmedLine', trimmedLine)
+            // console.log('trimmedLine', trimmedLine)
             if (!trimmedLine) continue
             
             if (trimmedLine === "[DONE]" || trimmedLine === "data: [DONE]") {
-               console.log('✅ 流式接收完成1')
-              console.log('🔄 准备设置 isCompleted=true, isStreaming=false')
+              //  console.log('✅ 流式接收完成1')
+              // console.log('🔄 准备设置 isCompleted=true, isStreaming=false')
               setIsCompleted(true)
               setIsStreaming(false)
-              console.log('✅ setIsCompleted(true) 已调用')
+              // console.log('✅ setIsCompleted(true) 已调用')
               continue
             }
             
@@ -435,22 +435,22 @@ export default function AILoadingScreen() {
               
               try {
                 const json = JSON.parse(jsonStr)
-                console.log('json', json)
+                // console.log('json', json)
                 // 优先检测 done 信号（无论什么阶段都要处理）
                 if (json.status === "done" || json.done || json.finished) {
-                  console.log('✅ 流式接收完成2') 
-                  console.log('🔄 准备设置 isCompleted=true (JSON done信号)')
+                  // console.log('✅ 流式接收完成2') 
+                  // console.log('🔄 准备设置 isCompleted=true (JSON done信号)')
                   isFormattingRef.current = false
                   setIsCompleted(true)
                   setIsStreaming(false)
                   setIsFormatting(false)
-                  console.log('✅ setIsCompleted(true) 已调用 (JSON done信号)')
+                  // console.log('✅ setIsCompleted(true) 已调用 (JSON done信号)')
                   return
                 }
                 
                 // 检测格式化阶段
                 if (json.status === "stage_end" && json.stage === 1) {
-                  console.log('📋 进入格式化阶段:', json.message)
+                  // console.log('📋 进入格式化阶段:', json.message)
                   isFormattingRef.current = true
                   setIsFormatting(true)
                   // 不要设置 isStreaming = false，否则定时器会停止
@@ -459,7 +459,7 @@ export default function AILoadingScreen() {
                 
                 // 格式化阶段不处理内容
                 if (isFormattingRef.current) {
-                  console.log('⚠️ 格式化阶段，跳过内容处理')
+                  // console.log('⚠️ 格式化阶段，跳过内容处理')
                   return
                 }
                 
@@ -478,9 +478,9 @@ export default function AILoadingScreen() {
                   }
                   
                   // 每500字符打印一次，或者每次添加内容时打印（前几次）
-                  if (contentBuffer.current.length % 500 < content.length || contentBuffer.current.length < 100) {
-                    console.log(`📥 已接收 ${contentBuffer.current.length} 字符 (本次添加 ${content.length} 字符, 从 ${beforeLength} 到 ${afterLength})`)
-                  }
+                  // if (contentBuffer.current.length % 500 < content.length || contentBuffer.current.length < 100) {
+                  //   console.log(`📥 已接收 ${contentBuffer.current.length} 字符 (本次添加 ${content.length} 字符, 从 ${beforeLength} 到 ${afterLength})`)
+                  // }
                 } else {
                   console.log('⚠️ JSON 中无内容字段:', JSON.stringify(json).substring(0, 100))
                 }
@@ -496,9 +496,9 @@ export default function AILoadingScreen() {
           if (fullText.length > previousLength) {
             const newChunk = fullText.substring(previousLength)
             // 每10KB打印一次进度
-            if (fullText.length % 10000 < newChunk.length) {
-              console.log(`📡 接收进度: ${(fullText.length / 1024).toFixed(1)} KB`)
-            }
+            // if (fullText.length % 10000 < newChunk.length) {
+            //   console.log(`📡 接收进度: ${(fullText.length / 1024).toFixed(1)} KB`)
+            // }
             previousLength = fullText.length
             processChunk(newChunk)
           }
@@ -513,11 +513,11 @@ export default function AILoadingScreen() {
             }
           }
           
-          console.log('🔄 XHR onload: 准备设置 isCompleted=true')
+          // console.log('🔄 XHR onload: 准备设置 isCompleted=true')
           setIsCompleted(true)
           setIsStreaming(false)
           xhrRef.current = null
-          console.log('✅ XHR onload: setIsCompleted(true) 已调用')
+          // console.log('✅ XHR onload: setIsCompleted(true) 已调用')
           resolve()
         }
         
@@ -658,9 +658,9 @@ export default function AILoadingScreen() {
         contentBuffer.current = contentBuffer.current.substring(charsToAdd)
         
         // 减少日志频率，但前几次和每500字符时打印
-        if (contentBuffer.current.length % 500 === 0 || contentBuffer.current.length < 100) {
-          console.log(`📝 显示进度: buffer剩余 ${contentBuffer.current.length} 字符 (取出了 ${charsToAdd} 字符, 格式化阶段: ${isFormatting})`)
-        }
+        // if (contentBuffer.current.length % 500 === 0 || contentBuffer.current.length < 100) {
+        //   console.log(`📝 显示进度: buffer剩余 ${contentBuffer.current.length} 字符 (取出了 ${charsToAdd} 字符, 格式化阶段: ${isFormatting})`)
+        // }
         
         setStreamContent(prev => {
           // 本地保存完整内容（不删除）

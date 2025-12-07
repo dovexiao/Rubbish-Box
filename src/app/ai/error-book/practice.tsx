@@ -589,11 +589,6 @@ const styles = createStyles({
     fontSize: 8.6,
     color: "#333",
     lineHeight: 15.48,
-  },
-  optionText: {
-    fontSize: 8.6,
-    color: "#333",
-    lineHeight: 15.48,
     flexShrink: 1,
   },
   optionTextWrapper: {

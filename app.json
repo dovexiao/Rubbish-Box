@@ -2,7 +2,7 @@
   "expo": {
     "name": "xhtx",
     "slug": "xhtx",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "landscape",
     "icon": "./assets/app/icons/1024x1024.png",
     "scheme": "xhtx",
@@ -18,12 +18,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.xhtx.app",
-      "buildNumber": "10003"
+      "buildNumber": "10004"
     },
     "android": {
       "package": "com.xhtx.app",
       "jsEngine": "hermes",
-      "versionCode": 10003,
+      "versionCode": 10004,
       "enableSeparateBuildPerCPUArchitecture": false,
       "targetSdkVersion": 34,
       "compileSdkVersion": 35,
@@ -73,9 +73,11 @@
     "plugins": [
       "expo-router",
       [
-      "expo-font",
+        "expo-font",
         {
-          "fonts": ["./assets/font/Kingnam-Bobo.TTF"]
+          "fonts": [
+            "./assets/font/Kingnam-Bobo.TTF"
+          ]
         }
       ],
       [

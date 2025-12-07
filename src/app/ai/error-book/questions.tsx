@@ -545,6 +545,11 @@ const styles = createStyles({
     color: "#000000",
     lineHeight: 14,
   },
+    questionText: {
+    fontSize: 9.375,
+    color: "#000000",
+    lineHeight: 14,
+  },
   // 选项
   optionsContainer: {
     flexDirection: "row",

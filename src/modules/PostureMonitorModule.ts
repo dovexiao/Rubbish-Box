@@ -8,11 +8,13 @@ import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 const { PostureMonitorModule } = NativeModules;
 
 interface PostureMonitorModuleType {
-  startMonitoringService(): Promise<boolean>;
+  startMonitoringService(enableDebug: boolean): Promise<boolean>;
   stopMonitoringService(): Promise<boolean>;
   isServiceRunning(): Promise<boolean>;
   setCameraInUseByOtherApp(inUse: boolean): void;
   checkConcurrentCameraSupport(): Promise<ConcurrentCameraSupport>;
+  checkOverlayPermission(): Promise<boolean>;
+  requestOverlayPermission(): Promise<boolean>;
   EVENT_FRAME_CAPTURED: string;
 }
 
@@ -58,19 +60,63 @@ export const postureMonitorEmitter = Platform.OS === 'android'
 
 /**
  * 启动后台坐姿监控服务
+ * @param enableDebug 是否启用调试模式（显示浮窗）
  */
-export async function startPostureMonitorService(): Promise<boolean> {
+export async function startPostureMonitorService(enableDebug: boolean = false): Promise<boolean> {
   if (!PostureMonitor) {
     console.warn('⚠️ PostureMonitorModule 仅支持 Android');
     return false;
   }
 
   try {
-    const result = await PostureMonitor.startMonitoringService();
-    console.log('✅ 后台坐姿监控服务已启动');
+    // 如果启用调试模式，检查悬浮窗权限
+    if (enableDebug) {
+      const hasPermission = await PostureMonitor.checkOverlayPermission();
+      if (!hasPermission) {
+        console.warn('⚠️ 缺少悬浮窗权限，无法显示调试浮窗');
+        console.log('💡 请在设置中授予应用悬浮窗权限');
+        // 可以选择打开设置页面
+        // await PostureMonitor.requestOverlayPermission();
+      }
+    }
+    
+    const result = await PostureMonitor.startMonitoringService(enableDebug);
+    console.log(`✅ 后台坐姿监控服务已启动${enableDebug ? '（调试模式）' : ''}`);
     return result;
   } catch (error) {
     console.error('❌ 启动后台服务失败:', error);
+    return false;
+  }
+}
+
+/**
+ * 检查是否有悬浮窗权限
+ */
+export async function checkOverlayPermission(): Promise<boolean> {
+  if (!PostureMonitor) {
+    return false;
+  }
+  
+  try {
+    return await PostureMonitor.checkOverlayPermission();
+  } catch (error) {
+    console.error('❌ 检查悬浮窗权限失败:', error);
+    return false;
+  }
+}
+
+/**
+ * 请求悬浮窗权限
+ */
+export async function requestOverlayPermission(): Promise<boolean> {
+  if (!PostureMonitor) {
+    return false;
+  }
+  
+  try {
+    return await PostureMonitor.requestOverlayPermission();
+  } catch (error) {
+    console.error('❌ 请求悬浮窗权限失败:', error);
     return false;
   }
 }

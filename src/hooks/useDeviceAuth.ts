@@ -2,7 +2,8 @@ import { useCallback } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useDeviceAuthStore } from "../stores/deviceAuthStore"
 import DeviceInfo from "react-native-device-info"
-import { Platform, PermissionsAndroid } from "react-native"
+import { Platform } from "react-native"
+import { getSerialNumber } from "../modules/SystemPropertiesModule"
 
 /**
  * 设备授权验证Hook
@@ -23,32 +24,17 @@ export const useDeviceAuth = () => {
         
         if (Platform.OS === 'android') {
           try {
-            // 请求权限
-            const granted = await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
-              {
-                title: "设备信息权限",
-                message: "应用需要获取设备序列号用于设备授权验证",
-                buttonNeutral: "稍后询问",
-                buttonNegative: "拒绝",
-                buttonPositive: "允许",
-              }
-            )
+            // 直接从系统属性读取序列号，无需权限
+            const serialNumber = await getSerialNumber()
             
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              const serialNumber = await DeviceInfo.getSerialNumber()
-              
-              // 验证是否是有效的序列号（不是"unknown"也不是空字符串）
-              if (serialNumber && 
-                  serialNumber !== 'unknown' && 
-                  serialNumber.trim().length > 0) {
-                deviceUUID = serialNumber.trim()
-                console.log("✅ 获取到设备序列号(SN):", deviceUUID)
-              } else {
-                console.warn("⚠️ 未获取到有效的设备序列号，device_code 将为空")
-              }
+            // 验证是否是有效的序列号
+            if (serialNumber && 
+                serialNumber !== 'unknown' && 
+                serialNumber.trim().length > 0) {
+              deviceUUID = serialNumber.trim()
+              console.log("✅ 从系统属性获取到设备序列号(SN):", deviceUUID)
             } else {
-              console.warn("⚠️ 用户拒绝授权，无法获取设备序列号")
+              console.warn("⚠️ 未获取到有效的设备序列号，device_code 将为空")
             }
           } catch (error) {
             console.error("❌ 获取设备序列号失败:", error)

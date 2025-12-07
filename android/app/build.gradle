@@ -89,11 +89,11 @@ android {
 
     namespace 'com.xhtx.app'
     defaultConfig {
-        applicationId 'com.xhtx.app.dev'
+        applicationId 'com.xhtx.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10003
-        versionName "1.0.3.dev"
+        versionCode 10004
+        versionName "1.0.4"
         
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", "true"  // ✨ 启用新架构
         buildConfigField "boolean", "IS_HERMES_ENABLED", "true"

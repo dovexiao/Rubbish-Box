@@ -78,6 +78,7 @@ export default function HomeScreen() {
     if (postureStatus === "good") return "坐姿正确"
     if (postureStatus === "head_not_centered") return "头部倾斜"
     if (postureStatus === "head_not_up") return "低头"
+    if (postureStatus === "too_far") return "正在检测"
     if (postureStatus === "detecting") return "正在检测"
     return "正在检测"
   }
@@ -962,7 +963,7 @@ const styles = createStyles({
   },
   settingsPanelTop: {
     width: 152.34735,
-    height: 162.216, // 增加高度以容纳新的"重启应用"选项
+    height: 128.216, // 增加高度以容纳新的"重启应用"选项
     borderRadius: 8.6,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     padding: 6.25,

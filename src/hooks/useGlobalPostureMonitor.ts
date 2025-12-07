@@ -92,9 +92,11 @@ export function useGlobalPostureMonitor() {
           return;
         }
 
-        const serviceStarted = await startPostureMonitorService();
+        // 启动服务，传入 false 禁用调试模式（不显示浮窗）
+        const enableDebug = false; // 设置为 false 关闭浮窗
+        const serviceStarted = await startPostureMonitorService(enableDebug);
         if (serviceStarted) {
-          console.log('✅ 后台相机服务已启动（Native层统计时间，每10秒检测一次）');
+          console.log(`✅ 后台相机服务已启动${enableDebug ? '（调试模式）' : ''}（Native层统计时间，每10秒检测一次）`);
           
           // 先移除旧的监听器，防止重复添加
           if (postureMonitorEmitter) {
@@ -188,7 +190,7 @@ export function useGlobalPostureMonitor() {
     });
     
     // 音频提醒和弹窗（Native 层每 30 秒更新一次，直接尝试播放）
-    if (status !== 'good' && status !== 'no_person' && status !== 'detecting') {
+    if (status !== 'good' && status !== 'no_person' && status !== 'detecting' && status !== 'too_far') {
       let currentStateDuration = 0;
       let audioType: 'adjust_posture' | 'head_not_up' | 'head_not_centered' | 'shoulders_not_level' = 'adjust_posture';
       let warningMessage = '';

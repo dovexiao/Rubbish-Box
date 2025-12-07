@@ -4,8 +4,9 @@
  */
 
 import DeviceInfo from 'react-native-device-info'
-import { Platform } from 'react-native'
+import { Platform, Dimensions } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import NetInfo from '@react-native-community/netinfo'
 
 /**
  * 设备信息接口
@@ -23,6 +24,11 @@ export interface DeviceInfoData {
   model: string           // 设备型号
   platform: string        // 平台
   isEmulator: boolean     // 是否模拟器
+  screenWidth: number     // 屏幕宽度（像素）
+  screenHeight: number    // 屏幕高度（像素）
+  ipAddress?: string      // IP地址（可选）
+  networkType?: string    // 网络类型（wifi/cellular/ethernet等）
+  isConnected?: boolean   // 是否联网
 }
 
 /**
@@ -68,7 +74,8 @@ export const getDeviceInfo = async (): Promise<DeviceInfoData> => {
       bundleId,
       brand,
       model,
-      isEmulator
+      isEmulator,
+      networkState
     ] = await Promise.all([
       getDeviceCode(),
       DeviceInfo.getDeviceId(),
@@ -80,8 +87,18 @@ export const getDeviceInfo = async (): Promise<DeviceInfoData> => {
       DeviceInfo.getBundleId(),
       DeviceInfo.getBrand(),
       DeviceInfo.getModel(),
-      DeviceInfo.isEmulator()
+      DeviceInfo.isEmulator(),
+      NetInfo.fetch() // 获取网络信息
     ])
+
+    // 获取屏幕尺寸（使用 'screen' 获取原始物理尺寸，包括状态栏和导航栏）
+    const { width: screenWidth, height: screenHeight } = Dimensions.get('screen')
+
+    // 提取网络信息
+    // NetInfo 的 details 类型因网络类型而异，需要安全访问
+    const ipAddress = (networkState.details as any)?.ipAddress || undefined
+    const networkType = networkState.type || undefined
+    const isConnected = networkState.isConnected ?? undefined
 
     const deviceInfo: DeviceInfoData = {
       deviceCode,
@@ -95,13 +112,21 @@ export const getDeviceInfo = async (): Promise<DeviceInfoData> => {
       brand,
       model,
       platform: Platform.OS,
-      isEmulator
+      isEmulator,
+      screenWidth: Math.round(screenWidth),
+      screenHeight: Math.round(screenHeight),
+      ipAddress,
+      networkType,
+      isConnected
     }
 
     console.log('设备信息:', deviceInfo)
     return deviceInfo
   } catch (error) {
     console.error('获取设备信息失败:', error)
+    
+    // 获取屏幕尺寸作为默认值（使用 'screen' 获取原始物理尺寸）
+    const { width: screenWidth, height: screenHeight } = Dimensions.get('screen')
     
     // 返回默认设备信息
     return {
@@ -116,7 +141,9 @@ export const getDeviceInfo = async (): Promise<DeviceInfoData> => {
       brand: 'unknown',
       model: 'unknown',
       platform: Platform.OS,
-      isEmulator: false
+      isEmulator: false,
+      screenWidth: Math.round(screenWidth),
+      screenHeight: Math.round(screenHeight)
     }
   }
 }
@@ -151,7 +178,12 @@ export const getDeviceInfoForAPI = async () => {
     platform: deviceInfo.platform,
     brand: deviceInfo.brand,
     model: deviceInfo.model,
-    is_emulator: deviceInfo.isEmulator
+    is_emulator: deviceInfo.isEmulator,
+    screen_width: deviceInfo.screenWidth,
+    screen_height: deviceInfo.screenHeight,
+    ip_address: deviceInfo.ipAddress,
+    network_type: deviceInfo.networkType,
+    is_connected: deviceInfo.isConnected
   }
 }
 
