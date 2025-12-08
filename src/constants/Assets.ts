@@ -122,6 +122,36 @@ export const Images = {
   // 网络弹窗相关
   networkModalTitle: require("../../assets/images/network-modal-title.png"),
   networkBoy: require("../../assets/images/network-boy.png"),
+
+  // 积分商城相关
+  // 每周打卡签到相关
+  pointsMallSurprisePoint: require("../../assets/images/points-mall/surprise-point.png"),
+  pointsMallSelectingByCircle: require("../../assets/images/points-mall/selecting-by-circle.png"),
+  pointsMallBackgroundPaper: require("../../assets/images/points-mall/background-paper.png"),
+  pointsMallGoldCoinGroupAndBoy: require("../../assets/images/points-mall/gold-coin-group-and-boy.png"),
+  pointsMallGoldCoin: require("../../assets/images/points-mall/gold-coin.png"),
+  pointsMallOrange_1: require("../../assets/images/points-mall/orange_1.png"),
+  pointsMallOrange_2: require("../../assets/images/points-mall/orange_2.png"),
+  pointsMallOrange_4: require("../../assets/images/points-mall/orange_4.png"),
+  pointsMallOrange_10: require("../../assets/images/points-mall/orange_10.png"),
+  pointsMallWhite_1: require("../../assets/images/points-mall/white_1.png"),
+  pointsMallWhite_2: require("../../assets/images/points-mall/white_2.png"),
+  pointsMallWhite_4: require("../../assets/images/points-mall/white_4.png"),
+  pointsMallWhite_10: require("../../assets/images/points-mall/white_10.png"),
+  pointsMallChecked: require("../../assets/images/points-mall/checked.png"),
+  pointsMallStatusMark: require("../../assets/images/points-mall/status_mark.png"),
+  pointsMallAnswerTitle: require("../../assets/images/points-mall/title.png"),
+  pointsMallAnswerStatusIcon: require("../../assets/images/points-mall/status-icon.png"),
+  pointsMallAnswerDivider: require("../../assets/images/points-mall/divider.png"),
+  pointsMallAnswerPageCorner: require("../../assets/images/points-mall/page-corner.png"),
+  pointsMallAnswerRing2: require("../../assets/images/points-mall/ring_2.png"),
+  pointsMallAnswerHole2: require("../../assets/images/points-mall/hole_2.png"),
+  pointsMallAnswerOptionA: require("../../assets/images/points-mall/option-a.png"),
+  pointsMallAnswerOptionB: require("../../assets/images/points-mall/option-b.png"),
+  pointsMallAnswerOptionC: require("../../assets/images/points-mall/option-c.png"),
+  pointsMallAnswerOptionD: require("../../assets/images/points-mall/option-d.png"),
+  pointsMallAnswerOptionCorrect: require("../../assets/images/points-mall/option-correct.png"),
+  pointsMallAnswerOptionWrong: require("../../assets/images/points-mall/option-wrong.png"),
 }
 
 // 统一导出

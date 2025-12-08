@@ -212,6 +212,96 @@ export interface DeleteExchangeRecordParams {
   record_id: number
 }
 
+/**
+ * 获取7天打卡活动列表数据结构
+ */
+export interface WeekCheckInListData {
+  consecutive_days: number;
+  today_checked: boolean;
+  today_date: string;
+  week_check_list: WeekCheckListItem[];
+  [property: string]: any;
+}
+
+/**
+ * 7天打卡活动列表单个项目
+ */
+export interface WeekCheckListItem {
+  checked: boolean;
+  date: string;
+  is_today: boolean;
+  weekday: string;
+  [property: string]: any;
+}
+
+/**
+ * 每日打卡练习题数据结构
+ */
+export interface DailyCheckInExerciseData {
+  questions: Question[];
+  quiz_date: string;
+  quiz_id: number;
+  statistics: Statistics;
+  [property: string]: any;
+}
+
+/**
+ * 每日打卡练习题题目
+ */
+export interface Question {
+  /**
+   * 类型
+   */
+  category: string;
+  /**
+   * 正确答案
+   */
+  correct_answer: string;
+  /**
+   * 解析
+   */
+  explanation: string;
+  id: number;
+  is_answered: boolean;
+  is_correct: null;
+  /**
+   * 选项
+   */
+  options: Options;
+  question_index: number;
+  /**
+   * 题目
+   */
+  question_text: string;
+  user_answer: null;
+  [property: string]: any;
+}
+
+/**
+* 选项
+*/
+export interface Options {
+  A: string;
+  B: string;
+  C: string;
+  D: string;
+  [property: string]: any;
+}
+
+/**
+ * 每日打卡练习题统计数据结构
+ */
+export interface Statistics {
+  accuracy: number;
+  answered_count: number;
+  correct_count: number;
+  total_count: number;
+  total_points_earned: number;
+  unanswered_count: number;
+  wrong_count: number;
+  [property: string]: any;
+}
+
 // ==================== API接口 ====================
 
 /**
@@ -310,4 +400,25 @@ export const getCities = (params: { province_code: string }) => {
  */
 export const getCounties = (params: { city_code: string }) => {
   return post<Array<{ value: string; text: string }>>("/AppStart/AddressView/get_counties/", params)
+}
+
+/**
+ * 获取7天打卡活动列表
+ */
+export const getWeekCheckInList = () => {
+  return post<WeekCheckInListData>("/AppStart/DailyQuiz/check_list/", {})
+}
+
+/**
+ * 获取每日打卡练习题
+ */
+export const getDailyCheckInExercise = () => {
+  return post<DailyCheckInExerciseData>("/AppStart/DailyQuiz/get_quiz_result/", {})
+}
+
+/**
+ * 添加积分
+ */
+export const addDailydPoints = (params: { devices: string, points: string, "points_type": "daily" }) => {
+  return post("/AppStart/Protected/add_points/", params)
 }
