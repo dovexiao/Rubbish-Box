@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from "react"
+import { useState, useMemo, useCallback, useRef, memo } from "react"
 import {
   View,
   Text as RNText,
@@ -16,6 +16,10 @@ import { createStyles, rpx } from "../utils/rpxStyleSheet"
 import { MixedContent } from "./MixedContent"
 
 const Text = RNText
+
+// 🔧 修复：移除 memo，因为 WebView 已经有 key 来控制重新挂载
+// memo 反而会导致 WebView 内容不更新的问题
+const MemoizedMixedContent = MixedContent
 
 interface GradingResult {
   questionIndex: number
@@ -59,6 +63,7 @@ export function QuestionResult({ data }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [revealAnswer, setRevealAnswer] = useState(false)
   const [filterType, setFilterType] = useState<"all" | "wrong" | "unanswered">("all") // 筛选类型
+  const switchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // 根据筛选类型过滤题目
   const filteredQuestions = useMemo(() => {
@@ -73,10 +78,22 @@ export function QuestionResult({ data }: Props) {
     return results.filter((q) => q.status === "答错了" || q.status === "未作答")
   }, [data.grading_results, filterType])
 
-  const currentQuestion = useMemo(
-    () => filteredQuestions[currentIndex] || {},
-    [filteredQuestions, currentIndex],
-  )
+  // 🔧 修复：确保 currentQuestion 在索引变化时正确更新
+  const currentQuestion = useMemo(() => {
+    const question = filteredQuestions[currentIndex]
+    // 如果没有找到题目，返回一个明确的空对象，避免使用缓存的旧数据
+    if (!question) {
+      return {
+        questionIndex: currentIndex,
+        questionText: "",
+        studentAnswer: "",
+        correctAnswer: "",
+        status: "",
+        feedback: ""
+      }
+    }
+    return question
+  }, [filteredQuestions, currentIndex])
 
   // 统计信息
   const statistics = useMemo(() => {
@@ -123,10 +140,20 @@ export function QuestionResult({ data }: Props) {
     }
   }, [revealAnswer])
 
-  // 切换题目时重置答案显示
+  // 优化：切换题目时添加防抖，避免快速点击导致的卡顿
   const handleQuestionChange = useCallback((index: number) => {
+    if (switchDebounceRef.current) {
+      clearTimeout(switchDebounceRef.current)
+    }
+    
+    // 立即更新索引（视觉反馈）
     setCurrentIndex(index)
     setRevealAnswer(false)
+    
+    // 防抖：延迟渲染详情内容
+    switchDebounceRef.current = setTimeout(() => {
+      switchDebounceRef.current = null
+    }, 50)
   }, [])
 
   // 切换筛选类型
@@ -283,11 +310,12 @@ export function QuestionResult({ data }: Props) {
                 style={styles.questionList} 
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
+                removeClippedSubviews={true}
               >
                 {filteredQuestions.length > 0 ? (
                   filteredQuestions.map((q, idx) => (
                   <TouchableWithoutFeedback
-                    key={idx}
+                    key={`q-${idx}-${q.questionText?.substring(0, 20)}`}
                     onPress={() => handleQuestionChange(idx)}
                   >
                     <View
@@ -298,7 +326,7 @@ export function QuestionResult({ data }: Props) {
                     >
                       <Text style={styles.qIndex}>{idx + 1}.</Text>
                         <View style={{ flex: 1 }}>
-                          <MixedContent 
+                          <MemoizedMixedContent
                             content={q.questionText || ""} 
                             style={styles.questionText}
                           />
@@ -337,6 +365,7 @@ export function QuestionResult({ data }: Props) {
                   contentContainerStyle={styles.scrollableContentContainer}
                   showsVerticalScrollIndicator={false}
                   nestedScrollEnabled={true}
+                  removeClippedSubviews={false}
                 >
                   {/* 答案块 */}
                   <View style={styles.answerBlock}>
@@ -348,8 +377,8 @@ export function QuestionResult({ data }: Props) {
                         {!revealAnswer ? (
                           <Text style={styles.scratchHint}>点击查看答案</Text>
                         ) : (
-                          <MixedContent 
-                            content={currentQuestion.correctAnswer|| ""} 
+                          <MemoizedMixedContent
+                            content={currentQuestion.correctAnswer || ""} 
                             style={styles.answerText}
                           />
                         )}
@@ -360,7 +389,7 @@ export function QuestionResult({ data }: Props) {
                   {/* 解析块 */}
                   <View style={styles.analysisBlock}>
                     <Text style={styles.analysisTitle}>解析</Text>
-                    <MixedContent 
+                    <MemoizedMixedContent
                       content={currentQuestion.feedback || ""} 
                       style={styles.analysisText}
                     />

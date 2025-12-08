@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import {
   View,
   Text,
@@ -167,6 +167,9 @@ export default function RankingScreen() {
   const [userProvince, setUserProvince] = useState<string>("") // 用户所在省份（中文名）
   const [userProvinceCode, setUserProvinceCode] = useState<string>("") // 用户所在省份区号（postal_code）
   
+  // 使用 ref 标记初始化状态，避免重复请求
+  const isInitializedRef = useRef(false)
+  
   // 城市选择相关状态（已注释，暂时不使用）
   // const [showCityPicker, setShowCityPicker] = useState(false)
   // const [selectedProvince, setSelectedProvince] = useState("河北省")
@@ -245,25 +248,34 @@ export default function RankingScreen() {
     } finally {
       setRefreshing(false)
     }
-  }, [filterType, userProvince])
+  }, [filterType, userProvinceCode, userProvince])
 
-  // 初始化加载
+  // 初始化加载（只执行一次）
   useEffect(() => {
-    fetchRankingData()
-  }, [])
-
-  // 当筛选类型改变时重新加载数据
-  useEffect(() => {
-    if (userProvinceCode || filterType === "all") {
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true
       fetchRankingData()
     }
-  }, [filterType, userProvinceCode])
+  }, [fetchRankingData])
+
+  // 当筛选类型变化时重新加载（跳过初始化，避免重复请求）
+  useEffect(() => {
+    // 只有在初始化完成后，且筛选类型变化时才触发
+    // 对于省份筛选，需要确保已经获取到省份代码
+    if (isInitializedRef.current) {
+      if (filterType === "all") {
+        fetchRankingData()
+      } else if (filterType === "province" && userProvinceCode) {
+        fetchRankingData()
+      }
+    }
+  }, [filterType]) // 只监听 filterType，避免 userProvinceCode 变化触发
 
   // 下拉刷新
-  const onRefresh = useCallback(() => {
+  const onRefresh = () => {
     setRefreshing(true)
     fetchRankingData(true)
-  }, [fetchRankingData])
+  }
 
   // 切换筛选类型（全国/省份）
   const toggleFilter = () => {

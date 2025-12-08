@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
 import { Platform, Alert } from "react-native"
 
 import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS, UPLOAD_API_URL } from "../config/api"
-import { IS_DEV } from "../config/env"
+import { IS_DEV, IS_PROD } from "../config/env"
 import { getDeviceInfoForAPI } from "../utils/deviceInfo"
 import { showError, showSuccess, showWarning } from "../utils/toast"
 import { triggerNetworkError } from "../utils/networkEvents"
@@ -23,7 +23,7 @@ declare module "axios" {
  * 日志配置IS_DEV
  */
 const LOG_CONFIG = {
-  ENABLED: '', // 只在开发环境打印日志
+  ENABLED: IS_DEV, // 只在开发环境打印日志
   SHOW_REQUEST: true,
   SHOW_RESPONSE: true,
   SHOW_ERROR: true,
@@ -31,16 +31,13 @@ const LOG_CONFIG = {
 }
 
 /**
- * 格式化日志数据
+ * 格式化日志数据（完整打印，不截断）
  */
 const formatLogData = (data: any): string => {
   if (!data) return "无"
 
   try {
     const jsonStr = JSON.stringify(data, null, 2)
-    if (jsonStr.length > LOG_CONFIG.MAX_DATA_LENGTH) {
-      return jsonStr.substring(0, LOG_CONFIG.MAX_DATA_LENGTH) + "... (数据过长，已截断)"
-    }
     return jsonStr
   } catch {
     return String(data)
@@ -447,29 +444,85 @@ apiClient.interceptors.response.use(
     let errorData = error.response?.data
     let errorMessage = ""
 
-    // 如果响应数据是字符串，尝试解析为JSON
+    // 🔧 检测是否是 HTML 响应（Django 错误页面）
+    const isHtmlResponse = (data: any): boolean => {
+      if (typeof data === "string") {
+        const trimmed = data.trim()
+        return (
+          trimmed.startsWith("<!DOCTYPE") ||
+          trimmed.startsWith("<!doctype") ||
+          trimmed.startsWith("<html") ||
+          trimmed.startsWith("<HTML")
+        )
+      }
+      return false
+    }
+
+    // 如果响应数据是字符串，先检查是否是 HTML
     if (typeof errorData === "string") {
-      try {
-        errorData = JSON.parse(errorData)
-        safeLog("✅ 成功解析错误响应为JSON:", errorData)
-      } catch (e) {
-        safeLog("⚠️ 错误响应不是有效的JSON，原始数据:", errorData)
+      if (isHtmlResponse(errorData)) {
+        safeLog("⚠️ 检测到 HTML 响应（可能是 Django 错误页面）")
+        
+        // 尝试从 HTML 中提取有用的错误信息
+        const htmlDoc = errorData
+        
+        // 尝试提取 <title> 标签中的内容
+        const titleMatch = htmlDoc.match(/<title[^>]*>([^<]+)<\/title>/i)
+        if (titleMatch && titleMatch[1]) {
+          errorMessage = titleMatch[1].trim()
+          safeLog("📄 从 HTML title 提取错误信息:", errorMessage)
+        } else {
+          // 尝试提取 <h1> 标签中的内容
+          const h1Match = htmlDoc.match(/<h1[^>]*>([^<]+)<\/h1>/i)
+          if (h1Match && h1Match[1]) {
+            errorMessage = h1Match[1].trim()
+            safeLog("📄 从 HTML h1 提取错误信息:", errorMessage)
+          } else {
+            // 根据 HTTP 状态码生成友好提示
+            const status = error.response?.status
+            if (status === 404) {
+              errorMessage = "请求的资源不存在（404）"
+            } else if (status === 500) {
+              errorMessage = "服务器内部错误（500）"
+            } else if (status === 403) {
+              errorMessage = "没有权限访问该资源（403）"
+            } else if (status === 400) {
+              errorMessage = "请求参数错误（400）"
+            } else {
+              errorMessage = `服务器错误（${status || "未知"}）`
+            }
+            safeLog("📄 使用 HTTP 状态码生成错误信息:", errorMessage)
+          }
+        }
+        
+        // 不尝试解析 HTML 为 JSON
+        errorData = null
+      } else {
+        // 不是 HTML，尝试解析为 JSON
+        try {
+          errorData = JSON.parse(errorData)
+          safeLog("✅ 成功解析错误响应为JSON:", errorData)
+        } catch (e) {
+          safeLog("⚠️ 错误响应不是有效的JSON，原始数据:", errorData.substring(0, 200))
+        }
       }
     }
 
-    // 提取错误消息
-    if (errorData?.message) {
-      errorMessage = errorData.message
-    } else if (errorData?.msg) {
-      errorMessage = errorData.msg
-    } else if (errorData?.error) {
-      errorMessage = errorData.error
-    } else if (typeof errorData === "string") {
-      errorMessage = errorData
-    } else if (error.message) {
-      errorMessage = error.message
-    } else {
-      errorMessage = "网络请求失败，请检查网络连接"
+    // 提取错误消息（如果还没有从 HTML 中提取）
+    if (!errorMessage) {
+      if (errorData?.message) {
+        errorMessage = errorData.message
+      } else if (errorData?.msg) {
+        errorMessage = errorData.msg
+      } else if (errorData?.error) {
+        errorMessage = errorData.error
+      } else if (typeof errorData === "string" && !isHtmlResponse(errorData)) {
+        errorMessage = errorData
+      } else if (error.message) {
+        errorMessage = error.message
+      } else {
+        errorMessage = "网络请求失败，请检查网络连接"
+      }
     }
 
     // 检测是否为网络错误
@@ -481,6 +534,16 @@ apiClient.interceptors.response.use(
       error.message.includes("timeout") || // 超时错误
       error.message.includes("网络")  // 包含"网络"关键字
 
+    // 🔧 检测是否是 HTML 错误响应（Django 错误页面）
+    const isHtmlError = typeof error.response?.data === "string" && 
+      (error.response.data.trim().startsWith("<!DOCTYPE") || 
+       error.response.data.trim().startsWith("<!doctype") ||
+       error.response.data.trim().startsWith("<html") ||
+       error.response.data.trim().startsWith("<HTML"))
+    
+    // 🔧 生产环境遇到 HTML 错误不弹窗，只记录日志
+    const shouldShowError = !(IS_PROD && isHtmlError)
+    
     // 如果是网络错误，先验证网络是否真的不可用
     if (isNetworkError) {
       safeLog("🌐 检测到疑似网络错误，开始验证网络连接...")
@@ -492,14 +555,22 @@ apiClient.interceptors.response.use(
           safeLog("🌐 网络验证失败，触发网络弹窗")
           triggerNetworkError()
         } else {
-          // 网络可用，但API请求失败，说明是服务器问题，显示toast
-          safeLog("🌐 网络可用，API服务器问题，显示错误提示")
-          showError(errorMessage)
+          // 网络可用，但API请求失败，说明是服务器问题
+          if (shouldShowError) {
+            safeLog("🌐 网络可用，API服务器问题，显示错误提示")
+            showError(errorMessage)
+          } else {
+            safeLog("🌐 生产环境 HTML 错误，静默处理，不弹窗")
+          }
         }
       })
     } else {
-      // 非网络错误才显示 toast
-      showError(errorMessage)
+      // 非网络错误，根据环境决定是否显示
+      if (shouldShowError) {
+        showError(errorMessage)
+      } else {
+        safeLog("🔇 生产环境 HTML 错误，静默处理，不弹窗")
+      }
     }
 
     // 创建一个新的 Error 对象，使用解析后的错误消息

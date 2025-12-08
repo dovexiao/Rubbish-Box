@@ -1,9 +1,26 @@
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useRef, useEffect } from "react"
 import { View, Text as RNText, StyleSheet } from "react-native"
 import { WebView } from "react-native-webview"
 import { rpx } from "../utils/rpxStyleSheet"
 
 const Text = RNText
+
+// 全局缓存 KaTeX 基础模板，避免重复生成
+const KATEX_BASE_TEMPLATE = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+</head>
+<body>
+  <div id="content"></div>
+</body>
+</html>
+`
 
 /**
  * 解析内容，提取文本和数学公式
@@ -151,6 +168,9 @@ export const MixedContent = ({ content, style, mathStyle }: MixedContentProps) =
   
   const segments = useMemo(() => parseContentSegments(safeContent), [safeContent])
   const [contentHeight, setContentHeight] = useState<number | null>(null)
+  const webViewRef = useRef<any>(null)
+  const [isWebViewReady, setIsWebViewReady] = useState(false)
+  const contentVersionRef = useRef(0)
   
   // 检查是否只有文本，没有公式
   const hasMath = useMemo(() => segments.length > 0 && segments.some(seg => seg.type === "math"), [segments])
@@ -197,209 +217,121 @@ export const MixedContent = ({ content, style, mathStyle }: MixedContentProps) =
   const lineHeight = style?.lineHeight || (fontSize * 1.5)
   const minHeight = typeof lineHeight === 'number' ? lineHeight : rpx(27)
   
-  // 生成 HTML 内容，包含脚本用于动态获取高度
+  // ⚡ 方案3：使用本地资源 + 提供动态更新接口（HTML 模板固定，不包含内容）
   const htmlContent = useMemo(() => {
-    // combinedExpression 已经处理了文本的 HTML 转义和公式的分隔符
-    // 直接使用即可
     return `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.css">
-  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="file:///android_asset/katex/katex.min.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: auto;
-      min-height: 0;
-      display: block;
-      background-color: transparent;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      white-space: normal;
-      font-size: ${fontSize}px;
-      line-height: ${typeof lineHeight === 'number' ? lineHeight : fontSize * 1.5}px;
-      color: #333;
-    }
-    #content {
-      width: 100%;
-      height: auto;
-      min-height: 0;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      white-space: normal;
-      display: block;
-    }
-    .katex {
-      font-size: ${fontSize}px;
-      margin: 0;
-      padding: 0;
-      display: inline-block;
-      background-color: transparent;
-      line-height: ${typeof lineHeight === 'number' ? lineHeight : fontSize * 1.5}px;
-      vertical-align: baseline;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      white-space: normal;
-    }
-    .katex * {
-      background-color: transparent;
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{margin:0;padding:0;width:100%;height:auto;background:transparent;word-wrap:break-word;font-size:${fontSize}px;line-height:${typeof lineHeight === 'number' ? lineHeight : fontSize * 1.5}px;color:#333}
+    #content{width:100%;height:auto;word-wrap:break-word;white-space:normal}
+    .katex{font-size:${fontSize}px;display:inline-block;background:transparent;line-height:${typeof lineHeight === 'number' ? lineHeight : fontSize * 1.5}px}
   </style>
+  <script src="file:///android_asset/katex/katex.min.js"></script>
+  <script src="file:///android_asset/katex/auto-render.min.js"></script>
 </head>
 <body>
-  <div id="content">${combinedExpression}</div>
+  <div id="content"></div>
   <script>
-    var renderAttempts = 0;
-    var maxRenderAttempts = 10;
-    var lastHeight = 0;
-    var updateTimer = null;
+    var lastHeight=0;
+    var currentVersion=0;
     
-    function updateHeight() {
-      try {
-        var contentEl = document.getElementById('content');
-        if (!contentEl) {
-          return;
+    function updateHeight(){
+      try{
+        var el=document.getElementById('content');
+        if(!el)return;
+        var h=el.getBoundingClientRect().height||el.scrollHeight||${minHeight};
+        h=Math.ceil(h+2);
+        if(window.ReactNativeWebView&&Math.abs(h-lastHeight)>1){
+          lastHeight=h;
+          window.ReactNativeWebView.postMessage(JSON.stringify({type:'height',height:h}));
         }
+      }catch(e){}
+    }
+    
+    function renderContent(content){
+      try{
+        var el=document.getElementById('content');
+        if(!el)return;
+        el.innerHTML=content;
         
-        // 等待一帧，确保内容已完全渲染
-        requestAnimationFrame(function() {
-          // 使用 getBoundingClientRect 获取更精确的高度
-          var rect = contentEl.getBoundingClientRect();
-          var height = rect.height;
-          
-          // 如果 getBoundingClientRect 不可用，使用 scrollHeight
-          if (!height || height <= 0) {
-            height = contentEl.scrollHeight || contentEl.offsetHeight;
-          }
-          
-          // 如果内容为空或高度为0，使用最小高度
-          if (height <= 0) {
-            height = ${minHeight};
-          }
-          
-          // 添加小的边距以确保内容不被裁剪（约2px）
-          height = height + 2;
-          
-          // 只有当高度发生变化时才发送消息，避免频繁更新
-          if (window.ReactNativeWebView && Math.abs(height - lastHeight) > 1) {
-            lastHeight = height;
-            window.ReactNativeWebView.postMessage(JSON.stringify({
-              type: 'height',
-              height: Math.ceil(height)
-            }));
-          }
-        });
-      } catch (e) {
-        console.error('Error updating height:', e);
-      }
-    }
-    
-    // 防抖函数，避免频繁更新
-    function debouncedUpdateHeight() {
-      if (updateTimer) {
-        clearTimeout(updateTimer);
-      }
-      updateTimer = setTimeout(updateHeight, 100);
-    }
-    
-    function renderMath() {
-      try {
-        renderAttempts++;
-        if (typeof renderMathInElement !== 'undefined') {
-          var contentEl = document.getElementById('content');
-          if (contentEl) {
-            renderMathInElement(contentEl, {
-              delimiters: [
-                {left: '\\\\[', right: '\\\\]', display: false},
-                {left: '\\\\(', right: '\\\\)', display: false},
-                {left: '$$', right: '$$', display: false},
-                {left: '$', right: '$', display: false}
-              ],
-              throwOnError: false,
-              errorColor: '#cc0000'
-            });
-            // 渲染完成后更新高度
-            setTimeout(debouncedUpdateHeight, 300);
-          } else {
-            if (renderAttempts < maxRenderAttempts) {
-              setTimeout(renderMath, 100);
-            } else {
-              debouncedUpdateHeight();
-            }
-          }
-        } else {
-          if (renderAttempts < maxRenderAttempts) {
-            setTimeout(renderMath, 100);
-          } else {
-            // KaTeX 加载失败，至少显示文本内容
-            debouncedUpdateHeight();
-          }
+        if(typeof renderMathInElement!=='undefined'){
+          renderMathInElement(el,{
+            delimiters:[
+              {left:'\\\\[',right:'\\\\]',display:false},
+              {left:'\\\\(',right:'\\\\)',display:false},
+              {left:'$$',right:'$$',display:false},
+              {left:'$',right:'$',display:false}
+            ],
+            throwOnError:false
+          });
         }
-      } catch (e) {
-        console.error('Error rendering math:', e);
-        debouncedUpdateHeight();
+        setTimeout(updateHeight,100);
+      }catch(e){
+        console.error('Render error:',e);
+        updateHeight();
       }
     }
     
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() {
-        renderMath();
-      });
-    } else {
-      renderMath();
+    // ⚡ 动态更新接口 - 供 React Native 调用
+    window.updateContent=function(newContent,version){
+      if(version>currentVersion){
+        currentVersion=version;
+        renderContent(newContent);
+      }
+    };
+    
+    // 通知 React Native WebView 已就绪（不渲染初始内容，等待 JS 注入）
+    if(window.ReactNativeWebView){
+      window.ReactNativeWebView.postMessage(JSON.stringify({type:'ready'}));
     }
-    
-    window.addEventListener('load', function() {
-      renderMath();
-    });
-    
-    // 监听内容变化，使用防抖
-    try {
-      new MutationObserver(function() {
-        debouncedUpdateHeight();
-      }).observe(document.getElementById('content'), {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true
-      });
-    } catch (e) {
-      console.error('Error setting up MutationObserver:', e);
-    }
-    
-    // 初始测量，延迟执行确保内容已渲染
-    setTimeout(debouncedUpdateHeight, 400);
   </script>
 </body>
 </html>
     `
-  }, [combinedExpression, fontSize, lineHeight, minHeight])
+  }, [fontSize, lineHeight, minHeight])
   
-  // 处理 WebView 消息，获取内容高度
+  // ⚡ 处理 WebView 消息（高度更新 + 就绪通知）
   const handleMessage = useCallback((event: any) => {
     try {
       const data = JSON.parse(event.nativeEvent.data)
-      if (data.type === 'height' && typeof data.height === 'number' && data.height > 0) {
-        // 确保高度合理，不超过屏幕高度的10倍（防止异常值）
+      
+      if (data.type === 'ready') {
+        // WebView 已就绪，可以接收动态更新
+        setIsWebViewReady(true)
+      } else if (data.type === 'height' && data.height > 0) {
         const maxHeight = typeof minHeight === 'number' ? minHeight * 50 : 5000
-        const finalHeight = Math.min(Math.max(data.height, minHeight), maxHeight)
-        setContentHeight(finalHeight)
+        setContentHeight(Math.min(Math.max(data.height, minHeight), maxHeight))
       }
-    } catch (e) {
-      // 忽略解析错误
-    }
+    } catch (e) {}
   }, [minHeight])
+  
+  // ⚡ 当内容变化或 WebView 就绪时，动态更新内容
+  useEffect(() => {
+    if (isWebViewReady && webViewRef.current && hasMath && combinedExpression) {
+      contentVersionRef.current += 1
+      const version = contentVersionRef.current
+      
+      // 转义内容中的特殊字符
+      const escapedContent = combinedExpression
+        .replace(/\\/g, '\\\\')
+        .replace(/`/g, '\\`')
+        .replace(/\$/g, '\\$')
+      
+      // 注入 JavaScript 动态更新内容
+      const script = `window.updateContent(\`${escapedContent}\`, ${version});`
+      
+      // 使用 setTimeout 确保 WebView 完全就绪
+      setTimeout(() => {
+        webViewRef.current?.injectJavaScript(script)
+      }, 50)
+    }
+  }, [safeContent, isWebViewReady, hasMath, combinedExpression])
   
   // 根据内容类型返回不同的组件
   // 如果内容为空或只有文本，直接使用 Text 组件
@@ -407,14 +339,11 @@ export const MixedContent = ({ content, style, mathStyle }: MixedContentProps) =
     return <Text style={style}>{safeContent}</Text>
   }
   
-  // 使用 WebView 渲染所有内容，支持动态高度
+  // ⚡ 使用本地资源 + 动态更新，不再使用 key 强制重新挂载
   return (
-    <View 
-      style={{ 
-        width: "100%",
-      }}
-    >
+    <View style={{ width: "100%" }}>
       <WebView
+        ref={webViewRef}
         source={{ html: htmlContent }}
         style={{
           width: estimatedWidth,
@@ -427,6 +356,11 @@ export const MixedContent = ({ content, style, mathStyle }: MixedContentProps) =
         onMessage={handleMessage}
         javaScriptEnabled={true}
         originWhitelist={['*']}
+        androidLayerType="hardware"
+        androidHardwareAccelerationDisabled={false}
+        onLoad={() => {
+          // WebView 加载完成，等待 ready 消息
+        }}
       />
     </View>
   )
