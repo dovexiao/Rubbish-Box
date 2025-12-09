@@ -19,6 +19,9 @@ import {
 } from "../../services/pointsMall"
 import DailyCheckIn, { DailyCheckInRef } from "@/components/points-mall/DailyCheckIn"
 import DailyCheckInOnAnswer from "@/components/points-mall/DailyCheckInonAnswer"
+import CurrencyGuideFloatingButton from "@/components/points-mall/CurrencyGuideFloatingButton"
+import CurrencyAmount from "@/components/points-mall/CurrencyAmount"
+
 
 export default function PointsMallScreen() {
   const router = useRouter()
@@ -295,6 +298,10 @@ export default function PointsMallScreen() {
         }} 
       />
 
+      <CurrencyAmount onPress={() => router.push("/points-mall/currency-record")} style={styles.currencyAmountContainer} />
+
+      <CurrencyGuideFloatingButton onPress={handleShowCurrencyGuide} style={styles.currencyGuideFloatingButtonContainer} />
+
       {/* 顶部固定区域 */}
       {/* <View style={styles.topSection}>
         <LinearGradient
@@ -442,6 +449,16 @@ const styles = createStyles({
     flex: 1,
     width: "100%" as const,
     height: "100%" as const,
+  },
+  currencyAmountContainer: {
+    position: "absolute" as const,
+    top: 45.703125, // 117
+    left: 31.25, // 80
+  },
+  currencyGuideFloatingButtonContainer: {
+    position: "absolute" as const,
+    top: 234.375, // 600
+    right: 18.359375, // 47
   },
   dailyCheckIn: {
     position: "absolute" as const,

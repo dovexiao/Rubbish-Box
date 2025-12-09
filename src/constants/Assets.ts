@@ -152,6 +152,8 @@ export const Images = {
   pointsMallAnswerOptionD: require("../../assets/images/points-mall/option-d.png"),
   pointsMallAnswerOptionCorrect: require("../../assets/images/points-mall/option-correct.png"),
   pointsMallAnswerOptionWrong: require("../../assets/images/points-mall/option-wrong.png"),
+  pointsMallGuideFloatingButtonIcon: require("../../assets/images/points-mall/guide-floating-button-icon.png"),
+  pointsMallPointsIcon: require("../../assets/images/points-mall/points-coin.png"),
 }
 
 // 统一导出
