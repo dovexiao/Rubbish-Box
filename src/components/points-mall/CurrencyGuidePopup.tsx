@@ -18,7 +18,12 @@ export function CurrencyGuidePopup({ visible, onClose }: CurrencyGuidePopupProps
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={onClose}
+        />
         <View style={styles.popupContainer}>
           <View style={styles.popup}>
             {/* 标题 */}
@@ -106,11 +111,11 @@ export function CurrencyGuidePopup({ visible, onClose }: CurrencyGuidePopupProps
           </View>
 
           {/* 关闭按钮 */}
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          {/* <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <View style={styles.closeIconWrapper}>
               <Ionicons name="close" size={24} color="#666" />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </Modal>
@@ -118,69 +123,85 @@ export function CurrencyGuidePopup({ visible, onClose }: CurrencyGuidePopupProps
 }
 
 const styles = createStyles({
-  overlay: {
+  container: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center" as const,
     alignItems: "center" as const,
+    position: "relative" as const,
+  },
+  overlay: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1,
   },
   popupContainer: {
+    width: 358.984375, // 919
+    height: 345.3125, // 884
+    justifyContent: "center" as const,
     alignItems: "center" as const,
+    backgroundColor: "rgba(255, 250, 236, 1)",
+    borderRadius: 12, // 30
+    overflow: "hidden" as const,
+    zIndex: 2,
+    position: "relative" as const,
   },
   popup: {
-    width: 375,
-    maxHeight: "84%",
-    backgroundColor: "rgba(255, 250, 236, 1)",
-    borderRadius: 12,
-    overflow: "hidden",
+    width: '100%' as const,
+    height: '100%' as const,
   },
   header: {
-    paddingVertical: 12,
+    width: '100%' as const,
+    paddingTop: 20.3125, // 52
+    paddingBottom: 9.375, // 24
     alignItems: "center" as const,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 193, 91, 0.2)",
   },
   title: {
-    fontSize: 12,
-    fontWeight: "600" as const,
+    fontFamily: 'kingnam_bobo',
+    fontSize: 12.5, // 32
+    fontWeight: "400" as const,
     color: "#FF9000",
   },
   scrollContent: {
-    maxHeight: 400,
+    flex: 1,
+    width: '100%' as const,
   },
   content: {
-    padding: 16,
+    paddingHorizontal: 26.171875, // 67
   },
   section: {
-    marginBottom: 12,
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 10,
     fontWeight: "600" as const,
     color: "#333",
-    marginBottom: 6,
-    lineHeight: 14,
+    // marginBottom: 6,
+    lineHeight: 16,
   },
   subTitle: {
     fontSize: 9,
     fontWeight: "600" as const,
     color: "#333",
     marginTop: 6,
-    marginBottom: 4,
-    lineHeight: 13,
+    // marginBottom: 4,
+    // lineHeight: 13,
   },
   sectionText: {
     fontSize: 8.6,
     color: "#666",
-    lineHeight: 14,
+    lineHeight: 16,
     marginBottom: 4,
   },
   warningText: {
     fontSize: 8.6,
     color: "#FF9000",
-    lineHeight: 14,
-    marginTop: 4,
-    marginBottom: 4,
+    lineHeight: 16,
+    // marginTop: 4,
+    // marginBottom: 4,
   },
   closeButton: {
     marginTop: 6,

@@ -421,10 +421,10 @@ export default function PointsMallScreen() {
       /> */}
 
       {/* 货币指南弹窗 */}
-      {/* <CurrencyGuidePopup
+      <CurrencyGuidePopup
         visible={showCurrencyGuide}
         onClose={handleCloseCurrencyGuide}
-      /> */}
+      />
 
       {/* 货币指南浮动按钮 */}
       {/* <TouchableOpacity
