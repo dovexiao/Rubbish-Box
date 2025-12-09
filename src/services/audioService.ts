@@ -52,9 +52,9 @@ export class AudioService {
       return;
     }
 
-    // 防止频繁播放
+    // 防止频繁播放（rest_reminder 不受此限制，因为是45分钟定时提醒）
     const now = Date.now();
-    if (now - this.lastPlayTime < this.MIN_PLAY_INTERVAL) {
+    if (audioType !== 'rest_reminder' && now - this.lastPlayTime < this.MIN_PLAY_INTERVAL) {
       console.log(`⚠️ 音频播放间隔过短 (${now - this.lastPlayTime}ms < ${this.MIN_PLAY_INTERVAL}ms)`);
       return;
     }

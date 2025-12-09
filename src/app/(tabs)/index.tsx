@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Image, TouchableOpacity, ImageBackground, Platform, Linking } from "react-native"
+import { View, Image, TouchableOpacity, ImageBackground, Platform, Linking, AppState } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import Slider from "@react-native-community/slider"
 import { useFocusEffect, useRouter } from "expo-router"
@@ -112,24 +112,66 @@ export default function HomeScreen() {
     }
   }
 
+  // IntentLauncher 活动状态跟踪
+  const intentLauncherActiveRef = useRef<boolean>(false)
+  const intentLauncherTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // 重置 IntentLauncher 状态（当从系统设置返回时调用）
+  const resetIntentLauncherState = useCallback(() => {
+    // 清除之前的定时器
+    if (intentLauncherTimeoutRef.current) {
+      clearTimeout(intentLauncherTimeoutRef.current)
+      intentLauncherTimeoutRef.current = null
+    }
+    // 立即重置活动状态
+    intentLauncherActiveRef.current = false
+    console.log("🔄 IntentLauncher 状态已重置")
+  }, [])
+
+  // 监听应用状态变化（当从系统设置返回时）
+  useEffect(() => {
+    if (Platform.OS !== "android") return
+
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      // 当应用从后台回到前台时，重置 IntentLauncher 状态
+      if (nextAppState === "active" && intentLauncherActiveRef.current) {
+        console.log("📱 应用回到前台，重置 IntentLauncher 状态")
+        resetIntentLauncherState()
+      }
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [resetIntentLauncherState])
+
+  // 页面获得焦点时也重置状态（双重保障）
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS === "android" && intentLauncherActiveRef.current) {
+        console.log("👁️ 页面获得焦点，重置 IntentLauncher 状态")
+        resetIntentLauncherState()
+      }
+    }, [resetIntentLauncherState])
+  )
+
   // 获取当前系统音量
 const openVolumeSettings = async () => {
   if (Platform.OS === 'android') {
     try {
-      // 跳转到音频设置页面
-       const IntentLauncher = await import("expo-intent-launcher")
-      await IntentLauncher.startActivityAsync(
-        IntentLauncher.ActivityAction.SOUND_SETTINGS
-      );
+        // 使用原生模块打开声音设置，确保每次都能成功
+        const { openSoundSettings } = await import("../../services/systemSettings")
+        await openSoundSettings()
+        console.log("已打开系统音量设置")
     } catch (error) {
-      console.error('无法打开音量设置:', error);
-      showError('无法打开系统音量设置');
+        console.error('无法打开音量设置:', error)
+        showError('无法打开系统音量设置')
     }
       } else {
     // iOS 不允许直接跳转到音量设置
-    showInfo('iOS 不支持直接跳转到音量设置，请手动打开：设置 > 声音与触感');
+      showInfo('iOS 不支持直接跳转到音量设置，请手动打开：设置 > 声音与触感')
   }
-};
+  }
 
   // 加载数据 - 每次点击tabbar都刷新
   const loadData = useCallback(async () => {
@@ -446,13 +488,14 @@ const openVolumeSettings = async () => {
   //   }
   // }
 
+
   // 打开系统WiFi设置
   const openSystemWifiSettings = async () => {
     if (Platform.OS === "android") {
       try {
-        // 使用IntentLauncher打开Android系统WiFi设置
-        const IntentLauncher = await import("expo-intent-launcher")
-        await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.WIFI_SETTINGS)
+        // 使用原生模块打开WiFi设置，确保每次都能成功
+        const { openWifiSettings } = await import("../../services/systemSettings")
+        await openWifiSettings()
         console.log("已打开系统WiFi设置")
       } catch (error) {
         console.error("打开系统WiFi设置失败:", error)
@@ -468,9 +511,9 @@ const openVolumeSettings = async () => {
   const openSystemBluetoothSettings = async () => {
     if (Platform.OS === "android") {
       try {
-        // 使用IntentLauncher打开Android系统蓝牙设置
-        const IntentLauncher = await import("expo-intent-launcher")
-        await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.BLUETOOTH_SETTINGS)
+        // 使用原生模块打开蓝牙设置，确保每次都能成功
+        const { openBluetoothSettings } = await import("../../services/systemSettings")
+        await openBluetoothSettings()
         console.log("已打开系统蓝牙设置")
       } catch (error) {
         console.error("打开系统蓝牙设置失败:", error)
@@ -755,7 +798,7 @@ const openVolumeSettings = async () => {
 
             {/* 通知栏 */}
             <NoticeBar
-              texts={notifications.length > 0 ? notifications : ["欢迎使用XHTX学习助手"]}
+              texts={notifications.length > 0 ? notifications : ["欢迎使用XHTX小褐同学"]}
               delay={3}
               color="#fff"
               backgroundColor="rgba(255, 235, 181, 0.65)"

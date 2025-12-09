@@ -60,8 +60,8 @@ const safeLog = (message: string, ...args: any[]) => {
 
 // 重试配置
 const RETRY_CONFIG = {
-  MAX_RETRIES: 3, // 最大重试次数
-  RETRY_DELAY: 1000, // 初始重试延迟（毫秒）
+  MAX_RETRIES: 1, // 最大重试次数（只重试一次）
+  RETRY_DELAY: 3000, // 初始重试延迟（毫秒）
   RETRY_STATUS_CODES: [408, 500, 502, 503, 504], // 需要重试的HTTP状态码
   BACKOFF_MULTIPLIER: 2, // 指数退避倍数
 }
@@ -185,7 +185,38 @@ apiClient.interceptors.request.use(
       safeLog("⚠️ 添加设备信息失败:", error)
     }
 
-    // 打印请求详细信息
+    // 检查是否是登录相关的API（这些API不需要token）
+    const loginRelatedAPIs = [
+      "/AppStart/Input_Code",
+      "/AppStart/SignInPhoneid",
+      "/AppStart/SignInPassword",
+      "/AppStart/ResetPassword",
+    ]
+
+    const isLoginRelatedAPI = loginRelatedAPIs.some((api) => config.url?.includes(api))
+
+    // 从存储中获取token（在打印日志之前添加，确保日志显示真实的headers）
+    if (!isLoginRelatedAPI) {
+      try {
+        const { useUserStore } = await import("../stores/userStore")
+        const userStore = useUserStore.getState()
+        const token = userStore.token || "" // 直接从 userStore.token 获取
+
+        if (token && typeof token === "string") {
+          config.headers.Authorization = `Bearer ${token}`
+          safeLog("🔐 已添加Token:", token.substring(0, 20) + "...")
+        } else {
+          safeLog("⚠️ 未找到Token，继续发送请求但不添加Authorization头")
+        }
+      } catch (error) {
+        safeLog("⚠️ 获取Token失败:", error)
+        safeLog("⚠️ 继续发送请求但不添加Authorization头")
+      }
+    } else {
+      safeLog("🔓 登录相关API，无需添加Token")
+    }
+
+    // 打印请求详细信息（在添加token之后，确保日志显示真实的headers）
     if (LOG_CONFIG.ENABLED && LOG_CONFIG.SHOW_REQUEST) {
       safeLog("🚀 API请求开始 ===================================")
       safeLog("📍 请求URL:", (config.baseURL || "") + (config.url || ""))
@@ -207,38 +238,6 @@ apiClient.interceptors.request.use(
       safeLog("⏱️ 超时时间:", config.timeout + "ms")
       safeLog("🕐 请求时间:", new Date().toLocaleTimeString())
       safeLog("===============================================")
-    }
-
-    // 检查是否是登录相关的API（这些API不需要token）
-    const loginRelatedAPIs = [
-      "/AppStart/Input_Code",
-      "/AppStart/SignInPhoneid",
-      "/AppStart/SignInPassword",
-      "/AppStart/ResetPassword",
-    ]
-
-    const isLoginRelatedAPI = loginRelatedAPIs.some((api) => config.url?.includes(api))
-
-    if (isLoginRelatedAPI) {
-      safeLog("🔓 登录相关API，无需添加Token")
-      return config
-    }
-
-    // 从存储中获取token
-    try {
-      const { useUserStore } = await import("../stores/userStore")
-      const userStore = useUserStore.getState()
-      const token = userStore.token || "" // 直接从 userStore.token 获取
-
-      if (token && typeof token === "string") {
-        config.headers.Authorization = `Bearer ${token}`
-        safeLog("🔐 已添加Token:", token.substring(0, 20) + "...")
-      } else {
-        safeLog("⚠️ 未找到Token，继续发送请求但不添加Authorization头")
-      }
-    } catch (error) {
-      safeLog("⚠️ 获取Token失败:", error)
-      safeLog("⚠️ 继续发送请求但不添加Authorization头")
     }
 
     return config

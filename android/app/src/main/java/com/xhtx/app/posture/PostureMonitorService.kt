@@ -183,6 +183,9 @@ class PostureMonitorService : Service() {
         // 初始化相机管理器
         initializeCameraManager()
         
+        // ⚠️ 先移除旧的定时器回调，防止重复启动
+        restReminderHandler.removeCallbacks(restReminderRunnable)
+        
         // 启动45分钟休息提醒定时器
         restReminderHandler.postDelayed(restReminderRunnable, REST_REMINDER_INTERVAL)
         Log.d(TAG, "⏰ 已启动45分钟休息提醒定时器")
@@ -236,6 +239,13 @@ class PostureMonitorService : Service() {
 
     private fun initializeCameraManager() {
         try {
+            // ⚠️ 如果相机已经初始化，先停止旧的相机，防止重复初始化
+            if (cameraManager != null) {
+                Log.d(TAG, "⚠️ 相机已初始化，先停止旧相机")
+                cameraManager?.stopCamera()
+                cameraManager = null
+            }
+            
             cameraManager = BackgroundCameraManager(
                 context = this,
                 debugMode = isDebugMode, // 传递调试模式标志
