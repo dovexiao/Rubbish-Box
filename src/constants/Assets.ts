@@ -153,7 +153,11 @@ export const Images = {
   pointsMallAnswerOptionCorrect: require("../../assets/images/points-mall/option-correct.png"),
   pointsMallAnswerOptionWrong: require("../../assets/images/points-mall/option-wrong.png"),
   pointsMallGuideFloatingButtonIcon: require("../../assets/images/points-mall/guide-floating-button-icon.png"),
-  pointsMallPointsIcon: require("../../assets/images/points-mall/points-coin.png"),
+  pointsMallPointsIcon: require("../../assets/images/points-mall/points-coin.png"), // 通用货币图标
+  pointsMallDiscountedGoodsTitle: require("../../assets/images/points-mall/discounted-goods-title.png"),
+  pointsMallDiscountedGoodsExchange: require("../../assets/images/points-mall/discounted-goods-exchange.png"),
+  pointsMallDiscountedGoodsRibbons: require("../../assets/images/points-mall/discounted-goods-ribbons.png"),
+  pointsMallDiscountProductBackgroundPaper: require("../../assets/images/points-mall/discount-product-background-paper.png"),
 }
 
 // 统一导出
