@@ -192,8 +192,10 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
         onPress={() => {
           if (todayInfo?.index !== null && todayInfo?.isChecked === false) {
             onAnswer(rewardPointsList[weekCheckInList.findIndex(item => item.is_today) ?? 0]);
-          } else {
+          } else if (todayInfo && todayInfo.index && todayInfo.isChecked) {
             showInfo('今日已打卡');
+          } else {
+            showInfo('无法打卡');
           }
         }}
       >

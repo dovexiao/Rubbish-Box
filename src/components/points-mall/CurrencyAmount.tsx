@@ -47,10 +47,21 @@ const CurrencyAmount: React.FC<CurrencyAmountProps> = ({ onPress, style }) => {
     }, [fetchPointsBalance])
   );
 
+  // 大数处理
+  const formatPointsBalance = useCallback((points: number) => {
+    if (typeof points !== 'number' || points < 0) {
+      return '0';
+    }
+    if (points > 999999) {
+      return '999999+';
+    }
+    return points.toString();
+  }, []);
+
   return (
     <View style={[styles.container, style]}>
       {/* 货币数量文本 */}
-      <Text style={styles.amountText}>{pointsBalance}</Text>
+      <Text style={styles.amountText}>{formatPointsBalance(pointsBalance)}</Text>
       
       {/* 货币记录入口 */}
       <TouchableOpacity
@@ -66,7 +77,7 @@ const CurrencyAmount: React.FC<CurrencyAmountProps> = ({ onPress, style }) => {
         <Text style={styles.currencyText}>货币</Text>
         <Ionicons
           name="chevron-forward"
-          size={rpx(7.8125)}
+          size={rpx(9.375)}
           color="#FF9D00"
         />
       </TouchableOpacity>
@@ -94,25 +105,24 @@ const styles = createStyles({
     borderWidth: 0.2890625, // 0.74
     borderColor: '#FFFFFF',
     backgroundColor: '#FFFFFFCC', // rgba(255, 255, 255, 0.8)
-    paddingTop: 3.125, // 8
-    paddingRight: 6.25, // 16
-    paddingBottom: 3.125, // 8
+    // paddingVertical: 3.125, // 8
     paddingLeft: 6.25, // 16
     marginLeft: 6.640625, // 17
     flexDirection: 'row' as const,
+    // justifyContent: 'space-evenly' as const,
     alignItems: 'center' as const,
-    gap: 3.125, // 8
+    // gap: 3.125, // 8
   },
   coinIcon: {
     width: 14.0625, // 36
     height: 14.0625, // 36
+    marginRight: 3.125, // 8
   },
   currencyText: {
     fontFamily: 'PingFang-SC',
     fontSize: 8.59375, // 22
     fontWeight: '500' as const,
     color: '#FF9D00',
-    marginBottom: 2.1484375, // 5.5
   },
 });
 
