@@ -42,7 +42,8 @@ const ExchangeRecords: React.FC<ExchangeRecordsProps> = ({ style }) => {
                     per_page: perPage.toString(),
                 });
                 if (res && res.records) {
-                    setRecords((prev) => (append ? [...prev, ...res.records] : res.records));
+                    const newRecords = res.records.filter((item: ExchangeRecordItem) => item.logistics_status_display !== '已取消');
+                    setRecords((prev) => (append ? [...prev, ...newRecords] : newRecords));
                     setCurrentPage(res.current_page);
                     setHasNext(res.has_next);
                 }
@@ -113,16 +114,13 @@ const ExchangeRecords: React.FC<ExchangeRecordsProps> = ({ style }) => {
                         </View>
                         <View style={styles.logisticsPlaceholder} />
                     </View>
-                    {/* 第三行：创建时间和操作按钮 */}
+                    {/* 第三行：创建时间和操作按钮/物流状态 */}
                     <View style={styles.thirdRow}>
                         <Text style={styles.createTime}>{formatDate(item.created_at)}</Text>
                         {item.logistics_status_display === '待发货' && (
-                            <TouchableOpacity
-                                style={styles.actionButtonPending}
-                                activeOpacity={0.7}
-                            >
-                                <Text style={styles.actionButtonTextPending}>取消订单</Text>
-                            </TouchableOpacity>
+                            <View style={styles.actionButtonPending}>
+                                <Text style={styles.actionButtonTextPending}>待发货</Text>
+                            </View>
                         )}
                         {item.logistics_status_display === '运输中' && (
                             <TouchableOpacity
@@ -239,6 +237,9 @@ const styles = createStyles({
         flexDirection: 'row' as const,
         alignItems: 'center' as const,
         justifyContent: 'space-between' as const,
+        paddingBottom: 4.6875, // 12
+        borderBottomWidth: 1.171875,
+        borderBottomColor: '#00000008',
     },
     amountContainer: {
         flexDirection: 'row' as const,

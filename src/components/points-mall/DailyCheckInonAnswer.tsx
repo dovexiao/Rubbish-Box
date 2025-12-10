@@ -91,7 +91,8 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
                 <TouchableOpacity
                     style={styles.backdrop}
                     activeOpacity={1}
-                // onPress={onClose}
+                    disabled={questions && questions.length > 0}
+                    onPress={onClose}
                 />
 
                 {/* 内容容器 */}
@@ -134,7 +135,7 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
 
                         {/* 题目 */}
                         <View style={styles.questionContainer}>
-                            <Text style={styles.questionText}>{questions[currentQuestionIndex]?.question_text ?? '没有题目'}</Text>
+                            <Text style={styles.questionText}>{questions[currentQuestionIndex]?.question_text ?? '今日没有题目'}</Text>
                         </View>
 
                         {
