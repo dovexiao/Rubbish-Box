@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { LinearGradient } from "expo-linear-gradient"
 import { createStyles } from "../utils/rpxStyleSheet"
 import { Images } from "../constants/Assets"
+import { BlurView } from "@react-native-community/blur";
 
 // 预计算Tab配置映射，避免每次find()操作
 const TAB_CONFIG_MAP = {
@@ -93,10 +94,10 @@ const TabItem = memo(function TabItem({
  * 高性能TabBar组件
  * 移除所有动画，专注极致性能
  */
-export const CustomTabBar = memo(function CustomTabBar({ 
-  state, 
-  descriptors, 
-  navigation 
+export const CustomTabBar = memo(function CustomTabBar({
+  state,
+  descriptors,
+  navigation
 }: BottomTabBarProps) {
   const insets = useSafeAreaInsets()
   const lastPressTime = useRef<number>(0)
@@ -105,21 +106,21 @@ export const CustomTabBar = memo(function CustomTabBar({
   // 跟手感点击处理器 - 立即响应
   const handleTabPress = useCallback((route: any, isFocused: boolean) => {
     const now = Date.now()
-    
+
     // 如果已经是当前页面，直接返回
     if (isFocused) return
-    
+
     // 防抖：100ms内重复点击同一路由，忽略（更短的防抖时间）
     if (now - lastPressTime.current < 100 && lastPressRoute.current === route.name) {
       return
     }
-    
+
     lastPressTime.current = now
     lastPressRoute.current = route.name
 
     // 立即导航，不等待任何事件处理
     navigation.navigate(route.name, route.params)
-    
+
     // 异步发送事件，不阻塞导航
     requestAnimationFrame(() => {
       navigation.emit({
@@ -140,13 +141,19 @@ export const CustomTabBar = memo(function CustomTabBar({
 
   return (
     <View style={[styles.tabbarWrapper, { bottom: 17.1875 + insets.bottom }]}>
-      <LinearGradient
-        colors={["rgba(255, 255, 255, 0.8)", "rgba(255, 255, 255, 0.2)"]}
-        locations={[0, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <View
+        // colors={["rgba(255, 255, 255, 0.8)", "rgba(255, 255, 255, 0.2)"]}
+        // locations={[0, 1]}
+        // start={{ x: 0, y: 0 }}
+        // end={{ x: 1, y: 1 }}
         style={styles.tabbarContainer}
       >
+        <BlurView
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+          blurType="light"
+          blurAmount={8}
+          overlayColor="rgba(255, 255, 255, 0.5)"
+        />
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key]
           const isFocused = state.index === index
@@ -168,7 +175,7 @@ export const CustomTabBar = memo(function CustomTabBar({
             />
           )
         })}
-      </LinearGradient>
+      </View>
     </View>
   )
 })

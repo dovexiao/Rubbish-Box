@@ -89,16 +89,16 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
     }
     if (index === todayInfo.index) {
       console.log('index等于todayInfo.index', index, todayInfo.index);
-        if (isChecked) return 2;
-        return 1;
+      if (isChecked) return 2;
+      return 1;
     }
     if (index < todayInfo.index) {
       console.log('index小于todayInfo.index', index, todayInfo.index);
-        if (isChecked) return 2;
-        return 0;
+      if (isChecked) return 2;
+      return 0;
     }
     return 3;
-  }, []);
+  }, [todayInfo]);
 
   useEffect(() => {
     loadWeekCheckInList();
@@ -106,21 +106,21 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <Image 
-        source={Images.pointsMallBackgroundPaper} 
+      <Image
+        source={Images.pointsMallBackgroundPaper}
         style={styles.backgroundPaper}
         resizeMode="contain"
       />
       <View style={styles.content}>
         {/* 惊喜点 */}
-        <Image 
-          source={Images.pointsMallSurprisePoint} 
+        <Image
+          source={Images.pointsMallSurprisePoint}
           style={styles.surprisePoint}
           resizeMode="contain"
         />
         {/* 圈圈选中 */}
-        <Image 
-          source={Images.pointsMallSelectingByCircle} 
+        <Image
+          source={Images.pointsMallSelectingByCircle}
           style={styles.selectingByCircle}
           resizeMode="contain"
         />
@@ -141,10 +141,10 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
             console.log('dateStatus2', dateStatus, index, item.checked);
             return (
               <View style={[
-                styles.dailyCheckInListItem, 
-                dateStatus === 0 && styles.dailyCheckInListItemExpired, 
-                dateStatus === 1 && styles.dailyCheckInListItemToday, 
-                dateStatus === 2 && styles.dailyCheckInListItemReceived, 
+                styles.dailyCheckInListItem,
+                dateStatus === 0 && styles.dailyCheckInListItemExpired,
+                dateStatus === 1 && styles.dailyCheckInListItemToday,
+                dateStatus === 2 && styles.dailyCheckInListItemReceived,
               ]}>
                 <Text style={[
                   styles.dailyCheckInListItemText,
@@ -186,14 +186,16 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
         </View>
       </View>
       {/* 打卡领取奖励按钮 */}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.buttonContainer}
         activeOpacity={0.8}
         onPress={() => {
           if (todayInfo?.index !== null && todayInfo?.isChecked === false) {
             onAnswer(rewardPointsList[weekCheckInList.findIndex(item => item.is_today) ?? 0]);
-          } else {
+          } else if (todayInfo && todayInfo.index && todayInfo.isChecked) {
             showInfo('今日已打卡');
+          } else {
+            showInfo('无法打卡');
           }
         }}
       >
@@ -207,8 +209,8 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
         </LinearGradient>
       </TouchableOpacity>
       {/* 装饰素材-打卡男孩金币群定位 */}
-      <Image 
-        source={Images.pointsMallGoldCoinGroupAndBoy} 
+      <Image
+        source={Images.pointsMallGoldCoinGroupAndBoy}
         style={styles.goldCoinGroupAndBoy}
         resizeMode="contain"
       />
@@ -335,7 +337,7 @@ const styles = createStyles({
     shadowRadius: 0.60546875, // 1.55
     elevation: 0.78125, // 2
   },
-  dailyCheckInListItemToday: {  
+  dailyCheckInListItemToday: {
     backgroundColor: '#FF9D00',
   },
   dailyCheckInListItemExpired: {

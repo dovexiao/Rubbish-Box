@@ -17,6 +17,13 @@ import {
   type PointsBalanceData,
   type ProductDetailResponse,
 } from "../../services/pointsMall"
+import DailyCheckIn, { DailyCheckInRef } from "@/components/points-mall/DailyCheckIn"
+import DailyCheckInOnAnswer from "@/components/points-mall/DailyCheckInonAnswer"
+import CurrencyGuideFloatingButton from "@/components/points-mall/CurrencyGuideFloatingButton"
+import CurrencyAmount from "@/components/points-mall/CurrencyAmount"
+import MultiCategoryProductList from "@/components/points-mall/MultiCategoryProductList"
+import DiscountedProductWindow from "@/components/points-mall/DiscountedProductWindow"
+
 
 export default function PointsMallScreen() {
   const router = useRouter()
@@ -33,7 +40,7 @@ export default function PointsMallScreen() {
   const [isInitialized, setIsInitialized] = useState(false)
   const [showCurrencyGuide, setShowCurrencyGuide] = useState(false)
   const pageSize = 18
-  
+
   // 使用 ref 防止重复请求
   const isLoadingRef = useRef(false)
   const hasMoreRef = useRef(true)
@@ -42,7 +49,7 @@ export default function PointsMallScreen() {
   const categories = ["热点推荐", "积分可兑", "学习文具", "亲子娱乐"]
 
   // 预计算分类选项，避免重复创建
-  const categoryOptions = useMemo(() => 
+  const categoryOptions = useMemo(() =>
     categories.map((category, index) => ({ label: category, value: index })),
     [categories]
   )
@@ -70,9 +77,9 @@ export default function PointsMallScreen() {
   const getProducts = useCallback(async () => {
     // 使用 ref 进行严格的防重复检查
     if (isLoadingRef.current || !hasMoreRef.current) {
-      console.log("🚫 阻止重复请求:", { 
-        isLoading: isLoadingRef.current, 
-        hasMore: hasMoreRef.current 
+      console.log("🚫 阻止重复请求:", {
+        isLoading: isLoadingRef.current,
+        hasMore: hasMoreRef.current
       })
       return
     }
@@ -87,7 +94,7 @@ export default function PointsMallScreen() {
     // 立即标记为正在加载
     isLoadingRef.current = true
     setLoadingMore(true)
-    
+
     const currentPage = currentPageRef.current
     console.log("📄 开始加载第", currentPage, "页")
 
@@ -95,6 +102,8 @@ export default function PointsMallScreen() {
       const res = await getMallList({
         page: currentPage.toString(),
         per_page: pageSize.toString(),
+        category: activeCategory,
+        redeemable_only: true,
       })
 
       console.log("✅ 第", currentPage, "页数据返回:", {
@@ -115,7 +124,7 @@ export default function PointsMallScreen() {
         const hasNext = res.pagination.has_next
         hasMoreRef.current = hasNext
         setHasMore(hasNext)
-        
+
         // 只有当有下一页时才增加页码
         if (hasNext) {
           currentPageRef.current = currentPage + 1
@@ -144,14 +153,14 @@ export default function PointsMallScreen() {
       console.log("🔄 切换分类:", index, categories[index])
       setActiveCategory(index)
       setProducts([])
-      
+
       // 重置所有分页相关状态和 ref
       setPageNum(1)
       setHasMore(true)
       currentPageRef.current = 1
       hasMoreRef.current = true
       isLoadingRef.current = false
-      
+
       // 由于重置了pageNum，需要在下一次渲染时调用getProducts
       setTimeout(() => getProducts(), 0)
     },
@@ -167,11 +176,6 @@ export default function PointsMallScreen() {
   const goToExchangeRecord = useCallback(() => {
     router.push("/points-mall/exchange-record")
   }, [router])
-
-  // 显示货币指南
-  const handleShowCurrencyGuide = useCallback(() => {
-    setShowCurrencyGuide(true)
-  }, [])
 
   // 关闭货币指南
   const handleCloseCurrencyGuide = useCallback(() => {
@@ -209,14 +213,14 @@ export default function PointsMallScreen() {
     // 刷新积分余额和商品列表
     fetchPointsBalance()
     setProducts([])
-    
+
     // 重置所有分页相关状态和 ref
     setPageNum(1)
     setHasMore(true)
     currentPageRef.current = 1
     hasMoreRef.current = true
     isLoadingRef.current = false
-    
+
     setTimeout(() => getProducts(), 0)
   }, [fetchPointsBalance, getProducts])
 
@@ -258,6 +262,15 @@ export default function PointsMallScreen() {
     }, [isInitialized, fetchPointsBalance]),
   )
 
+  const [showDailyCheckInOnAnswer, setShowDailyCheckInOnAnswer] = useState(false);
+  const [dailyCheckInPoints, setDailyCheckInPoints] = useState(0);
+  const dailyCheckInRef = useRef<DailyCheckInRef>(null);
+
+  // 显示货币指南
+  const handleShowCurrencyGuide = useCallback(() => {
+    setShowCurrencyGuide(true)
+  }, []);
+
   return (
     <LinearGradient
       colors={["#93abff", "#e4f4ff", "#ecf8ff", "#ffffff"]}
@@ -268,6 +281,51 @@ export default function PointsMallScreen() {
     >
       {/* 自定义状态栏 */}
       <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
+
+      {/* 每日打卡 */}
+      <DailyCheckIn
+        ref={dailyCheckInRef}
+        containerStyle={styles.dailyCheckIn}
+        onAnswer={(points: number) => {
+          setShowDailyCheckInOnAnswer(true);
+          setDailyCheckInPoints(points);
+        }}
+      />
+
+      {/* 每日打卡答题弹窗 */}
+      <DailyCheckInOnAnswer
+        visible={showDailyCheckInOnAnswer}
+        points={dailyCheckInPoints}
+        onClose={() => {
+          setShowDailyCheckInOnAnswer(false);
+          // 重新加载打卡列表
+          dailyCheckInRef.current?.loadWeekCheckInList();
+        }}
+      />
+
+      {/* 货币余额 */}
+      <CurrencyAmount
+        onPress={() => router.push("/points-mall/currency-record")}
+        style={styles.currencyAmountContainer}
+      />
+
+      {/* 货币指南浮动按钮 */}
+      <CurrencyGuideFloatingButton
+        onPress={handleShowCurrencyGuide}
+        style={styles.currencyGuideFloatingButtonContainer}
+      />
+
+      {/* 货币指南弹窗 */}
+      <CurrencyGuidePopup
+        visible={showCurrencyGuide}
+        onClose={handleCloseCurrencyGuide}
+      />
+
+      {/* 积分可兑商品列表 */}
+      <MultiCategoryProductList style={styles.multiCategoryProductListContainer} />
+
+      {/* 折扣商品窗口 */}
+      <DiscountedProductWindow style={styles.discountedProductWindowContainer} />
 
       {/* 顶部固定区域 */}
       <View style={styles.topSection}>
@@ -397,29 +455,7 @@ export default function PointsMallScreen() {
         productData={currentProduct}
         onClose={handleCloseOrderConfirm}
         onConfirm={handleOrderConfirmSuccess}
-      />
-
-      {/* 货币指南弹窗 */}
-      <CurrencyGuidePopup
-        visible={showCurrencyGuide}
-        onClose={handleCloseCurrencyGuide}
-      />
-
-      {/* 货币指南浮动按钮 */}
-      <TouchableOpacity
-        style={styles.currencyGuideButton}
-        onPress={handleShowCurrencyGuide}
-        activeOpacity={0.8}
-      >
-        <View style={styles.currencyGuideIconWrapper}>
-          <Image
-              source={require("../../../assets/images/currency-guide-icon.png")}
-              style={styles.currencyGuideIcon}
-              resizeMode="contain"
-/>
-        </View>
-  
-      </TouchableOpacity>
+      /> */}
     </LinearGradient>
   )
 }
@@ -427,8 +463,34 @@ export default function PointsMallScreen() {
 const styles = createStyles({
   pageContainer: {
     flex: 1,
-    width: "100%",
-    height: "100%",
+    width: "100%" as const,
+    height: "100%" as const,
+  },
+  currencyAmountContainer: {
+    position: "absolute" as const,
+    top: 45.703125, // 117
+    left: 31.25, // 80
+  },
+  currencyGuideFloatingButtonContainer: {
+    position: "absolute" as const,
+    top: 234.375, // 600
+    right: 18.359375, // 47
+    zIndex: 1000,
+  },
+  dailyCheckIn: {
+    position: "absolute" as const,
+    top: 80.859375, // 207
+    left: 31.25, // 80
+  },
+  multiCategoryProductListContainer: {
+    position: "absolute" as const,
+    top: 219.53125, // 562
+    left: 31.25, // 80
+  },
+  discountedProductWindowContainer: {
+    position: "absolute" as const,
+    top: 61.71875, // 158
+    left: 318.75, // 816
   },
   topSection: {
     // paddingHorizontal: 29,
@@ -603,7 +665,7 @@ const styles = createStyles({
     marginBottom: 2,
   },
   currencyGuideIcon: {
-     width: 60.9375,
+    width: 60.9375,
     height: 71.09375,
   },
   currencyGuideText: {

@@ -68,6 +68,8 @@ export interface PaginationInfo {
 export interface MallListParams {
   page: string
   per_page: string
+  category: number
+  redeemable_only: boolean
 }
 
 /**
@@ -82,6 +84,12 @@ export interface ProductItem {
   stock: number
   is_active: boolean
   image: string
+  heat: number
+}
+
+export interface CategoryItem {
+  id: number
+  name: string
 }
 
 /**
@@ -90,6 +98,8 @@ export interface ProductItem {
 export interface MallListResponse {
   items: ProductItem[]
   pagination: PaginationInfo
+  categories: CategoryItem[]
+  [property: string]: any;
 }
 
 /**
@@ -302,6 +312,44 @@ export interface Statistics {
   [property: string]: any;
 }
 
+export interface DiscountProductListData {
+  /**
+   * 折扣日是否开启，周六此字段会变成True
+   */
+  discount_day: boolean;
+  discount_products: DiscountProduct[];
+  [property: string]: any;
+}
+
+export interface DiscountProduct {
+  /**
+   * 商品描述
+   */
+  description: string;
+  /**
+   * 商品id
+   */
+  id: number;
+  /**
+   * 商品图片
+   */
+  image: null | string;
+  is_active: boolean;
+  /**
+   * 商品名称
+   */
+  name: string;
+  /**
+   * 商品所需价格，周六会有折扣
+   */
+  price: number;
+  /**
+   * 商品数量
+   */
+  stock: number;
+  [property: string]: any;
+}
+
 // ==================== API接口 ====================
 
 /**
@@ -417,8 +465,15 @@ export const getDailyCheckInExercise = () => {
 }
 
 /**
- * 添加积分
+ * 添加每日打卡积分
  */
 export const addDailydPoints = (params: { devices: string, points: string, "points_type": "daily" }) => {
   return post("/AppStart/Protected/add_points/", params)
+}
+
+/**
+ * 获取折扣商品列表
+ */
+export const getDiscountProductList = () => {
+  return post<DiscountProductListData>("/AppStart/Protected/discount_product_list/", {})
 }
