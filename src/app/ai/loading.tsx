@@ -34,16 +34,16 @@ const generateInitialHTML = () => {
     
     var webviewStartTime = Date.now();
   </script>
-  <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.16.9/katex.min.css" 
+  <link rel="stylesheet" href="file:///android_asset/katex/katex.min.css" 
     onload="if(typeof logToRN==='function'){var loadTime=Date.now();var elapsed=loadTime-webviewStartTime;logToRN('✅ KaTeX CSS 加载成功 ('+elapsed+'ms)');}else{var loadTime=Date.now();console.log('✅ KaTeX CSS 加载成功 ('+(loadTime-webviewStartTime)+'ms)');}" 
     onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ KaTeX CSS 加载失败 ('+elapsed+'ms)');}else{var errorTime=Date.now();console.error('❌ KaTeX CSS 加载失败 ('+(errorTime-webviewStartTime)+'ms)');}">
-  <script src="https://cdn.staticfile.org/KaTeX/0.16.9/katex.min.js" defer 
+  <script src="file:///android_asset/katex/katex.min.js" defer 
     onload="if(typeof logToRN==='function'){var loadTime=Date.now();var elapsed=loadTime-webviewStartTime;logToRN('✅ KaTeX JS 加载成功 ('+elapsed+'ms)');}else{var loadTime=Date.now();console.log('✅ KaTeX JS 加载成功 ('+(loadTime-webviewStartTime)+'ms)');}" 
     onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ KaTeX JS 加载失败 ('+elapsed+'ms)');}else{var errorTime=Date.now();console.error('❌ KaTeX JS 加载失败 ('+(errorTime-webviewStartTime)+'ms)');}"></script>
-  <script src="https://cdn.staticfile.org/KaTeX/0.16.9/contrib/auto-render.min.js" defer 
+  <script src="file:///android_asset/katex/auto-render.min.js" defer 
     onload="if(typeof logToRN==='function'){var loadTime=Date.now();var elapsed=loadTime-webviewStartTime;logToRN('✅ KaTeX auto-render 加载成功 ('+elapsed+'ms)');}else{var loadTime=Date.now();console.log('✅ KaTeX auto-render 加载成功 ('+(loadTime-webviewStartTime)+'ms)');}" 
     onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ KaTeX auto-render 加载失败 ('+elapsed+'ms)');}else{var errorTime=Date.now();console.error('❌ KaTeX auto-render 加载失败 ('+(errorTime-webviewStartTime)+'ms)');}"></script>
-  <script src="https://cdn.staticfile.org/marked/11.1.0/marked.min.js" defer 
+  <script src="file:///android_asset/katex/marked.min.js" defer 
     onload="if(typeof logToRN==='function'){var loadTime=Date.now();var elapsed=loadTime-webviewStartTime;logToRN('✅ Marked 加载成功 ('+elapsed+'ms)');}else{var loadTime=Date.now();console.log('✅ Marked 加载成功 ('+(loadTime-webviewStartTime)+'ms)');}" 
     onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ Marked 加载失败 ('+elapsed+'ms)');}else{var errorTime=Date.now();console.error('❌ Marked 加载失败 ('+(errorTime-webviewStartTime)+'ms)');}"></script>
     <style>

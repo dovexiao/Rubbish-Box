@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient"
 import { Ionicons } from "@expo/vector-icons"
 import Svg, { Circle, Text as SvgText } from "react-native-svg"
 import { useFocusEffect } from "expo-router"
+import * as Application from "expo-application"
 
 import { StatusBar } from "../../components/StatusBar"
 import { NavBar } from "../../components/NavBar"
@@ -48,6 +49,12 @@ export default function MyScreen() {
   })
   const [weeklyStudyData, setWeeklyStudyData] = useState<DailyStudyData[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
+  const [showVersion, setShowVersion] = useState(false)
+
+  // 获取应用版本号
+  const appVersion = useMemo(() => {
+    return Application.nativeApplicationVersion || "1.0.0"
+  }, [])
 
   // 预计算用户头像，避免重复计算
   const userAvatar = useMemo(() => {
@@ -493,6 +500,19 @@ export default function MyScreen() {
           </View>
         </View>
       </ScrollView>
+
+      {/* 版本号显示区域 - 右下角 */}
+      <TouchableOpacity
+        style={styles.versionTrigger}
+        onPress={() => setShowVersion(!showVersion)}
+        activeOpacity={0.7}
+      >
+        {showVersion && (
+          <View style={styles.versionContainer}>
+            <Text style={styles.versionText}>v{appVersion}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
     </LinearGradient>
   )
 }
@@ -831,5 +851,36 @@ const styles = createStyles({
   weeklyUnit: {
     fontSize: 7.8125,
     color: "#666",
+  },
+  // 版本号显示
+  versionTrigger: {
+    position: "absolute" as const,
+    bottom: 20,
+    right: 20,
+    minWidth: 60,
+    minHeight: 40,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    zIndex: 999,
+  },
+  versionContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 15.625,
+    paddingHorizontal: 15.625,
+    paddingVertical: 7.8125,
+    borderWidth: 1,
+    borderColor: "rgba(72, 145, 255, 0.3)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1.953 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.90625,
+    elevation: 2,
+    minWidth: 80,
+    alignItems: "center" as const,
+  },
+  versionText: {
+    fontSize: 11.71875,
+    color: "#4891FF",
+    fontWeight: "500" as const,
   },
 })

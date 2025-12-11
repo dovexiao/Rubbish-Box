@@ -100,5 +100,30 @@ class SystemSettingsModule(reactContext: ReactApplicationContext) :
             promise.reject("OPEN_ERROR", "打开声音设置失败: ${e.message}", e)
         }
     }
-}
 
+    /**
+     * 打开系统设置主页
+     */
+    @ReactMethod
+    fun openSystemSettings(promise: Promise) {
+        try {
+            val activity = currentActivity
+            if (activity == null) {
+                promise.reject("NO_ACTIVITY", "Activity不存在")
+                return
+            }
+
+            val intent = Intent(Settings.ACTION_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+
+            activity.startActivity(intent)
+            Log.d(TAG, "✅ 已打开系统设置主页")
+            promise.resolve(true)
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ 打开系统设置主页失败: ${e.message}", e)
+            promise.reject("OPEN_ERROR", "打开系统设置主页失败: ${e.message}", e)
+        }
+    }
+}

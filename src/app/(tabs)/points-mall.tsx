@@ -284,9 +284,10 @@ export default function PointsMallScreen() {
 
   return (
     <LinearGradient
-      colors={["#FFB991", "#FFECD5"]}
+      colors={["#93abff", "#e4f4ff", "#ecf8ff", "#ffffff"]}
+      locations={[-0.1128, 0.1494, 0.8474, 1.0586]}
       start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 1 }}
       style={styles.pageContainer}
     >
       {/* 自定义状态栏 */}
@@ -349,13 +350,15 @@ export default function PointsMallScreen() {
       <DiscountedProductWindow style={styles.discountedProductWindowContainer} />
 
       {/* 顶部固定区域 */}
-      {/* <View style={styles.topSection}>
+      <View style={styles.topSection}>
+        {/* 顶部货币区域 */}
         <LinearGradient
             colors={['#E7B500', '#FFE7CD', '#F7F7F7']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
         >
           <View style={styles.topCurrencySection}>
+            {/* 456货币卡片 */}
             <TouchableOpacity style={styles.currencyCard} onPress={goToPointsDetail}>
               <Image
                   source={require("../../../assets/images/coin.png")}
@@ -366,11 +369,15 @@ export default function PointsMallScreen() {
               <Text style={styles.currencyLabel}>货币</Text>
               <Ionicons name="chevron-forward" size={rpx(12)} color="rgba(255, 144, 0, 1)" style={styles.arrowIcon} />
             </TouchableOpacity>
+
+            {/* 兑换记录按钮 */}
             <TouchableOpacity style={styles.exchangeRecordBtn} onPress={goToExchangeRecord}>
               <Text style={styles.exchangeRecordText}>兑换记录</Text>
             </TouchableOpacity>
           </View>
         </LinearGradient>
+
+        {/* 分类导航 */}
         <View style={styles.categorySection}>
           {categories.map((category, index) => (
             <TouchableOpacity
@@ -388,10 +395,10 @@ export default function PointsMallScreen() {
             </TouchableOpacity>
           ))}
         </View>
-      </View> */}
+      </View>
 
       {/* 商品网格列表 */}
-      {/* <FlatList
+      <FlatList
         data={products}
         keyExtractor={(item, index) => `product-${item.id}-${index}`}
         numColumns={6}
@@ -412,6 +419,7 @@ export default function PointsMallScreen() {
             onPress={() => handleShowProductDetail(product.id)}
             activeOpacity={0.8}
           >
+            {/* 商品图片区域 */}
             <Image
               source={{
                 uri: product.image || "/static/images/product-placeholder.png",
@@ -419,6 +427,8 @@ export default function PointsMallScreen() {
               style={styles.productImage}
               resizeMode="cover"
             />
+
+            {/* 商品信息区域 */}
             <View style={styles.productInfoArea}>
               <Text style={styles.productName} numberOfLines={1}>
                 {product.name}
@@ -435,12 +445,15 @@ export default function PointsMallScreen() {
         )}
         ListFooterComponent={
           <>
+            {/* 加载状态 */}
             {loadingMore && (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="small" color="#666" />
                 <Text style={styles.loadingText}>正在加载...</Text>
               </View>
             )}
+
+            {/* 没有更多数据 */}
             {!hasMore && products.length > 0 && (
               <View style={styles.noMoreContainer}>
                 <Text style={styles.noMoreText}>没有更多商品了</Text>
@@ -448,18 +461,18 @@ export default function PointsMallScreen() {
             )}
           </>
         }
-      /> */}
+      />
 
       {/* 商品详情弹窗 */}
-      {/* <ProductDetailPopup
+      <ProductDetailPopup
         visible={showProductDetail}
         productId={selectedProductId}
         onClose={handleCloseProductDetail}
         onConfirm={handleProductDetailConfirm}
-      /> */}
+      />
 
       {/* 订单确认弹窗 */}
-      {/* <OrderConfirmPopup
+      <OrderConfirmPopup
         visible={showOrderConfirm}
         productData={currentProduct}
         onClose={handleCloseOrderConfirm}
@@ -641,9 +654,9 @@ const styles = createStyles({
     textDecorationLine: "line-through",
   },
   loadingContainer: {
-    flexDirection: "row" as const,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 12,
     gap: 8,
   },
@@ -652,9 +665,9 @@ const styles = createStyles({
     color: "#666",
   },
   noMoreContainer: {
-    flexDirection: "row" as const,
+    flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center" as const,
+    alignItems: "center",
     paddingVertical: 12,
   },
   noMoreText: {

@@ -17,6 +17,8 @@ import { Images } from "../../constants/Assets"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError, showWarning, showInfo } from "../../utils/toast"
 
+import { BrightnessSlider } from "../../components/BrightnessSlider"
+
 // 自定义Text组件，避免lint错误
 const Text = ({ children, style, ...props }: any) => {
   const { Text: RNText } = require("react-native")
@@ -391,6 +393,12 @@ const openVolumeSettings = async () => {
     router.push("/ranking")
   }
 
+  // 跳转到 WebSocket 测试页面
+  const goToWebSocketTest = () => {
+    console.log("🔌 跳转到 WebSocket 测试页面")
+    router.push("/examples/websocket-test")
+  }
+
   // 重新启动应用
   const handleRestartApp = () => {
     showDialog(
@@ -470,23 +478,28 @@ const openVolumeSettings = async () => {
   }
 
   // 打开系统设置（总设置页面）
-  // const openSystemSettings = async () => {
-  //   if (Platform.OS === "android") {
-  //     try {
-  //       // 使用IntentLauncher打开Android系统设置主页
-  //       const IntentLauncher = await import("expo-intent-launcher")
-  //       await IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.SETTINGS)
-  //       console.log("已打开系统设置")
-  //     } catch (error) {
-  //       console.error("打开系统设置失败:", error)
-  //       showError("无法打开系统设置")
-  //     }
-  //   } else if (Platform.OS === "ios") {
-  //     // iOS打开设置
-  //     const { Linking } = require("react-native")
-  //     Linking.openURL("app-settings:")
-  //   }
-  // }
+  const openSystemSettings = async () => {
+    if (Platform.OS === "android") {
+      try {
+        console.log("🔧 准备打开系统设置")
+        // 使用原生模块打开系统设置主页，确保每次都能成功
+        const { openSystemSettings } = await import("../../services/systemSettings")
+        await openSystemSettings()
+        console.log("✅ 已打开系统设置")
+      } catch (error) {
+        console.error("❌ 打开系统设置失败:", error)
+        showError("无法打开系统设置")
+      }
+    } else if (Platform.OS === "ios") {
+      // iOS打开设置
+      try {
+        await Linking.openURL("app-settings:")
+      } catch (error) {
+        console.error("❌ 打开系统设置失败:", error)
+        showError("无法打开系统设置")
+      }
+    }
+  }
 
 
   // 打开系统WiFi设置
@@ -636,7 +649,7 @@ const openVolumeSettings = async () => {
               </TouchableOpacity>
 
               {/* 系统设置 - 紧急逃生入口 */}
-              {/* <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
+              <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
                 <View style={styles.settingItemLeft}>
                   <View style={styles.settingIconContainer}>
                     <Ionicons name="settings" size={rpx(10.9)} color="#fff" />
@@ -646,7 +659,7 @@ const openVolumeSettings = async () => {
                 <Text style={styles.settingArrow}>
                   <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
                 </Text>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
 
               {/* WiFi设置 */}
               <TouchableOpacity style={styles.settingItem} onPress={openSystemWifiSettings}>
@@ -693,28 +706,10 @@ const openVolumeSettings = async () => {
             {/* 亮度调节 */}
             <View style={styles.sliderContainer}>
               <Text style={styles.sliderLabel}>亮度</Text>
-              {Platform.OS === "ios" ? (
-                <Slider
-                  style={styles.slider}
-                  minimumValue={0}
-                  maximumValue={100}
-                  value={brightness}
-                  onValueChange={onBrightnessChange}
-                  minimumTrackTintColor="#4891FF"
-                  maximumTrackTintColor="rgba(255,255,255,0.8)"
-                />
-              ) : (
-                <Slider
-                  style={styles.slider}
-                  minimumValue={0}
-                  maximumValue={100}
-                  value={brightness}
-                  onValueChange={onBrightnessChange}
-                  minimumTrackTintColor="#4891FF"
-                  maximumTrackTintColor="rgba(255,255,255,0.8)"
-                  thumbTintColor="#FFFFFF"
-                />
-              )}
+              <BrightnessSlider 
+                initialValue={brightness} 
+                style={styles.slider}
+              />
             </View>
           </View>
           </>
@@ -917,6 +912,15 @@ const openVolumeSettings = async () => {
           <Text>测试相机</Text>
         </TouchableOpacity> */}
 
+        {/* WebSocket 测试按钮 
+        <TouchableOpacity 
+          style={styles.wsTestButton} 
+          onPress={goToWebSocketTest}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.wsTestButtonText}>WS测试</Text>
+        </TouchableOpacity>
+ 。    */}
       </ImageBackground>
     </LinearGradient>
   )
@@ -1006,7 +1010,7 @@ const styles = createStyles({
   },
   settingsPanelTop: {
     width: 152.34735,
-    height: 128.216, // 增加高度以容纳新的"重启应用"选项
+    height: 162.216, // 增加高度以容纳新的"重启应用"选项
     borderRadius: 8.6,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     padding: 6.25,
@@ -1052,7 +1056,7 @@ const styles = createStyles({
   },
   sliderContainer: {
     width: 152.34735,
-    height: 39,
+    height: 49,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     borderRadius: 8.6,
     padding: 4.7,
@@ -1065,9 +1069,10 @@ const styles = createStyles({
     marginBottom: 5,
   },
   slider: {
-    width: 138.28125,
-    height: 20,
-    marginLeft: 0,
+    width: "100%",
+    height: 14.0625,
+    marginTop: 2,
+    borderRadius: 999, // 确保外部也是胶囊
   },
   sliderThumb: {
     width: 7.9125,
@@ -1488,6 +1493,28 @@ const styles = createStyles({
     elevation: 8,
     justifyContent: "center" as const,
     alignItems: "center" as const,
+  },
+  wsTestButton: {
+    position: "absolute" as const,
+    right: 26.5625,
+    top: 200,
+    width: 80,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(255, 152, 0, 0.9)",
+    shadowColor: "#FF9800",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    zIndex: 1000,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+  },
+  wsTestButtonText: {
+    fontSize: 12,
+    color: "#FFFFFF",
+    fontWeight: "600" as const,
   },
   testMathButtonContent: {
     flexDirection: "row" as const,
