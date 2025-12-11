@@ -20,6 +20,13 @@ export function setLoginModalRef(ref: typeof globalLoginModalRef) {
 }
 
 /**
+ * 获取全局登录弹窗引用
+ */
+export function getLoginModalRef() {
+  return globalLoginModalRef
+}
+
+/**
  * 检查用户是否已登录
  */
 export function isUserLoggedIn(): boolean {

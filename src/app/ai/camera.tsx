@@ -242,10 +242,13 @@ export default function CameraScreen() {
       console.log("🔐 准备上传照片，Token状态:", token ? `有效(${token.length}字符)` : "无Token")
 
       let batchId: string | null = null
+      const totalStartTime = Date.now() // 总上传开始时间
 
       // 逐个上传照片
       for (let i = 0; i < photos.length; i++) {
         const photo = photos[i]
+        const uploadStartTime = Date.now() // 单张照片上传开始时间
+        
         console.log(`📤 上传第 ${i + 1}/${photos.length} 张照片...`)
         setUploadProgress(`正在上传第 ${i + 1}/${photos.length} 张照片...`)
 
@@ -278,7 +281,11 @@ export default function CameraScreen() {
           timeout: 180000, // 180秒超时
         })
 
+        const uploadEndTime = Date.now() // 单张照片上传结束时间
+        const uploadDuration = uploadEndTime - uploadStartTime // 计算耗时
+        
         console.log("✅ 上传结果:", response.status, response.data)
+        console.log(`⏱️ 第 ${i + 1} 张照片上传耗时: ${uploadDuration}ms (${(uploadDuration / 1000).toFixed(2)}秒)`)
 
         if (response.status === 200) {
           const data = response.data
@@ -294,6 +301,12 @@ export default function CameraScreen() {
           throw new Error(`HTTP错误: ${response.status}`)
         }
       }
+
+      const totalEndTime = Date.now() // 总上传结束时间
+      const totalDuration = totalEndTime - totalStartTime // 计算总耗时
+      console.log(`✅ 全部 ${photos.length} 张照片上传完成`)
+      console.log(`⏱️ 总耗时: ${totalDuration}ms (${(totalDuration / 1000).toFixed(2)}秒)`)
+      console.log(`📊 平均每张耗时: ${(totalDuration / photos.length).toFixed(0)}ms (${(totalDuration / photos.length / 1000).toFixed(2)}秒)`)
 
       return batchId || ""
     } catch (error) {

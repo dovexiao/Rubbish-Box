@@ -67,3 +67,22 @@ export const openSoundSettings = async (): Promise<void> => {
   }
 }
 
+/**
+ * 打开系统设置主页
+ */
+export const openSystemSettings = async (): Promise<void> => {
+  if (Platform.OS !== 'android') {
+    throw new Error('仅支持 Android 平台')
+  }
+
+  if (!SystemSettingsModule) {
+    throw new Error('SystemSettingsModule 不可用')
+  }
+
+  try {
+    await SystemSettingsModule.openSystemSettings()
+  } catch (error) {
+    console.error('打开系统设置失败:', error)
+    throw error
+  }
+}

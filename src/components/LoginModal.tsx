@@ -378,51 +378,33 @@ export const LoginModal = React.memo(function LoginModal({
         onCancel?.()
       }}
     >
-      <View 
-        style={styles.modalOverlay}
-        onStartShouldSetResponder={() => {
-          console.log("🔐 LoginModal: 蒙版区域 - onStartShouldSetResponder 返回 true")
-          return true
-        }}
-        onResponderRelease={(e) => {
-          // 检查点击位置是否在内容区域外
-          const { pageX, pageY, target } = e.nativeEvent
-          console.log("🔐 LoginModal: 蒙版区域 - onResponderRelease", { pageX, pageY, target })
-          
-          // 如果点击的是蒙版本身（不是内容区域），则关闭
-          console.log("🔐 LoginModal: 点击蒙版，准备关闭弹窗")
+      <TouchableWithoutFeedback 
+        onPress={() => {
+          console.log("🔐 LoginModal: 点击蒙版，关闭弹窗")
           onCancel?.()
         }}
       >
-        <View
-          style={styles.keyboardView}
-          onStartShouldSetResponder={(e) => {
-            // 检查点击是否在内容卡片内
-            const { pageX, pageY } = e.nativeEvent
-            console.log("🔐 LoginModal: 内容区域 - onStartShouldSetResponder 检查", { pageX, pageY })
-            // 不拦截，让事件冒泡到蒙版
-            return false
-          }}
-          onMoveShouldSetResponder={() => {
-            // 不拦截移动事件
-            return false
-          }}
-        >
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1 }}
-        >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* 关闭按钮 */}
-            {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
-              <Ionicons name="close" size={24} color="#666" />
-            </TouchableOpacity> */}
+        <View style={styles.modalOverlay}>
+          <View style={styles.keyboardView}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ flex: 1 }}
+            >
+              <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+              >
+                {/* 关闭按钮 */}
+                {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
+                  <Ionicons name="close" size={24} color="#666" />
+                </TouchableOpacity> */}
 
-            {/* 原封不动的登录内容块 */}
-            <View style={styles.loginCard}>
+                {/* 原封不动的登录内容块 - 使用 TouchableWithoutFeedback 阻止点击穿透 */}
+                <TouchableWithoutFeedback onPress={() => {
+                  console.log("🔐 LoginModal: 点击内容卡片，不关闭弹窗")
+                  // 什么都不做，阻止事件传递到外层
+                }}>
+                  <View style={styles.loginCard}>
               <LinearGradient
                 colors={["#92DEFF", "#FFFFFF"]} // 上面蓝色，下面白色
                 locations={[0, 0.3515]} // 0%到55.15%的位置
@@ -465,9 +447,10 @@ export const LoginModal = React.memo(function LoginModal({
                   </View>
                 </View>
               </LinearGradient>
-            </View>
+                  </View>
+                </TouchableWithoutFeedback>
 
-            {/* 隐私政策弹窗 */}
+                {/* 隐私政策弹窗 */}
             {showPrivacyModal && (
               <View style={styles.privacyModalOverlay}>
                 <View style={styles.privacyModalContent}>
@@ -498,10 +481,11 @@ export const LoginModal = React.memo(function LoginModal({
                 </View>
               </View>
             )}
-          </ScrollView>
-        </KeyboardAvoidingView>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
 
       {/* 用户协议弹窗 */}
       <UserAgreementModal

@@ -35,6 +35,7 @@ class PostureMonitorService : Service() {
         private const val PREF_NAME = "PostureMonitorPrefs"
         private const val KEY_LAST_DATE = "last_date"
         private const val KEY_REWARD_ACCUMULATED = "reward_accumulated"
+        private const val KEY_REST_REMINDER_ACCUMULATED = "rest_reminder_accumulated"
         private const val KEY_GOOD_POSTURE = "good_posture"
         private const val KEY_SHOULDERS_TILTED = "shoulders_tilted"
         private const val KEY_HEAD_TILTED = "head_tilted"
@@ -42,7 +43,7 @@ class PostureMonitorService : Service() {
         
         // 时间常量
         private const val UPDATE_INTERVAL_SECONDS = 30 // 30秒更新一次前端
-         private const val REST_REMINDER_INTERVAL = 45 * 60 * 1000L // 45分钟休息提醒（毫秒）
+        private const val REST_REMINDER_SECONDS = 45 * 60 // 45分钟 = 2700秒
 
         private const val DETECTION_INTERVAL_SECONDS = 10 // Native每10秒检测一次
         private const val REWARD_INTERVAL_SECONDS = 10 * 60 // 10分钟 = 600秒
@@ -99,21 +100,13 @@ class PostureMonitorService : Service() {
     private var headNotUpSeconds = 0
     private var totalSeconds = 0
     
+    // 🎯 核心逻辑3：45分钟休息提醒计时器（秒）
+    private var restReminderAccumulatedSeconds = 0
+    
     // 辅助变量
     private var lastUpdateTime = 0L
     private var lastFrontendUpdateTime = 0L
     private var lastStatus = "detecting"
-    
-    // 45分钟休息提醒
-    private val restReminderHandler = android.os.Handler(android.os.Looper.getMainLooper())
-    private val restReminderRunnable = object : Runnable {
-        override fun run() {
-            Log.d(TAG, "⏰ 45分钟休息提醒")
-            sendRestReminderToJS()
-            // 继续下一次提醒
-            restReminderHandler.postDelayed(this, REST_REMINDER_INTERVAL)
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -183,12 +176,7 @@ class PostureMonitorService : Service() {
         // 初始化相机管理器
         initializeCameraManager()
         
-        // ⚠️ 先移除旧的定时器回调，防止重复启动
-        restReminderHandler.removeCallbacks(restReminderRunnable)
-        
-        // 启动45分钟休息提醒定时器
-        restReminderHandler.postDelayed(restReminderRunnable, REST_REMINDER_INTERVAL)
-        Log.d(TAG, "⏰ 已启动45分钟休息提醒定时器")
+        Log.d(TAG, "⏰ 45分钟休息提醒将基于实际学习时长累计")
         
         // 使用 START_NOT_STICKY：应用退出时不自动重启服务
         return START_NOT_STICKY
@@ -214,10 +202,6 @@ class PostureMonitorService : Service() {
         // 💾 保存统计数据
         saveStatistics()
         Log.d(TAG, "💾 已保存统计数据")
-        
-        // 停止休息提醒定时器
-        restReminderHandler.removeCallbacks(restReminderRunnable)
-        Log.d(TAG, "⏰ 已停止45分钟休息提醒定时器")
         
         // 停止相机
         try {
@@ -305,18 +289,22 @@ class PostureMonitorService : Service() {
                 "good" -> {
                     dailyGoodPostureSeconds += DETECTION_INTERVAL_SECONDS
                     rewardAccumulatedSeconds += DETECTION_INTERVAL_SECONDS // 所有有效状态都计入奖励
+                    restReminderAccumulatedSeconds += DETECTION_INTERVAL_SECONDS // 计入休息提醒
                 }
                 "shoulders_not_level" -> {
                     shouldersTiltedSeconds += DETECTION_INTERVAL_SECONDS
                     rewardAccumulatedSeconds += DETECTION_INTERVAL_SECONDS
+                    restReminderAccumulatedSeconds += DETECTION_INTERVAL_SECONDS
                 }
                 "head_not_centered" -> {
                     headTiltedSeconds += DETECTION_INTERVAL_SECONDS
                     rewardAccumulatedSeconds += DETECTION_INTERVAL_SECONDS
+                    restReminderAccumulatedSeconds += DETECTION_INTERVAL_SECONDS
                 }
                 "head_not_up" -> {
                     headNotUpSeconds += DETECTION_INTERVAL_SECONDS
                     rewardAccumulatedSeconds += DETECTION_INTERVAL_SECONDS
+                    restReminderAccumulatedSeconds += DETECTION_INTERVAL_SECONDS
                 }
                 "no_person", "detecting" -> {
                     // 检测不到人或检测中，不增加计数
@@ -330,7 +318,7 @@ class PostureMonitorService : Service() {
             // 💾 每次累加后保存数据
             saveStatistics()
             
-            Log.d(TAG, "📊 累计时间: total=${totalSeconds}s, reward=${rewardAccumulatedSeconds}s, status=${status}")
+            Log.d(TAG, "📊 累计时间: total=${totalSeconds}s, reward=${rewardAccumulatedSeconds}s, rest=${restReminderAccumulatedSeconds}s, status=${status}")
             
             // 🎯 核心逻辑1：检查10分钟奖励（600秒 = 60次检测）
             if (rewardAccumulatedSeconds >= REWARD_INTERVAL_SECONDS) {
@@ -341,7 +329,14 @@ class PostureMonitorService : Service() {
                 rewardAccumulatedSeconds = 0 // 重置奖励计时器，开始新一轮
             }
             
-            // 🎯 核心逻辑2：检查1小时上报（3600秒 = 360次检测）
+            // 🎯 核心逻辑2：检查45分钟休息提醒（2700秒）
+            if (restReminderAccumulatedSeconds >= REST_REMINDER_SECONDS) {
+                Log.d(TAG, "⏰ 达到45分钟休息提醒阈值: ${restReminderAccumulatedSeconds}秒")
+                sendRestReminderToJS()
+                restReminderAccumulatedSeconds = 0 // 重置休息提醒计时器，不影响其他统计数据
+            }
+            
+            // 🎯 核心逻辑3：检查1小时上报（3600秒 = 360次检测）
             if (totalSeconds >= HOUR_IN_SECONDS) {
                 Log.d(TAG, "⏰ 达到1小时阈值，上报数据并重置")
                 sendPostureStatusToJS(status, "updateTime")
@@ -368,7 +363,7 @@ class PostureMonitorService : Service() {
         headTiltedSeconds = 0
         headNotUpSeconds = 0
         totalSeconds = 0
-        // 注意：rewardAccumulatedSeconds 不重置，它独立计时
+        // 注意：rewardAccumulatedSeconds 和 restReminderAccumulatedSeconds 不重置，它们独立计时
     }
 
     /**
@@ -513,6 +508,7 @@ class PostureMonitorService : Service() {
             // 新的一天，重置所有数据
             Log.d(TAG, "📦 新的一天($today)，重置统计数据")
             rewardAccumulatedSeconds = 0
+            restReminderAccumulatedSeconds = 0
             dailyGoodPostureSeconds = 0
             shouldersTiltedSeconds = 0
             headTiltedSeconds = 0
@@ -523,6 +519,7 @@ class PostureMonitorService : Service() {
             prefs.edit()
                 .putString(KEY_LAST_DATE, today)
                 .putInt(KEY_REWARD_ACCUMULATED, 0)
+                .putInt(KEY_REST_REMINDER_ACCUMULATED, 0)
                 .putInt(KEY_GOOD_POSTURE, 0)
                 .putInt(KEY_SHOULDERS_TILTED, 0)
                 .putInt(KEY_HEAD_TILTED, 0)
@@ -531,6 +528,7 @@ class PostureMonitorService : Service() {
         } else {
             // 同一天，加载之前的数据
             rewardAccumulatedSeconds = prefs.getInt(KEY_REWARD_ACCUMULATED, 0)
+            restReminderAccumulatedSeconds = prefs.getInt(KEY_REST_REMINDER_ACCUMULATED, 0)
             dailyGoodPostureSeconds = prefs.getInt(KEY_GOOD_POSTURE, 0)
             shouldersTiltedSeconds = prefs.getInt(KEY_SHOULDERS_TILTED, 0)
             headTiltedSeconds = prefs.getInt(KEY_HEAD_TILTED, 0)
@@ -538,7 +536,7 @@ class PostureMonitorService : Service() {
             totalSeconds = dailyGoodPostureSeconds + shouldersTiltedSeconds + 
                           headTiltedSeconds + headNotUpSeconds
             
-            Log.d(TAG, "📦 加载统计数据: reward=${rewardAccumulatedSeconds}s, total=${totalSeconds}s")
+            Log.d(TAG, "📦 加载统计数据: reward=${rewardAccumulatedSeconds}s, rest=${restReminderAccumulatedSeconds}s, total=${totalSeconds}s")
         }
     }
     
@@ -552,6 +550,7 @@ class PostureMonitorService : Service() {
         prefs.edit()
             .putString(KEY_LAST_DATE, today)
             .putInt(KEY_REWARD_ACCUMULATED, rewardAccumulatedSeconds)
+            .putInt(KEY_REST_REMINDER_ACCUMULATED, restReminderAccumulatedSeconds)
             .putInt(KEY_GOOD_POSTURE, dailyGoodPostureSeconds)
             .putInt(KEY_SHOULDERS_TILTED, shouldersTiltedSeconds)
             .putInt(KEY_HEAD_TILTED, headTiltedSeconds)

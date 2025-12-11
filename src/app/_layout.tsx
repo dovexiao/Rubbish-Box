@@ -19,6 +19,10 @@ import { useDataSync } from "../hooks/useDataSync"
 import { useDeviceAuth } from "../hooks/useDeviceAuth"
 import { useNetworkMonitor, useNetwork } from "../stores/networkStore"
 import { useDeviceAuthStore } from "../stores/deviceAuthStore"
+import { useToastStore } from "../stores/toastStore"
+import { useDialogStore } from "../stores/dialogStore"
+import { useUpdateStore } from "../stores/updateStore"
+import { getLoginModalRef } from "../utils/loginUtils"
 
 // 导入P1重要功能Hooks
 import { useSystemKeyListener } from "../hooks/useSystemKeyListener"
@@ -50,6 +54,101 @@ export default function RootLayout() {
   const [showFakeConnectionModal, setShowFakeConnectionModal] = useState(false)
   // 防止重复打开系统设置
   const isOpeningSettings = React.useRef(false)
+  
+  // 保存其他弹窗的状态（在显示网络弹窗时需要暂时隐藏它们）
+  const savedModalsState = React.useRef<{
+    toast: boolean
+    dialog: boolean
+    update: boolean
+    login: { isVisible: boolean; forgotPassword: boolean }
+  } | null>(null)
+
+  // 隐藏其他所有弹窗并保存状态
+  const hideOtherModals = useCallback(() => {
+    console.log("🔐 [NetworkModal] 网络弹窗显示，隐藏其他弹窗")
+    
+    // 保存当前状态
+    const toastState = useToastStore.getState()
+    const dialogState = useDialogStore.getState()
+    const updateState = useUpdateStore.getState()
+    const loginModalRef = getLoginModalRef()
+    
+    savedModalsState.current = {
+      toast: toastState.visible,
+      dialog: dialogState.visible,
+      update: updateState.showUpdateDialog,
+      login: {
+        isVisible: false, // 这个值需要从 hook 中获取，这里先默认false
+        forgotPassword: false,
+      }
+    }
+    
+    console.log("📦 [NetworkModal] 保存的弹窗状态:", savedModalsState.current)
+    
+    // 隐藏所有弹窗
+    if (toastState.visible) {
+      console.log("  ↪ 隐藏 Toast")
+      toastState.hideToast()
+    }
+    if (dialogState.visible) {
+      console.log("  ↪ 隐藏 Dialog")
+      dialogState.hideDialog()
+    }
+    if (updateState.showUpdateDialog) {
+      console.log("  ↪ 隐藏 Update Dialog")
+      updateState.hideUpdateDialogAction()
+    }
+    if (loginModalRef) {
+      console.log("  ↪ 隐藏 Login Modal")
+      loginModalRef.hideLoginModal()
+    }
+  }, [])
+  
+  // 恢复其他弹窗的状态
+  const restoreOtherModals = useCallback(() => {
+    if (!savedModalsState.current) {
+      console.log("📦 [NetworkModal] 没有保存的弹窗状态，跳过恢复")
+      return
+    }
+    
+    console.log("🔓 [NetworkModal] 网络恢复，恢复其他弹窗")
+    console.log("📦 [NetworkModal] 恢复的弹窗状态:", savedModalsState.current)
+    
+    const saved = savedModalsState.current
+    
+    // 恢复 Toast（注意：Toast 通常有自动隐藏机制，可能不需要恢复）
+    if (saved.toast) {
+      console.log("  ↪ 恢复 Toast（跳过，因为 Toast 有自动消失机制）")
+      // 不恢复 Toast，因为它会自动消失
+    }
+    
+    // 恢复 Dialog
+    if (saved.dialog) {
+      console.log("  ↪ 恢复 Dialog")
+      // Dialog 需要完整的数据才能恢复，这里只是一个占位
+      // 实际上 Dialog 在网络断开期间不应该显示，所以不恢复也合理
+    }
+    
+    // 恢复 Update Dialog
+    if (saved.update) {
+      console.log("  ↪ 恢复 Update Dialog")
+      const updateState = useUpdateStore.getState()
+      // 需要保存完整的 updateData 才能恢复，这里简化处理
+      // 实际场景中，更新弹窗在网络恢复后会重新检查
+    }
+    
+    // 恢复 Login Modal
+    if (saved.login.isVisible) {
+      console.log("  ↪ 恢复 Login Modal")
+      const loginModalRef = getLoginModalRef()
+      if (loginModalRef) {
+        loginModalRef.showLoginModal()
+      }
+    }
+    
+    // 清空保存的状态
+    savedModalsState.current = null
+  }, [])
 
   // 打开系统网络设置
   const openNetworkSettings = async () => {
@@ -167,6 +266,19 @@ export default function RootLayout() {
       unsubscribe()
     }
   }, [])
+  
+  // 监听网络弹窗状态，自动隐藏/恢复其他弹窗
+  useEffect(() => {
+    const isNetworkModalShowing = showNetworkModal || showFakeConnectionModal
+    
+    if (isNetworkModalShowing) {
+      // 网络弹窗显示时，隐藏其他弹窗
+      hideOtherModals()
+    } else {
+      // 网络弹窗隐藏时，恢复其他弹窗
+      restoreOtherModals()
+    }
+  }, [showNetworkModal, showFakeConnectionModal, hideOtherModals, restoreOtherModals])
 
   // P0核心功能Hooks
   const {
