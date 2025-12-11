@@ -15,7 +15,7 @@ import {
   getMallList,
   type ProductItem,
   type PointsBalanceData,
-  type ProductDetailResponse,
+  // type ProductDetailResponse,
 } from "../../services/pointsMall"
 import DailyCheckIn, { DailyCheckInRef } from "@/components/points-mall/DailyCheckIn"
 import DailyCheckInOnAnswer from "@/components/points-mall/DailyCheckInonAnswer"
@@ -23,7 +23,7 @@ import CurrencyGuideFloatingButton from "@/components/points-mall/CurrencyGuideF
 import CurrencyAmount from "@/components/points-mall/CurrencyAmount"
 import MultiCategoryProductList from "@/components/points-mall/MultiCategoryProductList"
 import DiscountedProductWindow from "@/components/points-mall/DiscountedProductWindow"
-
+import NewProductDetailsPopup from "@/components/points-mall/NewProductDetailsPopup"
 
 export default function PointsMallScreen() {
   const router = useRouter()
@@ -33,10 +33,9 @@ export default function PointsMallScreen() {
   const [pageNum, setPageNum] = useState(1)
   const [loadingMore, setLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(true)
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(null)
   const [showProductDetail, setShowProductDetail] = useState(false)
   const [showOrderConfirm, setShowOrderConfirm] = useState(false)
-  const [currentProduct, setCurrentProduct] = useState<ProductDetailResponse | null>(null)
+  // const [currentProduct, setCurrentProduct] = useState<ProductDetailResponse | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
   const [showCurrencyGuide, setShowCurrencyGuide] = useState(false)
   const pageSize = 18
@@ -192,20 +191,20 @@ export default function PointsMallScreen() {
   const handleCloseProductDetail = useCallback(() => {
     setShowProductDetail(false)
     setSelectedProductId(null)
-    setCurrentProduct(null)
+    // setCurrentProduct(null)
   }, [])
 
   // 确认商品详情，显示订单确认弹窗
-  const handleProductDetailConfirm = useCallback((productData: ProductDetailResponse) => {
-    setCurrentProduct(productData)
-    setShowProductDetail(false)
-    setShowOrderConfirm(true)
-  }, [])
+  // const handleProductDetailConfirm = useCallback((productData: ProductDetailResponse) => {
+  //   setCurrentProduct(productData)
+  //   setShowProductDetail(false)
+  //   setShowOrderConfirm(true)
+  // }, [])
 
   // 关闭订单确认弹窗
   const handleCloseOrderConfirm = useCallback(() => {
     setShowOrderConfirm(false)
-    setCurrentProduct(null)
+    // setCurrentProduct(null)
   }, [])
 
   // 订单确认成功
@@ -265,11 +264,23 @@ export default function PointsMallScreen() {
   const [showDailyCheckInOnAnswer, setShowDailyCheckInOnAnswer] = useState(false);
   const [dailyCheckInPoints, setDailyCheckInPoints] = useState(0);
   const dailyCheckInRef = useRef<DailyCheckInRef>(null);
+  const [showNewProductDetails, setShowNewProductDetails] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null)
 
   // 显示货币指南
   const handleShowCurrencyGuide = useCallback(() => {
     setShowCurrencyGuide(true)
   }, []);
+
+  // 点击商品详情
+  const handleClickProductDetails = useCallback((id: number) => {
+    setSelectedProductId(id)
+    setShowNewProductDetails(true)
+  }, [])
+  
+  const handleCloseNewProductDetails = useCallback(() => {
+    setShowNewProductDetails(false)
+  }, [])
 
   return (
     <LinearGradient
@@ -320,8 +331,19 @@ export default function PointsMallScreen() {
         onClose={handleCloseCurrencyGuide}
       />
 
-      {/* 积分可兑商品列表 */}
-      <MultiCategoryProductList style={styles.multiCategoryProductListContainer} />
+      {/* 积分多类商品列表 */}
+      <MultiCategoryProductList
+        style={styles.multiCategoryProductListContainer}
+        onProductClick={handleClickProductDetails}
+      />
+
+      {/* 商品详情弹窗 */}
+      <NewProductDetailsPopup
+        visible={true}
+        // visible={showNewProductDetails}
+        productId={selectedProductId as number}
+        onClose={handleCloseNewProductDetails}
+      />
 
       {/* 折扣商品窗口 */}
       <DiscountedProductWindow style={styles.discountedProductWindowContainer} />

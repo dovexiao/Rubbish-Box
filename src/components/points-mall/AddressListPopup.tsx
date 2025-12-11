@@ -5,8 +5,7 @@ import { Ionicons } from "@expo/vector-icons"
 
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { getAddressList, deleteAddress, type AddressItem } from "../../services/pointsMall"
-import { AddAddressPopup } from "./AddAddressPopup"
-import { EditAddressPopup } from "./EditAddressPopup"
+// import { AddressEditorPopup } from "./AddressEditorPopup"
 
 interface AddressListPopupProps {
   visible: boolean
@@ -237,28 +236,28 @@ export function AddressListPopup({ visible, onClose, onSelect }: AddressListPopu
         {snackbarMessage}
       </Snackbar>
 
-      {/* 新增地址弹窗 */}
-      <AddAddressPopup
+      {/* 新增/编辑地址弹窗（已统一在 ShippingAddressView 使用，这里按要求注释） */}
+      {/*
+      <AddressEditorPopup
         visible={showAddAddressPopup}
         onClose={() => setShowAddAddressPopup(false)}
         onSuccess={handleAddSuccess}
       />
-
-      {/* 编辑地址弹窗 */}
-      <EditAddressPopup
+      <AddressEditorPopup
         visible={showEditAddressPopup}
-        addressData={editAddressData}
+        address={editAddressData}
         onClose={() => setShowEditAddressPopup(false)}
         onSuccess={handleEditSuccess}
       />
+      */}
     </Portal>
   )
 }
 
 const styles = createStyles({
   modal: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     padding: 20,
   },
   popup: {
@@ -266,32 +265,32 @@ const styles = createStyles({
     borderRadius: 9.765625,
     width: 464.84375,
     height: 362.890625,
-    overflow: "hidden",
+    overflow: "hidden" as const,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     height: 31.8125,
-    position: "relative",
+    position: "relative" as const,
     backgroundColor: "#fff",
   },
   backButton: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 10,
     padding: 5,
   },
   headerTitle: {
     fontSize: 11.71875,
-    fontWeight: "600",
+    fontWeight: "600" as const,
     color: "#333",
   },
   content: {
     flex: 1,
   },
   emptyState: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     height: 100,
   },
   emptyText: {
@@ -303,7 +302,7 @@ const styles = createStyles({
     backgroundColor: "#fff",
     paddingTop: 17.1875,
     paddingHorizontal: 17.1875,
-    position: "relative",
+    position: "relative" as const,
     marginTop: 3.125,
   },
   addressInfo: {
@@ -312,13 +311,13 @@ const styles = createStyles({
     borderBottomColor: "rgba(0, 0, 0, 0.05)",
   },
   namePhone: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     marginBottom: 8,
   },
   name: {
     fontSize: 11.71875,
-    fontWeight: "600",
+    fontWeight: "600" as const,
     color: "#333",
     marginRight: 15,
   },
@@ -332,15 +331,15 @@ const styles = createStyles({
     lineHeight: 16,
   },
   addressActions: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "flex-end" as const,
+    alignItems: "center" as const,
     height: 25,
     gap: 12,
   },
   actionItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: 4,
     paddingVertical: 4,
   },
@@ -354,12 +353,12 @@ const styles = createStyles({
   addButton: {
     backgroundColor: "#5C9DFF",
     height: 46.875,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   addButtonText: {
     fontSize: 14.0625,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     color: "#fff",
   },
   dialog: {

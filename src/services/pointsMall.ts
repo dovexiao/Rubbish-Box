@@ -121,7 +121,7 @@ export interface ProductImage {
 /**
  * 商品详情响应数据结构
  */
-export interface ProductDetailResponse {
+export interface ProductDetailData {
   id: number
   name: string
   description: string
@@ -377,7 +377,7 @@ export const getMallList = (params: MallListParams) => {
  * 获取商品详情
  */
 export const getProductDetail = (params: ProductDetailParams) => {
-  return post<ProductDetailResponse>("/AppStart/Protected/product_detail/", params)
+  return post<ProductDetailData>("/AppStart/Protected/product_detail/", params)
 }
 
 /**
