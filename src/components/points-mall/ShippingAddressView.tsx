@@ -1,10 +1,13 @@
-import React, { useState } from "react"
+import React, { useState, useCallback } from "react"
 import { View, Text, ScrollView, TouchableOpacity, Clipboard } from "react-native"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { LinearGradient } from "expo-linear-gradient"
-import { AddressItem } from "@/services/pointsMall"
+import { AddressItem, addAddress, updateAddress, deleteAddress, AddAddressParams, UpdateAddressParams, DeleteAddressParams } from "@/services/pointsMall"
 import { Ionicons } from "@expo/vector-icons"
 import AddressAddOrEditorPopup from "./AddressAddOrEditorPopup"
+import ConfirmDialog from "./ConfirmDialog"
+import { showError, showSuccess } from "@/utils/toast"
+import { Snackbar, Portal } from "react-native-paper"
 
 /**
  * 收货地址信息视图组件
@@ -18,27 +21,61 @@ interface ShippingAddressProps {
 
 const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSelectAddress, onRefresh }) => {
   const [addVisible, setAddVisible] = useState(false)
-  const [snackbarVisible, setSnackbarVisible] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState("")
-  const [snackbarType, setSnackbarType] = useState<"success" | "error" | "info">("info")
   const [address, setAddress] = useState<AddressItem | null>(null)
-
-  const showSnackbar = (message: string, type: "success" | "error" | "info" = "info") => {
-    setSnackbarMessage(message)
-    setSnackbarType(type)
-    setSnackbarVisible(true)
-  }
+  const [deleteVisible, setDeleteVisible] = useState(false)
+  const [deletingAddress, setDeletingAddress] = useState<AddressItem | null>(null)
 
   const copyAddress = (address: AddressItem) => {
-    const addressText = `${address.receiver_name} ${address.phone} ${address.province_text}${address.city_text}${address.district_text}${address.detail_address}`
+    const addressText = `${address.receiver_name} ${address.phone} ${address.province}${address.city}${address.district}${address.detail_address}`
 
     try {
       Clipboard.setString(addressText)
-      showSnackbar("地址已复制", "success")
+      showSuccess("地址已复制");
     } catch (_error) {
-      showSnackbar("复制失败", "error")
+      showError("复制失败");
     }
   }
+
+  // 新增收货地址
+  const handleAddAddress = useCallback(async (params: AddAddressParams) => {
+    try {
+      await addAddress(params)
+      showSuccess("新增地址成功")
+      onRefresh?.()
+      // setAddress(null)
+    } catch (error) {
+      console.error("新增地址失败:", error)
+      showError("新增地址失败，请重试")
+      throw error
+    }
+  }, [onRefresh])
+
+  // 修改收货地址
+  const handleUpdateAddress = useCallback(async (params: UpdateAddressParams) => {
+    try {
+      await updateAddress(params)
+      showSuccess("修改地址成功")
+      onRefresh?.()
+      // setAddress(null)
+    } catch (error) {
+      console.error("修改地址失败:", error)
+      showError("修改地址失败，请重试")
+      throw error
+    }
+  }, [onRefresh])
+
+  // 删除收货地址
+  const handleDeleteAddress = useCallback(async (addressId: number) => {
+    try {
+      await deleteAddress({ address_id: addressId })
+      showSuccess("删除地址成功")
+      onRefresh?.()
+      setAddress(null)
+    } catch (error) {
+      console.error("删除地址失败:", error)
+      showError("删除地址失败，请重试")
+    }
+  }, [onRefresh])
 
   return (
     <>
@@ -60,9 +97,9 @@ const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSe
                   <Text style={styles.phone}>{item.phone}</Text>
                 </View>
                 <Text style={styles.address} numberOfLines={2}>
-                  {item.province_text}
-                  {item.city_text}
-                  {item.district_text}
+                  {item.province}
+                  {item.city}
+                  {item.district}
                   {item.detail_address}
                 </Text>
               </View>
@@ -97,6 +134,8 @@ const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSe
                     onPress={(e) => {
                       e.stopPropagation()
                       // 弹出删除弹窗确认框
+                      setDeletingAddress(item)
+                      setDeleteVisible(true)
                     }}>
                     <Ionicons name="trash-outline" size={rpx(12.5)} color="#666" />
                     <Text style={styles.actionText}>删除</Text>
@@ -112,7 +151,7 @@ const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSe
           )}
         </ScrollView>
       </View>
-      {/* 下一步按钮 */}
+      {/* 新增按钮 */}
       <TouchableOpacity
         style={styles.nextButton}
         activeOpacity={0.8}
@@ -131,13 +170,38 @@ const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSe
         </LinearGradient>
       </TouchableOpacity>
 
+      {/* 新增/编辑地址弹窗 */}
       <AddressAddOrEditorPopup
         visible={addVisible}
         address={address}
         onClose={() => setAddVisible(false)}
-        onSuccess={() => {
-          setAddVisible(false)
+        onSuccess={() => { }}
+        onAddAddress={handleAddAddress}
+        onUpdateAddress={handleUpdateAddress}
+      />
+
+      {/* 删除地址确认弹窗 */}
+      <ConfirmDialog
+        visible={deleteVisible}
+        title="确认删除地址吗?"
+        // content="删除后将无法找回，请谨慎操作"
+        confirmText="确定"
+        cancelText="取消"
+        onClose={() => {
+          setDeleteVisible(false)
+          setDeletingAddress(null)
+        }}
+        onConfirm={() => {
+          if (deletingAddress) {
+            handleDeleteAddress(deletingAddress.id)
+          }
           onRefresh?.()
+          setDeleteVisible(false)
+          setDeletingAddress(null)
+        }}
+        onCancel={() => {
+          setDeleteVisible(false)
+          setDeletingAddress(null)
         }}
       />
     </>
@@ -185,7 +249,7 @@ const styles = createStyles({
     color: "#000000",
   },
   phone: {
-    width: 66.4063, // 170
+    width: 78.125, // 200
     fontFamily: "PingFang SC",
     fontWeight: "400" as const,
     fontSize: 11.7188, // 30

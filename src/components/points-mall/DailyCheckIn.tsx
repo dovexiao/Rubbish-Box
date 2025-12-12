@@ -71,7 +71,7 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
   // 暴露方法给父组件
   useImperativeHandle(ref, () => ({
     loadWeekCheckInList,
-  }), [loadWeekCheckInList]);
+  }), []);
 
   // 计算日期相对今日状态
   const calculateDateRelativeToTodayStatus = useCallback((index: number, isChecked: boolean) => { // 0 过期 1 未领取 2 已领取 3 未开始

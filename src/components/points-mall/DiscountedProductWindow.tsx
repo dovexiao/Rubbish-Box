@@ -36,6 +36,7 @@ const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style
             const items = res.discount_products ?? [];
             // 只取前5个
             setProducts(items.slice(0, 5));
+            console.log('获取折扣商品成功:', items.slice(0, 5));    
         } catch (error) {
             console.error('获取折扣商品失败:', error);
             showError('获取折扣商品失败，请重试');
@@ -73,8 +74,8 @@ const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style
                 ) : (
                     /* 商品容器 */
                     <View style={styles.productsContainer}>
-                        {products.map((item) => (
-                            <View key={item.id} style={styles.productItem}>
+                        {products.map((item, index) => (
+                            <View key={index} style={styles.productItem}>
                                 {/* 商品图片 */}
                                 <Image
                                     source={{ uri: item.image || '' }}

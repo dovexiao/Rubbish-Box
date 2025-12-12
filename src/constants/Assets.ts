@@ -164,6 +164,7 @@ export const Images = {
   pointsMallConfirmInventoryStatus: require("../../assets/images/points-mall/confirm-inventory-status.png"),
   pointsMallPayForGoods: require("../../assets/images/points-mall/pay-for-goods.png"),
   pointsMallDottedLine: require("../../assets/images/points-mall/dotted-line.png"),
+  pointsMallBoy: require("../../assets/images/points-mall/boy.png"),
 }
 
 // 统一导出
