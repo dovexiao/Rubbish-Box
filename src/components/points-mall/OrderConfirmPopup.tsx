@@ -12,7 +12,7 @@ import {
 } from "../../services/pointsMall"
 import { useUserStore } from "../../stores/userStore"
 import { AddressListPopup } from "./AddressListPopup"
-import { AddAddressPopup } from "./AddAddressPopup"
+// import { AddressEditorPopup } from "./AddressEditorPopup"
 import { EditAddressPopup } from "./EditAddressPopup"
 
 interface OrderConfirmPopupProps {
@@ -269,11 +269,13 @@ export function OrderConfirmPopup({
       />
 
       {/* 新增地址弹窗 */}
-      <AddAddressPopup
+      {/*
+      <AddressEditorPopup
         visible={showAddAddressPopup}
         onClose={() => setShowAddAddressPopup(false)}
         onSuccess={handleAddAddressSuccess}
       />
+      */}
 
       {/* 编辑地址弹窗 */}
       <EditAddressPopup

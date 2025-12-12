@@ -1,11 +1,11 @@
 import React, { memo, useCallback, useMemo, useRef } from "react"
-import { View, Text, Image, Pressable } from "react-native"
+import { View, Text, Image, Pressable, StyleSheet } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { LinearGradient } from "expo-linear-gradient"
 import { createStyles } from "../utils/rpxStyleSheet"
 import { Images } from "../constants/Assets"
-// import { BlurView } from "@react-native-community/blur";
+import { BlurView } from 'expo-blur';
 
 // 预计算Tab配置映射，避免每次find()操作
 const TAB_CONFIG_MAP = {
@@ -154,27 +154,34 @@ export const CustomTabBar = memo(function CustomTabBar({
           blurAmount={8}
           overlayColor="rgba(255, 255, 255, 0.5)"
         /> */}
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key]
-          const isFocused = state.index === index
+        <BlurView
+          intensity={70}
+          blurReductionFactor={8}
+          tint="light"
+          experimentalBlurMethod={'dimezisBlurView'}
+          style={[StyleSheet.absoluteFill, { flexDirection: 'row' }]}>
+          {state.routes.map((route, index) => {
+            const { options } = descriptors[route.key]
+            const isFocused = state.index === index
 
-          // 使用预计算的映射，避免find()操作
-          const tabConfig = TAB_CONFIG_MAP[route.name as keyof typeof TAB_CONFIG_MAP]
-          if (!tabConfig) return null
+            // 使用预计算的映射，避免find()操作
+            const tabConfig = TAB_CONFIG_MAP[route.name as keyof typeof TAB_CONFIG_MAP]
+            if (!tabConfig) return null
 
-          return (
-            <TabItem
-              key={route.key}
-              route={route}
-              index={index}
-              isFocused={isFocused}
-              tabConfig={tabConfig}
-              options={options}
-              onPress={() => handleTabPress(route, isFocused)}
-              onLongPress={() => handleTabLongPress(route)}
-            />
-          )
-        })}
+            return (
+              <TabItem
+                key={route.key}
+                route={route}
+                index={index}
+                isFocused={isFocused}
+                tabConfig={tabConfig}
+                options={options}
+                onPress={() => handleTabPress(route, isFocused)}
+                onLongPress={() => handleTabLongPress(route)}
+              />
+            )
+          })}
+        </BlurView>
       </View>
     </View>
   )

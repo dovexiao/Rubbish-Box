@@ -4,22 +4,21 @@ import { useState, useCallback, useEffect } from "react"
 import { Ionicons } from "@expo/vector-icons"
 
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
-import { addAddress } from "../../services/pointsMall"
+import { addAddress, updateAddress, type AddressItem } from "../../services/pointsMall"
 import CascadeSelector from "../CascadeSelector"
 import api from "../../services/api"
 
-interface AddAddressPopupProps {
+interface AddressEditorPopupProps {
   visible: boolean
   onClose: () => void
   onSuccess: () => void
+  address?: AddressItem | null
 }
 
 /**
- * 添加地址弹窗组件
- * 基于UniApp项目 /src/pages/pointsMall/components/AddAddressPopup.vue
- * 100%还原UniApp项目
+ * 收货地址新增/编辑弹窗
  */
-export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopupProps) {
+export function AddressEditorPopup({ visible, onClose, onSuccess, address }: AddressEditorPopupProps) {
   const [formData, setFormData] = useState({
     receiver_name: "",
     phone: "",
@@ -42,14 +41,13 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
     setSnackbarVisible(true)
   }
 
-  // 初始化地区数据
   const initRegionData = useCallback(async () => {
     try {
       const response = await api.post("/AppStart/AddressView/get_provinces/")
       const provinces = (response || []).map((item: any) => ({
         value: item.value,
         label: item.text,
-        children: [], // 懒加载子级数据
+        children: [],
       }))
       setRegionOptions(provinces)
     } catch (error) {
@@ -58,24 +56,18 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
     }
   }, [])
 
-  // 懒加载地区子级数据
   const loadRegionChildren = useCallback(async (parentValue: string, level: number) => {
     try {
       if (level === 0) {
-        // 加载城市数据
-        const cityRes: any = await api.post("/AppStart/AddressView/get_cities/", {
-          province_code: parentValue,
-        })
+        const cityRes: any = await api.post("/AppStart/AddressView/get_cities/", { province_code: parentValue })
         return (cityRes || []).map((item: any) => ({
           value: item.value,
           label: item.text,
-          children: [], // 懒加载区县数据
+          children: [],
         }))
-      } else if (level === 1) {
-        // 加载区县数据
-        const districtRes: any = await api.post("/AppStart/AddressView/get_counties/", {
-          city_code: parentValue,
-        })
+      }
+      if (level === 1) {
+        const districtRes: any = await api.post("/AppStart/AddressView/get_counties/", { city_code: parentValue })
         return (districtRes || []).map((item: any) => ({
           value: item.value,
           label: item.text,
@@ -88,27 +80,37 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
     }
   }, [])
 
-  // 处理地区选择
-  const handleRegionSelect = useCallback((values: string[], labels: string[]) => {
+  const handleRegionSelect = useCallback((values: string[]) => {
     setSelectedRegionValues(values)
-    
-    // 更新表单数据（保存编码到 province/city/district）
     if (values.length === 3) {
       setFormData(prev => ({
         ...prev,
-        province: values[0] || "", // 保存编码，而不是文本
+        province: values[0] || "",
         city: values[1] || "",
         district: values[2] || "",
       }))
     }
   }, [])
 
-  // 初始化地区数据
   useEffect(() => {
     if (visible) {
       initRegionData()
+      if (address) {
+        setFormData({
+          receiver_name: address.receiver_name || "",
+          phone: address.phone || "",
+          province: address.province || address.province_text || "",
+          city: address.city || address.city_text || "",
+          district: address.district || address.district_text || "",
+          detail_address: address.detail_address || "",
+        })
+        const regionCodes = [address.province, address.city, address.district].filter(Boolean) as string[]
+        setSelectedRegionValues(regionCodes)
+      } else {
+        resetForm()
+      }
     }
-  }, [visible, initRegionData])
+  }, [visible, initRegionData, address])
 
   const handleClose = () => {
     resetForm()
@@ -132,45 +134,41 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
       showSnackbar("请输入收货人姓名", "info")
       return false
     }
-
     if (!formData.phone.trim()) {
       showSnackbar("请输入手机号", "info")
       return false
     }
-
     const phoneRegex = /^1[3-9]\d{9}$/
     if (!phoneRegex.test(formData.phone)) {
       showSnackbar("请输入正确的手机号", "info")
       return false
     }
-
     if (!formData.province.trim() || !formData.city.trim() || !formData.district.trim()) {
       showSnackbar("请输入完整的地区信息", "info")
       return false
     }
-
     if (!formData.detail_address.trim()) {
       showSnackbar("请输入详细地址", "info")
       return false
     }
-
     return true
   }
 
   const saveAddress = async () => {
-    if (!validateForm()) {
-      return
-    }
-
+    if (!validateForm()) return
     try {
-      await addAddress(formData)
+      if (address?.id) {
+        await updateAddress({ address_id: address.id, ...formData } as any)
+      } else {
+        await addAddress(formData)
+      }
       showSnackbar("保存成功", "success")
       setTimeout(() => {
         onSuccess()
         handleClose()
-      }, 1000)
+      }, 500)
     } catch (_error) {
-      // showSnackbar("保存失败，请重试", "error")
+      showSnackbar("保存失败，请重试", "error")
     }
   }
 
@@ -178,17 +176,14 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
     <Portal>
       <Modal visible={visible} onDismiss={handleClose} contentContainerStyle={styles.modal}>
         <View style={styles.popup}>
-          {/* 头部 */}
           <View style={styles.header}>
             <TouchableOpacity onPress={handleClose} style={styles.backButton}>
               <Ionicons name="arrow-back" size={rpx(11.71875)} color="#333" />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>添加收货地址</Text>
+            <Text style={styles.headerTitle}>{address ? "编辑收货地址" : "添加收货地址"}</Text>
           </View>
 
-          {/* 内容区域 */}
           <ScrollView style={styles.content}>
-            {/* 收货人 */}
             <View style={styles.formCard}>
               <View style={styles.formItem}>
                 <Text style={styles.formLabel}>收货人</Text>
@@ -202,7 +197,6 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
               </View>
             </View>
 
-            {/* 手机号 */}
             <View style={styles.formCard}>
               <View style={styles.formItem}>
                 <Text style={styles.formLabel}>手机号</Text>
@@ -218,7 +212,6 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
               </View>
             </View>
 
-            {/* 地区选择 */}
             <View style={styles.formCard}>
               <View style={[styles.formItem, styles.regionSelectorItem]}>
                 <Text style={styles.formLabel}>地区</Text>
@@ -228,7 +221,7 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
                     selectedValues={selectedRegionValues}
                     onSelect={handleRegionSelect}
                     onLoadChildren={loadRegionChildren}
-                    placeholder="选择省/市/区"
+                    placeholder="点击选择"
                     title="选择地区"
                     style={styles.cascadeSelector}
                   />
@@ -236,7 +229,6 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
               </View>
             </View>
 
-            {/* 详细地址 */}
             <View style={styles.formCard}>
               <View style={[styles.formItem, styles.detailAddressItem]}>
                 <Text style={styles.formLabel}>详细地址</Text>
@@ -254,7 +246,6 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
             </View>
           </ScrollView>
 
-          {/* 底部按钮 */}
           <View style={styles.footer}>
             <TouchableOpacity style={styles.saveButton} onPress={saveAddress} activeOpacity={0.8}>
               <Text style={styles.saveButtonText}>保存</Text>
@@ -283,8 +274,8 @@ export function AddAddressPopup({ visible, onClose, onSuccess }: AddAddressPopup
 
 const styles = createStyles({
   modal: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     padding: 20,
   },
   popup: {
@@ -292,58 +283,58 @@ const styles = createStyles({
     borderRadius: 9.765625,
     width: 464.84375,
     height: 362.890625,
-    overflow: "hidden",
+    overflow: "hidden" as const,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     height: 31.8125,
-    position: "relative",
-    backgroundColor: "#fff",
+    position: "relative" as const,
+    backgroundColor: "#fff" as const,
   },
   backButton: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 10,
     padding: 5,
   },
   headerTitle: {
     fontSize: 11.71875,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: "600" as const,
+    color: "#333" as const,
   },
   content: {
     flex: 1,
   },
   formCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "#fff" as const,
     marginTop: 3.125,
   },
   formItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     paddingHorizontal: 17.1875,
     paddingVertical: 17.1875,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#f0f0f0" as const,
   },
   detailAddressItem: {
-    alignItems: "flex-start",
+    alignItems: "flex-start" as const,
   },
   regionSelectorItem: {
-    alignItems: "center",
+    alignItems: "center" as const,
   },
   formLabel: {
     flexShrink: 0,
     width: 70,
     fontSize: 11.71875,
-    color: "#333",
+    color: "#333" as const,
     lineHeight: 20,
   },
   formInput: {
     flex: 1,
     fontSize: 11.71875,
-    color: "#333",
+    color: "#333" as const,
     paddingLeft: 10,
     height: 30,
   },
@@ -352,35 +343,37 @@ const styles = createStyles({
     paddingLeft: 10,
   },
   cascadeSelector: {
-    backgroundColor: "transparent",
+    backgroundColor: "transparent" as const,
     borderWidth: 0,
     width: "100%",
     padding: 0,
     fontSize: 11.71875,
-    color: "#333",
+    color: "#333" as const,
   },
   formTextarea: {
     flex: 1,
     minHeight: 60,
     fontSize: 11.71875,
-    color: "#333",
+    color: "#333" as const,
     paddingLeft: 10,
     paddingTop: 4,
     lineHeight: 20,
-    textAlignVertical: "top",
+    textAlignVertical: "top" as const,
   },
   footer: {
-    backgroundColor: "#fff",
+    backgroundColor: "#fff" as const,
   },
   saveButton: {
-    backgroundColor: "#5C9DFF",
+    backgroundColor: "#5C9DFF" as const,
     height: 46.875,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   saveButtonText: {
     fontSize: 14.0625,
-    fontWeight: "bold",
-    color: "#fff",
+    fontWeight: "bold" as const,
+    color: "#fff" as const,
   },
 })
+
+

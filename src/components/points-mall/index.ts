@@ -6,7 +6,7 @@
 export { ProductDetailPopup } from "./ProductDetailPopup"
 export { OrderConfirmPopup } from "./OrderConfirmPopup"
 export { AddressListPopup } from "./AddressListPopup"
-export { AddAddressPopup } from "./AddAddressPopup"
+export { AddressEditorPopup } from "./AddressEditorPopup"
 export { EditAddressPopup } from "./EditAddressPopup"
 export { CurrencyGuidePopup } from "./CurrencyGuidePopup"
 

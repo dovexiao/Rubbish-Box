@@ -158,6 +158,12 @@ export const Images = {
   pointsMallDiscountedGoodsExchange: require("../../assets/images/points-mall/discounted-goods-exchange.png"),
   pointsMallDiscountedGoodsRibbons: require("../../assets/images/points-mall/discounted-goods-ribbons.png"),
   pointsMallDiscountProductBackgroundPaper: require("../../assets/images/points-mall/discount-product-background-paper.png"),
+  pointsMallMemberBadge: require("../../assets/images/points-mall/member-badge.png"),
+  pointsMallProductSelection: require("../../assets/images/points-mall/product-selection.png"),
+  pointsMallFillInShippingAddress: require("../../assets/images/points-mall/fill-in-the-shipping-address.png"),
+  pointsMallConfirmInventoryStatus: require("../../assets/images/points-mall/confirm-inventory-status.png"),
+  pointsMallPayForGoods: require("../../assets/images/points-mall/pay-for-goods.png"),
+  pointsMallDottedLine: require("../../assets/images/points-mall/dotted-line.png"),
 }
 
 // 统一导出

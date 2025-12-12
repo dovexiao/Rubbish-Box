@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 interface MultiCategoryProductListProps {
     pageSize?: number;
     style?: StyleProp<ViewStyle>;
+    onProductClick: (id: number) => void;
 }
 
 const DEFAULT_CATEGORIES = ['热点推荐', '积分可兑', '学习文具', '亲子娱乐'];
@@ -22,6 +23,7 @@ const TAB_STEP = TAB_WIDTH + TAB_GAP;
 const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
     pageSize = 18,
     style,
+    onProductClick,
 }) => {
     const [activeCategory, setActiveCategory] = useState(0);
     const [categories, setCategories] = useState<number[]>([]); // 商品有分类的分类ID列表
@@ -126,7 +128,9 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
         ({ item }: { item: ProductItem }) => {
             // const hasImage = !!item.image;
             return (
-                <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={() => {}}>
+                <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={() => {
+                    onProductClick(item.id)
+                }}>
                     {/* {hasImage ? (
                         <Image source={{ uri: item.image }} style={styles.productImage} resizeMode="cover" />
                     ) : (
@@ -134,6 +138,7 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                             <Ionicons name="image-outline" size={rpx(40)} color="#B0B0B0" />
                         </View>
                     )} */}
+                    {/* TODO  */}
                     <Image source={{ uri: item.image }} style={styles.productImage} resizeMode="cover" />
                     <Text style={styles.productName} numberOfLines={1}>
                         {item.name}
