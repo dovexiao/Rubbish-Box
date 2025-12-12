@@ -201,6 +201,11 @@ export default function MyScreen() {
     )
   }
 
+  // 处理绑定家长端
+  const handleBindParent = () => {
+    router.push("/bind-parent")
+  }
+
   // 处理编辑用户信息 - 跳转到编辑模式的完善信息页面
   const handleUserEditClick = () => {
     router.push("/complete-info?type=edit")
@@ -315,22 +320,41 @@ export default function MyScreen() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={handleSwitchAccount} activeOpacity={0.8}>
-            <LinearGradient
-              colors={["rgba(255, 255, 255, 0.14)", "#ffffff"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.switchAccountBtn}
-            >
-              <Ionicons
-                name="swap-horizontal"
-                size={rpx(12)}
-                color="rgba(13, 92, 245, 0.83)"
-                style={styles.switchIcon}
-              />
-              <Text style={styles.switchText}>切换账号</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity onPress={handleSwitchAccount} activeOpacity={0.8}>
+              <LinearGradient
+                colors={["rgba(255, 255, 255, 0.14)", "#ffffff"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.switchAccountBtn}
+              >
+                <Ionicons
+                  name="swap-horizontal"
+                  size={rpx(12)}
+                  color="rgba(13, 92, 245, 0.83)"
+                  style={styles.switchIcon}
+                />
+                <Text style={styles.switchText}>切换账号</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleBindParent} activeOpacity={0.8}>
+              <LinearGradient
+                colors={["rgba(255, 255, 255, 0.14)", "#ffffff"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.switchAccountBtn}
+              >
+                <Ionicons
+                  name="link"
+                  size={rpx(12)}
+                  color="rgba(13, 92, 245, 0.83)"
+                  style={styles.switchIcon}
+                />
+                <Text style={styles.switchText}>绑定家长</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
 
           {/* 测试更新功能按钮 - 仅开发环境显示 */}
           {__DEV__ && (
@@ -578,6 +602,10 @@ const styles = createStyles({
   userGrade: {
     fontSize: 8.375,
     color: "rgba(13, 92, 245, 0.7)",
+  },
+  actionButtons: {
+    flexDirection: "row" as const,
+    gap: 7.8125,
   },
   switchAccountBtn: {
     flexDirection: "row" as const,

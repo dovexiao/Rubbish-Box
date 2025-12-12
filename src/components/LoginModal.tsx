@@ -386,25 +386,25 @@ export const LoginModal = React.memo(function LoginModal({
       >
         <View style={styles.modalOverlay}>
           <View style={styles.keyboardView}>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={{ flex: 1 }}
-            >
-              <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-              >
-                {/* 关闭按钮 */}
-                {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
-                  <Ionicons name="close" size={24} color="#666" />
-                </TouchableOpacity> */}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* 关闭按钮 */}
+            {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
+              <Ionicons name="close" size={24} color="#666" />
+            </TouchableOpacity> */}
 
                 {/* 原封不动的登录内容块 - 使用 TouchableWithoutFeedback 阻止点击穿透 */}
                 <TouchableWithoutFeedback onPress={() => {
                   console.log("🔐 LoginModal: 点击内容卡片，不关闭弹窗")
                   // 什么都不做，阻止事件传递到外层
                 }}>
-                  <View style={styles.loginCard}>
+            <View style={styles.loginCard}>
               <LinearGradient
                 colors={["#92DEFF", "#FFFFFF"]} // 上面蓝色，下面白色
                 locations={[0, 0.3515]} // 0%到55.15%的位置
@@ -447,10 +447,10 @@ export const LoginModal = React.memo(function LoginModal({
                   </View>
                 </View>
               </LinearGradient>
-                  </View>
+            </View>
                 </TouchableWithoutFeedback>
 
-                {/* 隐私政策弹窗 */}
+            {/* 隐私政策弹窗 */}
             {showPrivacyModal && (
               <View style={styles.privacyModalOverlay}>
                 <View style={styles.privacyModalContent}>
@@ -481,10 +481,10 @@ export const LoginModal = React.memo(function LoginModal({
                 </View>
               </View>
             )}
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
         </View>
+      </View>
       </TouchableWithoutFeedback>
 
       {/* 用户协议弹窗 */}
@@ -508,19 +508,10 @@ export const LoginModal = React.memo(function LoginModal({
         console.log("🔐 设置密码成功")
         setShowSetPasswordModal(false)
         
-        // 设置密码成功后，检查是否需要完善信息
-        const user = userStore.user
-        console.log("🔍 设置密码成功后的用户信息:", user)
-        console.log("🔍 username_exists:", (user as any)?.username_exists)
-        
-        if ((user as any)?.username_exists === false) {
-          console.log("📝 设置密码成功 - 需要完善信息，跳转到完善信息页面")
-          onSuccess?.() // 关闭登录弹窗
-          router.replace("/complete-info")
-        } else {
-          console.log("🏠 设置密码成功 - 已完成所有流程，关闭弹窗")
-          onSuccess?.() // 关闭登录弹窗
-        }
+        // 设置密码成功后，跳转到绑定家长端页面
+        console.log("📱 设置密码成功 - 跳转到绑定家长端页面")
+        onSuccess?.() // 关闭登录弹窗
+        router.replace("/bind-parent")
       }}
       onCancel={() => {
         console.log("❌ 取消设置密码")
