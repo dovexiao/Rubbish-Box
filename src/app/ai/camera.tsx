@@ -283,7 +283,7 @@ export default function CameraScreen() {
 
         const uploadEndTime = Date.now() // 单张照片上传结束时间
         const uploadDuration = uploadEndTime - uploadStartTime // 计算耗时
-        
+
         console.log("✅ 上传结果:", response.status, response.data)
         console.log(`⏱️ 第 ${i + 1} 张照片上传耗时: ${uploadDuration}ms (${(uploadDuration / 1000).toFixed(2)}秒)`)
 

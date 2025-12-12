@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { LinearGradient } from "expo-linear-gradient"
 import { createStyles } from "../utils/rpxStyleSheet"
 import { Images } from "../constants/Assets"
-import { BlurView } from "@react-native-community/blur";
+// import { BlurView } from "@react-native-community/blur";
 
 // 预计算Tab配置映射，避免每次find()操作
 const TAB_CONFIG_MAP = {
@@ -148,12 +148,12 @@ export const CustomTabBar = memo(function CustomTabBar({
         // end={{ x: 1, y: 1 }}
         style={styles.tabbarContainer}
       >
-        <BlurView
+        {/* <BlurView
           style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
           blurType="light"
           blurAmount={8}
           overlayColor="rgba(255, 255, 255, 0.5)"
-        />
+        /> */}
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key]
           const isFocused = state.index === index
