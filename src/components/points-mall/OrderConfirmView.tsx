@@ -6,6 +6,7 @@ import { AddressItem, ProductDetailData } from "../../services/pointsMall"
 import Ionicons from "@expo/vector-icons/build/Ionicons"
 import { Images } from "../../constants/Assets"
 import ConfirmDialog from "./ConfirmDialog"
+import ImageWithPlaceholder from "../common/ImageWithPlaceholder"
 
 /**
  * 确认订单信息视图组件
@@ -57,11 +58,16 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
         {/* 商品信息 */}
         <View style={styles.productInfoCard}>
           <View style={styles.productInfoImageContainer}>
-            <Image
-              source={{ uri: product?.main_image }}
+            <ImageWithPlaceholder
+              source={{ uri: product?.main_image || '' }}
               style={styles.productInfoImage}
               resizeMode="cover"
             />
+            {/* <Image
+              source={{ uri: product?.main_image }}
+              style={styles.productInfoImage}
+              resizeMode="cover"
+            /> */}
           </View>
           <View style={styles.productInfoContent}>
             <Text style={styles.productInfoName} numberOfLines={2}>{product?.name}</Text>

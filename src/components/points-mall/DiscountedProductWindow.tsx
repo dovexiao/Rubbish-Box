@@ -1,17 +1,19 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { View, Text, Image, StyleProp, ViewStyle, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleProp, ViewStyle, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { createStyles, rpx } from '../../utils/rpxStyleSheet';
 import { Images } from '../../constants/Assets';
 import { getDiscountProductList, type DiscountProduct } from '../../services/pointsMall';
 import { useUserStore } from '../../stores/userStore';
 import { showError } from '../../utils/toast';
+import ImageWithPlaceholder from '../common/ImageWithPlaceholder';
 
 interface DiscountedProductWindowProps {
     style?: StyleProp<ViewStyle>;
+    onProductClick: (id: number) => void;
 }
 
-const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style }) => {
+const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style, onProductClick }) => {
     const [products, setProducts] = useState<DiscountProduct[]>([]);
     const [loading, setLoading] = useState(false);
     const loadingRef = useRef(false);
@@ -75,13 +77,18 @@ const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style
                     /* 商品容器 */
                     <View style={styles.productsContainer}>
                         {products.map((item, index) => (
-                            <View key={index} style={styles.productItem}>
+                            <TouchableOpacity key={index} style={styles.productItem} onPress={() => onProductClick(item.id)}>
                                 {/* 商品图片 */}
-                                <Image
+                                <ImageWithPlaceholder
                                     source={{ uri: item.image || '' }}
                                     style={styles.productImage}
                                     resizeMode="cover"
                                 />
+                                {/* <Image
+                                    source={{ uri: item.image || '' }}
+                                    style={styles.productImage}
+                                    resizeMode="cover"
+                                /> */}
                                 {/* 商品名称 */}
                                 <Text style={styles.productName} numberOfLines={1}>
                                     {item.name}
@@ -104,7 +111,7 @@ const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style
                                         resizeMode="contain"
                                     />
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         ))}
                     </View>
                 )}

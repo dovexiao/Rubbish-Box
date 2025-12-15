@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { Modal, View, Text, TouchableOpacity, TextInput, TouchableWithoutFeedback } from "react-native"
 import { createStyles } from "../../utils/rpxStyleSheet"
 import { type AddressItem, AddAddressParams, UpdateAddressParams } from "../../services/pointsMall"
-import RegionSelector from "./RegionSelector"
+import RegionSelector from "../common/RegionSelector"
 
 interface AddressAddOrEditorPopupProps {
     visible: boolean

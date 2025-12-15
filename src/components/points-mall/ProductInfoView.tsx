@@ -4,6 +4,7 @@ import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { Images } from "../../constants/Assets"
 import { LinearGradient } from "expo-linear-gradient"
 import { getProductDetail, ProductDetailData, PointsItem, ProductImage, AddressItem } from "../../services/pointsMall"
+import ImageWithPlaceholder from "../common/ImageWithPlaceholder"
 
 interface ProductInfoViewProps {
     product?: ProductDetailData | null
@@ -35,11 +36,16 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
     const renderImageItem = useCallback(
         ({ item }: { item: ProductImage }) => (
             <View style={styles.imagePageContainer}>
-                <Image
+                <ImageWithPlaceholder
                     source={{ uri: item.url }}
                     style={styles.detailImage}
                     resizeMode="cover"
                 />
+                {/* <Image
+                    source={{ uri: item.url }}
+                    style={styles.detailImage}
+                    resizeMode="cover"
+                /> */}
             </View>
         ),
         [],
@@ -197,6 +203,9 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
                         </View>
                     </View>
                 </View>
+
+                {/* 高度占位 */}
+                <View style={{ height: rpx(97.65625) }} />
             </ScrollView>
             {/* 下一步按钮 */}
             {onNext && (
@@ -400,7 +409,7 @@ const styles = createStyles({
         borderRadius: 7.8125, // 20
         paddingVertical: 10.9375, // 28
         paddingHorizontal: 15.625, // 40
-        marginBottom: 45.3125, // 116
+        // marginBottom: 45.3125, // 116
         backgroundColor: "#FFFFFF",
         gap: 12.5, // 32
     },

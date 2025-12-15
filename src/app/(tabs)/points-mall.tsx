@@ -1,29 +1,42 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react"
-import { View, Text, Image, ScrollView, FlatList, TouchableOpacity, ActivityIndicator } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
-import { useFocusEffect, useRouter } from "expo-router"
+import { 
+  View, 
+  // Text, 
+  // Image, 
+  ScrollView, 
+  // FlatList, 
+  // TouchableOpacity, 
+  // ActivityIndicator,
+} from "react-native"
+// import { Ionicons } from "@expo/vector-icons"
+// import { useFocusEffect, useRouter } from "expo-router"
+import { useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
-import { InteractionManager } from "react-native"
+// import { InteractionManager } from "react-native"
 
 import { StatusBar } from "../../components/StatusBar"
-import { ProductDetailPopup, OrderConfirmPopup, CurrencyGuidePopup } from "../../components/points-mall"
+// import { ProductDetailPopup, OrderConfirmPopup, CurrencyGuidePopup } from "../../components/points-mall"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
-import { showError } from "../../utils/toast"
-import { useUserStore } from "../../stores/userStore"
+// import { showError } from "../../utils/toast"
+// import { useUserStore } from "../../stores/userStore"
+// import {
+//   getPointsBalance,
+//   getMallList,
+//   type ProductItem,
+//   type PointsBalanceData,
+//   type ProductDetailData,
+// } from "../../services/pointsMall"
 import {
-  getPointsBalance,
-  getMallList,
-  type ProductItem,
-  type PointsBalanceData,
-  // type ProductDetailResponse,
-} from "../../services/pointsMall"
-import DailyCheckIn, { DailyCheckInRef } from "@/components/points-mall/DailyCheckIn"
-import DailyCheckInOnAnswer from "@/components/points-mall/DailyCheckInonAnswer"
-import CurrencyGuideFloatingButton from "@/components/points-mall/CurrencyGuideFloatingButton"
-import CurrencyAmount from "@/components/points-mall/CurrencyAmount"
-import MultiCategoryProductList from "@/components/points-mall/MultiCategoryProductList"
-import DiscountedProductWindow from "@/components/points-mall/DiscountedProductWindow"
-import NewProductDetailsPopup from "@/components/points-mall/NewProductDetailsPopup"
+    DailyCheckIn,
+    type DailyCheckInRef,
+    DailyCheckInOnAnswer,
+    CurrencyGuideFloatingButton,
+    CurrencyAmount,
+    MultiCategoryProductList,
+    DiscountedProductWindow,
+    NewProductDetailsPopup,
+    CurrencyGuidePopup,
+} from "@/components/points-mall"
 
 export default function PointsMallScreen() {
   const router = useRouter()
@@ -261,7 +274,7 @@ export default function PointsMallScreen() {
   const [showNewProductDetails, setShowNewProductDetails] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null)
   const [showCurrencyGuide, setShowCurrencyGuide] = useState(false)
-  
+
   // 控制滚动的手势切换
   const [scrollViewEnabled, setScrollViewEnabled] = useState(true)
   const scrollViewRef = useRef<ScrollView>(null)
@@ -293,10 +306,10 @@ export default function PointsMallScreen() {
     const scrollY = contentOffset.y
     const contentHeight = contentSize.height
     const scrollViewHeight = layoutMeasurement.height
-    
+
     // 判断是否滑到底部（允许1px误差）
     const isAtBottom = scrollY + scrollViewHeight >= contentHeight - 1
-    
+
     if (isAtBottom && scrollViewEnabled) {
       // 滑到底部，禁用 ScrollView，启用 FlatList
       setScrollViewEnabled(false)
@@ -310,7 +323,7 @@ export default function PointsMallScreen() {
   const handleFlatListScroll = useCallback((event: any) => {
     const { contentOffset } = event.nativeEvent
     const scrollY = contentOffset.y
-    
+
     // 判断是否滑到顶部（允许1px误差）
     if (scrollY <= 1 && !scrollViewEnabled) {
       // 滑到顶部，启用 ScrollView，禁用 FlatList
@@ -348,11 +361,11 @@ export default function PointsMallScreen() {
           />
           {/* 货币余额 */}
           <CurrencyAmount
-            onPress={() => router.push("/points-mall/currency-record")}
+            onPress={() => router.replace("/currency-record")}
             style={styles.currencyAmountContainer}
           />
           {/* 折扣商品窗口 */}
-          <DiscountedProductWindow style={styles.discountedProductWindowContainer} />
+          <DiscountedProductWindow style={styles.discountedProductWindowContainer} onProductClick={handleClickProductDetails} />
         </View>
 
         {/* 积分多类商品列表 */}
@@ -377,18 +390,6 @@ export default function PointsMallScreen() {
           }}
         />
 
-        {/* 货币指南浮动按钮 */}
-        <CurrencyGuideFloatingButton
-          onPress={handleShowCurrencyGuide}
-          style={styles.currencyGuideFloatingButtonContainer}
-        />
-
-        {/* 货币指南弹窗 */}
-        <CurrencyGuidePopup
-          visible={showCurrencyGuide}
-          onClose={handleCloseCurrencyGuide}
-        />
-
         {/* 商品详情弹窗 */}
         <NewProductDetailsPopup
           // visible={true}
@@ -397,6 +398,18 @@ export default function PointsMallScreen() {
           onClose={handleCloseNewProductDetails}
         />
       </ScrollView>
+
+      {/* 货币指南浮动按钮 */}
+      <CurrencyGuideFloatingButton
+        onPress={handleShowCurrencyGuide}
+        style={styles.currencyGuideFloatingButtonContainer}
+      />
+
+      {/* 货币指南弹窗 */}
+      <CurrencyGuidePopup
+        visible={showCurrencyGuide}
+        onClose={handleCloseCurrencyGuide}
+      />
     </LinearGradient>
   )
 }

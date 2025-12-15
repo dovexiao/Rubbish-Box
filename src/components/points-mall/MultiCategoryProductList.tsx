@@ -7,6 +7,7 @@ import { CategoryItem, getMallList, MallListParams, type ProductItem } from '../
 import { useUserStore } from '../../stores/userStore';
 import { showError } from '../../utils/toast';
 import { Ionicons } from '@expo/vector-icons';
+import ImageWithPlaceholder from '../common/ImageWithPlaceholder';
 
 interface MultiCategoryProductListProps {
     pageSize?: number;
@@ -143,7 +144,12 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                         </View>
                     )} */}
                     {/* TODO  */}
-                    <Image source={{ uri: item.image, cache: 'reload' }} style={styles.productImage} resizeMode="cover" />
+                    <ImageWithPlaceholder
+                        source={{ uri: item.image }}
+                        style={styles.productImage}
+                        resizeMode="cover"
+                    />
+                    {/* <Image source={{ uri: item.image, cache: 'reload' }} style={styles.productImage} resizeMode="cover" /> */}
                     <Text style={styles.productName} numberOfLines={1}>
                         {item.name}
                     </Text>
@@ -374,7 +380,9 @@ const styles = createStyles({
     noMoreContainer: {
         alignItems: 'center' as const,
         justifyContent: 'center' as const,
-        paddingVertical: 3.90635, // 10
+        // paddingVertical: 19.5313,
+        // paddingTop: 3.90625, // 10
+        paddingBottom: 27.34375, // 70
     },
     noMoreText: {
         fontSize: 8.984375, // 23
