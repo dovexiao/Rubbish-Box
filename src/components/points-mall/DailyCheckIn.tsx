@@ -140,7 +140,7 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
             const dateStatus = calculateDateRelativeToTodayStatus(index, item.checked);
             console.log('dateStatus2', dateStatus, index, item.checked);
             return (
-              <View style={[
+              <View key={index} style={[
                 styles.dailyCheckInListItem,
                 dateStatus === 0 && styles.dailyCheckInListItemExpired,
                 dateStatus === 1 && styles.dailyCheckInListItemToday,
