@@ -1,0 +1,41 @@
+{
+  "fileKey": "aOXO6Tsm5y360LANFiN3ha",
+  "fileUrl": "https://www.figma.com/design/aOXO6Tsm5y360LANFiN3ha/小褐同学",
+  "token": "figd_scE_J5fxUdaWxg-BVYl1tfbYnrjFKGjUXGvRegEF",
+  "designTokens": {
+    "colors": {
+      "primary": "#4891FF",
+      "secondary": "#93abff",
+      "background": "#ffffff",
+      "text": "#333333"
+    },
+    "typography": {
+      "fontFamily": "Space Grotesk",
+      "baseSize": 16,
+      "lineHeight": 1.5
+    },
+    "spacing": {
+      "base": 8,
+      "scale": [4, 8, 12, 16, 24, 32, 48, 64]
+    },
+    "breakpoints": {
+      "mobile": 375,
+      "tablet": 768,
+      "desktop": 1920
+    }
+  },
+  "components": {
+    "button": {
+      "height": 48,
+      "borderRadius": 8,
+      "padding": [12, 24]
+    },
+    "card": {
+      "borderRadius": 12,
+      "padding": 16,
+      "shadow": "0 2px 8px rgba(0,0,0,0.1)"
+    }
+  },
+  "notes": "在开发时，AI助手会参考这个配置文件中的设计规范"
+}
+
