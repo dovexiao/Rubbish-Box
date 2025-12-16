@@ -61,23 +61,23 @@ const GlobalLockScreen: React.FC<GlobalLockScreenProps> = ({
   const lockOpacity = useSharedValue(0)
 
   // 自动锁屏：未锁定状态下 10 秒后自动锁屏
-  // useEffect(() => {
-  //   if (!locked) {
-  //     timerRef.current && clearTimeout(timerRef.current)
-  //     timerRef.current = setTimeout(() => {
-  //       setLocked(true)
-  //     }, 10000)
-  //   } else if (timerRef.current) {
-  //     clearTimeout(timerRef.current)
-  //     timerRef.current = null
-  //   }
-  //   return () => {
-  //     if (timerRef.current) {
-  //       clearTimeout(timerRef.current)
-  //       timerRef.current = null
-  //     }
-  //   }
-  // }, [locked])
+  useEffect(() => {
+    if (!locked) {
+      timerRef.current && clearTimeout(timerRef.current)
+      timerRef.current = setTimeout(() => {
+        setLocked(true)
+      }, 10000)
+    } else if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [locked])
 
   useEffect(() => {
     if (locked) {
