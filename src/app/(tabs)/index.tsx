@@ -19,6 +19,7 @@ import { showError, showWarning, showInfo } from "../../utils/toast"
 
 import { BrightnessSlider } from "../../components/BrightnessSlider"
 
+
 // 自定义Text组件，避免lint错误
 const Text = ({ children, style, ...props }: any) => {
   const { Text: RNText } = require("react-native")
