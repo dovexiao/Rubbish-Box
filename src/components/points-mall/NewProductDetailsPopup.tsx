@@ -6,8 +6,8 @@ import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import ProductInfoView from "./ProductInfoView"
 import OrderConfirmView from "./OrderConfirmView"
 import ShippingAddressView from "./ShippingAddressView"
-import { AddressItem, getAddressList, getProductDetail, ProductDetailData } from "@/services/pointsMall"
-import { showError } from "@/utils/toast"
+import { AddressItem, getAddressList, getProductDetail, ProductDetailData, exchangeProduct } from "@/services/pointsMall"
+import { showError, showSuccess } from "@/utils/toast"
 
 interface NewProductDetailsPopupProps {
     visible: boolean
@@ -52,16 +52,17 @@ const NewProductDetailsPopup = ({ visible, productId, onClose }: NewProductDetai
         try {
             const result = await getAddressList()
             if (result && result.length > 0) {
-                setSelectedAddress(result[0])
+                // setSelectedAddress(result[0])
+                console.log('获取地址列表成功', result);
                 setAddressList(result)
             } else {
-                setSelectedAddress(null)
+                // setSelectedAddress(null)
                 setAddressList([])
             }
         } catch (error) {
             console.error("获取地址列表失败:", error)
             showError("获取收货地址信息失败，请重试")
-            setSelectedAddress(null)
+            // setSelectedAddress(null)
             setAddressList([])
         }
     }, [productId])
@@ -72,10 +73,38 @@ const NewProductDetailsPopup = ({ visible, productId, onClose }: NewProductDetai
         goBack()
     }
 
+    // 兑换商品
+    const handleExchangeProduct = useCallback(async () => {
+        if (!productDetail || !selectedAddress) {
+            showError("请选择商品和收货地址")
+            console.log("请选择商品和收货地址", productDetail, selectedAddress)
+            return
+        }
+
+        try {
+            await exchangeProduct({
+                product_id: productDetail.id.toString(),
+                address_id: selectedAddress.id.toString(),
+            })
+            // TODO: 兑换成功后，展示成功弹窗
+            showSuccess("兑换成功")
+            onClose()
+        } catch (error) {
+            console.error("兑换商品失败:", error)
+            showError(`兑换失败: ${error}`)
+        }
+    }, [productDetail, selectedAddress])
+
     useEffect(() => {
-        loadProductDetail();
-        loadAddressList();
-    }, [])
+        if (visible) {
+            loadProductDetail();
+            loadAddressList();
+        } else {
+            setProductDetail(null)
+            setSelectedAddress(null)
+            setAddressList([])
+        }
+    }, [visible])
 
     // 堆栈：存储视图索引，最后一个元素是当前显示的视图
     const [viewStack, setViewStack] = useState<number[]>([0])
@@ -212,9 +241,9 @@ const NewProductDetailsPopup = ({ visible, productId, onClose }: NewProductDetai
             case 0:
                 return <ProductInfoView product={productDetail} onNext={() => goNext(0)} />
             case 1:
-                return <OrderConfirmView product={productDetail} selectedAddress={selectedAddress} onNext={() => goNext(1)} />
+                return <OrderConfirmView product={productDetail} selectedAddress={selectedAddress} onNext={() => goNext(1)} onExchange={handleExchangeProduct} />
             case 2:
-                return <ShippingAddressView addressList={addressList} onSelectAddress={handleSelectAddress} onRefresh={() => loadAddressList()} />
+                return <ShippingAddressView addressList={addressList} onSelectAddress={handleSelectAddress} onRefresh={() => {loadAddressList(); setSelectedAddress(null)}} />
             default:
                 return null
         }

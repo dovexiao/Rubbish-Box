@@ -7,16 +7,19 @@ import { CategoryItem, getMallList, MallListParams, type ProductItem } from '../
 import { useUserStore } from '../../stores/userStore';
 import { showError } from '../../utils/toast';
 import { Ionicons } from '@expo/vector-icons';
+import ImageWithPlaceholder from '../common/ImageWithPlaceholder';
 
 interface MultiCategoryProductListProps {
     pageSize?: number;
     style?: StyleProp<ViewStyle>;
     onProductClick: (id: number) => void;
+    scrollEnabled?: boolean;
+    onScroll?: (event: any) => void;
 }
 
 const DEFAULT_CATEGORIES = ['热点推荐', '积分可兑', '学习文具', '亲子娱乐'];
 
-const TAB_WIDTH = 120;
+const TAB_WIDTH = 140;
 const TAB_GAP = 60;
 const TAB_STEP = TAB_WIDTH + TAB_GAP;
 
@@ -24,6 +27,8 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
     pageSize = 18,
     style,
     onProductClick,
+    scrollEnabled = true,
+    onScroll,
 }) => {
     const [activeCategory, setActiveCategory] = useState(0);
     const [categories, setCategories] = useState<number[]>([]); // 商品有分类的分类ID列表
@@ -139,7 +144,12 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                         </View>
                     )} */}
                     {/* TODO  */}
-                    <Image source={{ uri: item.image }} style={styles.productImage} resizeMode="cover" />
+                    <ImageWithPlaceholder
+                        source={{ uri: item.image }}
+                        style={styles.productImage}
+                        resizeMode="cover"
+                    />
+                    {/* <Image source={{ uri: item.image, cache: 'reload' }} style={styles.productImage} resizeMode="cover" /> */}
                     <Text style={styles.productName} numberOfLines={1}>
                         {item.name}
                     </Text>
@@ -190,6 +200,10 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                 columnWrapperStyle={styles.columnWrapper}
                 renderItem={renderItem}
                 showsVerticalScrollIndicator={false}
+                scrollEnabled={scrollEnabled}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
+                nestedScrollEnabled={true}
                 onEndReached={loadMore}
                 onEndReachedThreshold={0.4}
                 ListFooterComponent={
@@ -241,7 +255,7 @@ const styles = createStyles({
         gap: 23.4375, // 60
     },
     tabItem: {
-        width: 46.875, // 120
+        width: 54.6875, // 140
         height: 16.40625, // 42
         alignItems: 'center' as const,
         justifyContent: 'center' as const,
@@ -260,7 +274,7 @@ const styles = createStyles({
         bottom: 0,
         left: 6.640625, // 17
         height: 4.6875, // 12
-        width: 46.875, // 与 tabItem 同宽
+        width: 54.6875, // 与 tabItem 同宽
         backgroundColor: '#FF8C00',
         borderRadius: 3.90625, // 10
         marginTop: 3.125, // 8
@@ -366,7 +380,9 @@ const styles = createStyles({
     noMoreContainer: {
         alignItems: 'center' as const,
         justifyContent: 'center' as const,
-        paddingVertical: 7.8125, // 20
+        // paddingVertical: 19.5313,
+        // paddingTop: 3.90625, // 10
+        paddingBottom: 27.34375, // 70
     },
     noMoreText: {
         fontSize: 8.984375, // 23

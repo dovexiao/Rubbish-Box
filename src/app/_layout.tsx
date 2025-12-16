@@ -36,6 +36,8 @@ import RouteGuard from "../services/routeGuard"
 import { post } from "../services/api"
 import { LinearGradient } from "expo-linear-gradient"
 import { Images } from "../constants/Assets"
+import GlobalLockScreen from "../components/GlobalLockScreen"
+
 // 防止闪屏
 SplashScreen.preventAutoHideAsync()
 
@@ -576,7 +578,9 @@ export default function RootLayout() {
 
       <PaperProvider>
         <SafeAreaProvider>
-          <Slot />
+          <GlobalLockScreen>
+            <Slot />
+          </GlobalLockScreen>
           {/* 全局登录管理器 */}
           <GlobalLoginManager />
           {/* 全局更新对话框 */}

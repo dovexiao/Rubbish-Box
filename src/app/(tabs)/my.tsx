@@ -20,7 +20,6 @@ import { NavBar } from "../../components/NavBar"
 import { WeeklyStudyChart } from "../../components/WeeklyStudyChart"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { useUserStore } from "../../stores/userStore"
-import { useDeviceStatusStore } from "../../stores/deviceStatusStore"
 import { useUpdateManager } from "../../hooks/useUpdateManager"
 import { showSuccess, showError, showWarning, showInfo } from "../../utils/toast"
 import { showConfirm, showMessage } from "../../utils/dialog"
@@ -51,9 +50,6 @@ export default function MyScreen() {
   const [weeklyStudyData, setWeeklyStudyData] = useState<DailyStudyData[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
   const [showVersion, setShowVersion] = useState(false)
-
-  // 订阅设备绑定状态
-  const isBound = useDeviceStatusStore((state) => state.status?.bound ?? false)
 
   // 获取应用版本号
   const appVersion = useMemo(() => {
@@ -342,25 +338,22 @@ export default function MyScreen() {
               </LinearGradient>
             </TouchableOpacity>
 
-            {/* 绑定家长按钮 - 仅在未绑定时显示 */}
-            {!isBound && (
-              <TouchableOpacity onPress={handleBindParent} activeOpacity={0.8}>
-                <LinearGradient
-                  colors={["rgba(255, 255, 255, 0.14)", "#ffffff"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.switchAccountBtn}
-                >
-                  <Ionicons
-                    name="link"
-                    size={rpx(12)}
-                    color="rgba(13, 92, 245, 0.83)"
-                    style={styles.switchIcon}
-                  />
-                  <Text style={styles.switchText}>绑定家长</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity onPress={handleBindParent} activeOpacity={0.8}>
+              <LinearGradient
+                colors={["rgba(255, 255, 255, 0.14)", "#ffffff"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.switchAccountBtn}
+              >
+                <Ionicons
+                  name="link"
+                  size={rpx(12)}
+                  color="rgba(13, 92, 245, 0.83)"
+                  style={styles.switchIcon}
+                />
+                <Text style={styles.switchText}>绑定家长</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
 
           {/* 测试更新功能按钮 - 仅开发环境显示 */}

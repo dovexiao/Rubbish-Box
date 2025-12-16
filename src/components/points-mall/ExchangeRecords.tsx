@@ -5,6 +5,7 @@ import { createStyles, rpx } from '../../utils/rpxStyleSheet';
 import { getExchangeRecords, type ExchangeRecordItem, type ExchangeRecordsResponse } from '../../services/pointsMall';
 import { Images } from '../../constants/Assets';
 import { showError } from '../../utils/toast';
+import ImageWithPlaceholder from '../common/ImageWithPlaceholder';
 
 interface ExchangeRecordsProps {
     style?: ViewStyle;
@@ -88,11 +89,16 @@ const ExchangeRecords: React.FC<ExchangeRecordsProps> = ({ style }) => {
         ({ item }: { item: ExchangeRecordItem }) => (
             <View style={styles.recordItem}>
                 {/* 商品图 */}
-                <Image
+                <ImageWithPlaceholder
                     source={{ uri: item.image }}
                     style={styles.productImage}
                     resizeMode="cover"
                 />
+                {/* <Image
+                    source={{ uri: item.image }}
+                    style={styles.productImage}
+                    resizeMode="cover"
+                /> */}
                 {/* 内容容器 */}
                 <View style={styles.contentContainer}>
                     {/* 第一行：商品名称和订单状态 */}

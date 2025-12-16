@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { createStyles } from '../../utils/rpxStyleSheet';
 import { Images } from '../../constants/Assets';
 import { getDailyCheckInExercise, addDailydPoints, DailyCheckInExerciseData, Question, Statistics, Options } from '../../services/pointsMall';
-import { showError, showInfo } from '../../utils/toast';
+import { showError, showInfo, showSuccess } from '../../utils/toast';
 import { getDeviceCode, getDeviceInfoForAPI } from '../../utils/deviceInfo';
 
 
@@ -30,11 +30,12 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
     const getDailyCheckInExerciseData = useCallback(async () => {
         try {
             const data: DailyCheckInExerciseData = await getDailyCheckInExercise();
-            setQuestions(data.questions);
+            setQuestions(data.questions ?? []);
             console.log('获取每日打卡练习题数据成功', data);
         } catch (error: unknown) {
             console.error('获取每日打卡练习题数据失败:', error);
             showError('获取每日打卡练习题数据失败');
+            setQuestions([]);
         }
     }, []);
 
@@ -45,12 +46,12 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
         return;
     }, [currentQuestionIndex]);
 
-    const onPressRightButton = useCallback(() => {
+    const onPressRightButton = useCallback(async () => {
         if (questions && questions.length > 0 && currentQuestionIndex >= 0 && currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
         } else if (currentQuestionIndex === questions.length - 1) {
             // showInfo('已经是最后一题');
-            handleAddDailyPoints();
+            await handleAddDailyPoints();
             onClose?.();
         }
         return;
@@ -66,18 +67,20 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
                 "points_type": "daily"
             });
             console.log('添加每日打卡练习题积分成功');
+            showSuccess('打卡成功，获得积分：' + points.toString());
         } catch (error: unknown) {
             console.error('添加每日打卡练习题积分失败:', error);
             showError('添加每日打卡练习题积分失败');
         }
     }, [points]);
 
-
+    
     useEffect(() => {
-        console.log('DailyCheckInOnAnswer useEffect', visible);
-        getDailyCheckInExerciseData();
-    }, []);
-
+        if (visible) {
+            console.log('DailyCheckInOnAnswer useEffect', visible);
+            getDailyCheckInExerciseData();
+        }
+    }, [visible]);
 
     return (
         <Modal
@@ -157,11 +160,11 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
                                             const newAnswerOptions = [...answerOptions];
                                             if (newAnswerOptions[currentQuestionIndex] === '') {
                                                 newAnswerOptions[currentQuestionIndex] = 'A';
-                                            }
-                                            newAnswerOptions[currentQuestionIndex] = 'A';
-                                            setAnswerOptions(newAnswerOptions);
-                                            if (questions[currentQuestionIndex]?.correct_answer === 'A') {
-                                                setCorrectCount((prev) => prev + 1);
+                                                newAnswerOptions[currentQuestionIndex] = 'A';
+                                                setAnswerOptions(newAnswerOptions);
+                                                if (questions[currentQuestionIndex]?.correct_answer === 'A') {
+                                                    setCorrectCount((prev) => prev + 1);
+                                                }
                                             }
                                         }}
                                         activeOpacity={0.8}>
@@ -183,11 +186,11 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
                                             const newAnswerOptions = [...answerOptions];
                                             if (newAnswerOptions[currentQuestionIndex] === '') {
                                                 newAnswerOptions[currentQuestionIndex] = 'B';
-                                            }
-                                            newAnswerOptions[currentQuestionIndex] = 'B';
-                                            setAnswerOptions(newAnswerOptions);
-                                            if (questions[currentQuestionIndex]?.correct_answer === 'B') {
-                                                setCorrectCount((prev) => prev + 1);
+                                                newAnswerOptions[currentQuestionIndex] = 'B';
+                                                setAnswerOptions(newAnswerOptions);
+                                                if (questions[currentQuestionIndex]?.correct_answer === 'B') {
+                                                    setCorrectCount((prev) => prev + 1);
+                                                }
                                             }
                                         }}
                                         activeOpacity={0.8}>
@@ -208,11 +211,11 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
                                             const newAnswerOptions = [...answerOptions];
                                             if (newAnswerOptions[currentQuestionIndex] === '') {
                                                 newAnswerOptions[currentQuestionIndex] = 'C';
-                                            }
-                                            newAnswerOptions[currentQuestionIndex] = 'C';
-                                            setAnswerOptions(newAnswerOptions);
-                                            if (questions[currentQuestionIndex]?.correct_answer === 'C') {
-                                                setCorrectCount((prev) => prev + 1);
+                                                newAnswerOptions[currentQuestionIndex] = 'C';
+                                                setAnswerOptions(newAnswerOptions);
+                                                if (questions[currentQuestionIndex]?.correct_answer === 'C') {
+                                                    setCorrectCount((prev) => prev + 1);
+                                                }
                                             }
                                         }}
                                         activeOpacity={0.8}>
@@ -233,11 +236,11 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
                                             const newAnswerOptions = [...answerOptions];
                                             if (newAnswerOptions[currentQuestionIndex] === '') {
                                                 newAnswerOptions[currentQuestionIndex] = 'D';
-                                            }
-                                            newAnswerOptions[currentQuestionIndex] = 'D';
-                                            setAnswerOptions(newAnswerOptions);
-                                            if (questions[currentQuestionIndex]?.correct_answer === 'D') {
-                                                setCorrectCount((prev) => prev + 1);
+                                                newAnswerOptions[currentQuestionIndex] = 'D';
+                                                setAnswerOptions(newAnswerOptions);
+                                                if (questions[currentQuestionIndex]?.correct_answer === 'D') {
+                                                    setCorrectCount((prev) => prev + 1);
+                                                }
                                             }
                                         }}
                                         activeOpacity={0.8}>
@@ -440,7 +443,7 @@ const styles = createStyles({
         borderRadius: 6.5703125, // 16.82px
         backgroundColor: '#F2F4DF' as const,
         flexDirection: 'row' as const,
-        justifyContent: 'space-evenly' as const,
+        justifyContent: 'flex-start' as const,
         alignItems: 'center' as const,
         borderWidth: 1.5625, // 4
         borderColor: 'transparent' as const,
@@ -456,20 +459,23 @@ const styles = createStyles({
     optionsItemIcon: {
         width: 25, // 64
         height: 25, // 64
-        // marginLeft: 6.25, // 16
-        // marginRight: 7.8125, // 20
+        marginLeft: 6.25, // 16
+        marginRight: 6.25, // 16
     },
     optionsItemText: {
+        // width: 51.5625, // 132
+        flex: 1,
         fontFamily: 'PingFang SC',
         fontWeight: '500' as const,
         fontSize: 10.9375, // 28
-        lineHeight: 21.875, // 56
+        lineHeight: 12.5, // 32
         color: '#37861C',
     },
     optionsItemStatusIcon: {
         width: 15.625, // 40
         height: 15.625, // 40
-        // marginLeft: 7.8125, // 20
+        marginLeft: 6.25, // 16
+        marginRight: 6.25, // 16
     },
     buttonContainer: {
         position: 'absolute' as const,

@@ -71,7 +71,7 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
   // 暴露方法给父组件
   useImperativeHandle(ref, () => ({
     loadWeekCheckInList,
-  }), [loadWeekCheckInList]);
+  }), []);
 
   // 计算日期相对今日状态
   const calculateDateRelativeToTodayStatus = useCallback((index: number, isChecked: boolean) => { // 0 过期 1 未领取 2 已领取 3 未开始
@@ -140,7 +140,7 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
             const dateStatus = calculateDateRelativeToTodayStatus(index, item.checked);
             console.log('dateStatus2', dateStatus, index, item.checked);
             return (
-              <View style={[
+              <View key={index} style={[
                 styles.dailyCheckInListItem,
                 dateStatus === 0 && styles.dailyCheckInListItemExpired,
                 dateStatus === 1 && styles.dailyCheckInListItemToday,
@@ -192,9 +192,11 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
         onPress={() => {
           if (todayInfo?.index !== null && todayInfo?.isChecked === false) {
             onAnswer(rewardPointsList[weekCheckInList.findIndex(item => item.is_today) ?? 0]);
-          } else if (todayInfo && todayInfo.index && todayInfo.isChecked) {
+          } else if (todayInfo && typeof todayInfo.index === 'number' && todayInfo.index >= 0 && todayInfo.isChecked) {
+            console.log('今日已打卡', todayInfo);
             showInfo('今日已打卡');
           } else {
+            console.log('无法打卡', todayInfo);
             showInfo('无法打卡');
           }
         }}

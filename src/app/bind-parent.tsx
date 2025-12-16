@@ -15,9 +15,6 @@ import { StatusBar } from "../components/StatusBar"
 import { createStyles, rpx } from "../utils/rpxStyleSheet"
 import { getBindQRCode, checkBindStatus, type BindDeviceResponse } from "../services/bind"
 import { showError, showSuccess } from "../utils/toast"
-import { NavBar } from "../components/NavBar"
-import { ConfirmDialog } from "../components/ConfirmDialog"
-import { useDeviceStatusStore } from "../stores/deviceStatusStore"
 
 /**
  * 绑定家长端小程序页面
@@ -27,32 +24,20 @@ export default function BindParentScreen() {
   const [loading, setLoading] = useState(true)
   const [bindData, setBindData] = useState<BindDeviceResponse | null>(null)
   const [countdown, setCountdown] = useState(300) // 5分钟倒计时
-  
-  // 弹窗状态
-  const [dialogVisible, setDialogVisible] = useState(false)
-  const [dialogMessage, setDialogMessage] = useState("")
-
+  const [checking, setChecking] = useState(false)
+  const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const hasNavigatedRef = useRef(false) // 防止重复跳转
-  
-  // 订阅 WebSocket 推送的绑定状态
-  const isBound = useDeviceStatusStore((state) => state.status?.bound ?? false)
 
   // 获取绑定二维码
   const fetchBindQRCode = async () => {
     try {
       setLoading(true)
-      const response = await getBindQRCode()
+      const data = await getBindQRCode()
+      setBindData(data)
+      setCountdown(data.expiresIn || 300)
       
-      // 如果已经绑定过了，弹窗提示并返回上一页
-      if (response.bound === true) {
-        setDialogMessage("该设备已经绑定过了")
-        setDialogVisible(true)
-        return
-      }
-      
-      setBindData(response.data)
-      setCountdown(response.data.expiresIn || 300)
+      // 开始轮询检查绑定状态
+      startCheckingBindStatus(data.bindCode)
       
       // 开始倒计时
       startCountdown()
@@ -64,11 +49,50 @@ export default function BindParentScreen() {
         stack: error?.stack,
       })
       showError(error.message || "获取二维码失败")
+      // 失败后返回上一页
+      // setTimeout(() => {
+      //   router.back()
+      // }, 1500)
     } finally {
       setLoading(false)
     }
   }
 
+  // 开始轮询检查绑定状态
+  const startCheckingBindStatus = (bindCode: string) => {
+    // 清除旧的轮询
+    if (checkIntervalRef.current) {
+      clearInterval(checkIntervalRef.current)
+    }
+
+    // 每3秒检查一次
+    checkIntervalRef.current = setInterval(async () => {
+      try {
+        setChecking(true)
+        const result = await checkBindStatus(bindCode)
+        
+        if (result.success && result.bound) {
+          // 绑定成功
+          stopChecking()
+          showSuccess("绑定成功")
+          
+          // 延迟跳转到首页
+          setTimeout(() => {
+            router.replace("/(tabs)")
+          }, 1500)
+        }
+      } catch (error: any) {
+        console.error("❌ checkBindStatus poll error", {
+          message: error?.message,
+          status: error?.status,
+          data: error?.data,
+          stack: error?.stack,
+        })
+      } finally {
+        setChecking(false)
+      }
+    }, 3000)
+  }
 
   // 开始倒计时
   const startCountdown = () => {
@@ -80,8 +104,8 @@ export default function BindParentScreen() {
     countdownIntervalRef.current = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          // 倒计时结束
-          stopCountdown()
+          // 倒计时结束，停止检查
+          stopChecking()
           return 0
         }
         return prev - 1
@@ -89,54 +113,42 @@ export default function BindParentScreen() {
     }, 1000)
   }
 
-  // 停止倒计时
-  const stopCountdown = () => {
+  // 停止检查
+  const stopChecking = () => {
+    if (checkIntervalRef.current) {
+      clearInterval(checkIntervalRef.current)
+      checkIntervalRef.current = null
+    }
     if (countdownIntervalRef.current) {
       clearInterval(countdownIntervalRef.current)
       countdownIntervalRef.current = null
     }
   }
 
-  // 确认弹窗处理
-  const handleConfirmDialog = () => {
-    setDialogVisible(false)
-    router.back()
-  }
-
   // 刷新二维码
   const handleRefresh = () => {
-    stopCountdown()
+    stopChecking()
     fetchBindQRCode()
+  }
+
+  // 跳过绑定，直接进入首页
+  const handleSkip = () => {
+    stopChecking()
+    router.replace("/(tabs)")
   }
 
   // 返回首页
   const handleBack = () => {
-    stopCountdown()
-    if (router.canGoBack()) {
-      router.back()
-    } else {
-      router.replace("/(tabs)")
-    }
+    stopChecking()
+    router.replace("/(tabs)")
   }
 
-  // 监听 WebSocket 推送的绑定状态
-  useEffect(() => {
-    if (isBound && !hasNavigatedRef.current && !loading) {
-      console.log("🎉 检测到设备已绑定，准备跳转...")
-      hasNavigatedRef.current = true // 防止重复跳转
-      
-      // 停止倒计时
-      stopCountdown()
-      
-      // 显示成功提示
-      showSuccess("绑定成功")
-      
-      // 延迟跳转到首页
-      setTimeout(() => {
-        router.replace("/(tabs)")
-      }, 1500)
-    }
-  }, [isBound, loading])
+  // 格式化倒计时
+  const formatCountdown = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, "0")}`
+  }
 
   // 组件挂载时获取二维码
   useEffect(() => {
@@ -144,7 +156,7 @@ export default function BindParentScreen() {
 
     // 组件卸载时清理
     return () => {
-      stopCountdown()
+      stopChecking()
     }
   }, [])
 
@@ -159,11 +171,23 @@ export default function BindParentScreen() {
       <StatusBar theme="dark" />
 
       {/* 标题栏 */}
-      <NavBar 
-        title="扫码绑定" 
-        leftArrow={true} 
-        onBackPress={handleBack} 
-      />
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleBack}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="home" size={rpx(20)} color="#4891FF" />
+        </TouchableOpacity>
+        <Text style={styles.title}>绑定家长端</Text>
+        <TouchableOpacity
+          style={styles.skipButton}
+          onPress={handleSkip}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.skipText}>跳过</Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -177,78 +201,104 @@ export default function BindParentScreen() {
           </View>
         ) : (
           <View style={styles.content}>
-             {/* 大卡片容器 */}
-             <View style={styles.bigCard}>
-                {/* 步骤一 */}
-                <View style={styles.stepRow}>
-                  <View style={styles.stepInfo}>
-                    <View style={styles.stepHeader}>
-                      <Text style={styles.stepNumber}>01</Text>
-                      <Text style={styles.stepTitle}>
-                        打开微信“扫一扫”登录“小褐同学家长端”小程序
-                      </Text>
-                    </View>
-                    <Text style={styles.stepSubtitle}>进入小程序手机号进行验证登录~</Text>
-                  </View>
-                  <View style={styles.qrCodeWrapper}>
-                    {/* 小程序码占位 */}
-                    <View style={styles.qrCodePlaceholder}>
-                        <Ionicons name="qr-code" size={rpx(60)} color="#4891FF" />
-                        <Text style={styles.placeholderText}>小程序码</Text>
-                    </View>
-                  </View>
+            {/* 小程序码占位 - 固定图片 */}
+            <View style={styles.miniProgramSection}>
+              <Text style={styles.stepNumber}>01</Text>
+              <View style={styles.stepContent}>
+                <Text style={styles.stepTitle}>
+                  打开微信"扫一扫"登录"小褐同学家长端"小程序
+                </Text>
+                <Text style={styles.stepSubtitle}>进入小程序手机号进行验证登录~</Text>
+              </View>
+              <View style={styles.qrCodeWrapper}>
+                {/* 这里放一个占位的小程序码图片 */}
+                <View style={styles.qrCodePlaceholder}>
+                  <Ionicons name="qr-code" size={rpx(80)} color="#4891FF" />
+                  <Text style={styles.placeholderText}>小程序码</Text>
                 </View>
+              </View>
+            </View>
 
-                {/* 步骤二 */}
-                <View style={[styles.stepRow, styles.stepRowMargin]}>
-                  <View style={styles.stepInfo}>
-                    <View style={styles.stepHeader}>
-                      <Text style={styles.stepNumber}>02</Text>
-                      <Text style={styles.stepTitle}>登录后扫描下方二维码进行绑定</Text>
-                    </View>
-                    <Text style={styles.stepSubtitle}>
-                      小程序点击主页「绑定设备」按钮，扫描下方二维码完成设备绑定
-                    </Text>
-                  </View>
-                  
-                  <View style={styles.qrCodeWrapper}>
-                    {bindData ? (
-                      <View style={styles.qrCodeContainer}>
-                         {countdown > 0 ? (
-                            <Image
-                              source={{ uri: bindData.qrCode }}
-                              style={styles.qrCodeImage}
-                              resizeMode="contain"
-                            />
-                         ) : (
-                            <TouchableOpacity onPress={handleRefresh} style={styles.expiredOverlay}>
-                               <Ionicons name="refresh" size={rpx(24)} color="#fff" />
-                               <Text style={styles.expiredText}>点击刷新</Text>
-                            </TouchableOpacity>
-                         )}
-                      </View>
+            {/* 绑定二维码 */}
+            <View style={styles.bindSection}>
+              <Text style={styles.stepNumber}>02</Text>
+              <View style={styles.stepContent}>
+                <Text style={styles.stepTitle}>登录后扫描下方二维码进行绑定</Text>
+                <Text style={styles.stepSubtitle}>
+                  小程序点击主页「绑定设备」按钮，扫描下方二维码完成设备绑定
+                </Text>
+              </View>
+              
+              {bindData && (
+                <View style={styles.qrCodeSection}>
+                  <View style={styles.qrCodeCard}>
+                    {countdown > 0 ? (
+                      <>
+                        <Image
+                          source={{ uri: bindData.qrCode }}
+                          style={styles.qrCodeImage}
+                          resizeMode="contain"
+                        />
+                        <View style={styles.qrCodeInfo}>
+                          <View style={styles.deviceInfo}>
+                            <Text style={styles.deviceTypeText}>
+                              {bindData.deviceTypeName}
+                            </Text>
+                            <Text style={styles.bindCodeText}>
+                              绑定码：{bindData.bindCode}
+                            </Text>
+                          </View>
+                          <View style={styles.countdownContainer}>
+                            <Ionicons name="time-outline" size={rpx(14)} color="#666" />
+                            <Text style={styles.countdownText}>
+                              有效期：{formatCountdown(countdown)}
+                            </Text>
+                          </View>
+                        </View>
+                        {checking && (
+                          <View style={styles.checkingOverlay}>
+                            <ActivityIndicator size="small" color="#4891FF" />
+                            <Text style={styles.checkingText}>检查绑定状态...</Text>
+                          </View>
+                        )}
+                      </>
                     ) : (
-                      <View style={styles.qrCodePlaceholder}>
-                        <ActivityIndicator size="small" color="#999" />
+                      <View style={styles.expiredContainer}>
+                        <Ionicons name="alert-circle-outline" size={rpx(40)} color="#999" />
+                        <Text style={styles.expiredText}>二维码已过期</Text>
+                        <TouchableOpacity
+                          style={styles.refreshButton}
+                          onPress={handleRefresh}
+                          activeOpacity={0.7}
+                        >
+                          <Ionicons name="refresh" size={rpx(16)} color="#fff" />
+                          <Text style={styles.refreshButtonText}>刷新二维码</Text>
+                        </TouchableOpacity>
                       </View>
                     )}
                   </View>
                 </View>
-             </View>
+              )}
+            </View>
+
+            {/* 提示信息 */}
+            <View style={styles.tipsContainer}>
+              <View style={styles.tipRow}>
+                <Ionicons name="information-circle" size={rpx(14)} color="#4891FF" />
+                <Text style={styles.tipText}>
+                  绑定后，家长可通过小程序查看孩子的学习数据
+                </Text>
+              </View>
+              <View style={styles.tipRow}>
+                <Ionicons name="information-circle" size={rpx(14)} color="#4891FF" />
+                <Text style={styles.tipText}>
+                  一个设备可以绑定多个家长账号
+                </Text>
+              </View>
+            </View>
           </View>
         )}
       </ScrollView>
-
-      {/* 确认弹窗 */}
-      <ConfirmDialog
-        visible={dialogVisible}
-        title="提示"
-        message={dialogMessage}
-        confirmText="确定"
-        cancelText="" // 隐藏取消按钮
-        onConfirm={handleConfirmDialog}
-        onCancel={() => {}} // 空函数，实际上不会显示取消按钮
-      />
     </LinearGradient>
   )
 }
@@ -257,15 +307,43 @@ const styles = createStyles({
   container: {
     flex: 1,
     width: "100%" as const,
+    minWidth: 750,
+  },
+  header: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
+    paddingHorizontal: 29,
+    paddingTop: 38.625,
+    paddingBottom: 15.625,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderRadius: 20,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold" as const,
+    color: "#333",
+  },
+  skipButton: {
+    paddingHorizontal: 15.625,
+    paddingVertical: 7.8125,
+  },
+  skipText: {
+    fontSize: 14,
+    color: "#4891FF",
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 100,
-    paddingTop: 10,
+    paddingHorizontal: 29,
     paddingBottom: 40,
-    alignItems: 'center' as const,
   },
   loadingContainer: {
     flex: 1,
@@ -274,118 +352,180 @@ const styles = createStyles({
     paddingTop: 100,
   },
   loadingText: {
-    marginTop: 5.625,
-    fontSize: 9.375,
+    marginTop: 15.625,
+    fontSize: 14,
     color: "#666",
   },
   content: {
-    width: '100%' as const,
-    maxWidth: 600,
-    alignItems: 'center' as const,
+    gap: 31.25,
   },
-  bigCard: {
-    backgroundColor: "rgba(215, 236, 255, 0.6)",
-    borderRadius: 20,
-    padding: 10,
-    width: '100%' as const,
-  },
-  stepRow: {
-    flexDirection: 'row' as const,
-    justifyContent: 'space-between' as const,
-    alignItems: 'center' as const,
-    minHeight: 120,
-  },
-  stepRowMargin: {
-    marginTop: 0,
-  },
-  stepInfo: {
-    flex: 1,
-    paddingRight: 20,
-    justifyContent: 'center' as const,
-  },
-  stepHeader: {
-    flexDirection: 'row' as const,
-    alignItems: 'flex-start' as const,
-    marginBottom: 10,
+  // 小程序码部分
+  miniProgramSection: {
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
+    borderRadius: 15.625,
+    padding: 23.4375,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.8)",
   },
   stepNumber: {
-    backgroundColor: '#4891FF',
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold' as const,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginRight: 10,
-    overflow: 'hidden' as const,
-    marginTop: 2, // 微调垂直对齐
+    fontSize: 16,
+    fontWeight: "bold" as const,
+    color: "#4891FF",
+    backgroundColor: "rgba(72, 145, 255, 0.1)",
+    width: 35,
+    height: 35,
+    lineHeight: 35,
+    textAlign: "center" as const,
+    borderRadius: 17.5,
+    marginBottom: 15.625,
+  },
+  stepContent: {
+    marginBottom: 23.4375,
   },
   stepTitle: {
-    fontSize: 16,
-    fontWeight: 'bold' as const,
+    fontSize: 15.625,
+    fontWeight: "bold" as const,
     color: "#333",
-    flex: 1,
-    lineHeight: 24,
+    marginBottom: 7.8125,
   },
   stepSubtitle: {
-    fontSize: 12,
-    color: '#666',
-    lineHeight: 18,
-    marginTop: 5,
-    paddingLeft: 45, // 对齐到标题下方
+    fontSize: 12.5,
+    color: "#666",
+    lineHeight: 20,
   },
   qrCodeWrapper: {
-    width: 100,
-    height: 100,
-    backgroundColor: '#fff',
-    padding: 8,
-    borderRadius: 12,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  qrCodeContainer: {
-    width: '100%' as const,
-    height: '100%' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    borderRadius: 8,
-    overflow: 'hidden' as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    paddingVertical: 23.4375,
   },
   qrCodePlaceholder: {
-    width: '100%' as const,
-    height: '100%' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
-  },
-  qrCodeImage: {
-    width: '100%' as const,
-    height: '100%' as const,
+    width: 100,
+    height: 100,
+    backgroundColor: "#fff",
+    borderRadius: 15.625,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    borderWidth: 2,
+    borderColor: "#E5E5E5",
+    borderStyle: "dashed" as const,
   },
   placeholderText: {
-    fontSize: 10,
-    color: '#999',
-    marginTop: 4,
+    marginTop: 11.71875,
+    fontSize: 14,
+    color: "#999",
   },
-  expiredOverlay: {
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+  // 绑定二维码部分
+  bindSection: {
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
+    borderRadius: 15.625,
+    padding: 23.4375,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.8)",
+  },
+  qrCodeSection: {
+    alignItems: "center" as const,
+  },
+  qrCodeCard: {
+    backgroundColor: "#fff",
+    borderRadius: 15.625,
+    padding: 23.4375,
+    alignItems: "center" as const,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3.90625 },
+    shadowOpacity: 0.1,
+    shadowRadius: 7.8125,
+    elevation: 3,
+    minHeight: 300,
+    justifyContent: "center" as const,
+  },
+  qrCodeImage: {
+    width: 150,
+    height: 150,
+  },
+  qrCodeInfo: {
+    marginTop: 15.625,
+    width: "100%" as const,
+    gap: 11.71875,
+  },
+  deviceInfo: {
+    alignItems: "center" as const,
+    gap: 7.8125,
+  },
+  deviceTypeText: {
+    fontSize: 14,
+    fontWeight: "bold" as const,
+    color: "#333",
+  },
+  bindCodeText: {
+    fontSize: 12,
+    color: "#666",
+    fontFamily: "monospace" as const,
+  },
+  countdownContainer: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    gap: 5.859375,
+  },
+  countdownText: {
+    fontSize: 12,
+    color: "#666",
+  },
+  checkingOverlay: {
+    position: "absolute" as const,
+    bottom: 15.625,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 7.8125,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    paddingHorizontal: 15.625,
+    paddingVertical: 7.8125,
+    borderRadius: 15.625,
+  },
+  checkingText: {
+    fontSize: 12,
+    color: "#4891FF",
+  },
+  expiredContainer: {
+    alignItems: "center" as const,
+    gap: 15.625,
+    paddingVertical: 40,
   },
   expiredText: {
-    color: '#fff',
-    fontSize: 10,
-    marginTop: 4,
+    fontSize: 14,
+    color: "#999",
+  },
+  refreshButton: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 7.8125,
+    backgroundColor: "#4891FF",
+    paddingHorizontal: 23.4375,
+    paddingVertical: 11.71875,
+    borderRadius: 23.4375,
+  },
+  refreshButtonText: {
+    fontSize: 14,
+    color: "#fff",
+    fontWeight: "bold" as const,
+  },
+  // 提示信息
+  tipsContainer: {
+    backgroundColor: "rgba(72, 145, 255, 0.05)",
+    borderRadius: 11.71875,
+    padding: 15.625,
+    gap: 11.71875,
+  },
+  tipRow: {
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+    gap: 7.8125,
+  },
+  tipText: {
+    flex: 1,
+    fontSize: 12.5,
+    color: "#666",
+    lineHeight: 20,
   },
 })
+

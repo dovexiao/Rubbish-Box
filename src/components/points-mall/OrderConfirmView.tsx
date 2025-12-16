@@ -1,10 +1,12 @@
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { LinearGradient } from "expo-linear-gradient"
 import { AddressItem, ProductDetailData } from "../../services/pointsMall"
 import Ionicons from "@expo/vector-icons/build/Ionicons"
 import { Images } from "../../constants/Assets"
+import ConfirmDialog from "./ConfirmDialog"
+import ImageWithPlaceholder from "../common/ImageWithPlaceholder"
 
 /**
  * 确认订单信息视图组件
@@ -14,9 +16,17 @@ interface OrderConfirmProps {
   product?: ProductDetailData | null
   selectedAddress?: AddressItem | null
   onNext: () => void
+  onExchange?: () => Promise<void>
 }
 
-const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddress, onNext }) => {
+const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddress, onNext, onExchange }) => {
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+  const handleConfirmExchange = useCallback(async () => {
+    await onExchange?.();
+    setShowConfirmDialog(false);
+  }, [onExchange])
+
   return (
     <>
       <View style={styles.headerContainer}>
@@ -33,7 +43,7 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
               style={styles.addressInfoIcon}
             />
             {selectedAddress ? (
-              <Text style={styles.addressInfoText}>{selectedAddress.receiver_name}，{selectedAddress.phone}，{selectedAddress.province_text}{selectedAddress.city_text}{selectedAddress.district_text}{selectedAddress.detail_address}</Text>
+              <Text style={styles.addressInfoText}>{selectedAddress.receiver_name}，{selectedAddress.phone}，{selectedAddress.province}{selectedAddress.city}{selectedAddress.district}{selectedAddress.detail_address}</Text>
             ) : (
               <Text style={styles.addressInfoText}>请选择收货地址</Text>
             )}
@@ -47,17 +57,22 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
         </View>
         {/* 商品信息 */}
         <View style={styles.productInfoCard}>
-            <View style={styles.productInfoImageContainer}>
-              <Image
-                source={{ uri: product?.main_image }}
-                style={styles.productInfoImage}
-                resizeMode="cover"
-              />  
-            </View>
-            <View style={styles.productInfoContent}>
-              <Text style={styles.productInfoName} numberOfLines={2}>{product?.name}</Text>
-              <Text style={styles.productInfoCount}>x1</Text>
-            </View>
+          <View style={styles.productInfoImageContainer}>
+            <ImageWithPlaceholder
+              source={{ uri: product?.main_image || '' }}
+              style={styles.productInfoImage}
+              resizeMode="cover"
+            />
+            {/* <Image
+              source={{ uri: product?.main_image }}
+              style={styles.productInfoImage}
+              resizeMode="cover"
+            /> */}
+          </View>
+          <View style={styles.productInfoContent}>
+            <Text style={styles.productInfoName} numberOfLines={2}>{product?.name}</Text>
+            <Text style={styles.productInfoCount}>x1</Text>
+          </View>
         </View>
         {/* 价格总计 */}
         <View style={styles.priceTotalCard}>
@@ -90,22 +105,29 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
         </View>
       </View>
       {/* 下一步按钮 */}
-      {onNext && (
-        <TouchableOpacity
-          style={styles.nextButton}
-          activeOpacity={0.8}
-          onPress={onNext}
+      <TouchableOpacity
+        style={styles.nextButton}
+        activeOpacity={0.8}
+        onPress={() => { setShowConfirmDialog(true) }}
+      >
+        <LinearGradient
+          colors={['#FFDCBC', '#FFBB7B']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.nextButtonGradient}
         >
-          <LinearGradient
-            colors={['#FFDCBC', '#FFBB7B']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.nextButtonGradient}
-          >
-            <Text style={styles.nextButtonText}>确认兑换</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      )}
+          <Text style={styles.nextButtonText}>确认兑换</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+      <ConfirmDialog
+        visible={showConfirmDialog}
+        title="确认兑换吗?"
+        content="积分一旦兑换后订单不可取消哦"
+        confirmText="确认兑换"
+        cancelText="再考虑下"
+        onClose={() => { setShowConfirmDialog(false) }}
+        onConfirm={handleConfirmExchange}
+      />
     </>
   )
 }

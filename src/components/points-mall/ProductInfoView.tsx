@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react"
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native"
-import { createStyles } from "../../utils/rpxStyleSheet"
+import React, { useCallback, useEffect, useState, useRef } from "react"
+import { View, Text, Image, ScrollView, TouchableOpacity, FlatList } from "react-native"
+import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { Images } from "../../constants/Assets"
 import { LinearGradient } from "expo-linear-gradient"
 import { getProductDetail, ProductDetailData, PointsItem, ProductImage, AddressItem } from "../../services/pointsMall"
+import ImageWithPlaceholder from "../common/ImageWithPlaceholder"
 
 interface ProductInfoViewProps {
     product?: ProductDetailData | null
@@ -17,12 +18,81 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
     product,
     onNext,
 }) => {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    const detailImages = product?.detail_image || []
+
+    // 处理可见项变化
+    const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
+        if (viewableItems.length > 0) {
+            setCurrentImageIndex(viewableItems[0].index || 0)
+        }
+    }).current
+
+    const viewabilityConfig = useRef({
+        itemVisiblePercentThreshold: 50,
+    }).current
+
+    // 渲染图片项
+    const renderImageItem = useCallback(
+        ({ item }: { item: ProductImage }) => (
+            <View style={styles.imagePageContainer}>
+                <ImageWithPlaceholder
+                    source={{ uri: item.url }}
+                    style={styles.detailImage}
+                    resizeMode="cover"
+                />
+                {/* <Image
+                    source={{ uri: item.url }}
+                    style={styles.detailImage}
+                    resizeMode="cover"
+                /> */}
+            </View>
+        ),
+        [],
+    )
+
+    const keyExtractor = useCallback((item: ProductImage, index: number) => `detail-image-${item.id || index}`, [])
+
     return (
         <>
             <View style={styles.headerContainer}>
                 <Text style={styles.titleText}>商品详情</Text>
             </View>
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+                {/* 商品详情图片轮播 */}
+                {detailImages.length > 0 && (
+                    <View style={styles.imageCarouselContainer}>
+                        <FlatList
+                            data={detailImages}
+                            renderItem={renderImageItem}
+                            keyExtractor={keyExtractor}
+                            horizontal
+                            pagingEnabled
+                            showsHorizontalScrollIndicator={false}
+                            nestedScrollEnabled={true}
+                            onViewableItemsChanged={onViewableItemsChanged}
+                            viewabilityConfig={viewabilityConfig}
+                            style={styles.imageFlatList}
+                            getItemLayout={(data, index) => {
+                                const pageWidth = rpx(378.125) // 968 (容器宽度减去左右 padding)
+                                return {
+                                    length: pageWidth,
+                                    offset: pageWidth * index,
+                                    index,
+                                }
+                            }}
+                        />
+                        {/* 页码指示器 */}
+                        {detailImages.length > 1 && (
+                            <View style={styles.pageIndicator}>
+                                <Text style={styles.pageIndicatorText}>
+                                    {currentImageIndex + 1}/{detailImages.length}
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                )}
+
                 {/* 子视图1：商品信息 */}
                 <View style={styles.productInfoCard}>
                     {/* 第一行：金额视图和会员标识视图 */}
@@ -133,6 +203,9 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
                         </View>
                     </View>
                 </View>
+
+                {/* 高度占位 */}
+                <View style={{ height: rpx(97.65625) }} />
             </ScrollView>
             {/* 下一步按钮 */}
             {onNext && (
@@ -172,16 +245,52 @@ const styles = createStyles({
         width: '100%' as const,
         height: 38.2813, // 98
         flexDirection: "row" as const,
-        // backgroundColor: "#FFFFFF" as const,
+        backgroundColor: "#F5F5F5" as const,
         justifyContent: "center" as const,
         alignItems: "center" as const,
-        zIndex: 1
+        zIndex: 2,
     },
     titleText: {
         fontFamily: "PingFang SC",
         fontWeight: "400" as const,
         fontSize: 11.7188, // 30
         color: "#000000",
+    },
+    imageCarouselContainer: {
+        width: "100%" as const,
+        height: 139.0625, // 356
+    },
+    imageFlatList: {
+        width: "100%" as const,
+        height: "100%" as const,
+    },
+    imagePageContainer: {
+        width: 378.125, // 968 (容器宽度减去左右 padding: 406.25 - 14.0625 * 2)
+        height: "100%" as const,
+        justifyContent: "center" as const,
+        alignItems: "center" as const,
+    },
+    detailImage: {
+        width: 123.4375, // 316
+        height: 123.4375, // 316
+        borderRadius: 3.90625, // 10
+    },
+    pageIndicator: {
+        position: "absolute" as const,
+        bottom: 7.8125, // 20
+        right: 7.8125, // 20
+        width: 31.25, // 80
+        height: 14.84375, // 38
+        backgroundColor: "#00000026",
+        borderRadius: 7.8125, // 20
+        justifyContent: "center" as const,
+        alignItems: "center" as const,
+    },
+    pageIndicatorText: {
+        fontFamily: "PingFang SC",
+        fontWeight: "500" as const,
+        fontSize: 9.375, // 24
+        color: "#FFFFFF",
     },
     productInfoCard: {
         width: "100%" as const,
@@ -264,7 +373,7 @@ const styles = createStyles({
     },
     sectionTitle: {
         fontFamily: "PingFang SC",
-        fontWeight: "500" as const,
+        fontWeight: "bold" as const,
         fontSize: 11.71875, // 30
         color: "#000000CC",
         // marginBottom: 7.8125, // 20
@@ -300,7 +409,7 @@ const styles = createStyles({
         borderRadius: 7.8125, // 20
         paddingVertical: 10.9375, // 28
         paddingHorizontal: 15.625, // 40
-        marginBottom: 45.3125, // 116
+        // marginBottom: 45.3125, // 116
         backgroundColor: "#FFFFFF",
         gap: 12.5, // 32
     },
@@ -312,9 +421,11 @@ const styles = createStyles({
         width: "100%" as const,
         flexDirection: "row" as const,
         gap: 14.0625, // 36
+        // borderWidth: 1,
+        // borderColor: "red",
     },
     conditionLabel: {
-        width: 40.625, // 104
+        width: 46.875, // 120
         fontFamily: "PingFang SC",
         fontWeight: "300" as const,
         fontSize: 10.15625, // 26

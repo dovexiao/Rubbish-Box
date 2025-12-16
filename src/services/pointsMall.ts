@@ -178,6 +178,7 @@ export interface AddressItem {
   province_code?: string // 省份编码（可选）
   receiver_name: string
   user: string
+  phone_unencrypted: string // 回显手机号
 }
 
 /**

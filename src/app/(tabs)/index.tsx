@@ -36,7 +36,7 @@ const Text = ({ children, style, ...props }: any) => {
  */
 export default function HomeScreen() {
   // 只订阅需要的状态，避免不必要的重渲染
-  const postureStatus = usePostureStore((state) => state.nowStatus) || "detecting"
+  const postureStatus = usePostureStore((state) => state.nowStatus)
   const showDialog = useDialogStore((state) => state.showDialog)
   const [showSettingsPanel, setShowSettingsPanel] = useState(false)
   const [brightness, setBrightness] = useState(50)
@@ -268,8 +268,8 @@ const openVolumeSettings = async () => {
 
       // 设置最近学习视频
       if (latestVideoData) {
-        // console.log("✅ 最近学习视频加载成功:", latestVideoData?.rsname || "")
-        // console.log("📱 设置视频信息到状态:", latestVideoData)
+        console.log("✅ 最近学习视频加载成功:", latestVideoData?.rsname || "")
+        console.log("📱 设置视频信息到状态:", latestVideoData)
         setLatestVideo(latestVideoData)
       } else {
         console.warn("❌ 最近学习视频为空")
@@ -277,9 +277,9 @@ const openVolumeSettings = async () => {
 
       // 设置通知
       if (notificationsData && notificationsData.notifications) {
-        // console.log("✅ 通知加载成功:", notificationsData.notifications.length)
+        console.log("✅ 通知加载成功:", notificationsData.notifications.length)
         const notificationTitles = notificationsData.notifications.map((item: any) => item.title)
-        // console.log("📱 设置通知到状态:", notificationTitles)
+        console.log("📱 设置通知到状态:", notificationTitles)
         setNotifications(notificationTitles)
       } else {
         console.warn("❌ 通知数据为空")
@@ -287,7 +287,7 @@ const openVolumeSettings = async () => {
 
       // 设置排行榜
       if (ranksData && ranksData.ranking_list) {
-        // console.log("✅ 排行榜加载成功:", ranksData.ranking_list.length)
+        console.log("✅ 排行榜加载成功:", ranksData.ranking_list.length)
 
         let hasCurrentUser = false
         const rankList = ranksData.ranking_list.map((item: any) => {
@@ -302,7 +302,7 @@ const openVolumeSettings = async () => {
           rankList[0].is_current_user = true
         }
 
-        // console.log("📱 设置排行榜到状态:", rankList)
+        console.log("📱 设置排行榜到状态:", rankList)
         setRanks(rankList)
       } else {
         console.warn("❌ 排行榜数据为空")
@@ -576,14 +576,14 @@ const openVolumeSettings = async () => {
   }, [])
 
   // 调试：打印当前状态值
-  // console.log("🎨 渲染首页 - 当前状态值:", {
-  //   userInfo: userInfo,
-  //   latestVideo: latestVideo,
-  //   notifications: notifications,
-  //   ranks: ranks,
-  //   isLoading: isLoading,
-  //   isDataLoaded: isDataLoaded
-  // })
+  console.log("🎨 渲染首页 - 当前状态值:", {
+    userInfo: userInfo,
+    latestVideo: latestVideo,
+    notifications: notifications,
+    ranks: ranks,
+    isLoading: isLoading,
+    isDataLoaded: isDataLoaded
+  })
 
   return (
     <LinearGradient
@@ -643,9 +643,9 @@ const openVolumeSettings = async () => {
                   </View>
                   <Text style={styles.settingText}>关机</Text>
                 </View>
-                <View>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
-                </View>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
               </TouchableOpacity>
 
               {/* 系统设置 - 紧急逃生入口 */}
@@ -656,9 +656,9 @@ const openVolumeSettings = async () => {
                   </View>
                   <Text style={styles.settingText}>系统设置</Text>
                 </View>
-                <View>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
-                </View>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
               </TouchableOpacity>
 
               {/* WiFi设置 */}
@@ -669,9 +669,9 @@ const openVolumeSettings = async () => {
                   </View>
                   <Text style={styles.settingText}>WiFi</Text>
                 </View>
-                <View>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
-                </View>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
               </TouchableOpacity>
 
               {/* 蓝牙设置 */}
@@ -684,9 +684,9 @@ const openVolumeSettings = async () => {
                   />
                   <Text style={styles.settingText}>蓝牙</Text>
                 </View>
-                <View>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
-                </View>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
               </TouchableOpacity>
 
               {/* 声音设置 */}
@@ -697,9 +697,9 @@ const openVolumeSettings = async () => {
                   </View>
                   <Text style={styles.settingText}>声音</Text>
                 </View>
-                <View>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
-                </View>
+                <Text style={styles.settingArrow}>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -912,15 +912,15 @@ const openVolumeSettings = async () => {
           <Text>测试相机</Text>
         </TouchableOpacity> */}
 
-        {/* WebSocket 测试按钮  */}
-        <TouchableOpacity
+        {/* WebSocket 测试按钮 
+        <TouchableOpacity 
           style={styles.wsTestButton} 
           onPress={goToWebSocketTest}
           activeOpacity={0.7}
         >
           <Text style={styles.wsTestButtonText}>WS测试</Text>
         </TouchableOpacity>
- 。   
+ 。    */}
       </ImageBackground>
     </LinearGradient>
   )
