@@ -86,7 +86,7 @@ export async function getBindQRCode(): Promise<GetBindQRCodeResponse> {
 
   
   try {
-    const url = "https://fast.xiaohetx.cn/api/device/bind"
+    const url = "http://115.190.2.98:2333/api/device/bind"
     console.log("📌 getBindQRCode: request URL", url)
       console.log("📌 getBindQRCode: headers", DEFAULT_HEADERS)
         console.log("📌 getBindQRCode: requestData", requestData)
@@ -121,49 +121,6 @@ export async function getBindQRCode(): Promise<GetBindQRCodeResponse> {
     const resp = err?.response
     console.log("❌ getBindQRCode error", {
       url: resp?.config?.url,
-      message: err?.message,
-      status: resp?.status,
-      statusText: resp?.statusText,
-      data: resp?.data,
-      stack: err?.stack,
-    })
-    throw err
-  }
-}
-
-/**
- * 检查绑定状态
- * @param bindCode 绑定码
- */
-export async function checkBindStatus(bindCode: string): Promise<{ 
-  success: boolean
-  bound: boolean 
-  message?: string 
-}> {
-  console.log("📌 checkBindStatus: bindCode", bindCode)
-  try {
-    const url = "https://fast.xiaohetx.cn/api/device/bind/status"
-    console.log("📌 checkBindStatus: request URL", url)
-    const res = await axios.post<{ success: boolean; bound: boolean; message?: string }>(
-      url,
-      { bindCode },
-      {
-        timeout: API_TIMEOUT,
-        headers: DEFAULT_HEADERS,
-        validateStatus: () => true,
-      },
-    )
-    console.log("📌 checkBindStatus: response status", res.status, res.statusText)
-    console.log("📌 checkBindStatus: response data", res.data)
-
-    if (res.status < 200 || res.status >= 300) {
-      throw new Error(`请求失败，HTTP ${res.status} ${res.statusText}`)
-    }
-
-    return res.data
-  } catch (err: any) {
-    const resp = err?.response
-    console.log("❌ checkBindStatus error", {
       message: err?.message,
       status: resp?.status,
       statusText: resp?.statusText,

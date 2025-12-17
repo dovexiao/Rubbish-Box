@@ -12,7 +12,7 @@ import {useRouter, useLocalSearchParams} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBar} from '../../components/StatusBar';
 import {createStyles, rpx} from '../../utils/rpxStyleSheet';
-import {useReaderThemeStore} from './store/useReaderTheme';
+import {useReaderThemeStore} from '../../stores/readerThemeStore';
 import {useReadingProgress} from '../../hooks/useReadingProgress';
 import useBookStore, {
   handleBookDetailInitialized,

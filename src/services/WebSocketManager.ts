@@ -12,7 +12,6 @@ import {
 import { getWebSocketConfig } from '../config/websocket'
 
 /**
-<<<<<<< HEAD
  * WebSocket readyState 常量
  * React Native 中 WebSocket 没有 OPEN 等常量，使用数字代替
  */
@@ -24,8 +23,6 @@ const WS_READY_STATE = {
 } as const
 
 /**
-=======
->>>>>>> dev
  * WebSocket 管理器（单例模式）
  * 提供稳定的 WebSocket 长连接管理
  * 
@@ -178,11 +175,7 @@ export class WebSocketManager {
     }
 
     // 如果已连接，直接发送
-<<<<<<< HEAD
     if (this.status === WebSocketStatus.CONNECTED && this.ws?.readyState === WS_READY_STATE.OPEN) {
-=======
-    if (this.status === WebSocketStatus.CONNECTED && this.ws?.readyState === WebSocket.OPEN) {
->>>>>>> dev
       return this.sendMessage(message)
     }
 
@@ -369,11 +362,7 @@ export class WebSocketManager {
    */
   private sendMessage(message: WebSocketMessage): boolean {
     try {
-<<<<<<< HEAD
       if (!this.ws || this.ws.readyState !== WS_READY_STATE.OPEN) {
-=======
-      if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
->>>>>>> dev
         throw new Error('WebSocket 未连接')
       }
       

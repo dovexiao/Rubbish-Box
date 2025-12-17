@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {View, Text, TouchableOpacity, ScrollView, Modal, Image} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
-import {useReaderThemeStore} from '../store/useReaderTheme';
+import {useReaderThemeStore} from '../../../stores/readerThemeStore';
 import useBookStore, {initializeChapterContent} from '../store/useBookStore';
 import type {Chapter} from '../store/useBookStore';
 import {createStyles, rpx} from '../../../utils/rpxStyleSheet';

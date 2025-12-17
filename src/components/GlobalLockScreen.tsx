@@ -145,17 +145,11 @@ const GlobalLockScreen: React.FC<GlobalLockScreenProps> = ({
     [unlockText],
   )
 
-  const AnimatedChildren = useCallback(() => {
-    return (
+  return (
+    <View style={styles.container}>
       <Animated.View style={[styles.childrenWrapper, progressStyle]}>
         {children}
       </Animated.View>
-    )
-  }, [children, progressStyle])
-
-  return (
-    <View style={styles.container}>
-      <AnimatedChildren />
 
       <Animated.View style={[styles.blurLayer, blurAnimatedStyle]}>
         <AnimatedBlurView

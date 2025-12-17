@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {Ionicons} from '@expo/vector-icons';
 import {createStyles, rpx} from '../../../utils/rpxStyleSheet';
-import {useReaderThemeStore} from '../store/useReaderTheme';
+import {useReaderThemeStore} from '../../../stores/readerThemeStore';
 
 export interface BackButtonProps {
   /** 是否显示返回键，由外部控制 */

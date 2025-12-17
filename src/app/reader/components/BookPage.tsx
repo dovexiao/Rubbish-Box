@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
 import {View, Text, TextStyle, Image} from 'react-native';
 import {createStyles, rpx} from '../../../utils/rpxStyleSheet';
-import {useReaderThemeStore} from '../store/useReaderTheme';
+import {useReaderThemeStore} from '../../../stores/readerThemeStore';
 
 type Page = {
   id: string;

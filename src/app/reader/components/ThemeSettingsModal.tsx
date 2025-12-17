@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import {View, TouchableOpacity, Text, Modal, TextStyle} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
-import {useReaderThemeStore, type ReaderTheme} from '../store/useReaderTheme';
+import {useReaderThemeStore, type ReaderTheme} from '../../../stores/readerThemeStore';
 import {createStyles, rpx} from '../../../utils/rpxStyleSheet';
 
 export interface ThemeSettingsModalProps {

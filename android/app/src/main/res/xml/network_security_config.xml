@@ -8,12 +8,22 @@
         </trust-anchors>
     </base-config>
     
-    <!-- 针对特定域名的配置 -->
+    <!-- 针对特定域名的配置（HTTP明文流量） -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">10.0.2.2</domain>
         <domain includeSubdomains="true">10.0.3.2</domain>
         <domain includeSubdomains="true">192.168.31.169</domain>
         <domain includeSubdomains="true">8.135.11.47</domain>
+        <domain includeSubdomains="true">xiaohetx.cn</domain>
+    </domain-config>
+    
+    <!-- fast.xiaohetx.cn: 允许HTTP + 信任自签名HTTPS证书 -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">fast.xiaohetx.cn</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
     </domain-config>
 </network-security-config>

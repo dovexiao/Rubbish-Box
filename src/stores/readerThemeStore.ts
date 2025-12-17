@@ -132,3 +132,4 @@ export const useReaderThemeStore = create<ReaderThemeState>((set, get) => ({
         set({ fontSize: Math.max(25, Math.min(35, size)) });
     },
 }));
+

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { View, Image, TouchableOpacity, ImageBackground, Platform, Linking, AppState } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
-import Slider from "@react-native-community/slider"
 import { useFocusEffect, useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
 import { InteractionManager } from "react-native"
@@ -19,7 +18,6 @@ import { showError, showWarning, showInfo } from "../../utils/toast"
 
 import { BrightnessSlider } from "../../components/BrightnessSlider"
 
-
 // 自定义Text组件，避免lint错误
 const Text = ({ children, style, ...props }: any) => {
   const { Text: RNText } = require("react-native")
@@ -33,11 +31,10 @@ const Text = ({ children, style, ...props }: any) => {
 
 /**
  * 首页组件
- * 100%还原UniApp项目中的pages/index/index
  */
 export default function HomeScreen() {
   // 只订阅需要的状态，避免不必要的重渲染
-  const postureStatus = usePostureStore((state) => state.nowStatus)
+  const postureStatus = usePostureStore((state) => state.nowStatus) || "detecting"
   const showDialog = useDialogStore((state) => state.showDialog)
   const [showSettingsPanel, setShowSettingsPanel] = useState(false)
   const [brightness, setBrightness] = useState(50)
@@ -65,14 +62,9 @@ export default function HomeScreen() {
   const [isDataLoaded, setIsDataLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const isLoadingRef = useRef(false) // 使用 ref 防止重复调用
+  const lastLoadTimeRef = useRef<number>(0) // 跟踪最后一次加载时间
+  const LOAD_INTERVAL = 2000 // 2秒内不重复加载
   const [homeBgSource, setHomeBgSource] = useState<any>(Images.homeBg1)
-  
-
-  // 页面获得焦点时恢复沉浸式模式
-  useFocusEffect(() => {
-    // console.log("首页获得焦点，恢复沉浸式模式")
-    // globalImmersive.forceRestore()
-  })
 
   // 获取坐姿状态文本
   const getPostureStatusText = () => {
@@ -178,13 +170,26 @@ const openVolumeSettings = async () => {
 
   // 加载数据 - 每次点击tabbar都刷新
   const loadData = useCallback(async () => {
-    console.log("🔄 loadData 被调用")
+    const now = Date.now()
+    const timeSinceLastLoad = now - lastLoadTimeRef.current
     
-    // 使用 ref 防止重复调用
-    if (isLoadingRef.current) {
-      console.log("⏳ 正在加载中，跳过重复调用")
+    // 检查时间间隔，防止短时间内重复加载
+    if (timeSinceLastLoad < LOAD_INTERVAL) {
+      console.log(`⏳ [防重复] 距离上次加载时间太短(${timeSinceLastLoad}ms < ${LOAD_INTERVAL}ms)，跳过重复调用`)
       return
     }
+    
+    // 使用 ref 防止重复调用 - 立即检查
+    if (isLoadingRef.current) {
+      console.log("⏳ [防重复] 正在加载中，跳过重复调用")
+      return
+    }
+    
+    // ⚠️ 关键修复：立即设置加载状态，防止竞态条件（必须在所有检查之后立即设置）
+    isLoadingRef.current = true
+    lastLoadTimeRef.current = now
+    
+    console.log("🔄 loadData 开始执行")
     
     // 等待 100ms，确保 token 已经设置完成
     await new Promise(resolve => setTimeout(resolve, 100))
@@ -207,12 +212,12 @@ const openVolumeSettings = async () => {
     
     if (!token) {
       console.log("❌ 未找到token，跳过数据加载")
+      isLoadingRef.current = false // 重置加载状态
       setIsDataLoaded(true) // 即使没有token也要显示内容
       return
     }
     
     console.log("✅ 开始加载首页数据...")
-    isLoadingRef.current = true
     setIsLoading(true)
     
     try {
@@ -269,8 +274,8 @@ const openVolumeSettings = async () => {
 
       // 设置最近学习视频
       if (latestVideoData) {
-        console.log("✅ 最近学习视频加载成功:", latestVideoData?.rsname || "")
-        console.log("📱 设置视频信息到状态:", latestVideoData)
+        // console.log("✅ 最近学习视频加载成功:", latestVideoData?.rsname || "")
+        // console.log("📱 设置视频信息到状态:", latestVideoData)
         setLatestVideo(latestVideoData)
       } else {
         console.warn("❌ 最近学习视频为空")
@@ -278,9 +283,9 @@ const openVolumeSettings = async () => {
 
       // 设置通知
       if (notificationsData && notificationsData.notifications) {
-        console.log("✅ 通知加载成功:", notificationsData.notifications.length)
+        // console.log("✅ 通知加载成功:", notificationsData.notifications.length)
         const notificationTitles = notificationsData.notifications.map((item: any) => item.title)
-        console.log("📱 设置通知到状态:", notificationTitles)
+        // console.log("📱 设置通知到状态:", notificationTitles)
         setNotifications(notificationTitles)
       } else {
         console.warn("❌ 通知数据为空")
@@ -288,7 +293,7 @@ const openVolumeSettings = async () => {
 
       // 设置排行榜
       if (ranksData && ranksData.ranking_list) {
-        console.log("✅ 排行榜加载成功:", ranksData.ranking_list.length)
+        // console.log("✅ 排行榜加载成功:", ranksData.ranking_list.length)
 
         let hasCurrentUser = false
         const rankList = ranksData.ranking_list.map((item: any) => {
@@ -303,7 +308,7 @@ const openVolumeSettings = async () => {
           rankList[0].is_current_user = true
         }
 
-        console.log("📱 设置排行榜到状态:", rankList)
+        // console.log("📱 设置排行榜到状态:", rankList)
         setRanks(rankList)
       } else {
         console.warn("❌ 排行榜数据为空")
@@ -319,35 +324,35 @@ const openVolumeSettings = async () => {
     }
   }, []) // 空依赖数组，loadData 永远不会重新创建
 
-  // 页面加载时直接加载数据
-  useEffect(() => {
-    console.log("🚀 首页初始化，直接加载数据")
-    // 使用 InteractionManager 等待初始化完成
-    InteractionManager.runAfterInteractions(() => {
-      console.log("🚀 开始加载首页数据")
-      loadData()
-    })
-
-    // 清理函数：组件卸载时清除定时器
-    return () => {
-      if (brightnessTimeoutRef.current) {
-        clearTimeout(brightnessTimeoutRef.current)
-      }
-    }
-  }, []) // 只在首次加载时调用
-
   // 页面获得焦点时重新加载数据（每次点击tabbar都刷新）
   useFocusEffect(
     useCallback(() => {
       console.log("🎯 首页获得焦点，准备加载数据")
-      // 使用 InteractionManager 等待初始化完成
-      InteractionManager.runAfterInteractions(() => {
-        console.log("🚀 开始加载首页数据")
-        loadData()
-      })
+      
+      let cancelled = false
+      let timeoutId: ReturnType<typeof setTimeout> | null = null
+      
+      // 移除 InteractionManager 延迟，直接执行，避免回调累积
+      // 使用 setTimeout 0 确保在下一个事件循环执行
+      timeoutId = setTimeout(() => {
+        if (!cancelled) {
+          console.log("🚀 开始加载首页数据")
+          loadData()
+        }
+      }, 0)
+      
       // 恢复沉浸式模式
       // globalImmersive.forceRestore()
-    }, []), // 空依赖，loadData 不会变化
+      
+      // 清理函数：页面失去焦点时取消待执行的加载
+      return () => {
+        cancelled = true
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
+        console.log("🛑 页面失去焦点，取消待执行的加载")
+      }
+    }, [loadData]), // 依赖 loadData
   )
 
   const router = useRouter()
@@ -577,14 +582,14 @@ const openVolumeSettings = async () => {
   }, [])
 
   // 调试：打印当前状态值
-  console.log("🎨 渲染首页 - 当前状态值:", {
-    userInfo: userInfo,
-    latestVideo: latestVideo,
-    notifications: notifications,
-    ranks: ranks,
-    isLoading: isLoading,
-    isDataLoaded: isDataLoaded
-  })
+  // console.log("🎨 渲染首页 - 当前状态值:", {
+  //   userInfo: userInfo,
+  //   latestVideo: latestVideo,
+  //   notifications: notifications,
+  //   ranks: ranks,
+  //   isLoading: isLoading,
+  //   isDataLoaded: isDataLoaded
+  // })
 
   return (
     <LinearGradient
@@ -644,11 +649,12 @@ const openVolumeSettings = async () => {
                   </View>
                   <Text style={styles.settingText}>关机</Text>
                 </View>
-                <Text style={styles.settingArrow}>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
-                </Text>
+                <View>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
+                </View>
               </TouchableOpacity>
-
+ 
+                
               {/* 系统设置 - 紧急逃生入口 */}
               <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
                 <View style={styles.settingItemLeft}>
@@ -657,9 +663,9 @@ const openVolumeSettings = async () => {
                   </View>
                   <Text style={styles.settingText}>系统设置</Text>
                 </View>
-                <Text style={styles.settingArrow}>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
-                </Text>
+                <View>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
+                </View>
               </TouchableOpacity>
 
               {/* WiFi设置 */}
@@ -670,9 +676,9 @@ const openVolumeSettings = async () => {
                   </View>
                   <Text style={styles.settingText}>WiFi</Text>
                 </View>
-                <Text style={styles.settingArrow}>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
-                </Text>
+                <View>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
+                </View>
               </TouchableOpacity>
 
               {/* 蓝牙设置 */}
@@ -685,9 +691,9 @@ const openVolumeSettings = async () => {
                   />
                   <Text style={styles.settingText}>蓝牙</Text>
                 </View>
-                <Text style={styles.settingArrow}>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
-                </Text>
+                <View>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
+                </View>
               </TouchableOpacity>
 
               {/* 声音设置 */}
@@ -698,9 +704,9 @@ const openVolumeSettings = async () => {
                   </View>
                   <Text style={styles.settingText}>声音</Text>
                 </View>
-                <Text style={styles.settingArrow}>
-                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="#fff" />
-                </Text>
+                <View>
+                  <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -913,15 +919,15 @@ const openVolumeSettings = async () => {
           <Text>测试相机</Text>
         </TouchableOpacity> */}
 
-        {/* WebSocket 测试按钮 
-        <TouchableOpacity 
+        {/* WebSocket 测试按钮  */}
+        <TouchableOpacity
           style={styles.wsTestButton} 
           onPress={goToWebSocketTest}
           activeOpacity={0.7}
         >
           <Text style={styles.wsTestButtonText}>WS测试</Text>
         </TouchableOpacity>
- 。    */}
+ 。   
       </ImageBackground>
     </LinearGradient>
   )

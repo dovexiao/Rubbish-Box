@@ -578,9 +578,9 @@ export default function RootLayout() {
 
       <PaperProvider>
         <SafeAreaProvider>
-          <GlobalLockScreen>
+          {/* <GlobalLockScreen> */}
             <Slot />
-          </GlobalLockScreen>
+          {/* </GlobalLockScreen> */}
           {/* 全局登录管理器 */}
           <GlobalLoginManager />
           {/* 全局更新对话框 */}
