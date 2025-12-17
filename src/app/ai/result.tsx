@@ -14,6 +14,7 @@ import {
 } from "../../services/ai"
 import { createStyles } from "../../utils/rpxStyleSheet"
 import { showError } from "../../utils/toast"
+import { useActivityTracking } from "../../hooks/useActivityTracking"
 
 /**
  * AI结果页面
@@ -27,6 +28,11 @@ export default function AIResultScreen() {
   const [data, setData] = useState<any>({})
   const [compositionInfo, setCompositionInfo] = useState<AiResponse>({})
   const [isLoading, setIsLoading] = useState(true)
+  
+  // 活动追踪 - 追踪AI批改结果查看
+  const { startHomework, startComposition } = useActivityTracking({
+    autoExitOnUnmount: true,
+  })
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,6 +44,21 @@ export default function AIResultScreen() {
           console.log("📦 通过 batch_id 查询结果:", params.batch_id)
           const correctionType = params.type as string
           setType(correctionType === "composition" ? "作文" : "题目")
+          
+          // 📊 启动活动追踪（如果从loading页面跳转过来，这里会覆盖之前的追踪，但保持类型一致）
+          if (correctionType === "composition") {
+            console.log("📊 [活动追踪] 查看作文批改结果")
+            startComposition({
+              compositionId: params.batch_id as string,
+              compositionName: "AI作文批改结果",
+            })
+          } else {
+            console.log("📊 [活动追踪] 查看作业批改结果")
+            startHomework({
+              homeworkId: params.batch_id as string,
+              homeworkName: "AI作业批改结果",
+            })
+          }
           
           const res = await getCompositionCorrectionRecordDetails({ 
             batch_id: params.batch_id as string 
@@ -52,6 +73,14 @@ export default function AIResultScreen() {
         // 是作文收录来的
         else if (params.id) {
           setType("作文")
+          
+          // 📊 启动作文追踪
+          console.log("📊 [活动追踪] 查看作文批改结果（从收录）")
+          startComposition({
+            compositionId: params.id as string,
+            compositionName: "AI作文批改结果",
+          })
+          
           const res = await getCompositionCorrectionRecordDetails({ id: Number(params.id) })
           setCompositionInfo(res)
         }

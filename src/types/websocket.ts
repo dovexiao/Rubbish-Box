@@ -32,6 +32,8 @@ export enum MessageType {
   NOTIFICATION = 'notification',
   /** 错误消息 */
   ERROR = 'error',
+  /** 用户活动 */
+  USER_ACTIVITY = 'user_activity',
 }
 
 /**

@@ -23,6 +23,7 @@ import { useUserStore } from "../../stores/userStore"
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError } from "../../utils/toast"
+import { useActivityTracking } from "../../hooks/useActivityTracking"
 
 interface VideoParams {
   videoCode?: string
@@ -42,6 +43,12 @@ export default function VideoPlayerScreen() {
   const params = useLocalSearchParams() as VideoParams
   const userStore = useUserStore()
   const videoRef = useRef<Video>(null)
+  
+  // 活动追踪 - 追踪视频观看行为
+  const { startVideo, updateVideoProgress, endVideo } = useActivityTracking({
+    throttleDelay: 3000, // 视频进度更新节流3秒
+    autoExitOnUnmount: true, // 组件卸载时自动发送退出通知
+  })
 
   // 页面参数
   const [pointId, setPointId] = useState("")
@@ -286,13 +293,24 @@ export default function VideoPlayerScreen() {
       _setTitle(response.course_name)
       setVideoUrl(response.video_url)
       setLoading(false)
+      
+      // 📊 启动视频观看追踪
+      console.log("📊 [活动追踪] 启动视频观看追踪")
+      startVideo({
+        videoId: response.video_code,
+        videoName: response.course_name,
+        progress: lastSavedTime, // 当前播放位置
+        duration: totalDuration > 0 ? totalDuration : undefined,
+        courseId: response.album_code,
+        courseName: params.title ? decodeURIComponent(params.title) : response.course_name,
+      })
     } catch (error) {
       console.error("获取视频信息失败:", error)
       showError("视频加载失败")
 
       // 降级处理：使用模拟数据
       console.log("使用降级模拟数据")
-      setVideoInfo({
+      const fallbackInfo = {
         video_code: pointId,
         album_code: "",
         course_name: lessonTitle,
@@ -300,12 +318,22 @@ export default function VideoPlayerScreen() {
         Referer_video: "",
         Referer_img: "",
         details_list: [],
-      })
+      }
+      setVideoInfo(fallbackInfo)
       _setTitle(lessonTitle)
       setVideoUrl("/static/video/sample-lesson.mp4")
       setLoading(false)
+      
+      // 📊 降级情况下也启动追踪
+      console.log("📊 [活动追踪] 启动视频观看追踪（降级模式）")
+      startVideo({
+        videoId: pointId,
+        videoName: lessonTitle,
+        progress: lastSavedTime,
+        duration: totalDuration > 0 ? totalDuration : undefined,
+      })
     }
-  }, [pointId, lessonTitle])
+  }, [pointId, lessonTitle, lastSavedTime, totalDuration, startVideo, params.title])
 
   // 生成练习题
   const getGeneratePracticeQuestions = useCallback(async () => {
@@ -339,6 +367,11 @@ export default function VideoPlayerScreen() {
       if (currentSeconds !== currentTime) {
         setCurrentTime(currentSeconds)
         console.log(`⏱️ 视频时间更新: ${currentSeconds}秒 / ${durationSeconds}秒`)
+        
+        // 📊 更新视频播放进度（已内置3秒节流）
+        if (status.isPlaying && durationSeconds > 0) {
+          updateVideoProgress(currentSeconds, durationSeconds)
+        }
       }
       
       if (durationSeconds > 0 && durationSeconds !== totalDuration) {
@@ -361,6 +394,10 @@ export default function VideoPlayerScreen() {
         setCurrentTime(durationSeconds)
         setShowCompleteTip(true)
         setIsCompleted(true)
+        
+        // 📊 视频播放结束，发送最终进度
+        console.log("📊 [活动追踪] 视频播放结束")
+        updateVideoProgress(durationSeconds, durationSeconds)
       }
     }
   }
@@ -486,6 +523,10 @@ export default function VideoPlayerScreen() {
         console.error("保存学习进度失败:", error)
       })
     }
+    
+    // 📊 手动退出（虽然组件卸载时会自动调用，但这里提前调用确保发送）
+    console.log("📊 [活动追踪] 手动退出视频观看")
+    endVideo()
 
     router.back()
   }

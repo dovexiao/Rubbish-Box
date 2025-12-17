@@ -42,7 +42,8 @@ export default function MyScreen() {
   const userStore = useUserStore()
   const { manualCheckForUpdates } = useUpdateManager()
 
-  const [userInfo, setUserInfo] = useState<any>((userStore as any).userInfo)
+  // 直接订阅 store 的 user，这样当 store 更新时会自动更新组件
+  const userInfo = useUserStore((state) => state.user)
   const [badges, setBadges] = useState<MedalList[]>([])
   const [todayQuestionData, setTodayQuestionData] = useState<TodayQuestionData>({
     total_wrong_questions: 0,
@@ -94,7 +95,7 @@ export default function MyScreen() {
       ])
 
       // 批量更新状态
-      setUserInfo(userStore.user) // 使用 store 中已更新的用户信息
+      // 不需要 setUserInfo，因为 userInfo 已经通过 useUserStore 订阅自动更新了
       setBadges(badgesData.medal_list || [])
       setTodayQuestionData(todayData)
       setWeeklyStudyData(studyDataResult.daily_data || [])
@@ -160,7 +161,7 @@ export default function MyScreen() {
           ])
           
           if (!isCancelled) {
-            setUserInfo(userStore.user)
+            // 不需要 setUserInfo，因为 userInfo 已经通过 useUserStore 订阅自动更新了
             setBadges(badgesData.medal_list || [])
             setTodayQuestionData(todayData)
             setWeeklyStudyData(studyDataResult.daily_data || [])

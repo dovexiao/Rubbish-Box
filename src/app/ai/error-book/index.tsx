@@ -8,6 +8,7 @@ import { StatusBar } from "../../../components/StatusBar"
 import { NavBar } from "../../../components/NavBar"
 import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
 import { getCorrectionRecordResponse, type CorrectionRecordItem } from "../../../services/ai"
+import { useActivityTracking } from "../../../hooks/useActivityTracking"
 
 /**
  * 错题本首页
@@ -20,6 +21,11 @@ export default function ErrorBookScreen() {
   const [subjectList, setSubjectList] = useState<CorrectionRecordItem[]>([])
   const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(0)
   const [selectedSubject, setSelectedSubject] = useState<CorrectionRecordItem | null>(null)
+  
+  // 活动追踪 - 追踪错题本使用
+  const { startErrorBook } = useActivityTracking({
+    autoExitOnUnmount: true,
+  })
 
   // 获取错题本数据
   const fetchCorrectionRecord = useCallback(async () => {
@@ -29,13 +35,19 @@ export default function ErrorBookScreen() {
       if (res && res.data && res.data.length > 0) {
         setSubjectList(res.data)
         setSelectedSubject(res.data[0])
+        
+        // 📊 启动错题本追踪
+        console.log("📊 [活动追踪] 进入错题本")
+        startErrorBook({
+          subject: res.data[0].subject,
+        })
       }
     } catch (error) {
       console.error("获取错题本数据失败:", error)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [startErrorBook])
 
   useEffect(() => {
     fetchCorrectionRecord()

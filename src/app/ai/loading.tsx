@@ -9,6 +9,7 @@ import { showError, showWarning } from "../../utils/toast"
 import { API_BASE_URL } from "../../config/api"
 import { getDeviceInfoForAPI } from "../../utils/deviceInfo"
 import { useUserStore } from "../../stores/userStore"
+import { useActivityTracking } from "../../hooks/useActivityTracking"
 
 // 生成初始 HTML（只生成一次）
 const generateInitialHTML = () => {
@@ -273,6 +274,11 @@ export default function AILoadingScreen() {
   const [webViewReady, setWebViewReady] = useState(false) // WebView 就绪状态
   const [isFormatting, setIsFormatting] = useState(false) // 是否在格式化数据
   const hasStartedStream = useRef(false)
+  
+  // 活动追踪 - 追踪AI批改行为
+  const { startHomework, endHomework, startComposition, endComposition } = useActivityTracking({
+    autoExitOnUnmount: true,
+  })
   const cursorOpacity = useRef(new Animated.Value(1)).current
   const contentBuffer = useRef("") // 完整内容缓冲区
   const displayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -395,6 +401,21 @@ export default function AILoadingScreen() {
 
     const uuid = params.imguuid as string
     const correctionType = params.type as string
+
+    // 📊 启动活动追踪
+    if (correctionType === "composition") {
+      console.log("📊 [活动追踪] 启动作文批改追踪")
+      startComposition({
+        compositionId: uuid,
+        compositionName: "AI作文批改",
+      })
+    } else if (correctionType === "question") {
+      console.log("📊 [活动追踪] 启动作业批改追踪")
+      startHomework({
+        homeworkId: uuid,
+        homeworkName: "AI作业批改",
+      })
+    }
 
     try {
       setIsStreaming(true)

@@ -404,6 +404,11 @@ const openVolumeSettings = async () => {
     console.log("🔌 跳转到 WebSocket 测试页面")
     router.push("/examples/websocket-test")
   }
+  // 跳转到 activity-tracking-test 测试页面
+  const goToActivityTrackingTest = () => {
+    console.log("🔌 跳转到 activity-tracking-test 测试页面")
+    router.push("/examples/activity-tracking-test")
+  }
 
   // 重新启动应用
   const handleRestartApp = () => {
@@ -927,7 +932,17 @@ const openVolumeSettings = async () => {
         >
           <Text style={styles.wsTestButtonText}>WS测试</Text>
         </TouchableOpacity>
- 。   
+      {/* ws通信  */}
+        <TouchableOpacity
+          style={styles.wsTestButton} 
+          onPress={goToActivityTrackingTest}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.wsTestButtonText}>activity-tracking-test测试</Text>
+        </TouchableOpacity>
+
+
+ 
       </ImageBackground>
     </LinearGradient>
   )
