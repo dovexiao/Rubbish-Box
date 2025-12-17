@@ -165,6 +165,9 @@ export const Images = {
   pointsMallPayForGoods: require("../../assets/images/points-mall/pay-for-goods.png"),
   pointsMallDottedLine: require("../../assets/images/points-mall/dotted-line.png"),
   pointsMallBoy: require("../../assets/images/points-mall/boy.png"),
+
+  // 锁屏相关
+  lockScreenWallpaper1: require("../../assets/images/lock-screen/lock-screen-wallpaper-1.png"),
 }
 
 // 统一导出
