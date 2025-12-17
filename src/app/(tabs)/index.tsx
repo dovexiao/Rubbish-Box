@@ -927,7 +927,6 @@ const openVolumeSettings = async () => {
         >
           <Text style={styles.wsTestButtonText}>WS测试</Text>
         </TouchableOpacity>
- 。   
       </ImageBackground>
     </LinearGradient>
   )

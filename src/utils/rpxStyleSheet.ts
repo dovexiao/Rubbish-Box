@@ -187,26 +187,28 @@ const getDeviceAdaptationStrategy = () => {
  * 4. 自动根据设备方向选择最佳转换基准
  */
 const rpx = (size: number): number => {
-  const strategy = getDeviceAdaptationStrategy()
+  // const strategy = getDeviceAdaptationStrategy()
   
-  if (strategy.isCustom) {
-    // 使用专门的适配策略
-    // 公式：实际像素 = rpx值 × 缩放比例
-    return size * strategy.scaleRatio
-  }
+  // if (strategy.isCustom) {
+  //   // 使用专门的适配策略
+  //   // 公式：实际像素 = rpx值 × 缩放比例
+  //   return size * strategy.scaleRatio
+  // }
   
   // 使用原有的通用策略
   const { width, height } = getScreenDimensions()
+
+  return (width / DESIGN_WIDTH_RPX) * size
   
-  if (isLandscape()) {
-    // 横屏模式：基于高度计算
-    // 公式：实际像素 = rpx值 × 屏幕高度 / 设计稿高度rpx
-    return (height / DESIGN_HEIGHT_RPX) * size
-  } else {
-    // 竖屏模式：基于宽度计算
-    // 公式：实际像素 = rpx值 × 屏幕宽度 / 设计稿宽度rpx
-    return (width / DESIGN_WIDTH_RPX) * size
-  }
+  // if (isLandscape()) {
+  //   // 横屏模式：基于高度计算
+  //   // 公式：实际像素 = rpx值 × 屏幕高度 / 设计稿高度rpx
+  //   return (height / DESIGN_HEIGHT_RPX) * size
+  // } else {
+  //   // 竖屏模式：基于宽度计算
+  //   // 公式：实际像素 = rpx值 × 屏幕宽度 / 设计稿宽度rpx
+  //   return (width / DESIGN_WIDTH_RPX) * size
+  // }
 }
 
 /**
