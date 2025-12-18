@@ -17,6 +17,7 @@ import { createStyles, rpx } from "../utils/rpxStyleSheet"
 import { Images } from "../constants/Assets"
 import { useLockScreenStore } from "../stores/lockScreenStore"
 import StatusBar from "./StatusBar"
+import { Toast } from "./Toast"
 
 type GlobalLockScreenProps = {
   /**
@@ -80,6 +81,7 @@ const GlobalLockScreen: React.FC<GlobalLockScreenProps> = ({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const translateY = useSharedValue(-TRANSLATE_Y_OFFSET)
   const lockOpacity = useSharedValue(0)
+  const [showToast, setShowToast] = useState(false)
 
   // 绽放动画的 shared values
   const bloomScale = useSharedValue(BLOOM_SCALE_START)
@@ -202,10 +204,11 @@ const GlobalLockScreen: React.FC<GlobalLockScreenProps> = ({
   // 解锁回调
   const handleUnlock = useCallback(() => {
     // 只有在绽放动画完成后才能解锁
-    if (canUnlock) {
-      setLocked(false)
-      onUnlock?.()
-    }
+    // if (canUnlock) {
+    //   setLocked(false)
+    //   onUnlock?.()
+    // }
+    setShowToast(true)
   }, [canUnlock, onUnlock])
 
   // 锁屏交互动画
@@ -414,6 +417,8 @@ const GlobalLockScreen: React.FC<GlobalLockScreenProps> = ({
         />
         {showContent && (renderLockContent ? renderLockContent() : defaultLockContent)}
       </Animated.View>
+
+      <Toast visible={showToast} type="error" message="当前设备不可用，请到小程序家长端查看" duration={3000} onClose={() => setShowToast(false)} />
     </View>
   )
 }

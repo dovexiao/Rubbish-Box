@@ -2,6 +2,7 @@ import { Portal, Dialog, Button, Text } from "react-native-paper"
 import { Dimensions } from "react-native"
 import { useDialogStore } from "../stores/dialogStore"
 import { createStyles } from "../utils/rpxStyleSheet"
+import { useLockScreenStore } from "@/stores/lockScreenStore"
 
 const SCREEN_WIDTH = Dimensions.get("window").width
 
@@ -23,10 +24,12 @@ export function GlobalDialog() {
     button.onPress?.()
   }
 
+  const locked = useLockScreenStore((state) => state.locked)
+
   return (
     <Portal>
       <Dialog 
-        visible={visible} 
+        visible={visible && !locked} 
         onDismiss={hideDialog} 
         style={[
           styles.dialog,

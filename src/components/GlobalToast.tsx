@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { Toast, ToastType } from "./Toast"
 import { useToastStore } from "../stores/toastStore"
+import { useLockScreenStore } from "../stores/lockScreenStore"
 
 /**
  * 全局 Toast 组件
@@ -9,8 +10,10 @@ import { useToastStore } from "../stores/toastStore"
 export function GlobalToast() {
   const { visible, type, message, duration, hideToast } = useToastStore()
 
+  const locked = useLockScreenStore((state) => state.locked)
+
   return (
-    <Toast visible={visible} type={type} message={message} duration={duration} onClose={hideToast} />
+    <Toast visible={visible && !locked} type={type} message={message} duration={duration} onClose={hideToast} />
   )
 }
 
