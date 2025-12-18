@@ -475,7 +475,7 @@ export default function ReaderIndex() {
                     </View>
                     <View style={styles.rankingBookStats}>
                       <Ionicons name="flame" size={rpx(6.15625)} color="#FF5722" />
-                      <Text style={styles.rankingBookViews}>1.45w</Text>
+                      <Text style={styles.rankingBookViews}>{book.view_count}</Text>
                     </View>
                   </View>
                 </TouchableOpacity>
