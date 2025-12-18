@@ -25,7 +25,7 @@ import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError } from "../../utils/toast"
 import { useActivityTracking } from "../../hooks/useActivityTracking"
-// import { BrightnessControl, VolumeControl } from "../../components/video"
+import { BrightnessControl, VolumeControl } from "../../components/video"
 
 interface VideoParams {
   videoCode?: string
@@ -1000,10 +1000,10 @@ export default function VideoPlayerScreen() {
         )}
 
         {/* 音量调节器 */}
-        {/* <VolumeControl style={styles.volumeControl} />  */}
+        <VolumeControl style={styles.volumeControl} videoRef={videoRef as any} /> 
 
         {/* 亮度调节器 */}
-        {/* <BrightnessControl style={styles.brightnessControl} /> */}
+        <BrightnessControl style={styles.brightnessControl} />
       </View>
     </View>
   )
@@ -1037,8 +1037,6 @@ const styles = createStyles({
   video: {
     width: "100%" as const,
     height: "100%" as const,
-    borderWidth: 1,
-    borderColor: "red",
   },
   loading: {
     position: "absolute" as const,
@@ -1275,14 +1273,16 @@ const styles = createStyles({
     top: 0,
     bottom: 0,
     left: 0,
-    height: "25%" as const,
+    width: "12%" as const,
+    zIndex: 1,
   },
   brightnessControl: {
     position: "absolute" as const,
     top: 0,
     bottom: 0,
     right: 0,
-    height: "25%" as const,
+    width: "12%" as const,
+    zIndex: 1,
   },
   // ==================== 音量和亮度指示器样式（已注释）====================
   // brightnessIndicator: {
