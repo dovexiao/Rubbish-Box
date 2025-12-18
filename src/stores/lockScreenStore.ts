@@ -20,7 +20,12 @@ export const useLockScreenStore = create<LockScreenState>((set) => ({
   setLocked: (locked: boolean) => set({ locked }),
 }))
 
-export const unlockLockScreen = useLockScreenStore.getState().setLocked(false);
-export const lockLockScreen = useLockScreenStore.getState().setLocked(true);
+export const unlockLockScreen = () => {
+  useLockScreenStore.getState().setLocked(false);
+};
+
+export const lockLockScreen = () => {
+  useLockScreenStore.getState().setLocked(true);
+};
 
 

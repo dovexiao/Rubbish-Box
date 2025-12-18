@@ -12,7 +12,7 @@ import GlobalLoginManager from "../components/GlobalLoginManager"
 import GlobalUpdateDialog from "../components/GlobalUpdateDialog"
 import { GlobalToast } from "../components/GlobalToast"
 import { GlobalDialog } from "../components/GlobalDialog"
-// import { DeviceAuthBlocker } from "../components/DeviceAuthBlocker"
+import { DeviceAuthBlocker } from "../components/DeviceAuthBlocker"
 // 导入P0核心功能Hooks
 import { useAppLifecycle } from "../hooks/useAppLifecycle"
 import { useDataSync } from "../hooks/useDataSync"
@@ -37,6 +37,8 @@ import { post } from "../services/api"
 import { LinearGradient } from "expo-linear-gradient"
 import { Images } from "../constants/Assets"
 import GlobalLockScreen from "../components/GlobalLockScreen"
+import { useLoginModal } from "../hooks/useLoginModal"
+import { useLockScreenStore } from "../stores/lockScreenStore"
 
 // 防止闪屏
 SplashScreen.preventAutoHideAsync()
@@ -57,7 +59,7 @@ export default function RootLayout() {
   const [showFakeConnectionModal, setShowFakeConnectionModal] = useState(false)
   // 防止重复打开系统设置
   const isOpeningSettings = React.useRef(false)
-  
+
   // 保存其他弹窗的状态（在显示网络弹窗时需要暂时隐藏它们）
   const savedModalsState = React.useRef<{
     toast: boolean
@@ -69,13 +71,13 @@ export default function RootLayout() {
   // 隐藏其他所有弹窗并保存状态
   const hideOtherModals = useCallback(() => {
     console.log("🔐 [NetworkModal] 网络弹窗显示，隐藏其他弹窗")
-    
+
     // 保存当前状态
     const toastState = useToastStore.getState()
     const dialogState = useDialogStore.getState()
     const updateState = useUpdateStore.getState()
     const loginModalRef = getLoginModalRef()
-    
+
     savedModalsState.current = {
       toast: toastState.visible,
       dialog: dialogState.visible,
@@ -85,9 +87,9 @@ export default function RootLayout() {
         forgotPassword: false,
       }
     }
-    
+
     console.log("📦 [NetworkModal] 保存的弹窗状态:", savedModalsState.current)
-    
+
     // 隐藏所有弹窗
     if (toastState.visible) {
       console.log("  ↪ 隐藏 Toast")
@@ -106,32 +108,32 @@ export default function RootLayout() {
       loginModalRef.hideLoginModal()
     }
   }, [])
-  
+
   // 恢复其他弹窗的状态
   const restoreOtherModals = useCallback(() => {
     if (!savedModalsState.current) {
       console.log("📦 [NetworkModal] 没有保存的弹窗状态，跳过恢复")
       return
     }
-    
+
     console.log("🔓 [NetworkModal] 网络恢复，恢复其他弹窗")
     console.log("📦 [NetworkModal] 恢复的弹窗状态:", savedModalsState.current)
-    
+
     const saved = savedModalsState.current
-    
+
     // 恢复 Toast（注意：Toast 通常有自动隐藏机制，可能不需要恢复）
     if (saved.toast) {
       console.log("  ↪ 恢复 Toast（跳过，因为 Toast 有自动消失机制）")
       // 不恢复 Toast，因为它会自动消失
     }
-    
+
     // 恢复 Dialog
     if (saved.dialog) {
       console.log("  ↪ 恢复 Dialog")
       // Dialog 需要完整的数据才能恢复，这里只是一个占位
       // 实际上 Dialog 在网络断开期间不应该显示，所以不恢复也合理
     }
-    
+
     // 恢复 Update Dialog
     if (saved.update) {
       console.log("  ↪ 恢复 Update Dialog")
@@ -139,7 +141,7 @@ export default function RootLayout() {
       // 需要保存完整的 updateData 才能恢复，这里简化处理
       // 实际场景中，更新弹窗在网络恢复后会重新检查
     }
-    
+
     // 恢复 Login Modal
     if (saved.login.isVisible) {
       console.log("  ↪ 恢复 Login Modal")
@@ -148,7 +150,7 @@ export default function RootLayout() {
         loginModalRef.showLoginModal()
       }
     }
-    
+
     // 清空保存的状态
     savedModalsState.current = null
   }, [])
@@ -157,14 +159,14 @@ export default function RootLayout() {
   const openNetworkSettings = async () => {
     setShowNetworkModal(false) // 先关闭弹窗
     setShowFakeConnectionModal(false) // 先关闭假连接弹窗
-    
+
     if (Platform.OS === "android") {
       try {
         console.log("🔧 准备打开系统 WiFi 设置")
-        
+
         // 使用 expo-intent-launcher 打开 Android 系统 WiFi 设置
         const IntentLauncher = await import("expo-intent-launcher")
-        
+
         // 使用 FLAG_ACTIVITY_NEW_TASK 和 FLAG_ACTIVITY_CLEAR_TOP 确保每次都能打开
         // FLAG_ACTIVITY_NEW_TASK: 在新任务中启动活动
         // FLAG_ACTIVITY_CLEAR_TOP: 如果活动已存在，清除其上的所有活动
@@ -177,7 +179,7 @@ export default function RootLayout() {
         console.log("✅ 已打开系统 WiFi 设置")
       } catch (error: any) {
         console.error("❌ 打开系统 WiFi 设置失败:", error)
-        
+
         // 如果是活动已启动的错误，尝试使用 FLAG_ACTIVITY_REORDER_TO_FRONT
         if (error?.code === 'E_ACTIVITY_ALREADY_STARTED') {
           try {
@@ -252,14 +254,14 @@ export default function RootLayout() {
   // 🔴 P0最高优先级：网络监测 - 必须第一个初始化
   // 初始化全局网络监听（单例模式）
   useNetworkMonitor()
-  
+
   // 获取网络状态
   const { isConnected, isInternetReachable, networkType, isInitialized } = useNetwork()
 
   // 监听 API 层的网络错误事件
   useEffect(() => {
     const { networkEventManager } = require("../utils/networkEvents")
-    
+
     const unsubscribe = networkEventManager.addListener(() => {
       console.log("🌐 收到 API 网络错误事件，显示网络弹窗")
       setShowNetworkModal(true)
@@ -269,11 +271,11 @@ export default function RootLayout() {
       unsubscribe()
     }
   }, [])
-  
+
   // 监听网络弹窗状态，自动隐藏/恢复其他弹窗
   useEffect(() => {
     const isNetworkModalShowing = showNetworkModal || showFakeConnectionModal
-    
+
     if (isNetworkModalShowing) {
       // 网络弹窗显示时，隐藏其他弹窗
       hideOtherModals()
@@ -287,7 +289,7 @@ export default function RootLayout() {
   const {
     getAndCacheDeviceUUID: _getAndCacheDeviceUUID,
     reverifyDeviceAuthorization,
-   ensureDeviceAuth ,
+    ensureDeviceAuth,
     clearDeviceUUID,
   } = useDeviceAuth()
   const {
@@ -300,7 +302,7 @@ export default function RootLayout() {
   const { checkForUpdatesOnShow } = useUpdateManager()
   const postureStore = usePostureStore()
   const { startMonitoring: startPostureMonitoring, stopMonitoring: stopPostureMonitoring } = useGlobalPostureMonitor()
-  
+
   // 全局 WebSocket 连接
   useGlobalWebSocket()
 
@@ -340,7 +342,7 @@ export default function RootLayout() {
       // 🔴 关键：必须先获取设备序列号，因为设备授权验证需要它
       const deviceCode = await _getAndCacheDeviceUUID()
       console.log("📱 设备序列号:", deviceCode || '(无)')
-      
+
       // 将设备码保存到 store 中，供弹窗显示使用
       if (deviceCode) {
         useDeviceAuthStore.getState().setDeviceUUID(deviceCode)
@@ -348,7 +350,7 @@ export default function RootLayout() {
 
       // 初始化坐姿监测（还原UniApp逻辑）
       postureStore.initPoseMonitor()
-      
+
       // 启动全局坐姿监控
       console.log("🚀 启动全局坐姿监控")
       await startPostureMonitoring()
@@ -415,7 +417,7 @@ export default function RootLayout() {
 
     onAppHide: () => {
       console.log("应用进入后台")
-      
+
       // 注意：坐姿监控是后台服务，应用进入后台时会继续运行
       // Native层的后台服务会持续进行坐姿检测和时间统计
       console.log("📱 应用进入后台，坐姿监控继续在后台运行")
@@ -423,7 +425,7 @@ export default function RootLayout() {
 
     onAppExit: async () => {
       console.log("应用退出")
-      
+
       // 🔴 关键：应用退出时必须停止后台相机服务
       console.log("🛑 停止坐姿监控服务")
       await stopPostureMonitoring()
@@ -479,19 +481,19 @@ export default function RootLayout() {
     // 只在初始化完成时检查一次
     if (isInitialized && !prevNetworkState.current.isInitialized) {
       console.log("🔍 网络初始化完成，检查初始网络状态")
-      
+
       // 如果初始化完成时网络未连接，直接显示弹窗
       if (!isConnected) {
         console.log("🔴 初始化时检测到网络未连接，显示弹窗")
         setShowNetworkModal(true)
       }
-      
+
       // 如果初始化完成时是假连接，显示假连接弹窗
       if (isConnected && isInternetReachable === false) {
         console.log("🟠 初始化时检测到假连接，显示弹窗")
         setShowFakeConnectionModal(true)
       }
-      
+
       // 更新 ref，标记初始化已完成
       prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
     }
@@ -571,6 +573,24 @@ export default function RootLayout() {
     SplashScreen.hideAsync()
   }, [])
 
+  // 锁屏状态，用于控制网络断开提示弹窗的显示
+  const locked = useLockScreenStore((state) => state.locked)
+
+  // useEffect(() => {
+  //   (async () => {
+  //     setShowNetworkModal(true)
+  //     const { showLoginModal } = await import("../utils/loginUtils")
+  //     showLoginModal({
+  //       onSuccess: () => {
+  //         console.log("登录成功")
+  //       },
+  //       onCancel: () => {
+  //         console.log("登录取消")
+  //       },
+  //     });
+  //   })();
+  // }, [locked])
+
   return (
     <GestureHandlerRootView style={styles.container}>
       {/* 全局沉浸式模式 - 隐藏状态栏和三大金刚键 */}
@@ -596,8 +616,7 @@ export default function RootLayout() {
 
       {/* 网络断开提示 Modal - 放在最外层确保在登录框之上 */}
       <Modal
-        // visible={true}
-        visible={showNetworkModal}
+        visible={showNetworkModal && !locked}
         transparent
         animationType="fade"
         statusBarTranslucent
@@ -637,9 +656,9 @@ export default function RootLayout() {
                   colors={["#AFDCFF", "#4BB1FF"]}
                   start={{ x: 0.35, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                style={[styles.networkModalButton, styles.networkModalConfirmButton]}
-              >
-                <Text style={styles.networkModalConfirmText}>去设置</Text>
+                  style={[styles.networkModalButton, styles.networkModalConfirmButton]}
+                >
+                  <Text style={styles.networkModalConfirmText}>去设置</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>

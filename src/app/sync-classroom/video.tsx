@@ -20,10 +20,12 @@ import {
   type CourseVideoInfoResponse,
 } from "../../services/classroom"
 import { useUserStore } from "../../stores/userStore"
+import { useDeviceStatusStore, selectCanDragVideo } from "../../stores/deviceStatusStore"
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError } from "../../utils/toast"
 import { useActivityTracking } from "../../hooks/useActivityTracking"
+// import { BrightnessControl, VolumeControl } from "../../components/video"
 
 interface VideoParams {
   videoCode?: string
@@ -42,6 +44,7 @@ export default function VideoPlayerScreen() {
   const router = useRouter()
   const params = useLocalSearchParams() as VideoParams
   const userStore = useUserStore()
+  const canDragVideo = useDeviceStatusStore(selectCanDragVideo)
   const videoRef = useRef<Video>(null)
   
   // 活动追踪 - 追踪视频观看行为
@@ -124,6 +127,7 @@ export default function VideoPlayerScreen() {
   const previewTimeRef = useRef(0) // ✅ 用 ref 存储最新的 previewTime
   const currentTimeRef = useRef(0) // ✅ 用 ref 存储最新的 currentTime，避免闭包陷阱
   const totalDurationRef = useRef(0) // ✅ 用 ref 存储最新的 totalDuration
+  const canDragVideoRef = useRef(canDragVideo) // ✅ 用 ref 存储 canDragVideo，避免闭包陷阱
 
   // 视频页面强制隐藏状态栏和三大金刚 - 使用原生StatusBar API
   useEffect(() => {
@@ -174,6 +178,12 @@ export default function VideoPlayerScreen() {
       return () => clearTimeout(timer)
     }, []),
   )
+
+  // 监听 canDragVideo 状态变化，更新 ref
+  useEffect(() => {
+    canDragVideoRef.current = canDragVideo
+    console.log("🔄 canDragVideo 状态更新:", canDragVideo)
+  }, [canDragVideo])
 
   // 初始化页面参数
   useEffect(() => {
@@ -493,6 +503,13 @@ export default function VideoPlayerScreen() {
 
   // 进度条点击处理
   const onProgressClick = (event: any) => {
+    // 如果当前设备不允许拖拽视频进度，则直接返回，不处理点击
+    if (!canDragVideo) {
+      console.log("⚠️ 当前设备禁止拖拽视频进度，忽略进度条点击")
+      showError("当前设备禁止拖拽视频进度")
+      return
+    }
+
     if (!totalDuration || !videoRef.current || !progressBarWidth) return
 
     const { locationX } = event.nativeEvent
@@ -605,19 +622,45 @@ export default function VideoPlayerScreen() {
   const screenHeight = Dimensions.get("window").height
 
   const panResponder = useMemo(() => PanResponder.create({
-      onStartShouldSetPanResponder: () => true, // ✅ 改为 true，优先捕获触摸
+      onStartShouldSetPanResponder: () => {
+        // 如果禁止拖拽视频，则不捕获触摸
+        if (!canDragVideoRef.current) {
+          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
+          showError("当前设备禁止拖拽视频进度")
+          return false
+        }
+        return true // ✅ 改为 true，优先捕获触摸
+      },
       onStartShouldSetPanResponderCapture: () => false,
       onMoveShouldSetPanResponder: (_, gestureState) => {
+        // 如果禁止拖拽视频，则不处理手势
+        if (!canDragVideoRef.current) {
+          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
+          showError("当前设备禁止拖拽视频进度")
+          return false
+        }
         // 只有水平滑动距离 > 10px 时才认为是快进快退手势
         const shouldHandle = Math.abs(gestureState.dx) > 10
         console.log(`🎬 手势检测: dx=${gestureState.dx.toFixed(0)}, dy=${gestureState.dy.toFixed(0)}, shouldHandle=${shouldHandle}`)
         return shouldHandle
       },
       onMoveShouldSetPanResponderCapture: (_, gestureState) => {
+        // 如果禁止拖拽视频，则不处理手势
+        if (!canDragVideoRef.current) {
+          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
+          showError("当前设备禁止拖拽视频进度")
+          return false
+        }
         // 水平滑动优先于垂直滑动
         return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && Math.abs(gestureState.dx) > 10
       },
       onPanResponderGrant: () => {
+        // 如果禁止拖拽视频，则直接返回，不开始手势
+        if (!canDragVideoRef.current) {
+          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
+          showError("当前设备禁止拖拽视频进度")
+          return
+        }
         // 记录滑动开始时的时间位置
         const currentTimeValue = currentTimeRef.current // ✅ 从 ref 读取最新值
         seekStartTimeRef.current = currentTimeValue
@@ -628,6 +671,12 @@ export default function VideoPlayerScreen() {
         console.log("🎬 快进快退手势开始，当前时间:", currentTimeValue, "秒，总时长:", totalDurationRef.current, "秒")
       },
       onPanResponderMove: (_, gestureState) => {
+        // 如果禁止拖拽视频，则直接返回，不处理移动
+        if (!canDragVideoRef.current) {
+          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
+          showError("当前设备禁止拖拽视频进度")
+          return
+        }
         const { dx } = gestureState
         const totalDurationValue = totalDurationRef.current // ✅ 从 ref 读取最新值
 
@@ -645,6 +694,17 @@ export default function VideoPlayerScreen() {
         previewTimeRef.current = newTime // ✅ 同步更新 ref
       },
       onPanResponderRelease: async () => {
+        // 如果禁止拖拽视频，则直接返回，不执行跳转
+        if (!canDragVideoRef.current) {
+          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
+          showError("当前设备禁止拖拽视频进度")
+          // 如果指示器已显示，则隐藏它
+          if (showSeekIndicator) {
+            setShowSeekIndicator(false)
+            setSeekDelta(0)
+          }
+          return
+        }
         const finalTime = previewTimeRef.current // ✅ 从 ref 读取最新值
         const totalDurationValue = totalDurationRef.current
         
@@ -938,6 +998,12 @@ export default function VideoPlayerScreen() {
             </View>
           </View>
         )}
+
+        {/* 音量调节器 */}
+        {/* <VolumeControl style={styles.volumeControl} />  */}
+
+        {/* 亮度调节器 */}
+        {/* <BrightnessControl style={styles.brightnessControl} /> */}
       </View>
     </View>
   )
@@ -951,46 +1017,48 @@ const styles = createStyles({
   videoMain: {
     flex: 1,
     backgroundColor: "#000",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   videoContainer: {
-    width: "100%",
+    width: "100%" as const,
     height: 312.5,
     backgroundColor: "#000",
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
+    position: "relative" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   videoTouchArea: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    width: "100%" as const,
+    height: "100%" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   video: {
-    width: "100%",
-    height: "100%",
+    width: "100%" as const,
+    height: "100%" as const,
+    borderWidth: 1,
+    borderColor: "red",
   },
   loading: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: "absolute" as const,
+    top: "50%" as const,
+    left: "50%" as const,
     transform: [{ translateX: -50 }, { translateY: -50 }],
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   loadingText: {
     color: "#fff",
     fontSize: 14,
   },
   videoHeader: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 0,
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    alignItems: "center",
+    left: 0 as const,
+    right: 0 as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     zIndex: 1001,
     paddingHorizontal: 12.6,
     paddingTop: 10,
@@ -998,8 +1066,8 @@ const styles = createStyles({
   },
   headerBack: {
     padding: 4,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   backText: {
     fontSize: 24,
@@ -1007,23 +1075,23 @@ const styles = createStyles({
   },
   videoTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     color: "#fff",
     flex: 1,
     marginLeft: 12,
   },
   centerPlayBtn: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: "absolute" as const,
+    top: "50%" as const,
+    left: "50%" as const,
     transform: [{ translateX: -50 }, { translateY: -50 }],
     zIndex: 500,
   },
   videoControls: {
-    position: "absolute",
+    position: "absolute" as const,
     bottom: 0,
-    left: 0,
-    right: 0,
+    left: 0 as const,
+    right: 0 as const,
     backgroundColor: "rgba(0, 0, 0, 0.8)",
     paddingHorizontal: 20,
     paddingVertical: 15,
@@ -1031,8 +1099,8 @@ const styles = createStyles({
     zIndex: 800,
   },
   progressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: 10,
   },
   timeDisplay: {
@@ -1043,27 +1111,27 @@ const styles = createStyles({
   progressBar: {
     flex: 1,
     height: 20,
-    position: "relative",
-    justifyContent: "center",
+    position: "relative" as const,
+    justifyContent: "center" as const,
   },
   progressBg: {
-    width: "100%",
+    width: "100%" as const,
     height: 4,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 2,
   },
   progressFill: {
-    position: "absolute",
-    top: "50%",
-    left: 0,
+    position: "absolute" as const,
+    top: "50%" as const,
+    left: 0 as const,
     height: 4,
     backgroundColor: "#4891FF",
     borderRadius: 2,
     transform: [{ translateY: -2 }],
   },
   progressHandle: {
-    position: "absolute",
-    top: "50%",
+    position: "absolute" as const,
+    top: "50%" as const,
     width: 12,
     height: 12,
     backgroundColor: "#fff",
@@ -1073,31 +1141,31 @@ const styles = createStyles({
     transform: [{ translateX: -6 }, { translateY: -6 }],
   },
   controlsBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
   },
   controlsLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
   },
   controlsRight: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: 20,
   },
   playBtn: {
     padding: 4,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   controlItem: {
-    position: "relative",
+    position: "relative" as const,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 4,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: 4,
   },
   controlText: {
@@ -1110,9 +1178,9 @@ const styles = createStyles({
     borderRadius: 4,
   },
   speedMenu: {
-    position: "absolute",
-    bottom: "100%",
-    right: 0,
+    position: "absolute" as const,
+    bottom: "100%" as const,
+    right: 0 as const,
     backgroundColor: "rgba(0, 0, 0, 0.9)",
     borderRadius: 6,
     paddingVertical: 6,
@@ -1123,7 +1191,7 @@ const styles = createStyles({
   speedOption: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    alignItems: "center",
+    alignItems: "center" as const,
   },
   speedOptionActive: {
     backgroundColor: "#4891FF",
@@ -1131,17 +1199,17 @@ const styles = createStyles({
   speedOptionText: {
     fontSize: 12,
     color: "#fff",
-    textAlign: "center",
+    textAlign: "center" as const,
   },
   completeTip: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 0,
-    left: 0,
-    right: 0,
+    left: 0 as const,
+    right: 0 as const,
     bottom: 0,
     backgroundColor: "rgba(0, 0, 0, 0.8)",
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     zIndex: 99999,
   },
   tipContent: {
@@ -1149,39 +1217,39 @@ const styles = createStyles({
     borderRadius: 16,
     paddingHorizontal: 30,
     paddingVertical: 40,
-    alignItems: "center",
+    alignItems: "center" as const,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.2)",
     maxWidth: 400,
   },
   completeIcon: {
     marginBottom: 12,
-    alignItems: "center",
+    alignItems: "center" as const,
   },
   iconCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: "#4891FF",
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   iconText: {
     fontSize: 24,
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   completeTitle: {
     fontSize: 16,
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     marginBottom: 20,
     lineHeight: 22.4,
-    textAlign: "center",
+    textAlign: "center" as const,
   },
   completeActions: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: "row" as const,
+    justifyContent: "center" as const,
     gap: 12,
   },
   actionBtnSecondary: {
@@ -1201,6 +1269,20 @@ const styles = createStyles({
   btnText: {
     color: "#fff",
     fontSize: 10,
+  },
+  volumeControl: {
+    position: "absolute" as const,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    height: "25%" as const,
+  },
+  brightnessControl: {
+    position: "absolute" as const,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    height: "25%" as const,
   },
   // ==================== 音量和亮度指示器样式（已注释）====================
   // brightnessIndicator: {
@@ -1267,8 +1349,8 @@ const styles = createStyles({
   // ==================== 快进快退指示器样式 ====================
   seekIndicator: {
     position: "absolute" as const,
-    left: "50%",
-    top: "50%",
+    left: "50%" as const,
+    top: "50%" as const,
     transform: [{ translateX: -120 }, { translateY: -70 }],
     backgroundColor: "rgba(0, 0, 0, 0.85)",
     borderRadius: 12,
@@ -1285,7 +1367,7 @@ const styles = createStyles({
   },
   seekContent: {
     alignItems: "center" as const,
-    width: "100%",
+    width: "100%" as const,
   },
   seekDeltaText: {
     color: "#4891FF",
@@ -1303,7 +1385,7 @@ const styles = createStyles({
     fontWeight: "500" as const,
   },
   seekProgressBar: {
-    width: "100%",
+    width: "100%" as const,
     height: 4,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 2,

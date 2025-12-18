@@ -99,7 +99,7 @@ export default function MyScreen() {
       setBadges(badgesData.medal_list || [])
       setTodayQuestionData(todayData)
       setWeeklyStudyData(studyDataResult.daily_data || [])
-      
+
       console.log("✅ 我的页面数据加载完成")
     } catch (error) {
       console.error("获取数据失败:", error)
@@ -114,11 +114,11 @@ export default function MyScreen() {
           // 先获取用户信息
           await userStore.getUserInfo()
           // 再获取其他数据
-        await fetchAllData()
+          await fetchAllData()
         } catch (error) {
           console.error("初始化数据失败:", error)
         } finally {
-        setIsInitialized(true)
+          setIsInitialized(true)
         }
       })
     }
@@ -128,23 +128,23 @@ export default function MyScreen() {
   useFocusEffect(
     useCallback(() => {
       if (!isInitialized) return
-      
+
       let isCancelled = false
-      
+
       // 刷新用户信息和所有数据
       const refreshData = async () => {
         if (isCancelled) return
-        
+
         try {
           // 1. 先调用 getUserInfo 获取最新用户数据
           await userStore.getUserInfo()
-          
+
           if (isCancelled) return
-          
+
           // 2. 刷新其他数据
           const token = userStore.token
           if (!token) return
-          
+
           const [badgesData, todayData, studyDataResult] = await Promise.all([
             getUserBadges().catch((err) => {
               console.error("获取徽章失败:", err)
@@ -159,7 +159,7 @@ export default function MyScreen() {
               return { daily_data: [] }
             })
           ])
-          
+
           if (!isCancelled) {
             // 不需要 setUserInfo，因为 userInfo 已经通过 useUserStore 订阅自动更新了
             setBadges(badgesData.medal_list || [])
@@ -170,9 +170,9 @@ export default function MyScreen() {
           console.error("刷新数据失败:", error)
         }
       }
-      
+
       refreshData()
-      
+
       return () => {
         isCancelled = true
       }
@@ -387,7 +387,7 @@ export default function MyScreen() {
           {/* 左侧列 */}
           <View style={styles.leftColumn}>
             {/* 会员卡片 */}
-            <ImageBackground
+            {/* <ImageBackground
               source={require("../../../assets/images/my-user-vip-bg.png")}
               style={styles.memberCard}
               imageStyle={styles.memberCardImage}
@@ -408,7 +408,7 @@ export default function MyScreen() {
                 <Text style={styles.actionBtnText}>立即开通</Text>
                 <Ionicons name="chevron-forward" size={rpx(8.6)} color="#487FB1" />
               </TouchableOpacity>
-            </ImageBackground>
+            </ImageBackground> */}
 
             {/* 我的勋章 */}
             <LinearGradient
@@ -429,7 +429,7 @@ export default function MyScreen() {
               </View>
               {badges && badges.length > 0 && (
                 <View style={styles.badgesGrid}>
-                  {badges.slice(0, 3).map((badge, index) => {
+                  {badges.slice(0, 6).map((badge, index) => {
                     // 检查并修复图片 URL
                     let imageUrl = badge.image_url
                     if (imageUrl && !imageUrl.startsWith('http')) {
@@ -437,17 +437,17 @@ export default function MyScreen() {
                       const baseUrl = 'http://8.135.11.47:8080'
                       imageUrl = imageUrl.startsWith('/') ? `${baseUrl}${imageUrl}` : `${baseUrl}/${imageUrl}`
                     }
-                    
+
                     console.log('徽章图片 URL:', imageUrl)
-                    
+
                     return (
-                    <View key={index} style={styles.badgeItem}>
-                      <View style={styles.badgeCircle}>
+                      <View key={index} style={styles.badgeItem}>
+                        <View style={styles.badgeCircle}>
                           {imageUrl ? (
-                        <Image
+                            <Image
                               source={{ uri: imageUrl }}
-                          style={styles.badgeImage}
-                          resizeMode="contain"
+                              style={styles.badgeImage}
+                              resizeMode="contain"
                               onError={(error) => {
                                 console.log(`徽章[${badge.name}]图片加载失败:`, imageUrl, error.nativeEvent.error)
                               }}
@@ -458,16 +458,16 @@ export default function MyScreen() {
                           ) : (
                             <Text style={{ fontSize: 10, color: '#999' }}>无图片</Text>
                           )}
+                        </View>
+                        <Text
+                          style={[
+                            styles.badgeLabel,
+                            badge.is_unlocked ? styles.badgeLabelUnlocked : styles.badgeLabelLocked,
+                          ]}
+                        >
+                          {badge.name}
+                        </Text>
                       </View>
-                      <Text
-                        style={[
-                          styles.badgeLabel,
-                          badge.is_unlocked ? styles.badgeLabelUnlocked : styles.badgeLabelLocked,
-                        ]}
-                      >
-                        {badge.name}
-                      </Text>
-                    </View>
                     )
                   })}
                 </View>
@@ -714,10 +714,10 @@ const styles = createStyles({
   badgesCard: {
     borderWidth: 0.5,
     borderColor: "rgba(255, 255, 255, 0.8)",
-    borderRadius: 11.71875,
-    padding: 15.625,
-    width: 267.1875,
-    height: 132.03125,
+    borderRadius: 11.71875, // 30
+    padding: 15.625, // 40
+    width: 267.1875, // 684
+    height: 209.765625, // 537
     overflow: "hidden" as const,
     // shadowColor: "#000",
     // shadowOffset: { width: 0, height: 3.90625 },
@@ -729,38 +729,40 @@ const styles = createStyles({
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
     alignItems: "flex-start" as const,
+    marginBottom: 7.8125, // 20
   },
   badgesTitle: {
     width: "100%" as const,
-    height: 25,
-    position: "relative" as const,
+    height: 17.96875, // 46
   },
   badgesTitleText: {
-    fontSize: 9.375,
-    color: "#333",
+    fontSize: 12.890625, // 33
+    color: "#404040E5",
     fontWeight: "bold" as const,
     position: "relative" as const,
     zIndex: 2,
   },
   titleBgImage: {
     position: "absolute" as const,
-    left: -2,
-    top:5,
-    width: 53.90625,
+    left: -1.5625, // -4
+    top: 7.03125, // 18
+    width: 53.515625, // 137
+    height: 12.5, // 32
   },
   badgesGrid: {
     flexDirection: "row" as const,
-    gap: 18.71875,
+    flexWrap: "wrap" as const,
+    justifyContent: "space-between" as const,
+    gap: 7.8125, // 20
   },
   badgeItem: {
     flexDirection: "column" as const,
     alignItems: "center" as const,
-    gap: 3.90625,
+    gap: 3.125, // 8
   },
   badgeCircle: {
-    width: 57.8125,
-    height: 57.8125,
-    borderRadius: 28.90625,
+    width: 59.375, // 152
+    height: 59.375, // 152
     flexDirection: "row" as const,
     alignItems: "center" as const,
     justifyContent: "center" as const,
@@ -768,16 +770,13 @@ const styles = createStyles({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   badgeImage: {
-    width: 57.8125,
-    height: 57.8125,
+    width: 59.375, // 152
+    height: 59.375, // 152
   },
   badgeLabel: {
     textAlign: "center" as const,
-    fontSize: 10,
-    fontWeight: "bold" as const,
-    lineHeight: 14,
-    width: 62.5,
-    marginTop: 4,
+    fontSize: 8.59375, // 22
+    fontWeight: "600" as const,
   },
   badgeLabelUnlocked: {
     color: "#42508D",
@@ -798,20 +797,21 @@ const styles = createStyles({
     // elevation: 2,
   },
   dataHeader: {
-    // flexDirection: "row" as const,
-    // justifyContent: "start" as const,
-    // alignItems: "center" as const,
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "flex-start" as const,
+    marginBottom: 7.8125, // 20
   },
   dataTitle: {
-    position: "relative" as const,
-    height: 30,
+    width: "100%" as const,
+    height: 17.96875, // 46
   },
   dataTitleText: {
-    fontSize: 9.375,
-    color: "#333",
+    fontSize: 12.890625, // 33
+    color: "#404040E5",
     fontWeight: "bold" as const,
-    zIndex: 2,
     position: "relative" as const,
+    zIndex: 2,
   },
   studyDataContainer: {
     flexDirection: "row" as const,

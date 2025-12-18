@@ -77,6 +77,7 @@ export interface Hot {
   description?: string
   authors: HotAuthor[]
   categories: Category[]
+  view_count: number
 }
 
 export interface HotAuthor {
@@ -92,6 +93,7 @@ export interface NewBook {
   description?: string
   authors: NewBookAuthor[]
   categories: Category[]
+  view_count: number
 }
 
 export interface NewBookAuthor {
@@ -107,6 +109,7 @@ export interface Science {
   description?: string
   authors: ScienceAuthor[]
   categories: Category[]
+  view_count: number
 }
 
 export interface ScienceAuthor {

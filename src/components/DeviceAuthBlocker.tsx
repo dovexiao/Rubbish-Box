@@ -2,6 +2,7 @@ import React from "react"
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useDeviceAuthStore } from "../stores/deviceAuthStore"
+import { useLockScreenStore } from "@/stores/lockScreenStore"
 
 /**
  * 设备授权阻止组件
@@ -15,9 +16,11 @@ export const DeviceAuthBlocker: React.FC = () => {
     return null
   }
 
+  const locked = useLockScreenStore((state) => state.locked)
+
   return (
     <Modal
-      visible={isBlocked}
+      visible={isBlocked && !locked}
       transparent
       animationType="fade"
       statusBarTranslucent

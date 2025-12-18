@@ -4,6 +4,7 @@ import { useUpdateStore } from "../stores/updateStore"
 import { updateManager } from "../services/updateManager"
 import { UpdateType, UpdateLevel } from "../services/updateManager"
 import { UpdateDialog } from "./UpdateDialog"
+import { useLockScreenStore } from "../stores/lockScreenStore"
 
 /**
  * 全局更新对话框组件
@@ -147,10 +148,12 @@ export const GlobalUpdateDialog = React.memo(function GlobalUpdateDialog() {
     fileSize: updateData.fileSize,
   }
 
+  const locked = useLockScreenStore((state) => state.locked)
+
   return (
     <UpdateDialog
       // 热更新相关
-      hotUpdateVisible={!isFullUpdate && showUpdateDialog}
+      hotUpdateVisible={!isFullUpdate && showUpdateDialog && !locked}
       hotUpdateData={!isFullUpdate ? updateDialogData : undefined}
       hotCanSkip={!isForceUpdate && canSkip}
       
