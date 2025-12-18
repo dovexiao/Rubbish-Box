@@ -925,21 +925,21 @@ const openVolumeSettings = async () => {
         </TouchableOpacity> */}
 
         {/* WebSocket 测试按钮  */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.wsTestButton} 
           onPress={goToWebSocketTest}
           activeOpacity={0.7}
         >
           <Text style={styles.wsTestButtonText}>WS测试</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       {/* ws通信  */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.wsTestButton} 
           onPress={goToActivityTrackingTest}
           activeOpacity={0.7}
         >
           <Text style={styles.wsTestButtonText}>activity-tracking-test测试</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
 
  

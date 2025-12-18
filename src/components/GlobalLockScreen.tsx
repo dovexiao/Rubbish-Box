@@ -201,11 +201,12 @@ const GlobalLockScreen: React.FC<GlobalLockScreenProps> = ({
 
   // 解锁回调
   const handleUnlock = useCallback(() => {
+    
     // 只有在绽放动画完成后才能解锁
-    if (canUnlock) {
-      setLocked(false)
-      onUnlock?.()
-    }
+    // if (canUnlock) {
+    //   setLocked(false)
+    //   onUnlock?.()
+    // }
   }, [canUnlock, onUnlock])
 
   // 锁屏交互动画

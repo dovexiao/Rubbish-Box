@@ -244,6 +244,7 @@ class GlobalWebSocketService {
         bound: data.bound ?? false,
         dragVideo: data.dragVideo ?? false,
         displayAnswer: data.displayAnswer ?? false,
+        lockScreenNow: data.lockScreenNow ?? false,
       }
 
       console.log('[GlobalWebSocket] 解析后的设备状态:', deviceStatus)

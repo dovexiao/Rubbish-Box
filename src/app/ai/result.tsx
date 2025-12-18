@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { View, ScrollView, ActivityIndicator, Text } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { useLocalSearchParams, useRouter } from "expo-router"
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router"
 
 import { CompositionResult } from "../../components/CompositionResult"
 import { NavBar } from "../../components/NavBar"
@@ -30,9 +30,12 @@ export default function AIResultScreen() {
   const [isLoading, setIsLoading] = useState(true)
   
   // 活动追踪 - 追踪AI批改结果查看
-  const { startHomework, startComposition } = useActivityTracking({
+  const { startHomework, endHomework, startComposition, endComposition } = useActivityTracking({
     autoExitOnUnmount: true,
   })
+  
+  // 记录当前追踪类型，用于退出时调用正确的方法
+  const activityTypeRef = useRef<"homework" | "composition" | null>(null)
 
   useEffect(() => {
     const loadData = async () => {
@@ -48,12 +51,14 @@ export default function AIResultScreen() {
           // 📊 启动活动追踪（如果从loading页面跳转过来，这里会覆盖之前的追踪，但保持类型一致）
           if (correctionType === "composition") {
             console.log("📊 [活动追踪] 查看作文批改结果")
+            activityTypeRef.current = "composition"
             startComposition({
               compositionId: params.batch_id as string,
               compositionName: "AI作文批改结果",
             })
           } else {
             console.log("📊 [活动追踪] 查看作业批改结果")
+            activityTypeRef.current = "homework"
             startHomework({
               homeworkId: params.batch_id as string,
               homeworkName: "AI作业批改结果",
@@ -76,6 +81,7 @@ export default function AIResultScreen() {
           
           // 📊 启动作文追踪
           console.log("📊 [活动追踪] 查看作文批改结果（从收录）")
+          activityTypeRef.current = "composition"
           startComposition({
             compositionId: params.id as string,
             compositionName: "AI作文批改结果",
@@ -106,6 +112,32 @@ export default function AIResultScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id, params.resData, params.cache_key, params.batch_id, params.type])
 
+  // 处理返回按钮点击
+  const handleBack = () => {
+    console.log("📊 [活动追踪] 手动退出批改结果页面")
+    if (activityTypeRef.current === "homework") {
+      endHomework()
+    } else if (activityTypeRef.current === "composition") {
+      endComposition()
+    }
+    router.back()
+  }
+
+  // 监听页面失焦，确保退出消息发送
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // 页面失焦时发送退出消息
+        console.log("📊 [活动追踪] 页面失焦，退出批改结果")
+        if (activityTypeRef.current === "homework") {
+          endHomework()
+        } else if (activityTypeRef.current === "composition") {
+          endComposition()
+        }
+      }
+    }, [endHomework, endComposition])
+  )
+
   return (
     <LinearGradient
       colors={["#93abff", "#e4f4ff", "#ecf8ff", "#ffffff"]}
@@ -117,7 +149,12 @@ export default function AIResultScreen() {
       {/* 头部 */}
       <View style={styles.header}>
         <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
-        <NavBar title={type === "作文" ? "作文批改" : "试题批改"} leftArrow goBackDelta={1} />
+        <NavBar 
+          title={type === "作文" ? "作文批改" : "试题批改"} 
+          leftArrow 
+          goBackDelta={1}
+          onBackPress={handleBack}
+        />
       </View>
 
       {/* 加载状态 */}

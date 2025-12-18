@@ -388,7 +388,18 @@ export default function AILoadingScreen() {
     useCallback(() => {
       RNStatusBar.setHidden(true, "none")
       globalImmersive.forceRestore()
-    }, []),
+      
+      return () => {
+        // 页面失焦时发送退出消息（如果还在批改中）
+        console.log("📊 [活动追踪] loading页面失焦，退出批改")
+        const correctionType = params.type as string
+        if (correctionType === "composition") {
+          endComposition()
+        } else if (correctionType === "question") {
+          endHomework()
+        }
+      }
+    }, [params.type, endHomework, endComposition]),
   )
 
   // 流式接收 AI 分析结果（保持原有逻辑）

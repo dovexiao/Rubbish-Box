@@ -36,6 +36,8 @@ import CatalogPanel from './components/CatalogPanel';
 import {EpubPaginator, PaginationOptions} from '../../utils/epubPaginator';
 import {showError, showInfo} from '../../utils/toast';
 import {Ionicons} from '@expo/vector-icons';
+import {useActivityTracking} from '../../hooks/useActivityTracking';
+import {useFocusEffect} from 'expo-router';
 
 type Direction = 'idle' | 'forward' | 'backward'; // idle: 不移动, forward: 向前拖动（向后翻页）, backward: 向后拖动（向前翻页）
 
@@ -94,9 +96,16 @@ const EpubReader: React.FC = () => {
 
   // 书本与章节相关状态与方法
   const saveBookId = useBookStore(state => state.bookId);
+  const bookTitle = useBookStore(state => state.bookTitle);
   const bookChapters = useBookStore(state => state.bookChapters);
   const currentChapter = useBookStore(state => state.currentChapter);
   const loadedChapters = useBookStore(state => state.loadedChapters); // 章节池
+  
+  // 活动追踪 - 追踪阅读行为
+  const { startReading, updateReadingProgress, endReading } = useActivityTracking({
+    throttleDelay: 3000, // 阅读进度更新节流3秒
+    autoExitOnUnmount: true,
+  })
 
   // 分页相关状态
   const pages = useBookStore(state => state.pages); // 分页数据 // 更新分页数据
@@ -186,6 +195,45 @@ const EpubReader: React.FC = () => {
       }
     }
   }, []);
+
+  // 📊 启动阅读追踪（当书本详情加载完成后）
+  useEffect(() => {
+    if (bookTitle && saveBookId && saveBookId > 0) {
+      console.log("📊 [活动追踪] 启动阅读追踪", { bookId: saveBookId, bookTitle, currentProgress })
+      startReading({
+        bookId: String(saveBookId),
+        bookName: bookTitle,
+        progress: Math.round(currentProgress * 100), // 转换为0-100的百分比
+        currentPage: currentPageIndex + 1,
+        totalPages: pages.length,
+        chapterId: currentChapter?.id ? String(currentChapter.id) : undefined,
+        chapterName: currentChapter?.title,
+      })
+    }
+  }, [bookTitle, saveBookId, startReading, currentProgress, currentPageIndex, pages.length, currentChapter]); // 只在书本信息加载时触发一次
+
+  // 📊 更新阅读进度（当进度变化时）
+  useEffect(() => {
+    if (saveBookId && saveBookId > 0 && currentProgress > 0 && bookTitle) {
+      const progressPercent = Math.round(currentProgress * 100)
+      updateReadingProgress(progressPercent, {
+        currentPage: currentPageIndex + 1,
+        totalPages: pages.length,
+        chapterId: currentChapter?.id ? String(currentChapter.id) : undefined,
+        chapterName: currentChapter?.title,
+      })
+    }
+  }, [currentProgress, currentPageIndex, pages.length, currentChapter, updateReadingProgress, saveBookId, bookTitle]);
+
+  // 📊 监听页面失焦，确保退出消息发送
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        console.log("📊 [活动追踪] 阅读页面失焦，退出阅读")
+        endReading()
+      }
+    }, [endReading])
+  );
 
   // 分页处理
   const paginateContent = useCallback(async (chapter: Chapter) => {
@@ -527,7 +575,11 @@ const EpubReader: React.FC = () => {
         <BackButton
           visible={showBackButton}
           containerStyle={styles.backContainer}
-          onPress={() => {router.back()}}
+          onPress={() => {
+            console.log("📊 [活动追踪] 手动退出阅读")
+            endReading()
+            router.back()
+          }}
         />
 
         {/* 书页翻动手势 */}

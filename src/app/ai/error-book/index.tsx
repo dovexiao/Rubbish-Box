@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Image } from "react-native"
-import { useRouter } from "expo-router"
+import { useRouter, useFocusEffect } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
 import Svg, { Circle, Text as SvgText } from "react-native-svg"
 
@@ -23,7 +23,7 @@ export default function ErrorBookScreen() {
   const [selectedSubject, setSelectedSubject] = useState<CorrectionRecordItem | null>(null)
   
   // 活动追踪 - 追踪错题本使用
-  const { startErrorBook } = useActivityTracking({
+  const { startErrorBook, endErrorBook } = useActivityTracking({
     autoExitOnUnmount: true,
   })
 

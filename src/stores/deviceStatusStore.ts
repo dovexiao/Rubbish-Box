@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useLockScreenStore } from './lockScreenStore'
 
 /**
  * 设备状态接口
@@ -10,6 +11,8 @@ export interface DeviceStatus {
   dragVideo: boolean
   /** 是否显示答案 */
   displayAnswer: boolean
+  /** 是否立即锁屏 */
+  lockScreenNow: boolean
 }
 
 /**
@@ -49,6 +52,13 @@ export const useDeviceStatusStore = create<DeviceStatusStore>((set) => ({
   // Actions
   setStatus: (status) => {
     console.log('[DeviceStatusStore] 设置设备状态:', status)
+    
+    // 同步锁屏状态
+    if (status.lockScreenNow !== undefined) {
+      useLockScreenStore.getState().setLocked(status.lockScreenNow)
+      console.log('[DeviceStatusStore] 同步锁屏状态:', status.lockScreenNow)
+    }
+    
     set({
       status,
       isInitialized: true,
@@ -63,6 +73,12 @@ export const useDeviceStatusStore = create<DeviceStatusStore>((set) => ({
         : statusUpdate as DeviceStatus
       
       console.log('[DeviceStatusStore] 更新设备状态:', statusUpdate)
+      
+      // 同步锁屏状态（如果 lockScreenNow 字段有更新）
+      if (statusUpdate.lockScreenNow !== undefined) {
+        useLockScreenStore.getState().setLocked(statusUpdate.lockScreenNow)
+        console.log('[DeviceStatusStore] 同步锁屏状态:', statusUpdate.lockScreenNow)
+      }
       
       return {
         status: newStatus,
