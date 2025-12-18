@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, memo } from "react"
+import { useState, useMemo, useCallback, useRef, memo, useEffect } from "react"
 import {
   View,
   Text as RNText,
@@ -12,8 +12,11 @@ import { useRouter } from "expo-router"
 
 import { Images } from "../constants/Assets"
 import { useTabbarStore } from "../stores/tabbarStore"
+import { useDeviceStatusStore, selectCanDisplayAnswer } from "../stores/deviceStatusStore"
 import { createStyles, rpx } from "../utils/rpxStyleSheet"
 import { MixedContent } from "./MixedContent"
+import { BlurView } from "expo-blur"
+import { showError, showInfo } from "../utils/toast"
 
 const Text = RNText
 
@@ -60,6 +63,7 @@ interface Props {
 export function QuestionResult({ data }: Props) {
   const router = useRouter()
   const tabbarStore = useTabbarStore()
+  const canDisplayAnswer = useDeviceStatusStore(selectCanDisplayAnswer)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [revealAnswer, setRevealAnswer] = useState(false)
   const [filterType, setFilterType] = useState<"all" | "wrong" | "unanswered">("all") // 筛选类型
@@ -68,7 +72,7 @@ export function QuestionResult({ data }: Props) {
   // 根据筛选类型过滤题目
   const filteredQuestions = useMemo(() => {
     const results = data.grading_results || []
-    
+
     if (filterType === "wrong") {
       return results.filter((q) => q.status === "答错了")
     } else if (filterType === "unanswered") {
@@ -107,11 +111,11 @@ export function QuestionResult({ data }: Props) {
         accuracy: 0,
       }
     }
-    
+
     // 如果没有 summary，则自己计算
     const results = data.grading_results || []
     const total = data.summary?.total_questions || results.length || 0
-    const  unanswered = results.filter((q) => q.status === "未作答").length
+    const unanswered = results.filter((q) => q.status === "未作答").length
     const wrong = results.filter((q) => q.status === "答错了").length
     const correct = total - unanswered - wrong
 
@@ -129,7 +133,7 @@ export function QuestionResult({ data }: Props) {
     () =>
       statistics.wrong_count === 0 &&
       statistics.unanswered_count === 0 &&
-      statistics.total_questions  > 0,
+      statistics.total_questions > 0,
     [statistics],
   )
 
@@ -145,11 +149,11 @@ export function QuestionResult({ data }: Props) {
     if (switchDebounceRef.current) {
       clearTimeout(switchDebounceRef.current)
     }
-    
+
     // 立即更新索引（视觉反馈）
     setCurrentIndex(index)
     setRevealAnswer(false)
-    
+
     // 防抖：延迟渲染详情内容
     switchDebounceRef.current = setTimeout(() => {
       switchDebounceRef.current = null
@@ -185,6 +189,11 @@ export function QuestionResult({ data }: Props) {
       </View>
     )
   }
+
+  useEffect(() => {
+    console.log("🔍 当前设备状态:", canDisplayAnswer)
+    showInfo(`当前设备${canDisplayAnswer ? "允许" : "禁止"}显示答案`)
+  }, [canDisplayAnswer])
 
   return (
     <View style={styles.questionResultUI}>
@@ -228,7 +237,7 @@ export function QuestionResult({ data }: Props) {
               </View>
               <View style={styles.topSummaryItem}>
                 <Text style={styles.summaryText}>共</Text>
-                <Text style={styles.summaryBoldText}>{statistics.total_questions }</Text>
+                <Text style={styles.summaryBoldText}>{statistics.total_questions}</Text>
                 <Text style={styles.summaryText}>题</Text>
               </View>
               <View style={styles.topSummaryItem}>
@@ -244,10 +253,10 @@ export function QuestionResult({ data }: Props) {
                     filterType === "wrong" && styles.topSummaryItemActive,
                   ]}
                 >
-                <Text style={styles.summaryText}>答错</Text>
-                <Text style={styles.summaryBoldText}>{statistics.wrong_count}</Text>
-                <Text style={styles.summaryText}>题</Text>
-              </View>
+                  <Text style={styles.summaryText}>答错</Text>
+                  <Text style={styles.summaryBoldText}>{statistics.wrong_count}</Text>
+                  <Text style={styles.summaryText}>题</Text>
+                </View>
               </TouchableWithoutFeedback>
               <TouchableWithoutFeedback onPress={() => handleFilterChange("unanswered")}>
                 <View
@@ -258,10 +267,10 @@ export function QuestionResult({ data }: Props) {
                     filterType === "unanswered" && styles.topSummaryItemActive,
                   ]}
                 >
-                <Text style={styles.summaryText}>未答</Text>
-                <Text style={styles.summaryBoldText}>{statistics.unanswered_count}</Text>
-                <Text style={styles.summaryText}>题</Text>
-              </View>
+                  <Text style={styles.summaryText}>未答</Text>
+                  <Text style={styles.summaryBoldText}>{statistics.unanswered_count}</Text>
+                  <Text style={styles.summaryText}>题</Text>
+                </View>
               </TouchableWithoutFeedback>
             </LinearGradient>
 
@@ -306,28 +315,28 @@ export function QuestionResult({ data }: Props) {
               </View>
 
               {/* 题目列表 */}
-              <ScrollView 
-                style={styles.questionList} 
+              <ScrollView
+                style={styles.questionList}
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
                 removeClippedSubviews={true}
               >
                 {filteredQuestions.length > 0 ? (
                   filteredQuestions.map((q, idx) => (
-                  <TouchableWithoutFeedback
-                    key={`q-${idx}-${q.questionText?.substring(0, 20)}`}
-                    onPress={() => handleQuestionChange(idx)}
-                  >
-                    <View
-                      style={[
-                        styles.questionItem,
-                        idx === currentIndex && styles.questionItemActive,
-                      ]}
+                    <TouchableWithoutFeedback
+                      key={`q-${idx}-${q.questionText?.substring(0, 20)}`}
+                      onPress={() => handleQuestionChange(idx)}
                     >
-                      <Text style={styles.qIndex}>{idx + 1}.</Text>
+                      <View
+                        style={[
+                          styles.questionItem,
+                          idx === currentIndex && styles.questionItemActive,
+                        ]}
+                      >
+                        <Text style={styles.qIndex}>{idx + 1}.</Text>
                         <View style={{ flex: 1 }}>
                           <MemoizedMixedContent
-                            content={q.questionText || ""} 
+                            content={q.questionText || ""}
                             style={styles.questionText}
                           />
                         </View>
@@ -339,7 +348,7 @@ export function QuestionResult({ data }: Props) {
                     <Text style={styles.emptyStateText}>
                       {filterType === "wrong" ? "没有答错的题目" : "没有未答的题目"}
                     </Text>
-                    </View>
+                  </View>
                 )}
               </ScrollView>
             </LinearGradient>
@@ -349,52 +358,65 @@ export function QuestionResult({ data }: Props) {
           <View style={styles.rightDetail}>
             {filteredQuestions.length > 0 && currentQuestion ? (
               <LinearGradient
-                colors={["#f7fcff", "#5ba8ff"]}
-                locations={[0.861, 1.4882]}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1 }}
+                colors={["#0088FF", "#27DFFF"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
                 style={styles.rightDetailItem}
               >
-                <View style={styles.cardCorner}>
-                  <Text style={styles.cardCornerText}>第{currentIndex + 1}题</Text>
-                </View>
-
-                {/* 可滚动内容区域 */}
-                <ScrollView
-                  style={styles.scrollableContent}
-                  contentContainerStyle={styles.scrollableContentContainer}
-                  showsVerticalScrollIndicator={false}
-                  nestedScrollEnabled={true}
-                  removeClippedSubviews={false}
-                >
+                <View style={styles.rightDetailItemContent}>
+                  <View style={styles.cardCorner}>
+                    <Text style={styles.cardCornerText}>第{currentIndex + 1}题</Text>
+                  </View>
                   {/* 答案块 */}
-                  <View style={styles.answerBlock}>
-                    <Text style={styles.answerTitle}>答案</Text>
-                    <TouchableWithoutFeedback onPress={handleRevealAnswer}>
-                      <View
-                        style={[styles.answerContent, revealAnswer && styles.answerContentRevealed]}
-                      >
-                        {!revealAnswer ? (
-                          <Text style={styles.scratchHint}>点击查看答案</Text>
-                        ) : (
-                          <MemoizedMixedContent
-                            content={currentQuestion.correctAnswer || ""} 
-                            style={styles.answerText}
-                          />
-                        )}
-                      </View>
-                    </TouchableWithoutFeedback>
+                  <LinearGradient
+                    colors={["#BDDBFF", "#BDDBFF03"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.formTitleWrapper}
+                  >
+                    <View style={styles.formTitleIconWrapper}>
+                      <View style={styles.formTitleIconCircle1} />
+                      <View style={styles.formTitleIconCircle2} />
+                    </View>
+                    <Text style={styles.formTitle}>答案</Text>
+                  </LinearGradient>
+                  <View style={[{ marginBottom: 12.890625 }]}>
+                    {/* 根据设备状态决定是否显示模糊层：如果允许显示答案则不渲染BlurView */}
+                    {!canDisplayAnswer && (
+                      <BlurView
+                        intensity={15.5}
+                        tint="dark"
+                        blurReductionFactor={8}
+                        experimentalBlurMethod={'dimezisBlurView'}
+                        style={styles.blurView}
+                      />
+                    )}
+                    <MemoizedMixedContent
+                      content={currentQuestion.correctAnswer || ""}
+                      style={styles.formText}
+                    />
                   </View>
 
                   {/* 解析块 */}
                   <View style={styles.analysisBlock}>
-                    <Text style={styles.analysisTitle}>解析</Text>
+                    <LinearGradient
+                      colors={["#D9E8FFE0", "#D9E8FFE0"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={styles.formTitleWrapper}
+                    >
+                      <View style={styles.formTitleIconWrapper}>
+                        <View style={styles.formTitleIconCircle1} />
+                        <View style={styles.formTitleIconCircle2} />
+                      </View>
+                      <Text style={styles.formTitle}>解析</Text>
+                    </LinearGradient>
                     <MemoizedMixedContent
-                      content={currentQuestion.feedback || ""} 
-                      style={styles.analysisText}
+                      content={currentQuestion.feedback || ""}
+                      style={styles.formText}
                     />
                   </View>
-                </ScrollView>
+                </View>
               </LinearGradient>
             ) : (
               <LinearGradient
@@ -600,6 +622,7 @@ const styles = createStyles({
   questionText: {
     flex: 1,
     color: "#000",
+    fontWeight: "400" as const,
     fontSize: 11.375, // 增大题目字体（从 8.6rpx 增加到 18rpx）
     lineHeight: 17.0625, // 相应增加行高
   },
@@ -620,104 +643,110 @@ const styles = createStyles({
     alignItems: "center" as const,
   },
   rightDetail: {
+    flex: 1,
     flexDirection: "column" as const,
     alignItems: "center" as const,
     justifyContent: "flex-start" as const,
-    flex: 1,
+    marginLeft: 13.28125, // 34
+    paddingTop: 12.5, // 32
   },
   rightDetailItem: {
-    width: 355, // 355rpx - UniApp原值
-    height: 269, // 269rpx - UniApp原值，固定高度与左侧一致
-    marginLeft: 14.84375, // 14.84375rpx - UniApp原值
-    borderRadius: 7.8125, // 7.8125rpx - UniApp原值
-    marginTop: 10.9375, // 10.9375rpx - UniApp原值
-    padding: 12.5, // 12.5rpx - UniApp原值
-    paddingTop: 30, // 顶部留空给角标
-    paddingBottom: 12.5, // 底部间距与padding一致
-    position: "relative" as const,
-    shadowColor: "#007bb4",
-    shadowOffset: { width: 0, height: -0.8 },
+    width: 355.078125, // 909
+    // height: 146.875, // 376
+    borderRadius: 7.8125, // 20
+    padding: 1.5625, // 4
+    shadowColor: "#516EFF",
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.6,
-    elevation: 3,
+    shadowRadius: 3.73046875, // 9.5
+    elevation: 8,
+    overflow: "hidden" as const,
+  },
+  rightDetailItemContent: {
+    flex: 1,
+    borderRadius: 6.25, // 16
+    padding: 15.625, // 40
+    justifyContent: "flex-start" as const,
+    alignItems: "flex-start" as const,
+    backgroundColor: "#fff",
+    overflow: "hidden" as const,
   },
   cardCorner: {
     position: "absolute" as const,
     top: 0,
     right: 0,
-    backgroundColor: "#eaf2ff",
-    borderBottomLeftRadius: 12, // 12rpx - UniApp原值
-    borderTopRightRadius: 7.8125, // 7.8125rpx - UniApp原值
-    paddingVertical: 6, // 6rpx - UniApp原值
-    paddingHorizontal: 18, // 18rpx - UniApp原值
+    width: 50.78125, // 130
+    height: 23.4375, // 60
+    backgroundColor: "#D9E8FFE0",
+    borderBottomLeftRadius: 13.28125, // 34
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   cardCornerText: {
-    color: "#1571fc",
-    fontSize: 13,
-    fontWeight: "bold" as const,
+    color: "#077FFF",
+    fontSize: 10.9375, // 28
+    fontWeight: "600" as const,
   },
-  answerBlock: {
-    marginBottom: 20, // 增加与解析块的间距
-    flexShrink: 0, // 防止被压缩
-  },
-  answerTitle: {
-    color: "#1571fc",
-    fontWeight: "bold" as const,
-    marginBottom: 10, // 10rpx - UniApp原值
-    fontSize: 15,
-  },
-  answerContent: {
-    position: "relative" as const,
-    minHeight: 60, // 减小最小高度，避免占用过多空间
+  formTitleWrapper: {
     flexDirection: "row" as const,
-    alignItems: "center" as const,
+    width: 56.640625, // 145
+    height: 20.3125, // 52
+    borderRadius: 7.8125, // 20
     justifyContent: "center" as const,
-    padding: 8, // 8rpx - UniApp原值
-    backgroundColor: "#ffb700",
-    borderRadius: 16, // 16rpx - UniApp原值
-    shadowColor: "#ffd700",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 5,
+    alignItems: "center" as const,
+    marginBottom: 5.46875, // 14
+    shadowColor: "#61ACDB",
+    shadowOffset: { width: -6, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 1.40625, // 3.6
+    elevation: 8,
   },
-  answerContentRevealed: {
-    backgroundColor: "#fffbe6",
+  formTitleIconWrapper: {
+    flexDirection: "row" as const,
+    width: 19.53125,  // 50
+    height: 12.5, // 32
   },
-  scratchHint: {
+  formTitleIconCircle1: {
+    width: 9.375, // 24
+    height: 9.375, // 24
+    borderRadius: 4.6875, // 12
+    backgroundColor: "#9BBBFFB2",
     position: "absolute" as const,
-    color: "#fff",
-    fontSize: 8.6, // 8.6rpx - UniApp原值
-    fontWeight: "bold" as const,
-    zIndex: 2,
+    left: 1.171875, // 3
+    top: 1.5625, // 4
   },
-  answerText: {
-    color: "#333",
-    fontSize: 11.75, // 增大答案字体（从 9.375rpx 增加到 18rpx）
-    textAlign: "center" as const,
-    lineHeight: 17.625, // 相应增加行高
+  formTitleIconCircle2: {
+    width: 9.375, // 24
+    height: 9.375, // 24
+    borderRadius: 4.6875, // 12
+    backgroundColor: "#CBCDFFB2",
+    position: "absolute" as const,
+    left: 6.640625, // 17
+    top: 1.5625, // 4
+  },
+  formTitle: {
+    color: "#1571fc",
+    fontWeight: "600" as const,
+    fontSize: 10.9375, // 28
+  },
+  // 蒙板
+  blurView: {
+    position: "absolute" as const,
+    minWidth: 56.640625, // 145
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    zIndex: 1,
+  },
+  formText: {
+    color: "#000",
+    fontSize: 10.15625, // 26
+    fontWeight: "400" as const,
   },
   analysisBlock: {
-    marginBottom: 20, // 底部留白
-    paddingTop: 4, // 顶部增加一点间距
-  },
-  analysisTitle: {
-    color: "#1571fc",
-    fontWeight: "bold" as const,
-    marginBottom: 10, // 10rpx - UniApp原值
-    fontSize: 20, // 增大标题字体
-  },
-  analysisText: {
-    color: "#333",
-    fontSize: 9.375, // 解析文字字体大小
-    lineHeight: 15.48, // 相应增加行高
-  },
-  scrollableContent: {
-    flex: 1,
-  },
-  scrollableContentContainer: {
-    paddingTop: 8,
-    paddingBottom: 16,
+    width: "100%" as const,
   },
   successModal: {
     position: "absolute" as const,
