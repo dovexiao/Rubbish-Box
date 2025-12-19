@@ -526,6 +526,7 @@ export const LoginModal = React.memo(function LoginModal({
           console.log("📱 设置密码成功 - 跳转到绑定家长端页面")
           onSuccess?.() // 关闭登录弹窗
           // router.replace("/bind-parent")
+          router.replace("/complete-info")
         }}
         onCancel={() => {
           console.log("❌ 取消设置密码")
