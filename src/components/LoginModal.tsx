@@ -23,6 +23,7 @@ import { PrivacyPolicyModal } from "./PrivacyPolicyModal"
 import { SetPasswordModal } from "./SetPasswordModal"
 import { showSuccess, showError, showWarning } from "../utils/toast"
 import { showConfirm } from "../utils/dialog"
+import { getBindQRCode } from "@/services/bind"
 
 
 type LoginMode = "sms" | "password"
@@ -107,7 +108,7 @@ export const LoginModal = React.memo(function LoginModal({
   const handleSMSLogin = async () => {
     console.log("🚀 LoginModal - handleSMSLogin 被调用")
     console.log("📱 输入信息:", { phone, smsCode, agreeTerms })
-    
+
     if (!phone || !smsCode) {
       console.log("❌ 手机号或验证码为空")
       showWarning("请输入手机号和验证码")
@@ -119,13 +120,13 @@ export const LoginModal = React.memo(function LoginModal({
       setShowPrivacyModal(true)
       return
     }
-    
+
     console.log("✅ 所有条件检查通过，开始登录")
 
     try {
       setLoading(true)
       const result = await AuthService.loginWithSMS(phone, smsCode)
-      
+
       console.log("🔍 LoginModal - AuthService 返回结果:", result)
       console.log("🔍 LoginModal - result.access_token:", result.access_token)
       console.log("🔍 LoginModal - result.refresh_token:", result.refresh_token)
@@ -142,7 +143,7 @@ export const LoginModal = React.memo(function LoginModal({
       clearFormData()
 
       showSuccess("登录成功")
-      
+
       // 检查登录后的状态
       console.log("🔍 LoginModal - 登录成功后的用户信息:", result.user_info)
       console.log("🔍 LoginModal - password_exists 值:", result.user_info?.password_exists)
@@ -151,7 +152,10 @@ export const LoginModal = React.memo(function LoginModal({
       console.log("🔍 LoginModal - username_exists 值:", result.user_info?.username_exists)
       console.log("🔍 LoginModal - username_exists 类型:", typeof result.user_info?.username_exists)
       console.log("🔍 LoginModal - username_exists === false:", result.user_info?.username_exists === false)
-      
+
+      const response = await getBindQRCode({ phone: phone })
+      console.log("🔍 LoginModal - getBindQRCode response:", response)
+
       setTimeout(() => {
         // 优先判断是否设置密码
         console.log("⚡ 开始判断逻辑...")
@@ -162,16 +166,26 @@ export const LoginModal = React.memo(function LoginModal({
           return
         }
         console.log("✓ password_exists 检查通过，继续判断 username_exists")
-        
+
         // 然后判断是否完善信息
         if (result.user_info?.username_exists === false) {
           console.log("📝 LoginModal - username_exists === false，跳转到完善信息页面")
           onSuccess?.() // 先关闭弹窗
           router.replace("/complete-info")
-        } else {
+        }
+        else {
           console.log("🏠 LoginModal - 所有检查通过，跳转到主页")
           onSuccess?.()
         }
+        
+        // if (response.bound === false) {
+        //   console.log("🔐 LoginModal - bound === false，跳转到绑定家长端页面")
+        //   onSuccess?.() // 先关闭弹窗
+        //   router.replace("/bind-parent")
+        // } else {
+        //   console.log("🏠 LoginModal - 所有检查通过，跳转到主页")
+        //   onSuccess?.()
+        // }
       }, 500)
     } catch (error: any) {
       showError(error.message || "登录失败")
@@ -207,14 +221,14 @@ export const LoginModal = React.memo(function LoginModal({
       clearFormData()
 
       showSuccess("登录成功")
-      
+
       // 检查登录后的状态
       console.log("🔍 LoginModal - 密码登录成功后的用户信息:", result.user_info)
       console.log("🔍 LoginModal - password_exists 值:", result.user_info?.password_exists)
       console.log("🔍 LoginModal - password_exists === false:", result.user_info?.password_exists === false)
       console.log("🔍 LoginModal - username_exists 值:", result.user_info?.username_exists)
       console.log("🔍 LoginModal - username_exists === false:", result.user_info?.username_exists === false)
-      
+
       setTimeout(() => {
         // 优先判断是否设置密码（密码登录一般不会出现这种情况，但保持一致）
         console.log("⚡ 开始判断逻辑（密码登录）...")
@@ -225,7 +239,7 @@ export const LoginModal = React.memo(function LoginModal({
           return
         }
         console.log("✓ password_exists 检查通过，继续判断 username_exists")
-        
+
         // 然后判断是否完善信息
         if (result.user_info?.username_exists === false) {
           console.log("📝 LoginModal - username_exists === false，跳转到完善信息页面")
@@ -324,7 +338,7 @@ export const LoginModal = React.memo(function LoginModal({
     <View style={styles.formContainer}>
       {/* 手机号输入 */}
       <View style={styles.inputWrapper}>
-         <Text style={styles.countryCode}>+86</Text>
+        <Text style={styles.countryCode}>+86</Text>
         <TextInput
           style={styles.fullInput}
           placeholder="请输入手机号"
@@ -369,156 +383,156 @@ export const LoginModal = React.memo(function LoginModal({
   )
   return (
     <>
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={() => {
-        console.log("🔐 LoginModal: onRequestClose 被调用")
-        onCancel?.()
-      }}
-    >
-      <TouchableWithoutFeedback 
-        onPress={() => {
-          console.log("🔐 LoginModal: 点击蒙版，关闭弹窗")
+      <Modal
+        visible={visible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => {
+          console.log("🔐 LoginModal: onRequestClose 被调用")
           onCancel?.()
         }}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.keyboardView}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1 }}
+        <TouchableWithoutFeedback
+          onPress={() => {
+            console.log("🔐 LoginModal: 点击蒙版，关闭弹窗")
+            onCancel?.()
+          }}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* 关闭按钮 */}
-            {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.keyboardView}>
+              <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={{ flex: 1 }}
+              >
+                <ScrollView
+                  contentContainerStyle={styles.scrollContent}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {/* 关闭按钮 */}
+                  {/* <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
               <Ionicons name="close" size={24} color="#666" />
             </TouchableOpacity> */}
 
-                {/* 原封不动的登录内容块 - 使用 TouchableWithoutFeedback 阻止点击穿透 */}
-                <TouchableWithoutFeedback onPress={() => {
-                  console.log("🔐 LoginModal: 点击内容卡片，不关闭弹窗")
-                  // 什么都不做，阻止事件传递到外层
-                }}>
-            <View style={styles.loginCard}>
-              <LinearGradient
-                colors={["#92DEFF", "#FFFFFF"]} // 上面蓝色，下面白色
-                locations={[0, 0.3515]} // 0%到55.15%的位置
-                start={{ x: 0.5, y: 0 }} // 从顶部中心开始
-                end={{ x: 0.5, y: 1 }} // 到底部中心结束（垂直渐变）
-                style={styles.cardGradient}
-              >
-                {/* Logo和标题 */}
-                <View style={styles.header}>
-                  <View style={styles.logoContainer}>
-                    <Image source={Images.loginLogo} style={styles.logo} resizeMode="contain" />
-                  </View>
-                  <Text style={styles.title}>Hello！欢迎使用小褐同学智能学习桌</Text>
-                </View>
+                  {/* 原封不动的登录内容块 - 使用 TouchableWithoutFeedback 阻止点击穿透 */}
+                  <TouchableWithoutFeedback onPress={() => {
+                    console.log("🔐 LoginModal: 点击内容卡片，不关闭弹窗")
+                    // 什么都不做，阻止事件传递到外层
+                  }}>
+                    <View style={styles.loginCard}>
+                      <LinearGradient
+                        colors={["#92DEFF", "#FFFFFF"]} // 上面蓝色，下面白色
+                        locations={[0, 0.3515]} // 0%到55.15%的位置
+                        start={{ x: 0.5, y: 0 }} // 从顶部中心开始
+                        end={{ x: 0.5, y: 1 }} // 到底部中心结束（垂直渐变）
+                        style={styles.cardGradient}
+                      >
+                        {/* Logo和标题 */}
+                        <View style={styles.header}>
+                          <View style={styles.logoContainer}>
+                            <Image source={Images.loginLogo} style={styles.logo} resizeMode="contain" />
+                          </View>
+                          <Text style={styles.title}>Hello！欢迎使用小褐同学智能学习桌</Text>
+                        </View>
 
-                {/* 登录表单 */}
-                {loginMode === "sms" ? renderSMSLogin() : renderPasswordLogin()}
+                        {/* 登录表单 */}
+                        {loginMode === "sms" ? renderSMSLogin() : renderPasswordLogin()}
 
-                {/* 隐私协议 */}
-                <View style={styles.agreementContainer}>
-                  <TouchableOpacity
-                    style={styles.checkbox}
-                    onPress={() => setAgreeTerms(!agreeTerms)}
-                  >
-                    <View style={[styles.checkboxInner, agreeTerms && styles.checkboxChecked]}>
-                      {agreeTerms && <Ionicons name="checkmark" size={12} color="#fff" />}
+                        {/* 隐私协议 */}
+                        <View style={styles.agreementContainer}>
+                          <TouchableOpacity
+                            style={styles.checkbox}
+                            onPress={() => setAgreeTerms(!agreeTerms)}
+                          >
+                            <View style={[styles.checkboxInner, agreeTerms && styles.checkboxChecked]}>
+                              {agreeTerms && <Ionicons name="checkmark" size={12} color="#fff" />}
+                            </View>
+                          </TouchableOpacity>
+                          <View style={styles.agreementTextContainer}>
+                            <Text style={styles.agreementText}>
+                              阅读并同意{" "}
+                              <Text style={styles.linkText} onPress={handleShowUserAgreement}>
+                                《用户协议》
+                              </Text>{" "}
+                              和{" "}
+                              <Text style={styles.linkText} onPress={handleShowPrivacyPolicy}>
+                                《隐私条款》
+                              </Text>
+                            </Text>
+                          </View>
+                        </View>
+                      </LinearGradient>
                     </View>
-                  </TouchableOpacity>
-                  <View style={styles.agreementTextContainer}>
-                    <Text style={styles.agreementText}>
-                      阅读并同意{" "}
-                      <Text style={styles.linkText} onPress={handleShowUserAgreement}>
-                        《用户协议》
-                      </Text>{" "}
-                      和{" "}
-                      <Text style={styles.linkText} onPress={handleShowPrivacyPolicy}>
-                        《隐私条款》
-                      </Text>
-                    </Text>
-                  </View>
-                </View>
-              </LinearGradient>
+                  </TouchableWithoutFeedback>
+
+                  {/* 隐私政策弹窗 */}
+                  {showPrivacyModal && (
+                    <View style={styles.privacyModalOverlay}>
+                      <View style={styles.privacyModalContent}>
+                        <Text style={styles.privacyModalTitle}>温馨提醒</Text>
+                        <Text style={styles.privacyModalText}>
+                          为了更好的保障你的权益，请阅读并同意
+                          {"\n"}《用户协议》和《隐私条款》
+                        </Text>
+                        <View style={styles.privacyModalButtons}>
+                          <TouchableOpacity
+                            style={styles.privacyModalButton}
+                            onPress={() => setShowPrivacyModal(false)}
+                          >
+                            <Text style={styles.privacyModalButtonText}>放弃并继续</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={[styles.privacyModalButton, styles.privacyModalButtonPrimary]}
+                            onPress={() => {
+                              setAgreeTerms(true)
+                              setShowPrivacyModal(false)
+                            }}
+                          >
+                            <Text style={[styles.privacyModalButtonText, styles.privacyModalButtonTextPrimary]}>
+                              同意并继续
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </View>
+                  )}
+                </ScrollView>
+              </KeyboardAvoidingView>
             </View>
-                </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
 
-            {/* 隐私政策弹窗 */}
-            {showPrivacyModal && (
-              <View style={styles.privacyModalOverlay}>
-                <View style={styles.privacyModalContent}>
-                  <Text style={styles.privacyModalTitle}>温馨提醒</Text>
-                  <Text style={styles.privacyModalText}>
-                    为了更好的保障你的权益，请阅读并同意
-                    {"\n"}《用户协议》和《隐私条款》
-                  </Text>
-                  <View style={styles.privacyModalButtons}>
-                    <TouchableOpacity
-                      style={styles.privacyModalButton}
-                      onPress={() => setShowPrivacyModal(false)}
-                    >
-                      <Text style={styles.privacyModalButtonText}>放弃并继续</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.privacyModalButton, styles.privacyModalButtonPrimary]}
-                      onPress={() => {
-                        setAgreeTerms(true)
-                        setShowPrivacyModal(false)
-                      }}
-                    >
-                      <Text style={[styles.privacyModalButtonText, styles.privacyModalButtonTextPrimary]}>
-                        同意并继续
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            )}
-          </ScrollView>
-        </KeyboardAvoidingView>
-        </View>
-      </View>
-      </TouchableWithoutFeedback>
+        {/* 用户协议弹窗 */}
+        <UserAgreementModal
+          visible={showUserAgreementModal}
+          onCancel={() => setShowUserAgreementModal(false)}
+        />
 
-      {/* 用户协议弹窗 */}
-      <UserAgreementModal
-        visible={showUserAgreementModal}
-        onCancel={() => setShowUserAgreementModal(false)}
+        {/* 隐私政策弹窗 */}
+        <PrivacyPolicyModal
+          visible={showPrivacyPolicyModal}
+          onCancel={() => setShowPrivacyPolicyModal(false)}
+        />
+
+      </Modal>
+
+      {/* 设置密码弹窗 - 独立的 Modal，不嵌套在 LoginModal 内 */}
+      <SetPasswordModal
+        visible={showSetPasswordModal}
+        onSuccess={() => {
+          console.log("🔐 设置密码成功")
+          setShowSetPasswordModal(false)
+
+          // 设置密码成功后，跳转到绑定家长端页面
+          console.log("📱 设置密码成功 - 跳转到绑定家长端页面")
+          onSuccess?.() // 关闭登录弹窗
+          // router.replace("/bind-parent")
+        }}
+        onCancel={() => {
+          console.log("❌ 取消设置密码")
+          setShowSetPasswordModal(false)
+        }}
       />
-
-      {/* 隐私政策弹窗 */}
-      <PrivacyPolicyModal
-        visible={showPrivacyPolicyModal}
-        onCancel={() => setShowPrivacyPolicyModal(false)}
-      />
-
-    </Modal>
-
-    {/* 设置密码弹窗 - 独立的 Modal，不嵌套在 LoginModal 内 */}
-    <SetPasswordModal
-      visible={showSetPasswordModal}
-      onSuccess={() => {
-        console.log("🔐 设置密码成功")
-        setShowSetPasswordModal(false)
-        
-        // 设置密码成功后，跳转到绑定家长端页面
-        console.log("📱 设置密码成功 - 跳转到绑定家长端页面")
-        onSuccess?.() // 关闭登录弹窗
-        router.replace("/bind-parent")
-      }}
-      onCancel={() => {
-        console.log("❌ 取消设置密码")
-        setShowSetPasswordModal(false)
-      }}
-    />
-  </>
+    </>
   )
 })
 
@@ -662,7 +676,7 @@ const styles = createStyles({
     color: "#fff",
   },
   bottomLinksCode: {
-      flexDirection: "row" as const,
+    flexDirection: "row" as const,
     justifyContent: "center" as const,
     alignItems: "center" as const,
     marginTop: 6.25,

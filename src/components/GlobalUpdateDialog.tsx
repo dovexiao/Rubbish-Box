@@ -130,6 +130,8 @@ export const GlobalUpdateDialog = React.memo(function GlobalUpdateDialog() {
     }
   }
 
+  const locked = useLockScreenStore((state) => state.locked)
+
   if (!showUpdateDialog || !updateData) {
     return null
   }
@@ -147,8 +149,6 @@ export const GlobalUpdateDialog = React.memo(function GlobalUpdateDialog() {
     downloadUrl: updateData.downloadUrl,
     fileSize: updateData.fileSize,
   }
-
-  const locked = useLockScreenStore((state) => state.locked)
 
   return (
     <UpdateDialog
