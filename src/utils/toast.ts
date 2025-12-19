@@ -16,6 +16,9 @@ export const showSuccess = (message: string, duration?: number) => {
  * 显示错误提示
  */
 export const showError = (message: string, duration?: number) => {
+  if (typeof message !== "string") {
+    message = JSON.stringify(message)
+  }
   useToastStore.getState().showToast("error", message, duration)
 }
 

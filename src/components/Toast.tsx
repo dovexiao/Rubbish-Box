@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { View, Text, Animated, TouchableOpacity, Modal } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { createStyles, rpx } from "../utils/rpxStyleSheet"
@@ -20,6 +20,8 @@ interface ToastProps {
 export function Toast({ visible, type, message, duration = 3000, onClose }: ToastProps) {
   const [fadeAnim] = useState(new Animated.Value(0))
   const [translateY] = useState(new Animated.Value(-50))
+  // 自动关闭时间ref
+  const autoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (visible) {
@@ -39,11 +41,15 @@ export function Toast({ visible, type, message, duration = 3000, onClose }: Toas
       ]).start()
 
       // 自动关闭
-      const timer = setTimeout(() => {
+      autoCloseTimerRef.current = setTimeout(() => {
         closeToast()
       }, duration)
+    }
 
-      return () => clearTimeout(timer)
+    return () => {
+      if (autoCloseTimerRef.current) {
+        clearTimeout(autoCloseTimerRef.current)
+      }
     }
   }, [visible])
 
@@ -130,9 +136,9 @@ export function Toast({ visible, type, message, duration = 3000, onClose }: Toas
           <Text style={styles.message} numberOfLines={2}>
             {message}
           </Text>
-          <TouchableOpacity onPress={closeToast} style={styles.closeButton} activeOpacity={0.8}>
+          {/* <TouchableOpacity onPress={closeToast} style={styles.closeButton} activeOpacity={0.8}>
             <Ionicons name="close" size={rpx(16)} color={colors.icon} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </Animated.View>
       </View>
     </Modal>
