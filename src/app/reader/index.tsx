@@ -186,11 +186,29 @@ export default function ReaderIndex() {
         const response = await getBooksList(params)
         console.log("📚 [API] 书籍列表响应:", response)
 
+        // response.results = response.results.slice(0, 5)
+
+        // 补齐到4的倍数
+        const padToMultipleOf4 = (arr: any[]) => {
+          if (!arr || arr.length === 0) return []
+          const remainder = arr.length % 4
+          if (remainder === 0) return arr
+          const paddingCount = 4 - remainder
+          return [...arr, ...Array(paddingCount).fill(null)]
+        }
+
+        const paddedResults = padToMultipleOf4(response.results || [])
+
         if (isRefresh) {
-          setBooks(response.results || [])
+          setBooks(paddedResults)
           setPageNum(2)
         } else {
-          setBooks((prev) => [...prev, ...(response.results || [])])
+          setBooks((prev) => {
+            // 移除之前的占位项，然后添加新数据并补齐
+            const prevWithoutPlaceholders = prev.filter(item => item !== null)
+            const newList = [...prevWithoutPlaceholders, ...(response.results || [])]
+            return padToMultipleOf4(newList)
+          })
           setPageNum((prev) => prev + 1)
         }
 
@@ -551,40 +569,47 @@ export default function ReaderIndex() {
 
   // 网格布局的书籍项渲染
   const renderGridBookItem = useCallback(
-    ({ item }: { item: any }) => (
-      <TouchableOpacity
-        style={styles.gridBookItem}
-        onPress={() => handleBookClick(item)}
-        activeOpacity={0.8}
-      >
-        <Image
-          source={
-            typeof getBookCover(item) === "string"
-              ? { uri: getBookCover(item) as string }
-              : getBookCover(item)
-          }
-          style={styles.gridBookCover}
-          resizeMode="cover"
-        />
-        <View style={styles.gridBookInfo}>
-          <View>
-            <Text style={styles.gridBookTitle} numberOfLines={1}>
-              {item.title}
-            </Text>
-            <Text style={styles.gridBookAuthor} numberOfLines={2} ellipsizeMode="tail">
-                {item.introduction || ""}
-            </Text>
-          </View>
-          <View style={styles.gridBookCategories}>
-            {item.categories.map((category: any) => (
-              <View key={category.id} style={styles.gridBookCategory}>
-                <Text style={styles.gridBookCategoryText}>{category.name}</Text>
-              </View>
-            ))}
-          </View>
-        </View> 
-      </TouchableOpacity>
-    ),
+    ({ item }: { item: any }) => {
+      // 如果是占位项（null），返回空 View 占位
+      if (item === null) {
+        return <View style={styles.gridBookItem} />
+      }
+
+      return (
+        <TouchableOpacity
+          style={styles.gridBookItem}
+          onPress={() => handleBookClick(item)}
+          activeOpacity={0.8}
+        >
+          <Image
+            source={
+              typeof getBookCover(item) === "string"
+                ? { uri: getBookCover(item) as string }
+                : getBookCover(item)
+            }
+            style={styles.gridBookCover}
+            resizeMode="cover"
+          />
+          <View style={styles.gridBookInfo}>
+            <View>
+              <Text style={styles.gridBookTitle} numberOfLines={1}>
+                {item.title}
+              </Text>
+              <Text style={styles.gridBookAuthor} numberOfLines={2} ellipsizeMode="tail">
+                  {item.introduction || ""}
+              </Text>
+            </View>
+            <View style={styles.gridBookCategories}>
+              {item.categories?.map((category: any) => (
+                <View key={category.id} style={styles.gridBookCategory}>
+                  <Text style={styles.gridBookCategoryText}>{category.name}</Text>
+                </View>
+              ))}
+            </View>
+          </View> 
+        </TouchableOpacity>
+      )
+    },
     [getBookCover, handleBookClick],
   )
 
@@ -612,7 +637,7 @@ export default function ReaderIndex() {
         <FlatList
           data={books}
           renderItem={renderGridBookItem}
-          keyExtractor={(item, index) => `${item.id}_${index}`}
+          keyExtractor={(item, index) => item?.id ? `${item.id}_${index}` : `placeholder_${index}`}
           numColumns={4}
           columnWrapperStyle={styles.gridRow}
           contentContainerStyle={styles.gridContainer}
