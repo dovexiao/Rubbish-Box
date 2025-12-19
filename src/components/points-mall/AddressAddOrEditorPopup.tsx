@@ -3,6 +3,7 @@ import { Modal, View, Text, TouchableOpacity, TextInput, TouchableWithoutFeedbac
 import { createStyles } from "../../utils/rpxStyleSheet"
 import { type AddressItem, AddAddressParams, UpdateAddressParams } from "../../services/pointsMall"
 import RegionSelector from "../common/RegionSelector"
+import { showError } from "@/utils/toast"
 
 interface AddressAddOrEditorPopupProps {
     visible: boolean
@@ -60,13 +61,17 @@ const AddressAddOrEditorPopup: React.FC<AddressAddOrEditorPopupProps> = ({
     }, [visible, address])
 
     const handleSave = useCallback(async () => {
+        if (!receiverName.trim() || !phone.trim() || !province.trim() || !city.trim() || !district.trim() || !detail.trim()) {
+            showError("请输入完整地址信息")
+            return
+        }
         let payload: AddAddressParams | UpdateAddressParams = {
             id: address?.id || 0,
             receiver_name: receiverName.trim(),
             phone: phone.trim(),
-            province: province || "",
-            city: city || "",
-            district: district || "",
+            province: province,
+            city: city,
+            district: district,
             detail_address: detail.trim(),
         }
 
