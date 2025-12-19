@@ -137,7 +137,7 @@ const ExchangeRecords: React.FC<ExchangeRecordsProps> = ({ style }) => {
                             //     <Text style={styles.actionButtonTextShipping}>查看物流</Text>
                             // </TouchableOpacity>
                             <View style={styles.actionButtonShipping}>
-                                <Text style={styles.actionButtonTextShipping}>{item.order_number}</Text>
+                                <Text style={styles.actionButtonTextShipping}>物流单号: {item.order_number}</Text>
                             </View>
                         )}
                     </View>
