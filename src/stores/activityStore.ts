@@ -30,7 +30,9 @@ interface ActivityState {
   
   // 便捷方法
   updateProgress: (progress: number, additionalData?: Record<string, any>) => void
-  exitCurrentActivity: () => void
+  exitCurrentActivity: () => boolean
+  /** 强制退出所有活动（兜底方法，即使本地没有活动也发送退出消息） */
+  forceExitAllActivities: () => void
 }
 
 /**
@@ -196,15 +198,25 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
   
   /**
    * 退出当前活动（便捷方法）
+   * @returns 是否成功发送退出消息
    */
   exitCurrentActivity: () => {
     const { currentActivity } = get()
     if (!currentActivity) {
       console.warn('📊 [ActivityStore] 没有当前活动')
-      return
+      return false
     }
     
-    console.log('📊 [ActivityStore] 准备退出活动:', currentActivity.type, currentActivity.homeworkId || currentActivity.videoId || currentActivity.bookId)
+    // 获取活动ID（根据类型不同，ID字段也不同）
+    const activityId = 
+      'homeworkId' in currentActivity ? currentActivity.homeworkId : 
+      'videoId' in currentActivity ? currentActivity.videoId : 
+      'bookId' in currentActivity ? currentActivity.bookId : 
+      'compositionId' in currentActivity ? currentActivity.compositionId : 
+      'questionId' in currentActivity ? currentActivity.questionId : 
+      'unknown'
+    
+    console.log('📊 [ActivityStore] 准备退出活动:', currentActivity.type, activityId)
     
     // 发送退出状态
     const exitSuccess = get().updateActivity({
@@ -216,7 +228,7 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
     if (!exitSuccess) {
       console.warn('📊 [ActivityStore] 退出消息发送失败，立即清除活动')
       get().clearActivity()
-      return
+      return false
     }
     
     // 延迟清除作为降级方案（如果服务器确认消息丢失）
@@ -229,6 +241,8 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
         get().clearActivity()
       }
     }, 2000) // 增加到2秒，给服务器更多时间响应
+    
+    return true
   },
 }))
 

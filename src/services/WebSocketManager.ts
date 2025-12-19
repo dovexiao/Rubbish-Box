@@ -15,6 +15,32 @@ import {
 import { getWebSocketConfig } from '../config/websocket'
 
 /**
+ * 开发环境日志工具
+ * 生产环境自动禁用，提升性能
+ */
+const devLog = (...args: any[]) => {
+  if (__DEV__) {
+    console.log(...args)
+  }
+}
+
+const devWarn = (...args: any[]) => {
+  if (__DEV__) {
+    console.warn(...args)
+  }
+}
+
+const devError = (...args: any[]) => {
+  // 错误日志在生产环境也保留，但可以简化输出
+  if (__DEV__) {
+    console.error(...args)
+  } else {
+    // 生产环境只输出关键错误信息
+    console.error('[WebSocket Error]', args[0])
+  }
+}
+
+/**
  * 完整配置（所有字段都必需）
  */
 interface FullWebSocketConfig extends Required<Omit<WebSocketConfig, 'reconnect' | 'messageQueue' | 'background'>> {
@@ -147,7 +173,7 @@ export class WebSocketManager {
    */
   public connect(): void {
     if (this.status === WebSocketStatus.CONNECTED || this.status === WebSocketStatus.CONNECTING) {
-      console.log('[WebSocket] 已连接或正在连接中，跳过')
+      devLog('[WebSocket] 已连接或正在连接中，跳过')
       return
     }
 
@@ -155,7 +181,7 @@ export class WebSocketManager {
     this.isManualClose = false
 
     try {
-      console.log(`[WebSocket] 正在连接: ${this.config.url}`)
+      devLog(`[WebSocket] 正在连接: ${this.config.url}`)
       
       // 创建 WebSocket 实例
       this.ws = new WebSocket(this.config.url, this.config.protocols)
@@ -163,7 +189,7 @@ export class WebSocketManager {
       // 设置连接超时
       this.connectionTimeoutTimer = setTimeout(() => {
         if (this.status === WebSocketStatus.CONNECTING) {
-          console.error('[WebSocket] 连接超时')
+          devError('[WebSocket] 连接超时')
           this.handleConnectionError(new Error('连接超时'))
         }
       }, this.config.connectionTimeout)
@@ -175,7 +201,7 @@ export class WebSocketManager {
       this.ws.onmessage = this.handleMessage.bind(this)
       
     } catch (error) {
-      console.error('[WebSocket] 连接失败:', error)
+      devError('[WebSocket] 连接失败:', error)
       this.handleConnectionError(error as Error)
     }
   }
@@ -184,7 +210,7 @@ export class WebSocketManager {
    * 断开连接
    */
   public disconnect(): void {
-    console.log('[WebSocket] 主动断开连接')
+    devLog('[WebSocket] 主动断开连接')
     this.isManualClose = true
     this.cleanup()
   }
@@ -277,7 +303,7 @@ export class WebSocketManager {
    */
   public clearQueue(): void {
     this.messageQueue = []
-    console.log('[WebSocket] 消息队列已清空')
+    devLog('[WebSocket] 消息队列已清空')
   }
 
   // ==================== 私有方法 ====================
@@ -286,7 +312,7 @@ export class WebSocketManager {
    * 处理连接打开
    */
   private handleOpen(): void {
-    console.log('[WebSocket] 连接已建立')
+    devLog('[WebSocket] 连接已建立')
     
     // 清除连接超时定时器
     if (this.connectionTimeoutTimer) {
@@ -319,7 +345,7 @@ export class WebSocketManager {
    * 处理连接关闭
    */
   private handleClose(event: CloseEvent): void {
-    console.log('[WebSocket] 连接已关闭:', event.code, event.reason)
+    devLog('[WebSocket] 连接已关闭:', event.code, event.reason)
     
     this.stats.lastDisconnectedAt = Date.now()
     
@@ -347,7 +373,7 @@ export class WebSocketManager {
    * 处理错误
    */
   private handleError(event: Event): void {
-    console.error('[WebSocket] 发生错误:', event)
+    devError('[WebSocket] 发生错误:', event)
     this.emit('error', event)
   }
 
@@ -389,7 +415,7 @@ export class WebSocketManager {
       this.emit('message', message)
       
     } catch (error) {
-      console.error('[WebSocket] 消息解析失败:', error)
+      devError('[WebSocket] 消息解析失败:', error)
       this.emit('error', error)
     }
   }
@@ -407,7 +433,7 @@ export class WebSocketManager {
       
       // 如果是心跳消息，记录详细日志
       if (message.type === MessageType.PING) {
-        console.log(`[WebSocket] 📤 发送心跳消息: ${messageStr}`)
+        devLog(`[WebSocket] 📤 发送心跳消息: ${messageStr}`)
       }
       
       this.ws.send(messageStr)
@@ -415,7 +441,7 @@ export class WebSocketManager {
       return true
       
     } catch (error) {
-      console.error('[WebSocket] 发送消息失败:', error)
+      devError('[WebSocket] 发送消息失败:', error)
       this.stats.failedMessages++
       this.enqueueMessage(message)
       return false
@@ -443,11 +469,11 @@ export class WebSocketManager {
         // LIFO: 移除最新的消息
         this.messageQueue.pop()
       }
-      console.warn('[WebSocket] 消息队列已满，移除旧消息')
+      devWarn('[WebSocket] 消息队列已满，移除旧消息')
     }
     
     this.messageQueue.push(queuedMessage)
-    console.log(`[WebSocket] 消息已加入队列，当前队列长度: ${this.messageQueue.length}`)
+    devLog(`[WebSocket] 消息已加入队列，当前队列长度: ${this.messageQueue.length}`)
   }
 
   /**
@@ -456,7 +482,7 @@ export class WebSocketManager {
   private flushMessageQueue(): void {
     if (this.messageQueue.length === 0) return
     
-    console.log(`[WebSocket] 开始发送队列消息，共 ${this.messageQueue.length} 条`)
+    devLog(`[WebSocket] 开始发送队列消息，共 ${this.messageQueue.length} 条`)
     
     const now = Date.now()
     const failedMessages: QueuedMessage[] = []
@@ -468,7 +494,7 @@ export class WebSocketManager {
       // 检查消息是否过期
       if (queuedMessage.expiresAt && now > queuedMessage.expiresAt) {
         expiredCount++
-        console.warn('[WebSocket] 消息已过期，丢弃:', queuedMessage.message)
+        devWarn('[WebSocket] 消息已过期，丢弃:', queuedMessage.message)
         continue
       }
       
@@ -480,7 +506,7 @@ export class WebSocketManager {
         if (queuedMessage.retryCount < 3) {
           failedMessages.push(queuedMessage)
         } else {
-          console.warn('[WebSocket] 消息重试次数超限，丢弃:', queuedMessage.message)
+          devWarn('[WebSocket] 消息重试次数超限，丢弃:', queuedMessage.message)
         }
       }
     }
@@ -489,11 +515,11 @@ export class WebSocketManager {
     this.messageQueue = failedMessages
     
     if (expiredCount > 0) {
-      console.warn(`[WebSocket] ${expiredCount} 条消息已过期`)
+      devWarn(`[WebSocket] ${expiredCount} 条消息已过期`)
     }
     
     if (failedMessages.length > 0) {
-      console.warn(`[WebSocket] ${failedMessages.length} 条消息发送失败，已重新加入队列`)
+      devWarn(`[WebSocket] ${failedMessages.length} 条消息发送失败，已重新加入队列`)
     }
   }
 
@@ -503,14 +529,14 @@ export class WebSocketManager {
   private startHeartbeat(): void {
     // 如果在后台且配置了暂停心跳，则不启动
     if (this.appState !== 'active' && this.config.background.pauseHeartbeat) {
-      console.log('[WebSocket] 应用在后台，暂停心跳')
+      devLog('[WebSocket] 应用在后台，暂停心跳')
       return
     }
     
     this.stopHeartbeat()
     
     const intervalSeconds = this.config.heartbeatInterval / 1000
-    console.log(`[WebSocket] 💓 启动心跳，间隔: ${this.config.heartbeatInterval}ms (${intervalSeconds}秒)`)
+    devLog(`[WebSocket] 💓 启动心跳，间隔: ${this.config.heartbeatInterval}ms (${intervalSeconds}秒)`)
     
     this.heartbeatTimer = setInterval(() => {
       this.sendHeartbeat()
@@ -542,7 +568,7 @@ export class WebSocketManager {
     if (this.isWaitingPong) {
       const elapsed = Date.now() - this.lastPongTime
       if (elapsed > this.config.heartbeatTimeout) {
-        console.error('[WebSocket] 心跳超时，准备重连')
+        devError('[WebSocket] 心跳超时，准备重连')
         this.cleanup()
         this.attemptReconnect()
         return
@@ -552,7 +578,7 @@ export class WebSocketManager {
     // 发送 ping
     const now = Date.now()
     const timeSinceLastPong = this.lastPongTime > 0 ? now - this.lastPongTime : 0
-    console.log(`[WebSocket] 💓 发送心跳 PING (距离上次PONG: ${timeSinceLastPong}ms, 间隔: ${this.config.heartbeatInterval}ms)`)
+    devLog(`[WebSocket] 💓 发送心跳 PING (距离上次PONG: ${timeSinceLastPong}ms, 间隔: ${this.config.heartbeatInterval}ms)`)
     
     const success = this.send(null, MessageType.PING)
     
@@ -563,13 +589,13 @@ export class WebSocketManager {
       // 设置心跳超时定时器
       this.heartbeatTimeoutTimer = setTimeout(() => {
         if (this.isWaitingPong) {
-          console.error('[WebSocket] 心跳超时，准备重连')
+          devError('[WebSocket] 心跳超时，准备重连')
           this.cleanup()
           this.attemptReconnect()
         }
       }, this.config.heartbeatTimeout)
     } else {
-      console.warn('[WebSocket] ⚠️ 心跳发送失败（可能已加入队列）')
+      devWarn('[WebSocket] ⚠️ 心跳发送失败（可能已加入队列）')
     }
   }
 
@@ -579,7 +605,7 @@ export class WebSocketManager {
   private handlePong(): void {
     const now = Date.now()
     const elapsed = this.lastPongTime > 0 ? now - this.lastPongTime : 0
-    console.log(`[WebSocket] 💚 收到心跳响应 PONG (耗时: ${elapsed}ms)`)
+    devLog(`[WebSocket] 💚 收到心跳响应 PONG (耗时: ${elapsed}ms)`)
     
     this.isWaitingPong = false
     
@@ -595,7 +621,7 @@ export class WebSocketManager {
   private attemptReconnect(): void {
     // 检查是否超过最大重连次数
     if (this.reconnectAttempts >= this.config.reconnect.maxAttempts) {
-      console.error('[WebSocket] 已达到最大重连次数，停止重连')
+      devError('[WebSocket] 已达到最大重连次数，停止重连')
       this.setStatus(WebSocketStatus.FAILED)
       this.emit('max_reconnect')
       return
@@ -604,7 +630,7 @@ export class WebSocketManager {
     this.setStatus(WebSocketStatus.RECONNECTING)
     this.reconnectAttempts++
     
-    console.log(
+    devLog(
       `[WebSocket] 准备重连 (${this.reconnectAttempts}/${this.config.reconnect.maxAttempts})，延迟: ${this.reconnectDelay}ms`
     )
     
@@ -646,7 +672,7 @@ export class WebSocketManager {
       try {
         this.ws.close()
       } catch (error) {
-        console.error('[WebSocket] 关闭连接时出错:', error)
+        devError('[WebSocket] 关闭连接时出错:', error)
       }
       this.ws = null
     }
@@ -657,7 +683,7 @@ export class WebSocketManager {
    */
   private setStatus(status: WebSocketStatus): void {
     if (this.status !== status) {
-      console.log(`[WebSocket] 状态变更: ${this.status} -> ${status}`)
+      devLog(`[WebSocket] 状态变更: ${this.status} -> ${status}`)
       this.status = status
     }
   }
@@ -672,7 +698,7 @@ export class WebSocketManager {
         try {
           handler(data)
         } catch (error) {
-          console.error(`[WebSocket] 事件处理器执行失败 (${event}):`, error)
+          devError(`[WebSocket] 事件处理器执行失败 (${event}):`, error)
         }
       })
     }
@@ -699,7 +725,7 @@ export class WebSocketManager {
    * 处理应用状态变化
    */
   private handleAppStateChange(nextAppState: AppStateStatus): void {
-    console.log(`[WebSocket] 应用状态变化: ${this.appState} -> ${nextAppState}`)
+    devLog(`[WebSocket] 应用状态变化: ${this.appState} -> ${nextAppState}`)
     
     const wasActive = this.appState === 'active'
     const isActive = nextAppState === 'active'
@@ -708,36 +734,36 @@ export class WebSocketManager {
     
     // 从后台切换到前台
     if (!wasActive && isActive) {
-      console.log('[WebSocket] 应用回到前台')
+      devLog('[WebSocket] 应用回到前台')
       
       // 验证连接是否真的有效
       if (this.status === WebSocketStatus.CONNECTED) {
         const isConnectionValid = this.ws && this.ws.readyState === WS_READY_STATE.OPEN
         
         if (isConnectionValid) {
-          console.log('[WebSocket] 连接仍然有效')
+          devLog('[WebSocket] 连接仍然有效')
           
           // 恢复心跳
           if (this.config.background.pauseHeartbeat) {
-            console.log('[WebSocket] 恢复心跳')
+            devLog('[WebSocket] 恢复心跳')
             this.startHeartbeat()
           }
         } else {
           // 连接实际已断开，更新状态并重连
-          console.warn('[WebSocket] 连接已断开，状态不一致，触发重连')
+          devWarn('[WebSocket] 连接已断开，状态不一致，触发重连')
           this.setStatus(WebSocketStatus.DISCONNECTED)
           this.attemptReconnect()
         }
       } else if (this.config.background.closeConnection && this.config.autoConnect) {
         // 如果配置了后台关闭连接，则重新连接
-        console.log('[WebSocket] 后台已关闭连接，重新连接')
+        devLog('[WebSocket] 后台已关闭连接，重新连接')
         this.connect()
       }
     }
     
     // 从前台切换到后台
     if (wasActive && !isActive) {
-      console.log('[WebSocket] 应用进入后台')
+      devLog('[WebSocket] 应用进入后台')
       
       // 暂停心跳
       if (this.config.background.pauseHeartbeat) {

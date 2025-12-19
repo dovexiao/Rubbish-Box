@@ -15,6 +15,32 @@ import {
 import { getDeviceCode } from '../utils/deviceInfo'
 
 /**
+ * 开发环境日志工具
+ * 生产环境自动禁用，提升性能
+ */
+const devLog = (...args: any[]) => {
+  if (__DEV__) {
+    console.log(...args)
+  }
+}
+
+const devWarn = (...args: any[]) => {
+  if (__DEV__) {
+    console.warn(...args)
+  }
+}
+
+const devError = (...args: any[]) => {
+  // 错误日志在生产环境也保留，但可以简化输出
+  if (__DEV__) {
+    console.error(...args)
+  } else {
+    // 生产环境只输出关键错误信息
+    console.error('[GlobalWebSocket Error]', args[0])
+  }
+}
+
+/**
  * 全局 WebSocket 服务
  * 负责管理应用级别的 WebSocket 连接
  * 
@@ -34,11 +60,11 @@ class GlobalWebSocketService {
    */
   public async initialize(): Promise<void> {
     if (this.isInitialized) {
-      console.log('[GlobalWebSocket] 服务已初始化')
+      devLog('[GlobalWebSocket] 服务已初始化')
       return
     }
 
-    console.log('[GlobalWebSocket] 初始化服务')
+    devLog('[GlobalWebSocket] 初始化服务')
     
     // 创建 WebSocket Manager 实例（不自动连接）
     this.wsManager = WebSocketManager.getInstance({
@@ -49,7 +75,7 @@ class GlobalWebSocketService {
     this.setupEventListeners()
 
     this.isInitialized = true
-    console.log('[GlobalWebSocket] 服务初始化完成')
+    devLog('[GlobalWebSocket] 服务初始化完成')
   }
 
   /**
@@ -60,7 +86,7 @@ class GlobalWebSocketService {
   public async connect(phone: string, deviceCode?: string): Promise<void> {
     if (!this.wsManager) {
       const error = new Error('WebSocket服务未初始化')
-      console.error('[GlobalWebSocket]', error.message)
+      devError('[GlobalWebSocket]', error.message)
       throw error
     }
 
@@ -69,11 +95,11 @@ class GlobalWebSocketService {
     
     if (!finalDeviceCode) {
       const error = new Error('设备码为空，无法连接')
-      console.error('[GlobalWebSocket]', error.message)
+      devError('[GlobalWebSocket]', error.message)
       throw error
     }
 
-    console.log('[GlobalWebSocket] 准备连接:', { phone, deviceCode: finalDeviceCode })
+    devLog('[GlobalWebSocket] 准备连接:', { phone, deviceCode: finalDeviceCode })
 
     // 如果已连接且参数相同，不需要重新连接
     if (
@@ -81,7 +107,7 @@ class GlobalWebSocketService {
       this.currentDeviceCode === finalDeviceCode &&
       this.wsManager.getStatus() === WebSocketStatus.CONNECTED
     ) {
-      console.log('[GlobalWebSocket] 已连接且参数相同，跳过重连')
+      devLog('[GlobalWebSocket] 已连接且参数相同，跳过重连')
       return
     }
 
@@ -89,7 +115,7 @@ class GlobalWebSocketService {
     const isSwitchingUser = this.currentPhone && this.currentPhone !== phone
 
     if (isSwitchingUser) {
-      console.log('[GlobalWebSocket] 检测到用户切换，清理旧连接状态')
+      devLog('[GlobalWebSocket] 检测到用户切换，清理旧连接状态')
       // 清空消息队列（旧用户的消息不应该发送给新用户）
       this.wsManager.clearQueue()
       // 重置设备状态
@@ -106,7 +132,7 @@ class GlobalWebSocketService {
     // 先断开旧连接
     const currentStatus = this.wsManager.getStatus()
     if (currentStatus !== WebSocketStatus.DISCONNECTED) {
-      console.log('[GlobalWebSocket] 断开旧连接')
+      devLog('[GlobalWebSocket] 断开旧连接')
       this.wsManager.disconnect()
       
       // 等待断开完成（最多等待500ms）
@@ -123,7 +149,7 @@ class GlobalWebSocketService {
     this.wsManager.updateConfig({ url: wsUrl })
 
     // 连接
-    console.log('[GlobalWebSocket] 开始建立新连接')
+    devLog('[GlobalWebSocket] 开始建立新连接')
     this.wsManager.connect()
   }
 
@@ -133,7 +159,7 @@ class GlobalWebSocketService {
   public disconnect(): void {
     if (!this.wsManager) return
 
-    console.log('[GlobalWebSocket] 断开连接')
+    devLog('[GlobalWebSocket] 断开连接')
     
     this.wsManager.disconnect()
     this.currentPhone = null
@@ -149,7 +175,7 @@ class GlobalWebSocketService {
    */
   public async reconnect(): Promise<void> {
     if (!this.currentPhone || !this.currentDeviceCode) {
-      console.warn('[GlobalWebSocket] 缺少连接参数，无法重连')
+      devWarn('[GlobalWebSocket] 缺少连接参数，无法重连')
       return
     }
 
@@ -187,7 +213,7 @@ class GlobalWebSocketService {
    */
   public send<T = any>(data: T, type?: MessageType): boolean {
     if (!this.wsManager) {
-      console.error('[GlobalWebSocket] 服务未初始化')
+      devError('[GlobalWebSocket] 服务未初始化')
       return false
     }
 
@@ -202,25 +228,25 @@ class GlobalWebSocketService {
 
     // 监听连接打开
     this.wsManager.on('open', () => {
-      console.log('[GlobalWebSocket] 连接已建立')
+      devLog('[GlobalWebSocket] 连接已建立')
       useWebSocketStore.getState().setStatus(WebSocketStatus.CONNECTED)
     })
 
     // 监听连接关闭
     this.wsManager.on('close', () => {
-      console.log('[GlobalWebSocket] 连接已关闭')
+      devLog('[GlobalWebSocket] 连接已关闭')
       useWebSocketStore.getState().setStatus(WebSocketStatus.DISCONNECTED)
     })
 
     // 监听连接错误
     this.wsManager.on('error', (error) => {
-      console.error('[GlobalWebSocket] 连接错误:', error)
+      devError('[GlobalWebSocket] 连接错误:', error)
       useWebSocketStore.getState().setError(error)
     })
 
     // 监听重连
     this.wsManager.on('reconnecting', (data) => {
-      console.log('[GlobalWebSocket] 正在重连...', data)
+      devLog('[GlobalWebSocket] 正在重连...', data)
       useWebSocketStore.getState().setStatus(WebSocketStatus.RECONNECTING)
     })
 
@@ -234,7 +260,7 @@ class GlobalWebSocketService {
    * 处理接收到的消息
    */
   private handleMessage(message: WebSocketMessage): void {
-    console.log('[GlobalWebSocket] 收到消息:', message)
+    devLog('[GlobalWebSocket] 收到消息:', message)
 
     try {
       // 服务器消息格式：{ type: 'deviceStatus', bound: false, dragVideo: true, displayAnswer: true }
@@ -252,7 +278,7 @@ class GlobalWebSocketService {
       }
 
       if (!serverMessage || !serverMessage.type) {
-        console.warn('[GlobalWebSocket] 无法识别的消息格式:', message)
+        devWarn('[GlobalWebSocket] 无法识别的消息格式:', message)
         return
       }
 
@@ -266,7 +292,7 @@ class GlobalWebSocketService {
 
       // 处理连接成功消息
       if (messageType === 'connected') {
-        console.log('[GlobalWebSocket] 客户端连接成功:', serverMessage)
+        devLog('[GlobalWebSocket] 客户端连接成功:', serverMessage)
         return
       }
 
@@ -277,10 +303,10 @@ class GlobalWebSocketService {
       }
 
       // 其他消息类型可以在这里添加处理逻辑
-      console.log('[GlobalWebSocket] 未处理的消息类型:', messageType)
+      devLog('[GlobalWebSocket] 未处理的消息类型:', messageType)
 
     } catch (error) {
-      console.error('[GlobalWebSocket] 消息处理失败:', error)
+      devError('[GlobalWebSocket] 消息处理失败:', error)
       this.emit('error', error)
     }
   }
@@ -289,11 +315,11 @@ class GlobalWebSocketService {
    * 处理设备状态消息
    */
   private handleDeviceStatus(data: DeviceStatusServerMessage): void {
-    console.log('[GlobalWebSocket] 收到设备状态数据:', data)
+    devLog('[GlobalWebSocket] 收到设备状态数据:', data)
 
     try {
       if (!data || typeof data !== 'object') {
-        console.error('[GlobalWebSocket] 设备状态数据无效')
+        devError('[GlobalWebSocket] 设备状态数据无效')
         this.emit('error', new Error('Invalid device status data'))
         return
       }
@@ -305,14 +331,14 @@ class GlobalWebSocketService {
         lockScreenNow: Boolean(data.lockScreenNow),
       }
 
-      console.log('[GlobalWebSocket] 解析后的设备状态:', deviceStatus)
+      devLog('[GlobalWebSocket] 解析后的设备状态:', deviceStatus)
 
       // 更新 store
       useDeviceStatusStore.getState().setStatus(deviceStatus)
 
-      console.log('[GlobalWebSocket] 设备状态已更新到 store')
+      devLog('[GlobalWebSocket] 设备状态已更新到 store')
     } catch (error) {
-      console.error('[GlobalWebSocket] 设备状态解析失败:', error)
+      devError('[GlobalWebSocket] 设备状态解析失败:', error)
       this.emit('error', error)
     }
   }
@@ -321,28 +347,28 @@ class GlobalWebSocketService {
    * 处理用户活动确认消息
    */
   private handleUserActivityAck(data: UserActivityAckServerMessage): void {
-    console.log('[GlobalWebSocket] 收到用户活动确认:', data)
+    devLog('[GlobalWebSocket] 收到用户活动确认:', data)
 
     try {
       if (!data || typeof data !== 'object') {
-        console.error('[GlobalWebSocket] 活动确认数据无效')
+        devError('[GlobalWebSocket] 活动确认数据无效')
         return
       }
 
       // 如果服务器确认收到退出消息，且成功，则清除本地活动
       if (data.success && data.activityStatus === 'exit') {
-        console.log('[GlobalWebSocket] 服务器已确认活动退出，清除本地活动状态')
+        devLog('[GlobalWebSocket] 服务器已确认活动退出，清除本地活动状态')
         // 延迟一点时间再清除，确保消息已处理
         setTimeout(() => {
           useActivityStore.getState().clearActivity()
         }, 500)
       } else if (data.success) {
-        console.log('[GlobalWebSocket] 服务器已确认活动状态:', data.activityStatus)
+        devLog('[GlobalWebSocket] 服务器已确认活动状态:', data.activityStatus)
       } else {
-        console.warn('[GlobalWebSocket] 服务器确认活动失败:', data)
+        devWarn('[GlobalWebSocket] 服务器确认活动失败:', data)
       }
     } catch (error) {
-      console.error('[GlobalWebSocket] 处理活动确认失败:', error)
+      devError('[GlobalWebSocket] 处理活动确认失败:', error)
     }
   }
 
@@ -351,14 +377,14 @@ class GlobalWebSocketService {
    */
   private emit(event: WebSocketEventType, data?: any): void {
     // 可以在这里添加全局事件处理
-    console.log(`[GlobalWebSocket] 事件触发: ${event}`, data)
+    devLog(`[GlobalWebSocket] 事件触发: ${event}`, data)
   }
 
   /**
    * 销毁服务
    */
   public destroy(): void {
-    console.log('[GlobalWebSocket] 销毁服务')
+    devLog('[GlobalWebSocket] 销毁服务')
     
     this.disconnect()
     
@@ -378,7 +404,7 @@ class GlobalWebSocketService {
   private cleanupEventListeners(): void {
     if (!this.wsManager) return
     
-    console.log('[GlobalWebSocket] 清理事件监听器')
+    devLog('[GlobalWebSocket] 清理事件监听器')
     
     // 移除所有事件监听器
     // 注意：WebSocketManager 内部的 Set 会在 destroyInstance 时被清理

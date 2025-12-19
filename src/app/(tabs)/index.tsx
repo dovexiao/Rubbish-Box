@@ -11,6 +11,11 @@ import { NoticeBar } from "../../components/NoticeBar"
 import { usePostureStore } from "../../stores/postureStore"
 import { useUserStore } from "../../stores/userStore"
 import { useDialogStore } from "../../stores/dialogStore"
+import { useActivityStore } from "../../stores/activityStore"
+import { globalWebSocket } from "../../services/globalWebSocket"
+import { MessageType } from "../../types/websocket"
+import { ActivityType, ActivityStatus } from "../../types/activity"
+import { getDeviceCode } from "../../utils/deviceInfo"
 import { getLatestVideo, getNotifications, getHomeRanks, getHomeBgImage } from "../../services/app"
 import { Images } from "../../constants/Assets"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
@@ -143,6 +148,8 @@ export default function HomeScreen() {
   // 页面获得焦点时也重置状态（双重保障）
   useFocusEffect(
     useCallback(() => {
+      console.log("👁️ [首页] useFocusEffect 触发 - 检查活动状态")
+      
       if (Platform.OS === "android" && intentLauncherActiveRef.current) {
         console.log("👁️ 页面获得焦点，重置 IntentLauncher 状态")
         resetIntentLauncherState()
@@ -328,6 +335,44 @@ const openVolumeSettings = async () => {
   useFocusEffect(
     useCallback(() => {
       console.log("🎯 首页获得焦点，准备加载数据")
+      
+      // 🎯 活动退出兜底：首页获得焦点时，直接发送所有活动类型的退出消息
+      console.log("📊 [首页] 强制发送退出消息（兜底机制）")
+      
+      // 获取用户信息
+      const userStore = useUserStore.getState()
+      const userId = userStore.user?.user_id
+      
+      // 异步获取设备码并发送退出消息
+      getDeviceCode().then((deviceCode) => {
+        // 发送所有可能的活动类型的退出消息
+        const activityTypes = [
+          ActivityType.HOMEWORK,
+          ActivityType.VIDEO,
+          ActivityType.READING,
+          ActivityType.COMPOSITION,
+          ActivityType.ERROR_BOOK,
+        ]
+        
+        for (const activityType of activityTypes) {
+          const exitActivity = {
+            type: activityType,
+            status: ActivityStatus.EXIT,
+            timestamp: Date.now(),
+            userId: userId,
+            deviceCode: deviceCode,
+            // 根据类型设置不同的ID字段（使用空字符串，服务器应该能处理）
+            ...(activityType === ActivityType.HOMEWORK && { homeworkId: '' }),
+            ...(activityType === ActivityType.VIDEO && { videoId: '' }),
+            ...(activityType === ActivityType.READING && { bookId: '' }),
+            ...(activityType === ActivityType.COMPOSITION && { compositionId: '' }),
+          }
+          
+          const success = globalWebSocket.send(exitActivity, MessageType.USER_ACTIVITY)
+        }
+      }).catch((error) => {
+        console.error('📊 [首页] 获取设备码失败，无法发送退出消息:', error)
+      })
       
       let cancelled = false
       let timeoutId: ReturnType<typeof setTimeout> | null = null

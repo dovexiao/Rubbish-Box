@@ -24,8 +24,8 @@ export const DEFAULT_WS_CONFIG: FullWebSocketConfig = {
   url: `${WS_BASE_URL}/ws/`,
   
   // 心跳配置：30秒心跳间隔，10秒超时
-  heartbeatInterval: 30000,
-  heartbeatTimeout: 10000,
+  heartbeatInterval: 10000,
+  heartbeatTimeout: 5000,
   
   // 重连配置：指数退避策略
   reconnect: {
@@ -41,9 +41,9 @@ export const DEFAULT_WS_CONFIG: FullWebSocketConfig = {
     strategy: 'fifo',
   },
   
-  // 后台行为：暂停心跳但保持连接
+  // 后台行为：保持心跳和连接
   background: {
-    pauseHeartbeat: true,
+    pauseHeartbeat: false,  // 后台也保持心跳
     closeConnection: false,
   },
   
@@ -57,14 +57,14 @@ export const DEFAULT_WS_CONFIG: FullWebSocketConfig = {
   headers: {},
   
   // 协议（可选）
-  protocols: undefined,
+  protocols: [],
 }
 
 /**
  * 开发环境配置（更详细的日志）
  */
 export const DEV_WS_CONFIG: Partial<WebSocketConfig> = {
-  heartbeatInterval: 30000,   // 开发环境也用 30秒，便于调试
+  heartbeatInterval: 10000,   // 开发环境 10秒心跳
   reconnect: {
     initialDelay: 2000,       // 开发环境延迟稍长，便于观察
     maxAttempts: 5,           // 开发环境减少重连次数
@@ -75,7 +75,7 @@ export const DEV_WS_CONFIG: Partial<WebSocketConfig> = {
  * 生产环境配置（更激进的重连）
  */
 export const PROD_WS_CONFIG: Partial<WebSocketConfig> = {
-  heartbeatInterval: 30000,
+  heartbeatInterval: 10000,   // 生产环境 10秒心跳
   reconnect: {
     initialDelay: 1000,
     maxAttempts: 10,
