@@ -598,9 +598,11 @@ export default function RootLayout() {
 
       <PaperProvider>
         <SafeAreaProvider>
-          <GlobalLockScreen>
-            <Slot />
-          </GlobalLockScreen>
+          <Slot />
+
+          {/* 全局锁屏 */}
+          <GlobalLockScreen />
+
           {/* 全局登录管理器 */}
           <GlobalLoginManager />
           {/* 全局更新对话框 */}
@@ -610,7 +612,7 @@ export default function RootLayout() {
           {/* 全局 Dialog 对话框 */}
           <GlobalDialog />
           {/* 设备授权阻止弹窗 */}
-          {/* <DeviceAuthBlocker /> */}
+          <DeviceAuthBlocker />
         </SafeAreaProvider>
       </PaperProvider>
 
