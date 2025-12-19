@@ -59,7 +59,10 @@ export function NavBar({
             <Ionicons name="chevron-back" size={rpx(15.625)} color="#1571fc" />
           </TouchableOpacity>
         )}
-        <Text style={styles.title}>{title}</Text>
+        {/* 标题容器 */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
         <View style={styles.rightContent}>{rightContent}</View>
       </View>
     </View>
@@ -68,7 +71,7 @@ export function NavBar({
 
 const styles = createStyles({
   container: {
-    paddingLeft: 16.3125, // 16.3125rpx - UniApp原值
+    // paddingLeft: 16.3125, // 16.3125rpx - UniApp原值
     marginTop: 16.28125, // 为StatusBar留出空间
   },
   navBar: {
@@ -83,10 +86,19 @@ const styles = createStyles({
     width: 31.25, // 40px转rpx = 31.25rpx
     height: 31.25, // 40px转rpx = 31.25rpx
     alignItems: "center" as const,
+    marginLeft: 16.3125,
+    justifyContent: "center" as const,
+  },
+  titleContainer: {
+    position: "absolute" as const,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center" as const,
     justifyContent: "center" as const,
   },
   title: {
-    flex: 1,
     textAlign: "center" as const,
     color: "#1571fc", // UniApp原值
     fontSize: 15.625, // 15.625rpx - UniApp原值

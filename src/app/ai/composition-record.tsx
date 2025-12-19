@@ -95,7 +95,7 @@ export default function CompositionRecordScreen() {
 
       {!loading && recordList.length === 0 && (
         <View style={styles.emptyContainer}>
-          <Ionicons name="document-text-outline" size={rpx(200)} color="#D9D9D9" />
+          <Ionicons name="document-text-outline" size={rpx(78.125)} color="#D9D9D9" />
           <Text style={styles.emptyText}>暂无作文记录</Text>
         </View>
       )}
@@ -214,14 +214,15 @@ const styles = createStyles({
   },
   // 空状态
   emptyContainer: {
+    flex: 1,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    height: 600,
+    // height: '100%',
   },
   emptyText: {
     color: "#999",
-    fontSize: 28,
+    fontSize: 10.9375,
   },
   // 记录列表
   recordListWrapper: {
