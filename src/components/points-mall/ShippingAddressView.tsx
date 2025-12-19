@@ -45,7 +45,7 @@ const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSe
       // setAddress(null)
     } catch (error) {
       console.error("新增地址失败:", error)
-      showError("新增地址失败，请重试")
+      // showError("新增地址失败，请重试")
       throw error
     }
   }, [onRefresh])
@@ -59,7 +59,7 @@ const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSe
       // setAddress(null)
     } catch (error) {
       console.error("修改地址失败:", error)
-      showError("修改地址失败，请重试")
+      // showError("修改地址失败，请重试")
       throw error
     }
   }, [onRefresh])
