@@ -66,6 +66,7 @@ export const BrightnessControl: React.FC<BrightnessControlProps> = ({ style }) =
 
     // 手势逻辑：垂直拖动控制 progress（使用屏幕高度的2/3计算）
     const panGesture = Gesture.Pan()
+        .minDistance(0)
         .onBegin((event) => {
             console.log("手势开始")
             startProgress.value = progress.value
@@ -81,6 +82,7 @@ export const BrightnessControl: React.FC<BrightnessControlProps> = ({ style }) =
             runOnJS(setSystemBrightness)(next)
         })
         .onEnd(() => {
+            console.log("手势结束")
             const finalValue = progress.value
             runOnJS(setSystemBrightness)(finalValue)
             // 手势结束后，barWrapper 在 500ms 内渐变为 0

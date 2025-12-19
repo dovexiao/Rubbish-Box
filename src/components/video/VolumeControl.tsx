@@ -52,6 +52,7 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({ style, videoRef })
 
     // 手势逻辑：垂直拖动控制 progress（使用屏幕高度的1/4计算）
     const panGesture = Gesture.Pan()
+        .minDistance(0)
         .onBegin((event) => {
             console.log("手势开始")
             startProgress.value = progress.value
