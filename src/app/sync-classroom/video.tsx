@@ -1037,8 +1037,8 @@ const styles = createStyles({
   video: {
     width: "100%" as const,
     height: "100%" as const,
-    borderWidth: 1,
-    borderColor: "red",
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   loading: {
     position: "absolute" as const,

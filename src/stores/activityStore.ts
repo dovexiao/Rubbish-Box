@@ -87,12 +87,13 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
   /**
    * 更新当前活动
    * @param updates 要更新的字段
+   * @returns 是否发送成功
    */
   updateActivity: (updates) => {
     const { currentActivity } = get()
     if (!currentActivity) {
       console.warn('📊 [ActivityStore] 没有当前活动，无法更新')
-      return
+      return false
     }
     
     const updatedActivity = {
@@ -105,11 +106,13 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
     set({ currentActivity: updatedActivity })
     
     // 如果开启了自动发送，立即发送
+    let sendSuccess = false
     if (get().autoSend) {
-      get().sendActivity(updatedActivity)
+      sendSuccess = get().sendActivity(updatedActivity)
     }
     
     console.log('📊 [ActivityStore] 活动已更新:', updatedActivity)
+    return sendSuccess
   },
   
   /**
@@ -201,16 +204,31 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
       return
     }
     
+    console.log('📊 [ActivityStore] 准备退出活动:', currentActivity.type, currentActivity.homeworkId || currentActivity.videoId || currentActivity.bookId)
+    
     // 发送退出状态
-    get().updateActivity({
+    const exitSuccess = get().updateActivity({
       status: ActivityStatus.EXIT,
       timestamp: Date.now(),
     })
     
-    // 清除当前活动
-    setTimeout(() => {
+    // 如果发送失败，立即清除（避免状态不一致）
+    if (!exitSuccess) {
+      console.warn('📊 [ActivityStore] 退出消息发送失败，立即清除活动')
       get().clearActivity()
-    }, 1000) // 延迟清除，确保退出消息已发送
+      return
+    }
+    
+    // 延迟清除作为降级方案（如果服务器确认消息丢失）
+    // 注意：正常情况下，服务器确认后会立即清除（在 globalWebSocket.handleUserActivityAck 中）
+    setTimeout(() => {
+      const { currentActivity: stillActive } = get()
+      // 只有当前活动仍然是退出状态时才清除（说明服务器确认消息可能丢失）
+      if (stillActive && stillActive.status === ActivityStatus.EXIT) {
+        console.log('📊 [ActivityStore] 延迟清除活动（降级方案）')
+        get().clearActivity()
+      }
+    }, 2000) // 增加到2秒，给服务器更多时间响应
   },
 }))
 

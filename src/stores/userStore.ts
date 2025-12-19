@@ -133,13 +133,6 @@ export const useUserStore = create<UserState>((set, get) => ({
         user,
         isLoggedIn: !!storedToken,
       }
-      
-      console.log("🔄 设置新的 userStore 状态:", {
-        token: newState.token ? `存在(${newState.token.length}字符)` : "不存在",
-        user: newState.user,
-        isLoggedIn: newState.isLoggedIn
-      })
-
       set(newState)
     } catch (error) {
       console.warn("Failed to initialize from storage:", error)
@@ -227,7 +220,7 @@ export const useUserStore = create<UserState>((set, get) => ({
         const { post: apiPost } = await import("../services/api")
         const response = await apiPost("/AppStart/UserInformation/user_information/", {})
         
-        console.log("🌐 用户信息接口响应:", response)
+        // console.log("🌐 用户信息接口响应:", response)
         
         if (response && typeof response === 'object') {
           // 确保response符合User接口

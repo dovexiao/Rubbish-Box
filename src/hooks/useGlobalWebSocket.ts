@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import { useUserStore } from '../stores/userStore'
 import { globalWebSocket } from '../services/globalWebSocket'
+import { WebSocketStatus } from '../types/websocket'
 
 /**
  * 全局 WebSocket Hook
@@ -92,9 +93,16 @@ export function useGlobalWebSocket() {
         // 如果用户已登录但 WebSocket 未连接，尝试重连
         if (isLoggedIn && user?.phone) {
           const status = globalWebSocket.getStatus()
-          if (status !== 'connected' && status !== 'connecting') {
+          if (
+            status !== WebSocketStatus.CONNECTED && 
+            status !== WebSocketStatus.CONNECTING &&
+            status !== WebSocketStatus.RECONNECTING
+          ) {
             console.log('[useGlobalWebSocket] WebSocket 未连接，尝试重连')
             globalWebSocket.reconnect()
+              .catch((error) => {
+                console.error('[useGlobalWebSocket] 重连失败:', error)
+              })
           }
         }
       }

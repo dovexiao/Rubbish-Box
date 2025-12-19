@@ -53,6 +53,40 @@ export interface WebSocketMessage<T = any> {
 }
 
 /**
+ * 重连配置
+ */
+export interface ReconnectConfig {
+  /** 初始延迟（毫秒），默认 1000 */
+  initialDelay: number
+  /** 最大延迟（毫秒），默认 30000 */
+  maxDelay: number
+  /** 最大重连次数，默认 10 */
+  maxAttempts: number
+  /** 退避倍数，默认 1.5 */
+  backoffMultiplier: number
+}
+
+/**
+ * 消息队列配置
+ */
+export interface MessageQueueConfig {
+  /** 最大队列大小，默认 100 */
+  maxSize: number
+  /** 队列策略，默认 fifo */
+  strategy: 'fifo' | 'lifo'
+}
+
+/**
+ * 后台行为配置
+ */
+export interface BackgroundConfig {
+  /** 后台是否暂停心跳，默认 true */
+  pauseHeartbeat: boolean
+  /** 后台是否关闭连接，默认 false */
+  closeConnection: boolean
+}
+
+/**
  * WebSocket 配置
  */
 export interface WebSocketConfig {
@@ -63,30 +97,11 @@ export interface WebSocketConfig {
   /** 心跳超时（毫秒），默认 10000 */
   heartbeatTimeout?: number
   /** 重连配置 */
-  reconnect?: {
-    /** 初始延迟（毫秒），默认 1000 */
-    initialDelay?: number
-    /** 最大延迟（毫秒），默认 30000 */
-    maxDelay?: number
-    /** 最大重连次数，默认 10 */
-    maxAttempts?: number
-    /** 退避倍数，默认 1.5 */
-    backoffMultiplier?: number
-  }
+  reconnect?: Partial<ReconnectConfig>
   /** 消息队列配置 */
-  messageQueue?: {
-    /** 最大队列大小，默认 100 */
-    maxSize?: number
-    /** 队列策略，默认 fifo */
-    strategy?: 'fifo' | 'lifo'
-  }
+  messageQueue?: Partial<MessageQueueConfig>
   /** 后台行为配置 */
-  background?: {
-    /** 后台是否暂停心跳，默认 true */
-    pauseHeartbeat?: boolean
-    /** 后台是否关闭连接，默认 false */
-    closeConnection?: boolean
-  }
+  background?: Partial<BackgroundConfig>
   /** 连接超时（毫秒），默认 10000 */
   connectionTimeout?: number
   /** 是否自动连接，默认 true */
@@ -144,5 +159,48 @@ export interface QueuedMessage {
   enqueuedAt: number
   /** 重试次数 */
   retryCount: number
+  /** 过期时间（毫秒） */
+  expiresAt?: number
+}
+
+/**
+ * 服务器消息格式（实际接收的原始格式）
+ */
+export interface ServerMessage {
+  /** 消息类型 */
+  type: string
+  /** 其他字段根据类型动态 */
+  [key: string]: any
+}
+
+/**
+ * 设备状态服务器消息
+ */
+export interface DeviceStatusServerMessage extends ServerMessage {
+  type: 'deviceStatus'
+  bound: boolean
+  dragVideo: boolean
+  displayAnswer: boolean
+  lockScreenNow: boolean
+}
+
+/**
+ * 连接成功服务器消息
+ */
+export interface ConnectedServerMessage extends ServerMessage {
+  type: 'connected'
+  clientId: string
+  deviceCode: string
+  phone: string
+}
+
+/**
+ * 用户活动确认服务器消息
+ */
+export interface UserActivityAckServerMessage extends ServerMessage {
+  type: 'user_activity_ack'
+  activityStatus: string
+  activityType: string
+  success: boolean
 }
 

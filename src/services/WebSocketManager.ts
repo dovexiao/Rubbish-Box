@@ -8,8 +8,20 @@ import {
   WebSocketEventHandler,
   WebSocketStats,
   QueuedMessage,
+  ReconnectConfig,
+  MessageQueueConfig,
+  BackgroundConfig,
 } from '../types/websocket'
 import { getWebSocketConfig } from '../config/websocket'
+
+/**
+ * 完整配置（所有字段都必需）
+ */
+interface FullWebSocketConfig extends Required<Omit<WebSocketConfig, 'reconnect' | 'messageQueue' | 'background'>> {
+  reconnect: ReconnectConfig
+  messageQueue: MessageQueueConfig
+  background: BackgroundConfig
+}
 
 /**
  * WebSocket readyState 常量
@@ -41,7 +53,7 @@ export class WebSocketManager {
   private ws: WebSocket | null = null
   
   // 配置
-  private config: Required<WebSocketConfig>
+  private config: FullWebSocketConfig
   
   // 状态
   private status: WebSocketStatus = WebSocketStatus.DISCONNECTED
@@ -85,9 +97,22 @@ export class WebSocketManager {
   private isManualClose = false
 
   private constructor(config?: Partial<WebSocketConfig>) {
+    const defaultConfig = getWebSocketConfig()
     this.config = {
-      ...getWebSocketConfig(),
+      ...defaultConfig,
       ...config,
+      reconnect: {
+        ...defaultConfig.reconnect,
+        ...(config?.reconnect || {}),
+      },
+      messageQueue: {
+        ...defaultConfig.messageQueue,
+        ...(config?.messageQueue || {}),
+      },
+      background: {
+        ...defaultConfig.background,
+        ...(config?.background || {}),
+      },
     }
     
     this.reconnectDelay = this.config.reconnect.initialDelay
@@ -232,6 +257,18 @@ export class WebSocketManager {
     this.config = {
       ...this.config,
       ...config,
+      reconnect: {
+        ...this.config.reconnect,
+        ...(config.reconnect || {}),
+      },
+      messageQueue: {
+        ...this.config.messageQueue,
+        ...(config.messageQueue || {}),
+      },
+      background: {
+        ...this.config.background,
+        ...(config.background || {}),
+      },
     }
   }
 
@@ -366,7 +403,14 @@ export class WebSocketManager {
         throw new Error('WebSocket 未连接')
       }
       
-      this.ws.send(JSON.stringify(message))
+      const messageStr = JSON.stringify(message)
+      
+      // 如果是心跳消息，记录详细日志
+      if (message.type === MessageType.PING) {
+        console.log(`[WebSocket] 📤 发送心跳消息: ${messageStr}`)
+      }
+      
+      this.ws.send(messageStr)
       this.stats.sentMessages++
       return true
       
@@ -382,10 +426,12 @@ export class WebSocketManager {
    * 消息加入队列
    */
   private enqueueMessage(message: WebSocketMessage): void {
+    const now = Date.now()
     const queuedMessage: QueuedMessage = {
       message,
-      enqueuedAt: Date.now(),
+      enqueuedAt: now,
       retryCount: 0,
+      expiresAt: now + 5 * 60 * 1000, // 5分钟后过期
     }
     
     // 检查队列大小
@@ -412,20 +458,39 @@ export class WebSocketManager {
     
     console.log(`[WebSocket] 开始发送队列消息，共 ${this.messageQueue.length} 条`)
     
+    const now = Date.now()
     const failedMessages: QueuedMessage[] = []
+    let expiredCount = 0
     
     while (this.messageQueue.length > 0) {
       const queuedMessage = this.messageQueue.shift()!
+      
+      // 检查消息是否过期
+      if (queuedMessage.expiresAt && now > queuedMessage.expiresAt) {
+        expiredCount++
+        console.warn('[WebSocket] 消息已过期，丢弃:', queuedMessage.message)
+        continue
+      }
+      
       const success = this.sendMessage(queuedMessage.message)
       
       if (!success) {
         queuedMessage.retryCount++
-        failedMessages.push(queuedMessage)
+        // 只重试3次
+        if (queuedMessage.retryCount < 3) {
+          failedMessages.push(queuedMessage)
+        } else {
+          console.warn('[WebSocket] 消息重试次数超限，丢弃:', queuedMessage.message)
+        }
       }
     }
     
     // 将失败的消息重新加入队列
     this.messageQueue = failedMessages
+    
+    if (expiredCount > 0) {
+      console.warn(`[WebSocket] ${expiredCount} 条消息已过期`)
+    }
     
     if (failedMessages.length > 0) {
       console.warn(`[WebSocket] ${failedMessages.length} 条消息发送失败，已重新加入队列`)
@@ -444,7 +509,8 @@ export class WebSocketManager {
     
     this.stopHeartbeat()
     
-    console.log(`[WebSocket] 启动心跳，间隔: ${this.config.heartbeatInterval}ms`)
+    const intervalSeconds = this.config.heartbeatInterval / 1000
+    console.log(`[WebSocket] 💓 启动心跳，间隔: ${this.config.heartbeatInterval}ms (${intervalSeconds}秒)`)
     
     this.heartbeatTimer = setInterval(() => {
       this.sendHeartbeat()
@@ -484,6 +550,10 @@ export class WebSocketManager {
     }
     
     // 发送 ping
+    const now = Date.now()
+    const timeSinceLastPong = this.lastPongTime > 0 ? now - this.lastPongTime : 0
+    console.log(`[WebSocket] 💓 发送心跳 PING (距离上次PONG: ${timeSinceLastPong}ms, 间隔: ${this.config.heartbeatInterval}ms)`)
+    
     const success = this.send(null, MessageType.PING)
     
     if (success) {
@@ -498,6 +568,8 @@ export class WebSocketManager {
           this.attemptReconnect()
         }
       }, this.config.heartbeatTimeout)
+    } else {
+      console.warn('[WebSocket] ⚠️ 心跳发送失败（可能已加入队列）')
     }
   }
 
@@ -505,6 +577,10 @@ export class WebSocketManager {
    * 处理心跳响应
    */
   private handlePong(): void {
+    const now = Date.now()
+    const elapsed = this.lastPongTime > 0 ? now - this.lastPongTime : 0
+    console.log(`[WebSocket] 💚 收到心跳响应 PONG (耗时: ${elapsed}ms)`)
+    
     this.isWaitingPong = false
     
     if (this.heartbeatTimeoutTimer) {
@@ -634,13 +710,27 @@ export class WebSocketManager {
     if (!wasActive && isActive) {
       console.log('[WebSocket] 应用回到前台')
       
-      // 恢复心跳
-      if (this.status === WebSocketStatus.CONNECTED && this.config.background.pauseHeartbeat) {
-        this.startHeartbeat()
-      }
-      
-      // 如果配置了后台关闭连接，则重新连接
-      if (this.config.background.closeConnection && this.config.autoConnect) {
+      // 验证连接是否真的有效
+      if (this.status === WebSocketStatus.CONNECTED) {
+        const isConnectionValid = this.ws && this.ws.readyState === WS_READY_STATE.OPEN
+        
+        if (isConnectionValid) {
+          console.log('[WebSocket] 连接仍然有效')
+          
+          // 恢复心跳
+          if (this.config.background.pauseHeartbeat) {
+            console.log('[WebSocket] 恢复心跳')
+            this.startHeartbeat()
+          }
+        } else {
+          // 连接实际已断开，更新状态并重连
+          console.warn('[WebSocket] 连接已断开，状态不一致，触发重连')
+          this.setStatus(WebSocketStatus.DISCONNECTED)
+          this.attemptReconnect()
+        }
+      } else if (this.config.background.closeConnection && this.config.autoConnect) {
+        // 如果配置了后台关闭连接，则重新连接
+        console.log('[WebSocket] 后台已关闭连接，重新连接')
         this.connect()
       }
     }

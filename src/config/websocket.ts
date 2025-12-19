@@ -1,4 +1,4 @@
-import { WebSocketConfig } from '../types/websocket'
+import { WebSocketConfig, ReconnectConfig, MessageQueueConfig, BackgroundConfig } from '../types/websocket'
 import { API_BASE_URL } from './api'
 import { IS_DEV } from './env'
 
@@ -8,10 +8,19 @@ import { IS_DEV } from './env'
 export const WS_BASE_URL = API_BASE_URL.replace(/^http/, 'ws')
 
 /**
+ * 完整配置类型
+ */
+interface FullWebSocketConfig extends Required<Omit<WebSocketConfig, 'reconnect' | 'messageQueue' | 'background'>> {
+  reconnect: ReconnectConfig
+  messageQueue: MessageQueueConfig
+  background: BackgroundConfig
+}
+
+/**
  * 默认 WebSocket 配置
  * 针对 RK3566 2GB 内存设备优化
  */
-export const DEFAULT_WS_CONFIG: Required<WebSocketConfig> = {
+export const DEFAULT_WS_CONFIG: FullWebSocketConfig = {
   url: `${WS_BASE_URL}/ws/`,
   
   // 心跳配置：30秒心跳间隔，10秒超时
@@ -76,7 +85,7 @@ export const PROD_WS_CONFIG: Partial<WebSocketConfig> = {
 /**
  * 获取当前环境的 WebSocket 配置
  */
-export const getWebSocketConfig = (): Required<WebSocketConfig> => {
+export const getWebSocketConfig = (): FullWebSocketConfig => {
   const envConfig = IS_DEV ? DEV_WS_CONFIG : PROD_WS_CONFIG
   
   return {
@@ -85,6 +94,14 @@ export const getWebSocketConfig = (): Required<WebSocketConfig> => {
     reconnect: {
       ...DEFAULT_WS_CONFIG.reconnect,
       ...envConfig.reconnect,
+    },
+    messageQueue: {
+      ...DEFAULT_WS_CONFIG.messageQueue,
+      ...(envConfig.messageQueue || {}),
+    },
+    background: {
+      ...DEFAULT_WS_CONFIG.background,
+      ...(envConfig.background || {}),
     },
   }
 }
