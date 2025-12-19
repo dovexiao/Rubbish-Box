@@ -22,8 +22,6 @@ import { UserAgreementModal } from "./UserAgreementModal"
 import { PrivacyPolicyModal } from "./PrivacyPolicyModal"
 import { SetPasswordModal } from "./SetPasswordModal"
 import { showSuccess, showError, showWarning } from "../utils/toast"
-import { showConfirm } from "../utils/dialog"
-import { getBindQRCode } from "@/services/bind"
 
 
 type LoginMode = "sms" | "password"
@@ -153,9 +151,6 @@ export const LoginModal = React.memo(function LoginModal({
       console.log("🔍 LoginModal - username_exists 类型:", typeof result.user_info?.username_exists)
       console.log("🔍 LoginModal - username_exists === false:", result.user_info?.username_exists === false)
 
-      const response = await getBindQRCode({ phone: phone })
-      console.log("🔍 LoginModal - getBindQRCode response:", response)
-
       setTimeout(() => {
         // 优先判断是否设置密码
         console.log("⚡ 开始判断逻辑...")
@@ -177,15 +172,6 @@ export const LoginModal = React.memo(function LoginModal({
           console.log("🏠 LoginModal - 所有检查通过，跳转到主页")
           onSuccess?.()
         }
-        
-        // if (response.bound === false) {
-        //   console.log("🔐 LoginModal - bound === false，跳转到绑定家长端页面")
-        //   onSuccess?.() // 先关闭弹窗
-        //   router.replace("/bind-parent")
-        // } else {
-        //   console.log("🏠 LoginModal - 所有检查通过，跳转到主页")
-        //   onSuccess?.()
-        // }
       }, 500)
     } catch (error: any) {
       showError(error.message || "登录失败")
