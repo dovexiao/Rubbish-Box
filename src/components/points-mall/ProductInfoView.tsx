@@ -104,7 +104,7 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
                                 style={styles.priceIcon}
                                 resizeMode="contain"
                             />
-                            <Text style={styles.priceText}>{product?.price ?? 0}</Text>
+                            <Text style={styles.priceText}>{String(product?.price ?? 0)}</Text>
                         </View>
                         {/* 会员标识视图 */}
                         {/* {isMember && (
@@ -121,11 +121,11 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
                     {/* 第二行：商品名称和想要人数 */}
                     <View style={styles.secondRow}>
                         <Text style={styles.productName} numberOfLines={1}>
-                            {product?.name ?? ''}
+                            {String(product?.name ?? '')}
                         </Text>
-                        {product?.heat && product?.heat > 0 && (
-                            <Text style={styles.heatText}>{product?.heat}人想要</Text>
-                        )}
+                        {product?.heat && product?.heat > 0 ? (
+                            <Text style={styles.heatText}>{String(product?.heat)}人想要</Text>
+                        ) : null}
                     </View>
                 </View>
 

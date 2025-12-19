@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { View, Text, Image, TouchableOpacity, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
@@ -12,7 +12,11 @@ interface CurrencyAmountProps {
   style?: ViewStyle;
 }
 
-const CurrencyAmount: React.FC<CurrencyAmountProps> = ({ onPress, style }) => {
+export type CurrencyAmountRef = {
+  refreshBalance: () => Promise<void>;
+}
+
+const CurrencyAmount = forwardRef<CurrencyAmountRef, CurrencyAmountProps>(({ onPress, style }, ref) => {
   // 展示金额的状态定义
   const [pointsBalance, setPointsBalance] = useState<number>(0);
 
@@ -46,6 +50,11 @@ const CurrencyAmount: React.FC<CurrencyAmountProps> = ({ onPress, style }) => {
       fetchPointsBalance();
     }, [fetchPointsBalance])
   );
+
+  // 暴露刷新方法给父组件
+  useImperativeHandle(ref, () => ({
+    refreshBalance: fetchPointsBalance,
+  }), [fetchPointsBalance]);
 
   // 大数处理
   const formatPointsBalance = useCallback((points: number) => {
@@ -83,7 +92,7 @@ const CurrencyAmount: React.FC<CurrencyAmountProps> = ({ onPress, style }) => {
       </TouchableOpacity>
     </View>
   );
-};
+});
 
 const styles = createStyles({
   container: {

@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
-import { View, Text, Image, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, Image, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { createStyles } from '../../utils/rpxStyleSheet';
 import { Images } from '../../constants/Assets';
@@ -19,6 +19,7 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [correctCount, setCorrectCount] = useState(0);
     const [answerOptions, setAnswerOptions] = useState<string[]>(Array.from({ length: 5 }, (_, index) => ''));
+    const [loading, setLoading] = useState(false);
 
     // 答对题目数展示字符
     const correctCountText = useMemo(() => {
@@ -28,6 +29,7 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
 
     // 每日打卡练习题数据
     const getDailyCheckInExerciseData = useCallback(async () => {
+        setLoading(true);
         try {
             const data: DailyCheckInExerciseData = await getDailyCheckInExercise();
             setQuestions(data.questions ?? []);
@@ -36,6 +38,8 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
             console.error('获取每日打卡练习题数据失败:', error);
             showError('获取每日打卡练习题数据失败');
             setQuestions([]);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
@@ -138,7 +142,11 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
 
                         {/* 题目 */}
                         <View style={styles.questionContainer}>
-                            <Text style={styles.questionText}>{questions[currentQuestionIndex]?.question_text ?? '今日没有题目'}</Text>
+                            {loading ? (
+                                <ActivityIndicator size="large" color="#307518" />
+                            ) : (
+                                <Text style={styles.questionText}>{questions[currentQuestionIndex]?.question_text ?? '今日没有题目'}</Text>
+                            )}
                         </View>
 
                         {

@@ -129,13 +129,16 @@ const ExchangeRecords: React.FC<ExchangeRecordsProps> = ({ style }) => {
                             </View>
                         )}
                         {item.logistics_status_display === '运输中' && (
-                            <TouchableOpacity
-                                style={styles.actionButtonShipping}
-                                activeOpacity={0.7}
-                                onPress={() => handleTrackOrder(item)}
-                            >
-                                <Text style={styles.actionButtonTextShipping}>查看物流</Text>
-                            </TouchableOpacity>
+                            // <TouchableOpacity
+                            //     style={styles.actionButtonShipping}
+                            //     activeOpacity={0.7}
+                            //     onPress={() => handleTrackOrder(item)}
+                            // >
+                            //     <Text style={styles.actionButtonTextShipping}>查看物流</Text>
+                            // </TouchableOpacity>
+                            <View style={styles.actionButtonShipping}>
+                                <Text style={styles.actionButtonTextShipping}>{item.order_number}</Text>
+                            </View>
                         )}
                     </View>
                 </View>

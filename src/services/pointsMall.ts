@@ -26,6 +26,7 @@ export interface ExchangeRecordItem {
   logistics_status_display: string
   exchange_quantity: number
   image: string
+  order_number: string
 }
 
 /**

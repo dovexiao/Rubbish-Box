@@ -78,9 +78,11 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
       setLoading(true)
       const data = await getProvinces()
       setProvinces(data || [])
+      return data
     } catch (error) {
       console.error("加载省份数据失败:", error)
       showError("加载省份数据失败，请重试")
+      return []
     } finally {
       setLoading(false)
     }
@@ -92,9 +94,11 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
       setLoading(true)
       const data = await getCities({ province_code: provinceCode })
       setCities(data || [])
+      return data
     } catch (error) {
       console.error("加载城市数据失败:", error)
       showError("加载城市数据失败，请重试")
+      return []
     } finally {
       setLoading(false)
     }
@@ -106,9 +110,11 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
       setLoading(true)
       const data = await getCounties({ city_code: cityCode })
       setDistricts(data || [])
+      return data
     } catch (error) {
       console.error("加载区县数据失败:", error)
       showError("加载区县数据失败，请重试")
+      return []
     } finally {
       setLoading(false)
     }
@@ -152,16 +158,42 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
   // 初始化数据
   useEffect(() => {
     if (visible) {
-      loadProvinces().then(() => {
+      console.log("地区选择器初始化数据", province, city, district)
+      loadProvinces().then((provinceData) => {
+        console.log("加载省份数据", provinceData)
         // 如果有初始值，加载对应的城市和区县数据
         if (province) {
-          const provinceItem = provinces.find(p => p.text === province)
+          const provinceItem = provinceData.find(p => p.text === province)
+          console.log("匹配到的省份数据", provinceItem)
           if (provinceItem) {
-            loadCities(provinceItem.value).then(() => {
+            console.log("有省份数据，加载城市数据", provinceItem)
+            setSelectedProvince(provinceItem.text)
+            setTimeout(() => {
+              provinceListRef.current?.scrollToIndex({ index: provinceData.findIndex(p => p.text === provinceItem.text) })
+            }, 100)
+            loadCities(provinceItem.value).then((cityData) => {
+              console.log("加载城市数据", cityData)
               if (city) {
-                const cityItem = cities.find(c => c.text === city)
+                const cityItem = cityData.find(c => c.text === city)
+                console.log("匹配到的城市数据", cityItem)
                 if (cityItem) {
-                  loadDistricts(cityItem.value)
+                  console.log("有城市数据，加载区县数据", cityItem)
+                  setSelectedCity(cityItem.text)
+                  setTimeout(() => {
+                    cityListRef.current?.scrollToIndex({ index: cityData.findIndex(c => c.text === cityItem.text) })
+                  }, 100)
+                  loadDistricts(cityItem.value).then((districtData) => {
+                    console.log("加载区县数据", districtData)
+                    if (district) {
+                      const districtItem = districtData.find(d => d.text === district)
+                      if (districtItem) {
+                        setSelectedDistrict(districtItem.text)
+                        setTimeout(() => {
+                          districtListRef.current?.scrollToIndex({ index: districtData.findIndex(d => d.text === districtItem.text) })
+                        }, 100)
+                      }
+                    }
+                  })
                 }
               }
             })
@@ -174,6 +206,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
       setSelectedProvince('')
       setSelectedCity('')
       setSelectedDistrict('')
+      setProvinces([])
       setCities([])
       setDistricts([])
     }

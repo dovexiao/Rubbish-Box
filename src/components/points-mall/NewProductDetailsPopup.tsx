@@ -91,7 +91,7 @@ const NewProductDetailsPopup = ({ visible, productId, onClose }: NewProductDetai
             onClose()
         } catch (error) {
             console.error("兑换商品失败:", error)
-            showError(`兑换失败: ${error}`)
+            showError(`兑换失败: ${error instanceof Error ? error.message : '未知错误'}`)
         }
     }, [productDetail, selectedAddress])
 

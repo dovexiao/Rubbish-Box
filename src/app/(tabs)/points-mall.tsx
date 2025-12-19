@@ -32,6 +32,7 @@ import {
     DailyCheckInOnAnswer,
     CurrencyGuideFloatingButton,
     CurrencyAmount,
+    type CurrencyAmountRef,
     MultiCategoryProductList,
     DiscountedProductWindow,
     NewProductDetailsPopup,
@@ -271,6 +272,7 @@ export default function PointsMallScreen() {
   const [showDailyCheckInOnAnswer, setShowDailyCheckInOnAnswer] = useState(false);
   const [dailyCheckInPoints, setDailyCheckInPoints] = useState(0);
   const dailyCheckInRef = useRef<DailyCheckInRef>(null);
+  const currencyAmountRef = useRef<CurrencyAmountRef>(null);
   const [showNewProductDetails, setShowNewProductDetails] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null)
   const [showCurrencyGuide, setShowCurrencyGuide] = useState(false)
@@ -293,6 +295,8 @@ export default function PointsMallScreen() {
   // 关闭商品详情弹窗
   const handleCloseNewProductDetails = useCallback(() => {
     setShowNewProductDetails(false)
+    // 刷新余额
+    currencyAmountRef.current?.refreshBalance()
   }, [])
 
   // 关闭货币指南
@@ -361,6 +365,7 @@ export default function PointsMallScreen() {
           />
           {/* 货币余额 */}
           <CurrencyAmount
+            ref={currencyAmountRef}
             onPress={() => router.replace("/currency-record")}
             style={styles.currencyAmountContainer}
           />
