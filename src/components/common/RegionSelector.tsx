@@ -59,7 +59,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
       return (event: any) => {
         const offsetY = event.nativeEvent.contentOffset.y
         const snappedOffset = snapToItem(offsetY)
-        
+
         // 如果偏移量有变化，进行校准
         if (Math.abs(offsetY - snappedOffset) > 0.1) {
           listRef.current?.scrollToOffset({
@@ -122,32 +122,50 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
 
   // 选择省份
   const handleSelectProvince = useCallback(
-    (item: RegionOption) => {
+    (item: RegionOption, index: number) => {
       setSelectedProvince(item.text || '')
       setSelectedCity('')
       setSelectedDistrict('')
       setCities([])
       setDistricts([])
       loadCities(item.value)
+      // const provinceIndex = provinces.findIndex(p => p.text === item.text)
+      // console.log("选择省份", item.text, provinceIndex, provinces.length)
+      // if (provinceIndex !== -1) {
+      //   provinceListRef.current?.scrollToIndex({ index: provinceIndex })
+      // }
+      provinceListRef.current?.scrollToIndex({ index })
     },
-    [],
+    [loadCities],
   )
 
   // 选择城市
   const handleSelectCity = useCallback(
-    (item: RegionOption) => {
+    (item: RegionOption, index: number) => {
       setSelectedCity(item.text || '')
       setSelectedDistrict('')
       setDistricts([])
       loadDistricts(item.value)
+      // const cityIndex = cities.findIndex(c => c.text === item.text)
+      // console.log("选择城市", item.text, cityIndex, cities.length)
+      // if (cityIndex !== -1) {
+      //   cityListRef.current?.scrollToIndex({ index: cityIndex })
+      // }
+      cityListRef.current?.scrollToIndex({ index })
     },
     [loadDistricts],
   )
 
   // 选择区县
-  const handleSelectDistrict = useCallback((item: RegionOption) => {
+  const handleSelectDistrict = useCallback((item: RegionOption, index: number) => {
     setSelectedDistrict(item.text || '')
-  }, [])
+    // const districtIndex = districts.findIndex(d => d.text === item.text)
+    // console.log("选择区县", item.text, districtIndex, districts.length)
+    // if (districtIndex !== -1) {
+    //   districtListRef.current?.scrollToIndex({ index: districtIndex })
+    // }
+    districtListRef.current?.scrollToIndex({ index })
+  }, [districts])
 
   // 确认选择
   const handleConfirm = useCallback(() => {
@@ -168,8 +186,9 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
           if (provinceItem) {
             console.log("有省份数据，加载城市数据", provinceItem)
             setSelectedProvince(provinceItem.text)
-            setTimeout(() => {
+            const provinceTimer = setTimeout(() => {
               provinceListRef.current?.scrollToIndex({ index: provinceData.findIndex(p => p.text === provinceItem.text) })
+              clearTimeout(provinceTimer)
             }, 100)
             loadCities(provinceItem.value).then((cityData) => {
               console.log("加载城市数据", cityData)
@@ -179,8 +198,9 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
                 if (cityItem) {
                   console.log("有城市数据，加载区县数据", cityItem)
                   setSelectedCity(cityItem.text)
-                  setTimeout(() => {
+                  const cityTimer = setTimeout(() => {
                     cityListRef.current?.scrollToIndex({ index: cityData.findIndex(c => c.text === cityItem.text) })
+                    clearTimeout(cityTimer)
                   }, 100)
                   loadDistricts(cityItem.value).then((districtData) => {
                     console.log("加载区县数据", districtData)
@@ -188,8 +208,9 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
                       const districtItem = districtData.find(d => d.text === district)
                       if (districtItem) {
                         setSelectedDistrict(districtItem.text)
-                        setTimeout(() => {
+                        const districtTimer = setTimeout(() => {
                           districtListRef.current?.scrollToIndex({ index: districtData.findIndex(d => d.text === districtItem.text) })
+                          clearTimeout(districtTimer)
                         }, 100)
                       }
                     }
@@ -197,7 +218,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
                 }
               }
             })
-            
+
           }
         }
       })
@@ -214,13 +235,13 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
 
   // 渲染省份列表项
   const renderProvinceItem = useCallback(
-    ({ item }: { item: RegionOption }) => {
+    ({ item, index }: { item: RegionOption, index: number }) => {
       const isSelected = selectedProvince === item.text
       return (
         <TouchableOpacity
           style={styles.listItem}
           activeOpacity={0.7}
-          onPress={() => handleSelectProvince(item)}
+          onPress={() => handleSelectProvince(item, index)}
         >
           <Text style={[styles.listItemText, isSelected && styles.selectedListItemText]} numberOfLines={2}>{item.text}</Text>
         </TouchableOpacity>
@@ -231,13 +252,13 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
 
   // 渲染城市列表项
   const renderCityItem = useCallback(
-    ({ item }: { item: RegionOption }) => {
+    ({ item, index }: { item: RegionOption, index: number }) => {
       const isSelected = selectedCity === item.text
       return (
         <TouchableOpacity
           style={styles.listItem}
           activeOpacity={0.7}
-          onPress={() => handleSelectCity(item)}
+          onPress={() => handleSelectCity(item, index)}
         >
           <Text style={[styles.listItemText, isSelected && styles.selectedListItemText]} numberOfLines={2}>{item.text}</Text>
         </TouchableOpacity>
@@ -248,13 +269,13 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({
 
   // 渲染区县列表项
   const renderDistrictItem = useCallback(
-    ({ item }: { item: RegionOption }) => {
+    ({ item, index }: { item: RegionOption, index: number }) => {
       const isSelected = selectedDistrict === item.text
       return (
         <TouchableOpacity
           style={styles.listItem}
           activeOpacity={0.7}
-          onPress={() => handleSelectDistrict(item)}
+          onPress={() => handleSelectDistrict(item, index)}
         >
           <Text style={[styles.listItemText, isSelected && styles.selectedListItemText]} numberOfLines={2}>{item.text}</Text>
         </TouchableOpacity>
