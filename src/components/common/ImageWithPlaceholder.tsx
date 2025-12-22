@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from "react"
+import React, { useState, useCallback, useEffect, useMemo } from "react"
 import { View, Image, ImageProps, ActivityIndicator, StyleProp, ImageStyle, ViewStyle, Text } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { rpx } from "../../utils/rpxStyleSheet"
 
 interface ImageWithPlaceholderProps extends Omit<ImageProps, "source"> {
-  source: { uri: string } | number
+  source: { uri: string | undefined } | number
   placeholderStyle?: StyleProp<ViewStyle>
   imageStyle?: StyleProp<ImageStyle>
   showLoadingIndicator?: boolean
@@ -49,12 +49,13 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
     return false
   }, [source])
 
-  const sourceValid = isValidSource()
-  const [loading, setLoading] = useState(sourceValid)
-  const [error, setError] = useState(!sourceValid)
+  const sourceValid = useMemo(() => isValidSource(), [source])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
 
   // 处理开始加载
   const handleLoadStart = useCallback(() => {
+    console.log("开始加载")
     setLoading(true)
     setError(false)
     onLoadStart?.()
@@ -109,6 +110,13 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
 
   // 计算图标大小（如果没有提供，使用默认值）
   const iconSize = placeholderIconSize || (typeof style === "object" && style && "width" in style && typeof style.width === "number" ? style.width * 0.3 : rpx(40))
+
+  useEffect(() => {
+    console.log("source", source)
+    console.log("sourceValid", sourceValid)
+    console.log("error", error)
+    console.log("loading", loading)
+  }, [source, sourceValid, error, loading])
 
   return (
     <View style={containerStyle}>

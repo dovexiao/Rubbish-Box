@@ -59,16 +59,16 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
         {/* 商品信息 */}
         <View style={styles.productInfoCard}>
           <View style={styles.productInfoImageContainer}>
-            {/* <ImageWithPlaceholder
-              source={{ uri: product?.main_image || '' }}
-              style={styles.productInfoImage}
-              resizeMode="cover"
-            /> */}
-            <Image
+            <ImageWithPlaceholder
               source={{ uri: product?.main_image }}
               style={styles.productInfoImage}
               resizeMode="cover"
             />
+            {/* <Image
+              source={{ uri: product?.main_image }}
+              style={styles.productInfoImage}
+              resizeMode="cover"
+            /> */}
           </View>
           <View style={styles.productInfoContent}>
             <Text style={styles.productInfoName} numberOfLines={2}>{product?.name}</Text>
