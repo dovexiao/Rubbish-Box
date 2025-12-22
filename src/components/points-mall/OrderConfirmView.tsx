@@ -20,6 +20,7 @@ interface OrderConfirmProps {
 }
 
 const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddress, onNext, onExchange }) => {
+  console.log("product data", product)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleConfirmExchange = useCallback(async () => {
@@ -58,16 +59,16 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
         {/* 商品信息 */}
         <View style={styles.productInfoCard}>
           <View style={styles.productInfoImageContainer}>
-            <ImageWithPlaceholder
+            {/* <ImageWithPlaceholder
               source={{ uri: product?.main_image || '' }}
               style={styles.productInfoImage}
               resizeMode="cover"
-            />
-            {/* <Image
+            /> */}
+            <Image
               source={{ uri: product?.main_image }}
               style={styles.productInfoImage}
               resizeMode="cover"
-            /> */}
+            />
           </View>
           <View style={styles.productInfoContent}>
             <Text style={styles.productInfoName} numberOfLines={2}>{product?.name}</Text>
@@ -122,7 +123,7 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
       <ConfirmDialog
         visible={showConfirmDialog}
         title="确认兑换吗?"
-        content="积分一旦兑换后订单不可取消哦"
+        content="时间货币一旦兑换后订单不可取消哦"
         confirmText="确认兑换"
         cancelText="再考虑下"
         onClose={() => { setShowConfirmDialog(false) }}

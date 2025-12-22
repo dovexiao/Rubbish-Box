@@ -83,7 +83,7 @@ export default function CompositionRecordScreen() {
     <View style={styles.pageContainer}>
       <View style={styles.sticky}>
         <StatusBar theme="dark" />
-        <NavBar title="作文收录" leftArrow style={styles.navbarMargin} />
+        <NavBar title="作文收录" leftArrow style={styles.navbarMargin}  onBackPress={() => router.navigate("/(tabs)/study")} />
       </View>
 
       {loading && (

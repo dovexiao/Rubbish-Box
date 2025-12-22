@@ -52,7 +52,7 @@ export default function UserAgreementScreen() {
             <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
               <Text style={styles.agreementTitle}>小褐同学智能学习桌用户服务协议</Text>
 
-              <Text style={styles.updateTime}>更新时间：2024年12月</Text>
+              <Text style={styles.updateTime}>更新时间：2025年12月</Text>
 
               <Text style={styles.sectionTitle}>1. 协议的范围</Text>
               <Text style={styles.content}>

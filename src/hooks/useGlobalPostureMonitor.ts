@@ -263,7 +263,7 @@ export function useGlobalPostureMonitor() {
     
     if (success) {
       // 使用 toast 显示奖励提示（1.5秒）
-      showInfo(`🎉 太棒了！累计学习10分钟，获得 ${points} 积分`, 2000);
+      showInfo(`🎉 太棒了！累计学习10分钟，获得 ${points} 时间货币`, 2000);
     }
   };
 

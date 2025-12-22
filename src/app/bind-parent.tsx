@@ -18,6 +18,7 @@ import { showError, showSuccess } from "../utils/toast"
 import { NavBar } from "../components/NavBar"
 import { ConfirmDialog } from "../components/ConfirmDialog"
 import { useDeviceStatusStore } from "../stores/deviceStatusStore"
+import { Images } from "../constants/Assets"
 
 /**
  * 绑定家长端小程序页面
@@ -37,6 +38,8 @@ export default function BindParentScreen() {
   
   // 订阅 WebSocket 推送的绑定状态
   const isBound = useDeviceStatusStore((state) => state.status?.bound ?? false)
+
+
 
   // 获取绑定二维码
   const fetchBindQRCode = async () => {
@@ -193,8 +196,12 @@ export default function BindParentScreen() {
                   <View style={styles.qrCodeWrapper}>
                     {/* 小程序码占位 */}
                     <View style={styles.qrCodePlaceholder}>
-                        <Ionicons name="qr-code" size={rpx(60)} color="#4891FF" />
-                        <Text style={styles.placeholderText}>小程序码</Text>
+                        <Image
+                              source={Images.appletQrCode as any}
+                              style={styles.qrCodeImage}
+                              resizeMode="contain"
+                            />
+                        {/* <Text style={styles.placeholderText}>小程序码</Text> */}
                     </View>
                   </View>
                 </View>

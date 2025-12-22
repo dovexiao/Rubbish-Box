@@ -158,7 +158,7 @@ export default function ErrorBookScreen() {
         style={styles.errorBookContainer}
       >
         <StatusBar theme="dark" />
-        <NavBar title="错题本" leftArrow />
+        <NavBar title="错题本" leftArrow onBackPress={() => router.navigate("/(tabs)/study")} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1571FC" />
           <Text style={styles.loadingText}>正在加载错本...</Text>
@@ -177,7 +177,7 @@ export default function ErrorBookScreen() {
         style={styles.errorBookContainer}
       >
         <StatusBar theme="dark" />
-        <NavBar title="错题本" leftArrow />
+        <NavBar title="错题本" leftArrow onBackPress={() => router.navigate("/(tabs)/study")} />
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>暂无内容</Text>
         </View>
@@ -194,7 +194,7 @@ export default function ErrorBookScreen() {
       style={styles.errorBookContainer}
     >
       <StatusBar theme="dark" />
-      <NavBar title="错题本" leftArrow />
+      <NavBar title="错题本" leftArrow onBackPress={() => router.navigate("/(tabs)/study")} />
 
       <View style={styles.mainContent}>
         {/* 左右布局容器 */}

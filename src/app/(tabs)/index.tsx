@@ -69,7 +69,7 @@ export default function HomeScreen() {
   const isLoadingRef = useRef(false) // 使用 ref 防止重复调用
   const lastLoadTimeRef = useRef<number>(0) // 跟踪最后一次加载时间
   const LOAD_INTERVAL = 2000 // 2秒内不重复加载
-  const [homeBgSource, setHomeBgSource] = useState<any>(Images.homeBg1)
+  const [homeBgSource, setHomeBgSource] = useState<any>(Images.homeBg2)
 
   // 获取坐姿状态文本
   const getPostureStatusText = () => {
@@ -242,31 +242,31 @@ const openVolumeSettings = async () => {
           console.error("获取排行榜失败:", err)
           return null
         }),
-        getHomeBgImage().catch((err) => {
-          console.error("获取首页背景图失败:", err)
-          return null
-        }),
+        // getHomeBgImage().catch((err) => {
+        //   console.error("获取首页背景图失败:", err)
+        //   return null
+        // }),
       ])
 
       // 处理首页背景图
-      if (homeBgData && homeBgData.image_url) {
-        const newUrl = homeBgData.image_url
-        setHomeBgSource((prev: any) => {
-          const currentUri = (prev && typeof prev === 'object' && prev.uri) ? prev.uri : null
+      // if (homeBgData && homeBgData.image_url) {
+      //   const newUrl = homeBgData.image_url
+      //   setHomeBgSource((prev: any) => {
+      //     const currentUri = (prev && typeof prev === 'object' && prev.uri) ? prev.uri : null
           
-          if (currentUri === newUrl) {
-            console.log("🖼️ 首页背景图未变，不更新")
-            return prev
-          }
+      //     if (currentUri === newUrl) {
+      //       console.log("🖼️ 首页背景图未变，不更新")
+      //       return prev
+      //     }
           
-          console.log("🖼️ 更新首页背景图:", newUrl)
-          return { uri: newUrl }
-        })
-      } else {
-        // 获取失败或为空，如果当前没有背景图（比如初始状态），保持默认 Images.homeBg1
-        // 这里不做操作，保留当前状态（如果是初始的 Images.homeBg1 则继续使用）
-        console.log("⚠️ 未获取到背景图，使用默认背景")
-      }
+      //     console.log("🖼️ 更新首页背景图:", newUrl)
+      //     return { uri: newUrl }
+      //   })
+      // } else {
+      //   // 获取失败或为空，如果当前没有背景图（比如初始状态），保持默认 Images.homeBg1
+      //   // 这里不做操作，保留当前状态（如果是初始的 Images.homeBg1 则继续使用）
+      //   console.log("⚠️ 未获取到背景图，使用默认背景")
+      // }
 
       // 设置用户信息 - 直接使用store中的用户信息
       if (currentUserStore.user) {
@@ -706,7 +706,7 @@ const openVolumeSettings = async () => {
  
                 
               {/* 系统设置 - 紧急逃生入口 */}
-              <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
+              {/* <TouchableOpacity style={styles.settingItem} onPress={openSystemSettings}>
                 <View style={styles.settingItemLeft}>
                   <View style={styles.settingIconContainer}>
                     <Ionicons name="settings" size={rpx(10.9)} color="#fff" />
@@ -716,7 +716,7 @@ const openVolumeSettings = async () => {
                 <View>
                   <Ionicons name="chevron-forward" size={rpx(8.6)} color="rgba(255, 255, 255, 0.52)" />
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {/* WiFi设置 */}
               <TouchableOpacity style={styles.settingItem} onPress={openSystemWifiSettings}>
@@ -1077,7 +1077,7 @@ const styles = createStyles({
   },
   settingsPanelTop: {
     width: 152.34735,
-    height: 162.216, // 增加高度以容纳新的"重启应用"选项
+    height: 142.216, // 增加高度以容纳新的"重启应用"选项
     borderRadius: 8.6,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     padding: 6.25,

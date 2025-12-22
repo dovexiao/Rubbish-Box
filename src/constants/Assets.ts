@@ -38,6 +38,7 @@ export const Images = {
   indexUserinfoBg: require("../../assets/images/index-userinfo-bg.png"),
   indexRankBg2: require("../../assets/images/index-rank-bg1.png"),
   homeBg1: require("../../assets/images/home-bg-1.png"),
+  homeBg2: require("../../assets/images/home-bg90.png"),
   book1: require("../../assets/images/book-1.png"),
   tipsIcon: require("../../assets/images/tips-icon.png"),
   rankGold: require("../../assets/images/rank/gold.png"),
@@ -165,7 +166,8 @@ export const Images = {
   pointsMallPayForGoods: require("../../assets/images/points-mall/pay-for-goods.png"),
   pointsMallDottedLine: require("../../assets/images/points-mall/dotted-line.png"),
   pointsMallBoy: require("../../assets/images/points-mall/boy.png"),
-
+  // 绑定家长端
+  appletQrCode: require("../../assets/images/applet-qr-code.png"),
   // 锁屏相关
   lockScreenWallpaper1: require("../../assets/images/lock-screen/lock-screen-wallpaper-1.png"),
 }

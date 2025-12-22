@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 58,
     paddingVertical: 10,
-    marginTop: 40,
+    marginTop: 60,
     backgroundColor: 'transparent',
   },
   backButton: {

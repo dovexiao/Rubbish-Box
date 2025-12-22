@@ -68,8 +68,9 @@ const API_URLS = {
   // [Environment.DEVELOPMENT]: "http://8.135.11.47:8000",
     // [Environment.DEVELOPMENT]: "http://47.112.206.205:8000",
   // [Environment.DEVELOPMENT]: "http://192.168.31.43:8080",
+    [Environment.DEVELOPMENT]: "http://192.168.31.252:8080",
   //  [Environment.DEVELOPMENT]: "http://192.168.217.109:8080",
-  [Environment.DEVELOPMENT]: "https://xiaohetx.cn",
+  // [Environment.DEVELOPMENT]: "https://xiaohetx.cn",
 
 }
 

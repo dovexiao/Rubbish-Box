@@ -140,9 +140,9 @@ export default function CameraScreen() {
       : `${tipPrefix}${nextIndex}页对准屏幕中间，点击拍照`
 
   // 返回上一页
-  const goBack = () => {
-    router.back()
-  }
+  // const goBack = () => {
+  //   router.back()
+  // }
 
   // 生成照片ID
   const generatePhotoId = () => {
@@ -332,7 +332,7 @@ export default function CameraScreen() {
       <View style={styles.overlay}>
       <StatusBar theme="dark" />
         {/* 使用NavBar组件 */}
-        <NavBar title={navTitle} leftArrow={true} goBackDelta={1} onBackPress={goBack} />
+        <NavBar title={navTitle} leftArrow={true} goBackDelta={1} onBackPress={() => router.navigate("/(tabs)/study")} />
 
         {/* 九宫格对齐线 */}
         <View style={[styles.gridOverlay, { width: screenWidth, height: screenHeight }]}>

@@ -63,7 +63,7 @@ export const PrivacyPolicyModal = React.memo(function PrivacyPolicyModal({
               <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
                 <Text style={styles.policyTitle}>小褐同学智能学习桌隐私保护政策</Text>
 
-                <Text style={styles.updateTime}>更新时间：2024年12月</Text>
+                <Text style={styles.updateTime}>更新时间：2025年12月</Text>
 
                 <Text style={styles.intro}>
                   小褐同学智能学习桌（以下简称"我们"）深知个人信息对您的重要性，并会尽全力保护您的个人信息安全可靠。我们致力于维持您对我们的信任，恪守以下原则，保护您的个人信息：权责一致原则、目的明确原则、选择同意原则、最少够用原则、确保安全原则、主体参与原则、公开透明原则等。

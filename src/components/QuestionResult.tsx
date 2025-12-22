@@ -381,20 +381,39 @@ export function QuestionResult({ data }: Props) {
                     <Text style={styles.formTitle}>答案</Text>
                   </LinearGradient>
                   <View style={[{ marginBottom: 12.890625 }]}>
-                    {/* 根据设备状态决定是否显示模糊层：如果允许显示答案则不渲染BlurView */}
+                    {/* 设备不允许显示时：显示模糊层 */}
                     {!canDisplayAnswer && (
-                      <BlurView
-                        intensity={15.5}
-                        tint="dark"
-                        blurReductionFactor={8}
-                        experimentalBlurMethod={'dimezisBlurView'}
-                        style={styles.blurView}
-                      />
+                      <>
+                        <BlurView
+                          intensity={40.5}
+                          tint="light"
+                          blurReductionFactor={8}
+                          experimentalBlurMethod={'dimezisBlurView'}
+                          style={styles.blurView}
+                        />
+                        <MemoizedMixedContent
+                          content={currentQuestion.correctAnswer || ""}
+                          style={styles.formText}
+                        />
+                      </>
                     )}
-                    <MemoizedMixedContent
-                      content={currentQuestion.correctAnswer || ""}
-                      style={styles.formText}
-                    />
+                    {/* 设备允许显示时：使用金色背景容器（与模糊组件完全隔离） */}
+                    {canDisplayAnswer && (
+                      <TouchableWithoutFeedback onPress={handleRevealAnswer}>
+                        <View
+                          style={[styles.answerContent, revealAnswer && styles.answerContentRevealed]}
+                        >
+                          {!revealAnswer ? (
+                            <Text style={styles.scratchHint}>点击查看答案</Text>
+                          ) : (
+                            <MemoizedMixedContent
+                              content={currentQuestion.correctAnswer || ""}
+                              style={styles.answerText}
+                            />
+                          )}
+                        </View>
+                      </TouchableWithoutFeedback>
+                    )}
                   </View>
 
                   {/* 解析块 */}
@@ -411,10 +430,23 @@ export function QuestionResult({ data }: Props) {
                       </View>
                       <Text style={styles.formTitle}>解析</Text>
                     </LinearGradient>
-                    <MemoizedMixedContent
-                      content={currentQuestion.feedback || ""}
-                      style={styles.formText}
-                    />
+                    <View style={[{ marginBottom: 12.890625 }]}>
+                      {/* 根据设备状态决定是否显示模糊层：设备不允许显示时显示BlurView */}
+                      {!canDisplayAnswer && (
+                        <BlurView
+                          intensity={40.5}
+                          tint="light"
+                          blurReductionFactor={8}
+                          experimentalBlurMethod={'dimezisBlurView'}
+                          style={styles.blurView}
+                        />
+                      )}
+                      {/* 解析内容直接显示（设备允许时直接显示，不允许时显示但被BlurView遮挡） */}
+                      <MemoizedMixedContent
+                        content={currentQuestion.feedback || ""}
+                        style={styles.formText}
+                      />
+                    </View>
                   </View>
                 </View>
               </LinearGradient>
@@ -739,6 +771,53 @@ const styles = createStyles({
     bottom: 0,
     backgroundColor: "rgba(0, 0, 0, 0.2)",
     zIndex: 1,
+  },
+  // 金黄色遮罩层
+  goldenOverlay: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255, 215, 0, 0.6)", // 金黄色半透明遮罩
+    zIndex: 1,
+
+  },
+  // 答案内容容器（金色背景）
+  answerContent: {
+    position: "relative" as const,
+    minHeight: 30,
+    width: "100%",
+    flexDirection: "column" as const,
+    alignItems: "flex-start" as const,
+    justifyContent: "center" as const,
+    padding: 8,
+    backgroundColor: "#ffb700", // 金黄色背景
+    borderRadius: 12,
+    shadowColor: "#ffd700",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  // 答案已显示时的样式（浅黄色背景）
+  answerContentRevealed: {
+    backgroundColor: "#fffbe6",
+  },
+  // 点击查看答案提示文字
+  scratchHint: {
+    color: "#fff",
+    fontSize: 8.6,
+    fontWeight: "bold" as const,
+    textAlign: "left" as const,
+  },
+  // 答案文字样式
+  answerText: {
+    color: "#333",
+    fontSize: 11.75,
+    textAlign: "left" as const,
+    lineHeight: 17.625,
+    width: "100%",
   },
   formText: {
     color: "#000",

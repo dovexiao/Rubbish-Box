@@ -220,6 +220,7 @@ const styles = createStyles({
     backgroundColor: '#fff' as const,
     marginHorizontal: 6.25,
     marginBottom: 0.390625,
+    // marginTop: 3.90625,
     paddingHorizontal: 4.6875,
     paddingVertical: 3.90625,
   },
