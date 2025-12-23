@@ -46,7 +46,6 @@ const BookPage: React.FC<BookPageProps> = ({
         color: themes[currentThemeIndex].textColor,
         fontWeight: themes[currentThemeIndex].fontWeight as TextStyle['fontWeight'],
         lineHeight: fontSize * 1.8 * 750 / 1920,
-        textAlign: 'center' as const,
       },
       pageNumber: {
         color: themes[currentThemeIndex].textColor,
@@ -118,8 +117,6 @@ const styles = createStyles({
   paragraphContainer: {
     flex: 1,
     marginTop: 64.0625,
-    borderWidth: 1,
-    borderColor: 'red',
   },
   paragraph: {
     color: '#3F2D20' as const,
