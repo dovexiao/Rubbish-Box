@@ -218,7 +218,6 @@ const EpubReader: React.FC = () => {
       const progressPercent = Math.round(currentProgress * 100)
       updateReadingProgress(progressPercent, {
         currentPage: currentPageIndex + 1,
-        totalPages: pages.length,
         chapterId: currentChapter?.id ? String(currentChapter.id) : undefined,
         chapterName: currentChapter?.title,
       })
@@ -263,16 +262,16 @@ const EpubReader: React.FC = () => {
       // console.log(`📖 [EPUB阅读器] 📄 格式化后内容长度: ${formattedText.length} 字符`);
 
       // 屏幕内容相关参数配置用于计算分页
-      // const options: PaginationOptions = {
-      //   containerWidth: 1920 / 2 - 65 * 2 - 2.5, // 书本双页总宽（屏幕宽度）- 书页左右边距 - 中间书脊宽度 / 2
-      //   containerHeight: (pageHeight * 1920 / screenWidth) - 264, // pageHeight = 内容高度 +（页码高度40px + 安全边距上下30px + 移动设备顶部的状态栏164px）
-      //   fontSize,
-      //   fontFamily: "'Source Han Serif', 'Noto Serif SC', '方正书宋', serif",
-      //   lineHeight: 1.8,
-      //   padding: 0,
-      //   textColor: '',
-      //   backgroundColor: '',
-      // }
+      const options: PaginationOptions = {
+        containerWidth: 1920 / 2 - 65 * 2 - 2.5, // 书本双页总宽（屏幕宽度）- 书页左右边距 - 中间书脊宽度 / 2
+        containerHeight: (pageHeight * 1920 / screenWidth) - 264, // pageHeight = 内容高度 +（页码高度40px + 安全边距上下30px + 移动设备顶部的状态栏164px）
+        fontSize,
+        fontFamily: "'Source Han Serif', 'Noto Serif SC', '方正书宋', serif",
+        lineHeight: 1.8,
+        padding: 0,
+        textColor: '',
+        backgroundColor: '',
+      }
 
 //       console.log('📖 [EPUB阅读器] 📏 分页选项:', {
 //         '屏幕内容宽度': `${options.containerWidth}px`,
@@ -287,7 +286,7 @@ const EpubReader: React.FC = () => {
         paginatorRef.current = new EpubPaginator(options)
       }
 
-      return await paginatorRef.current.paginate(formattedText);
+      return paginatorRef.current.paginate(formattedText);
     } catch (error: unknown) {
       console.error('📖 [EPUB阅读器] ❌ 分页处理失败:', error);
       showError('分页处理失败');
