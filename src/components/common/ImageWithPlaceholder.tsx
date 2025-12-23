@@ -55,7 +55,7 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
 
   // 处理开始加载
   const handleLoadStart = useCallback(() => {
-    console.log("开始加载")
+    // console.log("开始加载")
     setLoading(true)
     setError(false)
     onLoadStart?.()
@@ -63,7 +63,7 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
 
   // 处理加载成功
   const handleLoad = useCallback((e: any) => {
-    console.log("✅ 加载成功:", e)
+    // console.log("✅ 加载成功:", e)
     setLoading(false)
     setError(false)
     onLoad?.(e)
@@ -71,7 +71,7 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
 
   // 处理加载失败
   const handleError = useCallback((e: any) => {
-    console.log("❌ 加载失败:", e)
+    // console.error("❌ 加载失败:", e)
     setLoading(false)
     setError(true)
     onError?.(e)
