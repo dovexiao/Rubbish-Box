@@ -149,7 +149,7 @@ export class EpubPaginator {
 
     for (let index = 0; index < paragraphs.length; index = index + 1) {
       const paragraph = paragraphs[index];
-      paragraphs[index] = "  " + paragraph.trim()
+      paragraphs[index] = "　　" + paragraph.trim()
     }
 
     for (let index = 0; index < paragraphs.length; index = index + 1) {
