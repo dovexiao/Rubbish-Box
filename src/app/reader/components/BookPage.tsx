@@ -1,7 +1,12 @@
-import React, { useMemo, useEffect } from 'react';
-import {View, Text, TextStyle, Image} from 'react-native';
-import {createStyles, rpx} from '../../../utils/rpxStyleSheet';
-import {useReaderThemeStore} from '../../../stores/readerThemeStore';
+import React, { useMemo } from 'react';
+import { View, Text, TextStyle } from 'react-native';
+import { createStyles, rpx } from '../../../utils/rpxStyleSheet';
+import { useReaderThemeStore } from '../../../stores/readerThemeStore';
+import ImageWithPlaceholder from '../../../components/common/ImageWithPlaceholder';
+import {
+  isBase64ImageFromArray,
+  getBase64ImageUriFromArray,
+} from '../../../utils/base64ImageUtils';
 
 type Page = {
   id: string;
@@ -11,68 +16,29 @@ type Page = {
 };
 
 type BookPageProps = {
-  page?: Page;
+  page: Page;
   position: 'left' | 'right';
-};
-
-/**
- * 检测是否是 base64 字符串
- */
-const isBase64String = (content: string): boolean => {
-  // base64 图片通常很长（至少几百个字符）
-  if (content.length < 100) {
-    return false;
-  }
-
-  // 移除可能的空白字符（换行、空格等）
-  const cleaned = content.replace(/\s+/g, '');
-  
-  // base64 字符集：A-Z, a-z, 0-9, +, /, =
-  const base64Pattern = /^[A-Za-z0-9+/=]+$/;
-  
-  // 如果清理后的内容长度足够且符合 base64 模式
-  if (cleaned.length >= 100 && base64Pattern.test(cleaned)) {
-    // 进一步验证：base64 字符串中 = 应该只在末尾（填充字符）
-    const equalsCount = (cleaned.match(/=/g) || []).length;
-    const lastEqualsIndex = cleaned.lastIndexOf('=');
-    const hasValidPadding = equalsCount === 0 || 
-      (equalsCount <= 2 && lastEqualsIndex >= cleaned.length - 2);
-    
-    return hasValidPadding;
-  }
-  
-  return false;
 };
 
 const BookPage: React.FC<BookPageProps> = ({
   page,
   position,
 }) => {
-  const {fontSize, currentThemeIndex, themes} = useReaderThemeStore();
-
   // 检测是否是 base64 图片
   const isBase64Image = useMemo(() => {
-    return page?.content ? isBase64String(page.content) : false;
-  }, [page?.content]);
+    return isBase64ImageFromArray(page.content);
+  }, [page.content]);
 
-  // 获取 base64 图片的 URI
+  // 获取 base64 图片的 URI（所有判定逻辑都在函数内部）
   const base64ImageUri = useMemo(() => {
-    if (!isBase64Image || !page?.content) {
-      return null;
-    }
-    
-    // 如果已经包含 data URI 前缀，直接使用
-    if (page.content.startsWith('data:image/')) {
-      return page.content;
-    }
-    
-    // 否则添加默认的 data URI 前缀（假设是 JPEG）
-    return `data:image/jpeg;base64,${page.content}`;
-  }, [isBase64Image, page?.content]);
+    return getBase64ImageUriFromArray(page.content);
+  }, [page.content]);
+
+  const { fontSize, currentThemeIndex, themes } = useReaderThemeStore();
 
   const themeStyles = useMemo(() => {
     return createStyles({
-      page:{
+      page: {
         backgroundColor: themes[currentThemeIndex].bgColor,
       },
       paragraph: {
@@ -80,57 +46,55 @@ const BookPage: React.FC<BookPageProps> = ({
         color: themes[currentThemeIndex].textColor,
         fontWeight: themes[currentThemeIndex].fontWeight as TextStyle['fontWeight'],
         lineHeight: fontSize * 1.8 * 750 / 1920,
+        textAlign: 'center' as const,
       },
       pageNumber: {
         color: themes[currentThemeIndex].textColor,
       },
     });
   }, [fontSize, currentThemeIndex, themes]);
-  
+
   return (
     <View
       style={[styles.page, themeStyles.page, position === 'left' ? styles.leftPage : styles.rightPage]}>
-      {page ? (
-        <>
-          <View key={page.id} style={styles.paragraphContainer} onLayout={event => {
-            const {width, height} = event.nativeEvent.layout;
-            console.log(`📖 [EPUB阅读器] 📏 段落容器布局信息:`, {
-              '容器宽度': `${width}dp`,
-              '容器高度': `${height}dp`,
-            });
-          }}>
-            {isBase64Image && base64ImageUri ? (
-              // base64 图片展示
-              <Image
-                source={{uri: base64ImageUri}}
-                style={styles.base64Image}
-                resizeMode="contain"
-              />
-            ) : (
-              // 文本内容展示
-              <Text 
-                style={[styles.paragraph, themeStyles.paragraph]}
-                onTextLayout={(event) => {
-                  const {lines} = event.nativeEvent;
-                  console.log(`📖 [EPUB阅读器] 📏 文本布局信息:`, {
-                    '总行数': lines.length,
-                    '首行高度': lines[0]?.height ? `${lines[0].height}dp` : 'N/A',
-                  });
-                }}
-              >
-                {page.content}
-              </Text>
-            )}
-          </View>
-          <View style={styles.pageNumberContainer}>
-            <Text style={[styles.pageNumber, themeStyles.pageNumber]}>
-              {page.order}
-            </Text>
-          </View>
-        </>
-      ) : (
-        <Text /> 
-      )}
+      <View
+        key={page.id}
+        style={styles.paragraphContainer}
+        onLayout={event => {
+          // const { width, height } = event.nativeEvent.layout;
+          // console.log(`📖 [EPUB阅读器] 📏 段落容器布局信息:`, {
+          //   '容器宽度': `${width}dp`,
+          //   '容器高度': `${height}dp`,
+          // });
+        }}>
+        {isBase64Image && base64ImageUri ? (
+          // base64 图片展示
+          <ImageWithPlaceholder
+            source={{ uri: base64ImageUri }}
+            style={styles.base64Image}
+            resizeMode="contain"
+          />
+        ) : (
+          // 文本内容展示
+          <Text
+            style={[styles.paragraph, themeStyles.paragraph]}
+            onTextLayout={(event) => {
+              const { lines } = event.nativeEvent;
+              console.log(`📖 [EPUB阅读器] 📏 文本布局信息:`, {
+                '总行数': lines.length,
+                '首行高度': lines[0]?.height ? `${lines[0].height}dp` : 'N/A',
+              });
+            }}
+          >
+            {page.content}
+          </Text>
+        )}
+      </View>
+      <View style={styles.pageNumberContainer}>
+        <Text style={[styles.pageNumber, themeStyles.pageNumber]}>
+          {page.order}
+        </Text>
+      </View>
     </View>
   );
 };
@@ -138,30 +102,31 @@ const BookPage: React.FC<BookPageProps> = ({
 const styles = createStyles({
   page: {
     flex: 1,
-    paddingHorizontal: 25.390625,
+    paddingHorizontal: 25.390625, // 65
     // borderColor: '#E5DCCD' as const,
     // borderWidth: 1,
     justifyContent: 'flex-start' as const,
   },
   leftPage: {
     borderRightColor: '#E5DCCD' as const,
-    borderRightWidth: 1,
+    borderRightWidth: 0.9765625, // 2.5
   },
   rightPage: {
     borderLeftColor: '#E5DCCD' as const,
-    borderLeftWidth: 1,
+    borderLeftWidth: 0.9765625, // 2.5
   },
   paragraphContainer: {
     flex: 1,
     marginTop: 64.0625,
-    // borderWidth: 1,
-    // borderColor: 'red',
+    borderWidth: 1,
+    borderColor: 'red',
   },
   paragraph: {
     color: '#3F2D20' as const,
     fontFamily: "'Source Han Serif', 'Noto Serif SC', '方正书宋', serif" as const,
     // borderWidth: 1,
     // borderColor: 'blue',
+    letterSpacing: 0.9765625, // 2.5
   },
   base64Image: {
     width: '100%' as const,

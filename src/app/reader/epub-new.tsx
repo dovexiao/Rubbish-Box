@@ -41,7 +41,7 @@ import {useFocusEffect} from 'expo-router';
 
 type Direction = 'idle' | 'forward' | 'backward'; // idle: 不移动, forward: 向前拖动（向后翻页）, backward: 向后拖动（向前翻页）
 
-const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+const {width: screenWidth, height: screenHeight} = Dimensions.get('screen');
 
 
 const PERSPECTIVE = 1600;
@@ -58,12 +58,12 @@ const EpubReader: React.FC = () => {
 
   // 页面初始化接收参数日志打印
   useEffect(() => {
-    console.log(`📖 [EPUB阅读器] 页面初始化，接收参数:`, {
-      bookId,
-      bookUrl: _bookUrl,
-      readRecord: _readRecord,
-      decodedBookUrl: _bookUrl ? decodeURIComponent(_bookUrl) : undefined,
-    });
+//     console.log(`📖 [EPUB阅读器] 页面初始化，接收参数:`, {
+//       bookId,
+//       bookUrl: _bookUrl,
+//       readRecord: _readRecord,
+//       decodedBookUrl: _bookUrl ? decodeURIComponent(_bookUrl) : undefined,
+//     });
   }, []);
 
   // 主题和进度管理
@@ -144,12 +144,12 @@ const EpubReader: React.FC = () => {
   const loadBookDetail = useCallback(async () => {
     try {
       if (pages && pages.length > 0 && bookId === saveBookId) {
-        console.log(`📖 [EPUB阅读器] 📚 书本详情已加载，跳过加载:`, {
-          bookId: bookId,
-          saveBookId: saveBookId,
-          pages: pages,
-          pagesLength: pages.length,
-        });
+        // console.log(`📖 [EPUB阅读器] 📚 书本详情已加载，跳过加载:`, {
+        //   bookId: bookId,
+        //   saveBookId: saveBookId,
+        //   pages: pages,
+        //   pagesLength: pages.length,
+        // });
         setLoading(false);
         return;
       }
@@ -169,10 +169,10 @@ const EpubReader: React.FC = () => {
         showError('加载书籍详情失败');
       }
       loadingBookDetailRef.current = false;
-      console.log(`📖 [EPUB阅读器] 📏 加载书籍详情完成:`, {
-        bookId: bookId,
-        loadingRef: loadingBookDetailRef.current,
-      });
+      // console.log(`📖 [EPUB阅读器] 📏 加载书籍详情完成:`, {
+      //   bookId: bookId,
+      //   loadingRef: loadingBookDetailRef.current,
+      // });
     } catch (error: unknown) {
       console.error('📖 [EPUB阅读器] ❌ 加载书籍详情失败:', error);
       showError('加载书籍详情失败');
@@ -199,7 +199,7 @@ const EpubReader: React.FC = () => {
   // 📊 启动阅读追踪（当书本详情加载完成后）
   useEffect(() => {
     if (bookTitle && saveBookId && saveBookId > 0) {
-      console.log("📊 [活动追踪] 启动阅读追踪", { bookId: saveBookId, bookTitle, currentProgress })
+      // console.log("📊 [活动追踪] 启动阅读追踪", { bookId: saveBookId, bookTitle, currentProgress })
       startReading({
         bookId: String(saveBookId),
         bookName: bookTitle,
@@ -229,57 +229,57 @@ const EpubReader: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       return () => {
-        console.log("📊 [活动追踪] 阅读页面失焦，退出阅读")
+        // console.log("📊 [活动追踪] 阅读页面失焦，退出阅读")
         endReading()
       }
     }, [endReading])
   );
 
   // 分页处理
-  const paginateContent = useCallback(async (chapter: Chapter) => {
+  const paginateContent = useCallback((chapter: Chapter) => {
     if (!chapter?.content || !pageWidth || !pageHeight) {
-      console.log(`📖 [EPUB阅读器] ⚠️ 分页条件不满足:`, {
-        hasContent: !!chapter?.content,
-        pageWidth,
-        pageHeight
-      });
+      // console.log(`📖 [EPUB阅读器] ⚠️ 分页条件不满足:`, {
+      //   hasContent: !!chapter?.content,
+      //   pageWidth,
+      //   pageHeight
+      // });
       return null;
     }
 
     // 防止重复分页
     if (loadingPaginateRef.current) {
-      console.log(`📖 [EPUB阅读器] 📏 分页处理中，跳过分页:`, {
-        bookId: bookId,
-        loadingRef: loadingPaginateRef.current,
-      });
+      // console.log(`📖 [EPUB阅读器] 📏 分页处理中，跳过分页:`, {
+      //   bookId: bookId,
+      //   loadingRef: loadingPaginateRef.current,
+      // });
       return null;
     }
     loadingPaginateRef.current = true;
 
-    console.log(`📖 [EPUB阅读器] 📄 开始分页处理，内容长度: ${chapter.content.length} 字符`);
+    // console.log(`📖 [EPUB阅读器] 📄 开始分页处理，内容长度: ${chapter.content.length} 字符`);
 
     try {
       const formattedText = formatChapterContent(chapter?.content ?? '');
-      console.log(`📖 [EPUB阅读器] 📄 格式化后内容长度: ${formattedText.length} 字符`);
+      // console.log(`📖 [EPUB阅读器] 📄 格式化后内容长度: ${formattedText.length} 字符`);
 
       // 屏幕内容相关参数配置用于计算分页
-      const options: PaginationOptions = {
-        containerWidth: 1920 / 2 - 65 * 2,
-        containerHeight: (pageHeight * 1920 / screenWidth) - 264, // pageHeight = 内容高度 +（页码高度40px + 安全边距上下30px + 移动设备顶部的状态栏164px）
-        fontSize,
-        fontFamily: "'Source Han Serif', 'Noto Serif SC', '方正书宋', serif",
-        lineHeight: 1.8,
-        padding: 0,
-        textColor: '',
-        backgroundColor: '',
-      }
+      // const options: PaginationOptions = {
+      //   containerWidth: 1920 / 2 - 65 * 2 - 2.5, // 书本双页总宽（屏幕宽度）- 书页左右边距 - 中间书脊宽度 / 2
+      //   containerHeight: (pageHeight * 1920 / screenWidth) - 264, // pageHeight = 内容高度 +（页码高度40px + 安全边距上下30px + 移动设备顶部的状态栏164px）
+      //   fontSize,
+      //   fontFamily: "'Source Han Serif', 'Noto Serif SC', '方正书宋', serif",
+      //   lineHeight: 1.8,
+      //   padding: 0,
+      //   textColor: '',
+      //   backgroundColor: '',
+      // }
 
-      console.log('📖 [EPUB阅读器] 📏 分页选项:', {
-        '屏幕内容宽度': `${options.containerWidth}px`,
-        '屏幕内容高度': `${options.containerHeight}px ${screenWidth} ${pageHeight}`,
-        '字号': `${options.fontSize}px`,
-        '行高': options.lineHeight,
-      });
+//       console.log('📖 [EPUB阅读器] 📏 分页选项:', {
+//         '屏幕内容宽度': `${options.containerWidth}px`,
+//         '屏幕内容高度': `${options.containerHeight}px ${screenWidth} ${pageHeight}`,
+//         '字号': `${options.fontSize}px`,
+//         '行高': options.lineHeight,
+//       });
 
       if (paginatorRef.current) {
         paginatorRef.current.updateOptions(options)
@@ -309,7 +309,7 @@ const EpubReader: React.FC = () => {
 
   // 监听当前章节和章节池变化，对当前章节重新分页，期望为重置整个章节状态
   useEffect(() => {
-    console.log(`📖 [EPUB阅读器] 📏 当前章节或章节池变化:`, {currentChapter, loadedChapters});
+    // console.log(`📖 [EPUB阅读器] 📏 当前章节或章节池变化:`, {currentChapter, loadedChapters});
 
     const canPaginate = 
       !!pageWidth && 
@@ -318,15 +318,15 @@ const EpubReader: React.FC = () => {
       !!loadedChapters && loadedChapters.length === 1 && loadedChapters[0]?.id === currentChapter?.id;
 
     if (!canPaginate) {
-      console.log(`📖 [EPUB阅读器] 📏 当前章节分页条件不足:`, {
-        pageWidth: pageWidth,
-        pageHeight: pageHeight,
-        hasContent: !!currentChapter?.content,
-        isPaginated: !!currentChapter?.isPaginated,
-        hasOneChapterInPool: loadedChapters.length === 1,
-        isFirstChapterInPool: loadedChapters[0]?.id === currentChapter?.id,
-        canPaginate: false,
-      });
+      // console.log(`📖 [EPUB阅读器] 📏 当前章节分页条件不足:`, {
+      //   pageWidth: pageWidth,
+      //   pageHeight: pageHeight,
+      //   hasContent: !!currentChapter?.content,
+      //   isPaginated: !!currentChapter?.isPaginated,
+      //   hasOneChapterInPool: loadedChapters.length === 1,
+      //   isFirstChapterInPool: loadedChapters[0]?.id === currentChapter?.id,
+      //   canPaginate: false,
+      // });
       return;
     }
 
@@ -337,7 +337,7 @@ const EpubReader: React.FC = () => {
 
   // 监听字号变化，处理当前章节
   useEffect(() => {
-    console.log(`📖 [EPUB阅读器] 📏 字体或者屏幕尺寸变化:`, {fontSize, pageWidth, pageHeight});
+    // console.log(`📖 [EPUB阅读器] 📏 字体或者屏幕尺寸变化:`, {fontSize, pageWidth, pageHeight});
     // 规避组件初始化第一次无意义的分页处理
     if (!paginateAllowedRef.current) {
       paginateAllowedRef.current = true;
@@ -346,12 +346,12 @@ const EpubReader: React.FC = () => {
 
     const currentChapter = useBookStore.getState().currentChapter;
     if (!currentChapter?.content || !pageWidth || !pageHeight) {
-      console.log(`📖 [EPUB阅读器] 📏 字号变化处理当前章节条件不足:`, {
-        pageWidth: pageWidth,
-        pageHeight: pageHeight,
-        hasContent: !!currentChapter?.content,
-        canPaginate: false,
-      });
+      // console.log(`📖 [EPUB阅读器] 📏 字号变化处理当前章节条件不足:`, {
+      //   pageWidth: pageWidth,
+      //   pageHeight: pageHeight,
+      //   hasContent: !!currentChapter?.content,
+      //   canPaginate: false,
+      // });
       return;
     }
     resetLoadedChaptersToCurrent();
@@ -360,10 +360,10 @@ const EpubReader: React.FC = () => {
   // 动态加载相邻章节并分页
   const loadAdjacentChapterAndPaginate = useCallback(async (previousChapterId: number | null, nextChapterId: number | null, validationToken: string) => {
     if (!previousChapterId && !nextChapterId) {
-      console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节: 没有相邻章节', {
-        previousChapterId,
-        nextChapterId,
-      });
+      // console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节: 没有相邻章节', {
+      //   previousChapterId,
+      //   nextChapterId,
+      // });
       return;
     }
 
@@ -376,18 +376,18 @@ const EpubReader: React.FC = () => {
       const previousChapter = previousChapterResult.status === 'fulfilled' ? previousChapterResult.value : null;
       const nextChapter = nextChapterResult.status === 'fulfilled' ? nextChapterResult.value : null;
 
-      console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节:', {
-        previousChapter,
-        nextChapter,
-      });
+      // console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节:', {
+      //   previousChapter,
+      //   nextChapter,
+      // });
 
       const previousPagesResult = previousChapter ? await paginateContent(previousChapter) : null;
       const nextPagesResult = nextChapter ? await paginateContent(nextChapter) : null;
 
-      console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节分页数组:', {
-        previousPagesResult,
-        nextPagesResult,
-      });
+      // console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节分页数组:', {
+      //   previousPagesResult,
+      //   nextPagesResult,
+      // });
 
       if (previousChapter && previousChapter.content && previousPagesResult && previousPagesResult?.pages) {
         prependPages(previousChapter, previousPagesResult?.pages, validationToken);
@@ -403,29 +403,30 @@ const EpubReader: React.FC = () => {
   // 监听 currentChapter 和 loadedChapters 变化，检查是否需要动态加载相邻章节
   useEffect(() => {
     if (!currentChapter || !currentChapter?.content || !currentChapter?.isPaginated || !loadedChapters || loadedChapters.length === 0) {
-      console.log('📖 [EPUB阅读器] 📏 监听 currentChapter 和 loadedChapters 变化: 动态加载相邻章节条件不满足', {
-        currentChapter: !!currentChapter,
-        hasContent: !!currentChapter?.content,
-        isPaginated: !!currentChapter?.isPaginated,
-        loadedChapters: !!loadedChapters && loadedChapters.length > 0,
-      });
+      // console.log('📖 [EPUB阅读器] 📏 监听 currentChapter 和 loadedChapters 变化: 动态加载相邻章节条件不满足', {
+      //   currentChapter: !!currentChapter,
+      //   hasContent: !!currentChapter?.content,
+      //   isPaginated: !!currentChapter?.isPaginated,
+      //   loadedChapters: !!loadedChapters && loadedChapters.length > 0,
+      // });
+
       return;
     }
-    console.log('📖 [EPUB阅读器] 📏 监听 currentChapter 和 loadedChapters 变化:', {
-      currentChapter: currentChapter,
-      loadedChapters: loadedChapters,
-    });
+    // console.log('📖 [EPUB阅读器] 📏 监听 currentChapter 和 loadedChapters 变化:', {
+    //   currentChapter: currentChapter,
+    //   loadedChapters: loadedChapters,
+    // });
 
     const currentChapterIndexInPool = loadedChapters.findIndex(ch => ch.id === currentChapter.id);
     const isFirstInPool = currentChapterIndexInPool === 0;
     const isLastInPool = currentChapterIndexInPool === loadedChapters.length - 1;
 
-    console.log('📖 [EPUB阅读器] 📏 当前章节在章节池中的索引状态和边界判断:', {
-      currentChapterIndexInPool,
-      isFirstInPool,
-      isLastInPool,
-      loadedChapters: loadedChapters.map(ch => `${ch.id}-${ch.title}`).join(','),
-    });
+    // console.log('📖 [EPUB阅读器] 📏 当前章节在章节池中的索引状态和边界判断:', {
+    //   currentChapterIndexInPool,
+    //   isFirstInPool,
+    //   isLastInPool,
+    //   loadedChapters: loadedChapters.map(ch => `${ch.id}-${ch.title}`).join(','),
+    // });
 
     const currentChapterIndexInBook = bookChapters.findIndex(ch => ch.id === currentChapter.id);
     const isFirstInBook = currentChapterIndexInBook === 0;
@@ -433,21 +434,21 @@ const EpubReader: React.FC = () => {
     const previousChapterId = isFirstInBook || !isFirstInPool ? null : bookChapters[currentChapterIndexInBook - 1].id; 
     const nextChapterId = isLastInBook || !isLastInPool ? null : bookChapters[currentChapterIndexInBook + 1].id;
 
-    console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节:', {
-      currentChapterIndexInBook,
-      isFirstInBook,
-      isLastInBook,
-      currentChapterIndexInPool,
-      isFirstInPool,
-      isLastInPool,
-      previousChapterId,
-      nextChapterId,
-    });
+    // console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节:', {
+    //   currentChapterIndexInBook,
+    //   isFirstInBook,
+    //   isLastInBook,
+    //   currentChapterIndexInPool,
+    //   isFirstInPool,
+    //   isLastInPool,
+    //   previousChapterId,
+    //   nextChapterId,
+    // });
 
     if (previousChapterId !== null || nextChapterId !== null) {
-      console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节: 执行分页:', {
-        canPaginate: previousChapterId !== null || nextChapterId !== null,
-      });
+      // console.log('📖 [EPUB阅读器] 📏 动态加载相邻章节: 执行分页:', {
+      //   canPaginate: previousChapterId !== null || nextChapterId !== null,
+      // });
       loadAdjacentChapterAndPaginate(previousChapterId, nextChapterId, useBookStore.getState().validationToken);
     }
   }, [currentChapter, loadedChapters]);
@@ -460,20 +461,20 @@ const EpubReader: React.FC = () => {
   // 组件卸载时保存进度
   useEffect(() => {
     return () => {
-      console.log('📖 [EPUB阅读器] 🚪 组件卸载，保存阅读进度')
+      // console.log('📖 [EPUB阅读器] 🚪 组件卸载，保存阅读进度')
       const chapterId = useBookStore.getState().currentChapter?.id
       const progress = calculateChapterProgress() ?? 0
       
       if (chapterId && progress >= 0) {
-        console.log('📖 [EPUB阅读器] 💾 保存进度:', {
-          chapterId,
-          progress,
-          chapterTitle: useBookStore.getState().currentChapter?.title,
-        })
+        // console.log('📖 [EPUB阅读器] 💾 保存进度:', {
+        //   chapterId,
+        //   progress,
+        //   chapterTitle: useBookStore.getState().currentChapter?.title,
+        // })
         // 注意：cleanup 中不能使用 await，直接调用异步函数
         saveProgressImmediately(chapterId, progress)
       } else {
-        console.log('📖 [EPUB阅读器] ⚠️ 无有效进度可保存')
+        // console.log('📖 [EPUB阅读器] ⚠️ 无有效进度可保存')
       }
     }
   }, [])
@@ -563,9 +564,10 @@ const EpubReader: React.FC = () => {
       }} 
       style={styles.spread}>
       <View style={styles.spread} onLayout={event => {
-        const {width, height} = event.nativeEvent.layout;
-        setBookWidth(width);
-        setBookHeight(height);
+        // const {width, height} = event.nativeEvent.layout;
+        // console.log("📖 [EPUB阅读器] 📏 书本尺寸:", {width, height});
+        // setBookWidth(width);
+        // setBookHeight(height);
       }}>
         <StatusBar
           backgroundColor={'transparent'}
@@ -576,7 +578,7 @@ const EpubReader: React.FC = () => {
           visible={showBackButton}
           containerStyle={styles.backContainer}
           onPress={() => {
-            console.log("📊 [活动追踪] 手动退出阅读")
+            // console.log("📊 [活动追踪] 手动退出阅读")
             endReading()
             router.back()
           }}

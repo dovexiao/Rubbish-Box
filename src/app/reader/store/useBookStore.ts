@@ -120,7 +120,7 @@ const extractBase64Image = (content: string): string | null => {
       // 如果移除图片后内容为空或只有很少的文本，认为是纯图片章节
       // 允许一些标题文本（如"扉页"）和空白字符
       if (withoutImg.length < 50) {
-        console.log(`📖 [EPUB阅读器] 🖼️ 检测到纯图片章节，base64 长度: ${base64String.length}`);
+        // console.log(`📖 [EPUB阅读器] 🖼️ 检测到纯图片章节，base64 长度: ${base64String.length}`);
         return base64String;
       }
     }
@@ -191,27 +191,27 @@ const useBookStore = create<BookState>((set, get) => ({
         bookCover: bookDetail.cover_url ?? '',
       })
 
-      console.log(`📖 [EPUB阅读器] 📚 书本详情初始化成功:`, {
-        bookId: bookId,
-        bookTitle: bookDetail.title ?? '',
-        bookChapters: bookDetail.chapters,
-        readingHistory: bookDetail.reading_history,
-      })
+      // console.log(`📖 [EPUB阅读器] 📚 书本详情初始化成功:`, {
+      //   bookId: bookId,
+      //   bookTitle: bookDetail.title ?? '',
+      //   bookChapters: bookDetail.chapters,
+      //   readingHistory: bookDetail.reading_history,
+      // })
 
       if (bookDetail.reading_history && bookDetail.chapters && bookDetail.chapters?.length > 0) {
         const lastChapterId = bookDetail.reading_history.chapter;
         const lastProgress = bookDetail.reading_history.progress || 0 // 0-1 的小数
         const lastChapter = bookDetail.chapters.find((chapter: any) => chapter.id === lastChapterId)
     
-        console.log(`📖 [EPUB阅读器] 📚 恢复阅读记录:`, {
-          chapterId: lastChapterId,
-          chapterTitle: lastChapter?.title,
-          progress: lastProgress,
-          progressPercent: Math.round(lastProgress * 100) + '%',
-        })
+        // console.log(`📖 [EPUB阅读器] 📚 恢复阅读记录:`, {
+        //   chapterId: lastChapterId,
+        //   chapterTitle: lastChapter?.title,
+        //   progress: lastProgress,
+        //   progressPercent: Math.round(lastProgress * 100) + '%',
+        // })
 
         if (lastChapter) {
-          console.log(`📖 [EPUB阅读器] 📚 恢复阅读记录成功: 章节存在`);
+          // console.log(`📖 [EPUB阅读器] 📚 恢复阅读记录成功: 章节存在`);
           const restoredChapter: Chapter = {
             id: lastChapter?.id ?? 0,
             title: lastChapter?.title ?? '',
@@ -226,9 +226,9 @@ const useBookStore = create<BookState>((set, get) => ({
           });
           return lastChapterId;
         } else {
-          console.log(`📖 [EPUB阅读器] 📚 恢复阅读记录失败: 阅读章节不存在，从第一章开始`, {
-            chapterId: lastChapterId,
-          })
+          // console.log(`📖 [EPUB阅读器] 📚 恢复阅读记录失败: 阅读章节不存在，从第一章开始`, {
+          //   chapterId: lastChapterId,
+          // })
           const firstChapter: Chapter = {
             id: bookDetail.chapters[0]?.id ?? 0,
             title: bookDetail.chapters[0]?.title ?? '',
@@ -244,7 +244,7 @@ const useBookStore = create<BookState>((set, get) => ({
           return bookDetail.chapters[0]?.id ?? -1;
         }
       } else if (bookDetail.chapters && bookDetail.chapters?.length > 0) {
-        console.log(`📖 [EPUB阅读器] 📚 没有阅读记录，从第一章开始`);
+        // console.log(`📖 [EPUB阅读器] 📚 没有阅读记录，从第一章开始`);
         const firstChapter: Chapter = {
           id: bookDetail.chapters[0]?.id ?? 0,
           title: bookDetail.chapters[0]?.title ?? '',
@@ -267,9 +267,9 @@ const useBookStore = create<BookState>((set, get) => ({
 
   loadChapterContent: async (chapterId: number) => {
     try {
-      console.log(`📖 [EPUB阅读器] 🔄 开始加载章节内容，chapterId: ${chapterId}`)
+      // console.log(`📖 [EPUB阅读器] 🔄 开始加载章节内容，chapterId: ${chapterId}`)
 
-      console.log(`📖 [EPUB阅读器] 🌐 从服务器获取章节内容`)
+      // console.log(`📖 [EPUB阅读器] 🌐 从服务器获取章节内容`)
       const chapterDetail: ChapterDetailResponse = await getChapterDetail(chapterId);
 
       if (!chapterDetail || !chapterDetail.content) {
@@ -280,7 +280,7 @@ const useBookStore = create<BookState>((set, get) => ({
       const base64Image = extractBase64Image(chapterDetail.content);
       
       if (base64Image) {
-        console.log(`📖 [EPUB阅读器] 🖼️ 检测到纯图片章节，提取 base64 图片`);
+        // console.log(`📖 [EPUB阅读器] 🖼️ 检测到纯图片章节，提取 base64 图片`);
         
         // 返回特殊处理的 chapter，content 为 base64 字符串
         const newChapter: Chapter = {
@@ -299,7 +299,7 @@ const useBookStore = create<BookState>((set, get) => ({
       let processedContent = chapterDetail.content
         .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "") // 移除script标签
         .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "") // 移除style标签
-        .replace(/<img[^>]*>/gi, "[图片]") // 替换图片为占位符
+        .replace(/<img[^>]*>/gi, "") // 替换图片为占位符
         .replace(/<br\s*\/?>/gi, "\n") // br标签转换为换行
         .replace(/<\/p>/gi, "\n\n") // p标签结束转换为双换行
         .replace(/<[^>]*>/g, "") // 移除所有其他HTML标签
@@ -316,9 +316,9 @@ const useBookStore = create<BookState>((set, get) => ({
         processedContent = `第${chapterDetail.order}章 ${chapterDetail.title}\n\n章节内容加载中...`
       }
 
-      console.log(
-        `📖 [EPUB阅读器] ✅ 章节内容获取成功，处理后长度: ${processedContent.length} 字符`,
-      )
+      // console.log(
+      //   `📖 [EPUB阅读器] ✅ 章节内容获取成功，处理后长度: ${processedContent.length} 字符`,
+      // )
       
       const newChapter: Chapter = {
         id: chapterId,
@@ -399,20 +399,20 @@ const useBookStore = create<BookState>((set, get) => ({
         validationToken: newToken, // 刷新校验码
         validationCounter: newCounter,
       });
-      console.log(`📖 [EPUB阅读器] 📚 重置章节池为当前章节:`, {
-        chapterId: current.id,
-        chapterTitle: current.title,
-        validationToken: newToken,
-      });
+      // console.log(`📖 [EPUB阅读器] 📚 重置章节池为当前章节:`, {
+      //   chapterId: current.id,
+      //   chapterTitle: current.title,
+      //   validationToken: newToken,
+      // });
     } else {
       set({ 
         loadedChapters: [],
         validationToken: newToken, // 刷新校验码
         validationCounter: newCounter,
       });
-      console.log('📖 [EPUB阅读器] 📚 重置章节池为空: 当前无章节', {
-        validationToken: newToken,
-      });
+      // console.log('📖 [EPUB阅读器] 📚 重置章节池为空: 当前无章节', {
+      //   validationToken: newToken,
+      // });
     }
   },
   
@@ -426,11 +426,11 @@ const useBookStore = create<BookState>((set, get) => ({
       validationToken: newToken, // 刷新校验码
       validationCounter: newCounter,
     });
-    console.log(`📖 [EPUB阅读器] 📚 初始化章节内容:`, {
-      chapterId: chapter.id,
-      chapterTitle: chapter.title,
-      validationToken: newToken,
-    });
+    // console.log(`📖 [EPUB阅读器] 📚 初始化章节内容:`, {
+    //   chapterId: chapter.id,
+    //   chapterTitle: chapter.title,
+    //   validationToken: newToken,
+    // });
   },
   
   initializeChapterPaginate: (pages: string[]) => {
@@ -439,13 +439,13 @@ const useBookStore = create<BookState>((set, get) => ({
     const clampedIndex = Math.max(0, Math.min(targetPageIndex, pages.length - 1));
     const evenPageIndex = clampedIndex % 2 === 0 ? clampedIndex : clampedIndex - 1; // 双页模式，确保当前页序列是偶数序列（左页）
     set({ currentPageIndex: evenPageIndex, leftShowPageIndex: evenPageIndex, rightShowPageIndex: evenPageIndex + 1 });
-    console.log(`📖 [EPUB阅读器] 📚 初始化章节分页:`, {
-      pages: pages,
-      currentPageIndex: evenPageIndex,
-      leftShowPageIndex: evenPageIndex,
-      rightShowPageIndex: evenPageIndex + 1,
-      currentChapter: { ...(get().currentChapter as Chapter), isPaginated: true, pagesLength: pages.length },
-    });
+    // console.log(`📖 [EPUB阅读器] 📚 初始化章节分页:`, {
+    //   pages: pages,
+    //   currentPageIndex: evenPageIndex,
+    //   leftShowPageIndex: evenPageIndex,
+    //   rightShowPageIndex: evenPageIndex + 1,
+    //   currentChapter: { ...(get().currentChapter as Chapter), isPaginated: true, pagesLength: pages.length },
+    // });
   },
 
   prependPages: (chapter: Chapter, pages: string[], expectedToken?: string) => {
@@ -453,11 +453,11 @@ const useBookStore = create<BookState>((set, get) => ({
     if (expectedToken !== undefined) {
       const currentToken = get().validationToken;
       if (expectedToken !== currentToken) {
-        console.log('📖 [EPUB阅读器] ⚠️ 校验码不匹配，取消 prependPages:', {
-          expectedToken,
-          currentToken,
-          chapterId: chapter.id,
-        });
+        // console.log('📖 [EPUB阅读器] ⚠️ 校验码不匹配，取消 prependPages:', {
+        //   expectedToken,
+        //   currentToken,
+        //   chapterId: chapter.id,
+        // });
         return;
       }
     }
@@ -478,11 +478,11 @@ const useBookStore = create<BookState>((set, get) => ({
     if (expectedToken !== undefined) {
       const currentToken = get().validationToken;
       if (expectedToken !== currentToken) {
-        console.log('📖 [EPUB阅读器] ⚠️ 校验码不匹配，取消 appendPages:', {
-          expectedToken,
-          currentToken,
-          chapterId: chapter.id,
-        });
+        // console.log('📖 [EPUB阅读器] ⚠️ 校验码不匹配，取消 appendPages:', {
+        //   expectedToken,
+        //   currentToken,
+        //   chapterId: chapter.id,
+        // });
         return;
       }
     }
@@ -503,12 +503,12 @@ const useBookStore = create<BookState>((set, get) => ({
         // 从章节池中查找对应的章节
         const chapter = get().loadedChapters.find(ch => ch.id === nextPage.chapterId);
         if (chapter) {
-          console.log(`📖 [EPUB阅读器] 📚 翻到下一章:`, {
-            chapterId: chapter.id,
-            chapterTitle: chapter.title,
-            leftShowPageIndex: next,
-            rightShowPageIndex: next + 1,
-          })
+          // console.log(`📖 [EPUB阅读器] 📚 翻到下一章:`, {
+          //   chapterId: chapter.id,
+          //   chapterTitle: chapter.title,
+          //   leftShowPageIndex: next,
+          //   rightShowPageIndex: next + 1,
+          // })
           set({
             currentPageIndex: next,
             leftShowPageIndex: next,
@@ -527,12 +527,12 @@ const useBookStore = create<BookState>((set, get) => ({
       if (prevPage && prevPage.chapterId) {
         const chapter = get().loadedChapters.find(ch => ch.id === prevPage.chapterId);
         if (chapter) {
-          console.log(`📖 [EPUB阅读器] 📚 翻到上一章:`, {
-            chapterId: chapter.id,
-            chapterTitle: chapter.title,
-            leftShowPageIndex: prev,
-            rightShowPageIndex: prev + 1,
-          })
+          // console.log(`📖 [EPUB阅读器] 📚 翻到上一章:`, {
+          //   chapterId: chapter.id,
+          //   chapterTitle: chapter.title,
+          //   leftShowPageIndex: prev,
+          //   rightShowPageIndex: prev + 1,
+          // })
           set({
             currentPageIndex: prev,
             leftShowPageIndex: prev,
@@ -595,14 +595,14 @@ const useBookStore = create<BookState>((set, get) => ({
     // 同步更新 bookReadProgress
     setBookReadProgress(clampedProgress);
 
-    console.log(`📖 [EPUB阅读器] 📊 章节内阅读进度计算:`, {
-      currentPageIndex,
-      pageId: currentPage.id,
-      pageSequence,
-      pagesLength,
-      progress: clampedProgress,
-      progressPercent: `${Math.round(clampedProgress * 100)}%`,
-    });
+    // console.log(`📖 [EPUB阅读器] 📊 章节内阅读进度计算:`, {
+    //   currentPageIndex,
+    //   pageId: currentPage.id,
+    //   pageSequence,
+    //   pagesLength,
+    //   progress: clampedProgress,
+    //   progressPercent: `${Math.round(clampedProgress * 100)}%`,
+    // });
 
     return clampedProgress * 100;
   },

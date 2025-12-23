@@ -71,7 +71,7 @@ export class EpubPaginator {
   private getEffectiveSize() {
     return {
       width: this.options.containerWidth,
-      height: this.options.containerHeight - this.options.padding * 2,
+      height: this.options.containerHeight,
     }
   }
 
@@ -124,7 +124,7 @@ export class EpubPaginator {
   async paginate(content: string): Promise<PaginationResult> {
     // 检测是否是 base64 字符串
     if (this.isBase64String(content)) {
-      console.log('📖 [EPUB阅读器] 🖼️ 检测到 base64 图片内容，直接返回单页');
+      // console.log('📖 [EPUB阅读器] 🖼️ 检测到 base64 图片内容，直接返回单页');
       return {
         pages: [content],
         totalPages: 1,
@@ -136,9 +136,9 @@ export class EpubPaginator {
     const linesPerPage = this.getLinesPerPage()
     const charsPerPage = charsPerLine * linesPerPage
 
-    console.log('📖 [EPUB阅读器] 📏 每行可容纳的字符数:', charsPerLine);
-    console.log('📖 [EPUB阅读器] 📏 每页可容纳的行数:', linesPerPage);
-    console.log('📖 [EPUB阅读器] 📏 每页可容纳的字符数:', charsPerPage);
+    // console.log('📖 [EPUB阅读器] 📏 每行可容纳的字符数:', charsPerLine);
+    // console.log('📖 [EPUB阅读器] 📏 每页可容纳的行数:', linesPerPage);
+    // console.log('📖 [EPUB阅读器] 📏 每页可容纳的字符数:', charsPerPage);
 
     // 清理和格式化内容
     const cleanContent = this.formatContent(content)
@@ -147,31 +147,40 @@ export class EpubPaginator {
     let currentPage = ""
     let currentPageLines = 0
 
-    for (const paragraph of paragraphs) {
-      const paragraphWithIndent = "　　" + paragraph.trim()
+    for (let index = 0; index < paragraphs.length; index = index + 1) {
+      const paragraph = paragraphs[index];
+      paragraphs[index] = "  " + paragraph.trim()
+    }
 
-      const paragraphLines = this.calculateParagraphLines(paragraphWithIndent);
+    for (let index = 0; index < paragraphs.length; index = index + 1) {
+      const paragraph = paragraphs[index];
+      // const paragraphWithIndent = "　　" + paragraph.trim()
+
+      const paragraphLines = this.calculateParagraphLines(paragraph);
 
       if (currentPageLines + paragraphLines > linesPerPage) {
-          const { remainingText, newPageText } = this.splitParagraphAcrossPages(paragraphWithIndent, linesPerPage - currentPageLines);
+          const { remainingText, newPageText } = this.splitParagraphAcrossPages(paragraph, linesPerPage - currentPageLines);
           currentPage += remainingText;
           pages.push(currentPage)
-          console.log('📖 [EPUB阅读器] 📏 最后一段:', {
-            '剩余文本': remainingText,
-            '新页文本': newPageText,
-            '页未处理最后一段行数': currentPageLines,
-            '每页行数': linesPerPage,
-            '字体大小': this.options.fontSize,
-            '当前页内容:': currentPage,
-            '每页计算容纳行数': linesPerPage,
-            '每行计算容纳字符数': charsPerLine,
-            '总页新加': pages[pages.length - 1],
-          });
+          // console.log('📖 [EPUB阅读器] 📏 最后一段:', {
+          //   '剩余文本': remainingText,
+          //   '新页文本': newPageText,
+          //   '页未处理最后一段行数': currentPageLines,
+          //   '每页行数': linesPerPage,
+          //   '字体大小': this.options.fontSize,
+          //   '当前页内容:': currentPage,
+          //   '每页计算容纳行数': linesPerPage,
+          //   '每行计算容纳字符数': charsPerLine,
+          //   '总页新加': pages[pages.length - 1],
+          // });
+          currentPage = ""
           currentPageLines = 0
-          currentPage = newPageText + "\n"
-          currentPageLines += this.calculateParagraphLines(newPageText)
+          if (newPageText.length > 0) {
+            paragraphs[index] = newPageText
+            index = index - 1
+          }
       } else {
-        currentPage += paragraphWithIndent + "\n"
+        currentPage += paragraph + "\n"
         currentPageLines += paragraphLines
       }
 
@@ -191,15 +200,15 @@ export class EpubPaginator {
     // 添加最后一页
     if (currentPage) {
       pages.push(currentPage)
-      console.log('📖 [EPUB阅读器] 📏 最后一段:', {
-        '页未处理最后一段行数': currentPageLines,
-        '每页行数': linesPerPage,
-        '字体大小': this.options.fontSize,
-        '当前页内容:': currentPage,
-      });
+      // console.log('📖 [EPUB阅读器] 📏 最后一段:', {
+      //   '页未处理最后一段行数': currentPageLines,
+      //   '每页行数': linesPerPage,
+      //   '字体大小': this.options.fontSize,
+      //   '当前页内容:': currentPage,
+      // });
     }
 
-    console.log('📖 [EPUB阅读器] 📏 最后章节总页:', pages);
+    // console.log('📖 [EPUB阅读器] 📏 最后章节总页:', pages);
 
     const effectiveSize = this.getEffectiveSize()
     const debugInfo = {
@@ -254,7 +263,7 @@ export class EpubPaginator {
 
   // 计算段落会占用多少行
   private calculateParagraphLines(text: string): number {
-    // 实际可用宽度（已经扣除了 padding）
+    // 实际可用宽度（已弃用 padding ）
     const { width: effectiveWidth } = this.getEffectiveSize()
     if (!text || effectiveWidth <= 0) {
       return 0
