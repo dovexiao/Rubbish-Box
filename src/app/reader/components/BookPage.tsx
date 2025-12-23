@@ -71,6 +71,7 @@ const BookPage: React.FC<BookPageProps> = ({
           <ImageWithPlaceholder
             source={{ uri: base64ImageUri }}
             style={styles.base64Image}
+            placeholderBackgroundColor="transparent"
             resizeMode="contain"
           />
         ) : (
