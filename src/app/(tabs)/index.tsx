@@ -1077,7 +1077,7 @@ const styles = createStyles({
   },
   settingsPanelTop: {
     width: 152.34735,
-    height: 142.216, // 增加高度以容纳新的"重启应用"选项
+    height: 132.216, // 增加高度以容纳新的"重启应用"选项
     borderRadius: 8.6,
     backgroundColor: "rgba(21, 21, 21, 0.2)",
     padding: 6.25,
@@ -1453,7 +1453,7 @@ const styles = createStyles({
     flex: 1,
   },
   rankingList: {
-    marginTop: 40,
+    marginTop: 30,
     paddingHorizontal: 4.8,
   },
   rankingItem: {

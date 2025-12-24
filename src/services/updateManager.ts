@@ -107,6 +107,9 @@ export class UpdateManager {
     try {
       console.log("开始初始化更新管理器")
       
+      // 🔴 关键：检查版本是否已更新，清理安装标记
+      await this.checkVersionUpdate()
+      
       // 初始化EAS更新服务
       await easUpdateService.initialize()
       
@@ -143,6 +146,46 @@ export class UpdateManager {
   }
 
   /**
+   * 检查版本是否已更新，清理安装标记
+   */
+  private async checkVersionUpdate(): Promise<void> {
+    try {
+      const installingVersion = await AsyncStorage.getItem("installing_version")
+      const installPending = await AsyncStorage.getItem("apk_install_pending")
+      
+      if (!installingVersion || installPending !== "true") {
+        return
+      }
+      
+      // 获取当前版本
+      const appInfo = await this.getCurrentAppInfo()
+      const currentVersion = appInfo.appVersion
+      
+      console.log(`检查版本更新: 当前版本=${currentVersion}, 安装中的版本=${installingVersion}`)
+      
+      // 如果当前版本已经是安装中的版本，说明安装成功
+      if (currentVersion === installingVersion) {
+        console.log("✅ 版本更新成功，清理安装标记")
+        await this.clearInstallPendingState()
+        await AsyncStorage.removeItem("pending_update")
+        await AsyncStorage.removeItem("has_pending_update")
+      } else {
+        // 检查安装标记是否超时（超过10分钟）
+        const installStartTime = await AsyncStorage.getItem("install_start_time")
+        if (installStartTime) {
+          const timeDiff = Date.now() - parseInt(installStartTime)
+          if (timeDiff > 10 * 60 * 1000) {
+            console.log("⏰ 安装标记超时，清理标记")
+            await this.clearInstallPendingState()
+          }
+        }
+      }
+    } catch (error) {
+      console.error("检查版本更新失败:", error)
+    }
+  }
+
+  /**
    * 检测更新
    */
   async checkForUpdates(options: UpdateCheckOptions = {}): Promise<void> {
@@ -153,10 +196,25 @@ export class UpdateManager {
       return
     }
 
+    // 🔴 关键保护：检查是否正在下载
+    if (this.isDownloading && !forceCheck) {
+      console.log("🔒 正在下载更新，跳过重复检测")
+      return
+    }
+
     this.isChecking = true
 
     try {
       console.log(`开始检测更新，来源: ${source}`)
+
+      // 🔴 关键保护：检查是否有版本正在安装中
+      const installingVersion = await AsyncStorage.getItem("installing_version")
+      const installPending = await AsyncStorage.getItem("apk_install_pending")
+      
+      if (installingVersion && installPending === "true") {
+        console.log(`🔒 版本 ${installingVersion} 正在安装中，跳过更新检测`)
+        return
+      }
 
       // 步骤1：优先检测整包更新（通过服务端API）
       console.log("步骤1: 检测整包更新（APK）")
@@ -171,6 +229,12 @@ export class UpdateManager {
           console.log("✅ 发现整包更新，优先处理整包更新")
           console.log("更新数据:", updateResponse.data)
           const updateData = this.convertApiResponseToUpdateData(updateResponse.data)
+          
+          // 🔴 关键保护：如果检测到的版本正在安装中，跳过
+          if (installingVersion && updateData.version === installingVersion) {
+            console.log(`🔒 检测到的版本 ${updateData.version} 正在安装中，跳过弹窗`)
+            return
+          }
           
           // 如果是整包更新，直接处理，不再检测 OTA
           if (updateData.updateType === UpdateType.FULL) {
@@ -492,6 +556,9 @@ export class UpdateManager {
    * 下载并安装APK - 优先使用react-native-blob-util，失败时回退到expo-file-system
    */
   private async downloadAndInstallApk(updateData: UpdateData): Promise<void> {
+    // 设置下载状态标记
+    this.isDownloading = true
+    
     try {
       console.log("开始下载APK:", updateData.downloadUrl)
       
@@ -509,6 +576,7 @@ export class UpdateManager {
         )
         
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          this.isDownloading = false
           throw new Error('存储权限被拒绝')
         }
       }
@@ -519,6 +587,10 @@ export class UpdateManager {
       
     } catch (error) {
       console.error("APK下载安装失败:", error)
+      this.isDownloading = false
+      
+      // 清除安装标记（下载失败）
+      await this.clearInstallPendingState()
       
       // 如果自动安装失败，提供手动安装选项
       Alert.alert(
@@ -539,6 +611,8 @@ export class UpdateManager {
       )
       
       throw error
+    } finally {
+      this.isDownloading = false
     }
   }
 
@@ -627,11 +701,24 @@ export class UpdateManager {
         console.warn("无法获取下载文件大小:", error)
       }
       
+      // 🔴 关键修复：下载完成后立即设置安装标记，阻止重复检测
+      console.log("🔒 设置安装保护标记，防止重复弹窗")
+      await AsyncStorage.setItem("apk_install_pending", "true")
+      await AsyncStorage.setItem("install_start_time", Date.now().toString())
+      await AsyncStorage.setItem("installing_version", updateData.version)
+      await AsyncStorage.setItem("app_show_count_during_install", "0")
+      
+      // 清理待更新标记，避免重复处理
+      await AsyncStorage.removeItem("pending_update")
+      await AsyncStorage.removeItem("has_pending_update")
+      
       // 安装APK
       await this.installApkOptimized(result.uri)
       
     } catch (error) {
       console.error("下载过程中出错:", error)
+      // 下载失败时清除安装标记
+      await this.clearInstallPendingState()
       throw error
     }
   }
@@ -657,21 +744,13 @@ export class UpdateManager {
           flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
         })
         
-        console.log("IntentLauncher 安装成功")
+        console.log("✅ IntentLauncher 安装器已打开")
         
+        // 注意：安装标记已在下载完成时设置，这里只做提示
         Alert.alert(
           "安装提示", 
           "系统安装器已打开，请在安装器中点击'安装'按钮完成更新\n\n安装完成后请重启应用",
-          [
-            {
-              text: "确定",
-              onPress: async () => {
-                console.log("用户确认安装，设置安装标记")
-                await AsyncStorage.setItem("apk_install_pending", "true")
-                await AsyncStorage.setItem("install_start_time", Date.now().toString())
-              }
-            }
-          ]
+          [{ text: "知道了" }]
         )
         
         return
@@ -762,7 +841,7 @@ export class UpdateManager {
         }
       }
       
-      Alert.alert('提示', '请手动在文件管理器的下载目录中查找APK文件')
+      // Alert.alert('提示', '请手动在文件管理器的下载目录中查找APK文件')
       
     } catch (error) {
       console.error("打开文件位置失败:", error)
@@ -960,21 +1039,12 @@ export class UpdateManager {
         console.log("安装器打开后的状态检查")
       }, 1000)
       
-      Alert.alert(
-        "安装提示", 
-        "系统安装器已打开，请在安装器中点击'安装'按钮完成更新\n\n安装完成后请重启应用",
-        [
-          {
-            text: "确定",
-            onPress: async () => {
-              console.log("用户确认安装，设置安装标记")
-              // 设置安装标记，避免重复提示
-              await AsyncStorage.setItem("apk_install_pending", "true")
-              await AsyncStorage.setItem("install_start_time", Date.now().toString())
-            }
-          }
-        ]
-      )
+      // 注意：安装标记已在下载完成时设置，这里只做提示
+      // Alert.alert(
+      //   "安装提示", 
+      //   "系统安装器已打开，请在安装器中点击'安装'按钮完成更新\n\n安装完成后请重启应用",
+      //   [{ text: "知道了" }]
+      // )
       
     } catch (error) {
       console.error("FileProvider安装失败:", error)
@@ -1090,13 +1160,21 @@ export class UpdateManager {
         const startTime = parseInt(installStartTime)
         const timeDiff = Date.now() - startTime
         
-        // 如果安装开始时间超过5分钟，清除标记
-        if (timeDiff > 5 * 60 * 1000) {
-          await AsyncStorage.removeItem("apk_install_pending")
-          await AsyncStorage.removeItem("install_start_time")
-          console.log("安装标记已超时，清除标记")
+        // 🔴 智能检测：短时间内多次进入前台可能是用户取消了安装
+        const appShowCount = await this.incrementAppShowCount()
+        
+        // 如果3分钟内进入前台超过5次，可能是用户取消了安装，清除标记
+        if (timeDiff < 3 * 60 * 1000 && appShowCount >= 5) {
+          console.log("⚠️ 检测到用户可能取消了安装(3分钟内前台次数>5)，清除标记")
+          await this.clearInstallPendingState()
+        }
+        // 如果安装开始时间超过10分钟，清除标记（延长时间，给用户更多操作时间）
+        else if (timeDiff > 10 * 60 * 1000) {
+          console.log("⏰ 安装标记已超时(10分钟)，清除标记")
+          await this.clearInstallPendingState()
         } else {
-          console.log("APK安装进行中，跳过更新检测")
+          const installingVersion = await AsyncStorage.getItem("installing_version")
+          console.log(`🔒 APK安装进行中 (版本: ${installingVersion})，跳过更新检测 (前台次数: ${appShowCount})`)
           return
         }
       }
@@ -1104,7 +1182,7 @@ export class UpdateManager {
       // 检查是否在提醒时间内
       const nextRemindTime = await AsyncStorage.getItem("next_update_remind_time")
       if (nextRemindTime && Date.now() < parseInt(nextRemindTime)) {
-        console.log("在提醒时间内，跳过更新检测")
+        console.log("⏰ 在提醒时间内，跳过更新检测")
         return
       }
 
@@ -1116,6 +1194,32 @@ export class UpdateManager {
     } catch (error) {
       console.error("前台更新检测失败:", error)
     }
+  }
+
+  /**
+   * 递增应用前台次数计数器（用于检测用户是否取消安装）
+   */
+  private async incrementAppShowCount(): Promise<number> {
+    try {
+      const countStr = await AsyncStorage.getItem("app_show_count_during_install")
+      const count = countStr ? parseInt(countStr) : 0
+      const newCount = count + 1
+      await AsyncStorage.setItem("app_show_count_during_install", newCount.toString())
+      return newCount
+    } catch (error) {
+      console.error("递增前台计数失败:", error)
+      return 0
+    }
+  }
+
+  /**
+   * 清除安装待处理状态
+   */
+  private async clearInstallPendingState(): Promise<void> {
+    await AsyncStorage.removeItem("apk_install_pending")
+    await AsyncStorage.removeItem("install_start_time")
+    await AsyncStorage.removeItem("installing_version")
+    await AsyncStorage.removeItem("app_show_count_during_install")
   }
 
   /**
@@ -1205,12 +1309,28 @@ export class UpdateManager {
       await AsyncStorage.removeItem("has_pending_update")
       await AsyncStorage.removeItem("last_update_check")
       
+      // 清理安装状态
+      await this.clearInstallPendingState()
+      
       // 清理EAS更新缓存
       await easUpdateService.clearUpdateCache()
       
       console.log("更新缓存已清理")
     } catch (error) {
       console.error("清理更新缓存失败:", error)
+    }
+  }
+
+  /**
+   * 取消待处理的安装（用户主动取消安装时调用）
+   */
+  async cancelPendingInstall(): Promise<void> {
+    try {
+      console.log("用户取消待处理的安装")
+      await this.clearInstallPendingState()
+      this.showToast("已取消安装，可重新检查更新", "info")
+    } catch (error) {
+      console.error("取消安装失败:", error)
     }
   }
 
@@ -1315,7 +1435,7 @@ export class UpdateManager {
    * 触发显示整包更新对话框事件
    */
   private emitShowFullUpdateDialog(updateData: UpdateData, canSkip: boolean): void {
-    console.log("显示整包更新对话框:", { updateData, canSkip })
+    // console.log("显示整包更新对话框:", { updateData, canSkip })
     // 使用状态管理显示更新对话框
     useUpdateStore.getState().showUpdateDialogAction(updateData, canSkip)
   }
@@ -1324,7 +1444,7 @@ export class UpdateManager {
    * 触发显示热更新对话框事件
    */
   private emitShowHotUpdateDialog(updateData: UpdateData, canSkip: boolean): void {
-    console.log("显示热更新对话框:", { updateData, canSkip })
+    // console.log("显示热更新对话框:", { updateData, canSkip })
     // 使用状态管理显示更新对话框
     useUpdateStore.getState().showUpdateDialogAction(updateData, canSkip)
   }

@@ -50,7 +50,7 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
     setLoading(true);
     try {
       const weekCheckInListData: WeekCheckInListData = await getWeekCheckInList();
-      console.log('获取7天打卡活动列表成功', weekCheckInListData);
+      // console.log('获取7天打卡活动列表成功', weekCheckInListData);
       setWeekCheckInList(weekCheckInListData.week_check_list ?? emptyWeekCheckInList);
       setTotalCheckInDays(weekCheckInListData.consecutive_days ?? 0);
       setTodayInfo({
@@ -76,24 +76,24 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
   // 计算日期相对今日状态
   const calculateDateRelativeToTodayStatus = useCallback((index: number, isChecked: boolean) => { // 0 过期 1 未领取 2 已领取 3 未开始
     if (index === null || index === undefined) {
-      console.log('index不满足条件', index);
+      // console.log('index不满足条件', index);
       return 3;
     }
     if (todayInfo?.index === null || todayInfo?.index === undefined) {
-      console.log('todayInfo.index不满足条件', todayInfo?.index);
+      // console.log('todayInfo.index不满足条件', todayInfo?.index);
       return 3;
     }
     if (index > todayInfo.index) {
-      console.log('index大于todayInfo.index', index, todayInfo.index);
+      // console.log('index大于todayInfo.index', index, todayInfo.index);
       return 3;
     }
     if (index === todayInfo.index) {
-      console.log('index等于todayInfo.index', index, todayInfo.index);
+      // console.log('index等于todayInfo.index', index, todayInfo.index);
       if (isChecked) return 2;
       return 1;
     }
     if (index < todayInfo.index) {
-      console.log('index小于todayInfo.index', index, todayInfo.index);
+      // console.log('index小于todayInfo.index', index, todayInfo.index);
       if (isChecked) return 2;
       return 0;
     }
@@ -138,7 +138,7 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
         <View style={styles.dailyCheckInListContainer}>
           {weekCheckInList.map((item, index) => {
             const dateStatus = calculateDateRelativeToTodayStatus(index, item.checked);
-            console.log('dateStatus2', dateStatus, index, item.checked);
+            // console.log('dateStatus2', dateStatus, index, item.checked);
             return (
               <View key={index} style={[
                 styles.dailyCheckInListItem,

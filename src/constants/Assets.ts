@@ -170,6 +170,17 @@ export const Images = {
   appletQrCode: require("../../assets/images/applet-qr-code.png"),
   // 锁屏相关
   lockScreenWallpaper1: require("../../assets/images/lock-screen/lock-screen-wallpaper-1.png"),
+
+  // 学习周报相关 (占位图)
+  weeklyReportBoy: require("../../assets/images/report/weekly-report-boy.png"), // 知识探索者男孩assets/images/report/weekly-report-boy.png
+  weeklyReportCalendar: require("../../assets/images/report/weekly-report-calendar.png"), // 学习记录日历
+  weeklyReportClock: require("../../assets/images/report/weekly-report-clock.png"), // 学习时长闹钟
+  weeklyReportCourse: require("../../assets/images/study-img5.png"), // 课程封面
+  weeklyReportWorm: require("../../assets/images/study-img6.png"), // 毛毛虫装饰
+  weeklyReportMoon: require("../../assets/images/study-img8.png"), // 右上角月亮装饰
+  weeklyReportKnowledgeExplorerCardBg: require("../../assets/images/report/knowage-bg.png"), // 知识探索者卡片背景
+  Polygon164: require("../../assets/images/report/Polygon-164.png"), // 知识探索者卡片背景
+ 
 }
 
 // 统一导出

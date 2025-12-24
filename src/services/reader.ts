@@ -244,7 +244,7 @@ export async function getBooksList(params: BookListParams): Promise<BookListResp
     console.log("📚 [API] 请求书籍列表参数:", params)
 
     const response = await post("/AppStart/books/books/list/", params)
-    console.log("📚 [API] 书籍列表响应:", response)
+    // console.log("📚 [API] 书籍列表响应:", response)
 
     return response
   } catch (error) {
@@ -260,7 +260,7 @@ export async function getBooksList(params: BookListParams): Promise<BookListResp
 export async function getRecommendBooks(): Promise<RecommendData> {
   try {
     const response = await post("/AppStart/books/books/recommend/", {})
-    console.log("📚 [API] 推荐书籍响应:", response)
+    // console.log("📚 [API] 推荐书籍响应:", response)
 
     return response
   } catch (error) {
@@ -276,7 +276,7 @@ export async function getRecommendBooks(): Promise<RecommendData> {
 export async function getBookCategories(): Promise<CategoryData[]> {
   try {
     const response = await post("/AppStart/books/books/category/", {})
-    console.log("📚 [API] 书籍分类列表响应:", response)
+    // console.log("📚 [API] 书籍分类列表响应:", response)
 
     return response
   } catch (error) {
@@ -292,12 +292,12 @@ export async function getBookCategories(): Promise<CategoryData[]> {
  */
 export async function getChapterDetail(chapterId: string | number): Promise<ChapterDetailResponse> {
   try {
-    console.log(`📚 [API] 获取章节详情: ${chapterId}`)
+    // console.log(`📚 [API] 获取章节详情: ${chapterId}`)
 
     const response = await post("/AppStart/books/chapters/details_detail/", {
       chapter_id: chapterId,
     })
-    console.log("📚 [API] 章节详情响应:", response)
+    // console.log("📚 [API] 章节详情响应:", response)
 
     return response
   } catch (error) {
@@ -318,7 +318,7 @@ export async function updateReadingProgress(
     console.log(`📚 [API] 更新阅读进度:`, params)
 
     const response = await post("/AppStart/books/reading-history/update_progress/", params)
-    console.log("📚 [API] 更新阅读进度响应:", response)
+    // console.log("📚 [API] 更新阅读进度响应:", response)
 
     return response.data
   } catch (error) {
@@ -365,7 +365,7 @@ export async function getBookDetail(bookId: string | number): Promise<BookDetail
     const response = await post("/AppStart/books/books/detail/", {
       book_id: bookId,
     })
-    console.log("📚 [API] 书籍详情响应:", response)
+    // console.log("📚 [API] 书籍详情响应:", response)
 
     // 返回数据在 response.data.data 中
     return response

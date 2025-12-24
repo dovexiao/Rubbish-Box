@@ -108,10 +108,10 @@ export const selectIsBound = (state: DeviceStatusStore) =>
  * 选择器：是否允许拖拽视频
  */
 export const selectCanDragVideo = (state: DeviceStatusStore) => 
-  state.status?.dragVideo ?? false
+  state.status?.dragVideo ?? true
 
 /**
  * 选择器：是否显示答案
  */
 export const selectCanDisplayAnswer = (state: DeviceStatusStore) => 
-  state.status?.displayAnswer ?? false
+  state.status?.displayAnswer ?? true

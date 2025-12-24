@@ -223,7 +223,7 @@ export default function MyScreen() {
 
   // 处理数据点击
   const handleDataClick = () => {
-    router.push("/my/data")
+    router.push("/weekly-report")
   }
 
   // 渲染今日错题圆形进度条
@@ -438,7 +438,7 @@ export default function MyScreen() {
                       imageUrl = imageUrl.startsWith('/') ? `${baseUrl}${imageUrl}` : `${baseUrl}/${imageUrl}`
                     }
 
-                    console.log('徽章图片 URL:', imageUrl)
+                    // console.log('徽章图片 URL:', imageUrl)
 
                     return (
                       <View key={index} style={styles.badgeItem}>
@@ -452,7 +452,7 @@ export default function MyScreen() {
                                 console.log(`徽章[${badge.name}]图片加载失败:`, imageUrl, error.nativeEvent.error)
                               }}
                               onLoad={() => {
-                                console.log(`徽章[${badge.name}]图片加载成功`)
+                                // console.log(`徽章[${badge.name}]图片加载成功`)
                               }}
                             />
                           ) : (
@@ -493,6 +493,13 @@ export default function MyScreen() {
                     resizeMode="contain"
                   />
                 </View>
+                  {/* <Ionicons
+                    name="arrow-forward-sharp"
+                    size={rpx(8.6)}
+                  color="#487FB1"
+                  onPress={handleDataClick}
+                    style={styles.switchIcon}
+                  /> */}
               </View>
 
               <View style={styles.studyDataContainer}>
@@ -919,4 +926,16 @@ const styles = createStyles({
     color: "#4891FF",
     fontWeight: "500" as const,
   },
+  dataIcon: {
+    width: 8.6,
+    height: 8.6,
+    marginRight: 4,
+    marginLeft: 4,
+    marginTop: 4,
+    marginBottom: 4,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+  }
 })

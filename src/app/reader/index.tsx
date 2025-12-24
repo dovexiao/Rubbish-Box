@@ -96,10 +96,10 @@ export default function ReaderIndex() {
   // 处理书籍点击
   const handleBookClick = useCallback(
     async (book: any) => {
-      console.log(`📚 [阅读器] 用户点击书籍:`, {
-        bookId: book.id,
-        title: book.title,
-      })
+      // console.log(`📚 [阅读器] 用户点击书籍:`, {
+      //   bookId: book.id,
+      //   title: book.title,
+      // })
 
       if (!book.id) {
         console.log(`📚 [阅读器] ❌ 书籍信息不完整，缺少ID`)
@@ -132,7 +132,7 @@ export default function ReaderIndex() {
   const getCategories = useCallback(async () => {
     try {
       const response = await getBookCategories()
-      console.log("📚 [API] 分类列表处理前:", response)
+      // console.log("📚 [API] 分类列表处理前:", response)
 
       // 修复：response 是整个响应，我们需要的是 response.data
       const categoryList = response || []
@@ -141,7 +141,7 @@ export default function ReaderIndex() {
       setCategories(allCategories)
       setCategoryNames(allCategories.map((cat) => cat.name))
 
-      console.log("📚 [API] 分类列表处理后:", allCategories)
+      // console.log("📚 [API] 分类列表处理后:", allCategories)
       return allCategories
     } catch (error) {
       console.error("获取分类列表失败:", error)
@@ -157,7 +157,7 @@ export default function ReaderIndex() {
       setRecommendLoading(true)
       const data = await getRecommendBooks()
       setRecommendData(data)
-      console.log("📚 [API] 推荐数据:", data)
+      // console.log("📚 [API] 推荐数据:", data)
       return data
     } catch (error) {
       console.error("获取推荐书籍失败:", error)
@@ -182,9 +182,9 @@ export default function ReaderIndex() {
           category_id: activeCategory === 0 ? undefined : categories[activeCategory]?.id,
         }
 
-        console.log("📚 [API] 请求书籍列表参数:", params)
+        // console.log("📚 [API] 请求书籍列表参数:", params)
         const response = await getBooksList(params)
-        console.log("📚 [API] 书籍列表响应:", response)
+        // console.log("📚 [API] 书籍列表响应:", response)
 
         // response.results = response.results.slice(0, 5)
 

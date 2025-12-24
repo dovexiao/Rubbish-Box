@@ -111,12 +111,12 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
   // 计算图标大小（如果没有提供，使用默认值）
   const iconSize = placeholderIconSize || (typeof style === "object" && style && "width" in style && typeof style.width === "number" ? style.width * 0.3 : rpx(40))
 
-  useEffect(() => {
-    console.log("source", source)
-    console.log("sourceValid", sourceValid)
-    console.log("error", error)
-    console.log("loading", loading)
-  }, [source, sourceValid, error, loading])
+  // useEffect(() => {
+  //   console.log("source", source)
+  //   console.log("sourceValid", sourceValid)
+  //   console.log("error", error)
+  //   console.log("loading", loading)
+  // }, [source, sourceValid, error, loading])
 
   return (
     <View style={containerStyle}>

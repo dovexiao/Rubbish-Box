@@ -389,6 +389,40 @@ cd /Users/zhoudabo/Desktop/xhtx-app/xhtx && adb shell dumpsys media.camera | gre
 
 cd /Users/zhoudabo/Desktop/xhtx-app/xhtx && adb shell dumpsys media.camera | grep -A 5 -B 5 "120\|device.*120\|camera.*120"
 
+# Expo 调试模式相关 adb 命令
+
+# 1. 打开 Expo 开发者菜单（最常用）
+adb shell input keyevent 82
+
+# 2. 或者使用菜单键代码
+adb shell input keyevent KEYCODE_MENU
+
+# 3. 打开开发者选项（Android 系统设置）
+adb shell am start -a android.settings.APPLICATION_DEVELOPMENT_SETTINGS
+
+# 4. 重新加载应用（在开发者菜单打开后）
+adb shell input text "r"
+
+# 5. 打开调试器（在开发者菜单打开后）
+adb shell input text "d"
+
+# 6. 显示性能监控（在开发者菜单打开后）
+adb shell input text "p"
+
+# 7. 组合命令：打开菜单并等待
+adb shell input keyevent 82 && sleep 1
+
+# 8. 检查 Expo 开发服务器连接
+adb reverse tcp:8081 tcp:8081
+adb reverse tcp:19000 tcp:19000
+adb reverse tcp:19001 tcp:19001
+
+# 9. 查看 Expo 相关日志
+adb logcat | grep -i expo
+
+# 10. 清除应用数据并重启（用于调试）
+adb shell pm clear com.xhtx.app && adb shell am start -n com.xhtx.app/.MainActivity
+
 
 
 
