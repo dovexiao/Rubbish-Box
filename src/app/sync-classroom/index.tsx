@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useRouter } from "expo-router"
@@ -38,6 +38,9 @@ export default function SyncClassroomScreen() {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [subjects, setSubjects] = useState<string[]>([])
   const [versionOptions, setVersionOptions] = useState<string[]>([])
+  
+  // 保存之前选择的学科名称，用于年级切换时保持选择
+  const previousSubjectNameRef = useRef<string | null>(null)
   const [courseResource, setCourseResource] = useState<CourseResourceResponse>({
     grouped_course_resources: [],
     rspname: "",
@@ -130,12 +133,27 @@ export default function SyncClassroomScreen() {
 
       if (Array.isArray(response)) {
         setSubjects(response)
-        setCurrentSubject(0)
+        
+        // 尝试匹配之前选择的学科
+        let targetSubjectIndex = 0
+        if (previousSubjectNameRef.current && response.length > 0) {
+          const matchedIndex = response.findIndex(
+            (subject) => subject === previousSubjectNameRef.current
+          )
+          if (matchedIndex !== -1) {
+            targetSubjectIndex = matchedIndex
+            console.log(`✅ 找到匹配的学科: ${previousSubjectNameRef.current}, 索引: ${matchedIndex}`)
+          } else {
+            console.log(`⚠️ 新年级不存在学科: ${previousSubjectNameRef.current}, 使用第一个学科`)
+            previousSubjectNameRef.current = null // 清除不存在的学科引用
+          }
+        }
+        setCurrentSubject(targetSubjectIndex)
 
         // 直接使用response而不是state，避免闭包问题
         if (response.length > 0) {
-          // 立即获取版本列表
-          const subject = response[0]
+          // 使用匹配到的学科或第一个学科
+          const subject = response[targetSubjectIndex]
           const versionResponse = await getVersionList({ 
             grade, 
             volume, 
@@ -321,6 +339,13 @@ export default function SyncClassroomScreen() {
     async (index: number) => {
       console.log("🔄 切换学科到:", index, subjects[index])
       setCurrentSubject(index)
+      
+      // 保存当前选择的学科名称
+      if (subjects[index]) {
+        previousSubjectNameRef.current = subjects[index]
+        console.log(`💾 更新保存的学科: ${previousSubjectNameRef.current}`)
+      }
+      
       resetPagination()
       // 清空当前数据，避免显示旧数据
       setCourseResource({
@@ -341,6 +366,13 @@ export default function SyncClassroomScreen() {
   const handleGradeConfirm = useCallback(
     async (selection: GradeSelection) => {
       console.log("📚 年级选择确认:", selection)
+      
+      // 在切换年级前，保存当前选择的学科名称
+      if (subjects.length > 0 && currentSubject < subjects.length) {
+        previousSubjectNameRef.current = subjects[currentSubject]
+        console.log(`💾 保存当前学科: ${previousSubjectNameRef.current}`)
+      }
+      
       setGradeSelection(selection)
       
       // 直接使用选择的年级，不需要转换
@@ -353,19 +385,25 @@ export default function SyncClassroomScreen() {
       setVersionOptions([])
       await fetchSubjectList()
     },
-    [resetPagination, fetchSubjectList],
+    [resetPagination, fetchSubjectList, subjects, currentSubject],
   )
   
   // 旧的年级选择方法（保留兼容）
   const selectGrade = useCallback(
     async (grade: string) => {
+      // 在切换年级前，保存当前选择的学科名称
+      if (subjects.length > 0 && currentSubject < subjects.length) {
+        previousSubjectNameRef.current = subjects[currentSubject]
+        console.log(`💾 保存当前学科: ${previousSubjectNameRef.current}`)
+      }
+      
       setSelectedGrade(grade)
       resetPagination()
       setSelectedVersion("")
       setVersionOptions([])
       await fetchSubjectList()
     },
-    [resetPagination, fetchSubjectList],
+    [resetPagination, fetchSubjectList, subjects, currentSubject],
   )
 
   // 选择版本
