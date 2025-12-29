@@ -809,7 +809,7 @@ const styles = createStyles({
     alignItems: "center" as const,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
     paddingHorizontal: 4,
-    paddingVertical: 2,
+    paddingVertical: 4,
     borderRadius: 12,
     gap: 4,
   },
