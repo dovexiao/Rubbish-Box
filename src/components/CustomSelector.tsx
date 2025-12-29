@@ -54,8 +54,8 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
     if (selectorRef.current) {
       selectorRef.current.measure((x, y, width, height, pageX, pageY) => {
         const screenHeight = Dimensions.get("window").height
-        const dropdownHeight = 400 // 最大高度400rpx
-        const maxY = screenHeight - dropdownHeight - 20 // 留出20rpx边距
+        const dropdownHeight = rpx(156.25) // 最大高度400rpx
+        const maxY = screenHeight - dropdownHeight - rpx(15.625) // 留出20rpx边距
 
         setDropdownPosition({
           x: pageX,
@@ -104,9 +104,9 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
         onPress={openDropdown}
         activeOpacity={0.7}
       >
-        <View style={createStylesBase.selectorGradient}>
-          <Text 
-            style={[createStylesBase.selectorText, !selectedOption && styles.placeholderText]}
+        <View style={styles.selectorGradient}>
+          <Text
+            style={[styles.selectorText, !selectedOption && styles.placeholderText]}
             numberOfLines={1}
           >
             {selectedOption ? selectedOption.label : placeholder}
@@ -135,7 +135,7 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
                 {
                   opacity: fadeAnim,
                   left: dropdownPosition.centerX - ((dropdownPosition.width || 240) + 48) / 2, // 居中对齐
-                  top: dropdownPosition.y,
+                  top: dropdownPosition.y + rpx(3.90625),
                   width: (dropdownPosition.width || 240) + 48, // 左右各增加24rpx
                 },
               ]}
@@ -176,8 +176,11 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
   )
 }
 
-const createStylesBase = createStyles({
-    selectorGradient: {
+const styles = createStyles({
+  selector: {
+    alignSelf: "flex-start", // 允许容器自适应内容宽度
+  },
+  selectorGradient: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
@@ -186,38 +189,16 @@ const createStylesBase = createStyles({
     borderRadius: 12,
     gap: 4,
   },
-    selectorText: {
+  selectorText: {
     fontSize: 7.6,
     color: "#8C8D92",
-  
   },
-})
-
-const styles = StyleSheet.create({
-  selector: {
-    alignSelf: "flex-start", // 允许容器自适应内容宽度
-  },
-  // selectorGradient: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   paddingHorizontal: 12, // 12rpx
-  //   paddingVertical: 6, // 6rpx
-  //   paddingRight: 12, // 确保右侧有足够padding
-  //   backgroundColor: "rgba(255, 255, 255, 0.3)",
-  //   borderRadius: 24, // 24rpx
-  // },
-  // selectorText: {
-  //   fontSize: 20, // 20rpx
-  //   color: "#8C8D92",
-  //   fontWeight: "500",
-  //   marginRight: 8, // 8rpx
-  // },
   placeholderText: {
     color: "#999999",
   },
   arrowContainer: {
-    width: 20, // 再增加宽度
-    height: 20, // 设置高度
+    width: 7.8125, // 再增加宽度
+    height: 7.8125, // 设置高度
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0, // 防止箭头容器被压缩
@@ -236,7 +217,7 @@ const styles = StyleSheet.create({
   dropdown: {
     position: "absolute",
     backgroundColor: "rgba(255, 255, 255, 0.95)",
-    borderRadius: 12, // 12rpx
+    borderRadius: 4.6875, // 12rpx
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -245,17 +226,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8, // 8rpx
     elevation: 4,
-    minWidth: 160, // 160rpx
-    maxHeight: 400, // 400rpx - 限制最大高度
+    minWidth: 62.5, // 160rpx
+    maxHeight: 156.25, // 400rpx - 限制最大高度
     zIndex: 1000,
     overflow: "hidden", // 确保内容不会溢出
   },
   optionsScroll: {
-    maxHeight: 380, // 380rpx - 给滚动区域留出边距
+    maxHeight: 148.4375, // 380rpx - 给滚动区域留出边距
   },
   option: {
-    paddingHorizontal: 16, // 16rpx
-    paddingVertical: 12, // 12rpx
+    paddingHorizontal: 6.25, // 16rpx
+    paddingVertical: 4.6875, // 12rpx
     borderBottomWidth: 1, // 1rpx
     borderBottomColor: "rgba(0, 0, 0, 0.05)",
     flexDirection: "row",
@@ -269,7 +250,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(72, 145, 255, 0.1)",
   },
   optionText: {
-    fontSize: 20, // 20rpx
+    fontSize: 7.8125, // 20rpx
     color: "#333333",
     flex: 1,
   },
@@ -278,11 +259,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   selectedIndicator: {
-    width: 4, // 4rpx
-    height: 20, // 20rpx
+    width: 1.5625, // 4rpx
+    height: 7.8125, // 20rpx
     backgroundColor: "#4891FF",
-    borderRadius: 2, // 2rpx
-    marginLeft: 12, // 12rpx
+    borderRadius: 0.78125, // 2rpx
+    marginLeft: 4.6875, // 12rpx
   },
 })
 

@@ -336,7 +336,7 @@ const styles = createStyles({
     borderRadius: 16,
     backgroundColor: '#F3EFEF66',
     marginRight: 20,
-    marginTop: 80,
+    marginTop: 88,
     overflow: "hidden" as const,
   },
   modalContent: {
