@@ -245,6 +245,11 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                 nestedScrollEnabled={true}
                 onEndReached={loadMore}
                 onEndReachedThreshold={0.4}
+                ListEmptyComponent={
+                    <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyText}>暂无商品</Text>
+                    </View>
+                }
                 ListFooterComponent={
                     loadingMore ? (
                         <View style={styles.loadingContainer}>
@@ -406,6 +411,18 @@ const styles = createStyles({
         fontWeight: '400' as const,
         fontSize: 7.03125, // 18
         color: '#00000080',
+    },
+    emptyContainer: {
+        // flex: 1,
+        alignItems: 'center' as const,
+        justifyContent: 'center' as const,
+        paddingVertical: 15.625, // 20
+        // borderWidth: 1,
+        // borderColor: 'red',
+    },
+    emptyText: {
+        fontSize: 11.71875, // 30
+        color: '#999',
     },
     loadingContainer: {
         // width: '100%' as const,

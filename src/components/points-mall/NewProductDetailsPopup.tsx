@@ -6,9 +6,8 @@ import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import ProductInfoView from "./ProductInfoView"
 import OrderConfirmView from "./OrderConfirmView"
 import ShippingAddressView from "./ShippingAddressView"
-import { AddressItem, getProductDetail, ProductDetailData, exchangeProduct } from "@/services/pointsMall"
-import { showError, showSuccess } from "@/utils/toast"
-import { devError } from "@/services/WebSocketManager"
+// import { AddressItem, getProductDetail, ProductDetailData } from "@/services/pointsMall" // 已迁移到其他组件
+// import { devError } from "@/services/WebSocketManager" // 已迁移到其他组件
 
 export type NewProductDetailsPopupRef = {
     show: (productId: number) => void;
@@ -30,9 +29,9 @@ const CONTAINER_WIDTH = rpx(406.25); // 1040 * 750 / 1920
 const NewProductDetailsPopup = forwardRef<NewProductDetailsPopupRef, NewProductDetailsPopupProps>(({ onClose }, ref) => {
     const [visible, setVisible] = useState(false);
     const [productId, setProductId] = useState<number | null>(null);
-    const [productDetail, setProductDetail] = useState<ProductDetailData | null>(null);
+    // const [productDetail, setProductDetail] = useState<ProductDetailData | null>(null); // 已迁移到 store 中
     // const [addressList, setAddressList] = useState<AddressItem[]>([]); // 已迁移到 ShippingAddressView 中
-    const [defaultAddress, setDefaultAddress] = useState<AddressItem | null>(null);
+    // const [defaultAddress, setDefaultAddress] = useState<AddressItem | null>(null); // 已迁移到 store 中
     const [viewStack, setViewStack] = useState<number[]>([0]);
 
 
@@ -57,8 +56,8 @@ const NewProductDetailsPopup = forwardRef<NewProductDetailsPopupRef, NewProductD
     const hide = useCallback(() => {
         setVisible(false);
         setProductId(null);
-        setProductDetail(null);
-        setDefaultAddress(null);
+        // setProductDetail(null); // 已迁移到 store 中
+        // setDefaultAddress(null); // 已迁移到 store 中
         // setAddressList([]); // 已迁移到 ShippingAddressView 中
         onClose?.();
     }, [onClose]);
@@ -182,24 +181,7 @@ const NewProductDetailsPopup = forwardRef<NewProductDetailsPopupRef, NewProductD
     //     await loadAddressList();
     // }, [updateDefaultAddress, loadAddressList]);
 
-    // 兑换商品
-    const handleExchangeProduct = useCallback(async () => {
-        if (!productDetail || !defaultAddress) {
-            showError("请选择商品或收货地址");
-            return;
-        }
-
-        try {
-            await exchangeProduct({
-                product_id: productDetail.id.toString(),
-                address_id: defaultAddress.id.toString(),
-            });
-            showSuccess("兑换成功");
-            hide();
-        } catch (error) {
-            console.error("兑换商品失败:", error);
-        }
-    }, [productDetail, defaultAddress, hide]);
+    // 兑换商品（已迁移到 OrderConfirmView 中）
 
     // 为每个视图创建动画样式
     const view0Style = useAnimatedStyle(() => ({
@@ -239,11 +221,11 @@ const NewProductDetailsPopup = forwardRef<NewProductDetailsPopupRef, NewProductD
     const renderViewContent = useCallback((index: number) => {
         switch (index) {
             case 0: return <ProductInfoView productId={productId} onNext={() => goNext(0)} />;
-            case 1: return <OrderConfirmView onNext={() => goNext(1)} onExchange={handleExchangeProduct} />;
+            case 1: return <OrderConfirmView onNext={() => goNext(1)} onSuccess={hide} />;
             case 2: return <ShippingAddressView onPrevious={goBack} />;
             default: return null;
         }
-    }, [productId, handleExchangeProduct, goNext, goBack]);
+    }, [productId, hide, goNext, goBack]);
 
     useImperativeHandle(ref, () => ({
         show,

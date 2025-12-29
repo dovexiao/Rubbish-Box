@@ -166,7 +166,7 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
         <View style={styles.dailyCheckInListContainer}>
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color="#FF9D00" />
+              <ActivityIndicator size="large" color="#FF9D00" />
             </View>
           ) : (
             weekCheckInList.map((item, index) => (

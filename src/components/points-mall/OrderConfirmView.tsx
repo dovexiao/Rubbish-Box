@@ -7,6 +7,8 @@ import { Images } from "../../constants/Assets"
 import ConfirmDialog from "../common/ConfirmDialog"
 import ImageWithPlaceholder from "../common/ImageWithPlaceholder"
 import { useProductDetailStore } from "../../stores/points-mall/productDetailStore"
+import { exchangeProduct } from "../../services/pointsMall"
+import { showError, showSuccess } from "../../utils/toast"
 
 /**
  * 确认订单信息视图组件
@@ -14,17 +16,36 @@ import { useProductDetailStore } from "../../stores/points-mall/productDetailSto
 
 interface OrderConfirmProps {
   onNext: () => void
-  onExchange?: () => Promise<void>
+  onSuccess?: () => void
 }
 
-const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onExchange }) => {
-  const { productName, price, mainImage, defaultAddress } = useProductDetailStore();
+const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onSuccess }) => {
+  const { productId, productName, price, mainImage, defaultAddress } = useProductDetailStore();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
+  // 兑换商品
+  const handleExchangeProduct = useCallback(async () => {
+    if (!productId || !defaultAddress) {
+      showError("请选择商品或收货地址");
+      return;
+    }
+
+    try {
+      await exchangeProduct({
+        product_id: productId.toString(),
+        address_id: defaultAddress.id.toString(),
+      });
+      showSuccess("兑换成功");
+      onSuccess?.();
+    } catch (error) {
+      console.error("兑换商品失败:", error);
+    }
+  }, [productId, defaultAddress, onSuccess]);
+
   const handleConfirmExchange = useCallback(async () => {
-    await onExchange?.();
+    await handleExchangeProduct();
     setShowConfirmDialog(false);
-  }, [onExchange])
+  }, [handleExchangeProduct])
 
   return (
     <>

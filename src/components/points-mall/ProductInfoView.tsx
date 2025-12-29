@@ -44,17 +44,18 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
                 setDetailImages(result.detail_image ?? []);
                 // 更新 store 中的商品信息
                 updateProductInfo(
+                    result.id,
                     result.name,
                     result.price,
                     result.main_image
                 );
             } else {
-                updateProductInfo(null, null, null);
+                updateProductInfo(null, null, null, null);
             }
         } catch (error: unknown) {
             devError("获取商品详情失败:", error);
             setProduct(null);
-            updateProductInfo(null, null, null);
+            updateProductInfo(null, null, null, null);
         } finally {
             setLoading(false);
             loadingRef.current = false;
