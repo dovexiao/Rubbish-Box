@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import {
   View,
   Text,
   TouchableOpacity,
   StatusBar as RNStatusBar,
-  Dimensions,
-  PanResponder,
   AppState,
 } from "react-native"
 import { Video, ResizeMode, Audio } from "expo-av"
@@ -21,11 +19,12 @@ import {
 } from "../../services/classroom"
 import { useUserStore } from "../../stores/userStore"
 import { useDeviceStatusStore, selectCanDragVideo } from "../../stores/deviceStatusStore"
+import { useVideoPlayerStore } from "../../stores/sync-classroom/videoPlayerStore"
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError } from "../../utils/toast"
 import { useActivityTracking } from "../../hooks/useActivityTracking"
-import { BrightnessControl, VolumeControl } from "../../components/video"
+import { BrightnessControl, SeekControl, VolumeControl } from "../../components/video"
 
 interface VideoParams {
   videoCode?: string
@@ -46,7 +45,10 @@ export default function VideoPlayerScreen() {
   const userStore = useUserStore()
   const canDragVideo = useDeviceStatusStore(selectCanDragVideo)
   const videoRef = useRef<Video>(null)
-  
+
+  // 视频播放器 Store
+  const { setCurrentTime: setStoreCurrentTime, setTotalDuration: setStoreTotalDuration } = useVideoPlayerStore()
+
   // 活动追踪 - 追踪视频观看行为
   const { startVideo, updateVideoProgress, endVideo } = useActivityTracking({
     throttleDelay: 3000, // 视频进度更新节流3秒
@@ -88,7 +90,7 @@ export default function VideoPlayerScreen() {
 
   // 拖拽状态
   const [_isDragging, _setIsDragging] = useState(false)
-  
+
   // 进度条宽度
   const [progressBarWidth, setProgressBarWidth] = useState(0)
 
@@ -97,34 +99,6 @@ export default function VideoPlayerScreen() {
   // 是否已设置初始位置
   const hasSetInitialPositionRef = useRef(false)
 
-  // ==================== 音量和亮度控制（已注释，改为快进快退）====================
-  // const [volume, setVolume] = useState(1.0) // 0.0 - 1.0
-  // const [brightness, setBrightness] = useState(1.0) // 0.0 - 1.0
-  // const [showVolumeIndicator, setShowVolumeIndicator] = useState(false)
-  // const [showBrightnessIndicator, setShowBrightnessIndicator] = useState(false)
-  // const volumeTimerRef = useRef<NodeJS.Timeout | null>(null)
-  // const brightnessTimerRef = useRef<NodeJS.Timeout | null>(null)
-
-  // // 初始化亮度
-  // useEffect(() => {
-  //   const initBrightness = async () => {
-  //     try {
-  //       const currentBrightness = await Brightness.getBrightnessAsync()
-  //       setBrightness(currentBrightness)
-  //     } catch (error) {
-  //       console.log("获取亮度失败:", error)
-  //     }
-  //   }
-  //   initBrightness()
-  // }, [])
-  
-  // ==================== 快进快退控制 ====================
-  const [showSeekIndicator, setShowSeekIndicator] = useState(false)
-  const [seekDelta, setSeekDelta] = useState(0) // 快进/快退的秒数（正数为快进，负数为快退）
-  const [previewTime, setPreviewTime] = useState(0) // 预览时间位置
-  const seekTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const seekStartTimeRef = useRef(0) // 滑动开始时的时间位置
-  const previewTimeRef = useRef(0) // ✅ 用 ref 存储最新的 previewTime
   const currentTimeRef = useRef(0) // ✅ 用 ref 存储最新的 currentTime，避免闭包陷阱
   const totalDurationRef = useRef(0) // ✅ 用 ref 存储最新的 totalDuration
   const canDragVideoRef = useRef(canDragVideo) // ✅ 用 ref 存储 canDragVideo，避免闭包陷阱
@@ -197,6 +171,8 @@ export default function VideoPlayerScreen() {
       setLessonTitle(title)
       _setLessonDuration(duration)
       setTotalDuration(total)
+      // 更新 store 中的总时长
+      setStoreTotalDuration(total)
       setLastSavedTime(duration)
 
       console.log("接收到video_id:", videoCode)
@@ -219,20 +195,20 @@ export default function VideoPlayerScreen() {
     if (videoUrl && !loading && videoRef.current && !hasAutoPlayedRef.current) {
       console.log("视频准备完成，开始自动播放流程")
       hasAutoPlayedRef.current = true // 标记已尝试自动播放
-      
+
       // 延迟一下确保video组件已渲染并等待应用完全进入前台
       const timer = setTimeout(async () => {
         try {
           // 检查应用是否在前台
           const currentState = AppState.currentState
           console.log("📱 当前应用状态:", currentState)
-          
+
           if (currentState !== 'active') {
             console.log("⚠️ 应用不在前台，延迟自动播放")
             hasAutoPlayedRef.current = false // 允许重试
             return
           }
-          
+
           // 🔊 配置音频模式 - 强制获取音频焦点
           console.log("🔊 配置视频音频模式...")
           await Audio.setAudioModeAsync({
@@ -243,7 +219,7 @@ export default function VideoPlayerScreen() {
             staysActiveInBackground: true,
           })
           console.log("✅ 音频模式配置完成")
-          
+
           // 关键：先设置播放位置，再播放
           if (lastSavedTime > 0) {
             console.log(`⏩ 设置播放位置到历史记录: ${lastSavedTime}秒`)
@@ -252,7 +228,7 @@ export default function VideoPlayerScreen() {
           } else {
             console.log("📍 没有历史记录，从0秒开始播放")
           }
-          
+
           console.log("▶️ 开始播放...")
           await videoRef.current?.playAsync()
           console.log("✅ 自动播放成功")
@@ -262,7 +238,7 @@ export default function VideoPlayerScreen() {
           hasAutoPlayedRef.current = false // 失败后允许重试
         }
       }, 2000) // 增加延迟到2000ms，确保坐姿检测音频焦点完全释放
-      
+
       return () => clearTimeout(timer)
     }
     return undefined
@@ -303,7 +279,7 @@ export default function VideoPlayerScreen() {
       _setTitle(response.course_name)
       setVideoUrl(response.video_url)
       setLoading(false)
-      
+
       // 📊 启动视频观看追踪
       console.log("📊 [活动追踪] 启动视频观看追踪")
       startVideo({
@@ -333,7 +309,7 @@ export default function VideoPlayerScreen() {
       _setTitle(lessonTitle)
       setVideoUrl("/static/video/sample-lesson.mp4")
       setLoading(false)
-      
+
       // 📊 降级情况下也启动追踪
       console.log("📊 [活动追踪] 启动视频观看追踪（降级模式）")
       startVideo({
@@ -373,19 +349,23 @@ export default function VideoPlayerScreen() {
         setIsPlaying(status.isPlaying)
         console.log(`📹 视频播放状态: ${status.isPlaying ? "播放中" : "暂停"}`)
       }
-      
+
       if (currentSeconds !== currentTime) {
         setCurrentTime(currentSeconds)
+        // 更新 store 中的当前播放时间
+        setStoreCurrentTime(currentSeconds)
         console.log(`⏱️ 视频时间更新: ${currentSeconds}秒 / ${durationSeconds}秒`)
-        
+
         // 📊 更新视频播放进度（已内置3秒节流）
         if (status.isPlaying && durationSeconds > 0) {
           updateVideoProgress(currentSeconds, durationSeconds)
         }
       }
-      
+
       if (durationSeconds > 0 && durationSeconds !== totalDuration) {
         setTotalDuration(durationSeconds)
+        // 更新 store 中的总时长
+        setStoreTotalDuration(durationSeconds)
         console.log(`📏 视频总时长: ${durationSeconds}秒`)
       }
 
@@ -402,9 +382,11 @@ export default function VideoPlayerScreen() {
         setShowControls(true)
         setProgressPercent(100)
         setCurrentTime(durationSeconds)
+        // 更新 store 中的当前播放时间
+        setStoreCurrentTime(durationSeconds)
         setShowCompleteTip(true)
         setIsCompleted(true)
-        
+
         // 📊 视频播放结束，发送最终进度
         console.log("📊 [活动追踪] 视频播放结束")
         updateVideoProgress(durationSeconds, durationSeconds)
@@ -424,7 +406,7 @@ export default function VideoPlayerScreen() {
           console.log("⚠️ 应用不在前台，无法播放")
           return
         }
-        
+
         // 🔊 配置音频模式
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
@@ -433,11 +415,13 @@ export default function VideoPlayerScreen() {
           playThroughEarpieceAndroid: false,
           staysActiveInBackground: true,
         })
-        
+
         // 如果视频已播放完成，从头开始播放
         if (currentTime >= totalDuration && totalDuration > 0) {
           await videoRef.current?.setPositionAsync(0)
           setCurrentTime(0)
+          // 更新 store 中的当前播放时间
+          setStoreCurrentTime(0)
           setProgressPercent(0)
           setIsCompleted(false)
           setShowCompleteTip(false)
@@ -521,6 +505,8 @@ export default function VideoPlayerScreen() {
     try {
       videoRef.current.setPositionAsync(seekTime * 1000)
       setCurrentTime(seekTime)
+      // 更新 store 中的当前播放时间
+      setStoreCurrentTime(seekTime)
       setProgressPercent((seekTime / totalDuration) * 100)
     } catch (error) {
       console.error("跳转失败:", error)
@@ -540,7 +526,7 @@ export default function VideoPlayerScreen() {
         console.error("保存学习进度失败:", error)
       })
     }
-    
+
     // 📊 手动退出（虽然组件卸载时会自动调用，但这里提前调用确保发送）
     console.log("📊 [活动追踪] 手动退出视频观看")
     endVideo()
@@ -558,7 +544,7 @@ export default function VideoPlayerScreen() {
         console.log("⚠️ 应用不在前台，无法播放")
         return
       }
-      
+
       // 🔊 配置音频模式
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
@@ -567,11 +553,13 @@ export default function VideoPlayerScreen() {
         playThroughEarpieceAndroid: false,
         staysActiveInBackground: true,
       })
-      
+
       if (videoRef.current) {
         await videoRef.current.setPositionAsync(0)
         await videoRef.current.playAsync()
         setCurrentTime(0)
+        // 更新 store 中的当前播放时间
+        setStoreCurrentTime(0)
         setProgressPercent(0)
         setIsCompleted(false)
       }
@@ -617,126 +605,42 @@ export default function VideoPlayerScreen() {
     setShowControls(newShowControls)
   }
 
-  // ==================== 手势控制 - 快进快退 ====================
-  const screenWidth = Dimensions.get("window").width
-  const screenHeight = Dimensions.get("window").height
 
-  const panResponder = useMemo(() => PanResponder.create({
-      onStartShouldSetPanResponder: () => {
-        // 如果禁止拖拽视频，则不捕获触摸
-        if (!canDragVideoRef.current) {
-          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
-          showError("当前设备禁止拖拽视频进度")
-          return false
-        }
-        return true // ✅ 改为 true，优先捕获触摸
-      },
-      onStartShouldSetPanResponderCapture: () => false,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        // 如果禁止拖拽视频，则不处理手势
-        if (!canDragVideoRef.current) {
-          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
-          showError("当前设备禁止拖拽视频进度")
-          return false
-        }
-        // 只有水平滑动距离 > 10px 时才认为是快进快退手势
-        const shouldHandle = Math.abs(gestureState.dx) > 10
-        console.log(`🎬 手势检测: dx=${gestureState.dx.toFixed(0)}, dy=${gestureState.dy.toFixed(0)}, shouldHandle=${shouldHandle}`)
-        return shouldHandle
-      },
-      onMoveShouldSetPanResponderCapture: (_, gestureState) => {
-        // 如果禁止拖拽视频，则不处理手势
-        if (!canDragVideoRef.current) {
-          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
-          showError("当前设备禁止拖拽视频进度")
-          return false
-        }
-        // 水平滑动优先于垂直滑动
-        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && Math.abs(gestureState.dx) > 10
-      },
-      onPanResponderGrant: () => {
-        // 如果禁止拖拽视频，则直接返回，不开始手势
-        if (!canDragVideoRef.current) {
-          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
-          showError("当前设备禁止拖拽视频进度")
-          return
-        }
-        // 记录滑动开始时的时间位置
-        const currentTimeValue = currentTimeRef.current // ✅ 从 ref 读取最新值
-        seekStartTimeRef.current = currentTimeValue
-        setPreviewTime(currentTimeValue) // 初始化预览时间为当前时间
-        previewTimeRef.current = currentTimeValue // ✅ 同步更新 ref
-        setSeekDelta(0) // 重置偏移量
-        setShowSeekIndicator(true)
-        console.log("🎬 快进快退手势开始，当前时间:", currentTimeValue, "秒，总时长:", totalDurationRef.current, "秒")
-      },
-      onPanResponderMove: (_, gestureState) => {
-        // 如果禁止拖拽视频，则直接返回，不处理移动
-        if (!canDragVideoRef.current) {
-          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
-          showError("当前设备禁止拖拽视频进度")
-          return
-        }
-        const { dx } = gestureState
-        const totalDurationValue = totalDurationRef.current // ✅ 从 ref 读取最新值
+  // ==================== SeekControl 手势释放回调 ====================
+  const handleSeekGestureEnd = useCallback(async (finalTime: number) => {
+    // 如果禁止拖拽视频，则直接返回
+    if (!canDragVideoRef.current) {
+      console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
+      showError("当前设备禁止拖拽视频进度")
+      return
+    }
 
-        // 灵敏度：滑动100px = 10秒
-        // 正数为快进（向右滑），负数为快退（向左滑）
-        const delta = Math.round((dx / 100) * 10)
-        
-        // 计算预览时间（限制在0到总时长之间）
-        const newTime = Math.max(0, Math.min(totalDurationValue, seekStartTimeRef.current + delta))
-        
-        console.log(`🎬 滑动: dx=${dx.toFixed(0)}px, delta=${delta}秒, 开始时间=${seekStartTimeRef.current}秒, 预览时间=${newTime}秒, 总时长=${totalDurationValue}秒, 进度=${totalDurationValue > 0 ? ((newTime / totalDurationValue) * 100).toFixed(1) : 0}%`)
-        
-        setSeekDelta(delta)
-        setPreviewTime(newTime)
-        previewTimeRef.current = newTime // ✅ 同步更新 ref
-      },
-      onPanResponderRelease: async () => {
-        // 如果禁止拖拽视频，则直接返回，不执行跳转
-        if (!canDragVideoRef.current) {
-          console.log("⚠️ 当前设备禁止拖拽视频进度，忽略手势")
-          showError("当前设备禁止拖拽视频进度")
-          // 如果指示器已显示，则隐藏它
-          if (showSeekIndicator) {
-            setShowSeekIndicator(false)
-            setSeekDelta(0)
-          }
-          return
-        }
-        const finalTime = previewTimeRef.current // ✅ 从 ref 读取最新值
-        const totalDurationValue = totalDurationRef.current
-        
-        console.log("🎬 快进快退手势结束，跳转到:", finalTime, "秒")
-        console.log(`🔍 检查条件: videoRef.current=${!!videoRef.current}, totalDuration=${totalDurationValue}, finalTime=${finalTime}`)
-        
-        // 真正跳转到目标时间
-        if (videoRef.current && totalDurationValue > 0) {
-          try {
-            console.log(`🎯 开始执行跳转: ${finalTime * 1000}ms`)
-            await videoRef.current.setPositionAsync(finalTime * 1000)
-            setCurrentTime(finalTime)
-            currentTimeRef.current = finalTime // ✅ 同步更新
-            setProgressPercent((finalTime / totalDurationValue) * 100)
-            console.log(`✅ 视频已跳转到: ${finalTime}秒`)
-          } catch (error) {
-            console.error("❌ 跳转失败:", error)
-          }
-        } else {
-          console.warn(`⚠️ 跳转条件不满足: videoRef=${!!videoRef.current}, totalDuration=${totalDurationValue}`)
-        }
+    const totalDurationValue = totalDurationRef.current
 
-        // 延迟隐藏指示器
-        if (seekTimerRef.current) {
-          clearTimeout(seekTimerRef.current)
-        }
-        seekTimerRef.current = setTimeout(() => {
-          setShowSeekIndicator(false)
-          setSeekDelta(0)
-        }, 500) as any
-      },
-    }), [])
+    console.log("🎬 SeekControl 快进快退手势结束，跳转到:", finalTime, "秒")
+    console.log(`🔍 检查条件: videoRef.current=${!!videoRef.current}, totalDuration=${totalDurationValue}, finalTime=${finalTime}`)
+
+    // 限制最终时间在有效范围内
+    const clampedTime = Math.max(0, Math.min(totalDurationValue, finalTime))
+
+    // 真正跳转到目标时间
+    if (videoRef.current && totalDurationValue > 0) {
+      try {
+        console.log(`🎯 开始执行跳转: ${clampedTime * 1000}ms`)
+        await videoRef.current.setPositionAsync(clampedTime * 1000)
+        setCurrentTime(clampedTime)
+        currentTimeRef.current = clampedTime // ✅ 同步更新
+        // 更新 store 中的当前播放时间
+        setStoreCurrentTime(clampedTime)
+        setProgressPercent((clampedTime / totalDurationValue) * 100)
+        console.log(`✅ 视频已跳转到: ${clampedTime}秒`)
+      } catch (error) {
+        console.error("❌ 跳转失败:", error)
+      }
+    } else {
+      console.warn(`⚠️ 跳转条件不满足: videoRef=${!!videoRef.current}, totalDuration=${totalDurationValue}`)
+    }
+  }, [setStoreCurrentTime])
 
   return (
     <View style={styles.container}>
@@ -755,10 +659,7 @@ export default function VideoPlayerScreen() {
       {/* 视频区域 */}
       <View style={styles.videoMain}>
         {/* 视频容器 */}
-        <View
-          style={styles.videoContainer}
-          {...panResponder.panHandlers}
-        >
+        <View style={styles.videoContainer}>
           <TouchableOpacity
             style={styles.videoTouchArea}
             activeOpacity={1}
@@ -782,7 +683,7 @@ export default function VideoPlayerScreen() {
                 onFullscreenUpdate={(event) => {
                   const { fullscreenUpdate } = event
                   console.log(`📺 [onFullscreenUpdate] 全屏状态更新: ${fullscreenUpdate}`)
-                  
+
                   // 进入全屏: 0 = WILL_PRESENT, 1 = DID_PRESENT
                   if (fullscreenUpdate === 0 || fullscreenUpdate === 1) {
                     console.log("✅ [onFullscreenUpdate] 进入全屏")
@@ -793,7 +694,7 @@ export default function VideoPlayerScreen() {
                     console.log("✅ [onFullscreenUpdate] 退出全屏")
                     setIsFullscreen(false)
                     setShowControls(true)
-                    
+
                     // 恢复沉浸式模式
                     setTimeout(() => {
                       RNStatusBar.setHidden(true, "none")
@@ -830,75 +731,6 @@ export default function VideoPlayerScreen() {
             )}
           </TouchableOpacity>
 
-          {/* ==================== 音量和亮度指示器（已注释）==================== */}
-          {/* {showBrightnessIndicator && (
-            <View style={styles.brightnessIndicator}>
-              <View style={styles.indicatorHeader}>
-                <Ionicons name="sunny" size={rpx(20)} color="#fff" />
-                <Text style={styles.indicatorText}>{Math.round(brightness * 100)}%</Text>
-              </View>
-              <View style={styles.indicatorBarHorizontal}>
-                <View style={styles.indicatorBgHorizontal} />
-                <View
-                  style={[styles.indicatorFillHorizontal, { width: `${brightness * 100}%` }]}
-                />
-              </View>
-            </View>
-          )} */}
-
-          {/* {showVolumeIndicator && (
-            <View style={styles.volumeIndicator}>
-              <View style={styles.indicatorHeader}>
-                <Ionicons
-                  name={volume === 0 ? "volume-mute" : volume < 0.5 ? "volume-low" : "volume-high"}
-                  size={rpx(20)}
-                  color="#fff"
-                />
-                <Text style={styles.indicatorText}>{Math.round(volume * 100)}%</Text>
-              </View>
-              <View style={styles.indicatorBarHorizontal}>
-                <View style={styles.indicatorBgHorizontal} />
-                <View style={[styles.indicatorFillHorizontal, { width: `${volume * 100}%` }]} />
-              </View>
-            </View>
-          )} */}
-
-          {/* 快进快退指示器 - 屏幕中间 */}
-          {showSeekIndicator && (
-            <View style={styles.seekIndicator}>
-              <View style={styles.seekContent}>
-                {/* 图标：快进或快退 */}
-                <Ionicons
-                  name={seekDelta >= 0 ? "play-forward" : "play-back"}
-                  size={rpx(32)}
-                  color="#fff"
-                />
-                
-                {/* 时间变化显示 */}
-                <Text style={styles.seekDeltaText}>
-                  {seekDelta > 0 ? `+${seekDelta}秒` : seekDelta < 0 ? `${seekDelta}秒` : '0秒'}
-                </Text>
-                
-                {/* 预览时间 */}
-                <View style={styles.seekTimeContainer}>
-                  <Text style={styles.seekTimeText}>
-                    {formatTime(previewTime)} / {formatTime(totalDuration)}
-                  </Text>
-                </View>
-                
-                {/* 进度预览条 */}
-                <View style={styles.seekProgressBar}>
-                  <View style={styles.seekProgressBg} />
-                  <View
-                    style={[
-                      styles.seekProgressFill,
-                      { width: `${totalDuration > 0 ? (previewTime / totalDuration) * 100 : 0}%` }
-                    ]}
-                  />
-                </View>
-              </View>
-            </View>
-          )}
         </View>
 
         {/* 视频控制栏 */}
@@ -1000,10 +832,24 @@ export default function VideoPlayerScreen() {
         )}
 
         {/* 音量调节器 */}
-        <VolumeControl style={styles.volumeControl} videoRef={videoRef as any} /> 
+        <VolumeControl 
+          style={styles.volumeControl} 
+          videoRef={videoRef as any} 
+          onGestureNotActivated={handleVideoClick}
+        />
 
         {/* 亮度调节器 */}
-        <BrightnessControl style={styles.brightnessControl} />
+        <BrightnessControl 
+          style={styles.brightnessControl} 
+          onGestureNotActivated={handleVideoClick}
+        />
+
+        {/* 快进快退控制器 */}  
+        <SeekControl 
+          style={styles.seekControl} 
+          onGestureEnd={handleSeekGestureEnd}
+          onGestureNotActivated={handleVideoClick}
+        />
       </View>
     </View>
   )
@@ -1037,8 +883,6 @@ const styles = createStyles({
   video: {
     width: "100%" as const,
     height: "100%" as const,
-    // borderWidth: 1,
-    // borderColor: "red",
   },
   loading: {
     position: "absolute" as const,
@@ -1082,9 +926,9 @@ const styles = createStyles({
   },
   centerPlayBtn: {
     position: "absolute" as const,
-    top: "50%" as const,
-    left: "50%" as const,
-    transform: [{ translateX: -50 }, { translateY: -50 }],
+    top: 'auto' as const,
+    left: 'auto' as const,
+    // transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
     zIndex: 500,
   },
   videoControls: {
@@ -1272,143 +1116,29 @@ const styles = createStyles({
   },
   volumeControl: {
     position: "absolute" as const,
-    top: 0,
-    bottom: 0,
+    top: "auto" as const,
+    bottom: "auto" as const,
     left: 0,
-    width: "12%" as const,
+    width: 93.75, // 240
+    height: 312.5, // 800
     zIndex: 1,
   },
   brightnessControl: {
     position: "absolute" as const,
-    top: 0,
-    bottom: 0,
+    top: "auto" as const,
+    bottom: "auto" as const,
     right: 0,
-    width: "12%" as const,
+    width: 93.75, // 240
+    height: 312.5, // 800
     zIndex: 1,
   },
-  // ==================== 音量和亮度指示器样式（已注释）====================
-  // brightnessIndicator: {
-  //   position: "absolute",
-  //   left: "50%",
-  //   top: "50%",
-  //   transform: [{ translateX: -100 }, { translateY: -30 }],
-  //   backgroundColor: "rgba(0, 0, 0, 0.8)",
-  //   borderRadius: 10,
-  //   paddingHorizontal: 20,
-  //   paddingVertical: 15,
-  //   minWidth: 200,
-  //   zIndex: 900,
-  // },
-  // volumeIndicator: {
-  //   position: "absolute",
-  //   left: "50%",
-  //   top: "50%",
-  //   transform: [{ translateX: -100 }, { translateY: -30 }],
-  //   backgroundColor: "rgba(0, 0, 0, 0.8)",
-  //   borderRadius: 10,
-  //   paddingHorizontal: 20,
-  //   paddingVertical: 15,
-  //   minWidth: 200,
-  //   zIndex: 900,
-  // },
-  // indicatorHeader: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   gap: 0,
-  //   marginBottom: 10,
-  // },
-  // indicatorBarHorizontal: {
-  //   width: "100%",
-  //   height: 6,
-  //   backgroundColor: "rgba(255, 255, 255, 0.3)",
-  //   borderRadius: 3,
-  //   position: "relative",
-  //   overflow: "hidden",
-  // },
-  // indicatorBgHorizontal: {
-  //   position: "absolute",
-  //   left: 0,
-  //   right: 0,
-  //   top: 0,
-  //   bottom: 0,
-  //   backgroundColor: "rgba(255, 255, 255, 0.3)",
-  // },
-  // indicatorFillHorizontal: {
-  //   position: "absolute",
-  //   left: 0,
-  //   top: 0,
-  //   bottom: 0,
-  //   backgroundColor: "#4891FF",
-  //   borderRadius: 3,
-  // },
-  // indicatorText: {
-  //   color: "#fff",
-  //   fontSize: 14,
-  //   fontWeight: "bold" as const,
-  //   minWidth: 40,
-  // },
-  
-  // ==================== 快进快退指示器样式 ====================
-  seekIndicator: {
+  seekControl: {
     position: "absolute" as const,
-    left: "50%" as const,
-    top: "50%" as const,
-    transform: [{ translateX: -120 }, { translateY: -70 }],
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
-    borderRadius: 12,
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    minWidth: 240,
-    zIndex: 900,
-    alignItems: "center" as const,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  seekContent: {
-    alignItems: "center" as const,
-    width: "100%" as const,
-  },
-  seekDeltaText: {
-    color: "#4891FF",
-    fontSize: 24,
-    fontWeight: "bold" as const,
-    marginTop: 12,
-    marginBottom: 8,
-  },
-  seekTimeContainer: {
-    marginVertical: 8,
-  },
-  seekTimeText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "500" as const,
-  },
-  seekProgressBar: {
-    width: "100%" as const,
-    height: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 2,
-    position: "relative" as const,
-    overflow: "hidden" as const,
-    marginTop: 12,
-  },
-  seekProgressBg: {
-    position: "absolute" as const,
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-  },
-  seekProgressFill: {
-    position: "absolute" as const,
-    left: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: "#4891FF",
-    borderRadius: 2,
+    top: "auto" as const,
+    bottom: "auto" as const,
+    left: "auto" as const,
+    right: "auto" as const,
+    width: 562.5, // 1440
+    height: 312.5, // 800
   },
 })
