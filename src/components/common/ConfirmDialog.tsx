@@ -11,7 +11,7 @@ interface ConfirmDialogProps {
   cancelText?: string
   confirmText?: string
   onCancel?: () => void
-  onConfirm?: () => void
+  onConfirm: () => void
   onClose?: () => void
 }
 
@@ -34,7 +34,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   }
 
   const handleConfirm = () => {
-    onConfirm?.()
+    onConfirm()
     onClose?.()
   }
 

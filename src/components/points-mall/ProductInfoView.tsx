@@ -1,13 +1,15 @@
-import React, { useCallback, useEffect, useState, useRef } from "react"
-import { View, Text, Image, ScrollView, TouchableOpacity, FlatList } from "react-native"
+import React, { useCallback, useEffect, useState, useRef, useMemo } from "react"
+import { View, Text, Image, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from "react-native"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { Images } from "../../constants/Assets"
 import { LinearGradient } from "expo-linear-gradient"
 import { getProductDetail, ProductDetailData, PointsItem, ProductImage, AddressItem } from "../../services/pointsMall"
 import ImageWithPlaceholder from "../common/ImageWithPlaceholder"
+import { devError } from "../../services/WebSocketManager"
+import { useProductDetailStore } from "../../stores/points-mall/productDetailStore"
 
 interface ProductInfoViewProps {
-    product?: ProductDetailData | null
+    productId: number | null
     onNext?: () => void
 }
 
@@ -15,11 +17,53 @@ interface ProductInfoViewProps {
  * 商品信息视图组件
  */
 const ProductInfoView: React.FC<ProductInfoViewProps> = ({
-    product,
+    productId,
     onNext,
 }) => {
+    const [product, setProduct] = useState<ProductDetailData | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
-    const detailImages = product?.detail_image || []
+    const [detailImages, setDetailImages] = useState<ProductImage[]>([]);
+    const [loading, setLoading] = useState(false);
+    const loadingRef = useRef<boolean>(false);
+
+    const productName = useProductDetailStore((state) => state.productName);
+    const price = useProductDetailStore((state) => state.price);
+
+    // 请求商品详情
+    const loadProductDetail = useCallback(async () => {
+        if (loadingRef.current) return;
+        loadingRef.current = true;
+        setLoading(true);
+
+        const updateProductInfo = useProductDetailStore.getState().updateProductInfo;
+
+        try {
+            const result = await getProductDetail({ product_id: productId?.toString() ?? '' });
+            if (result) {
+                setProduct(result);
+                setDetailImages(result.detail_image ?? []);
+                // 更新 store 中的商品信息
+                updateProductInfo(
+                    result.name,
+                    result.price,
+                    result.main_image
+                );
+            } else {
+                updateProductInfo(null, null, null);
+            }
+        } catch (error: unknown) {
+            devError("获取商品详情失败:", error);
+            setProduct(null);
+            updateProductInfo(null, null, null);
+        } finally {
+            setLoading(false);
+            loadingRef.current = false;
+        }
+    }, [productId]);
+
+    useEffect(() => {
+        loadProductDetail();
+    }, [loadProductDetail]);
 
     // 处理可见项变化
     const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
@@ -52,6 +96,16 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
     )
 
     const keyExtractor = useCallback((item: ProductImage, index: number) => `detail-image-${item.id || index}`, [])
+
+    // 判断商品 id 是否合法
+    const isProductIdValid = useMemo(() => {
+        return productId !== null && productId !== undefined;
+    }, [productId]);
+
+    // 判断按钮是否可用：商品 id 合法且 loading 为 false
+    const isButtonEnabled = useMemo(() => {
+        return isProductIdValid && !loading;
+    }, [isProductIdValid, loading]);
 
     return (
         <>
@@ -95,38 +149,47 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
 
                 {/* 子视图1：商品信息 */}
                 <View style={styles.productInfoCard}>
-                    {/* 第一行：金额视图和会员标识视图 */}
-                    <View style={styles.firstRow}>
-                        {/* 金额视图 */}
-                        <View style={styles.priceContainer}>
-                            <Image
-                                source={Images.pointsMallPointsIcon}
-                                style={styles.priceIcon}
-                                resizeMode="contain"
-                            />
-                            <Text style={styles.priceText}>{String(product?.price ?? 0)}</Text>
+                    {loading ? (
+                        // Loading 占位
+                        <View style={styles.productInfoPlaceholder}>
+                            <ActivityIndicator size="large" color="#FF9822" />
                         </View>
-                        {/* 会员标识视图 */}
-                        {/* {isMember && (
-                            <View style={styles.memberBadge}>
-                                <Image
-                                    source={Images.pointsMallMemberBadge}
-                                    style={styles.memberIcon}
-                                    resizeMode="contain"
-                                />
-                                <Text style={styles.memberText}>会员</Text>
+                    ) : (
+                        <>
+                            {/* 第一行：金额视图和会员标识视图 */}
+                            <View style={styles.firstRow}>
+                                {/* 金额视图 */}
+                                <View style={styles.priceContainer}>
+                                    <Image
+                                        source={Images.pointsMallPointsIcon}
+                                        style={styles.priceIcon}
+                                        resizeMode="contain"
+                                    />
+                                    <Text style={styles.priceText}>{String(price)}</Text>
+                                </View>
+                                {/* 会员标识视图 */}
+                                {/* {isMember && (
+                                    <View style={styles.memberBadge}>
+                                        <Image
+                                            source={Images.pointsMallMemberBadge}
+                                            style={styles.memberIcon}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.memberText}>会员</Text>
+                                    </View>
+                                )} */}
                             </View>
-                        )} */}
-                    </View>
-                    {/* 第二行：商品名称和想要人数 */}
-                    <View style={styles.secondRow}>
-                        <Text style={styles.productName} numberOfLines={1}>
-                            {String(product?.name ?? '')}
-                        </Text>
-                        {product?.heat && product?.heat > 0 ? (
-                            <Text style={styles.heatText}>{String(product?.heat)}人想要</Text>
-                        ) : null}
-                    </View>
+                            {/* 第二行：商品名称和想要人数 */}
+                            <View style={styles.secondRow}>
+                                <Text style={styles.productName} numberOfLines={1}>
+                                    {productName}
+                                </Text>
+                                {product?.heat && product?.heat > 0 ? (
+                                    <Text style={styles.heatText}>{String(product?.heat)}人想要</Text>
+                                ) : null}
+                            </View>
+                        </>
+                    )}
                 </View>
 
                 {/* 子视图2：使用方法 */}
@@ -210,17 +273,20 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
             {/* 下一步按钮 */}
             {onNext && (
                 <TouchableOpacity
-                    style={styles.nextButton}
-                    activeOpacity={0.8}
-                    onPress={onNext}
+                    style={[styles.nextButton, !isButtonEnabled && styles.nextButtonDisabled]}
+                    activeOpacity={isButtonEnabled ? 0.8 : 1}
+                    onPress={isButtonEnabled ? onNext : undefined}
+                    disabled={!isButtonEnabled}
                 >
                     <LinearGradient
-                        colors={['#FFDCBC', '#FFBB7B']}
+                        colors={isButtonEnabled ? ['#FFDCBC', '#FFBB7B'] : ['#CCCCCC', '#999999']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={styles.nextButtonGradient}
                     >
-                        <Text style={styles.nextButtonText}>立即兑换</Text>
+                        <Text style={[styles.nextButtonText, !isButtonEnabled && styles.nextButtonTextDisabled]}>
+                            立即兑换
+                        </Text>
                     </LinearGradient>
                 </TouchableOpacity>
             )}
@@ -355,6 +421,12 @@ const styles = createStyles({
         fontSize: 11.71875, // 30
         color: "#000000CC",
     },
+    productInfoPlaceholder: {
+        width: "100%" as const,
+        height: "100%" as const,
+        justifyContent: "center" as const,
+        alignItems: "center" as const,
+    },
     heatText: {
         fontFamily: "PingFang SC",
         fontWeight: "300" as const,
@@ -459,6 +531,12 @@ const styles = createStyles({
         fontWeight: "bold" as const,
         fontSize: 12.5, // 32
         color: "#743A14",
+    },
+    nextButtonDisabled: {
+        opacity: 0.6,
+    },
+    nextButtonTextDisabled: {
+        color: "#999999",
     },
 })
 

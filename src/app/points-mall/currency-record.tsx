@@ -88,6 +88,15 @@ export default function CurrencyRecordScreen() {
         .shouldCancelWhenOutside(true)
         .failOffsetY([-10, 10]);
 
+    const handleChevronBack = useCallback(() => {
+        if (router.canGoBack?.()) {
+            router.back()
+        } else {
+            // 如果不能返回，导航到首页
+            router.navigate("/(tabs)/points-mall")
+        }
+    }, [router])
+
     return (
         <LinearGradient
             colors={['#FFE7CD', '#F7F7F7']}
@@ -99,7 +108,7 @@ export default function CurrencyRecordScreen() {
 
             {/* 顶部导航 */}
             <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} onPress={() => router.back()} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.backButton} onPress={handleChevronBack} activeOpacity={0.7}>
                     <Ionicons name="chevron-back" size={rpx(17.1875)} color="#FF9000" />
                 </TouchableOpacity>
                 <Text style={styles.title}>货币记录</Text>
@@ -130,14 +139,14 @@ export default function CurrencyRecordScreen() {
                 {/* 内容分页 */}
                 <View style={styles.pagerOuter} onLayout={onLayoutPager}>
                     {/* <GestureDetector gesture={panGesture}> */}
-                        <Animated.View style={[styles.pagerTrack, pagerStyle]}>
-                            <View style={styles.page}>
-                                <PointsDetail />
-                            </View>
-                            <View style={styles.page}>
-                                <ExchangeRecords />
-                            </View>
-                        </Animated.View>
+                    <Animated.View style={[styles.pagerTrack, pagerStyle]}>
+                        <View style={styles.page}>
+                            <PointsDetail />
+                        </View>
+                        <View style={styles.page}>
+                            <ExchangeRecords />
+                        </View>
+                    </Animated.View>
                     {/* </GestureDetector> */}
                 </View>
             </View>

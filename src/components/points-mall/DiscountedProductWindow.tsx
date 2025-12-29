@@ -4,8 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { createStyles, rpx } from '../../utils/rpxStyleSheet';
 import { Images } from '../../constants/Assets';
 import { getDiscountProductList, type DiscountProduct } from '../../services/pointsMall';
-import { useUserStore } from '../../stores/userStore';
-import { showError } from '../../utils/toast';
 import ImageWithPlaceholder from '../common/ImageWithPlaceholder';
 
 interface DiscountedProductWindowProps {
@@ -19,17 +17,10 @@ const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style
     const loadingRef = useRef(false);
 
     const fetchProducts = useCallback(async () => {
-        // 使用 loadingRef 保证幂等
+        // 保证幂等
         if (loadingRef.current) {
             return;
         }
-
-        const token = useUserStore.getState().token;
-        if (!token) {
-            console.log('未找到token，跳过折扣商品获取');
-            return;
-        }
-
         loadingRef.current = true;
         setLoading(true);
 
@@ -38,10 +29,9 @@ const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style
             const items = res.discount_products ?? [];
             // 只取前5个
             setProducts(items.slice(0, 5));
-            console.log('获取折扣商品成功:', items.slice(0, 5));    
+            // console.log('获取折扣商品成功:', items.slice(0, 5));    
         } catch (error) {
-            console.error('获取折扣商品失败:', error);
-            showError('获取折扣商品失败，请重试');
+            // console.error('获取折扣商品失败:', error);
         } finally {
             loadingRef.current = false;
             setLoading(false);
@@ -50,7 +40,7 @@ const DiscountedProductWindow: React.FC<DiscountedProductWindowProps> = ({ style
 
     useEffect(() => {
         fetchProducts();
-    }, [fetchProducts]);
+    }, []);
 
     return (
         <LinearGradient

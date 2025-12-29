@@ -1,81 +1,240 @@
-import React, { useState, useCallback } from "react"
-import { View, Text, ScrollView, TouchableOpacity, Clipboard } from "react-native"
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react"
+import { View, Text, FlatList, TouchableOpacity, Clipboard, RefreshControl, ActivityIndicator } from "react-native"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { LinearGradient } from "expo-linear-gradient"
-import { AddressItem, addAddress, updateAddress, deleteAddress, AddAddressParams, UpdateAddressParams, DeleteAddressParams } from "@/services/pointsMall"
+import { AddressItem, addAddress, updateAddress, deleteAddress, AddAddressParams, UpdateAddressParams, getAddressList, setAddressDefault } from "@/services/pointsMall"
 import { Ionicons } from "@expo/vector-icons"
-import AddressAddOrEditorPopup from "./AddressAddOrEditorPopup"
-import ConfirmDialog from "./ConfirmDialog"
+import AddressAddOrEditorPopup, { type AddressAddOrEditorPopupRef } from "./AddressAddOrEditorPopup"
+import DeleteAddressDialog, { type DeleteAddressDialogRef } from "./DeleteAddressDialog"
 import { showError, showSuccess } from "@/utils/toast"
-import { Snackbar, Portal } from "react-native-paper"
+import { devError } from "../../services/WebSocketManager"
+import { useProductDetailStore } from "../../stores/points-mall/productDetailStore"
 
 /**
  * 收货地址信息视图组件
  */
 
 interface ShippingAddressProps {
-  addressList: AddressItem[]
-  onSelectAddress: (address: AddressItem) => void
-  onRefresh?: () => void
+  onPrevious?: () => void
 }
 
-const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSelectAddress, onRefresh }) => {
-  const [addVisible, setAddVisible] = useState(false)
-  const [address, setAddress] = useState<AddressItem | null>(null)
-  const [deleteVisible, setDeleteVisible] = useState(false)
-  const [deletingAddress, setDeletingAddress] = useState<AddressItem | null>(null)
+const ShippingAddressView: React.FC<ShippingAddressProps> = ({ onPrevious }) => {
+  const [addressList, setAddressList] = useState<AddressItem[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const loadingRef = useRef<boolean>(false);
+  const addressAddOrEditorPopupRef = useRef<AddressAddOrEditorPopupRef>(null);
+  const deleteAddressDialogRef = useRef<DeleteAddressDialogRef>(null);
 
-  const copyAddress = (address: AddressItem) => {
-    const addressText = `${address.receiver_name} ${address.phone} ${address.province}${address.city}${address.district}${address.detail_address}`
+  // 加载地址列表
+  const loadAddressList = useCallback(async () => {
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+    setLoading(true);
+
+    const setDefaultAddress = useProductDetailStore.getState().setDefaultAddress;
 
     try {
-      Clipboard.setString(addressText)
-      showSuccess("地址已复制");
-    } catch (_error) {
-      showError("复制失败");
+      const result = await getAddressList();
+      setAddressList(result ?? []);
+      const defaultAddress = (result ?? []).find(item => item.is_default) ?? (result ?? [null])[0];
+      setDefaultAddress(defaultAddress);
+    } catch (error: unknown) {
+      devError("获取地址列表失败:", error);
+      setAddressList([]);
+      setDefaultAddress(null);
+    } finally {
+      setLoading(false);
+      loadingRef.current = false;
     }
-  }
+  }, []);
+
+  // 刷新方法
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadAddressList();
+    setRefreshing(false);
+  }, [loadAddressList]);
+
+  // 设置默认地址
+  const updateDefaultAddress = useCallback(async (id: number) => {
+    try {
+      await setAddressDefault({ id: id.toString() });
+      await loadAddressList();
+      onPrevious?.();
+    } catch (error: unknown) {
+      devError("设置默认地址失败:", error);
+    }
+  }, [loadAddressList, onPrevious]);
+
+  // 处理点击选择收货地址
+  const handleSelectAddress = useCallback(async (address: AddressItem) => {
+    await updateDefaultAddress(address.id);
+  }, [updateDefaultAddress]);
 
   // 新增收货地址
   const handleAddAddress = useCallback(async (params: AddAddressParams) => {
     try {
-      await addAddress(params)
-      showSuccess("新增地址成功")
-      onRefresh?.()
-      // setAddress(null)
-    } catch (error) {
-      console.error("新增地址失败:", error)
-      // showError("新增地址失败，请重试")
-      throw error
+      await addAddress(params);
+      showSuccess("新增地址成功");
+      await loadAddressList();
+    } catch (error: unknown) {
+      devError("新增地址失败:", error);
     }
-  }, [onRefresh])
+  }, [loadAddressList]);
 
   // 修改收货地址
   const handleUpdateAddress = useCallback(async (params: UpdateAddressParams) => {
     try {
-      await updateAddress(params)
-      showSuccess("修改地址成功")
-      onRefresh?.()
-      // setAddress(null)
-    } catch (error) {
-      console.error("修改地址失败:", error)
-      // showError("修改地址失败，请重试")
-      throw error
+      await updateAddress(params);
+      showSuccess("修改地址成功");
+      await loadAddressList();
+    } catch (error: unknown) {
+      devError("修改地址失败:", error);
     }
-  }, [onRefresh])
+  }, [loadAddressList]);
 
   // 删除收货地址
   const handleDeleteAddress = useCallback(async (addressId: number) => {
     try {
-      await deleteAddress({ address_id: addressId })
-      showSuccess("删除地址成功")
-      onRefresh?.()
-      setAddress(null)
-    } catch (error) {
-      console.error("删除地址失败:", error)
-      showError("删除地址失败，请重试")
+      await deleteAddress({ address_id: addressId });
+      showSuccess("删除地址成功");
+      await loadAddressList();
+    } catch (error: unknown) {
+      devError("删除地址失败:", error);
     }
-  }, [onRefresh])
+  }, [loadAddressList]);
+
+  // 复制地址
+  const handleCopyAddress = useCallback((address: AddressItem) => {
+    const addressText = `${address.receiver_name} ${address.phone} ${address.province}${address.city}${address.district}${address.detail_address}`;
+
+    try {
+      Clipboard.setString(addressText);
+      showSuccess("地址已复制");
+    } catch (error: unknown) {
+      devError("复制地址失败:", error);
+      showError("复制地址失败");
+    }
+  }, []);
+
+  // 编辑地址
+  const handleEditAddress = useCallback((address: AddressItem) => {
+    addressAddOrEditorPopupRef.current?.show(address);
+  }, []);
+
+  // 删除地址
+  const handleDeleteAddressClick = useCallback((addressId: number) => {
+    deleteAddressDialogRef.current?.show(addressId);
+  }, []);
+
+  // 新增地址
+  const handleAddNewAddress = useCallback(() => {
+    addressAddOrEditorPopupRef.current?.show(null);
+  }, []);
+
+  // keyExtractor
+  const keyExtractor = useCallback((item: AddressItem) => {
+    return `address-${item.id}`;
+  }, []);
+
+  // renderItem
+  const renderItem = useCallback(({ item }: { item: AddressItem }) => {
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.85}
+        onPress={() => handleSelectAddress(item)}
+      >
+        <View style={styles.cardMain}>
+          <View style={styles.nameRow}>
+            <Text style={styles.name} numberOfLines={1}>{item.receiver_name}</Text>
+            <Text style={styles.phone}>{item.phone}</Text>
+          </View>
+          <Text style={styles.address} numberOfLines={2}>
+            {item.province}
+            {item.city}
+            {item.district}
+            {item.detail_address}
+          </Text>
+        </View>
+        <View style={styles.divider} />
+        <View style={styles.cardFooter}>
+          <View style={styles.footerActions}>
+            <TouchableOpacity
+              style={styles.actionItem}
+              activeOpacity={0.8}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleCopyAddress(item);
+              }}>
+              <Ionicons name="copy-outline" size={rpx(12.5)} color="#666" />
+              <Text style={styles.actionText}>复制</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionItem}
+              activeOpacity={0.8}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleEditAddress(item);
+              }}>
+              <Ionicons name="create-outline" size={rpx(12.5)} color="#666" />
+              <Text style={styles.actionText}>编辑</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionItem}
+              activeOpacity={0.8}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleDeleteAddressClick(item.id);
+              }}>
+              <Ionicons name="trash-outline" size={rpx(12.5)} color="#666" />
+              <Text style={styles.actionText}>删除</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }, [handleSelectAddress, handleCopyAddress, handleEditAddress, handleDeleteAddressClick]);
+
+  // refreshControl
+  const refreshControl = useMemo(() => {
+    return (
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+      />
+    );
+  }, [refreshing, handleRefresh]);
+
+  // ListEmptyComponent
+  const listEmptyComponent = useMemo(() => {
+    return (
+      <View style={styles.emptyState}>
+        <Text style={styles.emptyText}>暂无收货地址</Text>
+      </View>
+    );
+  }, []);
+
+  // ListFooterComponent
+  const listFooterComponent = useMemo(() => {
+    if (loading) {
+      return (
+        <View style={styles.footerState}>
+          <ActivityIndicator size="small" color="#999" />
+        </View>
+      );
+    }
+    return addressList.length > 0 ? (
+      <View style={styles.footerState}>
+        <Text style={styles.footerText}>没有更多了</Text>
+      </View>
+    ) : null;
+  }, [loading, addressList.length]);
+
+  useEffect(() => {
+    loadAddressList();
+  }, [loadAddressList]);
 
   return (
     <>
@@ -83,82 +242,23 @@ const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSe
         <Text style={styles.titleText}>收货地址</Text>
       </View>
       <View style={styles.container}>
-        <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={false}>
-          {addressList.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.card}
-              activeOpacity={0.85}
-              onPress={() => onSelectAddress(item)}
-            >
-              <View style={styles.cardMain}>
-                <View style={styles.nameRow}>
-                  <Text style={styles.name} numberOfLines={1}>{item.receiver_name}</Text>
-                  <Text style={styles.phone}>{item.phone}</Text>
-                </View>
-                <Text style={styles.address} numberOfLines={2}>
-                  {item.province}
-                  {item.city}
-                  {item.district}
-                  {item.detail_address}
-                </Text>
-              </View>
-              <View style={styles.divider} />
-              <View style={styles.cardFooter}>
-                <View style={styles.footerActions}>
-                  <TouchableOpacity
-                    style={styles.actionItem}
-                    activeOpacity={0.8}
-                    onPress={(e) => {
-                      e.stopPropagation()
-                      copyAddress(item)
-                    }}>
-                    <Ionicons name="copy-outline" size={rpx(12.5)} color="#666" />
-                    <Text style={styles.actionText}>复制</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.actionItem}
-                    activeOpacity={0.8}
-                    onPress={(e) => {
-                      e.stopPropagation()
-                      // 启动新增编辑地址弹窗, 并赋值地址
-                      setAddVisible(true)
-                      setAddress(item)
-                    }}>
-                    <Ionicons name="create-outline" size={rpx(12.5)} color="#666" />
-                    <Text style={styles.actionText}>编辑</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.actionItem}
-                    activeOpacity={0.8}
-                    onPress={(e) => {
-                      e.stopPropagation()
-                      // 弹出删除弹窗确认框
-                      setDeletingAddress(item)
-                      setDeleteVisible(true)
-                    }}>
-                    <Ionicons name="trash-outline" size={rpx(12.5)} color="#666" />
-                    <Text style={styles.actionText}>删除</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-          {addressList.length === 0 && (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>暂无收货地址</Text>
-            </View>
-          )}
-        </ScrollView>
+        <FlatList
+          data={addressList}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
+          // onEndReached={handleLoadMore} // 暂时不做加载更多方法，该属性注释，列表始终为空项或者没有更多，loadAddressList会一次性获取所有数据
+          // onEndReachedThreshold={0.1}
+          ListEmptyComponent={listEmptyComponent}
+          ListFooterComponent={listFooterComponent}
+        />
       </View>
       {/* 新增按钮 */}
       <TouchableOpacity
         style={styles.nextButton}
         activeOpacity={0.8}
-        onPress={() => {
-          setAddVisible(true);
-          setAddress(null);
-        }}
+        onPress={handleAddNewAddress}
       >
         <LinearGradient
           colors={['#FFDCBC', '#FFBB7B']}
@@ -172,37 +272,15 @@ const ShippingAddressView: React.FC<ShippingAddressProps> = ({ addressList, onSe
 
       {/* 新增/编辑地址弹窗 */}
       <AddressAddOrEditorPopup
-        visible={addVisible}
-        address={address}
-        onClose={() => setAddVisible(false)}
-        onSuccess={() => { }}
+        ref={addressAddOrEditorPopupRef}
         onAddAddress={handleAddAddress}
         onUpdateAddress={handleUpdateAddress}
       />
 
       {/* 删除地址确认弹窗 */}
-      <ConfirmDialog
-        visible={deleteVisible}
-        title="确认删除地址吗?"
-        // content="删除后将无法找回，请谨慎操作"
-        confirmText="确定"
-        cancelText="取消"
-        onClose={() => {
-          setDeleteVisible(false)
-          setDeletingAddress(null)
-        }}
-        onConfirm={() => {
-          if (deletingAddress) {
-            handleDeleteAddress(deletingAddress.id)
-          }
-          onRefresh?.()
-          setDeleteVisible(false)
-          setDeletingAddress(null)
-        }}
-        onCancel={() => {
-          setDeleteVisible(false)
-          setDeletingAddress(null)
-        }}
+      <DeleteAddressDialog
+        ref={deleteAddressDialogRef}
+        onDeleteAddress={handleDeleteAddress}
       />
     </>
   )
@@ -216,10 +294,6 @@ const styles = createStyles({
     paddingTop: 39.84375, // 102
     gap: 7.8125, // 20
     backgroundColor: "#F5F5F5" as const,
-  },
-  scrollArea: {
-    width: "100%" as const,
-    flex: 1,
   },
   card: {
     width: '100%' as const,
@@ -298,6 +372,15 @@ const styles = createStyles({
   },
   emptyText: {
     fontSize: 11.71875,
+    color: "#999",
+  },
+  footerState: {
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    paddingVertical: 15.625, // 40
+  },
+  footerText: {
+    fontSize: 10.15625, // 26
     color: "#999",
   },
   headerContainer: {

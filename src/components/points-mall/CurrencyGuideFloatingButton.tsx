@@ -12,7 +12,7 @@ interface CurrencyGuideFloatingButtonProps {
 const CurrencyGuideFloatingButton: React.FC<CurrencyGuideFloatingButtonProps> = ({ onPress, style }) => {
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={0.9}
       onPress={onPress}
       style={[styles.container, style]}
     >
@@ -37,6 +37,7 @@ const styles = createStyles({
   container: {
     width: 56.25, // 144
     height: 62.109375, // 159
+    borderRadius: 11.71875, // 30
     shadowColor: '#984700',
     shadowOffset: {
       width: 1.5625, // 4
@@ -45,15 +46,16 @@ const styles = createStyles({
     shadowOpacity: 0.25, // 25%
     shadowRadius: 10.0390625, // 25.7px
     elevation: 8,
+    overflow: 'hidden' as const,
+    backgroundColor: '#FFFFFF',
   },
   gradient: {
     width: '100%' as const,
-    minHeight: 62.109375, // 159px
-    borderRadius: 11.71875, // 30px
-    paddingTop: 7.8125, // 20px
-    paddingRight: 9.375, // 24px
-    paddingBottom: 7.8125, // 20px
-    paddingLeft: 9.375, // 24px
+    minHeight: 62.109375, // 159
+    paddingTop: 7.8125, // 20
+    paddingRight: 9.375, // 24
+    paddingBottom: 7.8125, // 20
+    paddingLeft: 9.375, // 24
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
   },

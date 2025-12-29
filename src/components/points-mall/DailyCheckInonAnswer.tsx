@@ -1,17 +1,18 @@
-import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react';
 import { View, Text, Image, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { createStyles } from '../../utils/rpxStyleSheet';
 import { Images } from '../../constants/Assets';
 import { getDailyCheckInExercise, addDailydPoints, DailyCheckInExerciseData, Question, Statistics, Options } from '../../services/pointsMall';
-import { showError, showInfo, showSuccess } from '../../utils/toast';
+import { showError, showSuccess } from '../../utils/toast';
 import { getDeviceCode, getDeviceInfoForAPI } from '../../utils/deviceInfo';
+import { devError } from '@/services/WebSocketManager';
 
 
 interface DailyCheckInOnAnswerProps {
     visible: boolean;
     points: number;
-    onClose?: () => void;
+    onClose?: (points: number) => void;
 }
 
 const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, points, onClose }) => {
@@ -20,7 +21,7 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
     const [correctCount, setCorrectCount] = useState(0);
     const [answerOptions, setAnswerOptions] = useState<string[]>(Array.from({ length: 5 }, (_, index) => ''));
     const [loading, setLoading] = useState(false);
-
+    const loadingRef = useRef(false);
     // 答对题目数展示字符
     const correctCountText = useMemo(() => {
         // 返回数字前补零2位
@@ -29,17 +30,20 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
 
     // 每日打卡练习题数据
     const getDailyCheckInExerciseData = useCallback(async () => {
+        // 保证幂等
+        if (loadingRef.current) return;
+        loadingRef.current = true;
         setLoading(true);
         try {
             const data: DailyCheckInExerciseData = await getDailyCheckInExercise();
             setQuestions(data.questions ?? []);
-            console.log('获取每日打卡练习题数据成功', data);
+            // console.log('获取每日打卡练习题数据成功', data);
         } catch (error: unknown) {
-            console.error('获取每日打卡练习题数据失败:', error);
-            showError('获取每日打卡练习题数据失败');
+            devError('获取每日打卡练习题数据失败:', error);
             setQuestions([]);
         } finally {
             setLoading(false);
+            loadingRef.current = false;
         }
     }, []);
 
@@ -47,41 +51,38 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
         if (questions && questions.length > 0 && currentQuestionIndex > 0) {
             setCurrentQuestionIndex((prev) => prev - 1);
         }
-        return;
-    }, [currentQuestionIndex]);
+    }, [currentQuestionIndex, questions, questions.length]);
 
     const onPressRightButton = useCallback(async () => {
         if (questions && questions.length > 0 && currentQuestionIndex >= 0 && currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
         } else if (currentQuestionIndex === questions.length - 1) {
-            // showInfo('已经是最后一题');
+            // 提交
             await handleAddDailyPoints();
-            onClose?.();
+            onClose?.(points);
         }
-        return;
-    }, [currentQuestionIndex, questions.length]);
+    }, [currentQuestionIndex, questions.length, points, onClose]);
 
     const handleAddDailyPoints = useCallback(async () => {
         try {
             const deviceInfo = await getDeviceInfoForAPI();
-            console.log('添加每日打卡练习题积分，设备ID:', deviceInfo.device_code, '积分:', points);
+            // console.log('添加每日打卡练习题积分，设备ID:', deviceInfo.device_code, '积分:', points);
             await addDailydPoints({
                 devices: deviceInfo.device_code,
                 points: points.toString(),
                 "points_type": "daily"
             });
-            console.log('添加每日打卡练习题积分成功');
-            showSuccess('打卡成功，获得积分：' + points.toString());
+            // console.log('添加每日打卡练习题积分成功');
+            // showSuccess('打卡成功，获得积分：' + points.toString());
         } catch (error: unknown) {
-            console.error('添加每日打卡练习题积分失败:', error);
-            showError('添加每日打卡练习题积分失败');
+            devError('添加每日打卡练习题积分失败:', error);
         }
     }, [points]);
 
     
     useEffect(() => {
         if (visible) {
-            console.log('DailyCheckInOnAnswer useEffect', visible);
+            // console.log('DailyCheckInOnAnswer useEffect', visible);
             getDailyCheckInExerciseData();
         }
     }, [visible]);
@@ -91,7 +92,7 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
             visible={visible}
             transparent
             animationType="fade"
-            onRequestClose={onClose}
+            onRequestClose={() => onClose?.(points)}
         >
             <View style={styles.modalOverlay}>
                 {/* 点击背景关闭 */}
@@ -99,7 +100,7 @@ const DailyCheckInOnAnswer: React.FC<DailyCheckInOnAnswerProps> = ({ visible, po
                     style={styles.backdrop}
                     activeOpacity={1}
                     disabled={questions && questions.length > 0}
-                    onPress={onClose}
+                    onPress={() => onClose?.(points)}
                 />
 
                 {/* 内容容器 */}

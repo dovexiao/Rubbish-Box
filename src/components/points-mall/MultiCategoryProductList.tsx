@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, ActivityIndicator, StyleProp, ViewStyle } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { createStyles, rpx } from '../../utils/rpxStyleSheet';
@@ -6,7 +6,6 @@ import { Images } from '../../constants/Assets';
 import { CategoryItem, getMallList, MallListParams, type ProductItem } from '../../services/pointsMall';
 import { useUserStore } from '../../stores/userStore';
 import { showError } from '../../utils/toast';
-import { Ionicons } from '@expo/vector-icons';
 import ImageWithPlaceholder from '../common/ImageWithPlaceholder';
 
 interface MultiCategoryProductListProps {
@@ -17,11 +16,22 @@ interface MultiCategoryProductListProps {
     onScroll?: (event: any) => void;
 }
 
-const DEFAULT_CATEGORIES = ['热点推荐', '积分可兑', '学习文具', '亲子娱乐'];
+const DEFAULT_CATEGORIES = ['热点推荐', '货币可兑', '学习文具', '亲子娱乐'];
 
 const TAB_WIDTH = 140;
 const TAB_GAP = 60;
 const TAB_STEP = TAB_WIDTH + TAB_GAP;
+const NUM_COLUMNS = 6;
+
+// 补齐数组到指定倍数的辅助函数
+const padToMultiple = <T,>(array: T[], multiple: number): (T | null)[] => {
+    const remainder = array.length % multiple;
+    if (remainder === 0) {
+        return array;
+    }
+    const paddingCount = multiple - remainder;
+    return [...array, ...Array(paddingCount).fill(null)];
+};
 
 const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
     pageSize = 18,
@@ -31,10 +41,10 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
     onScroll,
 }) => {
     const [activeCategory, setActiveCategory] = useState(0);
-    const [categories, setCategories] = useState<number[]>([]); // 商品有分类的分类ID列表
+    const [categories, setCategories] = useState<CategoryItem[]>([]); // 商品有分类的分类ID列表
     const indicatorTranslateX = useSharedValue(0);
 
-    const [products, setProducts] = useState<ProductItem[]>([]);
+    const [products, setProducts] = useState<(ProductItem | null)[]>([]);
     const [loadingMore, setLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const isLoadingRef = useRef(false);
@@ -43,7 +53,7 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
 
     useEffect(() => {
         indicatorTranslateX.value = withTiming(activeCategory * rpx(TAB_STEP * 750 / 1920), { duration: 200 });
-    }, [activeCategory, indicatorTranslateX]);
+    }, [activeCategory]);
 
     const indicatorStyle = useAnimatedStyle(() => ({
         transform: [{ translateX: indicatorTranslateX.value }],
@@ -68,7 +78,14 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
             } as MallListParams;
 
             if (categories && categories.length > 0 && (activeCategory === 2 || activeCategory === 3)) {
-                params.category = categories[activeCategory - 2] ?? 0;
+                const categoryName = DEFAULT_CATEGORIES[activeCategory];
+                const matchedCategory = categories.find(category => category.name === categoryName);
+                if (matchedCategory) {
+                    params.category = matchedCategory.id;
+                } else {
+                    params.category = 0;
+                    console.error('未找到分类:', categoryName);
+                }
             }
 
             if (activeCategory === 1) {
@@ -78,13 +95,25 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
 
             // 以上，如果activeCategory为1，则获取积分可兑的商品列表，否则获取其他分类的商品列表，默认获取所有分类的商品列表
 
+            // console.log('多类商品列表请求参数:', params);
+
             const res = await getMallList(params);
 
+            console.log('多类商品列表响应数据:', res.items, res.categories);
+
             const items = res.items ?? [];
+            
             if (currentPage === 1) {
-                setProducts(items);
+                // 补齐到 6 的倍数
+                const paddedItems = padToMultiple(items, NUM_COLUMNS);
+                setProducts(paddedItems);
             } else {
-                setProducts((prev) => [...prev, ...items]);
+                // 加载更多时，先移除之前的占位符，再添加新数据并补齐
+                setProducts((prev) => {
+                    const prevWithoutPlaceholders = prev.filter(item => item !== null) as ProductItem[];
+                    const newItems = [...prevWithoutPlaceholders, ...items];
+                    return padToMultiple(newItems, NUM_COLUMNS);
+                });
             }
 
             const hasNext = res.pagination?.has_next ?? false;
@@ -92,7 +121,7 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
             setHasMore(hasNext);
 
             if (res.categories && res.categories.length > 0) {
-                setCategories(res.categories.map((category: CategoryItem) => category.id));
+                setCategories(res.categories);
             }
 
             if (hasNext) {
@@ -105,7 +134,7 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
             isLoadingRef.current = false;
             setLoadingMore(false);
         }
-    }, [pageSize]);
+    }, [pageSize, activeCategory, categories]);
 
     const switchCategory = useCallback(
         (index: number) => {
@@ -123,14 +152,26 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
         if (hasMoreRef.current && !isLoadingRef.current) {
             fetchProducts();
         }
-    }, []);
+    }, [fetchProducts]);
 
     useEffect(() => {
         fetchProducts();
     }, [activeCategory]);
 
+    const keyExtractor = useCallback((item: ProductItem | null, index: number) => {
+        if (item === null) {
+            return `placeholder-${index}`;
+        }
+        return `product-${item.id}-${index}`;
+    }, []);
+
     const renderItem = useCallback(
-        ({ item }: { item: ProductItem }) => {
+        ({ item }: { item: ProductItem | null }) => {
+            // 空项占位符
+            if (item === null) {
+                return <View style={styles.placeholderCard} />;
+            }
+            
             // const hasImage = !!item.image;
             return (
                 <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={() => {
@@ -166,10 +207,8 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                 </TouchableOpacity>
             );
         },
-        [],
+        [onProductClick],
     );
-
-    const keyExtractor = useCallback((item: ProductItem, index: number) => `product-${item.id}-${index}`, []);
 
     return (
         <View style={[styles.container, style]}>
@@ -195,7 +234,7 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
             <FlatList
                 data={products}
                 keyExtractor={keyExtractor}
-                numColumns={6}
+                numColumns={NUM_COLUMNS}
                 contentContainerStyle={styles.listContent}
                 columnWrapperStyle={styles.columnWrapper}
                 renderItem={renderItem}
@@ -304,6 +343,10 @@ const styles = createStyles({
         shadowOpacity: 1,
         elevation: 10,
         alignItems: 'center' as const,
+    },
+    placeholderCard: {
+        width: 84.375, // 216
+        height: 116.796875, // 299
     },
     productImage: {
         width: 78.125, // 200

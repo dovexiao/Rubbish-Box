@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useEffect, useCallback, useImperativeHandle, forwardRef, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import { createStyles, rpx } from '../../utils/rpxStyleSheet';
 import { Images } from '../../constants/Assets';
 import { getPointsBalance, type PointsBalanceData } from '../../services/pointsMall';
-import { useUserStore } from '../../stores/userStore';
+import { devError } from '@/services/WebSocketManager';
 
 interface CurrencyAmountProps {
   onPress?: () => void;
@@ -19,30 +19,29 @@ export type CurrencyAmountRef = {
 const CurrencyAmount = forwardRef<CurrencyAmountRef, CurrencyAmountProps>(({ onPress, style }, ref) => {
   // 展示金额的状态定义
   const [pointsBalance, setPointsBalance] = useState<number>(0);
+  const loadingRef = useRef(false);
 
   // 展示金额获取函数封装
   const fetchPointsBalance = useCallback(async () => {
-    // 检查是否有token，没有则直接返回
-    const token = useUserStore.getState().token;
-    if (!token) {
-      console.log("未找到token，跳过积分余额获取");
-      return;
-    }
-
+    // 保证幂等
+    if (loadingRef.current) return;
+    loadingRef.current = true;
     try {
       const res: PointsBalanceData = await getPointsBalance();
       if (res.points !== undefined) {
         setPointsBalance(res.points);
       }
-    } catch (error) {
-      console.error("获取积分余额失败:", error);
+    } catch (error: unknown) {
+      devError("获取积分余额失败:", error);
+    } finally {
+      loadingRef.current = false;
     }
   }, []);
 
   // 初始化时执行
   useEffect(() => {
     fetchPointsBalance();
-  }, [fetchPointsBalance]);
+  }, []);
 
   // 页面聚焦时执行
   useFocusEffect(
@@ -86,7 +85,7 @@ const CurrencyAmount = forwardRef<CurrencyAmountRef, CurrencyAmountProps>(({ onP
         <Text style={styles.currencyText}>货币</Text>
         <Ionicons
           name="chevron-forward"
-          size={rpx(9.375)}
+          size={rpx(9.375)} // 24
           color="#FF9D00"
         />
       </TouchableOpacity>
@@ -113,7 +112,7 @@ const styles = createStyles({
     borderRadius: 23.4375, // 60
     borderWidth: 0.2890625, // 0.74
     borderColor: '#FFFFFF',
-    backgroundColor: '#FFFFFFCC', // rgba(255, 255, 255, 0.8)
+    backgroundColor: '#FFFFFFCC',
     // paddingVertical: 3.125, // 8
     paddingLeft: 6.25, // 16
     marginLeft: 6.640625, // 17

@@ -166,6 +166,7 @@ export const Images = {
   pointsMallPayForGoods: require("../../assets/images/points-mall/pay-for-goods.png"),
   pointsMallDottedLine: require("../../assets/images/points-mall/dotted-line.png"),
   pointsMallBoy: require("../../assets/images/points-mall/boy.png"),
+  pointsMallCheckInSuccess: require("../../assets/images/points-mall/check-in-success.png"),
   // 绑定家长端
   appletQrCode: require("../../assets/images/applet-qr-code.png"),
   // 锁屏相关

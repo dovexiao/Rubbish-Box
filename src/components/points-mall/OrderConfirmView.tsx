@@ -2,25 +2,23 @@ import React, { useCallback, useState } from "react"
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { LinearGradient } from "expo-linear-gradient"
-import { AddressItem, ProductDetailData } from "../../services/pointsMall"
 import Ionicons from "@expo/vector-icons/build/Ionicons"
 import { Images } from "../../constants/Assets"
-import ConfirmDialog from "./ConfirmDialog"
+import ConfirmDialog from "../common/ConfirmDialog"
 import ImageWithPlaceholder from "../common/ImageWithPlaceholder"
+import { useProductDetailStore } from "../../stores/points-mall/productDetailStore"
 
 /**
  * 确认订单信息视图组件
  */
 
 interface OrderConfirmProps {
-  product?: ProductDetailData | null
-  selectedAddress?: AddressItem | null
   onNext: () => void
   onExchange?: () => Promise<void>
 }
 
-const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddress, onNext, onExchange }) => {
-  console.log("product data", product)
+const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onExchange }) => {
+  const { productName, price, mainImage, defaultAddress } = useProductDetailStore();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleConfirmExchange = useCallback(async () => {
@@ -43,8 +41,8 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
               color="rgba(0, 0, 0, 0.4)"
               style={styles.addressInfoIcon}
             />
-            {selectedAddress ? (
-              <Text style={styles.addressInfoText}>{selectedAddress.receiver_name}，{selectedAddress.phone}，{selectedAddress.province}{selectedAddress.city}{selectedAddress.district}{selectedAddress.detail_address}</Text>
+            {defaultAddress ? (
+              <Text style={styles.addressInfoText}>{defaultAddress.receiver_name}，{defaultAddress.phone}，{defaultAddress.province}{defaultAddress.city}{defaultAddress.district}{defaultAddress.detail_address}</Text>
             ) : (
               <Text style={styles.addressInfoText}>请选择收货地址</Text>
             )}
@@ -60,18 +58,13 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
         <View style={styles.productInfoCard}>
           <View style={styles.productInfoImageContainer}>
             <ImageWithPlaceholder
-              source={{ uri: product?.main_image }}
+              source={{ uri: mainImage }}
               style={styles.productInfoImage}
               resizeMode="cover"
             />
-            {/* <Image
-              source={{ uri: product?.main_image }}
-              style={styles.productInfoImage}
-              resizeMode="cover"
-            /> */}
           </View>
           <View style={styles.productInfoContent}>
-            <Text style={styles.productInfoName} numberOfLines={2}>{product?.name}</Text>
+            <Text style={styles.productInfoName} numberOfLines={2}>{productName}</Text>
             <Text style={styles.productInfoCount}>x1</Text>
           </View>
         </View>
@@ -85,7 +78,7 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
             <View style={styles.priceRowRight}>
               <View style={styles.priceAmountRow}>
                 <Image source={Images.pointsMallPointsIcon} style={styles.coinIcon} resizeMode="contain" />
-                <Text style={styles.priceValue}>{product?.price ?? 0}</Text>
+                <Text style={styles.priceValue}>{price}</Text>
               </View>
               {/* <Text style={styles.rmbValue}>￥ 0</Text> */}
             </View>
@@ -95,7 +88,7 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ product, selectedAddres
             <Text style={styles.totalLabel}>合计</Text>
             <View style={styles.totalAmountRow}>
               <Image source={Images.pointsMallPointsIcon} style={styles.coinIcon} resizeMode="contain" />
-              <Text style={styles.totalAmount}>{product?.price ?? 0}</Text>
+              <Text style={styles.totalAmount}>{price}</Text>
             </View>
           </View>
         </View>

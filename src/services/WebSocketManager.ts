@@ -18,19 +18,19 @@ import { getWebSocketConfig } from '../config/websocket'
  * 开发环境日志工具
  * 生产环境自动禁用，提升性能
  */
-const devLog = (...args: any[]) => {
+export const devLog = (...args: any[]) => {
   if (__DEV__) {
     console.log(...args)
   }
 }
 
-const devWarn = (...args: any[]) => {
+export const devWarn = (...args: any[]) => {
   if (__DEV__) {
     console.warn(...args)
   }
 }
 
-const devError = (...args: any[]) => {
+export const devError = (...args: any[]) => {
   // 错误日志在生产环境也保留，但可以简化输出
   if (__DEV__) {
     console.error(...args)

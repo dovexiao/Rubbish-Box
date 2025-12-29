@@ -138,7 +138,7 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
           {!sourceValid || error ? (
             <Ionicons name={placeholderIcon} size={iconSize} color={placeholderIconColor} />
           ) : loading && showLoadingIndicator ? (
-            <ActivityIndicator size="small" color={placeholderIconColor} />
+            <ActivityIndicator size="large" color={placeholderIconColor} />
           ) : (
             <Text style={{ color: "#999", fontSize: rpx(9.375), textAlign: "center" }}>暂无图片</Text>
           )}

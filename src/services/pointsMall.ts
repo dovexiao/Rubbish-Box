@@ -135,6 +135,7 @@ export interface ProductDetailData {
   main_image: string
   detail_image: ProductImage[]
   host_graph: ProductImage[]
+  [property: string]: any;
 }
 
 /**
@@ -207,6 +208,47 @@ export interface UpdateAddressParams extends AddAddressParams {
  */
 export interface DeleteAddressParams {
   address_id: number
+}
+
+/**
+ * 设置默认地址请求参数
+ */
+export interface SetDefaultAddressParams {
+  id: string;
+  [property: string]: any;  
+}
+
+/**
+ * 获取省详情请求参数
+ */
+export interface GetProvinceParams {
+  province_code: string;
+  [property: string]: any;  
+}
+
+/**
+ * 获取市详情请求参数
+ */
+export interface GetCityParams {
+  city_code: string;
+  [property: string]: any;  
+}
+
+/**
+ * 获取区详情请求参数
+ */
+export interface GetDistrictParams {
+  district_code: string;
+  [property: string]: any;  
+}
+
+/**
+ * 获取省/市/区详情列表项
+ */
+export interface RegionItem {
+  value: string;
+  text: string;
+  [property: string]: any;  
 }
 
 /**
@@ -411,6 +453,13 @@ export const deleteAddress = (params: DeleteAddressParams) => {
 }
 
 /**
+ * 设置默认地址
+ */
+export const setAddressDefault = (params: SetDefaultAddressParams) => {
+  return post("/AppStart/Protected/address_set_default/", params)
+}
+
+/**
  * 兑换商品
  */
 export const exchangeProduct = (params: ExchangeProductParams) => {
@@ -435,21 +484,21 @@ export const getPoints = (params: { page: number; per_page: number }) => {
  * 获取省份数据
  */
 export const getProvinces = () => {
-  return post<Array<{ value: string; text: string }>>("/AppStart/AddressView/get_provinces/", {})
+  return post<Array<RegionItem>>("/AppStart/AddressView/get_provinces/", {})
 }
 
 /**
  * 获取城市数据
  */
-export const getCities = (params: { province_code: string }) => {
-  return post<Array<{ value: string; text: string }>>("/AppStart/AddressView/get_cities/", params)
+export const getCities = (params: GetProvinceParams) => {
+  return post<Array<RegionItem>>("/AppStart/AddressView/get_cities/", params)
 }
 
 /**
  * 获取区县数据
  */
-export const getCounties = (params: { city_code: string }) => {
-  return post<Array<{ value: string; text: string }>>("/AppStart/AddressView/get_counties/", params)
+export const getCounties = (params: GetCityParams) => {
+  return post<Array<RegionItem>>("/AppStart/AddressView/get_counties/", params)
 }
 
 /**

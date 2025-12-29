@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useImperativeHandle, forwardRef, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, ViewStyle, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ViewStyle, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { createStyles, rpx } from '../../utils/rpxStyleSheet';
 import { Images } from '../../constants/Assets';
-// import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Rect } from 'react-native-svg';
 import { getWeekCheckInList, WeekCheckInListData, WeekCheckListItem } from '../../services/pointsMall';
-import { showError, showInfo } from '../../utils/toast';
+import { showInfo, showError } from '../../utils/toast';
+import { devError, devLog } from '@/services/WebSocketManager';
 
 type DailyCheckInProps = {
   containerStyle: ViewStyle,
@@ -24,19 +24,43 @@ type TodayInfo = {
 }
 
 // 空的的7天打卡互活动列表
-const emptyWeekCheckInList: WeekCheckListItem[] = Array.from({ length: 7 }, (_, index) => ({
+const EMPTY_WEEK_CHECK_IN_LIST: WeekCheckListItem[] = Array.from({ length: 7 }, (_, index) => ({
   checked: false,
   date: '未知',
   is_today: false,
   weekday: '未知',
+  dateStatusCode: 0,
 }));
 
 // 领取积分奖励数组（写死）
 const rewardPointsList: number[] = [1, 2, 4, 2, 2, 4, 10];
 
+// 计算日期相对今日状态：0 过期 1 未领取 2 已领取 3 未开始
+const calculateDateRelativeToTodayStatus = (index: number, isChecked: boolean, todayInfo: TodayInfo): number => {
+  // 检查参数有效性
+  if (index === null || index === undefined || todayInfo?.index === null || todayInfo?.index === undefined) {
+    return 3;
+  }
+  
+  const todayIndex = todayInfo.index;
+  
+  // 未开始：index 大于 todayIndex
+  if (index > todayIndex) {
+    return 3;
+  }
+  
+  // 今日：index 等于 todayIndex
+  if (index === todayIndex) {
+    return isChecked ? 2 : 1;
+  }
+  
+  // 过去：index 小于 todayIndex
+  return isChecked ? 2 : 0;
+};
+
 const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ containerStyle, onAnswer }, ref) => {
   // 7天打卡活动列表
-  const [weekCheckInList, setWeekCheckInList] = useState<WeekCheckListItem[]>(emptyWeekCheckInList);
+  const [weekCheckInList, setWeekCheckInList] = useState<WeekCheckListItem[]>(EMPTY_WEEK_CHECK_IN_LIST);
   // 累计打卡天数
   const [totalCheckInDays, setTotalCheckInDays] = useState(0);
   const [todayInfo, setTodayInfo] = useState<TodayInfo | null>(null);
@@ -45,60 +69,64 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
   const loadingRef = useRef(false);
 
   const loadWeekCheckInList = useCallback(async () => {
+    // 保证幂等
     if (loadingRef.current) return;
     loadingRef.current = true;
     setLoading(true);
     try {
       const weekCheckInListData: WeekCheckInListData = await getWeekCheckInList();
       // console.log('获取7天打卡活动列表成功', weekCheckInListData);
-      setWeekCheckInList(weekCheckInListData.week_check_list ?? emptyWeekCheckInList);
-      setTotalCheckInDays(weekCheckInListData.consecutive_days ?? 0);
-      setTodayInfo({
-        index: (weekCheckInListData.week_check_list ?? emptyWeekCheckInList).findIndex(item => item.is_today) ?? null,
+      const todayInfo: TodayInfo = {
+        index: (weekCheckInListData.week_check_list ?? EMPTY_WEEK_CHECK_IN_LIST).findIndex(item => item.is_today) ?? null,
         isChecked: weekCheckInListData.today_checked ?? false,
         date: weekCheckInListData.today_date ?? '未知日期',
         text: weekCheckInListData.today_text ?? '未知日期',
+      }
+      const weekCheckInList = (weekCheckInListData.week_check_list ?? EMPTY_WEEK_CHECK_IN_LIST).map((item, index) => {
+        return {
+          checked: item.checked,
+          date: item.date,
+          is_today: item.is_today,
+          weekday: item.weekday,
+          dateStatusCode: item.dateStatusCode ?? calculateDateRelativeToTodayStatus(index, item.checked, todayInfo) as number,
+        }
       });
+      setWeekCheckInList(weekCheckInList);
+      setTotalCheckInDays(weekCheckInListData.consecutive_days ?? 0);
+      setTodayInfo(todayInfo);
     } catch (error: unknown) {
-      showError('获取7天打卡活动列表失败');
-      console.error('获取7天打卡活动列表失败:', error);
+      devError('获取7天打卡活动列表失败:', error);
     } finally {
       loadingRef.current = false;
       setLoading(false);
     }
   }, []);
 
+  // 处理打卡按钮点击
+  const handleCheckInPress = useCallback(() => {
+    const isValidTodayInfo = todayInfo && 
+                             typeof todayInfo.index === 'number' && 
+                             todayInfo.index >= 0;
+    
+    if (!isValidTodayInfo) {
+      devError('无法打卡, 今日数据不合法', todayInfo);
+      showError('无法打卡, 今日数据缺失');
+      return;
+    }
+    
+    if (todayInfo.isChecked) {
+      devLog('今日已打卡', todayInfo);
+      showInfo('今日已打卡');
+    } else {
+      const todayIndex = weekCheckInList.findIndex(item => item.is_today) ?? 0;
+      onAnswer(rewardPointsList[todayIndex]);
+    }
+  }, [todayInfo, weekCheckInList, onAnswer]);
+
   // 暴露方法给父组件
   useImperativeHandle(ref, () => ({
     loadWeekCheckInList,
-  }), []);
-
-  // 计算日期相对今日状态
-  const calculateDateRelativeToTodayStatus = useCallback((index: number, isChecked: boolean) => { // 0 过期 1 未领取 2 已领取 3 未开始
-    if (index === null || index === undefined) {
-      // console.log('index不满足条件', index);
-      return 3;
-    }
-    if (todayInfo?.index === null || todayInfo?.index === undefined) {
-      // console.log('todayInfo.index不满足条件', todayInfo?.index);
-      return 3;
-    }
-    if (index > todayInfo.index) {
-      // console.log('index大于todayInfo.index', index, todayInfo.index);
-      return 3;
-    }
-    if (index === todayInfo.index) {
-      // console.log('index等于todayInfo.index', index, todayInfo.index);
-      if (isChecked) return 2;
-      return 1;
-    }
-    if (index < todayInfo.index) {
-      // console.log('index小于todayInfo.index', index, todayInfo.index);
-      if (isChecked) return 2;
-      return 0;
-    }
-    return 3;
-  }, [todayInfo]);
+  }), [loadWeekCheckInList]);
 
   useEffect(() => {
     loadWeekCheckInList();
@@ -136,30 +164,32 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
 
         {/* 7天打卡活动列表 */}
         <View style={styles.dailyCheckInListContainer}>
-          {weekCheckInList.map((item, index) => {
-            const dateStatus = calculateDateRelativeToTodayStatus(index, item.checked);
-            // console.log('dateStatus2', dateStatus, index, item.checked);
-            return (
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color="#FF9D00" />
+            </View>
+          ) : (
+            weekCheckInList.map((item, index) => (
               <View key={index} style={[
                 styles.dailyCheckInListItem,
-                dateStatus === 0 && styles.dailyCheckInListItemExpired,
-                dateStatus === 1 && styles.dailyCheckInListItemToday,
-                dateStatus === 2 && styles.dailyCheckInListItemReceived,
+                item.dateStatusCode === 0 && styles.dailyCheckInListItemExpired,
+                item.dateStatusCode === 1 && styles.dailyCheckInListItemToday,
+                item.dateStatusCode === 2 && styles.dailyCheckInListItemReceived,
               ]}>
                 <Text style={[
                   styles.dailyCheckInListItemText,
-                  dateStatus === 0 && styles.dailyCheckInListItemTextExpired,
-                  dateStatus === 1 && styles.dailyCheckInListItemTextToday,
-                  dateStatus === 2 && styles.dailyCheckInListItemTextReceived,
+                  item.dateStatusCode === 0 && styles.dailyCheckInListItemTextExpired,
+                  item.dateStatusCode === 1 && styles.dailyCheckInListItemTextToday,
+                  item.dateStatusCode === 2 && styles.dailyCheckInListItemTextReceived,
                 ]}>
                   {item.date}
                 </Text>
                 {/* 已过期 */}
-                {dateStatus === 0 && (
+                {item.dateStatusCode === 0 && (
                   <Text style={styles.goldCoinText}>未打卡</Text>
                 )}
                 {/* 未领取 */}
-                {dateStatus === 1 && (
+                {item.dateStatusCode === 1 && (
                   <>
                     <Image source={Images.pointsMallGoldCoin} style={styles.goldCoinIcon} resizeMode="contain" />
                     <View style={[styles.goldCoinNumberContainer, index === 6 && styles.goldCoinNumberContainer_10]}>
@@ -168,11 +198,11 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
                   </>
                 )}
                 {/* 已领取 */}
-                {dateStatus === 2 && (
+                {item.dateStatusCode === 2 && (
                   <Image source={Images.pointsMallChecked} style={styles.goldCoinIcon} resizeMode="contain" />
                 )}
                 {/* 未开始 */}
-                {dateStatus === 3 && (
+                {item.dateStatusCode === 3 && (
                   <>
                     <Image source={Images.pointsMallGoldCoin} style={styles.goldCoinIcon} resizeMode="contain" />
                     <View style={[styles.goldCoinNumberContainer, index === 6 && styles.goldCoinNumberContainer_10]}>
@@ -181,25 +211,15 @@ const DailyCheckIn = forwardRef<DailyCheckInRef, DailyCheckInProps>(({ container
                   </>
                 )}
               </View>
-            )
-          })}
+            ))
+          )}
         </View>
       </View>
       {/* 打卡领取奖励按钮 */}
       <TouchableOpacity
         style={styles.buttonContainer}
         activeOpacity={0.8}
-        onPress={() => {
-          if (todayInfo?.index !== null && todayInfo?.isChecked === false) {
-            onAnswer(rewardPointsList[weekCheckInList.findIndex(item => item.is_today) ?? 0]);
-          } else if (todayInfo && typeof todayInfo.index === 'number' && todayInfo.index >= 0 && todayInfo.isChecked) {
-            console.log('今日已打卡', todayInfo);
-            showInfo('今日已打卡');
-          } else {
-            console.log('无法打卡', todayInfo);
-            showInfo('无法打卡');
-          }
-        }}
+        onPress={handleCheckInPress}
       >
         <LinearGradient
           colors={['#FFA27D', '#FF9900']}
@@ -321,6 +341,19 @@ const styles = createStyles({
     marginTop: 10.546875, // 27
     justifyContent: 'space-between' as const,
     zIndex: 1,
+    position: 'relative' as const,
+  },
+  loadingContainer: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    backgroundColor: 'rgba(255, 252, 235, 0.8)', // 半透明背景，与 content 背景色一致
+    borderRadius: 7.8125, // 20
+    zIndex: 2,
   },
   dailyCheckInListItem: {
     // flex: 1,
