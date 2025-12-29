@@ -23,6 +23,9 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onSuccess }) =>
   const { productId, productName, price, mainImage, defaultAddress } = useProductDetailStore();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
+  // 判断按钮是否禁用：当 productId 或 defaultAddress 为空时禁用
+  const isDisabled = !productId || !defaultAddress;
+
   // 兑换商品
   const handleExchangeProduct = useCallback(async () => {
     if (!productId || !defaultAddress) {
@@ -46,6 +49,13 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onSuccess }) =>
     await handleExchangeProduct();
     setShowConfirmDialog(false);
   }, [handleExchangeProduct])
+
+  const handleButtonPress = useCallback(() => {
+    if (isDisabled) {
+      return;
+    }
+    setShowConfirmDialog(true);
+  }, [isDisabled])
 
   return (
     <>
@@ -121,17 +131,18 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onSuccess }) =>
       </View>
       {/* 下一步按钮 */}
       <TouchableOpacity
-        style={styles.nextButton}
-        activeOpacity={0.8}
-        onPress={() => { setShowConfirmDialog(true) }}
+        style={[styles.nextButton, isDisabled && styles.nextButtonDisabled]}
+        activeOpacity={isDisabled ? 1 : 0.8}
+        disabled={isDisabled}
+        onPress={handleButtonPress}
       >
         <LinearGradient
-          colors={['#FFDCBC', '#FFBB7B']}
+          colors={isDisabled ? ['#E0E0E0', '#C0C0C0'] : ['#FFDCBC', '#FFBB7B']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.nextButtonGradient}
         >
-          <Text style={styles.nextButtonText}>确认兑换</Text>
+          <Text style={[styles.nextButtonText, isDisabled && styles.nextButtonTextDisabled]}>确认兑换</Text>
         </LinearGradient>
       </TouchableOpacity>
       <ConfirmDialog
@@ -361,6 +372,10 @@ const styles = createStyles({
     borderRadius: 15.625, // 40
     overflow: "hidden" as const,
   },
+  nextButtonDisabled: {
+    backgroundColor: "#E0E0E0",
+    opacity: 0.6,
+  },
   nextButtonGradient: {
     width: "100%" as const,
     height: "100%" as const,
@@ -372,6 +387,9 @@ const styles = createStyles({
     fontWeight: "bold" as const,
     fontSize: 12.5, // 32
     color: "#743A14",
+  },
+  nextButtonTextDisabled: {
+    color: "#999999",
   },
 })
 
