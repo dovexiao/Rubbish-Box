@@ -4,6 +4,7 @@ import { ForgotPasswordModal } from './ForgotPasswordModal'
 import { useLoginModal } from '../hooks/useLoginModal'
 import { setLoginModalRef } from '../utils/loginUtils'
 import { useLockScreenStore } from '../stores/lockScreenStore'
+import { useNetworkStore } from '../stores/networkStore'
 
 /**
  * 全局登录管理器组件
@@ -27,6 +28,7 @@ export const GlobalLoginManager = React.memo(function GlobalLoginManager() {
   } = useLoginModal()
 
   const locked = useLockScreenStore((state) => state.locked)
+  const showNetworkModal = useNetworkStore((state) => state.showNetworkModal)
 
   // 将实例设置到全局，供其他地方调用
   React.useEffect(() => {
@@ -40,7 +42,7 @@ export const GlobalLoginManager = React.memo(function GlobalLoginManager() {
     <>
       {/* 登录弹窗 */}
       <LoginModal
-        visible={isVisible && !locked}
+        visible={isVisible && !locked && !showNetworkModal}
         onSuccess={handleLoginSuccess}
         onCancel={handleLoginCancel}
         onShowForgotPassword={() => showForgotPasswordModal()}
@@ -48,7 +50,7 @@ export const GlobalLoginManager = React.memo(function GlobalLoginManager() {
       
       {/* 忘记密码弹窗 */}
       <ForgotPasswordModal
-        visible={forgotPasswordVisible && !locked}
+        visible={forgotPasswordVisible && !locked && !showNetworkModal}
         onSuccess={handleForgotPasswordSuccess}
         onCancel={handleForgotPasswordCancel}
         onBack={handleForgotPasswordBack}

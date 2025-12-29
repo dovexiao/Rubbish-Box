@@ -99,6 +99,7 @@ export function QuestionResult({ data }: Props) {
     return question
   }, [filteredQuestions, currentIndex])
 
+
   // 统计信息
   const statistics = useMemo(() => {
     // 安全检查：确保 data 和 grading_results 存在
@@ -152,7 +153,7 @@ export function QuestionResult({ data }: Props) {
 
     // 立即更新索引（视觉反馈）
     setCurrentIndex(index)
-    setRevealAnswer(false)
+    setRevealAnswer(false) // 重置答案显示状态
 
     // 防抖：延迟渲染详情内容
     switchDebounceRef.current = setTimeout(() => {
@@ -380,7 +381,7 @@ export function QuestionResult({ data }: Props) {
                     </View>
                     <Text style={styles.formTitle}>答案</Text>
                   </LinearGradient>
-                  <View style={[{ marginBottom: 12.890625 }]}>
+                  <View style={styles.answerContainer}>
                     {/* 设备不允许显示时：显示模糊层 */}
                     {!canDisplayAnswer && (
                       <>
@@ -397,22 +398,27 @@ export function QuestionResult({ data }: Props) {
                         />
                       </>
                     )}
-                    {/* 设备允许显示时：使用金色背景容器（与模糊组件完全隔离） */}
+                    {/* 设备允许显示时：使用金色遮罩层覆盖（与模糊组件完全隔离） */}
                     {canDisplayAnswer && (
-                      <TouchableWithoutFeedback onPress={handleRevealAnswer}>
-                        <View
-                          style={[styles.answerContent, revealAnswer && styles.answerContentRevealed]}
-                        >
-                          {!revealAnswer ? (
-                            <Text style={styles.scratchHint}>点击查看答案</Text>
-                          ) : (
+                      <View style={styles.answerContentWrapper}>
+                        {/* 答案内容：点击后才显示 */}
+                        {revealAnswer && (
+                          <View style={styles.answerContentInner}>
                             <MemoizedMixedContent
                               content={currentQuestion.correctAnswer || ""}
                               style={styles.answerText}
                             />
-                          )}
-                        </View>
-                      </TouchableWithoutFeedback>
+                          </View>
+                        )}
+                        {/* 金色遮罩层：固定宽度74，点击后隐藏 */}
+                        {!revealAnswer && (
+                          <TouchableWithoutFeedback onPress={handleRevealAnswer}>
+                            <View style={styles.goldenOverlay}>
+                              <Text style={styles.scratchHint}>点击查看答案</Text>
+                            </View>
+                          </TouchableWithoutFeedback>
+                        )}
+                      </View>
                     )}
                   </View>
 
@@ -772,41 +778,39 @@ const styles = createStyles({
     backgroundColor: "rgba(0, 0, 0, 0.2)",
     zIndex: 1,
   },
-  // 金黄色遮罩层
-  goldenOverlay: {
-    position: "absolute" as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(255, 215, 0, 0.6)", // 金黄色半透明遮罩
-    zIndex: 1,
-
+  // 答案容器（外层容器）
+  answerContainer: {
+    marginBottom: 12.890625,
+    width: "100%" as const,
   },
-  // 答案内容容器（金色背景）
-  answerContent: {
+  // 答案内容容器（无背景，只作为容器）
+  answerContentWrapper: {
     position: "relative" as const,
     minHeight: 30,
-    width: "100%",
-    flexDirection: "column" as const,
-    alignItems: "flex-start" as const,
-    justifyContent: "center" as const,
-    padding: 8,
-    backgroundColor: "#ffb700", // 金黄色背景
-    borderRadius: 12,
-    shadowColor: "#ffd700",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 5,
+    width: "100%" as const,
+    flexShrink: 1,
   },
-  // 答案已显示时的样式（浅黄色背景）
-  answerContentRevealed: {
-    backgroundColor: "#fffbe6",
+  // 答案内容内层容器
+  answerContentInner: {
+    width: "100%" as const,
+  },
+  // 金黄色遮罩层（固定宽度74）
+  goldenOverlay: {
+    width: 74,
+    minHeight: 24,
+    backgroundColor: "#FFECD0", // 背景色
+    borderWidth: 1.1719,
+    borderColor: "#FF8F39",
+    borderStyle: "solid" as const,
+    justifyContent: "center" as const,
+    alignItems: "flex-start" as const,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    marginTop: 4,
   },
   // 点击查看答案提示文字
   scratchHint: {
-    color: "#fff",
+    color: "#FF8426",
     fontSize: 8.6,
     fontWeight: "bold" as const,
     textAlign: "left" as const,
@@ -817,7 +821,9 @@ const styles = createStyles({
     fontSize: 11.75,
     textAlign: "left" as const,
     lineHeight: 17.625,
-    width: "100%",
+    width: "100%" as const,
+    flexShrink: 1,
+    flexWrap: "wrap" as const,
   },
   formText: {
     color: "#000",

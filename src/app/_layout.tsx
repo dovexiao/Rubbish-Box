@@ -17,7 +17,7 @@ import { DeviceAuthBlocker } from "../components/DeviceAuthBlocker"
 import { useAppLifecycle } from "../hooks/useAppLifecycle"
 import { useDataSync } from "../hooks/useDataSync"
 import { useDeviceAuth } from "../hooks/useDeviceAuth"
-import { useNetworkMonitor, useNetwork } from "../stores/networkStore"
+import { useNetworkMonitor, useNetwork, useNetworkStore } from "../stores/networkStore"
 import { useDeviceAuthStore } from "../stores/deviceAuthStore"
 import { useToastStore } from "../stores/toastStore"
 import { useDialogStore } from "../stores/dialogStore"
@@ -272,6 +272,12 @@ export default function RootLayout() {
     }
   }, [])
 
+  // 同步网络弹窗状态到 store
+  const setShowNetworkModalInStore = useNetworkStore((state) => state.setShowNetworkModal)
+  useEffect(() => {
+    setShowNetworkModalInStore(showNetworkModal || showFakeConnectionModal)
+  }, [showNetworkModal, showFakeConnectionModal, setShowNetworkModalInStore])
+
   // 监听网络弹窗状态，自动隐藏/恢复其他弹窗
   useEffect(() => {
     const isNetworkModalShowing = showNetworkModal || showFakeConnectionModal
@@ -396,6 +402,13 @@ export default function RootLayout() {
 
     onAppShow: async () => {
       console.log("应用进入前台")
+
+      // 切换背景图（应用进入前台时）
+      // @ts-ignore
+      if (global.switchHomeBackground && typeof global.switchHomeBackground === 'function') {
+        // @ts-ignore
+        global.switchHomeBackground()
+      }
 
       // 使用InteractionManager优化前台恢复性能
       InteractionManager.runAfterInteractions(async () => {

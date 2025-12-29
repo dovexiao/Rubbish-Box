@@ -15,10 +15,12 @@ interface NetworkStore {
   networkType: string
   networkDetails: NetworkDetails
   isInitialized: boolean
+  showNetworkModal: boolean // 网络弹窗显示状态
   
   // Actions
   updateNetworkState: (state: NetInfoState) => void
   initialize: () => void
+  setShowNetworkModal: (show: boolean) => void
 }
 
 // 全局单例 - 确保整个应用只有一个网络监听实例
@@ -31,6 +33,7 @@ export const useNetworkStore = create<NetworkStore>((set, get) => ({
   networkType: "unknown",
   networkDetails: {},
   isInitialized: false,
+  showNetworkModal: false,
 
   updateNetworkState: (state: NetInfoState) => {
     const connected = state.isConnected ?? false
@@ -121,6 +124,10 @@ export const useNetworkStore = create<NetworkStore>((set, get) => ({
     // 监听网络状态变化（全局只监听一次）
     console.log("👂 开始监听网络状态变化（全局单例）")
     netInfoUnsubscribe = NetInfo.addEventListener(get().updateNetworkState)
+  },
+
+  setShowNetworkModal: (show: boolean) => {
+    set({ showNetworkModal: show })
   },
 }))
 

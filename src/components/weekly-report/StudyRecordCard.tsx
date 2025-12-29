@@ -189,8 +189,15 @@ const styles = createStyles({
     zIndex: 10,
   },
   polygonText: {
+    position: "absolute" as const,
+    left: 18,
+    top: 13,
+    width: 103.125,
+    height: 38.2813,
+    zIndex: 10,
     fontSize: 12,
     color: "#FFFFFF",
     fontWeight: "bold" as const,
+    transform: [{ rotate: "8.69deg"}],
   },
 })

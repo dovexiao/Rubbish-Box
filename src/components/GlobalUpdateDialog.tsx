@@ -5,6 +5,7 @@ import { updateManager } from "../services/updateManager"
 import { UpdateType, UpdateLevel } from "../services/updateManager"
 import { UpdateDialog } from "./UpdateDialog"
 import { useLockScreenStore } from "../stores/lockScreenStore"
+import { useNetworkStore } from "../stores/networkStore"
 
 /**
  * 全局更新对话框组件
@@ -131,6 +132,7 @@ export const GlobalUpdateDialog = React.memo(function GlobalUpdateDialog() {
   }
 
   const locked = useLockScreenStore((state) => state.locked)
+  const showNetworkModal = useNetworkStore((state) => state.showNetworkModal)
 
   if (!showUpdateDialog || !updateData) {
     return null
@@ -153,12 +155,12 @@ export const GlobalUpdateDialog = React.memo(function GlobalUpdateDialog() {
   return (
     <UpdateDialog
       // 热更新相关
-      hotUpdateVisible={!isFullUpdate && showUpdateDialog && !locked}
+      hotUpdateVisible={!isFullUpdate && showUpdateDialog && !locked && !showNetworkModal}
       hotUpdateData={!isFullUpdate ? updateDialogData : undefined}
       hotCanSkip={!isForceUpdate && canSkip}
       
       // 整包更新相关
-      fullUpdateVisible={isFullUpdate && showUpdateDialog}
+      fullUpdateVisible={isFullUpdate && showUpdateDialog && !showNetworkModal}
       fullUpdateData={isFullUpdate ? updateDialogData : undefined}
       fullCanSkip={!isForceUpdate && canSkip}
       
