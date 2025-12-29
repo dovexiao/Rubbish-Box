@@ -72,27 +72,27 @@ export default function HomeScreen() {
   const LOAD_INTERVAL = 2000 // 2秒内不重复加载
   
   // 背景图列表
-  const backgroundImages = [Images.homeBg1, Images.homeBg2, Images.homeBg3]
-  const [homeBgIndex, setHomeBgIndex] = useState(0)
-  const [homeBgSource, setHomeBgSource] = useState<any>(backgroundImages[0])
+  // const backgroundImages = [Images.homeBg1, Images.homeBg2, Images.homeBg3]
+  // const [homeBgIndex, setHomeBgIndex] = useState(0)
+  const [homeBgSource, setHomeBgSource] = useState<any>(Images.homeBg2)
 
   // 切换背景图的函数（供全局调用）
-  const switchBackground = useCallback(() => {
-    const nextIndex = (homeBgIndex + 1) % backgroundImages.length
-    setHomeBgIndex(nextIndex)
-    setHomeBgSource(backgroundImages[nextIndex])
-    console.log(`🖼️ 背景图切换: ${homeBgIndex} -> ${nextIndex}`)
-  }, [homeBgIndex, backgroundImages])
+  // const switchBackground = useCallback(() => {
+  //   const nextIndex = (homeBgIndex + 1) % backgroundImages.length
+  //   setHomeBgIndex(nextIndex)
+  //   setHomeBgSource(backgroundImages[nextIndex])
+  //   console.log(`🖼️ 背景图切换: ${homeBgIndex} -> ${nextIndex}`)
+  // }, [homeBgIndex, backgroundImages])
 
   // 设置全局引用，供 _layout.tsx 使用
-  useEffect(() => {
-    // @ts-ignore
-    global.switchHomeBackground = switchBackground
-    return () => {
-      // @ts-ignore
-      delete global.switchHomeBackground
-    }
-  }, [switchBackground])
+  // useEffect(() => {
+  //   // @ts-ignore
+  //   global.switchHomeBackground = switchBackground
+  //   return () => {
+  //     // @ts-ignore
+  //     delete global.switchHomeBackground
+  //   }
+  // }, [switchBackground])
 
   // 获取坐姿状态文本
   const getPostureStatusText = () => {
@@ -169,11 +169,11 @@ export default function HomeScreen() {
   }, [resetIntentLauncherState])
 
   // 监听封面图URL变化，重置加载状态
-  useEffect(() => {
-    if (latestVideo.cover_v) {
-      setCoverImageLoaded(false)
-    }
-  }, [latestVideo.cover_v])
+  // useEffect(() => {
+  //   if (latestVideo.cover_v) {
+  //     setCoverImageLoaded(false)
+  //   }
+  // }, [latestVideo.cover_v])
 
 
 
@@ -697,7 +697,7 @@ const openVolumeSettings = async () => {
       style={styles.pageContainer}
     >
       <ImageBackground 
-        key={`bg-${homeBgIndex}`}
+        // key={`bg-${homeBgIndex}`}
         source={homeBgSource} 
         style={styles.backgroundImage} 
         resizeMode="cover"
@@ -934,29 +934,14 @@ const openVolumeSettings = async () => {
                         <Ionicons name="chevron-forward" size={rpx(10)} color="#fff" style={styles.studyButtonArrow} />
                       </LinearGradient>
                     </View>
-                    {/* 使用接口数据的封面图，如果没有则使用默认图片 */}
+                   {/* 使用接口数据的封面图，如果没有则使用默认图片 */}
                     {latestVideo.cover_v ? (
-                      <View style={styles.bookCoverContainer}>
-                        {/* 默认图片：在加载完成前显示 */}
-                        {!coverImageLoaded && (
-                          <Image 
-                            source={Images.book1} 
-                            style={[styles.bookCover, styles.bookCoverPlaceholder]} 
-                            resizeMode="contain" 
-                          />
-                        )}
-                        {/* 网络图片：加载完成后显示 */}
-                        <Image 
-                          source={{ uri: latestVideo.cover_v }} 
-                          style={[
-                            styles.bookCover,
-                            !coverImageLoaded && styles.bookCoverHidden
-                          ]} 
-                          resizeMode="contain"
-                          onLoad={() => setCoverImageLoaded(true)}
-                          onError={() => setCoverImageLoaded(false)}
-                        />
-                      </View>
+                      <Image 
+                        source={{ uri: latestVideo.cover_v }} 
+                        style={styles.bookCover} 
+                        resizeMode="contain"
+                        defaultSource={Images.book1}
+                      />
                     ) : (
                       <Image 
                         source={Images.book1} 

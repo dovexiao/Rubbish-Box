@@ -347,14 +347,14 @@ export default function VideoPlayerScreen() {
       // 只在状态真正改变时更新，避免频繁触发重新渲染
       if (status.isPlaying !== isPlaying) {
         setIsPlaying(status.isPlaying)
-        console.log(`📹 视频播放状态: ${status.isPlaying ? "播放中" : "暂停"}`)
+        // console.log(`📹 视频播放状态: ${status.isPlaying ? "播放中" : "暂停"}`)
       }
 
       if (currentSeconds !== currentTime) {
         setCurrentTime(currentSeconds)
         // 更新 store 中的当前播放时间
         setStoreCurrentTime(currentSeconds)
-        console.log(`⏱️ 视频时间更新: ${currentSeconds}秒 / ${durationSeconds}秒`)
+        // console.log(`⏱️ 视频时间更新: ${currentSeconds}秒 / ${durationSeconds}秒`)
 
         // 📊 更新视频播放进度（已内置3秒节流）
         if (status.isPlaying && durationSeconds > 0) {
@@ -366,7 +366,7 @@ export default function VideoPlayerScreen() {
         setTotalDuration(durationSeconds)
         // 更新 store 中的总时长
         setStoreTotalDuration(durationSeconds)
-        console.log(`📏 视频总时长: ${durationSeconds}秒`)
+        // console.log(`📏 视频总时长: ${durationSeconds}秒`)
       }
 
       if (durationSeconds > 0) {
@@ -388,7 +388,7 @@ export default function VideoPlayerScreen() {
         setIsCompleted(true)
 
         // 📊 视频播放结束，发送最终进度
-        console.log("📊 [活动追踪] 视频播放结束")
+        // console.log("📊 [活动追踪] 视频播放结束")
         updateVideoProgress(durationSeconds, durationSeconds)
       }
     }

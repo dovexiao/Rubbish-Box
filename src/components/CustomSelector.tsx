@@ -10,8 +10,8 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
 } from "react-native"
+import { createStyles, rpx } from "../utils/rpxStyleSheet"
 import { Ionicons } from "@expo/vector-icons"
-import {  rpx } from "../utils/rpxStyleSheet"
 
 interface SelectorOption {
   label: string
@@ -104,9 +104,9 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
         onPress={openDropdown}
         activeOpacity={0.7}
       >
-        <View style={styles.selectorGradient}>
+        <View style={createStylesBase.selectorGradient}>
           <Text 
-            style={[styles.selectorText, !selectedOption && styles.placeholderText]}
+            style={[createStylesBase.selectorText, !selectedOption && styles.placeholderText]}
             numberOfLines={1}
           >
             {selectedOption ? selectedOption.label : placeholder}
@@ -176,25 +176,42 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
   )
 }
 
+const createStylesBase = createStyles({
+    selectorGradient: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+    selectorText: {
+    fontSize: 7.6,
+    color: "#8C8D92",
+  
+  },
+})
+
 const styles = StyleSheet.create({
   selector: {
     alignSelf: "flex-start", // 允许容器自适应内容宽度
   },
-  selectorGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12, // 12rpx
-    paddingVertical: 6, // 6rpx
-    paddingRight: 12, // 确保右侧有足够padding
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 24, // 24rpx
-  },
-  selectorText: {
-    fontSize: 20, // 20rpx
-    color: "#8C8D92",
-    fontWeight: "500",
-    marginRight: 8, // 8rpx
-  },
+  // selectorGradient: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   paddingHorizontal: 12, // 12rpx
+  //   paddingVertical: 6, // 6rpx
+  //   paddingRight: 12, // 确保右侧有足够padding
+  //   backgroundColor: "rgba(255, 255, 255, 0.3)",
+  //   borderRadius: 24, // 24rpx
+  // },
+  // selectorText: {
+  //   fontSize: 20, // 20rpx
+  //   color: "#8C8D92",
+  //   fontWeight: "500",
+  //   marginRight: 8, // 8rpx
+  // },
   placeholderText: {
     color: "#999999",
   },
