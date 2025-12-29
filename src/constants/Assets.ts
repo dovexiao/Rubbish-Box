@@ -39,6 +39,7 @@ export const Images = {
   indexRankBg2: require("../../assets/images/index-rank-bg1.png"),
   homeBg1: require("../../assets/images/home-bg-1.png"),
   homeBg2: require("../../assets/images/home-bg90.png"),
+  homeBg3: require("../../assets/images/home-bg3.png"),
   book1: require("../../assets/images/book-1.png"),
   tipsIcon: require("../../assets/images/tips-icon.png"),
   rankGold: require("../../assets/images/rank/gold.png"),

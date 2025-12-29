@@ -62,6 +62,7 @@ export default function HomeScreen() {
     cover_v: "", // 课程封面图
     referer_img: "", // 图片 Referer（如需要）
   })
+  const [coverImageLoaded, setCoverImageLoaded] = useState(false) // 封面图加载状态
   const [notifications, setNotifications] = useState<string[]>([])
   const [ranks, setRanks] = useState<any[]>([])
   const [isDataLoaded, setIsDataLoaded] = useState(false)
@@ -69,7 +70,29 @@ export default function HomeScreen() {
   const isLoadingRef = useRef(false) // 使用 ref 防止重复调用
   const lastLoadTimeRef = useRef<number>(0) // 跟踪最后一次加载时间
   const LOAD_INTERVAL = 2000 // 2秒内不重复加载
-  const [homeBgSource, setHomeBgSource] = useState<any>(Images.homeBg2)
+  
+  // 背景图列表
+  const backgroundImages = [Images.homeBg1, Images.homeBg2, Images.homeBg3]
+  const [homeBgIndex, setHomeBgIndex] = useState(0)
+  const [homeBgSource, setHomeBgSource] = useState<any>(backgroundImages[0])
+
+  // 切换背景图的函数（供全局调用）
+  const switchBackground = useCallback(() => {
+    const nextIndex = (homeBgIndex + 1) % backgroundImages.length
+    setHomeBgIndex(nextIndex)
+    setHomeBgSource(backgroundImages[nextIndex])
+    console.log(`🖼️ 背景图切换: ${homeBgIndex} -> ${nextIndex}`)
+  }, [homeBgIndex, backgroundImages])
+
+  // 设置全局引用，供 _layout.tsx 使用
+  useEffect(() => {
+    // @ts-ignore
+    global.switchHomeBackground = switchBackground
+    return () => {
+      // @ts-ignore
+      delete global.switchHomeBackground
+    }
+  }, [switchBackground])
 
   // 获取坐姿状态文本
   const getPostureStatusText = () => {
@@ -144,6 +167,16 @@ export default function HomeScreen() {
       subscription.remove()
     }
   }, [resetIntentLauncherState])
+
+  // 监听封面图URL变化，重置加载状态
+  useEffect(() => {
+    if (latestVideo.cover_v) {
+      setCoverImageLoaded(false)
+    }
+  }, [latestVideo.cover_v])
+
+
+
 
   // 页面获得焦点时也重置状态（双重保障）
   useFocusEffect(
@@ -251,21 +284,34 @@ const openVolumeSettings = async () => {
       // 处理首页背景图
       // if (homeBgData && homeBgData.image_url) {
       //   const newUrl = homeBgData.image_url
-      //   setHomeBgSource((prev: any) => {
-      //     const currentUri = (prev && typeof prev === 'object' && prev.uri) ? prev.uri : null
-          
-      //     if (currentUri === newUrl) {
-      //       console.log("🖼️ 首页背景图未变，不更新")
-      //       return prev
+      //   const currentUri = (homeBgSourceRef.current && typeof homeBgSourceRef.current === 'object' && homeBgSourceRef.current.uri) 
+      //     ? homeBgSourceRef.current.uri 
+      //     : null
+        
+      //   if (currentUri === newUrl) {
+      //     console.log("🖼️ 首页背景图未变，不更新")
+      //     // 如果URL相同，确保状态已设置
+      //     if (!homeBgSource) {
+      //       setHomeBgSource(homeBgSourceRef.current)
       //     }
-          
+      //   } else {
       //     console.log("🖼️ 更新首页背景图:", newUrl)
-      //     return { uri: newUrl }
-      //   })
+      //     const newSource = { uri: newUrl }
+      //     homeBgSourceRef.current = newSource
+      //     setHomeBgSource(newSource)
+      //   }
       // } else {
-      //   // 获取失败或为空，如果当前没有背景图（比如初始状态），保持默认 Images.homeBg1
-      //   // 这里不做操作，保留当前状态（如果是初始的 Images.homeBg1 则继续使用）
-      //   console.log("⚠️ 未获取到背景图，使用默认背景")
+      //   // 获取失败或为空，如果当前没有背景图（初始状态为null），使用默认背景
+      //   if (!homeBgSourceRef.current) {
+      //     console.log("⚠️ 未获取到背景图，使用默认背景")
+      //     // homeBgSourceRef.current = Images.homeBg2
+      //     // setHomeBgSource(Images.homeBg2)
+      //   } else {
+      //     // 如果已经有背景图（网络图片），保持当前状态，不切换回默认图片
+      //     if (!homeBgSource) {
+      //       setHomeBgSource(homeBgSourceRef.current)
+      //     }
+      //   }
       // }
 
       // 设置用户信息 - 直接使用store中的用户信息
@@ -335,6 +381,7 @@ const openVolumeSettings = async () => {
   useFocusEffect(
     useCallback(() => {
       console.log("🎯 首页获得焦点，准备加载数据")
+      
       
       // 🎯 活动退出兜底：首页获得焦点时，直接发送所有活动类型的退出消息
       console.log("📊 [首页] 强制发送退出消息（兜底机制）")
@@ -649,7 +696,12 @@ const openVolumeSettings = async () => {
       end={{ x: 1, y: 1 }}
       style={styles.pageContainer}
     >
-      <ImageBackground source={homeBgSource} style={styles.backgroundImage} resizeMode="cover">
+      <ImageBackground 
+        key={`bg-${homeBgIndex}`}
+        source={homeBgSource} 
+        style={styles.backgroundImage} 
+        resizeMode="cover"
+      >
         {/* 自定义状态栏 */}
         <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
 
@@ -884,12 +936,27 @@ const openVolumeSettings = async () => {
                     </View>
                     {/* 使用接口数据的封面图，如果没有则使用默认图片 */}
                     {latestVideo.cover_v ? (
-                      <Image 
-                        source={{ uri: latestVideo.cover_v }} 
-                        style={styles.bookCover} 
-                        resizeMode="contain"
-                        defaultSource={Images.book1}
-                      />
+                      <View style={styles.bookCoverContainer}>
+                        {/* 默认图片：在加载完成前显示 */}
+                        {!coverImageLoaded && (
+                          <Image 
+                            source={Images.book1} 
+                            style={[styles.bookCover, styles.bookCoverPlaceholder]} 
+                            resizeMode="contain" 
+                          />
+                        )}
+                        {/* 网络图片：加载完成后显示 */}
+                        <Image 
+                          source={{ uri: latestVideo.cover_v }} 
+                          style={[
+                            styles.bookCover,
+                            !coverImageLoaded && styles.bookCoverHidden
+                          ]} 
+                          resizeMode="contain"
+                          onLoad={() => setCoverImageLoaded(true)}
+                          onError={() => setCoverImageLoaded(false)}
+                        />
+                      </View>
                     ) : (
                       <Image 
                         source={Images.book1} 
@@ -1398,10 +1465,24 @@ const styles = createStyles({
   studyButtonArrow: {
     marginLeft: 2,
   },
+  bookCoverContainer: {
+    width: 54.6875,
+    height: "auto" as any,
+    position: "relative" as const,
+    marginRight: 13.5,
+  },
   bookCover: {
     width: 54.6875,
     borderRadius: 5.2,
-    marginRight: 13.5,
+  },
+  bookCoverPlaceholder: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    zIndex: 1,
+  },
+  bookCoverHidden: {
+    opacity: 0,
   },
   syncClassFooter: {
     position: "absolute",

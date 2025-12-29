@@ -3,6 +3,7 @@ import { Dimensions } from "react-native"
 import { useDialogStore } from "../stores/dialogStore"
 import { createStyles } from "../utils/rpxStyleSheet"
 import { useLockScreenStore } from "@/stores/lockScreenStore"
+import { useNetworkStore } from "../stores/networkStore"
 
 const SCREEN_WIDTH = Dimensions.get("window").width
 
@@ -25,11 +26,12 @@ export function GlobalDialog() {
   }
 
   const locked = useLockScreenStore((state) => state.locked)
+  const showNetworkModal = useNetworkStore((state) => state.showNetworkModal)
 
   return (
     <Portal>
       <Dialog 
-        visible={visible && !locked} 
+        visible={visible && !locked && !showNetworkModal} 
         onDismiss={hideDialog} 
         style={[
           styles.dialog,
