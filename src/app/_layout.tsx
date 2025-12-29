@@ -22,7 +22,7 @@ import { useDeviceAuthStore } from "../stores/deviceAuthStore"
 import { useToastStore } from "../stores/toastStore"
 import { useDialogStore } from "../stores/dialogStore"
 import { useUpdateStore } from "../stores/updateStore"
-import { getLoginModalRef } from "../utils/loginUtils"
+import { getLoginModalRef, showLoginModal } from "../utils/loginUtils"
 
 // 导入P1重要功能Hooks
 import { useSystemKeyListener } from "../hooks/useSystemKeyListener"
@@ -49,6 +49,9 @@ SplashScreen.preventAutoHideAsync()
  */
 export default function RootLayout() {
   const segments = useSegments()
+  
+  // 获取token用于Slot的key，确保token变化时重新渲染路由树
+  const token = useUserStore((state) => state.token)
 
   // 路由守卫 - 使用ref跟踪组件是否已挂载
   const isMounted = React.useRef(false)
@@ -556,6 +559,45 @@ export default function RootLayout() {
       // 加载完成后检查token状态
       const token = useUserStore.getState().token
       console.log("用户数据初始化完成，token状态:", token ? "已存在" : "不存在")
+      
+      // 如果token不存在，等待登录弹窗管理器挂载后弹出登录弹窗
+      if (!token) {
+        console.log("🔐 检测到用户未登录，准备弹出登录弹窗")
+        
+        // 等待登录弹窗引用可用（GlobalLoginManager 挂载完成）
+        const waitForLoginModal = (maxAttempts = 20, interval = 100) => {
+          return new Promise<void>((resolve) => {
+            let attempts = 0
+            const checkInterval = setInterval(() => {
+              attempts++
+              const loginModalRef = getLoginModalRef()
+              if (loginModalRef || attempts >= maxAttempts) {
+                clearInterval(checkInterval)
+                resolve()
+              }
+            }, interval)
+          })
+        }
+        
+        // 等待登录弹窗管理器挂载
+        await waitForLoginModal()
+        
+        // 再次确认token状态（防止在等待期间用户已登录）
+        const currentToken = useUserStore.getState().token
+        if (!currentToken) {
+          console.log("🔐 弹出登录弹窗")
+          showLoginModal({
+            onSuccess: () => {
+              console.log("🔐 用户登录成功")
+            },
+            onCancel: () => {
+              console.log("🔐 用户取消登录")
+            },
+          })
+        } else {
+          console.log("🔐 等待期间用户已登录，跳过登录弹窗")
+        }
+      }
     })
 
     // 锁定横屏模式（还原UniApp逻辑：plus.screen.lockOrientation('landscape-primary')）
@@ -611,7 +653,7 @@ export default function RootLayout() {
 
       <PaperProvider>
         <SafeAreaProvider>
-          <Slot />
+          <Slot key={token || 'no-token'} />
 
           {/* 全局锁屏 */}
           <GlobalLockScreen />
@@ -619,7 +661,7 @@ export default function RootLayout() {
           {/* 全局登录管理器 */}
           <GlobalLoginManager />
           {/* 全局更新对话框 */}
-          <GlobalUpdateDialog />
+          {/* <GlobalUpdateDialog /> */}
           {/* 全局 Toast 提示 */}
           <GlobalToast />
           {/* 全局 Dialog 对话框 */}
