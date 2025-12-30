@@ -661,7 +661,7 @@ export default function RootLayout() {
           {/* 全局登录管理器 */}
           <GlobalLoginManager />
           {/* 全局更新对话框 */}
-          {/* <GlobalUpdateDialog /> */}
+          <GlobalUpdateDialog />
           {/* 全局 Toast 提示 */}
           <GlobalToast />
           {/* 全局 Dialog 对话框 */}
