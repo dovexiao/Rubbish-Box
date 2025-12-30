@@ -764,6 +764,15 @@ export default function AILoadingScreen() {
     }
   }, [streamContent, webViewReady])
 
+  // webview显示变量
+  const [webviewDisplayContent, setWebviewDisplayContent] = useState(false)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setWebviewDisplayContent(true)
+      clearTimeout(timer)
+    }, 1000)
+  }, [streamContent])
+
   return (
     <ImageBackground
       source={require("../../../assets/images/al-loading-bg.png")}
@@ -777,77 +786,78 @@ export default function AILoadingScreen() {
 
         <View style={styles.streamContainer}>
           {/* 立即创建 WebView，不等待条件 */}
-          <WebView
-            ref={webViewRef}
-            originWhitelist={['*']}
-            source={{ html: generateInitialHTML(), baseUrl: 'https://xiaohetx.cn' }}
-            style={styles.webView}
-            scrollEnabled={true}
-            showsVerticalScrollIndicator={true}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            startInLoadingState={false}
-            androidLayerType="hardware"
-            mixedContentMode="always"
-            allowFileAccess={true}
-            allowUniversalAccessFromFileURLs={true}
-            cacheEnabled={false}
-            incognito={true}
-            onLoadStart={() => {
-              perfTimestamps.current.webviewLoadStart = Date.now()
-              console.log('🌐 WebView onLoadStart: 开始加载 HTML')
-              logDuration('页面进入 → WebView 开始加载', 'pageEnter', perfTimestamps.current.webviewLoadStart)
-              
-              // 立即启动超时降级机制（不等待 useEffect）
-              if (!webViewReady && !webViewReadyFallbackTriggered.current && !webViewReadyTimeoutRef.current) {
-                console.log(`⏰ 在 onLoadStart 中启动 WebView 就绪超时降级机制，${WEBVIEW_READY_TIMEOUT}ms 后强制标记为就绪`)
-                
-                webViewReadyTimeoutRef.current = setTimeout(() => {
-                  if (!webViewReady) {
-                    webViewReadyFallbackTriggered.current = true
-                    perfTimestamps.current.webviewReady = Date.now()
-                    console.log('⚠️ WebView 就绪超时，启用降级机制：强制标记为就绪')
-                    logDuration('WebView 开始加载 → 降级就绪', 'webviewLoadStart', perfTimestamps.current.webviewReady)
-                    logDuration('页面进入 → WebView 降级就绪', 'pageEnter', perfTimestamps.current.webviewReady)
-                    setWebViewReady(true)
-                    console.log('✅ setWebViewReady(true) 已调用（降级机制）')
-                  }
-                }, WEBVIEW_READY_TIMEOUT)
-              }
-            }}
-            onLoad={() => {
-              perfTimestamps.current.webviewHtmlLoaded = Date.now()
-              console.log('🔄 WebView onLoad 触发：HTML 加载完成，等待资源就绪...')
-              logDuration('页面进入 → WebView HTML 加载', 'pageEnter', perfTimestamps.current.webviewHtmlLoaded)
-              
-              // 如果超时机制还没启动，基于 onLoad 时间启动（更准确）
-              if (!webViewReady && !webViewReadyFallbackTriggered.current && !webViewReadyTimeoutRef.current) {
-                const elapsed = Date.now() - perfTimestamps.current.webviewHtmlLoaded
-                const remainingTimeout = Math.max(0, WEBVIEW_READY_TIMEOUT - elapsed)
-                console.log(`⏰ 在 onLoad 中启动 WebView 就绪超时降级机制，${remainingTimeout}ms 后强制标记为就绪 (已等待 ${elapsed}ms)`)
-                
-                webViewReadyTimeoutRef.current = setTimeout(() => {
-                  if (!webViewReady) {
-                    webViewReadyFallbackTriggered.current = true
-                    perfTimestamps.current.webviewReady = Date.now()
-                    console.log('⚠️ WebView 就绪超时，启用降级机制：强制标记为就绪')
-                    logDuration('WebView HTML 加载 → 降级就绪', 'webviewHtmlLoaded', perfTimestamps.current.webviewReady)
-                    logDuration('页面进入 → WebView 降级就绪', 'pageEnter', perfTimestamps.current.webviewReady)
-                    setWebViewReady(true)
-                    console.log('✅ setWebViewReady(true) 已调用（降级机制）')
-                  }
-                }, remainingTimeout)
-              }
-            }}
-            onLoadEnd={() => {
-              console.log('🌐 WebView onLoadEnd: HTML 加载结束')
-              
-              // onLoadEnd 时，如果还没收到 WEBVIEW_READY，尝试通过 injectedJavaScript 触发
-              // 这是一个额外的保障机制
-              if (!webViewReady && webViewRef.current) {
-                console.log('🔄 onLoadEnd: 尝试通过 injectedJavaScript 触发就绪检测')
-                // 通过注入 JavaScript 来触发就绪检测
-                webViewRef.current.injectJavaScript(`
+          {webviewDisplayContent && (
+            <WebView
+              ref={webViewRef}
+              originWhitelist={['*']}
+              source={{ html: generateInitialHTML(), baseUrl: 'https://xiaohetx.cn' }}
+              style={styles.webView}
+              scrollEnabled={true}
+              showsVerticalScrollIndicator={true}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              startInLoadingState={false}
+              androidLayerType="hardware"
+              mixedContentMode="always"
+              allowFileAccess={true}
+              allowUniversalAccessFromFileURLs={true}
+              cacheEnabled={false}
+              incognito={true}
+              onLoadStart={() => {
+                perfTimestamps.current.webviewLoadStart = Date.now()
+                console.log('🌐 WebView onLoadStart: 开始加载 HTML')
+                logDuration('页面进入 → WebView 开始加载', 'pageEnter', perfTimestamps.current.webviewLoadStart)
+
+                // 立即启动超时降级机制（不等待 useEffect）
+                if (!webViewReady && !webViewReadyFallbackTriggered.current && !webViewReadyTimeoutRef.current) {
+                  console.log(`⏰ 在 onLoadStart 中启动 WebView 就绪超时降级机制，${WEBVIEW_READY_TIMEOUT}ms 后强制标记为就绪`)
+
+                  webViewReadyTimeoutRef.current = setTimeout(() => {
+                    if (!webViewReady) {
+                      webViewReadyFallbackTriggered.current = true
+                      perfTimestamps.current.webviewReady = Date.now()
+                      console.log('⚠️ WebView 就绪超时，启用降级机制：强制标记为就绪')
+                      logDuration('WebView 开始加载 → 降级就绪', 'webviewLoadStart', perfTimestamps.current.webviewReady)
+                      logDuration('页面进入 → WebView 降级就绪', 'pageEnter', perfTimestamps.current.webviewReady)
+                      setWebViewReady(true)
+                      console.log('✅ setWebViewReady(true) 已调用（降级机制）')
+                    }
+                  }, WEBVIEW_READY_TIMEOUT)
+                }
+              }}
+              onLoad={() => {
+                perfTimestamps.current.webviewHtmlLoaded = Date.now()
+                console.log('🔄 WebView onLoad 触发：HTML 加载完成，等待资源就绪...')
+                logDuration('页面进入 → WebView HTML 加载', 'pageEnter', perfTimestamps.current.webviewHtmlLoaded)
+
+                // 如果超时机制还没启动，基于 onLoad 时间启动（更准确）
+                if (!webViewReady && !webViewReadyFallbackTriggered.current && !webViewReadyTimeoutRef.current) {
+                  const elapsed = Date.now() - perfTimestamps.current.webviewHtmlLoaded
+                  const remainingTimeout = Math.max(0, WEBVIEW_READY_TIMEOUT - elapsed)
+                  console.log(`⏰ 在 onLoad 中启动 WebView 就绪超时降级机制，${remainingTimeout}ms 后强制标记为就绪 (已等待 ${elapsed}ms)`)
+
+                  webViewReadyTimeoutRef.current = setTimeout(() => {
+                    if (!webViewReady) {
+                      webViewReadyFallbackTriggered.current = true
+                      perfTimestamps.current.webviewReady = Date.now()
+                      console.log('⚠️ WebView 就绪超时，启用降级机制：强制标记为就绪')
+                      logDuration('WebView HTML 加载 → 降级就绪', 'webviewHtmlLoaded', perfTimestamps.current.webviewReady)
+                      logDuration('页面进入 → WebView 降级就绪', 'pageEnter', perfTimestamps.current.webviewReady)
+                      setWebViewReady(true)
+                      console.log('✅ setWebViewReady(true) 已调用（降级机制）')
+                    }
+                  }, remainingTimeout)
+                }
+              }}
+              onLoadEnd={() => {
+                console.log('🌐 WebView onLoadEnd: HTML 加载结束')
+
+                // onLoadEnd 时，如果还没收到 WEBVIEW_READY，尝试通过 injectedJavaScript 触发
+                // 这是一个额外的保障机制
+                if (!webViewReady && webViewRef.current) {
+                  console.log('🔄 onLoadEnd: 尝试通过 injectedJavaScript 触发就绪检测')
+                  // 通过注入 JavaScript 来触发就绪检测
+                  webViewRef.current.injectJavaScript(`
                   (function() {
                     if (window.ReactNativeWebView) {
                       try {
@@ -862,9 +872,9 @@ export default function AILoadingScreen() {
                   })();
                   true; // 必须返回 true
                 `)
-              }
-            }}
-            injectedJavaScript={`
+                }
+              }}
+              injectedJavaScript={`
               // 立即尝试发送就绪消息（在页面加载时）
               (function() {
                 var attempts = 0;
@@ -911,109 +921,110 @@ export default function AILoadingScreen() {
               })();
               true; // 必须返回 true
             `}
-            onMessage={(event) => {
-              const message = event.nativeEvent.data
-              
-              // 处理日志消息
-              try {
-                const parsed = JSON.parse(message)
-                if (parsed.type === 'log') {
-                  console.log('📱 [WebView]', parsed.message)
-                  return
-                }
-              } catch (e) {
-                // 不是 JSON，继续处理其他消息
-              }
-              
-              console.log('📨 WebView onMessage 收到消息:', message)
-              
-              // 收到 WEBVIEW_READY 或 WEBVIEW_READY_FROM_INJECT 消息都认为就绪
-              if (message === 'WEBVIEW_READY' || message === 'WEBVIEW_READY_FROM_INJECT') {
-                if (message === 'WEBVIEW_READY_FROM_INJECT') {
-                  console.log('✅ 收到 injectedJavaScript 发送的就绪消息')
-                }
-                // 清除超时定时器
-                if (webViewReadyTimeoutRef.current) {
-                  clearTimeout(webViewReadyTimeoutRef.current)
-                  webViewReadyTimeoutRef.current = null
-                }
-                
-                perfTimestamps.current.webviewReady = Date.now()
-                console.log('✅ WebView 收到 WEBVIEW_READY，设置 webViewReady=true')
-                logDuration('WebView HTML 加载 → 资源就绪', 'webviewHtmlLoaded', perfTimestamps.current.webviewReady)
-                logDuration('页面进入 → WebView 资源就绪', 'pageEnter', perfTimestamps.current.webviewReady)
-                setWebViewReady(true)
-                console.log('✅ setWebViewReady(true) 已调用')
-              } else {
-                console.log('⚠️ WebView 收到非 WEBVIEW_READY 消息，忽略')
-              }
-            }}
-            onError={(syntheticEvent) => {
-              const { nativeEvent } = syntheticEvent
-              console.error('❌ WebView onError 加载错误:', nativeEvent)
-              
-              // 错误恢复：如果 WebView 未就绪且未超过最大重试次数，尝试重新加载
-              if (!webViewReady && webViewRetryCount.current < MAX_WEBVIEW_RETRIES) {
-                webViewRetryCount.current++
-                console.log(`🔄 WebView 错误恢复：尝试重新加载 (第 ${webViewRetryCount.current}/${MAX_WEBVIEW_RETRIES} 次)`)
-                
-                // 延迟重新加载，避免立即重试
-                setTimeout(() => {
-                  if (webViewRef.current && !webViewReady) {
-                    console.log('🔄 执行 WebView 重新加载...')
-                    webViewRef.current.reload()
+              onMessage={(event) => {
+                const message = event.nativeEvent.data
+
+                // 处理日志消息
+                try {
+                  const parsed = JSON.parse(message)
+                  if (parsed.type === 'log') {
+                    console.log('📱 [WebView]', parsed.message)
+                    return
                   }
-                }, 500)
-              } else if (!webViewReady) {
-                console.error('❌ WebView 错误恢复失败：已达到最大重试次数，启用降级机制')
-                // 如果重试失败，启用降级机制
-                if (!webViewReadyFallbackTriggered.current) {
-                  webViewReadyFallbackTriggered.current = true
-                  perfTimestamps.current.webviewReady = Date.now()
-                  setWebViewReady(true)
-                  console.log('✅ setWebViewReady(true) 已调用（错误恢复降级）')
+                } catch (e) {
+                  // 不是 JSON，继续处理其他消息
                 }
-              }
-            }}
-            onHttpError={(syntheticEvent) => {
-              const { nativeEvent } = syntheticEvent
-              console.error('❌ WebView HTTP 错误:', nativeEvent)
-              
-              // HTTP 错误通常是 CDN 资源加载失败，不影响基本功能，可以降级处理
-              if (!webViewReady && !webViewReadyFallbackTriggered.current) {
-                console.log('⚠️ CDN 资源加载失败，但可以降级使用基本功能')
-                // 不立即降级，等待超时机制处理
-              }
-            }}
-            onRenderProcessGone={(syntheticEvent) => {
-              const { nativeEvent } = syntheticEvent
-              console.error('❌ WebView 渲染进程崩溃:', nativeEvent)
-              
-              // 渲染进程崩溃是最严重的情况，需要重新初始化
-              if (!webViewReady && webViewRetryCount.current < MAX_WEBVIEW_RETRIES) {
-                webViewRetryCount.current++
-                console.log(`🔄 WebView 渲染进程崩溃恢复：尝试重新初始化 (第 ${webViewRetryCount.current}/${MAX_WEBVIEW_RETRIES} 次)`)
-                
-                // 延迟重新加载
-                setTimeout(() => {
-                  if (webViewRef.current && !webViewReady) {
-                    console.log('🔄 执行 WebView 重新初始化...')
-                    webViewRef.current.reload()
+
+                console.log('📨 WebView onMessage 收到消息:', message)
+
+                // 收到 WEBVIEW_READY 或 WEBVIEW_READY_FROM_INJECT 消息都认为就绪
+                if (message === 'WEBVIEW_READY' || message === 'WEBVIEW_READY_FROM_INJECT') {
+                  if (message === 'WEBVIEW_READY_FROM_INJECT') {
+                    console.log('✅ 收到 injectedJavaScript 发送的就绪消息')
                   }
-                }, 1000)
-              } else if (!webViewReady) {
-                console.error('❌ WebView 渲染进程崩溃恢复失败：已达到最大重试次数，启用降级机制')
-                // 如果重试失败，启用降级机制
-                if (!webViewReadyFallbackTriggered.current) {
-                  webViewReadyFallbackTriggered.current = true
+                  // 清除超时定时器
+                  if (webViewReadyTimeoutRef.current) {
+                    clearTimeout(webViewReadyTimeoutRef.current)
+                    webViewReadyTimeoutRef.current = null
+                  }
+
                   perfTimestamps.current.webviewReady = Date.now()
+                  console.log('✅ WebView 收到 WEBVIEW_READY，设置 webViewReady=true')
+                  logDuration('WebView HTML 加载 → 资源就绪', 'webviewHtmlLoaded', perfTimestamps.current.webviewReady)
+                  logDuration('页面进入 → WebView 资源就绪', 'pageEnter', perfTimestamps.current.webviewReady)
                   setWebViewReady(true)
-                  console.log('✅ setWebViewReady(true) 已调用（崩溃恢复降级）')
+                  console.log('✅ setWebViewReady(true) 已调用')
+                } else {
+                  console.log('⚠️ WebView 收到非 WEBVIEW_READY 消息，忽略')
                 }
-              }
-            }}
-          />
-          
+              }}
+              onError={(syntheticEvent) => {
+                const { nativeEvent } = syntheticEvent
+                console.error('❌ WebView onError 加载错误:', nativeEvent)
+
+                // 错误恢复：如果 WebView 未就绪且未超过最大重试次数，尝试重新加载
+                if (!webViewReady && webViewRetryCount.current < MAX_WEBVIEW_RETRIES) {
+                  webViewRetryCount.current++
+                  console.log(`🔄 WebView 错误恢复：尝试重新加载 (第 ${webViewRetryCount.current}/${MAX_WEBVIEW_RETRIES} 次)`)
+
+                  // 延迟重新加载，避免立即重试
+                  setTimeout(() => {
+                    if (webViewRef.current && !webViewReady) {
+                      console.log('🔄 执行 WebView 重新加载...')
+                      webViewRef.current.reload()
+                    }
+                  }, 500)
+                } else if (!webViewReady) {
+                  console.error('❌ WebView 错误恢复失败：已达到最大重试次数，启用降级机制')
+                  // 如果重试失败，启用降级机制
+                  if (!webViewReadyFallbackTriggered.current) {
+                    webViewReadyFallbackTriggered.current = true
+                    perfTimestamps.current.webviewReady = Date.now()
+                    setWebViewReady(true)
+                    console.log('✅ setWebViewReady(true) 已调用（错误恢复降级）')
+                  }
+                }
+              }}
+              onHttpError={(syntheticEvent) => {
+                const { nativeEvent } = syntheticEvent
+                console.error('❌ WebView HTTP 错误:', nativeEvent)
+
+                // HTTP 错误通常是 CDN 资源加载失败，不影响基本功能，可以降级处理
+                if (!webViewReady && !webViewReadyFallbackTriggered.current) {
+                  console.log('⚠️ CDN 资源加载失败，但可以降级使用基本功能')
+                  // 不立即降级，等待超时机制处理
+                }
+              }}
+              onRenderProcessGone={(syntheticEvent) => {
+                const { nativeEvent } = syntheticEvent
+                console.error('❌ WebView 渲染进程崩溃:', nativeEvent)
+
+                // 渲染进程崩溃是最严重的情况，需要重新初始化
+                if (!webViewReady && webViewRetryCount.current < MAX_WEBVIEW_RETRIES) {
+                  webViewRetryCount.current++
+                  console.log(`🔄 WebView 渲染进程崩溃恢复：尝试重新初始化 (第 ${webViewRetryCount.current}/${MAX_WEBVIEW_RETRIES} 次)`)
+
+                  // 延迟重新加载
+                  setTimeout(() => {
+                    if (webViewRef.current && !webViewReady) {
+                      console.log('🔄 执行 WebView 重新初始化...')
+                      webViewRef.current.reload()
+                    }
+                  }, 1000)
+                } else if (!webViewReady) {
+                  console.error('❌ WebView 渲染进程崩溃恢复失败：已达到最大重试次数，启用降级机制')
+                  // 如果重试失败，启用降级机制
+                  if (!webViewReadyFallbackTriggered.current) {
+                    webViewReadyFallbackTriggered.current = true
+                    perfTimestamps.current.webviewReady = Date.now()
+                    setWebViewReady(true)
+                    console.log('✅ setWebViewReady(true) 已调用（崩溃恢复降级）')
+                  }
+                }
+              }}
+            />
+          )}
+
           {/* 格式化提示 */}
           {isFormatting && (
             <View style={styles.formattingContainer}>
@@ -1057,6 +1068,7 @@ const styles = createStyles({
     height: 155,
     marginTop: -60,
     marginLeft: -15,
+    overflow: 'hidden' as const,
   },
   webView: {
     flex: 1,
