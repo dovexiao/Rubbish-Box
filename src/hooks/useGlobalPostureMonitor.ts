@@ -19,7 +19,7 @@ import {
 } from '../modules/PostureMonitorModule';
 import { saveMointorData } from '../services/app';
 
-const BAD_POSTURE_REMINDER_INTERVAL_SECONDS = 30; // 不良姿势每30秒提醒一次
+const BAD_POSTURE_REMINDER_INTERVAL_SECONDS = 10; // 不良姿势每30秒提醒一次
 
 export function useGlobalPostureMonitor() {
   const postureStore = usePostureStore();

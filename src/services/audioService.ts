@@ -23,7 +23,7 @@ export class AudioService {
   private audioEnabled = true;
   private vibrationEnabled = true;
   private lastPlayTime = 0;
-  private readonly MIN_PLAY_INTERVAL = 30000; // 30秒最小间隔（避免过于频繁）
+  private readonly MIN_PLAY_INTERVAL = 10000; // 30秒最小间隔（避免过于频繁）
 
   constructor() {
     // 设置音频类别和模式

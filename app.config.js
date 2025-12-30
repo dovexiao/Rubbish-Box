@@ -39,7 +39,7 @@ module.exports = ({ config }) => {
       fallbackToCacheTimeout: 0,
     },
     // 运行时版本配置
-    runtimeVersion: "1.0.6",
+    runtimeVersion: "1.0.7",
     plugins: [
       ...existingPlugins, 
       "expo-font"

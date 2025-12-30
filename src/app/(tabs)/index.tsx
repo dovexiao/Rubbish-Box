@@ -456,7 +456,7 @@ const openVolumeSettings = async () => {
       return
     }
 
-    // 使用Expo Router导航到视频播放页面
+    // 使用Expo Router导航到视频播放页面 pathname: "/sync-classroom/video-expo-video",
     router.push({
       pathname: "/sync-classroom/video",
       params: {

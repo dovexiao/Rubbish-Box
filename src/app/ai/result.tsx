@@ -120,7 +120,8 @@ export default function AIResultScreen() {
     } else if (activityTypeRef.current === "composition") {
       endComposition()
     }
-    router.back()
+    // router.back()
+    router.navigate("/(tabs)/study")
   }
 
   // 监听页面失焦，确保退出消息发送

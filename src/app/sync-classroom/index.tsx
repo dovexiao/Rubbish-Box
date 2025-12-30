@@ -462,7 +462,7 @@ export default function SyncClassroomScreen() {
     })
   }, [])
 
-  // 播放视频
+  // 播放视频 pathname: "/sync-classroom/video-expo-video",
   const playVideo = useCallback(
     (point: any) => {
       router.push({

@@ -36,6 +36,23 @@ export function WritingAnalysis({ scoreItems }: Props) {
       </View>
     )
   }
+  
+  // 🛡️ 防崩溃：检查所有 percentage 是否都是 0
+  // 避免 SVG RadialGradient radius = 0 导致 Android 崩溃
+  const hasValidData = scoreItems.some(item => {
+    const percentage = typeof item.progress === 'string' 
+      ? parseFloat(item.progress) 
+      : item.progress
+    return percentage > 0
+  })
+  
+  if (!hasValidData) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.emptyText}>数据不足</Text>
+      </View>
+    )
+  }
 
   // 雷达图配置 - 增大雷达图，减少空白
   const width = 194 // 194rpx，与容器一致
@@ -45,7 +62,8 @@ export function WritingAnalysis({ scoreItems }: Props) {
   const labelDistance = 12 // 减小标签距离
   const textMargin = 15 // 文字预留空间（两行文字+间距）
   // 计算最大半径：(容器最小边 / 2) - 标签距离 - 文字预留
-  const maxRadius = Math.min(width, height) / 2 - labelDistance - textMargin
+  // 兜底：确保 maxRadius 至少为 1，避免为 0 或负数导致崩溃
+  const maxRadius = Math.max(1, Math.min(width, height) / 2 - labelDistance - textMargin)
 
   // 计算雷达图的各个点位置
   const angleStep = (Math.PI * 2) / scoreItems.length
@@ -190,12 +208,22 @@ export function WritingAnalysis({ scoreItems }: Props) {
     })
   }
 
+  // 计算 RadialGradient 的 radius，确保始终 > 0
+  // 重要：r 必须是字符串类型，数字会导致 Android 崩溃
+  const gradientRadius = Math.max(10, Math.min(width || 194, height || 169) / 2)
+
   return (
     <View style={styles.container}>
       <Svg width={width} height={height}>
         {/* 定义渐变 */}
         <Defs>
-          <RadialGradient id="gradient" cx="50%" cy="50%" r="50%">
+          {/* 兜底：使用字符串类型，确保 radius > 0，避免 Android 崩溃 */}
+          <RadialGradient 
+            id="gradient" 
+            cx="50%" 
+            cy="50%" 
+            r={`${gradientRadius}`}
+          >
             <Stop offset="0%" stopColor="rgba(146, 222, 255, 1)" stopOpacity={1} />
             <Stop offset="100%" stopColor="rgba(92, 255, 103, 1)" stopOpacity={1} />
           </RadialGradient>
@@ -221,8 +249,8 @@ const styles = createStyles({
   container: {
     width: 194, // 194rpx 恢复原尺寸
     height: 169, // 169rpx 恢复原尺寸
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     // borderWidth: 1,
     // borderColor: "#e0e0e0",
     borderRadius: 4,

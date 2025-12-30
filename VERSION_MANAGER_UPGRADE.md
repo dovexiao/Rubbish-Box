@@ -25,7 +25,7 @@
 7. ✅ **android/app/build.gradle (versionName)** ← 新增
 
 ### 3. 完整的版本信息显示
-`npm run version:show` 现在显示所有配置：
+`c` 现在显示所有配置：
 ```bash
 📋 当前版本信息:
 📱 用户版本号: 1.0.1

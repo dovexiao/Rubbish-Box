@@ -514,7 +514,7 @@ export default function AILoadingScreen() {
                   //   console.log(`📥 已接收 ${contentBuffer.current.length} 字符 (本次添加 ${content.length} 字符, 从 ${beforeLength} 到 ${afterLength})`)
                   // }
                 } else {
-                  console.log('⚠️ JSON 中无内容字段:', JSON.stringify(json).substring(0, 100))
+                  // console.log('⚠️ JSON 中无内容字段:', JSON.stringify(json).substring(0, 100))
                 }
               } catch (e) {
                 console.error("❌ JSON解析失败:", e)

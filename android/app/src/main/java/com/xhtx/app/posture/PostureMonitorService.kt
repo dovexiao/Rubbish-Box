@@ -42,7 +42,7 @@ class PostureMonitorService : Service() {
         private const val KEY_HEAD_NOT_UP = "head_not_up"
         
         // 时间常量
-        private const val UPDATE_INTERVAL_SECONDS = 30 // 30秒更新一次前端
+        private const val UPDATE_INTERVAL_SECONDS = 10 // 30秒更新一次前端
         private const val REST_REMINDER_SECONDS = 45 * 60 // 45分钟 = 2700秒
 
         private const val DETECTION_INTERVAL_SECONDS = 10 // Native每10秒检测一次
