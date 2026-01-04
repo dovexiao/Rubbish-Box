@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState, forwardRef, useImperativeHandle, useRef } from "react"
 import { Modal, View, Text, TouchableOpacity, TextInput, TouchableWithoutFeedback, ActivityIndicator } from "react-native"
-import { createStyles } from "../../utils/rpxStyleSheet"
+import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { type AddressItem, AddAddressParams, UpdateAddressParams } from "../../services/pointsMall"
 import RegionSelector from "../common/RegionSelector"
 import { showError } from "@/utils/toast"
+import { devError } from "../../services/WebSocketManager"
 
 export type AddressAddOrEditorPopupRef = {
     show: (address: AddressItem | null) => void;
@@ -93,7 +94,7 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
 
     // 保存按钮是否可用
     const isSaveButtonEnabled = useMemo(() => {
-        return isAddressInfoComplete && !loading && !visible;
+        return isAddressInfoComplete && !loading && visible;
     }, [isAddressInfoComplete, loading, visible]);
 
     // 处理地区选择确认
@@ -110,6 +111,9 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
     }), [show]);
 
     const handleSave = useCallback(async () => {
+        if (!isSaveButtonEnabled) {
+            return;
+        }
         if (!isAddressInfoComplete) {
             showError("请输入完整地址信息");
             return;
@@ -139,8 +143,8 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
             onSuccess?.();
             hide();
             onClose?.();
-        } catch (error) {
-            console.warn("保存地址失败", error);
+        } catch (error: unknown) {
+            devError("保存地址失败:", error);
         } finally {
             loadingRef.current = false;
             setLoading(false);
@@ -168,6 +172,7 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
                             placeholderTextColor="#00000066"
                             value={receiverName}
                             onChangeText={setReceiverName}
+                            maxLength={10}
                         />
                     </View>
 
@@ -202,17 +207,20 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
                             value={detail}
                             onChangeText={setDetail}
                             multiline
+                            maxLength={30}
+                            textAlign="left"
+                            textAlignVertical="top"
                         />
                     </View>
 
                     <TouchableOpacity
                         style={[styles.saveButton, !isAddressInfoComplete && styles.saveButtonDisabled]}
-                        activeOpacity={isAddressInfoComplete ? 0.8 : 1}
-                        onPress={isAddressInfoComplete ? handleSave : undefined}
-                        disabled={!isAddressInfoComplete}
+                        activeOpacity={!isSaveButtonEnabled ? 1 : 0.8}
+                        onPress={handleSave}
+                        disabled={!isSaveButtonEnabled}
                     >
                         <Text style={[styles.saveButtonText, !isAddressInfoComplete && styles.saveButtonTextDisabled]}>
-                            保存
+                            {loading ? "保存中..." : "保存"}
                         </Text>
                         {loading && (
                             <ActivityIndicator size="small" color="#FFFFFF" />
@@ -244,18 +252,23 @@ const styles = createStyles({
         backgroundColor: "rgba(0,0,0,0.6)",
     },
     centerBox: {
-        flex: 1,
+        // flex: 1,
+        width: "100%" as const,
+        height: "100%" as const,
         justifyContent: "center" as const,
         alignItems: "center" as const,
     },
     popup: {
-        width: 246.25, // 632
-        height: 281.25, // 720
+        width: 253.90625, // 650
+        minHeight: 281.25, // 720
         backgroundColor: "#FFFFFF",
         borderRadius: 10.546875, // 27
         paddingHorizontal: 15.625, // 40
         paddingVertical: 16.40625, // 42
         justifyContent: "flex-start" as const,
+        // 不可拉伸
+        flexShrink: 0,
+        flexGrow: 0,
     },
     title: {
         fontFamily: "PingFang SC",
@@ -267,7 +280,7 @@ const styles = createStyles({
     },
     formItem: {
         width: "100%" as const,
-        minHeight: 43.359375, // 111
+        minHeight: 46.875, // 120
         flexDirection: "row" as const,
         alignItems: "center" as const,
         // paddingVertical: 5.46875, // 14
