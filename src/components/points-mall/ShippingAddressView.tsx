@@ -378,6 +378,7 @@ const styles = createStyles({
     justifyContent: "center" as const,
     alignItems: "center" as const,
     paddingVertical: 15.625, // 40
+    paddingBottom: 58.984375, // 151
   },
   footerText: {
     fontSize: 10.15625, // 26
