@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react"
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native"
+import React, { useCallback, useState, useRef, useMemo } from "react"
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { LinearGradient } from "expo-linear-gradient"
 import Ionicons from "@expo/vector-icons/build/Ionicons"
@@ -9,11 +9,11 @@ import ImageWithPlaceholder from "../common/ImageWithPlaceholder"
 import { useProductDetailStore } from "../../stores/points-mall/productDetailStore"
 import { exchangeProduct } from "../../services/pointsMall"
 import { showError, showSuccess } from "../../utils/toast"
+import { devError } from "../../services/WebSocketManager"
 
 /**
  * 确认订单信息视图组件
  */
-
 interface OrderConfirmProps {
   onNext: () => void
   onSuccess?: () => void
@@ -22,9 +22,19 @@ interface OrderConfirmProps {
 const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onSuccess }) => {
   const { productId, productName, price, mainImage, defaultAddress } = useProductDetailStore();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [isExchanging, setIsExchanging] = useState(false);
+  
+  const exchangingRef = useRef(false);
 
-  // 判断按钮是否禁用：当 productId 或 defaultAddress 为空时禁用
-  const isDisabled = !productId || !defaultAddress;
+  // 信息完整性判断
+  const isInfoComplete = useMemo(() => {
+    return !!(productId && defaultAddress);
+  }, [productId, defaultAddress]);
+
+  // 判断按钮是否可用
+  const isButtonEnabled = useMemo(() => {
+    return isInfoComplete && !isExchanging;
+  }, [isInfoComplete, isExchanging]);
 
   // 兑换商品
   const handleExchangeProduct = useCallback(async () => {
@@ -33,6 +43,14 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onSuccess }) =>
       return;
     }
 
+    if (exchangingRef.current) {
+      return;
+    }
+
+    // 标记请求开始
+    exchangingRef.current = true;
+    setIsExchanging(true);
+
     try {
       await exchangeProduct({
         product_id: productId.toString(),
@@ -40,22 +58,31 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onSuccess }) =>
       });
       showSuccess("兑换成功");
       onSuccess?.();
-    } catch (error) {
-      console.error("兑换商品失败:", error);
+    } catch (error: unknown) {
+      devError("兑换商品失败:", error);
+    } finally {
+      // 重置状态
+      exchangingRef.current = false;
+      setIsExchanging(false);
     }
   }, [productId, defaultAddress, onSuccess]);
 
   const handleConfirmExchange = useCallback(async () => {
-    await handleExchangeProduct();
+    if (isExchanging) {
+      return; // 防止重复点击
+    }
+    // 先关闭对话框，避免用户重复点击
     setShowConfirmDialog(false);
-  }, [handleExchangeProduct])
+    // 执行兑换
+    await handleExchangeProduct();
+  }, [handleExchangeProduct, isExchanging])
 
   const handleButtonPress = useCallback(() => {
-    if (isDisabled) {
+    if (!isButtonEnabled) {
       return;
     }
     setShowConfirmDialog(true);
-  }, [isDisabled])
+  }, [isButtonEnabled])
 
   return (
     <>
@@ -131,27 +158,42 @@ const OrderConfirmView: React.FC<OrderConfirmProps> = ({ onNext, onSuccess }) =>
       </View>
       {/* 下一步按钮 */}
       <TouchableOpacity
-        style={[styles.nextButton, isDisabled && styles.nextButtonDisabled]}
-        activeOpacity={isDisabled ? 1 : 0.8}
-        disabled={isDisabled}
+        style={styles.nextButton}
+        activeOpacity={!isButtonEnabled ? 1 : 0.8}
+        disabled={!isButtonEnabled}
         onPress={handleButtonPress}
       >
         <LinearGradient
-          colors={isDisabled ? ['#E0E0E0', '#C0C0C0'] : ['#FFDCBC', '#FFBB7B']}
+          colors={!isInfoComplete ? ['#E0E0E0', '#C0C0C0'] : ['#FFDCBC', '#FFBB7B']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.nextButtonGradient}
         >
-          <Text style={[styles.nextButtonText, isDisabled && styles.nextButtonTextDisabled]}>确认兑换</Text>
+          <View style={styles.nextButtonContent}>
+            <Text style={[styles.nextButtonText, !isInfoComplete && styles.nextButtonTextDisabled]}>
+              {isExchanging ? "兑换中..." : "确认兑换"}
+            </Text>
+            {isExchanging && (
+              <ActivityIndicator 
+                size="small" 
+                color={!isInfoComplete ? "#999999" : "#743A14"} 
+                style={styles.nextButtonLoading}
+              />
+            )}
+          </View>
         </LinearGradient>
       </TouchableOpacity>
       <ConfirmDialog
         visible={showConfirmDialog}
         title="确认兑换吗?"
         content="时间货币一旦兑换后订单不可取消哦"
-        confirmText="确认兑换"
+        confirmText={isExchanging ? "兑换中..." : "确认兑换"}
         cancelText="再考虑下"
-        onClose={() => { setShowConfirmDialog(false) }}
+        onClose={() => { 
+          if (!isExchanging) {
+            setShowConfirmDialog(false);
+          }
+        }}
         onConfirm={handleConfirmExchange}
       />
     </>
@@ -368,7 +410,7 @@ const styles = createStyles({
     left: 108.0078125, // 276.5
     width: 187.5, // 480
     height: 33.203125, // 85
-    backgroundColor: "#FF8C00",
+    // backgroundColor: "#FF8C00",
     borderRadius: 15.625, // 40
     overflow: "hidden" as const,
   },
@@ -382,6 +424,12 @@ const styles = createStyles({
     alignItems: "center" as const,
     justifyContent: "center" as const,
   },
+  nextButtonContent: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    gap: 6.25, // 16
+  },
   nextButtonText: {
     fontFamily: "PingFang SC",
     fontWeight: "bold" as const,
@@ -390,6 +438,9 @@ const styles = createStyles({
   },
   nextButtonTextDisabled: {
     color: "#999999",
+  },
+  nextButtonLoading: {
+    marginLeft: 0,
   },
 })
 
