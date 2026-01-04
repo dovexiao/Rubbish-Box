@@ -209,6 +209,7 @@ const styles = createStyles({
     alignItems: "center", // 水平居中
   },
   titleChar: {
+    lineHeight: 16,
     fontSize: 10, // 字号适中，确保在格子内显示
     fontWeight: "bold",
     color: "#000000",
@@ -260,10 +261,9 @@ const styles = createStyles({
   chineseChar: {
     fontSize: 10, // 字号适中，确保在格子内显示
     color: "#000000",
+    lineHeight: 16,
     includeFontPadding: false, // 移除额外的字体padding
     textAlign: "center",
-    padding: 0, // 移除所有内边距
-    margin: 0, // 移除所有外边距
   },
   englishLineContainer: {
     height: 16, // GRID_SIZE
