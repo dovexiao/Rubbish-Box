@@ -14,7 +14,7 @@ interface DeviceAuthState {
   blockUserInteractions: () => void
   unblockUserInteractions: () => void
   ensureAuthFromCacheOrVerify: () => Promise<boolean>
-  verifyDeviceAuth: (deviceUUID: string) => Promise<boolean>
+  verifyDeviceAuth: (deviceUUID: string) => Promise<boolean | null>
 }
 
 /**
@@ -75,41 +75,77 @@ export const useDeviceAuthStore = create<DeviceAuthState>((set, get) => ({
 
       // 🔴 每次都调用接口验证设备授权（移除缓存检查）
       console.log("🔐 调用设备授权验证接口，UUID:", deviceUUID)
-      const isAuthorized = await get().verifyDeviceAuth(deviceUUID)
+      const authResult = await get().verifyDeviceAuth(deviceUUID)
 
-      if (isAuthorized) {
+      // 只有明确返回 false (exists === false) 时才阻止用户操作
+      if (authResult === false) {
+        set({
+          isAuthorized: false,
+          isBlocked: true,
+          lastVerifyTime: 0,
+        })
+        console.log("设备授权验证失败，阻止用户操作")
+        return false
+      } else if (authResult === true) {
         set({
           isAuthorized: true,
           isBlocked: false,
           lastVerifyTime: currentTime,
         })
         console.log("设备授权验证成功")
+        return true
       } else {
+        // authResult === null，接口报错，不阻止用户操作
+        console.log("⚠️ 设备授权验证接口调用失败，不阻止用户操作")
         set({
           isAuthorized: false,
-          isBlocked: true,
+          isBlocked: false,
           lastVerifyTime: 0,
         })
-        console.log("设备授权验证失败")
+        return false
       }
-
-      return isAuthorized
     } catch (error) {
       console.error("设备授权验证出错:", error)
+      // 异常情况也不阻止用户操作，只有明确 exists === false 时才阻止
       set({
         isAuthorized: false,
-        isBlocked: true,
+        isBlocked: false,
         lastVerifyTime: 0,
       })
       return false
     }
   },
 
-  // 设备授权验证（接口已在 _layout.tsx 中调用，这里只返回状态）
-  verifyDeviceAuth: async (deviceUUID: string): Promise<boolean> => {
-    // 接口已在应用启动时调用，这里直接返回 true
-    // 如果需要验证失败的处理，可以在 _layout.tsx 中处理
-    console.log("✅ 设备授权验证（接口已在应用启动时调用）")
-    return true
+  // 设备授权验证接口调用
+  verifyDeviceAuth: async (deviceUUID: string): Promise<boolean | null> => {
+    try {
+      const { post } = require("../services/api")
+      console.log("🔐 调用设备授权验证接口，UUID:", deviceUUID)
+      
+      const response = await post("/AppStart/verify-device-code/", {
+        device_code: deviceUUID,
+      })
+      
+      console.log("📡 设备授权接口响应:", response)
+      
+      // 根据接口响应处理授权状态
+      if (response && typeof response === 'object' && 'exists' in response) {
+        if (response.exists === false) {
+          console.log("❌ 设备未授权 (exists: false)")
+          return false
+        } else {
+          console.log("✅ 设备已授权 (exists: true)")
+          return true
+        }
+      }
+      
+      // 如果响应格式不符合预期，默认返回 true（向后兼容）
+      console.log("⚠️ 设备授权接口响应格式不符合预期，默认返回已授权")
+      return true
+    } catch (error) {
+      console.error("❌ 设备授权验证接口调用失败:", error)
+      // 接口调用失败时返回 null，表示未知状态，不阻止用户操作
+      return null
+    }
   },
 }))

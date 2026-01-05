@@ -259,7 +259,7 @@ export default function AIPracticeScreen() {
           {/* Loading 图标 */}
           <ActivityIndicator size="large" color="#5B9DFF" style={styles.loadingSpinner} />
           {/* 加载文字 */}
-          <Text style={styles.loadingText}>试题正在努力加载中请稍候.....</Text>
+          <Text style={styles.loadingText}>试题正在努力生成中，请耐心等待1～2分钟</Text>
         </View>
       </LinearGradient>
     )

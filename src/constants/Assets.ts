@@ -125,6 +125,9 @@ export const Images = {
   networkModalTitle: require("../../assets/images/network-modal-title.png"),
   networkBoy: require("../../assets/images/network-boy.png"),
 
+  // 客服微信二维码
+  customerServiceWeChat: require("../../assets/images/pic.png"),
+
   // 积分商城相关
   // 每周打卡签到相关
   pointsMallSurprisePoint: require("../../assets/images/points-mall/surprise-point.png"),

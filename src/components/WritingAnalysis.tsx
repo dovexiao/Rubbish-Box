@@ -36,7 +36,7 @@ export function WritingAnalysis({ scoreItems }: Props) {
       </View>
     )
   }
-  
+
   // 🛡️ 防崩溃：检查所有 percentage 是否都是 0
   // 避免 SVG RadialGradient radius = 0 导致 Android 崩溃
   const hasValidData = scoreItems.some(item => {

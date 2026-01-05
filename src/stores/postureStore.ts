@@ -1,13 +1,6 @@
 import { create } from "zustand"
 import { addPoints } from "../services/app"
-
-type PostureStatus =
-  | "good"
-  | "head_not_centered"
-  | "head_not_up"
-  | "shoulders_not_level"
-  | "detecting"
-  | "no_person"
+import { PostureStatus } from "../types/posture"
 
 interface RewardConfig {
   goodPostureCount: number // 正确坐姿时间阈值（秒）

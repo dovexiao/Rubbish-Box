@@ -1,8 +1,10 @@
 import React from "react"
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native"
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Image } from "react-native"
+import { BlurView } from "expo-blur"
 import { Ionicons } from "@expo/vector-icons"
 import { useDeviceAuthStore } from "../stores/deviceAuthStore"
 import { useLockScreenStore } from "@/stores/lockScreenStore"
+import { Images } from "../constants/Assets"
 
 /**
  * 设备授权阻止组件
@@ -11,12 +13,11 @@ import { useLockScreenStore } from "@/stores/lockScreenStore"
 export const DeviceAuthBlocker: React.FC = () => {
   const isBlocked = useDeviceAuthStore((state) => state.isBlocked)
   const deviceUUID = useDeviceAuthStore((state) => state.deviceUUID)
+  const locked = useLockScreenStore((state) => state.locked)
 
   if (!isBlocked) {
     return null
   }
-
-  const locked = useLockScreenStore((state) => state.locked)
 
   return (
     <Modal
@@ -28,7 +29,7 @@ export const DeviceAuthBlocker: React.FC = () => {
         // 不允许关闭
       }}
     >
-      <View style={styles.overlay}>
+      <BlurView intensity={100} style={styles.overlay} experimentalBlurMethod="dimezisBlurView">
         <View style={styles.content}>
           <View style={styles.iconContainer}>
             <Ionicons name="lock-closed" size={64} color="#FF3B30" />
@@ -38,18 +39,25 @@ export const DeviceAuthBlocker: React.FC = () => {
           
           <Text style={styles.message}>
             当前设备未通过授权验证，无法使用此应用。
-            {"\n\n"}
-            请联系管理员进行设备授权。
+            {/* {"\n"}
+            请联系客服进行设备授权。 */}
           </Text>
           
+          {/* 客服微信二维码 */}
+          <Image
+            source={Images.customerServiceWeChat}
+            style={styles.wechatQrCode}
+            resizeMode="contain"
+          />
+          
           <View style={styles.infoContainer}>
-            <Ionicons name="information-circle-outline" size={20} color="#666" />
+            <Ionicons name="information-circle-outline" size={20} color="#666" style={styles.infoIcon} />
             <Text style={styles.infoText}>
               设备序列号: {deviceUUID || "未获取"}
             </Text>
           </View>
         </View>
-      </View>
+      </BlurView>
     </Modal>
   )
 }
@@ -57,7 +65,7 @@ export const DeviceAuthBlocker: React.FC = () => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // 降低不透明度，让模糊效果更明显
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
@@ -76,11 +84,11 @@ const styles = StyleSheet.create({
     elevation: 24,
   },
   iconContainer: {
-    marginBottom: 24,
+    marginBottom: 14,
     backgroundColor: "#FFEBEE",
     borderRadius: 64,
-    width: 128,
-    height: 128,
+    width: 108,
+    height: 108,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -88,7 +96,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 16,
+    marginBottom: 6,
     textAlign: "center",
   },
   message: {
@@ -96,20 +104,34 @@ const styles = StyleSheet.create({
     color: "#666",
     lineHeight: 24,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 4,
+  },
+  wechatQrCode: {
+    width: 200,
+    height: 200,
+    marginBottom: 4,
+    borderRadius: 8,
   },
   infoContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    // alignItems: "center",
+    // justifyContent: "center",
     backgroundColor: "#F5F5F5",
     borderRadius: 8,
     padding: 12,
     marginTop: 8,
+    // width: "100%",
+  },
+  infoIcon: {
+    // alignSelf: "center",
+    // marginTop: 4
   },
   infoText: {
     fontSize: 14,
     color: "#666",
     marginLeft: 8,
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
 })
 

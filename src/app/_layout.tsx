@@ -60,6 +60,9 @@ export default function RootLayout() {
   const [showNetworkModal, setShowNetworkModal] = useState(false)
   // 假连接提示 Modal 状态
   const [showFakeConnectionModal, setShowFakeConnectionModal] = useState(false)
+  
+  // 获取设备授权状态（用于控制网络弹窗显示）
+  const isBlocked = useDeviceAuthStore((state) => state.isBlocked)
   // 防止重复打开系统设置
   const isOpeningSettings = React.useRef(false)
 
@@ -267,13 +270,19 @@ export default function RootLayout() {
 
     const unsubscribe = networkEventManager.addListener(() => {
       console.log("🌐 收到 API 网络错误事件，显示网络弹窗")
+      // 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）
+      const isBlocked = useDeviceAuthStore.getState().isBlocked
+      if (isBlocked && isConnected) {
+        console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
+        return
+      }
       setShowNetworkModal(true)
     })
 
     return () => {
       unsubscribe()
     }
-  }, [])
+  }, [isConnected])
 
   // 同步网络弹窗状态到 store
   const setShowNetworkModalInStore = useNetworkStore((state) => state.setShowNetworkModal)
@@ -315,6 +324,44 @@ export default function RootLayout() {
   // 全局 WebSocket 连接
   useGlobalWebSocket()
 
+  // 跟踪应用启动状态和设备授权验证状态
+  const appLaunchState = React.useRef({
+    isLaunched: false,
+    deviceCode: null as string | null,
+    authVerified: false,
+  })
+
+  // 🔴 核心函数：执行设备授权验证（需要网络连接）
+  const performDeviceAuth = useCallback(async (deviceCode: string) => {
+    // 检查网络状态
+    if (!isConnected) {
+      console.log("⏳ 等待网络连接后再进行设备授权验证...")
+      return false
+    }
+
+    if (isInternetReachable === false) {
+      console.log("⏳ 检测到假连接，等待真实网络连接后再进行设备授权验证...")
+      return false
+    }
+
+    // 网络已连接，执行设备授权验证
+    console.log("🔐 网络已连接，开始设备授权验证，设备码:", deviceCode)
+    const authResult = await ensureDeviceAuth()
+    
+    if (authResult) {
+      appLaunchState.current.authVerified = true
+      console.log("✅ 设备授权验证完成")
+      
+      // 🔴 设备授权通过后，启动全局坐姿监控（如果还未启动）
+      if (!postureStore.isMonitoring) {
+        console.log("🚀 设备授权通过，启动全局坐姿监控")
+        await startPostureMonitoring()
+      }
+    }
+    
+    return authResult
+  }, [isConnected, isInternetReachable, ensureDeviceAuth, postureStore, startPostureMonitoring])
+
   // 系统键监听回调 - 100%还原UniApp逻辑
   const systemKeyCallbacks = useMemo(() => ({
     onHomeKey: () => {
@@ -348,59 +395,43 @@ export default function RootLayout() {
       console.log(`📶 网络类型: ${networkType}`)
       console.log("==================")
 
-      // 🔴 关键：必须先获取设备序列号，因为设备授权验证需要它
+      // 🔴 第一步：获取设备序列号
       const deviceCode = await _getAndCacheDeviceUUID()
       console.log("📱 设备序列号:", deviceCode || '(无)')
 
       // 将设备码保存到 store 中，供弹窗显示使用
       if (deviceCode) {
         useDeviceAuthStore.getState().setDeviceUUID(deviceCode)
+        appLaunchState.current.deviceCode = deviceCode
+      } else {
+        console.warn("⚠️ 未获取到设备序列号，阻止用户操作")
+        useDeviceAuthStore.getState().blockUserInteractions()
+        appLaunchState.current.isLaunched = true
+        return
       }
 
       // 初始化坐姿监测（还原UniApp逻辑）
       postureStore.initPoseMonitor()
 
-      // 启动全局坐姿监控
-      console.log("🚀 启动全局坐姿监控")
-      await startPostureMonitoring()
+      // 标记应用已启动
+      appLaunchState.current.isLaunched = true
 
-      // 🔴 每次进应用都调用设备授权验证接口（在所有请求之前）
-      // 注释：暂时禁用设备授权验证
-      // if (deviceCode) {
-      //   try {
-      //     console.log("🔐 开始设备授权验证，设备码:", deviceCode)
-      //     
-      //     // 直接调用接口，使用 api.ts 的 post 方法（会自动添加设备信息）
-      //     const response = await post("/AppStart/verify-device-code/", {
-      //       device_code: 'dffklw11p',
-      //     })
-      //     
-      //     console.log("📡 设备授权接口响应:", response)
-      //     
-      //     // 🔴 根据接口响应处理授权状态
-      //     // if (response && typeof response === 'object' && 'exists' in response) {
-      //     //   if (response.exists === false) {
-      //     //     console.log("❌ 设备未授权 (exists: false)，阻止用户操作")
-      //     //     // 直接调用 store 的 blockUserInteractions 方法
-      //     //     useDeviceAuthStore.getState().blockUserInteractions()
-      //     //   } else {
-      //     //     console.log("✅ 设备已授权 (exists: true)")
-      //     //     // 解除阻止（如果之前被阻止了）
-      //     //     useDeviceAuthStore.getState().setAuthorized(true)
-      //     //     useDeviceAuthStore.getState().unblockUserInteractions()
-      //     //   }
-      //     // }
-      //     
-      //     console.log("✅ 设备授权验证接口调用成功")
-      //   } catch (error) {
-      //     console.error("❌ 设备授权验证接口调用失败:", error)
-      //     // 接口调用失败也应该阻止用户操作
-      //     console.log("❌ 接口调用失败，阻止用户操作")
-      //     useDeviceAuthStore.getState().blockUserInteractions()
-      //   }
-      // } else {
-      //   console.warn("⚠️ 未获取到设备序列号，跳过设备授权验证")
-      // }
+      // 🔴 第二步：检查网络状态，如果已连接则立即验证设备授权
+      // 🔴 只有设备授权通过后才能启动坐姿检测
+      if (isConnected && isInternetReachable !== false) {
+        // 网络已连接，立即执行设备授权验证
+        const authResult = await performDeviceAuth(deviceCode)
+        // 设备授权通过后，启动全局坐姿监控
+        if (authResult) {
+          console.log("🚀 设备授权通过，启动全局坐姿监控")
+          await startPostureMonitoring()
+        } else {
+          console.log("⚠️ 设备授权未通过，不启动坐姿监控")
+        }
+      } else {
+        // 网络未连接，等待网络连接后再验证（在 onNetworkConnected 中处理）
+        console.log("⏳ 网络未连接，等待网络连接后再进行设备授权验证")
+      }
     },
 
     onAppShow: async () => {
@@ -422,6 +453,13 @@ export default function RootLayout() {
         systemKeyHandleAppShow()
 
         // 检查坐姿监控状态（后台服务应该持续运行，这里只是确保状态正常）
+        // 🔴 只有设备授权通过后才能启动坐姿检测
+        const isAuthorized = useDeviceAuthStore.getState().isAuthorized
+        if (!isAuthorized) {
+          console.log("⚠️ 设备未授权，不启动坐姿监控")
+          return
+        }
+        
         if (!postureStore.isMonitoring) {
           console.log("📱 检测到监控未运行，重新启动")
           await startPostureMonitoring()
@@ -446,7 +484,7 @@ export default function RootLayout() {
       console.log("🛑 停止坐姿监控服务")
       await stopPostureMonitoring()
     },
-  }), [_getAndCacheDeviceUUID, postureStore, startPostureMonitoring, stopPostureMonitoring, checkForUpdatesOnShow, systemKeyHandleAppShow, isConnected, isInternetReachable, networkType])
+  }), [_getAndCacheDeviceUUID, postureStore, startPostureMonitoring, stopPostureMonitoring, checkForUpdatesOnShow, systemKeyHandleAppShow, isConnected, isInternetReachable, networkType, performDeviceAuth])
 
   // 网络状态回调 - 100%还原UniApp逻辑
   const networkCallbacks = useMemo(() => ({
@@ -454,15 +492,37 @@ export default function RootLayout() {
       console.log("网络已连接")
       // 关闭假连接弹窗（如果正在显示）
       setShowFakeConnectionModal(false)
+      
       // 使用InteractionManager优化网络恢复性能
       InteractionManager.runAfterInteractions(async () => {
-        // 网络恢复后触发一次设备授权复验（缓存优先）
-        await reverifyDeviceAuthorization()
+        // 🔴 如果应用已启动但设备授权还未验证，则执行验证
+        if (appLaunchState.current.isLaunched && 
+            appLaunchState.current.deviceCode && 
+            !appLaunchState.current.authVerified) {
+          console.log("🔐 网络已连接，执行设备授权验证")
+          await performDeviceAuth(appLaunchState.current.deviceCode)
+        } else {
+          // 否则执行设备授权复验（用于网络恢复场景）
+          console.log("🔄 网络恢复后触发设备授权复验")
+          const authResult = await reverifyDeviceAuthorization()
+          // 🔴 如果复验通过且坐姿监控未运行，启动坐姿监控
+          if (authResult && !postureStore.isMonitoring) {
+            console.log("🚀 设备授权复验通过，启动全局坐姿监控")
+            await startPostureMonitoring()
+          }
+        }
       })
     },
 
     onNetworkDisconnected: () => {
       console.log("网络已断开")
+      // 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）
+      // 如果设备未授权但网络未连接，可以显示网络弹窗（需要联网才能验证设备）
+      const isBlocked = useDeviceAuthStore.getState().isBlocked
+      if (isBlocked && isConnected) {
+        console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
+        return
+      }
       // 显示网络提示 Modal
       setShowNetworkModal(true)
       // 关闭假连接弹窗（如果正在显示）
@@ -475,12 +535,18 @@ export default function RootLayout() {
 
     onFakeConnection: () => {
       console.log("⚠️ 检测到假连接：已连接网络但无法访问互联网")
+      // 🔴 如果设备未授权，不显示假连接弹窗（设备授权弹窗优先）
+      const isBlocked = useDeviceAuthStore.getState().isBlocked
+      if (isBlocked) {
+        console.log("🔐 设备未授权，不显示假连接弹窗（设备授权弹窗优先）")
+        return
+      }
       // 显示假连接提示 Modal
       setShowFakeConnectionModal(true)
       // 关闭普通网络断开弹窗（如果正在显示）
       setShowNetworkModal(false)
     },
-  }), [reverifyDeviceAuthorization])
+  }), [reverifyDeviceAuthorization, performDeviceAuth])
 
   // 使用应用生命周期Hook
   useAppLifecycle(appLifecycleCallbacks)
@@ -498,6 +564,11 @@ export default function RootLayout() {
     if (isInitialized && !prevNetworkState.current.isInitialized) {
       console.log("🔍 网络初始化完成，检查初始网络状态")
 
+      // 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）
+      const isBlocked = useDeviceAuthStore.getState().isBlocked
+      if (isBlocked && isConnected) {
+        console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
+      } else {
       // 如果初始化完成时网络未连接，直接显示弹窗
       if (!isConnected) {
         console.log("🔴 初始化时检测到网络未连接，显示弹窗")
@@ -508,6 +579,7 @@ export default function RootLayout() {
       if (isConnected && isInternetReachable === false) {
         console.log("🟠 初始化时检测到假连接，显示弹窗")
         setShowFakeConnectionModal(true)
+        }
       }
 
       // 更新 ref，标记初始化已完成
@@ -672,8 +744,9 @@ export default function RootLayout() {
       </PaperProvider>
 
       {/* 网络断开提示 Modal - 放在最外层确保在登录框之上 */}
+      {/* 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先） */}
       <Modal
-        visible={showNetworkModal && !locked}
+        visible={showNetworkModal && !locked && !(isBlocked && isConnected)}
         transparent
         animationType="fade"
         statusBarTranslucent
@@ -724,16 +797,33 @@ export default function RootLayout() {
       </Modal>
 
       {/* 假连接提示 Modal - 已连接但无法访问互联网 */}
-      {/* <Modal
-        visible={showFakeConnectionModal}
+      {/* 🔴 如果设备未授权，不显示假连接弹窗（设备授权弹窗优先） */}
+      <Modal
+        visible={showFakeConnectionModal && !locked && !isBlocked}
         transparent
         animationType="fade"
         statusBarTranslucent
+        presentationStyle="overFullScreen"
         onRequestClose={() => setShowFakeConnectionModal(false)}
       >
         <View style={styles.networkModalOverlay}>
-          <View style={[styles.networkModalContent, styles.fakeConnectionModalContent]}>
-            <Text style={styles.networkModalTitle}>⚠️ 网络异常</Text>
+          <LinearGradient
+            colors={["#C1E0FF", "#EFF6FE"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 0.4 }}
+            style={[styles.networkModalContent, styles.fakeConnectionModalContent]}
+          >
+            {/* 绝对定位的男孩图片 */}
+            <Image
+              source={Images.networkBoy}
+              style={styles.networkModalBoyImage}
+              resizeMode="contain"
+            />
+            <Image
+              source={Images.networkModalTitle}
+              style={styles.networkModalTitleImage}
+              resizeMode="contain"
+            />
             <Text style={styles.networkModalMessage}>
               已连接到WiFi/移动网络，但无法访问互联网{"\n"}
               请检查路由器或数据流量设置
@@ -745,16 +835,20 @@ export default function RootLayout() {
               >
                 <Text style={styles.networkModalCancelText}>知道了</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.networkModalButton, styles.fakeConnectionConfirmButton]}
-                onPress={openNetworkSettings}
+              <TouchableOpacity onPress={openNetworkSettings}>
+                <LinearGradient
+                  colors={["#AFDCFF", "#4BB1FF"]}
+                  start={{ x: 0.35, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={[styles.networkModalButton, styles.networkModalConfirmButton]}
               >
                 <Text style={styles.networkModalConfirmText}>去设置</Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
+          </LinearGradient>
           </View>
-        </View>
-      </Modal> */}
+      </Modal>
     </GestureHandlerRootView>
   )
 }

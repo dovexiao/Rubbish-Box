@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { View, Image, TouchableOpacity, ImageBackground, Platform, Linking, AppState } from "react-native"
+import { View, Image, TouchableOpacity, ImageBackground, Platform, Linking, AppState, Animated, Easing } from "react-native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Ionicons } from "@expo/vector-icons"
 import { useFocusEffect, useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
-import { InteractionManager } from "react-native"
 import * as Brightness from "expo-brightness"
 
 import { StatusBar } from "../../components/StatusBar"
@@ -20,6 +20,7 @@ import { getLatestVideo, getNotifications, getHomeRanks, getHomeBgImage } from "
 import { Images } from "../../constants/Assets"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError, showWarning, showInfo } from "../../utils/toast"
+import { getCachedHomeBg, downloadAndCacheHomeBg, prefetchHomeBg, getHomeBgSource } from "../../utils/imageCache"
 
 import { BrightnessSlider } from "../../components/BrightnessSlider"
 
@@ -32,7 +33,6 @@ const Text = ({ children, style, ...props }: any) => {
     </RNText>
   )
 }
-// import { globalImmersive } from "../../utils/globalImmersive"
 
 /**
  * 首页组件
@@ -71,28 +71,185 @@ export default function HomeScreen() {
   const lastLoadTimeRef = useRef<number>(0) // 跟踪最后一次加载时间
   const LOAD_INTERVAL = 2000 // 2秒内不重复加载
   
-  // 背景图列表
-  // const backgroundImages = [Images.homeBg1, Images.homeBg2, Images.homeBg3]
-  // const [homeBgIndex, setHomeBgIndex] = useState(0)
-  const [homeBgSource, setHomeBgSource] = useState<any>(Images.homeBg2)
+  // 背景图状态管理（方案5：混合策略 + 状态持久化）
+  const [homeBgSource, setHomeBgSourceState] = useState<any>(null) // 当前显示的背景，初始为null避免闪烁
+  const [nextBgSource, setNextBgSource] = useState<any>(null) // 预加载的下一个背景
+  const bgOpacity = useRef(new Animated.Value(1)).current // 当前背景透明度
+  const nextBgOpacity = useRef(new Animated.Value(0)).current // 下一个背景透明度
+  const homeBgUrlRef = useRef<string | null>(null) // 当前背景URL（用于比较）
+  const isBgLoadingRef = useRef(false) // 背景加载中标记
 
-  // 切换背景图的函数（供全局调用）
-  // const switchBackground = useCallback(() => {
-  //   const nextIndex = (homeBgIndex + 1) % backgroundImages.length
-  //   setHomeBgIndex(nextIndex)
-  //   setHomeBgSource(backgroundImages[nextIndex])
-  //   console.log(`🖼️ 背景图切换: ${homeBgIndex} -> ${nextIndex}`)
-  // }, [homeBgIndex, backgroundImages])
 
-  // 设置全局引用，供 _layout.tsx 使用
-  // useEffect(() => {
-  //   // @ts-ignore
-  //   global.switchHomeBackground = switchBackground
-  //   return () => {
-  //     // @ts-ignore
-  //     delete global.switchHomeBackground
-  //   }
-  // }, [switchBackground])
+  // 背景图状态持久化存储key
+  const BG_STATE_KEY = 'home_bg_state'
+
+  // 保存背景图状态到持久化存储
+  const saveBgState = useCallback(async (source: any, url: string | null) => {
+    try {
+      const state = {
+        source,
+        url,
+        timestamp: Date.now()
+      }
+      await AsyncStorage.setItem(BG_STATE_KEY, JSON.stringify(state))
+    } catch (error) {
+   
+    }
+  }, [])
+
+  // 包装setHomeBgSource，确保每次设置都持久化
+  const setHomeBgSource = useCallback(async (source: any, url?: string | null) => {
+
+    setHomeBgSourceState(source)
+
+    // 如果提供了URL参数，使用它，否则使用当前的URL
+    const bgUrl = url !== undefined ? url : homeBgUrlRef.current
+    await saveBgState(source, bgUrl)
+  }, [saveBgState])
+
+  // 从持久化存储恢复背景图状态
+  const restoreBgState = useCallback(async () => {
+    try {
+      const savedStateStr = await AsyncStorage.getItem(BG_STATE_KEY)
+      if (savedStateStr) {
+        const savedState = JSON.parse(savedStateStr)
+
+        // 检查状态是否过期（1小时过期）
+        const EXPIRE_TIME = 60 * 60 * 1000 // 1小时
+        if (Date.now() - savedState.timestamp < EXPIRE_TIME) {
+
+          // 如果是网络图片，确保预加载完成再显示
+          if (savedState.source && savedState.source.uri && !savedState.source.uri.startsWith('file://')) {
+           
+            try {
+              await Image.prefetch(savedState.source.uri)
+            
+            } catch (error) {
+              console.warn('🖼️ [持久化] 网络图片预加载失败:', error)
+            }
+          }
+
+          // 恢复状态（持久化函数会自动保存状态）
+          await setHomeBgSource(savedState.source, savedState.url)
+
+          return true // 成功恢复
+        } else {
+       
+          await AsyncStorage.removeItem(BG_STATE_KEY)
+        }
+      }
+    } catch (error) {
+      console.error('🖼️ [持久化] 恢复背景图状态失败:', error)
+    }
+    return false // 恢复失败
+  }, [])
+  const pendingBgUrlRef = useRef<string | null>(null) // 待处理的URL，避免重复请求
+
+
+  /**
+   * 平滑切换背景图（淡入淡出动画）- 优化版：确保图片加载完成后再切换
+   */
+  const switchBackgroundSmoothly = useCallback(async (newSource: any, url?: string) => {
+  
+
+    // 首先确保图片已经加载完成（特别是网络图片）
+    if (newSource && newSource.uri && !newSource.uri.startsWith('file://')) {
+     
+      try {
+        await Image.prefetch(newSource.uri)
+      
+      } catch (error) {
+        console.warn("🖼️ [背景图切换] 网络图片预加载失败:", error)
+        // 即使预加载失败也继续，因为ImageBackground会自己处理
+      }
+    }
+
+    // 如果当前没有背景，直接设置
+    if (!homeBgSource) {
+      await setHomeBgSource(newSource, url)
+      return
+    }
+
+    return new Promise<void>((resolve) => {
+      // 设置下一个背景
+      setNextBgSource(newSource)
+
+      // 重置动画状态
+      bgOpacity.setValue(1)
+      nextBgOpacity.setValue(0)
+
+      // 执行超流畅的淡入淡出动画
+      Animated.parallel([
+        Animated.timing(bgOpacity, {
+          toValue: 0,
+          duration: 600, // 更流畅的动画时间
+          useNativeDriver: false,
+          easing: Easing.inOut(Easing.ease), // 更自然的缓动
+        }),
+        Animated.timing(nextBgOpacity, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: false,
+          easing: Easing.inOut(Easing.ease),
+        }),
+      ]).start(async () => {
+        // 动画完成后，立即切换状态
+        const oldSource = homeBgSource
+        await setHomeBgSource(newSource, url)
+
+        // 重置动画状态
+        bgOpacity.setValue(1)
+        nextBgOpacity.setValue(0)
+
+        // 清除下一个背景
+        setTimeout(() => {
+          setNextBgSource(null)
+          console.log("🖼️ [背景图切换] 切换完成，从", oldSource, "到", newSource)
+          resolve()
+        }, 100)
+      })
+    })
+  }, [homeBgSource, setHomeBgSource])
+
+  /**
+   * 初始化时恢复背景图状态（优先使用持久化状态，其次使用缓存）
+   */
+  useEffect(() => {
+    // 直接异步执行，不使用InteractionManager
+    ;(async () => {
+      try {
+        // 优先尝试恢复持久化状态
+        const restored = await restoreBgState()
+
+        if (restored) {
+          return // 如果恢复成功，直接返回
+        }
+
+        // 如果没有持久化状态，则检查缓存
+        const cachedInfo = await getCachedHomeBg()
+
+        if (cachedInfo) {
+          try {
+            await Image.prefetch(cachedInfo.localPath)
+          } catch (error) {
+            console.warn("🖼️ [初始化] 本地图片预加载失败:", error)
+            // 本地图片预加载失败不影响继续，因为通常加载很快
+          }
+
+          const cachedSource = { uri: cachedInfo.localPath }
+          // setHomeBgSource会自动保存到持久化存储
+          await setHomeBgSource(cachedSource, cachedInfo.url)
+
+          console.log("🖼️ [初始化] 完成，当前URL:", cachedInfo.url)
+        } else {
+          // 直接设置默认背景，避免后续切换
+          await setHomeBgSource(Images.homeBg2, null)
+        }
+      } catch (error) {
+        console.error("🖼️ [初始化] 初始化背景图状态失败:", error)
+      }
+    })()
+  }, [restoreBgState, saveBgState])
 
   // 获取坐姿状态文本
   const getPostureStatusText = () => {
@@ -122,14 +279,12 @@ export default function HomeScreen() {
       if (Platform.OS === 'android') {
         const { status } = await Brightness.requestPermissionsAsync()
         if (status !== 'granted') {
-          console.warn('未获得修改亮度权限')
           return
         }
       }
       
       const currentBrightness = await Brightness.getBrightnessAsync()
       setBrightness(Math.round(currentBrightness * 100))
-      console.log("当前亮度:", currentBrightness * 100)
     } catch (error) {
       console.error("获取屏幕亮度失败:", error)
     }
@@ -148,7 +303,6 @@ export default function HomeScreen() {
     }
     // 立即重置活动状态
     intentLauncherActiveRef.current = false
-    console.log("🔄 IntentLauncher 状态已重置")
   }, [])
 
   // 监听应用状态变化（当从系统设置返回时）
@@ -158,7 +312,6 @@ export default function HomeScreen() {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       // 当应用从后台回到前台时，重置 IntentLauncher 状态
       if (nextAppState === "active" && intentLauncherActiveRef.current) {
-        console.log("📱 应用回到前台，重置 IntentLauncher 状态")
         resetIntentLauncherState()
       }
     })
@@ -168,23 +321,10 @@ export default function HomeScreen() {
     }
   }, [resetIntentLauncherState])
 
-  // 监听封面图URL变化，重置加载状态
-  // useEffect(() => {
-  //   if (latestVideo.cover_v) {
-  //     setCoverImageLoaded(false)
-  //   }
-  // }, [latestVideo.cover_v])
-
-
-
-
   // 页面获得焦点时也重置状态（双重保障）
   useFocusEffect(
     useCallback(() => {
-      console.log("👁️ [首页] useFocusEffect 触发 - 检查活动状态")
-      
       if (Platform.OS === "android" && intentLauncherActiveRef.current) {
-        console.log("👁️ 页面获得焦点，重置 IntentLauncher 状态")
         resetIntentLauncherState()
       }
     }, [resetIntentLauncherState])
@@ -197,9 +337,7 @@ const openVolumeSettings = async () => {
         // 使用原生模块打开声音设置，确保每次都能成功
         const { openSoundSettings } = await import("../../services/systemSettings")
         await openSoundSettings()
-        console.log("已打开系统音量设置")
     } catch (error) {
-        console.error('无法打开音量设置:', error)
         showError('无法打开系统音量设置')
     }
       } else {
@@ -212,52 +350,33 @@ const openVolumeSettings = async () => {
   const loadData = useCallback(async () => {
     const now = Date.now()
     const timeSinceLastLoad = now - lastLoadTimeRef.current
-    
     // 检查时间间隔，防止短时间内重复加载
     if (timeSinceLastLoad < LOAD_INTERVAL) {
-      console.log(`⏳ [防重复] 距离上次加载时间太短(${timeSinceLastLoad}ms < ${LOAD_INTERVAL}ms)，跳过重复调用`)
       return
     }
-    
     // 使用 ref 防止重复调用 - 立即检查
     if (isLoadingRef.current) {
-      console.log("⏳ [防重复] 正在加载中，跳过重复调用")
       return
     }
     
     // ⚠️ 关键修复：立即设置加载状态，防止竞态条件（必须在所有检查之后立即设置）
     isLoadingRef.current = true
     lastLoadTimeRef.current = now
-    
-    console.log("🔄 loadData 开始执行")
-    
     // 等待 100ms，确保 token 已经设置完成
     await new Promise(resolve => setTimeout(resolve, 100))
     
     // ⚠️ 重要：直接从 store 获取最新状态，而不是使用闭包捕获的值
     const currentUserStore = useUserStore.getState()
-    
-    // 打印 userStore 中的用户信息
-    console.log("📱 userStore 完整状态:", {
-      token: currentUserStore.token ? `存在(${currentUserStore.token.length}字符)` : "不存在",
-      user: currentUserStore.user,
-      isLoggedIn: currentUserStore.isLoggedIn,
-      isLoading: currentUserStore.isLoading,
-      error: currentUserStore.error
-    })
-    
     // 检查是否有token，没有则直接返回
     const token = currentUserStore.token
     console.log("🔑 当前token状态:", token ? `存在(${token.length}字符)` : "不存在")
     
     if (!token) {
-      console.log("❌ 未找到token，跳过数据加载")
       isLoadingRef.current = false // 重置加载状态
       setIsDataLoaded(true) // 即使没有token也要显示内容
       return
     }
     
-    console.log("✅ 开始加载首页数据...")
     setIsLoading(true)
     
     try {
@@ -275,52 +394,70 @@ const openVolumeSettings = async () => {
           console.error("获取排行榜失败:", err)
           return null
         }),
-        // getHomeBgImage().catch((err) => {
-        //   console.error("获取首页背景图失败:", err)
-        //   return null
-        // }),
+        getHomeBgImage().catch((err) => {
+          console.error("获取首页背景图失败:", err)
+          return null
+        }),
       ])
 
-      // 处理首页背景图
-      // if (homeBgData && homeBgData.image_url) {
-      //   const newUrl = homeBgData.image_url
-      //   const currentUri = (homeBgSourceRef.current && typeof homeBgSourceRef.current === 'object' && homeBgSourceRef.current.uri) 
-      //     ? homeBgSourceRef.current.uri 
-      //     : null
-        
-      //   if (currentUri === newUrl) {
-      //     console.log("🖼️ 首页背景图未变，不更新")
-      //     // 如果URL相同，确保状态已设置
-      //     if (!homeBgSource) {
-      //       setHomeBgSource(homeBgSourceRef.current)
-      //     }
-      //   } else {
-      //     console.log("🖼️ 更新首页背景图:", newUrl)
-      //     const newSource = { uri: newUrl }
-      //     homeBgSourceRef.current = newSource
-      //     setHomeBgSource(newSource)
-      //   }
-      // } else {
-      //   // 获取失败或为空，如果当前没有背景图（初始状态为null），使用默认背景
-      //   if (!homeBgSourceRef.current) {
-      //     console.log("⚠️ 未获取到背景图，使用默认背景")
-      //     // homeBgSourceRef.current = Images.homeBg2
-      //     // setHomeBgSource(Images.homeBg2)
-      //   } else {
-      //     // 如果已经有背景图（网络图片），保持当前状态，不切换回默认图片
-      //     if (!homeBgSource) {
-      //       setHomeBgSource(homeBgSourceRef.current)
-      //     }
-      //   }
-      // }
+      // 处理首页背景图（方案5：混合策略 - 优化版）
 
+      if (homeBgData && homeBgData.image_url) {
+        const newUrl = homeBgData.image_url
+        // 如果已经有相同的URL在处理中，跳过
+        if (pendingBgUrlRef.current === newUrl) {
+          return
+        }
+        homeBgUrlRef.current = newUrl
+        pendingBgUrlRef.current = newUrl
+        isBgLoadingRef.current = true
+
+        // 直接异步处理背景图加载和切换（简化逻辑，提高可靠性）
+        ;(async () => {
+          const startTime = Date.now()
+          try {
+          
+            const downloadStartTime = Date.now()
+            const cachedPath = await downloadAndCacheHomeBg(newUrl)
+            const downloadDuration = Date.now() - downloadStartTime
+          
+
+            if (cachedPath) {
+              const prefetchStartTime = Date.now()
+              await Image.prefetch(cachedPath)
+              const prefetchDuration = Date.now() - prefetchStartTime
+              // 直接设置新背景（最简单可靠的方式）
+         
+              const cachedSource = { uri: cachedPath }
+              await setHomeBgSource(cachedSource, newUrl)
+
+            } else {
+              try {
+                await Image.prefetch(newUrl)
+              } catch (error) {
+                console.warn("🖼️ [背景图加载] 网络图片预加载失败:", error)
+              }
+              const networkSource = { uri: newUrl }
+              await setHomeBgSource(networkSource, newUrl)
+            }
+
+            const totalDuration = Date.now() - startTime
+            console.log(`🖼️ [背景图加载] ===== 加载流程完成，总耗时: ${totalDuration}ms =====`)
+
+          } catch (error) {
+            const errorDuration = Date.now() - startTime
+            // 出错时保持当前背景不变
+          } finally {
+            isBgLoadingRef.current = false
+            pendingBgUrlRef.current = null
+          }
+        })()
+      }
       // 设置用户信息 - 直接使用store中的用户信息
       if (currentUserStore.user) {
-        console.log("✅ 用户信息加载成功:", currentUserStore.user.username)
-        console.log("📱 设置用户信息到状态:", currentUserStore.user)
-         currentUserStore.getUserInfo().then(res => {
-             setUserInfo(res)  
-         })
+        currentUserStore.getUserInfo().then(res => {
+          setUserInfo(res)
+        })
       } else {
         console.warn("❌ 用户信息为空，可能需要登录")
       }
@@ -377,15 +514,11 @@ const openVolumeSettings = async () => {
     }
   }, []) // 空依赖数组，loadData 永远不会重新创建
 
-  // 页面获得焦点时重新加载数据（每次点击tabbar都刷新）
+  // 页面获得焦点时的处理（Tab切换时重新加载所有数据）
   useFocusEffect(
     useCallback(() => {
-      console.log("🎯 首页获得焦点，准备加载数据")
-      
       
       // 🎯 活动退出兜底：首页获得焦点时，直接发送所有活动类型的退出消息
-      console.log("📊 [首页] 强制发送退出消息（兜底机制）")
-      
       // 获取用户信息
       const userStore = useUserStore.getState()
       const userId = userStore.user?.user_id
@@ -421,30 +554,10 @@ const openVolumeSettings = async () => {
         console.error('📊 [首页] 获取设备码失败，无法发送退出消息:', error)
       })
       
-      let cancelled = false
-      let timeoutId: ReturnType<typeof setTimeout> | null = null
-      
-      // 移除 InteractionManager 延迟，直接执行，避免回调累积
-      // 使用 setTimeout 0 确保在下一个事件循环执行
-      timeoutId = setTimeout(() => {
-        if (!cancelled) {
-          console.log("🚀 开始加载首页数据")
-          loadData()
-        }
-      }, 0)
-      
-      // 恢复沉浸式模式
-      // globalImmersive.forceRestore()
-      
-      // 清理函数：页面失去焦点时取消待执行的加载
-      return () => {
-        cancelled = true
-        if (timeoutId) {
-          clearTimeout(timeoutId)
-        }
-        console.log("🛑 页面失去焦点，取消待执行的加载")
-      }
-    }, [loadData]), // 依赖 loadData
+      // ✅ Tab切换时重新加载所有数据（恢复之前的策略）
+      loadData()
+     
+    }, [resetIntentLauncherState, loadData]), // 依赖 resetIntentLauncherState 和 loadData
   )
 
   const router = useRouter()
@@ -455,8 +568,7 @@ const openVolumeSettings = async () => {
       showWarning("无法获取视频信息")
       return
     }
-
-    // 使用Expo Router导航到视频播放页面 pathname: "/sync-classroom/video-expo-video",
+    // 使用Expo Router导航到视频播放页面 pathname: "/sync-classroom/video-modular",
     router.push({
       pathname: "/sync-classroom/video",
       params: {
@@ -467,8 +579,6 @@ const openVolumeSettings = async () => {
       },
     })
   }
-
-
 
   // 跳转到AI页面
   const goToAI = () => {
@@ -483,7 +593,6 @@ const openVolumeSettings = async () => {
   // const goToAiSpeaking = () => {
   //   router.push("/ai/speaking")
   // }
-
 
   // 跳转到排行榜页面
   // 注释掉未使用的函数，保留功能以备将来实现
@@ -657,8 +766,6 @@ const openVolumeSettings = async () => {
     // 设置防抖，300ms后执行实际的亮度设置
     brightnessTimeoutRef.current = setTimeout(async () => {
       try {
-        console.log("开始设置亮度:", value)
-        
         // Android 需要请求权限
         if (Platform.OS === 'android') {
           const { status } = await Brightness.requestPermissionsAsync()
@@ -670,7 +777,6 @@ const openVolumeSettings = async () => {
         }
         
         await Brightness.setSystemBrightnessAsync(value / 100)
-        console.log("亮度设置成功:", value)
       } catch (error) {
         console.error("设置亮度失败:", error)
         showError('设置亮度失败')
@@ -678,15 +784,6 @@ const openVolumeSettings = async () => {
     }, 300)
   }, [])
 
-  // 调试：打印当前状态值
-  // console.log("🎨 渲染首页 - 当前状态值:", {
-  //   userInfo: userInfo,
-  //   latestVideo: latestVideo,
-  //   notifications: notifications,
-  //   ranks: ranks,
-  //   isLoading: isLoading,
-  //   isDataLoaded: isDataLoaded
-  // })
 
   return (
     <LinearGradient
@@ -696,17 +793,38 @@ const openVolumeSettings = async () => {
       end={{ x: 1, y: 1 }}
       style={styles.pageContainer}
     >
-      <ImageBackground 
-        // key={`bg-${homeBgIndex}`}
-        source={homeBgSource} 
-        style={styles.backgroundImage} 
-        resizeMode="cover"
-      >
+      {/* 背景图层（双缓冲） */}
+      <View style={styles.backgroundContainer}>
+        {/* 当前背景图 - 只有在有背景时才渲染 */}
+        {homeBgSource && (
+          <Animated.View style={[styles.backgroundImageWrapper, { opacity: bgOpacity }]}>
+            <ImageBackground
+              source={homeBgSource}
+              style={styles.backgroundImage}
+              resizeMode="cover"
+            />
+          </Animated.View>
+        )}
+        
+        {/* 下一个背景图（用于平滑切换） */}
+        {nextBgSource && (
+          <Animated.View style={[styles.backgroundImageWrapper, styles.backgroundImageOverlay, { opacity: nextBgOpacity }]}>
+            <ImageBackground 
+              source={nextBgSource} 
+              style={styles.backgroundImage} 
+              resizeMode="cover"
+            />
+          </Animated.View>
+        )}
+      </View>
+      
+      {/* 内容层（在背景图之上） */}
+      <View style={styles.contentWrapper}>
         {/* 自定义状态栏 */}
         <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
 
-        {/* 顶部工具栏 */}
-        <View style={styles.topBar}>
+              {/* 顶部工具栏 */}
+              <View style={styles.topBar}>
           {/* 左侧坐姿状态 */}
           <View style={styles.postureStatus}>
             <View
@@ -1037,10 +1155,7 @@ const openVolumeSettings = async () => {
         >
           <Text style={styles.wsTestButtonText}>activity-tracking-test测试</Text>
         </TouchableOpacity> */}
-
-
- 
-      </ImageBackground>
+      </View>
     </LinearGradient>
   )
 }
@@ -1051,10 +1166,41 @@ const styles = createStyles({
     width: "100%",
     height: "100%",
   },
+  backgroundContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "100%",
+  },
+  backgroundImageWrapper: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "100%",
+  },
+  backgroundImageOverlay: {
+    zIndex: 1,
+  },
   backgroundImage: {
     flex: 1,
     width: "100%",
     height: "100%" as any,
+  },
+  contentWrapper: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 2,
   },
   topBar: {
     flexDirection: "row" as const,
