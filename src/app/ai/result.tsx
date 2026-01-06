@@ -101,7 +101,7 @@ export default function AIResultScreen() {
         
         // 2秒后返回上一页
         setTimeout(() => {
-          router.back()
+          router.navigate("/(tabs)/study")
         }, 2000)
       } finally {
         setIsLoading(false)
