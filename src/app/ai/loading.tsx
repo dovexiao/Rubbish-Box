@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { View, Text as RNText, StatusBar as RNStatusBar, ActivityIndicator, ImageBackground, Animated } from "react-native"
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router"
 import { WebView } from "react-native-webview"
+import DeviceInfo from 'react-native-device-info'
 
 import { globalImmersive } from "../../utils/globalImmersive"
 import { createStyles } from "../../utils/rpxStyleSheet"
@@ -253,11 +254,12 @@ const generateInitialHTML = () => {
 export default function AILoadingScreen() {
   const router = useRouter()
   const params = useLocalSearchParams()
-  const [streamContent, setStreamContent] = useState("") 
+  const [streamContent, setStreamContent] = useState("")
   const [isStreaming, setIsStreaming] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
   const [webViewReady, setWebViewReady] = useState(false) // WebView 就绪状态
   const [isFormatting, setIsFormatting] = useState(false) // 是否在格式化数据
+  const [isRK3566, setIsRK3566] = useState(false) // 检测RK3566设备，用于智能降级
   const hasStartedStream = useRef(false)
   
   // 活动追踪 - 追踪AI批改行为
@@ -723,12 +725,33 @@ export default function AILoadingScreen() {
     }
   }, [params.imguuid, params.type, router])
 
+  // 页面初始化：设备检测和流式启动
   useEffect(() => {
+    console.log('📍 ============ 页面加载开始 ============')
+    console.log(`⏱️ 页面进入时间戳: ${perfTimestamps.current.pageEnter}`)
+    console.log(`📊 初始状态: webViewReady=${webViewReady}, isStreaming=${isStreaming}, isCompleted=${isCompleted}`)
+    console.log(`🔍 页面来源: ${params.from || 'unknown'}, 参数:`, params)
+
+    // 检测RK3566设备，用于智能降级策略
+    const detectDevice = async () => {
+      try {
+        const model = await DeviceInfo.getModel()
+        const isRK3566Device = model.includes('3566') || model.includes('RK3566')
+        setIsRK3566(isRK3566Device)
+        console.log(`📱 设备检测: ${model}, 是否RK3566: ${isRK3566Device}`)
+      } catch (error) {
+        console.error('设备检测失败:', error)
+        setIsRK3566(false)
+      }
+    }
+    detectDevice()
+
+    // 启动流式请求
     if (!hasStartedStream.current) {
       hasStartedStream.current = true
       startStreamingOCR()
     }
-    
+
     return () => {
       if (xhrRef.current) {
         xhrRef.current.abort()
@@ -866,14 +889,20 @@ export default function AILoadingScreen() {
     }
   }, [stopHealthCheck])
 
-  // webview显示变量
+  // webview显示变量 - 智能延迟策略
   const [webviewDisplayContent, setWebviewDisplayContent] = useState(false)
   useEffect(() => {
+    // 从camera页面跳转时需要更长的延迟等待GPU资源释放
+    const delay = params.from === 'camera' ? 2000 : 1000
+    console.log(`⏰ WebView显示延迟: ${delay}ms (来源: ${params.from || 'unknown'})`)
+
     const timer = setTimeout(() => {
       setWebviewDisplayContent(true)
-      clearTimeout(timer)
-    }, 1000)
-  }, [streamContent])
+      console.log('✅ WebView显示延迟结束，开始渲染')
+    }, delay)
+
+    return () => clearTimeout(timer)
+  }, [streamContent, params.from])
 
   return (
     <ImageBackground
@@ -899,7 +928,7 @@ export default function AILoadingScreen() {
               javaScriptEnabled={true}
               domStorageEnabled={true}
               startInLoadingState={false}
-              androidLayerType="hardware"
+              androidLayerType={isRK3566 && params.from === 'camera' ? 'software' : 'hardware'}
               mixedContentMode="always"
               allowFileAccess={true}
               allowUniversalAccessFromFileURLs={true}
