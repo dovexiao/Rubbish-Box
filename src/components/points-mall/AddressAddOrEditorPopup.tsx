@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState, forwardRef, useImpera
 import { Modal, View, Text, TouchableOpacity, TextInput, TouchableWithoutFeedback, ActivityIndicator } from "react-native"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { type AddressItem, AddAddressParams, UpdateAddressParams } from "../../services/pointsMall"
-import RegionSelector from "../common/RegionSelector"
+import RegionSelector, { type RegionSelectorRef } from "../common/RegionSelector"
 import { showError } from "@/utils/toast"
 import { devError } from "../../services/WebSocketManager"
 
@@ -39,7 +39,7 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
     const [city, setCity] = useState("")
     const [district, setDistrict] = useState("")
     const [detail, setDetail] = useState("")
-    const [regionSelectorVisible, setRegionSelectorVisible] = useState(false)
+    const regionSelectorRef = useRef<RegionSelectorRef>(null)
 
     useEffect(() => {
         if (visible) {
@@ -102,7 +102,6 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
         setProvince(provinceValue);
         setCity(cityValue);
         setDistrict(districtValue);
-        setRegionSelectorVisible(false);
     }, []);
 
     // 暴露方法给父组件
@@ -192,9 +191,15 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
                     <View style={styles.formItem}>
                         <Text style={styles.label}>地区</Text>
                         <TouchableOpacity style={styles.regionButton} activeOpacity={0.8} onPress={() => {
-                            setRegionSelectorVisible(true);
+                            regionSelectorRef.current?.show(province, city, district);
                         }}>
-                            <Text style={province || city || district ? styles.regionText : styles.regionPlaceholderText}>{province + city + district || "点击选择"}</Text>
+                            <Text
+                                style={province || city || district ? styles.regionText : styles.regionPlaceholderText}
+                                numberOfLines={2}
+                                ellipsizeMode="tail"
+                            >
+                                {province + city + district || "点击选择"}
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
@@ -227,12 +232,9 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
                         )}
                     </TouchableOpacity>
                     <RegionSelector
-                        visible={regionSelectorVisible}
-                        onClose={() => setRegionSelectorVisible(false)}
+                        ref={regionSelectorRef}
+                        onClose={() => { }}
                         onConfirm={handleRegionConfirm}
-                        province={province}
-                        city={city}
-                        district={district}
                     />
                 </View>
             </View>
