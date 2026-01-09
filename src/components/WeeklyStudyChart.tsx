@@ -12,28 +12,19 @@ interface WeeklyStudyChartProps {
  * 100%还原UniApp项目中的 WeeklyStudyChart 组件
  */
 export function WeeklyStudyChart({ weekData }: WeeklyStudyChartProps) {
-  // 如果没有数据，显示空状态
-  if (!weekData || weekData.length === 0) {
-    return (
-      <View style={styles.emptyContainer as any}>
-        <Text style={styles.emptyText}>暂无学习数据</Text>
-      </View>
-    )
-  }
-
   // 图表配置
   const chartWidth = 160 // rpx
   const chartHeight = 100 // rpx
   const barWidth = 15 // rpx
   const leftMargin = 20 // 左边距，用于显示纵轴刻度
   const actualChartWidth = chartWidth - leftMargin // 实际图表宽度
-  
+
   // 动态计算最大值：取数据最大值的1.2倍，至少为5
   const dataMax = Math.max(...weekData.map((d) => d.duration), 1)
   const maxValue = Math.max(Math.ceil(dataMax * 1.2), 5)
-  
+
   const spacing = (actualChartWidth - barWidth * weekData.length) / (weekData.length + 1)
-  
+
   // 计算纵轴刻度（5个刻度）
   const yAxisTicks = [0, maxValue * 0.25, maxValue * 0.5, maxValue * 0.75, maxValue]
 
@@ -45,10 +36,15 @@ export function WeeklyStudyChart({ weekData }: WeeklyStudyChartProps) {
       const year = new Date().getFullYear()
       const date = new Date(year, month - 1, day)
       const days = ["日", "一", "二", "三", "四", "五", "六"]
-      return days[date.getDay()]
+      return `周${days[date.getDay()]}`
     }
     return dateStr
   }
+
+  const hasValidData =
+    Array.isArray(weekData) &&
+    weekData.length > 0 &&
+    weekData.some((item) => item.duration > 0)
 
   return (
     <View style={styles.container as any}>
@@ -62,7 +58,7 @@ export function WeeklyStudyChart({ weekData }: WeeklyStudyChartProps) {
           stroke="#E5E5E5"
           strokeWidth={1}
         />
-        
+
         {/* 纵轴刻度、标签和网格线 */}
         {yAxisTicks.map((tick, index) => {
           const y = chartHeight - 20 - (tick / maxValue) * (chartHeight - 30)
@@ -103,7 +99,7 @@ export function WeeklyStudyChart({ weekData }: WeeklyStudyChartProps) {
             </View>
           )
         })}
-        
+
         {/* 数据柱状图 */}
         {weekData.map((item, index) => {
           const barHeight = (item.duration / maxValue) * (chartHeight - 30)
@@ -169,18 +165,7 @@ const styles = createStyles({
     height: 100,
     justifyContent: "center",
     alignItems: "flex-start", // 左对齐，因为有纵轴
-    paddingLeft: 5, // 给纵轴标签留出空间
-  },
-  emptyContainer: {
-    height: 80,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 8,
-  },
-  emptyText: {
-    fontSize: 9,
-    color: "#999",
+    // paddingLeft: 5, // 给纵轴标签留出空间
   },
 })
 
