@@ -1,8 +1,10 @@
 import { useState, useCallback, useEffect } from "react"
 import { View, Platform, StatusBar as RNStatusBar, Text } from "react-native"
-import { Ionicons, MaterialIcons } from "@expo/vector-icons"
+import { MaterialIcons } from "@expo/vector-icons"
 import { createStyles, rpx } from "../utils/rpxStyleSheet"
 import { useNetwork } from "../stores/networkStore"
+import { useBattery } from "../stores/batteryStore"
+import { getScreenInfo } from "../utils/rpxStyleSheet"
 
 interface StatusBarProps {
   theme?: "light" | "dark"
@@ -24,11 +26,42 @@ export function StatusBar({
   
   // 获取网络状态和信号强度（共享全局状态）
   const { 
-    isConnected, 
-    isInternetReachable, 
-    networkType, 
-    networkDetails 
+    isConnected,
+    isInternetReachable,
+    networkType,
+    networkDetails
   } = useNetwork()
+  
+  // 获取电池状态（共享全局状态）
+  const {
+    batteryLevel,
+    isCharging,
+  } = useBattery()
+
+  // const batteryLevel = null;
+  // const isCharging = true;
+
+  // const isConnected = true;
+  // const isInternetReachable = true;
+  // const networkType = "wifi";
+  // const networkDetails = {
+  //   strength: 60,
+  //   ssid: "test",
+  //   frequency: 2437,
+  //   cellularGeneration: "4G",
+  // };
+
+  const [isTablet, setIsTablet] = useState(false);
+
+  const getIsTablet = async () => {
+    const screenInfo = await getScreenInfo();
+    const { isTablet } = screenInfo;
+    setIsTablet(isTablet);
+  }
+
+  useEffect(() => {
+    getIsTablet();
+  }, []);
 
   // 更新时间
   const updateTime = useCallback(() => {
@@ -58,60 +91,147 @@ export function StatusBar({
     return () => clearTimeout(timer)
   }, [theme, translucent])
 
+  // 渲染电池图标
+  const renderBatteryIcon = () => {
+    const baseIconColor = theme === "dark" ? "#fff" : "#000"
+    
+    // 充电状态颜色（绿色）
+    const chargingColor = theme === "dark" ? "#4CAF50" : "#00C53B"
+    
+    // 根据电量设置颜色：危险(<20%) / 警告(20-40%) / 正常(>=40%)
+    let batteryColor: string
+    if (batteryLevel === null) {
+      // 未知状态：灰色
+      batteryColor = theme === "dark" ? "#999" : "#666"
+    } else {
+      const level = batteryLevel
+      if (level < 0.1) {
+        // 危险：红色
+        batteryColor = theme === "dark" ? "#FF6B6B" : "#E60012"
+      } else if (level < 0.2) {
+        // 警告：橙色
+        batteryColor = theme === "dark" ? "#FFB84D" : "#FF9500"
+      } else {
+        // 正常：使用基础颜色
+        batteryColor = baseIconColor
+      }
+    }
+    
+    // 如果正在充电，使用充电颜色
+    if (isCharging) {
+      batteryColor = chargingColor
+    }
+    
+    // 计算电量宽度（最大宽度 50，对应 100%）
+    const level = batteryLevel ?? 0
+    const batteryWidth = level * rpx(19.53125) // 50 = 19.53125rpx
+    
+    return (
+      <View style={styles.batteryContainer}>
+        {/* 大矩形（电池主体） */}
+        <View style={[styles.batteryMainRect, { borderColor: baseIconColor }]}>
+          {/* 中矩形（透明背景容器） */}
+          <View style={styles.batteryMiddleRect}>
+            {/* 最内小矩形（电量显示） */}
+            <View 
+              style={[
+                styles.batteryLevelRect, 
+                { 
+                  width: batteryWidth,
+                  backgroundColor: batteryColor 
+                }
+              ]} 
+            />
+          </View>
+        </View>
+        {/* 右边小矩形（电池正极） */}
+        <View style={[styles.batteryTerminalRect, { backgroundColor: baseIconColor }]} />
+        {/* 充电图标（如果正在充电） */}
+        {isCharging && (
+          <MaterialIcons
+            name="flash-on"
+            size={rpx(11.71875)} // 30
+            color={baseIconColor}
+            style={styles.batteryChargingIcon}
+          />
+        )}
+      </View>
+    )
+  }
+
   // 渲染网络信号图标
   const renderNetworkIcon = () => {
-    const iconColor = theme === "dark" ? "#fff" : "#000"
-    const iconSize = rpx(16.25)
-
+    const iconSize = rpx(18.359375) // 47
+    const baseIconColor = theme === "dark" ? "#fff" : "#000"
+    
+    // 判断是否为蜂窝网络类型
+    const isCellular = networkType === "cellular"
+    // 其他类型按 WiFi 处理
+    
+    let iconName: string
+    let iconColor: string
+    
     // 未连接网络
     if (!isConnected) {
-      return (
-        <Ionicons
-          name="wifi-outline"
-          size={iconSize}
-          color="#999"
-          style={styles.wifiIcon}
-        />
-      )
-    }
-
-    // WiFi 网络 - 根据信号强度显示
-    if (networkType === "wifi") {
-      const strength = networkDetails.strength ?? 100
-      let wifiIconName: "wifi-outline" | "wifi" = "wifi"
-      
-      if (strength < 30) {
-        wifiIconName = "wifi-outline" // 弱信号
-      } else if (strength < 70) {
-        wifiIconName = "wifi" // 中等信号
+      if (isCellular) {
+        iconName = "signal-cellular-off"
       } else {
-        wifiIconName = "wifi" // 强信号
+        iconName = "wifi-off"
       }
-
-      return (
-        <View style={styles.signalContainer}>
-          <Ionicons
-            name={wifiIconName}
-            size={iconSize}
-            color={iconColor}
-            style={styles.wifiIcon}
-          />
-        </View>
-      )
+      // 根据主题设置未连接图标颜色
+      iconColor = theme === "dark" ? "#999" : "#666"
     }
-
-    // 蜂窝网络 - 显示网络代数
-    if (networkType === "cellular") {
-      const generation = networkDetails.cellularGeneration
+    // 假连接：已连接但无法访问互联网
+    else if (!isInternetReachable) {
+      if (isCellular) {
+        iconName = "signal-cellular-connected-no-internet-4-bar"
+      } else {
+        iconName = "perm-scan-wifi"
+      }
+      // 根据主题设置假连接图标颜色
+      // iconColor = theme === "dark" ? "#FFB84D" : "#FF9500"
+      iconColor = theme === "dark" ? "#999" : "#666"
+    }
+    // 正常连接 - 根据信号强度显示
+    else {
+      const strength = networkDetails.strength ?? 100
       
+      if (isCellular) {
+        if (strength < 30) {
+          iconName = "signal-cellular-alt-1-bar"
+        } else if (strength < 70) {
+          iconName = "signal-cellular-alt-2-bar"
+        } else {
+          iconName = "signal-cellular-alt"
+        }
+      } else {
+        if (strength < 30) {
+          iconName = "wifi-1-bar"
+        } else if (strength < 70) {
+          iconName = "wifi-2-bar"
+        } else {
+          iconName = "wifi"
+        }
+      }
+      iconColor = baseIconColor
+    }
+    
+    // 渲染图标
+    const iconElement = (
+      <MaterialIcons
+        name={iconName as any}
+        size={iconSize}
+        color={iconColor}
+        style={isCellular ? styles.cellularIcon : styles.wifiIcon}
+      />
+    )
+    
+    // 蜂窝网络正常连接时需要显示网络代数
+    if (isCellular && isConnected && isInternetReachable) {
+      const generation = networkDetails.cellularGeneration
       return (
         <View style={styles.signalContainer}>
-          <MaterialIcons
-            name="signal-cellular-alt"
-            size={iconSize}
-            color={iconColor}
-            style={styles.cellularIcon}
-          />
+          {iconElement}
           {generation && (
             <Text style={[
               styles.networkGeneration,
@@ -123,15 +243,11 @@ export function StatusBar({
         </View>
       )
     }
-
-    // 其他网络类型 - 显示默认 WiFi 图标
+    
     return (
-      <Ionicons
-        name="wifi"
-        size={iconSize}
-        color={iconColor}
-        style={styles.wifiIcon}
-      />
+      <View style={styles.signalContainer}>
+        {iconElement}
+      </View>
     )
   }
 
@@ -151,6 +267,8 @@ export function StatusBar({
       </View>
       <View style={styles.statusBarRight}>
         <View style={styles.iconGroup}>
+          {/* 电池图标 - 根据电池电量和充电状态动态显示 */}
+          {isTablet && renderBatteryIcon()}
           {/* 网络信号图标 - 根据网络状态和信号强度动态显示 */}
           {renderNetworkIcon()}
         </View>
@@ -165,7 +283,7 @@ const styles = createStyles({
     justifyContent: "space-between" as const,
     alignItems: "center" as const,
     width: "100%" as const,
-    height: 38.28125, // 98px转rpx = 98 * 750 / 1920 = 38.28125rpx
+    height: 38.28125, // 98
     backgroundColor: "transparent",
     paddingHorizontal: 20.3125,
     position: "absolute" as const,
@@ -186,7 +304,7 @@ const styles = createStyles({
   signalContainer: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    marginLeft: 8,
+    // marginLeft: 8,
   },
   time: {
     fontSize: 15.625,
@@ -199,6 +317,47 @@ const styles = createStyles({
   },
   cellularIcon: {
     marginRight: 2,
+  },
+  batteryContainer: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    // width: 38.28125, // 98
+    height: 11.71875, // 30
+    marginRight: 5.859375, // 15
+    gap: 0.78125, // 2
+  },
+  batteryMainRect: {
+    width: 24.21875, // 62
+    height: 11.71875, // 30
+    borderRadius: 3.515625, // 9
+    borderWidth: 1,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+  },
+  batteryMiddleRect: {
+    width: 21.09375, // 54
+    height: 8.59375, // 22
+    borderRadius: 1.953125, // 5
+    backgroundColor: "transparent",
+    justifyContent: "center" as const,
+    alignItems: "flex-start" as const,
+    padding: 0.78125, // 2 gap
+    overflow: "hidden" as const,
+  },
+  batteryLevelRect: {
+    height: 7.03125, // 18
+    maxWidth: 19.53125, // 50
+    borderRadius: 1.171875, // 3
+    minWidth: 0,
+  },
+  batteryTerminalRect: {
+    width: 1.5625, // 4
+    height:3.90625, // 10
+    borderRadius: 0.78125, // 2
+    marginLeft: 0.78125, // 2 gap
+  },
+  batteryChargingIcon: {
+    // marginLeft: 0.78125, // 2 gap
   },
   networkGeneration: {
     fontSize: 10,

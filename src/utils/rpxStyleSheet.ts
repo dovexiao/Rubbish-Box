@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions, Platform } from "react-native"
+import { getDeviceInfo } from "./deviceInfo"
 
 // 设计稿尺寸配置
 const DESIGN_WIDTH_RPX = 750 // 设计稿宽度转rpx
@@ -101,11 +102,14 @@ const isLandscape = (): boolean => {
 }
 
 // 判断是否为平板设备
-const isTablet = (): boolean => {
-  const { width, height } = getScreenDimensions()
-  const minDimension = Math.min(width, height)
-  // 最小边大于600被认为是平板
-  return minDimension >= 600
+const isTablet = async (): Promise<boolean> => {
+  // const { width, height } = getScreenDimensions()
+  // const minDimension = Math.min(width, height)
+  // // 最小边大于600被认为是平板
+  // return minDimension >= 600
+  const { brand } = await getDeviceInfo();
+  console.log("brand isTablet", brand);
+  return brand === "Jaya";
 }
 
 // 获取设备类型和适配策略
@@ -234,11 +238,11 @@ export const getScaleRatio = (): number => {
 /**
  * 获取屏幕信息（用于调试）
  */
-export const getScreenInfo = () => {
+export const getScreenInfo = async () => {
   const dimensions = getScreenDimensions()
   const { width, height, physicalWidth, physicalHeight } = dimensions
   const landscape = isLandscape()
-  const tablet = isTablet()
+  const tablet = await isTablet()
   const strategy = getDeviceAdaptationStrategy()
   const scaleRatio = getScaleRatio()
   
