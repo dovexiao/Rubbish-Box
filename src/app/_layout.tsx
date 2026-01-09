@@ -58,8 +58,6 @@ export default function RootLayout() {
 
   // 网络提示 Modal 状态
   const [showNetworkModal, setShowNetworkModal] = useState(false)
-  // 假连接提示 Modal 状态
-  const [showFakeConnectionModal, setShowFakeConnectionModal] = useState(false)
   
   // 获取设备授权状态（用于控制网络弹窗显示）
   const isBlocked = useDeviceAuthStore((state) => state.isBlocked)
@@ -164,7 +162,6 @@ export default function RootLayout() {
   // 打开系统网络设置
   const openNetworkSettings = async () => {
     setShowNetworkModal(false) // 先关闭弹窗
-    setShowFakeConnectionModal(false) // 先关闭假连接弹窗
 
     if (Platform.OS === "android") {
       try {
@@ -287,21 +284,19 @@ export default function RootLayout() {
   // 同步网络弹窗状态到 store
   const setShowNetworkModalInStore = useNetworkStore((state) => state.setShowNetworkModal)
   useEffect(() => {
-    setShowNetworkModalInStore(showNetworkModal || showFakeConnectionModal)
-  }, [showNetworkModal, showFakeConnectionModal, setShowNetworkModalInStore])
+    setShowNetworkModalInStore(showNetworkModal)
+  }, [showNetworkModal, setShowNetworkModalInStore])
 
   // 监听网络弹窗状态，自动隐藏/恢复其他弹窗
   useEffect(() => {
-    const isNetworkModalShowing = showNetworkModal || showFakeConnectionModal
-
-    if (isNetworkModalShowing) {
+    if (showNetworkModal) {
       // 网络弹窗显示时，隐藏其他弹窗
       hideOtherModals()
     } else {
       // 网络弹窗隐藏时，恢复其他弹窗
       restoreOtherModals()
     }
-  }, [showNetworkModal, showFakeConnectionModal, hideOtherModals, restoreOtherModals])
+  }, [showNetworkModal, hideOtherModals, restoreOtherModals])
 
   // P0核心功能Hooks
   const {
@@ -339,10 +334,6 @@ export default function RootLayout() {
       return false
     }
 
-    if (isInternetReachable === false) {
-      console.log("⏳ 检测到假连接，等待真实网络连接后再进行设备授权验证...")
-      return false
-    }
 
     // 网络已连接，执行设备授权验证
     console.log("🔐 网络已连接，开始设备授权验证，设备码:", deviceCode)
@@ -490,14 +481,12 @@ export default function RootLayout() {
   const networkCallbacks = useMemo(() => ({
     onNetworkConnected: async () => {
       console.log("网络已连接")
-      // 关闭假连接弹窗（如果正在显示）
-      setShowFakeConnectionModal(false)
-      
+
       // 使用InteractionManager优化网络恢复性能
       InteractionManager.runAfterInteractions(async () => {
         // 🔴 如果应用已启动但设备授权还未验证，则执行验证
-        if (appLaunchState.current.isLaunched && 
-            appLaunchState.current.deviceCode && 
+        if (appLaunchState.current.isLaunched &&
+            appLaunchState.current.deviceCode &&
             !appLaunchState.current.authVerified) {
           console.log("🔐 网络已连接，执行设备授权验证")
           await performDeviceAuth(appLaunchState.current.deviceCode)
@@ -525,26 +514,10 @@ export default function RootLayout() {
       }
       // 显示网络提示 Modal
       setShowNetworkModal(true)
-      // 关闭假连接弹窗（如果正在显示）
-      setShowFakeConnectionModal(false)
     },
 
     onNetworkChange: (isConnected: boolean, networkType: string) => {
       console.log("网络状态变化:", { isConnected, networkType })
-    },
-
-    onFakeConnection: () => {
-      console.log("⚠️ 检测到假连接：已连接网络但无法访问互联网")
-      // 🔴 如果设备未授权，不显示假连接弹窗（设备授权弹窗优先）
-      const isBlocked = useDeviceAuthStore.getState().isBlocked
-      if (isBlocked) {
-        console.log("🔐 设备未授权，不显示假连接弹窗（设备授权弹窗优先）")
-        return
-      }
-      // 显示假连接提示 Modal
-      setShowFakeConnectionModal(true)
-      // 关闭普通网络断开弹窗（如果正在显示）
-      setShowNetworkModal(false)
     },
   }), [reverifyDeviceAuthorization, performDeviceAuth])
 
@@ -575,11 +548,6 @@ export default function RootLayout() {
         setShowNetworkModal(true)
       }
 
-      // 如果初始化完成时是假连接，显示假连接弹窗
-      if (isConnected && isInternetReachable === false) {
-        console.log("🟠 初始化时检测到假连接，显示弹窗")
-        setShowFakeConnectionModal(true)
-        }
       }
 
       // 更新 ref，标记初始化已完成
@@ -609,15 +577,6 @@ export default function RootLayout() {
       networkCallbacks.onNetworkConnected()
     }
 
-    // 检测假连接（从能访问变为不能访问）
-    if (
-      isConnected &&
-      prev.isInternetReachable !== false &&
-      isInternetReachable === false
-    ) {
-      console.log("🟠 网络状态变化：假连接 → 触发回调")
-      networkCallbacks.onFakeConnection?.()
-    }
 
     // 更新 ref
     prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
@@ -796,59 +755,6 @@ export default function RootLayout() {
         </View>
       </Modal>
 
-      {/* 假连接提示 Modal - 已连接但无法访问互联网 */}
-      {/* 🔴 如果设备未授权，不显示假连接弹窗（设备授权弹窗优先） */}
-      <Modal
-        visible={showFakeConnectionModal && !locked && !isBlocked}
-        transparent
-        animationType="fade"
-        statusBarTranslucent
-        presentationStyle="overFullScreen"
-        onRequestClose={() => setShowFakeConnectionModal(false)}
-      >
-        <View style={styles.networkModalOverlay}>
-          <LinearGradient
-            colors={["#C1E0FF", "#EFF6FE"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 0.4 }}
-            style={[styles.networkModalContent, styles.fakeConnectionModalContent]}
-          >
-            {/* 绝对定位的男孩图片 */}
-            <Image
-              source={Images.networkBoy}
-              style={styles.networkModalBoyImage}
-              resizeMode="contain"
-            />
-            <Image
-              source={Images.networkModalTitle}
-              style={styles.networkModalTitleImage}
-              resizeMode="contain"
-            />
-            <Text style={styles.networkModalMessage}>
-              已连接到WiFi/移动网络，但无法访问互联网{"\n"}
-              请检查路由器或数据流量设置
-            </Text>
-            <View style={styles.networkModalButtons}>
-              <TouchableOpacity
-                style={[styles.networkModalButton, styles.networkModalCancelButton]}
-                onPress={() => setShowFakeConnectionModal(false)}
-              >
-                <Text style={styles.networkModalCancelText}>知道了</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={openNetworkSettings}>
-                <LinearGradient
-                  colors={["#AFDCFF", "#4BB1FF"]}
-                  start={{ x: 0.35, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={[styles.networkModalButton, styles.networkModalConfirmButton]}
-              >
-                <Text style={styles.networkModalConfirmText}>去设置</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          </LinearGradient>
-          </View>
-      </Modal>
     </GestureHandlerRootView>
   )
 }
@@ -884,10 +790,6 @@ const styles = createStyles({
     shadowRadius: 3.125, // 8 * 750/1920
     elevation: 24,
     position: "relative" as const,
-  },
-  fakeConnectionModalContent: {
-    borderWidth: 0.78125, // 2 * 750/1920
-    borderColor: "#FF9500",
   },
   networkModalTitle: {
     fontSize: 12.5, // 32 * 750/1920
@@ -943,9 +845,6 @@ const styles = createStyles({
     shadowOpacity: 0.51,
     shadowRadius: 6.25, // 16 * 750/1920
     elevation: 24,
-  },
-  fakeConnectionConfirmButton: {
-    backgroundColor: "#FF9500",
   },
   networkModalCancelText: {
     fontSize: 10.9375, // 28 * 750/1920

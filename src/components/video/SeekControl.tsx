@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated"
 import { Ionicons } from "@expo/vector-icons"
 import { createStyles, rpx } from "@/utils/rpxStyleSheet"
-import { useVideoPlayerStore } from "@/stores/sync-classroom/videoPlayerStore"
+import { useVideoPlayerStore } from "@/stores/videoPlayerStore"
 import { selectCanDragVideo, useDeviceStatusStore } from "@/stores/deviceStatusStore"
 import { showError } from "@/utils/toast"
 

@@ -13,6 +13,8 @@ export default function SyncClassroomLayout() {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="video" />
+      <Stack.Screen name="video-modular" />
+      <Stack.Screen name="video-modular-v2" />
     </Stack>
   )
 }

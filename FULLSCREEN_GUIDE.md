@@ -1102,3 +1102,24 @@ const styles = createStyles({
   },
 })
 
+
+
+核心文件
+src/app/sync-classroom/video.tsx - 原始视频播放器代码（保留）
+src/app/sync-classroom/video-modular.tsx - 新的模块化实现（当前使用）
+Store 和工具
+src/stores/videoPlayerStore.ts - 视频播放器状态管理
+src/utils/video/videoTimeUtils.ts - 时间格式化工具
+src/utils/video/videoOperationLock.ts - 操作锁工具
+组件
+src/components/video/VideoHeader.tsx - 视频头部
+src/components/video/VideoProgressBar.tsx - 进度条
+src/components/video/VideoControls.tsx - 控制按钮
+src/components/video/CenterPlayButton.tsx - 中央播放按钮
+src/components/video/CompleteTip.tsx - 完成提示
+src/components/video/BrightnessControl.tsx - 亮度控制
+src/components/video/VolumeControl.tsx - 音量控制
+src/components/video/SeekControl.tsx - 快进快退控制
+Hooks
+src/hooks/useVideoPlayer.ts - 核心播放逻辑
+

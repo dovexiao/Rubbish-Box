@@ -75,20 +75,6 @@ export function StatusBar({
       )
     }
 
-    // 假连接：已连接但无法访问互联网
-    if (isInternetReachable === false) {
-      return (
-        <View style={styles.signalContainer}>
-          <Ionicons
-            name="warning"
-            size={iconSize}
-            color="#FF9500"
-            style={styles.wifiIcon}
-          />
-        </View>
-      )
-    }
-
     // WiFi 网络 - 根据信号强度显示
     if (networkType === "wifi") {
       const strength = networkDetails.strength ?? 100

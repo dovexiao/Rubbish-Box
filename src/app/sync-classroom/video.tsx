@@ -890,8 +890,17 @@ export default function VideoPlayerScreen() {
                   videoReadyRef.current = true // 🔒 标记视频真正准备好
                   setIsVideoReady(true) // 🔒 触发自动播放 useEffect
                 }}
-                onError={() => {
+                onError={(error) => {
+                  // 过滤掉应用在后台时无法获取音频焦点的错误（这是正常情况）
+                  const errorMessage = error?.message || String(error || '')
+                  if (errorMessage.includes('AudioFocusNotAcquiredException') || 
+                      errorMessage.includes('audio focus could not be acquired')) {
+                    console.log('⚠️ 应用在后台，无法获取音频焦点（正常情况）')
+                    return
+                  }
+                  
                   showError("视频播放失败")
+                  console.error('Video error:', error)
                   // 🔒 错误时重置所有状态
                   isLoadedRef.current = false
                   videoReadyRef.current = false

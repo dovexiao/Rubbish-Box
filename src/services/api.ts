@@ -23,7 +23,7 @@ declare module "axios" {
  * 日志配置IS_DEV
  */
 const LOG_CONFIG = {
-  ENABLED:  IS_DEV, // 只在开发环境打印日志
+  ENABLED:  '', // 只在开发环境打印日志
   SHOW_REQUEST: true,
   SHOW_RESPONSE: true,
   SHOW_ERROR: true,

@@ -13,7 +13,6 @@ interface NetworkStatusCallbacks {
   onNetworkConnected?: () => void | Promise<void>
   onNetworkDisconnected?: () => void | Promise<void>
   onNetworkChange?: (isConnected: boolean, networkType: string) => void | Promise<void>
-  onFakeConnection?: () => void | Promise<void> // 假连接：连上但无网
 }
 
 /**
@@ -24,7 +23,6 @@ interface NetworkStatusCallbacks {
  * 1. 网络连接状态（连接/断开）
  * 2. 网络类型（WiFi/蜂窝/无）
  * 3. 信号强度（WiFi: 0-100, 蜂窝: 2g/3g/4g/5g）
- * 4. 假连接检测（连上WiFi但无法访问互联网）
  */
 export const useNetworkStatus = (callbacks?: NetworkStatusCallbacks) => {
   const [isConnected, setIsConnected] = useState<boolean>(true)
@@ -79,9 +77,7 @@ export const useNetworkStatus = (callbacks?: NetworkStatusCallbacks) => {
       console.log("  - 互联网可达:", state.isInternetReachable)
       
       // 判断网络状态
-      if (state.isConnected && state.isInternetReachable === false) {
-        console.log("  - ⚠️ 假连接：已连接网络但无法访问互联网")
-      } else if (state.isConnected && state.isInternetReachable === true) {
+      if (state.isConnected && state.isInternetReachable === true) {
         console.log("  - ✅ 网络正常：已连接且可访问互联网")
       } else if (state.isConnected && state.isInternetReachable === null) {
         console.log("  - 🔍 检测中：正在验证互联网可达性...")
@@ -132,9 +128,7 @@ export const useNetworkStatus = (callbacks?: NetworkStatusCallbacks) => {
         })
         
         // 详细状态说明
-        if (connected && internetReachable === false) {
-          console.log("  🔴 状态: 假连接（已连接但无互联网）")
-        } else if (connected && internetReachable === true) {
+        if (connected && internetReachable === true) {
           console.log("  🟢 状态: 网络正常")
         } else if (connected && internetReachable === null) {
           console.log("  🟡 状态: 检测中...")
@@ -145,11 +139,6 @@ export const useNetworkStatus = (callbacks?: NetworkStatusCallbacks) => {
 
       // 只有在初始化后才触发回调，避免首次加载时的误触发
       if (isInitialized) {
-        // 检测假连接：已连接但无法访问互联网
-        if (connected && internetReachable === false) {
-          console.log("⚠️ 检测到假连接：已连接网络但无法访问互联网")
-          callbacks?.onFakeConnection?.()
-        }
 
         if (!isConnected && connected) {
           // 网络从断开到连接

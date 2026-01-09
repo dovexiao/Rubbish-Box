@@ -169,7 +169,7 @@ export const getDeviceInfoForAPI = async () => {
   const deviceInfo = await getDeviceInfo()
   
   return {
-    device_code: deviceInfo.deviceCode || 'ujyy78',
+    device_code: deviceInfo.deviceCode,
     device_id: deviceInfo.deviceId,
     device_name: deviceInfo.deviceName,
     system_name: deviceInfo.systemName,

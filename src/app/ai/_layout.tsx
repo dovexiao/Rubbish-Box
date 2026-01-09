@@ -8,6 +8,7 @@ export default function AILayout() {
     <Stack
       screenOptions={{
         headerShown: false,
+        animation: 'none'
       }}
     >
       <Stack.Screen name="camera" />

@@ -45,7 +45,7 @@ const generateInitialHTML = () => {
   <script src="file:///android_asset/katex/marked.min.js" defer 
     onerror="if(typeof logToRN==='function'){var errorTime=Date.now();var elapsed=errorTime-webviewStartTime;logToRN('❌ Marked 加载失败 ('+elapsed+'ms)');}"></script>
     <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; background-color: transparent;}
     html, body {
       background-color: transparent;
       color: #FFFFFF;
@@ -58,6 +58,7 @@ const generateInitialHTML = () => {
     #content { 
       word-wrap: break-word; 
       overflow-wrap: break-word; 
+      background-color: transparent !important;
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
@@ -69,8 +70,8 @@ const generateInitialHTML = () => {
     h1 { font-size: 22px; } h2 { font-size: 20px; } h3 { font-size: 18px; }
     p { margin: 4px 0; color: #FFFFFF; }
     strong { color: #FFD700; font-weight: bold; }
-    code { background: rgba(255,255,255,0.2); padding: 2px 4px; border-radius: 4px; color: #00FF00; font-size: 14px; }
-    pre { background: rgba(255,255,255,0.1); padding: 8px; border-radius: 4px; margin: 4px 0; overflow-x: auto; }
+    code { padding: 2px 4px; border-radius: 4px; color: #00FF00; font-size: 14px; }
+    pre { padding: 8px; border-radius: 4px; margin: 4px 0; overflow-x: auto; }
     ul, ol { margin: 4px 0; padding-left: 20px; }
     .katex { font-size: 16px; color: #FFFFFF !important; }
     .katex-display { margin: 8px 0; text-align: center; }
@@ -735,6 +736,7 @@ export default function AILoadingScreen() {
     // 检测RK3566设备，用于智能降级策略
     const detectDevice = async () => {
       try {
+        // console.log('DeviceInfo', DeviceInfo.getModel())
         const model = await DeviceInfo.getModel()
         const isRK3566Device = model.includes('3566') || model.includes('RK3566')
         setIsRK3566(isRK3566Device)
@@ -815,7 +817,7 @@ export default function AILoadingScreen() {
           console.log('✅ 流式接收完成，跳转到结果页')
           
           setTimeout(() => {
-            router.replace({ pathname: "/ai/result", params: { batch_id: imguuid, type } })
+            // router.replace({ pathname: "/ai/result", params: { batch_id: imguuid, type } })
           }, 500)
         }
         return // 立即返回，不处理 buffer

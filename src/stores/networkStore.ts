@@ -65,9 +65,7 @@ export const useNetworkStore = create<NetworkStore>((set, get) => ({
       })
       
       // 详细状态说明
-      if (connected && internetReachable === false) {
-        console.log("  🔴 状态: 假连接（已连接但无互联网）")
-      } else if (connected && internetReachable === true) {
+      if (connected && internetReachable === true) {
         console.log("  🟢 状态: 网络正常")
       } else if (connected && internetReachable === null) {
         console.log("  🟡 状态: 检测中...")

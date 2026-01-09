@@ -466,7 +466,7 @@ export default function SyncClassroomScreen() {
   const playVideo = useCallback(
     (point: any) => {
       router.push({
-        pathname: "/sync-classroom/video",
+        pathname: "/sync-classroom/video-modular-v2",
         params: {
           videoCode: point.id,
           title: encodeURIComponent(point.title),

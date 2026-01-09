@@ -1,3 +1,8 @@
 export { BrightnessControl } from "./BrightnessControl"
 export { VolumeControl } from "./VolumeControl"
 export { SeekControl } from "./SeekControl"
+export { VideoHeader } from "./VideoHeader"
+export { VideoProgressBar } from "./VideoProgressBar"
+export { VideoControls } from "./VideoControls"
+export { CenterPlayButton } from "./CenterPlayButton"
+export { CompleteTip } from "./CompleteTip"

@@ -78,6 +78,9 @@ export default function HomeScreen() {
   const nextBgOpacity = useRef(new Animated.Value(0)).current // 下一个背景透明度
   const homeBgUrlRef = useRef<string | null>(null) // 当前背景URL（用于比较）
   const isBgLoadingRef = useRef(false) // 背景加载中标记
+  const [homeBgLoaded, setHomeBgLoaded] = useState(false) // 当前背景图是否加载完成
+  const [nextBgLoaded, setNextBgLoaded] = useState(false) // 下一个背景图是否加载完成
+  const pendingAnimationRef = useRef<(() => void) | null>(null) // 等待图片加载完成的动画函数
 
 
   // 背景图状态持久化存储key
@@ -97,15 +100,97 @@ export default function HomeScreen() {
     }
   }, [])
 
-  // 包装setHomeBgSource，确保每次设置都持久化
+  /**
+   * 验证图片完整性 - 使用 Image.getSize 验证图片是否可访问且完整
+   */
+  const verifyImageComplete = useCallback(async (source: any): Promise<boolean> => { 
+    if (!source) {
+      console.warn('🖼️ [验证] 图片源为空')
+      return false
+    }
+    
+    // 本地资源（require 返回的 number）
+    if (typeof source === 'number') {
+      return true
+    }
+    
+    // 检查是否有 uri
+    if (!source.uri) {
+      console.warn('🖼️ [验证] 图片源缺少 uri')
+      return false
+    }
+    const uri = source.uri
+    console.log(`🖼️ [验证] 图片 URI: ${uri.substring(0, 80)}${uri.length > 80 ? '...' : ''}`)
+    
+    // 本地文件路径，也尝试获取尺寸验证
+    if (uri.startsWith('file://')) {
+      console.log('🖼️ [验证] 本地文件，尝试获取尺寸验证')
+      try {
+        return new Promise<boolean>((resolve) => {
+          Image.getSize(
+            uri,
+            (width, height) => {
+              if (width > 0 && height > 0) {
+                resolve(true)
+              } else {
+                console.warn('🖼️ [验证] 本地文件尺寸无效:', width, height)
+                resolve(false)
+              }
+            },
+            (error) => {
+              console.warn('🖼️ [验证] 本地文件验证失败:', error)
+              // 本地文件验证失败也返回 true，因为可能是权限问题
+              resolve(true)
+            }
+          )
+        })
+      } catch (error) {
+        console.warn('🖼️ [验证] 本地文件验证异常:', error)
+        return true // 本地文件验证异常也返回 true
+      }
+    }
+    
+    // 网络图片，使用 getSize 验证完整性
+    try {
+      return new Promise<boolean>((resolve) => {
+        Image.getSize(
+          uri,
+          (width, height) => {
+            // 如果成功获取尺寸且尺寸有效，说明图片完整
+            if (width > 0 && height > 0) {
+              resolve(true)
+            } else {
+              console.warn('🖼️ [验证] 图片尺寸无效:', width, height, 'URI:', uri.substring(0, 50))
+              resolve(false)
+            }
+          },
+          (error) => {
+            console.warn('🖼️ [验证] 图片验证失败:', error)
+            resolve(false)
+          }
+        )
+      })
+    } catch (error) {
+      console.warn('🖼️ [验证] 图片验证异常:', error)
+      return false
+    }
+  }, [])
+
+  // 包装setHomeBgSource，确保每次设置都持久化，并在设置前验证图片完整性
   const setHomeBgSource = useCallback(async (source: any, url?: string | null) => {
+    // 先验证图片完整性
+    const isValid = await verifyImageComplete(source)
+    if (!isValid) {
+      console.warn('🖼️ [设置背景] 图片验证失败，取消设置')
+      return
+    }
 
     setHomeBgSourceState(source)
 
     // 如果提供了URL参数，使用它，否则使用当前的URL
     const bgUrl = url !== undefined ? url : homeBgUrlRef.current
     await saveBgState(source, bgUrl)
-  }, [saveBgState])
+  }, [saveBgState, verifyImageComplete])
 
   // 从持久化存储恢复背景图状态
   const restoreBgState = useCallback(async () => {
@@ -148,29 +233,37 @@ export default function HomeScreen() {
 
   /**
    * 平滑切换背景图（淡入淡出动画）- 优化版：确保图片加载完成后再切换
+   * 使用 Image.getSize 验证图片完整性
    */
   const switchBackgroundSmoothly = useCallback(async (newSource: any, url?: string) => {
-  
+    // 步骤1: 验证图片完整性（使用 Image.getSize）
+    const isValid = await verifyImageComplete(newSource)
+    if (!isValid) {
+      console.warn("🖼️ [背景图切换] 图片验证失败，取消切换")
+      return
+    }
 
-    // 首先确保图片已经加载完成（特别是网络图片）
+    // 步骤2: prefetch 预加载（作为补充）
     if (newSource && newSource.uri && !newSource.uri.startsWith('file://')) {
-     
       try {
         await Image.prefetch(newSource.uri)
-      
       } catch (error) {
         console.warn("🖼️ [背景图切换] 网络图片预加载失败:", error)
-        // 即使预加载失败也继续，因为ImageBackground会自己处理
+        // 即使预加载失败也继续，因为已经通过 getSize 验证
       }
     }
 
     // 如果当前没有背景，直接设置
     if (!homeBgSource) {
+      setHomeBgLoaded(false) // 重置加载状态
       await setHomeBgSource(newSource, url)
       return
     }
 
     return new Promise<void>((resolve) => {
+      // 重置下一个背景的加载状态
+      setNextBgLoaded(false)
+      
       // 设置下一个背景
       setNextBgSource(newSource)
 
@@ -178,38 +271,61 @@ export default function HomeScreen() {
       bgOpacity.setValue(1)
       nextBgOpacity.setValue(0)
 
-      // 执行超流畅的淡入淡出动画
-      Animated.parallel([
-        Animated.timing(bgOpacity, {
-          toValue: 0,
-          duration: 600, // 更流畅的动画时间
-          useNativeDriver: false,
-          easing: Easing.inOut(Easing.ease), // 更自然的缓动
-        }),
-        Animated.timing(nextBgOpacity, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: false,
-          easing: Easing.inOut(Easing.ease),
-        }),
-      ]).start(async () => {
-        // 动画完成后，立即切换状态
-        const oldSource = homeBgSource
-        await setHomeBgSource(newSource, url)
+      // 等待下一个背景加载完成的函数
+      const startAnimation = () => {
+        // 执行超流畅的淡入淡出动画
+        Animated.parallel([
+          Animated.timing(bgOpacity, {
+            toValue: 0,
+            duration: 600, // 更流畅的动画时间
+            useNativeDriver: false,
+            easing: Easing.inOut(Easing.ease), // 更自然的缓动
+          }),
+          Animated.timing(nextBgOpacity, {
+            toValue: 1,
+            duration: 600,
+            useNativeDriver: false,
+            easing: Easing.inOut(Easing.ease),
+          }),
+        ]).start(async () => {
+          // 动画完成后，立即切换状态
+          const oldSource = homeBgSource
+          setHomeBgLoaded(true) // 设置新背景为已加载
+          await setHomeBgSource(newSource, url)
 
-        // 重置动画状态
-        bgOpacity.setValue(1)
-        nextBgOpacity.setValue(0)
+          // 重置动画状态
+          bgOpacity.setValue(1)
+          nextBgOpacity.setValue(0)
 
-        // 清除下一个背景
+          // 清除下一个背景
+          setTimeout(() => {
+            setNextBgSource(null)
+            setNextBgLoaded(false)
+            // console.log("🖼️ [背景图切换] 切换完成，从", oldSource, "到", newSource)
+            resolve()
+          }, 100)
+        })
+      }
+
+      // 如果下一个背景已经加载完成，立即开始动画
+      // 否则等待 onLoad 事件触发
+      if (nextBgLoaded) {
+        startAnimation()
+      } else {
+        // 存储动画函数，等待图片加载完成
+        pendingAnimationRef.current = startAnimation
+        
+        // 设置一个超时，防止图片加载失败导致永远不切换
         setTimeout(() => {
-          setNextBgSource(null)
-          console.log("🖼️ [背景图切换] 切换完成，从", oldSource, "到", newSource)
-          resolve()
-        }, 100)
-      })
+          if (pendingAnimationRef.current === startAnimation) {
+            console.warn("🖼️ [背景图切换] 图片加载超时，强制开始动画")
+            pendingAnimationRef.current = null
+            startAnimation()
+          }
+        }, 5000) // 5秒超时
+      }
     })
-  }, [homeBgSource, setHomeBgSource])
+  }, [homeBgSource, setHomeBgSource, nextBgLoaded, verifyImageComplete])
 
   /**
    * 初始化时恢复背景图状态（优先使用持久化状态，其次使用缓存）
@@ -240,7 +356,7 @@ export default function HomeScreen() {
           // setHomeBgSource会自动保存到持久化存储
           await setHomeBgSource(cachedSource, cachedInfo.url)
 
-          console.log("🖼️ [初始化] 完成，当前URL:", cachedInfo.url)
+          // console.log("🖼️ [初始化] 完成，当前URL:", cachedInfo.url)
         } else {
           // 直接设置默认背景，避免后续切换
           await setHomeBgSource(Images.homeBg2, null)
@@ -504,7 +620,7 @@ const openVolumeSettings = async () => {
         console.warn("❌ 排行榜数据为空")
       }
 
-      console.log("✅ 首页数据加载完成")
+      // console.log("✅ 首页数据加载完成")
     } catch (error) {
       console.error("首页数据加载失败:", error)
     } finally {
@@ -570,7 +686,7 @@ const openVolumeSettings = async () => {
     }
     // 使用Expo Router导航到视频播放页面 pathname: "/sync-classroom/video-modular",
     router.push({
-      pathname: "/sync-classroom/video",
+      pathname: "/sync-classroom/video-modular-v2",
       params: {
         videoCode: latestVideo.rsid,
         title: latestVideo.rsname,
@@ -602,12 +718,12 @@ const openVolumeSettings = async () => {
 
   // 跳转到 WebSocket 测试页面
   const goToWebSocketTest = () => {
-    console.log("🔌 跳转到 WebSocket 测试页面")
+    // console.log("🔌 跳转到 WebSocket 测试页面")
     router.push("/examples/websocket-test")
   }
   // 跳转到 activity-tracking-test 测试页面
   const goToActivityTrackingTest = () => {
-    console.log("🔌 跳转到 activity-tracking-test 测试页面")
+    // console.log("🔌 跳转到 activity-tracking-test 测试页面")
     router.push("/examples/activity-tracking-test")
   }
 
@@ -802,6 +918,30 @@ const openVolumeSettings = async () => {
               source={homeBgSource}
               style={styles.backgroundImage}
               resizeMode="cover"
+              onLoadStart={() => {
+                setHomeBgLoaded(false)
+              }}
+              onLoad={(event) => {
+                // 验证图片尺寸，确保图片真正加载完成
+                const { width, height } = event.nativeEvent.source
+                const source = event.nativeEvent.source
+                console.log(`🖼️ [背景图] 当前背景图加载完成: width=${width}, height=${height}`)
+                console.log(`🖼️ [背景图] 当前背景图详细信息:`, {
+                  width,
+                  height,
+                  uri: source.uri || '本地资源',
+                  宽高比: width > 0 && height > 0 ? (width / height).toFixed(2) : 'N/A'
+                })
+                if (width > 0 && height > 0) {
+                  setHomeBgLoaded(true)
+                } else {
+                  console.warn('🖼️ [背景图] 当前背景图尺寸无效:', width, height)
+                }
+              }}
+              onError={(error) => {
+                console.error('🖼️ [背景图] 当前背景图加载失败:', error)
+                setHomeBgLoaded(false)
+              }}
             />
           </Animated.View>
         )}
@@ -813,6 +953,47 @@ const openVolumeSettings = async () => {
               source={nextBgSource} 
               style={styles.backgroundImage} 
               resizeMode="cover"
+              onLoadStart={() => {
+                setNextBgLoaded(false)
+              }}
+              onLoad={(event) => {
+                // 验证图片尺寸，确保图片真正加载完成
+                const { width, height } = event.nativeEvent.source
+                const source = event.nativeEvent.source
+                console.log(`🖼️ [背景图] 下一个背景图加载完成: width=${width}, height=${height}`)
+                console.log(`🖼️ [背景图] 下一个背景图详细信息:`, {
+                  width,
+                  height,
+                  uri: source.uri || '本地资源',
+                  宽高比: width > 0 && height > 0 ? (width / height).toFixed(2) : 'N/A'
+                })
+                if (width > 0 && height > 0) {
+                  setNextBgLoaded(true)
+                  // 如果动画等待中，触发动画开始
+                  if (pendingAnimationRef.current) {
+                    const startAnimation = pendingAnimationRef.current
+                    pendingAnimationRef.current = null
+                    startAnimation()
+                  }
+                } else {
+                  console.warn('🖼️ [背景图] 下一个背景图尺寸无效:', width, height)
+                  // 即使尺寸无效，也设置加载完成，避免永远等待
+                  setNextBgLoaded(true)
+                  if (pendingAnimationRef.current) {
+                    const startAnimation = pendingAnimationRef.current
+                    pendingAnimationRef.current = null
+                    startAnimation()
+                  }
+                }
+              }}
+              onError={(error) => {
+                console.error('🖼️ [背景图] 下一个背景图加载失败:', error)
+                setNextBgLoaded(false)
+                // 加载失败时，清除待处理的动画
+                if (pendingAnimationRef.current) {
+                  pendingAnimationRef.current = null
+                }
+              }}
             />
           </Animated.View>
         )}
@@ -1675,25 +1856,27 @@ const styles = createStyles({
     paddingHorizontal: 11.71875,
     borderRadius: 4.8125,
     marginBottom: 5,
+  
   },
   rankingNumber: {
     // width: 24,
     color: "rgba(255, 255, 255, 0.8)",
     fontSize: 8.6,
-    lineHeight: 25.78125,
+ 
   },
   rankingUsername: {
     flex: 1,
     marginLeft: 1.625,
     color: "rgba(255, 255, 255, 0.8)",
     fontSize: 8.6,
-    lineHeight: 25.78125,
+    
   },
   rankingDuration: {
     color: "rgba(255, 255, 255, 0.8)",
     fontSize: 8.6,
     marginLeft: 4,
-    lineHeight: 25.78125,
+  
+   
   },
   aiButton: {
     position: "absolute",

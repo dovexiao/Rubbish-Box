@@ -45,7 +45,7 @@ export default function CameraScreen() {
   const [uploadLoading, setUploadLoading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState("")
   const [cameraKey, setCameraKey] = useState(0) // 用于强制重新挂载相机
-  const [showCamera, setShowCamera] = useState(true) // 控制CameraView显示，解决GPU资源竞争
+  // const [showCamera, setShowCamera] = useState(true) // 控制CameraView显示，解决GPU资源竞争
   const cameraRef = useRef<CameraView>(null)
   const wasPostureRunningRef = useRef(false) // 记录进入页面前坐姿检测是否在运行
 
@@ -79,7 +79,7 @@ export default function CameraScreen() {
       _setIsAnimating(false)
 
       // 显示相机组件
-      setShowCamera(true)
+      // setShowCamera(true)
 
       // 强制重新挂载相机组件
       setCameraKey((prev) => prev + 1)
@@ -97,7 +97,7 @@ export default function CameraScreen() {
       return () => {
         // 页面失焦时立即隐藏相机组件，释放GPU资源
         console.log("📹 相机页面失焦，立即隐藏CameraView释放GPU资源")
-        setShowCamera(false)
+        // setShowCamera(false)
         clearTimeout(timer)
       }
     }, []),
@@ -226,7 +226,7 @@ export default function CameraScreen() {
 
       // 跳转前强制隐藏CameraView，释放GPU资源，解决RK3566白屏问题
       console.log("📹 上传完成，隐藏CameraView释放GPU资源")
-      setShowCamera(false)
+      // setShowCamera(false)
 
       // 增加延迟等待GPU资源释放（RK3566需要更多时间）
       const releaseDelay = 1000 // 1秒等待GPU资源释放
@@ -336,7 +336,7 @@ export default function CameraScreen() {
       {/* 相机页面不使用自定义StatusBar组件，完全依赖原生层控制 */}
 
       {/* 相机视图 - 使用key强制重新挂载，条件渲染解决GPU资源竞争 */}
-      {showCamera && (
+      {(
         <CameraView
           key={cameraKey}
           ref={cameraRef}
