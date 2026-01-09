@@ -185,6 +185,18 @@ export default function VideoPlayerScreenModularV2() {
   const [seekDeltaText, setSeekDeltaText] = useState('0秒')
   const [seekPreviewTime, setSeekPreviewTime] = useState('00:00 / 00:00')
   const [seekIconName, setSeekIconName] = useState<'play-forward' | 'play-back'>('play-forward')
+  
+  // 节流控制：使用 SharedValue 存储上次调用时间（可在 worklet 中使用）
+  const lastSeekDisplayUpdate = useSharedValue(0)
+  const lastBrightnessUpdate = useSharedValue(0)
+  const lastVolumeUpdate = useSharedValue(0)
+  const lastBrightnessValue = useSharedValue(0.5)
+  const lastVolumeValue = useSharedValue(0.5)
+  const SEEK_DISPLAY_THROTTLE = 100 // 快进快退显示更新节流：100ms
+  const BRIGHTNESS_THROTTLE = 200 // 亮度更新节流：200ms
+  const VOLUME_THROTTLE = 100 // 音量更新节流：100ms
+  const BRIGHTNESS_THRESHOLD = 0.01 // 亮度变化阈值（超过此值才更新）
+  const VOLUME_THRESHOLD = 0.01 // 音量变化阈值（超过此值才更新）
 
   // 同步 totalDuration 到 SharedValue
   const totalDuration = useVideoPlayerStoreV2((state) => state.totalDuration)
@@ -311,9 +323,9 @@ export default function VideoPlayerScreenModularV2() {
         const currentShowTip = state.showCompleteTip
         if (!currentShowTip) {
           hasShownCompleteTipRef.current = true
-          setShowCompleteTip(true)
-          saveProgress()
-        }
+        setShowCompleteTip(true)
+        saveProgress()
+      }
       } else if (!currentIsCompleted) {
         // 当 isCompleted 变为 false 时，重置标记（用于继续观看后重新完成）
         hasShownCompleteTipRef.current = false
@@ -470,6 +482,7 @@ export default function VideoPlayerScreenModularV2() {
   }, [])
 
   // ==================== 快进快退相关函数 ====================
+  // 优化：合并状态更新，减少重渲染次数
   const updateSeekDisplay = useCallback((delta: number, startTime: number) => {
     const deltaValue = Math.floor(delta)
     const deltaText = deltaValue > 0
@@ -477,12 +490,15 @@ export default function VideoPlayerScreenModularV2() {
       : deltaValue < 0
       ? `${deltaValue}秒`
       : '0秒'
-    setSeekDeltaText(deltaText)
-    setSeekIconName(deltaValue >= 0 ? 'play-forward' : 'play-back')
+    const iconName = deltaValue >= 0 ? 'play-forward' : 'play-back' as 'play-forward' | 'play-back'
 
     const totalDurationValue = totalDurationSV.value
     const previewTime = Math.max(0, Math.min(totalDurationValue, startTime + delta))
     const previewText = `${formatTime(previewTime)} / ${formatTime(totalDurationValue)}`
+    
+    // 合并状态更新，减少重渲染次数
+    setSeekDeltaText(deltaText)
+    setSeekIconName(iconName)
     setSeekPreviewTime(previewText)
   }, [totalDurationSV])
 
@@ -504,6 +520,8 @@ export default function VideoPlayerScreenModularV2() {
   }, [canDragVideo, seek, totalDurationSV])
 
   // ==================== 亮度控制函数 ====================
+  // 优化：添加节流，减少系统 API 调用频率
+  // 注意：节流逻辑在 worklet 中处理，这里直接设置
   const setSystemBrightness = useCallback((val: number) => {
     Brightness.setSystemBrightnessAsync(val).catch((err) => {
       console.warn('设置亮度失败:', err)
@@ -511,6 +529,8 @@ export default function VideoPlayerScreenModularV2() {
   }, [])
 
   // ==================== 音量控制函数 ====================
+  // 优化：添加节流，减少原生模块调用频率
+  // 注意：节流逻辑在 worklet 中处理，这里直接设置
   const setAppVolume = useCallback((val: number) => {
     if (player) {
       player.volume = val
@@ -568,27 +588,53 @@ export default function VideoPlayerScreenModularV2() {
             if (!isLeftArea && !isRightArea && isHorizontal && canDragVideoValue.value) {
               const delta = Math.round(dx / 5)
               seekTimeDelta.value = delta
-              runOnJS(updateSeekDisplay)(delta, seekStartTime.value)
+              
+              // 节流：只在时间间隔足够时才更新 UI（减少 runOnJS 调用）
+              const now = Date.now()
+              if (now - lastSeekDisplayUpdate.value >= SEEK_DISPLAY_THROTTLE) {
+                lastSeekDisplayUpdate.value = now
+                runOnJS(updateSeekDisplay)(delta, seekStartTime.value)
+              }
             }
             // 左侧区域：垂直滑动 = 亮度
             else if (isLeftArea && !isHorizontal) {
               const diff = -dy
               let next = brightnessStartProgress.value + diff / EFFECTIVE_HEIGHT
               next = Math.max(0, Math.min(1, next))
+              
+              // 直接更新 SharedValue（不触发重渲染），性能更好
               brightnessProgress.value = next
               brightnessIndicatorOpacity.value = 1
               volumeIndicatorOpacity.value = 0
-              runOnJS(setSystemBrightness)(next)
+              
+              // 节流：只在时间间隔足够且值变化超过阈值时才更新系统亮度
+              const now = Date.now()
+              const valueDiff = Math.abs(next - lastBrightnessValue.value)
+              if (now - lastBrightnessUpdate.value >= BRIGHTNESS_THROTTLE && valueDiff >= BRIGHTNESS_THRESHOLD) {
+                lastBrightnessUpdate.value = now
+                lastBrightnessValue.value = next
+                runOnJS(setSystemBrightness)(next)
+              }
             }
             // 右侧区域：垂直滑动 = 音量
             else if (isRightArea && !isHorizontal) {
               const diff = -dy
               let next = volumeStartProgress.value + diff / EFFECTIVE_HEIGHT
               next = Math.max(0, Math.min(1, next))
+              
+              // 直接更新 SharedValue（不触发重渲染），性能更好
               volumeProgress.value = next
               volumeIndicatorOpacity.value = 1
               brightnessIndicatorOpacity.value = 0
-              runOnJS(setAppVolume)(next)
+              
+              // 节流：只在时间间隔足够且值变化超过阈值时才更新音量
+              const now = Date.now()
+              const valueDiff = Math.abs(next - lastVolumeValue.value)
+              if (now - lastVolumeUpdate.value >= VOLUME_THROTTLE && valueDiff >= VOLUME_THRESHOLD) {
+                lastVolumeUpdate.value = now
+                lastVolumeValue.value = next
+                runOnJS(setAppVolume)(next)
+              }
             }
           }
         })
@@ -607,18 +653,24 @@ export default function VideoPlayerScreenModularV2() {
             // 中间区域：水平滑动 = 快进快退
             if (!isLeftArea && !isRightArea && isHorizontal && canDragVideoValue.value) {
               const finalTime = seekStartTime.value + seekTimeDelta.value
+              // 最后一次更新 UI 显示
+              runOnJS(updateSeekDisplay)(seekTimeDelta.value, seekStartTime.value)
               runOnJS(finalizeSeek)(finalTime)
               seekIndicatorOpacity.value = withTiming(0, { duration: 300 })
             }
             // 左侧区域：垂直滑动 = 亮度
             else if (isLeftArea && !isHorizontal) {
               const finalValue = brightnessProgress.value
+              // 确保最终值被设置（更新节流值，然后设置）
+              lastBrightnessValue.value = finalValue
               runOnJS(setSystemBrightness)(finalValue)
               brightnessIndicatorOpacity.value = withTiming(0, { duration: 300 })
             }
             // 右侧区域：垂直滑动 = 音量
             else if (isRightArea && !isHorizontal) {
               const finalValue = volumeProgress.value
+              // 确保最终值被设置（更新节流值，然后设置）
+              lastVolumeValue.value = finalValue
               runOnJS(setAppVolume)(finalValue)
               volumeIndicatorOpacity.value = withTiming(0, { duration: 300 })
             }
@@ -645,7 +697,16 @@ export default function VideoPlayerScreenModularV2() {
             runOnJS(handleVideoClick)(isLeftArea ? 'left' : isRightArea ? 'right' : 'middle')
           }
         }),
-    [canDragVideoValue, initializeSeek, updateSeekDisplay, finalizeSeek, setSystemBrightness, setAppVolume, screenWidth, handleVideoClick, currentTimeSV]
+    [
+      canDragVideoValue,
+      updateSeekDisplay,
+      finalizeSeek,
+      setSystemBrightness,
+      setAppVolume,
+      screenWidth,
+      handleVideoClick,
+      currentTimeSV,
+    ]
   )
 
   // ==================== 动画样式 ====================
@@ -653,6 +714,8 @@ export default function VideoPlayerScreenModularV2() {
     opacity: seekIndicatorOpacity.value,
   }))
 
+  // 优化：移除 onChange 中的 withTiming，直接更新值，性能更好
+  // 只在 onEnd 时使用 withTiming 做平滑过渡
   const seekProgressFillStyle = useAnimatedStyle(() => {
     const previewTime = seekStartTime.value + seekTimeDelta.value
     const maxDuration = Math.max(totalDurationSV.value, 1)
@@ -662,21 +725,24 @@ export default function VideoPlayerScreenModularV2() {
       [0, seekProgressBarWidth.value],
       'clamp'
     )
+    // 直接返回计算值，不使用 withTiming（在滑动过程中性能更好）
     return {
-      width: withTiming(width, { duration: 80 }),
+      width: width,
     }
   })
 
+  // 优化：直接更新值，不使用 withTiming（在滑动过程中性能更好）
   const brightnessBarFillStyle = useAnimatedStyle(() => ({
-    width: withTiming(`${brightnessProgress.value * 100}%`, { duration: 80 }),
+    width: `${brightnessProgress.value * 100}%`,
   }))
 
   const brightnessIndicatorStyle = useAnimatedStyle(() => ({
     opacity: brightnessIndicatorOpacity.value,
   }))
 
+  // 优化：直接更新值，不使用 withTiming（在滑动过程中性能更好）
   const volumeBarFillStyle = useAnimatedStyle(() => ({
-    width: withTiming(`${volumeProgress.value * 100}%`, { duration: 80 }),
+    width: `${volumeProgress.value * 100}%`,
   }))
 
   const volumeIndicatorStyle = useAnimatedStyle(() => ({
