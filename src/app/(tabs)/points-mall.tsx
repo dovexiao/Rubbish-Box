@@ -117,7 +117,7 @@ export default function PointsMallScreen() {
       style={styles.container}
     >
       {/* 自定义状态栏 */}
-      <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
+      <StatusBar theme="light" backgroundColor="transparent" translucent={true} />
 
       <ScrollView
         ref={scrollViewRef}

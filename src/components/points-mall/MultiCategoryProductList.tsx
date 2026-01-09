@@ -99,7 +99,7 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
 
             const res = await getMallList(params);
 
-            console.log('多类商品列表响应数据:', res.items, res.categories);
+            // console.log('多类商品列表响应数据:', res.items, res.categories);
 
             const items = res.items ?? [];
             
