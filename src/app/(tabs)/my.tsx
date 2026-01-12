@@ -32,6 +32,7 @@ import {
   type TodayQuestionData,
   type DailyStudyData,
 } from "../../services/my"
+import { devError, devLog } from "@/services/WebSocketManager"
 
 /**
  * 个人中心首页
@@ -73,7 +74,7 @@ export default function MyScreen() {
     // 检查是否有token，没有则直接返回
     const token = userStore.token
     if (!token) {
-      console.log("未找到token，跳过我的页面数据加载")
+      // console.log("未找到token，跳过我的页面数据加载")
       return
     }
 
@@ -81,15 +82,15 @@ export default function MyScreen() {
       // 并行加载所有数据
       const [badgesData, todayData, studyDataResult] = await Promise.all([
         getUserBadges().catch((err) => {
-          console.error("获取徽章失败:", err)
+          devError("获取徽章失败:", err)
           return { medal_list: [] }
         }),
         getUserTodayQuestionData().catch((err) => {
-          console.error("获取今日错题数据失败:", err)
+          devError("获取今日错题数据失败:", err)
           return { total_wrong_questions: 0, total_corrected_questions: 0 }
         }),
         getUserStudyData().catch((err) => {
-          console.error("获取学习数据失败:", err)
+          devError("获取学习数据失败:", err)
           return { daily_data: [] }
         })
       ])
@@ -100,9 +101,9 @@ export default function MyScreen() {
       setTodayQuestionData(todayData)
       setWeeklyStudyData(studyDataResult.daily_data || [])
 
-      console.log("✅ 我的页面数据加载完成")
+      // console.log("✅ 我的页面数据加载完成")
     } catch (error) {
-      console.error("获取数据失败:", error)
+      devError("获取数据失败:", error)
     }
   }, [userStore])
 
@@ -116,7 +117,7 @@ export default function MyScreen() {
           // 再获取其他数据
           await fetchAllData()
         } catch (error) {
-          console.error("初始化数据失败:", error)
+          devError("初始化数据失败:", error)
         } finally {
           setIsInitialized(true)
         }
@@ -147,15 +148,15 @@ export default function MyScreen() {
 
           const [badgesData, todayData, studyDataResult] = await Promise.all([
             getUserBadges().catch((err) => {
-              console.error("获取徽章失败:", err)
+              devError("获取徽章失败:", err)
               return { medal_list: [] }
             }),
             getUserTodayQuestionData().catch((err) => {
-              console.error("获取今日错题数据失败:", err)
+              devError("获取今日错题数据失败:", err)
               return { total_wrong_questions: 0, total_corrected_questions: 0 }
             }),
             getUserStudyData().catch((err) => {
-              console.error("获取学习数据失败:", err)
+              devError("获取学习数据失败:", err)
               return { daily_data: [] }
             })
           ])
@@ -167,7 +168,7 @@ export default function MyScreen() {
             setWeeklyStudyData(studyDataResult.daily_data || [])
           }
         } catch (error) {
-          console.error("刷新数据失败:", error)
+          devError("刷新数据失败:", error)
         }
       }
 
@@ -195,10 +196,10 @@ export default function MyScreen() {
         import("../../utils/loginUtils").then(({ showLoginModal }) => {
           showLoginModal({
             onSuccess: () => {
-              console.log("🔐 切换账号成功")
+              devLog("切换账号成功")
             },
             onCancel: () => {
-              console.log("🔐 用户取消登录")
+              devLog("用户取消登录")
             },
           })
         })
@@ -228,16 +229,16 @@ export default function MyScreen() {
 
   // 渲染今日错题圆形进度条
   const renderTodayProgressCircle = () => {
-    const size = 140
-    const strokeWidth = 12.54
-    const radius = 60
+    const size = rpx(80)
+    const strokeWidth = rpx(10)
+    const radius = rpx(35)
     const center = size / 2
     const circumference = 2 * Math.PI * radius
 
     const totalWrong = todayQuestionData.total_wrong_questions || 0
     const corrected = todayQuestionData.total_corrected_questions || 0
     const uncorrected = totalWrong - corrected
-    const progress = totalWrong === 0 ? 0 : (uncorrected / 100) * 100
+    const progress = totalWrong === 0 ? 0 : (uncorrected / totalWrong) * 100
     const strokeDashoffset = circumference - (circumference * progress) / 100
 
     return (
@@ -268,7 +269,7 @@ export default function MyScreen() {
         {/* 中心文字 - 未订正数量 */}
         <SvgText
           x={center}
-          y={center - 2}
+          y={center - rpx(5)}
           fontSize={rpx(14)}
           fill="#1571FC"
           textAnchor="middle"
@@ -280,8 +281,8 @@ export default function MyScreen() {
         {/* 中心文字 - "未订正" */}
         <SvgText
           x={center}
-          y={center + 24}
-          fontSize={rpx(7)}
+          y={center + rpx(10)}
+          fontSize={rpx(8)}
           fill="#646464"
           textAnchor="middle"
           alignmentBaseline="middle"
@@ -300,7 +301,7 @@ export default function MyScreen() {
       end={{ x: 1, y: 1 }}
       style={styles.pageContainer}
     >
-      <StatusBar theme="dark" />
+      <StatusBar theme="light" />
 
       {/* 内容区域 */}
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -449,7 +450,7 @@ export default function MyScreen() {
                               style={styles.badgeImage}
                               resizeMode="contain"
                               onError={(error) => {
-                                console.log(`徽章[${badge.name}]图片加载失败:`, imageUrl, error.nativeEvent.error)
+                                devError(`徽章[${badge.name}]图片加载失败:`, imageUrl, error.nativeEvent.error)
                               }}
                               onLoad={() => {
                                 // console.log(`徽章[${badge.name}]图片加载成功`)
@@ -493,7 +494,7 @@ export default function MyScreen() {
                     resizeMode="contain"
                   />
                 </View>
-                  {/* <Ionicons
+                {/* <Ionicons
                     name="arrow-forward-sharp"
                     size={rpx(8.6)}
                   color="#487FB1"
@@ -850,14 +851,14 @@ const styles = createStyles({
   },
   progressCircleWrapper: {
     position: "relative" as const,
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
     marginTop: 12,
   },
   questionNumbers: {
     flexDirection: "column" as const,
     gap: 7.8125,
-    marginLeft: 20,
+    marginLeft: 10,
   },
   questionItem: {
     flexDirection: "row" as const,

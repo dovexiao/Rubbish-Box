@@ -18,6 +18,7 @@ import { useAppLifecycle } from "../hooks/useAppLifecycle"
 import { useDataSync } from "../hooks/useDataSync"
 import { useDeviceAuth } from "../hooks/useDeviceAuth"
 import { useNetworkMonitor, useNetwork, useNetworkStore } from "../stores/networkStore"
+import { useBatteryMonitor } from "../stores/batteryStore"
 import { useDeviceAuthStore } from "../stores/deviceAuthStore"
 import { useToastStore } from "../stores/toastStore"
 import { useDialogStore } from "../stores/dialogStore"
@@ -257,6 +258,9 @@ export default function RootLayout() {
   // 🔴 P0最高优先级：网络监测 - 必须第一个初始化
   // 初始化全局网络监听（单例模式）
   useNetworkMonitor()
+  
+  // 🔋 电池监测 - 初始化全局电池监听（单例模式）
+  useBatteryMonitor()
 
   // 获取网络状态
   const { isConnected, isInternetReachable, networkType, isInitialized } = useNetwork()
