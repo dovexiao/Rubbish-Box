@@ -64,6 +64,7 @@ export default function VideoPlayerScreenModularV2() {
   const [pointId, setPointId] = useState('')
   const [lessonTitle, setLessonTitle] = useState('')
   const [lastSavedTime, setLastSavedTime] = useState(0)
+  const progressSaveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // 视频信息状态
   const [videoInfo, setVideoInfo] = useState<CourseVideoInfoResponse | null>(null)
@@ -280,16 +281,14 @@ export default function VideoPlayerScreenModularV2() {
   const saveProgress = useCallback(async () => {
     const currentTime = useVideoPlayerStoreV2.getState().currentTime
     if (currentTime > 0 && pointId) {
-      try {
-        await saveStudyProgress({
-          video_code: pointId,
-          record: `${Math.floor(currentTime / 3600)}:${Math.floor((currentTime % 3600) / 60)}:${Math.floor(currentTime % 60)}`,
-          educational_system: params.educational_system || '六三',
-          grade_stage: params.grade_stage || '小学',
-        })
-      } catch (error) {
+      saveStudyProgress({
+        video_code: pointId,
+        record: formatTime(currentTime),
+        educational_system: params.educational_system || '六三',
+        grade_stage: params.grade_stage || '小学',
+      }).catch(() => {
         // 静默处理错误
-      }
+      })
     }
   }, [pointId, params.educational_system, params.grade_stage])
 
@@ -335,6 +334,22 @@ export default function VideoPlayerScreenModularV2() {
     })
     return unsubscribe
   }, [saveProgress, setShowCompleteTip])
+
+  // 定时自动保存进度（每30秒）
+  useEffect(() => {
+    if (pointId && videoUrl) {
+      progressSaveTimerRef.current = setInterval(() => {
+        saveProgress()
+      }, 30000) // 每30秒保存一次
+    }
+    
+    return () => {
+      if (progressSaveTimerRef.current) {
+        clearInterval(progressSaveTimerRef.current)
+        progressSaveTimerRef.current = null
+      }
+    }
+  }, [pointId, videoUrl, saveProgress])
 
   // 配置页面焦点
   useFocusEffect(
@@ -753,9 +768,15 @@ export default function VideoPlayerScreenModularV2() {
   useEffect(() => {
     return () => {
       clearAutoHideTimer()
+      if (progressSaveTimerRef.current) {
+        clearInterval(progressSaveTimerRef.current)
+        progressSaveTimerRef.current = null
+      }
+      // 组件卸载时保存最后一次进度
+      saveProgress()
       reset()
     }
-  }, [reset, clearAutoHideTimer])
+  }, [reset, clearAutoHideTimer, saveProgress])
 
   return (
     <View style={styles.container}>
@@ -860,6 +881,8 @@ export default function VideoPlayerScreenModularV2() {
             onSeek={handleSeek}
             canDrag={canDragVideo}
             onDragDisabled={() => showError('当前设备禁止拖拽视频进度')}
+            onDragStart={clearAutoHideTimer}
+            onDragEnd={startAutoHideTimer}
           />
         )}
 

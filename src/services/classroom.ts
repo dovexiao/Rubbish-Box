@@ -67,7 +67,7 @@ export interface Lesson {
   course_name: string
   video_code: string
   duration: string
-  record: string
+  record_time: string // API 返回的字段名是 record_time
   is_latest: boolean
 }
 

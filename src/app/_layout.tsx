@@ -378,6 +378,11 @@ export default function RootLayout() {
     onAppLaunch: async () => {
       console.log("App Launch - 应用启动")
 
+      // 🔴 应用启动时，先清除之前可能残留的 isBlocked 状态
+      // 这样即使之前验证失败，应用重启后也不会残留阻止状态
+      useDeviceAuthStore.getState().unblockUserInteractions()
+      console.log("🔓 应用启动，已清除授权阻止状态（等待验证结果）")
+
       // 🔴 P0最高优先级：输出网络状态（网络监测已在组件初始化时完成）
       console.log("==================")
       console.log("📡 网络状态检测完成")
@@ -422,6 +427,9 @@ export default function RootLayout() {
       } else {
         // 网络未连接，等待网络连接后再验证（在 onNetworkConnected 中处理）
         console.log("⏳ 网络未连接，等待网络连接后再进行设备授权验证")
+        // 🔴 网络未连接时，清除之前的 isBlocked 状态（因为无法验证，不应该阻止用户）
+        useDeviceAuthStore.getState().unblockUserInteractions()
+        console.log("🔓 网络未连接，已清除授权阻止状态")
       }
     },
 
@@ -685,10 +693,8 @@ export default function RootLayout() {
       <PaperProvider>
         <SafeAreaProvider>
           <Slot key={token || 'no-token'} />
-
           {/* 全局锁屏 */}
           <GlobalLockScreen />
-
           {/* 全局登录管理器 */}
           <GlobalLoginManager />
           {/* 全局更新对话框 */}
@@ -731,7 +737,7 @@ export default function RootLayout() {
               resizeMode="contain"
             />
             <Text style={styles.networkModalMessage}>
-              当前网络不可用，请检查网络设置后重试
+              当前网络不可用，请连接5G频段WiFi后重试
             </Text>
             <View style={styles.networkModalButtons}>
               <TouchableOpacity

@@ -87,9 +87,14 @@ export const useDeviceAuth = () => {
       console.log("开始设备授权验证")
       const isVerified = await deviceAuthStore.ensureAuthFromCacheOrVerify()
 
+      // 🔴 ensureAuthFromCacheOrVerify 已经处理了 isBlocked 的设置
+      // - 如果验证失败（exists: false），会设置 isBlocked = true
+      // - 如果接口失败（返回 null），会设置 isBlocked = false
+      // - 如果验证成功，会设置 isBlocked = false
+      // 所以这里不需要再次调用 blockUserInteractions()，避免覆盖正确的状态
+      
       if (!isVerified) {
-        console.log("设备未授权，阻止用户交互")
-        deviceAuthStore.blockUserInteractions()
+        console.log("设备授权验证未通过")
         return false
       }
 
@@ -97,6 +102,8 @@ export const useDeviceAuth = () => {
       return true
     } catch (error) {
       console.error("设备授权验证失败:", error)
+      // 异常情况也不阻止用户操作
+      deviceAuthStore.unblockUserInteractions()
       return false
     }
   }, [deviceAuthStore])

@@ -4,24 +4,31 @@ import { BlurView } from "expo-blur"
 import { Ionicons } from "@expo/vector-icons"
 import { useDeviceAuthStore } from "../stores/deviceAuthStore"
 import { useLockScreenStore } from "@/stores/lockScreenStore"
+import { useNetworkStore } from "../stores/networkStore"
 import { Images } from "../constants/Assets"
 
 /**
  * 设备授权阻止组件
  * 当设备未授权时，显示全屏遮罩阻止用户操作
+ * 🔴 只有在网络已连接且明确验证失败（exists: false）时才显示弹窗
  */
 export const DeviceAuthBlocker: React.FC = () => {
   const isBlocked = useDeviceAuthStore((state) => state.isBlocked)
   const deviceUUID = useDeviceAuthStore((state) => state.deviceUUID)
   const locked = useLockScreenStore((state) => state.locked)
+  const isConnected = useNetworkStore((state) => state.isConnected)
 
-  if (!isBlocked) {
+  // 🔴 只有明确验证失败（exists: false）时才显示弹窗
+  // 🔴 如果网络未连接，不显示授权弹窗（应该显示网络弹窗）
+  const shouldShow = isBlocked && !locked && isConnected
+
+  if (!shouldShow) {
     return null
   }
 
   return (
     <Modal
-      visible={isBlocked && !locked}
+      visible={shouldShow}
       transparent
       animationType="fade"
       statusBarTranslucent

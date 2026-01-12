@@ -516,8 +516,8 @@ export default function SyncClassroomScreen() {
       knowledgePoints: group.lessons.map((lesson) => ({
         id: lesson.video_code,
         title: lesson.course_name,
-        duration: lesson.duration,
-        record: lesson.record,
+        totalDuration: lesson.duration,
+        Duration: lesson.record,
         is_latest: lesson.is_latest,
       })),
     }))

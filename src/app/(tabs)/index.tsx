@@ -690,7 +690,7 @@ const openVolumeSettings = async () => {
       params: {
         videoCode: latestVideo.rsid,
         title: latestVideo.rsname,
-        duration: latestVideo.record_time,
+        Duration: latestVideo.record_time, // ✅ 使用 Duration（首字母大写）传递上次播放进度
         totalDuration: latestVideo.rstime || 0,
       },
     })

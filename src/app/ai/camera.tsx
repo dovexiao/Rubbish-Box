@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   StatusBar as RNStatusBar,
+  Modal,
 } from "react-native"
 import { StatusBar } from "../../components/StatusBar"
 import { CameraView, useCameraPermissions } from "expo-camera"
@@ -13,9 +14,11 @@ import { router, useLocalSearchParams, useFocusEffect } from "expo-router"
 
 import { LoadingOverlay } from "../../components/LoadingOverlay"
 import { NavBar } from "../../components/NavBar"
+import { RadioButton, IconButton } from "react-native-paper"
 import { globalImmersive } from "../../utils/globalImmersive"
-import { createStyles } from "../../utils/rpxStyleSheet"
+import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError, showWarning } from "../../utils/toast"
+import { Ionicons } from "@expo/vector-icons"
 import { 
   stopPostureMonitorService, 
   startPostureMonitorService,
@@ -48,6 +51,9 @@ export default function CameraScreen() {
   // const [showCamera, setShowCamera] = useState(true) // 控制CameraView显示，解决GPU资源竞争
   const cameraRef = useRef<CameraView>(null)
   const wasPostureRunningRef = useRef(false) // 记录进入页面前坐姿检测是否在运行
+  // 思考模式：速度（false）或质量（true），默认速度（false）
+  const [thinkingSwitch, setThinkingSwitch] = useState<boolean>(false)
+  const [showTooltip, setShowTooltip] = useState(false) // 控制提示框显示
 
   const { width: screenWidth, height: screenHeight } = Dimensions.get("screen")
 
@@ -234,7 +240,20 @@ export default function CameraScreen() {
       setTimeout(() => {
         setUploadLoading(false)
         console.log(`🚀 GPU资源释放等待${releaseDelay}ms后跳转`)
-        router.push(`/ai/loading?imguuid=${batch_id}&type=${type}&from=camera`)
+        // 只在作业批改时传递 thinking_switch 参数
+        if (type === "question") {
+          router.push({
+            pathname: "/ai/loading",
+            params: {
+              imguuid: batch_id,
+              type: type,
+              from: "camera",
+              thinking_switch: thinkingSwitch,
+            } as any,
+          })
+        } else {
+          router.push(`/ai/loading?imguuid=${batch_id}&type=${type}&from=camera`)
+        }
       }, releaseDelay)
     } catch (error) {
       console.error("上传照片失败:", error)
@@ -359,6 +378,57 @@ export default function CameraScreen() {
           <View style={[styles.gridV, { top: screenHeight * 0.333, width: screenWidth }]} />
           <View style={[styles.gridV, { top: screenHeight * 0.666, width: screenWidth }]} />
         </View>
+
+        {/* 思考模式单选框 - 只在作业批改时显示，左侧 */}
+        {type === "question" && (
+          <View style={[styles.thinkingModeContainer, { top: screenHeight * 0.845 }]}>
+            <RadioButton.Group
+              onValueChange={(value) => setThinkingSwitch(value === "true")}
+              value={thinkingSwitch ? "true" : "false"}
+            >
+              <View style={styles.radioGroup}>
+                <TouchableOpacity
+                  style={styles.radioOption}
+                  onPress={() => setThinkingSwitch(false)}
+                  activeOpacity={0.7}
+                >
+                  <RadioButton
+                    value="false"
+                    uncheckedColor="#fff"
+                    color="#fff"
+                  />
+                  <Text style={styles.radioLabel}>速度</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.radioOption}
+                  onPress={() => setThinkingSwitch(true)}
+                  activeOpacity={0.7}
+                >
+                  <RadioButton
+                    value="true"
+                    uncheckedColor="#fff"
+                    color="#fff"
+                  />
+                  <Text style={styles.radioLabel}>质量(理科推荐)</Text>
+                </TouchableOpacity>
+              </View>
+            </RadioButton.Group>
+            {/* <View style={styles.tooltipContainer}>
+              <IconButton
+                icon="help-circle-outline"
+                size={rpx(16)}
+                iconColor="#fff"
+                style={styles.tooltipIcon}
+                onPress={() => setShowTooltip(!showTooltip)}
+              />
+              {showTooltip && (
+                <View style={styles.tooltipBubble}>
+                  <Text style={styles.tooltipText}>文科推荐使用速度，理科推荐使用质量</Text>
+                </View>
+              )}
+            </View> */}
+          </View>
+        )}
 
         {/* 拍照按钮 - 右侧 */}
         <View style={[styles.sideBtns, { top: screenHeight * 0.845 }]}>
@@ -487,14 +557,69 @@ const styles = createStyles({
     height: 1,
   },
 
+  // 思考模式单选框容器
+  thinkingModeContainer: {
+    position: "absolute" as const,
+    right: 100,
+    zIndex: 200,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    backgroundColor: "#282828",
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    pointerEvents: "auto" as const,
+  },
+  radioGroup: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+  },
+  radioOption: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    marginRight: 12,
+  },
+  radioLabel: {
+    fontSize: 12,
+    color: "#fff",
+    marginLeft: 4,
+  },
+  tooltipContainer: {
+    position: "relative" as const,
+    marginLeft: 4,
+  },
+  tooltipIcon: {
+    margin: 0,
+    width: 24,
+    height: 24,
+  },
+  // 提示气泡样式
+  tooltipBubble: {
+    position: "absolute" as const,
+    bottom: 32,
+    left: -80,
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    minWidth: 160,
+    zIndex: 300,
+  },
+  tooltipText: {
+    fontSize: 12,
+    color: "#fff",
+    textAlign: "center" as const,
+    lineHeight: 16,
+  },
+
   // 拍照按钮
   sideBtns: {
-    position: "absolute",
+    position: "absolute" as const,
     right: 34,
     zIndex: 200,
-    flexDirection: "column",
-    alignItems: "center",
-    pointerEvents: "box-none",
+    flexDirection: "column" as const,
+    alignItems: "center" as const,
+    pointerEvents: "box-none" as const,
   },
 
   iconBtn: {

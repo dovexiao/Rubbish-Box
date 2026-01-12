@@ -10,6 +10,8 @@ export interface VideoBottomBarV2Props {
   onSeek: (time: number) => void
   canDrag: boolean
   onDragDisabled: () => void
+  onDragStart?: () => void
+  onDragEnd?: () => void
 }
 
 /**
@@ -22,6 +24,8 @@ export const VideoBottomBarV2: React.FC<VideoBottomBarV2Props> = ({
   onSeek,
   canDrag,
   onDragDisabled,
+  onDragStart,
+  onDragEnd,
 }) => {
   return (
     <LinearGradient
@@ -35,6 +39,8 @@ export const VideoBottomBarV2: React.FC<VideoBottomBarV2Props> = ({
             onSeek={onSeek}
             canDrag={canDrag}
             onDragDisabled={onDragDisabled}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
           />
         </View>
 

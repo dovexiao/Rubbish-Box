@@ -261,6 +261,7 @@ export default function AILoadingScreen() {
   const [webViewReady, setWebViewReady] = useState(false) // WebView 就绪状态
   const [isFormatting, setIsFormatting] = useState(false) // 是否在格式化数据
   const [isRK3566, setIsRK3566] = useState(false) // 检测RK3566设备，用于智能降级
+  const [loadingDotState, setLoadingDotState] = useState(0) // 加载动画状态：0=., 1=.., 2=...
   const hasStartedStream = useRef(false)
   
   // 活动追踪 - 追踪AI批改行为
@@ -398,7 +399,7 @@ export default function AILoadingScreen() {
   // 监控关键状态变化
   useEffect(() => {
     if (webViewReady) {
-      console.log('✅ WebView 已就绪')
+      // console.log('✅ WebView 已就绪')
       // 如果已经就绪，清除超时定时器
       if (webViewReadyTimeoutRef.current) {
         clearTimeout(webViewReadyTimeoutRef.current)
@@ -578,7 +579,12 @@ export default function AILoadingScreen() {
       const deviceInfo = await getDeviceInfoForAPI()
       const token = useUserStore.getState().token
       const url = `${API_BASE_URL}/AppStart/aiStream/ai_ocr_stream/`
-      const requestBody = { imguuid: uuid, type: correctionType, ...deviceInfo }
+      // 🔴 只在作业批改时添加 thinking_switch 参数
+      const thinkingSwitchParam = params.thinking_switch as string | undefined
+      const thinkingSwitch = thinkingSwitchParam === "true" ? true : thinkingSwitchParam === "false" ? false : undefined
+      const requestBody = correctionType === "question" && thinkingSwitch !== undefined
+        ? { imguuid: uuid, type: correctionType, thinking_switch: thinkingSwitch, ...deviceInfo }
+        : { imguuid: uuid, type: correctionType, ...deviceInfo }
       
       return new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest()
@@ -625,6 +631,20 @@ export default function AILoadingScreen() {
                   return
                 }
                 
+                // 检测错误状态
+                if (json.status === "error") {
+                  const errorMessage = json.message || "批改过程中发生错误"
+                  console.error('❌ 批改错误:', errorMessage)
+                  setIsStreaming(false)
+                  setIsCompleted(false)
+                  showError(errorMessage)
+                  // 2秒后跳转到学习页面
+                  setTimeout(() => {
+                    router.navigate("/(tabs)/study")
+                  }, 2000)
+                  return
+                }
+
                 // 检测格式化阶段
                 if (json.status === "stage_end" && json.stage === 1) {
                   // console.log('📋 进入格式化阶段:', json.message)
@@ -643,6 +663,11 @@ export default function AILoadingScreen() {
                 let content = json.content || json.text || json.data || json.message || ""
                 
                 if (content) {
+                  // 如果 content 是 "......" 占位符，直接忽略
+                  if (content === "......") {
+                    return // 不添加到 buffer
+                  }
+                  
                   const beforeLength = contentBuffer.current.length
                   contentBuffer.current += content
                   const afterLength = contentBuffer.current.length
@@ -728,11 +753,6 @@ export default function AILoadingScreen() {
 
   // 页面初始化：设备检测和流式启动
   useEffect(() => {
-    console.log('📍 ============ 页面加载开始 ============')
-    console.log(`⏱️ 页面进入时间戳: ${perfTimestamps.current.pageEnter}`)
-    console.log(`📊 初始状态: webViewReady=${webViewReady}, isStreaming=${isStreaming}, isCompleted=${isCompleted}`)
-    console.log(`🔍 页面来源: ${params.from || 'unknown'}, 参数:`, params)
-
     // 检测RK3566设备，用于智能降级策略
     const detectDevice = async () => {
       try {
@@ -791,6 +811,15 @@ export default function AILoadingScreen() {
     }
   }, [webViewReady, isStreaming])
 
+  // 加载动画：. → .. → ... 循环，每1秒完成一次循环
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLoadingDotState(prev => (prev + 1) % 3)
+    }, 333) // 1000ms / 3 = 333ms 每个状态
+    
+    return () => clearInterval(interval)
+  }, [])
+
   // 逐字符显示效果（只在 WebView 就绪后执行）
   useEffect(() => {
     // 必须 WebView 就绪才能开始
@@ -817,7 +846,7 @@ export default function AILoadingScreen() {
           console.log('✅ 流式接收完成，跳转到结果页')
           
           setTimeout(() => {
-            // router.replace({ pathname: "/ai/result", params: { batch_id: imguuid, type } })
+            router.replace({ pathname: "/ai/result", params: { batch_id: imguuid, type } })
           }, 500)
         }
         return // 立即返回，不处理 buffer
@@ -862,16 +891,19 @@ export default function AILoadingScreen() {
 
   // 实时更新 WebView 内容（只在 WebView 就绪后发送，并限制长度）
   useEffect(() => {
-    if (!streamContent) {
-      return
-    }
-    
     // 只有在 WebView 就绪后才发送
     if (webViewReady && webViewRef.current) {
       // 实现"阅后即焚"：只发送最新的 2000 字符到 WebView
-      const displayContent = streamContent.length > MAX_DISPLAY_LENGTH 
+      let displayContent = streamContent.length > MAX_DISPLAY_LENGTH 
         ? streamContent.slice(-MAX_DISPLAY_LENGTH) 
         : streamContent
+      
+      // 如果正在流式输出且未格式化，在末尾追加动画
+      if ((isStreaming || !isCompleted) && !isFormatting) {
+        const dotStates = [".", "..", "..."]
+        const currentDots = dotStates[loadingDotState]
+        displayContent = displayContent + currentDots
+      }
       
       // 更新内容长度记录
       lastContentLength.current = displayContent.length
@@ -882,7 +914,7 @@ export default function AILoadingScreen() {
         content: displayContent
       }))
     }
-  }, [streamContent, webViewReady])
+  }, [streamContent, webViewReady, loadingDotState, isStreaming, isCompleted, isFormatting])
   
   // 组件卸载时清理健康检查
   useEffect(() => {
@@ -896,7 +928,7 @@ export default function AILoadingScreen() {
   useEffect(() => {
     // 从camera页面跳转时需要更长的延迟等待GPU资源释放
     const delay = params.from === 'camera' ? 2000 : 1000
-    console.log(`⏰ WebView显示延迟: ${delay}ms (来源: ${params.from || 'unknown'})`)
+    // console.log(`⏰ WebView显示延迟: ${delay}ms (来源: ${params.from || 'unknown'})`)
 
     const timer = setTimeout(() => {
       setWebviewDisplayContent(true)
@@ -1150,11 +1182,11 @@ export default function AILoadingScreen() {
           )}
           
           {/* 光标动画 - 格式化时不显示 */}
-          {(isStreaming || !isCompleted) && !isFormatting && (
+          {/* {(isStreaming || !isCompleted) && !isFormatting && (
             <Animated.Text style={[styles.cursor, { opacity: cursorOpacity }]}>
               ▌
             </Animated.Text>
-          )}
+          )} */}
         </View>
       </View>
     </ImageBackground>
