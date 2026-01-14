@@ -699,6 +699,15 @@ export default function ReaderIndex() {
     }
   }, [preloadData])
 
+  // 处理按键返回
+  const handleBackPress = useCallback(() => {
+    if (router.canGoBack?.()) {
+      router.back()
+    } else {
+      router.replace("/(tabs)/study")
+    }
+  }, [])
+
   return (
     <LinearGradient
       colors={["#93abff", "#e4f4ff", "#cdedff", "#ffffff"]}
@@ -711,7 +720,7 @@ export default function ReaderIndex() {
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.navigate("/(tabs)/study")}
+          onPress={handleBackPress}
           activeOpacity={0.7}
         >
           <Ionicons name="chevron-back" size={35} color="#1E90FF" />

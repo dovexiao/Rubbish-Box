@@ -497,6 +497,16 @@ const EpubReader: React.FC = () => {
     }
   }, []);
 
+  // 处理关闭按钮
+  const handleClosePress = useCallback(() => {
+    endReading();
+    if (router.canGoBack?.()) {
+      router.back()
+    } else {
+      router.replace("/(tabs)/study")
+    }
+  }, [])
+
   // 滑动手势处理
   const slideGesture = Gesture.Pan()
     .onStart(event => {
@@ -576,11 +586,7 @@ const EpubReader: React.FC = () => {
         <BackButton
           visible={showBackButton}
           containerStyle={styles.backContainer}
-          onPress={() => {
-            // console.log("📊 [活动追踪] 手动退出阅读")
-            endReading()
-            router.back()
-          }}
+          onPress={handleClosePress}
         />
 
         {/* 书页翻动手势 */}

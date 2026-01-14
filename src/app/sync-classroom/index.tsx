@@ -541,6 +541,14 @@ export default function SyncClassroomScreen() {
     }
   }, [currentPage])
 
+  const handleBackPress = useCallback(() => {
+    if (router.canGoBack?.()) {
+      router.back()
+    } else {
+      router.replace("/(tabs)/study")
+    }
+  }, [])
+
   return (
     <LinearGradient
       colors={["#9DDEFF", "#9DDEFF", "#DAECFF", "#FFFFFF"]}
@@ -553,7 +561,7 @@ export default function SyncClassroomScreen() {
       <NavBar 
         title="同步课程" 
         leftArrow 
-        onBackPress={() => router.navigate("/(tabs)/study")}
+        onBackPress={handleBackPress}
       />
 
       {/* 学科选择标签 */}

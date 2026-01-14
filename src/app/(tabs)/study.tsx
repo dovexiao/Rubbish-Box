@@ -280,8 +280,8 @@ const styles = createStyles({
   // 页面容器 - 对应UniApp的.page-container
   pageContainer: {
     flex: 1,
-    width: "100%",
-    minHeight: "100%",
+    width: "100%" as const,
+    minHeight: "100%" as const,
   },
 
   // 主要内容区域 - 对应UniApp的flex items-center mx-31.25rpx mt-20rpx
