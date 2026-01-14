@@ -40,6 +40,9 @@ const NAV_IMAGES = {
   weekHotIcon: require("../../../assets/images/reader-recommend-week.png"),
   readerRecommend: require("../../../assets/images/reader-recommend.png"),
   mustRead: require("../../../assets/images/must-read-week.png"),
+  readerRinkNew: require("../../../assets/images/reader-rank-new.png"),
+  readerRinkScience: require("../../../assets/images/reader-rank-science.png"),
+  readerRinkHot: require("../../../assets/images/reader-rank-hot.png"),
 }
 
 /**
@@ -332,8 +335,8 @@ export default function ReaderIndex() {
       <View style={styles.weekHotSection}>
         {/* 本周必读标签 */}
         <Image
-          source={NAV_IMAGES.mustRead} 
-          style={styles.weekHotMustRead} 
+          source={NAV_IMAGES.mustRead}
+          style={styles.weekHotMustRead}
           resizeMode="contain"
         />
         <TouchableOpacity
@@ -359,7 +362,7 @@ export default function ReaderIndex() {
           />
           {/* 标题在卡片内部 */}
           <Image
-            source={ NAV_IMAGES.weekHotIcon}
+            source={NAV_IMAGES.weekHotIcon}
             style={styles.weekHotIcon}
             resizeMode="contain"
           />
@@ -408,11 +411,11 @@ export default function ReaderIndex() {
         <View style={styles.classicCard}>
           {/* 标题在卡片内部 */}
           <Image
-            source={ NAV_IMAGES.readerRecommend}
+            source={NAV_IMAGES.readerRecommend}
             style={styles.classicTitle}
             resizeMode="contain"
           />
-          
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -431,25 +434,25 @@ export default function ReaderIndex() {
     if (!recommendData) return null
 
     const rankings = [
-      { 
-        title: "新书榜", 
-        color: "#B6E3FF", 
+      {
+        title: "新书榜",
+        color: "#B6E3FF",
         books: recommendData.new_book || [],
-        icon: "NEW",
+        iconUrl: NAV_IMAGES.readerRinkNew,
         iconStyle: { opacity: 0.3 }
       },
-      { 
-        title: "科普榜", 
-        color: "#DAFFDA", 
+      {
+        title: "科普榜",
+        color: "#DAFFDA",
         books: recommendData.science || [],
-        icon: "🔍",
+        iconUrl: NAV_IMAGES.readerRinkScience,
         iconStyle: { opacity: 0.3 }
       },
-      { 
-        title: "热度榜", 
-        color: "#F1BBFF", 
+      {
+        title: "热度榜",
+        color: "#F1BBFF",
         books: recommendData.hot || [],
-        icon: "🔥",
+        iconUrl: NAV_IMAGES.readerRinkHot,
         iconStyle: { opacity: 0.3 }
       }
     ]
@@ -458,11 +461,16 @@ export default function ReaderIndex() {
       <View style={styles.rankingSection}>
         {rankings.map((ranking, index) => (
           <View key={index} style={[styles.rankingCard, { backgroundColor: ranking.color }]}>
+            <Image
+              source={ranking.iconUrl}
+              style={styles.rankingTitleIcon}
+              resizeMode="contain"
+            />
             {/* 标题区域，带背景水印 */}
             <View style={styles.rankingTitleContainer}>
               <Text style={styles.rankingTitle}>{ranking.title}</Text>
             </View>
-            
+
             {/* 书籍列表 */}
             <View style={styles.rankingBookList}>
               {ranking.books.slice(0, 3).map((book, bookIndex) => (
@@ -505,7 +513,7 @@ export default function ReaderIndex() {
     )
   }, [recommendData, getBookCover, handleBookClick])
 
-  const renderEducateSection = useCallback(() => {}, [])
+  const renderEducateSection = useCallback(() => { }, [])
 
   // 渲染推荐页面
   const renderRecommendPage = useCallback(() => {
@@ -519,11 +527,12 @@ export default function ReaderIndex() {
     }
 
     return (
-      <ScrollView 
+      <ScrollView
         style={styles.recommendScrollView}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.recommendContainer}>
           {/* 本周必读和经典书单推荐在同一行 */}
@@ -536,8 +545,8 @@ export default function ReaderIndex() {
             </View>
           </View>
           {renderRankingCards()}
+          <View style={{ height: rpx(7.8125) }} />
         </View>
-        <View style={{ height: 8 }} />
       </ScrollView>
     )
   }, [recommendLoading, refreshing, onRefresh, renderWeekHot, renderClassicSection, renderRankingCards])
@@ -596,7 +605,7 @@ export default function ReaderIndex() {
                 {item.title}
               </Text>
               <Text style={styles.gridBookAuthor} numberOfLines={2} ellipsizeMode="tail">
-                  {item.introduction || ""}
+                {item.introduction || ""}
               </Text>
             </View>
             <View style={styles.gridBookCategories}>
@@ -606,7 +615,7 @@ export default function ReaderIndex() {
                 </View>
               ))}
             </View>
-          </View> 
+          </View>
         </TouchableOpacity>
       )
     },
@@ -723,15 +732,15 @@ export default function ReaderIndex() {
           onPress={handleBackPress}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-back" size={35} color="#1E90FF" />
+          <Ionicons name="chevron-back" size={rpx(31.25)} color="#1E90FF" />
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={styles.searchBar}
           activeOpacity={0.7}
           onPress={handleSearchPress}
         >
-          <Ionicons name="search" size={18} color="#999"  />
+          <Ionicons name="search" size={rpx(19.53125)} color="#999" />
           <Text style={styles.searchPlaceholder}>搜索书名、作者</Text>
         </TouchableOpacity>
       </View>
@@ -742,7 +751,7 @@ export default function ReaderIndex() {
         <View style={styles.sideNav}>
           <Pressable
             style={({ pressed }) => [
-              styles.navButton, 
+              styles.navButton,
               currentTab === "recommend" && styles.activeNavButton,
               pressed && styles.navButtonPressed
             ]}
@@ -760,7 +769,7 @@ export default function ReaderIndex() {
 
           <Pressable
             style={({ pressed }) => [
-              styles.navButton, 
+              styles.navButton,
               currentTab === "category" && styles.activeNavButton,
               pressed && styles.navButtonPressed
             ]}
@@ -864,7 +873,7 @@ const styles = createStyles({
   },
   mainContent: {
     flex: 1,
-    paddingBottom: 20,
+    // paddingBottom: 20,
   },
   // 推荐页面样式
   recommendScrollView: {
@@ -874,12 +883,13 @@ const styles = createStyles({
   recommendContainer: {
     flex: 1,
     paddingHorizontal: 15,
+    gap: 18.359375, // 47
   },
   // 顶部区域：本周必读和经典书单推荐在同一行
   topSection: {
     flexDirection: "row" as const,
-    marginBottom: 20,
-    gap: 12,
+    // marginBottom: 20,
+    gap: 13.28125, // 34
     alignItems: "flex-start" as const,
   },
   weekHotContainer: {
@@ -1012,7 +1022,7 @@ const styles = createStyles({
     paddingTop: 4.8,
     paddingBottom: 4.8,
     paddingLeft: 10.9375,
-    paddingRight:  10.9375,
+    paddingRight: 10.9375,
     position: "relative" as const,
     height: 133.59375,
     overflow: "hidden" as const,
@@ -1024,11 +1034,11 @@ const styles = createStyles({
     gap: 5,
   },
   classicTitle: {
-   width: 100,
-   height: 25,
-   position: "absolute" as const,
-   top: -2,
-   left: 0,
+    width: 100,
+    height: 25,
+    position: "absolute" as const,
+    top: -2,
+    left: 0,
   },
   recommendScroll: {
     flexDirection: "row" as const,
@@ -1046,7 +1056,7 @@ const styles = createStyles({
     width: 56.25,
     height: 73.4375,
     borderRadius: 3.2,
- 
+
   },
   recommendBookTitle: {
     fontSize: 7.8125,
@@ -1071,12 +1081,12 @@ const styles = createStyles({
   rankingSection: {
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
-    marginTop: 10,
+    // marginTop: 10,
     // paddingHorizontal: 5,
-    gap: 8,
+    gap: 16.40625, // 42
   },
   rankingCard: {
-    width: "31%" as const,
+    flex: 1,
     borderRadius: 7.8125,
     overflow: "hidden" as const,
   },
@@ -1084,12 +1094,19 @@ const styles = createStyles({
     position: "relative" as const,
     marginLeft: 11.328125,
     alignItems: "flex-start" as const,
-    marginVertical: 8.203125,
+    marginVertical: 8.203125, // 21
   },
   rankingTitle: {
     fontSize: 12.5,
     fontWeight: "bold" as const,
     color: "#333",
+  },
+  rankingTitleIcon: {
+    width: 62.5, // 160
+    height: 31.25, // 80
+    position: "absolute" as const,
+    top: 0,
+    left: 39.0625, // 120
   },
   rankingBookList: {
     backgroundColor: "#FFFFFF",
@@ -1195,7 +1212,7 @@ const styles = createStyles({
     justifyContent: "space-between" as const,
     paddingHorizontal: 10,
   },
-  
+
   gridBookItem: {
     width: "22%" as const, // 一行4个，留一点间距
     marginBottom: 20,
