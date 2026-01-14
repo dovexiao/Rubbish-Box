@@ -713,6 +713,7 @@ export default function RootLayout() {
             {/* 其他页面自动发现，作为二级页面 */}
             {/* 不需要显式声明，Expo Router 会自动发现 */}
           </Stack>
+          
           {/* <Slot key={token || 'no-token'} /> */}
           {/* 全局锁屏 */}
           <GlobalLockScreen />
