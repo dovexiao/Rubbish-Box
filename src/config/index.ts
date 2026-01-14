@@ -1,0 +1,51 @@
+/**
+ * 环境配置
+ * 使用 react-native-config 管理不同环境的配置
+ * 通过 .env 文件配置不同环境的变量
+ */
+
+import Config from 'react-native-config';
+
+// 环境类型
+export type EnvType = 'development' | 'production';
+
+// 从环境变量获取当前环境，如果没有设置则根据 __DEV__ 判断
+export const ENV: EnvType = (Config.ENV as EnvType) || (__DEV__ ? 'development' : 'production');
+
+// 获取 API 基础地址（从环境变量读取）
+export const BASE_URL = Config.API_BASE_URL || 'https://api.example.com';
+
+// 获取 API 版本
+export const API_VERSION = Config.API_VERSION || 'v1';
+
+// 获取 Android 包名
+export const ANDROID_PACKAGE_NAME = Config.ANDROID_PACKAGE_NAME || 'com.boklock.m.test';
+
+// 获取 iOS Bundle ID
+export const IOS_BUNDLE_ID = Config.IOS_BUNDLE_ID || 'com.boklock.m.test';
+
+// 获取应用名称
+export const APP_NAME = Config.APP_NAME || 'boklock';
+
+// 导出配置对象（方便统一访问）
+export const config = {
+  env: ENV,
+  baseURL: BASE_URL,
+  apiVersion: API_VERSION,
+  androidPackageName: ANDROID_PACKAGE_NAME,
+  iosBundleId: IOS_BUNDLE_ID,
+  appName: APP_NAME,
+};
+
+// 打印当前环境（开发时方便调试）
+if (__DEV__) {
+  console.log('=== 环境配置 ===');
+  console.log(`当前环境: ${ENV}`);
+  console.log(`API 地址: ${BASE_URL}`);
+  console.log(`API 版本: ${API_VERSION}`);
+  console.log(`Android 包名: ${ANDROID_PACKAGE_NAME}`);
+  console.log(`iOS Bundle ID: ${IOS_BUNDLE_ID}`);
+  console.log(`应用名称: ${APP_NAME}`);
+  console.log('===============');
+}
+

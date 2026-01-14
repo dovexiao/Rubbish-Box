@@ -1,0 +1,163 @@
+<manifest xmlns:tools="http://schemas.android.com/tools"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
+      tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+      android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+      android:maxSdkVersion="32"
+      tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Bluetooth permissions for Android 12+ -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 移除第三方库与应用自身对开机广播的依赖，避免未经用户同意的自启动 -->
+    <uses-permission
+      android:name="android.permission.RECEIVE_BOOT_COMPLETED"
+      tools:node="remove" />
+    <!-- Bluetooth permissions for Android < 12 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <!-- Location permission required for scanning -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Add this line if your application always requires BLE. More info can be found on:
+        https://developer.android.com/guide/topics/connectivity/bluetooth-le.html#permissions
+      -->
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <uses-feature
+      android:name="android.hardware.camera"
+      android:required="false" />
+
+    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <queries>
+      <intent>
+        <action android:name="android.intent.action.DIAL" />
+      </intent>
+    </queries>
+
+    <queries>
+      <package android:name="com.tencent.mm" />
+    </queries>
+
+
+    <application
+      android:name=".MainApplication"
+      android:label="@string/app_name"
+      android:icon="${APP_ICON}"
+      android:roundIcon="${APP_ROUND_ICON}"
+      android:allowBackup="true"
+      android:theme="@style/AppTheme"
+      android:usesCleartextTraffic="true"
+      android:allowNativeHeapPointerTagging="false"
+      tools:ignore="DataExtractionRules">
+      <!-- 显式移除 notifee core 在库 Manifest 中声明的开机广播接收器，避免监听 BOOT_COMPLETED -->
+      <receiver
+        android:name="app.notifee.core.RebootBroadcastReceiver"
+        tools:node="remove" />
+      <!-- 显式移除 WorkManager 在库 Manifest 中声明的时间变更重排接收器，避免因 TIME_SET 等系统广播被动拉起应用 -->
+      <receiver
+        android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+        tools:node="remove" />
+      <provider
+        android:name=".NativeModules.App.Adapter.FileProviderAdapter"
+        android:authorities="${applicationId}.updateFileProvider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/file_path" />
+      </provider>
+      <activity
+        android:name=".MainActivity"
+        android:screenOrientation="portrait"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+        android:launchMode="singleTask"
+        android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        <!-- Deep Link: boklock://message 跳转到消息中心 -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="boklock" android:host="message" />
+        </intent-filter>
+        <!-- 通用 Scheme：boklock://open?route=message -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="boklock" android:host="open" />
+        </intent-filter>
+      </activity>
+       <activity
+        android:name=".wxapi.WXEntryActivity"
+        android:label="@string/app_name"
+        android:exported="true"
+        android:taskAffinity="com.boklock.m"
+        android:launchMode="singleTask"
+      />
+
+      <!-- MobPush 服务 -->
+      <service
+        android:name="com.mob.pushsdk.MobPushService"
+        android:exported="false" />
+      
+      <!-- MobPush 接收器 -->
+      <receiver
+        android:name="com.mob.pushsdk.MobPushReceiver"
+        android:exported="false">
+        <intent-filter>
+          <action android:name="com.mob.push.action.MESSAGE" />
+        </intent-filter>
+      </receiver>
+      
+      <!-- MobPush 点击接收器 -->
+      <receiver
+        android:name="com.mob.pushsdk.MobPushClickReceiver"
+        android:exported="false">
+        <intent-filter>
+          <action android:name="com.mob.push.action.CLICK" />
+        </intent-filter>
+      </receiver>
+
+      <!-- 华为推送接收器（MobSDK 自动添加，需要显式声明 android:exported） -->
+      <receiver
+        android:name="com.huawei.hms.support.api.push.PushReceiver"
+        android:exported="false"
+        tools:replace="android:exported" />
+      
+      <receiver
+        android:name="com.huawei.hms.support.api.push.PushMsgReceiver"
+        android:exported="false"
+        tools:replace="android:exported" />
+
+        <!-- "用于微信支付的回调" -->
+        <activity
+          android:name=".wxapi.WXPayEntryActivity"
+          android:label="@string/app_name"
+          android:exported="true"
+        />
+    </application>
+</manifest>

@@ -1,0 +1,117 @@
+# Fastfile for iOS - 蒲公英上传配置
+
+default_platform(:ios)
+
+platform :ios do
+  desc "构建开发环境 iOS 并上传蒲公英"
+  lane :dev do
+    # 设置版本号
+    version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    
+    # 构建 IPA
+    build_app(
+      workspace: "boklock.xcworkspace",
+      scheme: "boklock",
+      configuration: "Debug",
+      export_method: "development",
+      export_options: {
+        method: "development",
+        provisioningProfiles: {
+          # 替换为你的 Provisioning Profile UUID
+          "com.boklock.dev.m" => "your-dev-provisioning-profile-name"
+        }
+      },
+      skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
+    )
+    
+    # 查找 IPA 文件
+    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH] || 
+               "./build/boklock.ipa"
+    
+    # 上传到蒲公英
+    # API Key 已配置，User Key 需要在环境变量中配置
+    pgyer(
+      api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
+      user_key: ENV["PGYER_USER_KEY"] || "",
+      ipa: ipa_path,
+      password: ENV["PGYER_PASSWORD"] || "", # 可选：安装密码
+      update_description: "开发环境构建 - #{version}"
+    )
+    
+    UI.success "✅ IPA 已成功上传到蒲公英！"
+  end
+  
+  desc "构建生产环境 iOS 并上传蒲公英"
+  lane :real do
+    # 设置版本号
+    version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    
+    # 构建 IPA
+    build_app(
+      workspace: "boklock.xcworkspace",
+      scheme: "boklock",
+      configuration: "Release",
+      export_method: "app-store", # 或 "ad-hoc" / "enterprise"
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          # 替换为你的 Provisioning Profile UUID
+          "com.boklock.real.m" => "your-prod-provisioning-profile-name"
+        }
+      },
+      skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
+    )
+    
+    # 查找 IPA 文件
+    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH] || 
+               "./build/boklock.ipa"
+    
+    # 上传到蒲公英
+    pgyer(
+      api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
+      user_key: ENV["PGYER_USER_KEY"] || "",
+      ipa: ipa_path,
+      password: ENV["PGYER_PASSWORD"] || "",
+      update_description: "生产环境构建 - #{version}"
+    )
+    
+    UI.success "✅ IPA 已成功上传到蒲公英！"
+  end
+  
+  desc "构建测试环境 iOS 并上传蒲公英"
+  lane :staging do
+    # 设置版本号
+    version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    
+    # 构建 IPA
+    build_app(
+      workspace: "boklock.xcworkspace",
+      scheme: "boklock",
+      configuration: "Debug",
+      export_method: "development",
+      export_options: {
+        method: "development",
+        provisioningProfiles: {
+          "com.boklock.dev.m" => "your-dev-provisioning-profile-name"
+        }
+      },
+      skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
+    )
+    
+    # 查找 IPA 文件
+    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH] || 
+               "./build/boklock.ipa"
+    
+    # 上传到蒲公英
+    pgyer(
+      api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
+      user_key: ENV["PGYER_USER_KEY"] || "",
+      ipa: ipa_path,
+      password: ENV["PGYER_PASSWORD"] || "",
+      update_description: "测试环境构建 - #{version}"
+    )
+    
+    UI.success "✅ IPA 已成功上传到蒲公英！"
+  end
+end
+

@@ -1,0 +1,302 @@
+import java.text.SimpleDateFormat
+
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+apply plugin: 'com.mob.sdk'
+
+// react-native-config
+project.ext.envConfigFiles = [
+    dev: ".env.development",
+    prod: ".env.production"
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
+/**
+ * This is the configuration block to customize your React Native Android app.
+ * By default you don't need to apply any configuration, just uncomment the lines you need.
+ */
+react {
+    /* Folders */
+    //   The root of your project, i.e. where "package.json" lives. Default is '../..'
+    // root = file("../../")
+    //   The folder where the react-native NPM package is. Default is ../../node_modules/react-native
+    // reactNativeDir = file("../../node_modules/react-native")
+    //   The folder where the react-native Codegen package is. Default is ../../node_modules/@react-native/codegen
+    // codegenDir = file("../../node_modules/@react-native/codegen")
+    //   The cli.js file which is the React Native CLI entrypoint. Default is ../../node_modules/react-native/cli.js
+    // cliFile = file("../../node_modules/react-native/cli.js")
+
+    /* Variants */
+    //   The list of variants to that are debuggable. For those we're going to
+    //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
+    //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
+    debuggableVariants = ["devDebug", "prodDebug"]
+
+    /* Bundling */
+    //   A list containing the node command and its flags. Default is just 'node'.
+    // nodeExecutableAndArgs = ["node"]
+    //
+    //   The command to run when bundling. By default is 'bundle'
+    // bundleCommand = "ram-bundle"
+    //
+    //   The path to the CLI configuration file. Default is empty.
+    // bundleConfig = file(../rn-cli.config.js)
+    //
+    //   The name of the generated asset file containing your JS bundle
+    // bundleAssetName = "MyApplication.android.bundle"
+    //
+    //   The entry file for bundle generation. Default is 'index.android.js' or 'index.js'
+    // entryFile = file("../js/MyApplication.android.js")
+    //
+    //   A list of extra flags to pass to the 'bundle' commands.
+    //   See https://github.com/react-native-community/cli/blob/main/docs/commands.md#bundle
+    // extraPackagerArgs = []
+
+    /* Hermes Commands */
+    //   The hermes compiler command to run. By default it is 'hermesc'
+    // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
+    //
+    //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
+    // hermesFlags = ["-O", "-output-source-map"]
+
+    /* Autolinking */
+    autolinkLibrariesWithApp()
+}
+
+/**
+ * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+ */
+def enableProguardInReleaseBuilds = false
+
+/**
+ * The preferred build flavor of JavaScriptCore (JSC)
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US. Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
+def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
+
+def getVersionNameByProperty() {
+    def name
+    if (hasProperty('DEPLOY_ENV') && getProperty('DEPLOY_ENV') == 'real') {
+      // 线上环境
+      name = '1.0.1'
+    } else {
+      // 测试环境
+      name = '1.0.1'
+    }
+    return name
+}
+
+def getVersionCodeByProperty() {
+    def code
+    if (hasProperty('DEPLOY_ENV') && getProperty('DEPLOY_ENV') == 'real') {
+      // 线上环境
+      code = 2
+    } else {
+      // 测试环境
+      code = 1
+    }
+    return code
+}
+
+def getDeployVersionByProperty() {
+    def version
+    if (hasProperty('DEPLOY_VERSION') && getProperty('DEPLOY_VERSION') != null) {
+      version = getProperty('DEPLOY_VERSION').toString()
+    } else {
+      def currentDate = new Date()
+      def dateFormat = new SimpleDateFormat("yyyyMMddHHmmss")
+       version = "${dateFormat.format(currentDate)}"
+    }
+    return version
+}
+
+android {
+    ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
+
+    namespace "com.boklock.m"
+    
+    // 产品变体配置
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            dimension "default"
+            // 从 .env.development 读取包名（通过 react-native-config）
+            applicationId project.env.get("ANDROID_PACKAGE_NAME") ?: "com.boklock.m.test"
+            // 使用 APP_NAME 环境变量设置应用显示名称
+            resValue "string", "app_name", project.env.get("APP_NAME") ?: "boklock-Dev"
+        }
+        prod {
+            dimension "default"
+            // 从 .env.production 读取包名（通过 react-native-config）
+            applicationId project.env.get("ANDROID_PACKAGE_NAME") ?: "com.boklock.m"
+            // 使用 APP_NAME 环境变量设置应用显示名称
+            resValue "string", "app_name", project.env.get("APP_NAME") ?: "boklock"
+        }
+    }
+    
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionName getVersionNameByProperty()
+        versionCode getVersionCodeByProperty()
+        // 用于增量更新版本比较
+        buildConfigField "String", "DEPLOY_VERSION", "\"${getDeployVersionByProperty()}\""
+        
+        // 从 react-native-config 读取环境变量并生成 BuildConfig 字段
+        if (project.hasProperty("env")) {
+            project.env.each { k, v ->
+                def escaped = v.replaceAll("%","\\\\u0025")
+                buildConfigField "String", k, "\"$v\""
+                resValue "string", k, "\"$escaped\""
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                exclude "**/MobPush_backup/**"
+            }
+        }
+    }
+    
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        release {
+            // Caution! In production, you need to generate your own keystore file.
+            // see https://reactnative.dev/docs/signed-apk-android.
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+    
+    buildTypes {
+        debug {
+            manifestPlaceholders = [APP_ICON: "@mipmap/ic_launcher", APP_ROUND_ICON: "@mipmap/ic_launcher_round"]
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.debug
+            // 添加下面这行以禁用crunch
+            crunchPngs false
+            minifyEnabled false
+            debuggable true
+            buildConfigField "String", "DEPLOY_VERSION", "\"${getDeployVersionByProperty()}\""
+        }
+        release {
+            manifestPlaceholders = [APP_ICON: "@mipmap/ic_launcher", APP_ROUND_ICON: "@mipmap/ic_launcher_round"]
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.debug
+            // 添加下面这行以禁用crunch
+            crunchPngs false
+            minifyEnabled enableProguardInReleaseBuilds
+            debuggable false
+            buildConfigField "String", "DEPLOY_VERSION", "\"${getDeployVersionByProperty()}\""
+        }
+    }
+    
+    // applicationVariants are e.g. debug, release
+    applicationVariants.configureEach { variant ->
+        variant.outputs.each { output ->
+            def apk = output.outputFile
+            println "variant.name: ${variant.name}"
+            println "variant.versionName: ${variant.versionName}"
+            def newName = "boklock_${variant.name.replace("release", "real")}_v${variant.versionName}.apk"
+            output.outputFileName = newName
+        }
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        exclude group: 'com.amap.api', module: 'location'
+        exclude group: 'com.tencent.mm.opensdk', module: 'wechat-sdk-android'
+    }
+}
+
+dependencies {
+    // 本地包依赖。
+    implementation fileTree(dir: './libs', include: ['*.jar','*.aar'])
+
+    implementation 'com.google.code.gson:gson:2.8.8'
+
+    // The version of react-native is set by the React Native Gradle Plugin
+    implementation("com.facebook.react:react-android")
+
+    // AppCompat 支持（用于 DatePicker 等组件）
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    implementation 'com.facebook.fresco:animated-gif:2.5.0'
+    //noinspection GradleDynamicVersion
+    api 'net.lingala.zip4j:zip4j:2.+'
+
+    //noinspection GradleDynamicVersion
+    api 'com.tencent.mm.opensdk:wechat-sdk-android:+'
+
+    if (hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android")
+    } else {
+        implementation jscFlavor
+    }
+}
+
+repositories {
+    flatDir {
+        dirs './libs'
+    }
+}
+
+// MobSDK 配置
+MobSDK {
+        appKey "3c0b7f44fa2c1"
+        appSecret "c6468aa45a83d3b54c24a9e04b7ea321"
+        MobPush {
+            devInfo {
+                //小米推送配置信息
+                XIAOMI{
+                    appId "2882303761520479760"// 小米平台注册的appid
+                    appKey "5262047993760"// 小米平台注册的appkey
+                }
+                //华为推送配置信息
+                HUAWEI{
+                    appId "116065177" // 华为平台注册的appid
+                    // version "x.x.x.xxx"  // 可选，可自行指定华为推送SDK版本，默认为6.7.0.300
+                    // onlyCore true //可选，添加此配置可有效减少华为厂商包体大小
+                }
+                //荣耀推送配置信息
+                HONOR{
+                    appId "900938646"// 荣耀平台注册的appid
+                }
+                //魅族推送配置信息
+                MEIZU{
+                    appId "156385" // 魅族平台注册的appid
+                    appKey "6c9a531d5dbc4f468e7890e23d1ec933" // 魅族平台注册的appkey
+                }
+                //VIVO推送配置信息
+                VIVO{
+                    appId "105999442" // VIVO平台注册的appid
+                    appKey "e3f39a1e64940e558afc5c1a6bc670b7" // VIVO平台注册的appkey
+                }
+                //OPPO推送配置信息
+                OPPO{
+                    appKey "079888c360334adba28a8b93d7a33663" // OPPO平台注册的appkey
+                    appSecret "fa1395f7b91345d8a8e8b3fb27c265a5" // OPPO平台注册的appSecret
+                }
+            }
+        }
+}

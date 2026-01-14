@@ -1,0 +1,100 @@
+# Fastfile for Android - 蒲公英上传配置
+
+default_platform(:android)
+
+platform :android do
+  desc "构建开发环境 APK 并上传蒲公英"
+  lane :dev do
+    # 设置版本号
+    version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    
+    # 构建 APK
+    gradle(
+      task: "assemble",
+      build_type: "DevRelease",
+      properties: {
+        "DEPLOY_VERSION" => version,
+        "DEPLOY_ENV" => "dev"
+      }
+    )
+    
+    # 查找 APK 文件
+    apk_path = lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH] || 
+               "../app/build/outputs/apk/dev/release/app-dev-release.apk"
+    
+    # 上传到蒲公英
+    # API Key 已配置，User Key 需要在环境变量中配置
+    pgyer(
+      api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
+      user_key: ENV["PGYER_USER_KEY"] || "",
+      apk: apk_path,
+      password: ENV["PGYER_PASSWORD"] || "", # 可选：安装密码
+      update_description: "开发环境构建 - #{version}"
+    )
+    
+    UI.success "✅ APK 已成功上传到蒲公英！"
+  end
+  
+  desc "构建生产环境 APK 并上传蒲公英"
+  lane :real do
+    # 设置版本号
+    version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    
+    # 构建 APK
+    gradle(
+      task: "assemble",
+      build_type: "ProdRelease",
+      properties: {
+        "DEPLOY_VERSION" => version,
+        "DEPLOY_ENV" => "real"
+      }
+    )
+    
+    # 查找 APK 文件
+    apk_path = lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH] || 
+               "../app/build/outputs/apk/prod/release/app-prod-release.apk"
+    
+    # 上传到蒲公英
+    pgyer(
+      api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
+      user_key: ENV["PGYER_USER_KEY"] || "",
+      apk: apk_path,
+      password: ENV["PGYER_PASSWORD"] || "",
+      update_description: "生产环境构建 - #{version}"
+    )
+    
+    UI.success "✅ APK 已成功上传到蒲公英！"
+  end
+  
+  desc "构建测试环境 APK 并上传蒲公英"
+  lane :staging do
+    # 设置版本号
+    version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    
+    # 构建 APK
+    gradle(
+      task: "assemble",
+      build_type: "DevRelease",
+      properties: {
+        "DEPLOY_VERSION" => version,
+        "DEPLOY_ENV" => "staging"
+      }
+    )
+    
+    # 查找 APK 文件
+    apk_path = lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH] || 
+               "../app/build/outputs/apk/dev/release/app-dev-release.apk"
+    
+    # 上传到蒲公英
+    pgyer(
+      api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
+      user_key: ENV["PGYER_USER_KEY"] || "",
+      apk: apk_path,
+      password: ENV["PGYER_PASSWORD"] || "",
+      update_description: "测试环境构建 - #{version}"
+    )
+    
+    UI.success "✅ APK 已成功上传到蒲公英！"
+  end
+end
+
