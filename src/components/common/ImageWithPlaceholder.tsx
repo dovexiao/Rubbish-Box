@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react"
-import { View, Image, ImageProps, ActivityIndicator, StyleProp, ImageStyle, ViewStyle, Text } from "react-native"
+import React, { useState, useCallback, useMemo, useEffect } from "react"
+import { View, ActivityIndicator, StyleProp, ViewStyle, Text, Image, ImageProps, ImageStyle } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { rpx } from "../../utils/rpxStyleSheet"
+// import FastImage, { ImageStyle, FastImageProps as ImageProps, OnLoadEvent, OnProgressEvent } from "react-native-fast-image"
 
-interface ImageWithPlaceholderProps extends Omit<ImageProps, "source"> {
-  source: { uri: string | undefined } | number
+interface ImageWithPlaceholderProps extends ImageProps {
   placeholderStyle?: StyleProp<ViewStyle>
   imageStyle?: StyleProp<ImageStyle>
   showLoadingIndicator?: boolean
@@ -30,28 +30,31 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
   style,
   onLoadStart,
   onLoad,
+  onLoadEnd,
   onError,
+  onProgress,
   ...restProps
 }) => {
   // 验证 source 是否有效
   const isValidSource = useCallback((): boolean => {
     if (!source) return false
-    
+
     // number 类型（require() 返回的本地资源）始终有效
     if (typeof source === "number") return true
-    
+
     // 对象类型，检查是否有有效的 uri
     if (typeof source === "object" && "uri" in source) {
       const uri = source.uri
       return typeof uri === "string" && uri.trim().length > 0
     }
-    
+
     return false
   }, [source])
 
   const sourceValid = useMemo(() => isValidSource(), [source])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  // const [progress, setProgress] = useState(0)
 
   // 处理开始加载
   const handleLoadStart = useCallback(() => {
@@ -69,12 +72,26 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
     onLoad?.(e)
   }, [onLoad])
 
+  // 处理加载结束
+  const handleLoadEnd = useCallback(() => {
+    setLoading(false)
+    setError(false)
+    onLoadEnd?.()
+  }, [onLoadEnd])
+
+  // 处理进度
+  // const handleProgress = useCallback((e: OnProgressEvent) => {
+  //   setLoading(true)
+  //   setError(false)
+  //   onProgress?.(e)
+  // }, [onProgress])
+
   // 处理加载失败
-  const handleError = useCallback((e: any) => {
+  const handleError = useCallback(() => {
     // console.error("❌ 加载失败:", e)
     setLoading(false)
     setError(true)
-    onError?.(e)
+    // onError?.()
   }, [onError])
 
   // 合并样式
@@ -111,12 +128,14 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
   // 计算图标大小（如果没有提供，使用默认值）
   const iconSize = placeholderIconSize || (typeof style === "object" && style && "width" in style && typeof style.width === "number" ? style.width * 0.3 : rpx(40))
 
-  // useEffect(() => {
-  //   console.log("source", source)
-  //   console.log("sourceValid", sourceValid)
-  //   console.log("error", error)
-  //   console.log("loading", loading)
-  // }, [source, sourceValid, error, loading])
+  useEffect(() => {
+    if (loading || error) {
+      console.log("source", source)
+      console.log("sourceValid", sourceValid)
+      console.log("error", error)
+      console.log("loading", loading)
+    }
+  }, [source, sourceValid, error, loading])
 
   return (
     <View style={containerStyle}>
@@ -127,7 +146,9 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
           style={finalImageStyle}
           onLoadStart={handleLoadStart}
           onLoad={handleLoad}
+          onLoadEnd={handleLoadEnd}
           onError={handleError}
+          // onProgress={handleProgress}
           {...restProps}
         />
       )}

@@ -110,6 +110,7 @@
     "react-native-document-scanner-plugin": "^2.0.2",
     "react-native-drawer-layout": "^4.0.1",
     "react-native-edge-to-edge": "1.6.0",
+    "react-native-fast-image": "^8.6.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-immersive": "^2.0.0",
