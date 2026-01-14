@@ -344,8 +344,8 @@ export default function MyScreen() {
               </LinearGradient>
             </TouchableOpacity>
 
-            {/* 绑定家长按钮 - 仅在未绑定时显示 */}
-            {!isBound && (
+            {/* 绑定家长按钮 - 仅在未绑定时显示 !isBound && */}
+            {!isBound &&  (
               <TouchableOpacity onPress={handleBindParent} activeOpacity={0.8}>
                 <LinearGradient
                   colors={["rgba(255, 255, 255, 0.14)", "#ffffff"]}

@@ -14,6 +14,8 @@ import {
   startPostureMonitorService, 
   stopPostureMonitorService,
   postureMonitorEmitter,
+  checkOverlayPermission,
+  requestOverlayPermission,
   type PostureStatusEvent,
   type PostureRewardEvent 
 } from '../modules/PostureMonitorModule';
@@ -94,6 +96,35 @@ export function useGlobalPostureMonitor() {
 
         // 启动服务，传入 false 禁用调试模式（不显示浮窗）
         const enableDebug = false; // 设置为 false 关闭浮窗
+        
+        // 🔴 如果启用调试模式，需要检查并请求悬浮窗权限
+        if (enableDebug) {
+          try {
+            const hasOverlayPermission = await checkOverlayPermission();
+            if (!hasOverlayPermission) {
+              console.log('⚠️ 缺少悬浮窗权限，请求权限中...');
+              const granted = await requestOverlayPermission();
+              if (!granted) {
+                console.warn('❌ 悬浮窗权限被拒绝，将以非调试模式启动');
+                Alert.alert(
+                  '提示',
+                  '需要悬浮窗权限才能显示调试信息。将以非调试模式启动服务。',
+                  [{ text: '确定' }]
+                );
+                // 以非调试模式启动
+                const serviceStarted = await startPostureMonitorService(false);
+                if (serviceStarted) {
+                  console.log('✅ 后台相机服务已启动（非调试模式）');
+                }
+                return;
+              }
+              console.log('✅ 悬浮窗权限已授予');
+            }
+          } catch (error) {
+            console.error('❌ 检查悬浮窗权限失败:', error);
+          }
+        }
+        
         const serviceStarted = await startPostureMonitorService(enableDebug);
         if (serviceStarted) {
           console.log(`✅ 后台相机服务已启动${enableDebug ? '（调试模式）' : ''}（Native层统计时间，每10秒检测一次）`);

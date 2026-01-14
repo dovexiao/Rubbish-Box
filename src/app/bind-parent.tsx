@@ -191,7 +191,8 @@ export default function BindParentScreen() {
                         打开微信“扫一扫”登录“小褐同学家长端”小程序
                       </Text>
                     </View>
-                    <Text style={styles.stepSubtitle}>进入小程序手机号进行验证登录~</Text>
+                    <Text style={styles.stepSubtitle1}>
+进入小程序后，请使用与学习账号相同的手机号进行验证登录</Text>
                   </View>
                   <View style={styles.qrCodeWrapper}>
                     {/* 小程序码占位 */}
@@ -313,7 +314,7 @@ const styles = createStyles({
   stepHeader: {
     flexDirection: 'row' as const,
     alignItems: 'flex-start' as const,
-    marginBottom: 10,
+    marginBottom: 0,
   },
   stepNumber: {
     backgroundColor: '#4891FF',
@@ -337,9 +338,18 @@ const styles = createStyles({
   stepSubtitle: {
     fontSize: 12,
     color: '#666',
-    lineHeight: 18,
-    marginTop: 5,
+    lineHeight: 12,
+    // marginTop: 5,
     paddingLeft: 45, // 对齐到标题下方
+  },
+  stepSubtitle1: {
+    fontSize: 12,
+    color: '#2271fc',
+    lineHeight: 12,
+    // marginTop: 5,
+    paddingLeft: 45, // 对齐到标题下方
+
+
   },
   qrCodeWrapper: {
     width: 100,

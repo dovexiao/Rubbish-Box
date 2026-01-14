@@ -263,7 +263,7 @@ export default function RootLayout() {
   useBatteryMonitor()
 
   // 获取网络状态
-  const { isConnected, isInternetReachable, networkType, isInitialized } = useNetwork()
+  const { isConnected, isInternetReachable, networkType, networkDetails, isInitialized } = useNetwork()
 
   // 监听 API 层的网络错误事件
   useEffect(() => {
@@ -284,6 +284,63 @@ export default function RootLayout() {
       unsubscribe()
     }
   }, [isConnected])
+
+  // 检测 5G 频段 WiFi
+  useEffect(() => {
+    // 只在网络已初始化且已连接时检测
+    if (!isInitialized || !isConnected) {
+      return
+    }
+
+    // 只检测 WiFi 网络
+    if (networkType !== "wifi") {
+      return
+    }
+
+    // 检查频率
+    const frequency = networkDetails.frequency
+    if (frequency === null || frequency === undefined) {
+      // 频率信息不可用，不显示弹窗（可能是权限问题或系统不支持）
+      console.log("📡 WiFi 频率信息不可用，跳过 5G 频段检测")
+      return
+    }
+
+    // 5G WiFi 频段范围：5000-6000 MHz
+    // 2.4G WiFi 频段范围：2400-2500 MHz
+    const is5GHz = frequency >= 5000 && frequency <= 6000
+    const is2_4GHz = frequency >= 2400 && frequency <= 2500
+
+    if (is2_4GHz) {
+      // 检测到 2.4GHz WiFi，显示提示
+      console.log(`⚠️ 检测到 2.4GHz WiFi (${frequency} MHz)，需要 5G 频段`)
+      
+      // 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）
+      const isBlocked = useDeviceAuthStore.getState().isBlocked
+      if (isBlocked && isConnected) {
+        console.log("🔐 设备未授权且网络已连接，不显示 5G 频段提示（设备授权弹窗优先）")
+        return
+      }
+      
+      setShowNetworkModal(true)
+    } else if (!is5GHz && frequency > 0) {
+      // 既不是 2.4G 也不是 5G，可能是其他频段，也提示
+      console.log(`⚠️ 检测到非标准 WiFi 频段 (${frequency} MHz)，需要 5G 频段`)
+      
+      const isBlocked = useDeviceAuthStore.getState().isBlocked
+      if (isBlocked && isConnected) {
+        console.log("🔐 设备未授权且网络已连接，不显示 5G 频段提示（设备授权弹窗优先）")
+        return
+      }
+      
+      setShowNetworkModal(true)
+    } else if (is5GHz) {
+      // 5G 频段，关闭弹窗（如果之前显示过）
+      console.log(`✅ 检测到 5G WiFi (${frequency} MHz)`)
+      if (showNetworkModal) {
+        setShowNetworkModal(false)
+      }
+    }
+  }, [isInitialized, isConnected, networkType, networkDetails.frequency, showNetworkModal])
 
   // 同步网络弹窗状态到 store
   const setShowNetworkModalInStore = useNetworkStore((state) => state.setShowNetworkModal)

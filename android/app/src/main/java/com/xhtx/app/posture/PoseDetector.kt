@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.nnapi.NnApiDelegate
 import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -52,16 +53,33 @@ class PoseDetector(private val context: Context) {
             // 加载模型
             val model = loadModelFile()
             
-            // 配置解释器（使用 CPU，多线程优化）
+            // 配置解释器（优先使用 NNAPI/NPU，回退到 CPU）
+            val nnApiDelegate = try {
+                NnApiDelegate().also {
+                    Log.d(TAG, "📱 创建 NNAPI Delegate（尝试使用 NPU/GPU）")
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "⚠️ 创建 NNAPI Delegate 失败: ${e.message}")
+                null
+            }
+            
             val options = Interpreter.Options().apply {
-                setNumThreads(4) // 使用4个线程
-                setUseNNAPI(true) // 启用 NNAPI 硬件加速（如果设备支持）
+                setNumThreads(4) // CPU 回退时使用4个线程
+                if (nnApiDelegate != null) {
+                    addDelegate(nnApiDelegate) // 优先使用 NNAPI（如果设备支持 NPU/GPU）
+                    Log.d(TAG, "✅ 已添加 NNAPI Delegate")
+                } else {
+                    Log.d(TAG, "⚠️ 未添加 NNAPI Delegate，将使用 CPU")
+                }
             }
             
             // 创建解释器
             interpreter = Interpreter(model, options)
             
-            Log.d(TAG, "✅ TFLite 模型加载成功（CPU模式 + NNAPI）")
+            // 注意：实际使用的 delegate 由 TFLite 运行时决定
+            // 如果 NNAPI 不支持模型中的某些操作，会自动回退到 CPU
+            // 查看 logcat 中的 "Replacing X out of Y node(s)" 可以确认实际使用的 delegate
+            Log.d(TAG, "✅ TFLite 模型加载成功（查看 logcat 确认实际使用的加速器：NNAPI 或 XNNPACK/CPU）")
         } catch (e: Exception) {
             Log.e(TAG, "❌ 模型加载失败:", e)
         }
@@ -221,7 +239,7 @@ class PoseDetector(private val context: Context) {
         Log.d(TAG, "✅ 距离判断：正常 (肩宽=$shoulderWidth, 上半身高度=$torsoHeight, 置信度=$avgConfidence)")
         return false
     }
-    
+   
     /**
      * 释放资源
      */
@@ -230,5 +248,6 @@ class PoseDetector(private val context: Context) {
         interpreter = null
         Log.d(TAG, "🗑️ PoseDetector 已释放")
     }
+
 }
 
