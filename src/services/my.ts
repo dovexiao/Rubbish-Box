@@ -84,7 +84,7 @@ export async function getUserBadges(): Promise<BadgeResponse> {
 }
 
 /**
- * 获取用户学习数据（最近7天）
+ * 获取用户学习数据（最近5天）
  */
 export async function getUserStudyData(): Promise<StudyDataResponse> {
   const response = await post<any>(
