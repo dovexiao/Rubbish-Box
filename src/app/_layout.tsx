@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react"
-import { Slot, useSegments } from "expo-router"
+import { Slot, Stack, useSegments } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import * as ScreenOrientation from "expo-screen-orientation"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
@@ -50,7 +50,7 @@ SplashScreen.preventAutoHideAsync()
  */
 export default function RootLayout() {
   const segments = useSegments()
-  
+
   // 获取token用于Slot的key，确保token变化时重新渲染路由树
   const token = useUserStore((state) => state.token)
 
@@ -59,7 +59,7 @@ export default function RootLayout() {
 
   // 网络提示 Modal 状态
   const [showNetworkModal, setShowNetworkModal] = useState(false)
-  
+
   // 获取设备授权状态（用于控制网络弹窗显示）
   const isBlocked = useDeviceAuthStore((state) => state.isBlocked)
   // 防止重复打开系统设置
@@ -169,18 +169,21 @@ export default function RootLayout() {
         console.log("🔧 准备打开系统 WiFi 设置")
 
         // 使用 expo-intent-launcher 打开 Android 系统 WiFi 设置
-        const IntentLauncher = await import("expo-intent-launcher")
+        // const IntentLauncher = await import("expo-intent-launcher")
 
         // 使用 FLAG_ACTIVITY_NEW_TASK 和 FLAG_ACTIVITY_CLEAR_TOP 确保每次都能打开
         // FLAG_ACTIVITY_NEW_TASK: 在新任务中启动活动
         // FLAG_ACTIVITY_CLEAR_TOP: 如果活动已存在，清除其上的所有活动
-        await IntentLauncher.startActivityAsync(
-          IntentLauncher.ActivityAction.WIFI_SETTINGS,
-          {
-            flags: 0x10000000 | 0x04000000 // FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TOP
-          }
-        )
-        console.log("✅ 已打开系统 WiFi 设置")
+        // await IntentLauncher.startActivityAsync(
+        //   IntentLauncher.ActivityAction.WIFI_SETTINGS,
+        //   {
+        //     flags: 0x10000000 | 0x04000000 // FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TOP
+        //   }
+        // )
+        // console.log("✅ 已打开系统 WiFi 设置")
+        const { openWifiSettings } = await import("../services/systemSettings")
+        await openWifiSettings()
+        console.log("已打开系统WiFi设置")
       } catch (error: any) {
         console.error("❌ 打开系统 WiFi 设置失败:", error)
 
@@ -188,14 +191,14 @@ export default function RootLayout() {
         if (error?.code === 'E_ACTIVITY_ALREADY_STARTED') {
           try {
             console.log("🔄 设置页面已打开，尝试将其调到前台")
-            const IntentLauncher = await import("expo-intent-launcher")
-            await IntentLauncher.startActivityAsync(
-              IntentLauncher.ActivityAction.WIFI_SETTINGS,
-              {
-                flags: 0x20000 // FLAG_ACTIVITY_REORDER_TO_FRONT
-              }
-            )
-            console.log("✅ 已将系统设置调到前台")
+            // const IntentLauncher = await import("expo-intent-launcher")
+            // await IntentLauncher.startActivityAsync(
+            //   IntentLauncher.ActivityAction.WIFI_SETTINGS,
+            //   {
+            //     flags: 0x20000 // FLAG_ACTIVITY_REORDER_TO_FRONT
+            //   }
+            // )
+            // console.log("✅ 已将系统设置调到前台")
           } catch (retryError) {
             console.error("❌ 重试失败:", retryError)
             console.log("⚠️ 系统设置页面已打开，请在设置中操作")
@@ -258,7 +261,7 @@ export default function RootLayout() {
   // 🔴 P0最高优先级：网络监测 - 必须第一个初始化
   // 初始化全局网络监听（单例模式）
   useNetworkMonitor()
-  
+
   // 🔋 电池监测 - 初始化全局电池监听（单例模式）
   useBatteryMonitor()
 
@@ -342,18 +345,18 @@ export default function RootLayout() {
     // 网络已连接，执行设备授权验证
     console.log("🔐 网络已连接，开始设备授权验证，设备码:", deviceCode)
     const authResult = await ensureDeviceAuth()
-    
+
     if (authResult) {
       appLaunchState.current.authVerified = true
       console.log("✅ 设备授权验证完成")
-      
+
       // 🔴 设备授权通过后，启动全局坐姿监控（如果还未启动）
       if (!postureStore.isMonitoring) {
         console.log("🚀 设备授权通过，启动全局坐姿监控")
         await startPostureMonitoring()
       }
     }
-    
+
     return authResult
   }, [isConnected, isInternetReachable, ensureDeviceAuth, postureStore, startPostureMonitoring])
 
@@ -462,7 +465,7 @@ export default function RootLayout() {
           console.log("⚠️ 设备未授权，不启动坐姿监控")
           return
         }
-        
+
         if (!postureStore.isMonitoring) {
           console.log("📱 检测到监控未运行，重新启动")
           await startPostureMonitoring()
@@ -498,8 +501,8 @@ export default function RootLayout() {
       InteractionManager.runAfterInteractions(async () => {
         // 🔴 如果应用已启动但设备授权还未验证，则执行验证
         if (appLaunchState.current.isLaunched &&
-            appLaunchState.current.deviceCode &&
-            !appLaunchState.current.authVerified) {
+          appLaunchState.current.deviceCode &&
+          !appLaunchState.current.authVerified) {
           console.log("🔐 网络已连接，执行设备授权验证")
           await performDeviceAuth(appLaunchState.current.deviceCode)
         } else {
@@ -554,11 +557,11 @@ export default function RootLayout() {
       if (isBlocked && isConnected) {
         console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
       } else {
-      // 如果初始化完成时网络未连接，直接显示弹窗
-      if (!isConnected) {
-        console.log("🔴 初始化时检测到网络未连接，显示弹窗")
-        setShowNetworkModal(true)
-      }
+        // 如果初始化完成时网络未连接，直接显示弹窗
+        if (!isConnected) {
+          console.log("🔴 初始化时检测到网络未连接，显示弹窗")
+          setShowNetworkModal(true)
+        }
 
       }
 
@@ -598,15 +601,15 @@ export default function RootLayout() {
     // 使用InteractionManager优化初始化性能
     InteractionManager.runAfterInteractions(async () => {
       // 初始化用户存储数据 - 直接调用 store 的方法
-      await useUserStore.getState().initializeFromStorage()
+      useUserStore.getState().initializeFromStorage()
       // 加载完成后检查token状态
       const token = useUserStore.getState().token
       console.log("用户数据初始化完成，token状态:", token ? "已存在" : "不存在")
-      
+
       // 如果token不存在，等待登录弹窗管理器挂载后弹出登录弹窗
       if (!token) {
         console.log("🔐 检测到用户未登录，准备弹出登录弹窗")
-        
+
         // 等待登录弹窗引用可用（GlobalLoginManager 挂载完成）
         const waitForLoginModal = (maxAttempts = 20, interval = 100) => {
           return new Promise<void>((resolve) => {
@@ -621,10 +624,10 @@ export default function RootLayout() {
             }, interval)
           })
         }
-        
+
         // 等待登录弹窗管理器挂载
         await waitForLoginModal()
-        
+
         // 再次确认token状态（防止在等待期间用户已登录）
         const currentToken = useUserStore.getState().token
         if (!currentToken) {
@@ -657,15 +660,16 @@ export default function RootLayout() {
     // 注意：返回键行为已在useSystemKeyListener中处理，这里不需要重复设置
 
     // 输出屏幕适配信息（用于调试）
-    const screenInfo = getScreenInfo()
-    console.log("=== 屏幕适配信息 ===")
-    console.log(`屏幕尺寸: ${screenInfo.width} × ${screenInfo.height}`)
-    console.log(`设备类型: ${screenInfo.isTablet ? "平板" : "手机"}`)
-    console.log(`屏幕方向: ${screenInfo.isLandscape ? "横屏" : "竖屏"}`)
-    console.log(`缩放比例: ${screenInfo.scaleRatio}`)
-    console.log(`转换基准: ${screenInfo.baseRpx}rpx`)
-    console.log(`平台: ${screenInfo.platform}`)
-    console.log("==================")
+    getScreenInfo().then((screenInfo) => {
+      console.log("=== 屏幕适配信息 ===")
+      console.log(`屏幕尺寸: ${screenInfo.width} × ${screenInfo.height}`)
+      console.log(`设备类型: ${screenInfo.isTablet ? "平板" : "手机"}`)
+      console.log(`屏幕方向: ${screenInfo.isLandscape ? "横屏" : "竖屏"}`)
+      console.log(`缩放比例: ${screenInfo.scaleRatio}`)
+      console.log(`转换基准: ${screenInfo.baseRpx}rpx`)
+      console.log(`平台: ${screenInfo.platform}`)
+      console.log("==================")
+    })
 
     // 立即隐藏闪屏（无动画）
     SplashScreen.hideAsync()
@@ -696,7 +700,20 @@ export default function RootLayout() {
 
       <PaperProvider>
         <SafeAreaProvider>
-          <Slot key={token || 'no-token'} />
+          <Stack
+            key={token || 'no-token'}
+            screenOptions={{
+              headerShown: false,
+              animation: 'none',
+            }}
+          >
+            {/* 显式声明 tabs 作为一级页面 */}
+            <Stack.Screen name="(tabs)" />
+
+            {/* 其他页面自动发现，作为二级页面 */}
+            {/* 不需要显式声明，Expo Router 会自动发现 */}
+          </Stack>
+          {/* <Slot key={token || 'no-token'} /> */}
           {/* 全局锁屏 */}
           <GlobalLockScreen />
           {/* 全局登录管理器 */}
