@@ -255,7 +255,7 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
                         <View style={styles.conditionItem}>
                             <Text style={styles.conditionLabel}>兑后须知</Text>
                             <Text style={styles.conditionValue}>
-                                兑后48h内发货，不支持七天无理由
+                                兑后48h内发货，不支持七天无理由退换货
                             </Text>
                         </View>
                         {/* 第三行 */}

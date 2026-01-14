@@ -136,7 +136,7 @@ export default function PointsMallScreen() {
           {/* 货币余额 */}
           <CurrencyAmount
             ref={currencyAmountRef}
-            onPress={() => router.push("/currency-record")}
+            onPress={() => router.push("/points-mall/currency-record")}
             style={styles.currencyAmountContainer}
           />
           {/* 折扣商品窗口 */}

@@ -45,12 +45,22 @@ export default function MyScreen() {
 
   // 直接订阅 store 的 user，这样当 store 更新时会自动更新组件
   const userInfo = useUserStore((state) => state.user)
+  
+  // 周学习数据初始值
+  const defaultWeeklyStudyData: DailyStudyData[] = [
+    { date: "", duration: 0, weekday: "" },
+    { date: "", duration: 0, weekday: "" },
+    { date: "", duration: 0, weekday: "" },
+    { date: "", duration: 0, weekday: "" },
+    { date: "", duration: 0, weekday: "" },
+  ]
+  
   const [badges, setBadges] = useState<MedalList[]>([])
   const [todayQuestionData, setTodayQuestionData] = useState<TodayQuestionData>({
     total_wrong_questions: 0,
     total_corrected_questions: 0,
   })
-  const [weeklyStudyData, setWeeklyStudyData] = useState<DailyStudyData[]>([])
+  const [weeklyStudyData, setWeeklyStudyData] = useState<DailyStudyData[]>(defaultWeeklyStudyData)
   const [isInitialized, setIsInitialized] = useState(false)
   const [showVersion, setShowVersion] = useState(false)
 
@@ -99,7 +109,7 @@ export default function MyScreen() {
       // 不需要 setUserInfo，因为 userInfo 已经通过 useUserStore 订阅自动更新了
       setBadges(badgesData.medal_list || [])
       setTodayQuestionData(todayData)
-      setWeeklyStudyData(studyDataResult.daily_data || [])
+      setWeeklyStudyData(studyDataResult.daily_data || defaultWeeklyStudyData)
 
       // console.log("✅ 我的页面数据加载完成")
     } catch (error) {
@@ -165,7 +175,7 @@ export default function MyScreen() {
             // 不需要 setUserInfo，因为 userInfo 已经通过 useUserStore 订阅自动更新了
             setBadges(badgesData.medal_list || [])
             setTodayQuestionData(todayData)
-            setWeeklyStudyData(studyDataResult.daily_data || [])
+            setWeeklyStudyData(studyDataResult.daily_data || defaultWeeklyStudyData)
           }
         } catch (error) {
           devError("刷新数据失败:", error)
@@ -229,9 +239,9 @@ export default function MyScreen() {
 
   // 渲染今日错题圆形进度条
   const renderTodayProgressCircle = () => {
-    const size = rpx(80)
-    const strokeWidth = rpx(10)
-    const radius = rpx(35)
+    const size = rpx(78.125) // 200
+    const strokeWidth = rpx(10.546875) // 27
+    const radius = rpx(33.203125) // 85
     const center = size / 2
     const circumference = 2 * Math.PI * radius
 
@@ -295,8 +305,8 @@ export default function MyScreen() {
 
   return (
     <LinearGradient
-      colors={["#93ABFF", "#E4F4FF", "#CDEDFF", "#FFFFFF"]}
-      locations={[-0.1128, 0.1494, 0.8474, 1.0586]}
+      colors={["#DAE4FF", "#E8F1FF", "#F0F5FF", "#D6E2FF"]}
+      // colors={["#D1DBFF", "#C0DAFF", "#E6EEFF", "#C4DDFF"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.pageContainer}
@@ -413,9 +423,9 @@ export default function MyScreen() {
 
             {/* 我的勋章 */}
             <LinearGradient
-              colors={["rgba(255, 255, 255, 0.6)", "rgba(255, 255, 255, 0.264)"]}
+              colors={["#F5F9FF", "#E8F2FF"]}
               start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={styles.badgesCard}
             >
               <View style={styles.badgesHeader}>
@@ -480,9 +490,9 @@ export default function MyScreen() {
           <View style={styles.rightColumn}>
             {/* 我的数据卡片 */}
             <LinearGradient
-              colors={["rgba(255, 255, 255, 0.4)", "rgba(255, 255, 255, 0.176)"]}
+              colors={["#F5F9FF", "#E8F2FF"]}
               start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={styles.dataCard}
             >
               <View style={styles.dataHeader}>
@@ -490,7 +500,7 @@ export default function MyScreen() {
                   <Text style={styles.dataTitleText}>我的数据</Text>
                   <Image
                     source={require("../../../assets/images/my-title-bg.png")}
-                    style={styles.titleBgImage}
+                    style={styles.titleBgImage1}
                     resizeMode="contain"
                   />
                 </View>
@@ -602,7 +612,7 @@ const styles = createStyles({
     gap: 1.953125,
     height: 39.063,
     borderRadius: 35.156,
-    backgroundColor: "rgba(255, 255, 255, 0.46)",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderWidth: 1,
     borderColor: "#ffffff",
     paddingLeft: 42.969,
@@ -669,55 +679,55 @@ const styles = createStyles({
   leftColumn: {
     flex: 1,
     flexDirection: "column" as const,
-    gap: 9.375,
+    gap: 18.75, // 48
   },
   rightColumn: {},
   // 会员卡片
-  memberCard: {
-    borderRadius: 11.71875,
-    paddingHorizontal: 15.625,
-    paddingVertical: 15.625,
-    flexDirection: "row" as const,
-    justifyContent: "space-between" as const,
-    alignItems: "center" as const,
-    height: 73.4375,
-    width: 267.1875,
-    overflow: "hidden" as const,
-    // shadowColor: "#AFACD0",
-    // shadowOffset: { width: 0, height: 8.6 },
-    // shadowOpacity: 0.47,
-    // shadowRadius: 8.4,
-    // elevation: 5,
-  },
-  memberCardImage: {
-    borderRadius: 11.71875,
-  },
-  memberContent: {
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-  },
-  crownImage: {
-    width: 19,
-    marginTop: 6,
-  },
-  memberTitle: {
-    fontSize: 11.71875,
-    fontWeight: "bold" as const,
-    color: "#fff",
-    marginLeft: 8,
-  },
-  memberAction: {
-    backgroundColor: "#ffffff",
-    borderRadius: 11.71875,
-    paddingHorizontal: 7.8125,
-    paddingVertical: 3.90625,
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-  },
-  actionBtnText: {
-    fontSize: 8.6,
-    color: "#487FB1",
-  },
+  // memberCard: {
+  //   borderRadius: 11.71875,
+  //   paddingHorizontal: 15.625,
+  //   paddingVertical: 15.625,
+  //   flexDirection: "row" as const,
+  //   justifyContent: "space-between" as const,
+  //   alignItems: "center" as const,
+  //   height: 73.4375,
+  //   width: 267.1875,
+  //   overflow: "hidden" as const,
+  //   // shadowColor: "#AFACD0",
+  //   // shadowOffset: { width: 0, height: 8.6 },
+  //   // shadowOpacity: 0.47,
+  //   // shadowRadius: 8.4,
+  //   // elevation: 5,
+  // },
+  // memberCardImage: {
+  //   borderRadius: 11.71875,
+  // },
+  // memberContent: {
+  //   flexDirection: "row" as const,
+  //   alignItems: "center" as const,
+  // },
+  // crownImage: {
+  //   width: 19,
+  //   marginTop: 6,
+  // },
+  // memberTitle: {
+  //   fontSize: 11.71875,
+  //   fontWeight: "bold" as const,
+  //   color: "#fff",
+  //   marginLeft: 8,
+  // },
+  // memberAction: {
+  //   backgroundColor: "#ffffff",
+  //   borderRadius: 11.71875,
+  //   paddingHorizontal: 7.8125,
+  //   paddingVertical: 3.90625,
+  //   flexDirection: "row" as const,
+  //   alignItems: "center" as const,
+  // },
+  // actionBtnText: {
+  //   fontSize: 8.6,
+  //   color: "#487FB1",
+  // },
   // 我的勋章
   badgesCard: {
     borderWidth: 0.5,
@@ -727,11 +737,11 @@ const styles = createStyles({
     width: 267.1875, // 684
     height: 209.765625, // 537
     overflow: "hidden" as const,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 3.90625 },
-    // shadowOpacity: 0.05,
-    // shadowRadius: 7.8125,
-    // elevation: 2,
+    shadowColor: "#A3D4FE",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.22265625,
+    elevation: 3,
   },
   badgesHeader: {
     flexDirection: "row" as const,
@@ -744,7 +754,7 @@ const styles = createStyles({
     height: 17.96875, // 46
   },
   badgesTitleText: {
-    fontSize: 12.890625, // 33
+    fontSize: 13.671875, // 35
     color: "#404040E5",
     fontWeight: "bold" as const,
     position: "relative" as const,
@@ -754,6 +764,13 @@ const styles = createStyles({
     position: "absolute" as const,
     left: -1.5625, // -4
     top: 7.03125, // 18
+    width: 53.515625, // 137
+    height: 12.5, // 32
+  },
+  titleBgImage1: {
+    position: "absolute" as const,
+    left: 6.640625, // 17
+    top: 6.25, // 16
     width: 53.515625, // 137
     height: 12.5, // 32
   },
@@ -794,28 +811,28 @@ const styles = createStyles({
   },
   // 我的数据卡片
   dataCard: {
-    width: 401.5625,
-    height: 214.0625,
-    borderRadius: 11.71875,
-    padding: 15.625,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 3.90625 },
-    // shadowOpacity: 0.05,
-    // shadowRadius: 7.8125,
-    // elevation: 2,
+    width: 401.5625, // 1028
+    height: 214.0625, // 548
+    borderRadius: 11.71875, // 30
+    padding: 15.625, // 40
+    shadowColor: "#A3D4FE",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.22265625,
+    elevation: 3,
   },
   dataHeader: {
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
-    alignItems: "flex-start" as const,
-    marginBottom: 7.8125, // 20
+    alignItems: "center" as const,
+    height: 17.96875, // 46
   },
   dataTitle: {
     width: "100%" as const,
     height: 17.96875, // 46
   },
   dataTitleText: {
-    fontSize: 12.890625, // 33
+    fontSize: 13.671875, // 35
     color: "#404040E5",
     fontWeight: "bold" as const,
     position: "relative" as const,
@@ -823,47 +840,56 @@ const styles = createStyles({
   },
   studyDataContainer: {
     flexDirection: "row" as const,
-    gap: 15.625,
+    gap: 15.625, // 40
   },
   // 今日错题
   todayQuestions: {
-    backgroundColor: "rgba(253, 254, 255, 0.3)",
+    backgroundColor: "#F9FCFFF2",
     borderRadius: 7.8125,
-    padding: 11.71875,
+    padding: 12.5, // 32
     flex: 1,
-    width: "45%" as const,
+    height: 145.3125, // 372
+    marginTop: 14.0625, // 36 为了避免阴影遮蔽
+    shadowColor: '#D2CFFF',
+    shadowOpacity: 0.25,
+    shadowOffset: {
+      width: 0,    // 对应 X: 0
+      height: 0,   // 对应 Y: 0
+    },
+    shadowRadius: 13.8671875,
+    elevation: 2,
   },
   todayTitle: {
-    fontSize: 8.6,
+    fontSize: 11.71875, // 30
     fontWeight: "bold" as const,
-    color: "#000",
-    marginBottom: 7.8125,
+    color: "#404040E5",
+    marginBottom: 2.34375, // 6
   },
   todaySubtitle: {
-    fontSize: 7.8125,
-    color: "#666",
+    fontSize: 9.375, // 24
+    fontWeight: "400" as const,
+    color: "#6F6F6F",
   },
   questionStats: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    marginTop: 8,
-    marginBottom: 7.8125,
+    marginTop: 11.71875, // 30
   },
   progressCircleWrapper: {
     position: "relative" as const,
-    width: 80,
-    height: 80,
-    marginTop: 12,
+    width: 78.125, // 200
+    height: 78.125, // 200
   },
   questionNumbers: {
     flexDirection: "column" as const,
-    gap: 7.8125,
-    marginLeft: 10,
+    gap: 5.46875, // 14
+    marginLeft: 21.484375, // 55
   },
   questionItem: {
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
-    width: 63.75,
+    width: 46.875, // 120
+    height: 14.0625, // 36
   },
   questionLabel: {
     fontSize: 9.375,
@@ -875,26 +901,37 @@ const styles = createStyles({
   },
   // 本周学习时长
   weeklyStudy: {
-    backgroundColor: "rgba(253, 254, 255, 0.3)",
-    borderRadius: 7.8125,
-    padding: 11.71875,
+    backgroundColor: "#F9FCFFF2",
+    borderRadius: 7.8125, // 20
+    padding: 11.71875, // 30
     flex: 1,
-    width: "45%" as const,
+    height: 145.3125, // 372
+    marginTop: 14.0625, // 36 为了避免阴影遮蔽
+    shadowColor: '#D2CFFF',
+    shadowOpacity: 0.25,
+    shadowOffset: {
+      width: 0,    // 对应 X: 0
+      height: 0,   // 对应 Y: 0
+    },
+    shadowRadius: 13.8671875,
+    elevation: 2,
   },
   weeklyTitle: {
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
     alignItems: "center" as const,
-    marginBottom: 7.8125,
+    height: 17.96875, // 46
+    marginBottom: 7.8125, // 20
   },
   weeklyTitleText: {
-    fontSize: 8.6,
+    fontSize: 11.71875, // 30
     fontWeight: "bold" as const,
-    color: "#000",
+    color: "#404040E5",
   },
   weeklyUnit: {
-    fontSize: 7.8125,
-    color: "#666",
+    fontSize: 9.375, // 24
+    fontWeight: "400" as const,
+    color: "#6F6F6F",
   },
   // 版本号显示
   versionTrigger: {

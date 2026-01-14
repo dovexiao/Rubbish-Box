@@ -92,8 +92,8 @@ export default function CurrencyRecordScreen() {
         if (router.canGoBack?.()) {
             router.back()
         } else {
-            // 如果不能返回，导航到首页
-            router.navigate("/(tabs)/points-mall")
+            // 如果不能返回，导航到时间商城
+            router.replace("/(tabs)/points-mall")
         }
     }, [router])
 
