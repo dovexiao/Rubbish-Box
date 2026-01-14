@@ -430,7 +430,7 @@ const styles = createStyles({
         // flexDirection: 'row' as const,
         alignItems: 'center' as const,
         justifyContent: 'center' as const,
-        paddingVertical: 7.8125, // 20
+        paddingVertical: 11.71875, // 30
         gap: 3.125, // 8
     },
     loadingText: {
@@ -442,7 +442,7 @@ const styles = createStyles({
         justifyContent: 'center' as const,
         // paddingVertical: 19.5313,
         // paddingTop: 3.90625, // 10
-        paddingBottom: 27.34375, // 70
+        paddingBottom: 35.15625, // 90
     },
     noMoreText: {
         fontSize: 8.984375, // 23
