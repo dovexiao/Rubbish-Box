@@ -408,14 +408,19 @@ export default function ReaderIndex() {
 
     return (
       <View style={styles.classicSection}>
-        <View style={styles.classicCard}>
+        <LinearGradient
+          colors={['#c2d9fb54', '#0468ff54']}
+          locations={[0.6877, 1.0219]}
+          start={{ x: 1, y: 1 }}
+          end={{ x: 0, y: 0 }}
+          style={styles.classicCard}
+        >
           {/* 标题在卡片内部 */}
           <Image
             source={NAV_IMAGES.readerRecommend}
             style={styles.classicTitle}
             resizeMode="contain"
           />
-
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -424,7 +429,7 @@ export default function ReaderIndex() {
           >
             {recommendData.classic.slice(0, 4).map((book, index) => renderRecommendItem(book, index))}
           </ScrollView>
-        </View>
+        </LinearGradient>
       </View>
     )
   }, [recommendData, renderRecommendItem])
@@ -1017,13 +1022,11 @@ const styles = createStyles({
     marginBottom: 0,
   },
   classicCard: {
-    backgroundColor: "#C2D9FB", // 白色背景
     borderRadius: 7.8125,
     paddingTop: 4.8,
     paddingBottom: 4.8,
     paddingLeft: 10.9375,
     paddingRight: 10.9375,
-    position: "relative" as const,
     height: 133.59375,
     overflow: "hidden" as const,
   },
@@ -1056,7 +1059,6 @@ const styles = createStyles({
     width: 56.25,
     height: 73.4375,
     borderRadius: 3.2,
-
   },
   recommendBookTitle: {
     fontSize: 7.8125,
@@ -1075,6 +1077,8 @@ const styles = createStyles({
     fontSize: 7.03125,
     color: "#00000099",
     backgroundColor: "#2734A70F",
+    paddingVertical: 1.5625, // 4
+    paddingHorizontal: 3.125, // 8
     borderRadius: 4,
   },
   // 榜单卡片样式
@@ -1105,7 +1109,7 @@ const styles = createStyles({
     width: 62.5, // 160
     height: 31.25, // 80
     position: "absolute" as const,
-    top: 0,
+    top: 3.125, // 8
     left: 39.0625, // 120
   },
   rankingBookList: {
