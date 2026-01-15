@@ -50,14 +50,14 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
   }, [source])
 
   const sourceValid = useMemo(() => isValidSource(), [source])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
   // 处理开始加载
   const handleLoadStart = useCallback(() => {
     // console.log("开始加载")
-    setLoading(true)
-    setError(false)
+    // setLoading(true)
+    // setError(false)
     onLoadStart?.()
   }, [onLoadStart])
 
@@ -149,4 +149,3 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
 }
 
 export default ImageWithPlaceholder
-
