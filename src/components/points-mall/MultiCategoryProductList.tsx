@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { ComponentRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, forwardRef } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, ActivityIndicator, StyleProp, ViewStyle } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { createStyles, rpx } from '../../utils/rpxStyleSheet';
@@ -8,12 +8,17 @@ import { useUserStore } from '../../stores/userStore';
 import { showError } from '../../utils/toast';
 import ImageWithPlaceholder from '../common/ImageWithPlaceholder';
 
+export interface MultiCategoryProductListRef {
+    getCanScroll: () => boolean;
+}
+
 interface MultiCategoryProductListProps {
+    listRef?: React.RefObject<ComponentRef<typeof FlatList<any>> | null>;
     pageSize?: number;
     style?: StyleProp<ViewStyle>;
     onProductClick: (id: number) => void;
-    scrollEnabled?: boolean;
     onScroll?: (event: any) => void;
+    onCanScrollChange?: (canScroll: boolean) => void;
 }
 
 const DEFAULT_CATEGORIES = ['热点推荐', '货币可兑', '学习文具', '亲子娱乐'];
@@ -33,13 +38,14 @@ const padToMultiple = <T,>(array: T[], multiple: number): (T | null)[] => {
     return [...array, ...Array(paddingCount).fill(null)];
 };
 
-const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
+const MultiCategoryProductList = forwardRef<MultiCategoryProductListRef, MultiCategoryProductListProps>(({
+    listRef,
     pageSize = 18,
     style,
     onProductClick,
-    scrollEnabled = true,
     onScroll,
-}) => {
+    onCanScrollChange,
+}, ref) => {
     const [activeCategory, setActiveCategory] = useState(0);
     const [categories, setCategories] = useState<CategoryItem[]>([]); // 商品有分类的分类ID列表
     const indicatorTranslateX = useSharedValue(0);
@@ -50,6 +56,9 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
     const isLoadingRef = useRef(false);
     const hasMoreRef = useRef(true);
     const currentPageRef = useRef(1);
+    const [contentHeight, setContentHeight] = useState(0);
+
+    const LIST_HEIGHT = rpx(290.625);
 
     useEffect(() => {
         indicatorTranslateX.value = withTiming(activeCategory * rpx(TAB_STEP * 750 / 1920), { duration: 200 });
@@ -93,13 +102,7 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                 params.redeemable_only = true;
             }
 
-            // 以上，如果activeCategory为1，则获取积分可兑的商品列表，否则获取其他分类的商品列表，默认获取所有分类的商品列表
-
-            // console.log('多类商品列表请求参数:', params);
-
             const res = await getMallList(params);
-
-            // console.log('多类商品列表响应数据:', res.items, res.categories);
 
             const items = res.items ?? [];
             
@@ -177,20 +180,11 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                 <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={() => {
                     onProductClick(item.id)
                 }}>
-                    {/* {hasImage ? (
-                        <Image source={{ uri: item.image }} style={styles.productImage} resizeMode="cover" />
-                    ) : (
-                        <View style={styles.placeholder}>
-                            <Ionicons name="image-outline" size={rpx(40)} color="#B0B0B0" />
-                        </View>
-                    )} */}
-                    {/* TODO  */}
                     <ImageWithPlaceholder
                         source={{ uri: item.image }}
                         style={styles.productImage}
                         resizeMode="cover"
                     />
-                    {/* <Image source={{ uri: item.image, cache: 'reload' }} style={styles.productImage} resizeMode="cover" /> */}
                     <Text style={styles.productName} numberOfLines={1}>
                         {item.name}
                     </Text>
@@ -209,6 +203,20 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
         },
         [onProductClick],
     );
+
+    const canScroll = useMemo(() => {
+        return contentHeight >= LIST_HEIGHT;
+    }, [contentHeight]);
+
+    // 暴露 canScroll 状态快照给外部组件
+    useImperativeHandle(ref, () => ({
+        getCanScroll: () => canScroll,
+    }), [canScroll]);
+
+    // 监听 canScroll 发生变化
+    useEffect(() => {
+        onCanScrollChange?.(canScroll);
+    }, [canScroll, onCanScrollChange]);
 
     return (
         <View style={[styles.container, style]}>
@@ -232,15 +240,18 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
             </View>
 
             <FlatList
+                ref={listRef}
                 data={products}
                 keyExtractor={keyExtractor}
                 numColumns={NUM_COLUMNS}
+                style={styles.list}
                 contentContainerStyle={styles.listContent}
                 columnWrapperStyle={styles.columnWrapper}
                 renderItem={renderItem}
                 showsVerticalScrollIndicator={false}
-                scrollEnabled={scrollEnabled}
+                scrollEnabled={true}
                 onScroll={onScroll}
+                onScrollEndDrag={onScroll}
                 scrollEventThrottle={16}
                 nestedScrollEnabled={true}
                 onEndReached={loadMore}
@@ -262,10 +273,13 @@ const MultiCategoryProductList: React.FC<MultiCategoryProductListProps> = ({
                         </View>
                     ) : null
                 }
+                onContentSizeChange={(width, height) => {
+                    setContentHeight(height);
+                }}
             />
         </View>
     );
-};
+});
 
 const styles = createStyles({
     container: {
@@ -324,8 +338,11 @@ const styles = createStyles({
         marginTop: 3.125, // 8
         marginBottom: 3.125, // 8
     },
+    list: {
+        height: 290.625, // 744
+    },
     listContent: {
-        flexGrow: 1,
+        // flexGrow: 1,
         paddingTop: 3.515625, // 9
         paddingBottom: 3.515625, // 9
         rowGap: 14.0625, // 36
@@ -357,8 +374,6 @@ const styles = createStyles({
         width: 78.125, // 200
         height: 78.125, // 200
         borderRadius: 7.8125, // 20
-        // borderWidth: 1,
-        // borderColor: 'red',
     },
     placeholder: {
         width: 78.125, // 200
@@ -415,10 +430,8 @@ const styles = createStyles({
     emptyContainer: {
         // flex: 1,
         alignItems: 'center' as const,
-        justifyContent: 'center' as const,
+        justifyContent: 'flex-start' as const,
         paddingVertical: 15.625, // 20
-        // borderWidth: 1,
-        // borderColor: 'red',
     },
     emptyText: {
         fontSize: 11.71875, // 30
@@ -449,6 +462,8 @@ const styles = createStyles({
         color: '#999',
     },
 });
+
+MultiCategoryProductList.displayName = 'MultiCategoryProductList';
 
 export default MultiCategoryProductList;
 
