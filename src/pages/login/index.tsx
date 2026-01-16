@@ -16,12 +16,15 @@ import Sms from './com/sms';
 import Password from './com/password';
 import styles from './styles';
 import IconFont from '@/iconfont';
+import { cacheSet } from '@/utils/cache';
+import { setStorage } from '@/utils';
+import PopConfirm from '@/components/popConfirm';
 
 type LoginType = 'sms' | 'password' | 'mini';
 
 const Login = () => {
   const navigation = useAppNavigation();
-  const [agree, setAgree] = useState(true);
+  const [agree, setAgree] = useState<boolean>(false);
   const [loginType, setLoginType] = useState<LoginType>('sms');
   const [prevLoginType, setPrevLoginType] = useState<'sms' | 'password'>('sms');
   const [mobile, setMobile] = useState('');
@@ -128,7 +131,13 @@ const Login = () => {
     }
   };
 
-  const radioClick = () => { }
+  const radioClick = async () => {
+    setAgree(!agree);
+    await cacheSet({ key: 'agreePrivacy', data: !agree })
+    if (!agree) {
+      await setStorage({ key: 'pushEnabled', data: true })
+    }
+  }
 
   return (
     <PageContainer
@@ -146,26 +155,19 @@ const Login = () => {
           {loginType === 'sms' ? (
             <Sms
               agree={agree}
-              onChange={(mobile) => {
-                setLoginType('password');
-                setPrevLoginType('password');
-                setMobile(mobile);
-              }}
-              agreePopRef={agreePopRef}
+              onChange={(mobile) => setMobile(mobile)}
+              popRef={agreePopRef}
+              initialMobile={mobile}
             />
           ) : (
             <Password
               agree={agree}
-              onChange={setMobile}
+              onChange={(mobile) => setMobile(mobile)}
               popRef={agreePopRef}
               mobile={mobile}
             />
           )}
-        </Flex>
-
-
-        <Flex direction="column" align="center">
-          <Flex align="center" isTouchView onPress={radioClick}>
+          <Flex align="center" isTouchView onPress={radioClick} style={{ marginTop: 16 }}>
             <IconFont
               size={17}
               name={agree ? 'selected' : 'unselected'}
@@ -196,26 +198,36 @@ const Login = () => {
               </Pressable>
             </Flex>
           </Flex>
-          <Text
-            style={{ marginTop: 48 }}
-            onPress={async () => {
-              // try {
-              //   await cacheRemoveSync('token')
-              //   await cacheSet({key: 'guestMode', data: true})
-              // } catch {}
-              // reLaunch({url: '/pages/index/index'})
-            }}>
-            暂不登录
-          </Text>
+        </Flex>
+        <Flex style={{ height: 123 }} direction="column" align="center">
           <Flex align="center" style={styles.logTip}>
             <View style={styles.line} />
-            <Text style={styles.fastDesc}>第三方平台登录</Text>
+            <Text style={styles.fastDesc}>更多登录方式</Text>
             <View style={styles.line} />
           </Flex>
-          <Image source={{ uri: 'https://g.18qjz.cn/img/boklock/icon_login_mobile.png' }} style={styles.wxlogo} />
+          <Flex direction="row" justify="center" align="center">
+            <Flex direction="column" align="center">
+              <Image source={{ uri: 'https://g.18qjz.cn/img/boklock/icon_wechat.png' }} style={styles.wxlogo} />
+            </Flex>
+            <Flex direction="column" justify="center" align="center" style={{ marginLeft: 65 }} isTouchView onPress={() => {
+              const type =
+                (loginType === 'mini' ? prevLoginType : loginType) === 'sms'
+                  ? 'password'
+                  : 'sms'
+              setLoginType(type)
+              setPrevLoginType(type)
+            }}>
+              <Image source={{ uri: `https://g.18qjz.cn/img/boklock/loginIcon/icon_login_${(loginType === 'mini' ? prevLoginType : loginType) === 'sms' ? 'password' : 'mobile'}.png` }} style={styles.loginIcon}
+                resizeMode="contain"
+
+              />
+
+            </Flex>
+          </Flex>
         </Flex>
-      </View>
-    </PageContainer>
+      </View >
+      <PopConfirm ref={agreePopRef} title="请先阅读并同意用户协议和隐私政策" />
+    </PageContainer >
   );
 };
 

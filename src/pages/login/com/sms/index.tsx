@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { TextInput } from '@/components';
 import { mobileExp } from '@/utils';
-import loginStyles from './styles';
 import { getSmsCode } from '@/services';
 import { SMS_PURPOSE } from '@/constants';
 import IconFont from '@/iconfont';
-
+import Toast from '@ant-design/react-native/lib/toast';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import loginStyles from './styles';
 interface SmsProps {
   agree: boolean;
   onChange: (mobile: string) => void;
-  agreePopRef?: React.RefObject<any>;
+  popRef?: React.RefObject<any>;
+  initialMobile?: string;
 }
 
-const Sms: React.FC<SmsProps> = ({ agree, onChange, agreePopRef }) => {
+const Sms: React.FC<SmsProps> = ({ agree, onChange, popRef, initialMobile }) => {
+  const navigation = useNavigation<any>();
   const [showError, setShowError] = useState(false);
   const [mobile, setMobile] = useState('');
 
@@ -24,30 +27,34 @@ const Sms: React.FC<SmsProps> = ({ agree, onChange, agreePopRef }) => {
     }
 
     if (!agree) {
-      if (agreePopRef?.current) {
-        agreePopRef.current.open();
+      if (popRef?.current) {
+        popRef.current.open();
       }
       return;
     }
 
     setShowError(false);
-    // Toast.loading('发送中')
+    const loadingToast = Toast.loading('发送中', 0);
     const res = await getSmsCode({ mobile, purpose: SMS_PURPOSE.LOGIN })
-    // Toast.hide()
+    Toast.remove(loadingToast)
 
-    if (res.code === '200') {
-      // navigateTo({
-      //   url: `/pages/login/sms?${stringify({
-      //     mobile,
-      //   })}`,
-      // })
-    } else if (res.code === '521') {
+    if (res.code === 200) {
+      navigation.navigate('LoginSms', { mobile, type: SMS_PURPOSE.LOGIN })
+    } else if (res.code === 521) {
       setShowError(true)
     } else {
-      // Toast.show(res.message)
+      Toast.fail(res.msg || '发送失败');
     }
 
   }
+
+  useFocusEffect(useCallback(() => {
+    return () => {
+      if (initialMobile) {
+        setMobile(initialMobile);
+      }
+    }
+  }, [initialMobile]))
 
 
   return (
@@ -82,15 +89,6 @@ const Sms: React.FC<SmsProps> = ({ agree, onChange, agreePopRef }) => {
           }}>
           {showError ? <Text style={loginStyles.error}>手机号码有误</Text> : <></>}
           <Text style={loginStyles.btnText}>获取验证码</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={loginStyles.changeType}
-          onPress={() => {
-            Keyboard.dismiss();
-            onChange(mobile);
-          }}>
-          <Text style={loginStyles.changeTypeDesc}>密码登录</Text>
-          <IconFont name="a-headfor-12" size={20} color="#333333" />
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>

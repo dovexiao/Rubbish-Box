@@ -27,6 +27,11 @@ export const routes = {
       name: 'Login',
       component: require('@/pages/login').default,
       label: '登录',
-    }
+    },
+    {
+      name: 'ForgetPassword',
+      component: require('@/pages/forgetPassword').default,
+      label: '忘记密码',
+    },
   ],
 } as const;

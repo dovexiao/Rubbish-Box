@@ -1,5 +1,3 @@
-export * from './theme';
-
 export const LOGIN = '206'
 export const UN_COMMIT = '207'
 export const WAIT_APPROVE = '208'
@@ -105,7 +103,6 @@ export const SEARCH_BLUETOOTH_STATUS = {
 }
 
 export const SEARCH_BLUETOOTH_STATUS_NAME = {
-  [SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS]: '配对时请输入以下PIN码',
   [SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED]: '搜索失败',
 }
 

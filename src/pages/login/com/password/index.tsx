@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { getCurrentPages, getStorage, mobileExp, navigateBack, reLaunch } from '@/utils';
-import { cacheGet, cacheSetSync } from '@/utils/cache';
+import { cacheSetSync } from '@/utils/cache';
 import { getMobPushDeviceInfo } from '@/utils/push';
 import { Flex, TextInput } from '@/components';
 import IconFont from '@/iconfont';
 import { login } from '@/services/common';
-import { tokenStorage } from '@/utils/storage';
-import { useAppNavigation } from '@/hooks/useAppNavigation';
 import Toast from '@ant-design/react-native/lib/toast';
 import passwordStyles from './styles';
+import { useNavigation } from '@react-navigation/native';
 
 interface PasswordProps {
   agree: boolean;
@@ -19,6 +18,7 @@ interface PasswordProps {
 }
 
 const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: initialMobile = '' }) => {
+  const navigation = useNavigation<any>();
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('手机号码或密码错误');
   const [mobile, setMobile] = useState(initialMobile);
@@ -128,9 +128,7 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
           style={passwordStyles.errorBox}
           isTouchView
           onPress={() => {
-            // TODO: 导航到忘记密码页面
-            // navigation.navigate('ForgetPassword');
-            // Toast.show('忘记密码功能待实现');
+            navigation.navigate('ForgetPassword');
           }}>
           {showError ? (
             <Text style={passwordStyles.error}>{errorMessage}</Text>
@@ -149,16 +147,6 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
           }}
           disabled={!mobile || !password || showError || !agree}>
           <Text style={passwordStyles.btnText}>登录</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={passwordStyles.changeType}
-          onPress={() => {
-            Keyboard.dismiss();
-            onChange(mobile);
-          }}>
-          <Text style={passwordStyles.changeTypeDesc}>手机快捷登录</Text>
-          <IconFont name="a-headfor-12" size={20} color="#333333" />
         </TouchableOpacity>
       </Flex>
     </TouchableWithoutFeedback>

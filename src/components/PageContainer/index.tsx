@@ -17,6 +17,7 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
+import IconFont from '@/iconfont';
 
 interface PageNavProps {
   text?: string;
@@ -135,7 +136,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <Text style={[styles.backButtonText, { color: titleColor }]}>
-                  ←
+                  <IconFont name="back" size={24} color={titleColor} />
                 </Text>
               </TouchableOpacity>
             )}

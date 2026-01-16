@@ -47,8 +47,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 12
   },
   wxlogo: {
-    width: 40,
-    height: 40
+    width: 50,
+    height: 50
+  },
+  loginIcon: {
+    width: 50,
+    height: 50,
   }
 });
 
