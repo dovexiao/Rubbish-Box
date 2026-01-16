@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import {
   View,
   Text,
@@ -74,11 +74,14 @@ export default function ReaderIndex() {
   const [categoryNames, setCategoryNames] = useState<string[]>(["类型"])
 
   // 分页状态
-  const [pageNum, setPageNum] = useState(1)
+  const pageNum = useRef(1)
   const [pageSize] = useState(20)
 
   // 筛选选项
   // const sorts = ["综合", "热门", "最新"]
+
+  // 获取书籍用分类id校验标记，包括分类id和时间戳
+  const categoryIdRef = useRef<{ category: number, timestamp: number } | null>(null)
 
   // 获取书籍封面图片
   const getBookCover = useCallback((book: any) => {
@@ -173,16 +176,20 @@ export default function ReaderIndex() {
 
   // 获取书籍列表（仅分类页面使用）
   const getBooks = useCallback(
-    async (isRefresh = false) => {
+    async ({ category, isRefresh = false }: { category: number, isRefresh: boolean }) => {
       if (loading && !isRefresh) return
 
       try {
         setLoading(true)
 
+        const category_id = categories[category]?.id
+
+        categoryIdRef.current = { category: category_id, timestamp: Date.now() }
+
         const params: BookListParams = {
-          page: isRefresh ? 1 : pageNum,
+          page: isRefresh ? 1 : pageNum.current,
           page_size: pageSize,
-          category_id: activeCategory === 0 ? undefined : categories[activeCategory]?.id,
+          category_id,
         }
 
         // console.log("📚 [API] 请求书籍列表参数:", params)
@@ -190,6 +197,10 @@ export default function ReaderIndex() {
         // console.log("📚 [API] 书籍列表响应:", response)
 
         // response.results = response.results.slice(0, 5)
+
+        if (categoryIdRef.current?.category !== category_id) {
+          return;
+        }
 
         // 补齐到4的倍数
         const padToMultipleOf4 = (arr: any[]) => {
@@ -204,7 +215,7 @@ export default function ReaderIndex() {
 
         if (isRefresh) {
           setBooks(paddedResults)
-          setPageNum(2)
+          pageNum.current = 2
         } else {
           setBooks((prev) => {
             // 移除之前的占位项，然后添加新数据并补齐
@@ -212,7 +223,7 @@ export default function ReaderIndex() {
             const newList = [...prevWithoutPlaceholders, ...(response.results || [])]
             return padToMultipleOf4(newList)
           })
-          setPageNum((prev) => prev + 1)
+          pageNum.current += 1
         }
 
         setHasMore(response.total > response.page * response.page_size)
@@ -228,13 +239,13 @@ export default function ReaderIndex() {
         setRefreshing(false)
       }
     },
-    [loading, pageNum, pageSize, activeCategory, categories],
+    [loading, pageSize, categories],
   )
 
   // 重置书籍列表
   const resetBookList = useCallback(() => {
     setBooks([])
-    setPageNum(1)
+    pageNum.current = 1
     setHasMore(true)
   }, [])
 
@@ -244,9 +255,7 @@ export default function ReaderIndex() {
       setCurrentTab(tab)
       if (tab === "category" && books.length === 0) {
         // 使用 InteractionManager 延迟加载，确保UI先响应
-        InteractionManager.runAfterInteractions(() => {
-          getBooks(true)
-        })
+        getBooks({ category: 0, isRefresh: true })
       }
     },
     [books.length, getBooks],
@@ -257,9 +266,7 @@ export default function ReaderIndex() {
     (idx: number) => {
       setActiveSort(idx)
       resetBookList()
-      InteractionManager.runAfterInteractions(() => {
-        getBooks(true)
-      })
+      getBooks({ category: idx, isRefresh: true })
     },
     [resetBookList, getBooks],
   )
@@ -270,9 +277,10 @@ export default function ReaderIndex() {
       setActiveCategory(idx)
       setCategoryLoading(true) // 开始分类切换加载
       resetBookList()
-      InteractionManager.runAfterInteractions(() => {
-        getBooks(true)
-      })
+      getBooks({ category: idx, isRefresh: true })
+      // InteractionManager.runAfterInteractions(() => {
+      //   getBooks(true)
+      // })
     },
     [resetBookList, getBooks],
   )
@@ -284,16 +292,16 @@ export default function ReaderIndex() {
       getRecommendations()
     } else {
       resetBookList()
-      setTimeout(() => getBooks(true), 100)
+      getBooks({ category: activeCategory, isRefresh: true })
     }
-  }, [currentTab, resetBookList, getBooks, getRecommendations])
+  }, [currentTab, resetBookList, getBooks, getRecommendations, activeCategory])
 
   // 加载更多
   const loadMore = useCallback(() => {
-    if (!loading && hasMore && currentTab === "category") {
-      getBooks()
+    if (!loading && hasMore && currentTab === "category" && pageNum.current > 1) {
+      getBooks({ category: activeCategory, isRefresh: false })
     }
-  }, [loading, hasMore, getBooks, currentTab])
+  }, [loading, hasMore, getBooks, currentTab, activeCategory])
 
   // 渲染推荐书籍项
   const renderRecommendItem = useCallback(
@@ -702,7 +710,7 @@ export default function ReaderIndex() {
   const { data: preloadData, loading: preloadLoading } = useParallelPreload({
     categories: getCategories,
     recommendations: getRecommendations,
-    initialBooks: () => books.length === 0 ? getBooks(true) : Promise.resolve()
+    initialBooks: () => books.length === 0 ? getBooks({ category: 0, isRefresh: true }) : Promise.resolve()
   }, [])
 
   // 当预加载数据完成后，更新状态
