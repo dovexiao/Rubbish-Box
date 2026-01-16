@@ -101,7 +101,7 @@ export default function MyScreen() {
         }),
         getUserStudyData().catch((err) => {
           devError("获取学习数据失败:", err)
-          return { daily_data: [] }
+          return { daily_data: defaultWeeklyStudyData }
         })
       ])
 
@@ -167,7 +167,7 @@ export default function MyScreen() {
             }),
             getUserStudyData().catch((err) => {
               devError("获取学习数据失败:", err)
-              return { daily_data: [] }
+              return { daily_data: defaultWeeklyStudyData }
             })
           ])
 
