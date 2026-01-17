@@ -1,5 +1,8 @@
 import { create } from 'zustand'
+import { Platform } from 'react-native'
 import { useLockScreenStore } from './lockScreenStore'
+import { usePostureStore } from './postureStore'
+import { stopPostureMonitorService, postureMonitorEmitter } from '@/modules/PostureMonitorModule'
 
 /**
  * 设备状态接口
@@ -56,6 +59,31 @@ export const useDeviceStatusStore = create<DeviceStatusStore>((set) => ({
     // 同步锁屏状态
     if (status.lockScreenNow !== undefined) {
       useLockScreenStore.getState().setLocked(status.lockScreenNow)
+      // 暂停坐姿检测
+      console.log('暂停坐姿检测', status.lockScreenNow)
+      if (status.lockScreenNow) {
+        // 停止 JS 层监控状态
+        if (typeof usePostureStore !== 'undefined') {
+          usePostureStore.getState().stopMonitoring()
+        }
+        // 停止 Native 层后台服务
+        if (Platform.OS === 'android') {
+          stopPostureMonitorService().then((stopped) => {
+            if (stopped) {
+              console.log('✅ Native 层坐姿监控服务已停止')
+            }
+          }).catch((error) => {
+            console.error('❌ 停止 Native 层坐姿监控服务失败:', error)
+          })
+          // 移除事件监听器
+          if (postureMonitorEmitter) {
+            postureMonitorEmitter.removeAllListeners('onPostureStatus')
+            postureMonitorEmitter.removeAllListeners('onPostureReward')
+            postureMonitorEmitter.removeAllListeners('onRestReminder')
+            console.log('✅ 已移除坐姿监控事件监听器')
+          }
+        }
+      }
       console.log('[DeviceStatusStore] 同步锁屏状态:', status.lockScreenNow)
     }
     
@@ -77,6 +105,31 @@ export const useDeviceStatusStore = create<DeviceStatusStore>((set) => ({
       // 同步锁屏状态（如果 lockScreenNow 字段有更新）
       if (statusUpdate.lockScreenNow !== undefined) {
         useLockScreenStore.getState().setLocked(statusUpdate.lockScreenNow)
+        // 暂停坐姿检测
+        console.log('暂停坐姿检测', statusUpdate.lockScreenNow)
+        if (statusUpdate.lockScreenNow) {
+          // 停止 JS 层监控状态
+          if (typeof usePostureStore !== 'undefined') {
+            usePostureStore.getState().stopMonitoring()
+          }
+          // 停止 Native 层后台服务
+          if (Platform.OS === 'android') {
+            stopPostureMonitorService().then((stopped) => {
+              if (stopped) {
+                console.log('✅ Native 层坐姿监控服务已停止')
+              }
+            }).catch((error) => {
+              console.error('❌ 停止 Native 层坐姿监控服务失败:', error)
+            })
+            // 移除事件监听器
+            if (postureMonitorEmitter) {
+              postureMonitorEmitter.removeAllListeners('onPostureStatus')
+              postureMonitorEmitter.removeAllListeners('onPostureReward')
+              postureMonitorEmitter.removeAllListeners('onRestReminder')
+              console.log('✅ 已移除坐姿监控事件监听器')
+            }
+          }
+        }
         console.log('[DeviceStatusStore] 同步锁屏状态:', statusUpdate.lockScreenNow)
       }
       

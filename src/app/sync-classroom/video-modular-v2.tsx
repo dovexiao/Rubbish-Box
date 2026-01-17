@@ -34,6 +34,7 @@ import {
 } from '@/services/classroom'
 import { useUserStore } from '@/stores/userStore'
 import { useDeviceStatusStore, selectCanDragVideo } from '@/stores/deviceStatusStore'
+import { useLockScreenStore } from '@/stores/lockScreenStore'
 
 interface VideoParams {
   videoCode?: string
@@ -53,6 +54,7 @@ export default function VideoPlayerScreenModularV2() {
   const params = useLocalSearchParams() as VideoParams
   const userStore = useUserStore()
   const canDragVideo = useDeviceStatusStore(selectCanDragVideo)
+  const locked = useLockScreenStore((state) => state.locked)
 
   // 活动追踪
   const { startVideo, updateVideoProgress, endVideo } = useActivityTracking({
@@ -307,6 +309,14 @@ export default function VideoPlayerScreenModularV2() {
     }
     return undefined
   }, [videoUrl, loading, player, lastSavedTime, autoPlay])
+
+  // 监听锁屏状态，锁屏时暂停播放
+  useEffect(() => {
+    if (locked && isPlaying) {
+      console.log('🔒 检测到锁屏，暂停视频播放')
+      pause()
+    }
+  }, [locked, isPlaying, pause])
 
   // 监听视频完成
   useEffect(() => {

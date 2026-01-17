@@ -21,6 +21,7 @@ interface NetworkStore {
   updateNetworkState: (state: NetInfoState) => void
   initialize: () => void
   setShowNetworkModal: (show: boolean) => void
+  refreshNetworkInfo: () => Promise<void>
 }
 
 // 全局单例 - 确保整个应用只有一个网络监听实例
@@ -126,6 +127,17 @@ export const useNetworkStore = create<NetworkStore>((set, get) => ({
 
   setShowNetworkModal: (show: boolean) => {
     set({ showNetworkModal: show })
+  },
+
+  refreshNetworkInfo: async () => {
+    console.log("🔄 强制刷新网络信息")
+    try {
+      const networkState = await NetInfo.fetch()
+      get().updateNetworkState(networkState)
+      console.log("✅ 网络信息刷新完成")
+    } catch (error) {
+      console.error("❌ 刷新网络信息失败:", error)
+    }
   },
 }))
 

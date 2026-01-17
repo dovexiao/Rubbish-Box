@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react"
-import { View, ActivityIndicator, StyleProp, ViewStyle, Text } from "react-native"
+import { View, ActivityIndicator, StyleProp, ViewStyle, Text, Image, ImageStyle, ImageProps, } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { rpx } from "../../utils/rpxStyleSheet"
-import FastImage, { ImageStyle, FastImageProps as ImageProps, OnLoadEvent, OnProgressEvent } from "react-native-fast-image"
+// import FastImage, { ImageStyle, FastImageProps as ImageProps, OnLoadEvent, OnProgressEvent } from "react-native-fast-image"
 
 interface ImageWithPlaceholderProps extends ImageProps {
   placeholderStyle?: StyleProp<ViewStyle>
@@ -65,7 +65,7 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
   }, [onLoadStart])
 
   // 处理加载成功
-  const handleLoad = useCallback((e: OnLoadEvent) => {
+  const handleLoad = useCallback((e: any) => {
     // console.log("✅ 加载成功:", e)
     setLoading(false)
     setError(false)
@@ -141,7 +141,7 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
     <View style={containerStyle}>
       {/* 图片：只在 source 有效且未出错时显示 */}
       {sourceValid && !error && (
-        <FastImage
+        <Image
           source={source}
           style={finalImageStyle}
           onLoadStart={handleLoadStart}

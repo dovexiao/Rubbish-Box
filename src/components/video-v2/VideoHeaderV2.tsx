@@ -36,7 +36,7 @@ export const VideoHeaderV2: React.FC<VideoHeaderV2Props> = ({
           </TouchableOpacity>
       )}
       <Text style={styles.title} numberOfLines={1}>
-        {title}22222
+        {title}
       </Text>
     </View>
   )

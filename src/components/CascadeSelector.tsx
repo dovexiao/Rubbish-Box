@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   selectorGradient: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 8,
+    // paddingLeft: 8,
     paddingRight: 4,
     paddingVertical: 6,
     backgroundColor: "rgba(255, 255, 255, 0.3)",

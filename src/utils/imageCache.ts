@@ -26,6 +26,28 @@ async function ensureCacheDir(): Promise<void> {
  * 从URL生成缓存文件名
  */
 function getCacheFileName(url: string): string {
+  // 从URL提取实际的文件扩展名
+  let extension = 'jpg' // 默认扩展名
+
+  try {
+    // 解析URL路径部分
+    const urlObj = new URL(url)
+    const pathname = urlObj.pathname
+
+    // 从路径中提取文件扩展名
+    const lastDotIndex = pathname.lastIndexOf('.')
+    if (lastDotIndex !== -1) {
+      const ext = pathname.substring(lastDotIndex + 1).toLowerCase()
+      // 验证扩展名是否为有效的图片格式
+      const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp']
+      if (validExtensions.includes(ext)) {
+        extension = ext
+      }
+    }
+  } catch (error) {
+    console.warn('🖼️ [缓存文件名] 解析URL失败，使用默认扩展名:', error)
+  }
+
   // 使用完整的URL进行hash，避免文件名冲突
   let hash = 0
   for (let i = 0; i < url.length; i++) {
@@ -33,7 +55,8 @@ function getCacheFileName(url: string): string {
     hash = ((hash << 5) - hash) + char
     hash = hash & hash // 转换为32位整数
   }
-  return `bg_${Math.abs(hash)}.jpg`
+
+  return `bg_${Math.abs(hash)}.${extension}`
 }
 
 /**
@@ -172,7 +195,7 @@ export async function getHomeBgSource(url: string): Promise<{ uri: string } | nu
   const cachedPath = await getCachedHomeBg()
   if (cachedPath) {
     console.log("🖼️ 使用缓存的背景图")
-    return { uri: cachedPath }
+    return { uri: cachedPath.localPath }
   }
 
   // 如果没有缓存，返回网络URL

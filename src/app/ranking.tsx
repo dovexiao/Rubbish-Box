@@ -907,7 +907,7 @@ const styles = createStyles({
     borderTopColor: "#F7F8FA", // 分隔条效果
   },
   listRank: {
-    width: 20,
+    width: 28,
     fontSize: 11.75,
     fontWeight: "600" as const,
     color: "#666",
