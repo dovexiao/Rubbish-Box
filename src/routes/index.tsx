@@ -33,5 +33,10 @@ export const routes = {
       component: require('@/pages/forgetPassword').default,
       label: '忘记密码',
     },
+    {
+      name: 'WebView',
+      label: '网页浏览',
+      component: require('@/pages/WebView').default,
+    },
   ],
 } as const;

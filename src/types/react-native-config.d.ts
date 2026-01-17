@@ -11,6 +11,8 @@ declare module 'react-native-config' {
     ANDROID_PACKAGE_NAME?: string;
     IOS_BUNDLE_ID?: string;
     APP_NAME?: string;
+    MAP_KEY_ANDROID?: string;
+    MAP_KEY_IOS?: string;
     // 在这里添加其他环境变量
   }
 

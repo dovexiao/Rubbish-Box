@@ -34,6 +34,24 @@ const Login = () => {
   const agreePopRef = useRef<any>(null);
   const appStateSubscription = useRef<any>(null);
 
+  const handleAgreementLinkPress = (
+    type: 'userAgreement' | 'privacyPolicy',
+  ) => {
+    let url = '';
+    if (type === 'userAgreement') {
+      url = 'https://g.18qjz.cn/protocol/boklock/userAgreement.html';
+    } else if (type === 'privacyPolicy') {
+      url = 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html';
+    }
+    // 使用系统浏览器打开链接
+    if (url) {
+      navigation.navigate('WebView', {
+        url,
+        title: type === 'userAgreement' ? '泊刻地锁用户协议' : '泊刻地锁隐私政策',
+      });
+    }
+  };
+
   // 检查是否已同意协议
   useFocusEffect(
     React.useCallback(() => {
@@ -177,22 +195,14 @@ const Login = () => {
             <Flex align="center" >
               <Text style={styles.agree}>我已阅读并同意</Text>
               <Pressable onPress={() => {
-                // navigateTo({
-                //   url: `/pages/web/index?${stringify({
-                //     url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
-                //   })}`,
-                // })
+                handleAgreementLinkPress('userAgreement')
               }}>
                 <Text style={styles.agreeLink}>《泊刻地锁用户协议</Text>
               </Pressable>
 
               <Text style={styles.agree}>和</Text>
               <Pressable onPress={() => {
-                // navigateTo({
-                //   url: `/pages/web/index?${stringify({
-                //     url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
-                //   })}`,
-                // })
+                handleAgreementLinkPress('privacyPolicy')
               }}>
                 <Text style={styles.agreeLink}>《隐私政策》</Text>
               </Pressable>

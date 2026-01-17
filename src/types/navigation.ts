@@ -6,6 +6,9 @@ export type RootStackParamList = {
   MemberShare: undefined;
   VipInvite: undefined;
   DeviceInfo: undefined;
+  WebView: { url?: string; title?: string };
+  ForgetPassword: undefined;
+  ForgetPasswordSms?: { mobile: string; type: string };
 };
 
 export type MainTabParamList = {

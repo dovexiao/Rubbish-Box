@@ -224,7 +224,8 @@ android {
 
 configurations.all {
     resolutionStrategy {
-        exclude group: 'com.amap.api', module: 'location'
+        // 移除高德定位库的排除，因为 react-native-amap-geolocation 需要它
+        // exclude group: 'com.amap.api', module: 'location'
         exclude group: 'com.tencent.mm.opensdk', module: 'wechat-sdk-android'
     }
 }

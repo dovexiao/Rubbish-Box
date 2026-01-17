@@ -60,7 +60,7 @@ const PopConfirm = ({
       onClose={() => setVisible(false)}
       maskClosable
       visible={visible}
-      closable
+
     >
       <Flex direction={'column'} style={popupStyle.popupContainer}>
         {children}

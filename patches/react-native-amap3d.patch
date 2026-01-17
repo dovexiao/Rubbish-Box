@@ -1,0 +1,22 @@
+diff --git a/lib/ios/react-native-amap3d.podspec b/lib/ios/react-native-amap3d.podspec
+index 970eca789dad57952b8545d9b30663206405715e..24d2dc0ef8fbc186039cc46e57f3fbdca3802ffc 100644
+--- a/lib/ios/react-native-amap3d.podspec
++++ b/lib/ios/react-native-amap3d.podspec
+@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
+   s.source_files = "**/*.{h,m,mm,swift}"
+ 
+   s.dependency "React-Core"
+-  s.dependency 'AMap3DMap', "~> 9.6.0"
++  s.dependency 'AMap3DMap', "~> 10.0.700"
+ end
+diff --git a/react-native-amap3d.podspec b/react-native-amap3d.podspec
+index 2de92b619422585e95b8920ef7409e359e6ecf9b..645ff949cb7cd47c92f7c94e7ae139be54320b7e 100644
+--- a/react-native-amap3d.podspec
++++ b/react-native-amap3d.podspec
+@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
+   s.source_files = "lib/ios/**/*.{h,m,mm,swift}"
+ 
+   s.dependency "React-Core"
+-  s.dependency 'AMap3DMap', "~> 9.6.0"
++  s.dependency 'AMap3DMap', "~> 10.0.700"
+ end

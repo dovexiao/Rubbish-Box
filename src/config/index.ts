@@ -27,6 +27,10 @@ export const IOS_BUNDLE_ID = Config.IOS_BUNDLE_ID || 'com.boklock.m.test';
 // 获取应用名称
 export const APP_NAME = Config.APP_NAME || 'boklock';
 
+// 获取高德地图 API Key
+export const MAP_KEY_ANDROID = Config.MAP_KEY_ANDROID;
+export const MAP_KEY_IOS = Config.MAP_KEY_IOS;
+
 // 导出配置对象（方便统一访问）
 export const config = {
   env: ENV,
@@ -35,6 +39,8 @@ export const config = {
   androidPackageName: ANDROID_PACKAGE_NAME,
   iosBundleId: IOS_BUNDLE_ID,
   appName: APP_NAME,
+  mapKeyAndroid: MAP_KEY_ANDROID,
+  mapKeyIos: MAP_KEY_IOS,
 };
 
 // 打印当前环境（开发时方便调试）
@@ -46,6 +52,8 @@ if (__DEV__) {
   console.log(`Android 包名: ${ANDROID_PACKAGE_NAME}`);
   console.log(`iOS Bundle ID: ${IOS_BUNDLE_ID}`);
   console.log(`应用名称: ${APP_NAME}`);
+  console.log(`高德地图 Android Key: ${MAP_KEY_ANDROID ? '已配置' : '未配置'}`);
+  console.log(`高德地图 iOS Key: ${MAP_KEY_IOS ? '已配置' : '未配置'}`);
   console.log('===============');
 }
 
