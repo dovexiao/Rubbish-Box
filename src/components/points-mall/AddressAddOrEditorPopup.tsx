@@ -155,12 +155,17 @@ const AddressAddOrEditorPopup = forwardRef<AddressAddOrEditorPopupRef, AddressAd
     }
 
     return (
-        <Modal visible={visible} transparent animationType="fade" onRequestClose={() => { hide(); onClose?.(); }}>
-            <TouchableWithoutFeedback onPress={() => { hide(); onClose?.(); }}>
-                <View style={styles.overlay} />
-            </TouchableWithoutFeedback>
+        <Modal visible={visible} transparent animationType="fade" onRequestClose={() => {}}>
+            <View style={styles.overlay} />
             <View style={styles.centerBox}>
                 <View style={styles.popup}>
+                    <TouchableOpacity
+                        style={styles.closeButton}
+                        onPress={() => { hide(); onClose?.(); }}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={styles.closeButtonText}>×</Text>
+                    </TouchableOpacity>
                     <Text style={styles.title}>{isEdit ? "编辑收货地址" : "添加收货地址"}</Text>
 
                     <View style={styles.formItem}>
@@ -271,6 +276,7 @@ const styles = createStyles({
         // 不可拉伸
         flexShrink: 0,
         flexGrow: 0,
+        position: "relative" as const,
     },
     title: {
         fontFamily: "PingFang SC",
@@ -340,6 +346,22 @@ const styles = createStyles({
     },
     saveButtonTextDisabled: {
         color: "#999999",
+    },
+    closeButton: {
+        position: "absolute" as const,
+        top: 7.8125, // 20
+        right: 7.8125, // 20
+        width: 31.25, // 80
+        height: 31.25, // 80
+        justifyContent: "center" as const,
+        alignItems: "center" as const,
+        zIndex: 10,
+    },
+    closeButtonText: {
+        fontSize: 24,
+        color: "#999999",
+        fontWeight: "300" as const,
+        lineHeight: 30,
     },
 })
 

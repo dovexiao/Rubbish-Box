@@ -21,6 +21,7 @@ export { default as CurrencyGuideFloatingButton } from "./CurrencyGuideFloatingB
 export { default as CurrencyAmount } from "./CurrencyAmount"
 export type { CurrencyAmountRef } from "./CurrencyAmount"
 export { default as MultiCategoryProductList } from "./MultiCategoryProductList"
+export type { MultiCategoryProductListRef } from "./MultiCategoryProductList"
 export { default as DiscountedProductWindow } from "./DiscountedProductWindow"
 export { default as NewProductDetailsPopup } from "./NewProductDetailsPopup"
 export type { NewProductDetailsPopupRef } from "./NewProductDetailsPopup"

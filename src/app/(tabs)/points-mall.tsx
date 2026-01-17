@@ -1,8 +1,7 @@
-import { useState, useCallback, useRef } from "react"
+import  { useState, useCallback, useRef, ComponentRef, useEffect } from "react"
 import { View, ScrollView } from "react-native"
 import { useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
-
 import { StatusBar } from "../../components/StatusBar"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import {
@@ -15,11 +14,13 @@ import {
   CurrencyAmount,
   type CurrencyAmountRef,
   MultiCategoryProductList,
+  type MultiCategoryProductListRef,
   DiscountedProductWindow,
   NewProductDetailsPopup,
   type NewProductDetailsPopupRef,
   CurrencyGuidePopup,
 } from "@/components/points-mall"
+import { FlatList } from "react-native"
 
 export default function PointsMallScreen() {
   const router = useRouter()
@@ -30,6 +31,7 @@ export default function PointsMallScreen() {
   const currencyAmountRef = useRef<CurrencyAmountRef>(null);
   const checkInSuccessPopupRef = useRef<CheckInSuccessPopupRef>(null);
   const newProductDetailsPopupRef = useRef<NewProductDetailsPopupRef>(null);
+  const multiCategoryProductListRef = useRef<MultiCategoryProductListRef>(null);
   const [showCurrencyGuide, setShowCurrencyGuide] = useState(false)
 
   // 处理打卡答题回调
@@ -53,8 +55,11 @@ export default function PointsMallScreen() {
   }, []);
 
   // 控制滚动的手势切换
-  const [scrollViewEnabled, setScrollViewEnabled] = useState(true)
   const scrollViewRef = useRef<ScrollView>(null)
+  const scrollViewScrollEnabled = useRef<boolean>(true)
+  const flatListRef = useRef<ComponentRef<typeof FlatList<any>> | null>(null)
+  const flatListScrollEnabled = useRef<boolean>(false)
+  const isScrollViewScrollBottom = useRef<boolean>(false)
 
   // 显示货币指南
   const handleShowCurrencyGuide = useCallback(() => {
@@ -77,8 +82,8 @@ export default function PointsMallScreen() {
     setShowCurrencyGuide(false)
   }, [])
 
-  // 处理 ScrollView 滚动，判断是否到底部
-  const handleScrollViewScroll = useCallback((event: any) => {
+  // 处理 ScrollView 滚动结束，判断是否到底部
+  const handleScrollViewScrollEnd = useCallback((event: any) => {
     const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent
     const scrollY = contentOffset.y
     const contentHeight = contentSize.height
@@ -87,26 +92,82 @@ export default function PointsMallScreen() {
     // 判断是否滑到底部（允许1px误差）
     const isAtBottom = scrollY + scrollViewHeight >= contentHeight - 1
 
-    if (isAtBottom && scrollViewEnabled) {
-      // 滑到底部，禁用 ScrollView，启用 FlatList
-      setScrollViewEnabled(false)
-    } else if (!isAtBottom && !scrollViewEnabled) {
-      // 未到底部，启用 ScrollView，禁用 FlatList
-      setScrollViewEnabled(true)
-    }
-  }, [scrollViewEnabled])
+    const canScroll = multiCategoryProductListRef.current?.getCanScroll();
 
-  // 处理 FlatList 滚动，判断是否到顶部
-  const handleFlatListScroll = useCallback((event: any) => {
+    isScrollViewScrollBottom.current = isAtBottom
+
+    // console.log('测试ScrollView滚动结束', isAtBottom, scrollViewScrollEnabled.current, canScroll)
+
+    if (isAtBottom && scrollViewScrollEnabled.current && canScroll) {
+      // 滑到底部，禁用 ScrollView，启用 FlatList
+      // console.log('测试滑到底部，禁用 ScrollView，启用 FlatList', scrollY, scrollViewHeight, contentHeight)
+      scrollViewRef.current?.setNativeProps({
+        scrollEnabled: false,
+      })
+      scrollViewScrollEnabled.current = false
+      flatListRef.current?.setNativeProps({
+        scrollEnabled: true,
+      })
+      flatListScrollEnabled.current = true
+    }
+  }, [])
+
+  // 处理 FlatList 滚动中，判断是否到顶部
+  const handleFlatListScrolling = useCallback((event: any) => {
     const { contentOffset } = event.nativeEvent
     const scrollY = contentOffset.y
 
+    // console.log('测试FlatList滚动中', scrollY, contentOffset)
+
     // 判断是否滑到顶部（允许1px误差）
-    if (scrollY <= 1 && !scrollViewEnabled) {
+    if (scrollY <= 1 && flatListScrollEnabled.current) {
+      // console.log('测试滑到顶部，启用 ScrollView，禁用 FlatList')
       // 滑到顶部，启用 ScrollView，禁用 FlatList
-      setScrollViewEnabled(true)
+      scrollViewRef.current?.setNativeProps({
+        scrollEnabled: true,
+      })
+      scrollViewScrollEnabled.current = true
+      flatListRef.current?.setNativeProps({
+        scrollEnabled: false,
+      })
+      flatListScrollEnabled.current = false
     }
-  }, [scrollViewEnabled])
+  }, [])
+
+  // 处理列表canScroll变化回调
+  const handleCanScrollChange = useCallback((canScroll: boolean) => {
+    if (canScroll && isScrollViewScrollBottom.current) {
+      scrollViewRef.current?.setNativeProps({
+        scrollEnabled: false,
+      })
+      scrollViewScrollEnabled.current = false
+      flatListRef.current?.setNativeProps({
+        scrollEnabled: true,
+      })
+      flatListScrollEnabled.current = true
+      return
+    }
+
+    if (!canScroll) {
+      scrollViewRef.current?.setNativeProps({
+        scrollEnabled: true,
+      })
+      scrollViewScrollEnabled.current = true
+      flatListRef.current?.setNativeProps({
+        scrollEnabled: false,
+      })
+      flatListScrollEnabled.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    scrollViewRef.current?.setNativeProps({
+      scrollEnabled: true
+    })
+    flatListRef.current?.setNativeProps({
+      scrollEnabled: false,
+    })
+  }, [])
 
   return (
     <LinearGradient
@@ -123,8 +184,9 @@ export default function PointsMallScreen() {
         ref={scrollViewRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        scrollEnabled={scrollViewEnabled}
-        onScroll={handleScrollViewScroll}
+        scrollEnabled={true}
+        nestedScrollEnabled={true}
+        onScrollEndDrag={handleScrollViewScrollEnd}
         scrollEventThrottle={16}>
         <View style={styles.rowContainer}>
           {/* 每日打卡 */}
@@ -148,10 +210,12 @@ export default function PointsMallScreen() {
 
         {/* 积分多类商品列表 */}
         <MultiCategoryProductList
+          ref={multiCategoryProductListRef}
+          listRef={flatListRef}
           style={styles.multiCategoryProductListContainer}
           onProductClick={handleClickProductDetails}
-          scrollEnabled={!scrollViewEnabled}
-          onScroll={handleFlatListScroll}
+          onScroll={handleFlatListScrolling}
+          onCanScrollChange={handleCanScrollChange}
         />
 
         {/* 100高度占位 */}
