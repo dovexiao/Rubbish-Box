@@ -28,6 +28,34 @@ interface NetworkStore {
 let isNetInfoConfigured = false
 let netInfoUnsubscribe: (() => void) | null = null
 
+// 额外网络可达性检测函数
+const performExtraReachabilityCheck = async (): Promise<boolean> => {
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000) // 5秒超时
+
+    const response = await fetch('https://xiaohetx.cn/AppStart/', {
+      method: 'HEAD', // 只获取头部信息，减少数据传输
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeoutId)
+    const isReachable = response.status === 200
+
+    console.log("🌐 额外HTTP检测:", {
+      url: "https://xiaohetx.cn/AppStart/",
+      status: response.status,
+      可达: isReachable,
+      响应时间: new Date().toLocaleTimeString(),
+    })
+
+    return isReachable
+  } catch (error) {
+    console.log("❌ 额外HTTP检测失败:", error)
+    return false
+  }
+}
+
 export const useNetworkStore = create<NetworkStore>((set, get) => ({
   isConnected: true,
   isInternetReachable: null,
@@ -38,9 +66,9 @@ export const useNetworkStore = create<NetworkStore>((set, get) => ({
 
   updateNetworkState: (state: NetInfoState) => {
     const connected = state.isConnected ?? false
-    const internetReachable = state.isInternetReachable ?? null
+    let internetReachable = state.isInternetReachable ?? null
     const type = state.type || "unknown"
-    
+
     // 获取网络详细信息
     const details: NetworkDetails = {}
     if (state.type === "wifi" && state.details) {
@@ -49,6 +77,23 @@ export const useNetworkStore = create<NetworkStore>((set, get) => ({
       details.frequency = (state.details as any).frequency ?? null
     } else if (state.type === "cellular" && state.details) {
       details.cellularGeneration = (state.details as any).cellularGeneration ?? null
+    }
+
+    // 当系统检测返回 false 时，进行额外 HTTP 检测
+    if (connected && internetReachable === false) {
+      console.log("⚠️ 系统检测到网络不可达，执行额外 HTTP 检测...")
+      // 异步执行额外检测，不阻塞主流程
+      performExtraReachabilityCheck().then((extraResult) => {
+        if (extraResult !== internetReachable) {
+          console.log(`🔄 HTTP检测结果: ${extraResult} (系统检测: ${internetReachable})`)
+          // 如果HTTP检测结果不同，直接更新状态
+          set({
+            isInternetReachable: extraResult,
+          })
+        }
+      }).catch((error) => {
+        console.log("❌ 额外HTTP检测失败:", error)
+      })
     }
 
     // 检测状态变化
@@ -97,23 +142,8 @@ export const useNetworkStore = create<NetworkStore>((set, get) => ({
 
     // 配置 NetInfo 的可达性检测（全局只配置一次）
     NetInfo.configure({
-      reachabilityUrl: "https://www.baidu.com",
-      reachabilityTest: async (response) => {
-        const isReachable = response.status === 200
-        console.log("🌐 互联网可达性检测:", {
-          url: "https://www.baidu.com",
-          status: response.status,
-          可达: isReachable,
-          响应时间: new Date().toLocaleTimeString(),
-        })
-        return isReachable
-      },
-      reachabilityLongTimeout: 60 * 1000, // 60秒 - 网络稳定时的检测间隔
-      reachabilityShortTimeout: 30 * 1000, // 30秒 - 网络不稳定时的检测间隔
-      reachabilityRequestTimeout: 10 * 1000, // 10秒 - 单次请求超时
       shouldFetchWiFiSSID: true,
-      reachabilityShouldRun: () => true,
-      useNativeReachability: false,
+      useNativeReachability: true,
     })
 
     // 获取初始网络状态

@@ -170,7 +170,6 @@ export function StatusBar({
     
     let iconName: string
     let iconColor: string
-    
     // 未连接网络
     if (!isConnected) {
       if (isCellular) {
@@ -215,7 +214,6 @@ export function StatusBar({
       }
       iconColor = baseIconColor
     }
-    
     // 渲染图标
     const iconElement = (
       <MaterialIcons
