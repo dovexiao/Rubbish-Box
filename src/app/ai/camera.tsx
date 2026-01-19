@@ -52,7 +52,7 @@ export default function CameraScreen() {
   const cameraRef = useRef<CameraView>(null)
   const wasPostureRunningRef = useRef(false) // 记录进入页面前坐姿检测是否在运行
   // 思考模式：速度（false）或质量（true），默认速度（false）
-  const [thinkingSwitch, setThinkingSwitch] = useState<boolean>(false)
+  const [thinkingSwitch, setThinkingSwitch] = useState<boolean>(true)
   const [showTooltip, setShowTooltip] = useState(false) // 控制提示框显示
 
   const { width: screenWidth, height: screenHeight } = Dimensions.get("screen")
