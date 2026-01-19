@@ -6,8 +6,11 @@ settings:
 
 patchedDependencies:
   react-native-amap3d:
-    hash: 0391d2a16bc6c98b6f501877458bc0410e71a8e6ac39f42d2a930376e17efaf0
+    hash: 14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb
     path: patches/react-native-amap3d.patch
+  react-native-intent-launcher:
+    hash: abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8
+    path: patches/react-native-intent-launcher.patch
 
 importers:
 
@@ -63,7 +66,7 @@ importers:
         version: 1.2.3
       react-native-amap3d:
         specifier: ^3.2.4
-        version: 3.2.4(patch_hash=0391d2a16bc6c98b6f501877458bc0410e71a8e6ac39f42d2a930376e17efaf0)
+        version: 3.2.4(patch_hash=14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb)
       react-native-ble-plx:
         specifier: ^3.5.0
         version: 3.5.0(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
@@ -84,7 +87,7 @@ importers:
         version: 2.2.4(react-native-svg@15.15.1(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1))(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
       react-native-intent-launcher:
         specifier: ^0.2.1
-        version: 0.2.1
+        version: 0.2.1(patch_hash=abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8)
       react-native-keyboard-controller:
         specifier: ^1.20.5
         version: 1.20.5(react-native-reanimated@4.2.1(react-native-worklets@0.7.1(@babel/core@7.28.5)(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1))(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1))(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
@@ -9094,7 +9097,7 @@ snapshots:
 
   react-native-amap-geolocation@1.2.3: {}
 
-  react-native-amap3d@3.2.4(patch_hash=0391d2a16bc6c98b6f501877458bc0410e71a8e6ac39f42d2a930376e17efaf0):
+  react-native-amap3d@3.2.4(patch_hash=14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb):
     dependencies:
       supercluster: 7.1.5
 
@@ -9155,7 +9158,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-native-intent-launcher@0.2.1: {}
+  react-native-intent-launcher@0.2.1(patch_hash=abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8): {}
 
   react-native-is-edge-to-edge@1.2.1(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1):
     dependencies:

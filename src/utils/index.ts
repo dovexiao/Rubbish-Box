@@ -7,6 +7,18 @@ export {
   reLaunch,
 } from './navigation';
 
+/**
+ * 缓存工具函数
+ */
+export {
+  cacheGet,
+  cacheGetSync,
+  cacheSet,
+  cacheSetSync,
+  cacheRemove,
+  cacheRemoveSync,
+} from './cache';
+
 export const inputFixedTwo = (inputVal: any) => {
   return inputVal ? inputVal.match(/\d*(\.)?(\d{1,2})?/)[0] : inputVal
 }

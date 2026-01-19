@@ -21,7 +21,7 @@ import java.io.File
 import java.io.IOException
 
 class MainApplication : Application(), ReactApplication {
-  private val newArchEnabled = true
+  private val newArchEnabled = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
 
   override val reactNativeHost: ReactNativeHost =
       object : DefaultReactNativeHost(this) {

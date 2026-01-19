@@ -101,7 +101,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "react-native-amap3d": "patches/react-native-amap3d.patch"
+      "react-native-amap3d": "patches/react-native-amap3d.patch",
+      "react-native-intent-launcher": "patches/react-native-intent-launcher.patch"
     }
   }
 }
