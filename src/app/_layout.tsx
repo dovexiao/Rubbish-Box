@@ -38,6 +38,7 @@ import { post } from "../services/api"
 import { LinearGradient } from "expo-linear-gradient"
 import { Images } from "../constants/Assets"
 import GlobalLockScreen from "../components/GlobalLockScreen"
+import { useLoginModal } from "../hooks/useLoginModal"
 import { useLockScreenStore } from "../stores/lockScreenStore"
 
 // 防止闪屏
@@ -58,19 +59,13 @@ export default function RootLayout() {
 
   // 网络提示 Modal 状态
   const [showNetworkModal, setShowNetworkModal] = useState(false)
-  // 网络弹窗类型：'no-connection' | '2.4g-warning' | null
-  const [networkModalType, setNetworkModalType] = useState<'no-connection' | '2.4g-warning' | null>(null)
-
+ const [networkModalType, setNetworkModalType] = useState<'no-connection' | '2.4g-warning' | null>(null)
+  // 用户是否已点击"知道了"，不再显示网络弹窗
+  const [networkModalDismissed, setNetworkModalDismissed] = useState(false)
   // 获取设备授权状态（用于控制网络弹窗显示）
   const isBlocked = useDeviceAuthStore((state) => state.isBlocked)
   // 防止重复打开系统设置
   const isOpeningSettings = React.useRef(false)
-
-  // 关闭网络弹窗的辅助函数
-  const closeNetworkModal = () => {
-    setShowNetworkModal(false)
-    setNetworkModalType(null)
-  }
 
   // 保存其他弹窗的状态（在显示网络弹窗时需要暂时隐藏它们）
   const savedModalsState = React.useRef<{
@@ -80,6 +75,23 @@ export default function RootLayout() {
     login: { isVisible: boolean; forgotPassword: boolean }
   } | null>(null)
 
+
+  // 关闭网络弹窗的辅助函数
+  const closeNetworkModal = () => {
+    setShowNetworkModal(false)
+    setNetworkModalType(null)
+  }
+
+  // 点击"知道了"按钮，关闭弹窗并标记为已忽略（本次运行不再提示）
+  const dismissNetworkModal = () => {
+    setNetworkModalDismissed(true)
+    closeNetworkModal()
+  }
+
+  // 检查是否应该显示网络弹窗（用户未点击"知道了"且满足其他条件）
+  const shouldShowNetworkModal = () => {
+    return !networkModalDismissed
+  }
   // 隐藏其他所有弹窗并保存状态
   const hideOtherModals = useCallback(() => {
     console.log("🔐 [NetworkModal] 网络弹窗显示，隐藏其他弹窗")
@@ -169,7 +181,7 @@ export default function RootLayout() {
 
   // 打开系统网络设置
   const openNetworkSettings = async () => {
-    closeNetworkModal() // 先关闭弹窗
+    setShowNetworkModal(false) // 先关闭弹窗
 
     if (Platform.OS === "android") {
       try {
@@ -287,7 +299,11 @@ export default function RootLayout() {
         console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
         return
       }
-      setNetworkModalType('no-connection')
+      // 检查用户是否已点击"知道了"
+      if (!shouldShowNetworkModal()) {
+        console.log("👤 用户已点击'知道了'，本次运行不再显示网络弹窗")
+        return
+      }
       setShowNetworkModal(true)
     })
 
@@ -296,7 +312,6 @@ export default function RootLayout() {
     }
   }, [isConnected])
 
-  // 检测 5G 频段 WiFi
   useEffect(() => {
     // 只在网络已初始化且已连接时检测
     if (!isInitialized || !isConnected) {
@@ -332,6 +347,12 @@ export default function RootLayout() {
         return
       }
 
+      // 检查用户是否已点击"知道了"
+      if (!shouldShowNetworkModal()) {
+        console.log("👤 用户已点击'知道了'，本次运行不再显示 2.4G 频段警告")
+        return
+      }
+
       setNetworkModalType('2.4g-warning')
       setShowNetworkModal(true)
     } else if (!is5GHz && frequency > 0) {
@@ -344,17 +365,22 @@ export default function RootLayout() {
         return
       }
 
+      // 检查用户是否已点击"知道了"
+      if (!shouldShowNetworkModal()) {
+        console.log("👤 用户已点击'知道了'，本次运行不再显示网络提示")
+        return
+      }
+
       setNetworkModalType('no-connection')
       setShowNetworkModal(true)
     } else if (is5GHz) {
       // 5G 频段，关闭弹窗（如果之前显示过）
       console.log(`✅ 检测到 5G WiFi (${frequency} MHz)`)
       if (showNetworkModal) {
-        closeNetworkModal()
+        setShowNetworkModal(false)
       }
     }
   }, [isInitialized, isConnected, networkType, networkDetails.frequency, showNetworkModal])
-
   // 同步网络弹窗状态到 store
   const setShowNetworkModalInStore = useNetworkStore((state) => state.setShowNetworkModal)
   useEffect(() => {
@@ -450,164 +476,71 @@ export default function RootLayout() {
   // 应用生命周期回调 - 100%还原UniApp逻辑
   const appLifecycleCallbacks = useMemo(() => ({
     onAppLaunch: async () => {
-      console.log("🚀 App Launch - 应用启动，开始执行启动流程")
+      console.log("App Launch - 应用启动")
 
       // 🔴 应用启动时，先清除之前可能残留的 isBlocked 状态
+      // 这样即使之前验证失败，应用重启后也不会残留阻止状态
       useDeviceAuthStore.getState().unblockUserInteractions()
-      console.log("🔓 应用启动，已清除授权阻止状态")
+      console.log("🔓 应用启动，已清除授权阻止状态（等待验证结果）")
 
-      try {
-        // ===============================
-        // 🚀 第一步：等待网络连接
-        // ===============================
-        console.log("📡 第一步：检查网络连接状态")
-        console.log("==================")
-        console.log("📡 网络状态检测完成")
-        console.log(`🌐 网络连接: ${isConnected ? "已连接" : "未连接"}`)
-        console.log(`🌍 互联网访问: ${isInternetReachable === null ? "检测中" : isInternetReachable ? "可访问" : "不可访问"}`)
-        console.log(`📶 网络类型: ${networkType}`)
-        console.log("==================")
+      // 🔴 P0最高优先级：输出网络状态（网络监测已在组件初始化时完成）
+      console.log("==================")
+      console.log("📡 网络状态检测完成")
+      console.log(`🌐 网络连接: ${isConnected ? "已连接" : "未连接"}`)
+      console.log(`🌍 互联网访问: ${isInternetReachable === null ? "检测中" : isInternetReachable ? "可访问" : "不可访问"}`)
+      console.log(`📶 网络类型: ${networkType}`)
+      console.log("==================")
 
-        if (!isConnected) {
-          console.log("⚠️ 网络未连接，等待网络连接...")
-          // 等待网络连接（通过 onNetworkConnected 回调处理）
-          console.log("⏳ 网络未连接，跳过后续步骤，等待网络恢复")
-          return
-        }
+      // 🔴 第一步：获取设备序列号
+      const deviceCode = await _getAndCacheDeviceUUID()
+      console.log("📱 设备序列号:", deviceCode || '(无)')
 
-        console.log("✅ 第一步完成：网络已连接（支持2.4G/5G）")
-
-        // ===============================
-        // 🔐 第二步：获取设备序列号并验证设备授权
-        // ===============================
-        console.log("📱 第二步：获取设备序列号")
-
-        const deviceCode = await _getAndCacheDeviceUUID()
-        console.log("📱 设备序列号:", deviceCode || '(无)')
-
-        if (!deviceCode) {
-          console.warn("❌ 第二步失败：未获取到设备序列号，阻止用户操作")
-          useDeviceAuthStore.getState().blockUserInteractions()
-          appLaunchState.current.isLaunched = true
-          return
-        }
-
-        // 将设备码保存到 store 中，供弹窗显示使用
+      // 将设备码保存到 store 中，供弹窗显示使用
+      if (deviceCode) {
         useDeviceAuthStore.getState().setDeviceUUID(deviceCode)
         appLaunchState.current.deviceCode = deviceCode
-
-        console.log("✅ 第二步完成：设备序列号获取成功，开始验证设备授权")
-
-        // 执行设备授权验证
-        const authResult = await performDeviceAuth(deviceCode)
-        if (!authResult) {
-          console.warn("❌ 第二步失败：设备授权验证失败")
-          appLaunchState.current.isLaunched = true
-          return
-        }
-
-        console.log("✅ 第二步完成：设备授权验证通过")
-
-        // ===============================
-        // 📦 第三步：检查应用更新
-        // ===============================
-        console.log("📦 第三步：检查应用更新")
-
-        try {
-          await checkForUpdatesOnShow()
-          console.log("✅ 第三步完成：应用更新检查完成")
-        } catch (error) {
-          console.warn("⚠️ 第三步警告：应用更新检查失败，但继续执行:", error)
-          // 更新检查失败不阻断后续流程
-        }
-
-        // ===============================
-        // 🔑 第四步：检查用户登录状态
-        // ===============================
-        console.log("🔑 第四步：检查用户登录状态")
-
-        const token = useUserStore.getState().token
-        console.log(`🔑 登录状态: ${token ? "已登录" : "未登录"}`)
-
-        if (!token) {
-          console.log("🔐 用户未登录，准备弹出登录窗口")
-
-          // 等待登录弹窗管理器挂载
-          const waitForLoginModal = (maxAttempts = 20, interval = 100) => {
-            return new Promise<void>((resolve) => {
-              let attempts = 0
-              const checkInterval = setInterval(() => {
-                attempts++
-                const loginModalRef = getLoginModalRef()
-                if (loginModalRef || attempts >= maxAttempts) {
-                  clearInterval(checkInterval)
-                  resolve()
-                }
-              }, interval)
-            })
-          }
-
-          await waitForLoginModal()
-
-          // 再次确认token状态
-          const currentToken = useUserStore.getState().token
-          if (!currentToken) {
-            console.log("🔐 弹出登录弹窗")
-            showLoginModal({
-              onSuccess: () => {
-                console.log("✅ 登录成功，继续后续步骤")
-                // 登录成功后可以继续执行第五步，但这里先不处理
-                // 因为这是异步回调，启动流程已经完成
-              },
-              onCancel: () => {
-                console.log("❌ 用户取消登录")
-              },
-            })
-          } else {
-            console.log("🔐 等待期间用户已登录")
-          }
-        } else {
-          console.log("✅ 第四步完成：用户已登录")
-        }
-
-        // ===============================
-        // 🌐 第五步：启动WebSocket连接和坐姿检测
-        // ===============================
-        console.log("🌐 第五步：启动WebSocket连接和坐姿检测")
-
-        // 初始化坐姿监测
-        postureStore.initPoseMonitor()
-
-        // 启动全局WebSocket连接
-        console.log("🔌 启动全局WebSocket连接")
-        // WebSocket 已在组件级别启动，这里不需要重复启动
-
-        // 启动坐姿检测（只有在设备授权通过的情况下）
-        console.log("📱 启动坐姿检测")
-        await startPostureMonitoring()
-
-        console.log("✅ 第五步完成：WebSocket连接和坐姿检测已启动")
-
-        // ===============================
-        // 🎉 启动流程完成
-        // ===============================
+      } else {
+        console.warn("⚠️ 未获取到设备序列号，阻止用户操作")
+        useDeviceAuthStore.getState().blockUserInteractions()
         appLaunchState.current.isLaunched = true
-        console.log("🎉 应用启动流程全部完成！")
+        return
+      }
 
-      } catch (error) {
-        console.error("❌ 应用启动流程出现错误:", error)
-        appLaunchState.current.isLaunched = true // 即使出错也要标记为已启动
+      // 初始化坐姿监测（还原UniApp逻辑）
+      postureStore.initPoseMonitor()
+
+      // 标记应用已启动
+      appLaunchState.current.isLaunched = true
+
+      // 🔴 第二步：检查网络状态，如果已连接则立即验证设备授权
+      // 🔴 只有设备授权通过后才能启动坐姿检测
+      if (isConnected && isInternetReachable !== false) {
+        // 网络已连接，立即执行设备授权验证
+        const authResult = await performDeviceAuth(deviceCode)
+        // 设备授权通过后，启动全局坐姿监控
+        if (authResult) {
+          console.log("🚀 设备授权通过，启动全局坐姿监控")
+          await startPostureMonitoring()
+        } else {
+          console.log("⚠️ 设备授权未通过，不启动坐姿监控")
+        }
+      } else {
+        // 网络未连接，等待网络连接后再验证（在 onNetworkConnected 中处理）
+        console.log("⏳ 网络未连接，等待网络连接后再进行设备授权验证")
+        // 🔴 网络未连接时，清除之前的 isBlocked 状态（因为无法验证，不应该阻止用户）
+        useDeviceAuthStore.getState().unblockUserInteractions()
+        console.log("🔓 网络未连接，已清除授权阻止状态")
       }
     },
 
     onAppShow: async () => {
       console.log("应用进入前台")
 
-      // 🔄 强制重新检查网络状态（解决从设置页面返回时网络状态未及时更新的问题）
-      console.log("🔄 应用回到前台，强制重新检查网络状态")
-      const refreshNetworkInfo = useNetworkStore.getState().refreshNetworkInfo
-      if (refreshNetworkInfo) {
-        await refreshNetworkInfo()
+      // 切换背景图（应用进入前台时）
+      // @ts-ignore
+      if (global.switchHomeBackground && typeof global.switchHomeBackground === 'function') {
+        // @ts-ignore
+        global.switchHomeBackground()
       }
 
       // 使用InteractionManager优化前台恢复性能
@@ -617,29 +550,6 @@ export default function RootLayout() {
 
         // P1功能：系统键监听的兜底处理
         systemKeyHandleAppShow()
-
-        // 🔐 检查登录状态（应用回到前台时）
-        const token = useUserStore.getState().token
-        const isConnected = useNetworkStore.getState().isConnected
-
-        console.log(`🔑 前台恢复 - 登录状态: ${token ? "已登录" : "未登录"}, 网络状态: ${isConnected ? "已连接" : "未连接"}`)
-
-        if (!token && isConnected) {
-          // 未登录且网络已连接，弹出登录窗口
-          console.log("🔐 应用回到前台：用户未登录且网络已连接，弹出登录窗口")
-
-          // 等待一小段时间，确保UI完全恢复
-          setTimeout(() => {
-            showLoginModal({
-              onSuccess: () => {
-                console.log("✅ 前台登录成功")
-              },
-              onCancel: () => {
-                console.log("❌ 前台登录取消")
-              }
-            })
-          }, 500)
-        }
 
         // 检查坐姿监控状态（后台服务应该持续运行，这里只是确保状态正常）
         // 🔴 只有设备授权通过后才能启动坐姿检测
@@ -710,8 +620,12 @@ export default function RootLayout() {
         console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
         return
       }
-      // 显示网络连接提示 Modal
-      setNetworkModalType('no-connection')
+      // 检查用户是否已点击"知道了"
+      if (!shouldShowNetworkModal()) {
+        console.log("👤 用户已点击'知道了'，本次运行不再显示网络断开提示")
+        return
+      }
+      // 显示网络提示 Modal
       setShowNetworkModal(true)
     },
 
@@ -729,6 +643,35 @@ export default function RootLayout() {
     isInternetReachable,
     isInitialized: false,
   })
+
+  // 🔴 关键修复：初始化完成后，如果网络未连接，直接显示弹窗
+  useEffect(() => {
+    // 只在初始化完成时检查一次
+    if (isInitialized && !prevNetworkState.current.isInitialized) {
+      console.log("🔍 网络初始化完成，检查初始网络状态")
+
+      // 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）
+      const isBlocked = useDeviceAuthStore.getState().isBlocked
+      if (isBlocked && isConnected) {
+        console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
+      } else {
+        // 如果初始化完成时网络未连接，直接显示弹窗
+        if (!isConnected) {
+          // 检查用户是否已点击"知道了"
+          if (!shouldShowNetworkModal()) {
+            console.log("👤 用户已点击'知道了'，本次运行不再显示初始化网络未连接提示")
+            return
+          }
+          console.log("🔴 初始化时检测到网络未连接，显示弹窗")
+          setShowNetworkModal(true)
+        }
+
+      }
+
+      // 更新 ref，标记初始化已完成
+      prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
+    }
+  }, [isInitialized, isConnected, isInternetReachable])
 
   // 监听网络状态变化并触发回调（只在真正变化时触发）
   useEffect(() => {
@@ -752,6 +695,7 @@ export default function RootLayout() {
       networkCallbacks.onNetworkConnected()
     }
 
+
     // 更新 ref
     prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
   }, [isConnected, isInternetReachable, isInitialized, networkCallbacks])
@@ -760,9 +704,49 @@ export default function RootLayout() {
     // 使用InteractionManager优化初始化性能
     InteractionManager.runAfterInteractions(async () => {
       // 初始化用户存储数据 - 直接调用 store 的方法
-      // 注意：登录检查已在 onAppLaunch 的第四步中处理，这里不再重复
       useUserStore.getState().initializeFromStorage()
-      console.log("用户数据初始化完成（登录检查已在启动流程中完成）")
+      // 加载完成后检查token状态
+      const token = useUserStore.getState().token
+      console.log("用户数据初始化完成，token状态:", token ? "已存在" : "不存在")
+
+      // 如果token不存在，等待登录弹窗管理器挂载后弹出登录弹窗
+      if (!token) {
+        console.log("🔐 检测到用户未登录，准备弹出登录弹窗")
+
+        // 等待登录弹窗引用可用（GlobalLoginManager 挂载完成）
+        const waitForLoginModal = (maxAttempts = 20, interval = 100) => {
+          return new Promise<void>((resolve) => {
+            let attempts = 0
+            const checkInterval = setInterval(() => {
+              attempts++
+              const loginModalRef = getLoginModalRef()
+              if (loginModalRef || attempts >= maxAttempts) {
+                clearInterval(checkInterval)
+                resolve()
+              }
+            }, interval)
+          })
+        }
+
+        // 等待登录弹窗管理器挂载
+        await waitForLoginModal()
+
+        // 再次确认token状态（防止在等待期间用户已登录）
+        const currentToken = useUserStore.getState().token
+        if (!currentToken) {
+          console.log("🔐 弹出登录弹窗")
+          showLoginModal({
+            onSuccess: () => {
+              console.log("🔐 用户登录成功")
+            },
+            onCancel: () => {
+              console.log("🔐 用户取消登录")
+            },
+          })
+        } else {
+          console.log("🔐 等待期间用户已登录，跳过登录弹窗")
+        }
+      }
     })
 
     // 锁定横屏模式（还原UniApp逻辑：plus.screen.lockOrientation('landscape-primary')）
@@ -797,6 +781,21 @@ export default function RootLayout() {
   // 锁屏状态，用于控制网络断开提示弹窗的显示
   const locked = useLockScreenStore((state) => state.locked)
 
+  // useEffect(() => {
+  //   (async () => {
+  //     setShowNetworkModal(true)
+  //     const { showLoginModal } = await import("../utils/loginUtils")
+  //     showLoginModal({
+  //       onSuccess: () => {
+  //         console.log("登录成功")
+  //       },
+  //       onCancel: () => {
+  //         console.log("登录取消")
+  //       },
+  //     });
+  //   })();
+  // }, [locked])
+
   return (
     <GestureHandlerRootView style={styles.container}>
       {/* 全局沉浸式模式 - 隐藏状态栏和三大金刚键 */}
@@ -811,8 +810,14 @@ export default function RootLayout() {
               animation: 'none',
             }}
           >
+            {/* 显式声明 tabs 作为一级页面 */}
             <Stack.Screen name="(tabs)" />
+
+            {/* 其他页面自动发现，作为二级页面 */}
+            {/* 不需要显式声明，Expo Router 会自动发现 */}
           </Stack>
+          
+          {/* <Slot key={token || 'no-token'} /> */}
           {/* 全局锁屏 */}
           <GlobalLockScreen />
           {/* 全局登录管理器 */}
@@ -830,7 +835,7 @@ export default function RootLayout() {
 
       {/* 网络断开提示 Modal - 放在最外层确保在登录框之上 */}
       {/* 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先） */}
-      <Modal
+     <Modal
         visible={showNetworkModal && !locked && !(isBlocked && isConnected)}
         transparent
         animationType="fade"
@@ -880,7 +885,7 @@ export default function RootLayout() {
             <View style={styles.networkModalButtons}>
               <TouchableOpacity
                 style={[styles.networkModalButton, styles.networkModalCancelButton]}
-                onPress={closeNetworkModal}
+                onPress={dismissNetworkModal}
               >
                 <Text style={styles.networkModalCancelText}>知道了</Text>
               </TouchableOpacity>
@@ -924,7 +929,8 @@ const styles = createStyles({
     height: 126.5625, // 324 * 750/1920
     // backgroundColor: "#fff",
     borderRadius: 11.71875, // 30 * 750/1920
-    paddingVertical: 15.625, // 40 * 750/1920
+    paddingTop: 5.625, // 40 * 750/1920
+    paddingBottom: 8.625, // 40 * 750/1920
     paddingHorizontal: 15.625, // 40 * 750/1920
     justifyContent: "space-between" as const,
     alignItems: "center" as const,
@@ -958,17 +964,9 @@ const styles = createStyles({
   networkModalMessage: {
     fontSize: 10.9375, // 28 * 750/1920
     color: "#00000099",
-    lineHeight: 12.5, // 32 * 750/1920
+    lineHeight: 15.5, // 32 * 750/1920
     textAlign: "center" as const,
-  },
-  networkModalHighlightText: {
-    color: "#FF0000", // 红色高亮
-    fontWeight: "bold" as const,
-  },
-  networkModalButtons: {
-    flexDirection: "row" as const,
-    justifyContent: "space-between" as const,
-    gap: 12.5, // 32 * 750/1920
+    paddingVertical: 12.5, // 32 * 750/1920
   },
   networkModalButton: {
     // flex: 1,
@@ -1003,5 +1001,14 @@ const styles = createStyles({
     fontSize: 10.9375, // 28 * 750/1920
     color: "#FFFFFF",
     fontWeight: "500" as const,
+  },
+  networkModalHighlightText: {
+    color: "#FF0000", // 红色高亮
+    fontWeight: "bold" as const,
+  },
+  networkModalButtons: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    gap: 12.5, // 32 * 750/1920
   },
 })
