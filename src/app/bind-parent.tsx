@@ -338,14 +338,14 @@ const styles = createStyles({
   stepSubtitle: {
     fontSize: 12,
     color: '#666',
-    lineHeight: 12,
+    lineHeight: 15,
     // marginTop: 5,
     paddingLeft: 45, // 对齐到标题下方
   },
   stepSubtitle1: {
     fontSize: 12,
     color: '#2271fc',
-    lineHeight: 12,
+    lineHeight: 15,
     // marginTop: 5,
     paddingLeft: 45, // 对齐到标题下方
 
