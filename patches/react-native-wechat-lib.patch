@@ -1,0 +1,56 @@
+diff --git a/android/src/main/java/com/wechatlib/WeChatLibModule.java b/android/src/main/java/com/wechatlib/WeChatLibModule.java
+index d3e885231f826d664a3d7f50a073dfaa3495a31c..16dead37d965d6b6ac11a5e57df9b1dc88a6760b 100644
+--- a/android/src/main/java/com/wechatlib/WeChatLibModule.java
++++ b/android/src/main/java/com/wechatlib/WeChatLibModule.java
+@@ -111,7 +111,7 @@ public class WeChatLibModule extends ReactContextBaseJavaModule implements IWXAP
+ 
+     @Override
+     public String getName() {
+-        return "RCTWeChat";
++        return "WeChat";
+     }
+ 
+     /**
+diff --git a/ios/WechatLib.h b/ios/WechatLib.h
+index 615f1ec888cf04f80ff38591fbe700352f73ec6c..dabcf62b5bbaffc149a8f152adaa3565b8ec29c2 100644
+--- a/ios/WechatLib.h
++++ b/ios/WechatLib.h
+@@ -24,7 +24,7 @@
+ #define RCTWXEventName @"WeChat_Resp"
+ #define RCTWXEventNameWeChatReq @"WeChat_Req"
+ 
+-@interface WechatLib : NSObject <RCTBridgeModule, WXApiDelegate>
++@interface WeChat : NSObject <RCTBridgeModule, WXApiDelegate>
+ 
+ @property NSString* appId;
+ 
+diff --git a/ios/WechatLib.mm b/ios/WechatLib.mm
+index 51e61603a8d7ba3d1bc563feb6bbace0112ba5da..bbc3e0fad3dbe5eacd5949f78c881c687fc75028 100644
+--- a/ios/WechatLib.mm
++++ b/ios/WechatLib.mm
+@@ -6,7 +6,7 @@
+ #import <React/RCTLog.h>
+ #import <React/RCTImageLoader.h>
+ 
+-@implementation WechatLib
++@implementation WeChat
+ 
+ // Define error messages
+ #define NOT_REGISTERED (@"registerApp required.")
+diff --git a/src/index.js b/src/index.js
+index 3bb59a62dc860645e9fa034b0c43da824907d678..971614df0c72ada3d8c8fa2285abed01a601535c 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -4,11 +4,7 @@ import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
+ import { EventEmitter } from 'events';
+ 
+ let isAppRegistered = false;
+-let { WeChat, WechatLib } = NativeModules;
+-
+-if (WeChat == null) {
+-  WeChat = WechatLib;
+-}
++let { WeChat } = NativeModules;
+ 
+ // Event emitter to dispatch request and response from WeChat.
+ const emitter = new EventEmitter();

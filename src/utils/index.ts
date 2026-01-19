@@ -49,12 +49,21 @@ export function cdnToCosDomain(cosPath: string) {
   )
 }
 
-import { DeviceEventEmitter, Platform } from 'react-native';
+import { DeviceEventEmitter, Platform, Linking, NativeModules } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import IntentLauncher from 'react-native-intent-launcher';
+import NetInfo from '@react-native-community/netinfo';
+import { BleManager } from 'react-native-ble-plx';
+import { init as initAMapGeolocationLib, Geolocation } from 'react-native-amap-geolocation';
+import { AMapSdk } from 'react-native-amap3d';
+import Config from 'react-native-config';
+import wechat from 'react-native-wechat-lib';
 import { cacheGet } from './cache';
 import { storageUtil } from './storage';
 import appPush from './push';
 import { updateRegId } from '@/services/common';
+import { Toast } from '@ant-design/react-native';
 
 /**
  * 获取存储数据（兼容 Taro 风格的 API）
@@ -216,34 +225,11 @@ export const getMobPushDeviceInfo = async () => {
 }
 
 /**
- * 微信 SDK 初始化
- */
-export const WeChatInit = () => {
-  try {
-    const wechat = require('react-native-wechat-lib');
-    // 微信 AppID: wx5c90e0d5806a55c4
-    wechat.registerApp('wx5c90e0d5806a55c4')
-      .then(() => {
-        if (__DEV__) {
-          console.log('微信 SDK 初始化成功');
-        }
-      })
-      .catch((error: any) => {
-        console.error('微信 SDK 初始化失败:', error);
-      });
-  } catch (error) {
-    console.error('微信 SDK 模块加载失败:', error);
-  }
-};
-
-/**
  * 打开系统设置页面
  */
 export const openSettings = async (): Promise<void> => {
   try {
     if (Platform.OS === 'android') {
-      const IntentLauncher = require('react-native-intent-launcher').default;
-      const DeviceInfo = require('react-native-device-info');
       const bundleId = await DeviceInfo.getBundleId();
 
       await IntentLauncher.startActivity({
@@ -252,7 +238,6 @@ export const openSettings = async (): Promise<void> => {
       });
     } else {
       // iOS
-      const { Linking } = require('react-native');
       await Linking.openSettings();
     }
   } catch (error) {
@@ -269,8 +254,6 @@ export const requestBluetoothPermissions = async (): Promise<{
   canOpenSettings?: boolean; // 是否可以打开设置页面（权限被永久拒绝时）
 }> => {
   try {
-    const { check, request, PERMISSIONS, RESULTS } = require('react-native-permissions');
-
     if (Platform.OS === 'android') {
       // Android 12+ (API 31+) 需要 BLUETOOTH_CONNECT 权限
       // Android < 12 需要 BLUETOOTH 和 BLUETOOTH_ADMIN 权限
@@ -310,10 +293,10 @@ export const requestBluetoothPermissions = async (): Promise<{
       }
     } else {
       // iOS
-      // iOS 13+ 使用 BLUETOOTH_PERIPHERAL
+      // iOS 13+ 使用 BLUETOOTH
       // iOS 13 之前蓝牙权限在 Info.plist 中配置，系统会自动处理
       try {
-        const permission = PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL;
+        const permission = PERMISSIONS.IOS.BLUETOOTH;
         const checkResult = await check(permission);
 
         if (checkResult === RESULTS.GRANTED) {
@@ -380,8 +363,6 @@ export const initAppPush = async () => {
  */
 export const jumpToPage = async (): Promise<{ remove?: () => void }> => {
   try {
-    const { Linking } = require('react-native');
-
     // 监听推送消息点击
     const handleNotificationOpened = (result: any) => {
       console.log('推送消息被点击:', result);
@@ -413,7 +394,7 @@ export const getSystemConnectedDevices = async (): Promise<{
   message?: string;
 }> => {
   try {
-    const { BluetoothManager } = require('react-native').NativeModules;
+    const { BluetoothManager } = NativeModules;
     if (!BluetoothManager) {
       return { code: 'ERROR', message: '蓝牙模块不可用' };
     }
@@ -463,13 +444,12 @@ export const getNetworkState = async (): Promise<{
   isInternetReachable?: boolean;
 }> => {
   try {
-    const NetInfo = require('@react-native-community/netinfo').default;
     const state = await NetInfo.fetch();
 
     return {
       isConnected: state.isConnected ?? false,
       type: state.type || 'unknown',
-      isInternetReachable: state.isInternetReachable,
+      isInternetReachable: state.isInternetReachable ?? undefined,
     };
   } catch (error) {
     console.error('获取网络状态失败:', error);
@@ -487,8 +467,6 @@ export const addNetworkStateListener = (
   callback: (state: { isConnected: boolean; type: string; isInternetReachable?: boolean }) => void,
 ): (() => void) => {
   try {
-    const NetInfo = require('@react-native-community/netinfo').default;
-
     const unsubscribe = NetInfo.addEventListener((state: any) => {
       callback({
         isConnected: state.isConnected ?? false,
@@ -509,7 +487,6 @@ export const addNetworkStateListener = (
  */
 export const initBLEManager = () => {
   try {
-    const { BleManager } = require('react-native-ble-plx');
     const manager = new BleManager();
 
     if (__DEV__) {
@@ -544,41 +521,22 @@ export const checkBluetoothEnabled = async (manager: any): Promise<boolean> => {
  * 初始化高德定位服务
  * @param apiKey 高德地图 API Key（可选，如果未提供则从环境变量读取）
  */
-export const initAMapGeolocation = (apiKey?: string): void => {
+export const initAMapGeolocation = async (apiKey?: string): Promise<void> => {
   try {
-    const Geolocation = require('react-native-amap-geolocation').default;
-    const Config = require('react-native-config').default;
-    const { Platform } = require('react-native');
+    // 检查模块是否正确加载
+    if (!initAMapGeolocationLib || typeof initAMapGeolocationLib !== 'function') {
+      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
+      return;
+    }
 
     // 如果没有传入 apiKey，则从环境变量读取
-    if (!apiKey) {
-      apiKey = Platform.select({
-        android: Config.MAP_KEY_ANDROID,
-        ios: Config.MAP_KEY_IOS,
-      });
-    }
+    const androidKey = Config.MAP_KEY_ANDROID || '65e063bf30af1d5cb5d2bf648243bff1';
+    const iosKey = Config.MAP_KEY_IOS || '4d3d8b30420bb15896f580757451268d';
 
-    if (apiKey) {
-      // 设置 API Key
-      Geolocation.setApiKey(apiKey);
-    }
-
-    // 设置定位选项
-    Geolocation.setOptions({
-      // 定位模式：高精度
-      accuracy: 'HighAccuracy',
-      // 定位超时时间（毫秒）
-      timeout: 10000,
-      // 定位间隔（毫秒）
-      interval: 2000,
-      // 是否需要地址信息
-      needAddress: true,
-      // 是否使用GPS
-      onceLocation: false,
-      // 是否允许后台定位
-      allowsBackgroundLocationUpdates: false,
-      // 定位失败后是否使用IP定位
-      useIP: true,
+    // 使用 init 函数初始化（传入平台特定的 key）
+    await initAMapGeolocationLib({
+      android: androidKey,
+      ios: iosKey,
     });
 
     if (__DEV__) {
@@ -604,7 +562,11 @@ export const getCurrentLocation = async (): Promise<{
   streetNumber?: string;
 } | null> => {
   try {
-    const Geolocation = require('react-native-amap-geolocation').default;
+    // 检查模块是否正确加载
+    if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
+      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
+      return null;
+    }
 
     return new Promise((resolve, reject) => {
       Geolocation.getCurrentPosition(
@@ -645,7 +607,11 @@ export const startLocationUpdates = (
   }) => void,
 ): (() => void) => {
   try {
-    const Geolocation = require('react-native-amap-geolocation').default;
+    // 检查模块是否正确加载
+    if (!Geolocation || typeof Geolocation.watchPosition !== 'function') {
+      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
+      return () => { }; // 返回空函数，避免调用时出错
+    }
 
     const watchId = Geolocation.watchPosition(
       (position: any) => {
@@ -682,9 +648,11 @@ export const initAMapSdk = (androidKey?: string, iosKey?: string): void => {
   }
 
   try {
-    const { AMapSdk } = require('react-native-amap3d');
-    const { Platform } = require('react-native');
-    const Config = require('react-native-config').default;
+    // 检查模块是否正确加载
+    if (!AMapSdk || typeof AMapSdk.init !== 'function') {
+      console.warn('高德地图 SDK 模块未正确加载，可能是原生模块未链接');
+      return;
+    }
 
     const apiKey = Platform.select({
       android: androidKey || Config.MAP_KEY_ANDROID || '65e063bf30af1d5cb5d2bf648243bff1',
@@ -703,11 +671,6 @@ export const initAMapSdk = (androidKey?: string, iosKey?: string): void => {
     console.error('高德地图 SDK 初始化失败:', error);
   }
 };
-
-
-
-
-
 
 
 

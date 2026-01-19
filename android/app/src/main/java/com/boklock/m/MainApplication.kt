@@ -19,6 +19,7 @@ import com.boklock.m.NativeModules.MobPushPackage
 import com.mob.MobSDK
 import java.io.File
 import java.io.IOException
+import com.wechatlib.WeChatLibPackage
 
 class MainApplication : Application(), ReactApplication {
   private val newArchEnabled = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
@@ -30,6 +31,7 @@ class MainApplication : Application(), ReactApplication {
             add(AppPackage())
             add(BluetoothManagerPackage())
             add(MobPushPackage())
+            add(WeChatLibPackage())
           }
 
         override fun getJSMainModuleName(): String = "index"

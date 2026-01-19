@@ -223,8 +223,7 @@ android {
 }
 
 configurations.all {
-    // 排除微信 SDK（避免版本冲突）
-    exclude group: 'com.tencent.mm.opensdk', module: 'wechat-sdk-android'
+    // 微信 SDK：不要在这里全局 exclude，否则 app 侧引用 WeChatLibModule 时会缺少 IWXAPIEventHandler 等类型
 
     // 解决高德地图依赖冲突：
     // 3dmap-9.6.0 已包含定位类，避免再引入 location-6.2.0 产生重复 class。

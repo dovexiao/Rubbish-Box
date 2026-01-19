@@ -6,10 +6,11 @@ import {
   Alert,
   TouchableOpacity,
   Pressable,
+  AppState,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Flex, PageContainer } from '@/components';
-import { miniLogin } from '@/services';
+import { getThirdState, miniLogin, thirdLogin } from '@/services';
 import { tokenStorage } from '@/utils/storage';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import Sms from './com/sms';
@@ -17,8 +18,10 @@ import Password from './com/password';
 import styles from './styles';
 import IconFont from '@/iconfont';
 import { cacheSet } from '@/utils/cache';
-import { setStorage } from '@/utils';
+import { cacheSetSync, getMobPushDeviceInfo, getStorage, setStorage } from '@/utils';
 import PopConfirm from '@/components/popConfirm';
+import { Toast } from '@ant-design/react-native';
+import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
 
 type LoginType = 'sms' | 'password' | 'mini';
 
@@ -32,7 +35,15 @@ const Login = () => {
   const [tempToken, setTempToken] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const agreePopRef = useRef<any>(null);
-  const appStateSubscription = useRef<any>(null);
+
+  // 使用 ref 存储临时数据和设备信息
+  const tempData = useRef<{
+    appStateSub: any;
+  }>({
+    appStateSub: undefined,
+  });
+
+  const device = useRef<any>({});
 
   const handleAgreementLinkPress = (
     type: 'userAgreement' | 'privacyPolicy',
@@ -60,13 +71,6 @@ const Login = () => {
       // setAgree(agreed === true);
     }, []),
   );
-
-  // 微信登录
-  const handleWxLogin = async () => {
-    // React Native 中需要集成微信 SDK
-    // 这里先留空，后续可以集成 react-native-wechat-lib 等库
-    Alert.alert('提示', '微信登录功能需要集成微信 SDK');
-  };
 
   // 自动登录（小程序场景，不需要授权）
   const handleAutoLogin = async () => {
@@ -111,23 +115,91 @@ const Login = () => {
     // storageUtil.setItem('agreePrivacy', true);
   };
 
-  // 处理登录按钮点击
-  const handleLoginButtonPress = async () => {
+  // 微信登录
+  const wxLogin = async () => {
+    const isInstalledWeChat: any = await checkInstalledWeChat();
+    if (!isInstalledWeChat.result) {
+      Toast.show(isInstalledWeChat.message);
+      return;
+    }
+
+    const res = wechatLogin()
+    const loadingToast = Toast.loading('登录中...', 0);
+
+    // 监听应用状态变化（用户可能从微信返回）
+    const appStatePromise = new Promise<any>((resolve) => {
+      tempData.current.appStateSub =
+        AppState.addEventListener &&
+        AppState.addEventListener('change', (s) => {
+          if (s === 'active') {
+            resolve({ result: false, errCode: -998, message: '用户手动返回应用，未完成登录' });
+          }
+        });
+    });
+    let r: any
+    try {
+      const loadingToast = Toast.loading('登录中...', 0);
+      r = await Promise.race([res, appStatePromise])
+      if (r.result) {
+        const thirdState = await getThirdState({})
+        let obj: any = { source: 1, code: r.code, state: thirdState }
+        let deviceInfoStorage: any = {}
+        try {
+          deviceInfoStorage = await getStorage({ key: 'deviceInfo' })
+        } catch (e) { }
+        if (deviceInfoStorage?.data) {
+          obj = { ...obj, ...deviceInfoStorage?.data }
+        } else {
+          obj = { ...obj, ...device.current }
+        }
+        const thirdLoginRes = await thirdLogin({ ...obj })
+        if (thirdLoginRes.code === '200') {
+          await cacheSetSync('token', thirdLoginRes.data.token)
+          await cacheSetSync('guestMode', false)
+          try {
+            await getMobPushDeviceInfo()
+          } catch { }
+          if (thirdLoginRes.data.needBind) {
+            // navigateTo({ url: '/pages/user/account/bindPhone' })
+            // navigation.navigate('BindPhone')
+          } else if (thirdLoginRes.data.needMobileVerify) {
+            // navigateTo({
+            //   url: `/pages/login/miniBind?${stringify({
+            //     mobile: thirdLoginRes.data.mobile,
+            //   })}`,
+            // })
+            // navigation.navigate('MiniBind', {
+            //   mobile: thirdLoginRes.data.mobile,
+            // })
+          } else {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Index' as any }],
+            });
+          }
+        } else {
+          Toast.show(thirdLoginRes.message)
+        }
+      } else {
+        if (r.errCode === -998) console.log('用户手动返回')
+        else Toast.show(r.message)
+      }
+    } catch (e) {
+      console.log('一键登录异常:', e)
+    } finally {
+      Toast.remove(loadingToast)
+      tempData.current.appStateSub?.remove?.()
+      tempData.current.appStateSub = undefined
+    }
+  };
+
+  const handleWxLogin = async () => {
     if (!agree) {
       setLoginType('mini');
       agreePopRef.current?.open();
       return;
     }
-
-    if (loginType === 'mini') {
-      if (!needAuth) {
-        await handleAgree();
-        handleAutoLogin();
-      } else {
-        // 需要授权，触发微信授权
-        handleWxLogin();
-      }
-    }
+    await wxLogin();
   };
 
   // 处理协议弹窗确认
@@ -151,11 +223,11 @@ const Login = () => {
 
   const radioClick = async () => {
     setAgree(!agree);
-    await cacheSet({ key: 'agreePrivacy', data: !agree })
+    await cacheSet({ key: 'agreePrivacy', data: !agree });
     if (!agree) {
-      await setStorage({ key: 'pushEnabled', data: true })
+      await setStorage({ key: 'pushEnabled', data: true });
     }
-  }
+  };
 
   return (
     <PageContainer
@@ -216,7 +288,7 @@ const Login = () => {
             <View style={styles.line} />
           </Flex>
           <Flex direction="row" justify="center" align="center">
-            <Flex direction="column" align="center">
+            <Flex direction="column" align="center" isTouchView onPress={handleWxLogin}>
               <Image source={{ uri: 'https://g.18qjz.cn/img/boklock/icon_wechat.png' }} style={styles.wxlogo} />
             </Flex>
             <Flex direction="column" justify="center" align="center" style={{ marginLeft: 65 }} isTouchView onPress={() => {

@@ -3,7 +3,6 @@ import { AppState, AppStateStatus, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   NavigationContainer,
-  NavigationContainerRef,
   CommonActions,
   useNavigationContainerRef,
 } from '@react-navigation/native';
@@ -22,9 +21,6 @@ import {
   cacheGetSync,
   cacheSet,
   getStorage,
-  setStorage,
-  removeStorage,
-  WeChatInit,
   requestBluetoothPermissions,
   initAppPush,
   getMobPushDeviceInfo,
@@ -33,6 +29,7 @@ import {
   initAMapGeolocation,
 } from '@/utils';
 import appPush from '@/utils/push';
+import { WeChatInit } from '@/utils/wechat';
 
 
 function App() {
@@ -51,7 +48,7 @@ function App() {
 
   // 微信 SDK 初始化
   useEffect(() => {
-    WeChatInit();
+    WeChatInit()
   }, []);
 
   // 高德地图 SDK 初始化（地图组件，不涉及隐私权限，可立即初始化）
@@ -63,7 +60,7 @@ function App() {
   const handlePrivacyAgreed = async () => {
     try {
       // 初始化高德定位服务（涉及位置权限，需要在隐私协议同意后初始化）
-      initAMapGeolocation();
+      await initAMapGeolocation();
 
       // 请求蓝牙权限
       const bluetoothResult = await requestBluetoothPermissions();
@@ -85,7 +82,7 @@ function App() {
         await initAppPush();
         appPush.toggleNotifeeCore?.(true);
         appPush.toggleMobPushOEM?.(true);
-        
+
         // 获取推送设备信息
         await getMobPushDeviceInfo();
       } else {
@@ -115,7 +112,6 @@ function App() {
       }
     };
     checkPrivacyAgreement();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 深链接/推送跳转监听
@@ -208,7 +204,7 @@ function App() {
               <NavigationContainer ref={navigationRef}>
                 <AppNavigator />
               </NavigationContainer>
-              
+
               {/* 全局隐私政策弹窗（首次进入App弹出） */}
               <PopConfirm
                 ref={agreePopRef}
