@@ -26,7 +26,7 @@ const ForgetPassword = () => {
     const res = await getSmsCode({ mobile, purpose: SMS_PURPOSE.RESET_PASSWORD })
     Toast.remove(loadingToast)
     if (res.code === 200) {
-      navigation.navigate('ForgetPasswordSms', { mobile, type: SMS_PURPOSE.RESET_PASSWORD })
+      navigation.navigate('LoginSms', { mobile, type: SMS_PURPOSE.RESET_PASSWORD })
     } else if (res.code === 522) {
       setShowError(true);
       setErrorMessage('此手机号码未注册');

@@ -2,9 +2,12 @@ import { StyleSheet } from "react-native";
 
 const popupStyle = StyleSheet.create({
   popupContainer: {
-    width: 300,
-    height: 300,
-    backgroundColor: '#FFFFFF',
+    width: '100%',
+    // padding: 24,
+  },
+  popupTitle: {
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   btnMarginTop: {
     marginTop: 24,
@@ -14,6 +17,10 @@ const popupStyle = StyleSheet.create({
   },
   btnContainer: {
     borderRadius: 12,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   btnContainerClose: {
     borderWidth: 1,

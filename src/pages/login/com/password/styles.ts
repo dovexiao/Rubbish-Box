@@ -12,10 +12,9 @@ const passwordStyles = StyleSheet.create({
     marginTop: 16,
     backgroundColor: '#f7f7fb',
     borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
     width: 326,
     height: 56,
+    paddingHorizontal: 10,
   },
   input: {
     width: '100%',
@@ -24,6 +23,7 @@ const passwordStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+
   },
   errorBorder: {
     borderRadius: 12,

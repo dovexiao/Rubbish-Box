@@ -672,7 +672,91 @@ export const initAMapSdk = (androidKey?: string, iosKey?: string): void => {
   }
 };
 
+export function myNextTick(fn: any) {
+  setTimeout(() => {
+    fn()
+  }, 0)
+}
 
+/**
+ * 事件中心（兼容 Taro 风格）
+ */
+class EventCenter {
+  private events: Map<string, Set<Function>> = new Map();
+
+  /**
+   * 监听事件
+   * @param eventName 事件名称
+   * @param callback 回调函数
+   */
+  on(eventName: string, callback: Function) {
+    if (!this.events.has(eventName)) {
+      this.events.set(eventName, new Set());
+    }
+    this.events.get(eventName)!.add(callback);
+  }
+
+  /**
+   * 移除事件监听
+   * @param eventName 事件名称
+   * @param callback 回调函数（可选，不传则移除该事件的所有监听）
+   */
+  off(eventName: string, callback?: Function) {
+    if (!this.events.has(eventName)) {
+      return;
+    }
+
+    if (callback) {
+      // 移除指定的回调
+      this.events.get(eventName)!.delete(callback);
+      // 如果该事件没有监听者了，删除事件
+      if (this.events.get(eventName)!.size === 0) {
+        this.events.delete(eventName);
+      }
+    } else {
+      // 移除该事件的所有监听
+      this.events.delete(eventName);
+    }
+  }
+
+  /**
+   * 触发事件
+   * @param eventName 事件名称
+   * @param args 传递给回调函数的参数
+   */
+  trigger(eventName: string, ...args: any[]) {
+    if (!this.events.has(eventName)) {
+      return;
+    }
+
+    const callbacks = this.events.get(eventName)!;
+    callbacks.forEach((callback) => {
+      try {
+        callback(...args);
+      } catch (error) {
+        console.error(`EventCenter: Error executing callback for event "${eventName}":`, error);
+      }
+    });
+  }
+
+  /**
+   * 检查是否有监听者
+   * @param eventName 事件名称
+   */
+  has(eventName: string): boolean {
+    return this.events.has(eventName) && this.events.get(eventName)!.size > 0;
+  }
+
+  /**
+   * 清除所有事件监听
+   */
+  clear() {
+    this.events.clear();
+  }
+}
+
+// 导出单例实例
+export const eventCenter = new EventCenter();
 
 
 

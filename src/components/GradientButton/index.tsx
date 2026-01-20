@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -7,73 +7,108 @@ import {
   ViewStyle,
   TextStyle,
   StyleProp,
+  TouchableOpacityProps,
+  DimensionValue,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import LinearGradient, {
+  LinearGradientProps,
+} from 'react-native-linear-gradient';
 
-export interface GradientButtonProps {
+export interface GradientButtonProps extends Omit<TouchableOpacityProps, 'style'> {
+  children?: ReactNode;
   text?: string;
-  children?: React.ReactNode;
-  onPress?: () => void;
-  disabled?: boolean;
+  colors?: (string | number)[];
+  linearGradientProps?: Partial<LinearGradientProps>;
+  width?: DimensionValue;
+  height?: DimensionValue;
+  className?: string;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
-  width?: number;
-  height?: number;
-  startColor?: string;
-  endColor?: string;
+  round?: boolean;
+  disabled?: boolean;
+  btnBorderRadius?: number; // 按钮圆角
+  hasBorder?: boolean; // 是否有边框
   textColor?: string;
 }
 
 const GradientButton: React.FC<GradientButtonProps> = ({
-  text = '按钮',
+  colors = ['#0077FD', '#3393FF'],
   children,
+  text,
+  linearGradientProps,
+  className,
   onPress,
-  disabled = false,
+  round = true,
+  btnBorderRadius = 24,
+  hasBorder = false,
   style,
   contentStyle,
   textStyle,
-  width = 143,
-  height = 50,
-  startColor = '#1B9666',
-  endColor = '#49BD90',
+  width,
+  height,
+  disabled = false,
   textColor = '#FFFFFF',
+  ...props
 }) => {
+  const borderRadius = round
+    ? (height && typeof height === 'number' ? height / 2 : btnBorderRadius)
+    : btnBorderRadius;
+
+  const gradientStyle: ViewStyle = {
+    borderRadius,
+    width: width || '100%',
+    height,
+    opacity: disabled ? 0.6 : 1,
+  };
+
+  const buttonStyle: ViewStyle = {
+    width: width || '100%',
+    height,
+    borderWidth: hasBorder ? 2 : 0,
+    borderColor: hasBorder ? 'rgba(0, 0, 0, 0.1)' : 'transparent',
+    borderRadius,
+  };
+
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={onPress} disabled={disabled}>
-      <LinearGradient
-        colors={[startColor, endColor]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={[
-          styles.button,
-          {
-            width,
-            height,
-            borderRadius: height / 2,
-            opacity: disabled ? 0.6 : 1,
-          },
-          style,
-        ]}
+    <LinearGradient
+      start={{ x: 1, y: 1 }}
+      end={{ x: 0, y: 0 }}
+      locations={[0, 1]}
+      colors={colors}
+      style={[styles.linearGradient, gradientStyle, style]}
+      {...linearGradientProps}
+    >
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={onPress}
+        disabled={disabled}
+        style={[styles.button, buttonStyle]}
+        {...props}
       >
         <View style={[styles.content, contentStyle]}>
           {children ? (
             children
           ) : (
             <Text style={[styles.text, { color: textColor }, textStyle]}>
-              {text}
+              {text || '按钮'}
             </Text>
           )}
         </View>
-      </LinearGradient>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  linearGradient: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'transparent',
   },
   content: {
     flexDirection: 'row',

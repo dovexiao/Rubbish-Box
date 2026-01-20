@@ -38,5 +38,10 @@ export const routes = {
       label: '网页浏览',
       component: require('@/pages/WebView').default,
     },
+    {
+      name: 'LoginSms',
+      component: require('@/pages/LoginSms').default,
+      label: '登录短信',
+    }
   ],
 } as const;

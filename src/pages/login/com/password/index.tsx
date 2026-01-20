@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { getCurrentPages, getStorage, mobileExp, navigateBack, reLaunch } from '@/utils';
+import { eventCenter, getCurrentPages, getStorage, mobileExp, navigateBack, reLaunch } from '@/utils';
 import { cacheSetSync } from '@/utils/cache';
 import { getMobPushDeviceInfo } from '@/utils/push';
 import { Flex, TextInput } from '@/components';
@@ -46,13 +46,14 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
     const res = await login({
       mobile,
       password,
+      ...device,
     });
     if (res.code === 200) {
       await cacheSetSync('token', res.data.token)
       await cacheSetSync('guestMode', false)
       await getMobPushDeviceInfo()
       Toast.remove(loadingToast)
-
+      console.log('res', res)
       // 延迟执行导航，确保状态已更新和导航引用已准备好
       setTimeout(() => {
         const pages = getCurrentPages()
@@ -61,7 +62,7 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
         } else {
           reLaunch({
             url: '/pages/index/index',
-          })
+          });
         }
       }, 300)
     } else if (res.code === 520 || res.code === 522) {
@@ -69,9 +70,19 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
       setShowError(true);
       setErrorMessage(res.msg || '手机号码或密码错误');
     } else {
+      Toast.remove(loadingToast)
       Toast.fail(res.msg || '登录失败');
     }
   };
+
+  useEffect(() => {
+    eventCenter.on('onNext', () => {
+      onSubmit()
+    })
+    if (initialMobile) {
+      setMobile(initialMobile);
+    }
+  }, [initialMobile]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -89,6 +100,7 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
             value={mobile}
             onChangeText={(v) => {
               setMobile(v);
+              onChange(v); // 同步更新父组件的 mobile 状态
               if (v && v.length === 11 && mobileExp(v)) {
                 setShowError(false);
               }

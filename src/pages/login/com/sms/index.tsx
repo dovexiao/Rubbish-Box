@@ -1,12 +1,11 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { TextInput } from '@/components';
-import { mobileExp } from '@/utils';
+import { eventCenter, mobileExp } from '@/utils';
 import { getSmsCode } from '@/services';
 import { SMS_PURPOSE } from '@/constants';
-import IconFont from '@/iconfont';
 import Toast from '@ant-design/react-native/lib/toast';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import loginStyles from './styles';
 interface SmsProps {
   agree: boolean;
@@ -48,13 +47,23 @@ const Sms: React.FC<SmsProps> = ({ agree, onChange, popRef, initialMobile }) => 
 
   }
 
-  useFocusEffect(useCallback(() => {
-    return () => {
-      if (initialMobile) {
-        setMobile(initialMobile);
-      }
+  // 同步外部传入的 initialMobile
+  useEffect(() => {
+    if (initialMobile) {
+      setMobile(initialMobile);
     }
-  }, [initialMobile]))
+  }, [initialMobile]);
+
+  // 监听 onNext 事件（协议同意后触发）
+  useEffect(() => {
+    const handler = () => {
+      onNext();
+    };
+    eventCenter.on('onNext', handler);
+    return () => {
+      eventCenter.off('onNext', handler);
+    };
+  }, [mobile, agree]);
 
 
   return (
@@ -68,6 +77,7 @@ const Sms: React.FC<SmsProps> = ({ agree, onChange, popRef, initialMobile }) => 
             value={mobile}
             onChangeText={(v) => {
               setMobile(v);
+              onChange(v); // 同步更新父组件的 mobile 状态
               if (v && v.length === 11 && mobileExp(v)) {
                 setShowError(false);
               }

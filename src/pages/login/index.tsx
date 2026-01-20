@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Pressable,
   AppState,
+  Button,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Flex, PageContainer } from '@/components';
@@ -18,10 +19,12 @@ import Password from './com/password';
 import styles from './styles';
 import IconFont from '@/iconfont';
 import { cacheSet } from '@/utils/cache';
-import { cacheSetSync, getMobPushDeviceInfo, getStorage, setStorage } from '@/utils';
+import { cacheGetSync, cacheRemoveSync, cacheSetSync, eventCenter, getMobPushDeviceInfo, getStorage, myNextTick, reLaunch, setStorage } from '@/utils';
+import appPush from '@/utils/push';
 import PopConfirm from '@/components/popConfirm';
 import { Toast } from '@ant-design/react-native';
 import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
+import GradientButton from '@/components/GradientButton';
 
 type LoginType = 'sms' | 'password' | 'mini';
 
@@ -35,6 +38,7 @@ const Login = () => {
   const [tempToken, setTempToken] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const agreePopRef = useRef<any>(null);
+  const retainPopRef = useRef<any>(null);
 
   // 使用 ref 存储临时数据和设备信息
   const tempData = useRef<{
@@ -63,58 +67,6 @@ const Login = () => {
     }
   };
 
-  // 检查是否已同意协议
-  useFocusEffect(
-    React.useCallback(() => {
-      // 可以从 storage 读取之前是否同意过协议
-      // const agreed = storageUtil.getItem('agreePrivacy');
-      // setAgree(agreed === true);
-    }, []),
-  );
-
-  // 自动登录（小程序场景，不需要授权）
-  const handleAutoLogin = async () => {
-    if (!tempToken) return;
-
-    try {
-      setLoading(true);
-      tokenStorage.set(tempToken);
-      // 导航到首页
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Index' as any }],
-      });
-    } catch (error) {
-      console.error('自动登录失败:', error);
-      Alert.alert('提示', '登录失败，请重试');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 获取临时 token（小程序登录）
-  const getTempToken = async () => {
-    try {
-      // React Native 中需要获取微信 code
-      // 这里先模拟，实际需要调用微信登录 API
-      const res = await miniLogin({ jsCode: 'mock_code' });
-      // http 拦截器已经返回了 res.data，所以这里直接使用 res
-      if (res?.token) {
-        setNeedAuth(res.needAuth ?? true);
-        setTempToken(res.token);
-      }
-    } catch (error) {
-      console.error('获取临时 token 失败:', error);
-    }
-  };
-
-  // 处理协议同意
-  const handleAgree = async () => {
-    setAgree(true);
-    // 保存协议同意状态
-    // storageUtil.setItem('agreePrivacy', true);
-  };
-
   // 微信登录
   const wxLogin = async () => {
     const isInstalledWeChat: any = await checkInstalledWeChat();
@@ -124,7 +76,7 @@ const Login = () => {
     }
 
     const res = wechatLogin()
-    const loadingToast = Toast.loading('登录中...', 0);
+    Toast.loading('登录中...', 0);
 
     // 监听应用状态变化（用户可能从微信返回）
     const appStatePromise = new Promise<any>((resolve) => {
@@ -138,7 +90,7 @@ const Login = () => {
     });
     let r: any
     try {
-      const loadingToast = Toast.loading('登录中...', 0);
+      Toast.loading('登录中...', 0);
       r = await Promise.race([res, appStatePromise])
       if (r.result) {
         const thirdState = await getThirdState({})
@@ -160,22 +112,13 @@ const Login = () => {
             await getMobPushDeviceInfo()
           } catch { }
           if (thirdLoginRes.data.needBind) {
-            // navigateTo({ url: '/pages/user/account/bindPhone' })
-            // navigation.navigate('BindPhone')
+            navigation.navigate('BindPhone' as any);
           } else if (thirdLoginRes.data.needMobileVerify) {
-            // navigateTo({
-            //   url: `/pages/login/miniBind?${stringify({
-            //     mobile: thirdLoginRes.data.mobile,
-            //   })}`,
-            // })
-            // navigation.navigate('MiniBind', {
-            //   mobile: thirdLoginRes.data.mobile,
-            // })
-          } else {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Index' as any }],
+            navigation.navigate('MiniBind' as any, {
+              mobile: thirdLoginRes.data.mobile,
             });
+          } else {
+            reLaunch({ url: '/pages/index/index' });
           }
         } else {
           Toast.show(thirdLoginRes.message)
@@ -187,7 +130,7 @@ const Login = () => {
     } catch (e) {
       console.log('一键登录异常:', e)
     } finally {
-      Toast.remove(loadingToast)
+      Toast.removeAll()
       tempData.current.appStateSub?.remove?.()
       tempData.current.appStateSub = undefined
     }
@@ -202,24 +145,6 @@ const Login = () => {
     await wxLogin();
   };
 
-  // 处理协议弹窗确认
-  const handleAgreeConfirm = async () => {
-    await handleAgree();
-    agreePopRef.current?.close();
-
-    if (loginType === 'mini') {
-      if (!needAuth) {
-        handleAutoLogin();
-      } else {
-        setTimeout(() => {
-          handleWxLogin();
-        }, 300);
-      }
-    } else {
-      // 触发下一步（短信或密码登录）
-      // 这里可以通过事件或其他方式通知子组件
-    }
-  };
 
   const radioClick = async () => {
     setAgree(!agree);
@@ -228,6 +153,89 @@ const Login = () => {
       await setStorage({ key: 'pushEnabled', data: true });
     }
   };
+
+  // 页面加载时获取设备信息
+  useFocusEffect(
+    useCallback(() => {
+      const loadDeviceInfo = async () => {
+        let storageDevice: any = {};
+        try {
+          storageDevice = await getStorage({ key: 'deviceInfo' });
+          if (storageDevice?.data) {
+            device.current = storageDevice.data;
+          }
+        } catch (error) {
+          device.current = {};
+        }
+      };
+
+      loadDeviceInfo();
+
+      // 清理函数（页面卸载时执行）
+      return () => {
+        // 清理事件监听
+        eventCenter.off('onNext');
+        // 清理应用状态监听
+        if (tempData.current?.appStateSub) {
+          tempData.current.appStateSub.remove?.();
+          tempData.current.appStateSub = undefined;
+        }
+      };
+    }, [])
+  );
+
+  // 根据 agree 状态控制推送服务
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getStorage({ key: 'pushEnabled' });
+        // 合规：默认关闭推送，只有用户明确开启后才生效
+        const enabled = res?.data === true;
+        if (agree && enabled) {
+          appPush.submitPolicyGrantResult?.(true);
+          appPush.restartPush?.();
+          appPush.toggleNotifeeCore?.(true);
+          appPush.toggleMobPushOEM?.(true);
+        } else {
+          appPush.submitPolicyGrantResult?.(false);
+          appPush.stopPush?.();
+          appPush.toggleNotifeeCore?.(false);
+          appPush.toggleMobPushOEM?.(false);
+        }
+      } catch (e) {
+        // 读取失败时采取保守策略：未授权+停止推送
+        appPush.submitPolicyGrantResult?.(false);
+        appPush.stopPush?.();
+        appPush.toggleNotifeeCore?.(false);
+        appPush.toggleMobPushOEM?.(false);
+      }
+    })();
+  }, [agree]);
+
+  // 监听从协议/隐私 Web 返回后是否需要重开隐私弹窗
+  useEffect(() => {
+    const handler = async () => {
+      try {
+        const reopen = await cacheGetSync('reopenPrivacyAfterWeb');
+        const agreed = await cacheGetSync('agreePrivacy');
+        const byRes: any = await getStorage({ key: 'privacyOpenBy' }).catch(
+          () => ({ data: undefined }) as any,
+        );
+        const by = byRes?.data;
+        if (reopen && !agreed && by === 'login') {
+          try {
+            await cacheSetSync('reopenPrivacyAfterWeb', false);
+            await setStorage({ key: 'privacyOpenBy', data: '' });
+          } catch { }
+          agreePopRef.current?.open?.();
+        }
+      } catch { }
+    };
+    eventCenter.on('privacy:open', handler);
+    return () => {
+      eventCenter.off('privacy:open', handler);
+    };
+  }, []);
 
   return (
     <PageContainer
@@ -301,14 +309,110 @@ const Login = () => {
             }}>
               <Image source={{ uri: `https://g.18qjz.cn/img/boklock/loginIcon/icon_login_${(loginType === 'mini' ? prevLoginType : loginType) === 'sms' ? 'password' : 'mobile'}.png` }} style={styles.loginIcon}
                 resizeMode="contain"
-
               />
 
             </Flex>
           </Flex>
         </Flex>
       </View >
-      <PopConfirm ref={agreePopRef} title="请先阅读并同意用户协议和隐私政策" />
+      <PopConfirm ref={agreePopRef}
+        title={
+          <Flex direction="column" align="center" justify="center">
+            <Text style={styles.popTitle}>用户协议及隐私保护</Text>
+            <Text style={styles.popDesc}>
+              我已阅读并同意
+              <Text
+                style={styles.popDescLink}
+                onPress={async e => {
+                  e?.stopPropagation?.()
+                  try {
+                    await cacheSetSync('reopenPrivacyAfterWeb', true)
+                    await setStorage({ key: 'privacyOpenBy', data: 'login' })
+                  } catch { }
+                  agreePopRef.current?.close()
+                  navigation.navigate('WebView', {
+                    url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
+                    title: '泊刻地锁用户协议',
+                  })
+                }}>
+                《泊刻地锁用户协议》
+              </Text>
+              和
+              <Text
+                style={styles.popDescLink}
+                onPress={async e => {
+                  e?.stopPropagation?.()
+                  try {
+                    await cacheSetSync('reopenPrivacyAfterWeb', true)
+                    await setStorage({ key: 'privacyOpenBy', data: 'login' })
+                  } catch { }
+                  agreePopRef.current?.close()
+                  navigation.navigate('WebView', {
+                    url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
+                    title: '泊刻地锁隐私政策',
+                  })
+                }}>
+                《隐私政策》
+              </Text>
+            </Text>
+            <Text style={styles.popNotice}>
+              为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
+            </Text>
+          </Flex>
+        }
+        cancelText="不同意"
+        onCancel={() => {
+          agreePopRef.current?.close()
+          retainPopRef.current?.open()
+        }}
+        submitBtn={
+          <GradientButton
+            width={124}
+            style={styles.popSubmit}
+            colors={['#282828', '#4A4A4A']}
+            onPress={
+              loginType === 'mini'
+                ? async () => {
+                  await agreePopRef.current?.close()
+                  setAgree(true)
+                  await cacheSet({ key: 'agreePrivacy', data: true })
+                  await setStorage({ key: 'pushEnabled', data: true })
+                  setTimeout(() => {
+                    wxLogin()
+                  }, 300)
+                }
+                : () => {
+                  setAgree(true);
+                  myNextTick(() => {
+                    agreePopRef.current?.close()
+                    eventCenter.trigger('onNext')
+                  })
+                }
+            }
+          >
+            <Text style={styles.popBtnText}>同意并继续</Text>
+          </GradientButton>
+        }
+      />
+
+      {/* 拒绝后的挽留说明弹窗（仅确认按钮） */}
+      <PopConfirm
+        ref={retainPopRef}
+        showClose={false}
+        confirmText="我知道了"
+        title={
+          <Flex direction="column" align="center" justify="center">
+            <Text style={styles.popTitle}>温馨提示</Text>
+            <Text style={styles.popDesc}>
+              为保障您顺利绑定设备和正常使用定位、蓝牙、通知等功能，以及设备状态提醒的正常收取，建议您同意
+              <Text style={styles.popDescLink}>《泊刻地锁用户协议》</Text>和
+              <Text style={styles.popDescLink}>《隐私政策》</Text>
+              。您也可以选择暂不登录继续浏览。
+            </Text>
+          </Flex>
+        }
+      />
+
     </PageContainer >
   );
 };

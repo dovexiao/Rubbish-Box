@@ -20,8 +20,16 @@ import {
   cacheGet,
   cacheGetSync,
   cacheSet,
+  eventCenter,
+  getBluetoothDeviceInfo,
+  getCurrentPages,
   getStorage,
+  getSystemConnectedDevices,
+  isSameMac,
+  removeStorage,
   requestBluetoothPermissions,
+  reLaunch,
+  setStorage,
   initAppPush,
   getMobPushDeviceInfo,
   jumpToPage,
@@ -30,13 +38,30 @@ import {
 } from '@/utils';
 import appPush from '@/utils/push';
 import { WeChatInit } from '@/utils/wechat';
+import appUpdate from '@/utils/appUpdate';
+import { bind } from '@/services/bindDevice';
+import { openBluetoothProximity } from '@/services/bluetooth';
+import { Toast } from '@ant-design/react-native';
+import GradientButton from '@/components/GradientButton';
 
 
 function App() {
   const navigationRef = useNavigationContainerRef<any>();
   const agreePopRef = useRef<any>(null);
   const retainPopRef = useRef<any>(null);
+  const globalPopConfirmRef = useRef<any>(null);
   const [jumpListener, setJumpListener] = useState<{ remove?: () => void } | null>(null);
+  const [globalPopConfirmConfig, setGlobalPopConfirmConfig] = useState<{
+    title: string | React.ReactNode;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm?: () => any;
+    onCancel?: () => any;
+    showClose?: boolean;
+    confirmColors?: [string, string];
+    confirmTextColor?: string;
+    children?: React.ReactElement;
+  } | null>(null);
 
   // 设置导航引用，供 HTTP 拦截器使用
   useEffect(() => {
@@ -114,6 +139,66 @@ function App() {
     checkPrivacyAgreement();
   }, []);
 
+  // 监听从 Web 协议页返回后的重开指令（App 层处理，当 privacyOpenBy 不是 'login' 时）
+  useEffect(() => {
+    const handler = async () => {
+      try {
+        const agreed = await cacheGetSync('agreePrivacy');
+        const flagRes: any = await getStorage({ key: 'reopenPrivacyAfterWeb' }).catch(
+          () => ({ data: undefined }) as any,
+        );
+        const byRes: any = await getStorage({ key: 'privacyOpenBy' }).catch(
+          () => ({ data: undefined }) as any,
+        );
+        const needReopen = flagRes?.data === true;
+        const by = byRes?.data;
+        // 仅当来源非 login（或未设置）时由 App 层重弹
+        if (!agreed && needReopen && by !== 'login') {
+          agreePopRef.current?.open?.();
+        }
+        // 无论是否打开，均重置标记
+        try {
+          await setStorage({ key: 'reopenPrivacyAfterWeb', data: false });
+          await setStorage({ key: 'privacyOpenBy', data: '' });
+        } catch { }
+      } catch { }
+    };
+    eventCenter.on('privacy:open', handler);
+    return () => {
+      eventCenter.off('privacy:open', handler);
+    };
+  }, []);
+
+  // 监听全局 PopConfirm 显示事件
+  useEffect(() => {
+    const handler = (config: any) => {
+      setGlobalPopConfirmConfig(config);
+      globalPopConfirmRef.current?.open();
+    };
+    eventCenter.on('global:popConfirm:show', handler);
+    return () => {
+      eventCenter.off('global:popConfirm:show', handler);
+    };
+  }, []);
+
+  // 应用更新管理
+  useEffect(() => {
+    if (__DEV__) return; // 开发环境不检查更新
+
+    const updateManager = appUpdate();
+    updateManager.onUpdateReady(() => {
+      const updateInfo = updateManager.getUpdateInfo();
+      if (updateInfo.hasUpdate) {
+        const updateType = updateInfo.updateType === 'app' ? '应用更新' : '热更新';
+        Toast.info(`发现新版本`, 2000);
+        // 可以在这里显示更新提示
+        setTimeout(() => {
+          updateManager.applyUpdate();
+        }, 2000);
+      }
+    });
+  }, []);
+
   // 深链接/推送跳转监听
   useEffect(() => {
     const setupJumpListener = async () => {
@@ -149,6 +234,11 @@ function App() {
   useEffect(() => {
     const subscription = AppState.addEventListener('change', async (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
+        // 清理可能遗留的全局 Loading
+        try {
+          Toast.removeAll();
+        } catch { }
+
         // 应用激活时，检查并初始化推送
         try {
           const [agree, token, pushRes] = await Promise.all([
@@ -163,6 +253,121 @@ function App() {
           if (agree && enabled && loggedIn) {
             // 主动拉取一次推送设备信息
             await getMobPushDeviceInfo();
+          }
+
+          // 处理从系统设置返回的逻辑（rnReLaunchPath）
+          try {
+            const rnReLaunchRes = await getStorage({ key: 'rnReLaunchPath' }).catch(() => null);
+            const data = rnReLaunchRes?.data as
+              | { path?: string; params?: Record<string, any>; value?: any }
+              | undefined;
+            if (!data?.path) return;
+
+            try {
+              // 获取当前栈顶路由，判断app是否被杀掉
+              const pages = getCurrentPages();
+              const top = pages && pages[pages.length - 1];
+              const route = (top as any)?.routeName || (top as any)?.route || (top as any)?.path;
+
+              const normalize = (p?: string) => (p || '').replace(/^\//, '').replace(/^pages\//, '');
+              const currentRoute = normalize(route as string);
+              const targetRoute = normalize(data.path);
+
+              // 如果当前页面就是目标页面，说明app未被杀掉，由页面自己的onShow处理
+              if (currentRoute === targetRoute) {
+                await setStorage({ key: 'rnReLaunchPathProcessing', data: true }).catch(() => { });
+                // 延迟检查，如果页面处理完会清除记录
+                setTimeout(async () => {
+                  const stillExists = await getStorage({ key: 'rnReLaunchPath' }).catch(() => null);
+                  if (stillExists?.data) {
+                    await removeStorage({ key: 'rnReLaunchPath' }).catch(() => { });
+                  }
+                  await removeStorage({ key: 'rnReLaunchPathProcessing' }).catch(() => { });
+                }, 3000);
+                return;
+              }
+            } catch (e) {
+              console.log('[rn][restore] route check failed', e);
+            }
+
+            const { path, params, value } = data;
+            // 先清除记录，避免重复处理
+            await removeStorage({ key: 'rnReLaunchPath' }).catch(() => { });
+
+            try {
+              // 检查是否正在处理中（避免与页面onShow重复处理）
+              const processing = await getStorage({ key: 'rnReLaunchPathProcessing' }).catch(() => null);
+              if (processing?.data) {
+                console.log('[rn][restore] 页面正在处理中，跳过app.tsx处理');
+                return;
+              }
+
+              const info = await getSystemConnectedDevices();
+              if (path?.includes('bindDevice') || path?.includes('search')) {
+                const isPaired =
+                  info.data?.some((item: any) => isSameMac(item.deviceId || item.mac, params?.['bleNo'])) || false;
+                const deviceInfo = info.data?.find((item: any) =>
+                  isSameMac(item.deviceId || item.mac, params?.['bleNo']),
+                );
+                if (isPaired) {
+                  const bluetoothDeviceInfoList =
+                    (await getBluetoothDeviceInfo().catch(() => null)) || {};
+                  const { bleNo, imageMap, lockId, mode } = params || {};
+                  let res: any;
+                  if (path?.includes('bindDevice')) {
+                    Toast.loading('绑定中...', 0);
+                    res = await bind({
+                      deviceNo: params?.['deviceNo'],
+                      userId: null,
+                    });
+                  }
+                  if (path?.includes('search')) {
+                    Toast.loading('连接中...', 0);
+                    res = await openBluetoothProximity({ id: lockId });
+                  }
+                  Toast.removeAll();
+                  if (res?.code === 200 || res?.code === '200') {
+                    if (path?.includes('bindDevice')) {
+                      Toast.success('绑定成功');
+                    }
+                    if (path?.includes('search') && !mode) {
+                      Toast.success('自动升降开启成功');
+                    }
+                    if (path?.includes('search') && mode) {
+                      Toast.success('连接成功');
+                    }
+
+                    try {
+                      if (bleNo) {
+                        const newMap = { ...bluetoothDeviceInfoList };
+                        newMap[bleNo] = {
+                          bleNo: bleNo,
+                          deviceId: deviceInfo?.deviceId || deviceInfo?.mac,
+                          name: deviceInfo?.name || deviceInfo?.localName,
+                          imageMap: imageMap,
+                          isPaired: true,
+                        };
+                        await setStorage({ key: 'bluetoothDeviceInfoList', data: newMap });
+                      }
+                    } catch (e) {
+                      console.error('更新 bluetoothDeviceInfoList 映射失败:', e);
+                    }
+                  } else {
+                    Toast.fail(res?.message || '操作失败');
+                  }
+                }
+              } else {
+                // 其他路径直接跳转
+                reLaunch({ url: data.path });
+              }
+            } catch (e) {
+              // URLSearchParams 失败则只跳路径
+              reLaunch({
+                url: '/pages/index/index',
+              });
+            }
+          } catch (e) {
+            console.error('处理 rnReLaunchPath 失败:', e);
           }
         } catch (error) {
           console.error('应用激活处理失败:', error);
@@ -217,8 +422,15 @@ function App() {
                       我已阅读并同意
                       <Text
                         style={{ color: '#1E80FF' }}
-                        onPress={() => {
+                        onPress={async (e) => {
+                          e?.stopPropagation?.();
+                          // 跳转前先关闭弹窗，避免覆盖目标页面
                           agreePopRef.current?.close?.();
+                          // 标记返回后需要重开隐私弹窗
+                          try {
+                            await setStorage({ key: 'reopenPrivacyAfterWeb', data: true });
+                            await setStorage({ key: 'privacyOpenBy', data: 'app' });
+                          } catch { }
                           if (navigationRef?.isReady()) {
                             navigationRef.navigate('WebView', {
                               url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
@@ -231,8 +443,15 @@ function App() {
                       和
                       <Text
                         style={{ color: '#1E80FF' }}
-                        onPress={() => {
+                        onPress={async (e) => {
+                          e?.stopPropagation?.();
+                          // 跳转前先关闭弹窗，避免覆盖目标页面
                           agreePopRef.current?.close?.();
+                          // 标记返回后需要重开隐私弹窗
+                          try {
+                            await setStorage({ key: 'reopenPrivacyAfterWeb', data: true });
+                            await setStorage({ key: 'privacyOpenBy', data: 'app' });
+                          } catch { }
                           if (navigationRef?.isReady()) {
                             navigationRef.navigate('WebView', {
                               url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
@@ -243,11 +462,9 @@ function App() {
                         《隐私政策》
                       </Text>
                     </Text>
-                    {Platform.OS !== 'ios' && (
-                      <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
-                        为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
-                      </Text>
-                    )}
+                    <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
+                      为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
+                    </Text>
                   </Flex>
                 }
                 cancelText="不同意"
@@ -256,8 +473,10 @@ function App() {
                   retainPopRef.current?.open?.();
                 }}
                 submitBtn={
-                  <Button
-                    style={{ backgroundColor: '#333', marginLeft: 16 }}
+                  <GradientButton
+                    width={124}
+                    colors={['#282828', '#4A4A4A']}
+                    style={{ backgroundColor: '#333', marginLeft: 15, borderRadius: 12, }}
                     onPress={async () => {
                       try {
                         await cacheSet({ key: 'agreePrivacy', data: true });
@@ -268,7 +487,7 @@ function App() {
                       }
                     }}>
                     <Text style={{ color: '#fff' }}>同意并继续</Text>
-                  </Button>
+                  </GradientButton>
                 }
               />
 
@@ -289,6 +508,32 @@ function App() {
                   </Flex>
                 }
               />
+
+              {/* 全局 PopConfirm 弹窗（用于工具函数调用） */}
+              {globalPopConfirmConfig && (
+                <PopConfirm
+                  ref={globalPopConfirmRef}
+                  title={globalPopConfirmConfig.title}
+                  confirmText={globalPopConfirmConfig.confirmText || '确定'}
+                  cancelText={globalPopConfirmConfig.cancelText || '取消'}
+                  showClose={globalPopConfirmConfig.showClose !== false}
+                  confirmColors={globalPopConfirmConfig.confirmColors}
+                  confirmTextColor={globalPopConfirmConfig.confirmTextColor}
+                  onConfirm={async () => {
+                    const result = await globalPopConfirmConfig.onConfirm?.();
+                    if (result !== false) {
+                      globalPopConfirmRef.current?.close();
+                      setGlobalPopConfirmConfig(null);
+                    }
+                  }}
+                  onCancel={async () => {
+                    await globalPopConfirmConfig.onCancel?.();
+                    globalPopConfirmRef.current?.close();
+                    setGlobalPopConfirmConfig(null);
+                  }}>
+                  {globalPopConfirmConfig.children || undefined}
+                </PopConfirm>
+              )}
             </SafeAreaProvider>
           </GestureHandlerRootView>
         </AntdProvider>

@@ -54,7 +54,6 @@ const PopConfirm = ({
 
   return (
     <Modal
-      title={props.title}
       transparent
       modalType={'portal'}
       onClose={() => setVisible(false)}
@@ -63,20 +62,22 @@ const PopConfirm = ({
 
     >
       <Flex direction={'column'} style={popupStyle.popupContainer}>
+        <Text style={popupStyle.popupTitle}>
+          {props.title}
+        </Text>
         {children}
         <Flex
           style={[btnWrapStyle, ...(marginTop32 ? [popupStyle.btnMarginTop] : [popupStyle.btnContainerWrapper]),]}
           justify={'center'}>
           {showClose && (
             <GradientButton
-              startColor="transparent"
-              endColor="transparent"
+              colors={['transparent', 'transparent']}
               width={124}
               height={42}
               onPress={async () => {
                 onCancel ? await onCancel() : setVisible(false)
               }}
-              contentStyle={[popupStyle.btnContainer, popupStyle.btnContainerClose]}
+              style={[popupStyle.btnContainer, popupStyle.btnContainerClose]}
             >
               <Text style={popupStyle.btnContainerCloseText}>{cancelText}</Text>
             </GradientButton>
@@ -86,8 +87,7 @@ const PopConfirm = ({
             props.submitBtn
           ) : (
             <GradientButton
-              startColor={confirmColors[0]}
-              endColor={confirmColors[1]}
+              colors={confirmColors}
               width={showClose ? 124 : 160}
               height={42}
               onPress={async () => {
@@ -97,7 +97,7 @@ const PopConfirm = ({
                   setVisible(false)
                 }
               }}
-              contentStyle={[popupStyle.btnContainer, {
+              style={[popupStyle.btnContainer, {
                 ...(showClose ? { marginLeft: 15 } : {}),
               }]}>
               <Text

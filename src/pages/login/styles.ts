@@ -53,7 +53,50 @@ const styles = StyleSheet.create({
   loginIcon: {
     width: 50,
     height: 50,
-  }
+  },
+  popTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    lineHeight: 22,
+    color: '#333333',
+    textAlign: 'center',
+  },
+  popDesc: {
+    fontSize: 14,
+    color: '#999999',
+    lineHeight: 20,
+    textAlign: 'center',
+    marginTop: 8,
+    fontWeight: 'normal'
+  },
+  popDescLink: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#333333',
+  },
+  popNotice: {
+    fontSize: 13,
+    color: '#999999',
+    // lineHeight: 1.6,
+    marginTop: 8,
+  },
+  popSubmit: {
+    borderRadius: 12,
+    marginLeft: 15,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  wxLoginBtn: {
+    padding: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'transparent',
+  },
+  popBtnText: {
+    height: '100%',
+    color: '#ffffff'
+  },
 });
 
 export default styles;
