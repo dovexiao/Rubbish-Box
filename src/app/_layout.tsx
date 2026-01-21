@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react"
-import { Slot, Stack, useSegments } from "expo-router"
+import {  Stack, useSegments } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import * as ScreenOrientation from "expo-screen-orientation"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
@@ -23,7 +23,7 @@ import { useDeviceAuthStore } from "../stores/deviceAuthStore"
 import { useToastStore } from "../stores/toastStore"
 import { useDialogStore } from "../stores/dialogStore"
 import { useUpdateStore } from "../stores/updateStore"
-import { getLoginModalRef, showLoginModal } from "../utils/loginUtils"
+import { getLoginModalRef, showLoginModal, hideLoginModal, setNetworkModalController } from "../utils/loginUtils"
 
 // 导入P1重要功能Hooks
 import { useSystemKeyListener } from "../hooks/useSystemKeyListener"
@@ -51,8 +51,17 @@ SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
   const segments = useSegments()
 
-  // 获取token用于Slot的key，确保token变化时重新渲染路由树
-  const token = useUserStore((state) => state.token)
+  // 获取用户信息用于调试WebSocket连接
+  const user = useUserStore((state) => state.user)
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn)
+
+  // 调试WebSocket连接条件
+  console.log('🔍 WebSocket连接检查:', {
+    isLoggedIn,
+    hasUser: !!user,
+    userPhone: user?.phone,
+    userInfo: user ? { phone: user.phone, user_id: user.user_id } : null
+  })
 
   // 路由守卫 - 使用ref跟踪组件是否已挂载
   const isMounted = React.useRef(false)
@@ -62,10 +71,15 @@ export default function RootLayout() {
  const [networkModalType, setNetworkModalType] = useState<'no-connection' | '2.4g-warning' | null>(null)
   // 用户是否已点击"知道了"，不再显示网络弹窗
   const [networkModalDismissed, setNetworkModalDismissed] = useState(false)
-  // 获取设备授权状态（用于控制网络弹窗显示）
   const isBlocked = useDeviceAuthStore((state) => state.isBlocked)
   // 防止重复打开系统设置
   const isOpeningSettings = React.useRef(false)
+
+  // 全局网络弹窗控制器
+  const showNetworkModalController = React.useCallback((type: 'no-connection' | '2.4g-warning') => {
+    setNetworkModalType(type)
+    setShowNetworkModal(true)
+  }, [])
 
   // 保存其他弹窗的状态（在显示网络弹窗时需要暂时隐藏它们）
   const savedModalsState = React.useRef<{
@@ -186,20 +200,6 @@ export default function RootLayout() {
     if (Platform.OS === "android") {
       try {
         console.log("🔧 准备打开系统 WiFi 设置")
-
-        // 使用 expo-intent-launcher 打开 Android 系统 WiFi 设置
-        // const IntentLauncher = await import("expo-intent-launcher")
-
-        // 使用 FLAG_ACTIVITY_NEW_TASK 和 FLAG_ACTIVITY_CLEAR_TOP 确保每次都能打开
-        // FLAG_ACTIVITY_NEW_TASK: 在新任务中启动活动
-        // FLAG_ACTIVITY_CLEAR_TOP: 如果活动已存在，清除其上的所有活动
-        // await IntentLauncher.startActivityAsync(
-        //   IntentLauncher.ActivityAction.WIFI_SETTINGS,
-        //   {
-        //     flags: 0x10000000 | 0x04000000 // FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TOP
-        //   }
-        // )
-        // console.log("✅ 已打开系统 WiFi 设置")
         const { openWifiSettings } = await import("../services/systemSettings")
         await openWifiSettings()
         console.log("已打开系统WiFi设置")
@@ -229,229 +229,259 @@ export default function RootLayout() {
       console.log("iOS 平台，需要用户手动打开设置")
     }
   }
+  // 🔴 核心系统初始化和网络管理
+  console.log("🔧 初始化核心系统服务")
+
+  // 组件挂载状态管理
   useEffect(() => {
-    // 第一次渲染时，标记组件为已挂载
+    // 🔴 关键：首先从存储恢复用户登录状态（必须在检查登录状态之前执行）
+    console.log("🔍 步骤0：从持久化存储恢复用户登录状态")
+    useUserStore.getState().initializeFromStorage()
+    const restoredToken = useUserStore.getState().token
+    console.log("✅ 用户状态恢复完成，token:", restoredToken ? `存在(${restoredToken.length}字符)` : "不存在")
+
+    // 🔴 如果 token 恢复成功，立即关闭可能已显示的登录弹窗（双重保障）
+    if (restoredToken) {
+      const loginModalRef = getLoginModalRef()
+      if (loginModalRef) {
+        loginModalRef.hideLoginModal()
+        console.log("🔐 Token恢复后，已关闭登录弹窗")
+      }
+    }
+
     isMounted.current = true
-    // 同时设置路由守卫的挂载状态
     RouteGuard.isMounted = true
 
-    // 组件清理时，标记为未挂载
+    // 设置全局网络弹窗控制器
+    setNetworkModalController({
+      showNetworkModal: showNetworkModalController
+    })
+
     return () => {
       isMounted.current = false
       RouteGuard.isMounted = false
     }
-  }, [])
+  }, [showNetworkModalController])
 
-  // 路由守卫 - 只在组件挂载后执行，并确保用户数据已加载
-  useEffect(() => {
-    // 确保组件已挂载
-    if (!isMounted.current) return
-
-    // 获取当前路径
-    const path = "/" + segments.join("/")
-
-    // 获取当前token状态
-    const token = useUserStore.getState().token
-    console.log(`路由变化: ${path}, token状态: ${token ? "已存在" : "不存在"}`)
-
-    // 登录页面或根路径不需要验证
-    if (path === "/login" || path === "/") {
-      console.log("登录页面或根路径，跳过路由守卫检查")
-      return
-    }
-
-    // 使用InteractionManager优化路由守卫性能
-    InteractionManager.runAfterInteractions(() => {
-      // 再次检查token，确保最新状态
-      const currentToken = useUserStore.getState().token
-      console.log(`路由守卫检查前再次确认token: ${currentToken ? "已存在" : "不存在"}`)
-
-      // 如果token存在，则跳过路由守卫检查
-      if (currentToken) {
-        console.log("检测到有效token，跳过路由守卫检查")
-        return
-      }
-
-      // 使用路由守卫验证访问权限
-      RouteGuard.beforeEach(path)
-    })
-  }, [segments])
-
-  // 🔴 P0最高优先级：网络监测 - 必须第一个初始化
-  // 初始化全局网络监听（单例模式）
+  // 初始化基础服务
+  console.log("🚀 步骤1：初始化网络和电池监听")
   useNetworkMonitor()
-
-  // 🔋 电池监测 - 初始化全局电池监听（单例模式）
   useBatteryMonitor()
+  console.log("✅ 基础服务初始化完成")
 
-  // 获取网络状态
+  // 获取网络状态并设置监听
   const { isConnected, isInternetReachable, networkType, networkDetails, isInitialized } = useNetwork()
 
-  // 监听 API 层的网络错误事件
-  useEffect(() => {
-    const { networkEventManager } = require("../utils/networkEvents")
+  // 网络弹窗状态同步到store - 必须在组件顶层调用Hook，不能在useEffect内部
+  const setShowNetworkModalInStore = useNetworkStore((state) => state.setShowNetworkModal)
 
-    const unsubscribe = networkEventManager.addListener(() => {
-      console.log("🌐 收到 API 网络错误事件，显示网络弹窗")
-      // 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）
-      const isBlocked = useDeviceAuthStore.getState().isBlocked
-      if (isBlocked && isConnected) {
-        console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
-        return
-      }
-      // 检查用户是否已点击"知道了"
-      if (!shouldShowNetworkModal()) {
-        console.log("👤 用户已点击'知道了'，本次运行不再显示网络弹窗")
-        return
-      }
-      setShowNetworkModal(true)
-    })
-
-    return () => {
-      unsubscribe()
-    }
-  }, [isConnected])
-
-  useEffect(() => {
-    // 只在网络已初始化且已连接时检测
-    if (!isInitialized || !isConnected) {
-      return
-    }
-
-    // 只检测 WiFi 网络
-    if (networkType !== "wifi") {
-      return
-    }
-
-    // 检查频率
-    const frequency = networkDetails.frequency
-    if (frequency === null || frequency === undefined) {
-      // 频率信息不可用，不显示弹窗（可能是权限问题或系统不支持）
-      console.log("📡 WiFi 频率信息不可用，跳过 5G 频段检测")
-      return
-    }
-
-    // 5G WiFi 频段范围：5000-6000 MHz
-    // 2.4G WiFi 频段范围：2400-2500 MHz
+  // WiFi频段检测逻辑
+  const checkWifiFrequency = useCallback((frequency: number) => {
     const is5GHz = frequency >= 5000 && frequency <= 6000
     const is2_4GHz = frequency >= 2400 && frequency <= 2500
 
     if (is2_4GHz) {
-      // 检测到 2.4GHz WiFi，显示2.4G警告
-      console.log(`⚠️ 检测到 2.4GHz WiFi (${frequency} MHz)，建议升级到 5G 频段`)
-
-      // 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）
-      const isBlocked = useDeviceAuthStore.getState().isBlocked
-      if (isBlocked && isConnected) {
-        console.log("🔐 设备未授权且网络已连接，不显示 2.4G 频段警告（设备授权弹窗优先）")
-        return
-      }
-
-      // 检查用户是否已点击"知道了"
-      if (!shouldShowNetworkModal()) {
-        console.log("👤 用户已点击'知道了'，本次运行不再显示 2.4G 频段警告")
-        return
-      }
-
+      console.log(`⚠️ 检测到 2.4GHz WiFi (${frequency} MHz)`)
+      if (!shouldShowNetworkModal()) return
       setNetworkModalType('2.4g-warning')
       setShowNetworkModal(true)
     } else if (!is5GHz && frequency > 0) {
-      // 既不是 2.4G 也不是 5G，可能是其他频段，显示连接提示
-      console.log(`⚠️ 检测到非标准 WiFi 频段 (${frequency} MHz)，建议使用标准频段`)
-
-      const isBlocked = useDeviceAuthStore.getState().isBlocked
-      if (isBlocked && isConnected) {
-        console.log("🔐 设备未授权且网络已连接，不显示网络提示（设备授权弹窗优先）")
-        return
-      }
-
-      // 检查用户是否已点击"知道了"
-      if (!shouldShowNetworkModal()) {
-        console.log("👤 用户已点击'知道了'，本次运行不再显示网络提示")
-        return
-      }
-
+      console.log(`⚠️ 检测到非标准 WiFi 频段 (${frequency} MHz)`)
+      if (!shouldShowNetworkModal()) return
       setNetworkModalType('no-connection')
       setShowNetworkModal(true)
     } else if (is5GHz) {
-      // 5G 频段，关闭弹窗（如果之前显示过）
       console.log(`✅ 检测到 5G WiFi (${frequency} MHz)`)
-      if (showNetworkModal) {
-        setShowNetworkModal(false)
+      if (showNetworkModal) setShowNetworkModal(false)
+    }
+  }, [showNetworkModal])
+
+  // 🔴 网络相关状态监听和处理
+  useEffect(() => {
+    // API网络错误监听
+    const { networkEventManager } = require("../utils/networkEvents")
+    const unsubscribeApiErrors = networkEventManager.addListener(() => {
+      console.log("🌐 API网络错误，显示网络弹窗")
+      if (shouldShowNetworkModal()) {
+        setShowNetworkModal(true)
+      }
+    })
+
+    // WiFi频段检测
+    if (isInitialized && isConnected && networkType === "wifi") {
+      const frequency = networkDetails.frequency
+      if (frequency != null) {
+        checkWifiFrequency(frequency)
+      } else {
+        console.log("📡 WiFi频率信息不可用")
       }
     }
-  }, [isInitialized, isConnected, networkType, networkDetails.frequency, showNetworkModal])
-  // 同步网络弹窗状态到 store
-  const setShowNetworkModalInStore = useNetworkStore((state) => state.setShowNetworkModal)
-  useEffect(() => {
-    setShowNetworkModalInStore(showNetworkModal)
-  }, [showNetworkModal, setShowNetworkModalInStore])
 
-  // 监听网络弹窗状态，自动隐藏/恢复其他弹窗
-  useEffect(() => {
+    // 网络弹窗状态同步到store
+    setShowNetworkModalInStore(showNetworkModal)
+
+    // 网络弹窗显示时管理其他弹窗
     if (showNetworkModal) {
-      // 网络弹窗显示时，隐藏其他弹窗
       hideOtherModals()
     } else {
-      // 网络弹窗隐藏时，恢复其他弹窗
       restoreOtherModals()
     }
-  }, [showNetworkModal, hideOtherModals, restoreOtherModals])
+
+    return () => {
+      unsubscribeApiErrors()
+    }
+  }, [isInitialized, isConnected, networkType, networkDetails.frequency, showNetworkModal, checkWifiFrequency, setShowNetworkModalInStore])
+
+  // 路由守卫逻辑
+  useEffect(() => {
+    if (!isMounted.current) return
+
+    const path = "/" + segments.join("/")
+    const token = useUserStore.getState().token
+    console.log(`路由变化: ${path}, token: ${token ? "有" : "无"}`)
+
+    // 跳过不需要验证的页面
+    if (path === "/login" || path === "/" || showNetworkModal) {
+      return
+    }
+
+    InteractionManager.runAfterInteractions(() => {
+      const currentToken = useUserStore.getState().token
+      // 🔒 只有在没有token且网络已连接的情况下才弹出登录框
+      // 避免从设置返回时网络还未完全连接就弹出登录框
+      if (!currentToken && isConnected) {
+        RouteGuard.beforeEach(path)
+      }
+    })
+  }, [segments, showNetworkModal, isConnected])
 
   // P0核心功能Hooks
   const {
-    getAndCacheDeviceUUID: _getAndCacheDeviceUUID,
-    reverifyDeviceAuthorization,
-    ensureDeviceAuth,
-    clearDeviceUUID,
+    verifyDeviceAndAuth,  // 🔴 新增：统一的设备验证函数
   } = useDeviceAuth()
-  const {
-    saveMonitorData: _saveMonitorData,
-    setLocalData: _setLocalData,
-    getLocalData: _getLocalData,
-  } = useDataSync()
 
   // P1重要功能Hooks
-  const { checkForUpdatesOnShow } = useUpdateManager()
+  console.log("📦 步骤3：初始化更新管理器")
+  const { checkForUpdatesOnShow, manualCheckForUpdates, checkBundleUpdateOnly } = useUpdateManager()
+  console.log("✅ 更新管理器初始化完成")
+  console.log("🏃 步骤4：初始化坐姿监测store")
   const postureStore = usePostureStore()
+  console.log("✅ 坐姿监测store初始化完成")
+  console.log("🎥 步骤5：初始化全局坐姿监控")
   const { startMonitoring: startPostureMonitoring, stopMonitoring: stopPostureMonitoring } = useGlobalPostureMonitor()
+  console.log("✅ 全局坐姿监控初始化完成")
 
   // 全局 WebSocket 连接
+  console.log("🔌 步骤6：初始化全局WebSocket连接")
   useGlobalWebSocket()
+  console.log("✅ 全局WebSocket连接初始化完成")
 
-  // 跟踪应用启动状态和设备授权验证状态
-  const appLaunchState = React.useRef({
-    isLaunched: false,
-    deviceCode: null as string | null,
-    authVerified: false,
-  })
+  // 🔴 监听用户登录状态变化，确保登录成功后初始化服务
+  console.log("👤 步骤7：设置用户登录状态监听器")
+  useEffect(() => {
+    const unsubscribe = useUserStore.subscribe((state, prevState) => {
+      // 检测token从无到有的变化，表示用户刚刚登录成功
+      const hadToken = prevState.token && prevState.token.trim().length > 0
+      const hasToken = state.token && state.token.trim().length > 0
+      const isNewLogin = !hadToken && hasToken && state.isLoggedIn
 
-  // 🔴 核心函数：执行设备授权验证（需要网络连接）
-  const performDeviceAuth = useCallback(async (deviceCode: string) => {
-    // 检查网络状态
-    if (!isConnected) {
-      console.log("⏳ 等待网络连接后再进行设备授权验证...")
+      if (isNewLogin) {
+        console.log("🎉 检测到用户登录成功，开始初始化坐姿监测和全局监控服务")
+
+        // 初始化坐姿监测
+        console.log("📊 执行：初始化坐姿监测")
+        postureStore.initPoseMonitor()
+        console.log("✅ 坐姿监测初始化完成")
+
+        // 启动全局坐姿监控（异步执行，不阻塞）
+        console.log("🎥 执行：启动全局坐姿监控")
+        startPostureMonitoring().catch(error => {
+          console.error("❌ 启动坐姿监控失败:", error)
+        })
+        console.log("✅ 全局坐姿监控启动完成")
+      }
+    })
+
+    console.log("✅ 用户登录状态监听器设置完成")
+    // 组件卸载时取消订阅
+    return unsubscribe
+  }, [postureStore])
+
+  // 🔴 应用初始化逻辑（提取公共部分）
+  const performAppInitialization = (async (context: 'launch' | 'show') => {
+    try {
+      console.log(`🚀 === 应用${context === 'launch' ? '启动' : '前台切换'}流程开始 ===`)
+
+      if (context === 'launch') {
+        console.log("📱 App Launch - 应用启动")
+
+        // 🔴 应用启动时，先清除之前可能残留的 isBlocked 状态
+        console.log("🧹 执行：清除设备授权阻止状态")
+        useDeviceAuthStore.getState().unblockUserInteractions()
+        console.log("✅ 已清除授权阻止状态（等待验证结果）")
+      }
+
+      // 🔴 第一步：验证网络（这是第一步，所有后续操作都需要网络）
+      console.log("🌐 步骤1：验证网络连接状态")
+      if (!isConnected || isInternetReachable === false) {
+        console.log("❌ 网络未连接或不可达，显示网络弹窗")
+        setShowNetworkModal(true)
+        console.log(`🏁 === 应用${context === 'launch' ? '启动' : '前台切换'}流程提前结束（网络问题）===`)
+        return false // 返回false表示初始化未完成
+      }
+      console.log("✅ 网络连接正常，开始设备和更新检查")
+
+      // 🔴 第二步：设备码获取和授权验证
+      console.log("🔐 步骤2：执行设备码验证和授权检查")
+      // 🔴 使用统一的设备验证函数：获取设备码 + 验证授权 + 处理状态
+      const deviceVerified = await verifyDeviceAndAuth()
+      if (!deviceVerified) {
+        console.log("❌ 设备验证失败，停止初始化流程")
+        return false
+      }
+      console.log("✅ 设备验证成功")
+
+      // 🔴 第三步：整包更新检查（在设备验证后立即检查，避免与设备验证冲突）
+      console.log("📦 步骤3：检查整包更新")
+      const hasBundleUpdate = await checkBundleUpdateOnly()
+      if (!hasBundleUpdate) {
+        console.log("📦 发现整包更新，显示更新弹窗，停止初始化流程")
+        return false // 有整包更新，停止后续初始化
+      }
+      console.log("✅ 没有整包更新")
+
+      // 🔴 第四步：其他更新检查（OTA更新等）
+      console.log("🔄 步骤4：执行其他更新检查")
+      if (context === 'launch') {
+        await manualCheckForUpdates()
+      } else {
+        await checkForUpdatesOnShow()
+      }
+      console.log("✅ 其他更新检查完成")
+
+      // 🔴 第五步：登录验证（所有前置条件都满足后）
+      console.log("👤 步骤5：检查用户登录状态")
+      const token = useUserStore.getState().token
+      if (!token) {
+        console.log("🔑 用户未登录，显示登录弹窗")
+        await showLoginModal({
+          onSuccess: () => {
+            console.log(`🎉 用户${context === 'launch' ? '启动时' : '前台'}登录成功回调触发`)
+          },
+        })
+        console.log("✅ 登录弹窗已显示")
+      } else {
+        console.log("✅ 用户已登录，跳过登录验证")
+      }
+
+      console.log(`🏁 === 应用${context === 'launch' ? '启动' : '前台切换'}流程完成 ===`)
+      return true // 返回true表示初始化完成
+    } catch (error) {
+      console.error(`❌ 应用${context === 'launch' ? '启动' : '前台切换'}流程出错:`, error)
+      // 发生错误时，仍然返回false表示初始化未完成，避免应用崩溃
       return false
     }
-
-
-    // 网络已连接，执行设备授权验证
-    console.log("🔐 网络已连接，开始设备授权验证，设备码:", deviceCode)
-    const authResult = await ensureDeviceAuth()
-
-    if (authResult) {
-      appLaunchState.current.authVerified = true
-      console.log("✅ 设备授权验证完成")
-
-      // 🔴 设备授权通过后，启动全局坐姿监控（如果还未启动）
-      if (!postureStore.isMonitoring) {
-        console.log("🚀 设备授权通过，启动全局坐姿监控")
-        await startPostureMonitoring()
-      }
-    }
-
-    return authResult
-  }, [isConnected, isInternetReachable, ensureDeviceAuth, postureStore, startPostureMonitoring])
+  })
 
   // 系统键监听回调 - 100%还原UniApp逻辑
   const systemKeyCallbacks = useMemo(() => ({
@@ -474,168 +504,126 @@ export default function RootLayout() {
   const { handleAppShow: systemKeyHandleAppShow } = useSystemKeyListener(systemKeyCallbacks)
 
   // 应用生命周期回调 - 100%还原UniApp逻辑
+  console.log("🔄 步骤8：配置应用生命周期回调")
   const appLifecycleCallbacks = useMemo(() => ({
     onAppLaunch: async () => {
-      console.log("App Launch - 应用启动")
-
-      // 🔴 应用启动时，先清除之前可能残留的 isBlocked 状态
-      // 这样即使之前验证失败，应用重启后也不会残留阻止状态
-      useDeviceAuthStore.getState().unblockUserInteractions()
-      console.log("🔓 应用启动，已清除授权阻止状态（等待验证结果）")
-
-      // 🔴 P0最高优先级：输出网络状态（网络监测已在组件初始化时完成）
-      console.log("==================")
-      console.log("📡 网络状态检测完成")
-      console.log(`🌐 网络连接: ${isConnected ? "已连接" : "未连接"}`)
-      console.log(`🌍 互联网访问: ${isInternetReachable === null ? "检测中" : isInternetReachable ? "可访问" : "不可访问"}`)
-      console.log(`📶 网络类型: ${networkType}`)
-      console.log("==================")
-
-      // 🔴 第一步：获取设备序列号
-      const deviceCode = await _getAndCacheDeviceUUID()
-      console.log("📱 设备序列号:", deviceCode || '(无)')
-
-      // 将设备码保存到 store 中，供弹窗显示使用
-      if (deviceCode) {
-        useDeviceAuthStore.getState().setDeviceUUID(deviceCode)
-        appLaunchState.current.deviceCode = deviceCode
-      } else {
-        console.warn("⚠️ 未获取到设备序列号，阻止用户操作")
-        useDeviceAuthStore.getState().blockUserInteractions()
-        appLaunchState.current.isLaunched = true
-        return
-      }
-
-      // 初始化坐姿监测（还原UniApp逻辑）
-      postureStore.initPoseMonitor()
-
-      // 标记应用已启动
-      appLaunchState.current.isLaunched = true
-
-      // 🔴 第二步：检查网络状态，如果已连接则立即验证设备授权
-      // 🔴 只有设备授权通过后才能启动坐姿检测
-      if (isConnected && isInternetReachable !== false) {
-        // 网络已连接，立即执行设备授权验证
-        const authResult = await performDeviceAuth(deviceCode)
-        // 设备授权通过后，启动全局坐姿监控
-        if (authResult) {
-          console.log("🚀 设备授权通过，启动全局坐姿监控")
-          await startPostureMonitoring()
-        } else {
-          console.log("⚠️ 设备授权未通过，不启动坐姿监控")
-        }
-      } else {
-        // 网络未连接，等待网络连接后再验证（在 onNetworkConnected 中处理）
-        console.log("⏳ 网络未连接，等待网络连接后再进行设备授权验证")
-        // 🔴 网络未连接时，清除之前的 isBlocked 状态（因为无法验证，不应该阻止用户）
-        useDeviceAuthStore.getState().unblockUserInteractions()
-        console.log("🔓 网络未连接，已清除授权阻止状态")
+      try {
+        // 使用统一的初始化逻辑
+        await performAppInitialization('launch')
+      } catch (error) {
+        console.error('❌ 应用启动生命周期回调出错:', error)
       }
     },
 
     onAppShow: async () => {
-      console.log("应用进入前台")
-
-      // 切换背景图（应用进入前台时）
-      // @ts-ignore
-      if (global.switchHomeBackground && typeof global.switchHomeBackground === 'function') {
-        // @ts-ignore
-        global.switchHomeBackground()
-      }
-
       // 使用InteractionManager优化前台恢复性能
       InteractionManager.runAfterInteractions(async () => {
-        // P1功能：检查应用更新
-        await checkForUpdatesOnShow()
+        try {
+          console.log("⚡ InteractionManager: 开始执行前台恢复任务")
 
-        // P1功能：系统键监听的兜底处理
-        systemKeyHandleAppShow()
+          // 使用统一的初始化逻辑（网络检查、设备授权、更新检查、登录检查）
+          const initSuccess = await performAppInitialization('show')
 
-        // 检查坐姿监控状态（后台服务应该持续运行，这里只是确保状态正常）
-        // 🔴 只有设备授权通过后才能启动坐姿检测
-        const isAuthorized = useDeviceAuthStore.getState().isAuthorized
-        if (!isAuthorized) {
-          console.log("⚠️ 设备未授权，不启动坐姿监控")
-          return
+        if (initSuccess && isConnected && isInternetReachable) {
+          // 前台切换特有的额外逻辑
+
+          // P1功能：系统键监听的兜底处理
+          console.log("🎮 执行：系统键监听处理")
+          systemKeyHandleAppShow()
+          console.log("✅ 系统键监听处理完成")
+
+          // 🔴 只有设备授权通过后才能启动坐姿检测
+          console.log("🔐 检查设备授权状态")
+          const isAuthorized = useDeviceAuthStore.getState().isAuthorized
+          if (!isAuthorized) {
+            console.log("❌ 设备未授权，不启动坐姿监控")
+            console.log("🏁 === 前台切换流程结束（未授权）===")
+            return
+          }
+          console.log("✅ 设备已授权")
+
+          // 坐姿监控检查和启动
+          if (!postureStore.isMonitoring) {
+            console.log("📱 检测到监控未运行，重新启动")
+            await startPostureMonitoring()
+            console.log("✅ 坐姿监控启动完成")
+          } else {
+            console.log("✅ 坐姿监控正常运行中")
+          }
+
+          console.log("🏁 === 前台切换流程完成（正常）===")
         }
-
-        if (!postureStore.isMonitoring) {
-          console.log("📱 检测到监控未运行，重新启动")
-          await startPostureMonitoring()
-        } else {
-          console.log("📱 坐姿监控正常运行中")
+        } catch (error) {
+          console.error('❌ 前台切换生命周期回调出错:', error)
         }
       })
     },
 
     onAppHide: () => {
-      console.log("应用进入后台")
+      console.log("🔄 === 应用后台切换流程开始 ===")
+      console.log("📱 应用进入后台")
 
       // 注意：坐姿监控是后台服务，应用进入后台时会继续运行
       // Native层的后台服务会持续进行坐姿检测和时间统计
-      console.log("📱 应用进入后台，坐姿监控继续在后台运行")
+      console.log("📱 坐姿监控将继续在后台运行（Native层服务）")
+      console.log("🏁 === 应用后台切换流程完成 ===")
     },
 
     onAppExit: async () => {
-      console.log("应用退出")
+      console.log("🔄 === 应用退出流程开始 ===")
+      console.log("📱 应用退出")
 
       // 🔴 关键：应用退出时必须停止后台相机服务
-      console.log("🛑 停止坐姿监控服务")
+      console.log("🛑 执行：停止坐姿监控服务")
       await stopPostureMonitoring()
+      console.log("✅ 坐姿监控服务已停止")
+      console.log("🏁 === 应用退出流程完成 ===")
     },
-  }), [_getAndCacheDeviceUUID, postureStore, startPostureMonitoring, stopPostureMonitoring, checkForUpdatesOnShow, systemKeyHandleAppShow, isConnected, isInternetReachable, networkType, performDeviceAuth])
+  }), [ postureStore, startPostureMonitoring, stopPostureMonitoring, checkForUpdatesOnShow, systemKeyHandleAppShow, isConnected, isInternetReachable, networkType])
 
   // 网络状态回调 - 100%还原UniApp逻辑
+  console.log("🌐 步骤9：配置网络状态回调")
   const networkCallbacks = useMemo(() => ({
     onNetworkConnected: async () => {
-      console.log("网络已连接")
-
+      console.log("🔄 === 网络连接恢复流程开始 ===")
+      console.log("🟢 网络已连接")
       // 使用InteractionManager优化网络恢复性能
       InteractionManager.runAfterInteractions(async () => {
-        // 🔴 如果应用已启动但设备授权还未验证，则执行验证
-        if (appLaunchState.current.isLaunched &&
-          appLaunchState.current.deviceCode &&
-          !appLaunchState.current.authVerified) {
-          console.log("🔐 网络已连接，执行设备授权验证")
-          await performDeviceAuth(appLaunchState.current.deviceCode)
-        } else {
-          // 否则执行设备授权复验（用于网络恢复场景）
-          console.log("🔄 网络恢复后触发设备授权复验")
-          const authResult = await reverifyDeviceAuthorization()
-          // 🔴 如果复验通过且坐姿监控未运行，启动坐姿监控
-          if (authResult && !postureStore.isMonitoring) {
-            console.log("🚀 设备授权复验通过，启动全局坐姿监控")
-            await startPostureMonitoring()
-          }
-        }
+        console.log("⚡ InteractionManager: 开始执行网络恢复任务")
+        // 目前网络恢复时暂无额外处理逻辑
+        console.log("✅ 网络恢复处理完成")
+        console.log("🏁 === 网络连接恢复流程完成 ===")
       })
     },
 
     onNetworkDisconnected: () => {
-      console.log("网络已断开")
+      console.log("🔄 === 网络断开处理流程开始 ===")
+      console.log("🔴 网络已断开")
       // 🔴 如果设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）
-      // 如果设备未授权但网络未连接，可以显示网络弹窗（需要联网才能验证设备）
-      const isBlocked = useDeviceAuthStore.getState().isBlocked
-      if (isBlocked && isConnected) {
-        console.log("🔐 设备未授权且网络已连接，不显示网络弹窗（设备授权弹窗优先）")
-        return
-      }
       // 检查用户是否已点击"知道了"
       if (!shouldShowNetworkModal()) {
         console.log("👤 用户已点击'知道了'，本次运行不再显示网络断开提示")
+        console.log("🏁 === 网络断开处理流程结束（用户已忽略）===")
         return
       }
+      console.log("📱 显示网络断开提示弹窗")
       // 显示网络提示 Modal
       setShowNetworkModal(true)
+      console.log("✅ 网络断开弹窗已显示")
+      console.log("🏁 === 网络断开处理流程完成 ===")
     },
 
     onNetworkChange: (isConnected: boolean, networkType: string) => {
-      console.log("网络状态变化:", { isConnected, networkType })
+      console.log("🔄 网络状态变化:", { isConnected, networkType })
+      console.log(`📊 网络状态: ${isConnected ? '已连接' : '未连接'}, 类型: ${networkType}`)
     },
-  }), [reverifyDeviceAuthorization, performDeviceAuth])
+  }), [])
+  console.log("✅ 网络状态回调配置完成")
 
   // 使用应用生命周期Hook
+  console.log("🔄 步骤10：注册应用生命周期监听器")
   useAppLifecycle(appLifecycleCallbacks)
+  console.log("✅ 应用生命周期监听器注册完成")
 
   // 使用 ref 跟踪之前的网络状态，避免重复触发
   const prevNetworkState = React.useRef({
@@ -700,102 +688,52 @@ export default function RootLayout() {
     prevNetworkState.current = { isConnected, isInternetReachable, isInitialized }
   }, [isConnected, isInternetReachable, isInitialized, networkCallbacks])
 
+  console.log("📱 步骤11：初始化屏幕和系统设置")
   useEffect(() => {
-    // 使用InteractionManager优化初始化性能
-    InteractionManager.runAfterInteractions(async () => {
-      // 初始化用户存储数据 - 直接调用 store 的方法
-      useUserStore.getState().initializeFromStorage()
-      // 加载完成后检查token状态
-      const token = useUserStore.getState().token
-      console.log("用户数据初始化完成，token状态:", token ? "已存在" : "不存在")
-
-      // 如果token不存在，等待登录弹窗管理器挂载后弹出登录弹窗
-      if (!token) {
-        console.log("🔐 检测到用户未登录，准备弹出登录弹窗")
-
-        // 等待登录弹窗引用可用（GlobalLoginManager 挂载完成）
-        const waitForLoginModal = (maxAttempts = 20, interval = 100) => {
-          return new Promise<void>((resolve) => {
-            let attempts = 0
-            const checkInterval = setInterval(() => {
-              attempts++
-              const loginModalRef = getLoginModalRef()
-              if (loginModalRef || attempts >= maxAttempts) {
-                clearInterval(checkInterval)
-                resolve()
-              }
-            }, interval)
-          })
-        }
-
-        // 等待登录弹窗管理器挂载
-        await waitForLoginModal()
-
-        // 再次确认token状态（防止在等待期间用户已登录）
-        const currentToken = useUserStore.getState().token
-        if (!currentToken) {
-          console.log("🔐 弹出登录弹窗")
-          showLoginModal({
-            onSuccess: () => {
-              console.log("🔐 用户登录成功")
-            },
-            onCancel: () => {
-              console.log("🔐 用户取消登录")
-            },
-          })
-        } else {
-          console.log("🔐 等待期间用户已登录，跳过登录弹窗")
-        }
-      }
-    })
+    console.log("🔄 === 屏幕系统初始化开始 ===")
 
     // 锁定横屏模式（还原UniApp逻辑：plus.screen.lockOrientation('landscape-primary')）
     const lockOrientation = async () => {
+      console.log("📐 执行：锁定横屏模式")
       try {
         await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT)
-        console.log("已锁定横屏模式")
+        console.log("✅ 已锁定横屏模式（LANDSCAPE_RIGHT）")
       } catch (error) {
-        console.warn("锁定横屏失败:", error)
+        console.warn("❌ 锁定横屏失败:", error)
       }
     }
     lockOrientation()
 
     // 注意：返回键行为已在useSystemKeyListener中处理，这里不需要重复设置
+    console.log("ℹ️ 返回键行为已在系统键监听器中配置")
 
     // 输出屏幕适配信息（用于调试）
+    console.log("📊 收集屏幕适配信息")
     getScreenInfo().then((screenInfo) => {
-      console.log("=== 屏幕适配信息 ===")
-      console.log(`屏幕尺寸: ${screenInfo.width} × ${screenInfo.height}`)
-      console.log(`设备类型: ${screenInfo.isTablet ? "平板" : "手机"}`)
-      console.log(`屏幕方向: ${screenInfo.isLandscape ? "横屏" : "竖屏"}`)
-      console.log(`缩放比例: ${screenInfo.scaleRatio}`)
-      console.log(`转换基准: ${screenInfo.baseRpx}rpx`)
-      console.log(`平台: ${screenInfo.platform}`)
-      console.log("==================")
+      console.log("=== 📱 屏幕适配信息 ===")
+      console.log(`📏 屏幕尺寸: ${screenInfo.width} × ${screenInfo.height}`)
+      console.log(`🎯 设备类型: ${screenInfo.isTablet ? "平板" : "手机"}`)
+      console.log(`🔄 屏幕方向: ${screenInfo.isLandscape ? "横屏" : "竖屏"}`)
+      console.log(`📈 缩放比例: ${screenInfo.scaleRatio}`)
+      console.log(`📏 转换基准: ${screenInfo.baseRpx}rpx`)
+      console.log(`🖥️ 平台: ${screenInfo.platform}`)
+      console.log("========================")
     })
 
     // 立即隐藏闪屏（无动画）
+    console.log("👁️ 执行：隐藏启动闪屏")
     SplashScreen.hideAsync()
+    console.log("✅ 启动闪屏已隐藏")
+
+    console.log("🏁 === 屏幕系统初始化完成 ===")
   }, [])
+  console.log("✅ 屏幕和系统设置初始化完成")
 
   // 锁屏状态，用于控制网络断开提示弹窗的显示
   const locked = useLockScreenStore((state) => state.locked)
 
-  // useEffect(() => {
-  //   (async () => {
-  //     setShowNetworkModal(true)
-  //     const { showLoginModal } = await import("../utils/loginUtils")
-  //     showLoginModal({
-  //       onSuccess: () => {
-  //         console.log("登录成功")
-  //       },
-  //       onCancel: () => {
-  //         console.log("登录取消")
-  //       },
-  //     });
-  //   })();
-  // }, [locked])
 
+  console.log("🎨 步骤12：渲染应用UI")
   return (
     <GestureHandlerRootView style={styles.container}>
       {/* 全局沉浸式模式 - 隐藏状态栏和三大金刚键 */}
@@ -804,7 +742,6 @@ export default function RootLayout() {
       <PaperProvider>
         <SafeAreaProvider>
           <Stack
-            key={token || 'no-token'}
             screenOptions={{
               headerShown: false,
               animation: 'none',
@@ -874,7 +811,7 @@ export default function RootLayout() {
               </>
             ) : (
               <>
-                <Text style={styles.networkModalMessage}>
+                <Text style={styles.networkModalTitle}>
                   未连接网络
                 </Text>
                 <Text style={styles.networkModalMessage}>
@@ -883,12 +820,14 @@ export default function RootLayout() {
               </>
             )}
             <View style={styles.networkModalButtons}>
-              <TouchableOpacity
-                style={[styles.networkModalButton, styles.networkModalCancelButton]}
-                onPress={dismissNetworkModal}
-              >
-                <Text style={styles.networkModalCancelText}>知道了</Text>
-              </TouchableOpacity>
+              {networkModalType === '2.4g-warning' && (
+                <TouchableOpacity
+                  style={[styles.networkModalButton, styles.networkModalCancelButton]}
+                  onPress={dismissNetworkModal}
+                >
+                  <Text style={styles.networkModalCancelText}>知道了</Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity onPress={openNetworkSettings}>
                 <LinearGradient
                   colors={["#AFDCFF", "#4BB1FF"]}

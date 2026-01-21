@@ -50,8 +50,16 @@ export const useUpdateManager = () => {
   // 应用进入前台时检查更新
   const checkForUpdatesOnShow = useCallback(async () => {
     try {
-      const updateManager = updateManagerRef.current
-      if (!updateManager) return
+      let updateManager = updateManagerRef.current
+
+      // 如果更新管理器还没有初始化，先初始化它
+      if (!updateManager) {
+        console.log("更新管理器未初始化，正在初始化...")
+        updateManager = new UpdateManager()
+        await updateManager.initialize()
+        updateManagerRef.current = updateManager
+        console.log("✅ 更新管理器初始化完成")
+      }
 
       console.log("应用进入前台，检查更新")
       await updateManager.checkForUpdatesOnShow()
@@ -63,10 +71,15 @@ export const useUpdateManager = () => {
   // 手动检查更新
   const manualCheckForUpdates = useCallback(async () => {
     try {
-      const updateManager = updateManagerRef.current
+      let updateManager = updateManagerRef.current
+
+      // 如果更新管理器还没有初始化，先初始化它
       if (!updateManager) {
-        console.log("更新管理器未初始化")
-        return
+        console.log("更新管理器未初始化，正在初始化...")
+        updateManager = new UpdateManager()
+        await updateManager.initialize()
+        updateManagerRef.current = updateManager
+        console.log("✅ 更新管理器初始化完成")
       }
 
       console.log("手动检查更新")
@@ -76,22 +89,50 @@ export const useUpdateManager = () => {
     }
   }, [])
 
-  // 应用启动时初始化（仅一次）
-  useEffect(() => {
-    if (!didInitUpdate.current) {
-      // 冷启动后延迟初始化更新管理器（仅一次）
-      setTimeout(() => {
-        initUpdateManager()
-      }, 1200)
+  // 🔴 检查整包更新：如果没有整包更新返回true，有整包更新显示弹窗并返回false
+  const checkBundleUpdateOnly = useCallback(async (): Promise<boolean> => {
+    try {
+      let updateManager = updateManagerRef.current
 
-      didInitUpdate.current = true
+      // 如果更新管理器还没有初始化，先初始化它
+      if (!updateManager) {
+        console.log("更新管理器未初始化，正在初始化...")
+        updateManager = new UpdateManager()
+        await updateManager.initialize()
+        updateManagerRef.current = updateManager
+        console.log("✅ 更新管理器初始化完成")
+      }
+
+      console.log("开始检查整包更新")
+      // 调用UpdateManager的新方法
+      const hasBundleUpdate = await updateManager.checkBundleUpdateWithDialog()
+      return hasBundleUpdate
+
+    } catch (error) {
+      console.error("整包更新检查失败:", error)
+      // 检查失败时假设没有更新，继续流程
+      return true
     }
-  }, [initUpdateManager])
+  }, [])
+
+  // 🔴 移除自动初始化，由外部performAppInitialization控制
+  // 应用启动时不再自动检查更新，避免在网络检查前执行
+  // useEffect(() => {
+  //   if (!didInitUpdate.current) {
+  //     // 冷启动后延迟初始化更新管理器（仅一次）
+  //     setTimeout(() => {
+  //       initUpdateManager()
+  //     }, 1200)
+  //
+  //     didInitUpdate.current = true
+  //   }
+  // }, [initUpdateManager])
 
   return {
     initUpdateManager,
     checkForUpdatesOnShow,
     manualCheckForUpdates,
+    checkBundleUpdateOnly, // 🔴 新增：只检查整包更新的方法
     updateManager: updateManagerRef.current,
   }
 }

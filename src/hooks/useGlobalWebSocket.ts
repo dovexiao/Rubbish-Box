@@ -24,10 +24,16 @@ import { WebSocketStatus } from '../types/websocket'
 export function useGlobalWebSocket() {
   const isInitialized = useRef(false)
   const appState = useRef(AppState.currentState)
-  
+
   // 获取用户信息
   const user = useUserStore((state) => state.user)
   const isLoggedIn = useUserStore((state) => state.isLoggedIn)
+
+  console.log('[useGlobalWebSocket] Hook 执行:', {
+    isLoggedIn,
+    userPhone: user?.phone,
+    isInitialized: isInitialized.current
+  })
 
   // 初始化 WebSocket 服务（仅一次）
   useEffect(() => {
@@ -54,6 +60,13 @@ export function useGlobalWebSocket() {
 
   // 监听用户登录状态变化
   useEffect(() => {
+    console.log('[useGlobalWebSocket] 状态检查:', {
+      isLoggedIn,
+      hasPhone: !!user?.phone,
+      phone: user?.phone,
+      isInitialized: isInitialized.current
+    })
+
     if (!isLoggedIn || !user?.phone) {
       console.log('[useGlobalWebSocket] 用户未登录或无手机号，断开连接')
       globalWebSocket.disconnect()
@@ -61,16 +74,31 @@ export function useGlobalWebSocket() {
     }
 
     console.log('[useGlobalWebSocket] 用户已登录，准备连接 WebSocket')
-    
-    // 延迟一点时间再连接，确保其他初始化完成
-    const timer = setTimeout(() => {
-      globalWebSocket.connect(user.phone!)
-        .then(() => {
-          console.log('[useGlobalWebSocket] WebSocket 连接成功')
-        })
-        .catch((error) => {
-          console.error('[useGlobalWebSocket] WebSocket 连接失败:', error)
-        })
+
+    // 延迟一点时间再连接，确保WebSocket服务已初始化
+    const timer = setTimeout(async () => {
+      try {
+        // 确保WebSocket服务已初始化
+        if (!isInitialized.current) {
+          console.log('[useGlobalWebSocket] 等待WebSocket服务初始化...')
+          // 等待初始化完成，最多等待2秒
+          let attempts = 0
+          while (!isInitialized.current && attempts < 20) {
+            await new Promise(resolve => setTimeout(resolve, 100))
+            attempts++
+          }
+
+          if (!isInitialized.current) {
+            console.warn('[useGlobalWebSocket] WebSocket服务初始化超时，跳过连接')
+            return
+          }
+        }
+
+        await globalWebSocket.connect(user.phone!)
+        console.log('[useGlobalWebSocket] WebSocket 连接成功')
+      } catch (error) {
+        console.error('[useGlobalWebSocket] WebSocket 连接失败:', error)
+      }
     }, 500)
 
     return () => {
@@ -92,9 +120,15 @@ export function useGlobalWebSocket() {
         
         // 如果用户已登录但 WebSocket 未连接，尝试重连
         if (isLoggedIn && user?.phone) {
+          // 确保WebSocket服务已初始化
+          if (!isInitialized.current) {
+            console.log('[useGlobalWebSocket] 前台切换时WebSocket服务未初始化，跳过重连')
+            return
+          }
+
           const status = globalWebSocket.getStatus()
           if (
-            status !== WebSocketStatus.CONNECTED && 
+            status !== WebSocketStatus.CONNECTED &&
             status !== WebSocketStatus.CONNECTING &&
             status !== WebSocketStatus.RECONNECTING
           ) {

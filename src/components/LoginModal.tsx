@@ -21,7 +21,7 @@ import { useUserStore } from "../stores/userStore"
 import { UserAgreementModal } from "./UserAgreementModal"
 import { PrivacyPolicyModal } from "./PrivacyPolicyModal"
 import { SetPasswordModal } from "./SetPasswordModal"
-import { showSuccess, showError, showWarning } from "../utils/toast"
+import { showSuccess, showError, showWarning, showInfo } from "../utils/toast"
 
 
 type LoginMode = "sms" | "password"
@@ -374,14 +374,15 @@ export const LoginModal = React.memo(function LoginModal({
         animationType="fade"
         transparent={true}
         onRequestClose={() => {
-          console.log("🔐 LoginModal: onRequestClose 被调用")
-          onCancel?.()
+          console.log("🔐 LoginModal: onRequestClose 被调用，但不关闭弹窗")
+          // 不调用 onCancel，保持弹窗显示
         }}
       >
         <TouchableWithoutFeedback
           onPress={() => {
-            console.log("🔐 LoginModal: 点击蒙版，关闭弹窗")
-            onCancel?.()
+            console.log("🔐 LoginModal: 点击蒙版，但不关闭弹窗")
+            showInfo("请先完成登录才能继续使用")
+            // 不调用 onCancel，保持弹窗显示
           }}
         >
           <View style={styles.modalOverlay}>

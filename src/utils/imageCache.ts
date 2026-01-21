@@ -10,6 +10,7 @@ interface CacheInfo {
   url: string
   localPath: string
   timestamp: number
+  downloadCompletedAt?: number // 下载完成时间戳（用于验证是否已稳定3分钟）
 }
 
 /**
@@ -71,7 +72,7 @@ function isCacheExpired(timestamp: number): boolean {
 /**
  * 获取缓存的背景图路径和URL
  */
-export async function getCachedHomeBg(): Promise<{ localPath: string; url: string } | null> {
+export async function getCachedHomeBg(): Promise<{ localPath: string; url: string; downloadCompletedAt?: number } | null> {
   try {
     console.log("🖼️ [缓存检查] 开始检查缓存")
     const cacheInfoStr = await AsyncStorage.getItem(CACHE_KEY)
@@ -103,6 +104,7 @@ export async function getCachedHomeBg(): Promise<{ localPath: string; url: strin
     return {
       localPath: cacheInfo.localPath,
       url: cacheInfo.url,
+      downloadCompletedAt: cacheInfo.downloadCompletedAt,
     }
   } catch (error) {
     console.error("🖼️ [缓存检查] 获取缓存背景图失败:", error)
@@ -124,25 +126,27 @@ export async function downloadAndCacheHomeBg(url: string): Promise<string | null
 
     console.log("🖼️ 保存路径:", localPath)
 
-    // 设置超时时间为30秒
+    // 设置超时时间为3分钟（180秒），确保大文件完整下载
     const downloadPromise = FileSystem.downloadAsync(url, localPath)
     const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("下载超时")), 30000)
+      setTimeout(() => reject(new Error("下载超时")), 180000)
     )
 
     // 下载图片（带超时）
     const downloadResult = await Promise.race([downloadPromise, timeoutPromise])
 
     if (downloadResult.status === 200) {
-      // 保存缓存信息
+      // 保存缓存信息，记录下载完成时间
+      const downloadCompletedAt = Date.now()
       const cacheInfo: CacheInfo = {
         url,
         localPath: downloadResult.uri,
-        timestamp: Date.now(),
+        timestamp: downloadCompletedAt,
+        downloadCompletedAt: downloadCompletedAt, // 记录下载完成时间戳
       }
       await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(cacheInfo))
 
-      console.log("✅ 背景图下载并缓存成功，路径:", downloadResult.uri)
+      console.log("✅ 背景图下载并缓存成功，路径:", downloadResult.uri, "下载完成时间:", new Date(downloadCompletedAt).toLocaleString())
       return downloadResult.uri
     } else {
       console.error("❌ 背景图下载失败，状态码:", downloadResult.status)
@@ -165,6 +169,88 @@ export async function prefetchHomeBg(url: string): Promise<boolean> {
     return true
   } catch (error) {
     console.error("❌ 背景图预加载失败:", error)
+    return false
+  }
+}
+
+/**
+ * 检查下载完成时间是否已过3分钟（稳定期）
+ * @param downloadCompletedAt 下载完成时间戳
+ * @returns 如果已过3分钟返回true，否则返回false
+ */
+export function isDownloadStable(downloadCompletedAt: number | undefined): boolean {
+  if (!downloadCompletedAt) {
+    return false // 如果没有记录下载完成时间，认为不稳定
+  }
+  
+  const STABLE_DURATION = 3 * 60 * 1000 // 3分钟（毫秒）
+  const now = Date.now()
+  const elapsed = now - downloadCompletedAt
+  
+  return elapsed >= STABLE_DURATION
+}
+
+/**
+ * 等待下载稳定（如果下载完成时间不足3分钟，等待到3分钟）
+ * @param downloadCompletedAt 下载完成时间戳
+ * @returns Promise，在稳定后resolve
+ */
+export async function waitForDownloadStable(downloadCompletedAt: number | undefined): Promise<void> {
+  if (!downloadCompletedAt) {
+    console.warn('🖼️ [稳定检查] 没有下载完成时间戳，无法验证稳定性')
+    return
+  }
+  
+  const STABLE_DURATION = 3 * 60 * 1000 // 3分钟（毫秒）
+  const now = Date.now()
+  const elapsed = now - downloadCompletedAt
+  
+  if (elapsed >= STABLE_DURATION) {
+    console.log(`🖼️ [稳定检查] 下载已完成 ${(elapsed / 1000).toFixed(1)}秒，已超过3分钟稳定期，可以直接加载`)
+    return
+  }
+  
+  const waitTime = STABLE_DURATION - elapsed
+  console.log(`🖼️ [稳定检查] 下载完成时间不足3分钟，还需等待 ${(waitTime / 1000).toFixed(1)}秒 以确保文件稳定`)
+  
+  await new Promise(resolve => setTimeout(resolve, waitTime))
+  
+  console.log(`🖼️ [稳定检查] ✅ 等待完成，文件已稳定，可以安全加载`)
+}
+
+/**
+ * 验证图片文件完整性
+ */
+export async function verifyImageFileIntegrity(filePath: string): Promise<boolean> {
+  try {
+    // 检查文件是否存在
+    const fileInfo = await FileSystem.getInfoAsync(filePath)
+    if (!fileInfo.exists || !fileInfo.size || fileInfo.size === 0) {
+      console.warn('🖼️ [验证] 文件不存在或大小为0:', filePath)
+      return false
+    }
+
+    // 使用 Image.getSize 验证图片是否可以正常读取和解码
+    return new Promise<boolean>((resolve) => {
+      Image.getSize(
+        filePath,
+        (width, height) => {
+          if (width > 0 && height > 0) {
+            console.log(`🖼️ [验证] 图片完整性验证成功: ${width}x${height}, 文件大小: ${fileInfo.size} bytes`)
+            resolve(true)
+          } else {
+            console.warn('🖼️ [验证] 图片尺寸无效:', width, height)
+            resolve(false)
+          }
+        },
+        (error) => {
+          console.warn('🖼️ [验证] 图片验证失败:', error)
+          resolve(false)
+        }
+      )
+    })
+  } catch (error) {
+    console.error('🖼️ [验证] 验证过程异常:', error)
     return false
   }
 }

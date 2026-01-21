@@ -144,12 +144,57 @@ export const useDeviceAuth = () => {
     }
   }, [getAndCacheDeviceUUID])
 
+  // 🔴 统一的设备码验证函数：获取设备码 + 调用验证接口 + 处理授权状态
+  const verifyDeviceAndAuth = useCallback(async (): Promise<boolean> => {
+    try {
+      console.log("🔐 开始统一的设备码验证流程")
+
+      // 步骤1：获取并缓存设备码
+      console.log("📱 获取设备码")
+      const deviceCode = await getAndCacheDeviceUUID()
+      console.log("📋 设备码:", deviceCode || '(空)')
+
+      if (!deviceCode) {
+        console.log("❌ 设备码为空，无法验证授权")
+        // 设备码为空时，设置阻止状态
+        deviceAuthStore.blockUserInteractions()
+        return false
+      }
+
+      // 步骤2：调用设备授权验证接口
+      console.log("🔍 调用设备授权验证接口")
+      const authResult = await deviceAuthStore.ensureAuthFromCacheOrVerify()
+
+      if (authResult === false) {
+        console.log("❌ 设备未授权")
+        // ensureAuthFromCacheOrVerify 已经设置了 isBlocked = true
+        return false
+      } else if (authResult === true) {
+        console.log("✅ 设备已授权")
+        return true
+      } else {
+        // authResult === null，接口调用失败
+        console.log("⚠️ 设备授权验证接口调用失败")
+        // 接口失败时不阻止用户操作（设置 isBlocked = false）
+        deviceAuthStore.unblockUserInteractions()
+        return false
+      }
+    } catch (error) {
+      console.error("❌ 设备码验证流程出错:", error)
+      // 异常情况不阻止用户操作
+      deviceAuthStore.unblockUserInteractions()
+      return false
+    }
+  }, [deviceAuthStore, getAndCacheDeviceUUID])
+
   return {
     getAndCacheDeviceUUID,
     reverifyDeviceAuthorization,
     ensureDeviceAuth,
     clearDeviceUUID,
     getDeviceInfo,
+    // 🔴 新增：统一的设备验证函数
+    verifyDeviceAndAuth,
     // 从store中暴露状态
     isAuthorized: deviceAuthStore.isAuthorized,
     isBlocked: deviceAuthStore.isBlocked,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { InteractionManager } from "react-native"
 import {
   View,
@@ -116,6 +116,21 @@ export default function MyScreen() {
       devError("获取数据失败:", error)
     }
   }, [userStore])
+
+  // 监听token变化，当token从无到有时重新请求数据
+  const prevTokenRef = useRef<string | null>(null)
+  useEffect(() => {
+    const currentToken = userStore.token
+    const prevToken = prevTokenRef.current
+
+    // token从无到有，重新请求数据
+    if (!prevToken && currentToken && isInitialized) {
+      devLog("检测到token从无到有，重新请求我的页面数据")
+      fetchAllData()
+    }
+
+    prevTokenRef.current = currentToken
+  }, [userStore.token, isInitialized, fetchAllData])
 
   // 初始化数据 - 使用InteractionManager优化
   useEffect(() => {

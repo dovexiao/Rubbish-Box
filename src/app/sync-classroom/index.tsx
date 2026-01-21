@@ -559,7 +559,7 @@ export default function SyncClassroomScreen() {
     >
       <StatusBar theme="dark" backgroundColor="transparent" translucent={true} />
       <NavBar 
-        title="同步课程" 
+        title="同步课堂" 
         leftArrow 
         onBackPress={handleBackPress}
       />

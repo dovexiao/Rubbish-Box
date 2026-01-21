@@ -101,6 +101,74 @@ export class UpdateManager {
   }
 
   /**
+   * 检查是否有整包更新（不显示弹窗，只返回结果）
+   * @returns {Promise<boolean>} true=没有整包更新，false=有整包更新
+   */
+  async checkBundleUpdateOnly(): Promise<boolean> {
+    try {
+      console.log("开始检查整包更新（仅检查，不显示弹窗）")
+
+      // 获取当前应用信息
+      const appInfo = await this.getCurrentAppInfo()
+      console.log("当前应用信息:", appInfo)
+
+      // 调用整包更新检测API
+      const updateResponse = await this.requestUpdateCheck(appInfo)
+      console.log("整包更新检测API响应:", updateResponse)
+
+      if (updateResponse.code === 200 && updateResponse.data.needUpdate) {
+        console.log("✅ 发现整包更新")
+        return false // 有更新，返回false
+      }
+
+      console.log("✅ 没有整包更新")
+      return true // 没有更新，返回true
+
+    } catch (error) {
+      console.error("整包更新检查失败:", error)
+      // 检查失败时假设没有更新，继续流程
+      return true
+    }
+  }
+
+  /**
+   * 检查整包更新并显示弹窗（如果有更新）
+   * @returns {Promise<boolean>} true=没有整包更新，false=有整包更新且已显示弹窗
+   */
+  async checkBundleUpdateWithDialog(): Promise<boolean> {
+    try {
+      console.log("开始检查整包更新（检查并显示弹窗）")
+
+      // 获取当前应用信息
+      const appInfo = await this.getCurrentAppInfo()
+      console.log("当前应用信息:", appInfo)
+
+      // 调用整包更新检测API
+      const updateResponse = await this.requestUpdateCheck(appInfo)
+      console.log("整包更新检测API响应:", updateResponse)
+
+      if (updateResponse.code === 200 && updateResponse.data.needUpdate) {
+        console.log("✅ 发现整包更新，显示更新弹窗")
+        const updateData = this.convertApiResponseToUpdateData(updateResponse.data)
+
+        // 如果是整包更新，显示弹窗
+        if (updateData.updateType === UpdateType.FULL) {
+          await this.handleUpdateAvailable(updateData, false) // silent=false 显示弹窗
+          return false // 有更新，返回false
+        }
+      }
+
+      console.log("✅ 没有整包更新")
+      return true // 没有更新，返回true
+
+    } catch (error) {
+      console.error("整包更新检查失败:", error)
+      // 检查失败时假设没有更新，继续流程
+      return true
+    }
+  }
+
+  /**
    * 初始化更新管理器
    */
   async initialize(): Promise<void> {

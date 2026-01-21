@@ -30,7 +30,7 @@ export const CompleteTip: React.FC<CompleteTipProps> = ({
         <View style={styles.content}>
           <Text style={styles.title}>🎉 视频播放完成</Text>
           <Text style={styles.message}>
-            恭喜你完成了本课程的学习！
+            恭喜你完成了本课堂的学习！
           </Text>
           
           <View style={styles.buttons}>

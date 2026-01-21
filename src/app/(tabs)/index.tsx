@@ -20,7 +20,7 @@ import { getLatestVideo, getNotifications, getHomeRanks, getHomeBgImage } from "
 import { Images } from "../../constants/Assets"
 import { createStyles, rpx } from "../../utils/rpxStyleSheet"
 import { showError, showWarning, showInfo } from "../../utils/toast"
-import { getCachedHomeBg, downloadAndCacheHomeBg, prefetchHomeBg, getHomeBgSource } from "../../utils/imageCache"
+import { getCachedHomeBg, downloadAndCacheHomeBg, prefetchHomeBg, getHomeBgSource, verifyImageFileIntegrity, isDownloadStable, waitForDownloadStable } from "../../utils/imageCache"
 
 import { BrightnessSlider } from "../../components/BrightnessSlider"
 
@@ -81,6 +81,8 @@ export default function HomeScreen() {
   const [homeBgLoaded, setHomeBgLoaded] = useState(false) // 当前背景图是否加载完成
   const [nextBgLoaded, setNextBgLoaded] = useState(false) // 下一个背景图是否加载完成
   const pendingAnimationRef = useRef<(() => void) | null>(null) // 等待图片加载完成的动画函数
+  const isMountedRef = useRef(true) // 组件挂载状态标记，用于检查组件是否已卸载
+  const renderedBgUrlRef = useRef<string | null>(null) // 已渲染过的背景图URL（用于判断是否已渲染过）
 
 
   // 背景图状态持久化存储key
@@ -345,18 +347,41 @@ export default function HomeScreen() {
         const cachedInfo = await getCachedHomeBg()
 
         if (cachedInfo) {
-          try {
-            await Image.prefetch(cachedInfo.localPath)
-          } catch (error) {
-            console.warn("🖼️ [初始化] 本地图片预加载失败:", error)
-            // 本地图片预加载失败不影响继续，因为通常加载很快
+          // 检查缓存文件是否已稳定3分钟
+          const downloadCompletedAt = cachedInfo.downloadCompletedAt
+          if (downloadCompletedAt) {
+            const isStable = isDownloadStable(downloadCompletedAt)
+            if (isStable) {
+              // 文件已稳定3分钟，可以直接加载
+              try {
+                await Image.prefetch(cachedInfo.localPath)
+              } catch (error) {
+                console.warn("🖼️ [初始化] 本地图片预加载失败:", error)
+                // 本地图片预加载失败不影响继续，因为通常加载很快
+              }
+
+              const cachedSource = { uri: cachedInfo.localPath }
+              // setHomeBgSource会自动保存到持久化存储
+              await setHomeBgSource(cachedSource, cachedInfo.url)
+              // 标记该URL已渲染过
+              renderedBgUrlRef.current = cachedInfo.url
+              console.log("🖼️ [初始化] 完成，当前URL:", cachedInfo.url, "已标记为已渲染")
+            } else {
+              // 文件未稳定3分钟，不加载，等待loadData中的逻辑处理
+              console.log("🖼️ [初始化] 缓存文件未稳定3分钟，等待loadData处理")
+            }
+          } else {
+            // 没有下载完成时间戳，直接加载（兼容旧数据）
+            try {
+              await Image.prefetch(cachedInfo.localPath)
+            } catch (error) {
+              console.warn("🖼️ [初始化] 本地图片预加载失败:", error)
+            }
+
+            const cachedSource = { uri: cachedInfo.localPath }
+            await setHomeBgSource(cachedSource, cachedInfo.url)
+            renderedBgUrlRef.current = cachedInfo.url
           }
-
-          const cachedSource = { uri: cachedInfo.localPath }
-          // setHomeBgSource会自动保存到持久化存储
-          await setHomeBgSource(cachedSource, cachedInfo.url)
-
-          // console.log("🖼️ [初始化] 完成，当前URL:", cachedInfo.url)
         } else {
           // 直接设置默认背景，避免后续切换
           await setHomeBgSource(Images.homeBg2, null)
@@ -520,52 +545,170 @@ const openVolumeSettings = async () => {
 
       if (homeBgData && homeBgData.image_url) {
         const newUrl = homeBgData.image_url
-        // 如果已经有相同的URL在处理中，跳过
+        
+        // 检查条件：URL相同 AND 已渲染过（已等待3分钟并加载过）→ 跳过
+        // URL相同 BUT 未渲染过（未到3分钟）→ 必须等待并渲染一次
         if (pendingBgUrlRef.current === newUrl) {
-          return
+          // 如果URL相同且正在处理中，检查是否已渲染过
+          if (renderedBgUrlRef.current === newUrl) {
+            console.log(`🖼️ [背景图] URL相同且已渲染过，跳过: ${newUrl}`)
+            return
+          }
+          // 如果URL相同但未渲染过，继续执行等待和渲染逻辑
+          console.log(`🖼️ [背景图] URL相同但未渲染过，继续等待并渲染: ${newUrl}`)
         }
+        
+        // 检查缓存，如果文件已存在且已稳定3分钟且已渲染过，直接跳过
+        const cachedInfo = await getCachedHomeBg()
+        if (cachedInfo && cachedInfo.url === newUrl && cachedInfo.downloadCompletedAt) {
+          const isStable = isDownloadStable(cachedInfo.downloadCompletedAt)
+          if (isStable && renderedBgUrlRef.current === newUrl) {
+            console.log(`🖼️ [背景图] 缓存文件已稳定3分钟且已渲染过，跳过: ${newUrl}`)
+            return
+          }
+        }
+        
         homeBgUrlRef.current = newUrl
         pendingBgUrlRef.current = newUrl
         isBgLoadingRef.current = true
 
-        // 直接异步处理背景图加载和切换（简化逻辑，提高可靠性）
+        // 方案：下载3分钟，加载秒加载
+        // 分离下载和加载阶段，确保文件完整后再加载，避免加载一半的问题
         ;(async () => {
           const startTime = Date.now()
           try {
-          
+            // ========== 阶段1：下载文件（最多3分钟）==========
+            console.log(`🖼️ [背景图] ===== 开始下载阶段 =====`)
             const downloadStartTime = Date.now()
             const cachedPath = await downloadAndCacheHomeBg(newUrl)
             const downloadDuration = Date.now() - downloadStartTime
-          
+            
+            // 检查组件是否已卸载
+            if (!isMountedRef.current) {
+              console.log('🖼️ [背景图] 组件已卸载，取消后续操作')
+              return
+            }
 
             if (cachedPath) {
-              const prefetchStartTime = Date.now()
+              // ========== 阶段2：获取下载完成时间并验证稳定性 ==========
+              console.log(`🖼️ [背景图] ===== 开始验证下载稳定性 =====`)
+              
+              // 获取缓存信息，包含下载完成时间
+              const cachedInfo = await getCachedHomeBg()
+              const downloadCompletedAt = cachedInfo?.downloadCompletedAt
+              
+              // 检查组件是否已卸载
+              if (!isMountedRef.current) {
+                console.log('🖼️ [背景图] 组件已卸载，取消后续操作')
+                return
+              }
+
+              // ========== 阶段3：等待下载稳定（如果不足3分钟）==========
+              if (downloadCompletedAt) {
+                const isStable = isDownloadStable(downloadCompletedAt)
+                if (!isStable) {
+                  console.log(`🖼️ [背景图] 下载完成时间不足3分钟，等待文件稳定...`)
+                  await waitForDownloadStable(downloadCompletedAt)
+                  
+                  // 再次检查组件是否已卸载
+                  if (!isMountedRef.current) {
+                    console.log('🖼️ [背景图] 组件已卸载，取消后续操作')
+                    return
+                  }
+                } else {
+                  console.log(`🖼️ [背景图] ✅ 下载已完成超过3分钟，文件已稳定`)
+                }
+              } else {
+                console.warn('🖼️ [背景图] 没有下载完成时间戳，无法验证稳定性，直接加载')
+              }
+
+              // ========== 阶段4：验证文件完整性 ==========
+              console.log(`🖼️ [背景图] ===== 开始验证文件完整性 =====`)
+              const verifyStartTime = Date.now()
+              const isValid = await verifyImageFileIntegrity(cachedPath)
+              const verifyDuration = Date.now() - verifyStartTime
+              
+              // 再次检查组件是否已卸载
+              if (!isMountedRef.current) {
+                console.log('🖼️ [背景图] 组件已卸载，取消后续操作')
+                return
+              }
+
+              if (!isValid) {
+                console.warn('🖼️ [背景图] 文件完整性验证失败，使用默认背景')
+                // 文件不完整，使用默认背景
+                if (isMountedRef.current) {
+                  await setHomeBgSource(Images.homeBg2, null)
+                }
+                return
+              }
+
+              console.log(`🖼️ [背景图] ✅ 文件完整性验证通过，耗时: ${verifyDuration}ms`)
+
+              // ========== 阶段5：加载图片（秒加载，因为文件已完整且稳定）==========
+              console.log(`🖼️ [背景图] ===== 开始加载阶段（文件已完整且稳定，秒加载）=====`)
+              const loadStartTime = Date.now()
+              
+              // 预加载图片到内存（本地文件，秒加载）
               await Image.prefetch(cachedPath)
-              const prefetchDuration = Date.now() - prefetchStartTime
-              // 直接设置新背景（最简单可靠的方式）
-         
+              const prefetchDuration = Date.now() - loadStartTime
+              
+              // 再次检查组件是否已卸载
+              if (!isMountedRef.current) {
+                console.log('🖼️ [背景图] 组件已卸载，取消状态更新')
+                return
+              }
+
+              // 设置新背景（文件已完整且稳定，加载就是秒加载）
               const cachedSource = { uri: cachedPath }
               await setHomeBgSource(cachedSource, newUrl)
+              
+              // 标记该URL已渲染过
+              renderedBgUrlRef.current = newUrl
+              
+              const loadDuration = Date.now() - loadStartTime
+              console.log(`🖼️ [背景图] ✅ 加载完成，耗时: ${loadDuration}ms（秒加载）`)
+              console.log(`🖼️ [背景图] ✅ 已标记URL为已渲染: ${newUrl}`)
 
             } else {
+              // 下载失败，使用网络图片（不推荐，但作为兜底）
+              console.warn('🖼️ [背景图] 下载失败，尝试使用网络图片')
+              if (!isMountedRef.current) {
+                return
+              }
+              
               try {
                 await Image.prefetch(newUrl)
               } catch (error) {
-                console.warn("🖼️ [背景图加载] 网络图片预加载失败:", error)
+                console.warn("🖼️ [背景图] 网络图片预加载失败:", error)
               }
-              const networkSource = { uri: newUrl }
-              await setHomeBgSource(networkSource, newUrl)
+              
+              if (isMountedRef.current) {
+                const networkSource = { uri: newUrl }
+                await setHomeBgSource(networkSource, newUrl)
+                // 标记该URL已渲染过（网络图片也标记）
+                renderedBgUrlRef.current = newUrl
+              }
             }
 
             const totalDuration = Date.now() - startTime
-            console.log(`🖼️ [背景图加载] ===== 加载流程完成，总耗时: ${totalDuration}ms =====`)
+            console.log(`🖼️ [背景图] ===== 完整流程完成 =====`)
+            console.log(`🖼️ [背景图] 下载耗时: ${downloadDuration}ms`)
+            console.log(`🖼️ [背景图] 总耗时: ${totalDuration}ms`)
 
           } catch (error) {
             const errorDuration = Date.now() - startTime
+            console.error(`🖼️ [背景图] ❌ 加载流程失败，耗时: ${errorDuration}ms`, error)
             // 出错时保持当前背景不变
+            if (isMountedRef.current) {
+              // 可以设置默认背景
+              await setHomeBgSource(Images.homeBg2, null)
+            }
           } finally {
-            isBgLoadingRef.current = false
-            pendingBgUrlRef.current = null
+            if (isMountedRef.current) {
+              isBgLoadingRef.current = false
+              pendingBgUrlRef.current = null
+            }
           }
         })()
       }
@@ -630,9 +773,20 @@ const openVolumeSettings = async () => {
     }
   }, []) // 空依赖数组，loadData 永远不会重新创建
 
+  // 组件挂载/卸载状态管理
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+      console.log('🖼️ [组件] 组件卸载，标记为已卸载')
+    }
+  }, [])
+
   // 页面获得焦点时的处理（Tab切换时重新加载所有数据）
   useFocusEffect(
     useCallback(() => {
+      // 页面获得焦点时，标记组件为已挂载
+      isMountedRef.current = true
       
       // 🎯 活动退出兜底：首页获得焦点时，直接发送所有活动类型的退出消息
       // 获取用户信息
@@ -672,9 +826,31 @@ const openVolumeSettings = async () => {
       
       // ✅ Tab切换时重新加载所有数据（恢复之前的策略）
       loadData()
-     
+      
+      // 页面失焦时的清理函数
+      return () => {
+        // 注意：这里不设置 isMountedRef.current = false
+        // 因为 useFocusEffect 的清理函数在页面失焦时执行，但组件可能仍然挂载
+        // 真正的卸载检查在 useEffect 的清理函数中
+      }
     }, [resetIntentLauncherState, loadData]), // 依赖 resetIntentLauncherState 和 loadData
   )
+
+  // 监听用户登录状态变化，登录后加载首页数据
+  const hasInitialized = useRef(false)
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn)
+
+  useEffect(() => {
+    if (isLoggedIn && !hasInitialized.current) {
+      console.log('🔐 用户登录状态变化：已登录，开始加载首页数据')
+      loadData()
+      hasInitialized.current = true
+    } else if (!isLoggedIn && hasInitialized.current) {
+      console.log('🚪 用户登录状态变化：已登出，重置初始化状态')
+      hasInitialized.current = false
+      // 可以在这里清理数据或重置状态
+    }
+  }, [isLoggedIn, loadData])
 
   const router = useRouter()
 

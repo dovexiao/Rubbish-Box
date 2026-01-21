@@ -5,6 +5,7 @@ import { useLoginModal } from '../hooks/useLoginModal'
 import { setLoginModalRef } from '../utils/loginUtils'
 import { useLockScreenStore } from '../stores/lockScreenStore'
 import { useNetworkStore } from '../stores/networkStore'
+import { useUserStore } from '../stores/userStore'
 
 /**
  * 全局登录管理器组件
@@ -29,6 +30,16 @@ export const GlobalLoginManager = React.memo(function GlobalLoginManager() {
 
   const locked = useLockScreenStore((state) => state.locked)
   const showNetworkModal = useNetworkStore((state) => state.showNetworkModal)
+  const token = useUserStore((state) => state.token)
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn)
+
+  // 🔴 关键：监听 token 状态，如果 token 恢复且弹窗正在显示，自动关闭弹窗
+  React.useEffect(() => {
+    if (token && isLoggedIn && isVisible) {
+      console.log("🔐 Token已恢复，自动关闭登录弹窗")
+      hideLoginModal()
+    }
+  }, [token, isLoggedIn, isVisible, hideLoginModal])
 
   // 将实例设置到全局，供其他地方调用
   React.useEffect(() => {
