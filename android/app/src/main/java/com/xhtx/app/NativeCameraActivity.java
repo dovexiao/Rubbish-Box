@@ -32,6 +32,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -45,6 +46,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+
+import com.xhtx.app.gesture.HandGrabDetector;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -65,6 +68,13 @@ public class NativeCameraActivity extends Activity {
     private static final String TAG = "NativeCameraActivity";
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final int MAX_PHOTOS = 6;
+    
+    // Gesture auto-capture
+    private static final int ANALYSIS_WIDTH = 256;
+    private static final int ANALYSIS_HEIGHT = 256;
+    private static final long GESTURE_PROCESS_INTERVAL_MS = 80; // ~12.5fps
+    private static final long GRAB_EDGE_DEBOUNCE_MS = 300;
+    private static final long GRAB_CONTINUOUS_INTERVAL_MS = 900;
 
     private TextureView textureView;
     private TextView tvTitle;
@@ -78,12 +88,21 @@ public class NativeCameraActivity extends Activity {
     private CaptureRequest.Builder previewRequestBuilder;
     private Size previewSize = new Size(1280, 720);
     private ImageReader imageReader;
+    private ImageReader analysisReader;
 
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
 
     private ArrayList<String> photoPaths = new ArrayList<>();
     private String cameraType;
+
+    private HandGrabDetector handGrabDetector;
+    private volatile boolean gestureEnabled = true;
+    private volatile boolean isCapturing = false;
+    private volatile boolean isGrabActive = false;
+    private volatile long lastGestureProcessTime = 0;
+    private volatile long lastGrabEdgeTime = 0;
+    private volatile long lastAutoCaptureTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +127,10 @@ public class NativeCameraActivity extends Activity {
         setContentView(R.layout.activity_native_camera);
 
         cameraType = getIntent().getStringExtra("type");
+        // Optional: allow disabling gesture via intent extra (default true)
+        if (getIntent() != null && getIntent().hasExtra("gestureEnabled")) {
+            gestureEnabled = getIntent().getBooleanExtra("gestureEnabled", true);
+        }
 
         initViews();
         updateUI();
@@ -352,6 +375,13 @@ public class NativeCameraActivity extends Activity {
         );
         
         startBackgroundThread();
+        // Init gesture detector (safe even if disabled)
+        if (handGrabDetector == null) {
+            handGrabDetector = new HandGrabDetector(this, this::onGrabStateChanged);
+        }
+        if (gestureEnabled) {
+            handGrabDetector.start();
+        }
         if (textureView != null && textureView.isAvailable()) {
             openCamera();
         }
@@ -361,6 +391,9 @@ public class NativeCameraActivity extends Activity {
     protected void onPause() {
         closeCamera();
         stopBackgroundThread();
+        if (handGrabDetector != null) {
+            handGrabDetector.stop();
+        }
         super.onPause();
     }
 
@@ -494,6 +527,11 @@ public class NativeCameraActivity extends Activity {
                     android.graphics.ImageFormat.YUV_420_888, 2);
             imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler);
 
+            // Low-res analysis stream for gesture detection (does NOT save photos)
+            analysisReader = ImageReader.newInstance(ANALYSIS_WIDTH, ANALYSIS_HEIGHT,
+                    android.graphics.ImageFormat.YUV_420_888, 2);
+            analysisReader.setOnImageAvailableListener(onAnalysisImageAvailableListener, backgroundHandler);
+
             manager.openCamera(cameraId, stateCallback, backgroundHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "openCamera failed", e);
@@ -578,9 +616,17 @@ public class NativeCameraActivity extends Activity {
 
             previewRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             previewRequestBuilder.addTarget(previewSurface);
+            if (analysisReader != null) {
+                previewRequestBuilder.addTarget(analysisReader.getSurface());
+            }
             previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
-            cameraDevice.createCaptureSession(Arrays.asList(previewSurface, imageReader.getSurface()),
+            List<Surface> outputs = new ArrayList<>();
+            outputs.add(previewSurface);
+            if (imageReader != null) outputs.add(imageReader.getSurface());
+            if (analysisReader != null) outputs.add(analysisReader.getSurface());
+
+            cameraDevice.createCaptureSession(outputs,
                     new CameraCaptureSession.StateCallback() {
                         @Override
                         public void onConfigured(@NonNull CameraCaptureSession session) {
@@ -612,6 +658,11 @@ public class NativeCameraActivity extends Activity {
         if (cameraDevice == null || photoPaths.size() >= MAX_PHOTOS) {
             return;
         }
+        if (isCapturing) {
+            Log.d(TAG, "📸 takePhoto skipped: already capturing");
+            return;
+        }
+        isCapturing = true;
 
         // 禁用拍照按钮，防止重复点击
         runOnUiThread(() -> {
@@ -637,6 +688,7 @@ public class NativeCameraActivity extends Activity {
                     
                     // 🔥 关键修复：拍照完成后，重新启动预览
                     startPreview();
+                    isCapturing = false;
                     
                     new Handler(getMainLooper()).postDelayed(() -> {
                         if (photoPaths.size() < MAX_PHOTOS) {
@@ -652,6 +704,7 @@ public class NativeCameraActivity extends Activity {
                     Log.e(TAG, "❌ 拍照失败: " + failure.getReason());
                     // 拍照失败，也要恢复预览
                     startPreview();
+                    isCapturing = false;
                     runOnUiThread(() -> {
                         btnCapture.setEnabled(true);
                         btnCapture.setAlpha(1.0f);
@@ -663,6 +716,7 @@ public class NativeCameraActivity extends Activity {
             Log.e(TAG, "takePhoto failed", e);
             // 发生错误时重新启用按钮并恢复预览
             startPreview();
+            isCapturing = false;
             runOnUiThread(() -> {
                 btnCapture.setEnabled(true);
                 btnCapture.setAlpha(1.0f);
@@ -685,6 +739,71 @@ public class NativeCameraActivity extends Activity {
         } catch (CameraAccessException e) {
             Log.e(TAG, "Failed to restart preview", e);
         }
+    }
+
+    private final ImageReader.OnImageAvailableListener onAnalysisImageAvailableListener = reader -> {
+        if (!gestureEnabled || handGrabDetector == null) return;
+
+        Image image = null;
+        try {
+            image = reader.acquireLatestImage();
+            if (image == null) return;
+
+            long now = SystemClock.uptimeMillis();
+            if (now - lastGestureProcessTime < GESTURE_PROCESS_INTERVAL_MS) {
+                return;
+            }
+            lastGestureProcessTime = now;
+
+            // Copy to Bitmap internally, so we can close Image immediately after return.
+            handGrabDetector.process(image, now);
+        } catch (Exception e) {
+            Log.e(TAG, "onAnalysisImageAvailableListener failed", e);
+        } finally {
+            if (image != null) image.close();
+        }
+    };
+
+    private void onGrabStateChanged(boolean isGrab) {
+        // Called from MediaPipe result thread.
+        long now = SystemClock.uptimeMillis();
+
+        if (!isGrab) {
+            isGrabActive = false;
+            return;
+        }
+
+        // Grab detected
+        if (!isGrabActive) {
+            // Rising edge
+            if (now - lastGrabEdgeTime >= GRAB_EDGE_DEBOUNCE_MS) {
+                lastGrabEdgeTime = now;
+                lastAutoCaptureTime = 0;
+                triggerAutoCapture(now);
+            }
+            isGrabActive = true;
+            return;
+        }
+
+        // Continuous hold -> continuous capture
+        if (now - lastAutoCaptureTime >= GRAB_CONTINUOUS_INTERVAL_MS) {
+            triggerAutoCapture(now);
+        }
+    }
+
+    private void triggerAutoCapture(long now) {
+        if (photoPaths.size() >= MAX_PHOTOS) return;
+        if (isCapturing) return;
+
+        lastAutoCaptureTime = now;
+        runOnUiThread(() -> {
+            try {
+                Log.d(TAG, "🤏 Gesture grab -> auto capture");
+                takePhoto();
+            } catch (Exception e) {
+                Log.e(TAG, "triggerAutoCapture failed", e);
+            }
+        });
     }
 
     private final ImageReader.OnImageAvailableListener onImageAvailableListener = reader -> {
@@ -871,6 +990,10 @@ public class NativeCameraActivity extends Activity {
         if (imageReader != null) {
             imageReader.close();
             imageReader = null;
+        }
+        if (analysisReader != null) {
+            analysisReader.close();
+            analysisReader = null;
         }
     }
 }

@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react"
-import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, StatusBar as RNStatusBar } from "react-native"
+import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, StatusBar as RNStatusBar, Platform } from "react-native"
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera"
 import { useRouter, useFocusEffect } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
@@ -11,9 +11,14 @@ import { LoadingOverlay } from "../../../components/LoadingOverlay"
 import { globalImmersive } from "../../../utils/globalImmersive"
 import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
 import { showError, showWarning } from "../../../utils/toast"
+import { isPostureServiceRunning, stopPostureMonitorService } from "../../../modules/PostureMonitorModule"
+import { NativeCameraPreview } from "../../../components/NativeCameraPreview"
 
 interface PhotoInfo {
+  /** Raw local path (Android native may be without scheme) */
   path: string
+  /** Always a valid RN uri (usually starts with file://) */
+  uri: string
   id: string
   timestamp: number
 }
@@ -34,6 +39,8 @@ export default function ErrorCameraScreen() {
   const [cameraKey, setCameraKey] = useState(0) // 用于强制重新挂载相机
   const [uploadLoading, setUploadLoading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState("")
+  const wasPostureRunningRef = useRef(false)
+  const nativePreviewRef = useRef<{ takePhoto: () => void } | null>(null)
 
   const { width: windowWidth, height: windowHeight } = Dimensions.get("screen")
 
@@ -66,6 +73,19 @@ export default function ErrorCameraScreen() {
       setIsSubmitting(false)
       setIsAnimating(false)
 
+      // 进入拍照页：暂停后台坐姿检测（避免资源竞争）
+      ;(async () => {
+        try {
+          const running = await isPostureServiceRunning()
+          wasPostureRunningRef.current = running
+          if (running) {
+            await stopPostureMonitorService()
+          }
+        } catch (e) {
+          console.warn("⚠️ 检查/停止坐姿服务失败:", e)
+        }
+      })()
+
       // 强制重新挂载相机组件
       setCameraKey((prev) => prev + 1)
       console.log("🎥 相机组件将重新挂载")
@@ -78,7 +98,12 @@ export default function ErrorCameraScreen() {
         globalImmersive.forceRestore()
       }, 500)
 
-      return () => clearTimeout(timer)
+      return () => {
+        clearTimeout(timer)
+        // ⚠️ 不在这里恢复坐姿服务：AI 模块内跳转仍属于 /ai/*
+        // 恢复逻辑由全局 useGlobalPostureMonitor 在离开 AI 模块时统一处理
+        wasPostureRunningRef.current = false
+      }
     }, []),
   )
 
@@ -99,6 +124,10 @@ export default function ErrorCameraScreen() {
 
   // 拍照
   const takePicture = useCallback(async () => {
+    if (nativePreviewRef.current) {
+      nativePreviewRef.current.takePhoto()
+      return
+    }
     if (!cameraRef.current || isAnimating || photos.length >= 6) return
 
     try {
@@ -110,6 +139,7 @@ export default function ErrorCameraScreen() {
       if (photo) {
         const newPhoto: PhotoInfo = {
           path: photo.uri,
+          uri: photo.uri,
           id: Date.now().toString(),
           timestamp: Date.now(),
         }
@@ -148,7 +178,7 @@ export default function ErrorCameraScreen() {
         console.log(`📤 上传第 ${i + 1}/${photos.length} 张照片...`)
         setUploadProgress(`正在上传第 ${i + 1}/${photos.length} 张照片...`)
 
-        const uploadResult = await FileSystem.uploadAsync(uploadUrl, photo.path, {
+        const uploadResult = await FileSystem.uploadAsync(uploadUrl, photo.uri, {
           fieldName: "images",
           httpMethod: "POST",
           uploadType: FileSystem.FileSystemUploadType.MULTIPART,
@@ -246,12 +276,95 @@ export default function ErrorCameraScreen() {
   return (
     <View style={[styles.indexContainer, { width: windowWidth, height: windowHeight }]}>
       <View style={[styles.indexContent, { width: windowWidth }]}>
-        <CameraView
-          key={cameraKey}
-          ref={cameraRef}
-          style={[styles.camera, { width: windowWidth, height: windowHeight }]}
-          facing={facing}
-        >
+        {Platform.OS === "android" ? (
+          <View style={[styles.camera, { width: windowWidth, height: windowHeight }]}>
+            <NativeCameraPreview
+              ref={nativePreviewRef as any}
+              style={{ width: windowWidth, height: windowHeight }}
+              gestureEnabled={true}
+              cameraFacing={1}
+              photoCount={photos.length}
+              maxPhotos={6}
+              onPhotoCaptured={(e) => {
+                const { path, uri } = e.nativeEvent as any
+                if (!path) return
+                const normalizedUri =
+                  typeof uri === "string" && uri.length > 0
+                    ? uri
+                    : path.startsWith("file://")
+                      ? path
+                      : `file://${path}`
+                const newPhoto: PhotoInfo = {
+                  path,
+                  uri: normalizedUri,
+                  id: Date.now().toString() + "_" + Math.random().toString(36).slice(2),
+                  timestamp: Date.now(),
+                }
+                setPhotos((prev) => (prev.length >= 6 ? prev : [...prev, newPhoto]))
+              }}
+            />
+
+            {/* 覆盖层（保持原UI不变） */}
+            <View style={styles.coverOverlay}>
+              <StatusBar theme="dark" />
+              <NavBar title="拍照录入" leftArrow={true} onBackPress={goHome} />
+
+              <View style={[styles.gridOverlay, { width: windowWidth, height: windowHeight }]}>
+                <View style={[styles.gridH, styles.gridH1, { left: windowWidth * 0.333, height: windowHeight }]} />
+                <View style={[styles.gridH, styles.gridH2, { left: windowWidth * 0.666, height: windowHeight }]} />
+                <View style={[styles.gridV, styles.gridV1, { top: windowHeight * 0.333, width: windowWidth }]} />
+                <View style={[styles.gridV, styles.gridV2, { top: windowHeight * 0.666, width: windowWidth }]} />
+              </View>
+
+              <View style={[styles.sideBtns, { left: windowWidth * 0.475 }]}>
+                <TouchableOpacity style={[styles.iconBtn, isAnimating && styles.btnAnimate]} onPress={takePicture} activeOpacity={0.8} />
+              </View>
+
+              <View style={[styles.tipText, { left: windowWidth / 2, top: windowHeight * 0.12 }]}>
+                <Text style={styles.tipTextContent}>{tipText}</Text>
+              </View>
+
+              {photos.length > 0 && (
+                <ScrollView
+                  horizontal
+                  style={[styles.thumbsBar, { width: windowWidth }]}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {photos.map((photo, index) => (
+                    <View key={photo.id} style={styles.thumbWrapper}>
+                      <Image source={{ uri: photo.uri }} style={styles.thumbImage} resizeMode="cover" />
+                      <Text style={styles.thumbIndex}>{index + 1}</Text>
+                      <TouchableOpacity
+                        style={styles.thumbDelete}
+                        onPress={() => deletePhoto(index)}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.thumbDeleteText}>×</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </ScrollView>
+              )}
+
+              {photos.length > 0 && (
+                <TouchableOpacity
+                  style={styles.startBtn}
+                  onPress={submitPhotos}
+                  activeOpacity={0.8}
+                  disabled={isSubmitting}
+                >
+                  <Text style={styles.startBtnText}>{isSubmitting ? "上传中..." : "开始录入"}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        ) : (
+          <CameraView
+            key={cameraKey}
+            ref={cameraRef}
+            style={[styles.camera, { width: windowWidth, height: windowHeight }]}
+            facing={facing}
+          >
           {/* 覆盖层 */}
           <View style={styles.coverOverlay}>
             <StatusBar theme="dark" />
@@ -289,7 +402,7 @@ export default function ErrorCameraScreen() {
               >
                 {photos.map((photo, index) => (
                   <View key={photo.id} style={styles.thumbWrapper}>
-                    <Image source={{ uri: photo.path }} style={styles.thumbImage} resizeMode="cover" />
+                    <Image source={{ uri: photo.uri }} style={styles.thumbImage} resizeMode="cover" />
                     <Text style={styles.thumbIndex}>{index + 1}</Text>
                     <TouchableOpacity
                       style={styles.thumbDelete}
@@ -315,7 +428,8 @@ export default function ErrorCameraScreen() {
               </TouchableOpacity>
             )}
           </View>
-        </CameraView>
+          </CameraView>
+        )}
       </View>
 
       {/* 上传Loading遮罩 */}
@@ -337,8 +451,8 @@ const styles = createStyles({
   },
   permissionContainer: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   permissionText: {
     fontSize: 14,
@@ -361,7 +475,7 @@ const styles = createStyles({
   },
   // 覆盖层
   coverOverlay: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 0,
     left: 0,
     right: 0,
@@ -369,9 +483,9 @@ const styles = createStyles({
   },
   // 顶部导航栏
   navBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 12,
@@ -379,8 +493,8 @@ const styles = createStyles({
   backButton: {
     width: 40,
     height: 40,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   backIconImg: {
     width: 16.4,
@@ -389,9 +503,9 @@ const styles = createStyles({
   navTitle: {
     color: "#2979FF",
     fontSize: 15.625,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     flex: 1,
-    textAlign: "center",
+    textAlign: "center" as const,
   },
   navRightPlaceholder: {
     width: 40,
@@ -399,19 +513,19 @@ const styles = createStyles({
   },
   // 九宫格对齐线
   gridOverlay: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 0,
     top: 0,
   },
   gridH: {
-    position: "absolute",
+    position: "absolute" as const,
     width: 1,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   gridH1: {},
   gridH2: {},
   gridV: {
-    position: "absolute",
+    position: "absolute" as const,
     height: 1,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
@@ -419,7 +533,7 @@ const styles = createStyles({
   gridV2: {},
   // 拍照按钮
   sideBtns: {
-    position: "absolute",
+    position: "absolute" as const,
     bottom: 44,
   },
   iconBtn: {
@@ -435,7 +549,7 @@ const styles = createStyles({
   },
   // 提示文字
   tipText: {
-    position: "absolute",
+    position: "absolute" as const,
     transform: [{ translateX: -98 }],
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     marginTop: 6,
@@ -446,31 +560,31 @@ const styles = createStyles({
   tipTextContent: {
     color: "rgba(255, 255, 255, 1)",
     fontSize: 10.375,
-    textAlign: "center",
+    textAlign: "center" as const,
   },
   // 缩略图列表
   thumbsBar: {
-    position: "absolute",
+    position: "absolute" as const,
     bottom: 124,
     left: 0,
-    flexDirection: "row",
+    flexDirection: "row" as const,
     paddingHorizontal: 29,
   },
   thumbWrapper: {
-    position: "relative",
+    position: "relative" as const,
     width: 60,
     height: 80,
     marginRight: 10,
     borderRadius: 8,
-    overflow: "hidden",
+    overflow: "hidden" as const,
     backgroundColor: "#fff",
   },
   thumbImage: {
-    width: "100%",
-    height: "100%",
+    width: "100%" as const,
+    height: "100%" as const,
   },
   thumbIndex: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 4,
     left: 4,
     backgroundColor: "rgba(0, 0, 0, 0.6)",
@@ -481,24 +595,24 @@ const styles = createStyles({
     borderRadius: 4,
   },
   thumbDelete: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 4,
     right: 4,
     width: 20,
     height: 20,
     backgroundColor: "rgba(255, 0, 0, 0.8)",
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   thumbDeleteText: {
     color: "#fff",
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   // 开始录入按钮
   startBtn: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 29,
     bottom: 44,
     backgroundColor: "#4891FF",
@@ -514,7 +628,7 @@ const styles = createStyles({
   startBtnText: {
     color: "#fff",
     fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: "bold" as const,
+    textAlign: "center" as const,
   },
 })

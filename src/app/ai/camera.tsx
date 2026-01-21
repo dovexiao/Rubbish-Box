@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  Platform,
   StatusBar as RNStatusBar,
   Modal,
 } from "react-native"
@@ -21,14 +22,17 @@ import { showError, showWarning } from "../../utils/toast"
 import { Ionicons } from "@expo/vector-icons"
 import { 
   stopPostureMonitorService, 
-  startPostureMonitorService,
   isPostureServiceRunning 
 } from "../../modules/PostureMonitorModule"
+import { NativeCameraPreview } from "../../components/NativeCameraPreview"
 
 const Text = RNText
 
 interface PhotoInfo {
+  /** Raw local path (Android native may be without scheme) */
   path: string
+  /** Always a valid RN uri (usually starts with file://) */
+  uri: string
   id: string
   timestamp: number
 }
@@ -51,6 +55,7 @@ export default function CameraScreen() {
   // const [showCamera, setShowCamera] = useState(true) // 控制CameraView显示，解决GPU资源竞争
   const cameraRef = useRef<CameraView>(null)
   const wasPostureRunningRef = useRef(false) // 记录进入页面前坐姿检测是否在运行
+  const nativePreviewRef = useRef<{ takePhoto: () => void } | null>(null)
   // 思考模式：速度（false）或质量（true），默认速度（false）
   const [thinkingSwitch, setThinkingSwitch] = useState<boolean>(true)
   const [showTooltip, setShowTooltip] = useState(false) // 控制提示框显示
@@ -84,6 +89,20 @@ export default function CameraScreen() {
       _setIsSubmitting(false)
       _setIsAnimating(false)
 
+      // 进入拍照页：暂停后台坐姿检测（避免前置相机占用/资源竞争）
+      ;(async () => {
+        try {
+          const running = await isPostureServiceRunning()
+          wasPostureRunningRef.current = running
+          if (running) {
+            console.log("🛑 进入AI拍照页，暂停坐姿检测服务")
+            await stopPostureMonitorService()
+          }
+        } catch (e) {
+          console.warn("⚠️ 检查/停止坐姿服务失败:", e)
+        }
+      })()
+
       // 显示相机组件
       // setShowCamera(true)
 
@@ -105,6 +124,9 @@ export default function CameraScreen() {
         console.log("📹 相机页面失焦，立即隐藏CameraView释放GPU资源")
         // setShowCamera(false)
         clearTimeout(timer)
+        // ⚠️ 不在这里恢复坐姿服务：从 /ai/camera 跳到 /ai/loading 仍属于 AI 模块
+        // 恢复逻辑由全局 useGlobalPostureMonitor 在“离开 /ai/*”时统一处理
+        wasPostureRunningRef.current = false
       }
     }, []),
   )
@@ -182,6 +204,7 @@ export default function CameraScreen() {
       if (photo) {
         const newPhoto: PhotoInfo = {
           path: photo.uri,
+          uri: photo.uri,
           id: generatePhotoId(),
           timestamp: Date.now(),
         }
@@ -201,6 +224,14 @@ export default function CameraScreen() {
 
   // 触摸拍照处理
   const handleTap = () => {
+    console.log("📸 [camera.tsx] handleTap called, nativePreviewRef:", nativePreviewRef.current)
+    // UI不变：按钮仍在 RN 页里，Android 下改为调用嵌入式原生预览的 takePhoto
+    if (nativePreviewRef.current) {
+      console.log("📸 [camera.tsx] Calling nativePreviewRef.takePhoto()")
+      nativePreviewRef.current.takePhoto()
+      return
+    }
+    console.log("📸 [camera.tsx] No native ref, calling takePhoto()")
     takePhoto()
   }
 
@@ -292,7 +323,7 @@ export default function CameraScreen() {
         
         // 添加文件
         formData.append('images', {
-          uri: photo.path,
+          uri: photo.uri,
           type: 'image/jpeg',
           name: `photo_${i + 1}.jpg`,
         } as any)
@@ -355,7 +386,28 @@ export default function CameraScreen() {
       {/* 相机页面不使用自定义StatusBar组件，完全依赖原生层控制 */}
 
       {/* 相机视图 - 使用key强制重新挂载，条件渲染解决GPU资源竞争 */}
-      {(
+      {Platform.OS === "android" ? (
+        <NativeCameraPreview
+        ref={nativePreviewRef as any}
+        style={styles.camera as any}
+        gestureEnabled={true}
+        cameraFacing={1}
+        photoCount={photos.length}
+        maxPhotos={6}
+        onPhotoCaptured={(e) => {
+          const { path, uri } = e.nativeEvent as any
+          if (!path) return
+          const normalizedUri =
+            typeof uri === "string" && uri.length > 0
+              ? uri
+              : path.startsWith("file://")
+                ? path
+                : `file://${path}`
+          const newPhoto: PhotoInfo = { path, uri: normalizedUri, id: generatePhotoId(), timestamp: Date.now() }
+          setPhotos((prev) => (prev.length >= 6 ? prev : [...prev, newPhoto]))
+        }}
+        />
+      ) : (
         <CameraView
           key={cameraKey}
           ref={cameraRef}
@@ -364,6 +416,7 @@ export default function CameraScreen() {
           mode="picture"
         />
       )}
+
 
       {/* 覆盖层UI */}
       <View style={styles.overlay}>
@@ -457,7 +510,7 @@ export default function CameraScreen() {
         <View style={[styles.thumbsBar, { width: screenWidth }]}>
           {photos.map((photo, index) => (
             <View key={photo.id} style={styles.thumbWrapper}>
-              <Image source={{ uri: photo.path }} style={styles.thumbImage} />
+              <Image source={{ uri: photo.uri }} style={styles.thumbImage} />
               <Text style={styles.thumbIndex}>{index + 1}</Text>
               <TouchableOpacity style={styles.thumbDelete} onPress={() => deletePhoto(index)}>
                 <Text style={styles.thumbDeleteText}>×</Text>

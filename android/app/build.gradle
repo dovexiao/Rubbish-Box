@@ -222,6 +222,10 @@ dependencies {
     
     // TensorFlow Lite for native pose detection (CPU + NNAPI only)
     implementation 'org.tensorflow:tensorflow-lite:2.14.0'
+
+    // MediaPipe Tasks Vision (for hand landmarks on CPU)
+    // Used by NativeCameraActivity gesture auto-capture ("grab" / fist)
+    implementation 'com.google.mediapipe:tasks-vision:0.10.29'
     
     // Sherpa-ONNX for high-quality offline TTS (已包含ONNX Runtime，无需额外依赖)
     implementation(name: 'sherpa-onnx-1.12.18', ext: 'aar')

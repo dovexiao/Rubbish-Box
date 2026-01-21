@@ -12,3 +12,11 @@
 -keep class com.facebook.react.turbomodule.** { *; }
 
 # Add any project specific keep options here:
+
+# MediaPipe Tasks (hand landmarker) - keep to avoid reflection stripping
+-keep class com.google.mediapipe.** { *; }
+-dontwarn com.google.mediapipe.**
+
+# Protobuf lite used by MediaPipe Tasks
+-keep class com.google.protobuf.** { *; }
+-dontwarn com.google.protobuf.**
