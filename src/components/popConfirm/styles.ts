@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 const popupStyle = StyleSheet.create({
   popupContainer: {
     width: '100%',
+    paddingHorizontal: 12,
     // padding: 24,
   },
   popupTitle: {

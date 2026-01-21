@@ -71,7 +71,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
   backgroundColor = '#FFFFFF',
   backgroundImage,
   statusBarStyle = 'dark-content',
-  statusBarBackgroundColor,
+  statusBarBackgroundColor = 'transparent',
   showStatusBar = true,
   safeAreaEdges = ['top', 'bottom'],
   keyboardAvoidingView = false,

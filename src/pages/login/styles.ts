@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 8,
     fontWeight: 'normal'
+
   },
   popDescLink: {
     fontSize: 14,

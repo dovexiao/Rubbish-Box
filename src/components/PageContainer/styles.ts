@@ -73,8 +73,8 @@ export const styles = StyleSheet.create({
     lineHeight: 24,
   },
   navHeaderTitle: {
-    fontSize: 17,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
 });
