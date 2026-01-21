@@ -58,12 +58,10 @@ import { BleManager } from 'react-native-ble-plx';
 import { init as initAMapGeolocationLib, Geolocation } from 'react-native-amap-geolocation';
 import { AMapSdk } from 'react-native-amap3d';
 import Config from 'react-native-config';
-import wechat from 'react-native-wechat-lib';
 import { cacheGet } from './cache';
 import { storageUtil } from './storage';
 import appPush from './push';
 import { updateRegId } from '@/services/common';
-import { Toast } from '@ant-design/react-native';
 
 /**
  * 获取存储数据（兼容 Taro 风格的 API）
@@ -757,6 +755,70 @@ class EventCenter {
 
 // 导出单例实例
 export const eventCenter = new EventCenter();
+
+/**
+ * 过滤对象中的 undefined 和 null 值（递归处理）
+ */
+export function filterUndefinedAndNull(obj: any): any {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+  const result: any = {};
+  Object.keys(obj).forEach(key => {
+    const value = obj[key];
+    if (value !== undefined && value !== null) {
+      result[key] = filterUndefinedAndNull(value);
+    }
+  });
+  return result;
+}
+
+/**
+ * 生成随机字符串
+ * @param length 字符串长度
+ * @returns 随机字符串
+ */
+export function randomStr(length: number = 16): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+/**
+ * 生成签名
+ * @param data 数据对象
+ * @param nonce 随机字符串
+ * @param secret 密钥（可选，从缓存获取）
+ * @returns 签名字符串
+ */
+export function getSign(data: Record<string, any>, nonce: string, secret?: string): string {
+  const crypto = require('crypto-js');
+  const keys = Object.keys(data).sort();
+  const params: string[] = [];
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i] as string;
+    const value = data[key];
+
+    if (value !== null && value !== undefined && value !== '') {
+      if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+        // 对象和数组暂时不参与签名（与 Taro 项目保持一致）
+      } else {
+        params.push(key + '=' + encodeURIComponent(value));
+      }
+    }
+  }
+
+  params.push('nonce=' + nonce);
+
+  const signStr = params.join('&') + (secret || '');
+  const sign = crypto.HmacSHA256(signStr, 'jdtz').toString(crypto.enc.Hex);
+
+  return sign;
+}
 
 
 

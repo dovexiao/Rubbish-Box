@@ -5,6 +5,8 @@
 declare module 'react-native-config' {
   export interface NativeConfig {
     DEPLOY_VERSION: string | undefined;
+    DEPLOY_ENV?: string; // dev/real/staging
+    GRAY?: string; // 'true' | undefined
     ENV?: string;
     API_BASE_URL?: string;
     API_VERSION?: string;

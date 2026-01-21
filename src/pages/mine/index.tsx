@@ -1,96 +1,222 @@
-import { getStaffList } from "@/services";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
-import { useState } from "react";
-import { Text, View, ActivityIndicator } from "react-native";
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Image, TouchableOpacity, View, Text } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Toast } from '@ant-design/react-native';
+import PageContainer from '@/components/PageContainer';
+import PopConfirm from '@/components/popConfirm';
+import IconFont from '@/iconfont';
+import { baseInfo, getStaffList, logout } from '@/services/user';
+import { cacheGetSync, cacheRemove, cacheSetSync } from '@/utils/cache';
+import { tokenStorage } from '@/utils/storage';
+import styles from './styles';
 
-const Mine = () => {
-  const [totol, setTotal] = useState(0);
-  const [info, setInfo] = useState({});
-  const [unreadCount, setUnreadCount] = useState(0);
+type MineInfo = {
+  id?: string | number;
+  nickName?: string;
+  avatar?: string;
+  bgUrl?: string;
+  isTest?: boolean;
+};
+
+export default function Mine() {
+  const navigation = useNavigation<any>();
+
+  const [hasToken, setHasToken] = useState(false);
+  const [info, setInfo] = useState<MineInfo | undefined>(undefined);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const getTotal = async () => {
+  const logoutRef = useRef<any>(null);
+
+  const backgroundImage = useMemo(() => {
+    const url = info?.bgUrl;
+    if (url && typeof url === 'string' && url.startsWith('http')) {
+      return { uri: url };
+    }
+    return undefined;
+  }, [info?.bgUrl]);
+
+  const load = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError(null);
+      const token = await cacheGetSync('token');
+      const gm = await cacheGetSync('guestMode');
+      const has = !!token;
+      setHasToken(has);
 
-      console.log('=== 开始请求 getStaffList ===');
-      console.log('请求参数:', { offset: 0, pageSize: 20 });
+      if (!has) {
+        setInfo(undefined);
+        setTotal(0);
+        return;
+      }
 
-      const res = await getStaffList({
-        offset: 0,
-        pageSize: 20,
-      });
+      // 仅在存在有效 token 时必定拉取数据；若此前为访客模式则自愈为 false
+      if (gm === true) {
+        await cacheSetSync('guestMode', false);
+      }
 
-      console.log('=== 请求成功 ===');
-      console.log('响应数据:', JSON.stringify(res, null, 2));
-      console.log('响应类型:', typeof res);
-      console.log('响应是否为数组:', Array.isArray(res));
+      const [staffRes, infoRes] = await Promise.all([
+        getStaffList({ offset: 0, pageSize: 20 }),
+        baseInfo({}),
+      ]);
 
-      if (res && typeof res === 'object') {
-        if ('total' in res) {
-          setTotal(res.total as number);
-          console.log('设置 total:', res.total);
-        } else {
-          console.warn('响应中没有 total 字段，完整响应:', res);
-          setTotal(0);
-        }
+      if (staffRes.code === 200 && staffRes.success) {
+        setTotal(Number((staffRes.data as any)?.total || 0));
       } else {
-        console.warn('响应数据格式异常:', res);
         setTotal(0);
       }
-    } catch (err: any) {
-      console.error('=== 请求失败 ===');
-      console.error('错误信息:', err);
-      console.error('错误堆栈:', err?.stack);
-      console.error('错误详情:', {
-        message: err?.message,
-        response: err?.response?.data,
-        status: err?.response?.status,
-        statusText: err?.response?.statusText,
-      });
 
-      setError(err?.message || '请求失败');
-      setTotal(0);
+      if (infoRes.code === 200 && infoRes.success) {
+        setInfo((infoRes.data || {}) as MineInfo);
+      } else {
+        Toast.fail(infoRes.msg || infoRes.message || '获取用户信息失败');
+      }
     } finally {
       setLoading(false);
-      console.log('=== 请求完成 ===');
     }
-  }
+  }, []);
 
-  useFocusEffect(useCallback(() => {
-    console.log('=== Mine 页面获得焦点，开始请求 ===');
-    getTotal();
-  }, []));
+  useFocusEffect(
+    useCallback(() => {
+      void load();
+      return;
+    }, [load]),
+  );
+
+  const requireLogin = useCallback(() => {
+    Toast.info('请先登录');
+    navigation.navigate('Login');
+  }, [navigation]);
+
+  const onLogout = useCallback(async () => {
+    try {
+      // 服务端退出（失败也不影响本地清理）
+      await logout({});
+    } catch { }
+    try {
+      await cacheRemove({ key: 'token' });
+    } catch { }
+    try {
+      await tokenStorage.remove();
+    } catch { }
+    try {
+      await cacheSetSync('guestMode', true);
+    } catch { }
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  }, [navigation]);
+
+  const listItems = useMemo(
+    () => [
+      { icon: 'a-addequipments' as const, label: '添加设备', onPress: () => navigation.navigate('AddDevice') },
+      { icon: 'shopping' as const, label: '商城', onPress: () => navigation.navigate('Mall') },
+      { icon: 'order' as const, label: '我的订单', onPress: () => navigation.navigate('MyOrder') },
+      { icon: 'maintain' as const, label: '在线报修', onPress: () => navigation.navigate('OnlineRepair') },
+      { icon: 'a-advertisingdisplay' as const, label: '广告位展示', onPress: () => navigation.navigate('AdvertisingDisplay') },
+      { icon: 'feedback' as const, label: '意见反馈', onPress: () => navigation.navigate('Feedback') },
+      { icon: 'a-skinpeeler' as const, label: '换肤', onPress: () => navigation.navigate('SkinPeeler') },
+      { icon: 'setting' as const, label: '设置', onPress: () => navigation.navigate('Setting') },
+    ],
+    [navigation],
+  );
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 20, marginBottom: 20 }}>Mine</Text>
+    <PageContainer
+      backgroundColor="#FCFBFE"
+      backgroundImage={backgroundImage}
+      statusBarBackgroundColor={backgroundImage ? 'transparent' : '#FCFBFE'}
+      scrollable
+      loading={loading && hasToken && !info}
+      safeAreaEdges={['top', 'bottom']}
+    >
+      <View style={styles.contentBox}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            if (!hasToken) return requireLogin();
+            navigation.navigate('UserInfo');
+          }}
+        >
+          {info?.avatar && typeof info.avatar === 'string' && info.avatar.startsWith('http') ? (
+            <Image source={{ uri: info.avatar }} style={styles.avatar} />
+          ) : (
+            <View style={styles.avatar} />
+          )}
+        </TouchableOpacity>
 
-      {loading && (
-        <View style={{ alignItems: 'center', marginVertical: 20 }}>
-          <ActivityIndicator size="large" />
-          <Text style={{ marginTop: 10 }}>加载中...</Text>
+        <Text style={styles.name}>
+          {hasToken ? (info?.nickName ?? '') : '未登录'}
+        </Text>
+
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.card}
+          onPress={() => {
+            if (!hasToken) return requireLogin();
+            navigation.navigate('Staff');
+          }}
+        >
+          <View style={styles.memberRow}>
+            <IconFont name="member-20" size={20} color="#333333" />
+            <View style={styles.memberTextBox}>
+              <Text style={styles.memberTitle}>
+                成员{total ? `（${total}）` : ''}
+              </Text>
+              <Text style={styles.memberDesc}>添加成员，授权使用地锁</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.listBox}>
+          {listItems.map((it) => {
+            return (
+              <View key={it.label}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.listItem}
+                  onPress={() => {
+                    if (!hasToken) return requireLogin();
+                    it.onPress();
+                  }}
+                >
+                  <IconFont name={it.icon} size={22} color="#333333" />
+                  <Text style={styles.listLabel}>{it.label}</Text>
+                  <IconFont name="a-headfor-20" size={16} color="#333333" />
+                </TouchableOpacity>
+              </View>
+            );
+          })}
         </View>
-      )}
 
-      {error && (
-        <View style={{ backgroundColor: '#ffebee', padding: 10, borderRadius: 5, marginBottom: 10 }}>
-          <Text style={{ color: '#c62828' }}>错误: {error}</Text>
+        <View style={styles.logoutBox}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.listItem}
+            onPress={() => {
+              if (!hasToken) return requireLogin();
+              logoutRef.current?.open();
+            }}
+          >
+            <IconFont name="exit" size={22} color="#333333" />
+            <Text style={styles.listLabel}>退出登录</Text>
+            <IconFont name="a-headfor-20" size={16} color="#333333" />
+          </TouchableOpacity>
         </View>
-      )}
 
-      <Text style={{ fontSize: 16, marginTop: 10 }}>
-        总数: {totol}
-      </Text>
-
-      <Text style={{ fontSize: 14, color: '#666', marginTop: 10 }}>
-        未读消息: {unreadCount}
-      </Text>
-    </View>
+        {/* 退出登录弹窗 */}
+        <PopConfirm
+          ref={logoutRef}
+          marginTop32
+          textWeight="bold"
+          title="确定要退出登录"
+          cancelText="暂不退出"
+          confirmText="确定退出"
+          onConfirm={onLogout}
+        />
+      </View>
+    </PageContainer>
   );
 }
-
-export default Mine;

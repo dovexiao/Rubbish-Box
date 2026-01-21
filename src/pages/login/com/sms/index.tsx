@@ -36,6 +36,7 @@ const Sms: React.FC<SmsProps> = ({ agree, onChange, popRef, initialMobile }) => 
     const loadingToast = Toast.loading('发送中', 0);
     const res = await getSmsCode({ mobile, purpose: SMS_PURPOSE.LOGIN })
     Toast.remove(loadingToast)
+    console.log('res', res)
 
     if (res.code === 200) {
       navigation.navigate('LoginSms', { mobile, type: SMS_PURPOSE.LOGIN })

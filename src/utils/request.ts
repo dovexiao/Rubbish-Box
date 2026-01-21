@@ -1,4 +1,4 @@
-import { get, post, put, del } from './http';
+import { del, get, post, put, type CreateFetchResponse } from './http';
 import type { AxiosRequestConfig } from 'axios';
 
 /**
@@ -17,7 +17,11 @@ export function createFetch<TResponse = any, TParams = any>(
   url: string,
   method: HttpMethod = 'GET',
 ) {
-  return (params?: TParams, config?: AxiosRequestConfig): Promise<TResponse> => {
+  // RN 环境：统一返回 CreateFetchResponse，不需要额外传 info
+  return (
+    params?: TParams,
+    config?: AxiosRequestConfig,
+  ): Promise<CreateFetchResponse<TResponse>> => {
     switch (method) {
       case 'GET':
         // GET 请求将 params 作为 query 参数

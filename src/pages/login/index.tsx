@@ -19,7 +19,7 @@ import Password from './com/password';
 import styles from './styles';
 import IconFont from '@/iconfont';
 import { cacheSet } from '@/utils/cache';
-import { cacheGetSync, cacheRemoveSync, cacheSetSync, eventCenter, getMobPushDeviceInfo, getStorage, myNextTick, reLaunch, setStorage } from '@/utils';
+import { cacheGetSync, cacheSetSync, eventCenter, getMobPushDeviceInfo, getStorage, myNextTick, reLaunch, setStorage } from '@/utils';
 import appPush from '@/utils/push';
 import PopConfirm from '@/components/popConfirm';
 import { Toast } from '@ant-design/react-native';
@@ -105,7 +105,7 @@ const Login = () => {
           obj = { ...obj, ...device.current }
         }
         const thirdLoginRes = await thirdLogin({ ...obj })
-        if (thirdLoginRes.code === '200') {
+        if (thirdLoginRes.code === 200) {
           await cacheSetSync('token', thirdLoginRes.data.token)
           await cacheSetSync('guestMode', false)
           try {

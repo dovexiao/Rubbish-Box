@@ -12,6 +12,15 @@ export type EnvType = 'development' | 'production';
 // 从环境变量获取当前环境，如果没有设置则根据 __DEV__ 判断
 export const ENV: EnvType = (Config.ENV as EnvType) || (__DEV__ ? 'development' : 'production');
 
+// 获取部署环境（dev/real/staging）
+export const DEPLOY_ENV = Config.DEPLOY_ENV || (__DEV__ ? 'dev' : 'real');
+
+// 获取灰度标识
+export const GRAY = Config.GRAY === 'true';
+
+// 获取部署版本号
+export const DEPLOY_VERSION = Config.DEPLOY_VERSION || '';
+
 // 获取 API 基础地址（从环境变量读取）
 export const BASE_URL = Config.API_BASE_URL || 'https://api.example.com';
 
@@ -34,6 +43,9 @@ export const MAP_KEY_IOS = Config.MAP_KEY_IOS;
 // 导出配置对象（方便统一访问）
 export const config = {
   env: ENV,
+  deployEnv: DEPLOY_ENV,
+  gray: GRAY,
+  deployVersion: DEPLOY_VERSION,
   baseURL: BASE_URL,
   apiVersion: API_VERSION,
   androidPackageName: ANDROID_PACKAGE_NAME,
@@ -47,6 +59,9 @@ export const config = {
 if (__DEV__) {
   console.log('=== 环境配置 ===');
   console.log(`当前环境: ${ENV}`);
+  console.log(`部署环境: ${DEPLOY_ENV}`);
+  console.log(`灰度标识: ${GRAY}`);
+  console.log(`部署版本: ${DEPLOY_VERSION}`);
   console.log(`API 地址: ${BASE_URL}`);
   console.log(`API 版本: ${API_VERSION}`);
   console.log(`Android 包名: ${ANDROID_PACKAGE_NAME}`);

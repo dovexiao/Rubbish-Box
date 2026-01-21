@@ -76,7 +76,7 @@ const LoginSms = () => {
             ...device,
           }));
 
-      if (res.code === 200 || res.code === '200') {
+      if (res.code === 200) {
         // 仅在校验成功时停止倒计时
         stop();
         Keyboard.dismiss();
@@ -97,7 +97,7 @@ const LoginSms = () => {
             url: '/pages/index/index',
           });
         }
-      } else if (res.code === 515 || res.code === '515') {
+      } else if (res.code === 515) {
         setShowError(true);
         Toast.remove(loadingToast);
       } else {

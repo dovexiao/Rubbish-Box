@@ -157,7 +157,7 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
             Keyboard.dismiss();
             onSubmit();
           }}
-          disabled={!mobile || !password || showError || !agree}>
+        >
           <Text style={passwordStyles.btnText}>登录</Text>
         </TouchableOpacity>
       </Flex>
