@@ -83,7 +83,7 @@ export default function CompositionRecordScreen() {
     <View style={styles.pageContainer}>
       <View style={styles.sticky}>
         <StatusBar theme="dark" />
-        <NavBar title="作文收录" leftArrow style={styles.navbarMargin}  onBackPress={() => router.navigate("/(tabs)/study")} />
+        <NavBar title="作文收录" leftArrow onBackPress={() => router.navigate("/(tabs)/study")} />
       </View>
 
       {loading && (
@@ -101,85 +101,92 @@ export default function CompositionRecordScreen() {
       )}
 
       {!loading && recordList.length > 0 && (
-        <ScrollView style={styles.recordListWrapper} showsVerticalScrollIndicator={false}>
-          <View style={styles.recordList}>
-            <View style={styles.recordListInner}>
-              {recordList.map((group, index) => (
-                <View key={index}>
-                  <View style={styles.monthGroup}>
-                    <TouchableOpacity
-                      style={styles.monthHeader}
-                      onPress={() => toggleMonth(group.year_month)}
-                      activeOpacity={0.8}
-                    >
-                      <Text style={styles.monthTitle}>{group.year_month}</Text>
-                      <View style={styles.monthToggle}>
-                        <Text style={styles.toggleText}>共{group.records?.length || 0}条</Text>
-                        <Ionicons
-                          name={
-                            expandedMonths[group.year_month || ""]
-                              ? "chevron-down"
-                              : "chevron-forward"
-                          }
-                          size={rpx(22)}
-                          color="rgba(0, 0, 0, 0.7)"
-                        />
-                      </View>
-                    </TouchableOpacity>
+        <LinearGradient 
+          colors={["#9FDDFF", "#B3C9FF"]} 
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.recordListContainer}
+        >
+          <ScrollView style={styles.recordListWrapper} showsVerticalScrollIndicator={false}>
+            <View style={styles.recordList}>
+              <View style={styles.recordListInner}>
+                {recordList.map((group, index) => (
+                  <View key={index}>
+                    <View style={styles.monthGroup}>
+                      <TouchableOpacity
+                        style={styles.monthHeader}
+                        onPress={() => toggleMonth(group.year_month)}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.monthTitle}>{group.year_month}</Text>
+                        <View style={styles.monthToggle}>
+                          <Text style={styles.toggleText}>共{group.records?.length || 0}条</Text>
+                          <Ionicons
+                            name={
+                              expandedMonths[group.year_month || ""]
+                                ? "chevron-down"
+                                : "chevron-forward"
+                            }
+                            size={rpx(15.625)}
+                            color="rgba(0, 0, 0, 0.7)"
+                          />
+                        </View>
+                      </TouchableOpacity>
 
-                    {expandedMonths[group.year_month || ""] && (
-                      <>
-                        {group.records && group.records.length > 0 ? (
-                          <View style={styles.monthList}>
-                            {group.records.map((item) => (
-                              <TouchableOpacity
-                                key={item.id}
-                                style={styles.recordItem}
-                                onPress={() => goToDetail(item.id)}
-                                activeOpacity={0.8}
-                              >
-                                <Image
-                                  source={{
-                                    uri: item.cover_image || "/static/images/default-cover.png",
-                                  }}
-                                  style={styles.recordImage}
-                                  resizeMode="cover"
-                                />
-                                <View style={styles.scoreBadge}>
-                                  <Text style={styles.scoreText}>{item.rating}</Text>
-                                  <Image 
-                                    source={require("../../../assets/images/Frame 2090059169.png")} 
-                                    style={styles.scoreLine}
-                                    resizeMode="contain"
+                      {expandedMonths[group.year_month || ""] && (
+                        <>
+                          {group.records && group.records.length > 0 ? (
+                            <View style={styles.monthList}>
+                              {group.records.map((item) => (
+                                <TouchableOpacity
+                                  key={item.id}
+                                  style={styles.recordItem}
+                                  onPress={() => goToDetail(item.id)}
+                                  activeOpacity={0.8}
+                                >
+                                  <Image
+                                    source={{
+                                      uri: item.cover_image || "/static/images/default-cover.png",
+                                    }}
+                                    style={styles.recordImage}
+                                    resizeMode="cover"
                                   />
-                                </View>
-                                <View style={styles.recordInfo}>
-                                  <View style={styles.recordType}>
-                                    <Text style={styles.recordTypeText}>
-                                      作文批改·{item.composition_type || "未知类型"}
+                                  <View style={styles.scoreBadge}>
+                                    <Text style={styles.scoreText}>{item.rating}</Text>
+                                    <Image 
+                                      source={require("../../../assets/images/Frame 2090059169.png")} 
+                                      style={styles.scoreLine}
+                                      resizeMode="contain"
+                                    />
+                                  </View>
+                                  <View style={styles.recordInfo}>
+                                    <View style={styles.recordType}>
+                                      <Text style={styles.recordTypeText}>
+                                        作文批改·{item.composition_type || "未知类型"}
+                                      </Text>
+                                    </View>
+                                    <Text style={styles.recordTime}>
+                                      {formatDate(item.created_at)}
                                     </Text>
                                   </View>
-                                  <Text style={styles.recordTime}>
-                                    {formatDate(item.created_at)}
-                                  </Text>
-                                </View>
-                              </TouchableOpacity>
-                            ))}
-                          </View>
-                        ) : (
-                          <View style={styles.emptyMonth}>
-                            <Text style={styles.emptyMonthText}>本月暂无记录</Text>
-                          </View>
-                        )}
-                      </>
-                    )}
+                                </TouchableOpacity>
+                              ))}
+                            </View>
+                          ) : (
+                            <View style={styles.emptyMonth}>
+                              <Text style={styles.emptyMonthText}>本月暂无记录</Text>
+                            </View>
+                          )}
+                        </>
+                      )}
+                    </View>
+                    {index < recordList.length - 1 && <View style={styles.monthDivider} />}
                   </View>
-                  {index < recordList.length - 1 && <View style={styles.monthDivider} />}
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </LinearGradient>
       )}
     </View>
   )
@@ -187,13 +194,11 @@ export default function CompositionRecordScreen() {
 
 const styles = createStyles({
   pageContainer: {
-    minWidth: 750,
-    minHeight: "100%",
     backgroundColor: "#E4F4FF",
     flex: 1,
   },
   sticky: {
-    position: "relative",
+    position: "relative" as const,
     zIndex: 10,
     backgroundColor: "#E4F4FF",
   },
@@ -202,9 +207,9 @@ const styles = createStyles({
   },
   // 加载状态
   loadingContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: "column" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     height: 200,
   },
   loadingText: {
@@ -215,9 +220,9 @@ const styles = createStyles({
   // 空状态
   emptyContainer: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: "column" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     // height: '100%',
   },
   emptyText: {
@@ -225,87 +230,93 @@ const styles = createStyles({
     fontSize: 10.9375,
   },
   // 记录列表
+  recordListContainer: {
+    flex: 1,
+    marginTop: 9.375, // 24
+    marginHorizontal: 34.375, // 88
+    padding: 12.5, // 32
+    paddingBottom: 0,
+    borderTopLeftRadius: 11.7188, // 30
+    borderTopRightRadius: 11.7188, // 30
+  },
   recordListWrapper: {
     flex: 1,
   },
   recordList: {
-    marginHorizontal: 29,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    borderRadius: 8.2031, // 21
+    backgroundColor: "#F4F7FA",
+    overflow: "hidden" as const,
   },
   recordListInner: {
-    // Note: Use LinearGradient component for gradient background
-    backgroundColor: "#B3C9FF",
-    borderRadius: 11.81785,
-    marginHorizontal: 12.5,
-    marginVertical: 12.5,
-    width: "100%",
-    padding: 12.5,
-    shadowColor: "#FFFFFF",
-    shadowOffset: { width: -3.2, height: -2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5.2,
-    elevation: 3,
+    width: "100%" as const,
+    paddingVertical: 14.0625, // 36
+    paddingHorizontal: 12.5, // 32
   },
   // 月份组
   monthGroup: {
-    marginBottom: 0,
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   monthHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 15.625,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
+    marginBottom: 10.9375, // 28
   },
   monthTitle: {
-    fontSize: 10.9375,
+    fontWeight: "bold" as const,
+    fontSize: 10.9375, // 28
     color: "#000000",
   },
   monthToggle: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
   },
   toggleText: {
-    fontSize: 7,
-    color: "rgba(0, 0, 0, 0.7)",
-    marginRight: 4,
+    fontWeight: "400" as const,
+    fontSize: 9.7656, // 25
+    color: "#00000080",
+    marginRight: 3.9063,
   },
   // 月份记录列表
   monthList: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    columnGap: 22.6563, // 58
+    rowGap: 10.9375, // 28
+    marginBottom: 10.9375, // 28
   },
   recordItem: {
-    position: "relative",
-    width: 212.2,
-    marginRight: 10,
-    marginBottom: 30,
-    borderRadius: 5.8,
-    overflow: "hidden",
-    backgroundColor: "#fff",
-    borderWidth: 1.8,
+    position: "relative" as const,
+    width: 140.625, // 360
+    borderRadius: 4.6875, // 12
+    overflow: "hidden" as const,
+    backgroundColor: "#DDF3FF",
+    borderWidth: 1.1719,
     borderColor: "#DDF3FF",
-    shadowColor: "#9CCDFB",
+    shadowColor: "#439EFF",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 2.4,
-    elevation: 2,
+    shadowOpacity: 0.63,
+    shadowRadius: 2.4316, // 6.25
+    elevation: 5.8594,
   },
   recordImage: {
-    width: 212.2,
-    height: 212.2,
+    width: 140.2344, // 359
+    height: 78.125, // 200
   },
   scoreBadge: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 4,
     right: 8,
-    alignItems: "center",
+    alignItems: "center" as const,
   },
   scoreText: {
     color: "#FF2828",
     fontSize: 11.7,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   scoreLine: {
     width: 14, // 横线宽度
@@ -313,8 +324,9 @@ const styles = createStyles({
     marginTop: -2, // 分数和横线之间的间距
   },
   recordInfo: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
     padding: 4.8,
     backgroundColor: "#DDF3FF",
   },
@@ -325,28 +337,25 @@ const styles = createStyles({
     paddingVertical: 1.4,
   },
   recordTypeText: {
-    fontSize: 7.8,
+    fontSize: 7.8125, // 20
     color: "#000000",
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   recordTime: {
-    fontSize: 7,
-    color: "rgba(0, 0, 0, 0.7)",
+    fontSize: 7.8125,
+    color: "#000000B2",
   },
   // 月份分割线
   monthDivider: {
-    height: 2,
-    backgroundColor: "#eee",
-    marginVertical: 20,
-    marginBottom: 30,
+    height: 1.171875, // 3
   },
   // 空月份
   emptyMonth: {
-    width: "100%",
+    width: "100%" as const,
     height: 200,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
   emptyMonthText: {
     color: "#999",
