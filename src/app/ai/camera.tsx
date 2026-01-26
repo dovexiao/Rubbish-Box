@@ -25,6 +25,7 @@ import {
   isPostureServiceRunning 
 } from "../../modules/PostureMonitorModule"
 import { NativeCameraPreview } from "../../components/NativeCameraPreview"
+import DeviceInfo from "react-native-device-info"
 
 const Text = RNText
 
@@ -56,11 +57,31 @@ export default function CameraScreen() {
   const cameraRef = useRef<CameraView>(null)
   const wasPostureRunningRef = useRef(false) // 记录进入页面前坐姿检测是否在运行
   const nativePreviewRef = useRef<{ takePhoto: () => void } | null>(null)
+  const [swapLensFacing, setSwapLensFacing] = useState(false)
   // 思考模式：速度（false）或质量（true），默认速度（false）
   const [thinkingSwitch, setThinkingSwitch] = useState<boolean>(true)
   const [showTooltip, setShowTooltip] = useState(false) // 控制提示框显示
 
   const { width: screenWidth, height: screenHeight } = Dimensions.get("screen")
+
+  // 部分 Rockchip 主板会把 Camera2 的 LENS_FACING 标记反了（物理前后摄像头对调）。
+  // 主设备（AI80）上启用原生侧反转选择，保证：拍照=后置、手势=前置。
+  useEffect(() => {
+    if (Platform.OS !== "android") return
+    Promise.all([DeviceInfo.getBrand(), DeviceInfo.getModel()])
+      .then(([brand, model]) => {
+        const b = (brand ?? "").toLowerCase()
+        const m = (model ?? "").toUpperCase()
+        const shouldSwap = b === "rockchip" && m === "AI80"
+        if (shouldSwap) {
+          console.log("📷 [camera.tsx] swapLensFacing enabled for device:", { brand, model })
+        }
+        setSwapLensFacing(shouldSwap)
+      })
+      .catch(() => {
+        // ignore
+      })
+  }, [])
 
   // 相机页面强制隐藏状态栏 - 使用原生StatusBar API
   useEffect(() => {
@@ -392,6 +413,7 @@ export default function CameraScreen() {
         style={styles.camera as any}
         gestureEnabled={true}
         cameraFacing={1}
+        swapLensFacing={swapLensFacing}
         photoCount={photos.length}
         maxPhotos={6}
         onPhotoCaptured={(e) => {

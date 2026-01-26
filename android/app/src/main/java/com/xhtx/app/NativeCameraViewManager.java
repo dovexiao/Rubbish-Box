@@ -59,12 +59,23 @@ public class NativeCameraViewManager extends SimpleViewManager<NativeCameraView>
   }
 
   /**
-   * 0 = back, 1 = front
-   * Default is back (AI拍照+手势用后置；坐姿监测用前置在进入页面时已停止)
+   * Android CameraCharacteristics.LENS_FACING_*:
+   * - 0 = front
+   * - 1 = back
+   * Default is back (AI拍照用后置；手势检测用前置；坐姿监测进入页面时会停止)
    */
   @ReactProp(name = "cameraFacing", defaultInt = android.hardware.camera2.CameraCharacteristics.LENS_FACING_BACK)
   public void setCameraFacing(NativeCameraView view, int facing) {
     view.setCameraFacing(facing);
+  }
+
+  /**
+   * Workaround for some vendor HALs that report LENS_FACING swapped.
+   * When true, native selection will invert front/back.
+   */
+  @ReactProp(name = "swapLensFacing", defaultBoolean = false)
+  public void setSwapLensFacing(NativeCameraView view, boolean enabled) {
+    view.setSwapLensFacing(enabled);
   }
 
   @Nullable

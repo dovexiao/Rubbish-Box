@@ -13,6 +13,7 @@ import { createStyles, rpx } from "../../../utils/rpxStyleSheet"
 import { showError, showWarning } from "../../../utils/toast"
 import { isPostureServiceRunning, stopPostureMonitorService } from "../../../modules/PostureMonitorModule"
 import { NativeCameraPreview } from "../../../components/NativeCameraPreview"
+import DeviceInfo from "react-native-device-info"
 
 interface PhotoInfo {
   /** Raw local path (Android native may be without scheme) */
@@ -41,8 +42,23 @@ export default function ErrorCameraScreen() {
   const [uploadProgress, setUploadProgress] = useState("")
   const wasPostureRunningRef = useRef(false)
   const nativePreviewRef = useRef<{ takePhoto: () => void } | null>(null)
+  const [swapLensFacing, setSwapLensFacing] = useState(false)
 
   const { width: windowWidth, height: windowHeight } = Dimensions.get("screen")
+
+  // 主设备（AI80）Camera2 LENS_FACING 可能被 HAL 标记反了，启用原生侧反转选择。
+  useEffect(() => {
+    if (Platform.OS !== "android") return
+    Promise.all([DeviceInfo.getBrand(), DeviceInfo.getModel()])
+      .then(([brand, model]) => {
+        const b = (brand ?? "").toLowerCase()
+        const m = (model ?? "").toUpperCase()
+        setSwapLensFacing(b === "rockchip" && m === "AI80")
+      })
+      .catch(() => {
+        // ignore
+      })
+  }, [])
 
   const tipText =
     photos.length >= 6
@@ -283,6 +299,7 @@ export default function ErrorCameraScreen() {
               style={{ width: windowWidth, height: windowHeight }}
               gestureEnabled={true}
               cameraFacing={1}
+              swapLensFacing={swapLensFacing}
               photoCount={photos.length}
               maxPhotos={6}
               onPhotoCaptured={(e) => {

@@ -17,6 +17,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
@@ -43,6 +44,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Native camera preview view for embedding into RN UI without changing UI.
@@ -60,8 +62,10 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
   private static final String TAG = "NativeCameraView";
 
   // Gesture auto-capture analysis stream
-  private static final int ANALYSIS_WIDTH = 256;
-  private static final int ANALYSIS_HEIGHT = 256;
+  // NOTE: Some vendor HALs don't support tiny square YUV outputs.
+  // We'll pick the nearest supported size at runtime (prefer ~320x240 or 640x360).
+  private static final int ANALYSIS_TARGET_WIDTH = 320;
+  private static final int ANALYSIS_TARGET_HEIGHT = 240;
   private static final long GESTURE_PROCESS_INTERVAL_MS = 80; // ~12.5fps
   private static final long GRAB_EDGE_DEBOUNCE_MS = 300;
   private static final long GRAB_CONTINUOUS_INTERVAL_MS = 500; // 连续抓握间隔防抖 0.5s
@@ -90,12 +94,24 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
   // Camera facing: default back for AI capture & gesture.
   // (Posture monitor uses front camera separately; AI module will stop it on entry.)
   private volatile int desiredLensFacing = CameraCharacteristics.LENS_FACING_BACK;
+  // Some vendor HALs report LENS_FACING swapped. When true, we invert facing selection.
+  private volatile boolean swapLensFacing = false;
   private volatile boolean isCapturing = false;
   private volatile boolean isGrabActive = false;
   private volatile long lastGestureProcessTime = 0;
   private volatile long lastGrabEdgeTime = 0;
   private volatile long lastAutoCaptureTime = 0;
   private volatile long lastAnalysisDebugTime = 0;
+  private volatile boolean gestureStartRequested = false;
+  private volatile boolean mainPreviewStarted = false;
+  private volatile boolean mainOpenRequested = false;
+  private volatile boolean retryingMainAfterClosingGesture = false;
+  private volatile boolean concurrentChecked = false;
+  private volatile boolean concurrentSupported = false;
+  @Nullable private String cachedMainCameraId = null;
+  @Nullable private String cachedFrontCameraId = null;
+  @Nullable private Size cachedAnalysisSize = null;
+  @Nullable private Size cachedJpegSize = null;
 
   // Controlled from JS
   private volatile int photoCount = 0;
@@ -145,9 +161,13 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
     if (enabled) {
       handGrabDetector.start();
       sendDebugEvent("🤚 HandGrabDetector started (prop update)");
+      gestureStartRequested = true;
+      maybeStartGestureCamera();
     } else {
       handGrabDetector.stop();
       sendDebugEvent("🤚 HandGrabDetector stopped (prop update)");
+      gestureStartRequested = false;
+      closeGestureCamera();
     }
   }
 
@@ -158,12 +178,31 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
         : CameraCharacteristics.LENS_FACING_BACK;
     if (desiredLensFacing == newFacing) return;
     desiredLensFacing = newFacing;
-    sendDebugEvent("📷 cameraFacing updated: " + (desiredLensFacing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front"));
+    sendDebugEvent("📷 cameraFacing updated: " + (desiredLensFacing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front")
+        + " (swapLensFacing=" + swapLensFacing + ")");
     // If already active, restart camera to apply.
     if (isActive) {
       closeCamera();
       if (textureView.isAvailable()) openCamera();
     }
+  }
+
+  /** If true, invert LENS_FACING selection (device HAL bug workaround). */
+  public void setSwapLensFacing(boolean enabled) {
+    if (swapLensFacing == enabled) return;
+    swapLensFacing = enabled;
+    sendDebugEvent("🔁 swapLensFacing updated: " + swapLensFacing);
+    if (isActive) {
+      closeCamera();
+      if (textureView.isAvailable()) openCamera();
+    }
+  }
+
+  private int mapFacing(int facing) {
+    if (!swapLensFacing) return facing;
+    if (facing == CameraCharacteristics.LENS_FACING_FRONT) return CameraCharacteristics.LENS_FACING_BACK;
+    if (facing == CameraCharacteristics.LENS_FACING_BACK) return CameraCharacteristics.LENS_FACING_FRONT;
+    return facing;
   }
 
   public void setPhotoCount(int count) {
@@ -258,6 +297,16 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
       return;
     }
     isActive = true;
+    mainPreviewStarted = false;
+    mainOpenRequested = false;
+    retryingMainAfterClosingGesture = false;
+    concurrentChecked = false;
+    concurrentSupported = false;
+    cachedMainCameraId = null;
+    cachedFrontCameraId = null;
+    cachedAnalysisSize = null;
+    cachedJpegSize = null;
+    gestureStartRequested = gestureEnabled;
     startBackgroundThread();
     if (handGrabDetector == null) {
       handGrabDetector = new HandGrabDetector(getContext(), this::onGrabStateChanged);
@@ -265,10 +314,6 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
     if (gestureEnabled) {
       handGrabDetector.start();
       Log.d(TAG, "🤚 HandGrabDetector started");
-    }
-    // Gesture analysis camera does not depend on TextureView.
-    if (gestureEnabled) {
-      openGestureCamera();
     }
     if (textureView.isAvailable()) {
       Log.d(TAG, "📷 TextureView available, opening camera");
@@ -281,6 +326,10 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
   @Override
   public void onHostPause() {
     isActive = false;
+    mainPreviewStarted = false;
+    mainOpenRequested = false;
+    retryingMainAfterClosingGesture = false;
+    gestureStartRequested = false;
     closeCamera();
     stopBackgroundThread();
     if (handGrabDetector != null) {
@@ -342,6 +391,7 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
       CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
       if (manager == null) {
         Log.e(TAG, "❌ CameraManager is null");
+        sendDebugEvent("❌ openCamera: CameraManager is null");
         return;
       }
 
@@ -349,50 +399,78 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
       Log.d(TAG, "📷 Available cameras: " + java.util.Arrays.toString(cameraIds));
       if (cameraIds.length == 0) {
         Log.e(TAG, "❌ No cameras available");
+        sendDebugEvent("❌ openCamera: no cameras available");
         return;
       }
 
       // Pick camera by lens facing (best practice, avoid OEM-specific hardcoded IDs).
+      int effectiveDesiredFacing = mapFacing(desiredLensFacing);
       String cameraId = null;
       for (String id : cameraIds) {
         CameraCharacteristics c = manager.getCameraCharacteristics(id);
         Integer facing = c.get(CameraCharacteristics.LENS_FACING);
-        if (facing != null && facing == desiredLensFacing) {
+        if (facing != null && facing == effectiveDesiredFacing) {
           cameraId = id;
           break;
         }
       }
       // Fallback: any camera
       if (cameraId == null) cameraId = cameraIds[0];
+
+      cachedMainCameraId = cameraId;
+      cachedFrontCameraId = findCameraIdByFacing(manager, mapFacing(CameraCharacteristics.LENS_FACING_FRONT));
+      if (!concurrentChecked) {
+        concurrentChecked = true;
+        concurrentSupported = (cachedFrontCameraId != null)
+            && !cachedFrontCameraId.equals(cachedMainCameraId)
+            && isConcurrentPairSupported(manager, cachedMainCameraId, cachedFrontCameraId);
+        sendDebugEvent("🧩 concurrent=" + (concurrentSupported ? "supported" : "not_supported")
+            + " (main=" + cachedMainCameraId + ", front=" + (cachedFrontCameraId == null ? "null" : cachedFrontCameraId)
+            + ", api=" + Build.VERSION.SDK_INT + ", swapLensFacing=" + swapLensFacing + ")");
+      }
+
       Log.d(TAG, "📷 Using cameraId: " + cameraId + " (desiredFacing=" +
           (desiredLensFacing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + ")");
       sendDebugEvent("📷 Using cameraId: " + cameraId + " (desired=" +
           (desiredLensFacing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + ")");
+      sendDebugEvent("📷 effectiveFacing(main)=" + (effectiveDesiredFacing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front")
+          + " effectiveFacing(gestureFront)=" + (mapFacing(CameraCharacteristics.LENS_FACING_FRONT) == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front"));
 
       CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
       StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+      // Concurrency-friendly sizes:
+      // - Preview: prefer ~1280x720 (or closest supported) instead of the maximum size.
+      // - Capture: prefer JPEG at <=1920x1080 (or closest) with similar aspect ratio.
       if (map != null) {
-        Size[] sizes = map.getOutputSizes(SurfaceTexture.class);
-        if (sizes != null && sizes.length > 0) {
-          Size best = sizes[0];
-          for (Size s : sizes) {
-            if (s.getWidth() * s.getHeight() > best.getWidth() * best.getHeight()) best = s;
-          }
-          previewSize = best;
-        }
+        Size[] previewSizes = map.getOutputSizes(SurfaceTexture.class);
+        Size chosenPreview = chooseClosestSize(previewSizes, 1280, 720, 1920, 1080);
+        if (chosenPreview != null) previewSize = chosenPreview;
+
+        Size[] jpegSizes = map.getOutputSizes(ImageFormat.JPEG);
+        Size chosenJpeg = chooseJpegSize(jpegSizes, previewSize);
+        cachedJpegSize = chosenJpeg;
+      }
+      if (cachedJpegSize == null) {
+        cachedJpegSize = new Size(previewSize.getWidth(), previewSize.getHeight());
       }
       Log.d(TAG, "📷 Preview size: " + previewSize.getWidth() + "x" + previewSize.getHeight());
+      Log.d(TAG, "📷 JPEG capture size: " + cachedJpegSize.getWidth() + "x" + cachedJpegSize.getHeight());
+      sendDebugEvent("📷 sizes preview=" + previewSize.getWidth() + "x" + previewSize.getHeight()
+          + " jpeg=" + cachedJpegSize.getWidth() + "x" + cachedJpegSize.getHeight());
 
-      // Full-res still capture reader (preview/back camera)
-      photoReader = ImageReader.newInstance(previewSize.getWidth(), previewSize.getHeight(), ImageFormat.YUV_420_888, 2);
+      // Still capture reader (JPEG is much more concurrency-friendly than full-res YUV).
+      photoReader = ImageReader.newInstance(cachedJpegSize.getWidth(), cachedJpegSize.getHeight(), ImageFormat.JPEG, 2);
       photoReader.setOnImageAvailableListener(onPhotoAvailableListener, backgroundHandler);
 
       Log.d(TAG, "📷 Opening camera...");
+      mainOpenRequested = true;
       manager.openCamera(cameraId, stateCallback, backgroundHandler);
     } catch (SecurityException e) {
       Log.e(TAG, "❌ openCamera failed: No camera permission", e);
+      sendDebugEvent("❌ openCamera: no permission");
     } catch (Exception e) {
       Log.e(TAG, "❌ openCamera failed", e);
+      sendDebugEvent("❌ openCamera failed: " + e.getClass().getSimpleName());
     }
   }
 
@@ -401,6 +479,8 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
     public void onOpened(@NonNull CameraDevice camera) {
       Log.d(TAG, "✅ Camera opened successfully");
       cameraDevice = camera;
+      retryingMainAfterClosingGesture = false;
+      sendDebugEvent("✅ Main camera opened");
       createPreviewSession();
     }
 
@@ -408,13 +488,33 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
     public void onDisconnected(@NonNull CameraDevice camera) {
       camera.close();
       cameraDevice = null;
+      sendDebugEvent("⚠️ Main camera disconnected");
     }
 
     @Override
     public void onError(@NonNull CameraDevice camera, int error) {
       Log.e(TAG, "Camera error: " + error);
+      sendDebugEvent("❌ Main camera error: " + error);
       camera.close();
       cameraDevice = null;
+
+      // Safety: if gesture camera was opened first (or HAL resource race),
+      // close gesture and retry opening the main camera once.
+      if (!retryingMainAfterClosingGesture
+          && (error == CameraDevice.StateCallback.ERROR_MAX_CAMERAS_IN_USE
+          || error == CameraDevice.StateCallback.ERROR_CAMERA_IN_USE)
+          && gestureCameraDevice != null) {
+        retryingMainAfterClosingGesture = true;
+        sendDebugEvent("🧩 Main blocked by concurrent use; closing gesture camera and retrying main");
+        closeGestureCamera();
+        if (backgroundHandler != null) {
+          backgroundHandler.postDelayed(() -> {
+            if (isActive && textureView.isAvailable()) {
+              openCamera();
+            }
+          }, 250);
+        }
+      }
     }
   };
 
@@ -423,11 +523,13 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
     try {
       if (cameraDevice == null) {
         Log.e(TAG, "❌ cameraDevice is null");
+        sendDebugEvent("❌ createPreviewSession: cameraDevice is null");
         return;
       }
       SurfaceTexture texture = textureView.getSurfaceTexture();
       if (texture == null) {
         Log.e(TAG, "❌ SurfaceTexture is null");
+        sendDebugEvent("❌ createPreviewSession: SurfaceTexture is null");
         return;
       }
 
@@ -448,16 +550,19 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
         public void onConfigured(@NonNull CameraCaptureSession session) {
           Log.d(TAG, "✅ CaptureSession configured successfully");
           captureSession = session;
+          sendDebugEvent("✅ Main captureSession configured");
           startPreview();
         }
 
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession session) {
           Log.e(TAG, "❌ CaptureSession configure failed");
+          sendDebugEvent("❌ Main captureSession configure failed");
         }
       }, backgroundHandler);
     } catch (Exception e) {
       Log.e(TAG, "❌ createPreviewSession failed", e);
+      sendDebugEvent("❌ createPreviewSession failed: " + e.getClass().getSimpleName());
     }
   }
 
@@ -466,12 +571,17 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
     try {
       if (captureSession == null || previewRequestBuilder == null) {
         Log.e(TAG, "❌ Cannot start preview: session or builder is null");
+        sendDebugEvent("❌ startPreview: session/builder null");
         return;
       }
       captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, backgroundHandler);
       Log.d(TAG, "✅ Preview started successfully");
+      mainPreviewStarted = true;
+      sendDebugEvent("✅ Preview started");
+      maybeStartGestureCamera();
     } catch (Exception e) {
       Log.e(TAG, "❌ startPreview failed", e);
+      sendDebugEvent("❌ startPreview failed: " + e.getClass().getSimpleName());
     }
   }
 
@@ -505,25 +615,30 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
     try {
       CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
       if (manager == null) return;
-      String[] cameraIds = manager.getCameraIdList();
-      if (cameraIds.length == 0) return;
-
       // Always prefer FRONT for gesture.
-      String cameraId = null;
-      for (String id : cameraIds) {
-        CameraCharacteristics c = manager.getCameraCharacteristics(id);
-        Integer facing = c.get(CameraCharacteristics.LENS_FACING);
-        if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-          cameraId = id;
-          break;
-        }
+      String cameraId = cachedFrontCameraId != null ? cachedFrontCameraId
+          : findCameraIdByFacing(manager, mapFacing(CameraCharacteristics.LENS_FACING_FRONT));
+      if (cameraId == null) {
+        sendDebugEvent("❌ openGestureCamera: no front camera");
+        return;
       }
-      // Fallback: if no front camera, use first available.
-      if (cameraId == null) cameraId = cameraIds[0];
 
       sendDebugEvent("🤚 Gesture cameraId: " + cameraId + " (desired=front)");
 
-      analysisReader = ImageReader.newInstance(ANALYSIS_WIDTH, ANALYSIS_HEIGHT, ImageFormat.YUV_420_888, 2);
+      // Pick a supported low-res YUV size for this camera.
+      CameraCharacteristics c = manager.getCameraCharacteristics(cameraId);
+      StreamConfigurationMap map = c.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+      Size analysisSize = null;
+      if (map != null) {
+        analysisSize = chooseClosestSize(map.getOutputSizes(ImageFormat.YUV_420_888), ANALYSIS_TARGET_WIDTH, ANALYSIS_TARGET_HEIGHT, 640, 480);
+      }
+      if (analysisSize == null) {
+        analysisSize = new Size(640, 360);
+      }
+      cachedAnalysisSize = analysisSize;
+      sendDebugEvent("🤚 Gesture analysis size: " + analysisSize.getWidth() + "x" + analysisSize.getHeight());
+
+      analysisReader = ImageReader.newInstance(analysisSize.getWidth(), analysisSize.getHeight(), ImageFormat.YUV_420_888, 2);
       analysisReader.setOnImageAvailableListener(onAnalysisAvailableListener, backgroundHandler);
 
       manager.openCamera(cameraId, gestureStateCallback, backgroundHandler);
@@ -534,6 +649,21 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
       Log.e(TAG, "❌ openGestureCamera failed", e);
       sendDebugEvent("❌ openGestureCamera failed: " + e.getClass().getSimpleName());
     }
+  }
+
+  private void maybeStartGestureCamera() {
+    if (!isActive) return;
+    if (!gestureEnabled) return;
+    if (!gestureStartRequested) return;
+    // Important: on many devices, starting gesture(front) before main(back) can block the main camera -> black screen.
+    if (!mainPreviewStarted) return;
+    if (gestureCameraDevice != null || gestureCaptureSession != null) return;
+
+    // Try regardless of concurrentSupported, but always report what framework says.
+    if (concurrentChecked) {
+      sendDebugEvent("🧩 maybeStartGestureCamera (framework concurrent=" + (concurrentSupported ? "supported" : "not_supported") + ")");
+    }
+    openGestureCamera();
   }
 
   private final CameraDevice.StateCallback gestureStateCallback = new CameraDevice.StateCallback() {
@@ -647,8 +777,8 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
         return;
       }
 
-      Log.d(TAG, "📷 Saving photo " + image.getWidth() + "x" + image.getHeight());
-      String path = saveToAppStorage(image);
+      Log.d(TAG, "📷 Saving photo " + image.getWidth() + "x" + image.getHeight() + " format=" + image.getFormat());
+      String path = saveJpegToAppStorage(image);
       if (path == null) {
         Log.e(TAG, "❌ Failed to save photo");
         return;
@@ -669,37 +799,136 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
   };
 
   @Nullable
-  private String saveToAppStorage(@NonNull Image image) {
+  private String saveJpegToAppStorage(@NonNull Image image) {
     File file = null;
     try {
-      ByteBuffer yBuffer = image.getPlanes()[0].getBuffer();
-      ByteBuffer uBuffer = image.getPlanes()[1].getBuffer();
-      ByteBuffer vBuffer = image.getPlanes()[2].getBuffer();
-
-      int ySize = yBuffer.remaining();
-      int uSize = uBuffer.remaining();
-      int vSize = vBuffer.remaining();
-
-      byte[] nv21 = new byte[ySize + uSize + vSize];
-      yBuffer.get(nv21, 0, ySize);
-      vBuffer.get(nv21, ySize, vSize);
-      uBuffer.get(nv21, ySize + vSize, uSize);
-
-      YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
-
       File storageDir = new File(getContext().getFilesDir(), "captured_photos");
       if (!storageDir.exists()) storageDir.mkdirs();
       file = new File(storageDir, "IMG_" + System.currentTimeMillis() + ".jpg");
 
       try (FileOutputStream fos = new FileOutputStream(file)) {
-        yuvImage.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 90, fos);
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        fos.write(bytes);
       }
 
       return file.getAbsolutePath();
     } catch (Exception e) {
-      Log.e(TAG, "saveToAppStorage failed", e);
+      Log.e(TAG, "saveJpegToAppStorage failed", e);
       if (file != null && file.exists()) file.delete();
       return null;
+    }
+  }
+
+  @Nullable
+  private static String findCameraIdByFacing(@NonNull CameraManager manager, int facing) throws CameraAccessException {
+    for (String id : manager.getCameraIdList()) {
+      CameraCharacteristics c = manager.getCameraCharacteristics(id);
+      Integer f = c.get(CameraCharacteristics.LENS_FACING);
+      if (f != null && f == facing) return id;
+    }
+    return null;
+  }
+
+  private static boolean isConcurrentPairSupported(@NonNull CameraManager manager, @NonNull String idA, @NonNull String idB) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return false;
+    try {
+      Set<Set<String>> groups = manager.getConcurrentCameraIds();
+      if (groups == null) return false;
+      for (Set<String> g : groups) {
+        if (g != null && g.contains(idA) && g.contains(idB)) return true;
+      }
+      return false;
+    } catch (Throwable t) {
+      // Vendor implementations may throw; treat as unsupported but keep trying to open (we still attempt).
+      return false;
+    }
+  }
+
+  @Nullable
+  private static Size chooseClosestSize(@Nullable Size[] sizes, int targetW, int targetH, int maxW, int maxH) {
+    if (sizes == null || sizes.length == 0) return null;
+
+    Size best = null;
+    long bestScore = Long.MAX_VALUE;
+    long targetArea = (long) targetW * (long) targetH;
+
+    for (Size s : sizes) {
+      if (s == null) continue;
+      int w = s.getWidth();
+      int h = s.getHeight();
+      if (w <= 0 || h <= 0) continue;
+
+      // Prefer sizes not exceeding the max (especially important under concurrency).
+      boolean withinMax = (w <= maxW && h <= maxH);
+      long area = (long) w * (long) h;
+      long areaDiff = Math.abs(area - targetArea);
+      long penalty = withinMax ? 0 : 10_000_000_000L; // big penalty if exceeds max
+      long score = penalty + areaDiff;
+      if (score < bestScore) {
+        bestScore = score;
+        best = s;
+      }
+    }
+    return best;
+  }
+
+  @Nullable
+  private static Size chooseJpegSize(@Nullable Size[] jpegSizes, @NonNull Size preview) {
+    if (jpegSizes == null || jpegSizes.length == 0) return null;
+
+    // Try to keep similar aspect ratio to reduce session configuration failures.
+    double previewRatio = (double) preview.getWidth() / (double) preview.getHeight();
+    Size best = null;
+    long bestScore = Long.MAX_VALUE;
+
+    for (Size s : jpegSizes) {
+      if (s == null) continue;
+      int w = s.getWidth();
+      int h = s.getHeight();
+      if (w <= 0 || h <= 0) continue;
+
+      // Cap JPEG size for concurrency stability.
+      boolean withinMax = (w <= 1920 && h <= 1080) || (w <= 1080 && h <= 1920);
+      double ratio = (double) w / (double) h;
+      double ratioDiff = Math.abs(ratio - previewRatio);
+
+      long area = (long) w * (long) h;
+      long targetArea = (long) Math.min(preview.getWidth(), 1920) * (long) Math.min(preview.getHeight(), 1080);
+      long areaDiff = Math.abs(area - targetArea);
+
+      long penalty = 0;
+      // Strongly prefer matching ratio.
+      if (ratioDiff > 0.05) penalty += 5_000_000_000L;
+      // Prefer within max.
+      if (!withinMax) penalty += 10_000_000_000L;
+
+      long score = penalty + areaDiff;
+      if (score < bestScore) {
+        bestScore = score;
+        best = s;
+      }
+    }
+    return best;
+  }
+
+  private void closeGestureCamera() {
+    try {
+      if (gestureCaptureSession != null) {
+        gestureCaptureSession.close();
+        gestureCaptureSession = null;
+      }
+      if (gestureCameraDevice != null) {
+        gestureCameraDevice.close();
+        gestureCameraDevice = null;
+      }
+      if (analysisReader != null) {
+        analysisReader.close();
+        analysisReader = null;
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "closeGestureCamera failed", e);
     }
   }
 
@@ -713,22 +942,11 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
         cameraDevice.close();
         cameraDevice = null;
       }
-      if (gestureCaptureSession != null) {
-        gestureCaptureSession.close();
-        gestureCaptureSession = null;
-      }
-      if (gestureCameraDevice != null) {
-        gestureCameraDevice.close();
-        gestureCameraDevice = null;
-      }
       if (photoReader != null) {
         photoReader.close();
         photoReader = null;
       }
-      if (analysisReader != null) {
-        analysisReader.close();
-        analysisReader = null;
-      }
+      closeGestureCamera();
     } catch (Exception e) {
       Log.e(TAG, "closeCamera failed", e);
     }

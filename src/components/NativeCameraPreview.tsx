@@ -13,6 +13,11 @@ type Props = {
   gestureEnabled?: boolean
   /** Android CameraCharacteristics.LENS_FACING_*: 0=front, 1=back */
   cameraFacing?: number
+  /**
+   * 某些主板 HAL 的 LENS_FACING 标记是反的。
+   * 置为 true 时，原生侧会把 front/back 选择反转（不影响 UI，仅影响用哪颗物理摄像头）。
+   */
+  swapLensFacing?: boolean
   photoCount: number
   maxPhotos: number
   onPhotoCaptured: (e: PhotoCapturedEvent) => void
@@ -25,7 +30,7 @@ type NativeCommands = {
 const NativeComponent = requireNativeComponent<Props>("NativeCameraPreview")
 
 export const NativeCameraPreview = React.forwardRef<{ takePhoto: () => void }, Props>(
-  ({ gestureEnabled = true, cameraFacing = 1, photoCount, maxPhotos, onPhotoCaptured, style }, ref) => {
+  ({ gestureEnabled = true, cameraFacing = 1, swapLensFacing = false, photoCount, maxPhotos, onPhotoCaptured, style }, ref) => {
     const nativeRef = useRef<any>(null)
 
     const command = useMemo(() => {
@@ -69,6 +74,7 @@ export const NativeCameraPreview = React.forwardRef<{ takePhoto: () => void }, P
         style={style}
         gestureEnabled={gestureEnabled}
         cameraFacing={cameraFacing}
+        swapLensFacing={swapLensFacing}
         photoCount={photoCount}
         maxPhotos={maxPhotos}
         onPhotoCaptured={(e) => {
