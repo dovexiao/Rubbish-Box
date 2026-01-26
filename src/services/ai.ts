@@ -179,7 +179,7 @@ export async function aiOcr(data: AiOcrRequest): Promise<AiOcrResponse> {
   const { API_BASE_URL } = require("../config/api")
   const { useUserStore } = require("../stores/userStore")
   const { getDeviceInfoForAPI } = require("../utils/deviceInfo")
-  
+
   const userStore = useUserStore.getState()
   const token = userStore.token || ""
   const deviceInfo = await getDeviceInfoForAPI()
@@ -295,7 +295,7 @@ export interface SubjectQuestionsParams {
  * 错题列表响应
  */
 export interface SubjectQuestionsResponse {
- 
+
   /** 总题数 */
   total_questions: number
   /** 总页数 */
@@ -482,6 +482,7 @@ export interface CompositionRecordDatum {
   records?: CompositionRecord[]
   /** 年月 */
   year_month?: string
+  [property: string]: any
 }
 
 /**
@@ -525,7 +526,7 @@ export async function uploadImage(
     const axios = require("axios").default
     const { API_BASE_URL } = require("../config/api")
     const { useUserStore } = require("../stores/userStore")
-    
+
     const userStore = useUserStore.getState()
     const token = userStore.token || "" // 直接从 userStore.token 获取
 
