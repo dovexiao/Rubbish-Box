@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from "react-native"
 import { useRouter } from "expo-router"
 import { LinearGradient } from "expo-linear-gradient"
@@ -20,6 +20,11 @@ export default function CompositionRecordScreen() {
   const [recordList, setRecordList] = useState<CompositionRecordDatum[]>([])
   const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({})
 
+  // 存储完整的 res 数据
+  const fullRecordListRef = useRef<CompositionRecordDatum[]>([])
+  // 存储res更新序列
+  const resUpdateSequenceRef = useRef<number>(1e18)
+
   // 格式化日期显示
   const formatDate = (dateString?: string) => {
     if (!dateString) return ""
@@ -36,13 +41,22 @@ export default function CompositionRecordScreen() {
   }
 
   // 切换月份展开/收起状态
-  const toggleMonth = (yearMonth: string | undefined) => {
+  const toggleMonth = useCallback((yearMonth: string | undefined) => {
     if (!yearMonth) return
+    const index = recordList.findIndex(item => item.year_month === yearMonth)
+    if (index === -1) return
     setExpandedMonths((prev) => ({
       ...prev,
       [yearMonth]: !prev[yearMonth],
     }))
-  }
+    if (recordList[index].records?.length === 0 && index < fullRecordListRef.current.length) {
+      setRecordList(prev => {
+        const newList = [...prev]
+        newList[index].records = fullRecordListRef.current[index]?.records ?? []
+        return newList
+      })
+    }
+  }, [recordList])
 
   // 获取作文收录记录
   const getCompositionRecords = useCallback(async () => {
@@ -50,14 +64,24 @@ export default function CompositionRecordScreen() {
       setLoading(true)
       const res = await getCompositionCorrectionRecordList()
       if (res) {
-        setRecordList(res)
+        // 存储完整的 res 数据到 ref
+        fullRecordListRef.current = res
+        resUpdateSequenceRef.current = 1
 
-        // 默认展开当前月份，其他月份收起
-        const currentYearMonth = getCurrentYearMonth()
+        // 创建新对象，除了第一个项之外，剩余的项的 records 都赋值为 []
+        const optimizedRecordList = res.map((item, index) => ({
+          ...item,
+          records: index === 0 ? item.records : [],
+          recordsLength: item.records?.length || 0
+        }))
+
+        setRecordList(optimizedRecordList)
+
+        // 默认展开第一个项
         const initialExpanded: Record<string, boolean> = {}
-        res.forEach((item) => {
+        res.forEach((item, index) => {
           if (item.year_month) {
-            initialExpanded[item.year_month] = item.year_month === currentYearMonth
+            initialExpanded[item.year_month] = index === 0
           }
         })
         setExpandedMonths(initialExpanded)
@@ -71,7 +95,25 @@ export default function CompositionRecordScreen() {
 
   useEffect(() => {
     getCompositionRecords()
-  }, [getCompositionRecords])
+  }, [])
+
+  useEffect(() => {
+    // 当 recordList 被设置为 optimizedRecordList 后
+    if (recordList.length > 0 && fullRecordListRef.current.length > 0 && resUpdateSequenceRef.current < fullRecordListRef.current.length) {
+      // 延迟到下一事件循环，确保首次渲染完成
+      const newList = [...recordList]
+      newList[resUpdateSequenceRef.current].records = fullRecordListRef.current[resUpdateSequenceRef.current]?.records ?? []
+      const timer = setTimeout(() => {
+        setRecordList(newList)
+        clearTimeout(timer)
+      }, 0)
+      resUpdateSequenceRef.current = resUpdateSequenceRef.current + 1
+      if (resUpdateSequenceRef.current >= fullRecordListRef.current.length) {
+        fullRecordListRef.current = []
+        resUpdateSequenceRef.current = 1e18
+      }
+    }
+  }, [recordList])
 
   // 跳转到作文详情页面
   const goToDetail = (id: number | undefined) => {
@@ -112,15 +154,16 @@ export default function CompositionRecordScreen() {
               <View style={styles.recordListInner}>
                 {recordList.map((group, index) => (
                   <View key={index}>
-                    <View style={styles.monthGroup}>
-                      <TouchableOpacity
-                        style={styles.monthHeader}
-                        onPress={() => toggleMonth(group.year_month)}
-                        activeOpacity={0.8}
-                      >
+                    <View 
+                      style={[
+                        styles.monthGroup, 
+                        // { marginBottom: group.records?.length && group.records?.length > 0 ? 10.9375 : 0 }
+                      ]}
+                    >
+                      <TouchableOpacity style={styles.monthHeader} onPress={() => toggleMonth(group.year_month)} activeOpacity={0.8}>
                         <Text style={styles.monthTitle}>{group.year_month}</Text>
                         <View style={styles.monthToggle}>
-                          <Text style={styles.toggleText}>共{group.records?.length || 0}条</Text>
+                          <Text style={styles.toggleText}>共{group.recordsLength ?? group.records?.length ?? 0}条</Text>
                           <Ionicons
                             name={
                               expandedMonths[group.year_month || ""]
@@ -133,54 +176,52 @@ export default function CompositionRecordScreen() {
                         </View>
                       </TouchableOpacity>
 
-                      {expandedMonths[group.year_month || ""] && (
-                        <>
-                          {group.records && group.records.length > 0 ? (
-                            <View style={styles.monthList}>
-                              {group.records.map((item) => (
-                                <TouchableOpacity
-                                  key={item.id}
-                                  style={styles.recordItem}
-                                  onPress={() => goToDetail(item.id)}
-                                  activeOpacity={0.8}
-                                >
-                                  <Image
-                                    source={{
-                                      uri: item.cover_image || "/static/images/default-cover.png",
-                                    }}
-                                    style={styles.recordImage}
-                                    resizeMode="cover"
+                      <View style={!expandedMonths[group.year_month || ""] && { height: 0, overflow: "hidden" }}>
+                        {group.records && group.records.length > 0 ? (
+                          <View style={styles.monthList}>
+                            {group.records.map((item) => (
+                              <TouchableOpacity
+                                key={item.id}
+                                style={styles.recordItem}
+                                onPress={() => goToDetail(item.id)}
+                                activeOpacity={0.8}
+                              >
+                                <Image
+                                  source={{
+                                    uri: item.cover_image || "/static/images/default-cover.png",
+                                  }}
+                                  style={styles.recordImage}
+                                  resizeMode="cover"
+                                />
+                                <View style={styles.scoreBadge}>
+                                  <Text style={styles.scoreText}>{item.rating}</Text>
+                                  <Image 
+                                    source={require("../../../assets/images/Frame 2090059169.png")} 
+                                    style={styles.scoreLine}
+                                    resizeMode="contain"
                                   />
-                                  <View style={styles.scoreBadge}>
-                                    <Text style={styles.scoreText}>{item.rating}</Text>
-                                    <Image 
-                                      source={require("../../../assets/images/Frame 2090059169.png")} 
-                                      style={styles.scoreLine}
-                                      resizeMode="contain"
-                                    />
-                                  </View>
-                                  <View style={styles.recordInfo}>
-                                    <View style={styles.recordType}>
-                                      <Text style={styles.recordTypeText}>
-                                        作文批改·{item.composition_type || "未知类型"}
-                                      </Text>
-                                    </View>
-                                    <Text style={styles.recordTime}>
-                                      {formatDate(item.created_at)}
+                                </View>
+                                <View style={styles.recordInfo}>
+                                  <View style={styles.recordType}>
+                                    <Text style={styles.recordTypeText}>
+                                      作文批改·{item.composition_type || "未知类型"}
                                     </Text>
                                   </View>
-                                </TouchableOpacity>
-                              ))}
-                            </View>
-                          ) : (
-                            <View style={styles.emptyMonth}>
-                              <Text style={styles.emptyMonthText}>本月暂无记录</Text>
-                            </View>
-                          )}
-                        </>
-                      )}
+                                  <Text style={styles.recordTime}>
+                                    {formatDate(item.created_at)}
+                                  </Text>
+                                </View>
+                              </TouchableOpacity>
+                            ))}
+                          </View>
+                        ) : (
+                          <View style={styles.emptyMonth}>
+                            <Text style={styles.emptyMonthText}>本月暂无记录</Text>
+                          </View>
+                        )}
+                      </View>
                     </View>
-                    {index < recordList.length - 1 && <View style={styles.monthDivider} />}
+                    {/* {index < recordList.length - 1 && <View style={styles.monthDivider} />} */}
                   </View>
                 ))}
               </View>
@@ -252,13 +293,14 @@ const styles = createStyles({
   },
   recordListInner: {
     width: "100%" as const,
-    paddingVertical: 14.0625, // 36
-    paddingHorizontal: 12.5, // 32
+    paddingTop: 14.0625, // 36
+    paddingBottom: 3.9063, // 10
   },
   // 月份组
   monthGroup: {
-    // borderWidth: 1,
+    // borderWidth: .3906,
     // borderColor: "red",
+    paddingHorizontal: 12.5, // 32
   },
   monthHeader: {
     flexDirection: "row" as const,
@@ -347,7 +389,7 @@ const styles = createStyles({
   },
   // 月份分割线
   monthDivider: {
-    height: 1.171875, // 3
+    // height: 1.171875, // 3
   },
   // 空月份
   emptyMonth: {
