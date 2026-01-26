@@ -56,7 +56,7 @@ export function NavBar({
             activeOpacity={0.6}
             delayPressIn={0}
           >
-            <Ionicons name="chevron-back" size={rpx(15.625)} color="#1571fc" />
+            <Ionicons name="chevron-back" size={rpx(19.53125)} color="#1571fc" />
           </TouchableOpacity>
         )}
         {/* 标题容器 */}
@@ -71,23 +71,22 @@ export function NavBar({
 
 const styles = createStyles({
   container: {
-    // paddingLeft: 16.3125, // 16.3125rpx - UniApp原值
-    marginTop: 16.28125, // 为StatusBar留出空间
+    marginTop: 37.5, // 96
   },
   navBar: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
     justifyContent: "space-between" as const,
     backgroundColor: "transparent",
-    height: 50, // 50rpx - UniApp navbar高度
+    height: 26.5625, // 68
     zIndex: 9999, // 确保NavBar在StatusBar之上
   },
   leftButton: {
-    width: 31.25, // 40px转rpx = 31.25rpx
-    height: 31.25, // 40px转rpx = 31.25rpx
+    width: 26.5625, // 68
+    height: 26.5625, // 68
     alignItems: "center" as const,
-    marginLeft: 16.3125,
     justifyContent: "center" as const,
+    marginLeft: 23.4375, // 60
   },
   titleContainer: {
     position: "absolute" as const,
@@ -101,10 +100,9 @@ const styles = createStyles({
   title: {
     textAlign: "center" as const,
     color: "#1571fc", // UniApp原值
-    fontSize: 15.625, // 15.625rpx - UniApp原值
+    fontSize: 15.625, // 40
     fontWeight: "400" as const,
     fontFamily: "kingnam_bobo",
-    flexShrink: 1,
   },
   rightContent: {
     minWidth: 31.25, // 40px转rpx = 31.25rpx
