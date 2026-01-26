@@ -192,7 +192,7 @@ export default function RankingScreen() {
 
       // 调用接口（POST请求）
       const data: RankingData = await post<RankingData>("/AppStart/UserRanking/details_ranking/", params)
-      console.log("排行榜数据", data)
+      // console.log("排行榜数据", data)
       // 保存用户省份信息（只在第一次加载时保存）
       if (data.current_user_province?.province && !userProvince) {
         setUserProvince(data.current_user_province.province)
