@@ -14,6 +14,7 @@ import { showError, showWarning } from "../../../utils/toast"
 import { isPostureServiceRunning, stopPostureMonitorService } from "../../../modules/PostureMonitorModule"
 import { NativeCameraPreview } from "../../../components/NativeCameraPreview"
 import DeviceInfo from "react-native-device-info"
+import { isTabletDevice } from "@/utils/deviceInfo"
 
 interface PhotoInfo {
   /** Raw local path (Android native may be without scheme) */
@@ -45,6 +46,16 @@ export default function ErrorCameraScreen() {
   const [swapLensFacing, setSwapLensFacing] = useState(false)
 
   const { width: windowWidth, height: windowHeight } = Dimensions.get("screen")
+
+  const [isTablet, setIsTablet] = useState<boolean>(true)
+
+  // 异步获取设备类型
+  useEffect(() => {
+    isTabletDevice().then(setIsTablet).catch((error) => {
+      console.error('获取设备类型失败:', error)
+      setIsTablet(true) // 出错时默认认为是平板，更安全
+    })
+  }, [])
 
   // 主设备（AI80）Camera2 LENS_FACING 可能被 HAL 标记反了，启用原生侧反转选择。
   useEffect(() => {
@@ -292,7 +303,7 @@ export default function ErrorCameraScreen() {
   return (
     <View style={[styles.indexContainer, { width: windowWidth, height: windowHeight }]}>
       <View style={[styles.indexContent, { width: windowWidth }]}>
-        {Platform.OS === "android" ? (
+        {Platform.OS === "android" && isTablet === false ? (
           <View style={[styles.camera, { width: windowWidth, height: windowHeight }]}>
             <NativeCameraPreview
               ref={nativePreviewRef as any}

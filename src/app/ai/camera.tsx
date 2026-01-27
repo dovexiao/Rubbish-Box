@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import {
   View,
   Text as RNText,
@@ -26,6 +26,7 @@ import {
 } from "../../modules/PostureMonitorModule"
 import { NativeCameraPreview } from "../../components/NativeCameraPreview"
 import DeviceInfo from "react-native-device-info"
+import { isTabletDevice } from "@/utils/deviceInfo"
 
 const Text = RNText
 
@@ -63,6 +64,16 @@ export default function CameraScreen() {
   const [showTooltip, setShowTooltip] = useState(false) // 控制提示框显示
 
   const { width: screenWidth, height: screenHeight } = Dimensions.get("screen")
+
+  const [isTablet, setIsTablet] = useState<boolean>(true)
+
+  // 异步获取设备类型
+  useEffect(() => {
+    isTabletDevice().then(setIsTablet).catch((error) => {
+      console.error('获取设备类型失败:', error)
+      setIsTablet(true) // 出错时默认认为是平板，更安全
+    })
+  }, [])
 
   // 部分 Rockchip 主板会把 Camera2 的 LENS_FACING 标记反了（物理前后摄像头对调）。
   // 主设备（AI80）上启用原生侧反转选择，保证：拍照=后置、手势=前置。
@@ -407,27 +418,27 @@ export default function CameraScreen() {
       {/* 相机页面不使用自定义StatusBar组件，完全依赖原生层控制 */}
 
       {/* 相机视图 - 使用key强制重新挂载，条件渲染解决GPU资源竞争 */}
-      {Platform.OS === "android" ? (
+      {Platform.OS === "android" && isTablet === false ? (
         <NativeCameraPreview
-        ref={nativePreviewRef as any}
-        style={styles.camera as any}
-        gestureEnabled={true}
-        cameraFacing={1}
-        swapLensFacing={false}
-        photoCount={photos.length}
-        maxPhotos={6}
-        onPhotoCaptured={(e) => {
-          const { path, uri } = e.nativeEvent as any
-          if (!path) return
-          const normalizedUri =
-            typeof uri === "string" && uri.length > 0
-              ? uri
-              : path.startsWith("file://")
-                ? path
-                : `file://${path}`
-          const newPhoto: PhotoInfo = { path, uri: normalizedUri, id: generatePhotoId(), timestamp: Date.now() }
-          setPhotos((prev) => (prev.length >= 6 ? prev : [...prev, newPhoto]))
-        }}
+          ref={nativePreviewRef as any}
+          style={styles.camera as any}
+          gestureEnabled={true}
+          cameraFacing={1}
+          swapLensFacing={false}
+          photoCount={photos.length}
+          maxPhotos={6}
+          onPhotoCaptured={(e) => {
+            const { path, uri } = e.nativeEvent as any
+            if (!path) return
+            const normalizedUri =
+              typeof uri === "string" && uri.length > 0
+                ? uri
+                : path.startsWith("file://")
+                  ? path
+                  : `file://${path}`
+            const newPhoto: PhotoInfo = { path, uri: normalizedUri, id: generatePhotoId(), timestamp: Date.now() }
+            setPhotos((prev) => (prev.length >= 6 ? prev : [...prev, newPhoto]))
+          }}
         />
       ) : (
         <CameraView
@@ -534,7 +545,7 @@ export default function CameraScreen() {
             <View key={photo.id} style={styles.thumbWrapper}>
               <Image source={{ uri: photo.uri }} style={styles.thumbImage} />
               <Text style={styles.thumbIndex}>{index + 1}</Text>
-              <TouchableOpacity style={styles.thumbDelete} onPress={() => deletePhoto(index)}>
+              <TouchableOpacity style={styles.thumbDelete as any} onPress={() => deletePhoto(index)}>
                 <Text style={styles.thumbDeleteText}>×</Text>
               </TouchableOpacity>
             </View>
@@ -562,8 +573,8 @@ const styles = createStyles({
     left: 0,
     right: 0,
     bottom: 0,
-    width: "100%",
-    height: "100%",
+    width: "100%" as const,
+    height: "100%" as const,
     backgroundColor: "#000",
   },
   camera: {
@@ -572,24 +583,24 @@ const styles = createStyles({
     left: 0,
     right: 0,
     bottom: 0,
-    width: "100%",
-    height: "100%",
+    width: "100%" as const,
+    height: "100%" as const,
   },
 
   overlay: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 0,
     top: 0,
     right: 0,
     bottom: 0,
-    pointerEvents: "box-none",
+    pointerEvents: "box-none" as const,
   },
 
   // 权限相关
   permissionContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     backgroundColor: "#000",
   },
 
@@ -597,7 +608,7 @@ const styles = createStyles({
     color: "#fff",
     fontSize: 16,
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: "center" as const,
   },
 
   permissionButton: {
@@ -610,25 +621,25 @@ const styles = createStyles({
   permissionButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
 
   // 九宫格对齐线
   gridOverlay: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 0,
     top: 0,
   },
 
   gridH: {
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-    position: "absolute",
+    position: "absolute" as const,
     width: 1,
   },
 
   gridV: {
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-    position: "absolute",
+    position: "absolute" as const,
     height: 1,
   },
 
@@ -702,7 +713,7 @@ const styles = createStyles({
     width: 39.06,
     height: 39.06,
     borderRadius: 19.53,
-    pointerEvents: "auto",
+    pointerEvents: "auto" as const,
   },
 
   btnAnimate: {
@@ -711,38 +722,38 @@ const styles = createStyles({
 
   // 提示文本
   tipText: {
-    position: "absolute",
-    transform: [{ translateX: "-50%" }],
+    position: "absolute" as const,
+    transform: [{ translateX: "-50%" }] as const,
     backgroundColor: "#282828",
     borderRadius: 6.6,
     paddingVertical: 4,
     paddingHorizontal: 9,
-    pointerEvents: "none",
+    pointerEvents: "none" as const,
   },
 
   tipTextContent: {
     color: "rgba(255, 255, 255, 1)",
     fontSize: 10.375,
-    textAlign: "center",
+    textAlign: "center" as const,
     lineHeight: 16,
   },
 
   // 缩略图列表
   thumbsBar: {
-    position: "absolute",
+    position: "absolute" as const,
     bottom: 124,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    flexWrap: "wrap",
-    pointerEvents: "box-none",
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+    flexWrap: "wrap" as const,
+    pointerEvents: "box-none" as const,
   },
 
   thumbWrapper: {
-    position: "relative",
+    position: "relative" as const,
     width: 90.3125,
     marginLeft: 20,
     marginTop: 20,
-    pointerEvents: "box-none",
+    pointerEvents: "box-none" as const,
   },
 
   thumbImage: {
@@ -758,7 +769,7 @@ const styles = createStyles({
   },
 
   thumbIndex: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 0,
     top: 6,
     backgroundColor: "#1F79FF",
@@ -776,42 +787,42 @@ const styles = createStyles({
   },
 
   thumbDelete: {
-    position: "absolute",
+    position: "absolute" as const,
     right: 0,
     top: 0,
     width: 16,
     height: 16,
     borderRadius: 8,
     backgroundColor: "#FFFFFF",
-    alignItems: "center",
+    alignItems: "center" as const,
     justifyContent: "center",
-    pointerEvents: "auto",
+    pointerEvents: "auto" as const,
   },
 
   thumbDeleteText: {
     color: "#54A7FF",
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
     lineHeight: 16,
   },
 
   // 开始批改按钮
   startBtn: {
-    position: "absolute",
+    position: "absolute" as const,
     left: 29,
     bottom: 44,
     width: 87.5,
     height: 25.81875,
     borderRadius: 23.4375,
     backgroundColor: "#C2E0FF",
-    alignItems: "center",
-    justifyContent: "center",
-    pointerEvents: "auto",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    pointerEvents: "auto" as const,
   },
 
   startBtnText: {
     color: "#4A4A4A",
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
 })
