@@ -1,11 +1,19 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Alert, Image, InteractionManager, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import { PageContainer, Popup, TextInput } from '@/components';
 import IconFont from '@/iconfont';
+import {
+  ImagePickerResponse,
+  launchImageLibrary,
+  MediaType,
+} from 'react-native-image-picker';
 import { baseInfo, updateInfo } from '@/services/user';
+import { checkAndRequestPhotoPermission } from '@/utils/permissions';
 import styles from './styles';
+import { openSettings } from 'react-native-permissions';
+import { tencentUpload } from '@/utils';
 
 type BaseInfoData = {
   id?: number;
@@ -25,8 +33,8 @@ export default function UserInfo() {
   const [inputName, setInputName] = useState('');
 
   const [avatar, setAvatar] = useState('');
-  const [inputAvatar, setInputAvatar] = useState('');
   const [nickNameVisible, setNickNameVisible] = useState(false);
+  const pickerBusyRef = useRef(false);
 
   const canSaveNickName = useMemo(() => inputName.trim().length > 0, [inputName]);
   ;
@@ -47,7 +55,6 @@ export default function UserInfo() {
       setNickName(data.nickName || '');
       setInputName(data.nickName || '');
       setAvatar(data.avatar || '');
-      setInputAvatar(data.avatar || '');
       Toast.remove(t);
     } catch (e) {
       Toast.remove(t);
@@ -96,6 +103,121 @@ export default function UserInfo() {
   }, [detail, inputName, load]);
 
 
+  const handleChangeAvatar = useCallback(async () => {
+    if (pickerBusyRef.current) return;
+    pickerBusyRef.current = true;
+
+    try {
+      // 检查相册权限（Android 需要，iOS 也需要）
+      const hasPermission = await checkAndRequestPhotoPermission();
+      if (!hasPermission) {
+        pickerBusyRef.current = false;
+        return;
+      }
+
+      const baseOptions = {
+        mediaType: 'photo',
+        quality: 0.8 as any,
+        maxWidth: 500,
+        maxHeight: 500,
+        includeBase64: true,
+      } as const;
+
+      const libraryOptions: any = {
+        ...baseOptions,
+        presentationStyle: 'fullScreen',
+        selectionLimit: 1,
+      };
+
+      const launchFunction = launchImageLibrary;
+      await new Promise<void>(resolve => setTimeout(resolve, 300));
+      await new Promise<void>(resolve =>
+        InteractionManager.runAfterInteractions(() => resolve()),
+      );
+      launchFunction(
+        libraryOptions,
+        async (response: ImagePickerResponse) => {
+          if (response.didCancel) {
+            return;
+          }
+
+          if ((response as any).errorCode === 'permission') {
+            Alert.alert(
+              '需要权限',
+              '请在“设置-隐私与安全-照片”中允许访问相册。',
+              [
+                { text: '取消', style: 'cancel' },
+                {
+                  text: '去设置',
+                  onPress: () => {
+                    openSettings().catch(() => {
+                      Alert.alert('无法打开设置', '请手动前往系统设置开启权限');
+                    });
+                  },
+                },
+              ],
+            );
+            return;
+          }
+
+          if (response.errorMessage) {
+            // 处理其他类型的错误（非权限错误）
+            if (response.errorMessage.includes('Activity')) {
+              Alert.alert(
+                '功能不可用',
+                '图片选择功能暂时不可用，请检查设备权限设置',
+                [{ text: '确定', style: 'default' }],
+              );
+            } else {
+              Alert.alert(
+                '错误',
+                `选择图片时发生错误: ${response.errorMessage}`,
+              );
+            }
+            return;
+          }
+
+          if (response.assets && response.assets[0]) {
+            const asset = response.assets[0];
+            if (!asset.uri) return;
+            tencentUpload({
+              file: asset.uri,
+              filename: asset.fileName || '',
+              index: asset.fileSize || 0,
+            }).then(async (res) => {
+              if (res.code === 200 && res.success) {
+                const { Location } = res.data
+                const r = await updateInfo({
+                  nickName: nickName || '',
+                  avatar: `https://${Location}`,
+                  userId: detail?.userId ?? detail?.id,
+                });
+                if (r.code === 200 && r.success) {
+                  Toast.success('修改成功');
+                  await load();
+                } else {
+                  Toast.fail(r.msg || r.message || '修改失败');
+                }
+              }
+            });
+
+
+            if (asset.uri) {
+
+            }
+          }
+        },
+      );
+
+    } catch (error) {
+      console.error('选择头像失败:', error);
+      Toast.fail('选择头像失败');
+    } finally {
+      pickerBusyRef.current = false;
+    }
+  }, []);
+
+
   return (
     <PageContainer
       backgroundColor="#FFFFFF"
@@ -114,10 +236,7 @@ export default function UserInfo() {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.row}
-          onPress={() => {
-            // RN 版没有接入相册选择/上传能力，这里用“输入链接”方式完成头像修改
-
-          }}
+          onPress={handleChangeAvatar}
         >
           <Text style={styles.label}>头像</Text>
           <View style={styles.middle}>
@@ -194,7 +313,6 @@ export default function UserInfo() {
               style={styles.input}
               maxLength={20}
               onChangeText={(v) => setInputName(v)}
-              autoFocus
               returnKeyType="done"
             />
             <IconFont name="redact" size={20} color="#999999" />

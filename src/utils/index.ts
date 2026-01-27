@@ -51,7 +51,6 @@ export function cdnToCosDomain(cosPath: string) {
 
 import { DeviceEventEmitter, Platform, Linking, NativeModules } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import IntentLauncher from 'react-native-intent-launcher';
 import NetInfo from '@react-native-community/netinfo';
 import { BleManager } from 'react-native-ble-plx';
@@ -244,98 +243,10 @@ export const openSettings = async (): Promise<void> => {
 };
 
 /**
- * 请求蓝牙权限
+ * 请求蓝牙权限（已迁移到 @/utils/permissions，保留此导出以保持向后兼容）
+ * @deprecated 请使用 @/utils/permissions 中的 checkBluetoothPermission 或 checkAndRequestBluetoothPermission
  */
-export const requestBluetoothPermissions = async (): Promise<{
-  granted: boolean;
-  message?: string;
-  canOpenSettings?: boolean; // 是否可以打开设置页面（权限被永久拒绝时）
-}> => {
-  try {
-    if (Platform.OS === 'android') {
-      // Android 12+ (API 31+) 需要 BLUETOOTH_CONNECT 权限
-      // Android < 12 需要 BLUETOOTH 和 BLUETOOTH_ADMIN 权限
-      const androidVersion = Platform.Version as number;
-
-      if (androidVersion >= 31) {
-        // Android 12+
-        const permission = PERMISSIONS.ANDROID.BLUETOOTH_CONNECT;
-        const checkResult = await check(permission);
-
-        if (checkResult === RESULTS.GRANTED) {
-          return { granted: true };
-        }
-
-        if (checkResult === RESULTS.DENIED) {
-          const requestResult = await request(permission);
-          if (requestResult === RESULTS.GRANTED) {
-            return { granted: true };
-          } else {
-            return { granted: false, message: '蓝牙连接权限被拒绝' };
-          }
-        }
-
-        if (checkResult === RESULTS.BLOCKED) {
-          return {
-            granted: false,
-            message: '蓝牙连接权限已被永久拒绝，请在设置中开启',
-            canOpenSettings: true,
-          };
-        }
-
-        return { granted: false, message: '蓝牙连接权限状态未知' };
-      } else {
-        // Android < 12
-        // 旧版本 Android 蓝牙权限在安装时自动授予
-        return { granted: true };
-      }
-    } else {
-      // iOS
-      // iOS 13+ 使用 BLUETOOTH
-      // iOS 13 之前蓝牙权限在 Info.plist 中配置，系统会自动处理
-      try {
-        const permission = PERMISSIONS.IOS.BLUETOOTH;
-        const checkResult = await check(permission);
-
-        if (checkResult === RESULTS.GRANTED) {
-          return { granted: true };
-        }
-
-        if (checkResult === RESULTS.DENIED) {
-          const requestResult = await request(permission);
-          if (requestResult === RESULTS.GRANTED) {
-            return { granted: true };
-          } else {
-            return { granted: false, message: '蓝牙权限被拒绝' };
-          }
-        }
-
-        if (checkResult === RESULTS.BLOCKED) {
-          return {
-            granted: false,
-            message: '蓝牙权限已被永久拒绝，请在设置中开启',
-            canOpenSettings: true,
-          };
-        }
-
-        if (checkResult === RESULTS.UNAVAILABLE) {
-          // iOS 13 之前的设备，权限在 Info.plist 中配置，系统会自动处理
-          return { granted: true };
-        }
-
-        return { granted: false, message: '蓝牙权限状态未知' };
-      } catch (error) {
-        // 如果权限检查失败（可能是 iOS 版本不支持），返回已授权
-        // 因为旧版本 iOS 蓝牙权限在 Info.plist 中配置
-        console.warn('iOS 蓝牙权限检查失败，使用默认授权:', error);
-        return { granted: true };
-      }
-    }
-  } catch (error) {
-    console.error('请求蓝牙权限失败:', error);
-    return { granted: false, message: '请求蓝牙权限时发生错误' };
-  }
-};
+export { checkBluetoothPermission as requestBluetoothPermissions } from './permissions';
 
 /**
  * 初始化推送服务
@@ -818,6 +729,39 @@ export function getSign(data: Record<string, any>, nonce: string, secret?: strin
   const sign = crypto.HmacSHA256(signStr, 'jdtz').toString(crypto.enc.Hex);
 
   return sign;
+}
+
+/**
+ * 腾讯云 COS 上传工具
+ */
+import _tencentUpload from './tencentUpload';
+import type { CreateFetchResponse } from './http';
+
+export function tencentUpload(options: {
+  file: any;
+  filename: string;
+  index: number;
+  randomFileName?: boolean;
+  appointName?: string;
+  folderName?: string;
+}): Promise<CreateFetchResponse<any> & { index?: number }> {
+  return new Promise(
+    (
+      resolve: (
+        res: CreateFetchResponse<any> & { index?: number },
+      ) => void,
+      reject: (res: CreateFetchResponse<any> & { index?: number }) => void,
+    ) => {
+      _tencentUpload(options).then(res => {
+        if (res.code !== 200) {
+          // 可以在这里添加监控逻辑
+          reject(res);
+        } else {
+          resolve(res);
+        }
+      });
+    },
+  );
 }
 
 
