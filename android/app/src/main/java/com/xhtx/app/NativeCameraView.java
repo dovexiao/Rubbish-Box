@@ -25,6 +25,7 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -112,6 +113,7 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
   @Nullable private String cachedFrontCameraId = null;
   @Nullable private Size cachedAnalysisSize = null;
   @Nullable private Size cachedJpegSize = null;
+  private int sensorOrientation = 0; // 相机传感器方向
 
   // Controlled from JS
   private volatile int photoCount = 0;
@@ -262,7 +264,12 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
       CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
       captureBuilder.addTarget(photoReader.getSurface());
       captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-      captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 0);
+      
+      // 计算正确的 JPEG 方向
+      int jpegOrientation = calculateJpegOrientation();
+      captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, jpegOrientation);
+      Log.d(TAG, "📸 JPEG orientation set to: " + jpegOrientation + " degrees");
+      sendDebugEvent("📸 JPEG orientation: " + jpegOrientation + "°");
 
       captureSession.capture(captureBuilder.build(), new CameraCaptureSession.CaptureCallback() {
         @Override
@@ -437,6 +444,18 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
           + " effectiveFacing(gestureFront)=" + (mapFacing(CameraCharacteristics.LENS_FACING_FRONT) == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front"));
 
       CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+      
+      // 读取传感器方向
+      Integer sensorOrientationValue = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+      if (sensorOrientationValue != null) {
+        sensorOrientation = sensorOrientationValue;
+        Log.d(TAG, "📷 Sensor orientation: " + sensorOrientation + " degrees");
+        sendDebugEvent("📷 Sensor orientation: " + sensorOrientation + "°");
+      } else {
+        sensorOrientation = 0;
+        Log.w(TAG, "⚠️ Sensor orientation not available, defaulting to 0");
+      }
+      
       StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
       // Concurrency-friendly sizes:
       // - Preview: prefer ~1280x720 (or closest supported) instead of the maximum size.
@@ -818,6 +837,67 @@ public class NativeCameraView extends FrameLayout implements LifecycleEventListe
       Log.e(TAG, "saveJpegToAppStorage failed", e);
       if (file != null && file.exists()) file.delete();
       return null;
+    }
+  }
+
+  /**
+   * 计算正确的 JPEG 方向
+   * 公式: (sensorOrientation + deviceRotation) % 360
+   * 对于后置摄像头，通常需要额外处理
+   */
+  private int calculateJpegOrientation() {
+    try {
+      WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+      if (windowManager == null) {
+        Log.w(TAG, "⚠️ WindowManager is null, using sensor orientation only");
+        return sensorOrientation;
+      }
+      
+      int deviceRotation = windowManager.getDefaultDisplay().getRotation();
+      int degrees = 0;
+      switch (deviceRotation) {
+        case Surface.ROTATION_0:
+          degrees = 0;
+          break;
+        case Surface.ROTATION_90:
+          degrees = 90;
+          break;
+        case Surface.ROTATION_180:
+          degrees = 180;
+          break;
+        case Surface.ROTATION_270:
+          degrees = 270;
+          break;
+      }
+      
+      // 对于后置摄像头，计算方向
+      // 公式: (sensorOrientation - degrees + 360) % 360
+      // 对于前置摄像头，公式: (sensorOrientation + degrees) % 360
+      int facing = desiredLensFacing;
+      if (swapLensFacing) {
+        facing = (facing == CameraCharacteristics.LENS_FACING_BACK) 
+            ? CameraCharacteristics.LENS_FACING_FRONT 
+            : CameraCharacteristics.LENS_FACING_BACK;
+      }
+      
+      int jpegOrientation;
+      if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
+        // 前置摄像头
+        jpegOrientation = (sensorOrientation + degrees) % 360;
+      } else {
+        // 后置摄像头
+        jpegOrientation = (sensorOrientation - degrees + 360) % 360;
+      }
+      
+      Log.d(TAG, "📐 Orientation calculation: sensor=" + sensorOrientation + "°, device=" + degrees + "°, facing=" + 
+          (facing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + ", result=" + jpegOrientation + "°");
+      
+      return jpegOrientation;
+    } catch (Exception e) {
+      Log.e(TAG, "❌ Failed to calculate JPEG orientation", e);
+      // 如果计算失败，返回传感器方向（通常后置摄像头是90度，横屏需要180度）
+      // 根据问题描述，照片是180度反转，所以可能需要直接返回180
+      return sensorOrientation;
     }
   }
 

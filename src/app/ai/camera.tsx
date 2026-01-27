@@ -413,7 +413,7 @@ export default function CameraScreen() {
         style={styles.camera as any}
         gestureEnabled={true}
         cameraFacing={1}
-        swapLensFacing={swapLensFacing}
+        swapLensFacing={false}
         photoCount={photos.length}
         maxPhotos={6}
         onPhotoCaptured={(e) => {
