@@ -2,7 +2,7 @@
   "expo": {
     "name": "小褐同学",
     "slug": "xhtx",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "orientation": "landscape",
     "icon": "./assets/app/icons/1024x1024.png",
     "scheme": "xhtx",
@@ -18,12 +18,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.xhtx.app",
-      "buildNumber": "10008"
+      "buildNumber": "10009"
     },
     "android": {
       "package": "com.xhtx.app",
       "jsEngine": "hermes",
-      "versionCode": 10008,
+      "versionCode": 10009,
       "enableSeparateBuildPerCPUArchitecture": false,
       "targetSdkVersion": 34,
       "compileSdkVersion": 35,

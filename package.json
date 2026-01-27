@@ -1,6 +1,6 @@
 {
   "name": "xhtx",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -35,6 +35,7 @@
     "build:android:dev": "NODE_ENV=production eas build --profile development:device --platform android",
     "build:android:preview": "NODE_ENV=production eas build --profile preview --platform android",
     "build:android:prod": "NODE_ENV=production eas build --profile production --platform android",
+    "build:android:prod:win": "set NODE_ENV=production&& eas build --profile production --platform android",
     "update:preview": "eas update --branch preview --message",
     "update:production": "eas update --branch production --message",
     "update:development": "eas update --branch development --message",
