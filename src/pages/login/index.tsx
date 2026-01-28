@@ -19,7 +19,16 @@ import Password from './com/password';
 import styles from './styles';
 import IconFont from '@/iconfont';
 import { cacheSet } from '@/utils/cache';
-import { cacheGetSync, cacheSetSync, eventCenter, getMobPushDeviceInfo, getStorage, myNextTick, reLaunch, setStorage } from '@/utils';
+import {
+  cacheGetSync,
+  cacheSetSync,
+  eventCenter,
+  getMobPushDeviceInfo,
+  getStorage,
+  myNextTick,
+  reLaunch,
+  setStorage,
+} from '@/utils';
 import appPush from '@/utils/push';
 import PopConfirm from '@/components/popConfirm';
 import { Toast } from '@ant-design/react-native';
@@ -62,7 +71,8 @@ const Login = () => {
     if (url) {
       navigation.navigate('WebView', {
         url,
-        title: type === 'userAgreement' ? '泊刻地锁用户协议' : '泊刻地锁隐私政策',
+        title:
+          type === 'userAgreement' ? '泊刻地锁用户协议' : '泊刻地锁隐私政策',
       });
     }
   };
@@ -75,42 +85,46 @@ const Login = () => {
       return;
     }
 
-    const res = wechatLogin()
+    const res = wechatLogin();
     Toast.loading('登录中...', 0);
 
     // 监听应用状态变化（用户可能从微信返回）
-    const appStatePromise = new Promise<any>((resolve) => {
+    const appStatePromise = new Promise<any>(resolve => {
       tempData.current.appStateSub =
         AppState.addEventListener &&
-        AppState.addEventListener('change', (s) => {
+        AppState.addEventListener('change', s => {
           if (s === 'active') {
-            resolve({ result: false, errCode: -998, message: '用户手动返回应用，未完成登录' });
+            resolve({
+              result: false,
+              errCode: -998,
+              message: '用户手动返回应用，未完成登录',
+            });
           }
         });
     });
-    let r: any
+    let r: any;
     try {
       Toast.loading('登录中...', 0);
-      r = await Promise.race([res, appStatePromise])
+      r = await Promise.race([res, appStatePromise]);
       if (r.result) {
-        const thirdState = await getThirdState({})
-        let obj: any = { source: 1, code: r.code, state: thirdState }
-        let deviceInfoStorage: any = {}
+        const thirdState = await getThirdState({});
+        let obj: any = { source: 1, code: r.code, state: thirdState };
+        let deviceInfoStorage: any = {};
         try {
-          deviceInfoStorage = await getStorage({ key: 'deviceInfo' })
-        } catch (e) { }
+          deviceInfoStorage = await getStorage({ key: 'deviceInfo' });
+        } catch (e) {}
         if (deviceInfoStorage?.data) {
-          obj = { ...obj, ...deviceInfoStorage?.data }
+          obj = { ...obj, ...deviceInfoStorage?.data };
         } else {
-          obj = { ...obj, ...device.current }
+          obj = { ...obj, ...device.current };
         }
-        const thirdLoginRes = await thirdLogin({ ...obj })
+        const thirdLoginRes = await thirdLogin({ ...obj });
         if (thirdLoginRes.code === 200) {
-          await cacheSetSync('token', thirdLoginRes.data.token)
-          await cacheSetSync('guestMode', false)
+          await cacheSetSync('token', thirdLoginRes.data.token);
+          await cacheSetSync('guestMode', false);
           try {
-            await getMobPushDeviceInfo()
-          } catch { }
+            await getMobPushDeviceInfo();
+          } catch {}
           if (thirdLoginRes.data.needBind) {
             navigation.navigate('BindPhone' as any);
           } else if (thirdLoginRes.data.needMobileVerify) {
@@ -121,18 +135,18 @@ const Login = () => {
             reLaunch({ url: '/pages/index/index' });
           }
         } else {
-          Toast.show(thirdLoginRes.message)
+          Toast.show(thirdLoginRes.message);
         }
       } else {
-        if (r.errCode === -998) console.log('用户手动返回')
-        else Toast.show(r.message)
+        if (r.errCode === -998) console.log('用户手动返回');
+        else Toast.show(r.message);
       }
     } catch (e) {
-      console.log('一键登录异常:', e)
+      console.log('一键登录异常:', e);
     } finally {
-      Toast.removeAll()
-      tempData.current.appStateSub?.remove?.()
-      tempData.current.appStateSub = undefined
+      Toast.removeAll();
+      tempData.current.appStateSub?.remove?.();
+      tempData.current.appStateSub = undefined;
     }
   };
 
@@ -144,7 +158,6 @@ const Login = () => {
     }
     await wxLogin();
   };
-
 
   const radioClick = async () => {
     setAgree(!agree);
@@ -181,7 +194,7 @@ const Login = () => {
           tempData.current.appStateSub = undefined;
         }
       };
-    }, [])
+    }, []),
   );
 
   // 根据 agree 状态控制推送服务
@@ -219,17 +232,17 @@ const Login = () => {
         const reopen = await cacheGetSync('reopenPrivacyAfterWeb');
         const agreed = await cacheGetSync('agreePrivacy');
         const byRes: any = await getStorage({ key: 'privacyOpenBy' }).catch(
-          () => ({ data: undefined }) as any,
+          () => ({ data: undefined } as any),
         );
         const by = byRes?.data;
         if (reopen && !agreed && by === 'login') {
           try {
             await cacheSetSync('reopenPrivacyAfterWeb', false);
             await setStorage({ key: 'privacyOpenBy', data: '' });
-          } catch { }
+          } catch {}
           agreePopRef.current?.open?.();
         }
-      } catch { }
+      } catch {}
     };
     eventCenter.on('privacy:open', handler);
     return () => {
@@ -241,9 +254,15 @@ const Login = () => {
     <PageContainer
       backgroundColor="#FFFFFF"
       statusBarStyle="dark-content"
-      safeAreaEdges={['top', 'bottom']}>
+      safeAreaEdges={['top', 'bottom']}
+    >
       <View style={styles.container}>
-        <Flex style={{ flex: 1 }} direction="column" align="center" justify="center">
+        <Flex
+          style={{ flex: 1 }}
+          direction="column"
+          align="center"
+          justify="center"
+        >
           <Image
             source={{ uri: 'https://g.18qjz.cn/img/boklock/logo.png' }}
             style={styles.logo}
@@ -253,37 +272,46 @@ const Login = () => {
           {loginType === 'sms' ? (
             <Sms
               agree={agree}
-              onChange={(mobile) => setMobile(mobile)}
+              onChange={mobile => setMobile(mobile)}
               popRef={agreePopRef}
               initialMobile={mobile}
             />
           ) : (
             <Password
               agree={agree}
-              onChange={(mobile) => setMobile(mobile)}
+              onChange={mobile => setMobile(mobile)}
               popRef={agreePopRef}
               mobile={mobile}
             />
           )}
-          <Flex align="center" isTouchView onPress={radioClick} style={{ marginTop: 16 }}>
+          <Flex
+            align="center"
+            isTouchView
+            onPress={radioClick}
+            style={{ marginTop: 16 }}
+          >
             <IconFont
               size={17}
               name={agree ? 'selected' : 'unselected'}
               color={agree ? '#333333' : '#E1E1E1'}
               style={{ marginRight: 8 }}
             />
-            <Flex align="center" >
+            <Flex align="center">
               <Text style={styles.agree}>我已阅读并同意</Text>
-              <Pressable onPress={() => {
-                handleAgreementLinkPress('userAgreement')
-              }}>
-                <Text style={styles.agreeLink}>《泊刻地锁用户协议</Text>
+              <Pressable
+                onPress={() => {
+                  handleAgreementLinkPress('userAgreement');
+                }}
+              >
+                <Text style={styles.agreeLink}>《泊刻地锁用户协议》</Text>
               </Pressable>
 
               <Text style={styles.agree}>和</Text>
-              <Pressable onPress={() => {
-                handleAgreementLinkPress('privacyPolicy')
-              }}>
+              <Pressable
+                onPress={() => {
+                  handleAgreementLinkPress('privacyPolicy');
+                }}
+              >
                 <Text style={styles.agreeLink}>《隐私政策》</Text>
               </Pressable>
             </Flex>
@@ -296,26 +324,51 @@ const Login = () => {
             <View style={styles.line} />
           </Flex>
           <Flex direction="row" justify="center" align="center">
-            <Flex direction="column" align="center" isTouchView onPress={handleWxLogin}>
-              <Image source={{ uri: 'https://g.18qjz.cn/img/boklock/icon_wechat.png' }} style={styles.wxlogo} />
+            <Flex
+              direction="column"
+              align="center"
+              isTouchView
+              onPress={handleWxLogin}
+            >
+              <Image
+                source={{
+                  uri: 'https://g.18qjz.cn/img/boklock/icon_wechat.png',
+                }}
+                style={styles.wxlogo}
+              />
             </Flex>
-            <Flex direction="column" justify="center" align="center" style={{ marginLeft: 65 }} isTouchView onPress={() => {
-              const type =
-                (loginType === 'mini' ? prevLoginType : loginType) === 'sms'
-                  ? 'password'
-                  : 'sms'
-              setLoginType(type)
-              setPrevLoginType(type)
-            }}>
-              <Image source={{ uri: `https://g.18qjz.cn/img/boklock/loginIcon/icon_login_${(loginType === 'mini' ? prevLoginType : loginType) === 'sms' ? 'password' : 'mobile'}.png` }} style={styles.loginIcon}
+            <Flex
+              direction="column"
+              justify="center"
+              align="center"
+              style={{ marginLeft: 65 }}
+              isTouchView
+              onPress={() => {
+                const type =
+                  (loginType === 'mini' ? prevLoginType : loginType) === 'sms'
+                    ? 'password'
+                    : 'sms';
+                setLoginType(type);
+                setPrevLoginType(type);
+              }}
+            >
+              <Image
+                source={{
+                  uri: `https://g.18qjz.cn/img/boklock/loginIcon/icon_login_${
+                    (loginType === 'mini' ? prevLoginType : loginType) === 'sms'
+                      ? 'password'
+                      : 'mobile'
+                  }.png`,
+                }}
+                style={styles.loginIcon}
                 resizeMode="contain"
               />
-
             </Flex>
           </Flex>
         </Flex>
-      </View >
-      <PopConfirm ref={agreePopRef}
+      </View>
+      <PopConfirm
+        ref={agreePopRef}
         title={
           <Flex direction="column" align="center" justify="center">
             <Text style={styles.popTitle}>用户协议及隐私保护</Text>
@@ -324,34 +377,36 @@ const Login = () => {
               <Text
                 style={styles.popDescLink}
                 onPress={async e => {
-                  e?.stopPropagation?.()
+                  e?.stopPropagation?.();
                   try {
-                    await cacheSetSync('reopenPrivacyAfterWeb', true)
-                    await setStorage({ key: 'privacyOpenBy', data: 'login' })
-                  } catch { }
-                  agreePopRef.current?.close()
+                    await cacheSetSync('reopenPrivacyAfterWeb', true);
+                    await setStorage({ key: 'privacyOpenBy', data: 'login' });
+                  } catch {}
+                  agreePopRef.current?.close();
                   navigation.navigate('WebView', {
                     url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
                     title: '泊刻地锁用户协议',
-                  })
-                }}>
+                  });
+                }}
+              >
                 《泊刻地锁用户协议》
               </Text>
               和
               <Text
                 style={styles.popDescLink}
                 onPress={async e => {
-                  e?.stopPropagation?.()
+                  e?.stopPropagation?.();
                   try {
-                    await cacheSetSync('reopenPrivacyAfterWeb', true)
-                    await setStorage({ key: 'privacyOpenBy', data: 'login' })
-                  } catch { }
-                  agreePopRef.current?.close()
+                    await cacheSetSync('reopenPrivacyAfterWeb', true);
+                    await setStorage({ key: 'privacyOpenBy', data: 'login' });
+                  } catch {}
+                  agreePopRef.current?.close();
                   navigation.navigate('WebView', {
                     url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
                     title: '泊刻地锁隐私政策',
-                  })
-                }}>
+                  });
+                }}
+              >
                 《隐私政策》
               </Text>
             </Text>
@@ -362,8 +417,8 @@ const Login = () => {
         }
         cancelText="不同意"
         onCancel={() => {
-          agreePopRef.current?.close()
-          retainPopRef.current?.open()
+          agreePopRef.current?.close();
+          retainPopRef.current?.open();
         }}
         submitBtn={
           <GradientButton
@@ -373,21 +428,21 @@ const Login = () => {
             onPress={
               loginType === 'mini'
                 ? async () => {
-                  await agreePopRef.current?.close()
-                  setAgree(true)
-                  await cacheSet({ key: 'agreePrivacy', data: true })
-                  await setStorage({ key: 'pushEnabled', data: true })
-                  setTimeout(() => {
-                    wxLogin()
-                  }, 300)
-                }
+                    await agreePopRef.current?.close();
+                    setAgree(true);
+                    await cacheSet({ key: 'agreePrivacy', data: true });
+                    await setStorage({ key: 'pushEnabled', data: true });
+                    setTimeout(() => {
+                      wxLogin();
+                    }, 300);
+                  }
                 : () => {
-                  setAgree(true);
-                  myNextTick(() => {
-                    agreePopRef.current?.close()
-                    eventCenter.trigger('onNext')
-                  })
-                }
+                    setAgree(true);
+                    myNextTick(() => {
+                      agreePopRef.current?.close();
+                      eventCenter.trigger('onNext');
+                    });
+                  }
             }
           >
             <Text style={styles.popBtnText}>同意并继续</Text>
@@ -412,8 +467,7 @@ const Login = () => {
           </Flex>
         }
       />
-
-    </PageContainer >
+    </PageContainer>
   );
 };
 

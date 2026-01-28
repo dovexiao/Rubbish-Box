@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Keyboard } from 'react-native';
+import { View, Text, TouchableOpacity, Keyboard } from 'react-native';
 import { PageContainer } from '@/components';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import InputCode, { InputCodeRef } from '@/components/InputCode';
@@ -57,19 +57,19 @@ const LoginSms = () => {
     try {
       const res = await (type === SMS_PURPOSE.RESET_PASSWORD
         ? restPasswordVerify({
-          code,
-          mobile,
-          tempToken,
-          ...device,
-        })
-        : type === SMS_PURPOSE.BIND_PHONE
-          ? thirdBind({
             code,
             mobile,
             tempToken,
             ...device,
           })
-          : login({
+        : type === SMS_PURPOSE.BIND_PHONE
+        ? thirdBind({
+            code,
+            mobile,
+            tempToken,
+            ...device,
+          })
+        : login({
             code,
             mobile,
             tempToken,
@@ -91,7 +91,7 @@ const LoginSms = () => {
           await cacheSetSync('guestMode', false);
           try {
             await getMobPushDeviceInfo();
-          } catch { }
+          } catch {}
           Toast.remove(loadingToast);
           reLaunch({
             url: '/pages/index/index',
@@ -142,7 +142,8 @@ const LoginSms = () => {
       backgroundColor="#FFFFFF"
       statusBarStyle="dark-content"
       safeAreaEdges={['top', 'bottom']}
-      style={loginSmsStyles.container}>
+      style={loginSmsStyles.container}
+    >
       <View style={loginSmsStyles.passwordTitle}>
         <Text style={loginSmsStyles.passwordTitleText}>请输入短信验证码</Text>
       </View>
@@ -152,9 +153,12 @@ const LoginSms = () => {
         showError={showError}
         code={code}
         errorMessage="验证码错误"
-        onUpdate={(value) => {
+        onUpdate={value => {
           setCode(value);
           setShowError(false);
+          if (value.length === 6) {
+            Keyboard.dismiss();
+          }
         }}
       />
 
@@ -168,24 +172,43 @@ const LoginSms = () => {
             await getCode();
             inputCodeRef.current?.clearCode();
           }}
-          disabled={isCounting}>
+          disabled={isCounting}
+        >
           <Flex align="center" justify="center">
-            <Text style={[loginSmsStyles.getAgainText, !isCounting && loginSmsStyles.getAgainTextActive]}>
+            <Text
+              style={[
+                loginSmsStyles.getAgainText,
+                !isCounting && loginSmsStyles.getAgainTextActive,
+              ]}
+            >
               重新发送
             </Text>
             {isCounting && count ? (
               <Text style={loginSmsStyles.getAgainText}>({count}s)</Text>
             ) : (
-              <IconFont name="refresh" size={20} color={isCounting ? '#999' : '#333333'} />
+              <IconFont
+                name="refresh"
+                size={20}
+                color={isCounting ? '#999' : '#333333'}
+              />
             )}
           </Flex>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[loginSmsStyles.submitBtn, code.length === 6 && loginSmsStyles.btnActive]}
+          style={[
+            loginSmsStyles.submitBtn,
+            code.length === 6 && loginSmsStyles.btnActive,
+          ]}
           onPress={onSubmit}
-          disabled={code.length !== 6}>
-          <Text style={[loginSmsStyles.submitBtnText, code.length === 6 && loginSmsStyles.submitBtnTextActive]}>
+          disabled={code.length !== 6}
+        >
+          <Text
+            style={[
+              loginSmsStyles.submitBtnText,
+              code.length === 6 && loginSmsStyles.submitBtnTextActive,
+            ]}
+          >
             下一步
           </Text>
         </TouchableOpacity>
@@ -193,6 +216,5 @@ const LoginSms = () => {
     </PageContainer>
   );
 };
-
 
 export default LoginSms;

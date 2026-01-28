@@ -10,7 +10,8 @@ import Config from 'react-native-config';
 export type EnvType = 'development' | 'production';
 
 // 从环境变量获取当前环境，如果没有设置则根据 __DEV__ 判断
-export const ENV: EnvType = (Config.ENV as EnvType) || (__DEV__ ? 'development' : 'production');
+export const ENV: EnvType =
+  (Config.ENV as EnvType) || (__DEV__ ? 'development' : 'production');
 
 // 获取部署环境（dev/real/staging）
 export const DEPLOY_ENV = Config.DEPLOY_ENV || (__DEV__ ? 'dev' : 'real');
@@ -22,13 +23,20 @@ export const GRAY = Config.GRAY === 'true';
 export const DEPLOY_VERSION = Config.DEPLOY_VERSION || '';
 
 // 获取 API 基础地址（从环境变量读取）
-export const BASE_URL = Config.API_BASE_URL || 'https://api.example.com';
+// 根据部署环境自动切换 API 前缀
+const BASE_URL_MAP: Record<string, string> = {
+  real: 'https://boke-api.18qjz.cn',
+  dev: 'https://boke-api-dev.18qjz.cn',
+};
+export const BASE_URL =
+  Config.API_BASE_URL || BASE_URL_MAP[DEPLOY_ENV] || 'https://api.example.com';
 
 // 获取 API 版本
 export const API_VERSION = Config.API_VERSION || 'v1';
 
 // 获取 Android 包名
-export const ANDROID_PACKAGE_NAME = Config.ANDROID_PACKAGE_NAME || 'com.boklock.m.test';
+export const ANDROID_PACKAGE_NAME =
+  Config.ANDROID_PACKAGE_NAME || 'com.boklock.m.test';
 
 // 获取 iOS Bundle ID
 export const IOS_BUNDLE_ID = Config.IOS_BUNDLE_ID || 'com.boklock.m.test';
@@ -71,4 +79,3 @@ if (__DEV__) {
   console.log(`高德地图 iOS Key: ${MAP_KEY_IOS ? '已配置' : '未配置'}`);
   console.log('===============');
 }
-
