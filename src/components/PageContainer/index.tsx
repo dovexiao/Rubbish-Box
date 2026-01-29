@@ -18,6 +18,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import IconFont from '@/iconfont';
+import StatusError from './StatusError';
+import StatusLogin from './StatusLogin';
+import { LOGIN } from '@/constants';
 
 interface PageNavProps {
   text?: string;
@@ -53,6 +56,15 @@ interface PageContainerProps {
   paddingVertical?: number;
   pageNavProps?: PageNavProps;
   keyboardShouldPersistTaps?: 'always' | 'never' | 'handled';
+  // 业务错误展示（参考 bok Container 的 Error 行为，做 RN 化封装）
+  error?: {
+    code?: string | number;
+    message?: string;
+  } | null;
+  /** 是否以整页形式展示错误，而不是仅覆盖局部内容 */
+  fullScreenError?: boolean;
+  /** 错误态下的重试回调 */
+  onRetry?: () => void;
 }
 
 // 计算 padding 样式
@@ -89,6 +101,9 @@ const PageContainer: React.FC<PageContainerProps> = ({
   paddingVertical = 0,
   pageNavProps,
   keyboardShouldPersistTaps = 'handled',
+  error,
+  fullScreenError = false,
+  onRetry,
 }) => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -169,11 +184,31 @@ const PageContainer: React.FC<PageContainerProps> = ({
       ...getPaddingStyle(padding, paddingHorizontal, paddingVertical),
       ...style,
     }),
-    [defaultBackgroundColor, padding, paddingHorizontal, paddingVertical, style],
+    [
+      defaultBackgroundColor,
+      padding,
+      paddingHorizontal,
+      paddingVertical,
+      style,
+    ],
   );
 
   // 渲染内容
   const renderContent = useMemo(() => {
+    // 若需要整页错误展示，则用统一错误视图替代具体内容
+    if (error && fullScreenError) {
+      const codeStr =
+        error.code !== undefined && error.code !== null && error.code !== ''
+          ? String(error.code)
+          : undefined;
+
+      if (codeStr && codeStr === String(LOGIN)) {
+        return <StatusLogin />;
+      }
+
+      return <StatusError error={error} onRetry={onRetry} />;
+    }
+
     if (scrollable) {
       const scrollContentStyle = [
         styles.scrollContent,
@@ -203,6 +238,9 @@ const PageContainer: React.FC<PageContainerProps> = ({
     paddingVertical,
     contentContainerStyle,
     contentStyle,
+    error,
+    fullScreenError,
+    onRetry,
   ]);
 
   return (
@@ -247,10 +285,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
               pointerEvents="auto"
             >
               <View style={styles.loadingContainer}>
-                <ActivityIndicator
-                  size="large"
-                  color={loadingIndicatorColor}
-                />
+                <ActivityIndicator size="large" color={loadingIndicatorColor} />
               </View>
             </View>
           )}
@@ -284,4 +319,3 @@ const PageContainer: React.FC<PageContainerProps> = ({
 };
 
 export default PageContainer;
-

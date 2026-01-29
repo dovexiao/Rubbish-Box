@@ -77,5 +77,69 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  errorContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 8,
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  errorRetryButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#2878FF',
+  },
+  errorRetryText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+  },
+  statusLoginContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+  },
+  statusLoginTitle: {
+    fontSize: 20,
+    color: '#333333',
+    marginBottom: 32,
+  },
+  statusLoginAddBtn: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    backgroundColor: '#F5F7FA',
+    marginBottom: 16,
+  },
+  statusLoginAddImage: {
+    width: 96,
+    height: 96,
+  },
+  statusLoginToast: {
+    fontSize: 14,
+    color: '#666666',
+    marginBottom: 24,
+  },
+  statusLoginLoginBtn: {
+    width: 240,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#2878FF',
+  },
+  statusLoginLoginText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
 });
-

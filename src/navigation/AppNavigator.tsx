@@ -75,19 +75,8 @@ export const AppNavigator: React.FC = () => {
     return isLoggedIn ? 'Index' : 'Login';
   }, [isLoggedIn, loading]);
 
-  // 监听登录状态变化，如果未登录且当前不在登录页，则跳转到登录页
-  useEffect(() => {
-    if (!isLoggedIn) {
-      // 延迟执行，确保导航已经初始化
-      const timer = setTimeout(() => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Login' }],
-        });
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoggedIn, navigation]);
+  // 登录后（含 guest 模式）若当前仍停留在登录页，可在需要时通过业务代码显式跳转到首页。
+  // 这里不再在未登录时强制重置到登录页，以便支持“暂不登录”场景通过导航工具自行控制路由。
 
   return (
     <Stack.Navigator
@@ -95,7 +84,8 @@ export const AppNavigator: React.FC = () => {
       screenOptions={{
         headerShown: false,
         animation: 'none',
-      }}>
+      }}
+    >
       {/* 登录页面 */}
       {routes.pages.map(route => (
         <Stack.Screen
@@ -112,7 +102,8 @@ export const AppNavigator: React.FC = () => {
         name="Index"
         options={{
           orientation: 'portrait',
-        }}>
+        }}
+      >
         {() => <MainTabNavigator />}
       </Stack.Screen>
     </Stack.Navigator>

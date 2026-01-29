@@ -8,6 +8,7 @@ import { getSmsCode, login } from '@/services/common';
 import { restPasswordVerify, thirdBind } from '@/services/user';
 import { SMS_PURPOSE } from '@/constants';
 import { cacheSetSync, getStorage, getMobPushDeviceInfo } from '@/utils';
+import { tokenStorage } from '@/utils/storage';
 import { reLaunch } from '@/utils/navigation';
 import { Toast } from '@ant-design/react-native';
 import IconFont from '@/iconfont';
@@ -88,6 +89,8 @@ const LoginSms = () => {
           });
         } else {
           await cacheSetSync('token', res.data.token);
+          // 同步写入 AsyncStorage 的 tokenStorage，供 useAuth 等逻辑使用
+          await tokenStorage.set(String(res.data.token));
           await cacheSetSync('guestMode', false);
           try {
             await getMobPushDeviceInfo();

@@ -22,6 +22,7 @@ import { cacheSet } from '@/utils/cache';
 import {
   cacheGetSync,
   cacheSetSync,
+  cacheRemoveSync,
   eventCenter,
   getMobPushDeviceInfo,
   getStorage,
@@ -316,6 +317,23 @@ const Login = () => {
               </Pressable>
             </Flex>
           </Flex>
+          <Text
+            style={{ marginTop: 24, fontSize: 16, color: '#333333' }}
+            onPress={async () => {
+              // 暂不登录：清理 token，开启 guestMode，进入首页
+              try {
+                await cacheRemoveSync('token');
+                await cacheSet({ key: 'agreePrivacy', data: agree });
+                await cacheSetSync('guestMode', true);
+              } catch {}
+              try {
+                await tokenStorage.remove();
+              } catch {}
+              reLaunch({ url: '/pages/index/index' });
+            }}
+          >
+            暂不登录
+          </Text>
         </Flex>
         <Flex style={{ height: 123 }} direction="column" align="center">
           <Flex align="center" style={styles.logTip}>
@@ -455,6 +473,17 @@ const Login = () => {
         ref={retainPopRef}
         showClose={false}
         confirmText="我知道了"
+        onConfirm={async () => {
+          // 用户选择暂不登录，进入访客模式浏览首页
+          try {
+            await cacheSetSync('guestMode', true);
+          } catch {}
+          try {
+            // 确保访客模式下没有残留登录 token
+            await tokenStorage.remove();
+          } catch {}
+          reLaunch({ url: '/pages/index/index' });
+        }}
         title={
           <Flex direction="column" align="center" justify="center">
             <Text style={styles.popTitle}>温馨提示</Text>
