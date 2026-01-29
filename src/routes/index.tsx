@@ -37,11 +37,11 @@ export const routes = {
     {
       name: 'WebView',
       label: '网页浏览',
-      component: require('@/pages/webView').default,
+      component: require('@/pages/WebView').default,
     },
     {
       name: 'LoginSms',
-      component: require('@/pages/loginSms').default,
+      component: require('@/pages/LoginSms').default,
       label: '登录短信',
     },
     {

@@ -1,30 +1,40 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+  ImageSourcePropType,
+} from 'react-native';
 import Flex from '../Flex';
 import IconFont from '@/iconfont';
 import { Toast } from '@ant-design/react-native';
 import { operateLock } from '@/services/device';
 import { OPT_TYPE } from '@/constants';
+import { DeviceSwitch } from '../Device/switch';
+import { LockInfoDTO } from '@/pages/index/typing';
 
 interface ContentProps {
-  detail?: any;
-  backgroundType?: 'deep' | 'shallow' | string;
+  detail?: LockInfoDTO;
+  backgroundType?: 'deep' | 'shallow';
   reload?: (id?: number) => Promise<any> | void;
   isMultiple?: boolean;
   optioning?: boolean;
   onFresh?: (id?: number) => Promise<any> | void;
   onAnimation?: (params: any) => void;
-  powerTypeMode?: any;
-  powerTypeChange?: (value: any) => void;
   children?: React.ReactNode;
 }
 
 const Content: React.FC<ContentProps> = ({
   detail,
+  backgroundType,
   reload,
   isMultiple,
   optioning,
   onFresh,
+  onAnimation,
   children,
 }) => {
   const [operating, setOperating] = useState(false);
@@ -70,105 +80,108 @@ const Content: React.FC<ContentProps> = ({
   const address = detail?.locationList?.[0]?.address || detail?.address || '';
 
   return (
-    <View style={styles.contentBox}>
-      {/* 上方设备模型/状态图 */}
-      <Flex direction="column" align="center" style={styles.lockVisualBox}>
-        {children}
-        {detail?.lockName ? (
-          <Text style={styles.lockNameText} numberOfLines={1}>
-            {detail.lockName} {detail.roleName ? ` | ${detail.roleName}` : ''}
-          </Text>
-        ) : null}
-      </Flex>
+    <ImageBackground source={{ uri: detail?.imageMap?.bgPng }}>
+      <View style={styles.contentBox}>
+        {/* 上方设备模型/状态图 */}
+        <Flex direction="column" align="center">
+          {children}
+          <DeviceSwitch
+            lockInfo={detail}
+            reload={reload}
+            type={detail?.isGroup ? 2 : 1}
+            backgroundType={backgroundType}
+          />
+        </Flex>
 
-      {/* 手动升降按钮 */}
-      <Flex justify="between" style={styles.manualRow}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.manualBtn}
-          disabled={operating}
-          onPress={() => handleOperate('rise')}
-        >
-          <View style={styles.manualIconCircle}>
-            <IconFont name="arrow-up" size={24} color="#333333" />
-          </View>
-          <Text style={styles.manualText}>手动升锁</Text>
-        </TouchableOpacity>
+        {/* 手动升降按钮 */}
+        <Flex justify="between" style={styles.manualRow}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.manualBtn}
+            disabled={operating}
+            onPress={() => handleOperate('rise')}
+          >
+            <View style={styles.manualIconCircle}>
+              <IconFont name="arrow-up" size={24} color="#333333" />
+            </View>
+            <Text style={styles.manualText}>手动升锁</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.manualBtn}
-          disabled={operating}
-          onPress={() => handleOperate('fall')}
-        >
-          <View style={styles.manualIconCircle}>
-            <IconFont name="arrow-down" size={24} color="#333333" />
-          </View>
-          <Text style={styles.manualText}>手动降锁</Text>
-        </TouchableOpacity>
-      </Flex>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.manualBtn}
+            disabled={operating}
+            onPress={() => handleOperate('fall')}
+          >
+            <View style={styles.manualIconCircle}>
+              <IconFont name="arrow-down" size={24} color="#333333" />
+            </View>
+            <Text style={styles.manualText}>手动降锁</Text>
+          </TouchableOpacity>
+        </Flex>
 
-      {/* 地图 + 设备信息卡片 */}
-      <Flex justify="between" style={styles.cardsRow}>
-        <View style={[styles.card, styles.mapCard]}>
-          <View style={styles.mapPreview}>
-            <Image
-              source={{
-                uri: 'https://g.18qjz.cn/img/boklock/map_placeholder.png',
-              }}
-              style={styles.mapImage}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.cardTitle} numberOfLines={1}>
-            当前位置
-          </Text>
-          {!!address && (
-            <Text style={styles.cardSubTitle} numberOfLines={2}>
-              {address}
+        {/* 地图 + 设备信息卡片 */}
+        <Flex justify="between" style={styles.cardsRow}>
+          <View style={[styles.card, styles.mapCard]}>
+            <View style={styles.mapPreview}>
+              <Image
+                source={{
+                  uri: 'https://g.18qjz.cn/img/boklock/map_placeholder.png',
+                }}
+                style={styles.mapImage}
+                resizeMode="cover"
+              />
+            </View>
+            <Text style={styles.cardTitle} numberOfLines={1}>
+              当前位置
             </Text>
-          )}
-        </View>
-
-        <View style={[styles.card, styles.infoCard]}>
-          <Flex justify="between" align="center">
-            <Text style={styles.cardTitle}>设备信息</Text>
-            <IconFont name="a-headfor-20" size={16} color="#333333" />
-          </Flex>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>电量</Text>
-            <Text style={styles.infoValue}>{detail?.battery ?? '--'}%</Text>
+            {!!address && (
+              <Text style={styles.cardSubTitle} numberOfLines={2}>
+                {address}
+              </Text>
+            )}
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>信号</Text>
-            <Text style={styles.infoValue}>{detail?.signal ?? '--'}</Text>
+
+          <View style={[styles.card, styles.infoCard]}>
+            <Flex justify="between" align="center">
+              <Text style={styles.cardTitle}>设备信息</Text>
+              <IconFont name="a-headfor-20" size={16} color="#333333" />
+            </Flex>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>电量</Text>
+              <Text style={styles.infoValue}>{detail?.battery ?? '--'}%</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>信号</Text>
+              <Text style={styles.infoValue}>{detail?.signal ?? '--'}</Text>
+            </View>
           </View>
+        </Flex>
+
+        {/* 成员共享 / 下载 App 等入口 */}
+        <View style={styles.entryList}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.entryItem}>
+            <Flex justify="between" align="center">
+              <Flex align="center">
+                <IconFont name="user" size={18} color="#333333" />
+                <Text style={styles.entryText}>成员共享</Text>
+              </Flex>
+              <IconFont name="a-headfor-20" size={16} color="#B3B3B3" />
+            </Flex>
+          </TouchableOpacity>
+
+          <TouchableOpacity activeOpacity={0.8} style={styles.entryItem}>
+            <Flex justify="between" align="center">
+              <Flex align="center">
+                <IconFont name="download" size={18} color="#333333" />
+                <Text style={styles.entryText}>下载APP</Text>
+              </Flex>
+              <IconFont name="a-headfor-20" size={16} color="#B3B3B3" />
+            </Flex>
+          </TouchableOpacity>
         </View>
-      </Flex>
-
-      {/* 成员共享 / 下载 App 等入口 */}
-      <View style={styles.entryList}>
-        <TouchableOpacity activeOpacity={0.8} style={styles.entryItem}>
-          <Flex justify="between" align="center">
-            <Flex align="center">
-              <IconFont name="user" size={18} color="#333333" />
-              <Text style={styles.entryText}>成员共享</Text>
-            </Flex>
-            <IconFont name="a-headfor-20" size={16} color="#B3B3B3" />
-          </Flex>
-        </TouchableOpacity>
-
-        <TouchableOpacity activeOpacity={0.8} style={styles.entryItem}>
-          <Flex justify="between" align="center">
-            <Flex align="center">
-              <IconFont name="download" size={18} color="#333333" />
-              <Text style={styles.entryText}>下载APP</Text>
-            </Flex>
-            <IconFont name="a-headfor-20" size={16} color="#B3B3B3" />
-          </Flex>
-        </TouchableOpacity>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -176,9 +189,7 @@ const styles = StyleSheet.create({
   contentBox: {
     flex: 1,
   },
-  lockVisualBox: {
-    marginBottom: 24,
-  },
+
   lockNameText: {
     marginTop: 12,
     fontSize: 16,
@@ -186,15 +197,15 @@ const styles = StyleSheet.create({
   },
   manualRow: {
     paddingHorizontal: 40,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   manualBtn: {
     alignItems: 'center',
   },
   manualIconCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
@@ -205,7 +216,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   manualText: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#333333',
   },
   cardsRow: {
@@ -265,6 +276,7 @@ const styles = StyleSheet.create({
   },
   entryList: {
     marginTop: 8,
+    marginBottom: 12,
     marginHorizontal: 16,
     borderRadius: 12,
     backgroundColor: '#FFFFFF',

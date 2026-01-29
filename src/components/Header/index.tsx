@@ -146,16 +146,6 @@ const Header: React.FC<HeaderProps> = ({
     }
   }, [lockInfo?.id, loadDeviceList]);
 
-  const openDeviceList = useCallback(() => {
-    if (!lockInfo?.id) return;
-    setDeviceListVisible(true);
-    if (!deviceList.length) {
-      loadDeviceList(true).catch(() => {
-        // ignore
-      });
-    }
-  }, [deviceList.length, loadDeviceList, lockInfo?.id]);
-
   const handleSelectDevice = useCallback(
     async (item: any) => {
       setDeviceListVisible(false);
@@ -261,11 +251,7 @@ const Header: React.FC<HeaderProps> = ({
             {renderMessage()}
           </Flex>
         ) : (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.headerTouch}
-            onPress={openDeviceList}
-          >
+          <TouchableOpacity activeOpacity={0.8} style={styles.headerTouch}>
             <Flex style={styles.headerLeft} align="center">
               {/* 电量 */}
               {lockInfo?.showBattery && batteryIcon && (
@@ -347,7 +333,7 @@ const Header: React.FC<HeaderProps> = ({
       </Flex>
 
       {/* 设备列表弹层 */}
-      <Popup
+      {/* <Popup
         visible={deviceListVisible}
         onClose={() => setDeviceListVisible(false)}
         title="选择设备"
@@ -423,7 +409,7 @@ const Header: React.FC<HeaderProps> = ({
             </TouchableOpacity>
           ))}
         </ScrollView>
-      </Popup>
+      </Popup> */}
 
       {/* 重命名弹窗 */}
       <Popup
@@ -490,10 +476,11 @@ const Header: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    height: 56,
+    height: 54,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   headerLeft: {
     flex: 1,

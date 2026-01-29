@@ -1,0 +1,9 @@
+{
+  // 建议安装的 VS Code 扩展（打开项目时会提示安装）
+  "recommendations": [
+    // Prettier：负责格式化（读取项目根目录的 .prettierrc.js）
+    "esbenp.prettier-vscode",
+    // ESLint：负责代码规范检查/修复（读取 .eslintrc.js）
+    "dbaeumer.vscode-eslint"
+  ]
+}

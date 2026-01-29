@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { tokenStorage } from '@/utils/storage';
-import { cacheGetSync } from '@/utils/cache';
+import { cacheGetSync, cacheSetSync } from '@/utils/cache';
 
 /**
  * 检查用户是否已登录
@@ -14,17 +13,17 @@ export function useAuth() {
 
   useEffect(() => {
     let mounted = true;
-
     const checkAuth = async () => {
       try {
-        const tokenValue = await tokenStorage.get();
+        const tokenValue = await cacheGetSync('token');
+        console.log(tokenValue);
         // 兜底：若 tokenStorage 中没有，但老的 cache 中有 token，则做一次迁移
         const cacheToken = await cacheGetSync('token');
         let finalToken = tokenValue;
         if (!finalToken && cacheToken) {
           finalToken = String(cacheToken);
           try {
-            await tokenStorage.set(finalToken);
+            await cacheSetSync('token', finalToken);
           } catch {}
         }
 
@@ -33,7 +32,7 @@ export function useAuth() {
         const isGuest = cacheGuestMode === true;
 
         const loggedIn = !!finalToken || isGuest;
-
+        console.log('loggedIn', loggedIn);
         if (mounted) {
           setIsLoggedIn(loggedIn);
           setToken(finalToken);
@@ -73,13 +72,20 @@ export function useAuth() {
  */
 export async function checkAuth(): Promise<boolean> {
   try {
-    let token = await tokenStorage.get();
+    let token = await cacheGetSync('token');
     if (!token) {
       const cacheToken = await cacheGetSync('token');
       if (cacheToken) {
         token = String(cacheToken);
         try {
-          await tokenStorage.set(token);
+          await cacheSetSync('token', token);
+        } catch {}
+      }
+    } else {
+      const cacheToken = await cacheGetSync('token');
+      if (!cacheToken) {
+        try {
+          await cacheSetSync('token', token as any);
         } catch {}
       }
     }

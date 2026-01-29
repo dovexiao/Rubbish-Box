@@ -8,22 +8,35 @@ import { getLockInfo } from '@/services/device';
 import { unreadCount as fetchUnreadCount } from '@/services/user';
 import Flex from '@/components/Flex';
 import PopConfirm from '@/components/popConfirm';
-import { reLaunch, cacheGetSync } from '@/utils';
-
-// 设备状态图占位
-const DeviceStatusBlock = () => (
-  <View style={styles.deviceStatusBlock}>
-    <Text style={styles.deviceStatusText}>[设备状态图占位]</Text>
-  </View>
-);
+import { reLaunch, cacheGetSync, eventCenter } from '@/utils';
+import LockVisual, {
+  DeviceStatusFlags,
+  LockVisualStatus,
+} from '@/components/LockVisual';
+import { LockInfoDTO } from './typing';
+import { FALL_STATUS } from '@/constants';
 
 const Index = () => {
   const [loading, setLoading] = useState(false);
   const [hasDevice, setHasDevice] = useState<boolean>(true);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [detail, setDetail] = useState<any | undefined>(undefined);
+  const [detail, setDetail] = useState<LockInfoDTO | undefined>(undefined);
   const [hasToken, setHasToken] = useState<boolean | null>(null);
   const [guestMode, setGuestMode] = useState(false);
+  const [currentDeviceStatus, setCurrentDeviceStatus] =
+    useState<LockVisualStatus>('rise');
+  const [deviceStatus, setDeviceStatus] = useState<DeviceStatusFlags>({
+    rising30: false,
+    falling30: false,
+    rising120: false,
+    falling120: false,
+    rising: false,
+    falling: false,
+    openCovering: false,
+    closeCovering: false,
+  });
+  const [gifNonce, setGifNonce] = useState<number>(0);
+  const [optioning, setOptioning] = useState<boolean>(false);
   const [error, setError] = useState<{
     code?: number | string;
     message?: string;
@@ -38,6 +51,32 @@ const Index = () => {
         setDetail(lockRes.data);
         setHasDevice(true);
         setError(null);
+        setCurrentDeviceStatus(() => {
+          const powerType = lockRes.data?.powerType;
+          const coverStatus = lockRes.data?.coverStatus;
+          const fallStatus = lockRes.data?.fallStatus;
+          // 非市电版本：只展示静态升起图
+          if (powerType !== 1) {
+            return 'rise';
+          }
+          // 市电版本 & 盖子已打开
+          if (coverStatus === 1 && powerType === 1) {
+            return 'openCover';
+          }
+          // 根据 fallStatus 判定
+          switch (fallStatus) {
+            case FALL_STATUS.RISE:
+              return 'rise';
+            case FALL_STATUS.FALL_SUCCESS:
+              return 'fall';
+            case FALL_STATUS.RISE_30:
+              return 'rise30';
+            case FALL_STATUS.RISE_120:
+              return 'rise120';
+            default:
+              return 'rise';
+          }
+        });
       } else {
         setDetail(undefined);
         setHasDevice(false);
@@ -58,6 +97,7 @@ const Index = () => {
       setHasDevice(false);
       setDetail(undefined);
       setError({ message: '网络异常，请稍后重试' });
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -99,6 +139,81 @@ const Index = () => {
   const showGuestWelcome = !hasToken && guestMode;
 
   const guestPopupRef = useRef<any>(null);
+  const animationTimer = useRef<any>(null);
+
+  const onAnimationEnd = () => {
+    setDeviceStatus(prev => ({
+      ...prev,
+      rising: false,
+      falling: false,
+      openCovering: false,
+      closeCovering: false,
+      rising30: false,
+      falling30: false,
+      rising120: false,
+      falling120: false,
+    }));
+  };
+  const onAnimation = useCallback(
+    ({
+      type,
+      value,
+    }: {
+      type:
+        | 'rising'
+        | 'falling'
+        | 'openCovering'
+        | 'closeCovering'
+        | 'rising30'
+        | 'falling30'
+        | 'rising120'
+        | 'falling120';
+      value: boolean;
+    }) => {
+      setDeviceStatus(prev => ({
+        ...prev,
+        rising: false,
+        falling: false,
+        openCovering: false,
+        closeCovering: false,
+        rising30: false,
+        rising120: false,
+        falling30: false,
+        falling120: false,
+        [type]: value,
+      }));
+      setGifNonce(prev => prev + 1);
+      if (animationTimer.current) {
+        clearTimeout(animationTimer.current);
+        animationTimer.current = null;
+      }
+      animationTimer.current = setTimeout(() => {
+        onAnimationEnd();
+      }, 1830);
+    },
+    [],
+  );
+
+  const onOptioned = useCallback(
+    (option: boolean) => {
+      setOptioning(option);
+    },
+    [setOptioning],
+  );
+
+  useEffect(() => {
+    eventCenter.on('onAnimation', onAnimation);
+    eventCenter.on('onOptioned', onOptioned);
+
+    return () => {
+      eventCenter.off('onAnimation', onAnimation);
+      eventCenter.off('onOptioned', onOptioned);
+      if (animationTimer.current) {
+        clearTimeout(animationTimer.current);
+        animationTimer.current = null;
+      }
+    };
+  }, [onOptioned, onAnimation]);
 
   return (
     <PageContainer
@@ -182,7 +297,12 @@ const Index = () => {
                 isMultiple={!!detail?.isGroup}
                 optioning={false}
               >
-                <DeviceStatusBlock />
+                <LockVisual
+                  detail={detail}
+                  currentDeviceStatus={currentDeviceStatus}
+                  deviceStatus={deviceStatus}
+                  inconsistentStatus={false}
+                />
               </Content>
             ) : (
               <NoDevices unreadCount={unreadCount} hasDevice={hasDevice} />
@@ -201,7 +321,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    padding: 16,
   },
   deviceStatusBlock: {
     height: 180,
