@@ -13,6 +13,7 @@ import {
 import {
   SafeAreaView,
   useSafeAreaInsets,
+  Edge,
 } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useNavigation } from '@react-navigation/native';
@@ -22,52 +23,101 @@ import StatusError from './StatusError';
 import StatusLogin from './StatusLogin';
 import { LOGIN } from '@/constants';
 
+/**
+ * 页面导航栏配置类型
+ */
 interface PageNavProps {
+  /** 导航栏标题 */
   text?: string;
+  /** 是否显示返回按钮 */
   showBack?: boolean;
+  /** 导航栏背景色 */
   background?: string;
+  /** 右侧额外节点（弃用，建议用 rightContent） */
   extraNode?: React.ReactNode;
+  /** 左侧自定义内容 */
   leftContent?: React.ReactNode;
+  /** 右侧自定义内容 */
   rightContent?: React.ReactNode;
+  /** 自定义返回点击事件 */
   onBackPress?: () => void;
+  /** 标题颜色 */
   titleColor?: string;
 }
 
+/**
+ * 页面容器组件属性类型
+ */
 interface PageContainerProps {
+  /** 页面内容 */
   children: React.ReactNode;
+
+  // --- 样式相关 ---
+  /** 背景颜色，默认白色 */
   backgroundColor?: string;
+  /** 背景图片，设置后会自动处理沉浸式状态栏 */
   backgroundImage?: ImageSourcePropType;
-  statusBarStyle?: 'default' | 'light-content' | 'dark-content';
-  statusBarBackgroundColor?: string;
-  showStatusBar?: boolean;
-  safeAreaEdges?: ('top' | 'bottom' | 'left' | 'right')[];
-  keyboardAvoidingView?: boolean;
-  scrollable?: boolean;
-  contentContainerStyle?: ViewStyle;
-  loading?: boolean;
-  loadingStyle?: ViewStyle;
-  loadingIndicatorColor?: string;
-  loadingBackgroundColor?: string;
+  /** 容器样式 */
   style?: ViewStyle;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
+  /** 内容容器样式（仅 scrollable=true 时生效） */
+  contentContainerStyle?: ViewStyle;
+
+  // --- 布局与安全区 ---
+  /** 统一内边距 */
   padding?: number;
+  /** 水平内边距 */
   paddingHorizontal?: number;
+  /** 垂直内边距 */
   paddingVertical?: number;
-  pageNavProps?: PageNavProps;
+  /** 安全区边界配置，默认 ['top', 'bottom'] */
+  safeAreaEdges?: Edge[];
+  /** 是否启用 ScrollView */
+  scrollable?: boolean;
+  /** 键盘交互模式 */
   keyboardShouldPersistTaps?: 'always' | 'never' | 'handled';
-  // 业务错误展示（参考 bok Container 的 Error 行为，做 RN 化封装）
+  /** 是否启用键盘避让视图 (暂未实装，预留接口) */
+  keyboardAvoidingView?: boolean;
+
+  // --- 状态栏 ---
+  /** 是否显示状态栏 */
+  showStatusBar?: boolean;
+  /** 状态栏样式 */
+  statusBarStyle?: 'default' | 'light-content' | 'dark-content';
+  /** 状态栏背景色 */
+  statusBarBackgroundColor?: string;
+
+  // --- 头部与底部 ---
+  /** 自定义头部组件 */
+  header?: React.ReactNode;
+  /** 自定义底部组件 */
+  footer?: React.ReactNode;
+  /** 简易导航栏配置（优先级高于 header） */
+  pageNavProps?: PageNavProps;
+
+  // --- 状态展示 ---
+  /** 是否处于加载中 */
+  loading?: boolean;
+  /** 加载中遮罩样式 */
+  loadingStyle?: ViewStyle;
+  /** 加载指示器颜色 */
+  loadingIndicatorColor?: string;
+  /** 加载遮罩背景色 */
+  loadingBackgroundColor?: string;
+
+  /** 错误信息对象 */
   error?: {
     code?: string | number;
     message?: string;
   } | null;
-  /** 是否以整页形式展示错误，而不是仅覆盖局部内容 */
+  /** 是否全屏展示错误（覆盖整个页面内容） */
   fullScreenError?: boolean;
-  /** 错误态下的重试回调 */
+  /** 错误重试回调 */
   onRetry?: () => void;
 }
 
-// 计算 padding 样式
+/**
+ * 计算内边距样式
+ */
 const getPaddingStyle = (
   padding: number,
   paddingHorizontal?: number,
@@ -80,27 +130,31 @@ const getPaddingStyle = (
 
 const PageContainer: React.FC<PageContainerProps> = ({
   children,
+  // 样式默认值
   backgroundColor = '#FFFFFF',
   backgroundImage,
+  style,
+  contentContainerStyle,
+  // 布局默认值
+  padding = 0,
+  paddingHorizontal = 0,
+  paddingVertical = 0,
+  safeAreaEdges = ['top', 'bottom'],
+  scrollable = false,
+  keyboardShouldPersistTaps = 'handled',
+  // 状态栏默认值
   statusBarStyle = 'dark-content',
   statusBarBackgroundColor = 'transparent',
   showStatusBar = true,
-  safeAreaEdges = ['top', 'bottom'],
-  keyboardAvoidingView = false,
-  scrollable = false,
-  contentContainerStyle,
+  // 头部底部
+  header,
+  footer,
+  pageNavProps,
+  // 状态展示
   loading = false,
   loadingStyle,
   loadingIndicatorColor = '#333333',
   loadingBackgroundColor = 'rgba(0,0,0,0.3)',
-  style,
-  header,
-  footer,
-  padding = 0,
-  paddingHorizontal = 0,
-  paddingVertical = 0,
-  pageNavProps,
-  keyboardShouldPersistTaps = 'handled',
   error,
   fullScreenError = false,
   onRetry,
@@ -108,11 +162,9 @@ const PageContainer: React.FC<PageContainerProps> = ({
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
-  // 默认状态栏样式
-  const defaultStatusBarStyle = statusBarStyle;
-
-  // 生成导航头部
+  // 1. 导航栏处理 (Navigation Header)
   const renderNavHeader = useMemo(() => {
+    // 优先渲染 pageNavProps 配置的导航栏
     if (pageNavProps) {
       const {
         text,
@@ -125,10 +177,8 @@ const PageContainer: React.FC<PageContainerProps> = ({
         titleColor = '#333333',
       } = pageNavProps;
 
-      // 构建右侧内容
       const navRightContent = extraNode || rightContent;
 
-      // 简单的导航头部实现（可以后续替换为 Header 组件）
       return (
         <View
           style={[
@@ -170,22 +220,24 @@ const PageContainer: React.FC<PageContainerProps> = ({
         </View>
       );
     }
+    // 否则渲染传入的 header 组件
     return header;
-  }, [pageNavProps, header, backgroundImage]);
+  }, [pageNavProps, header, backgroundImage, navigation]);
 
-  // 默认背景色
-  const defaultBackgroundColor = backgroundColor;
+  // 2. 内容区域处理 (Content)
 
-  // 内容样式
+  // 计算内容容器的基础样式
   const contentStyle: ViewStyle = useMemo(
     () => ({
       flex: 1,
-      backgroundColor: defaultBackgroundColor,
+      // 如果有背景图，内容背景需透明
+      backgroundColor: backgroundImage ? 'transparent' : backgroundColor,
       ...getPaddingStyle(padding, paddingHorizontal, paddingVertical),
       ...style,
     }),
     [
-      defaultBackgroundColor,
+      backgroundColor,
+      backgroundImage,
       padding,
       paddingHorizontal,
       paddingVertical,
@@ -193,22 +245,21 @@ const PageContainer: React.FC<PageContainerProps> = ({
     ],
   );
 
-  // 渲染内容
   const renderContent = useMemo(() => {
-    // 若需要整页错误展示，则用统一错误视图替代具体内容
+    // A. 全屏错误展示
     if (error && fullScreenError) {
       const codeStr =
         error.code !== undefined && error.code !== null && error.code !== ''
           ? String(error.code)
           : undefined;
 
-      if (codeStr && codeStr === String(LOGIN)) {
+      if (codeStr === String(LOGIN)) {
         return <StatusLogin />;
       }
-
       return <StatusError error={error} onRetry={onRetry} />;
     }
 
+    // B. 可滚动内容 (ScrollView)
     if (scrollable) {
       const scrollContentStyle = [
         styles.scrollContent,
@@ -221,7 +272,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
           style={styles.scrollView}
           contentContainerStyle={scrollContentStyle}
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          keyboardShouldPersistTaps={keyboardShouldPersistTaps}
           bottomOffset={Platform.OS === 'ios' ? 0 : 20}
         >
           {children}
@@ -229,8 +280,11 @@ const PageContainer: React.FC<PageContainerProps> = ({
       );
     }
 
+    // C. 普通视图
     return <View style={contentStyle}>{children}</View>;
   }, [
+    error,
+    fullScreenError,
     scrollable,
     children,
     padding,
@@ -238,71 +292,112 @@ const PageContainer: React.FC<PageContainerProps> = ({
     paddingVertical,
     contentContainerStyle,
     contentStyle,
-    error,
-    fullScreenError,
+    keyboardShouldPersistTaps,
     onRetry,
   ]);
 
+  // 3. 安全区与背景图适配 (Safe Area & Background)
+
+  /**
+   * 核心逻辑：背景图沉浸式适配
+   *
+   * 当存在 backgroundImage 时：
+   * 1. SafeAreaView 的 top/bottom edges 被禁用，使其延伸到屏幕边缘（覆盖状态栏）。
+   * 2. 我们通过 manualPaddingStyle 手动给内容容器添加 padding，确保内容不被状态栏遮挡。
+   *
+   * 这样做的目的是让 ImageBackground 作为最外层父容器铺满全屏，而内容依然在安全区内。
+   */
+
+  // 计算 SafeAreaView 的 edges
+  const finalEdges = useMemo(() => {
+    if (backgroundImage) {
+      return safeAreaEdges.filter(e => e !== 'top' && e !== 'bottom');
+    }
+    return safeAreaEdges;
+  }, [backgroundImage, safeAreaEdges]);
+
+  // 计算手动补充的 padding
+  const manualPaddingStyle = useMemo(() => {
+    if (!backgroundImage) return {};
+    const style: ViewStyle = {};
+    if (safeAreaEdges.includes('top')) {
+      style.paddingTop = insets.top;
+    }
+    if (safeAreaEdges.includes('bottom')) {
+      style.paddingBottom = insets.bottom;
+    }
+    return style;
+  }, [backgroundImage, safeAreaEdges, insets]);
+
+  // 4. Loading 遮罩
+  const renderLoading = () => {
+    if (!loading) return null;
+    return (
+      <View
+        style={[
+          styles.loadingOverlay,
+          { backgroundColor: loadingBackgroundColor },
+          loadingStyle,
+        ]}
+        pointerEvents="auto"
+      >
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={loadingIndicatorColor} />
+        </View>
+      </View>
+    );
+  };
+
+  // 5. Main Render
   return (
     <>
-      {/* 状态栏 */}
+      {/* 状态栏配置 */}
       {showStatusBar && (
         <StatusBar
-          barStyle={defaultStatusBarStyle}
-          backgroundColor={
-            statusBarBackgroundColor ||
-            (Platform.OS === 'android' ? defaultBackgroundColor : undefined)
-          }
+          barStyle={statusBarStyle}
+          backgroundColor={statusBarBackgroundColor}
           showHideTransition={'none'}
-          translucent={Platform.OS === 'android'}
+          translucent
         />
       )}
+
+      {/* 背景容器 */}
       <ImageBackground
         source={backgroundImage}
         style={styles.backgroundImage}
-        resizeMode={'stretch'}
+        resizeMode={'cover'}
       >
         <SafeAreaView
           style={[
             styles.container,
             {
+              // 无背景图时使用 backgroundColor，有背景图时透明以便透出 ImageBackground
               backgroundColor: backgroundImage
                 ? 'transparent'
-                : defaultBackgroundColor,
+                : backgroundColor,
             },
           ]}
-          edges={safeAreaEdges}
+          edges={finalEdges}
         >
-          {loading && (
-            <View
-              style={[
-                styles.loadingOverlay,
-                {
-                  backgroundColor: loadingBackgroundColor,
-                },
-                loadingStyle,
-              ]}
-              pointerEvents="auto"
-            >
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={loadingIndicatorColor} />
-              </View>
-            </View>
-          )}
-          <View style={styles.pageContainer}>
-            {/* 头部 */}
+          {/* 全局 Loading */}
+          {renderLoading()}
+
+          {/* 页面主结构 */}
+          <View style={[styles.pageContainer, manualPaddingStyle]}>
+            {/* 头部区域 */}
             {(header || pageNavProps) && (
               <View style={styles.headerContainer}>{renderNavHeader}</View>
             )}
 
-            {/* 主要内容 */}
+            {/* 内容区域 */}
             {renderContent}
 
-            {/* 底部 */}
+            {/* 底部区域 */}
             {footer && (
               <View
                 style={[
                   styles.footerContainer,
+                  // Android 底部额外 padding 适配
                   Platform.OS === 'android' && {
                     paddingBottom: insets.bottom + 20,
                   },

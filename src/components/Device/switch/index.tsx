@@ -271,9 +271,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   switchText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '400',
-    marginRight: 4,
   },
   header: {
     padding: 16,

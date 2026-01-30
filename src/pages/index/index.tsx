@@ -215,10 +215,15 @@ const Index = () => {
     };
   }, [onOptioned, onAnimation]);
 
+  const bgImage =
+    detail && detail.imageMap?.bgPng
+      ? { uri: detail.imageMap.bgPng }
+      : undefined;
+
   return (
     <PageContainer
-      backgroundColor="#f7f8fa"
-      statusBarStyle="dark-content"
+      backgroundColor={bgImage ? 'transparent' : '#f7f8fa'}
+      statusBarStyle={bgImage ? 'light-content' : 'dark-content'}
       style={styles.pageContainer}
       loading={loading}
       error={error}
@@ -226,12 +231,7 @@ const Index = () => {
       onRetry={() => {
         void load();
       }}
-      // 参考 Taro Container：有设备时使用远程背景图
-      backgroundImage={
-        detail && detail.imageMap?.bgPng
-          ? { uri: detail.imageMap.bgPng }
-          : undefined
-      }
+      backgroundImage={bgImage}
     >
       {showGuestWelcome ? (
         <View style={styles.guestContainer}>
@@ -276,17 +276,16 @@ const Index = () => {
         </View>
       ) : (
         <>
-          <Header
-            unreadCount={unreadCount}
-            lockInfo={detail}
-            title="首页"
-            reload={() => {
-              void load();
-            }}
-          />
-
           {/* 主体内容 */}
           <ScrollView contentContainerStyle={styles.content}>
+            <Header
+              unreadCount={unreadCount}
+              lockInfo={detail}
+              title="首页"
+              reload={() => {
+                void load();
+              }}
+            />
             {hasDevice && detail?.id ? (
               <Content
                 detail={detail}
@@ -317,7 +316,6 @@ const Index = () => {
 const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
-    backgroundColor: '#f7f8fa',
   },
   content: {
     flexGrow: 1,
