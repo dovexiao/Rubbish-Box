@@ -14,7 +14,8 @@ import LinearGradient, {
   LinearGradientProps,
 } from 'react-native-linear-gradient';
 
-export interface GradientButtonProps extends Omit<TouchableOpacityProps, 'style'> {
+export interface GradientButtonProps
+  extends Omit<TouchableOpacityProps, 'style'> {
   children?: ReactNode;
   text?: string;
   colors?: (string | number)[];
@@ -33,14 +34,14 @@ export interface GradientButtonProps extends Omit<TouchableOpacityProps, 'style'
 }
 
 const GradientButton: React.FC<GradientButtonProps> = ({
-  colors = ['#0077FD', '#3393FF'],
+  colors = ['#333333', '#333333'],
   children,
   text,
   linearGradientProps,
   className,
   onPress,
   round = true,
-  btnBorderRadius = 24,
+  btnBorderRadius = 12,
   hasBorder = false,
   style,
   contentStyle,
@@ -52,7 +53,9 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   ...props
 }) => {
   const borderRadius = round
-    ? (height && typeof height === 'number' ? height / 2 : btnBorderRadius)
+    ? height && typeof height === 'number'
+      ? height / 2
+      : btnBorderRadius
     : btnBorderRadius;
 
   const gradientStyle: ViewStyle = {

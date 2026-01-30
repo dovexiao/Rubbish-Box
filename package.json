@@ -8,6 +8,7 @@
     "android": "cross-env ENVFILE=.env.development react-native run-android --mode=devDebug --appId=com.boklock.m.test",
     "ios": "react-native run-ios",
     "lint": "eslint .",
+    "iconfont": "iconfont-rn",
     "test": "jest",
     "podInstall": "cd ios && pod install && cd ..",
     "gradlew:clean": "cd android && ./gradlew clean && cd ..",

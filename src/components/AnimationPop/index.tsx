@@ -175,13 +175,7 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
           pointerEvents="box-none"
         >
           <View style={{ flex: isVertical ? 0 : 1, overflow: 'hidden' }}>
-            {/* <ScrollView
-              style={{ flex: isVertical ? 0 : 1 }}
-              contentContainerStyle={{ flexGrow: 1 }}
-              keyboardShouldPersistTaps="handled"
-            > */}
             <View onStartShouldSetResponder={() => true}>{children}</View>
-            {/* </ScrollView> */}
             {btn && <View style={styles.btnContainer}>{btn}</View>}
           </View>
         </Animated.View>
