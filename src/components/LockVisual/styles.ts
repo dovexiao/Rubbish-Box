@@ -20,10 +20,10 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   actionButtonDeep: {
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   actionButtonLight: {
-    backgroundColor: 'rgba(0,0,0,0.06)',
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
   actionText: {
     fontSize: 12,
@@ -31,13 +31,13 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   actionTextDeep: {
-    color: '#FFFFFF',
+    color: 'rgba(255,255,255,0.8)',
   },
   actionTextLight: {
-    color: '#333333',
+    color: 'rgba(51,51,51,0.8)',
   },
   actionIcon: {
-    marginLeft: 6,
+    marginLeft: 2,
   },
   staticImage: {
     width: '100%',

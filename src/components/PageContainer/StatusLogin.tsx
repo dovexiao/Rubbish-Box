@@ -4,17 +4,24 @@ import { styles } from './styles';
 import Flex from '@/components/Flex';
 import PopConfirm from '@/components/popConfirm';
 import { reLaunch } from '@/utils';
+import { useTheme } from '@/context/ThemeContext';
 
 const StatusLogin: React.FC = () => {
   const popupRef = useRef<any>(null);
+  const { theme, themeType } = useTheme();
 
   return (
     <View style={styles.statusLoginContainer}>
-      <Text style={styles.statusLoginTitle}>欢迎使用 泊刻地锁</Text>
+      <Text style={[styles.statusLoginTitle, { color: theme.colors.text.primary }]}>
+        欢迎使用 泊刻地锁
+      </Text>
       <Flex
         align="center"
         justify="center"
-        style={styles.statusLoginAddBtn}
+        style={[
+          styles.statusLoginAddBtn,
+          { backgroundColor: themeType === 'dark' ? '#2C2C2C' : '#F5F7FA' },
+        ]}
         isTouchView
         onPress={() => {
           popupRef.current?.open?.();
@@ -26,7 +33,9 @@ const StatusLogin: React.FC = () => {
           resizeMode="contain"
         />
       </Flex>
-      <Text style={styles.statusLoginToast}>来添加你的第一台地锁吧！</Text>
+      <Text style={[styles.statusLoginToast, { color: theme.colors.text.secondary }]}>
+        来添加你的第一台地锁吧！
+      </Text>
       <Flex
         isTouchView
         justify="center"

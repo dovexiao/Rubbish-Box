@@ -9,6 +9,7 @@ import { baseInfo, getStaffList, logout } from '@/services/user';
 import { cacheGetSync, cacheRemove, cacheSetSync } from '@/utils/cache';
 import { tokenStorage } from '@/utils/storage';
 import styles from './styles';
+import { useTheme } from '@/context/ThemeContext';
 
 type MineInfo = {
   id?: string | number;
@@ -20,6 +21,7 @@ type MineInfo = {
 
 export default function Mine() {
   const navigation = useNavigation<any>();
+  const { theme, themeType } = useTheme();
 
   const [hasToken, setHasToken] = useState(false);
   const [info, setInfo] = useState<MineInfo | undefined>(undefined);
@@ -92,16 +94,16 @@ export default function Mine() {
     try {
       // 服务端退出（失败也不影响本地清理）
       await logout({});
-    } catch { }
+    } catch {}
     try {
       await cacheRemove({ key: 'token' });
-    } catch { }
+    } catch {}
     try {
       await tokenStorage.remove();
-    } catch { }
+    } catch {}
     try {
       await cacheSetSync('guestMode', true);
-    } catch { }
+    } catch {}
 
     navigation.reset({
       index: 0,
@@ -111,14 +113,46 @@ export default function Mine() {
 
   const listItems = useMemo(
     () => [
-      { icon: 'a-addequipments' as const, label: '添加设备', onPress: () => navigation.navigate('AddDevice') },
-      { icon: 'shopping' as const, label: '商城', onPress: () => navigation.navigate('Mall') },
-      { icon: 'order' as const, label: '我的订单', onPress: () => navigation.navigate('MyOrder') },
-      { icon: 'maintain' as const, label: '在线报修', onPress: () => navigation.navigate('OnlineRepair') },
-      { icon: 'a-advertisingdisplay' as const, label: '广告位展示', onPress: () => navigation.navigate('AdvertisingDisplay') },
-      { icon: 'feedback' as const, label: '意见反馈', onPress: () => navigation.navigate('Feedback') },
-      { icon: 'a-skinpeeler' as const, label: '换肤', onPress: () => navigation.navigate('SkinPeeler') },
-      { icon: 'setting' as const, label: '设置', onPress: () => navigation.navigate('Setting') },
+      {
+        icon: 'a-addequipments' as const,
+        label: '添加设备',
+        onPress: () => navigation.navigate('AddDevice'),
+      },
+      {
+        icon: 'shopping' as const,
+        label: '商城',
+        onPress: () => navigation.navigate('Mall'),
+      },
+      {
+        icon: 'order' as const,
+        label: '我的订单',
+        onPress: () => navigation.navigate('MyOrder'),
+      },
+      {
+        icon: 'maintain' as const,
+        label: '在线报修',
+        onPress: () => navigation.navigate('OnlineRepair'),
+      },
+      {
+        icon: 'a-advertisingdisplay' as const,
+        label: '广告位展示',
+        onPress: () => navigation.navigate('AdvertisingDisplay'),
+      },
+      {
+        icon: 'feedback' as const,
+        label: '意见反馈',
+        onPress: () => navigation.navigate('Feedback'),
+      },
+      {
+        icon: 'a-skinpeeler' as const,
+        label: '换肤',
+        onPress: () => navigation.navigate('SkinPeeler'),
+      },
+      {
+        icon: 'setting' as const,
+        label: '设置',
+        onPress: () => navigation.navigate('Setting'),
+      },
     ],
     [navigation],
   );
@@ -127,7 +161,7 @@ export default function Mine() {
     <PageContainer
       backgroundColor="#FCFBFE"
       backgroundImage={backgroundImage}
-      statusBarBackgroundColor={backgroundImage ? 'transparent' : '#FCFBFE'}
+      statusBarBackgroundColor={backgroundImage ? 'transparent' : '#FFFFFF'}
       scrollable
       loading={loading && hasToken && !info}
       safeAreaEdges={['top', 'bottom']}
@@ -140,15 +174,22 @@ export default function Mine() {
             navigation.navigate('UserInfo');
           }}
         >
-          {info?.avatar && typeof info.avatar === 'string' && info.avatar.startsWith('http') ? (
+          {info?.avatar &&
+          typeof info.avatar === 'string' &&
+          info.avatar.startsWith('http') ? (
             <Image source={{ uri: info.avatar }} style={styles.avatar} />
           ) : (
             <View style={styles.avatar} />
           )}
         </TouchableOpacity>
 
-        <Text style={styles.name}>
-          {hasToken ? (info?.nickName ?? '') : '未登录'}
+        <Text
+          style={[
+            styles.name,
+            themeType === 'dark' ? styles.darkName : styles.lightName,
+          ]}
+        >
+          {hasToken ? info?.nickName ?? '' : '未登录'}
         </Text>
 
         <TouchableOpacity
@@ -171,7 +212,7 @@ export default function Mine() {
         </TouchableOpacity>
 
         <View style={styles.listBox}>
-          {listItems.map((it) => {
+          {listItems.map(it => {
             return (
               <View key={it.label}>
                 <TouchableOpacity

@@ -222,8 +222,7 @@ const Index = () => {
 
   return (
     <PageContainer
-      backgroundColor={bgImage ? 'transparent' : '#f7f8fa'}
-      statusBarStyle={bgImage ? 'light-content' : 'dark-content'}
+      backgroundColor={bgImage ? 'transparent' : '#f6f7fa'}
       style={styles.pageContainer}
       loading={loading}
       error={error}
@@ -278,14 +277,7 @@ const Index = () => {
         <>
           {/* 主体内容 */}
           <ScrollView contentContainerStyle={styles.content}>
-            <Header
-              unreadCount={unreadCount}
-              lockInfo={detail}
-              title="首页"
-              reload={() => {
-                void load();
-              }}
-            />
+            <Header unreadCount={unreadCount} lockInfo={detail} />
             {hasDevice && detail?.id ? (
               <Content
                 detail={detail}

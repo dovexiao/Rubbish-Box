@@ -22,6 +22,7 @@ import IconFont from '@/iconfont';
 import StatusError from './StatusError';
 import StatusLogin from './StatusLogin';
 import { LOGIN } from '@/constants';
+import { useTheme } from '@/context/ThemeContext';
 
 /**
  * 页面导航栏配置类型
@@ -131,7 +132,7 @@ const getPaddingStyle = (
 const PageContainer: React.FC<PageContainerProps> = ({
   children,
   // 样式默认值
-  backgroundColor = '#FFFFFF',
+  backgroundColor,
   backgroundImage,
   style,
   contentContainerStyle,
@@ -143,8 +144,8 @@ const PageContainer: React.FC<PageContainerProps> = ({
   scrollable = false,
   keyboardShouldPersistTaps = 'handled',
   // 状态栏默认值
-  statusBarStyle = 'dark-content',
-  statusBarBackgroundColor = 'transparent',
+  statusBarStyle,
+  statusBarBackgroundColor,
   showStatusBar = true,
   // 头部底部
   header,
@@ -153,7 +154,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
   // 状态展示
   loading = false,
   loadingStyle,
-  loadingIndicatorColor = '#333333',
+  loadingIndicatorColor,
   loadingBackgroundColor = 'rgba(0,0,0,0.3)',
   error,
   fullScreenError = false,
@@ -161,6 +162,15 @@ const PageContainer: React.FC<PageContainerProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const { theme } = useTheme();
+
+  // 解析主题默认值
+  const defaultBackgroundColor =
+    backgroundColor ?? theme.colors.background.primary;
+  const defaultStatusBarStyle =
+    statusBarStyle ?? theme.colors.statusBar.barStyle;
+  const defaultStatusBarBackgroundColor =
+    statusBarBackgroundColor ?? theme.colors.statusBar.backgroundColor;
 
   // 1. 导航栏处理 (Navigation Header)
   const renderNavHeader = useMemo(() => {
@@ -231,12 +241,12 @@ const PageContainer: React.FC<PageContainerProps> = ({
     () => ({
       flex: 1,
       // 如果有背景图，内容背景需透明
-      backgroundColor: backgroundImage ? 'transparent' : backgroundColor,
+      backgroundColor: backgroundImage ? 'transparent' : defaultBackgroundColor,
       ...getPaddingStyle(padding, paddingHorizontal, paddingVertical),
       ...style,
     }),
     [
-      backgroundColor,
+      defaultBackgroundColor,
       backgroundImage,
       padding,
       paddingHorizontal,
@@ -354,8 +364,8 @@ const PageContainer: React.FC<PageContainerProps> = ({
       {/* 状态栏配置 */}
       {showStatusBar && (
         <StatusBar
-          barStyle={statusBarStyle}
-          backgroundColor={statusBarBackgroundColor}
+          barStyle={defaultStatusBarStyle}
+          backgroundColor={defaultStatusBarBackgroundColor}
           showHideTransition={'none'}
           translucent
         />
@@ -374,7 +384,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
               // 无背景图时使用 backgroundColor，有背景图时透明以便透出 ImageBackground
               backgroundColor: backgroundImage
                 ? 'transparent'
-                : backgroundColor,
+                : defaultBackgroundColor,
             },
           ]}
           edges={finalEdges}

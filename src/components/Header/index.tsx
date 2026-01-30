@@ -1,13 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Flex from '../Flex';
 import IconFont from '@/iconfont';
 import {
@@ -17,22 +9,16 @@ import {
   SIGNAL_STATUS_DEEP,
   LOCK_STATUS,
 } from '@/constants';
-import Popup from '@/components/Popup';
 import PopConfirm from '@/components/popConfirm';
 import { getLockDeviceList } from '@/services/device';
-import { updateName } from '@/services/deviceInfo';
-import { cacheGetSync } from '@/utils/cache';
 import { Toast } from '@ant-design/react-native';
+import { useTheme } from '@/context/ThemeContext';
 
 interface HeaderProps {
   /** 未读消息数 */
   unreadCount?: number;
-  /** 背景类型：深色 / 浅色 */
-  backgroundType?: 'deep' | 'normal' | 'shallow';
   /** 当前锁信息 */
   lockInfo?: any;
-  /** 刷新当前设备详情；切换设备或改名成功后调用 */
-  reload?: (id?: number) => Promise<any> | void;
   /** 设备类型：单个/组合等，默认为 1，与原项目对齐占位 */
   type?: number;
   /** 标题（占位，保持与调用方兼容） */
@@ -41,32 +27,32 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({
   unreadCount = 0,
-  backgroundType,
   lockInfo,
-  reload,
   type = 1,
 }) => {
-  const [deviceListVisible, setDeviceListVisible] = useState(false);
-  const [editVisible, setEditVisible] = useState(false);
   const [deviceList, setDeviceList] = useState<any[]>([]);
-  const [editingDevice, setEditingDevice] = useState<any | null>(null);
-  const [lockNameEditing, setLockNameEditing] = useState('');
+  const { theme, themeType } = useTheme();
 
-  const isDeep = backgroundType === 'deep';
-
-  const textColor = isDeep ? '#FFFFFF' : '#333333';
+  const textColor = useMemo(() => {
+    // 深色模式下 primary 为白色；浅色模式下 inverse 为白色
+    return themeType === 'dark'
+      ? theme.colors.text.primary
+      : theme.colors.text.color333;
+  }, [themeType, theme]);
 
   const batteryIcon = useMemo(() => {
     if (!lockInfo?.showBattery) return undefined;
 
     // 市电充电中
     if (lockInfo?.powerType === 1) {
-      return 'https://g.18qjz.cn/img/boklock/charging.png';
+      return themeType === 'dark'
+        ? 'https://g.18qjz.cn/img/boklock/batteryIcon/charging.png'
+        : 'https://g.18qjz.cn/img/boklock/batteryIcon/deep_charging.png';
     }
 
     // 离线或故障使用无信号图标
     if ([6, 7].includes(lockInfo?.deviceStatus)) {
-      return isDeep
+      return themeType === 'dark'
         ? 'https://g.18qjz.cn/img/boklock/batteryIcon/battery_no_signal_deep.png'
         : 'https://g.18qjz.cn/img/boklock/batteryIcon/battery_no_signal.png';
     }
@@ -74,14 +60,14 @@ const Header: React.FC<HeaderProps> = ({
     const percent = Number(lockInfo?.battery ?? 0);
     const level =
       percent >= 75 ? 100 : percent >= 50 ? 75 : percent >= 25 ? 50 : 25;
-    const map = isDeep ? BATTERY_STATUS_DEEP : BATTERY_STATUS;
+    const map = themeType === 'dark' ? BATTERY_STATUS_DEEP : BATTERY_STATUS;
     return (map as any)[level];
-  }, [isDeep, lockInfo]);
+  }, [themeType, lockInfo]);
 
   const signalIcon = useMemo(() => {
     // 离线单独处理
     if (lockInfo?.deviceStatus === 6) {
-      return isDeep
+      return themeType === 'dark'
         ? 'https://g.18qjz.cn/img/boklock/signalIcon/signal_no_signal_deep.png'
         : 'https://g.18qjz.cn/img/boklock/signalIcon/signal_no_signal.png';
     }
@@ -92,9 +78,9 @@ const Header: React.FC<HeaderProps> = ({
     else if (csq >= 16) level = 4;
     else if (csq >= 12) level = 3;
     else if (csq >= 8) level = 2;
-    const map = isDeep ? SIGNAL_STATUS_DEEP : SIGNAL_STATUS;
+    const map = themeType === 'dark' ? SIGNAL_STATUS_DEEP : SIGNAL_STATUS;
     return (map as any)[level];
-  }, [isDeep, lockInfo]);
+  }, [themeType, lockInfo]);
 
   const renderMessage = () => (
     <View style={styles.messageWrapper}>
@@ -115,132 +101,6 @@ const Header: React.FC<HeaderProps> = ({
   );
 
   const isGroupOrNonMains = lockInfo?.isGroup || lockInfo?.powerType !== 1;
-
-  const loadDeviceList = useCallback(
-    async (reloadList: boolean) => {
-      if (!lockInfo?.id) return;
-      const offset = reloadList ? 0 : deviceList.length;
-      const res = await getLockDeviceList({
-        offset,
-        pageSize: 999,
-        id: lockInfo.id,
-        type,
-      } as any);
-
-      if (!res?.success) {
-        Toast.fail(res?.message || '获取设备列表失败');
-        return;
-      }
-
-      const list = (res.data as any)?.list || [];
-      setDeviceList(reloadList ? list : [...deviceList, ...list]);
-    },
-    [deviceList, lockInfo?.id, type],
-  );
-
-  useEffect(() => {
-    if (lockInfo?.id) {
-      loadDeviceList(true).catch(() => {
-        // ignore
-      });
-    }
-  }, [lockInfo?.id, loadDeviceList]);
-
-  const handleSelectDevice = useCallback(
-    async (item: any) => {
-      setDeviceListVisible(false);
-      if (!reload || !lockInfo?.id) return;
-
-      const loadingToast = Toast.loading('切换设备中...', 0);
-      try {
-        const result = await getLockDeviceList({
-          id: lockInfo.id,
-          type,
-          offset: 0,
-          pageSize: 999,
-        } as any);
-
-        if (!result?.success) {
-          Toast.remove(loadingToast);
-          Toast.fail(result?.message || '获取设备列表失败');
-          return;
-        }
-
-        const latestList = (result.data as any)?.list || [];
-        if (!latestList.some((v: any) => v?.id === item?.id)) {
-          setDeviceList(latestList);
-          Toast.remove(loadingToast);
-          Toast.info('该设备已不存在');
-          const r = reload(undefined);
-          if (r && typeof (r as any).then === 'function') {
-            await (r as Promise<any>);
-          }
-          return;
-        }
-
-        const r = reload(item.id);
-        if (r && typeof (r as any).then === 'function') {
-          await (r as Promise<any>);
-        }
-
-        Toast.remove(loadingToast);
-      } catch (e) {
-        Toast.remove(loadingToast);
-        Toast.fail('切换设备失败');
-      }
-    },
-    [lockInfo?.id, reload, type],
-  );
-
-  const openEditName = useCallback((item: any) => {
-    setEditingDevice(item);
-    setLockNameEditing(item?.lockName || '');
-    setDeviceListVisible(false);
-    setEditVisible(true);
-  }, []);
-
-  const handleConfirmEdit = useCallback(async () => {
-    if (!editingDevice) {
-      setEditVisible(false);
-      return;
-    }
-
-    const name = lockNameEditing.trim();
-    if (!name) {
-      Toast.info('请输入名称');
-      return;
-    }
-
-    const userId = await cacheGetSync('userId');
-    const loadingToast = Toast.loading('修改中...', 0);
-    try {
-      const res = await updateName({
-        id: editingDevice.id,
-        lockName: name,
-        userId,
-      } as any);
-
-      if (!res?.success) {
-        Toast.remove(loadingToast);
-        Toast.fail(res?.message || '修改地锁名称失败');
-        return;
-      }
-
-      Toast.remove(loadingToast);
-      Toast.success('修改成功');
-      setEditVisible(false);
-
-      if (reload) {
-        const r = reload();
-        if (r && typeof (r as any).then === 'function') {
-          await (r as Promise<any>);
-        }
-      }
-    } catch (e) {
-      Toast.remove(loadingToast);
-      Toast.fail('修改地锁名称失败');
-    }
-  }, [editingDevice, lockNameEditing, reload]);
 
   return (
     <>
@@ -286,7 +146,9 @@ const Header: React.FC<HeaderProps> = ({
                   style={[
                     styles.line,
                     styles.colSpace16,
-                    isDeep ? styles.deepLineColor : styles.defaultLineColor,
+                    themeType === 'dark'
+                      ? styles.deepLineColor
+                      : styles.defaultLineColor,
                   ]}
                 />
               )}
@@ -309,9 +171,10 @@ const Header: React.FC<HeaderProps> = ({
                   lockInfo?.deviceStatus === 7 && styles.failureDot,
                   lockInfo?.deviceStatus === 6
                     ? {
-                        backgroundColor: isDeep
-                          ? 'rgba(249, 249, 249, 0.41)'
-                          : 'rgba(51, 51, 51, 0.3)',
+                        backgroundColor:
+                          themeType === 'dark'
+                            ? 'rgba(249, 249, 249, 0.41)'
+                            : 'rgba(51, 51, 51, 0.3)',
                       }
                     : null,
                 ]}
@@ -331,124 +194,6 @@ const Header: React.FC<HeaderProps> = ({
           </TouchableOpacity>
         )}
       </Flex>
-
-      {/* 设备列表弹层 */}
-      {/* <Popup
-        visible={deviceListVisible}
-        onClose={() => setDeviceListVisible(false)}
-        title="选择设备"
-        minHeight={260}
-        footer={
-          <View style={styles.deviceFooter}>
-            <TouchableOpacity
-              style={[styles.footerButton]}
-              activeOpacity={0.8}
-              onPress={() => {
-                setDeviceListVisible(false);
-                Toast.info(
-                  lockInfo?.isGroup
-                    ? '创建组合设备功能待接入'
-                    : '添加设备功能待接入',
-                );
-              }}
-            >
-              <Text style={styles.footerButtonText}>
-                {lockInfo?.isGroup ? '创建组合设备' : '添加设备'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        }
-      >
-        <ScrollView
-          style={styles.deviceList}
-          contentContainerStyle={styles.deviceListContent}
-        >
-          {deviceList.map((item: any) => (
-            <TouchableOpacity
-              key={item.id}
-              activeOpacity={0.8}
-              onPress={() => handleSelectDevice(item)}
-              style={[
-                styles.deviceItem,
-                item.id === lockInfo?.id && styles.deviceItemActive,
-              ]}
-            >
-              <View style={styles.deviceInfoLeft}>
-                <Text style={styles.deviceName} numberOfLines={1}>
-                  {item.lockName}
-                </Text>
-                <Text style={styles.deviceRole}>{item.roleName}</Text>
-                {item.role === 1 && (
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => openEditName(item)}
-                    style={styles.deviceEdit}
-                  >
-                    <Text style={styles.deviceEditText}>编辑</Text>
-                    <IconFont name="pen16" size={14} color="#999999" />
-                  </TouchableOpacity>
-                )}
-              </View>
-              <View style={styles.deviceInfoRight}>
-                {item.imageUrl ? (
-                  <Image
-                    source={{ uri: item.imageUrl }}
-                    style={styles.deviceImage}
-                    resizeMode="contain"
-                  />
-                ) : null}
-                {item.groupCount !== 1 && (
-                  <View style={styles.deviceGroupWrap}>
-                    <IconFont name="multiplication" size={12} color="#333333" />
-                    <Text style={styles.deviceGroupCount}>
-                      {item.groupCount}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </Popup> */}
-
-      {/* 重命名弹窗 */}
-      <Popup
-        visible={editVisible}
-        onClose={() => setEditVisible(false)}
-        title={`编辑${
-          editingDevice?.groupCount === 1 ? '地锁' : '组合设备'
-        }名称`}
-        minHeight={200}
-      >
-        <View style={styles.editRow}>
-          <Text style={styles.editLabel}>
-            {editingDevice?.groupCount === 1 ? '地锁名称' : '组合设备名称'}
-          </Text>
-          <TextInput
-            style={styles.editInput}
-            value={lockNameEditing}
-            onChangeText={setLockNameEditing}
-            placeholder="请输入"
-            placeholderTextColor="#999999"
-          />
-        </View>
-        <View style={styles.editFooter}>
-          <TouchableOpacity
-            style={[styles.editButton, styles.editCancel]}
-            activeOpacity={0.8}
-            onPress={() => setEditVisible(false)}
-          >
-            <Text style={styles.editCancelText}>取消</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.editButton, styles.editConfirm]}
-            activeOpacity={0.8}
-            onPress={handleConfirmEdit}
-          >
-            <Text style={styles.editConfirmText}>确定</Text>
-          </TouchableOpacity>
-        </View>
-      </Popup>
 
       {/* 预留蓝牙提示弹窗 */}
       <PopConfirm

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { PERMISSION_DENIED } from '@/constants';
+import { useTheme } from '@/context/ThemeContext';
 
 export interface StatusErrorProps {
   error?: {
@@ -12,6 +13,7 @@ export interface StatusErrorProps {
 }
 
 const StatusError: React.FC<StatusErrorProps> = ({ error, onRetry }) => {
+  const { theme } = useTheme();
   const code = error?.code;
   const codeStr =
     code !== undefined && code !== null && code !== ''
@@ -36,8 +38,14 @@ const StatusError: React.FC<StatusErrorProps> = ({ error, onRetry }) => {
 
   return (
     <View style={styles.errorContainer}>
-      <Text style={styles.errorTitle}>{title}</Text>
-      <Text style={styles.errorMessage}>{displayText}</Text>
+      <Text style={[styles.errorTitle, { color: theme.colors.text.primary }]}>
+        {title}
+      </Text>
+      <Text
+        style={[styles.errorMessage, { color: theme.colors.text.secondary }]}
+      >
+        {displayText}
+      </Text>
       {onRetry && (
         <TouchableOpacity
           style={styles.errorRetryButton}

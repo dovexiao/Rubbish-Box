@@ -242,6 +242,7 @@ const {
     guestMode: false,
     // 从协议/隐私 Web 页面返回后，是否需要重开隐私弹窗
     reopenPrivacyAfterWeb: false,
+    themeType: 'dark' as 'dark' | 'light',
   },
 });
 

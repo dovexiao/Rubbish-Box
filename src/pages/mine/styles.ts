@@ -25,8 +25,13 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 18,
     lineHeight: 24,
-    fontWeight: '700',
+    fontWeight: '500',
     textAlign: 'center',
+  },
+  darkName: {
+    color: '#FFFFFF',
+  },
+  lightName: {
     color: '#333333',
   },
 
@@ -78,7 +83,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-
   listLabel: {
     flex: 1,
     marginLeft: 12,
@@ -97,4 +101,3 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
-

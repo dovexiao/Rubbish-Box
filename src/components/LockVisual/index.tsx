@@ -6,6 +6,7 @@ import { LOCK_ROLE } from '@/constants';
 import FastImage from 'react-native-fast-image';
 import styles from './styles';
 import { LockInfoDTO } from '@/pages/index/typing';
+import { useTheme } from '@/context/ThemeContext';
 
 export type LockVisualStatus =
   | 'rise'
@@ -54,6 +55,7 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     onPressAddDevice,
     onPressCombineDevice,
   } = props;
+  const { theme, themeType } = useTheme();
 
   const [lockStatus, setLockStatus] =
     useState<LockVisualStatus>(currentDeviceStatus);
@@ -86,8 +88,6 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     showFalling30Gif ||
     showRising120Gif ||
     showFalling120Gif;
-
-  const isDeep = backgroundType === 'deep';
 
   const showActionButton = detail?.role === LOCK_ROLE.ADMIN;
 
@@ -151,13 +151,17 @@ const LockVisual: React.FC<LockVisualProps> = props => {
           onPress={handlePressAction}
           style={[
             styles.actionButton,
-            isDeep ? styles.actionButtonDeep : styles.actionButtonLight,
+            themeType === 'dark'
+              ? styles.actionButtonDeep
+              : styles.actionButtonLight,
           ]}
         >
           <Text
             style={[
               styles.actionText,
-              isDeep ? styles.actionTextDeep : styles.actionTextLight,
+              themeType === 'dark'
+                ? styles.actionTextDeep
+                : styles.actionTextLight,
             ]}
           >
             {actionButtonText}
@@ -166,7 +170,11 @@ const LockVisual: React.FC<LockVisualProps> = props => {
             <IconFont
               name={detail?.isGroup ? 'a-combinationunit' : 'a-add12'}
               size={16}
-              color={isDeep ? '#FFFFFF' : '#333333'}
+              color={
+                themeType === 'dark'
+                  ? 'rgba(255,255,255,0.8)'
+                  : 'rgba(51,51,51,0.8)'
+              }
             />
           </View>
         </Flex>
