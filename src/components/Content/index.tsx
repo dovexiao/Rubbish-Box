@@ -1,13 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
-  ImageSourcePropType,
-} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import Flex from '../Flex';
 import IconFont from '@/iconfont';
 import { Toast } from '@ant-design/react-native';
@@ -15,12 +7,12 @@ import { operateLock } from '@/services/device';
 import { OPT_TYPE } from '@/constants';
 import { DeviceSwitch } from '../Device/switch';
 import { LockInfoDTO } from '@/pages/index/typing';
+import { styles } from './style';
+import { groupSubList } from '@/services';
 
 interface ContentProps {
   detail?: LockInfoDTO;
-  backgroundType?: 'deep' | 'shallow';
   reload?: (id?: number) => Promise<any> | void;
-  isMultiple?: boolean;
   optioning?: boolean;
   onFresh?: (id?: number) => Promise<any> | void;
   onAnimation?: (params: any) => void;
@@ -29,15 +21,28 @@ interface ContentProps {
 
 const Content: React.FC<ContentProps> = ({
   detail,
-  backgroundType,
   reload,
-  isMultiple,
   optioning,
   onFresh,
   onAnimation,
   children,
 }) => {
   const [operating, setOperating] = useState(false);
+  const [groupList, setGroupList] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (detail?.isGroup) {
+      async function getGroupSubList() {
+        const res = await groupSubList({
+          id: detail?.id,
+          pageSize: 30,
+          offset: 0,
+        });
+        setGroupList(res.data?.list || []);
+      }
+      getGroupSubList();
+    }
+  }, [detail]);
 
   const handleOperate = useCallback(
     async (direction: 'rise' | 'fall') => {
@@ -89,7 +94,6 @@ const Content: React.FC<ContentProps> = ({
           lockInfo={detail}
           reload={reload}
           type={detail?.isGroup ? 2 : 1}
-          backgroundType={backgroundType}
         />
       </Flex>
 
@@ -133,7 +137,7 @@ const Content: React.FC<ContentProps> = ({
             />
           </View>
           <Text style={styles.cardTitle} numberOfLines={1}>
-            当前位置
+            当前位置{detail?.isGroup ? '（组锁）' : '（单锁）'}
           </Text>
           {!!address && (
             <Text style={styles.cardSubTitle} numberOfLines={2}>
@@ -142,41 +146,88 @@ const Content: React.FC<ContentProps> = ({
           )}
         </View>
 
-        <View style={[styles.card, styles.infoCard]}>
-          <Flex justify="between" align="center">
-            <Text style={styles.cardTitle}>设备信息</Text>
-            <IconFont name="a-headfor-20" size={16} color="#333333" />
+        <View style={[styles.card]}>
+          <Flex justify="between" align="center" style={styles.cardHeader}>
+            <IconFont
+              name={
+                detail?.isGroup ? 'a-Equipmentlist' : 'a-equipmentinformation'
+              }
+              size={20}
+              color={'#333'}
+            />
+            <Text style={styles.cardTitle}>
+              {detail?.isGroup ? '设备列表' : '设备信息'}
+            </Text>
+            <IconFont name="a-headfor-20" size={20} color="#333333" />
           </Flex>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>电量</Text>
-            <Text style={styles.infoValue}>{detail?.battery ?? '--'}%</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>信号</Text>
-            <Text style={styles.infoValue}>{'--'}</Text>
-          </View>
+          {detail?.isGroup ? (
+            <Flex
+              style={styles.groupListBox}
+              direction="column"
+              justify="between"
+              align="center"
+            >
+              {(groupList || [])?.slice(0, 2)?.map(item => (
+                <Flex
+                  key={item?.id}
+                  style={styles.groupItem}
+                  direction="row"
+                  justify={'between'}
+                  align={'center'}
+                >
+                  <Image
+                    src={item?.imageUrl || ''}
+                    style={styles.groupItemImage}
+                  />
+                  <Text numberOfLines={1} style={styles.groupItemLockName}>
+                    {item?.lockName || ''}
+                  </Text>
+                </Flex>
+              ))}
+            </Flex>
+          ) : (
+            <View style={styles.infoList}>
+              <View style={styles.infoRow}>
+                <IconFont name={'a-Upgradelock'} size={16} color="#ccc" />
+                <Text style={styles.infoLabel}>离车升锁</Text>
+                <Text style={styles.infoValue}>
+                  {detail?.battery ? `${detail?.leaveUpTime}s` : '暂无信息'}
+                </Text>
+              </View>
+              <View style={styles.infoRow}>
+                <IconFont name={'bell'} size={16} color="#ccc" />
+                <Text style={styles.infoLabel}>蜂鸣碰撞</Text>
+                <Image
+                  style={{ width: 16, height: 16 }}
+                  source={{
+                    uri: `https://g.18qjz.cn/img/boklock/icon/${
+                      detail?.buzzerStatus === 1
+                        ? 'buzzing_icon'
+                        : 'buzzing_icon_close'
+                    }.png`,
+                  }}
+                />
+              </View>
+            </View>
+          )}
         </View>
       </Flex>
 
       {/* 成员共享 / 下载 App 等入口 */}
       <View style={styles.entryList}>
-        <TouchableOpacity activeOpacity={0.8} style={styles.entryItem}>
+        <TouchableOpacity style={styles.entryItem}>
           <Flex justify="between" align="center">
-            <Flex align="center">
-              <IconFont name="member" size={18} color="#333333" />
-              <Text style={styles.entryText}>成员共享</Text>
-            </Flex>
-            <IconFont name="a-headfor-20" size={16} color="#B3B3B3" />
+            <IconFont name="member" size={16} color="#333333" />
+            <Text style={styles.entryText}>成员共享</Text>
+            <IconFont name="a-headfor-20" size={20} color="#333333" />
           </Flex>
         </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.8} style={styles.entryItem}>
+        <TouchableOpacity style={styles.entryItem}>
           <Flex justify="between" align="center">
-            <Flex align="center">
-              <IconFont name="download" size={18} color="#333333" />
-              <Text style={styles.entryText}>下载APP</Text>
-            </Flex>
-            <IconFont name="a-headfor-20" size={16} color="#B3B3B3" />
+            <IconFont name="download" size={16} color="#333333" />
+            <Text style={styles.entryText}>下载APP</Text>
+            <IconFont name="a-headfor-20" size={20} color="#333333" />
           </Flex>
         </TouchableOpacity>
       </View>
@@ -184,115 +235,5 @@ const Content: React.FC<ContentProps> = ({
     // </ImageBackground>
   );
 };
-
-const styles = StyleSheet.create({
-  contentBox: {
-    flex: 1,
-  },
-
-  lockNameText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#333333',
-  },
-  manualRow: {
-    paddingHorizontal: 40,
-    marginBottom: 20,
-  },
-  manualBtn: {
-    alignItems: 'center',
-  },
-  manualIconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-    marginBottom: 8,
-  },
-  manualText: {
-    fontSize: 12,
-    color: '#333333',
-  },
-  cardsRow: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  card: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 12,
-    marginHorizontal: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  mapCard: {
-    marginRight: 4,
-  },
-  infoCard: {
-    marginLeft: 4,
-  },
-  mapPreview: {
-    width: '100%',
-    height: 80,
-    borderRadius: 8,
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  mapImage: {
-    width: '100%',
-    height: '100%',
-  },
-  cardTitle: {
-    fontSize: 14,
-    color: '#333333',
-    marginBottom: 4,
-  },
-  cardSubTitle: {
-    fontSize: 12,
-    color: '#666666',
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: '#999999',
-    marginRight: 8,
-  },
-  infoValue: {
-    fontSize: 12,
-    color: '#333333',
-  },
-  entryList: {
-    marginTop: 8,
-    marginBottom: 12,
-    marginHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    overflow: 'hidden',
-  },
-  entryItem: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#F0F0F0',
-  },
-  entryText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: '#333333',
-  },
-});
 
 export default Content;

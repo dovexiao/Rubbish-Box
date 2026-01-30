@@ -275,33 +275,32 @@ const Index = () => {
           />
         </View>
       ) : (
-        <>
-          {/* 主体内容 */}
-          <ScrollView contentContainerStyle={styles.content}>
-            <Header unreadCount={unreadCount} lockInfo={detail} />
-            {hasDevice && detail?.id ? (
-              <Content
+        //  主体内容
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          <Header unreadCount={unreadCount} lockInfo={detail} />
+          {hasDevice && detail?.id ? (
+            <Content
+              detail={detail}
+              reload={() => {
+                void load();
+              }}
+              optioning={false}
+            >
+              <LockVisual
                 detail={detail}
-                backgroundType={undefined}
-                reload={() => {
-                  void load();
-                }}
-                isMultiple={!!detail?.isGroup}
-                optioning={false}
-              >
-                <LockVisual
-                  detail={detail}
-                  currentDeviceStatus={currentDeviceStatus}
-                  deviceStatus={deviceStatus}
-                  inconsistentStatus={false}
-                  gifNonce={gifNonce}
-                />
-              </Content>
-            ) : (
-              <NoDevices unreadCount={unreadCount} hasDevice={hasDevice} />
-            )}
-          </ScrollView>
-        </>
+                currentDeviceStatus={currentDeviceStatus}
+                deviceStatus={deviceStatus}
+                inconsistentStatus={false}
+                gifNonce={gifNonce}
+              />
+            </Content>
+          ) : (
+            <NoDevices unreadCount={unreadCount} hasDevice={hasDevice} />
+          )}
+        </ScrollView>
       )}
     </PageContainer>
   );

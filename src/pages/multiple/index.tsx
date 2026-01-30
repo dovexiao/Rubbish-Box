@@ -282,11 +282,9 @@ const Index = () => {
             {hasDevice && detail?.id ? (
               <Content
                 detail={detail}
-                backgroundType={undefined}
                 reload={() => {
                   void load();
                 }}
-                isMultiple={!!detail?.isGroup}
                 optioning={false}
               >
                 <LockVisual

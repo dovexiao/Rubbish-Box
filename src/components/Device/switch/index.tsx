@@ -253,7 +253,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     opacity: 0.5,
     marginTop: 16,
-    marginBottom: 20,
     borderRadius: 12,
     display: 'flex',
     alignItems: 'center',
