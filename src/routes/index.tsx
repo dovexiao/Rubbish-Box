@@ -3,7 +3,7 @@ export const routes = {
     {
       name: 'Multiple',
       label: '组合设备',
-      component: require('@/pages/multiple').default,
+      component: require('@/pages/multiple/index').default,
       icon: 'https://g.18qjz.cn/img/boklock/tabBar/multiple_hd.png',
       chooseIcon:
         'https://g.18qjz.cn/img/boklock/tabBar/multiple_selected_hd.png',

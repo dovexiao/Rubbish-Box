@@ -283,6 +283,7 @@ const Index = () => {
           <Header unreadCount={unreadCount} lockInfo={detail} />
           {hasDevice && detail?.id ? (
             <Content
+              key={'single'}
               detail={detail}
               reload={() => {
                 void load();
