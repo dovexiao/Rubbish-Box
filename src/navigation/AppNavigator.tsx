@@ -66,31 +66,16 @@ export const AppNavigator: React.FC = () => {
   const { isLoggedIn, loading } = useAuth();
   const navigation = useAppNavigation();
 
-  // 根据登录状态决定初始路由
-  const initialRouteName = useMemo(() => {
-    // 如果还在加载中，默认显示登录页，避免闪烁
-    if (loading) {
-      return 'Login';
-    }
-    return isLoggedIn ? 'Index' : 'Login';
-  }, [isLoggedIn, loading]);
+  // 加载中时先不渲染路由，避免闪一下登录页
+  if (loading) {
+    return null;
+  }
 
-  // 监听登录状态变化，如果未登录且当前不在登录页，则跳转到登录页
-  useEffect(() => {
-    if (!isLoggedIn) {
-      // 延迟执行，确保导航已经初始化
-      const timer = setTimeout(() => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Login' }],
-        });
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoggedIn, navigation]);
+  const initialRouteName = isLoggedIn ? 'Index' : 'Login';
 
   return (
     <Stack.Navigator
+      // 根据登录状态选择初始路由
       initialRouteName={initialRouteName}
       screenOptions={{
         headerShown: false,

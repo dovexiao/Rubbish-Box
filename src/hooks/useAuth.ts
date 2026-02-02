@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { tokenStorage } from '@/utils/storage';
+import { cacheGetSync } from '@/utils/cache';
 
 /**
  * 检查用户是否已登录
@@ -15,12 +15,12 @@ export function useAuth() {
 
     const checkAuth = async () => {
       try {
-        const hasToken = await tokenStorage.has();
-        const tokenValue = await tokenStorage.get();
-        
+        const cacheToken = await cacheGetSync('token');
+
         if (mounted) {
-          setIsLoggedIn(hasToken && !!tokenValue);
-          setToken(tokenValue);
+          const hasToken = !!cacheToken;
+          setIsLoggedIn(hasToken);
+          setToken(hasToken ? String(cacheToken) : null);
           setLoading(false);
         }
       } catch (error) {
@@ -54,9 +54,9 @@ export function useAuth() {
  */
 export async function checkAuth(): Promise<boolean> {
   try {
-    const hasToken = await tokenStorage.has();
-    const token = await tokenStorage.get();
-    return hasToken && !!token;
+    // 只检查 cache 中的 token
+    const cacheToken = await cacheGetSync('token');
+    return !!cacheToken;
   } catch (error) {
     return false;
   }

@@ -112,7 +112,7 @@ export default function Mine() {
   const listItems = useMemo(
     () => [
       { icon: 'a-addequipments' as const, label: '添加设备', onPress: () => navigation.navigate('AddDevice') },
-      { icon: 'shopping' as const, label: '商城', onPress: () => navigation.navigate('Mall') },
+      { icon: 'shopping' as const, label: '商城', onPress: () => navigation.navigate('Shopping') },
       { icon: 'order' as const, label: '我的订单', onPress: () => navigation.navigate('MyOrder') },
       { icon: 'maintain' as const, label: '在线报修', onPress: () => navigation.navigate('OnlineRepair') },
       { icon: 'a-advertisingdisplay' as const, label: '广告位展示', onPress: () => navigation.navigate('AdvertisingDisplay') },
@@ -156,14 +156,14 @@ export default function Mine() {
           style={styles.card}
           onPress={() => {
             if (!hasToken) return requireLogin();
-            navigation.navigate('Staff');
+            navigation.navigate('MemberList');
           }}
         >
           <View style={styles.memberRow}>
             <IconFont name="member-20" size={20} color="#333333" />
             <View style={styles.memberTextBox}>
               <Text style={styles.memberTitle}>
-                成员{total ? `（${total}）` : ''}
+                成员
               </Text>
               <Text style={styles.memberDesc}>添加成员，授权使用地锁</Text>
             </View>

@@ -34,6 +34,7 @@ interface PageContainerProps {
   children: React.ReactNode;
   backgroundColor?: string;
   backgroundImage?: ImageSourcePropType;
+  backgroundImageHeight?: number;
   statusBarStyle?: 'default' | 'light-content' | 'dark-content';
   statusBarBackgroundColor?: string;
   showStatusBar?: boolean;
@@ -70,6 +71,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
   children,
   backgroundColor = '#FFFFFF',
   backgroundImage,
+  backgroundImageHeight,
   statusBarStyle = 'dark-content',
   statusBarBackgroundColor = 'transparent',
   showStatusBar = true,
@@ -221,7 +223,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
       )}
       <ImageBackground
         source={backgroundImage}
-        style={styles.backgroundImage}
+        style={[styles.backgroundImage, { height: backgroundImageHeight }]}
         resizeMode={'stretch'}
       >
         <SafeAreaView
