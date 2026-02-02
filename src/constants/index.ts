@@ -34,6 +34,12 @@ export const LOCK_STATUS = {
   // /** 车辆开走 */
   // CAR_GO: -99,
 }
+export const FALL_STATUS = {
+  RISE: 0,
+  FALL_SUCCESS: 2,
+  RISE_30: 8,
+  RISE_120: 9,
+}
 
 export const LOCK_BTN_COLORS = {
   [LOCK_STATUS.FALL_SUCCESS]: ['#4A4A4A', '#282828'],

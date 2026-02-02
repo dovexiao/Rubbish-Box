@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const popupStyle = StyleSheet.create({
   popupContainer: {
@@ -34,8 +34,8 @@ const popupStyle = StyleSheet.create({
     color: '#ffffff',
   },
   btnContainerConfirm: {
-    marginLeft: 15
-  }
+    marginLeft: 15,
+  },
 });
 
 export default popupStyle;

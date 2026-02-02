@@ -1,0 +1,29 @@
+{
+  // 保存时自动格式化（由 Prettier 执行）
+  "editor.formatOnSave": true,
+
+  // 默认格式化器：Prettier
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // 保存时触发 ESLint 修复（explicit：避免某些 VS Code 版本里频繁自动改动）
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // 让 ESLint 扩展检查这些语言模式
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+
+  // 下面这些是为了确保不同语言模式下都使用 Prettier 作为格式化器
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

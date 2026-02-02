@@ -1,11 +1,7 @@
 /**
  * 导航工具函数（兼容 Taro 风格）
  */
-export {
-  getCurrentPages,
-  navigateBack,
-  reLaunch,
-} from './navigation';
+export { getCurrentPages, navigateBack, reLaunch } from './navigation';
 
 /**
  * 缓存工具函数
@@ -20,41 +16,52 @@ export {
 } from './cache';
 
 export const inputFixedTwo = (inputVal: any) => {
-  return inputVal ? inputVal.match(/\d*(\.)?(\d{1,2})?/)[0] : inputVal
-}
+  return inputVal ? inputVal.match(/\d*(\.)?(\d{1,2})?/)[0] : inputVal;
+};
 
 export const mobileExp = (mobile: string) => {
-  const mobileReg = /^1[3456789]\d{9}$/
-  return mobileReg.test(mobile)
-}
+  const mobileReg = /^1[3456789]\d{9}$/;
+  return mobileReg.test(mobile);
+};
 
 export const idCardExp = (idCard: string) => {
   const idCardReg =
-    /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/
-  return idCardReg.test(idCard)
-}
+    /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;
+  return idCardReg.test(idCard);
+};
 
 export const isDecimal = (number: any) => {
-  return Number.isFinite(number) && !Number.isInteger(number)
-}
+  return Number.isFinite(number) && !Number.isInteger(number);
+};
 
 export function cdnDomain(cosPath: string) {
-  return cosPath.replace('sbqfc-1307862547.cos.ap-shanghai.myqcloud.com', 'https://g.18qjz.cn')
+  return cosPath.replace(
+    'sbqfc-1307862547.cos.ap-shanghai.myqcloud.com',
+    'https://g.18qjz.cn',
+  );
 }
 
 export function cdnToCosDomain(cosPath: string) {
   return cosPath.replace(
     'https://g.18qjz.cn',
     'https://sbqfc-1307862547.cos.ap-shanghai.myqcloud.com',
-  )
+  );
 }
 
-import { DeviceEventEmitter, Platform, Linking, NativeModules } from 'react-native';
+import {
+  DeviceEventEmitter,
+  Platform,
+  Linking,
+  NativeModules,
+} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import IntentLauncher from 'react-native-intent-launcher';
 import NetInfo from '@react-native-community/netinfo';
 import { BleManager } from 'react-native-ble-plx';
-import { init as initAMapGeolocationLib, Geolocation } from 'react-native-amap-geolocation';
+import {
+  init as initAMapGeolocationLib,
+  Geolocation,
+} from 'react-native-amap-geolocation';
 import { AMapSdk } from 'react-native-amap3d';
 import Config from 'react-native-config';
 import { cacheGet } from './cache';
@@ -67,7 +74,9 @@ import { updateRegId } from '@/services/common';
  * @param options 配置对象，包含 key
  * @returns Promise<T | null>
  */
-export async function getStorage<T = any>(options: { key: string }): Promise<T | null> {
+export async function getStorage<T = any>(options: {
+  key: string;
+}): Promise<T | null> {
   return storageUtil.getItem<T>(options.key);
 }
 
@@ -75,7 +84,10 @@ export async function getStorage<T = any>(options: { key: string }): Promise<T |
  * 设置存储数据（兼容 Taro 风格的 API）
  * @param options 配置对象，包含 key 和 data
  */
-export async function setStorage<T = any>(options: { key: string; data: T }): Promise<void> {
+export async function setStorage<T = any>(options: {
+  key: string;
+  data: T;
+}): Promise<void> {
   return storageUtil.setItem(options.key, options.data);
 }
 
@@ -124,7 +136,9 @@ export const getMobPushDeviceInfo = async () => {
     const [agree, token, pushRes]: any[] = await Promise.all([
       cacheGet({ key: 'agreePrivacy' }).catch(() => false),
       cacheGet({ key: 'token' }).catch(() => undefined),
-      getStorage({ key: 'pushEnabled' }).catch(() => ({ data: undefined }) as any),
+      getStorage({ key: 'pushEnabled' }).catch(
+        () => ({ data: undefined } as any),
+      ),
     ]);
     const enabled = pushRes?.data === true;
     const loggedIn = !!token;
@@ -141,85 +155,92 @@ export const getMobPushDeviceInfo = async () => {
   const info: any = {
     platform: isIOS ? 'ios' : 'android',
     brand: sys.brand?.toLowerCase() || '',
-  }
+  };
 
   // 1. 获取 deviceToken
   try {
-    const token = await appPush.getDeviceToken()
-    if (token) info.deviceToken = token
+    const token = await appPush.getDeviceToken();
+    if (token) info.deviceToken = token;
   } catch (e) {
-    console.warn('getDeviceToken error:', e)
+    console.warn('getDeviceToken error:', e);
   }
 
   // 2. 获取 registrationId（MOBPush 最重要）,两秒没拿到就默认赋值为空
-  const timeoutPromise = new Promise<boolean>(resolve => setTimeout(() => resolve(false), 2000))
+  const timeoutPromise = new Promise<boolean>(resolve =>
+    setTimeout(() => resolve(false), 2000),
+  );
 
   try {
-    const rid = await Promise.race([appPush.getRegistrationID(), timeoutPromise])
-    info.registrationId = rid || ''
+    const rid = await Promise.race([
+      appPush.getRegistrationID(),
+      timeoutPromise,
+    ]);
+    info.registrationId = rid || '';
   } catch (e) {
-    console.warn('getRegistrationID error:', e)
+    console.warn('getRegistrationID error:', e);
   }
 
   setStorage({
     key: 'deviceInfo',
     data: info,
-  })
+  });
 
   // 如果此时已经拿到有效的 registrationId，直接上报一次，避免仅依赖异步回调
   if (info.registrationId) {
-    console.log('进来', info.registrationId, '这是MOB平台回调')
+    console.log('进来', info.registrationId, '这是MOB平台回调');
     try {
-      await updateRegId({ ...info })
+      await updateRegId({ ...info });
     } catch (e) {
-      console.warn('updateRegId in getMobPushDeviceInfo error:', e)
+      console.warn('updateRegId in getMobPushDeviceInfo error:', e);
     }
   }
 
   // 4️⃣ 补充：监听异步更新
   DeviceEventEmitter.addListener('registrationId', async rid => {
-    console.log(rid, '这是MOB平台回调')
-    if (!rid) return
+    console.log(rid, '这是MOB平台回调');
+    if (!rid) return;
 
     // 再次兜底校验：仅在同意隐私 + 已登录 + 用户开启通知服务时处理 registrationId
     try {
       const [agree, token, pushRes]: any[] = await Promise.all([
         cacheGet({ key: 'agreePrivacy' }).catch(() => false),
         cacheGet({ key: 'token' }).catch(() => undefined),
-        getStorage({ key: 'pushEnabled' }).catch(() => ({ data: undefined }) as any),
-      ])
-      const enabled = pushRes?.data === true
-      const loggedIn = !!token
+        getStorage({ key: 'pushEnabled' }).catch(
+          () => ({ data: undefined } as any),
+        ),
+      ]);
+      const enabled = pushRes?.data === true;
+      const loggedIn = !!token;
       if (!agree || !enabled || !loggedIn) {
-        return
+        return;
       }
     } catch {
       // 发生异常时不继续上报，避免在未授权场景处理 registrationId
-      return
+      return;
     }
 
-    let stored: any = {}
+    let stored: any = {};
     try {
-      const res = await getStorage({ key: 'deviceInfo' })
-      stored = res?.data || {}
+      const res = await getStorage({ key: 'deviceInfo' });
+      stored = res?.data || {};
     } catch {
-      stored = {}
+      stored = {};
     }
-    stored.registrationId = rid
+    stored.registrationId = rid;
     try {
-      await setStorage({ key: 'deviceInfo', data: stored })
-    } catch { }
+      await setStorage({ key: 'deviceInfo', data: stored });
+    } catch {}
 
     // 可以在这里调用接口上传 rid
     try {
-      await updateRegId({ ...stored, registrationId: rid })
+      await updateRegId({ ...stored, registrationId: rid });
     } catch (e) {
-      console.warn('updateRegId error:', e)
+      console.warn('updateRegId error:', e);
     }
-  })
+  });
 
-  return info
-}
+  return info;
+};
 
 /**
  * 打开系统设置页面
@@ -308,7 +329,7 @@ export const getSystemConnectedDevices = async (): Promise<{
       return { code: 'ERROR', message: '蓝牙模块不可用' };
     }
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       BluetoothManager.getConnectedDevices((result: any) => {
         if (result.error) {
           resolve({ code: 'ERROR', message: result.error });
@@ -335,7 +356,9 @@ export const isSameMac = (mac1?: string, mac2?: string): boolean => {
 /**
  * 获取蓝牙设备信息
  */
-export const getBluetoothDeviceInfo = async (): Promise<Record<string, any>> => {
+export const getBluetoothDeviceInfo = async (): Promise<
+  Record<string, any>
+> => {
   try {
     const info = await getStorage({ key: 'bluetoothDeviceInfoList' });
     return (info as any)?.data || {};
@@ -373,7 +396,11 @@ export const getNetworkState = async (): Promise<{
  * 监听网络状态变化
  */
 export const addNetworkStateListener = (
-  callback: (state: { isConnected: boolean; type: string; isInternetReachable?: boolean }) => void,
+  callback: (state: {
+    isConnected: boolean;
+    type: string;
+    isInternetReachable?: boolean;
+  }) => void,
 ): (() => void) => {
   try {
     const unsubscribe = NetInfo.addEventListener((state: any) => {
@@ -387,7 +414,7 @@ export const addNetworkStateListener = (
     return unsubscribe;
   } catch (error) {
     console.error('添加网络状态监听失败:', error);
-    return () => { }; // 返回空函数，避免调用时出错
+    return () => {}; // 返回空函数，避免调用时出错
   }
 };
 
@@ -433,13 +460,17 @@ export const checkBluetoothEnabled = async (manager: any): Promise<boolean> => {
 export const initAMapGeolocation = async (apiKey?: string): Promise<void> => {
   try {
     // 检查模块是否正确加载
-    if (!initAMapGeolocationLib || typeof initAMapGeolocationLib !== 'function') {
+    if (
+      !initAMapGeolocationLib ||
+      typeof initAMapGeolocationLib !== 'function'
+    ) {
       console.warn('高德定位模块未正确加载，可能是原生模块未链接');
       return;
     }
 
     // 如果没有传入 apiKey，则从环境变量读取
-    const androidKey = Config.MAP_KEY_ANDROID || '65e063bf30af1d5cb5d2bf648243bff1';
+    const androidKey =
+      Config.MAP_KEY_ANDROID || '65e063bf30af1d5cb5d2bf648243bff1';
     const iosKey = Config.MAP_KEY_IOS || '4d3d8b30420bb15896f580757451268d';
 
     // 使用 init 函数初始化（传入平台特定的 key）
@@ -519,7 +550,7 @@ export const startLocationUpdates = (
     // 检查模块是否正确加载
     if (!Geolocation || typeof Geolocation.watchPosition !== 'function') {
       console.warn('高德定位模块未正确加载，可能是原生模块未链接');
-      return () => { }; // 返回空函数，避免调用时出错
+      return () => {}; // 返回空函数，避免调用时出错
     }
 
     const watchId = Geolocation.watchPosition(
@@ -541,7 +572,7 @@ export const startLocationUpdates = (
     };
   } catch (error) {
     console.error('开始定位监听失败:', error);
-    return () => { }; // 返回空函数，避免调用时出错
+    return () => {}; // 返回空函数，避免调用时出错
   }
 };
 
@@ -564,7 +595,10 @@ export const initAMapSdk = (androidKey?: string, iosKey?: string): void => {
     }
 
     const apiKey = Platform.select({
-      android: androidKey || Config.MAP_KEY_ANDROID || '65e063bf30af1d5cb5d2bf648243bff1',
+      android:
+        androidKey ||
+        Config.MAP_KEY_ANDROID ||
+        '65e063bf30af1d5cb5d2bf648243bff1',
       ios: iosKey || Config.MAP_KEY_IOS || '4d3d8b30420bb15896f580757451268d',
     });
 
@@ -583,8 +617,8 @@ export const initAMapSdk = (androidKey?: string, iosKey?: string): void => {
 
 export function myNextTick(fn: any) {
   setTimeout(() => {
-    fn()
-  }, 0)
+    fn();
+  }, 0);
 }
 
 /**
@@ -639,11 +673,14 @@ class EventCenter {
     }
 
     const callbacks = this.events.get(eventName)!;
-    callbacks.forEach((callback) => {
+    callbacks.forEach(callback => {
       try {
         callback(...args);
       } catch (error) {
-        console.error(`EventCenter: Error executing callback for event "${eventName}":`, error);
+        console.error(
+          `EventCenter: Error executing callback for event "${eventName}":`,
+          error,
+        );
       }
     });
   }
@@ -690,7 +727,8 @@ export function filterUndefinedAndNull(obj: any): any {
  * @returns 随机字符串
  */
 export function randomStr(length: number = 16): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -705,7 +743,11 @@ export function randomStr(length: number = 16): string {
  * @param secret 密钥（可选，从缓存获取）
  * @returns 签名字符串
  */
-export function getSign(data: Record<string, any>, nonce: string, secret?: string): string {
+export function getSign(
+  data: Record<string, any>,
+  nonce: string,
+  secret?: string,
+): string {
   const crypto = require('crypto-js');
   const keys = Object.keys(data).sort();
   const params: string[] = [];
@@ -715,7 +757,10 @@ export function getSign(data: Record<string, any>, nonce: string, secret?: strin
     const value = data[key];
 
     if (value !== null && value !== undefined && value !== '') {
-      if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+      if (
+        Array.isArray(value) ||
+        (typeof value === 'object' && value !== null)
+      ) {
         // 对象和数组暂时不参与签名（与 Taro 项目保持一致）
       } else {
         params.push(key + '=' + encodeURIComponent(value));
@@ -747,9 +792,7 @@ export function tencentUpload(options: {
 }): Promise<CreateFetchResponse<any> & { index?: number }> {
   return new Promise(
     (
-      resolve: (
-        res: CreateFetchResponse<any> & { index?: number },
-      ) => void,
+      resolve: (res: CreateFetchResponse<any> & { index?: number }) => void,
       reject: (res: CreateFetchResponse<any> & { index?: number }) => void,
     ) => {
       _tencentUpload(options).then(res => {
@@ -764,7 +807,96 @@ export function tencentUpload(options: {
   );
 }
 
+/**
+ * 轮询控制器接口
+ */
+export interface LoopController {
+  /** 开始轮询 */
+  start: () => void;
+  /** 停止轮询 */
+  stop: () => void;
+}
 
+/**
+ * 通用轮询工具函数
+ *
+ * @param func 轮询执行的任务函数
+ *             返回 Promise<boolean>
+ *             - resolve(true): 继续轮询
+ *             - resolve(false): 停止轮询
+ * @param interval 轮询间隔时间（毫秒），默认 1000ms
+ * @param maxTimes 最大轮询次数，0 为无限次数，默认 0
+ * @returns 轮询控制器 { start, stop }
+ *
+ * @example
+ * ```ts
+ * const poller = loopFunc(async () => {
+ *   const status = await checkStatus();
+ *   return status !== 'completed';
+ * }, 2000);
+ *
+ * poller.start();
+ * // ...
+ * poller.stop();
+ * ```
+ */
+export function loopFunc(
+  func: () => Promise<boolean>,
+  interval = 1000,
+  maxTimes = 0,
+): LoopController {
+  let isStopped = true;
+  let count = 0;
+  let timer: ReturnType<typeof setTimeout> | null = null;
 
+  const stop = () => {
+    isStopped = true;
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  };
 
+  const start = () => {
+    // 如果已经在运行，则不重复启动
+    if (!isStopped) return;
 
+    isStopped = false;
+    count = 0;
+
+    const run = async () => {
+      // 停止检查
+      if (isStopped) return;
+
+      // 次数检查
+      if (maxTimes > 0 && count >= maxTimes) {
+        stop();
+        return;
+      }
+
+      try {
+        count++;
+        // 执行任务
+        const shouldContinue = await func();
+
+        // 任务返回 false 或已被外部停止，则结束
+        if (!shouldContinue || isStopped) {
+          stop();
+          return;
+        }
+
+        // 调度下一次执行
+        if (!isStopped) {
+          timer = setTimeout(run, interval);
+        }
+      } catch (error) {
+        console.warn('Loop function execution failed:', error);
+        stop();
+      }
+    };
+
+    run();
+  };
+
+  return { start, stop };
+}

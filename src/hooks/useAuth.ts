@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { cacheGetSync } from '@/utils/cache';
+import { cacheGetSync, cacheSetSync } from '@/utils/cache';
 
 /**
  * 检查用户是否已登录
@@ -9,18 +9,34 @@ export function useAuth() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [guestMode, setGuestMode] = useState(false);
 
   useEffect(() => {
     let mounted = true;
-
     const checkAuth = async () => {
       try {
+        const tokenValue = await cacheGetSync('token');
+        console.log(tokenValue);
+        // 兜底：若 tokenStorage 中没有，但老的 cache 中有 token，则做一次迁移
         const cacheToken = await cacheGetSync('token');
+        let finalToken = tokenValue;
+        if (!finalToken && cacheToken) {
+          finalToken = String(cacheToken);
+          try {
+            await cacheSetSync('token', finalToken);
+          } catch {}
+        }
 
+        // 访客模式：在未登录但用户选择“暂不登录”时允许进入主应用
+        const cacheGuestMode = await cacheGetSync('guestMode');
+        const isGuest = cacheGuestMode === true;
+
+        const loggedIn = !!finalToken || isGuest;
+        console.log('loggedIn', loggedIn);
         if (mounted) {
-          const hasToken = !!cacheToken;
-          setIsLoggedIn(hasToken);
-          setToken(hasToken ? String(cacheToken) : null);
+          setIsLoggedIn(loggedIn);
+          setToken(finalToken);
+          setGuestMode(isGuest);
           setLoading(false);
         }
       } catch (error) {
@@ -30,6 +46,7 @@ export function useAuth() {
         if (mounted) {
           setIsLoggedIn(false);
           setToken(null);
+          setGuestMode(false);
           setLoading(false);
         }
       }
@@ -45,6 +62,7 @@ export function useAuth() {
   return {
     isLoggedIn,
     token,
+    guestMode,
     loading,
   };
 }
@@ -54,9 +72,28 @@ export function useAuth() {
  */
 export async function checkAuth(): Promise<boolean> {
   try {
-    // 只检查 cache 中的 token
-    const cacheToken = await cacheGetSync('token');
-    return !!cacheToken;
+    let token = await cacheGetSync('token');
+    if (!token) {
+      const cacheToken = await cacheGetSync('token');
+      if (cacheToken) {
+        token = String(cacheToken);
+        try {
+          await cacheSetSync('token', token);
+        } catch {}
+      }
+    } else {
+      const cacheToken = await cacheGetSync('token');
+      if (!cacheToken) {
+        try {
+          await cacheSetSync('token', token as any);
+        } catch {}
+      }
+    }
+    if (token) return true;
+
+    // 兜底：若显式开启了 guestMode，则视作“已通过登录页校验”，允许进入主应用
+    const cacheGuestMode = await cacheGetSync('guestMode');
+    return cacheGuestMode === true;
   } catch (error) {
     return false;
   }

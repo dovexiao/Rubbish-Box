@@ -80,7 +80,8 @@ export const AppNavigator: React.FC = () => {
       screenOptions={{
         headerShown: false,
         animation: 'none',
-      }}>
+      }}
+    >
       {/* 登录页面 */}
       {routes.pages.map(route => (
         <Stack.Screen
@@ -97,7 +98,8 @@ export const AppNavigator: React.FC = () => {
         name="Index"
         options={{
           orientation: 'portrait',
-        }}>
+        }}
+      >
         {() => <MainTabNavigator />}
       </Stack.Screen>
     </Stack.Navigator>

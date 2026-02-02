@@ -1,33 +1,33 @@
-import { ForwardedRef, ReactElement, ReactNode, useImperativeHandle, useState } from "react"
 import {
-  Modal,
-  Text,
-  View,
-} from '@ant-design/react-native'
-import { ViewStyle, TextStyle } from 'react-native'
-import Flex from "../Flex"
-import popupStyle from "./styles"
-import GradientButton from "../GradientButton"
+  ForwardedRef,
+  ReactElement,
+  ReactNode,
+  useImperativeHandle,
+  useState,
+} from 'react';
+import { Modal, Text, View } from '@ant-design/react-native';
+import { ViewStyle, TextStyle } from 'react-native';
+import Flex from '../Flex';
+import popupStyle from './styles';
+import GradientButton from '../GradientButton';
 
 interface PopConfirmProps {
-  title: string | ReactNode
-  showClose?: boolean
-  ref: ForwardedRef<any>
-  confirmText?: string
-  cancelText?: string
-  onConfirm?: () => any //Promise<boolean>
-  onCancel?: () => any
-  confirmColors?: [string, string] // 自定义确认按钮背景渐变颜色
-  confirmTextColor?: string // 自定义确认按钮字体颜色
-  textWeight?: TextStyle['fontWeight'] // 按钮字体加粗
-  marginTop32?: boolean
-  submitBtn?: ReactElement
-  children?: ReactElement
-  btnWrapStyle?: ViewStyle
-  confirmBtnStyle?: ViewStyle
+  title: string | ReactNode;
+  showClose?: boolean;
+  ref: ForwardedRef<any>;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm?: () => any; //Promise<boolean>
+  onCancel?: () => any;
+  confirmColors?: [string, string]; // 自定义确认按钮背景渐变颜色
+  confirmTextColor?: string; // 自定义确认按钮字体颜色
+  textWeight?: TextStyle['fontWeight']; // 按钮字体加粗
+  marginTop32?: boolean;
+  submitBtn?: ReactElement;
+  children?: ReactElement;
+  btnWrapStyle?: ViewStyle;
+  confirmBtnStyle?: ViewStyle;
 }
-
-
 
 const PopConfirm = ({
   showClose = true,
@@ -59,23 +59,29 @@ const PopConfirm = ({
       onClose={() => setVisible(false)}
       maskClosable
       visible={visible}
-
+      style={{
+        borderRadius: 16,
+      }}
     >
       <Flex direction={'column'} style={popupStyle.popupContainer}>
-        <Text style={popupStyle.popupTitle}>
-          {props.title}
-        </Text>
+        <Text style={popupStyle.popupTitle}>{props.title}</Text>
         {children}
         <Flex
-          style={[btnWrapStyle, ...(marginTop32 ? [popupStyle.btnMarginTop] : [popupStyle.btnContainerWrapper]),]}
-          justify={'center'}>
+          style={[
+            btnWrapStyle,
+            ...(marginTop32
+              ? [popupStyle.btnMarginTop]
+              : [popupStyle.btnContainerWrapper]),
+          ]}
+          justify={'center'}
+        >
           {showClose && (
             <GradientButton
               colors={['transparent', 'transparent']}
               width={124}
               height={42}
               onPress={async () => {
-                onCancel ? await onCancel() : setVisible(false)
+                onCancel ? await onCancel() : setVisible(false);
               }}
               style={[popupStyle.btnContainer, popupStyle.btnContainerClose]}
             >
@@ -91,26 +97,37 @@ const PopConfirm = ({
               width={showClose ? 124 : 160}
               height={42}
               onPress={async () => {
-                const result = await onConfirm?.()
+                const result = await onConfirm?.();
                 // 如果 onConfirm 返回 false，则不关闭 popup；其他情况（true/undefined）都关闭
                 if (result !== false) {
-                  setVisible(false)
+                  setVisible(false);
                 }
               }}
-              style={[popupStyle.btnContainer, {
-                ...(showClose ? { marginLeft: 15 } : {}),
-              }]}>
+              style={[
+                popupStyle.btnContainer,
+                {
+                  ...(showClose ? { marginLeft: 15 } : {}),
+                },
+              ]}
+            >
               <Text
-                style={[popupStyle.btnContainerConfirmText, { color: confirmTextColor, fontWeight: textWeight, ...confirmBtnStyle }]}>
+                style={[
+                  popupStyle.btnContainerConfirmText,
+                  {
+                    color: confirmTextColor,
+                    fontWeight: textWeight,
+                    ...confirmBtnStyle,
+                  },
+                ]}
+              >
                 {confirmText}
               </Text>
             </GradientButton>
           )}
         </Flex>
       </Flex>
-
     </Modal>
-  )
-}
+  );
+};
 
 export default PopConfirm;

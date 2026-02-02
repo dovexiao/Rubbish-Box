@@ -171,7 +171,13 @@ const PageContainer: React.FC<PageContainerProps> = ({
       ...getPaddingStyle(padding, paddingHorizontal, paddingVertical),
       ...style,
     }),
-    [defaultBackgroundColor, padding, paddingHorizontal, paddingVertical, style],
+    [
+      defaultBackgroundColor,
+      padding,
+      paddingHorizontal,
+      paddingVertical,
+      style,
+    ],
   );
 
   // 渲染内容
@@ -249,10 +255,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
               pointerEvents="auto"
             >
               <View style={styles.loadingContainer}>
-                <ActivityIndicator
-                  size="large"
-                  color={loadingIndicatorColor}
-                />
+                <ActivityIndicator size="large" color={loadingIndicatorColor} />
               </View>
             </View>
           )}
@@ -286,4 +289,3 @@ const PageContainer: React.FC<PageContainerProps> = ({
 };
 
 export default PageContainer;
-
