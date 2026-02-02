@@ -1,7 +1,7 @@
+import { useTheme } from '@/context/ThemeContext';
 import React, {
   useState,
   useRef,
-  useEffect,
   useImperativeHandle,
   forwardRef,
 } from 'react';
@@ -10,16 +10,14 @@ import {
   Easing,
   Modal,
   StyleSheet,
-  TouchableOpacity,
+  StatusBar,
   View,
   ScrollView,
-  Dimensions,
   TouchableWithoutFeedback,
+  useWindowDimensions,
   ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export interface AnimationPopRef {
   open: () => void;
@@ -34,6 +32,7 @@ interface Props {
   onClose?: () => void;
   btn?: React.ReactNode; // 底部按钮
   coverSafeArea?: boolean;
+  maxHeight?: number;
   style?: ViewStyle;
 }
 
@@ -46,13 +45,18 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
     onClose,
     btn,
     coverSafeArea = true,
+    maxHeight,
     style,
   } = props;
+
+  const { themeType } = useTheme();
 
   const [isOpen, setIsOpen] = useState(false);
   const slideAnim = useRef(new Animated.Value(0)).current;
   const insets = useSafeAreaInsets();
   const isVertical = direction === 'top' || direction === 'bottom';
+  const maskTopInset = Math.max(insets.top, StatusBar.currentHeight ?? 0);
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   const setOpen = (open: boolean) => {
     if (open) {
@@ -63,6 +67,8 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }).start();
+      StatusBar.setBarStyle('dark-content');
+      StatusBar.setBackgroundColor('#ffffff');
     } else {
       Animated.timing(slideAnim, {
         toValue: 0,
@@ -73,6 +79,10 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
         setIsOpen(false);
         onClose?.();
       });
+      StatusBar.setBarStyle(
+        themeType === 'dark' ? 'light-content' : 'dark-content',
+      );
+      StatusBar.setBackgroundColor('transparent');
     }
   };
 
@@ -86,12 +96,12 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
       inputRange: [0, 1],
       outputRange:
         direction === 'top'
-          ? [-SCREEN_HEIGHT, 0]
+          ? [-screenHeight, 0]
           : direction === 'bottom'
-          ? [SCREEN_HEIGHT, 0]
+          ? [screenHeight, 0]
           : direction === 'left'
-          ? [-SCREEN_WIDTH, 0]
-          : [SCREEN_WIDTH, 0],
+          ? [-screenWidth, 0]
+          : [screenWidth, 0],
     });
 
     switch (direction) {
@@ -109,12 +119,19 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
   const getContentStyle = () => {
     const baseStyle: any = {
       backgroundColor: '#fff',
-      // maxHeight: 586,
     };
+
+    if (typeof maxHeight === 'number') {
+      baseStyle.maxHeight = maxHeight;
+    }
 
     if (direction === 'top') {
       baseStyle.width = '100%';
-      baseStyle.paddingTop = coverSafeArea ? insets.top : 0;
+      if (coverSafeArea) {
+        baseStyle.paddingTop = insets.top;
+      } else {
+        baseStyle.marginTop = insets.top;
+      }
       baseStyle.borderBottomLeftRadius = 12;
       baseStyle.borderBottomRightRadius = 12;
     } else if (direction === 'bottom') {
@@ -123,22 +140,25 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
       baseStyle.borderTopLeftRadius = 12;
       baseStyle.borderTopRightRadius = 12;
       baseStyle.position = 'absolute';
-      baseStyle.bottom = 0;
-    } else if (direction === 'left') {
-      baseStyle.height = '100%';
-      baseStyle.width = '80%';
-      baseStyle.paddingTop = coverSafeArea ? insets.top : 0;
-      baseStyle.paddingBottom = coverSafeArea ? insets.bottom : 0;
-    } else if (direction === 'right') {
-      baseStyle.height = '100%';
-      baseStyle.width = '80%';
-      baseStyle.paddingTop = coverSafeArea ? insets.top : 0;
-      baseStyle.paddingBottom = coverSafeArea ? insets.bottom : 0;
-      baseStyle.position = 'absolute';
-      baseStyle.right = 0;
+      baseStyle.bottom = coverSafeArea ? 0 : insets.bottom;
     }
 
     return [baseStyle, style];
+  };
+
+  const renderChildren = () => {
+    if (isVertical && typeof maxHeight === 'number') {
+      return (
+        <ScrollView
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {children}
+        </ScrollView>
+      );
+    }
+    return <View onStartShouldSetResponder={() => true}>{children}</View>;
   };
 
   if (!isOpen) return null;
@@ -154,7 +174,17 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
       statusBarTranslucent
     >
       <View style={styles.container}>
+        {direction === 'top' && (
+          <>
+            {/* <StatusBar barStyle="light-content" /> */}
+            {/* <View
+              pointerEvents="none"
+              style={[styles.topSafeAreaBg, { height: insets.top }]}
+            /> */}
+          </>
+        )}
         {/* Mask */}
+        {/* <TouchableWithoutFeedback */}
         <TouchableWithoutFeedback
           onPress={() => maskClosable && setOpen(false)}
         >
@@ -164,6 +194,8 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
               {
                 opacity: slideAnim,
                 backgroundColor: mask ? 'rgba(0,0,0,0.5)' : 'transparent',
+                top: maskTopInset,
+                // backgroundColor: 'transparent',
               },
             ]}
           />
@@ -175,7 +207,7 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
           pointerEvents="box-none"
         >
           <View style={{ flex: isVertical ? 0 : 1, overflow: 'hidden' }}>
-            <View onStartShouldSetResponder={() => true}>{children}</View>
+            {renderChildren()}
             {btn && <View style={styles.btnContainer}>{btn}</View>}
           </View>
         </Animated.View>
@@ -188,10 +220,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
-    paddingVertical: 12,
+    paddingVertical: 0,
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    // top: insets.top,
+  },
+  topSafeAreaBg: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
   btnContainer: {
     paddingVertical: 10,

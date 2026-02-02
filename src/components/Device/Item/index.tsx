@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import Flex from '@/components/Flex';
 import Icon from '@/iconfont';
 import { DeviceItemDTO } from './typing';
@@ -16,7 +9,6 @@ interface DeviceItemProps {
   active?: boolean;
   onSelect: () => void;
   onChangeName?: () => void;
-  isfirst: boolean;
 }
 
 export const DeviceItem: React.FC<DeviceItemProps> = ({
@@ -24,7 +16,6 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
   active = true,
   onSelect,
   onChangeName,
-  isfirst,
 }) => {
   return (
     <TouchableOpacity
@@ -34,7 +25,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
         styles.deviceItem,
         styles.defaultBgColor,
         active && styles.deviceItemActive,
-        !isfirst && styles.mt24,
+        styles.mt24,
       ]}
     >
       <Flex justify="between" align="center" style={{ width: '100%' }}>
