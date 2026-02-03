@@ -63,6 +63,7 @@ interface PageContainerProps {
   backgroundColor?: string;
   /** 背景图片，设置后会自动处理沉浸式状态栏 */
   backgroundImage?: ImageSourcePropType;
+  backgroundImageHeight?: number;
   /** 容器样式 */
   style?: ViewStyle;
   /** 内容容器样式（仅 scrollable=true 时生效） */
@@ -150,6 +151,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       // 样式默认值
       backgroundColor,
       backgroundImage,
+      backgroundImageHeight,
       style,
       contentContainerStyle,
       // 布局默认值
@@ -411,7 +413,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
         {/* 背景容器 */}
         <ImageBackground
           source={backgroundImage}
-          style={styles.backgroundImage}
+          style={(styles.backgroundImage, { height: backgroundImageHeight })}
           resizeMode={'cover'}
         >
           <SafeAreaView

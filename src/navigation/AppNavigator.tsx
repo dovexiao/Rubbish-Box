@@ -66,16 +66,17 @@ export const AppNavigator: React.FC = () => {
   const { isLoggedIn, loading } = useAuth();
   const navigation = useAppNavigation();
 
-  // 根据登录状态决定初始路由
-  // 注意：useAuth 初始化时 loading=true，isLoggedIn=false
-  // 必须等到 loading=false 后再渲染 Navigator，否则 initialRouteName 会被固定为 Login
+  // 加载中时先不渲染路由，避免闪一下登录页
   if (loading) {
-    return null; // 或者返回一个 Splash Screen 组件
+    return null;
   }
+
+  const initialRouteName = isLoggedIn ? 'Index' : 'Login';
 
   return (
     <Stack.Navigator
-      initialRouteName={isLoggedIn ? 'Index' : 'Login'}
+      // 根据登录状态选择初始路由
+      initialRouteName={initialRouteName}
       screenOptions={{
         headerShown: false,
         animation: 'none',

@@ -69,5 +69,30 @@ export const routes = {
       component: require('@/pages/deviceInfo').default,
       label: '设备信息',
     },
+    {
+      name: 'MemberList',
+      component: require('@/pages/memberList').default,
+      label: '成员列表',
+    },
+    {
+      name: 'AddMember',
+      component: require('@/pages/addMember').default,
+      label: '添加成员',
+    },
+    {
+      name: 'Shopping',
+      component: require('@/pages/shopping').default,
+      label: '商城',
+    },
+    {
+      name: 'GoodsDetail',
+      component: require('@/pages/goodsDetail').default,
+      label: '商品详情',
+    },
+    {
+      name: 'PickupCode',
+      component: require('@/pages/pickupCode').default,
+      label: '提货码',
+    },
   ],
 } as const;

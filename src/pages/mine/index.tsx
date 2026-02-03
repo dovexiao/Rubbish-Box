@@ -121,7 +121,7 @@ export default function Mine() {
       {
         icon: 'shopping' as const,
         label: '商城',
-        onPress: () => navigation.navigate('Mall'),
+        onPress: () => navigation.navigate('Shopping'),
       },
       {
         icon: 'order' as const,
@@ -197,15 +197,13 @@ export default function Mine() {
           style={styles.card}
           onPress={() => {
             if (!hasToken) return requireLogin();
-            navigation.navigate('Staff');
+            navigation.navigate('MemberList');
           }}
         >
           <View style={styles.memberRow}>
             <IconFont name="member-20" size={20} color="#333333" />
             <View style={styles.memberTextBox}>
-              <Text style={styles.memberTitle}>
-                成员{total ? `（${total}）` : ''}
-              </Text>
+              <Text style={styles.memberTitle}>成员</Text>
               <Text style={styles.memberDesc}>添加成员，授权使用地锁</Text>
             </View>
           </View>
