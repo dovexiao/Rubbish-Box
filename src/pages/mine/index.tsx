@@ -250,7 +250,6 @@ export default function Mine() {
         {/* 退出登录弹窗 */}
         <PopConfirm
           ref={logoutRef}
-          marginTop32
           textWeight="bold"
           title="确定要退出登录"
           cancelText="暂不退出"

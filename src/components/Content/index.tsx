@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Pressable } from 'react-native';
 import Flex from '../Flex';
 import IconFont from '@/iconfont';
 import { Toast } from '@ant-design/react-native';
@@ -9,6 +9,7 @@ import { DeviceSwitch } from '../Device/switch';
 import { LockInfoDTO } from '@/pages/index/typing';
 import { styles } from './style';
 import { groupSubList } from '@/services';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -27,6 +28,8 @@ const Content: React.FC<ContentProps> = ({
   onAnimation,
   children,
 }) => {
+  const navigation = useAppNavigation();
+
   const [operating, setOperating] = useState(false);
   const [groupList, setGroupList] = useState<any[]>([]);
 
@@ -81,6 +84,18 @@ const Content: React.FC<ContentProps> = ({
     },
     [detail, onFresh, reload, operating],
   );
+
+  const handleDeviceInfo = () => {
+    if (detail?.isGroup) {
+      console.log('跳转设备列表');
+    } else {
+      if (!detail?.id) return;
+      navigation.navigate('DeviceInfo', {
+        lockId: detail.id,
+        isAdmin: detail?.role === 1,
+      });
+    }
+  };
 
   const address = detail?.locationList?.[0]?.address || detail?.address || '';
 
@@ -146,7 +161,7 @@ const Content: React.FC<ContentProps> = ({
           )}
         </View>
 
-        <View style={[styles.card]}>
+        <Pressable style={[styles.card]} onPress={handleDeviceInfo}>
           <Flex justify="between" align="center" style={styles.cardHeader}>
             <IconFont
               name={
@@ -210,7 +225,7 @@ const Content: React.FC<ContentProps> = ({
               </View>
             </View>
           )}
-        </View>
+        </Pressable>
       </Flex>
 
       {/* 成员共享 / 下载 App 等入口 */}

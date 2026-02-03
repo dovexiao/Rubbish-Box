@@ -64,5 +64,10 @@ export const routes = {
       component: require('@/pages/userInfo').default,
       label: '用户信息',
     },
+    {
+      name: 'DeviceInfo',
+      component: require('@/pages/deviceInfo').default,
+      label: '设备信息',
+    },
   ],
 } as const;
