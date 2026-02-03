@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
   },
   footerContainer: {
     zIndex: 10,
-    paddingTop: 20,
+    // paddingTop: 20,
   },
   scrollView: {
     flex: 1,
@@ -47,6 +47,11 @@ export const styles = StyleSheet.create({
     height: 44,
     paddingHorizontal: 16,
     minHeight: 44,
+  },
+  navHeaderBorder: {
+    borderBottomWidth: 1,
+    borderStyle: 'solid',
+    borderBottomColor: 'rgba(0,0,0,0.05)',
   },
   navHeaderLeft: {
     flexDirection: 'row',
