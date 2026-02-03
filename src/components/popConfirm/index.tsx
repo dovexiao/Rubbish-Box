@@ -11,6 +11,22 @@ import Flex from '../Flex';
 import popupStyle from './styles';
 import GradientButton from '../GradientButton';
 
+/**
+ * 确认弹窗
+ * 用于确认用户操作，如删除、退出登录等：不存在UI展示
+ * @param title 弹窗标题
+ * @param showClose 是否显示关闭按钮
+ * @param ref 弹窗引用
+ * @param confirmText 确认按钮文本
+ * @param cancelText 取消按钮文本
+ * @param onConfirm 确认回调
+ * @param onCancel 取消回调
+ * @param confirmColors 确认按钮背景渐变颜色
+ * @param confirmTextColor 确认按钮字体颜色
+ * @param textWeight 按钮字体加粗
+ * @param submitBtn 自定义确认按钮
+ */
+
 interface PopConfirmProps {
   title: string | ReactNode;
   showClose?: boolean;
@@ -22,11 +38,10 @@ interface PopConfirmProps {
   confirmColors?: [string, string]; // 自定义确认按钮背景渐变颜色
   confirmTextColor?: string; // 自定义确认按钮字体颜色
   textWeight?: TextStyle['fontWeight']; // 按钮字体加粗
-  marginTop32?: boolean;
   submitBtn?: ReactElement;
-  children?: ReactElement;
   btnWrapStyle?: ViewStyle;
   confirmBtnStyle?: ViewStyle;
+  width?: number;
 }
 
 const PopConfirm = ({
@@ -38,10 +53,9 @@ const PopConfirm = ({
   confirmColors = ['#333333', '#333333'], // 默认背景颜色
   confirmTextColor = '#FFFFFF', // 默认字体颜色
   textWeight = 'normal',
-  marginTop32 = false,
-  children,
   btnWrapStyle = {},
   confirmBtnStyle,
+  width = 311,
   ref,
   ...props
 }: PopConfirmProps) => {
@@ -59,21 +73,23 @@ const PopConfirm = ({
       onClose={() => setVisible(false)}
       maskClosable
       visible={visible}
+      bodyStyle={{
+        paddingTop: 12,
+        paddingHorizontal: 24,
+        paddingBottom: 24,
+      }}
       style={{
         borderRadius: 16,
+        width: width,
+        display: 'flex',
       }}
     >
-      <Flex direction={'column'} style={popupStyle.popupContainer}>
+      <Flex style={popupStyle.popupContainer}>
         <Text style={popupStyle.popupTitle}>{props.title}</Text>
-        {children}
         <Flex
-          style={[
-            btnWrapStyle,
-            ...(marginTop32
-              ? [popupStyle.btnMarginTop]
-              : [popupStyle.btnContainerWrapper]),
-          ]}
+          style={[btnWrapStyle, popupStyle.btnContainerWrapper]}
           justify={'center'}
+          align="center"
         >
           {showClose && (
             <GradientButton
@@ -103,12 +119,7 @@ const PopConfirm = ({
                   setVisible(false);
                 }
               }}
-              style={[
-                popupStyle.btnContainer,
-                {
-                  ...(showClose ? { marginLeft: 15 } : {}),
-                },
-              ]}
+              style={[popupStyle.btnContainer]}
             >
               <Text
                 style={[

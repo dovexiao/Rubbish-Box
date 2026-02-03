@@ -3,18 +3,19 @@ import { StyleSheet } from 'react-native';
 const popupStyle = StyleSheet.create({
   popupContainer: {
     width: '100%',
-    paddingHorizontal: 12,
-    // padding: 24,
+    display: 'flex',
+    flexDirection: 'column',
   },
   popupTitle: {
-    fontWeight: 'bold',
+    fontWeight: '500',
+    fontSize: 16,
+    color: '#333333',
     textAlign: 'center',
   },
-  btnMarginTop: {
-    marginTop: 24,
-  },
   btnContainerWrapper: {
+    width: '100%',
     marginTop: 36,
+    gap: 15,
   },
   btnContainer: {
     borderRadius: 12,
@@ -32,9 +33,6 @@ const popupStyle = StyleSheet.create({
   },
   btnContainerConfirmText: {
     color: '#ffffff',
-  },
-  btnContainerConfirm: {
-    marginLeft: 15,
   },
 });
 

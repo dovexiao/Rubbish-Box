@@ -24,6 +24,21 @@ export interface AnimationPopRef {
   close: () => void;
 }
 
+/**
+ * 动画弹窗
+ * 用于展示弹窗，包含标题、内容、底部按钮等
+ * 在本项目中用于顶部弹窗、底部弹窗
+ *
+ * @param children 弹窗内容
+ * @param mask 是否显示遮罩
+ * @param maskClosable 是否点击遮罩关闭弹窗
+ * @param direction 弹窗方向
+ * @param onClose 关闭回调
+ * @param btn 底部按钮
+ * @param coverSafeArea 是否覆盖安全区域
+ * @param maxHeight 弹窗最大高度
+ * @param style 弹窗样式
+ */
 interface Props {
   children: React.ReactNode;
   mask?: boolean;
@@ -67,8 +82,10 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }).start();
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('#ffffff');
+      if (direction === 'top') {
+        StatusBar.setBarStyle('dark-content');
+        StatusBar.setBackgroundColor('#ffffff');
+      }
     } else {
       Animated.timing(slideAnim, {
         toValue: 0,
@@ -79,10 +96,13 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
         setIsOpen(false);
         onClose?.();
       });
-      StatusBar.setBarStyle(
-        themeType === 'dark' ? 'light-content' : 'dark-content',
-      );
-      StatusBar.setBackgroundColor('transparent');
+
+      if (direction === 'top') {
+        StatusBar.setBarStyle(
+          themeType === 'dark' ? 'light-content' : 'dark-content',
+        );
+        StatusBar.setBackgroundColor('transparent');
+      }
     }
   };
 
@@ -174,17 +194,7 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
       statusBarTranslucent
     >
       <View style={styles.container}>
-        {direction === 'top' && (
-          <>
-            {/* <StatusBar barStyle="light-content" /> */}
-            {/* <View
-              pointerEvents="none"
-              style={[styles.topSafeAreaBg, { height: insets.top }]}
-            /> */}
-          </>
-        )}
         {/* Mask */}
-        {/* <TouchableWithoutFeedback */}
         <TouchableWithoutFeedback
           onPress={() => maskClosable && setOpen(false)}
         >
@@ -194,8 +204,7 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
               {
                 opacity: slideAnim,
                 backgroundColor: mask ? 'rgba(0,0,0,0.5)' : 'transparent',
-                top: maskTopInset,
-                // backgroundColor: 'transparent',
+                top: direction === 'top' ? maskTopInset : 0,
               },
             ]}
           />
