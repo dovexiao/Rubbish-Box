@@ -413,7 +413,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
         {/* 背景容器 */}
         <ImageBackground
           source={backgroundImage}
-          style={(styles.backgroundImage, { height: backgroundImageHeight })}
+          style={[styles.backgroundImage, { height: backgroundImageHeight }]}
           resizeMode={'cover'}
         >
           <SafeAreaView
