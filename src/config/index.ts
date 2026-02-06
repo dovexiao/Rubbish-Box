@@ -10,7 +10,7 @@ import { Platform } from 'react-native';
 // 环境类型
 export type EnvType = 'development' | 'production';
 
-const isHarmony = Platform.OS === 'harmony';
+const isHarmony = (Platform as any).OS === 'harmony';
 
 // 从环境变量获取当前环境，如果没有设置则根据 __DEV__ 判断
 export const ENV: EnvType =
