@@ -61,41 +61,10 @@ const PopConfirm = ({
 }: PopConfirmProps) => {
   const [visible, setVisible] = useState<boolean>(false);
 
-    return (
-      <Modal
-        transparent
-        modalType={'portal'}
-        onClose={() => setVisible(false)}
-        maskClosable
-        visible={visible}
-      >
-        <Flex direction={'column'} style={popupStyle.popupContainer}>
-          <Text style={popupStyle.popupTitle}>{props.title}</Text>
-          {children}
-          <Flex
-            style={[
-              btnWrapStyle,
-              ...(marginTop32
-                ? [popupStyle.btnMarginTop]
-                : [popupStyle.btnContainerWrapper]),
-            ]}
-            justify={'center'}
-          >
-            {showClose && (
-              <GradientButton
-                colors={['transparent', 'transparent']}
-                width={124}
-                height={42}
-                onPress={async () => {
-                  onCancel ? await onCancel() : setVisible(false);
-                }}
-                style={[popupStyle.btnContainer, popupStyle.btnContainerClose]}
-              >
-                <Text style={popupStyle.btnContainerCloseText}>
-                  {cancelText}
-                </Text>
-              </GradientButton>
-            )}
+  useImperativeHandle(ref, () => ({
+    open: () => setVisible(true),
+    close: () => setVisible(false),
+  }));
 
   return (
     <Modal
