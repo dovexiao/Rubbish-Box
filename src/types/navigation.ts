@@ -5,7 +5,7 @@ export type RootStackParamList = {
   DeviceDetail: { deviceId: string };
   MemberShare: undefined;
   VipInvite: undefined;
-  DeviceInfo: undefined;
+  DeviceInfo: { lockId: number; isAdmin: boolean };
   WebView: { url?: string; title?: string };
   ForgetPassword: undefined;
   ForgetPasswordSms?: { mobile: string; type: string };
@@ -16,4 +16,3 @@ export type MainTabParamList = {
   DeviceGroup: undefined;
   Profile: undefined;
 };
-

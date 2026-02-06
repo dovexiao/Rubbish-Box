@@ -8,7 +8,7 @@ import {
   TextInput as RNTextInput,
   TextInputProps as RNTextInputProps,
 } from 'react-native';
-import { theme } from '@/context/theme';
+import { useTheme } from '@/context/ThemeContext';
 
 export interface TextInputProps extends RNTextInputProps {
   // 可以扩展自定义属性
@@ -19,18 +19,18 @@ export interface TextInputProps extends RNTextInputProps {
  * 自动应用全局光标颜色和选中颜色
  */
 export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(
-  (
-    {
-      cursorColor = theme.input.cursorColor,
-      selectionColor = theme.input.selectionColor,
-      underlineColorAndroid = theme.input.underlineColorAndroid,
-      ...props
-    },
-    ref,
-  ) => {
+  (props, ref) => {
+    const { theme } = useTheme();
+    const {
+      cursorColor = theme.colors.text.primary,
+      selectionColor = theme.colors.text.primary,
+      underlineColorAndroid = 'transparent',
+      ...restProps
+    } = props;
+
     return (
       <RNTextInput
-        {...props}
+        {...restProps}
         ref={ref}
         cursorColor={cursorColor}
         selectionColor={selectionColor}

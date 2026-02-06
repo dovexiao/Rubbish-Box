@@ -869,3 +869,97 @@ export function tencentUpload(options: {
     },
   );
 }
+
+/**
+ * 轮询控制器接口
+ */
+export interface LoopController {
+  /** 开始轮询 */
+  start: () => void;
+  /** 停止轮询 */
+  stop: () => void;
+}
+
+/**
+ * 通用轮询工具函数
+ *
+ * @param func 轮询执行的任务函数
+ *             返回 Promise<boolean>
+ *             - resolve(true): 继续轮询
+ *             - resolve(false): 停止轮询
+ * @param interval 轮询间隔时间（毫秒），默认 1000ms
+ * @param maxTimes 最大轮询次数，0 为无限次数，默认 0
+ * @returns 轮询控制器 { start, stop }
+ *
+ * @example
+ * ```ts
+ * const poller = loopFunc(async () => {
+ *   const status = await checkStatus();
+ *   return status !== 'completed';
+ * }, 2000);
+ *
+ * poller.start();
+ * // ...
+ * poller.stop();
+ * ```
+ */
+export function loopFunc(
+  func: () => Promise<boolean>,
+  interval = 1000,
+  maxTimes = 0,
+): LoopController {
+  let isStopped = true;
+  let count = 0;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  const stop = () => {
+    isStopped = true;
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  };
+
+  const start = () => {
+    // 如果已经在运行，则不重复启动
+    if (!isStopped) return;
+
+    isStopped = false;
+    count = 0;
+
+    const run = async () => {
+      // 停止检查
+      if (isStopped) return;
+
+      // 次数检查
+      if (maxTimes > 0 && count >= maxTimes) {
+        stop();
+        return;
+      }
+
+      try {
+        count++;
+        // 执行任务
+        const shouldContinue = await func();
+
+        // 任务返回 false 或已被外部停止，则结束
+        if (!shouldContinue || isStopped) {
+          stop();
+          return;
+        }
+
+        // 调度下一次执行
+        if (!isStopped) {
+          timer = setTimeout(run, interval);
+        }
+      } catch (error) {
+        console.warn('Loop function execution failed:', error);
+        stop();
+      }
+    };
+
+    run();
+  };
+
+  return { start, stop };
+}

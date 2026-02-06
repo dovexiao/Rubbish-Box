@@ -1,13 +1,9 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   TextInput,
-  Dimensions,
-  ActivityIndicator,
-  Keyboard,
   ScrollView,
 } from 'react-native';
 import Toast from '@ant-design/react-native/lib/toast';
@@ -19,12 +15,10 @@ import { cacheGet } from '@/utils/cache';
 import Icon from '@/iconfont';
 import Flex from '@/components/Flex';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
-import GradientButton from '@/components/GradientButton';
 import { DeviceItem } from '../Item/index';
 import { DeviceItemDTO } from '../Item/typing';
-
-const { width: screenWidth } = Dimensions.get('window');
-const pxToDp = (px: number) => (px * screenWidth) / 750;
+import IconFont from '@/iconfont';
+import { styles } from './style';
 
 interface Props {
   lockInfo?: LockInfoDTO;
@@ -156,24 +150,26 @@ export const DeviceSwitch: React.FC<Props> = ({
           </Text>
           <Text style={styles.switchLine} />
           <Text style={styles.roleNameText}>{lockInfo?.roleName}</Text>
-          <Icon name="pull-down" size={pxToDp(24)} color={themeColor} />
+          <IconFont name="pull-down" size={12} color={themeColor} />
         </Flex>
       </TouchableOpacity>
 
-      <AnimationPop ref={devicePopRef} direction={'top'} coverSafeArea>
+      <AnimationPop ref={devicePopRef} direction={'top'} coverSafeArea={false}>
         <View
           style={{
-            height: 586,
-            paddingTop: insets.bottom,
-            paddingHorizontal: 24,
-            justifyContent: 'space-between',
+            paddingTop: 4,
           }}
         >
-          <ScrollView style={{ flex: 1 }}>
+          <ScrollView
+            style={{
+              maxHeight: 466,
+              paddingHorizontal: 24,
+            }}
+            showsVerticalScrollIndicator={false}
+          >
             {deviceList.map((item, index) => (
               <DeviceItem
                 key={item.id}
-                isfirst={index === 0}
                 data={item}
                 active={lockInfo?.id === item.id}
                 onSelect={() => handleSelectDevice(item)}
@@ -189,17 +185,17 @@ export const DeviceSwitch: React.FC<Props> = ({
           </ScrollView>
 
           <View style={styles.footer}>
-            <GradientButton
-              width={156}
-              height={48}
-              btnBorderRadius={12}
-              colors={['#333333', '#333333']}
-              text={lockInfo?.isGroup ? '创建组合设备' : '添加设备'}
+            <TouchableOpacity
+              style={styles.selectListBtn}
               onPress={() => {
                 devicePopRef.current?.close();
                 Toast.info('功能待接入');
               }}
-            />
+            >
+              <Text style={styles.selectListBtnText}>
+                {lockInfo?.isGroup ? '创建组合设备' : '添加设备'}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </AnimationPop>
@@ -207,146 +203,50 @@ export const DeviceSwitch: React.FC<Props> = ({
       {/* Edit Name Popup */}
       <AnimationPop ref={editNamePopRef} direction="bottom" coverSafeArea>
         <View
-          style={[styles.editContainer, { paddingBottom: insets.bottom + 20 }]}
+          style={[styles.editContainer, { paddingBottom: insets.bottom + 8 }]}
         >
           <View style={styles.header}>
             <Text style={styles.headerTitle}>修改名称</Text>
           </View>
 
           <View style={styles.editContent}>
-            <Text style={styles.editLabel}>
-              {currentDevice?.groupCount === 1 ? '地锁名称' : '组合设备名称'}
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={lockName}
-              onChangeText={setLockName}
-              placeholder="请输入名称"
-              placeholderTextColor="#999"
-              maxLength={20}
-            />
-            <View style={styles.editFooter}>
-              <TouchableOpacity
-                style={[styles.editBtn, styles.cancelBtn]}
-                onPress={() => editNamePopRef.current?.close()}
-              >
-                <Text style={styles.cancelText}>取消</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.editBtn, styles.confirmBtn]}
-                onPress={handleNameConfirm}
-              >
-                <Text style={styles.confirmText}>确定</Text>
-              </TouchableOpacity>
+            <View style={styles.editItem}>
+              <Text style={styles.editLabel}>
+                {currentDevice?.groupCount === 1 ? '地锁名称' : '组合设备名称'}
+              </Text>
+              <TextInput
+                style={styles.input}
+                value={lockName}
+                onChangeText={setLockName}
+                placeholder="请输入名称"
+                placeholderTextColor="#999"
+                maxLength={20}
+              />
+              <IconFont name={'redact'} color="#999" size={20} />
             </View>
+          </View>
+          <View style={styles.editFooter}>
+            <TouchableOpacity
+              style={[styles.editBtn, styles.cancelBtn]}
+              onPress={() => editNamePopRef.current?.close()}
+            >
+              <Text style={styles.cancelText}>取消</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.editBtn, styles.confirmBtn]}
+              onPress={handleNameConfirm}
+            >
+              <Text style={styles.confirmText}>确定</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.closeIcon}>
+            <TouchableOpacity onPress={() => editNamePopRef.current?.close()}>
+              <IconFont name={'close'} color="#333" size={24} />
+            </TouchableOpacity>
           </View>
         </View>
       </AnimationPop>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  switchBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: '#fff',
-    opacity: 0.5,
-    marginTop: 16,
-    marginBottom: 20,
-    borderRadius: 12,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  switchLine: {
-    width: 1,
-    height: 16,
-    marginHorizontal: 8,
-    backgroundColor: '#999',
-  },
-  roleNameText: {
-    fontWeight: 400,
-    fontSize: 12,
-    color: '#333333',
-    marginRight: 8,
-  },
-  switchText: {
-    fontSize: 14,
-    fontWeight: '400',
-  },
-  header: {
-    padding: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#eee',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  footer: {
-    width: '100%',
-    height: 76,
-    paddingTop: 12,
-    paddingBottom: 16,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyContainer: {
-    padding: 30,
-    alignItems: 'center',
-  },
-  emptyText: {
-    color: '#999',
-    fontSize: 14,
-  },
-  editContainer: {
-    backgroundColor: '#fff',
-  },
-  editContent: {
-    padding: 20,
-  },
-  editLabel: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 10,
-  },
-  input: {
-    backgroundColor: '#F5F7FA',
-    padding: 12,
-    borderRadius: 6,
-    marginBottom: 30,
-    fontSize: 16,
-    color: '#333',
-  },
-  editFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  editBtn: {
-    flex: 1,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 22,
-  },
-  cancelBtn: {
-    backgroundColor: '#F5F7FA',
-    marginRight: 10,
-  },
-  confirmBtn: {
-    backgroundColor: '#333', // Dark theme primary
-    marginLeft: 10,
-  },
-  cancelText: {
-    color: '#666',
-    fontSize: 16,
-  },
-  confirmText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-});

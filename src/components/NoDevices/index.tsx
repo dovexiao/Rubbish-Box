@@ -1,29 +1,50 @@
+import { Toast } from '@ant-design/react-native';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Flex from '../Flex';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 interface NoDevicesProps {
   unreadCount?: number;
   hasDevice?: boolean;
 }
 
-const NoDevices: React.FC<NoDevicesProps> = ({
-  unreadCount = 0,
-  hasDevice = false,
-}) => {
+const NoDevices: React.FC<NoDevicesProps> = ({ hasDevice = false }) => {
   return (
     <View style={styles.container}>
-      <Flex align="center" justify="center" style={styles.header}>
-        <Text style={styles.headerTitle}>暂无设备</Text>
-        {unreadCount > 0 && (
-          <View style={styles.unreadBadge}>
-            <Text style={styles.unreadText}>{unreadCount}</Text>
-          </View>
-        )}
-      </Flex>
-      <View style={styles.contentBox}>
-        <Text style={styles.tips}>请前往添加或绑定设备</Text>
-      </View>
+      <Text style={styles.title}>欢迎使用　泊刻地锁</Text>
+      {hasDevice ? (
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              Toast.show({
+                content: '跳转组合设备',
+              });
+            }}
+            style={styles.combineBtn}
+          >
+            <Text style={styles.combineBtnText}>设备组合</Text>
+          </TouchableOpacity>
+          <Text style={styles.tips}>来组合你的地锁吧！</Text>
+        </View>
+      ) : (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            Toast.show({
+              content: '跳转添加设备',
+            });
+          }}
+          style={styles.contentBox}
+        >
+          <Image
+            style={styles.addImage}
+            source={{
+              uri: 'https://g.18qjz.cn/img/boklock/device_add.png',
+            }}
+          />
+          <Text style={styles.tips}>来添加你的第一台地锁吧！</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -31,42 +52,41 @@ const NoDevices: React.FC<NoDevicesProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f7f8fa',
+    backgroundColor: '#f6f7fa',
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#222',
-  },
-  unreadBadge: {
-    minWidth: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#ff4d4f',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 6,
-    marginLeft: 8,
-  },
-  unreadText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
+  title: {
+    fontSize: 20,
+    fontWeight: '500',
+    marginTop: 102,
   },
   contentBox: {
-    marginTop: 24,
     alignItems: 'center',
+  },
+  addImage: {
+    width: 120,
+    height: 120,
+    marginTop: 24,
+    marginBottom: 12,
+  },
+  combineBtn: {
+    paddingVertical: 13,
+    paddingHorizontal: 46,
+    backgroundColor: '#333',
+    borderRadius: 12,
+    marginTop: 60,
+    marginBottom: 48,
+  },
+  combineBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '400',
   },
   tips: {
     color: '#999',
     fontSize: 16,
+    fontWeight: '400',
+    textAlign: 'center',
   },
 });
 

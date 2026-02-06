@@ -10,8 +10,6 @@ import {
   LOCK_STATUS,
 } from '@/constants';
 import PopConfirm from '@/components/popConfirm';
-import { getLockDeviceList } from '@/services/device';
-import { Toast } from '@ant-design/react-native';
 import { useTheme } from '@/context/ThemeContext';
 
 interface HeaderProps {
@@ -30,15 +28,13 @@ const Header: React.FC<HeaderProps> = ({
   lockInfo,
   type = 1,
 }) => {
-  const [deviceList, setDeviceList] = useState<any[]>([]);
   const { theme, themeType } = useTheme();
-
   const textColor = useMemo(() => {
-    // 深色模式下 primary 为白色；浅色模式下 inverse 为白色
-    return themeType === 'dark'
-      ? theme.colors.text.primary
-      : theme.colors.text.color333;
-  }, [themeType, theme]);
+    // 深色模式下 primary 为白色
+    return themeType !== 'dark' || !lockInfo?.id
+      ? theme.colors.text.color333
+      : theme.colors.text.primary;
+  }, [themeType, theme, lockInfo]);
 
   const batteryIcon = useMemo(() => {
     if (!lockInfo?.showBattery) return undefined;
@@ -81,15 +77,21 @@ const Header: React.FC<HeaderProps> = ({
     const map = themeType === 'dark' ? SIGNAL_STATUS_DEEP : SIGNAL_STATUS;
     return (map as any)[level];
   }, [themeType, lockInfo]);
-
+  console.log('unreadCount', unreadCount);
   const renderMessage = () => (
-    <View style={styles.messageWrapper}>
+    <View
+      style={[
+        unreadCount > 99 ? styles.messgeWrapperMax : styles.messageWrapper,
+      ]}
+    >
       <IconFont name="message" size={24} color={textColor} />
       {unreadCount > 0 && (
         <View
           style={[
             styles.messageBadge,
-            unreadCount > 99 ? styles.messageBadgeLarge : null,
+            unreadCount > 99
+              ? styles.messageBadgeTextLengthMore
+              : styles.messageBadgeTextLength,
           ]}
         >
           <Text style={styles.messageBadgeText}>
@@ -277,28 +279,32 @@ const styles = StyleSheet.create({
   },
   messageWrapper: {
     position: 'relative',
-    paddingRight: 8,
+    paddingRight: 14,
+  },
+  messgeWrapperMax: {
+    position: 'relative',
+    paddingRight: 22,
   },
   messageBadge: {
     position: 'absolute',
-    top: -6,
-    right: -6,
-    minWidth: 16,
-    height: 16,
+    top: -8,
+    left: 14,
+    height: 18,
     paddingHorizontal: 4,
-    borderRadius: 8,
+    borderRadius: 9,
     backgroundColor: '#FF2B24',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  messageBadgeLarge: {
-    right: -4,
+  messageBadgeTextLength: {
+    minWidth: 24,
+  },
+  messageBadgeTextLengthMore: {
+    minWidth: 32,
   },
   messageBadgeText: {
-    fontSize: 10,
+    fontSize: 12,
     color: '#FFFFFF',
-    textAlign: 'center',
-    lineHeight: 16,
   },
   flexSpacer: {
     flex: 1,

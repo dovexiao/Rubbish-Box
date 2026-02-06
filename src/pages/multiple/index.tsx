@@ -47,10 +47,10 @@ const Index = () => {
     setLoading(true);
     try {
       // 获取首页锁信息
-      const lockRes = await getLockInfo({ type: 1 } as any);
+      const lockRes = await getLockInfo({ type: 2 } as any);
       if (lockRes.success && lockRes.code === 200 && lockRes.data) {
         setDetail(lockRes.data);
-        setHasDevice(true);
+        setHasDevice(lockRes.data?.hasDevice);
         setError(null);
         setCurrentDeviceStatus(() => {
           const powerType = lockRes.data?.powerType;
@@ -230,7 +230,8 @@ const Index = () => {
       onRetry={() => {
         void load();
       }}
-      backgroundImage={bgImage}
+      backgroundImage={detail?.id ? bgImage : undefined}
+      statusBarStyle={!detail?.id ? 'dark-content' : undefined}
     >
       {showGuestWelcome ? (
         <View style={styles.guestContainer}>
@@ -278,14 +279,13 @@ const Index = () => {
           {/* 主体内容 */}
           <ScrollView contentContainerStyle={styles.content}>
             <Header unreadCount={unreadCount} lockInfo={detail} />
-            {hasDevice && detail?.id ? (
+            {detail && detail?.id ? (
               <Content
+                key={'multiple'}
                 detail={detail}
-                backgroundType={undefined}
                 reload={() => {
                   void load();
                 }}
-                isMultiple={!!detail?.isGroup}
                 optioning={false}
               >
                 <LockVisual

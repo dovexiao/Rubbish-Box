@@ -3,7 +3,7 @@ export const routes = {
     {
       name: 'Multiple',
       label: '组合设备',
-      component: require('@/pages/multiple').default,
+      component: require('@/pages/multiple/index').default,
       icon: 'https://g.18qjz.cn/img/boklock/tabBar/multiple_hd.png',
       chooseIcon:
         'https://g.18qjz.cn/img/boklock/tabBar/multiple_selected_hd.png',
@@ -63,6 +63,51 @@ export const routes = {
       name: 'UserInfo',
       component: require('@/pages/userInfo').default,
       label: '用户信息',
+    },
+    {
+      name: 'DeviceInfo',
+      component: require('@/pages/deviceInfo').default,
+      label: '设备信息',
+    },
+    {
+      name: 'MemberList',
+      component: require('@/pages/memberList').default,
+      label: '成员列表',
+    },
+    {
+      name: 'AddMember',
+      component: require('@/pages/addMember').default,
+      label: '添加成员',
+    },
+    {
+      name: 'Shopping',
+      component: require('@/pages/shopping').default,
+      label: '商城',
+    },
+    {
+      name: 'GoodsDetail',
+      component: require('@/pages/goodsDetail').default,
+      label: '商品详情',
+    },
+    {
+      name: 'PickupCode',
+      component: require('@/pages/pickupCode').default,
+      label: '提货码',
+    },
+    {
+      name: 'ScanPickupCode',
+      component: require('@/pages/scanPickupCode').default,
+      label: '扫描提货码',
+    },
+    {
+      name: 'PickupCodeRecordList',
+      component: require('@/pages/pickupCodeRecordList').default,
+      label: '领取记录',
+    },
+    {
+      name: 'PickupCodeRecordDetail',
+      component: require('@/pages/pickupCodeRecordDetail').default,
+      label: '领取详情',
     },
   ],
 } as const;
