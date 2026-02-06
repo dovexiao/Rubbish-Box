@@ -41,7 +41,7 @@ export const routes = {
     },
     {
       name: 'LoginSms',
-      component: require('@/pages/LoginSms').default,
+      component: require('@/pages/loginSms').default,
       label: '登录短信',
     },
     {
@@ -93,6 +93,21 @@ export const routes = {
       name: 'PickupCode',
       component: require('@/pages/pickupCode').default,
       label: '提货码',
+    },
+    {
+      name: 'ScanPickupCode',
+      component: require('@/pages/scanPickupCode').default,
+      label: '扫描提货码',
+    },
+    {
+      name: 'PickupCodeRecordList',
+      component: require('@/pages/pickupCodeRecordList').default,
+      label: '领取记录',
+    },
+    {
+      name: 'PickupCodeRecordDetail',
+      component: require('@/pages/pickupCodeRecordDetail').default,
+      label: '领取详情',
     },
   ],
 } as const;

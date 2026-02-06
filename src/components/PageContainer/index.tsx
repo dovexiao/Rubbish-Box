@@ -411,53 +411,96 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
         )}
 
         {/* 背景容器 */}
-        <ImageBackground
-          source={backgroundImage}
-          style={(styles.backgroundImage, { height: backgroundImageHeight })}
-          resizeMode={'cover'}
-        >
-          <SafeAreaView
+        {backgroundImage ? (
+          <ImageBackground
+            source={backgroundImage}
             style={[
-              styles.container,
-              {
-                // 无背景图时使用 backgroundColor，有背景图时透明以便透出 ImageBackground
-                backgroundColor: backgroundImage
-                  ? 'transparent'
-                  : defaultBackgroundColor,
-              },
+              styles.backgroundImage,
+              backgroundImageHeight ? { height: backgroundImageHeight } : null,
             ]}
-            edges={finalEdges}
+            resizeMode="cover"
           >
-            {/* 全局 Loading */}
-            {renderLoading()}
+            <SafeAreaView
+              style={[
+                styles.container,
+                {
+                  // 有背景图时内容背景透明，以便透出 ImageBackground
+                  backgroundColor: 'transparent',
+                },
+              ]}
+              edges={finalEdges}
+            >
+              {/* 全局 Loading */}
+              {renderLoading()}
 
-            {/* 页面主结构 */}
-            <View style={[styles.pageContainer, manualPaddingStyle]}>
-              {/* 头部区域 */}
-              {(header || pageNavProps) && (
-                <View style={styles.headerContainer}>{renderNavHeader}</View>
-              )}
+              {/* 页面主结构 */}
+              <View style={[styles.pageContainer, manualPaddingStyle]}>
+                {/* 头部区域 */}
+                {(header || pageNavProps) && (
+                  <View style={styles.headerContainer}>{renderNavHeader}</View>
+                )}
 
-              {/* 内容区域 */}
-              {renderContent}
+                {/* 内容区域 */}
+                {renderContent}
 
-              {/* 底部区域 */}
-              {footer && (
-                <View
-                  style={[
-                    styles.footerContainer,
-                    // Android 底部额外 padding 适配
-                    Platform.OS === 'android' && {
-                      paddingBottom: insets.bottom + 20,
-                    },
-                  ]}
-                >
-                  {footer}
-                </View>
-              )}
-            </View>
-          </SafeAreaView>
-        </ImageBackground>
+                {/* 底部区域 */}
+                {footer && (
+                  <View
+                    style={[
+                      styles.footerContainer,
+                      // Android 底部额外 padding 适配
+                      Platform.OS === 'android' && {
+                        paddingBottom: insets.bottom + 20,
+                      },
+                    ]}
+                  >
+                    {footer}
+                  </View>
+                )}
+              </View>
+            </SafeAreaView>
+          </ImageBackground>
+        ) : (
+          <View style={styles.backgroundImage}>
+            <SafeAreaView
+              style={[
+                styles.container,
+                {
+                  backgroundColor: defaultBackgroundColor,
+                },
+              ]}
+              edges={finalEdges}
+            >
+              {/* 全局 Loading */}
+              {renderLoading()}
+
+              {/* 页面主结构 */}
+              <View style={[styles.pageContainer, manualPaddingStyle]}>
+                {/* 头部区域 */}
+                {(header || pageNavProps) && (
+                  <View style={styles.headerContainer}>{renderNavHeader}</View>
+                )}
+
+                {/* 内容区域 */}
+                {renderContent}
+
+                {/* 底部区域 */}
+                {footer && (
+                  <View
+                    style={[
+                      styles.footerContainer,
+                      Platform.OS === 'android' && {
+                        paddingBottom: insets.bottom + 20,
+                      },
+                    ]}
+                  >
+                    {footer}
+                  </View>
+                )}
+              </View>
+            </SafeAreaView>
+          </View>
+        )}
       </>
     );
   },

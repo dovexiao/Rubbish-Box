@@ -13,10 +13,7 @@ import { PageContainer, Flex, Popup } from '@/components';
 import PopConfirm from '@/components/popConfirm';
 import GradientButton from '@/components/GradientButton';
 import IconFont from '@/iconfont';
-import {
-  getPickupCodeDetail,
-  confirmPickupCode,
-} from '@/services/mall';
+import { getPickupCodeDetail, confirmPickupCode } from '@/services/mall';
 import { getStorage, removeStorage } from '@/utils';
 import styles from './styles';
 
@@ -35,16 +32,16 @@ export default function PickupCode() {
         try {
           // 检查扫码传入的提货码
           const scanRes = await getStorage({ key: 'PICKUP_CODE_FROM_SCAN' });
-          if (scanRes?.data) {
-            setPickupCode(scanRes.data);
+          if (scanRes) {
+            setPickupCode(scanRes);
             await removeStorage({ key: 'PICKUP_CODE_FROM_SCAN' });
             return;
           }
 
           // 检查跳转传入的提货码
           const jumpRes = await getStorage({ key: 'pickupCodeJump' });
-          if (jumpRes?.data?.path) {
-            const path = jumpRes.data.path as string;
+          if (jumpRes?.path) {
+            const path = jumpRes.path as string;
             const match = path.match(/[?&]pk=([^&]+)/);
             const encodedPk = match && match[1];
             if (encodedPk) {
@@ -117,24 +114,19 @@ export default function PickupCode() {
     confirmRef.current?.close();
     if (ok) {
       setPickupCode('');
-      setDeviceImg('');
       setSuccessVisible(true);
     }
   }, [handleConfirmPickup]);
 
   // 扫码填入
   const handleScan = useCallback(() => {
-    // TODO: 跳转到扫码页面
-    Toast.info('扫码功能待实现');
-    // navigation.navigate('ScanPickupCode');
+    navigation.navigate('ScanPickupCode');
   }, []);
 
   // 领取记录
   const handleRecord = useCallback(() => {
-    // TODO: 跳转到领取记录页面
-    Toast.info('领取记录功能待实现');
-    // navigation.navigate('PickupCodeRecordList');
-  }, []);
+    navigation.navigate('PickupCodeRecordList');
+  }, [navigation]);
 
   const canSubmit = pickupCode.trim().length === 19;
 
@@ -151,12 +143,21 @@ export default function PickupCode() {
         background: 'transparent',
         titleColor: '#FFFFFF',
       }}
-      backgroundImageHeight={680}
-      backgroundImage={{ uri: 'https://g.18qjz.cn/img/boklock/pickupCode/rcvBg2.png' }}
+      backgroundImageHeight={400}
+      backgroundImage={{
+        uri: 'https://g.18qjz.cn/img/boklock/pickupCode/rcvBg2.png',
+      }}
     >
       <Flex direction="column" justify="between" style={styles.container}>
-        <Flex direction="column" justify="center" align="center" style={styles.codeBox}>
-          <Text style={styles.codeBoxTitle}>凭有效提货码可领取一台泊刻地锁</Text>
+        <Flex
+          direction="column"
+          justify="center"
+          align="center"
+          style={styles.codeBox}
+        >
+          <Text style={styles.codeBoxTitle}>
+            凭有效提货码可领取一台泊刻地锁
+          </Text>
 
           <View style={styles.codeInput}>
             <TextInput
@@ -217,27 +218,28 @@ export default function PickupCode() {
       {/* 确认领取弹窗 */}
       <PopConfirm
         ref={confirmRef}
-        title="确认要领取吗？"
+        title={
+          <Flex direction="column" align="center" justify="center">
+            <Text>确认要领取吗？</Text>
+            {deviceImg ? (
+              <View style={styles.deviceImgBox}>
+                <Image
+                  source={{ uri: deviceImg }}
+                  style={styles.deviceImage}
+                  resizeMode="contain"
+                />
+                <Flex direction="row" align="end" style={styles.numBox}>
+                  <Text style={styles.numBoxText}>x</Text>
+                  <Text style={styles.numBoxText2}>1</Text>
+                </Flex>
+              </View>
+            ) : null}
+          </Flex>
+        }
         cancelText="取消"
         confirmText="确定领取"
         onConfirm={handleConfirm}
-      >
-        <Flex direction="column" align="center" justify="center">
-          {deviceImg ? (
-            <View style={styles.deviceImgBox}>
-              <Image
-                source={{ uri: deviceImg }}
-                style={styles.deviceImage}
-                resizeMode="contain"
-              />
-              <Flex direction="row" align="end" style={styles.numBox}>
-                <Text style={styles.numBoxText}>x</Text>
-                <Text style={styles.numBoxText2}>1</Text>
-              </Flex>
-            </View>
-          ) : null}
-        </Flex>
-      </PopConfirm>
+      ></PopConfirm>
 
       {/* 领取成功弹窗 */}
       <Popup
@@ -247,7 +249,12 @@ export default function PickupCode() {
         minHeight={420}
       >
         <View style={styles.successContent}>
-          <Flex direction="column" align="center" justify="center">
+          <Flex
+            direction="column"
+            align="center"
+            justify="center"
+            style={styles.successContentBox}
+          >
             {deviceImg ? (
               <View style={styles.deviceImgBox}>
                 <Image

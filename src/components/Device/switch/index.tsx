@@ -150,7 +150,7 @@ export const DeviceSwitch: React.FC<Props> = ({
           </Text>
           <Text style={styles.switchLine} />
           <Text style={styles.roleNameText}>{lockInfo?.roleName}</Text>
-          <Icon name="pull-down" size={24} color={themeColor} />
+          <IconFont name="pull-down" size={12} color={themeColor} />
         </Flex>
       </TouchableOpacity>
 
