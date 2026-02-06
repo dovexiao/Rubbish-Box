@@ -5,7 +5,24 @@
  * AsyncStorage 使用异步 API，兼容性更好
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+
+// Harmony 等非原生移动平台上，使用 JS 实现的 AsyncStorage shim，避免 NativeModule 为空报错
+let AsyncStorage: any = null;
+if (Platform.OS === 'android' || Platform.OS === 'ios') {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    AsyncStorage = require('@react-native-async-storage/async-storage').default;
+  } catch (e) {
+    console.warn('AsyncStorage native module not available:', e);
+    // 兜底使用内存实现，保证基本功能可用
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    AsyncStorage = require('../harmony/async-storage-shim').default;
+  }
+} else {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+  AsyncStorage = require('../harmony/async-storage-shim').default;
+}
 
 /**
  * 存储键名常量
@@ -174,7 +191,3 @@ export const userStorage = {
     return await storageUtil.contains(StorageKeys.USER_INFO);
   },
 };
-
-
-
-

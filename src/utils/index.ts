@@ -14,11 +14,77 @@ export {
   cacheRemove,
   cacheRemoveSync,
 } from './cache';
+import {
+  DeviceEventEmitter,
+  Platform,
+  Linking,
+  NativeModules,
+} from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import Config from 'react-native-config';
+import { cacheGet } from './cache';
+import { storageUtil } from './storage';
+import appPush from './push';
+import { updateRegId } from '@/services/common';
 
-export const inputFixedTwo = (inputVal: any) => {
-  return inputVal ? inputVal.match(/\d*(\.)?(\d{1,2})?/)[0] : inputVal;
+// 按平台懒加载仅在 Android / iOS 存在的原生库，避免在 Harmony 等平台导入时报 NativeModule 为 null
+const isNativeMobile = Platform.OS === 'android' || Platform.OS === 'ios';
+
+let IntentLauncher: any = null;
+let NetInfo: any = null;
+let BleManagerClass: any = null;
+let AMapSdk: any = null;
+let initAMapGeolocationLib: any = null;
+let Geolocation: any = null;
+
+if (isNativeMobile) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    IntentLauncher = require('react-native-intent-launcher');
+  } catch (e) {
+    console.warn('IntentLauncher module not available:', e);
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    NetInfo = require('@react-native-community/netinfo').default;
+  } catch (e) {
+    console.warn('@react-native-community/netinfo module not available:', e);
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    BleManagerClass = require('react-native-ble-plx').BleManager;
+  } catch (e) {
+    console.warn('react-native-ble-plx module not available:', e);
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    AMapSdk = require('react-native-amap3d').AMapSdk;
+  } catch (e) {
+    console.warn('react-native-amap3d module not available:', e);
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    const geo = require('react-native-amap-geolocation');
+    initAMapGeolocationLib = geo.init;
+    Geolocation = geo.Geolocation;
+  } catch (e) {
+    console.warn('react-native-amap-geolocation module not available:', e);
+  }
+}
+
+// 金额/数字输入保留两位小数
+export const inputFixedTwo = (inputVal: string | number) => {
+  const val = String(inputVal ?? '');
+  if (!val) return val;
+  const match = val.match(/\d*(\.)?(\d{1,2})?/);
+  return match ? match[0] : val;
 };
 
+// 手机号正则校验
 export const mobileExp = (mobile: string) => {
   const mobileReg = /^1[3456789]\d{9}$/;
   return mobileReg.test(mobile);
@@ -47,27 +113,6 @@ export function cdnToCosDomain(cosPath: string) {
     'https://sbqfc-1307862547.cos.ap-shanghai.myqcloud.com',
   );
 }
-
-import {
-  DeviceEventEmitter,
-  Platform,
-  Linking,
-  NativeModules,
-} from 'react-native';
-import DeviceInfo from 'react-native-device-info';
-import IntentLauncher from 'react-native-intent-launcher';
-import NetInfo from '@react-native-community/netinfo';
-import { BleManager } from 'react-native-ble-plx';
-import {
-  init as initAMapGeolocationLib,
-  Geolocation,
-} from 'react-native-amap-geolocation';
-import { AMapSdk } from 'react-native-amap3d';
-import Config from 'react-native-config';
-import { cacheGet } from './cache';
-import { storageUtil } from './storage';
-import appPush from './push';
-import { updateRegId } from '@/services/common';
 
 /**
  * 获取存储数据（兼容 Taro 风格的 API）
@@ -376,6 +421,14 @@ export const getNetworkState = async (): Promise<{
   isInternetReachable?: boolean;
 }> => {
   try {
+    if (!NetInfo) {
+      // 在不支持 NetInfo 的平台上，返回一个兜底的离线状态，避免抛错
+      return {
+        isConnected: true,
+        type: 'unknown',
+      };
+    }
+
     const state = await NetInfo.fetch();
 
     return {
@@ -403,6 +456,11 @@ export const addNetworkStateListener = (
   }) => void,
 ): (() => void) => {
   try {
+    if (!NetInfo) {
+      console.warn('NetInfo is not available on this platform');
+      return () => {};
+    }
+
     const unsubscribe = NetInfo.addEventListener((state: any) => {
       callback({
         isConnected: state.isConnected ?? false,
@@ -423,7 +481,12 @@ export const addNetworkStateListener = (
  */
 export const initBLEManager = () => {
   try {
-    const manager = new BleManager();
+    if (!BleManagerClass) {
+      console.warn('BLE Manager is not available on this platform');
+      return null;
+    }
+
+    const manager = new BleManagerClass();
 
     if (__DEV__) {
       console.log('BLE Manager 初始化成功');

@@ -17,7 +17,7 @@ import {
   TouchableWithoutFeedback,
   ViewStyle,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 

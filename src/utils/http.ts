@@ -1,15 +1,23 @@
-import axios, {
+import type {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
+// 在 RN 中强制使用 axios 的 browser 版 bundle，避免依赖 Node 的 crypto 等内置模块
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const axios = require('axios/dist/browser/axios.cjs') as typeof import('axios');
 import dayjs from 'dayjs';
 import { BASE_URL, DEPLOY_ENV, DEPLOY_VERSION, GRAY } from '@/config';
 import { tokenStorage } from '@/utils/storage';
 import { navigateToLogin } from '@/utils/navigation';
 import { cacheGetSync, cacheRemove } from '@/utils/cache';
-import { eventCenter, filterUndefinedAndNull, getSign, randomStr } from '@/utils';
+import {
+  eventCenter,
+  filterUndefinedAndNull,
+  getSign,
+  randomStr,
+} from '@/utils';
 
 /**
  * 统一请求返回格式（参考 MyProject 的 CreateFetchResponse）
@@ -61,10 +69,10 @@ async function getTokenForHeaders(): Promise<string> {
 async function clearAllToken() {
   try {
     await cacheRemove({ key: 'token' });
-  } catch { }
+  } catch {}
   try {
     await tokenStorage.remove();
-  } catch { }
+  } catch {}
 }
 
 function handleReLoginByCode(code: number) {
@@ -116,10 +124,9 @@ http.interceptors.request.use(
       const requestData =
         config.method === 'get' ? (config.params as any) : (config.data as any);
       const sign = getSign(
-        (requestData && typeof requestData === 'object' ? requestData : {}) as Record<
-          string,
-          any
-        >,
+        (requestData && typeof requestData === 'object'
+          ? requestData
+          : {}) as Record<string, any>,
         random,
         secret ? String(secret) : undefined,
       );
@@ -295,5 +302,3 @@ export function del<T = any>(
  * 也可以直接导出实例
  */
 export default http;
-
-

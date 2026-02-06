@@ -67,11 +67,22 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
             {data.groupCount === 1 ? '单个设备' : '组合设备'}
           </Text>
           <Flex style={{ marginTop: 14 }} align="center">
-            <Image
-              source={{ uri: data.imageUrl }}
-              style={{ width: 48, height: 28 }}
-              resizeMode="contain"
-            />
+            {data.imageUrl && data.imageUrl !== 'null' ? (
+              <Image
+                source={{ uri: data.imageUrl }}
+                style={{ width: 48, height: 28 }}
+                resizeMode="contain"
+              />
+            ) : (
+              <View
+                style={{
+                  width: 48,
+                  height: 28,
+                  borderRadius: 4,
+                  backgroundColor: '#E6E8EB',
+                }}
+              />
+            )}
             {data.groupCount !== 1 && (
               <>
                 <Icon

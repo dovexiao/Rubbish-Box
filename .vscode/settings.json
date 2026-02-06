@@ -11,7 +11,12 @@
   },
 
   // 让 ESLint 扩展检查这些语言模式
-  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
 
   // 下面这些是为了确保不同语言模式下都使用 Prettier 作为格式化器
   "[javascript]": {
@@ -25,5 +30,7 @@
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.compile.nullAnalysis.mode": "automatic"
 }

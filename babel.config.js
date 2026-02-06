@@ -10,8 +10,7 @@ module.exports = {
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       },
-
     ],
-    'react-native-worklets/plugin', // 必须在最后
+    'react-native-reanimated/plugin',
   ],
 };

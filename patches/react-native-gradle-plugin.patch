@@ -1,0 +1,30 @@
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 1111111..2222222 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -6,10 +6,8 @@
+* LICENSE file in the root directory of this source tree.
+*/
+
+-import org.gradle.api.internal.classpath.ModuleRegistry
+ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+-import org.gradle.configurationcache.extensions.serviceOf
+ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+@@ -23,17 +23,9 @@
+ dependencies {
+   implementation(gradleApi())
+   implementation("com.android.tools.build:gradle:7.4.2")
+   implementation("com.google.code.gson:gson:2.8.9")
+   implementation("com.google.guava:guava:31.0.1-jre")
+   implementation("com.squareup:javapoet:1.13.0")
+
+   testImplementation("junit:junit:4.13.2")
+-
+-  testRuntimeOnly(
+-      files(
+-          serviceOf<ModuleRegistry>()
+-              .getModule("gradle-tooling-api-builders")
+-              .classpath
+-              .asFiles
+-              .first()))
+ }

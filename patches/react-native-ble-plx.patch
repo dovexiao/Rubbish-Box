@@ -1,0 +1,31 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index 1111111..2222222 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -1,19 +1,7 @@
+-def safeExtGet(prop, fallback) {
+-	rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+-}
+-
+-buildscript {
+-	repositories {
+-		jcenter()
+-		maven {
+-			url 'https://maven.google.com/'
+-			name 'Google'
+-		}
+-	}
+-	dependencies {
+-		classpath 'com.android.tools.build:gradle:3.1.4'
+-	}
+-}
+-
+-apply plugin: 'com.android.library'
++def safeExtGet(prop, fallback) {
++	rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
++}
++
++apply plugin: 'com.android.library'
+ 
+ android {
+ 	compileSdkVersion safeExtGet('compileSdkVersion', 27)

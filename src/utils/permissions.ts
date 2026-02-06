@@ -1,5 +1,11 @@
 import { Platform, Linking } from 'react-native';
-import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
+import {
+  check,
+  request,
+  PERMISSIONS,
+  RESULTS,
+  openSettings,
+} from 'react-native-permissions';
 import { Toast } from '@ant-design/react-native';
 
 /**
@@ -72,7 +78,7 @@ export async function checkPhotoPermission(): Promise<{
 
         return { granted: false, message: '相册权限状态未知' };
       }
-    } else {
+    } else if (Platform.OS === 'ios') {
       // iOS
       const permission = PERMISSIONS.IOS.PHOTO_LIBRARY;
       const checkResult = await check(permission);
@@ -99,6 +105,9 @@ export async function checkPhotoPermission(): Promise<{
       }
 
       return { granted: false, message: '相册权限状态未知' };
+    } else {
+      // 其他平台（如鸿蒙）暂不支持权限库，统一视为未授权但不中断逻辑
+      return { granted: false, message: '当前平台暂不支持相册权限检查' };
     }
   } catch (error: any) {
     console.error('检查相册权限失败:', error);
@@ -142,7 +151,7 @@ export async function checkCameraPermission(): Promise<{
       }
 
       return { granted: false, message: '相机权限状态未知' };
-    } else {
+    } else if (Platform.OS === 'ios') {
       // iOS
       const permission = PERMISSIONS.IOS.CAMERA;
       const checkResult = await check(permission);
@@ -169,6 +178,9 @@ export async function checkCameraPermission(): Promise<{
       }
 
       return { granted: false, message: '相机权限状态未知' };
+    } else {
+      // 其他平台（如鸿蒙）
+      return { granted: false, message: '当前平台暂不支持相机权限检查' };
     }
   } catch (error: any) {
     console.error('检查相机权限失败:', error);
@@ -284,7 +296,7 @@ export async function checkBluetoothPermission(): Promise<{
         // 旧版本 Android 蓝牙权限在安装时自动授予
         return { granted: true };
       }
-    } else {
+    } else if (Platform.OS === 'ios') {
       // iOS
       // iOS 13+ 使用 BLUETOOTH
       // iOS 13 之前蓝牙权限在 Info.plist 中配置，系统会自动处理
@@ -325,6 +337,9 @@ export async function checkBluetoothPermission(): Promise<{
         console.warn('iOS 蓝牙权限检查失败，使用默认授权:', error);
         return { granted: true };
       }
+    } else {
+      // 其他平台（如鸿蒙）暂不支持当前权限库的蓝牙能力
+      return { granted: false, message: '当前平台暂不支持蓝牙权限检查' };
     }
   } catch (error: any) {
     console.error('检查蓝牙权限失败:', error);

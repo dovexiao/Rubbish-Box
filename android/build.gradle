@@ -1,11 +1,11 @@
 buildscript {
     ext {
-        buildToolsVersion = "36.0.0"
+        buildToolsVersion = "33.0.2"
         minSdkVersion = 24
-        compileSdkVersion = 36
-        targetSdkVersion = 36
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         ndkVersion = "27.1.12297006"
-        kotlinVersion = "2.1.20"
+        kotlinVersion = "1.8.22"
     }
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public' }
@@ -18,9 +18,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("com.android.tools.build:gradle:7.4.2")
+        classpath("com.facebook.react:react-native-gradle-plugin:0.72.5")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("com.mob.sdk:MobSDK2:+")
     }
 }
@@ -36,6 +36,44 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    // Force AndroidX dependencies to versions compatible with
+    // compileSdk 33 and AGP 7.4.x, avoiding too-new artifacts
+    // (core/appcompat 1.16+/1.7+ etc.) that require SDK 34/35
+    // and AGP 8.6.
+    configurations.all { config ->
+        resolutionStrategy {
+            force "androidx.core:core:1.10.1"
+            force "androidx.core:core-ktx:1.10.1"
+            force "androidx.appcompat:appcompat:1.6.1"
+            force "androidx.appcompat:appcompat-resources:1.6.1"
+            force "androidx.annotation:annotation-experimental:1.3.1"
+            // Use an older core-viewtree to avoid high compileSdk requirements
+            force "androidx.core:core-viewtree:1.0.0-alpha02"
+        }
+    }
 }
 
-apply plugin: "com.facebook.react.rootproject"
+// Ensure all Android modules use a consistent SDK / Build Tools setup
+subprojects { subproject ->
+    afterEvaluate { project ->
+        if (project.hasProperty("android") && project.android != null) {
+            // Align compileSdk / buildTools across app and all libraries
+            try {
+                project.android.compileSdkVersion rootProject.ext.compileSdkVersion
+            } catch (Throwable ignored) { }
+
+            try {
+                project.android.buildToolsVersion rootProject.ext.buildToolsVersion
+            } catch (Throwable ignored) { }
+
+            try {
+                def defaultConfig = project.android.defaultConfig
+                if (defaultConfig != null) {
+                    defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
+                    defaultConfig.targetSdkVersion rootProject.ext.targetSdkVersion
+                }
+            } catch (Throwable ignored) { }
+        }
+    }
+}

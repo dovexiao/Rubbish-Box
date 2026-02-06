@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Toast from '@ant-design/react-native/lib/toast';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { LockInfoDTO } from '@/pages/index/typing';
 import { getLockDeviceList } from '@/services/device';
 import { updateName } from '@/services/deviceInfo';

@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { eventCenter, getCurrentPages, getStorage, mobileExp, navigateBack, reLaunch } from '@/utils';
+import {
+  Text,
+  TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import {
+  eventCenter,
+  getCurrentPages,
+  getStorage,
+  mobileExp,
+  navigateBack,
+  reLaunch,
+} from '@/utils';
 import { cacheSetSync } from '@/utils/cache';
 import { getMobPushDeviceInfo } from '@/utils/push';
 import { Flex, TextInput } from '@/components';
@@ -17,7 +29,12 @@ interface PasswordProps {
   mobile?: string;
 }
 
-const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: initialMobile = '' }) => {
+const Password: React.FC<PasswordProps> = ({
+  agree,
+  onChange,
+  popRef,
+  mobile: initialMobile = '',
+}) => {
   const navigation = useNavigation<any>();
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('手机号码或密码错误');
@@ -38,47 +55,58 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
 
     setShowError(false);
     const loadingToast = Toast.loading('登录中', 0);
-    let deviceInfoRes: any = {};
+
     try {
-      deviceInfoRes = await getStorage({ key: 'deviceInfo' })
-    } catch { }
-    const device = deviceInfoRes?.data || {}
-    const res = await login({
-      mobile,
-      password,
-      ...device,
-    });
-    if (res.code === 200) {
-      await cacheSetSync('token', res.data.token)
-      await cacheSetSync('guestMode', false)
-      await getMobPushDeviceInfo()
-      Toast.remove(loadingToast)
-      console.log('res', res)
-      // 延迟执行导航，确保状态已更新和导航引用已准备好
-      setTimeout(() => {
-        const pages = getCurrentPages()
-        if (pages.length > 1) {
-          navigateBack()
-        } else {
-          reLaunch({
-            url: '/pages/index/index',
-          });
+      let deviceInfoRes: any = {};
+      try {
+        deviceInfoRes = await getStorage({ key: 'deviceInfo' });
+      } catch {}
+      const device = deviceInfoRes?.data || {};
+
+      const res = await login({
+        mobile,
+        password,
+        ...device,
+      });
+
+      if (res.code === 200) {
+        await cacheSetSync('token', res.data.token);
+        await cacheSetSync('guestMode', false);
+        try {
+          await getMobPushDeviceInfo();
+        } catch (e) {
+          console.error('获取推送设备信息失败:', e);
         }
-      }, 300)
-    } else if (res.code === 520 || res.code === 522) {
-      Toast.remove(loadingToast)
-      setShowError(true);
-      setErrorMessage(res.msg || '手机号码或密码错误');
-    } else {
-      Toast.remove(loadingToast)
-      Toast.fail(res.msg || '登录失败');
+        console.log('密码登录成功 res', res);
+        // 延迟执行导航，确保状态已更新和导航引用已准备好
+        setTimeout(() => {
+          const pages = getCurrentPages();
+          if (pages.length > 1) {
+            navigateBack();
+          } else {
+            reLaunch({
+              url: '/pages/index/index',
+            });
+          }
+        }, 300);
+      } else if (res.code === 520 || res.code === 522) {
+        setShowError(true);
+        setErrorMessage(res.msg || '手机号码或密码错误');
+      } else {
+        Toast.fail(res.msg || '登录失败');
+      }
+    } catch (error) {
+      console.error('密码登录异常:', error);
+      Toast.fail('登录失败，请稍后重试');
+    } finally {
+      Toast.remove(loadingToast);
     }
   };
 
   useEffect(() => {
     eventCenter.on('onNext', () => {
-      onSubmit()
-    })
+      onSubmit();
+    });
     if (initialMobile) {
       setMobile(initialMobile);
     }
@@ -92,13 +120,14 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
             passwordStyles.content,
             showError ? passwordStyles.errorBorder : {},
           ]}
-          align="center">
+          align="center"
+        >
           <TextInput
             placeholder="请输入手机号"
             style={passwordStyles.input}
             placeholderTextColor="#CCCCCC"
             value={mobile}
-            onChangeText={(v) => {
+            onChangeText={v => {
               setMobile(v);
               onChange(v); // 同步更新父组件的 mobile 状态
               if (v && v.length === 11 && mobileExp(v)) {
@@ -116,13 +145,14 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
             passwordStyles.content,
             showError ? passwordStyles.errorBorder : {},
           ]}
-          align="center">
+          align="center"
+        >
           <TextInput
             placeholder="请输入密码"
             style={passwordStyles.input}
             placeholderTextColor="#CCCCCC"
             value={password}
-            onChangeText={(v) => {
+            onChangeText={v => {
               setPassword(v);
               if (v) {
                 setShowError(false);
@@ -141,7 +171,8 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
           isTouchView
           onPress={() => {
             navigation.navigate('ForgetPassword');
-          }}>
+          }}
+        >
           {showError ? (
             <Text style={passwordStyles.error}>{errorMessage}</Text>
           ) : null}
@@ -151,7 +182,11 @@ const Password: React.FC<PasswordProps> = ({ agree, onChange, popRef, mobile: in
         <TouchableOpacity
           style={[
             passwordStyles.btn,
-            mobile && password && !showError && agree && passwordStyles.btnActive,
+            mobile &&
+              password &&
+              !showError &&
+              agree &&
+              passwordStyles.btnActive,
           ]}
           onPress={() => {
             Keyboard.dismiss();

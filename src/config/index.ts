@@ -5,16 +5,21 @@
  */
 
 import Config from 'react-native-config';
+import { Platform } from 'react-native';
 
 // 环境类型
 export type EnvType = 'development' | 'production';
+
+const isHarmony = Platform.OS === 'harmony';
 
 // 从环境变量获取当前环境，如果没有设置则根据 __DEV__ 判断
 export const ENV: EnvType =
   (Config.ENV as EnvType) || (__DEV__ ? 'development' : 'production');
 
 // 获取部署环境（dev/real/staging）
-export const DEPLOY_ENV = Config.DEPLOY_ENV || (__DEV__ ? 'dev' : 'real');
+// Harmony 上不要再依赖 __DEV__，默认走 real，避免 bundle-harmony 始终 __DEV__=true 导致一直使用 dev
+export const DEPLOY_ENV =
+  Config.DEPLOY_ENV || (isHarmony ? 'real' : __DEV__ ? 'dev' : 'real');
 
 // 获取灰度标识
 export const GRAY = Config.GRAY === 'true';

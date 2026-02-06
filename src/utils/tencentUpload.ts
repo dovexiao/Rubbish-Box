@@ -1,4 +1,4 @@
-import Cos from 'react-native-cos-sdk';
+import { Platform } from 'react-native';
 // @ts-ignore
 import dayjs from 'dayjs';
 import { getCosKey } from '@/services/common';
@@ -6,6 +6,19 @@ import { CreateFetchResponse } from './http';
 
 const REGION = 'ap-shanghai';
 const BUCKET = 'sbqfc-1307862547';
+
+const isNativeMobile = Platform.OS === 'android' || Platform.OS === 'ios';
+
+let Cos: any = null;
+if (isNativeMobile) {
+  try {
+    // 仅在 Android / iOS 平台按需加载原生 COS SDK，避免鸿蒙等平台导入时报错
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    Cos = require('react-native-cos-sdk');
+  } catch (e) {
+    console.warn('react-native-cos-sdk is not available:', e);
+  }
+}
 
 /**
  * 生成随机数字
@@ -29,11 +42,35 @@ export default function tencentUpload(options: {
   randomFileName?: boolean;
   appointName?: string;
   folderName?: string;
-}): Promise<CreateFetchResponse<any> & { index?: number }> {
+}) {
+  const { index } = options;
+
+  // 鸿蒙等非 Android / iOS 平台暂不支持原生 COS SDK，直接返回失败结果，避免触发 NativeModule 链接错误
+  if (!isNativeMobile) {
+    return Promise.resolve({
+      code: 599,
+      success: false,
+      data: null,
+      message: '当前平台暂不支持文件上传',
+      index,
+      header: {},
+    } as any);
+  }
+
+  if (!Cos) {
+    return Promise.resolve({
+      code: 599,
+      success: false,
+      data: null,
+      message: '上传模块未正确加载',
+      index,
+      header: {},
+    } as any);
+  }
+
   const {
     file,
     filename,
-    index,
     appointName,
     folderName,
     randomFileName = true,

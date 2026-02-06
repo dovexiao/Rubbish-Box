@@ -10,12 +10,8 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-  Edge,
-} from 'react-native-safe-area-context';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { SafeAreaView, useSafeAreaInsets } from '@/libs/safeAreaContext';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import IconFont from '@/iconfont';

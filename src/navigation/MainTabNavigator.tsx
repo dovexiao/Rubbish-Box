@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { routes } from '@/routes';
 const Tab = createBottomTabNavigator();
 

@@ -216,10 +216,9 @@ const Index = () => {
     };
   }, [onOptioned, onAnimation]);
 
+  const bgImageUri = detail?.imageMap?.bgPng;
   const bgImage =
-    detail && detail.imageMap?.bgPng
-      ? { uri: detail.imageMap.bgPng }
-      : undefined;
+    bgImageUri && bgImageUri !== 'null' ? { uri: bgImageUri } : undefined;
 
   return (
     <PageContainer

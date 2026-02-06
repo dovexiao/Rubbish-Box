@@ -78,3 +78,12 @@ export const darkTheme = {
 
 export type Theme = typeof lightTheme;
 export type ThemeType = 'light' | 'dark';
+
+// 默认主题配置（供不使用 ThemeContext 的组件引用）
+export const theme = {
+  input: {
+    cursorColor: lightTheme.colors.text.primary,
+    selectionColor: lightTheme.colors.text.primary,
+    underlineColorAndroid: 'transparent',
+  },
+};

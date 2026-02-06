@@ -109,8 +109,8 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     onPressAddDevice?.();
   };
 
-  const renderStaticImage = (uri?: string) => {
-    if (!uri) return null;
+  const renderStaticImage = (uri?: string | null) => {
+    if (!uri || uri === 'null') return null;
     return (
       <Image
         source={{ uri }}
@@ -128,8 +128,8 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     return `${uri}${sep}__nonce=${encodeURIComponent(String(nonce))}`;
   };
 
-  const renderGif = (uri?: string, key?: string) => {
-    if (!uri) return null;
+  const renderGif = (uri?: string | null, key?: string) => {
+    if (!uri || uri === 'null') return null;
     const finalUri = withNonce(uri, gifNonce);
     return (
       <FastImage

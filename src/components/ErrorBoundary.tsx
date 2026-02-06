@@ -4,8 +4,14 @@
  */
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import { SafeAreaView } from '@/libs/safeAreaContext';
 
 interface Props {
   children: ReactNode;
@@ -13,7 +19,11 @@ interface Props {
    * 自定义错误UI渲染函数
    * 如果提供，将使用自定义UI而不是默认UI
    */
-  fallback?: (error: Error, errorInfo: ErrorInfo, resetError: () => void) => ReactNode;
+  fallback?: (
+    error: Error,
+    errorInfo: ErrorInfo,
+    resetError: () => void,
+  ) => ReactNode;
   /**
    * 错误发生时的回调
    */
@@ -114,7 +124,8 @@ export class ErrorBoundary extends Component<Props, State> {
         <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
           <ScrollView
             contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}>
+            showsVerticalScrollIndicator={false}
+          >
             <View style={styles.content}>
               {/* 错误图标 */}
               <View style={styles.iconContainer}>
@@ -149,13 +160,15 @@ export class ErrorBoundary extends Component<Props, State> {
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={[styles.button, styles.primaryButton]}
-                  onPress={this.resetError}>
+                  onPress={this.resetError}
+                >
                   <Text style={styles.primaryButtonText}>重试</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={[styles.button, styles.secondaryButton]}
-                  onPress={this.goHome}>
+                  onPress={this.goHome}
+                >
                   <Text style={styles.secondaryButtonText}>返回首页</Text>
                 </TouchableOpacity>
               </View>
@@ -258,4 +271,3 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
-
