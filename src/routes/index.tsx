@@ -109,5 +109,40 @@ export const routes = {
       component: require('@/pages/pickupCodeRecordDetail').default,
       label: '领取详情',
     },
+    {
+      name: 'Order',
+      component: require('@/pages/order').default,
+      label: '我的订单',
+    },
+    {
+      name: 'OrderDetail',
+      component: require('@/pages/order/detail').default,
+      label: '订单详情',
+    },
+    {
+      name: 'OnlineRepair',
+      component: require('@/pages/maintain').default,
+      label: '在线报修',
+    },
+    {
+      name: 'MaintainLockChoose',
+      component: require('@/pages/maintain/lockChoose').default,
+      label: '选择地锁',
+    },
+    {
+      name: 'MaintainService',
+      component: require('@/pages/maintain/service').default,
+      label: '服务记录',
+    },
+    {
+      name: 'MaintainServiceDetail',
+      component: require('@/pages/maintain/serviceDetail').default,
+      label: '服务单详情',
+    },
+    {
+      name: 'AdvertisingDisplay',
+      component: require('@/pages/adDisplay').default,
+      label: '广告展示',
+    },
   ],
 } as const;

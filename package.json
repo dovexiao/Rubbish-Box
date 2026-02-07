@@ -53,6 +53,7 @@
     "@types/crypto-js": "^4.2.2",
     "axios": "^1.13.2",
     "crypto-js": "^4.2.0",
+    "element-china-area-data": "^6.1.0",
     "eventemitter3": "^5.0.4",
     "install": "^0.13.0",
     "npm": "^11.7.0",

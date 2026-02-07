@@ -126,7 +126,7 @@ export default function Mine() {
       {
         icon: 'order' as const,
         label: '我的订单',
-        onPress: () => navigation.navigate('MyOrder'),
+        onPress: () => navigation.navigate('Order'),
       },
       {
         icon: 'maintain' as const,
