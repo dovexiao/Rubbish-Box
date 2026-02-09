@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import Flex from '../Flex';
 import IconFont from '@/iconfont';
 import {
@@ -21,12 +28,15 @@ interface HeaderProps {
   type?: number;
   /** 标题（占位，保持与调用方兼容） */
   title?: string;
+  /** 鸿蒙端 noDevices header高度单独处理*/
+  noDevices?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
   unreadCount = 0,
   lockInfo,
   type = 1,
+  noDevices = false,
 }) => {
   const { theme, themeType } = useTheme();
   const textColor = useMemo(() => {
@@ -103,10 +113,14 @@ const Header: React.FC<HeaderProps> = ({
   );
 
   const isGroupOrNonMains = lockInfo?.isGroup || lockInfo?.powerType !== 1;
+  const isHarmony = !['ios', 'android'].includes(Platform.OS);
 
   return (
     <>
-      <Flex align="center" style={styles.header}>
+      <Flex
+        align="center"
+        style={styles[isHarmony && noDevices ? 'headerHarmony' : 'header']}
+      >
         {isGroupOrNonMains ? (
           // 组合设备或非市电：只展示消息入口
           <Flex style={styles.headerLeft} align="center" justify="end">
@@ -197,26 +211,30 @@ const Header: React.FC<HeaderProps> = ({
         )}
       </Flex>
 
-      {/* 预留蓝牙提示弹窗 */}
-      <PopConfirm
-        title={<Text style={styles.popTitle}>需用蓝牙连接设备开启</Text>}
-        ref={{ current: null } as any}
-        cancelText="取消"
-        confirmText="前往连接"
-        onConfirm={async () => {}}
-      />
-      <PopConfirm
-        title={
-          <Flex direction="column" align="center">
-            <Text style={styles.popTitle}>温馨提示</Text>
-            <Text style={styles.popText}>未连接上蓝牙，请靠近地锁才能使用</Text>
-          </Flex>
-        }
-        ref={{ current: null } as any}
-        showClose={false}
-        confirmText="关闭"
-        onConfirm={async () => {}}
-      />
+      {/* 预留蓝牙提示弹窗：Android / iOS 使用，Harmony 暂时关闭以避免兼容性崩溃 */}
+      {!isHarmony && (
+        <>
+          <PopConfirm
+            title={<Text style={styles.popTitle}>需用蓝牙连接设备开启</Text>}
+            cancelText="取消"
+            confirmText="前往连接"
+            onConfirm={async () => {}}
+          />
+          <PopConfirm
+            title={
+              <Flex direction="column" align="center">
+                <Text style={styles.popTitle}>温馨提示</Text>
+                <Text style={styles.popText}>
+                  未连接上蓝牙，请靠近地锁才能使用
+                </Text>
+              </Flex>
+            }
+            showClose={false}
+            confirmText="关闭"
+            onConfirm={async () => {}}
+          />
+        </>
+      )}
     </>
   );
 };
@@ -227,6 +245,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  headerHarmony: {
+    height: 70,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
     backgroundColor: 'transparent',
   },
   headerLeft: {

@@ -17,7 +17,7 @@ import { useAppNavigation } from '@/hooks/useAppNavigation';
 import Sms from './com/sms';
 import Password from './com/password';
 import styles from './styles';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { cacheSet } from '@/utils/cache';
 import {
   cacheGetSync,
@@ -291,7 +291,7 @@ const Login = () => {
             onPress={radioClick}
             style={{ marginTop: 16 }}
           >
-            <IconFont
+            <AppIcon
               size={17}
               name={agree ? 'selected' : 'unselected'}
               color={agree ? '#333333' : '#E1E1E1'}
@@ -441,6 +441,7 @@ const Login = () => {
         submitBtn={
           <GradientButton
             width={124}
+            height={42}
             style={styles.popSubmit}
             colors={['#282828', '#4A4A4A']}
             onPress={

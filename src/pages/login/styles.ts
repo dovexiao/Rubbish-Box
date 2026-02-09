@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 52
+    paddingBottom: 52,
   },
   logo: {
     width: 191,
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     color: '#333333',
     lineHeight: 20,
     letterSpacing: 5,
-    marginTop: 8
+    marginTop: 8,
   },
   agree: {
     fontSize: 12,
@@ -44,11 +44,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999999',
     lineHeight: 17,
-    marginHorizontal: 12
+    marginHorizontal: 12,
   },
   wxlogo: {
     width: 50,
-    height: 50
+    height: 50,
   },
   loginIcon: {
     width: 50,
@@ -67,8 +67,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: 'center',
     marginTop: 8,
-    fontWeight: 'normal'
-
+    fontWeight: 'normal',
   },
   popDescLink: {
     fontSize: 14,
@@ -95,10 +94,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   popBtnText: {
-    height: '100%',
-    color: '#ffffff'
+    color: '#ffffff',
+    textAlign: 'center',
   },
 });
 
 export default styles;
-

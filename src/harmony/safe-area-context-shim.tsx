@@ -33,7 +33,8 @@ export const SafeAreaInsetsContext =
 export const SafeAreaFrameContext =
   React.createContext<typeof defaultFrame>(defaultFrame);
 
-// Harmony 上没有 RNCSafeAreaView，直接退化为普通 View
+// Harmony 上没有 RNCSafeAreaView，直接退化为普通 View（不主动加 padding），
+// 由上层 PageContainer 等组件自己基于 useSafeAreaInsets 决定是否添加内边距
 export const SafeAreaView: React.FC<SafeAreaViewProps> = props => {
   return <View {...props} />;
 };

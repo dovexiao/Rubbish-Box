@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Pressable,
+  ImageStyle,
+} from 'react-native';
 import Flex from '../Flex';
 import IconFont from '@/iconfont';
 import { Toast } from '@ant-design/react-native';
@@ -35,15 +42,15 @@ const Content: React.FC<ContentProps> = ({
 
   useEffect(() => {
     if (detail?.isGroup) {
-      async function getGroupSubList() {
+      const funs = async function getGroupSubList() {
         const res = await groupSubList({
           id: detail?.id,
           pageSize: 30,
           offset: 0,
         });
         setGroupList(res.data?.list || []);
-      }
-      getGroupSubList();
+      };
+      funs();
     }
   }, [detail]);
 
@@ -100,7 +107,6 @@ const Content: React.FC<ContentProps> = ({
   const address = detail?.locationList?.[0]?.address || detail?.address || '';
 
   return (
-    // <ImageBackground source={{ uri: detail?.imageMap?.bgPng }}>
     <View style={styles.contentBox}>
       {/* 上方设备模型/状态图 */}
       <Flex direction="column" align="center">
@@ -147,7 +153,7 @@ const Content: React.FC<ContentProps> = ({
               source={{
                 uri: 'https://g.18qjz.cn/img/boklock/map_placeholder.png',
               }}
-              style={styles.mapImage}
+              style={styles.mapImage as ImageStyle}
               resizeMode="cover"
             />
           </View>
@@ -191,8 +197,12 @@ const Content: React.FC<ContentProps> = ({
                   align={'center'}
                 >
                   <Image
-                    src={item?.imageUrl || ''}
-                    style={styles.groupItemImage}
+                    source={
+                      item?.imageUrl
+                        ? { uri: String(item.imageUrl) }
+                        : undefined
+                    }
+                    style={styles.groupItemImage as ImageStyle}
                   />
                   <Text numberOfLines={1} style={styles.groupItemLockName}>
                     {item?.lockName || ''}
@@ -247,7 +257,6 @@ const Content: React.FC<ContentProps> = ({
         </TouchableOpacity>
       </View>
     </View>
-    // </ImageBackground>
   );
 };
 

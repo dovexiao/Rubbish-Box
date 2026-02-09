@@ -277,9 +277,13 @@ const Index = () => {
         //  主体内容
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[styles.content]}
         >
-          <Header unreadCount={unreadCount} lockInfo={detail} />
+          <Header
+            unreadCount={unreadCount}
+            lockInfo={detail}
+            noDevices={hasDevice && detail?.id ? false : true}
+          />
           {hasDevice && detail?.id ? (
             <Content
               key={'single'}

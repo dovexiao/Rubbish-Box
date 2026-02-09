@@ -50,6 +50,18 @@ baseConfig.resolver = {
   resolveRequest(context, moduleName, platform) {
     // Harmony 平台下，用 JS shim 替代部分依赖原生模块的库，避免 NativeModule 为空时报错
     if (platform === 'harmony') {
+      if (moduleName === 'react-native-svg') {
+        // Harmony 上暂时没有原生 SVG 实现，使用 JS 占位 shim，保证图标至少有可见形态
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(__dirname, 'src/harmony/svg-shim.tsx'),
+          platform,
+        );
+      }
+
       if (moduleName === 'react-native-gesture-handler') {
         return resolve(
           {
@@ -104,18 +116,6 @@ baseConfig.resolver = {
             resolveRequest: null,
           },
           path.resolve(__dirname, 'src/harmony/linear-gradient-shim.tsx'),
-          platform,
-        );
-      }
-
-      if (moduleName === 'react-native-svg') {
-        // Harmony 上用 JS 版 Svg 占位实现，避免 RNSVGPath 等原生组件缺失
-        return resolve(
-          {
-            ...context,
-            resolveRequest: null,
-          },
-          path.resolve(__dirname, 'src/harmony/svg-shim.tsx'),
           platform,
         );
       }

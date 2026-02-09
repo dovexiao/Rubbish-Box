@@ -1,0 +1,13 @@
+diff --git a/android/src/main/java/com/swmansion/rnscreens/ScreenStack.kt b/android/src/main/java/com/swmansion/rnscreens/ScreenStack.kt
+index 34aed7959dc622c658120dc32cc53d2232c3f36a..0587140ed09aff502d806f32f78421aaf4abc36d 100644
+--- a/android/src/main/java/com/swmansion/rnscreens/ScreenStack.kt
++++ b/android/src/main/java/com/swmansion/rnscreens/ScreenStack.kt
+@@ -297,7 +297,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
+     }
+ 
+     private fun performDraw(op: DrawingOp) {
+-        super.drawChild(op.canvas, op.child, op.drawingTime)
++        super.drawChild(op.canvas!!, op.child, op.drawingTime)
+     }
+ 
+     private fun obtainDrawingOp(): DrawingOp =

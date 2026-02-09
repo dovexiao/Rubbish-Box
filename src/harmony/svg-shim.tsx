@@ -27,20 +27,53 @@ export interface PathProps extends ViewProps {
   fill?: string;
 }
 
-export const Svg: React.FC<SvgProps> = ({ children, style, ...rest }) => {
+export const Svg: React.FC<SvgProps> = ({
+  children,
+  style,
+  width,
+  height,
+  ...rest
+}) => {
+  // 从第一个 Path 子节点里取 fill 颜色，用于占位块
+  let fillColor = '#333333';
+  const firstChild = React.Children.toArray(children)[0] as any;
+  if (firstChild && firstChild.props && firstChild.props.fill) {
+    fillColor = firstChild.props.fill;
+  }
+
+  const boxSizeStyle: any = {
+    width: width ?? 18,
+    height: height ?? 18,
+  };
+
   return (
     <View
-      // 给一个最小尺寸，避免某些地方 size=0 完全不可见
-      style={[{ alignItems: 'center', justifyContent: 'center' }, style]}
+      style={[
+        {
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+        },
+        boxSizeStyle,
+        style,
+      ]}
       {...rest}
     >
-      {children}
+      {/* 用纯色方块作为 icon 占位，保证 Harmony 上至少有可见图形 */}
+      <View
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: 3,
+          backgroundColor: fillColor,
+        }}
+      />
     </View>
   );
 };
 
 export const Path: React.FC<PathProps> = () => {
-  // 不绘制真实路径，仅作为占位，避免崩溃
+  // 具体路径在 Harmony 上暂不绘制，避免依赖原生 RNSVG* 组件
   return null;
 };
 

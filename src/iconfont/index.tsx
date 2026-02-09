@@ -1,8 +1,11 @@
 /* tslint:disable */
+/* eslint-disable */
 
 import React, { FunctionComponent } from 'react';
+import { Platform } from 'react-native';
 import { ViewProps } from 'react-native';
 import { GProps } from 'react-native-svg';
+import HarmonyIconImage from '@/harmony/HarmonyIconImage';
 import IconAPopUpwindowsclose from './IconAPopUpwindowsclose';
 import IconStar from './IconStar';
 import IconACombinationunit from './IconACombinationunit';
@@ -249,14 +252,13 @@ export type IconNames =
   | 'manager'
   | 'arrows1';
 
-// @ts-ignore
 interface Props extends GProps, ViewProps {
   name: IconNames;
   size?: number;
   color?: string | string[];
 }
 
-let IconFont: FunctionComponent<Props> = ({ name, ...rest }) => {
+const SvgIconFont: FunctionComponent<Props> = ({ name, ...rest }) => {
   switch (name) {
     case 'a-pop-upwindowsclose':
       return <IconAPopUpwindowsclose key="1" {...rest} />;
@@ -425,6 +427,20 @@ let IconFont: FunctionComponent<Props> = ({ name, ...rest }) => {
   return null;
 };
 
-IconFont = React.memo ? React.memo(IconFont) : IconFont;
+const isNativePlatform = Platform.OS === 'android' || Platform.OS === 'ios';
+
+const IconFont: FunctionComponent<Props> = props => {
+  if (isNativePlatform) {
+    return <SvgIconFont {...props} />;
+  }
+
+  const { name, size, color, ...rest } = props;
+
+  return <HarmonyIconImage name={name} size={size} color={color} {...rest} />;
+};
+
+IconFont.defaultProps = {
+  size: 18,
+};
 
 export default IconFont;

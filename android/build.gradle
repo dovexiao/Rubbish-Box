@@ -1,9 +1,9 @@
 buildscript {
     ext {
-        buildToolsVersion = "33.0.2"
+        buildToolsVersion = "34.0.0"
         minSdkVersion = 24
-        compileSdkVersion = 33
-        targetSdkVersion = 33
+        compileSdkVersion = 34
+        targetSdkVersion = 34
         ndkVersion = "27.1.12297006"
         kotlinVersion = "1.8.22"
     }
@@ -37,10 +37,7 @@ allprojects {
         mavenCentral()
     }
 
-    // Force AndroidX dependencies to versions compatible with
-    // compileSdk 33 and AGP 7.4.x, avoiding too-new artifacts
-    // (core/appcompat 1.16+/1.7+ etc.) that require SDK 34/35
-    // and AGP 8.6.
+    // Force部分 AndroidX 依赖的版本，避免个别库自动升级到更高版本导致编译断崖式报错
     configurations.all { config ->
         resolutionStrategy {
             force "androidx.core:core:1.10.1"
@@ -50,6 +47,8 @@ allprojects {
             force "androidx.annotation:annotation-experimental:1.3.1"
             // Use an older core-viewtree to avoid high compileSdk requirements
             force "androidx.core:core-viewtree:1.0.0-alpha02"
+
+            // CameraX 版本交由各库自行管理（例如 VisionCamera），在 compileSdk 34 下不再强制降级
         }
     }
 }
@@ -74,6 +73,24 @@ subprojects { subproject ->
                     defaultConfig.targetSdkVersion rootProject.ext.targetSdkVersion
                 }
             } catch (Throwable ignored) { }
+
+            // Use Java 17 across all Android modules so libraries like
+            // react-native-reanimated 3.16.x can use modern language features
+            try {
+                project.android.compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            } catch (Throwable ignored) { }
         }
+
+        // Align Kotlin jvmTarget where Kotlin Android plugin is applied
+        try {
+            project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach { task ->
+                if (task.kotlinOptions != null) {
+                    task.kotlinOptions.jvmTarget = "17"
+                }
+            }
+        } catch (Throwable ignored) { }
     }
 }

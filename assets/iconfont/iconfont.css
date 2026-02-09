@@ -1,0 +1,341 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4985985 */
+  /* Color fonts */
+  src: 
+       url('//at.alicdn.com/t/c/font_4985985_1enj8wy3ob8.woff2?t=1769502110921') format('woff2'),
+       url('//at.alicdn.com/t/c/font_4985985_1enj8wy3ob8.woff?t=1769502110921') format('woff'),
+       url('//at.alicdn.com/t/c/font_4985985_1enj8wy3ob8.ttf?t=1769502110921') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-a-pop-upwindowsclose:before {
+  content: "\e71b";
+}
+
+.icon-star:before {
+  content: "\e71a";
+}
+
+.icon-a-combinationunit:before {
+  content: "\e719";
+}
+
+.icon-a-styledescription:before {
+  content: "\e716";
+}
+
+.icon-a-add12:before {
+  content: "\e715";
+}
+
+.icon-a-scanQRcodes1:before {
+  content: "\e717";
+}
+
+.icon-copy1:before {
+  content: "\e718";
+}
+
+.icon-feedback:before {
+  content: "\e714";
+}
+
+.icon-a-nextpage:before {
+  content: "\e712";
+}
+
+.icon-a-previouspage:before {
+  content: "\e713";
+}
+
+.icon-a-addequipments:before {
+  content: "\e711";
+}
+
+.icon-a-batterylifepriority:before {
+  content: "\e70e";
+}
+
+.icon-a-powersupply:before {
+  content: "\e70f";
+}
+
+.icon-a-performancefirst:before {
+  content: "\e710";
+}
+
+.icon-more:before {
+  content: "\e70c";
+}
+
+.icon-search:before {
+  content: "\e70d";
+}
+
+.icon-a-downloadtheAPP:before {
+  content: "\e703";
+}
+
+.icon-a-operatingguide:before {
+  content: "\e70b";
+}
+
+.icon-message1:before {
+  content: "\e6fd";
+}
+
+.icon-a-Equipmentlist:before {
+  content: "\e6f8";
+}
+
+.icon-a-customerservice:before {
+  content: "\e706";
+}
+
+.icon-lock:before {
+  content: "\e704";
+}
+
+.icon-order:before {
+  content: "\e705";
+}
+
+.icon-unlock:before {
+  content: "\e707";
+}
+
+.icon-park1:before {
+  content: "\e708";
+}
+
+.icon-pull-down:before {
+  content: "\e709";
+}
+
+.icon-a-VIPInvitation:before {
+  content: "\e70a";
+}
+
+.icon-a-headfor-16-grey1:before {
+  content: "\e6f7";
+}
+
+.icon-bluetooth-1:before {
+  content: "\e6ed";
+}
+
+.icon-a-headfor-201:before {
+  content: "\e6ee";
+}
+
+.icon-down:before {
+  content: "\e6ef";
+}
+
+.icon-a-advertisingdisplay:before {
+  content: "\e6f0";
+}
+
+.icon-a-headfor-121:before {
+  content: "\e6f1";
+}
+
+.icon-exit:before {
+  content: "\e6f2";
+}
+
+.icon-a-combinationmanagement:before {
+  content: "\e6f3";
+}
+
+.icon-maintain:before {
+  content: "\e6f4";
+}
+
+.icon-share:before {
+  content: "\e6f5";
+}
+
+.icon-a-powermanagement:before {
+  content: "\e6f6";
+}
+
+.icon-a-equipmentinformation:before {
+  content: "\e6f9";
+}
+
+.icon-member-20:before {
+  content: "\e6fa";
+}
+
+.icon-message:before {
+  content: "\e6fb";
+}
+
+.icon-location1:before {
+  content: "\e6fc";
+}
+
+.icon-rise:before {
+  content: "\e6fe";
+}
+
+.icon-setting:before {
+  content: "\e6ff";
+}
+
+.icon-member:before {
+  content: "\e700";
+}
+
+.icon-a-skinpeeler:before {
+  content: "\e701";
+}
+
+.icon-shopping:before {
+  content: "\e702";
+}
+
+.icon-pen16:before {
+  content: "\e6ea";
+}
+
+.icon-pen24:before {
+  content: "\e6eb";
+}
+
+.icon-explain:before {
+  content: "\e6da";
+}
+
+.icon-download:before {
+  content: "\e6d9";
+}
+
+.icon-play:before {
+  content: "\e6d8";
+}
+
+.icon-a-headfor-16-grey:before {
+  content: "\e6c7";
+}
+
+.icon-a-Videoguidance:before {
+  content: "\e6c0";
+}
+
+.icon-a-Upgradelock:before {
+  content: "\e6bf";
+}
+
+.icon-mine:before {
+  content: "\e6b9";
+}
+
+.icon-statistics1:before {
+  content: "\e6be";
+}
+
+.icon-a-Lowbatteryreminder:before {
+  content: "\e6bb";
+}
+
+.icon-bell:before {
+  content: "\e6bc";
+}
+
+.icon-wrong-red:before {
+  content: "\e6b1";
+}
+
+.icon-right-green:before {
+  content: "\e6b3";
+}
+
+.icon-invisible:before {
+  content: "\e6b0";
+}
+
+.icon-visible:before {
+  content: "\e6af";
+}
+
+.icon-back:before {
+  content: "\e6ae";
+}
+
+.icon-selected:before {
+  content: "\e6ad";
+}
+
+.icon-unselected:before {
+  content: "\e6ac";
+}
+
+.icon-multiplication:before {
+  content: "\e6ab";
+}
+
+.icon-tick-white:before {
+  content: "\e6a9";
+}
+
+.icon-minus:before {
+  content: "\e6aa";
+}
+
+.icon-telephone:before {
+  content: "\e6a6";
+}
+
+.icon-add:before {
+  content: "\e6a7";
+}
+
+.icon-camera:before {
+  content: "\e6a8";
+}
+
+.icon-refresh:before {
+  content: "\e69d";
+}
+
+.icon-location:before {
+  content: "\e69e";
+}
+
+.icon-redact:before {
+  content: "\e69f";
+}
+
+.icon-close:before {
+  content: "\e696";
+}
+
+.icon-a-headfor-12:before {
+  content: "\e692";
+}
+
+.icon-a-headfor-20:before {
+  content: "\e693";
+}
+
+.icon-statistics:before {
+  content: "\e690";
+}
+
+.icon-manager:before {
+  content: "\e68e";
+}
+
+.icon-arrows1:before {
+  content: "\e688";
+}
+

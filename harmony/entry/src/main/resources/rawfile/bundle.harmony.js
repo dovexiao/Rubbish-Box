@@ -1382,7 +1382,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   _reactNative.AppRegistry.registerComponent(_$$_REQUIRE(_dependencyMap[5], "./app.json").name, function () {
     return _App.default;
   });
-},0,[1,3,521,895,591,1436],"index.js");
+},0,[1,3,521,895,591,1588],"index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Copyright (c) 2024 Huawei Technologies Co., Ltd.
@@ -119240,16 +119240,31 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   });
   exports.default = void 0;
   var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
-  var _toConsumableArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/toConsumableArray"));
-  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/slicedToArray"));
-  var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "@babel/runtime/helpers/objectWithoutProperties"));
-  var _react = _$$_REQUIRE(_dependencyMap[5], "react");
-  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "../Flex"));
-  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./styles"));
-  var _GradientButton = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "../GradientButton"));
-  var _excluded = ["showClose", "confirmText", "cancelText", "onConfirm", "onCancel", "confirmColors", "confirmTextColor", "textWeight", "marginTop32", "children", "btnWrapStyle", "confirmBtnStyle"];
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
+  var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/objectWithoutProperties"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react"));
+  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../Flex"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./styles"));
+  var _GradientButton = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "../GradientButton"));
+  var _excluded = ["showClose", "confirmText", "cancelText", "onConfirm", "onCancel", "confirmColors", "confirmTextColor", "textWeight", "btnWrapStyle", "confirmBtnStyle", "width"];
   var _this = this,
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\popConfirm\\index.tsx";
+  /**
+   * 确认弹窗
+   * 用于确认用户操作，如删除、退出登录等：不存在UI展示
+   * @param title 弹窗标题
+   * @param showClose 是否显示关闭按钮
+   * @param ref 弹窗引用
+   * @param confirmText 确认按钮文本
+   * @param cancelText 取消按钮文本
+   * @param onConfirm 确认回调
+   * @param onCancel 取消回调
+   * @param confirmColors 确认按钮背景渐变颜色
+   * @param confirmTextColor 确认按钮字体颜色
+   * @param textWeight 按钮字体加粗
+   * @param submitBtn 自定义确认按钮
+   */
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var PopConfirm = (0, _react.forwardRef)(function (_ref, ref) {
     var _ref$showClose = _ref.showClose,
       showClose = _ref$showClose === void 0 ? true : _ref$showClose,
@@ -119265,12 +119280,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       confirmTextColor = _ref$confirmTextColor === void 0 ? '#FFFFFF' : _ref$confirmTextColor,
       _ref$textWeight = _ref.textWeight,
       textWeight = _ref$textWeight === void 0 ? 'normal' : _ref$textWeight,
-      _ref$marginTop = _ref.marginTop32,
-      marginTop32 = _ref$marginTop === void 0 ? false : _ref$marginTop,
-      children = _ref.children,
       _ref$btnWrapStyle = _ref.btnWrapStyle,
       btnWrapStyle = _ref$btnWrapStyle === void 0 ? {} : _ref$btnWrapStyle,
       confirmBtnStyle = _ref.confirmBtnStyle,
+      _ref$width = _ref.width,
+      width = _ref$width === void 0 ? 311 : _ref$width,
       props = (0, _objectWithoutProperties2.default)(_ref, _excluded);
     var _useState = (0, _react.useState)(false),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
@@ -119286,7 +119300,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       };
     });
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[10], "@ant-design/react-native").Modal, {
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Modal, {
       transparent: true,
       modalType: 'portal',
       onClose: function onClose() {
@@ -119294,16 +119308,26 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       },
       maskClosable: true,
       visible: visible,
-      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_Flex.default, {
-        direction: 'column',
+      bodyStyle: {
+        paddingTop: 12,
+        paddingHorizontal: 24,
+        paddingBottom: 24
+      },
+      style: {
+        borderRadius: 16,
+        width: width,
+        display: 'flex'
+      },
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_Flex.default, {
         style: _styles.default.popupContainer,
-        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[10], "@ant-design/react-native").Text, {
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Text, {
           style: _styles.default.popupTitle,
           children: props.title
-        }), children, /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_Flex.default, {
-          style: [btnWrapStyle].concat((0, _toConsumableArray2.default)(marginTop32 ? [_styles.default.btnMarginTop] : [_styles.default.btnContainerWrapper])),
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_Flex.default, {
+          style: [btnWrapStyle, _styles.default.btnContainerWrapper],
           justify: 'center',
-          children: [showClose && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_GradientButton.default, {
+          align: "center",
+          children: [showClose && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_GradientButton.default, {
             colors: ['transparent', 'transparent'],
             width: 124,
             height: 42,
@@ -119311,11 +119335,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               onCancel ? yield onCancel() : setVisible(false);
             }),
             style: [_styles.default.btnContainer, _styles.default.btnContainerClose],
-            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[10], "@ant-design/react-native").Text, {
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Text, {
               style: _styles.default.btnContainerCloseText,
               children: cancelText
             })
-          }), props != null && props.submitBtn ? props.submitBtn : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_GradientButton.default, {
+          }), props != null && props.submitBtn ? props.submitBtn : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_GradientButton.default, {
             colors: confirmColors,
             width: showClose ? 124 : 160,
             height: 42,
@@ -119326,10 +119350,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 setVisible(false);
               }
             }),
-            style: [_styles.default.btnContainer, Object.assign({}, showClose ? {
-              marginLeft: 15
-            } : {})],
-            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[10], "@ant-design/react-native").Text, {
+            style: [_styles.default.btnContainer],
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Text, {
               style: [_styles.default.btnContainerConfirmText, Object.assign({
                 color: confirmTextColor,
                 fontWeight: textWeight
@@ -119342,7 +119364,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = PopConfirm;
-},536,[3,83,6,24,150,41,537,539,540,90,542],"src\\components\\popConfirm\\index.tsx");
+},536,[3,83,24,150,41,537,539,540,90,542],"src\\components\\popConfirm\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -119450,18 +119472,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var popupStyle = _reactNative.StyleSheet.create({
     popupContainer: {
       width: '100%',
-      paddingHorizontal: 12
-      // padding: 24,
+      display: 'flex',
+      flexDirection: 'column'
     },
     popupTitle: {
-      fontWeight: 'bold',
+      fontWeight: '500',
+      fontSize: 16,
+      color: '#333333',
       textAlign: 'center'
     },
-    btnMarginTop: {
-      marginTop: 24
-    },
     btnContainerWrapper: {
-      marginTop: 36
+      width: '100%',
+      marginTop: 36,
+      gap: 15
     },
     btnContainer: {
       borderRadius: 12,
@@ -119479,9 +119502,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     btnContainerConfirmText: {
       color: '#ffffff'
-    },
-    btnContainerConfirm: {
-      marginLeft: 15
     }
   });
   var _default = exports.default = popupStyle;
@@ -162038,7 +162058,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   });
   exports.config = exports.MAP_KEY_IOS = exports.MAP_KEY_ANDROID = exports.IOS_BUNDLE_ID = exports.GRAY = exports.ENV = exports.DEPLOY_VERSION = exports.DEPLOY_ENV = exports.BASE_URL = exports.APP_NAME = exports.API_VERSION = exports.ANDROID_PACKAGE_NAME = void 0;
   var _reactNativeConfig = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "react-native-config"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
   /**
    * 环境配置
    * 使用 react-native-config 管理不同环境的配置
@@ -162047,14 +162066,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 环境类型
 
-  var isHarmony = _reactNative.Platform.OS === 'harmony';
-
   // 从环境变量获取当前环境，如果没有设置则根据 __DEV__ 判断
   var ENV = exports.ENV = _reactNativeConfig.default.ENV || (__DEV__ ? 'development' : 'production');
 
   // 获取部署环境（dev/real/staging）
-  // Harmony 上不要再依赖 __DEV__，默认走 real，避免 bundle-harmony 始终 __DEV__=true 导致一直使用 dev
-  var DEPLOY_ENV = exports.DEPLOY_ENV = _reactNativeConfig.default.DEPLOY_ENV || (isHarmony ? 'real' : __DEV__ ? 'dev' : 'real');
+  // 优先使用环境变量中的 DEPLOY_ENV（通过不同打包命令传入），否则按 __DEV__ 默认 dev / real
+  var DEPLOY_ENV = exports.DEPLOY_ENV = _reactNativeConfig.default.DEPLOY_ENV || (__DEV__ ? 'dev' : 'real');
 
   // 获取灰度标识
   var GRAY = exports.GRAY = _reactNativeConfig.default.GRAY === 'true';
@@ -162117,7 +162134,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     console.log(`高德地图 iOS Key: ${MAP_KEY_IOS ? '已配置' : '未配置'}`);
     console.log('===============');
   }
-},964,[3,953,1],"src\\config\\index.ts");
+},964,[3,953],"src\\config\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -162812,7 +162829,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.getNetworkState = exports.getMobPushDeviceInfo = void 0;
   exports.getSign = getSign;
   exports.getStorage = getStorage;
-  exports.mobileExp = exports.jumpToPage = exports.isSameMac = exports.isDecimal = exports.inputFixedTwo = exports.initBLEManager = exports.initAppPush = exports.initAMapSdk = exports.initAMapGeolocation = exports.idCardExp = exports.getSystemConnectedDevices = void 0;
+  exports.jumpToPage = exports.isSameMac = exports.isDecimal = exports.inputFixedTwo = exports.initBLEManager = exports.initAppPush = exports.initAMapSdk = exports.initAMapGeolocation = exports.idCardExp = exports.getSystemConnectedDevices = void 0;
+  exports.loopFunc = loopFunc;
+  exports.mobileExp = void 0;
   exports.myNextTick = myNextTick;
   Object.defineProperty(exports, "navigateBack", {
     enumerable: true,
@@ -163703,6 +163722,93 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
     });
+  }
+
+  /**
+   * 轮询控制器接口
+   */
+
+  /**
+   * 通用轮询工具函数
+   *
+   * @param func 轮询执行的任务函数
+   *             返回 Promise<boolean>
+   *             - resolve(true): 继续轮询
+   *             - resolve(false): 停止轮询
+   * @param interval 轮询间隔时间（毫秒），默认 1000ms
+   * @param maxTimes 最大轮询次数，0 为无限次数，默认 0
+   * @returns 轮询控制器 { start, stop }
+   *
+   * @example
+   * ```ts
+   * const poller = loopFunc(async () => {
+   *   const status = await checkStatus();
+   *   return status !== 'completed';
+   * }, 2000);
+   *
+   * poller.start();
+   * // ...
+   * poller.stop();
+   * ```
+   */
+  function loopFunc(func) {
+    var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
+    var maxTimes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var isStopped = true;
+    var count = 0;
+    var timer = null;
+    var stop = function stop() {
+      isStopped = true;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+    var start = function start() {
+      // 如果已经在运行，则不重复启动
+      if (!isStopped) return;
+      isStopped = false;
+      count = 0;
+      var _run = /*#__PURE__*/function () {
+        var _ref10 = (0, _asyncToGenerator2.default)(function* () {
+          // 停止检查
+          if (isStopped) return;
+
+          // 次数检查
+          if (maxTimes > 0 && count >= maxTimes) {
+            stop();
+            return;
+          }
+          try {
+            count++;
+            // 执行任务
+            var shouldContinue = yield func();
+
+            // 任务返回 false 或已被外部停止，则结束
+            if (!shouldContinue || isStopped) {
+              stop();
+              return;
+            }
+
+            // 调度下一次执行
+            if (!isStopped) {
+              timer = setTimeout(_run, interval);
+            }
+          } catch (error) {
+            console.warn('Loop function execution failed:', error);
+            stop();
+          }
+        });
+        return function run() {
+          return _ref10.apply(this, arguments);
+        };
+      }();
+      _run();
+    };
+    return {
+      start: start,
+      stop: stop
+    };
   }
 },968,[965,969,1068,3,12,13,24,83,1,946,953,944,1075,1098,1100,1108,1118,1132,966,957,1136],"src\\utils\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
@@ -197329,14 +197435,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       loading = _useAuth.loading;
     var navigation = (0, _$$_REQUIRE(_dependencyMap[4], "../hooks/useAppNavigation").useAppNavigation)();
 
-    // 根据登录状态决定初始路由
-    // 注意：useAuth 初始化时 loading=true，isLoggedIn=false
-    // 必须等到 loading=false 后再渲染 Navigator，否则 initialRouteName 会被固定为 Login
+    // 加载中时先不渲染路由，避免闪一下登录页
     if (loading) {
-      return null; // 或者返回一个 Splash Screen 组件
+      return null;
     }
+    var initialRouteName = isLoggedIn ? 'Index' : 'Login';
     return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(Stack.Navigator, {
-      initialRouteName: isLoggedIn ? 'Index' : 'Login',
+      // 根据登录状态选择初始路由
+      initialRouteName: initialRouteName,
       screenOptions: {
         headerShown: false,
         animation: 'none'
@@ -197360,7 +197466,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   };
-},1232,[3,41,1233,1265,1266,90,1267,1419],"src\\navigation\\AppNavigator.tsx");
+},1232,[3,41,1233,1265,1266,90,1267,1571],"src\\navigation\\AppNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -199720,9 +199826,45 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       name: 'UserInfo',
       component: _$$_REQUIRE(_dependencyMap[10], "../pages/userInfo").default,
       label: '用户信息'
+    }, {
+      name: 'DeviceInfo',
+      component: _$$_REQUIRE(_dependencyMap[11], "../pages/deviceInfo").default,
+      label: '设备信息'
+    }, {
+      name: 'MemberList',
+      component: _$$_REQUIRE(_dependencyMap[12], "../pages/memberList").default,
+      label: '成员列表'
+    }, {
+      name: 'AddMember',
+      component: _$$_REQUIRE(_dependencyMap[13], "../pages/addMember").default,
+      label: '添加成员'
+    }, {
+      name: 'Shopping',
+      component: _$$_REQUIRE(_dependencyMap[14], "../pages/shopping").default,
+      label: '商城'
+    }, {
+      name: 'GoodsDetail',
+      component: _$$_REQUIRE(_dependencyMap[15], "../pages/goodsDetail").default,
+      label: '商品详情'
+    }, {
+      name: 'PickupCode',
+      component: _$$_REQUIRE(_dependencyMap[16], "../pages/pickupCode").default,
+      label: '提货码'
+    }, {
+      name: 'ScanPickupCode',
+      component: _$$_REQUIRE(_dependencyMap[17], "../pages/scanPickupCode").default,
+      label: '扫描提货码'
+    }, {
+      name: 'PickupCodeRecordList',
+      component: _$$_REQUIRE(_dependencyMap[18], "../pages/pickupCodeRecordList").default,
+      label: '领取记录'
+    }, {
+      name: 'PickupCodeRecordDetail',
+      component: _$$_REQUIRE(_dependencyMap[19], "../pages/pickupCodeRecordDetail").default,
+      label: '领取详情'
     }]
   };
-},1267,[1268,1377,1378,1380,1399,1401,1404,1407,1409,1411,1413],"src\\routes\\index.tsx");
+},1267,[1268,1470,1471,1473,1488,1490,1493,1496,1498,1500,1502,1508,1512,1514,1518,1520,1522,1524,1567,1569],"src\\routes\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -199803,17 +199945,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       try {
         // 获取首页锁信息
         var lockRes = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/device").getLockInfo)({
-          type: 1
+          type: 2
         });
         if (lockRes.success && lockRes.code === 200 && lockRes.data) {
+          var _lockRes$data;
           setDetail(lockRes.data);
-          setHasDevice(true);
+          setHasDevice((_lockRes$data = lockRes.data) == null ? void 0 : _lockRes$data.hasDevice);
           setError(null);
           setCurrentDeviceStatus(function () {
-            var _lockRes$data, _lockRes$data2, _lockRes$data3;
-            var powerType = (_lockRes$data = lockRes.data) == null ? void 0 : _lockRes$data.powerType;
-            var coverStatus = (_lockRes$data2 = lockRes.data) == null ? void 0 : _lockRes$data2.coverStatus;
-            var fallStatus = (_lockRes$data3 = lockRes.data) == null ? void 0 : _lockRes$data3.fallStatus;
+            var _lockRes$data2, _lockRes$data3, _lockRes$data4;
+            var powerType = (_lockRes$data2 = lockRes.data) == null ? void 0 : _lockRes$data2.powerType;
+            var coverStatus = (_lockRes$data3 = lockRes.data) == null ? void 0 : _lockRes$data3.coverStatus;
+            var fallStatus = (_lockRes$data4 = lockRes.data) == null ? void 0 : _lockRes$data4.fallStatus;
             // 非市电版本：只展示静态升起图
             if (powerType !== 1) {
               return 'rise';
@@ -199967,7 +200110,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       onRetry: function onRetry() {
         void load();
       },
-      backgroundImage: bgImage,
+      backgroundImage: detail != null && detail.id ? bgImage : undefined,
+      statusBarStyle: !(detail != null && detail.id) ? 'dark-content' : undefined,
       children: showGuestWelcome ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsxs)(_reactNative.View, {
         style: _$$_REQUIRE(_dependencyMap[18], "../index/style").styles.guestContainer,
         children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_reactNative.Text, {
@@ -200025,13 +200169,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_Header.default, {
             unreadCount: unreadCount,
             lockInfo: detail
-          }), hasDevice && detail != null && detail.id ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_Content.default, {
+          }), detail && detail != null && detail.id ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_Content.default, {
             detail: detail,
-            backgroundType: undefined,
             reload: function reload() {
               void load();
             },
-            isMultiple: !!(detail != null && detail.isGroup),
             optioning: false,
             children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_LockVisual.default, {
               detail: detail,
@@ -200040,7 +200182,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               inconsistentStatus: false,
               gifNonce: gifNonce
             })
-          }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_NoDevices.default, {
+          }, 'multiple') : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_NoDevices.default, {
             unreadCount: unreadCount,
             hasDevice: hasDevice
           })]
@@ -200049,17 +200191,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Index;
-},1268,[3,202,83,24,41,1,1269,1364,1365,1366,537,536,1372,1367,1355,1375,968,90,1376],"src\\pages\\multiple\\index.tsx");
+},1268,[3,202,83,24,41,1,1269,1448,1449,1450,537,536,1466,1453,1439,1452,968,90,1469],"src\\pages\\multiple\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.default = void 0;
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[0], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[1], "react-native");
-  var _iconfont = _$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "../../iconfont"));
-  var _StatusError = _$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "./StatusError"));
-  var _StatusLogin = _$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "./StatusLogin"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../../iconfont"));
+  var _StatusError = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "./StatusError"));
+  var _StatusLogin = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./StatusLogin"));
   var _this = this,
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\PageContainer\\index.tsx";
   /**
@@ -200068,6 +200211,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   /**
    * 页面容器组件属性类型
    */
+  /** 刷新页面容器 */
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   /**
    * 计算内边距样式
@@ -200079,10 +200223,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       paddingVertical: paddingVertical != null ? paddingVertical : padding
     };
   };
-  var PageContainer = function PageContainer(_ref) {
+  var PageContainer = (0, _react.forwardRef)(function (_ref, ref) {
     var children = _ref.children,
       backgroundColor = _ref.backgroundColor,
       backgroundImage = _ref.backgroundImage,
+      backgroundImageHeight = _ref.backgroundImageHeight,
       style = _ref.style,
       contentContainerStyle = _ref.contentContainerStyle,
       _ref$padding = _ref.padding,
@@ -200102,6 +200247,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _ref$showStatusBar = _ref.showStatusBar,
       showStatusBar = _ref$showStatusBar === void 0 ? true : _ref$showStatusBar,
       header = _ref.header,
+      _ref$navBorder = _ref.navBorder,
+      navBorder = _ref$navBorder === void 0 ? false : _ref$navBorder,
       footer = _ref.footer,
       pageNavProps = _ref.pageNavProps,
       _ref$loading = _ref.loading,
@@ -200113,11 +200260,26 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       error = _ref.error,
       _ref$fullScreenError = _ref.fullScreenError,
       fullScreenError = _ref$fullScreenError === void 0 ? false : _ref$fullScreenError,
-      onRetry = _ref.onRetry;
-    var insets = (0, _$$_REQUIRE(_dependencyMap[6], "../../libs/safeAreaContext").useSafeAreaInsets)();
-    var navigation = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useNavigation)();
-    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[8], "../../context/ThemeContext").useTheme)(),
+      onRetry = _ref.onRetry,
+      onRefresh = _ref.onRefresh;
+    var insets = (0, _$$_REQUIRE(_dependencyMap[7], "../../libs/safeAreaContext").useSafeAreaInsets)();
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[8], "@react-navigation/native").useNavigation)();
+    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[9], "../../context/ThemeContext").useTheme)(),
       theme = _useTheme.theme;
+    var _useState = (0, _react.useState)(0),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      reloadSeed = _useState2[0],
+      setReloadSeed = _useState2[1];
+    (0, _react.useImperativeHandle)(ref, function () {
+      return {
+        refresh: function refresh() {
+          onRefresh == null || onRefresh();
+          setReloadSeed(function (prev) {
+            return prev + 1;
+          });
+        }
+      };
+    });
 
     // 解析主题默认值
     var defaultBackgroundColor = backgroundColor != null ? backgroundColor : theme.colors.background.primary;
@@ -200139,14 +200301,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           _pageNavProps$titleCo = pageNavProps.titleColor,
           titleColor = _pageNavProps$titleCo === void 0 ? '#333333' : _pageNavProps$titleCo;
         var navRightContent = extraNode || rightContent;
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_reactNative.View, {
-          style: [_$$_REQUIRE(_dependencyMap[10], "./styles").styles.navHeader, {
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.navHeader, {
             backgroundColor: backgroundImage ? 'transparent' : background || 'transparent'
-          }],
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[10], "./styles").styles.navHeaderLeft,
-            children: [leftContent, showBack && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
-              style: _$$_REQUIRE(_dependencyMap[10], "./styles").styles.navHeaderBack,
+          }, navBorder && _$$_REQUIRE(_dependencyMap[11], "./styles").styles.navHeaderBorder],
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.navHeaderLeft,
+            children: [leftContent, showBack && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.navHeaderBack,
               onPress: function onPress() {
                 onBackPress ? onBackPress() : navigation.goBack();
               },
@@ -200156,35 +200318,35 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 left: 10,
                 right: 10
               },
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                style: [_$$_REQUIRE(_dependencyMap[10], "./styles").styles.backButtonText, {
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.backButtonText, {
                   color: titleColor
                 }],
-                children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_iconfont.default, {
+                children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
                   name: "back",
                   size: 24,
                   color: titleColor
                 })
               })
             })]
-          }), text && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[10], "./styles").styles.navHeaderCenter,
-            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: [_$$_REQUIRE(_dependencyMap[10], "./styles").styles.navHeaderTitle, {
+          }), text && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.navHeaderCenter,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.navHeaderTitle, {
                 color: titleColor
               }],
               numberOfLines: 1,
               children: text
             })
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[10], "./styles").styles.navHeaderRight,
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.navHeaderRight,
             children: navRightContent
           })]
         });
       }
       // 否则渲染传入的 header 组件
       return header;
-    }, [pageNavProps, header, backgroundImage, navigation]);
+    }, [pageNavProps, header, backgroundImage, navigation, navBorder]);
 
     // 2. 内容区域处理 (Content)
 
@@ -200200,34 +200362,34 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       // A. 全屏错误展示
       if (error && fullScreenError) {
         var codeStr = error.code !== undefined && error.code !== null && error.code !== '' ? String(error.code) : undefined;
-        if (codeStr === String(_$$_REQUIRE(_dependencyMap[11], "../../constants").LOGIN)) {
-          return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_StatusLogin.default, {});
+        if (codeStr === String(_$$_REQUIRE(_dependencyMap[12], "../../constants").LOGIN)) {
+          return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_StatusLogin.default, {}, reloadSeed);
         }
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_StatusError.default, {
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_StatusError.default, {
           error: error,
           onRetry: onRetry
-        });
+        }, reloadSeed);
       }
 
       // B. 可滚动内容 (ScrollView)
       if (scrollable) {
-        var scrollContentStyle = [_$$_REQUIRE(_dependencyMap[10], "./styles").styles.scrollContent, getPaddingStyle(padding, paddingHorizontal, paddingVertical), contentContainerStyle];
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[12], "react-native-keyboard-aware-scroll-view").KeyboardAwareScrollView, {
-          style: _$$_REQUIRE(_dependencyMap[10], "./styles").styles.scrollView,
+        var scrollContentStyle = [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.scrollContent, getPaddingStyle(padding, paddingHorizontal, paddingVertical), contentContainerStyle];
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[13], "react-native-keyboard-aware-scroll-view").KeyboardAwareScrollView, {
+          style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.scrollView,
           contentContainerStyle: scrollContentStyle,
           showsVerticalScrollIndicator: false,
           keyboardShouldPersistTaps: keyboardShouldPersistTaps,
           bottomOffset: _reactNative.Platform.OS === 'ios' ? 0 : 20,
           children: children
-        });
+        }, reloadSeed);
       }
 
       // C. 普通视图
-      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
         style: contentStyle,
         children: children
-      });
-    }, [error, fullScreenError, scrollable, children, padding, paddingHorizontal, paddingVertical, contentContainerStyle, contentStyle, keyboardShouldPersistTaps, onRetry]);
+      }, reloadSeed);
+    }, [error, fullScreenError, scrollable, children, padding, paddingHorizontal, paddingVertical, contentContainerStyle, contentStyle, keyboardShouldPersistTaps, onRetry, reloadSeed]);
 
     // 3. 安全区与背景图适配 (Safe Area & Background)
 
@@ -200267,14 +200429,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // 4. Loading 遮罩
     var renderLoading = function renderLoading() {
       if (!loading) return null;
-      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
-        style: [_$$_REQUIRE(_dependencyMap[10], "./styles").styles.loadingOverlay, {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+        style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.loadingOverlay, {
           backgroundColor: loadingBackgroundColor
         }, loadingStyle],
         pointerEvents: "auto",
-        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
-          style: _$$_REQUIRE(_dependencyMap[10], "./styles").styles.loadingContainer,
-          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.ActivityIndicator, {
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.loadingContainer,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.ActivityIndicator, {
             size: "large",
             color: loadingIndicatorColor
           })
@@ -200283,29 +200445,31 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
 
     // 5. Main Render
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").Fragment, {
-      children: [showStatusBar && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.StatusBar, {
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").Fragment, {
+      children: [showStatusBar && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.StatusBar, {
         barStyle: defaultStatusBarStyle,
         backgroundColor: defaultStatusBarBackgroundColor,
         showHideTransition: 'none',
         translucent: true
-      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.ImageBackground, {
+      }), backgroundImage ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.ImageBackground, {
         source: backgroundImage,
-        style: _$$_REQUIRE(_dependencyMap[10], "./styles").styles.backgroundImage,
-        resizeMode: 'cover',
-        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[6], "../../libs/safeAreaContext").SafeAreaView, {
-          style: [_$$_REQUIRE(_dependencyMap[10], "./styles").styles.container, {
-            // 无背景图时使用 backgroundColor，有背景图时透明以便透出 ImageBackground
-            backgroundColor: backgroundImage ? 'transparent' : defaultBackgroundColor
+        style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.backgroundImage, backgroundImageHeight ? {
+          height: backgroundImageHeight
+        } : null],
+        resizeMode: "cover",
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../libs/safeAreaContext").SafeAreaView, {
+          style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.container, {
+            // 有背景图时内容背景透明，以便透出 ImageBackground
+            backgroundColor: 'transparent'
           }],
           edges: finalEdges,
-          children: [renderLoading(), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_reactNative.View, {
-            style: [_$$_REQUIRE(_dependencyMap[10], "./styles").styles.pageContainer, manualPaddingStyle],
-            children: [(header || pageNavProps) && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: _$$_REQUIRE(_dependencyMap[10], "./styles").styles.headerContainer,
+          children: [renderLoading(), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.pageContainer, manualPaddingStyle],
+            children: [(header || pageNavProps) && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.headerContainer,
               children: renderNavHeader
-            }), renderContent, footer && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: [_$$_REQUIRE(_dependencyMap[10], "./styles").styles.footerContainer,
+            }), renderContent, footer && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.footerContainer,
               // Android 底部额外 padding 适配
               _reactNative.Platform.OS === 'android' && {
                 paddingBottom: insets.bottom + 20
@@ -200314,11 +200478,31 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             })]
           })]
         })
+      }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+        style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.backgroundImage,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../libs/safeAreaContext").SafeAreaView, {
+          style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.container, {
+            backgroundColor: defaultBackgroundColor
+          }],
+          edges: finalEdges,
+          children: [renderLoading(), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.pageContainer, manualPaddingStyle],
+            children: [(header || pageNavProps) && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[11], "./styles").styles.headerContainer,
+              children: renderNavHeader
+            }), renderContent, footer && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: [_$$_REQUIRE(_dependencyMap[11], "./styles").styles.footerContainer, _reactNative.Platform.OS === 'android' && {
+                paddingBottom: insets.bottom + 20
+              }],
+              children: footer
+            })]
+          })]
+        })
       })]
     });
-  };
+  });
   var _default = exports.default = PageContainer;
-},1269,[41,1,3,1270,1354,1357,1181,970,1229,90,1356,1355,1358],"src\\components\\PageContainer\\index.tsx");
+},1269,[3,24,41,1,1270,1438,1441,1181,970,1229,90,1440,1439,1442],"src\\components\\PageContainer\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -200812,265 +200996,1395 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/objectWithoutProperties"));
   var _react = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "react"));
-  var _IconAPopUpwindowsclose = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "./IconAPopUpwindowsclose"));
-  var _IconStar = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "./IconStar"));
-  var _IconACombinationunit = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "./IconACombinationunit"));
-  var _IconAStyledescription = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./IconAStyledescription"));
-  var _IconAAdd = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./IconAAdd12"));
-  var _IconAScanQRcodes = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "./IconAScanQRcodes1"));
-  var _IconCopy = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[9], "./IconCopy1"));
-  var _IconFeedback = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[10], "./IconFeedback"));
-  var _IconANextpage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[11], "./IconANextpage"));
-  var _IconAPreviouspage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[12], "./IconAPreviouspage"));
-  var _IconAAddequipments = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[13], "./IconAAddequipments"));
-  var _IconABatterylifepriority = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[14], "./IconABatterylifepriority"));
-  var _IconAPowersupply = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[15], "./IconAPowersupply"));
-  var _IconAPerformancefirst = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[16], "./IconAPerformancefirst"));
-  var _IconMore = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[17], "./IconMore"));
-  var _IconSearch = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[18], "./IconSearch"));
-  var _IconADownloadtheApp = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[19], "./IconADownloadtheApp"));
-  var _IconAOperatingguide = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[20], "./IconAOperatingguide"));
-  var _IconMessage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[21], "./IconMessage1"));
-  var _IconAEquipmentlist = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[22], "./IconAEquipmentlist"));
-  var _IconACustomerservice = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[23], "./IconACustomerservice"));
-  var _IconLock = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[24], "./IconLock"));
-  var _IconOrder = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[25], "./IconOrder"));
-  var _IconUnlock = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[26], "./IconUnlock"));
-  var _IconPark = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[27], "./IconPark1"));
-  var _IconPullDown = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[28], "./IconPullDown"));
-  var _IconAVipInvitation = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[29], "./IconAVipInvitation"));
-  var _IconAHeadfor16Grey = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[30], "./IconAHeadfor16Grey1"));
-  var _IconBluetooth = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[31], "./IconBluetooth1"));
-  var _IconAHeadfor = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[32], "./IconAHeadfor201"));
-  var _IconDown = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[33], "./IconDown"));
-  var _IconAAdvertisingdisplay = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[34], "./IconAAdvertisingdisplay"));
-  var _IconAHeadfor2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[35], "./IconAHeadfor121"));
-  var _IconExit = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[36], "./IconExit"));
-  var _IconACombinationmanagement = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[37], "./IconACombinationmanagement"));
-  var _IconMaintain = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[38], "./IconMaintain"));
-  var _IconShare = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[39], "./IconShare"));
-  var _IconAPowermanagement = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[40], "./IconAPowermanagement"));
-  var _IconAEquipmentinformation = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[41], "./IconAEquipmentinformation"));
-  var _IconMember = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[42], "./IconMember20"));
-  var _IconMessage2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[43], "./IconMessage"));
-  var _IconLocation = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[44], "./IconLocation1"));
-  var _IconRise = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[45], "./IconRise"));
-  var _IconSetting = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[46], "./IconSetting"));
-  var _IconMember2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[47], "./IconMember"));
-  var _IconASkinpeeler = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[48], "./IconASkinpeeler"));
-  var _IconShopping = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[49], "./IconShopping"));
-  var _IconPen = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[50], "./IconPen16"));
-  var _IconPen2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[51], "./IconPen24"));
-  var _IconExplain = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[52], "./IconExplain"));
-  var _IconDownload = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[53], "./IconDownload"));
-  var _IconPlay = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[54], "./IconPlay"));
-  var _IconAHeadfor16Grey2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[55], "./IconAHeadfor16Grey"));
-  var _IconAVideoguidance = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[56], "./IconAVideoguidance"));
-  var _IconAUpgradelock = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[57], "./IconAUpgradelock"));
-  var _IconMine = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[58], "./IconMine"));
-  var _IconStatistics = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[59], "./IconStatistics1"));
-  var _IconALowbatteryreminder = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[60], "./IconALowbatteryreminder"));
-  var _IconBell = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[61], "./IconBell"));
-  var _IconWrongRed = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[62], "./IconWrongRed"));
-  var _IconRightGreen = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[63], "./IconRightGreen"));
-  var _IconInvisible = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[64], "./IconInvisible"));
-  var _IconVisible = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[65], "./IconVisible"));
-  var _IconBack = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[66], "./IconBack"));
-  var _IconSelected = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[67], "./IconSelected"));
-  var _IconUnselected = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[68], "./IconUnselected"));
-  var _IconMultiplication = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[69], "./IconMultiplication"));
-  var _IconTickWhite = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[70], "./IconTickWhite"));
-  var _IconMinus = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[71], "./IconMinus"));
-  var _IconTelephone = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[72], "./IconTelephone"));
-  var _IconAdd = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[73], "./IconAdd"));
-  var _IconCamera = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[74], "./IconCamera"));
-  var _IconRefresh = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[75], "./IconRefresh"));
-  var _IconLocation2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[76], "./IconLocation"));
-  var _IconRedact = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[77], "./IconRedact"));
-  var _IconClose = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[78], "./IconClose"));
-  var _IconAHeadfor3 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[79], "./IconAHeadfor12"));
-  var _IconAHeadfor4 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[80], "./IconAHeadfor20"));
-  var _IconStatistics2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[81], "./IconStatistics"));
-  var _IconManager = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[82], "./IconManager"));
-  var _IconArrows = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[83], "./IconArrows1"));
-  var _excluded = ["name"];
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _HarmonyIconImage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../harmony/HarmonyIconImage"));
+  var _IconAPopUpwindowsclose = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "./IconAPopUpwindowsclose"));
+  var _IconStar = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./IconStar"));
+  var _IconACombinationunit = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./IconACombinationunit"));
+  var _IconAStyledescription = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "./IconAStyledescription"));
+  var _IconAAdd = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[9], "./IconAAdd12"));
+  var _IconAScanQRcodes = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[10], "./IconAScanQRcodes1"));
+  var _IconCopy = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[11], "./IconCopy1"));
+  var _IconFeedback = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[12], "./IconFeedback"));
+  var _IconANextpage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[13], "./IconANextpage"));
+  var _IconAPreviouspage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[14], "./IconAPreviouspage"));
+  var _IconAAddequipments = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[15], "./IconAAddequipments"));
+  var _IconABatterylifepriority = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[16], "./IconABatterylifepriority"));
+  var _IconAPowersupply = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[17], "./IconAPowersupply"));
+  var _IconAPerformancefirst = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[18], "./IconAPerformancefirst"));
+  var _IconMore = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[19], "./IconMore"));
+  var _IconSearch = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[20], "./IconSearch"));
+  var _IconADownloadtheApp = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[21], "./IconADownloadtheApp"));
+  var _IconAOperatingguide = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[22], "./IconAOperatingguide"));
+  var _IconMessage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[23], "./IconMessage1"));
+  var _IconAEquipmentlist = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[24], "./IconAEquipmentlist"));
+  var _IconACustomerservice = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[25], "./IconACustomerservice"));
+  var _IconLock = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[26], "./IconLock"));
+  var _IconOrder = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[27], "./IconOrder"));
+  var _IconUnlock = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[28], "./IconUnlock"));
+  var _IconPark = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[29], "./IconPark1"));
+  var _IconPullDown = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[30], "./IconPullDown"));
+  var _IconAVipInvitation = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[31], "./IconAVipInvitation"));
+  var _IconAHeadfor16Grey = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[32], "./IconAHeadfor16Grey1"));
+  var _IconBluetooth = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[33], "./IconBluetooth1"));
+  var _IconAHeadfor = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[34], "./IconAHeadfor201"));
+  var _IconDown = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[35], "./IconDown"));
+  var _IconAAdvertisingdisplay = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[36], "./IconAAdvertisingdisplay"));
+  var _IconAHeadfor2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[37], "./IconAHeadfor121"));
+  var _IconExit = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[38], "./IconExit"));
+  var _IconACombinationmanagement = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[39], "./IconACombinationmanagement"));
+  var _IconMaintain = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[40], "./IconMaintain"));
+  var _IconShare = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[41], "./IconShare"));
+  var _IconAPowermanagement = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[42], "./IconAPowermanagement"));
+  var _IconAEquipmentinformation = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[43], "./IconAEquipmentinformation"));
+  var _IconMember = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[44], "./IconMember20"));
+  var _IconMessage2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[45], "./IconMessage"));
+  var _IconLocation = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[46], "./IconLocation1"));
+  var _IconRise = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[47], "./IconRise"));
+  var _IconSetting = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[48], "./IconSetting"));
+  var _IconMember2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[49], "./IconMember"));
+  var _IconASkinpeeler = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[50], "./IconASkinpeeler"));
+  var _IconShopping = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[51], "./IconShopping"));
+  var _IconPen = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[52], "./IconPen16"));
+  var _IconPen2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[53], "./IconPen24"));
+  var _IconExplain = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[54], "./IconExplain"));
+  var _IconDownload = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[55], "./IconDownload"));
+  var _IconPlay = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[56], "./IconPlay"));
+  var _IconAHeadfor16Grey2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[57], "./IconAHeadfor16Grey"));
+  var _IconAVideoguidance = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[58], "./IconAVideoguidance"));
+  var _IconAUpgradelock = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[59], "./IconAUpgradelock"));
+  var _IconMine = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[60], "./IconMine"));
+  var _IconStatistics = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[61], "./IconStatistics1"));
+  var _IconALowbatteryreminder = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[62], "./IconALowbatteryreminder"));
+  var _IconBell = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[63], "./IconBell"));
+  var _IconWrongRed = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[64], "./IconWrongRed"));
+  var _IconRightGreen = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[65], "./IconRightGreen"));
+  var _IconInvisible = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[66], "./IconInvisible"));
+  var _IconVisible = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[67], "./IconVisible"));
+  var _IconBack = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[68], "./IconBack"));
+  var _IconSelected = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[69], "./IconSelected"));
+  var _IconUnselected = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[70], "./IconUnselected"));
+  var _IconMultiplication = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[71], "./IconMultiplication"));
+  var _IconTickWhite = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[72], "./IconTickWhite"));
+  var _IconMinus = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[73], "./IconMinus"));
+  var _IconTelephone = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[74], "./IconTelephone"));
+  var _IconAdd = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[75], "./IconAdd"));
+  var _IconCamera = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[76], "./IconCamera"));
+  var _IconRefresh = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[77], "./IconRefresh"));
+  var _IconLocation2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[78], "./IconLocation"));
+  var _IconRedact = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[79], "./IconRedact"));
+  var _IconClose = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[80], "./IconClose"));
+  var _IconAHeadfor3 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[81], "./IconAHeadfor12"));
+  var _IconAHeadfor4 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[82], "./IconAHeadfor20"));
+  var _IconStatistics2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[83], "./IconStatistics"));
+  var _IconManager = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[84], "./IconManager"));
+  var _IconArrows = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[85], "./IconArrows1"));
+  var _excluded = ["name"],
+    _excluded2 = ["name", "size", "color"];
   var _this = this,
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\iconfont\\index.tsx";
   /* tslint:disable */
-  // @ts-ignore
-
-  var IconFont = function IconFont(_ref) {
+  /* eslint-disable */
+  var SvgIconFont = function SvgIconFont(_ref) {
     var name = _ref.name,
       rest = (0, _objectWithoutProperties2.default)(_ref, _excluded);
     switch (name) {
       case 'a-pop-upwindowsclose':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAPopUpwindowsclose.default, Object.assign({}, rest), "1");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAPopUpwindowsclose.default, Object.assign({}, rest), "1");
       case 'star':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconStar.default, Object.assign({}, rest), "2");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconStar.default, Object.assign({}, rest), "2");
       case 'a-combinationunit':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconACombinationunit.default, Object.assign({}, rest), "3");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconACombinationunit.default, Object.assign({}, rest), "3");
       case 'a-styledescription':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAStyledescription.default, Object.assign({}, rest), "4");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAStyledescription.default, Object.assign({}, rest), "4");
       case 'a-add12':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAAdd.default, Object.assign({}, rest), "5");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAAdd.default, Object.assign({}, rest), "5");
       case 'a-scanQRcodes1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAScanQRcodes.default, Object.assign({}, rest), "6");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAScanQRcodes.default, Object.assign({}, rest), "6");
       case 'copy1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconCopy.default, Object.assign({}, rest), "7");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconCopy.default, Object.assign({}, rest), "7");
       case 'feedback':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconFeedback.default, Object.assign({}, rest), "8");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconFeedback.default, Object.assign({}, rest), "8");
       case 'a-nextpage':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconANextpage.default, Object.assign({}, rest), "9");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconANextpage.default, Object.assign({}, rest), "9");
       case 'a-previouspage':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAPreviouspage.default, Object.assign({}, rest), "10");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAPreviouspage.default, Object.assign({}, rest), "10");
       case 'a-addequipments':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAAddequipments.default, Object.assign({}, rest), "11");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAAddequipments.default, Object.assign({}, rest), "11");
       case 'a-batterylifepriority':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconABatterylifepriority.default, Object.assign({}, rest), "12");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconABatterylifepriority.default, Object.assign({}, rest), "12");
       case 'a-powersupply':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAPowersupply.default, Object.assign({}, rest), "13");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAPowersupply.default, Object.assign({}, rest), "13");
       case 'a-performancefirst':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAPerformancefirst.default, Object.assign({}, rest), "14");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAPerformancefirst.default, Object.assign({}, rest), "14");
       case 'more':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMore.default, Object.assign({}, rest), "15");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMore.default, Object.assign({}, rest), "15");
       case 'search':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconSearch.default, Object.assign({}, rest), "16");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconSearch.default, Object.assign({}, rest), "16");
       case 'a-downloadtheAPP':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconADownloadtheApp.default, Object.assign({}, rest), "17");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconADownloadtheApp.default, Object.assign({}, rest), "17");
       case 'a-operatingguide':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAOperatingguide.default, Object.assign({}, rest), "18");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAOperatingguide.default, Object.assign({}, rest), "18");
       case 'message1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMessage.default, Object.assign({}, rest), "19");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMessage.default, Object.assign({}, rest), "19");
       case 'a-Equipmentlist':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAEquipmentlist.default, Object.assign({}, rest), "20");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAEquipmentlist.default, Object.assign({}, rest), "20");
       case 'a-customerservice':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconACustomerservice.default, Object.assign({}, rest), "21");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconACustomerservice.default, Object.assign({}, rest), "21");
       case 'lock':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconLock.default, Object.assign({}, rest), "22");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconLock.default, Object.assign({}, rest), "22");
       case 'order':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconOrder.default, Object.assign({}, rest), "23");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconOrder.default, Object.assign({}, rest), "23");
       case 'unlock':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconUnlock.default, Object.assign({}, rest), "24");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconUnlock.default, Object.assign({}, rest), "24");
       case 'park1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconPark.default, Object.assign({}, rest), "25");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconPark.default, Object.assign({}, rest), "25");
       case 'pull-down':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconPullDown.default, Object.assign({}, rest), "26");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconPullDown.default, Object.assign({}, rest), "26");
       case 'a-VIPInvitation':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAVipInvitation.default, Object.assign({}, rest), "27");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAVipInvitation.default, Object.assign({}, rest), "27");
       case 'a-headfor-16-grey1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAHeadfor16Grey.default, Object.assign({}, rest), "28");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAHeadfor16Grey.default, Object.assign({}, rest), "28");
       case 'bluetooth-1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconBluetooth.default, Object.assign({}, rest), "29");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconBluetooth.default, Object.assign({}, rest), "29");
       case 'a-headfor-201':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAHeadfor.default, Object.assign({}, rest), "30");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAHeadfor.default, Object.assign({}, rest), "30");
       case 'down':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconDown.default, Object.assign({}, rest), "31");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconDown.default, Object.assign({}, rest), "31");
       case 'a-advertisingdisplay':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAAdvertisingdisplay.default, Object.assign({}, rest), "32");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAAdvertisingdisplay.default, Object.assign({}, rest), "32");
       case 'a-headfor-121':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAHeadfor2.default, Object.assign({}, rest), "33");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAHeadfor2.default, Object.assign({}, rest), "33");
       case 'exit':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconExit.default, Object.assign({}, rest), "34");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconExit.default, Object.assign({}, rest), "34");
       case 'a-combinationmanagement':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconACombinationmanagement.default, Object.assign({}, rest), "35");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconACombinationmanagement.default, Object.assign({}, rest), "35");
       case 'maintain':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMaintain.default, Object.assign({}, rest), "36");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMaintain.default, Object.assign({}, rest), "36");
       case 'share':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconShare.default, Object.assign({}, rest), "37");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconShare.default, Object.assign({}, rest), "37");
       case 'a-powermanagement':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAPowermanagement.default, Object.assign({}, rest), "38");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAPowermanagement.default, Object.assign({}, rest), "38");
       case 'a-equipmentinformation':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAEquipmentinformation.default, Object.assign({}, rest), "39");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAEquipmentinformation.default, Object.assign({}, rest), "39");
       case 'member-20':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMember.default, Object.assign({}, rest), "40");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMember.default, Object.assign({}, rest), "40");
       case 'message':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMessage2.default, Object.assign({}, rest), "41");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMessage2.default, Object.assign({}, rest), "41");
       case 'location1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconLocation.default, Object.assign({}, rest), "42");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconLocation.default, Object.assign({}, rest), "42");
       case 'rise':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconRise.default, Object.assign({}, rest), "43");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconRise.default, Object.assign({}, rest), "43");
       case 'setting':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconSetting.default, Object.assign({}, rest), "44");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconSetting.default, Object.assign({}, rest), "44");
       case 'member':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMember2.default, Object.assign({}, rest), "45");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMember2.default, Object.assign({}, rest), "45");
       case 'a-skinpeeler':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconASkinpeeler.default, Object.assign({}, rest), "46");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconASkinpeeler.default, Object.assign({}, rest), "46");
       case 'shopping':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconShopping.default, Object.assign({}, rest), "47");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconShopping.default, Object.assign({}, rest), "47");
       case 'pen16':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconPen.default, Object.assign({}, rest), "48");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconPen.default, Object.assign({}, rest), "48");
       case 'pen24':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconPen2.default, Object.assign({}, rest), "49");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconPen2.default, Object.assign({}, rest), "49");
       case 'explain':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconExplain.default, Object.assign({}, rest), "50");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconExplain.default, Object.assign({}, rest), "50");
       case 'download':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconDownload.default, Object.assign({}, rest), "51");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconDownload.default, Object.assign({}, rest), "51");
       case 'play':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconPlay.default, Object.assign({}, rest), "52");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconPlay.default, Object.assign({}, rest), "52");
       case 'a-headfor-16-grey':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAHeadfor16Grey2.default, Object.assign({}, rest), "53");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAHeadfor16Grey2.default, Object.assign({}, rest), "53");
       case 'a-Videoguidance':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAVideoguidance.default, Object.assign({}, rest), "54");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAVideoguidance.default, Object.assign({}, rest), "54");
       case 'a-Upgradelock':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAUpgradelock.default, Object.assign({}, rest), "55");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAUpgradelock.default, Object.assign({}, rest), "55");
       case 'mine':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMine.default, Object.assign({}, rest), "56");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMine.default, Object.assign({}, rest), "56");
       case 'statistics1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconStatistics.default, Object.assign({}, rest), "57");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconStatistics.default, Object.assign({}, rest), "57");
       case 'a-Lowbatteryreminder':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconALowbatteryreminder.default, Object.assign({}, rest), "58");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconALowbatteryreminder.default, Object.assign({}, rest), "58");
       case 'bell':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconBell.default, Object.assign({}, rest), "59");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconBell.default, Object.assign({}, rest), "59");
       case 'wrong-red':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconWrongRed.default, Object.assign({}, rest), "60");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconWrongRed.default, Object.assign({}, rest), "60");
       case 'right-green':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconRightGreen.default, Object.assign({}, rest), "61");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconRightGreen.default, Object.assign({}, rest), "61");
       case 'invisible':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconInvisible.default, Object.assign({}, rest), "62");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconInvisible.default, Object.assign({}, rest), "62");
       case 'visible':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconVisible.default, Object.assign({}, rest), "63");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconVisible.default, Object.assign({}, rest), "63");
       case 'back':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconBack.default, Object.assign({}, rest), "64");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconBack.default, Object.assign({}, rest), "64");
       case 'selected':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconSelected.default, Object.assign({}, rest), "65");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconSelected.default, Object.assign({}, rest), "65");
       case 'unselected':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconUnselected.default, Object.assign({}, rest), "66");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconUnselected.default, Object.assign({}, rest), "66");
       case 'multiplication':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMultiplication.default, Object.assign({}, rest), "67");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMultiplication.default, Object.assign({}, rest), "67");
       case 'tick-white':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconTickWhite.default, Object.assign({}, rest), "68");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconTickWhite.default, Object.assign({}, rest), "68");
       case 'minus':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconMinus.default, Object.assign({}, rest), "69");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconMinus.default, Object.assign({}, rest), "69");
       case 'telephone':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconTelephone.default, Object.assign({}, rest), "70");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconTelephone.default, Object.assign({}, rest), "70");
       case 'add':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAdd.default, Object.assign({}, rest), "71");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAdd.default, Object.assign({}, rest), "71");
       case 'camera':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconCamera.default, Object.assign({}, rest), "72");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconCamera.default, Object.assign({}, rest), "72");
       case 'refresh':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconRefresh.default, Object.assign({}, rest), "73");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconRefresh.default, Object.assign({}, rest), "73");
       case 'location':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconLocation2.default, Object.assign({}, rest), "74");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconLocation2.default, Object.assign({}, rest), "74");
       case 'redact':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconRedact.default, Object.assign({}, rest), "75");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconRedact.default, Object.assign({}, rest), "75");
       case 'close':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconClose.default, Object.assign({}, rest), "76");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconClose.default, Object.assign({}, rest), "76");
       case 'a-headfor-12':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAHeadfor3.default, Object.assign({}, rest), "77");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAHeadfor3.default, Object.assign({}, rest), "77");
       case 'a-headfor-20':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconAHeadfor4.default, Object.assign({}, rest), "78");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconAHeadfor4.default, Object.assign({}, rest), "78");
       case 'statistics':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconStatistics2.default, Object.assign({}, rest), "79");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconStatistics2.default, Object.assign({}, rest), "79");
       case 'manager':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconManager.default, Object.assign({}, rest), "80");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconManager.default, Object.assign({}, rest), "80");
       case 'arrows1':
-        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[84], "react/jsx-runtime").jsx)(_IconArrows.default, Object.assign({}, rest), "81");
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_IconArrows.default, Object.assign({}, rest), "81");
     }
     return null;
   };
-  IconFont = _react.default.memo ? _react.default.memo(IconFont) : IconFont;
+  var isNativePlatform = _reactNative.Platform.OS === 'android' || _reactNative.Platform.OS === 'ios';
+  var IconFont = function IconFont(props) {
+    if (isNativePlatform) {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(SvgIconFont, Object.assign({}, props));
+    }
+    var name = props.name,
+      size = props.size,
+      color = props.color,
+      rest = (0, _objectWithoutProperties2.default)(props, _excluded2);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[86], "react/jsx-runtime").jsx)(_HarmonyIconImage.default, Object.assign({
+      name: name,
+      size: size,
+      color: color
+    }, rest));
+  };
+  IconFont.defaultProps = {
+    size: 18
+  };
   var _default = exports.default = IconFont;
-},1270,[3,150,41,1271,1274,1275,1276,1277,1278,1279,1280,1281,1282,1283,1284,1285,1286,1287,1288,1289,1290,1291,1292,1293,1294,1295,1296,1297,1298,1299,1300,1301,1302,1303,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,1321,1322,1323,1324,1325,1326,1327,1328,1329,1330,1331,1332,1333,1334,1335,1336,1337,1338,1339,1340,1341,1342,1343,1344,1345,1346,1347,1348,1349,1350,1351,1352,1353,90],"src\\iconfont\\index.tsx");
+},1270,[3,150,41,1,1271,1355,1358,1359,1360,1361,1362,1363,1364,1365,1366,1367,1368,1369,1370,1371,1372,1373,1374,1375,1376,1377,1378,1379,1380,1381,1382,1383,1384,1385,1386,1387,1388,1389,1390,1391,1392,1393,1394,1395,1396,1397,1398,1399,1400,1401,1402,1403,1404,1405,1406,1407,1408,1409,1410,1411,1412,1413,1414,1415,1416,1417,1418,1419,1420,1421,1422,1423,1424,1425,1426,1427,1428,1429,1430,1431,1432,1433,1434,1435,1436,1437,90],"src\\iconfont\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/objectWithoutProperties"));
+  var _react = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _harmonyIconMap = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "./harmonyIconMap"));
+  var _excluded = ["name", "size", "color", "style"];
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\harmony\\HarmonyIconImage.tsx"; // Harmony 专用：name -> PNG 资源映射
+  // 默认占位图（当某个 name 没有生成 PNG 时使用）
+  var HarmonyIconImage = function HarmonyIconImage(_ref) {
+    var name = _ref.name,
+      _ref$size = _ref.size,
+      size = _ref$size === void 0 ? 18 : _ref$size,
+      color = _ref.color,
+      style = _ref.style,
+      rest = (0, _objectWithoutProperties2.default)(_ref, _excluded);
+    var source = _harmonyIconMap.default[name] || _$$_REQUIRE(_dependencyMap[5], "../../android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png");
+    var singleColor = Array.isArray(color) ? color == null ? void 0 : color[0] : color;
+    var imageStyle = [{
+      width: size,
+      height: size
+    },
+    // singleColor ? { tintColor: singleColor } : null,
+    style];
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.Image, Object.assign({
+      source: source,
+      style: imageStyle
+    }, rest));
+  };
+  var _default = exports.default = HarmonyIconImage;
+},1271,[3,150,41,1,1272,1354,90],"src\\harmony\\HarmonyIconImage.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  /* 自动生成：鸿蒙端 icon 名称到 PNG 资源的映射，请勿手动修改。*/
+
+  var harmonyPngMap = {
+    'a-pop-upwindowsclose': _$$_REQUIRE(_dependencyMap[0], "../assets/harmony-icons/a-pop-upwindowsclose.png"),
+    'star': _$$_REQUIRE(_dependencyMap[1], "../assets/harmony-icons/star.png"),
+    'a-combinationunit': _$$_REQUIRE(_dependencyMap[2], "../assets/harmony-icons/a-combinationunit.png"),
+    'a-styledescription': _$$_REQUIRE(_dependencyMap[3], "../assets/harmony-icons/a-styledescription.png"),
+    'a-add12': _$$_REQUIRE(_dependencyMap[4], "../assets/harmony-icons/a-add12.png"),
+    'a-scanQRcodes1': _$$_REQUIRE(_dependencyMap[5], "../assets/harmony-icons/a-scanQRcodes1.png"),
+    'copy1': _$$_REQUIRE(_dependencyMap[6], "../assets/harmony-icons/copy1.png"),
+    'feedback': _$$_REQUIRE(_dependencyMap[7], "../assets/harmony-icons/feedback.png"),
+    'a-nextpage': _$$_REQUIRE(_dependencyMap[8], "../assets/harmony-icons/a-nextpage.png"),
+    'a-previouspage': _$$_REQUIRE(_dependencyMap[9], "../assets/harmony-icons/a-previouspage.png"),
+    'a-addequipments': _$$_REQUIRE(_dependencyMap[10], "../assets/harmony-icons/a-addequipments.png"),
+    'a-batterylifepriority': _$$_REQUIRE(_dependencyMap[11], "../assets/harmony-icons/a-batterylifepriority.png"),
+    'a-powersupply': _$$_REQUIRE(_dependencyMap[12], "../assets/harmony-icons/a-powersupply.png"),
+    'a-performancefirst': _$$_REQUIRE(_dependencyMap[13], "../assets/harmony-icons/a-performancefirst.png"),
+    'more': _$$_REQUIRE(_dependencyMap[14], "../assets/harmony-icons/more.png"),
+    'search': _$$_REQUIRE(_dependencyMap[15], "../assets/harmony-icons/search.png"),
+    'a-downloadtheAPP': _$$_REQUIRE(_dependencyMap[16], "../assets/harmony-icons/a-downloadtheAPP.png"),
+    'a-operatingguide': _$$_REQUIRE(_dependencyMap[17], "../assets/harmony-icons/a-operatingguide.png"),
+    'message1': _$$_REQUIRE(_dependencyMap[18], "../assets/harmony-icons/message1.png"),
+    'a-Equipmentlist': _$$_REQUIRE(_dependencyMap[19], "../assets/harmony-icons/a-Equipmentlist.png"),
+    'a-customerservice': _$$_REQUIRE(_dependencyMap[20], "../assets/harmony-icons/a-customerservice.png"),
+    'lock': _$$_REQUIRE(_dependencyMap[21], "../assets/harmony-icons/lock.png"),
+    'order': _$$_REQUIRE(_dependencyMap[22], "../assets/harmony-icons/order.png"),
+    'unlock': _$$_REQUIRE(_dependencyMap[23], "../assets/harmony-icons/unlock.png"),
+    'park1': _$$_REQUIRE(_dependencyMap[24], "../assets/harmony-icons/park1.png"),
+    'pull-down': _$$_REQUIRE(_dependencyMap[25], "../assets/harmony-icons/pull-down.png"),
+    'a-VIPInvitation': _$$_REQUIRE(_dependencyMap[26], "../assets/harmony-icons/a-VIPInvitation.png"),
+    'a-headfor-16-grey1': _$$_REQUIRE(_dependencyMap[27], "../assets/harmony-icons/a-headfor-16-grey1.png"),
+    'bluetooth-1': _$$_REQUIRE(_dependencyMap[28], "../assets/harmony-icons/bluetooth-1.png"),
+    'a-headfor-201': _$$_REQUIRE(_dependencyMap[29], "../assets/harmony-icons/a-headfor-201.png"),
+    'down': _$$_REQUIRE(_dependencyMap[30], "../assets/harmony-icons/down.png"),
+    'a-advertisingdisplay': _$$_REQUIRE(_dependencyMap[31], "../assets/harmony-icons/a-advertisingdisplay.png"),
+    'a-headfor-121': _$$_REQUIRE(_dependencyMap[32], "../assets/harmony-icons/a-headfor-121.png"),
+    'exit': _$$_REQUIRE(_dependencyMap[33], "../assets/harmony-icons/exit.png"),
+    'a-combinationmanagement': _$$_REQUIRE(_dependencyMap[34], "../assets/harmony-icons/a-combinationmanagement.png"),
+    'maintain': _$$_REQUIRE(_dependencyMap[35], "../assets/harmony-icons/maintain.png"),
+    'share': _$$_REQUIRE(_dependencyMap[36], "../assets/harmony-icons/share.png"),
+    'a-powermanagement': _$$_REQUIRE(_dependencyMap[37], "../assets/harmony-icons/a-powermanagement.png"),
+    'a-equipmentinformation': _$$_REQUIRE(_dependencyMap[38], "../assets/harmony-icons/a-equipmentinformation.png"),
+    'member-20': _$$_REQUIRE(_dependencyMap[39], "../assets/harmony-icons/member-20.png"),
+    'message': _$$_REQUIRE(_dependencyMap[40], "../assets/harmony-icons/message.png"),
+    'location1': _$$_REQUIRE(_dependencyMap[41], "../assets/harmony-icons/location1.png"),
+    'rise': _$$_REQUIRE(_dependencyMap[42], "../assets/harmony-icons/rise.png"),
+    'setting': _$$_REQUIRE(_dependencyMap[43], "../assets/harmony-icons/setting.png"),
+    'member': _$$_REQUIRE(_dependencyMap[44], "../assets/harmony-icons/member.png"),
+    'a-skinpeeler': _$$_REQUIRE(_dependencyMap[45], "../assets/harmony-icons/a-skinpeeler.png"),
+    'shopping': _$$_REQUIRE(_dependencyMap[46], "../assets/harmony-icons/shopping.png"),
+    'pen16': _$$_REQUIRE(_dependencyMap[47], "../assets/harmony-icons/pen16.png"),
+    'pen24': _$$_REQUIRE(_dependencyMap[48], "../assets/harmony-icons/pen24.png"),
+    'explain': _$$_REQUIRE(_dependencyMap[49], "../assets/harmony-icons/explain.png"),
+    'download': _$$_REQUIRE(_dependencyMap[50], "../assets/harmony-icons/download.png"),
+    'play': _$$_REQUIRE(_dependencyMap[51], "../assets/harmony-icons/play.png"),
+    'a-headfor-16-grey': _$$_REQUIRE(_dependencyMap[52], "../assets/harmony-icons/a-headfor-16-grey.png"),
+    'a-Videoguidance': _$$_REQUIRE(_dependencyMap[53], "../assets/harmony-icons/a-Videoguidance.png"),
+    'a-Upgradelock': _$$_REQUIRE(_dependencyMap[54], "../assets/harmony-icons/a-Upgradelock.png"),
+    'mine': _$$_REQUIRE(_dependencyMap[55], "../assets/harmony-icons/mine.png"),
+    'statistics1': _$$_REQUIRE(_dependencyMap[56], "../assets/harmony-icons/statistics1.png"),
+    'a-Lowbatteryreminder': _$$_REQUIRE(_dependencyMap[57], "../assets/harmony-icons/a-Lowbatteryreminder.png"),
+    'bell': _$$_REQUIRE(_dependencyMap[58], "../assets/harmony-icons/bell.png"),
+    'wrong-red': _$$_REQUIRE(_dependencyMap[59], "../assets/harmony-icons/wrong-red.png"),
+    'right-green': _$$_REQUIRE(_dependencyMap[60], "../assets/harmony-icons/right-green.png"),
+    'invisible': _$$_REQUIRE(_dependencyMap[61], "../assets/harmony-icons/invisible.png"),
+    'visible': _$$_REQUIRE(_dependencyMap[62], "../assets/harmony-icons/visible.png"),
+    'back': _$$_REQUIRE(_dependencyMap[63], "../assets/harmony-icons/back.png"),
+    'selected': _$$_REQUIRE(_dependencyMap[64], "../assets/harmony-icons/selected.png"),
+    'unselected': _$$_REQUIRE(_dependencyMap[65], "../assets/harmony-icons/unselected.png"),
+    'multiplication': _$$_REQUIRE(_dependencyMap[66], "../assets/harmony-icons/multiplication.png"),
+    'tick-white': _$$_REQUIRE(_dependencyMap[67], "../assets/harmony-icons/tick-white.png"),
+    'minus': _$$_REQUIRE(_dependencyMap[68], "../assets/harmony-icons/minus.png"),
+    'telephone': _$$_REQUIRE(_dependencyMap[69], "../assets/harmony-icons/telephone.png"),
+    'add': _$$_REQUIRE(_dependencyMap[70], "../assets/harmony-icons/add.png"),
+    'camera': _$$_REQUIRE(_dependencyMap[71], "../assets/harmony-icons/camera.png"),
+    'refresh': _$$_REQUIRE(_dependencyMap[72], "../assets/harmony-icons/refresh.png"),
+    'location': _$$_REQUIRE(_dependencyMap[73], "../assets/harmony-icons/location.png"),
+    'redact': _$$_REQUIRE(_dependencyMap[74], "../assets/harmony-icons/redact.png"),
+    'close': _$$_REQUIRE(_dependencyMap[75], "../assets/harmony-icons/close.png"),
+    'a-headfor-12': _$$_REQUIRE(_dependencyMap[76], "../assets/harmony-icons/a-headfor-12.png"),
+    'a-headfor-20': _$$_REQUIRE(_dependencyMap[77], "../assets/harmony-icons/a-headfor-20.png"),
+    'statistics': _$$_REQUIRE(_dependencyMap[78], "../assets/harmony-icons/statistics.png"),
+    'manager': _$$_REQUIRE(_dependencyMap[79], "../assets/harmony-icons/manager.png"),
+    'arrows1': _$$_REQUIRE(_dependencyMap[80], "../assets/harmony-icons/arrows1.png")
+  };
+  var _default = exports.default = harmonyPngMap;
+},1272,[1273,1274,1275,1276,1277,1278,1279,1280,1281,1282,1283,1284,1285,1286,1287,1288,1289,1290,1291,1292,1293,1294,1295,1296,1297,1298,1299,1300,1301,1302,1303,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,1321,1322,1323,1324,1325,1326,1327,1328,1329,1330,1331,1332,1333,1334,1335,1336,1337,1338,1339,1340,1341,1342,1343,1344,1345,1346,1347,1348,1349,1350,1351,1352,1353],"src\\harmony\\harmonyIconMap.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "5c7aa761cc8ca05b1858e6cd525b9a8f",
+    "name": "a-pop-upwindowsclose",
+    "type": "png"
+  });
+},1273,[442],"src\\assets\\harmony-icons\\a-pop-upwindowsclose.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "30667fae3c82cd9d9367d1777e84f435",
+    "name": "star",
+    "type": "png"
+  });
+},1274,[442],"src\\assets\\harmony-icons\\star.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "78b6d41b7045b79372806f3e631b7c6c",
+    "name": "a-combinationunit",
+    "type": "png"
+  });
+},1275,[442],"src\\assets\\harmony-icons\\a-combinationunit.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "ba0e82605b28830c3f45ed4fa92d7684",
+    "name": "a-styledescription",
+    "type": "png"
+  });
+},1276,[442],"src\\assets\\harmony-icons\\a-styledescription.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "35ac3d980699fe5e5c12f7dbfd480688",
+    "name": "a-add12",
+    "type": "png"
+  });
+},1277,[442],"src\\assets\\harmony-icons\\a-add12.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "feb664c6b3ed7e1c9182fe2aa65ee7d4",
+    "name": "a-scanQRcodes1",
+    "type": "png"
+  });
+},1278,[442],"src\\assets\\harmony-icons\\a-scanQRcodes1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "3c58c1a01dbab7ac98a2905ca88b9a18",
+    "name": "copy1",
+    "type": "png"
+  });
+},1279,[442],"src\\assets\\harmony-icons\\copy1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "085af4b550ca3c3c58c622bae1f94ec5",
+    "name": "feedback",
+    "type": "png"
+  });
+},1280,[442],"src\\assets\\harmony-icons\\feedback.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "68cb8f40fa107c6cb4cbe525452aa1f5",
+    "name": "a-nextpage",
+    "type": "png"
+  });
+},1281,[442],"src\\assets\\harmony-icons\\a-nextpage.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "003e592747b94c71ba3e30884e2f0175",
+    "name": "a-previouspage",
+    "type": "png"
+  });
+},1282,[442],"src\\assets\\harmony-icons\\a-previouspage.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "5946787107a4bad32a380f29e1a86c43",
+    "name": "a-addequipments",
+    "type": "png"
+  });
+},1283,[442],"src\\assets\\harmony-icons\\a-addequipments.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "32fcb9827e6692bdafd3310c76042075",
+    "name": "a-batterylifepriority",
+    "type": "png"
+  });
+},1284,[442],"src\\assets\\harmony-icons\\a-batterylifepriority.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "1aae577a7b08e0d4e0b658853ca224ad",
+    "name": "a-powersupply",
+    "type": "png"
+  });
+},1285,[442],"src\\assets\\harmony-icons\\a-powersupply.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "743708aced361a903b0fce5384ebac3b",
+    "name": "a-performancefirst",
+    "type": "png"
+  });
+},1286,[442],"src\\assets\\harmony-icons\\a-performancefirst.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "b3b94ee8dd8f8f7a108f62327f84d56f",
+    "name": "more",
+    "type": "png"
+  });
+},1287,[442],"src\\assets\\harmony-icons\\more.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "510ae65a7ee4d38850c373827e0a6733",
+    "name": "search",
+    "type": "png"
+  });
+},1288,[442],"src\\assets\\harmony-icons\\search.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "6d74839610358e8558998045de4dec37",
+    "name": "a-downloadtheAPP",
+    "type": "png"
+  });
+},1289,[442],"src\\assets\\harmony-icons\\a-downloadtheAPP.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "ab0396b3c5ecbc3fd4e792ec59ebf64e",
+    "name": "a-operatingguide",
+    "type": "png"
+  });
+},1290,[442],"src\\assets\\harmony-icons\\a-operatingguide.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "dc66c9f9c460a3ce3a9efa00af52bc4e",
+    "name": "message1",
+    "type": "png"
+  });
+},1291,[442],"src\\assets\\harmony-icons\\message1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "c1f07fdff7ae89bc6af782211f19c182",
+    "name": "a-Equipmentlist",
+    "type": "png"
+  });
+},1292,[442],"src\\assets\\harmony-icons\\a-Equipmentlist.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "0058c551aaac1dc79ff69c74f3c54d19",
+    "name": "a-customerservice",
+    "type": "png"
+  });
+},1293,[442],"src\\assets\\harmony-icons\\a-customerservice.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "26b7d588c540ce60f7173c3065dd1878",
+    "name": "lock",
+    "type": "png"
+  });
+},1294,[442],"src\\assets\\harmony-icons\\lock.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "ecb13dc72bbc26b5e2a66deb70da55a6",
+    "name": "order",
+    "type": "png"
+  });
+},1295,[442],"src\\assets\\harmony-icons\\order.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "e29a315175bdc69b2afa9c1cf3961329",
+    "name": "unlock",
+    "type": "png"
+  });
+},1296,[442],"src\\assets\\harmony-icons\\unlock.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "4c02335f67c766966d5aa4a9d0b10886",
+    "name": "park1",
+    "type": "png"
+  });
+},1297,[442],"src\\assets\\harmony-icons\\park1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "f2e70db4057cc766ad698b5633bc6ac7",
+    "name": "pull-down",
+    "type": "png"
+  });
+},1298,[442],"src\\assets\\harmony-icons\\pull-down.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "99c767a30719e221aa1a4d304235d7f2",
+    "name": "a-VIPInvitation",
+    "type": "png"
+  });
+},1299,[442],"src\\assets\\harmony-icons\\a-VIPInvitation.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "271653dd133fe6bfd4765186f7352c80",
+    "name": "a-headfor-16-grey1",
+    "type": "png"
+  });
+},1300,[442],"src\\assets\\harmony-icons\\a-headfor-16-grey1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "272d38ed391d0313422326f03096f271",
+    "name": "bluetooth-1",
+    "type": "png"
+  });
+},1301,[442],"src\\assets\\harmony-icons\\bluetooth-1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "0cba0493adbd774a4eea67371a1d1c5f",
+    "name": "a-headfor-201",
+    "type": "png"
+  });
+},1302,[442],"src\\assets\\harmony-icons\\a-headfor-201.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "99d65ff973d488f6b5a1738474da3792",
+    "name": "down",
+    "type": "png"
+  });
+},1303,[442],"src\\assets\\harmony-icons\\down.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "c97b8f06c7d4b24e798573863d41cb78",
+    "name": "a-advertisingdisplay",
+    "type": "png"
+  });
+},1304,[442],"src\\assets\\harmony-icons\\a-advertisingdisplay.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "68cb8f40fa107c6cb4cbe525452aa1f5",
+    "name": "a-headfor-121",
+    "type": "png"
+  });
+},1305,[442],"src\\assets\\harmony-icons\\a-headfor-121.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "7836e4b7c32bc311c2779c60717ebc48",
+    "name": "exit",
+    "type": "png"
+  });
+},1306,[442],"src\\assets\\harmony-icons\\exit.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "37f2f2f9882529740dc2cd484cd5d1dc",
+    "name": "a-combinationmanagement",
+    "type": "png"
+  });
+},1307,[442],"src\\assets\\harmony-icons\\a-combinationmanagement.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "3858157463ec1e861c178fc3b1f75740",
+    "name": "maintain",
+    "type": "png"
+  });
+},1308,[442],"src\\assets\\harmony-icons\\maintain.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "a1b7f94ff66542ada00ef325412f796a",
+    "name": "share",
+    "type": "png"
+  });
+},1309,[442],"src\\assets\\harmony-icons\\share.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "a2ba2e8f6babaedaf919fc0c67712a0b",
+    "name": "a-powermanagement",
+    "type": "png"
+  });
+},1310,[442],"src\\assets\\harmony-icons\\a-powermanagement.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "9123d3d9304d99e84c491b56995b53d3",
+    "name": "a-equipmentinformation",
+    "type": "png"
+  });
+},1311,[442],"src\\assets\\harmony-icons\\a-equipmentinformation.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "6445e018d1344e9963c82e0a452a5d94",
+    "name": "member-20",
+    "type": "png"
+  });
+},1312,[442],"src\\assets\\harmony-icons\\member-20.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "da0fc26db6c0b5132958c2717497e553",
+    "name": "message",
+    "type": "png"
+  });
+},1313,[442],"src\\assets\\harmony-icons\\message.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "9c2423b9e47e8a23b33c8082cc7521d6",
+    "name": "location1",
+    "type": "png"
+  });
+},1314,[442],"src\\assets\\harmony-icons\\location1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "35b05f92da108e8fbacb44a9cd83d209",
+    "name": "rise",
+    "type": "png"
+  });
+},1315,[442],"src\\assets\\harmony-icons\\rise.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "6c4318ebf7d8ea21585353220e1587ec",
+    "name": "setting",
+    "type": "png"
+  });
+},1316,[442],"src\\assets\\harmony-icons\\setting.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "37dbba7f73fe9143dff6d0a5eb3f6bae",
+    "name": "member",
+    "type": "png"
+  });
+},1317,[442],"src\\assets\\harmony-icons\\member.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "5c21b79020d31824f8327567d66431ba",
+    "name": "a-skinpeeler",
+    "type": "png"
+  });
+},1318,[442],"src\\assets\\harmony-icons\\a-skinpeeler.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "e6e8bc945be108479971527411a3385b",
+    "name": "shopping",
+    "type": "png"
+  });
+},1319,[442],"src\\assets\\harmony-icons\\shopping.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "770a0c8847c3fbe33b2dc13383fed6ba",
+    "name": "pen16",
+    "type": "png"
+  });
+},1320,[442],"src\\assets\\harmony-icons\\pen16.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "fdf37bce7c5b3528d74ab43227d1c488",
+    "name": "pen24",
+    "type": "png"
+  });
+},1321,[442],"src\\assets\\harmony-icons\\pen24.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "60b2e7b96dfb781a2043001fa783f7e5",
+    "name": "explain",
+    "type": "png"
+  });
+},1322,[442],"src\\assets\\harmony-icons\\explain.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "60ad0c22845f849c01b8590bbaeffa76",
+    "name": "download",
+    "type": "png"
+  });
+},1323,[442],"src\\assets\\harmony-icons\\download.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "acc6b7e1bee36329c988ef0c27bb8284",
+    "name": "play",
+    "type": "png"
+  });
+},1324,[442],"src\\assets\\harmony-icons\\play.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "264d2918bd489dcae104b02af93238a8",
+    "name": "a-headfor-16-grey",
+    "type": "png"
+  });
+},1325,[442],"src\\assets\\harmony-icons\\a-headfor-16-grey.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "f4bc033f882107a32e55046be6269cca",
+    "name": "a-Videoguidance",
+    "type": "png"
+  });
+},1326,[442],"src\\assets\\harmony-icons\\a-Videoguidance.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "5e5e2822a8b6d774670718cc9925af91",
+    "name": "a-Upgradelock",
+    "type": "png"
+  });
+},1327,[442],"src\\assets\\harmony-icons\\a-Upgradelock.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "4fcc2e9511b67b57d130f0db24f54ec3",
+    "name": "mine",
+    "type": "png"
+  });
+},1328,[442],"src\\assets\\harmony-icons\\mine.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "00a52284f1df2436f66e22a7fdcb3bbe",
+    "name": "statistics1",
+    "type": "png"
+  });
+},1329,[442],"src\\assets\\harmony-icons\\statistics1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "60db4aec50e00a2d899932f8027b0683",
+    "name": "a-Lowbatteryreminder",
+    "type": "png"
+  });
+},1330,[442],"src\\assets\\harmony-icons\\a-Lowbatteryreminder.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "06592fb5917a402600e55dc5d8561ffa",
+    "name": "bell",
+    "type": "png"
+  });
+},1331,[442],"src\\assets\\harmony-icons\\bell.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "5b814548ceeeea67b4dcb7825d29b9d5",
+    "name": "wrong-red",
+    "type": "png"
+  });
+},1332,[442],"src\\assets\\harmony-icons\\wrong-red.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "25d69d7d59a579f3761d54c20af17f85",
+    "name": "right-green",
+    "type": "png"
+  });
+},1333,[442],"src\\assets\\harmony-icons\\right-green.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "d60530f1cb69c4f8dff6995bc7fd5b9b",
+    "name": "invisible",
+    "type": "png"
+  });
+},1334,[442],"src\\assets\\harmony-icons\\invisible.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "ce436b143fd34bc5f0df70666d2c8e4c",
+    "name": "visible",
+    "type": "png"
+  });
+},1335,[442],"src\\assets\\harmony-icons\\visible.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "4a776cc6eed409357d670fb70f2ad145",
+    "name": "back",
+    "type": "png"
+  });
+},1336,[442],"src\\assets\\harmony-icons\\back.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "6c1be5deea72cb1e9d85742b76cb124f",
+    "name": "selected",
+    "type": "png"
+  });
+},1337,[442],"src\\assets\\harmony-icons\\selected.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "d764fa98884581a8d2bf79a145d5b077",
+    "name": "unselected",
+    "type": "png"
+  });
+},1338,[442],"src\\assets\\harmony-icons\\unselected.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "b0002e8b155234050564b244aa34d0de",
+    "name": "multiplication",
+    "type": "png"
+  });
+},1339,[442],"src\\assets\\harmony-icons\\multiplication.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "5de2863b3190caed24d51633529e2565",
+    "name": "tick-white",
+    "type": "png"
+  });
+},1340,[442],"src\\assets\\harmony-icons\\tick-white.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "5b71b2b8789b388c50160c54464e466e",
+    "name": "minus",
+    "type": "png"
+  });
+},1341,[442],"src\\assets\\harmony-icons\\minus.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "6d41cc7b78c7e01d707bce836d7b4e60",
+    "name": "telephone",
+    "type": "png"
+  });
+},1342,[442],"src\\assets\\harmony-icons\\telephone.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "867b9c5708e3bfeb4bac28036b547ebd",
+    "name": "add",
+    "type": "png"
+  });
+},1343,[442],"src\\assets\\harmony-icons\\add.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "927cb15d6dafb03ee98e5b4448cb75d5",
+    "name": "camera",
+    "type": "png"
+  });
+},1344,[442],"src\\assets\\harmony-icons\\camera.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "b03be51a4ac6824a9300fce77db27192",
+    "name": "refresh",
+    "type": "png"
+  });
+},1345,[442],"src\\assets\\harmony-icons\\refresh.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "b131781ab1e8a93e186d1feba22d9bc6",
+    "name": "location",
+    "type": "png"
+  });
+},1346,[442],"src\\assets\\harmony-icons\\location.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "492589ffd0d516831846b4768350e6f9",
+    "name": "redact",
+    "type": "png"
+  });
+},1347,[442],"src\\assets\\harmony-icons\\redact.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "583d42c24028ee732694c5f6aa684559",
+    "name": "close",
+    "type": "png"
+  });
+},1348,[442],"src\\assets\\harmony-icons\\close.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "c0f435b314add1c80613f884f5847fbe",
+    "name": "a-headfor-12",
+    "type": "png"
+  });
+},1349,[442],"src\\assets\\harmony-icons\\a-headfor-12.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "99edc004d407276d1788f9b54bfb5b68",
+    "name": "a-headfor-20",
+    "type": "png"
+  });
+},1350,[442],"src\\assets\\harmony-icons\\a-headfor-20.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "0889b5c297bc5720a93c75d40cd0a6b2",
+    "name": "statistics",
+    "type": "png"
+  });
+},1351,[442],"src\\assets\\harmony-icons\\statistics.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "2858577c1911128507bcc9b5f8be9464",
+    "name": "manager",
+    "type": "png"
+  });
+},1352,[442],"src\\assets\\harmony-icons\\manager.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/src/assets/harmony-icons",
+    "width": 96,
+    "height": 96,
+    "scales": [1],
+    "hash": "fd3177567920731f3ba33349b37f664f",
+    "name": "arrows1",
+    "type": "png"
+  });
+},1353,[442],"src\\assets\\harmony-icons\\arrows1.png");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/android/app/src/main/res/mipmap-xxxhdpi",
+    "width": 192,
+    "height": 192,
+    "scales": [1],
+    "hash": "bf7ea80b6cff1ea85dd784bbfb4f733d",
+    "name": "ic_launcher",
+    "type": "png"
+  });
+},1354,[442],"android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.png");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201103,7 +202417,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAPopUpwindowsclose = _react.default.memo ? _react.default.memo(IconAPopUpwindowsclose) : IconAPopUpwindowsclose;
   var _default = exports.default = IconAPopUpwindowsclose;
-},1271,[3,150,41,90,1272,1273],"src\\iconfont\\IconAPopUpwindowsclose.tsx");
+},1355,[3,150,41,90,1356,1357],"src\\iconfont\\IconAPopUpwindowsclose.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201112,7 +202426,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/objectWithoutProperties"));
   var React = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
   var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
-  var _excluded = ["children", "style"],
+  var _excluded = ["children", "style", "width", "height"],
     _excluded2 = ["children"];
   var _this = this,
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\harmony\\svg-shim.tsx";
@@ -201131,20 +202445,38 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var Svg = exports.Svg = function Svg(_ref) {
     var children = _ref.children,
       style = _ref.style,
+      width = _ref.width,
+      height = _ref.height,
       rest = (0, _objectWithoutProperties2.default)(_ref, _excluded);
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.View
-    // 给一个最小尺寸，避免某些地方 size=0 完全不可见
-    , Object.assign({
+    // 从第一个 Path 子节点里取 fill 颜色，用于占位块
+    var fillColor = '#333333';
+    var firstChild = React.Children.toArray(children)[0];
+    if (firstChild && firstChild.props && firstChild.props.fill) {
+      fillColor = firstChild.props.fill;
+    }
+    var boxSizeStyle = {
+      width: width != null ? width : 18,
+      height: height != null ? height : 18
+    };
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.View, Object.assign({
       style: [{
         alignItems: 'center',
-        justifyContent: 'center'
-      }, style]
+        justifyContent: 'center',
+        overflow: 'hidden'
+      }, boxSizeStyle, style]
     }, rest, {
-      children: children
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.View, {
+        style: {
+          width: '100%',
+          height: '100%',
+          borderRadius: 3,
+          backgroundColor: fillColor
+        }
+      })
     }));
   };
   var Path = exports.Path = function Path() {
-    // 不绘制真实路径，仅作为占位，避免崩溃
+    // 具体路径在 Harmony 上暂不绘制，避免依赖原生 RNSVG* 组件
     return null;
   };
   var G = exports.G = function G(_ref2) {
@@ -201185,7 +202517,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     ClipPath: ClipPath
   };
   var _default = exports.default = defaultExport;
-},1272,[3,150,41,1,90],"src\\harmony\\svg-shim.tsx");
+},1356,[3,150,41,1,90],"src\\harmony\\svg-shim.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201197,7 +202529,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var getIconColor = exports.getIconColor = function getIconColor(color, index, defaultColor) {
     return color ? typeof color === 'string' ? color : color[index] || defaultColor : defaultColor;
   };
-},1273,[],"src\\iconfont\\helper.ts");
+},1357,[],"src\\iconfont\\helper.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201230,7 +202562,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconStar = _react.default.memo ? _react.default.memo(IconStar) : IconStar;
   var _default = exports.default = IconStar;
-},1274,[3,150,41,90,1272,1273],"src\\iconfont\\IconStar.tsx");
+},1358,[3,150,41,90,1356,1357],"src\\iconfont\\IconStar.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201266,7 +202598,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconACombinationunit = _react.default.memo ? _react.default.memo(IconACombinationunit) : IconACombinationunit;
   var _default = exports.default = IconACombinationunit;
-},1275,[3,150,41,90,1272,1273],"src\\iconfont\\IconACombinationunit.tsx");
+},1359,[3,150,41,90,1356,1357],"src\\iconfont\\IconACombinationunit.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201305,7 +202637,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAStyledescription = _react.default.memo ? _react.default.memo(IconAStyledescription) : IconAStyledescription;
   var _default = exports.default = IconAStyledescription;
-},1276,[3,150,41,90,1272,1273],"src\\iconfont\\IconAStyledescription.tsx");
+},1360,[3,150,41,90,1356,1357],"src\\iconfont\\IconAStyledescription.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201341,7 +202673,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAAdd12 = _react.default.memo ? _react.default.memo(IconAAdd12) : IconAAdd12;
   var _default = exports.default = IconAAdd12;
-},1277,[3,150,41,90,1272,1273],"src\\iconfont\\IconAAdd12.tsx");
+},1361,[3,150,41,90,1356,1357],"src\\iconfont\\IconAAdd12.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201374,7 +202706,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAScanQRcodes1 = _react.default.memo ? _react.default.memo(IconAScanQRcodes1) : IconAScanQRcodes1;
   var _default = exports.default = IconAScanQRcodes1;
-},1278,[3,150,41,90,1272,1273],"src\\iconfont\\IconAScanQRcodes1.tsx");
+},1362,[3,150,41,90,1356,1357],"src\\iconfont\\IconAScanQRcodes1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201410,7 +202742,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconCopy1 = _react.default.memo ? _react.default.memo(IconCopy1) : IconCopy1;
   var _default = exports.default = IconCopy1;
-},1279,[3,150,41,90,1272,1273],"src\\iconfont\\IconCopy1.tsx");
+},1363,[3,150,41,90,1356,1357],"src\\iconfont\\IconCopy1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201446,7 +202778,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconFeedback = _react.default.memo ? _react.default.memo(IconFeedback) : IconFeedback;
   var _default = exports.default = IconFeedback;
-},1280,[3,150,41,90,1272,1273],"src\\iconfont\\IconFeedback.tsx");
+},1364,[3,150,41,90,1356,1357],"src\\iconfont\\IconFeedback.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201479,7 +202811,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconANextpage = _react.default.memo ? _react.default.memo(IconANextpage) : IconANextpage;
   var _default = exports.default = IconANextpage;
-},1281,[3,150,41,90,1272,1273],"src\\iconfont\\IconANextpage.tsx");
+},1365,[3,150,41,90,1356,1357],"src\\iconfont\\IconANextpage.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201512,7 +202844,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAPreviouspage = _react.default.memo ? _react.default.memo(IconAPreviouspage) : IconAPreviouspage;
   var _default = exports.default = IconAPreviouspage;
-},1282,[3,150,41,90,1272,1273],"src\\iconfont\\IconAPreviouspage.tsx");
+},1366,[3,150,41,90,1356,1357],"src\\iconfont\\IconAPreviouspage.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201548,7 +202880,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAAddequipments = _react.default.memo ? _react.default.memo(IconAAddequipments) : IconAAddequipments;
   var _default = exports.default = IconAAddequipments;
-},1283,[3,150,41,90,1272,1273],"src\\iconfont\\IconAAddequipments.tsx");
+},1367,[3,150,41,90,1356,1357],"src\\iconfont\\IconAAddequipments.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201581,7 +202913,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconABatterylifepriority = _react.default.memo ? _react.default.memo(IconABatterylifepriority) : IconABatterylifepriority;
   var _default = exports.default = IconABatterylifepriority;
-},1284,[3,150,41,90,1272,1273],"src\\iconfont\\IconABatterylifepriority.tsx");
+},1368,[3,150,41,90,1356,1357],"src\\iconfont\\IconABatterylifepriority.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201617,7 +202949,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAPowersupply = _react.default.memo ? _react.default.memo(IconAPowersupply) : IconAPowersupply;
   var _default = exports.default = IconAPowersupply;
-},1285,[3,150,41,90,1272,1273],"src\\iconfont\\IconAPowersupply.tsx");
+},1369,[3,150,41,90,1356,1357],"src\\iconfont\\IconAPowersupply.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201650,7 +202982,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAPerformancefirst = _react.default.memo ? _react.default.memo(IconAPerformancefirst) : IconAPerformancefirst;
   var _default = exports.default = IconAPerformancefirst;
-},1286,[3,150,41,90,1272,1273],"src\\iconfont\\IconAPerformancefirst.tsx");
+},1370,[3,150,41,90,1356,1357],"src\\iconfont\\IconAPerformancefirst.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201683,7 +203015,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMore = _react.default.memo ? _react.default.memo(IconMore) : IconMore;
   var _default = exports.default = IconMore;
-},1287,[3,150,41,90,1272,1273],"src\\iconfont\\IconMore.tsx");
+},1371,[3,150,41,90,1356,1357],"src\\iconfont\\IconMore.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201716,7 +203048,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconSearch = _react.default.memo ? _react.default.memo(IconSearch) : IconSearch;
   var _default = exports.default = IconSearch;
-},1288,[3,150,41,90,1272,1273],"src\\iconfont\\IconSearch.tsx");
+},1372,[3,150,41,90,1356,1357],"src\\iconfont\\IconSearch.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201752,7 +203084,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconADownloadtheApp = _react.default.memo ? _react.default.memo(IconADownloadtheApp) : IconADownloadtheApp;
   var _default = exports.default = IconADownloadtheApp;
-},1289,[3,150,41,90,1272,1273],"src\\iconfont\\IconADownloadtheApp.tsx");
+},1373,[3,150,41,90,1356,1357],"src\\iconfont\\IconADownloadtheApp.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201788,7 +203120,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAOperatingguide = _react.default.memo ? _react.default.memo(IconAOperatingguide) : IconAOperatingguide;
   var _default = exports.default = IconAOperatingguide;
-},1290,[3,150,41,90,1272,1273],"src\\iconfont\\IconAOperatingguide.tsx");
+},1374,[3,150,41,90,1356,1357],"src\\iconfont\\IconAOperatingguide.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201824,7 +203156,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMessage1 = _react.default.memo ? _react.default.memo(IconMessage1) : IconMessage1;
   var _default = exports.default = IconMessage1;
-},1291,[3,150,41,90,1272,1273],"src\\iconfont\\IconMessage1.tsx");
+},1375,[3,150,41,90,1356,1357],"src\\iconfont\\IconMessage1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201860,7 +203192,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAEquipmentlist = _react.default.memo ? _react.default.memo(IconAEquipmentlist) : IconAEquipmentlist;
   var _default = exports.default = IconAEquipmentlist;
-},1292,[3,150,41,90,1272,1273],"src\\iconfont\\IconAEquipmentlist.tsx");
+},1376,[3,150,41,90,1356,1357],"src\\iconfont\\IconAEquipmentlist.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201893,7 +203225,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconACustomerservice = _react.default.memo ? _react.default.memo(IconACustomerservice) : IconACustomerservice;
   var _default = exports.default = IconACustomerservice;
-},1293,[3,150,41,90,1272,1273],"src\\iconfont\\IconACustomerservice.tsx");
+},1377,[3,150,41,90,1356,1357],"src\\iconfont\\IconACustomerservice.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201929,7 +203261,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconLock = _react.default.memo ? _react.default.memo(IconLock) : IconLock;
   var _default = exports.default = IconLock;
-},1294,[3,150,41,90,1272,1273],"src\\iconfont\\IconLock.tsx");
+},1378,[3,150,41,90,1356,1357],"src\\iconfont\\IconLock.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -201965,7 +203297,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconOrder = _react.default.memo ? _react.default.memo(IconOrder) : IconOrder;
   var _default = exports.default = IconOrder;
-},1295,[3,150,41,90,1272,1273],"src\\iconfont\\IconOrder.tsx");
+},1379,[3,150,41,90,1356,1357],"src\\iconfont\\IconOrder.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202001,7 +203333,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconUnlock = _react.default.memo ? _react.default.memo(IconUnlock) : IconUnlock;
   var _default = exports.default = IconUnlock;
-},1296,[3,150,41,90,1272,1273],"src\\iconfont\\IconUnlock.tsx");
+},1380,[3,150,41,90,1356,1357],"src\\iconfont\\IconUnlock.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202037,7 +203369,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconPark1 = _react.default.memo ? _react.default.memo(IconPark1) : IconPark1;
   var _default = exports.default = IconPark1;
-},1297,[3,150,41,90,1272,1273],"src\\iconfont\\IconPark1.tsx");
+},1381,[3,150,41,90,1356,1357],"src\\iconfont\\IconPark1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202070,7 +203402,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconPullDown = _react.default.memo ? _react.default.memo(IconPullDown) : IconPullDown;
   var _default = exports.default = IconPullDown;
-},1298,[3,150,41,90,1272,1273],"src\\iconfont\\IconPullDown.tsx");
+},1382,[3,150,41,90,1356,1357],"src\\iconfont\\IconPullDown.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202106,7 +203438,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAVipInvitation = _react.default.memo ? _react.default.memo(IconAVipInvitation) : IconAVipInvitation;
   var _default = exports.default = IconAVipInvitation;
-},1299,[3,150,41,90,1272,1273],"src\\iconfont\\IconAVipInvitation.tsx");
+},1383,[3,150,41,90,1356,1357],"src\\iconfont\\IconAVipInvitation.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202139,7 +203471,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAHeadfor16Grey1 = _react.default.memo ? _react.default.memo(IconAHeadfor16Grey1) : IconAHeadfor16Grey1;
   var _default = exports.default = IconAHeadfor16Grey1;
-},1300,[3,150,41,90,1272,1273],"src\\iconfont\\IconAHeadfor16Grey1.tsx");
+},1384,[3,150,41,90,1356,1357],"src\\iconfont\\IconAHeadfor16Grey1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202175,7 +203507,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconBluetooth1 = _react.default.memo ? _react.default.memo(IconBluetooth1) : IconBluetooth1;
   var _default = exports.default = IconBluetooth1;
-},1301,[3,150,41,90,1272,1273],"src\\iconfont\\IconBluetooth1.tsx");
+},1385,[3,150,41,90,1356,1357],"src\\iconfont\\IconBluetooth1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202208,7 +203540,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAHeadfor201 = _react.default.memo ? _react.default.memo(IconAHeadfor201) : IconAHeadfor201;
   var _default = exports.default = IconAHeadfor201;
-},1302,[3,150,41,90,1272,1273],"src\\iconfont\\IconAHeadfor201.tsx");
+},1386,[3,150,41,90,1356,1357],"src\\iconfont\\IconAHeadfor201.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202241,7 +203573,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconDown = _react.default.memo ? _react.default.memo(IconDown) : IconDown;
   var _default = exports.default = IconDown;
-},1303,[3,150,41,90,1272,1273],"src\\iconfont\\IconDown.tsx");
+},1387,[3,150,41,90,1356,1357],"src\\iconfont\\IconDown.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202280,7 +203612,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAAdvertisingdisplay = _react.default.memo ? _react.default.memo(IconAAdvertisingdisplay) : IconAAdvertisingdisplay;
   var _default = exports.default = IconAAdvertisingdisplay;
-},1304,[3,150,41,90,1272,1273],"src\\iconfont\\IconAAdvertisingdisplay.tsx");
+},1388,[3,150,41,90,1356,1357],"src\\iconfont\\IconAAdvertisingdisplay.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202313,7 +203645,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAHeadfor121 = _react.default.memo ? _react.default.memo(IconAHeadfor121) : IconAHeadfor121;
   var _default = exports.default = IconAHeadfor121;
-},1305,[3,150,41,90,1272,1273],"src\\iconfont\\IconAHeadfor121.tsx");
+},1389,[3,150,41,90,1356,1357],"src\\iconfont\\IconAHeadfor121.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202349,7 +203681,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconExit = _react.default.memo ? _react.default.memo(IconExit) : IconExit;
   var _default = exports.default = IconExit;
-},1306,[3,150,41,90,1272,1273],"src\\iconfont\\IconExit.tsx");
+},1390,[3,150,41,90,1356,1357],"src\\iconfont\\IconExit.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202385,7 +203717,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconACombinationmanagement = _react.default.memo ? _react.default.memo(IconACombinationmanagement) : IconACombinationmanagement;
   var _default = exports.default = IconACombinationmanagement;
-},1307,[3,150,41,90,1272,1273],"src\\iconfont\\IconACombinationmanagement.tsx");
+},1391,[3,150,41,90,1356,1357],"src\\iconfont\\IconACombinationmanagement.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202418,7 +203750,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMaintain = _react.default.memo ? _react.default.memo(IconMaintain) : IconMaintain;
   var _default = exports.default = IconMaintain;
-},1308,[3,150,41,90,1272,1273],"src\\iconfont\\IconMaintain.tsx");
+},1392,[3,150,41,90,1356,1357],"src\\iconfont\\IconMaintain.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202454,7 +203786,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconShare = _react.default.memo ? _react.default.memo(IconShare) : IconShare;
   var _default = exports.default = IconShare;
-},1309,[3,150,41,90,1272,1273],"src\\iconfont\\IconShare.tsx");
+},1393,[3,150,41,90,1356,1357],"src\\iconfont\\IconShare.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202493,7 +203825,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAPowermanagement = _react.default.memo ? _react.default.memo(IconAPowermanagement) : IconAPowermanagement;
   var _default = exports.default = IconAPowermanagement;
-},1310,[3,150,41,90,1272,1273],"src\\iconfont\\IconAPowermanagement.tsx");
+},1394,[3,150,41,90,1356,1357],"src\\iconfont\\IconAPowermanagement.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202529,7 +203861,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAEquipmentinformation = _react.default.memo ? _react.default.memo(IconAEquipmentinformation) : IconAEquipmentinformation;
   var _default = exports.default = IconAEquipmentinformation;
-},1311,[3,150,41,90,1272,1273],"src\\iconfont\\IconAEquipmentinformation.tsx");
+},1395,[3,150,41,90,1356,1357],"src\\iconfont\\IconAEquipmentinformation.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202562,7 +203894,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMember20 = _react.default.memo ? _react.default.memo(IconMember20) : IconMember20;
   var _default = exports.default = IconMember20;
-},1312,[3,150,41,90,1272,1273],"src\\iconfont\\IconMember20.tsx");
+},1396,[3,150,41,90,1356,1357],"src\\iconfont\\IconMember20.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202598,7 +203930,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMessage = _react.default.memo ? _react.default.memo(IconMessage) : IconMessage;
   var _default = exports.default = IconMessage;
-},1313,[3,150,41,90,1272,1273],"src\\iconfont\\IconMessage.tsx");
+},1397,[3,150,41,90,1356,1357],"src\\iconfont\\IconMessage.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202634,7 +203966,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconLocation1 = _react.default.memo ? _react.default.memo(IconLocation1) : IconLocation1;
   var _default = exports.default = IconLocation1;
-},1314,[3,150,41,90,1272,1273],"src\\iconfont\\IconLocation1.tsx");
+},1398,[3,150,41,90,1356,1357],"src\\iconfont\\IconLocation1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202667,7 +203999,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconRise = _react.default.memo ? _react.default.memo(IconRise) : IconRise;
   var _default = exports.default = IconRise;
-},1315,[3,150,41,90,1272,1273],"src\\iconfont\\IconRise.tsx");
+},1399,[3,150,41,90,1356,1357],"src\\iconfont\\IconRise.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202703,7 +204035,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconSetting = _react.default.memo ? _react.default.memo(IconSetting) : IconSetting;
   var _default = exports.default = IconSetting;
-},1316,[3,150,41,90,1272,1273],"src\\iconfont\\IconSetting.tsx");
+},1400,[3,150,41,90,1356,1357],"src\\iconfont\\IconSetting.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202736,7 +204068,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMember = _react.default.memo ? _react.default.memo(IconMember) : IconMember;
   var _default = exports.default = IconMember;
-},1317,[3,150,41,90,1272,1273],"src\\iconfont\\IconMember.tsx");
+},1401,[3,150,41,90,1356,1357],"src\\iconfont\\IconMember.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202769,7 +204101,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconASkinpeeler = _react.default.memo ? _react.default.memo(IconASkinpeeler) : IconASkinpeeler;
   var _default = exports.default = IconASkinpeeler;
-},1318,[3,150,41,90,1272,1273],"src\\iconfont\\IconASkinpeeler.tsx");
+},1402,[3,150,41,90,1356,1357],"src\\iconfont\\IconASkinpeeler.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202805,7 +204137,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconShopping = _react.default.memo ? _react.default.memo(IconShopping) : IconShopping;
   var _default = exports.default = IconShopping;
-},1319,[3,150,41,90,1272,1273],"src\\iconfont\\IconShopping.tsx");
+},1403,[3,150,41,90,1356,1357],"src\\iconfont\\IconShopping.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202838,7 +204170,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconPen16 = _react.default.memo ? _react.default.memo(IconPen16) : IconPen16;
   var _default = exports.default = IconPen16;
-},1320,[3,150,41,90,1272,1273],"src\\iconfont\\IconPen16.tsx");
+},1404,[3,150,41,90,1356,1357],"src\\iconfont\\IconPen16.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202871,7 +204203,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconPen24 = _react.default.memo ? _react.default.memo(IconPen24) : IconPen24;
   var _default = exports.default = IconPen24;
-},1321,[3,150,41,90,1272,1273],"src\\iconfont\\IconPen24.tsx");
+},1405,[3,150,41,90,1356,1357],"src\\iconfont\\IconPen24.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202910,7 +204242,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconExplain = _react.default.memo ? _react.default.memo(IconExplain) : IconExplain;
   var _default = exports.default = IconExplain;
-},1322,[3,150,41,90,1272,1273],"src\\iconfont\\IconExplain.tsx");
+},1406,[3,150,41,90,1356,1357],"src\\iconfont\\IconExplain.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202946,7 +204278,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconDownload = _react.default.memo ? _react.default.memo(IconDownload) : IconDownload;
   var _default = exports.default = IconDownload;
-},1323,[3,150,41,90,1272,1273],"src\\iconfont\\IconDownload.tsx");
+},1407,[3,150,41,90,1356,1357],"src\\iconfont\\IconDownload.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -202982,7 +204314,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconPlay = _react.default.memo ? _react.default.memo(IconPlay) : IconPlay;
   var _default = exports.default = IconPlay;
-},1324,[3,150,41,90,1272,1273],"src\\iconfont\\IconPlay.tsx");
+},1408,[3,150,41,90,1356,1357],"src\\iconfont\\IconPlay.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203015,7 +204347,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAHeadfor16Grey = _react.default.memo ? _react.default.memo(IconAHeadfor16Grey) : IconAHeadfor16Grey;
   var _default = exports.default = IconAHeadfor16Grey;
-},1325,[3,150,41,90,1272,1273],"src\\iconfont\\IconAHeadfor16Grey.tsx");
+},1409,[3,150,41,90,1356,1357],"src\\iconfont\\IconAHeadfor16Grey.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203051,7 +204383,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAVideoguidance = _react.default.memo ? _react.default.memo(IconAVideoguidance) : IconAVideoguidance;
   var _default = exports.default = IconAVideoguidance;
-},1326,[3,150,41,90,1272,1273],"src\\iconfont\\IconAVideoguidance.tsx");
+},1410,[3,150,41,90,1356,1357],"src\\iconfont\\IconAVideoguidance.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203087,7 +204419,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAUpgradelock = _react.default.memo ? _react.default.memo(IconAUpgradelock) : IconAUpgradelock;
   var _default = exports.default = IconAUpgradelock;
-},1327,[3,150,41,90,1272,1273],"src\\iconfont\\IconAUpgradelock.tsx");
+},1411,[3,150,41,90,1356,1357],"src\\iconfont\\IconAUpgradelock.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203129,7 +204461,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMine = _react.default.memo ? _react.default.memo(IconMine) : IconMine;
   var _default = exports.default = IconMine;
-},1328,[3,150,41,90,1272,1273],"src\\iconfont\\IconMine.tsx");
+},1412,[3,150,41,90,1356,1357],"src\\iconfont\\IconMine.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203165,7 +204497,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconStatistics1 = _react.default.memo ? _react.default.memo(IconStatistics1) : IconStatistics1;
   var _default = exports.default = IconStatistics1;
-},1329,[3,150,41,90,1272,1273],"src\\iconfont\\IconStatistics1.tsx");
+},1413,[3,150,41,90,1356,1357],"src\\iconfont\\IconStatistics1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203210,7 +204542,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconALowbatteryreminder = _react.default.memo ? _react.default.memo(IconALowbatteryreminder) : IconALowbatteryreminder;
   var _default = exports.default = IconALowbatteryreminder;
-},1330,[3,150,41,90,1272,1273],"src\\iconfont\\IconALowbatteryreminder.tsx");
+},1414,[3,150,41,90,1356,1357],"src\\iconfont\\IconALowbatteryreminder.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203249,7 +204581,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconBell = _react.default.memo ? _react.default.memo(IconBell) : IconBell;
   var _default = exports.default = IconBell;
-},1331,[3,150,41,90,1272,1273],"src\\iconfont\\IconBell.tsx");
+},1415,[3,150,41,90,1356,1357],"src\\iconfont\\IconBell.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203285,7 +204617,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconWrongRed = _react.default.memo ? _react.default.memo(IconWrongRed) : IconWrongRed;
   var _default = exports.default = IconWrongRed;
-},1332,[3,150,41,90,1272,1273],"src\\iconfont\\IconWrongRed.tsx");
+},1416,[3,150,41,90,1356,1357],"src\\iconfont\\IconWrongRed.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203321,7 +204653,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconRightGreen = _react.default.memo ? _react.default.memo(IconRightGreen) : IconRightGreen;
   var _default = exports.default = IconRightGreen;
-},1333,[3,150,41,90,1272,1273],"src\\iconfont\\IconRightGreen.tsx");
+},1417,[3,150,41,90,1356,1357],"src\\iconfont\\IconRightGreen.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203357,7 +204689,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconInvisible = _react.default.memo ? _react.default.memo(IconInvisible) : IconInvisible;
   var _default = exports.default = IconInvisible;
-},1334,[3,150,41,90,1272,1273],"src\\iconfont\\IconInvisible.tsx");
+},1418,[3,150,41,90,1356,1357],"src\\iconfont\\IconInvisible.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203393,7 +204725,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconVisible = _react.default.memo ? _react.default.memo(IconVisible) : IconVisible;
   var _default = exports.default = IconVisible;
-},1335,[3,150,41,90,1272,1273],"src\\iconfont\\IconVisible.tsx");
+},1419,[3,150,41,90,1356,1357],"src\\iconfont\\IconVisible.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203426,7 +204758,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconBack = _react.default.memo ? _react.default.memo(IconBack) : IconBack;
   var _default = exports.default = IconBack;
-},1336,[3,150,41,90,1272,1273],"src\\iconfont\\IconBack.tsx");
+},1420,[3,150,41,90,1356,1357],"src\\iconfont\\IconBack.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203459,7 +204791,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconSelected = _react.default.memo ? _react.default.memo(IconSelected) : IconSelected;
   var _default = exports.default = IconSelected;
-},1337,[3,150,41,90,1272,1273],"src\\iconfont\\IconSelected.tsx");
+},1421,[3,150,41,90,1356,1357],"src\\iconfont\\IconSelected.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203492,7 +204824,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconUnselected = _react.default.memo ? _react.default.memo(IconUnselected) : IconUnselected;
   var _default = exports.default = IconUnselected;
-},1338,[3,150,41,90,1272,1273],"src\\iconfont\\IconUnselected.tsx");
+},1422,[3,150,41,90,1356,1357],"src\\iconfont\\IconUnselected.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203525,7 +204857,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMultiplication = _react.default.memo ? _react.default.memo(IconMultiplication) : IconMultiplication;
   var _default = exports.default = IconMultiplication;
-},1339,[3,150,41,90,1272,1273],"src\\iconfont\\IconMultiplication.tsx");
+},1423,[3,150,41,90,1356,1357],"src\\iconfont\\IconMultiplication.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203558,7 +204890,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconTickWhite = _react.default.memo ? _react.default.memo(IconTickWhite) : IconTickWhite;
   var _default = exports.default = IconTickWhite;
-},1340,[3,150,41,90,1272,1273],"src\\iconfont\\IconTickWhite.tsx");
+},1424,[3,150,41,90,1356,1357],"src\\iconfont\\IconTickWhite.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203591,7 +204923,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconMinus = _react.default.memo ? _react.default.memo(IconMinus) : IconMinus;
   var _default = exports.default = IconMinus;
-},1341,[3,150,41,90,1272,1273],"src\\iconfont\\IconMinus.tsx");
+},1425,[3,150,41,90,1356,1357],"src\\iconfont\\IconMinus.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203624,7 +204956,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconTelephone = _react.default.memo ? _react.default.memo(IconTelephone) : IconTelephone;
   var _default = exports.default = IconTelephone;
-},1342,[3,150,41,90,1272,1273],"src\\iconfont\\IconTelephone.tsx");
+},1426,[3,150,41,90,1356,1357],"src\\iconfont\\IconTelephone.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203657,7 +204989,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAdd = _react.default.memo ? _react.default.memo(IconAdd) : IconAdd;
   var _default = exports.default = IconAdd;
-},1343,[3,150,41,90,1272,1273],"src\\iconfont\\IconAdd.tsx");
+},1427,[3,150,41,90,1356,1357],"src\\iconfont\\IconAdd.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203690,7 +205022,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconCamera = _react.default.memo ? _react.default.memo(IconCamera) : IconCamera;
   var _default = exports.default = IconCamera;
-},1344,[3,150,41,90,1272,1273],"src\\iconfont\\IconCamera.tsx");
+},1428,[3,150,41,90,1356,1357],"src\\iconfont\\IconCamera.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203723,7 +205055,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconRefresh = _react.default.memo ? _react.default.memo(IconRefresh) : IconRefresh;
   var _default = exports.default = IconRefresh;
-},1345,[3,150,41,90,1272,1273],"src\\iconfont\\IconRefresh.tsx");
+},1429,[3,150,41,90,1356,1357],"src\\iconfont\\IconRefresh.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203756,7 +205088,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconLocation = _react.default.memo ? _react.default.memo(IconLocation) : IconLocation;
   var _default = exports.default = IconLocation;
-},1346,[3,150,41,90,1272,1273],"src\\iconfont\\IconLocation.tsx");
+},1430,[3,150,41,90,1356,1357],"src\\iconfont\\IconLocation.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203792,7 +205124,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconRedact = _react.default.memo ? _react.default.memo(IconRedact) : IconRedact;
   var _default = exports.default = IconRedact;
-},1347,[3,150,41,90,1272,1273],"src\\iconfont\\IconRedact.tsx");
+},1431,[3,150,41,90,1356,1357],"src\\iconfont\\IconRedact.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203825,7 +205157,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconClose = _react.default.memo ? _react.default.memo(IconClose) : IconClose;
   var _default = exports.default = IconClose;
-},1348,[3,150,41,90,1272,1273],"src\\iconfont\\IconClose.tsx");
+},1432,[3,150,41,90,1356,1357],"src\\iconfont\\IconClose.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203858,7 +205190,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAHeadfor12 = _react.default.memo ? _react.default.memo(IconAHeadfor12) : IconAHeadfor12;
   var _default = exports.default = IconAHeadfor12;
-},1349,[3,150,41,90,1272,1273],"src\\iconfont\\IconAHeadfor12.tsx");
+},1433,[3,150,41,90,1356,1357],"src\\iconfont\\IconAHeadfor12.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203891,7 +205223,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconAHeadfor20 = _react.default.memo ? _react.default.memo(IconAHeadfor20) : IconAHeadfor20;
   var _default = exports.default = IconAHeadfor20;
-},1350,[3,150,41,90,1272,1273],"src\\iconfont\\IconAHeadfor20.tsx");
+},1434,[3,150,41,90,1356,1357],"src\\iconfont\\IconAHeadfor20.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203927,7 +205259,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconStatistics = _react.default.memo ? _react.default.memo(IconStatistics) : IconStatistics;
   var _default = exports.default = IconStatistics;
-},1351,[3,150,41,90,1272,1273],"src\\iconfont\\IconStatistics.tsx");
+},1435,[3,150,41,90,1356,1357],"src\\iconfont\\IconStatistics.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203966,7 +205298,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconManager = _react.default.memo ? _react.default.memo(IconManager) : IconManager;
   var _default = exports.default = IconManager;
-},1352,[3,150,41,90,1272,1273],"src\\iconfont\\IconManager.tsx");
+},1436,[3,150,41,90,1356,1357],"src\\iconfont\\IconManager.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -203999,7 +205331,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   IconArrows1 = _react.default.memo ? _react.default.memo(IconArrows1) : IconArrows1;
   var _default = exports.default = IconArrows1;
-},1353,[3,150,41,90,1272,1273],"src\\iconfont\\IconArrows1.tsx");
+},1437,[3,150,41,90,1356,1357],"src\\iconfont\\IconArrows1.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204052,7 +205384,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = StatusError;
-},1354,[3,41,1,1229,1355,90,1356],"src\\components\\PageContainer\\StatusError.tsx");
+},1438,[3,41,1,1229,1439,90,1440],"src\\components\\PageContainer\\StatusError.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204271,7 +205603,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     //订单支付超时
     CLOSE: 4 //订单关闭
   };
-},1355,[3,202],"src\\constants\\index.ts");
+},1439,[3,202],"src\\constants\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204296,8 +205628,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       zIndex: 10
     },
     footerContainer: {
-      zIndex: 10,
-      paddingTop: 20
+      zIndex: 10
+      // paddingTop: 20,
     },
     scrollView: {
       flex: 1
@@ -204325,6 +205657,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       height: 44,
       paddingHorizontal: 16,
       minHeight: 44
+    },
+    navHeaderBorder: {
+      borderBottomWidth: 1,
+      borderStyle: 'solid',
+      borderBottomColor: 'rgba(0,0,0,0.05)'
     },
     navHeaderLeft: {
       flexDirection: 'row',
@@ -204421,7 +205758,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#FFFFFF'
     }
   });
-},1356,[1],"src\\components\\PageContainer\\styles.ts");
+},1440,[1],"src\\components\\PageContainer\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204499,7 +205836,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = StatusLogin;
-},1357,[41,1,3,537,536,1229,90,1356,968],"src\\components\\PageContainer\\StatusLogin.tsx");
+},1441,[41,1,3,537,536,1229,90,1440,968],"src\\components\\PageContainer\\StatusLogin.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204532,7 +205869,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _KeyboardAwareScrollView = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "./lib/KeyboardAwareScrollView"));
   var _KeyboardAwareFlatList = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "./lib/KeyboardAwareFlatList"));
   var _KeyboardAwareSectionList = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "./lib/KeyboardAwareSectionList"));
-},1358,[3,1359,1361,1362,1363],"node_modules\\react-native-keyboard-aware-scroll-view\\index.js");
+},1442,[3,1443,1445,1446,1447],"node_modules\\react-native-keyboard-aware-scroll-view\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204912,7 +206249,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   };
   var _default = exports.default = listenToKeyboardEvents;
-},1359,[3,24,83,12,13,49,51,52,202,41,300,1,1360,90],"node_modules\\react-native-keyboard-aware-scroll-view\\lib\\KeyboardAwareHOC.js");
+},1443,[3,24,83,12,13,49,51,52,202,41,300,1,1444,90],"node_modules\\react-native-keyboard-aware-scroll-view\\lib\\KeyboardAwareHOC.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204942,7 +206279,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   function getBottomSpace() {
     return isIphoneX() ? 34 : 0;
   }
-},1360,[1],"node_modules\\react-native-iphone-x-helper\\index.js");
+},1444,[1],"node_modules\\react-native-iphone-x-helper\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204951,7 +206288,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
   var _KeyboardAwareHOC = _$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "./KeyboardAwareHOC"));
   var _default = exports.default = (0, _KeyboardAwareHOC.default)(_reactNative.ScrollView);
-},1361,[1,3,1359],"node_modules\\react-native-keyboard-aware-scroll-view\\lib\\KeyboardAwareScrollView.js");
+},1445,[1,3,1443],"node_modules\\react-native-keyboard-aware-scroll-view\\lib\\KeyboardAwareScrollView.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204960,7 +206297,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
   var _KeyboardAwareHOC = _$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "./KeyboardAwareHOC"));
   var _default = exports.default = (0, _KeyboardAwareHOC.default)(_reactNative.FlatList);
-},1362,[1,3,1359],"node_modules\\react-native-keyboard-aware-scroll-view\\lib\\KeyboardAwareFlatList.js");
+},1446,[1,3,1443],"node_modules\\react-native-keyboard-aware-scroll-view\\lib\\KeyboardAwareFlatList.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -204969,19 +206306,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
   var _KeyboardAwareHOC = _$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "./KeyboardAwareHOC"));
   var _default = exports.default = (0, _KeyboardAwareHOC.default)(_reactNative.SectionList);
-},1363,[1,3,1359],"node_modules\\react-native-keyboard-aware-scroll-view\\lib\\KeyboardAwareSectionList.js");
+},1447,[1,3,1443],"node_modules\\react-native-keyboard-aware-scroll-view\\lib\\KeyboardAwareSectionList.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.default = void 0;
   var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
-  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
-  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../Flex"));
-  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "../../iconfont"));
-  var _popConfirm = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "../popConfirm"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../Flex"));
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../../iconfont"));
+  var _popConfirm = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "../popConfirm"));
   var _this = this,
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\Header\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
@@ -204992,17 +206328,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lockInfo = _ref.lockInfo,
       _ref$type = _ref.type,
       type = _ref$type === void 0 ? 1 : _ref$type;
-    var _useState = (0, _react.useState)([]),
-      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      deviceList = _useState2[0],
-      setDeviceList = _useState2[1];
-    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[8], "../../context/ThemeContext").useTheme)(),
+    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[7], "../../context/ThemeContext").useTheme)(),
       theme = _useTheme.theme,
       themeType = _useTheme.themeType;
     var textColor = (0, _react.useMemo)(function () {
-      // 深色模式下 primary 为白色；浅色模式下 inverse 为白色
-      return themeType === 'dark' ? theme.colors.text.primary : theme.colors.text.color333;
-    }, [themeType, theme]);
+      // 深色模式下 primary 为白色
+      return themeType !== 'dark' || !(lockInfo != null && lockInfo.id) ? theme.colors.text.color333 : theme.colors.text.primary;
+    }, [themeType, theme, lockInfo]);
     var batteryIcon = (0, _react.useMemo)(function () {
       var _lockInfo$battery;
       if (!(lockInfo != null && lockInfo.showBattery)) return undefined;
@@ -205018,7 +206350,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
       var percent = Number((_lockInfo$battery = lockInfo == null ? void 0 : lockInfo.battery) != null ? _lockInfo$battery : 0);
       var level = percent >= 75 ? 100 : percent >= 50 ? 75 : percent >= 25 ? 50 : 25;
-      var map = themeType === 'dark' ? _$$_REQUIRE(_dependencyMap[9], "../../constants").BATTERY_STATUS_DEEP : _$$_REQUIRE(_dependencyMap[9], "../../constants").BATTERY_STATUS;
+      var map = themeType === 'dark' ? _$$_REQUIRE(_dependencyMap[8], "../../constants").BATTERY_STATUS_DEEP : _$$_REQUIRE(_dependencyMap[8], "../../constants").BATTERY_STATUS;
       return map[level];
     }, [themeType, lockInfo]);
     var signalIcon = (0, _react.useMemo)(function () {
@@ -205030,19 +206362,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       var csq = Number((_lockInfo$atCsq = lockInfo == null ? void 0 : lockInfo.atCsq) != null ? _lockInfo$atCsq : 0);
       var level = 1;
       if (csq >= 20) level = 5;else if (csq >= 16) level = 4;else if (csq >= 12) level = 3;else if (csq >= 8) level = 2;
-      var map = themeType === 'dark' ? _$$_REQUIRE(_dependencyMap[9], "../../constants").SIGNAL_STATUS_DEEP : _$$_REQUIRE(_dependencyMap[9], "../../constants").SIGNAL_STATUS;
+      var map = themeType === 'dark' ? _$$_REQUIRE(_dependencyMap[8], "../../constants").SIGNAL_STATUS_DEEP : _$$_REQUIRE(_dependencyMap[8], "../../constants").SIGNAL_STATUS;
       return map[level];
     }, [themeType, lockInfo]);
+    console.log('unreadCount', unreadCount);
     var renderMessage = function renderMessage() {
-      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
-        style: styles.messageWrapper,
-        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: [unreadCount > 99 ? styles.messgeWrapperMax : styles.messageWrapper],
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_iconfont.default, {
           name: "message",
           size: 24,
           color: textColor
-        }), unreadCount > 0 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
-          style: [styles.messageBadge, unreadCount > 99 ? styles.messageBadgeLarge : null],
-          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+        }), unreadCount > 0 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: [styles.messageBadge, unreadCount > 99 ? styles.messageBadgeTextLengthMore : styles.messageBadgeTextLength],
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Text, {
             style: styles.messageBadgeText,
             children: unreadCount > 99 ? '99+' : unreadCount
           })
@@ -205050,100 +206383,97 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     };
     var isGroupOrNonMains = (lockInfo == null ? void 0 : lockInfo.isGroup) || (lockInfo == null ? void 0 : lockInfo.powerType) !== 1;
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").Fragment, {
-      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_Flex.default, {
+    var isHarmony = !['ios', 'android'].includes(_reactNative.Platform.OS);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").Fragment, {
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_Flex.default, {
         align: "center",
         style: styles.header,
         children: isGroupOrNonMains ?
         /*#__PURE__*/
         // 组合设备或非市电：只展示消息入口
-        (0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_Flex.default, {
+        (0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_Flex.default, {
           style: styles.headerLeft,
           align: "center",
           justify: "end",
           children: renderMessage()
-        }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+        }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
           activeOpacity: 0.8,
           style: styles.headerTouch,
-          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_Flex.default, {
             style: styles.headerLeft,
             align: "center",
-            children: [(lockInfo == null ? void 0 : lockInfo.showBattery) && batteryIcon && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+            children: [(lockInfo == null ? void 0 : lockInfo.showBattery) && batteryIcon && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_Flex.default, {
               align: "center",
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Image, {
                 source: {
                   uri: batteryIcon
                 },
                 style: styles.batteryIcon,
                 resizeMode: "contain"
-              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Text, {
                 style: [styles.batteryText, {
                   color: textColor
                 }],
                 children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? '充电中' : `${Number((_lockInfo$battery2 = lockInfo == null ? void 0 : lockInfo.battery) != null ? _lockInfo$battery2 : 0)}%`
               })]
-            }), signalIcon && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            }), signalIcon && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
               style: styles.colSpace16,
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Image, {
                 source: {
                   uri: signalIcon
                 },
                 style: styles.signalIcon,
                 resizeMode: "contain"
               })
-            }), lockInfo && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            }), lockInfo && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
               style: [styles.line, styles.colSpace16, themeType === 'dark' ? styles.deepLineColor : styles.defaultLineColor]
-            }), (lockInfo == null ? void 0 : lockInfo.aboveStatus) === 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            }), (lockInfo == null ? void 0 : lockInfo.aboveStatus) === 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
               style: styles.colSpace16,
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_iconfont.default, {
                 name: "park1",
                 size: 20,
                 color: textColor
               })
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
               style: [styles.greenDot, styles.colSpace16, (lockInfo == null ? void 0 : lockInfo.deviceStatus) !== 6 && (lockInfo == null ? void 0 : lockInfo.deviceStatus) !== 7 && styles.signalDot, (lockInfo == null ? void 0 : lockInfo.deviceStatus) === 7 && styles.failureDot, (lockInfo == null ? void 0 : lockInfo.deviceStatus) === 6 ? {
                 backgroundColor: themeType === 'dark' ? 'rgba(249, 249, 249, 0.41)' : 'rgba(51, 51, 51, 0.3)'
               } : null]
-            }), (lockInfo == null ? void 0 : lockInfo.fallStatus) === _$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_STATUS.FAULT && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            }), (lockInfo == null ? void 0 : lockInfo.fallStatus) === _$$_REQUIRE(_dependencyMap[8], "../../constants").LOCK_STATUS.FAULT && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
               style: styles.colSpace16,
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Text, {
                 style: styles.faultText,
                 children: "\u8BBE\u5907\u6545\u969C"
               })
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.View, {
               style: styles.flexSpacer
             }), renderMessage()]
           })
         })
-      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_popConfirm.default, {
-        title: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-          style: styles.popTitle,
-          children: "\u9700\u7528\u84DD\u7259\u8FDE\u63A5\u8BBE\u5907\u5F00\u542F"
-        }),
-        ref: {
-          current: null
-        },
-        cancelText: "\u53D6\u6D88",
-        confirmText: "\u524D\u5F80\u8FDE\u63A5",
-        onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {})
-      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_popConfirm.default, {
-        title: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
-          direction: "column",
-          align: "center",
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+      }), !isHarmony && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").Fragment, {
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_popConfirm.default, {
+          title: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Text, {
             style: styles.popTitle,
-            children: "\u6E29\u99A8\u63D0\u793A"
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-            style: styles.popText,
-            children: "\u672A\u8FDE\u63A5\u4E0A\u84DD\u7259\uFF0C\u8BF7\u9760\u8FD1\u5730\u9501\u624D\u80FD\u4F7F\u7528"
-          })]
-        }),
-        ref: {
-          current: null
-        },
-        showClose: false,
-        confirmText: "\u5173\u95ED",
-        onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {})
+            children: "\u9700\u7528\u84DD\u7259\u8FDE\u63A5\u8BBE\u5907\u5F00\u542F"
+          }),
+          cancelText: "\u53D6\u6D88",
+          confirmText: "\u524D\u5F80\u8FDE\u63A5",
+          onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {})
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_popConfirm.default, {
+          title: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsxs)(_Flex.default, {
+            direction: "column",
+            align: "center",
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: styles.popTitle,
+              children: "\u6E29\u99A8\u63D0\u793A"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: styles.popText,
+              children: "\u672A\u8FDE\u63A5\u4E0A\u84DD\u7259\uFF0C\u8BF7\u9760\u8FD1\u5730\u9501\u624D\u80FD\u4F7F\u7528"
+            })]
+          }),
+          showClose: false,
+          confirmText: "\u5173\u95ED",
+          onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {})
+        })]
       })]
     });
   };
@@ -205205,28 +206535,32 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     messageWrapper: {
       position: 'relative',
-      paddingRight: 8
+      paddingRight: 14
+    },
+    messgeWrapperMax: {
+      position: 'relative',
+      paddingRight: 22
     },
     messageBadge: {
       position: 'absolute',
-      top: -6,
-      right: -6,
-      minWidth: 16,
-      height: 16,
+      top: -8,
+      left: 14,
+      height: 18,
       paddingHorizontal: 4,
-      borderRadius: 8,
+      borderRadius: 9,
       backgroundColor: '#FF2B24',
       alignItems: 'center',
       justifyContent: 'center'
     },
-    messageBadgeLarge: {
-      right: -4
+    messageBadgeTextLength: {
+      minWidth: 24
+    },
+    messageBadgeTextLengthMore: {
+      minWidth: 32
     },
     messageBadgeText: {
-      fontSize: 10,
-      color: '#FFFFFF',
-      textAlign: 'center',
-      lineHeight: 16
+      fontSize: 12,
+      color: '#FFFFFF'
     },
     flexSpacer: {
       flex: 1
@@ -205367,90 +206701,103 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = Header;
-},1364,[3,83,24,41,1,537,1270,536,1229,1355,90],"src\\components\\Header\\index.tsx");
+},1448,[3,83,41,1,537,1270,536,1229,1439,90],"src\\components\\Header\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.default = void 0;
   var _react = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
-  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "../Flex"));
+  var _reactNative2 = _$$_REQUIRE(_dependencyMap[2], "react-native");
   var _this = this,
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\NoDevices\\index.tsx";
   var NoDevices = function NoDevices(_ref) {
-    var _ref$unreadCount = _ref.unreadCount,
-      unreadCount = _ref$unreadCount === void 0 ? 0 : _ref$unreadCount,
-      _ref$hasDevice = _ref.hasDevice,
+    var _ref$hasDevice = _ref.hasDevice,
       hasDevice = _ref$hasDevice === void 0 ? false : _ref$hasDevice;
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsxs)(_reactNative.View, {
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsxs)(_reactNative2.View, {
       style: styles.container,
-      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsxs)(_Flex.default, {
-        align: "center",
-        justify: "center",
-        style: styles.header,
-        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.Text, {
-          style: styles.headerTitle,
-          children: "\u6682\u65E0\u8BBE\u5907"
-        }), unreadCount > 0 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.View, {
-          style: styles.unreadBadge,
-          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.Text, {
-            style: styles.unreadText,
-            children: unreadCount
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsx)(_reactNative2.Text, {
+        style: styles.title,
+        children: "\u6B22\u8FCE\u4F7F\u7528\u3000\u6CCA\u523B\u5730\u9501"
+      }), hasDevice ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsxs)(_reactNative2.View, {
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsx)(_reactNative2.TouchableOpacity, {
+          activeOpacity: 0.8,
+          onPress: function onPress() {
+            _$$_REQUIRE(_dependencyMap[4], "@ant-design/react-native").Toast.show({
+              content: '跳转组合设备'
+            });
+          },
+          style: styles.combineBtn,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsx)(_reactNative2.Text, {
+            style: styles.combineBtnText,
+            children: "\u8BBE\u5907\u7EC4\u5408"
           })
-        })]
-      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.View, {
-        style: styles.contentBox,
-        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.Text, {
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsx)(_reactNative2.Text, {
           style: styles.tips,
-          children: "\u8BF7\u524D\u5F80\u6DFB\u52A0\u6216\u7ED1\u5B9A\u8BBE\u5907"
-        })
+          children: "\u6765\u7EC4\u5408\u4F60\u7684\u5730\u9501\u5427\uFF01"
+        })]
+      }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsxs)(_reactNative2.TouchableOpacity, {
+        activeOpacity: 0.8,
+        onPress: function onPress() {
+          _$$_REQUIRE(_dependencyMap[4], "@ant-design/react-native").Toast.show({
+            content: '跳转添加设备'
+          });
+        },
+        style: styles.contentBox,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsx)(_reactNative2.Image, {
+          style: styles.addImage,
+          source: {
+            uri: 'https://g.18qjz.cn/img/boklock/device_add.png'
+          }
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[3], "react/jsx-runtime").jsx)(_reactNative2.Text, {
+          style: styles.tips,
+          children: "\u6765\u6DFB\u52A0\u4F60\u7684\u7B2C\u4E00\u53F0\u5730\u9501\u5427\uFF01"
+        })]
       })]
     });
   };
-  var styles = _reactNative.StyleSheet.create({
+  var styles = _reactNative2.StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#f7f8fa',
-      alignItems: 'center',
-      justifyContent: 'center'
+      backgroundColor: '#f6f7fa',
+      alignItems: 'center'
     },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 16
-    },
-    headerTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#222'
-    },
-    unreadBadge: {
-      minWidth: 20,
-      height: 20,
-      borderRadius: 10,
-      backgroundColor: '#ff4d4f',
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 6,
-      marginLeft: 8
-    },
-    unreadText: {
-      color: '#fff',
-      fontSize: 12,
-      fontWeight: 'bold'
+    title: {
+      fontSize: 20,
+      fontWeight: '500',
+      marginTop: 102
     },
     contentBox: {
-      marginTop: 24,
       alignItems: 'center'
+    },
+    addImage: {
+      width: 120,
+      height: 120,
+      marginTop: 24,
+      marginBottom: 12
+    },
+    combineBtn: {
+      paddingVertical: 13,
+      paddingHorizontal: 46,
+      backgroundColor: '#333',
+      borderRadius: 12,
+      marginTop: 60,
+      marginBottom: 48
+    },
+    combineBtnText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: '400'
     },
     tips: {
       color: '#999',
-      fontSize: 16
+      fontSize: 16,
+      fontWeight: '400',
+      textAlign: 'center'
     }
   });
   var _default = exports.default = NoDevices;
-},1365,[3,41,1,537,90],"src\\components\\NoDevices\\index.tsx");
+},1449,[3,41,1,90,542],"src\\components\\NoDevices\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -205466,43 +206813,66 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\Content\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var Content = function Content(_ref) {
-    var _detail$locationList, _detail$battery;
+    var _detail$locationList, _ref3;
     var detail = _ref.detail,
-      backgroundType = _ref.backgroundType,
       reload = _ref.reload,
-      isMultiple = _ref.isMultiple,
       optioning = _ref.optioning,
       onFresh = _ref.onFresh,
       onAnimation = _ref.onAnimation,
       children = _ref.children;
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[7], "../../hooks/useAppNavigation").useAppNavigation)();
     var _useState = (0, _react.useState)(false),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       operating = _useState2[0],
       setOperating = _useState2[1];
+    var _useState3 = (0, _react.useState)([]),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      groupList = _useState4[0],
+      setGroupList = _useState4[1];
+    (0, _react.useEffect)(function () {
+      if (detail != null && detail.isGroup) {
+        function getGroupSubList() {
+          return _getGroupSubList.apply(this, arguments);
+        }
+        function _getGroupSubList() {
+          _getGroupSubList = (0, _asyncToGenerator2.default)(function* () {
+            var _res$data;
+            var res = yield (0, _$$_REQUIRE(_dependencyMap[8], "../../services").groupSubList)({
+              id: detail == null ? void 0 : detail.id,
+              pageSize: 30,
+              offset: 0
+            });
+            setGroupList(((_res$data = res.data) == null ? void 0 : _res$data.list) || []);
+          });
+          return _getGroupSubList.apply(this, arguments);
+        }
+        getGroupSubList();
+      }
+    }, [detail]);
     var handleOperate = (0, _react.useCallback)(/*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2.default)(function* (direction) {
         if (!(detail != null && detail.id) || operating) return;
         setOperating(true);
-        var loadingToast = _$$_REQUIRE(_dependencyMap[7], "@ant-design/react-native").Toast.loading(direction === 'fall' ? '降下中...' : '升起中...', 0);
+        var loadingToast = _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.loading(direction === 'fall' ? '降下中...' : '升起中...', 0);
         try {
-          var res = yield (0, _$$_REQUIRE(_dependencyMap[8], "../../services/device").operateLock)({
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../services/device").operateLock)({
             id: detail.id,
-            optType: direction === 'fall' ? _$$_REQUIRE(_dependencyMap[9], "../../constants").OPT_TYPE.FALL : _$$_REQUIRE(_dependencyMap[9], "../../constants").OPT_TYPE.RISE
+            optType: direction === 'fall' ? _$$_REQUIRE(_dependencyMap[11], "../../constants").OPT_TYPE.FALL : _$$_REQUIRE(_dependencyMap[11], "../../constants").OPT_TYPE.RISE
           });
           if ((res == null ? void 0 : res.code) === 200 || res != null && res.success) {
-            _$$_REQUIRE(_dependencyMap[7], "@ant-design/react-native").Toast.success(direction === 'fall' ? '已发送降锁指令' : '已发送升锁指令');
+            _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.success(direction === 'fall' ? '已发送降锁指令' : '已发送升锁指令');
             if (onFresh) {
               yield onFresh(detail.id);
             } else if (reload) {
               yield reload(detail.id);
             }
           } else {
-            _$$_REQUIRE(_dependencyMap[7], "@ant-design/react-native").Toast.fail((res == null ? void 0 : res.message) || (res == null ? void 0 : res.msg) || '操作失败');
+            _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail((res == null ? void 0 : res.message) || (res == null ? void 0 : res.msg) || '操作失败');
           }
         } catch (e) {
-          _$$_REQUIRE(_dependencyMap[7], "@ant-design/react-native").Toast.fail('操作失败，请稍后重试');
+          _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail('操作失败，请稍后重试');
         } finally {
-          _$$_REQUIRE(_dependencyMap[7], "@ant-design/react-native").Toast.remove(loadingToast);
+          _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.remove(loadingToast);
           setOperating(false);
         }
       });
@@ -205510,161 +206880,206 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return _ref2.apply(this, arguments);
       };
     }(), [detail, onFresh, reload, operating]);
+    var handleDeviceInfo = function handleDeviceInfo() {
+      if (detail != null && detail.isGroup) {
+        console.log('跳转设备列表');
+      } else {
+        if (!(detail != null && detail.id)) return;
+        navigation.navigate('DeviceInfo', {
+          lockId: detail.id,
+          isAdmin: (detail == null ? void 0 : detail.role) === 1
+        });
+      }
+    };
     var address = (detail == null || (_detail$locationList = detail.locationList) == null || (_detail$locationList = _detail$locationList[0]) == null ? void 0 : _detail$locationList.address) || (detail == null ? void 0 : detail.address) || '';
     return (
       /*#__PURE__*/
       // <ImageBackground source={{ uri: detail?.imageMap?.bgPng }}>
-      (0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
-        style: styles.contentBox,
-        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+      (0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.contentBox,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_Flex.default, {
           direction: "column",
           align: "center",
-          children: [children, /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../Device/switch").DeviceSwitch, {
+          children: [children, /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[14], "../Device/switch").DeviceSwitch, {
             lockInfo: detail,
             reload: reload,
-            type: detail != null && detail.isGroup ? 2 : 1,
-            backgroundType: backgroundType
+            type: detail != null && detail.isGroup ? 2 : 1
           })]
-        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_Flex.default, {
           justify: "between",
-          style: styles.manualRow,
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+          style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.manualRow,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
             activeOpacity: 0.8,
-            style: styles.manualBtn,
+            style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.manualBtn,
             disabled: operating,
             onPress: function onPress() {
               return handleOperate('rise');
             },
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: styles.manualIconCircle,
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.manualIconCircle,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
                 name: "rise",
                 size: 24,
                 color: "#333333"
               })
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: styles.manualText,
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.manualText,
               children: "\u624B\u52A8\u5347\u9501"
             })]
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
             activeOpacity: 0.8,
-            style: styles.manualBtn,
+            style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.manualBtn,
             disabled: operating,
             onPress: function onPress() {
               return handleOperate('fall');
             },
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: styles.manualIconCircle,
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.manualIconCircle,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
                 name: "down",
                 size: 24,
                 color: "#333333"
               })
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: styles.manualText,
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.manualText,
               children: "\u624B\u52A8\u964D\u9501"
             })]
           })]
-        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_Flex.default, {
           justify: "between",
-          style: styles.cardsRow,
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
-            style: [styles.card, styles.mapCard],
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: styles.mapPreview,
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+          style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.cardsRow,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: [_$$_REQUIRE(_dependencyMap[13], "./style").styles.card, _$$_REQUIRE(_dependencyMap[13], "./style").styles.mapCard],
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.mapPreview,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Image, {
                 source: {
                   uri: 'https://g.18qjz.cn/img/boklock/map_placeholder.png'
                 },
-                style: styles.mapImage,
+                style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.mapImage,
                 resizeMode: "cover"
               })
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: styles.cardTitle,
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.cardTitle,
               numberOfLines: 1,
-              children: "\u5F53\u524D\u4F4D\u7F6E"
-            }), !!address && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: styles.cardSubTitle,
+              children: ["\u5F53\u524D\u4F4D\u7F6E", detail != null && detail.isGroup ? '（组锁）' : '（单锁）']
+            }), !!address && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.cardSubTitle,
               numberOfLines: 2,
               children: address
             })]
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
-            style: [styles.card, styles.infoCard],
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.Pressable, {
+            style: [_$$_REQUIRE(_dependencyMap[13], "./style").styles.card],
+            onPress: handleDeviceInfo,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_Flex.default, {
               justify: "between",
               align: "center",
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                style: styles.cardTitle,
-                children: "\u8BBE\u5907\u4FE1\u606F"
-              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.cardHeader,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: detail != null && detail.isGroup ? 'a-Equipmentlist' : 'a-equipmentinformation',
+                size: 20,
+                color: '#333'
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.cardTitle,
+                children: detail != null && detail.isGroup ? '设备列表' : '设备信息'
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
                 name: "a-headfor-20",
-                size: 16,
+                size: 20,
                 color: "#333333"
               })]
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
-              style: styles.infoRow,
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                style: styles.infoLabel,
-                children: "\u7535\u91CF"
-              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.Text, {
-                style: styles.infoValue,
-                children: [(_detail$battery = detail == null ? void 0 : detail.battery) != null ? _detail$battery : '--', "%"]
-              })]
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
-              style: styles.infoRow,
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                style: styles.infoLabel,
-                children: "\u4FE1\u53F7"
-              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                style: styles.infoValue,
-                children: '--'
+            }), detail != null && detail.isGroup ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_Flex.default, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.groupListBox,
+              direction: "column",
+              justify: "between",
+              align: "center",
+              children: (_ref3 = groupList || []) == null || (_ref3 = _ref3.slice(0, 2)) == null ? void 0 : _ref3.map(function (item) {
+                return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_Flex.default, {
+                  style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.groupItem,
+                  direction: "row",
+                  justify: 'between',
+                  align: 'center',
+                  children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Image, {
+                    src: (item == null ? void 0 : item.imageUrl) || '',
+                    style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.groupItemImage
+                  }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                    numberOfLines: 1,
+                    style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.groupItemLockName,
+                    children: (item == null ? void 0 : item.lockName) || ''
+                  })]
+                }, item == null ? void 0 : item.id);
+              })
+            }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.infoList,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.infoRow,
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
+                  name: 'a-Upgradelock',
+                  size: 16,
+                  color: "#ccc"
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.infoLabel,
+                  children: "\u79BB\u8F66\u5347\u9501"
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.infoValue,
+                  children: detail != null && detail.battery ? `${detail == null ? void 0 : detail.leaveUpTime}s` : '暂无信息'
+                })]
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.infoRow,
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
+                  name: 'bell',
+                  size: 16,
+                  color: "#ccc"
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.infoLabel,
+                  children: "\u8702\u9E23\u78B0\u649E"
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Image, {
+                  style: {
+                    width: 16,
+                    height: 16
+                  },
+                  source: {
+                    uri: `https://g.18qjz.cn/img/boklock/icon/${(detail == null ? void 0 : detail.buzzerStatus) === 1 ? 'buzzing_icon' : 'buzzing_icon_close'}.png`
+                  }
+                })]
               })]
             })]
           })]
-        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
-          style: styles.entryList,
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
-            activeOpacity: 0.8,
-            style: styles.entryItem,
-            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.entryList,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+            style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.entryItem,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_Flex.default, {
               justify: "between",
               align: "center",
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
-                align: "center",
-                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
-                  name: "member",
-                  size: 18,
-                  color: "#333333"
-                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                  style: styles.entryText,
-                  children: "\u6210\u5458\u5171\u4EAB"
-                })]
-              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
-                name: "a-headfor-20",
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: "member",
                 size: 16,
-                color: "#B3B3B3"
+                color: "#333333"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.entryText,
+                children: "\u6210\u5458\u5171\u4EAB"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: "a-headfor-20",
+                size: 20,
+                color: "#333333"
               })]
             })
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
-            activeOpacity: 0.8,
-            style: styles.entryItem,
-            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+            style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.entryItem,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_Flex.default, {
               justify: "between",
               align: "center",
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
-                align: "center",
-                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
-                  name: "download",
-                  size: 18,
-                  color: "#333333"
-                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                  style: styles.entryText,
-                  children: "\u4E0B\u8F7DAPP"
-                })]
-              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
-                name: "a-headfor-20",
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: "download",
                 size: 16,
-                color: "#B3B3B3"
+                color: "#333333"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.entryText,
+                children: "\u4E0B\u8F7DAPP"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: "a-headfor-20",
+                size: 20,
+                color: "#333333"
               })]
             })
           })]
@@ -205673,1234 +207088,123 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       // </ImageBackground>
     );
   };
-  var styles = _reactNative.StyleSheet.create({
-    contentBox: {
-      flex: 1
-    },
-    lockNameText: {
-      marginTop: 12,
-      fontSize: 16,
-      color: '#333333'
-    },
-    manualRow: {
-      paddingHorizontal: 40,
-      marginBottom: 20
-    },
-    manualBtn: {
-      alignItems: 'center'
-    },
-    manualIconCircle: {
-      width: 60,
-      height: 60,
-      borderRadius: 30,
-      backgroundColor: '#FFFFFF',
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowColor: '#000',
-      shadowOpacity: 0.05,
-      shadowRadius: 4,
-      elevation: 2,
-      marginBottom: 8
-    },
-    manualText: {
-      fontSize: 12,
-      color: '#333333'
-    },
-    cardsRow: {
-      paddingHorizontal: 16,
-      marginBottom: 16
-    },
-    card: {
-      flex: 1,
-      backgroundColor: '#FFFFFF',
-      borderRadius: 12,
-      padding: 12,
-      marginHorizontal: 4,
-      shadowColor: '#000',
-      shadowOpacity: 0.05,
-      shadowRadius: 4,
-      elevation: 2
-    },
-    mapCard: {
-      marginRight: 4
-    },
-    infoCard: {
-      marginLeft: 4
-    },
-    mapPreview: {
-      width: '100%',
-      height: 80,
-      borderRadius: 8,
-      overflow: 'hidden',
-      marginBottom: 8
-    },
-    mapImage: {
-      width: '100%',
-      height: '100%'
-    },
-    cardTitle: {
-      fontSize: 14,
-      color: '#333333',
-      marginBottom: 4
-    },
-    cardSubTitle: {
-      fontSize: 12,
-      color: '#666666'
-    },
-    infoRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: 4
-    },
-    infoLabel: {
-      fontSize: 12,
-      color: '#999999',
-      marginRight: 8
-    },
-    infoValue: {
-      fontSize: 12,
-      color: '#333333'
-    },
-    entryList: {
-      marginTop: 8,
-      marginBottom: 12,
-      marginHorizontal: 16,
-      borderRadius: 12,
-      backgroundColor: '#FFFFFF',
-      overflow: 'hidden'
-    },
-    entryItem: {
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      borderBottomWidth: _reactNative.StyleSheet.hairlineWidth,
-      borderBottomColor: '#F0F0F0'
-    },
-    entryText: {
-      marginLeft: 8,
-      fontSize: 14,
-      color: '#333333'
-    }
-  });
   var _default = exports.default = Content;
-},1366,[3,83,24,41,1,537,1270,542,1367,1355,90,1368],"src\\components\\Content\\index.tsx");
+},1450,[3,83,24,41,1,537,1270,1266,1451,542,1453,1439,90,1460,1461],"src\\components\\Content\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.operateLockCover = exports.operateLock = exports.operateBuzzing = exports.modifyLockWarnBattery = exports.modifyLockLeaveTime = exports.modifyLockCrashBuzzer = exports.getRiceInfoList = exports.getOperateResult = exports.getLockList = exports.getLockInfo = exports.getLockDeviceList = exports.getGroupOperateResult = void 0;
-  /**
-   * 设备相关接口
-   */
-
-  // 获取锁信息
-  var getLockInfo = exports.getLockInfo = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/detail', 'GET');
-
-  // 操作锁
-  var operateLock = exports.operateLock = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/lockOpt', 'POST');
-
-  // 获取操作结果
-  var getOperateResult = exports.getOperateResult = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/optStatus', 'GET');
-
-  // 组合设备轮询接口
-  var getGroupOperateResult = exports.getGroupOperateResult = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/group/optStatus', 'GET');
-
-  // 操作蜂鸣器
-  var operateBuzzing = exports.operateBuzzing = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/chirp', 'POST');
-
-  // 获取锁设备列表
-  var getLockDeviceList = exports.getLockDeviceList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/list', 'POST');
-
-  // 获取锁列表（单个）
-  var getLockList = exports.getLockList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/list/single', 'POST');
-
-  // 操作锁盖
-  var operateLockCover = exports.operateLockCover = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/setting/openCover', 'POST');
-
-  // 修改锁离开时间
-  var modifyLockLeaveTime = exports.modifyLockLeaveTime = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/setting/leaveUpTime', 'POST');
-
-  // 修改锁电池警告
-  var modifyLockWarnBattery = exports.modifyLockWarnBattery = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/setting/warnBattery', 'POST');
-
-  // 修改锁碰撞蜂鸣器
-  var modifyLockCrashBuzzer = exports.modifyLockCrashBuzzer = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/setting/crashBuzzer', 'POST');
-
-  // 获取操作记录列表
-  var getRiceInfoList = exports.getRiceInfoList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/optRecords', 'POST');
-},1367,[958],"src\\services\\device.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.DeviceSwitch = void 0;
-  var _toConsumableArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
-  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/asyncToGenerator"));
-  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/slicedToArray"));
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[5], "react-native");
-  var _toast = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "@ant-design/react-native/lib/toast"));
-  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "../../../iconfont"));
-  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "../../Flex"));
-  var _AnimationPop = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[9], "../../AnimationPop"));
-  var _GradientButton = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[10], "../../GradientButton"));
-  var _this = this,
-    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\Device\\switch\\index.tsx";
-  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-  var _Dimensions$get = _reactNative.Dimensions.get('window'),
-    screenWidth = _Dimensions$get.width;
-  var pxToDp = function pxToDp(px) {
-    return px * screenWidth / 750;
-  };
-  var DeviceSwitch = exports.DeviceSwitch = function DeviceSwitch(_ref) {
-    var lockInfo = _ref.lockInfo,
-      reload = _ref.reload,
-      type = _ref.type,
-      backgroundType = _ref.backgroundType;
-    var _useState = (0, _react.useState)([]),
-      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      deviceList = _useState2[0],
-      setDeviceList = _useState2[1];
-    var _useState3 = (0, _react.useState)(false),
-      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
-      loading = _useState4[0],
-      setLoading = _useState4[1];
-    var _useState5 = (0, _react.useState)(''),
-      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
-      lockName = _useState6[0],
-      setLockName = _useState6[1];
-    var _useState7 = (0, _react.useState)(null),
-      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
-      currentDevice = _useState8[0],
-      setCurrentDevice = _useState8[1];
-    var devicePopRef = (0, _react.useRef)(null);
-    var editNamePopRef = (0, _react.useRef)(null);
-    var insets = (0, _$$_REQUIRE(_dependencyMap[11], "../../../libs/safeAreaContext").useSafeAreaInsets)();
-    var isDeep = backgroundType === 'deep';
-    var themeColor = isDeep ? '#fff' : '#333';
-    var handleOpenDeviceList = function handleOpenDeviceList() {
-      var _devicePopRef$current;
-      (_devicePopRef$current = devicePopRef.current) == null || _devicePopRef$current.open();
-      if (deviceList.length === 0) {
-        loadDeviceList();
+  Object.keys(_$$_REQUIRE(_dependencyMap[0], "./common")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[0], "./common")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[0], "./common")[key];
       }
-    };
-    var loadDeviceList = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-      var _res$data;
-      var reloadList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-      if (!(lockInfo != null && lockInfo.id)) return;
-      var offset = reloadList ? 0 : deviceList.length;
-      var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../../services/device").getLockDeviceList)({
-        offset: offset,
-        pageSize: 999,
-        id: lockInfo.id,
-        type: type
-      });
-      if (!(res != null && res.success)) {
-        _toast.default.fail((res == null ? void 0 : res.message) || '获取设备列表失败');
-        return;
-      }
-      console.log(res.data);
-      var list = ((_res$data = res.data) == null ? void 0 : _res$data.list) || [];
-      setDeviceList(reloadList ? list : [].concat((0, _toConsumableArray2.default)(deviceList), (0, _toConsumableArray2.default)(list)));
-    }), [deviceList, lockInfo == null ? void 0 : lockInfo.id, type]);
-    var handleSelectDevice = /*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2.default)(function* (item) {
-        var _devicePopRef$current2;
-        (_devicePopRef$current2 = devicePopRef.current) == null || _devicePopRef$current2.close();
-        if ((lockInfo == null ? void 0 : lockInfo.id) === item.id) return;
-        var loadingToast = _toast.default.loading('切换设备中...', 0);
-        try {
-          if (reload) {
-            yield reload(item.id);
-          }
-          _toast.default.remove(loadingToast);
-        } catch (error) {
-          _toast.default.remove(loadingToast);
-          _toast.default.fail('切换失败');
-        }
-      });
-      return function handleSelectDevice(_x) {
-        return _ref3.apply(this, arguments);
-      };
-    }();
-    var handleOpenEditName = function handleOpenEditName(item) {
-      var _devicePopRef$current3;
-      setCurrentDevice(item);
-      setLockName(item.lockName || '');
-      (_devicePopRef$current3 = devicePopRef.current) == null || _devicePopRef$current3.close();
-      // Wait for the first popup to close before opening the second one
-      setTimeout(function () {
-        var _editNamePopRef$curre;
-        (_editNamePopRef$curre = editNamePopRef.current) == null || _editNamePopRef$curre.open();
-      }, 300);
-    };
-    var handleNameConfirm = /*#__PURE__*/function () {
-      var _ref4 = (0, _asyncToGenerator2.default)(function* () {
-        if (!lockName.trim()) {
-          _toast.default.info('请输入名称');
-          return;
-        }
-        var userId = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../../utils/cache").cacheGet)({
-          key: 'userId'
-        });
-        var loadingToast = _toast.default.loading('修改中...', 0);
-        try {
-          var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../../services/deviceInfo").updateName)({
-            id: currentDevice == null ? void 0 : currentDevice.id,
-            lockName: lockName,
-            userId: userId
-          });
-          if (res != null && res.success) {
-            var _editNamePopRef$curre2;
-            _toast.default.remove(loadingToast);
-            _toast.default.success('修改成功');
-            (_editNamePopRef$curre2 = editNamePopRef.current) == null || _editNamePopRef$curre2.close();
-            if (reload) yield reload();
-            loadDeviceList(); // Refresh list
-          } else {
-            _toast.default.remove(loadingToast);
-            _toast.default.fail((res == null ? void 0 : res.message) || '修改失败');
-          }
-        } catch (error) {
-          _toast.default.remove(loadingToast);
-          _toast.default.fail('修改异常');
-        }
-      });
-      return function handleNameConfirm() {
-        return _ref4.apply(this, arguments);
-      };
-    }();
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").Fragment, {
-      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
-        activeOpacity: 0.8,
-        onPress: handleOpenDeviceList,
-        style: styles.switchBtn,
-        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_Flex.default, {
-          direction: "row",
-          align: "center",
-          justify: "center",
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
-            style: [styles.switchText, {
-              color: themeColor
-            }],
-            numberOfLines: 1,
-            children: lockInfo == null ? void 0 : lockInfo.lockName
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
-            style: styles.switchLine
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
-            style: styles.roleNameText,
-            children: lockInfo == null ? void 0 : lockInfo.roleName
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_iconfont.default, {
-            name: "pull-down",
-            size: pxToDp(24),
-            color: themeColor
-          })]
-        })
-      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_AnimationPop.default, {
-        ref: devicePopRef,
-        direction: 'top',
-        coverSafeArea: true,
-        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_reactNative.View, {
-          style: {
-            height: 586,
-            paddingTop: insets.bottom,
-            paddingHorizontal: 24,
-            justifyContent: 'space-between'
-          },
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_reactNative.ScrollView, {
-            style: {
-              flex: 1
-            },
-            children: [deviceList.map(function (item, index) {
-              return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[16], "../Item/index").DeviceItem, {
-                isfirst: index === 0,
-                data: item,
-                active: (lockInfo == null ? void 0 : lockInfo.id) === item.id,
-                onSelect: function onSelect() {
-                  return handleSelectDevice(item);
-                },
-                onChangeName: function onChangeName() {
-                  return handleOpenEditName(item);
-                }
-              }, item.id);
-            }), !loading && deviceList.length === 0 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: styles.emptyContainer,
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                style: styles.emptyText,
-                children: "\u6682\u65E0\u8BBE\u5907"
-              })
-            })]
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.View, {
-            style: styles.footer,
-            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_GradientButton.default, {
-              width: 156,
-              height: 48,
-              btnBorderRadius: 12,
-              colors: ['#333333', '#333333'],
-              text: lockInfo != null && lockInfo.isGroup ? '创建组合设备' : '添加设备',
-              onPress: function onPress() {
-                var _devicePopRef$current4;
-                (_devicePopRef$current4 = devicePopRef.current) == null || _devicePopRef$current4.close();
-                _toast.default.info('功能待接入');
-              }
-            })
-          })]
-        })
-      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_AnimationPop.default, {
-        ref: editNamePopRef,
-        direction: "bottom",
-        coverSafeArea: true,
-        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_reactNative.View, {
-          style: [styles.editContainer, {
-            paddingBottom: insets.bottom + 20
-          }],
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.View, {
-            style: styles.header,
-            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: styles.headerTitle,
-              children: "\u4FEE\u6539\u540D\u79F0"
-            })
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_reactNative.View, {
-            style: styles.editContent,
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: styles.editLabel,
-              children: (currentDevice == null ? void 0 : currentDevice.groupCount) === 1 ? '地锁名称' : '组合设备名称'
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.TextInput, {
-              style: styles.input,
-              value: lockName,
-              onChangeText: setLockName,
-              placeholder: "\u8BF7\u8F93\u5165\u540D\u79F0",
-              placeholderTextColor: "#999",
-              maxLength: 20
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_reactNative.View, {
-              style: styles.editFooter,
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
-                style: [styles.editBtn, styles.cancelBtn],
-                onPress: function onPress() {
-                  var _editNamePopRef$curre3;
-                  return (_editNamePopRef$curre3 = editNamePopRef.current) == null ? void 0 : _editNamePopRef$curre3.close();
-                },
-                children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                  style: styles.cancelText,
-                  children: "\u53D6\u6D88"
-                })
-              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
-                style: [styles.editBtn, styles.confirmBtn],
-                onPress: handleNameConfirm,
-                children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                  style: styles.confirmText,
-                  children: "\u786E\u5B9A"
-                })
-              })]
-            })]
-          })]
-        })
-      })]
-    });
-  };
-  var styles = _reactNative.StyleSheet.create({
-    switchBtn: {
-      paddingVertical: 6,
-      paddingHorizontal: 12,
-      backgroundColor: '#fff',
-      opacity: 0.5,
-      marginTop: 16,
-      marginBottom: 20,
-      borderRadius: 12,
-      display: 'flex',
-      alignItems: 'center'
-    },
-    switchLine: {
-      width: 1,
-      height: 16,
-      marginHorizontal: 8,
-      backgroundColor: '#999'
-    },
-    roleNameText: {
-      fontWeight: 400,
-      fontSize: 12,
-      color: '#333333',
-      marginRight: 8
-    },
-    switchText: {
-      fontSize: 14,
-      fontWeight: '400'
-    },
-    header: {
-      padding: 16,
-      borderBottomWidth: _reactNative.StyleSheet.hairlineWidth,
-      borderBottomColor: '#eee',
-      alignItems: 'center'
-    },
-    headerTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#333'
-    },
-    footer: {
-      width: '100%',
-      height: 76,
-      paddingTop: 12,
-      paddingBottom: 16,
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    emptyContainer: {
-      padding: 30,
-      alignItems: 'center'
-    },
-    emptyText: {
-      color: '#999',
-      fontSize: 14
-    },
-    editContainer: {
-      backgroundColor: '#fff'
-    },
-    editContent: {
-      padding: 20
-    },
-    editLabel: {
-      fontSize: 14,
-      color: '#333',
-      marginBottom: 10
-    },
-    input: {
-      backgroundColor: '#F5F7FA',
-      padding: 12,
-      borderRadius: 6,
-      marginBottom: 30,
-      fontSize: 16,
-      color: '#333'
-    },
-    editFooter: {
-      flexDirection: 'row',
-      justifyContent: 'space-between'
-    },
-    editBtn: {
-      flex: 1,
-      height: 44,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 22
-    },
-    cancelBtn: {
-      backgroundColor: '#F5F7FA',
-      marginRight: 10
-    },
-    confirmBtn: {
-      backgroundColor: '#333',
-      // Dark theme primary
-      marginLeft: 10
-    },
-    cancelText: {
-      color: '#666',
-      fontSize: 16
-    },
-    confirmText: {
-      color: '#fff',
-      fontSize: 16
-    }
-  });
-},1368,[3,6,83,24,41,1,937,1270,537,1369,540,1181,1367,965,1370,90,1371],"src\\components\\Device\\switch\\index.tsx");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
-  var _this = this,
-    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\AnimationPop\\index.tsx";
-  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-  var _Dimensions$get = _reactNative.Dimensions.get('window'),
-    SCREEN_WIDTH = _Dimensions$get.width,
-    SCREEN_HEIGHT = _Dimensions$get.height;
-  var AnimationPop = (0, _react.forwardRef)(function (props, ref) {
-    var children = props.children,
-      _props$mask = props.mask,
-      mask = _props$mask === void 0 ? true : _props$mask,
-      _props$direction = props.direction,
-      direction = _props$direction === void 0 ? 'top' : _props$direction,
-      _props$maskClosable = props.maskClosable,
-      maskClosable = _props$maskClosable === void 0 ? true : _props$maskClosable,
-      onClose = props.onClose,
-      btn = props.btn,
-      _props$coverSafeArea = props.coverSafeArea,
-      coverSafeArea = _props$coverSafeArea === void 0 ? true : _props$coverSafeArea,
-      style = props.style;
-    var _useState = (0, _react.useState)(false),
-      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      isOpen = _useState2[0],
-      setIsOpen = _useState2[1];
-    var slideAnim = (0, _react.useRef)(new _reactNative.Animated.Value(0)).current;
-    var insets = (0, _$$_REQUIRE(_dependencyMap[4], "../../libs/safeAreaContext").useSafeAreaInsets)();
-    var isVertical = direction === 'top' || direction === 'bottom';
-    var setOpen = function setOpen(open) {
-      if (open) {
-        setIsOpen(true);
-        _reactNative.Animated.timing(slideAnim, {
-          toValue: 1,
-          duration: 300,
-          easing: _reactNative.Easing.out(_reactNative.Easing.ease),
-          useNativeDriver: true
-        }).start();
-      } else {
-        _reactNative.Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 300,
-          easing: _reactNative.Easing.in(_reactNative.Easing.ease),
-          useNativeDriver: true
-        }).start(function () {
-          setIsOpen(false);
-          onClose == null || onClose();
-        });
-      }
-    };
-    (0, _react.useImperativeHandle)(ref, function () {
-      return {
-        open: function open() {
-          return setOpen(true);
-        },
-        close: function close() {
-          return setOpen(false);
-        }
-      };
-    });
-    var getTransform = function getTransform() {
-      var translate = slideAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: direction === 'top' ? [-SCREEN_HEIGHT, 0] : direction === 'bottom' ? [SCREEN_HEIGHT, 0] : direction === 'left' ? [-SCREEN_WIDTH, 0] : [SCREEN_WIDTH, 0]
-      });
-      switch (direction) {
-        case 'top':
-        case 'bottom':
-          return [{
-            translateY: translate
-          }];
-        case 'left':
-        case 'right':
-          return [{
-            translateX: translate
-          }];
-        default:
-          return [{
-            translateY: translate
-          }];
-      }
-    };
-    var getContentStyle = function getContentStyle() {
-      var baseStyle = {
-        backgroundColor: '#fff'
-        // maxHeight: 586,
-      };
-      if (direction === 'top') {
-        baseStyle.width = '100%';
-        baseStyle.paddingTop = coverSafeArea ? insets.top : 0;
-        baseStyle.borderBottomLeftRadius = 12;
-        baseStyle.borderBottomRightRadius = 12;
-      } else if (direction === 'bottom') {
-        baseStyle.width = '100%';
-        baseStyle.paddingBottom = coverSafeArea ? insets.bottom : 0;
-        baseStyle.borderTopLeftRadius = 12;
-        baseStyle.borderTopRightRadius = 12;
-        baseStyle.position = 'absolute';
-        baseStyle.bottom = 0;
-      } else if (direction === 'left') {
-        baseStyle.height = '100%';
-        baseStyle.width = '80%';
-        baseStyle.paddingTop = coverSafeArea ? insets.top : 0;
-        baseStyle.paddingBottom = coverSafeArea ? insets.bottom : 0;
-      } else if (direction === 'right') {
-        baseStyle.height = '100%';
-        baseStyle.width = '80%';
-        baseStyle.paddingTop = coverSafeArea ? insets.top : 0;
-        baseStyle.paddingBottom = coverSafeArea ? insets.bottom : 0;
-        baseStyle.position = 'absolute';
-        baseStyle.right = 0;
-      }
-      return [baseStyle, style];
-    };
-    if (!isOpen) return null;
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Modal, {
-      transparent: true,
-      visible: isOpen,
-      onRequestClose: function onRequestClose() {
-        if (maskClosable) setOpen(false);
-      },
-      animationType: "none",
-      statusBarTranslucent: true,
-      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_reactNative.View, {
-        style: styles.container,
-        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.TouchableWithoutFeedback, {
-          onPress: function onPress() {
-            return maskClosable && setOpen(false);
-          },
-          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Animated.View, {
-            style: [styles.mask, {
-              opacity: slideAnim,
-              backgroundColor: mask ? 'rgba(0,0,0,0.5)' : 'transparent'
-            }]
-          })
-        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Animated.View, {
-          style: [getContentStyle(), {
-            transform: getTransform()
-          }],
-          pointerEvents: "box-none",
-          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_reactNative.View, {
-            style: {
-              flex: isVertical ? 0 : 1,
-              overflow: 'hidden'
-            },
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
-              onStartShouldSetResponder: function onStartShouldSetResponder() {
-                return true;
-              },
-              children: children
-            }), btn && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: styles.btnContainer,
-              children: btn
-            })]
-          })
-        })]
-      })
     });
   });
-  var styles = _reactNative.StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'flex-start',
-      paddingVertical: 12
-    },
-    mask: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject),
-    btnContainer: {
-      paddingVertical: 10,
-      borderTopWidth: _reactNative.StyleSheet.hairlineWidth,
-      borderTopColor: '#eee'
-    },
-    contentWrapper: {
-      flex: 1,
-      overflow: 'hidden'
-    },
-    contentWrapperVertical: {
-      flex: 0
-    }
-  });
-  var _default = exports.default = AnimationPop;
-},1369,[3,24,41,1,1181,90],"src\\components\\AnimationPop\\index.tsx");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.updateName = exports.unbindSms = exports.unbind = exports.lastVersion = exports.getVersionRecords = exports.getUpdateInfo = exports.getInfo = exports.changeQrCodeScan = exports.changeQrCode = void 0;
-  /**
-   * 设备信息相关接口
-   */
-
-  // 更新名称
-  var updateName = exports.updateName = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/updateName', 'POST');
-
-  // 获取设备信息
-  var getInfo = exports.getInfo = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/info', 'POST');
-
-  // 修改二维码扫描
-  var changeQrCodeScan = exports.changeQrCodeScan = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/changeQrCodeScan', 'POST');
-
-  // 修改二维码
-  var changeQrCode = exports.changeQrCode = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/changeQrCode', 'POST');
-
-  // 获取版本记录
-  var getVersionRecords = exports.getVersionRecords = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/versionRecords', 'POST');
-
-  // 解绑短信
-  var unbindSms = exports.unbindSms = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/unbindSms', 'GET');
-
-  // 解绑
-  var unbind = exports.unbind = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/unbind', 'POST');
-
-  // 获取更新信息
-  var getUpdateInfo = exports.getUpdateInfo = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/user/version/update', 'GET');
-
-  // 最新版本
-  var lastVersion = exports.lastVersion = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/lastVersion', 'GET');
-},1370,[958],"src\\services\\deviceInfo.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.DeviceItem = void 0;
-  var _react = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
-  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "../../Flex"));
-  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../../../iconfont"));
-  var _this = this,
-    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\Device\\Item\\index.tsx";
-  var DeviceItem = exports.DeviceItem = function DeviceItem(_ref) {
-    var data = _ref.data,
-      _ref$active = _ref.active,
-      active = _ref$active === void 0 ? true : _ref$active,
-      onSelect = _ref.onSelect,
-      onChangeName = _ref.onChangeName,
-      isfirst = _ref.isfirst;
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
-      activeOpacity: 0.8,
-      onPress: onSelect,
-      style: [styles.deviceItem, styles.defaultBgColor, active && styles.deviceItemActive, !isfirst && styles.mt24],
-      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
-        justify: "between",
-        align: "center",
-        style: {
-          width: '100%'
-        },
-        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
-          direction: "column",
-          justify: "center",
-          align: "start",
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
-            direction: "row",
-            align: "center",
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: styles.deviceNameText,
-              numberOfLines: 1,
-              children: data.lockName
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: styles.tagContainer,
-              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                style: styles.tag,
-                children: data.roleName
-              })
-            })]
-          }), data.role === 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
-            style: {
-              marginTop: 10,
-              flexDirection: 'row',
-              alignItems: 'center'
-            },
-            onPress: function onPress() {
-              return onChangeName == null ? void 0 : onChangeName();
-            },
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
-              style: styles.editText,
-              children: "\u7F16\u8F91"
-            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_iconfont.default, {
-              name: "pen16",
-              color: "#999999",
-              size: 16
-            })]
-          })]
-        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
-          direction: "column",
-          align: "center",
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
-            style: styles.deviceTypeText,
-            children: data.groupCount === 1 ? '单个设备' : '组合设备'
-          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
-            style: {
-              marginTop: 14
-            },
-            align: "center",
-            children: [data.imageUrl && data.imageUrl !== 'null' ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Image, {
-              source: {
-                uri: data.imageUrl
-              },
-              style: {
-                width: 48,
-                height: 28
-              },
-              resizeMode: "contain"
-            }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
-              style: {
-                width: 48,
-                height: 28,
-                borderRadius: 4,
-                backgroundColor: '#E6E8EB'
-              }
-            }), data.groupCount !== 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").Fragment, {
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_iconfont.default, {
-                name: "multiplication",
-                color: "#333333",
-                size: 14,
-                style: {
-                  marginHorizontal: 2
-                }
-              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
-                style: styles.deviceCountText,
-                children: data.groupCount
-              })]
-            })]
-          })]
-        })]
-      })
+  Object.keys(_$$_REQUIRE(_dependencyMap[1], "./user")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[1], "./user")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[1], "./user")[key];
+      }
     });
-  };
-  var styles = _reactNative.StyleSheet.create({
-    deviceItem: {
-      padding: 12,
-      borderRadius: 8,
-      width: '100%'
-    },
-    defaultBgColor: {
-      backgroundColor: '#F5F7FA'
-    },
-    deviceItemActive: {
-      backgroundColor: '#fff',
-      borderWidth: 1,
-      borderColor: '#333'
-    },
-    mt24: {
-      marginTop: 12
-    },
-    deviceNameText: {
-      fontSize: 16,
-      color: '#333',
-      fontWeight: 'bold',
-      maxWidth: 260
-    },
-    tagContainer: {
-      marginLeft: 6,
-      paddingHorizontal: 4,
-      paddingVertical: 2,
-      backgroundColor: '#E6E8EB',
-      borderRadius: 4
-    },
-    tag: {
-      fontSize: 10,
-      color: '#666'
-    },
-    editText: {
-      fontSize: 12,
-      color: '#999',
-      marginRight: 4
-    },
-    deviceTypeText: {
-      fontSize: 12,
-      color: '#999'
-    },
-    deviceCountText: {
-      fontSize: 24,
-      color: '#333',
-      fontWeight: 'bold'
-    }
   });
-},1371,[3,41,1,537,1270,90],"src\\components\\Device\\Item\\index.tsx");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
-  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../Flex"));
-  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../../iconfont"));
-  var _reactNativeFastImage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "react-native-fast-image"));
-  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./styles"));
-  var _this = this,
-    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\LockVisual\\index.tsx";
-  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-  var LockVisual = function LockVisual(props) {
-    var _detail$imageMap, _detail$imageMap2, _detail$imageMap3, _detail$imageMap4, _detail$imageMap5, _detail$imageMap6, _detail$imageMap7, _detail$imageMap8, _detail$imageMap9, _detail$imageMap0, _detail$imageMap1, _detail$imageMap10, _detail$imageMap11;
-    var detail = props.detail,
-      deviceStatus = props.deviceStatus,
-      currentDeviceStatus = props.currentDeviceStatus,
-      gifNonce = props.gifNonce,
-      inconsistentStatus = props.inconsistentStatus,
-      backgroundType = props.backgroundType,
-      onPressAddDevice = props.onPressAddDevice,
-      onPressCombineDevice = props.onPressCombineDevice;
-    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[8], "../../context/ThemeContext").useTheme)(),
-      theme = _useTheme.theme,
-      themeType = _useTheme.themeType;
-    var _useState = (0, _react.useState)(currentDeviceStatus),
-      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      lockStatus = _useState2[0],
-      setLockStatus = _useState2[1];
-    (0, _react.useEffect)(function () {
-      if (inconsistentStatus) {
-        setLockStatus('rise');
-        return;
+  Object.keys(_$$_REQUIRE(_dependencyMap[2], "./device")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[2], "./device")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[2], "./device")[key];
       }
-      setLockStatus(currentDeviceStatus);
-    }, [currentDeviceStatus, inconsistentStatus]);
-    var showRising30Gif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.rising30);
-    var showFalling30Gif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.falling30);
-    var showRising120Gif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.rising120);
-    var showFalling120Gif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.falling120);
-    var showRisingGif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.rising);
-    var showFallingGif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.falling);
-    var showOpenCoveringGif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.openCovering);
-    var showCloseCoveringGif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.closeCovering);
-    var anyGifShowing = showRisingGif || showFallingGif || showOpenCoveringGif || showCloseCoveringGif || showRising30Gif || showFalling30Gif || showRising120Gif || showFalling120Gif;
-    var showActionButton = (detail == null ? void 0 : detail.role) === _$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_ROLE.ADMIN;
-    var actionButtonText = (0, _react.useMemo)(function () {
-      if (!showActionButton) return '';
-      return detail != null && detail.isGroup ? '组合设备' : '添加设备';
-    }, [detail == null ? void 0 : detail.isGroup, showActionButton]);
-    var handlePressAction = function handlePressAction() {
-      if (!showActionButton) return;
-      if (detail != null && detail.isGroup) {
-        onPressCombineDevice == null || onPressCombineDevice({
-          id: detail == null ? void 0 : detail.id,
-          lockName: detail == null ? void 0 : detail.lockName,
-          type: false
-        });
-        return;
-      }
-      onPressAddDevice == null || onPressAddDevice();
-    };
-    var renderStaticImage = function renderStaticImage(uri) {
-      if (!uri || uri === 'null') return null;
-      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
-        source: {
-          uri: uri
-        },
-        style: _styles.default.staticImage,
-        resizeMode: "contain",
-        fadeDuration: 0
-      });
-    };
-    var withNonce = function withNonce(uri, nonce) {
-      if (nonce === undefined || nonce === null || nonce === '') return uri;
-      var hasQuery = uri.includes('?');
-      var sep = hasQuery ? '&' : '?';
-      return `${uri}${sep}__nonce=${encodeURIComponent(String(nonce))}`;
-    };
-    var renderGif = function renderGif(uri, key) {
-      if (!uri || uri === 'null') return null;
-      var finalUri = withNonce(uri, gifNonce);
-      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNativeFastImage.default, {
-        source: {
-          uri: finalUri,
-          priority: _reactNativeFastImage.default.priority.normal
-        },
-        style: _styles.default.gifImage,
-        resizeMode: _reactNativeFastImage.default.resizeMode.contain
-      }, key);
-    };
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
-      justify: "center",
-      align: "center",
-      style: _styles.default.container,
-      children: [showActionButton ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
-        justify: "center",
-        align: "center",
-        isTouchView: true,
-        onPress: handlePressAction,
-        style: [_styles.default.actionButton, themeType === 'dark' ? _styles.default.actionButtonDeep : _styles.default.actionButtonLight],
-        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
-          style: [_styles.default.actionText, themeType === 'dark' ? _styles.default.actionTextDeep : _styles.default.actionTextLight],
-          children: actionButtonText
-        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
-          style: _styles.default.actionIcon,
-          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
-            name: detail != null && detail.isGroup ? 'a-combinationunit' : 'a-add12',
-            size: 16,
-            color: themeType === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(51,51,51,0.8)'
-          })
-        })]
-      }) : null, lockStatus === 'rise' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap = detail.imageMap) == null ? void 0 : _detail$imageMap.upLockPng) : null, lockStatus === 'rise30' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap2 = detail.imageMap) == null ? void 0 : _detail$imageMap2.up30LockPng) : null, lockStatus === 'rise120' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap3 = detail.imageMap) == null ? void 0 : _detail$imageMap3.up120LockPng) : null, lockStatus === 'fall' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap4 = detail.imageMap) == null ? void 0 : _detail$imageMap4.fallLockPng) : null, lockStatus === 'openCover' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap5 = detail.imageMap) == null ? void 0 : _detail$imageMap5.openLockPng) : null, showRisingGif ? renderGif(detail == null || (_detail$imageMap6 = detail.imageMap) == null ? void 0 : _detail$imageMap6.upLockGif, `upLockGif_${gifNonce != null ? gifNonce : 0}`) : null, showRising30Gif ? renderGif(detail == null || (_detail$imageMap7 = detail.imageMap) == null ? void 0 : _detail$imageMap7.up30LockGif, `up30LockGif_${gifNonce != null ? gifNonce : 0}`) : null, showRising120Gif ? renderGif(detail == null || (_detail$imageMap8 = detail.imageMap) == null ? void 0 : _detail$imageMap8.up120LockGif, `up120LockGif_${gifNonce != null ? gifNonce : 0}`) : null, showFallingGif ? renderGif(detail == null || (_detail$imageMap9 = detail.imageMap) == null ? void 0 : _detail$imageMap9.fallLockGif, `fallLockGif_${gifNonce != null ? gifNonce : 0}`) : null, showFalling30Gif ? renderGif(detail == null || (_detail$imageMap0 = detail.imageMap) == null ? void 0 : _detail$imageMap0.fall30LockGif, `fall30LockGif_${gifNonce != null ? gifNonce : 0}`) : null, showFalling120Gif ? renderGif(detail == null || (_detail$imageMap1 = detail.imageMap) == null ? void 0 : _detail$imageMap1.fall120LockGif, `fall120LockGif_${gifNonce != null ? gifNonce : 0}`) : null, showOpenCoveringGif ? renderGif(detail == null || (_detail$imageMap10 = detail.imageMap) == null ? void 0 : _detail$imageMap10.openCoverGif, `openCoverGif_${gifNonce != null ? gifNonce : 0}`) : null, showCloseCoveringGif ? renderGif(detail == null || (_detail$imageMap11 = detail.imageMap) == null ? void 0 : _detail$imageMap11.closeCoverGif, `closeCoverGif_${gifNonce != null ? gifNonce : 0}`) : null]
     });
-  };
-  var _default = exports.default = LockVisual;
-},1372,[3,24,41,1,537,1270,1373,1374,1229,1355,90],"src\\components\\LockVisual\\index.tsx");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  'use strict';
-
-  var _excluded = ["source", "defaultSource", "tintColor", "onLoadStart", "onProgress", "onLoad", "onError", "onLoadEnd", "style", "fallback", "children", "resizeMode", "forwardedRef"];
-  var React = _$$_REQUIRE(_dependencyMap[0], "react");
-  var reactNative = _$$_REQUIRE(_dependencyMap[1], "react-native");
-  function _interopDefaultLegacy(e) {
-    return e && typeof e === 'object' && 'default' in e ? e : {
-      'default': e
-    };
-  }
-  var _extends__default = /*#__PURE__*/_interopDefaultLegacy(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/extends"));
-  var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
-  var resizeMode = {
-    contain: 'contain',
-    cover: 'cover',
-    stretch: 'stretch',
-    center: 'center'
-  };
-  var priority = {
-    low: 'low',
-    normal: 'normal',
-    high: 'high'
-  };
-  var cacheControl = {
-    // Ignore headers, use uri as cache key, fetch only if not in cache.
-    immutable: 'immutable',
-    // Respect http headers, no aggressive caching.
-    web: 'web',
-    // Only load from cache.
-    cacheOnly: 'cacheOnly'
-  };
-  var resolveDefaultSource = function resolveDefaultSource(defaultSource) {
-    if (!defaultSource) {
-      return null;
-    }
-    if (reactNative.Platform.OS === 'android') {
-      // Android receives a URI string, and resolves into a Drawable using RN's methods.
-      var resolved = reactNative.Image.resolveAssetSource(defaultSource);
-      if (resolved) {
-        return resolved.uri;
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[3], "./bluetooth")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[3], "./bluetooth")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[3], "./bluetooth")[key];
       }
-      return null;
-    } // iOS or other number mapped assets
-    // In iOS the number is passed, and bridged automatically into a UIImage
-
-    return defaultSource;
-  };
-  function FastImageBase(_ref) {
-    var source = _ref.source,
-      defaultSource = _ref.defaultSource,
-      tintColor = _ref.tintColor,
-      onLoadStart = _ref.onLoadStart,
-      onProgress = _ref.onProgress,
-      onLoad = _ref.onLoad,
-      onError = _ref.onError,
-      onLoadEnd = _ref.onLoadEnd,
-      style = _ref.style,
-      fallback = _ref.fallback,
-      children = _ref.children,
-      _ref$resizeMode = _ref.resizeMode,
-      resizeMode = _ref$resizeMode === void 0 ? 'cover' : _ref$resizeMode,
-      forwardedRef = _ref.forwardedRef,
-      props = _$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/objectWithoutProperties")(_ref, _excluded);
-    if (fallback) {
-      var cleanedSource = Object.assign({}, source);
-      delete cleanedSource.cache;
-      var _resolvedSource = reactNative.Image.resolveAssetSource(cleanedSource);
-      return /*#__PURE__*/React__default['default'].createElement(reactNative.View, {
-        style: [styles.imageContainer, style],
-        ref: forwardedRef
-      }, /*#__PURE__*/React__default['default'].createElement(reactNative.Image, _extends__default['default']({}, props, {
-        style: [reactNative.StyleSheet.absoluteFill, {
-          tintColor: tintColor
-        }],
-        source: _resolvedSource,
-        defaultSource: defaultSource,
-        onLoadStart: onLoadStart,
-        onProgress: onProgress,
-        onLoad: onLoad,
-        onError: onError,
-        onLoadEnd: onLoadEnd,
-        resizeMode: resizeMode
-      })), children);
-    }
-    var resolvedSource = reactNative.Image.resolveAssetSource(source);
-    var resolvedDefaultSource = resolveDefaultSource(defaultSource);
-    return /*#__PURE__*/React__default['default'].createElement(reactNative.View, {
-      style: [styles.imageContainer, style],
-      ref: forwardedRef
-    }, /*#__PURE__*/React__default['default'].createElement(FastImageView, _extends__default['default']({}, props, {
-      tintColor: tintColor,
-      style: reactNative.StyleSheet.absoluteFill,
-      source: resolvedSource,
-      defaultSource: resolvedDefaultSource,
-      onFastImageLoadStart: onLoadStart,
-      onFastImageProgress: onProgress,
-      onFastImageLoad: onLoad,
-      onFastImageError: onError,
-      onFastImageLoadEnd: onLoadEnd,
-      resizeMode: resizeMode
-    })), children);
-  }
-  var FastImageMemo = /*#__PURE__*/React.memo(FastImageBase);
-  var FastImageComponent = /*#__PURE__*/React.forwardRef(function (props, ref) {
-    return /*#__PURE__*/React__default['default'].createElement(FastImageMemo, _extends__default['default']({
-      forwardedRef: ref
-    }, props));
+    });
   });
-  FastImageComponent.displayName = 'FastImage';
-  var FastImage = FastImageComponent;
-  FastImage.resizeMode = resizeMode;
-  FastImage.cacheControl = cacheControl;
-  FastImage.priority = priority;
-  FastImage.preload = function (sources) {
-    return reactNative.NativeModules.FastImageView.preload(sources);
-  };
-  FastImage.clearMemoryCache = function () {
-    return reactNative.NativeModules.FastImageView.clearMemoryCache();
-  };
-  FastImage.clearDiskCache = function () {
-    return reactNative.NativeModules.FastImageView.clearDiskCache();
-  };
-  var styles = reactNative.StyleSheet.create({
-    imageContainer: {
-      overflow: 'hidden'
-    }
-  }); // Types of requireNativeComponent are not correct.
-
-  var FastImageView = reactNative.requireNativeComponent('FastImageView', FastImage, {
-    nativeOnly: {
-      onFastImageLoadStart: true,
-      onFastImageProgress: true,
-      onFastImageLoad: true,
-      onFastImageError: true,
-      onFastImageLoadEnd: true
-    }
+  Object.keys(_$$_REQUIRE(_dependencyMap[4], "./order")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[4], "./order")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[4], "./order")[key];
+      }
+    });
   });
-  module.exports = FastImage;
-},1373,[41,1,524,150],"node_modules\\react-native-fast-image\\dist\\index.cjs.js");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
+  Object.keys(_$$_REQUIRE(_dependencyMap[5], "./setting")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[5], "./setting")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[5], "./setting")[key];
+      }
+    });
   });
-  exports.default = void 0;
-  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
-  var styles = _reactNative.StyleSheet.create({
-    container: {
-      position: 'relative',
-      height: 241,
-      paddingTop: 40,
-      width: '100%'
-    },
-    actionButton: {
-      position: 'absolute',
-      top: 2,
-      right: 16,
-      paddingVertical: 6,
-      paddingHorizontal: 10,
-      borderRadius: 12,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 2
-    },
-    actionButtonDeep: {
-      backgroundColor: 'rgba(0,0,0,0.2)'
-    },
-    actionButtonLight: {
-      backgroundColor: 'rgba(0,0,0,0.05)'
-    },
-    actionText: {
-      fontSize: 12,
-      lineHeight: 17,
-      fontWeight: '400'
-    },
-    actionTextDeep: {
-      color: 'rgba(255,255,255,0.8)'
-    },
-    actionTextLight: {
-      color: 'rgba(51,51,51,0.8)'
-    },
-    actionIcon: {
-      marginLeft: 2
-    },
-    staticImage: {
-      width: '100%',
-      height: 210
-    },
-    gifImage: {
-      width: '100%',
-      height: 210
-    }
+  Object.keys(_$$_REQUIRE(_dependencyMap[6], "./mall")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[6], "./mall")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[6], "./mall")[key];
+      }
+    });
   });
-  var _default = exports.default = styles;
-},1374,[1],"src\\components\\LockVisual\\styles.ts");
+  Object.keys(_$$_REQUIRE(_dependencyMap[7], "./combine")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[7], "./combine")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[7], "./combine")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[8], "./deviceInfo")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[8], "./deviceInfo")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[8], "./deviceInfo")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[9], "./deviceTest")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[9], "./deviceTest")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[9], "./deviceTest")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[10], "./bindDevice")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[10], "./bindDevice")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[10], "./bindDevice")[key];
+      }
+    });
+  });
+},1451,[957,1452,1453,1179,1454,1455,1456,1457,1458,1459,1178],"src\\services\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -207103,7 +207407,1509 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var getRepairDetail = exports.getRepairDetail = function getRepairDetail(id) {
     return (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)(`/boke/repair/detail/${id}`, 'GET')();
   };
-},1375,[958],"src\\services\\user.ts");
+},1452,[958],"src\\services\\user.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.operateLockCover = exports.operateLock = exports.operateBuzzing = exports.modifyLockWarnBattery = exports.modifyLockLeaveTime = exports.modifyLockCrashBuzzer = exports.getRiceInfoList = exports.getOperateResult = exports.getLockList = exports.getLockInfo = exports.getLockDeviceList = exports.getGroupOperateResult = void 0;
+  /**
+   * 设备相关接口
+   */
+
+  // 获取锁信息
+  var getLockInfo = exports.getLockInfo = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/detail', 'GET');
+
+  // 操作锁
+  var operateLock = exports.operateLock = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/lockOpt', 'POST');
+
+  // 获取操作结果
+  var getOperateResult = exports.getOperateResult = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/optStatus', 'GET');
+
+  // 组合设备轮询接口
+  var getGroupOperateResult = exports.getGroupOperateResult = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/group/optStatus', 'GET');
+
+  // 操作蜂鸣器
+  var operateBuzzing = exports.operateBuzzing = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/chirp', 'POST');
+
+  // 获取锁设备列表
+  var getLockDeviceList = exports.getLockDeviceList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/list', 'POST');
+
+  // 获取锁列表（单个）
+  var getLockList = exports.getLockList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/list/single', 'POST');
+
+  // 操作锁盖
+  var operateLockCover = exports.operateLockCover = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/setting/openCover', 'POST');
+
+  // 修改锁离开时间
+  var modifyLockLeaveTime = exports.modifyLockLeaveTime = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/setting/leaveUpTime', 'POST');
+
+  // 修改锁电池警告
+  var modifyLockWarnBattery = exports.modifyLockWarnBattery = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/setting/warnBattery', 'POST');
+
+  // 修改锁碰撞蜂鸣器
+  var modifyLockCrashBuzzer = exports.modifyLockCrashBuzzer = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/setting/crashBuzzer', 'POST');
+
+  // 获取操作记录列表
+  var getRiceInfoList = exports.getRiceInfoList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/optRecords', 'POST');
+},1453,[958],"src\\services\\device.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.postOrderPay = exports.getPayResult = exports.getOrderList = exports.getOrderDetail = exports.createOrder = void 0;
+  /**
+   * 订单相关接口
+   */
+
+  // 获取订单列表
+  var getOrderList = exports.getOrderList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/order/userOrderList', 'POST');
+
+  // 创建订单
+  var createOrder = exports.createOrder = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/order/create', 'POST');
+
+  // 获取订单详情
+  var getOrderDetail = exports.getOrderDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/order/userOrderDetail', 'GET');
+
+  // 订单支付
+  var postOrderPay = exports.postOrderPay = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/custom/trade/pay', 'POST');
+
+  // 获取支付结果
+  var getPayResult = exports.getPayResult = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/custom/trade/query', 'POST');
+},1454,[958],"src\\services\\order.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.saveOrUpdate = exports.getTextParsing = exports.getDetail = exports.deleteAddress = void 0;
+  /**
+   * 设置相关接口
+   */
+
+  // 删除地址
+  var deleteAddress = exports.deleteAddress = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/address/delete', 'GET');
+
+  // 保存或更新地址
+  var saveOrUpdate = exports.saveOrUpdate = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/address/saveOrUpdate', 'POST');
+
+  // 获取地址详情
+  var getDetail = exports.getDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/address/detail', 'GET');
+
+  // 文本解析
+  var getTextParsing = exports.getTextParsing = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/address/textParsing', 'POST');
+},1455,[958],"src\\services\\setting.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.savePickupCodeAddress = exports.getPickupCodeRecordList = exports.getPickupCodeRecordDetail = exports.getPickupCodeDetail = exports.getGoodsList = exports.getGoodsDetail = exports.confirmPickupCode = void 0;
+  /**
+   * 商城相关接口
+   */
+
+  // 获取商品列表
+  var getGoodsList = exports.getGoodsList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/product/list', 'POST');
+
+  // 获取商品详情
+  var getGoodsDetail = exports.getGoodsDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/product/detail', 'GET');
+
+  // 提货码详情
+  var getPickupCodeDetail = exports.getPickupCodeDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/pickupCode/imgDetail', 'POST');
+
+  // 提货码确认提货
+  var confirmPickupCode = exports.confirmPickupCode = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/pickupCode/confirm', 'POST');
+
+  // 提货码填写收货地址
+  var savePickupCodeAddress = exports.savePickupCodeAddress = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/pickupCode/address', 'POST');
+
+  // 提货记录列表
+  var getPickupCodeRecordList = exports.getPickupCodeRecordList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/pickupCode/record/list', 'POST');
+
+  // 提货记录详情
+  var getPickupCodeRecordDetail = exports.getPickupCodeRecordDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/pickupCode/record/detail', 'POST');
+},1456,[958],"src\\services\\mall.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.saveGroup = exports.memberList = exports.memberEdit = exports.memberDelete = exports.groupSubList = exports.groupChooseList = exports.deviceDelete = exports.defaultName = void 0;
+  /**
+   * 组合设备相关接口
+   */
+
+  // 创建组合设备选择列表
+  var groupChooseList = exports.groupChooseList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/groupChooseList', 'POST');
+
+  // 保存组合
+  var saveGroup = exports.saveGroup = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/saveGroup', 'POST');
+
+  // 组合子列表
+  var groupSubList = exports.groupSubList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/groupSubList', 'POST');
+
+  // 成员列表
+  var memberList = exports.memberList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/member/list', 'POST');
+
+  // 成员编辑
+  var memberEdit = exports.memberEdit = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/member/save', 'POST');
+
+  // 成员删除
+  var memberDelete = exports.memberDelete = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/member/delete', 'POST');
+
+  // 设备删除
+  var deviceDelete = exports.deviceDelete = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/deleteGroup', 'POST');
+
+  // 获取默认组合名称
+  var defaultName = exports.defaultName = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/group/defaultName', 'GET');
+},1457,[958],"src\\services\\combine.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.updateName = exports.unbindSms = exports.unbind = exports.lastVersion = exports.getVersionRecords = exports.getUpdateInfo = exports.getInfo = exports.changeQrCodeScan = exports.changeQrCode = void 0;
+  /**
+   * 设备信息相关接口
+   */
+
+  // 更新名称
+  var updateName = exports.updateName = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/updateName', 'POST');
+
+  // 获取设备信息
+  var getInfo = exports.getInfo = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/device/info', 'POST');
+
+  // 修改二维码扫描
+  var changeQrCodeScan = exports.changeQrCodeScan = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/changeQrCodeScan', 'POST');
+
+  // 修改二维码
+  var changeQrCode = exports.changeQrCode = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/changeQrCode', 'POST');
+
+  // 获取版本记录
+  var getVersionRecords = exports.getVersionRecords = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/versionRecords', 'POST');
+
+  // 解绑短信
+  var unbindSms = exports.unbindSms = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/unbindSms', 'GET');
+
+  // 解绑
+  var unbind = exports.unbind = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/unbind', 'POST');
+
+  // 获取更新信息
+  var getUpdateInfo = exports.getUpdateInfo = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/user/version/update', 'GET');
+
+  // 最新版本
+  var lastVersion = exports.lastVersion = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/lastVersion', 'GET');
+},1458,[958],"src\\services\\deviceInfo.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.testDeviceOperation = exports.resetTestDevice = exports.modifyTestDevice = exports.getTestOperateResult = exports.getTestDeviceReason = exports.getTestDeviceList = exports.getTestDeviceDetail = void 0;
+  /**
+   * 设备测试相关接口
+   */
+
+  // 获取测试设备列表
+  var getTestDeviceList = exports.getTestDeviceList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/list', 'POST');
+
+  // 测试设备操作
+  var testDeviceOperation = exports.testDeviceOperation = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/operation', 'POST');
+
+  // 获取测试设备详情
+  var getTestDeviceDetail = exports.getTestDeviceDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/detail', 'GET');
+
+  // 修改测试设备
+  var modifyTestDevice = exports.modifyTestDevice = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/modify', 'POST');
+
+  // 获取测试设备原因
+  var getTestDeviceReason = exports.getTestDeviceReason = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/reason', 'GET');
+
+  // 重置测试设备
+  var resetTestDevice = exports.resetTestDevice = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/reset', 'POST');
+
+  // 获取测试操作结果
+  var getTestOperateResult = exports.getTestOperateResult = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/optStatus', 'GET');
+},1459,[958],"src\\services\\deviceTest.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.styles = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = exports.styles = _reactNative.StyleSheet.create({
+    contentBox: {
+      flex: 1
+    },
+    lockNameText: {
+      marginTop: 12,
+      fontSize: 16,
+      color: '#333333'
+    },
+    manualRow: {
+      paddingHorizontal: 28,
+      marginVertical: 20
+    },
+    manualBtn: {
+      alignItems: 'center'
+    },
+    manualIconCircle: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: '#FFFFFF',
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: '#000',
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+      marginBottom: 8
+    },
+    manualText: {
+      fontSize: 12,
+      color: '#333333'
+    },
+    cardsRow: {
+      paddingHorizontal: 16
+    },
+    card: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 12,
+      padding: 4,
+      marginHorizontal: 4,
+      shadowColor: '#000',
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2
+    },
+    mapCard: {
+      marginRight: 4
+    },
+    cardHeader: {
+      margin: 12
+    },
+    mapPreview: {
+      width: '100%',
+      height: 80,
+      borderRadius: 8,
+      overflow: 'hidden',
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: '#F0F0F0'
+    },
+    mapImage: {
+      width: '100%',
+      height: '100%'
+    },
+    cardTitle: {
+      flex: 1,
+      marginLeft: 8,
+      fontSize: 14,
+      color: '#333333'
+    },
+    cardSubTitle: {
+      fontSize: 12,
+      color: '#666666'
+    },
+    groupListBox: {
+      marginTop: 10,
+      backgroundColor: '#F9F9F9',
+      borderRadius: 8,
+      paddingVertical: 23,
+      paddingHorizontal: 12
+    },
+    groupItem: {
+      width: '100%'
+    },
+    groupItemImage: {
+      width: 20,
+      height: 20
+    },
+    groupItemLockName: {
+      fontWeight: '400',
+      fontSize: 12,
+      color: '#999999',
+      marginLeft: 8
+    },
+    infoList: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      paddingHorizontal: 12,
+      paddingVertical: 16,
+      backgroundColor: '#F9F9F9',
+      borderRadius: '0 0 8 8',
+      gap: 12
+    },
+    infoRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 4
+    },
+    infoLabel: {
+      fontSize: 12,
+      color: '#999999',
+      marginLeft: 8,
+      flex: 1
+    },
+    infoValue: {
+      fontSize: 12,
+      color: '#333333'
+    },
+    entryList: {
+      marginVertical: 12,
+      marginHorizontal: 16,
+      borderRadius: 12,
+      backgroundColor: '#FFFFFF',
+      overflow: 'hidden',
+      padding: 16,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16
+    },
+    entryItem: {
+      flex: 1,
+      paddingVertical: 4
+    },
+    entryText: {
+      flex: 1,
+      marginLeft: 12,
+      fontSize: 14,
+      fontWeight: '400',
+      color: '#333333'
+    }
+  });
+},1460,[1],"src\\components\\Content\\style.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.DeviceSwitch = void 0;
+  var _toConsumableArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[5], "react-native");
+  var _toast = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "@ant-design/react-native/lib/toast"));
+  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "../../Flex"));
+  var _AnimationPop = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "../../AnimationPop"));
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[9], "../../../iconfont"));
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\Device\\switch\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var DeviceSwitch = exports.DeviceSwitch = function DeviceSwitch(_ref) {
+    var lockInfo = _ref.lockInfo,
+      reload = _ref.reload,
+      type = _ref.type,
+      backgroundType = _ref.backgroundType;
+    var _useState = (0, _react.useState)([]),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      deviceList = _useState2[0],
+      setDeviceList = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      loading = _useState4[0],
+      setLoading = _useState4[1];
+    var _useState5 = (0, _react.useState)(''),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      lockName = _useState6[0],
+      setLockName = _useState6[1];
+    var _useState7 = (0, _react.useState)(null),
+      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
+      currentDevice = _useState8[0],
+      setCurrentDevice = _useState8[1];
+    var devicePopRef = (0, _react.useRef)(null);
+    var editNamePopRef = (0, _react.useRef)(null);
+    var insets = (0, _$$_REQUIRE(_dependencyMap[10], "../../../libs/safeAreaContext").useSafeAreaInsets)();
+    var isDeep = backgroundType === 'deep';
+    var themeColor = isDeep ? '#fff' : '#333';
+    var handleOpenDeviceList = function handleOpenDeviceList() {
+      var _devicePopRef$current;
+      (_devicePopRef$current = devicePopRef.current) == null || _devicePopRef$current.open();
+      if (deviceList.length === 0) {
+        loadDeviceList();
+      }
+    };
+    var loadDeviceList = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var _res$data;
+      var reloadList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+      if (!(lockInfo != null && lockInfo.id)) return;
+      var offset = reloadList ? 0 : deviceList.length;
+      var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../../services/device").getLockDeviceList)({
+        offset: offset,
+        pageSize: 999,
+        id: lockInfo.id,
+        type: type
+      });
+      if (!(res != null && res.success)) {
+        _toast.default.fail((res == null ? void 0 : res.message) || '获取设备列表失败');
+        return;
+      }
+      console.log(res.data);
+      var list = ((_res$data = res.data) == null ? void 0 : _res$data.list) || [];
+      setDeviceList(reloadList ? list : [].concat((0, _toConsumableArray2.default)(deviceList), (0, _toConsumableArray2.default)(list)));
+    }), [deviceList, lockInfo == null ? void 0 : lockInfo.id, type]);
+    var handleSelectDevice = /*#__PURE__*/function () {
+      var _ref3 = (0, _asyncToGenerator2.default)(function* (item) {
+        var _devicePopRef$current2;
+        (_devicePopRef$current2 = devicePopRef.current) == null || _devicePopRef$current2.close();
+        if ((lockInfo == null ? void 0 : lockInfo.id) === item.id) return;
+        var loadingToast = _toast.default.loading('切换设备中...', 0);
+        try {
+          if (reload) {
+            yield reload(item.id);
+          }
+          _toast.default.remove(loadingToast);
+        } catch (error) {
+          _toast.default.remove(loadingToast);
+          _toast.default.fail('切换失败');
+        }
+      });
+      return function handleSelectDevice(_x) {
+        return _ref3.apply(this, arguments);
+      };
+    }();
+    var handleOpenEditName = function handleOpenEditName(item) {
+      var _devicePopRef$current3;
+      setCurrentDevice(item);
+      setLockName(item.lockName || '');
+      (_devicePopRef$current3 = devicePopRef.current) == null || _devicePopRef$current3.close();
+      // Wait for the first popup to close before opening the second one
+      setTimeout(function () {
+        var _editNamePopRef$curre;
+        (_editNamePopRef$curre = editNamePopRef.current) == null || _editNamePopRef$curre.open();
+      }, 300);
+    };
+    var handleNameConfirm = /*#__PURE__*/function () {
+      var _ref4 = (0, _asyncToGenerator2.default)(function* () {
+        if (!lockName.trim()) {
+          _toast.default.info('请输入名称');
+          return;
+        }
+        var userId = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../../utils/cache").cacheGet)({
+          key: 'userId'
+        });
+        var loadingToast = _toast.default.loading('修改中...', 0);
+        try {
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../../services/deviceInfo").updateName)({
+            id: currentDevice == null ? void 0 : currentDevice.id,
+            lockName: lockName,
+            userId: userId
+          });
+          if (res != null && res.success) {
+            var _editNamePopRef$curre2;
+            _toast.default.remove(loadingToast);
+            _toast.default.success('修改成功');
+            (_editNamePopRef$curre2 = editNamePopRef.current) == null || _editNamePopRef$curre2.close();
+            if (reload) yield reload();
+            loadDeviceList(); // Refresh list
+          } else {
+            _toast.default.remove(loadingToast);
+            _toast.default.fail((res == null ? void 0 : res.message) || '修改失败');
+          }
+        } catch (error) {
+          _toast.default.remove(loadingToast);
+          _toast.default.fail('修改异常');
+        }
+      });
+      return function handleNameConfirm() {
+        return _ref4.apply(this, arguments);
+      };
+    }();
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").Fragment, {
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+        activeOpacity: 0.8,
+        onPress: handleOpenDeviceList,
+        style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.switchBtn,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsxs)(_Flex.default, {
+          direction: "row",
+          align: "center",
+          justify: "center",
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: [_$$_REQUIRE(_dependencyMap[15], "./style").styles.switchText, {
+              color: themeColor
+            }],
+            numberOfLines: 1,
+            children: lockInfo == null ? void 0 : lockInfo.lockName
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.switchLine
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.roleNameText,
+            children: lockInfo == null ? void 0 : lockInfo.roleName
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_iconfont.default, {
+            name: "pull-down",
+            size: 12,
+            color: themeColor
+          })]
+        })
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_AnimationPop.default, {
+        ref: devicePopRef,
+        direction: 'top',
+        coverSafeArea: false,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: {
+            paddingTop: 4
+          },
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsxs)(_reactNative.ScrollView, {
+            style: {
+              maxHeight: 466,
+              paddingHorizontal: 24
+            },
+            showsVerticalScrollIndicator: false,
+            children: [deviceList.map(function (item, index) {
+              return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[16], "../Item/index").DeviceItem, {
+                data: item,
+                active: (lockInfo == null ? void 0 : lockInfo.id) === item.id,
+                onSelect: function onSelect() {
+                  return handleSelectDevice(item);
+                },
+                onChangeName: function onChangeName() {
+                  return handleOpenEditName(item);
+                }
+              }, item.id);
+            }), !loading && deviceList.length === 0 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.emptyContainer,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.emptyText,
+                children: "\u6682\u65E0\u8BBE\u5907"
+              })
+            })]
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.footer,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.selectListBtn,
+              onPress: function onPress() {
+                var _devicePopRef$current4;
+                (_devicePopRef$current4 = devicePopRef.current) == null || _devicePopRef$current4.close();
+                _toast.default.info('功能待接入');
+              },
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.selectListBtnText,
+                children: lockInfo != null && lockInfo.isGroup ? '创建组合设备' : '添加设备'
+              })
+            })
+          })]
+        })
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_AnimationPop.default, {
+        ref: editNamePopRef,
+        direction: "bottom",
+        coverSafeArea: true,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: [_$$_REQUIRE(_dependencyMap[15], "./style").styles.editContainer, {
+            paddingBottom: insets.bottom + 8
+          }],
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.header,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.headerTitle,
+              children: "\u4FEE\u6539\u540D\u79F0"
+            })
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.editContent,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.editItem,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.editLabel,
+                children: (currentDevice == null ? void 0 : currentDevice.groupCount) === 1 ? '地锁名称' : '组合设备名称'
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.TextInput, {
+                style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.input,
+                value: lockName,
+                onChangeText: setLockName,
+                placeholder: "\u8BF7\u8F93\u5165\u540D\u79F0",
+                placeholderTextColor: "#999",
+                maxLength: 20
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: 'redact',
+                color: "#999",
+                size: 20
+              })]
+            })
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.editFooter,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              style: [_$$_REQUIRE(_dependencyMap[15], "./style").styles.editBtn, _$$_REQUIRE(_dependencyMap[15], "./style").styles.cancelBtn],
+              onPress: function onPress() {
+                var _editNamePopRef$curre3;
+                return (_editNamePopRef$curre3 = editNamePopRef.current) == null ? void 0 : _editNamePopRef$curre3.close();
+              },
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.cancelText,
+                children: "\u53D6\u6D88"
+              })
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              style: [_$$_REQUIRE(_dependencyMap[15], "./style").styles.editBtn, _$$_REQUIRE(_dependencyMap[15], "./style").styles.confirmBtn],
+              onPress: handleNameConfirm,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.confirmText,
+                children: "\u786E\u5B9A"
+              })
+            })]
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.closeIcon,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              onPress: function onPress() {
+                var _editNamePopRef$curre4;
+                return (_editNamePopRef$curre4 = editNamePopRef.current) == null ? void 0 : _editNamePopRef$curre4.close();
+              },
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[14], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: 'close',
+                color: "#333",
+                size: 24
+              })
+            })
+          })]
+        })
+      })]
+    });
+  };
+},1461,[3,6,83,24,41,1,937,537,1462,1270,1181,1453,965,1458,90,1463,1464],"src\\components\\Device\\switch\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\AnimationPop\\index.tsx";
+  /**
+   * 动画弹窗
+   * 用于展示弹窗，包含标题、内容、底部按钮等
+   * 在本项目中用于顶部弹窗、底部弹窗
+   *
+   * @param children 弹窗内容
+   * @param mask 是否显示遮罩
+   * @param maskClosable 是否点击遮罩关闭弹窗
+   * @param direction 弹窗方向
+   * @param onClose 关闭回调
+   * @param btn 底部按钮
+   * @param coverSafeArea 是否覆盖安全区域
+   * @param maxHeight 弹窗最大高度
+   * @param style 弹窗样式
+   */
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var AnimationPop = (0, _react.forwardRef)(function (props, ref) {
+    var _StatusBar$currentHei;
+    var children = props.children,
+      _props$mask = props.mask,
+      mask = _props$mask === void 0 ? true : _props$mask,
+      _props$direction = props.direction,
+      direction = _props$direction === void 0 ? 'top' : _props$direction,
+      _props$maskClosable = props.maskClosable,
+      maskClosable = _props$maskClosable === void 0 ? true : _props$maskClosable,
+      onClose = props.onClose,
+      btn = props.btn,
+      _props$coverSafeArea = props.coverSafeArea,
+      coverSafeArea = _props$coverSafeArea === void 0 ? true : _props$coverSafeArea,
+      maxHeight = props.maxHeight,
+      style = props.style;
+    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[4], "../../context/ThemeContext").useTheme)(),
+      themeType = _useTheme.themeType;
+    var _useState = (0, _react.useState)(false),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      isOpen = _useState2[0],
+      setIsOpen = _useState2[1];
+    var slideAnim = (0, _react.useRef)(new _reactNative.Animated.Value(0)).current;
+    var insets = (0, _$$_REQUIRE(_dependencyMap[5], "../../libs/safeAreaContext").useSafeAreaInsets)();
+    var isVertical = direction === 'top' || direction === 'bottom';
+    var maskTopInset = Math.max(insets.top, (_StatusBar$currentHei = _reactNative.StatusBar.currentHeight) != null ? _StatusBar$currentHei : 0);
+    var _useWindowDimensions = (0, _reactNative.useWindowDimensions)(),
+      screenWidth = _useWindowDimensions.width,
+      screenHeight = _useWindowDimensions.height;
+    var setOpen = function setOpen(open) {
+      if (open) {
+        setIsOpen(true);
+        _reactNative.Animated.timing(slideAnim, {
+          toValue: 1,
+          duration: 300,
+          easing: _reactNative.Easing.out(_reactNative.Easing.ease),
+          useNativeDriver: true
+        }).start();
+        if (direction === 'top') {
+          _reactNative.StatusBar.setBarStyle('dark-content');
+          _reactNative.StatusBar.setBackgroundColor('#ffffff');
+        }
+      } else {
+        _reactNative.Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 300,
+          easing: _reactNative.Easing.in(_reactNative.Easing.ease),
+          useNativeDriver: true
+        }).start(function () {
+          setIsOpen(false);
+          onClose == null || onClose();
+        });
+        if (direction === 'top') {
+          _reactNative.StatusBar.setBarStyle(themeType === 'dark' ? 'light-content' : 'dark-content');
+          _reactNative.StatusBar.setBackgroundColor('transparent');
+        }
+      }
+    };
+    (0, _react.useImperativeHandle)(ref, function () {
+      return {
+        open: function open() {
+          return setOpen(true);
+        },
+        close: function close() {
+          return setOpen(false);
+        }
+      };
+    });
+    var getTransform = function getTransform() {
+      var translate = slideAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: direction === 'top' ? [-screenHeight, 0] : direction === 'bottom' ? [screenHeight, 0] : direction === 'left' ? [-screenWidth, 0] : [screenWidth, 0]
+      });
+      switch (direction) {
+        case 'top':
+        case 'bottom':
+          return [{
+            translateY: translate
+          }];
+        case 'left':
+        case 'right':
+          return [{
+            translateX: translate
+          }];
+        default:
+          return [{
+            translateY: translate
+          }];
+      }
+    };
+    var getContentStyle = function getContentStyle() {
+      var baseStyle = {
+        backgroundColor: '#fff'
+      };
+      if (typeof maxHeight === 'number') {
+        baseStyle.maxHeight = maxHeight;
+      }
+      if (direction === 'top') {
+        baseStyle.width = '100%';
+        if (coverSafeArea) {
+          baseStyle.paddingTop = insets.top;
+        } else {
+          baseStyle.marginTop = insets.top;
+        }
+        baseStyle.borderBottomLeftRadius = 12;
+        baseStyle.borderBottomRightRadius = 12;
+      } else if (direction === 'bottom') {
+        baseStyle.width = '100%';
+        baseStyle.paddingBottom = coverSafeArea ? insets.bottom : 0;
+        baseStyle.borderTopLeftRadius = 12;
+        baseStyle.borderTopRightRadius = 12;
+        baseStyle.position = 'absolute';
+        baseStyle.bottom = coverSafeArea ? 0 : insets.bottom;
+      }
+      return [baseStyle, style];
+    };
+    var renderChildren = function renderChildren() {
+      if (isVertical && typeof maxHeight === 'number') {
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.ScrollView, {
+          bounces: false,
+          showsVerticalScrollIndicator: false,
+          keyboardShouldPersistTaps: "handled",
+          children: children
+        });
+      }
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.View, {
+        onStartShouldSetResponder: function onStartShouldSetResponder() {
+          return true;
+        },
+        children: children
+      });
+    };
+    if (!isOpen) return null;
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.Modal, {
+      transparent: true,
+      visible: isOpen,
+      onRequestClose: function onRequestClose() {
+        if (maskClosable) setOpen(false);
+      },
+      animationType: "none",
+      statusBarTranslucent: true,
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: styles.container,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.TouchableWithoutFeedback, {
+          onPress: function onPress() {
+            return maskClosable && setOpen(false);
+          },
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.Animated.View, {
+            style: [styles.mask, {
+              opacity: slideAnim,
+              backgroundColor: mask ? 'rgba(0,0,0,0.5)' : 'transparent',
+              top: direction === 'top' ? maskTopInset : 0
+            }]
+          })
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.Animated.View, {
+          style: [getContentStyle(), {
+            transform: getTransform()
+          }],
+          pointerEvents: "box-none",
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: {
+              flex: isVertical ? 0 : 1,
+              overflow: 'hidden'
+            },
+            children: [renderChildren(), btn && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: styles.btnContainer,
+              children: btn
+            })]
+          })
+        })]
+      })
+    });
+  });
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'flex-start',
+      paddingVertical: 0
+    },
+    mask: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject, {
+      position: 'absolute'
+      // top: insets.top,
+    }),
+    topSafeAreaBg: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0
+    },
+    btnContainer: {
+      paddingVertical: 10,
+      borderTopWidth: _reactNative.StyleSheet.hairlineWidth,
+      borderTopColor: '#eee'
+    },
+    contentWrapper: {
+      flex: 1,
+      overflow: 'hidden'
+    },
+    contentWrapperVertical: {
+      flex: 0
+    }
+  });
+  var _default = exports.default = AnimationPop;
+},1462,[3,24,41,1,1229,1181,90],"src\\components\\AnimationPop\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.styles = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = exports.styles = _reactNative.StyleSheet.create({
+    switchBtn: {
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      backgroundColor: '#fff',
+      opacity: 0.5,
+      marginTop: 16,
+      borderRadius: 12,
+      display: 'flex',
+      alignItems: 'center'
+    },
+    switchLine: {
+      width: 1,
+      height: 16,
+      marginHorizontal: 8,
+      backgroundColor: '#999'
+    },
+    roleNameText: {
+      fontWeight: 400,
+      fontSize: 12,
+      color: '#333333',
+      marginRight: 8
+    },
+    switchText: {
+      fontSize: 14,
+      fontWeight: '400'
+    },
+    header: {
+      alignItems: 'center'
+    },
+    headerTitle: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: '#333'
+    },
+    footer: {
+      width: '100%',
+      paddingTop: 12,
+      paddingBottom: 16,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    selectListBtn: {
+      paddingHorizontal: 46,
+      paddingVertical: 13,
+      borderRadius: 12,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#333'
+    },
+    selectListBtnText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: '#fff'
+    },
+    emptyContainer: {
+      padding: 30,
+      alignItems: 'center'
+    },
+    emptyText: {
+      color: '#999',
+      fontSize: 14
+    },
+    editContainer: {
+      backgroundColor: '#fff',
+      borderRadius: 16,
+      paddingTop: 16,
+      paddingHorizontal: 24,
+      position: 'relative'
+    },
+    closeIcon: {
+      position: 'absolute',
+      top: 16,
+      right: 16
+    },
+    editContent: {
+      marginTop: 24,
+      marginBottom: 36
+    },
+    editItem: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    editLabel: {
+      fontSize: 14,
+      color: '#333',
+      fontWeight: '500'
+    },
+    input: {
+      flex: 1,
+      textAlign: 'right',
+      fontSize: 16,
+      color: '#333',
+      padding: 0,
+      marginRight: 4
+    },
+    editFooter: {
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    },
+    editBtn: {
+      flex: 1,
+      height: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 12
+    },
+    cancelBtn: {
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: 'rgba(0,0,0,0.1)',
+      marginRight: 15
+    },
+    confirmBtn: {
+      backgroundColor: '#333',
+      // Dark theme primary
+      marginLeft: 10
+    },
+    cancelText: {
+      color: '#666',
+      fontSize: 16
+    },
+    confirmText: {
+      color: '#fff',
+      fontSize: 16
+    }
+  });
+},1463,[1],"src\\components\\Device\\switch\\style.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.DeviceItem = void 0;
+  var _react = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "../../Flex"));
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../../../iconfont"));
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\Device\\Item\\index.tsx";
+  var DeviceItem = exports.DeviceItem = function DeviceItem(_ref) {
+    var data = _ref.data,
+      _ref$active = _ref.active,
+      active = _ref$active === void 0 ? true : _ref$active,
+      onSelect = _ref.onSelect,
+      onChangeName = _ref.onChangeName;
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+      activeOpacity: 0.8,
+      onPress: onSelect,
+      style: [_$$_REQUIRE(_dependencyMap[6], "./style").styles.deviceItem, _$$_REQUIRE(_dependencyMap[6], "./style").styles.defaultBgColor, active && _$$_REQUIRE(_dependencyMap[6], "./style").styles.deviceItemActive, _$$_REQUIRE(_dependencyMap[6], "./style").styles.mt24],
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
+        justify: "between",
+        align: "center",
+        style: {
+          width: '100%'
+        },
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
+          direction: "column",
+          justify: "center",
+          align: "start",
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
+            direction: "row",
+            align: "center",
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[6], "./style").styles.deviceNameText,
+              numberOfLines: 1,
+              children: data.lockName
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[6], "./style").styles.tagContainer,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[6], "./style").styles.tag,
+                children: data.roleName
+              })
+            })]
+          }), data.role === 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+            style: {
+              marginTop: 10,
+              flexDirection: 'row',
+              alignItems: 'center'
+            },
+            onPress: function onPress() {
+              return onChangeName == null ? void 0 : onChangeName();
+            },
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[6], "./style").styles.editText,
+              children: "\u7F16\u8F91"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_iconfont.default, {
+              name: "pen16",
+              color: "#999999",
+              size: 16
+            })]
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
+          direction: "column",
+          align: "center",
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[6], "./style").styles.deviceTypeText,
+            children: data.groupCount === 1 ? '单个设备' : '组合设备'
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_Flex.default, {
+            style: {
+              marginTop: 14
+            },
+            align: "center",
+            children: [data.imageUrl && data.imageUrl !== 'null' ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              source: {
+                uri: data.imageUrl
+              },
+              style: {
+                width: 48,
+                height: 28
+              },
+              resizeMode: "contain"
+            }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: {
+                width: 48,
+                height: 28,
+                borderRadius: 4,
+                backgroundColor: '#E6E8EB'
+              }
+            }), data.groupCount !== 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").Fragment, {
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: "multiplication",
+                color: "#333333",
+                size: 14,
+                style: {
+                  marginHorizontal: 2
+                }
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[6], "./style").styles.deviceCountText,
+                children: data.groupCount
+              })]
+            })]
+          })]
+        })]
+      })
+    });
+  };
+},1464,[3,41,1,537,1270,90,1465],"src\\components\\Device\\Item\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.styles = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = exports.styles = _reactNative.StyleSheet.create({
+    deviceItem: {
+      padding: 12,
+      borderRadius: 8,
+      width: '100%'
+    },
+    defaultBgColor: {
+      backgroundColor: '#F5F7FA'
+    },
+    deviceItemActive: {
+      backgroundColor: '#fff',
+      borderWidth: 1,
+      borderColor: '#333'
+    },
+    mt24: {
+      marginTop: 12
+    },
+    deviceNameText: {
+      fontSize: 16,
+      color: '#333',
+      fontWeight: 'bold',
+      maxWidth: 260
+    },
+    tagContainer: {
+      marginLeft: 6,
+      paddingHorizontal: 4,
+      paddingVertical: 2,
+      backgroundColor: '#E6E8EB',
+      borderRadius: 4
+    },
+    tag: {
+      fontSize: 10,
+      color: '#666'
+    },
+    editText: {
+      fontSize: 12,
+      color: '#999',
+      marginRight: 4
+    },
+    deviceTypeText: {
+      fontSize: 12,
+      color: '#999'
+    },
+    deviceCountText: {
+      fontSize: 24,
+      color: '#333',
+      fontWeight: 'bold'
+    }
+  });
+},1465,[1],"src\\components\\Device\\Item\\style.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _Flex = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../Flex"));
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../../iconfont"));
+  var _reactNativeFastImage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "react-native-fast-image"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./styles"));
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\LockVisual\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var LockVisual = function LockVisual(props) {
+    var _detail$imageMap, _detail$imageMap2, _detail$imageMap3, _detail$imageMap4, _detail$imageMap5, _detail$imageMap6, _detail$imageMap7, _detail$imageMap8, _detail$imageMap9, _detail$imageMap0, _detail$imageMap1, _detail$imageMap10, _detail$imageMap11;
+    var detail = props.detail,
+      deviceStatus = props.deviceStatus,
+      currentDeviceStatus = props.currentDeviceStatus,
+      gifNonce = props.gifNonce,
+      inconsistentStatus = props.inconsistentStatus,
+      backgroundType = props.backgroundType,
+      onPressAddDevice = props.onPressAddDevice,
+      onPressCombineDevice = props.onPressCombineDevice;
+    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[8], "../../context/ThemeContext").useTheme)(),
+      theme = _useTheme.theme,
+      themeType = _useTheme.themeType;
+    var _useState = (0, _react.useState)(currentDeviceStatus),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      lockStatus = _useState2[0],
+      setLockStatus = _useState2[1];
+    (0, _react.useEffect)(function () {
+      if (inconsistentStatus) {
+        setLockStatus('rise');
+        return;
+      }
+      setLockStatus(currentDeviceStatus);
+    }, [currentDeviceStatus, inconsistentStatus]);
+    var showRising30Gif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.rising30);
+    var showFalling30Gif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.falling30);
+    var showRising120Gif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.rising120);
+    var showFalling120Gif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.falling120);
+    var showRisingGif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.rising);
+    var showFallingGif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.falling);
+    var showOpenCoveringGif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.openCovering);
+    var showCloseCoveringGif = !inconsistentStatus && !!(deviceStatus != null && deviceStatus.closeCovering);
+    var anyGifShowing = showRisingGif || showFallingGif || showOpenCoveringGif || showCloseCoveringGif || showRising30Gif || showFalling30Gif || showRising120Gif || showFalling120Gif;
+    var showActionButton = (detail == null ? void 0 : detail.role) === _$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_ROLE.ADMIN;
+    var actionButtonText = (0, _react.useMemo)(function () {
+      if (!showActionButton) return '';
+      return detail != null && detail.isGroup ? '组合设备' : '添加设备';
+    }, [detail == null ? void 0 : detail.isGroup, showActionButton]);
+    var handlePressAction = function handlePressAction() {
+      if (!showActionButton) return;
+      if (detail != null && detail.isGroup) {
+        onPressCombineDevice == null || onPressCombineDevice({
+          id: detail == null ? void 0 : detail.id,
+          lockName: detail == null ? void 0 : detail.lockName,
+          type: false
+        });
+        return;
+      }
+      onPressAddDevice == null || onPressAddDevice();
+    };
+    var renderStaticImage = function renderStaticImage(uri) {
+      if (!uri || uri === 'null') return null;
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+        source: {
+          uri: uri
+        },
+        style: _styles.default.staticImage,
+        resizeMode: "contain",
+        fadeDuration: 0
+      });
+    };
+    var withNonce = function withNonce(uri, nonce) {
+      if (nonce === undefined || nonce === null || nonce === '') return uri;
+      var hasQuery = uri.includes('?');
+      var sep = hasQuery ? '&' : '?';
+      return `${uri}${sep}__nonce=${encodeURIComponent(String(nonce))}`;
+    };
+    var renderGif = function renderGif(uri, key) {
+      if (!uri || uri === 'null') return null;
+      var finalUri = withNonce(uri, gifNonce);
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNativeFastImage.default, {
+        source: {
+          uri: finalUri,
+          priority: _reactNativeFastImage.default.priority.normal
+        },
+        style: _styles.default.gifImage,
+        resizeMode: _reactNativeFastImage.default.resizeMode.contain
+      }, key);
+    };
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+      justify: "center",
+      align: "center",
+      style: _styles.default.container,
+      children: [showActionButton ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_Flex.default, {
+        justify: "center",
+        align: "center",
+        isTouchView: true,
+        onPress: handlePressAction,
+        style: [_styles.default.actionButton, themeType === 'dark' ? _styles.default.actionButtonDeep : _styles.default.actionButtonLight],
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+          style: [_styles.default.actionText, themeType === 'dark' ? _styles.default.actionTextDeep : _styles.default.actionTextLight],
+          children: actionButtonText
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _styles.default.actionIcon,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+            name: detail != null && detail.isGroup ? 'a-combinationunit' : 'a-add12',
+            size: 16,
+            color: themeType === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(51,51,51,0.8)'
+          })
+        })]
+      }) : null, lockStatus === 'rise' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap = detail.imageMap) == null ? void 0 : _detail$imageMap.upLockPng) : null, lockStatus === 'rise30' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap2 = detail.imageMap) == null ? void 0 : _detail$imageMap2.up30LockPng) : null, lockStatus === 'rise120' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap3 = detail.imageMap) == null ? void 0 : _detail$imageMap3.up120LockPng) : null, lockStatus === 'fall' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap4 = detail.imageMap) == null ? void 0 : _detail$imageMap4.fallLockPng) : null, lockStatus === 'openCover' && !anyGifShowing ? renderStaticImage(detail == null || (_detail$imageMap5 = detail.imageMap) == null ? void 0 : _detail$imageMap5.openLockPng) : null, showRisingGif ? renderGif(detail == null || (_detail$imageMap6 = detail.imageMap) == null ? void 0 : _detail$imageMap6.upLockGif, `upLockGif_${gifNonce != null ? gifNonce : 0}`) : null, showRising30Gif ? renderGif(detail == null || (_detail$imageMap7 = detail.imageMap) == null ? void 0 : _detail$imageMap7.up30LockGif, `up30LockGif_${gifNonce != null ? gifNonce : 0}`) : null, showRising120Gif ? renderGif(detail == null || (_detail$imageMap8 = detail.imageMap) == null ? void 0 : _detail$imageMap8.up120LockGif, `up120LockGif_${gifNonce != null ? gifNonce : 0}`) : null, showFallingGif ? renderGif(detail == null || (_detail$imageMap9 = detail.imageMap) == null ? void 0 : _detail$imageMap9.fallLockGif, `fallLockGif_${gifNonce != null ? gifNonce : 0}`) : null, showFalling30Gif ? renderGif(detail == null || (_detail$imageMap0 = detail.imageMap) == null ? void 0 : _detail$imageMap0.fall30LockGif, `fall30LockGif_${gifNonce != null ? gifNonce : 0}`) : null, showFalling120Gif ? renderGif(detail == null || (_detail$imageMap1 = detail.imageMap) == null ? void 0 : _detail$imageMap1.fall120LockGif, `fall120LockGif_${gifNonce != null ? gifNonce : 0}`) : null, showOpenCoveringGif ? renderGif(detail == null || (_detail$imageMap10 = detail.imageMap) == null ? void 0 : _detail$imageMap10.openCoverGif, `openCoverGif_${gifNonce != null ? gifNonce : 0}`) : null, showCloseCoveringGif ? renderGif(detail == null || (_detail$imageMap11 = detail.imageMap) == null ? void 0 : _detail$imageMap11.closeCoverGif, `closeCoverGif_${gifNonce != null ? gifNonce : 0}`) : null]
+    });
+  };
+  var _default = exports.default = LockVisual;
+},1466,[3,24,41,1,537,1270,1467,1468,1229,1439,90],"src\\components\\LockVisual\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  var _excluded = ["source", "defaultSource", "tintColor", "onLoadStart", "onProgress", "onLoad", "onError", "onLoadEnd", "style", "fallback", "children", "resizeMode", "forwardedRef"];
+  var React = _$$_REQUIRE(_dependencyMap[0], "react");
+  var reactNative = _$$_REQUIRE(_dependencyMap[1], "react-native");
+  function _interopDefaultLegacy(e) {
+    return e && typeof e === 'object' && 'default' in e ? e : {
+      'default': e
+    };
+  }
+  var _extends__default = /*#__PURE__*/_interopDefaultLegacy(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/extends"));
+  var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
+  var resizeMode = {
+    contain: 'contain',
+    cover: 'cover',
+    stretch: 'stretch',
+    center: 'center'
+  };
+  var priority = {
+    low: 'low',
+    normal: 'normal',
+    high: 'high'
+  };
+  var cacheControl = {
+    // Ignore headers, use uri as cache key, fetch only if not in cache.
+    immutable: 'immutable',
+    // Respect http headers, no aggressive caching.
+    web: 'web',
+    // Only load from cache.
+    cacheOnly: 'cacheOnly'
+  };
+  var resolveDefaultSource = function resolveDefaultSource(defaultSource) {
+    if (!defaultSource) {
+      return null;
+    }
+    if (reactNative.Platform.OS === 'android') {
+      // Android receives a URI string, and resolves into a Drawable using RN's methods.
+      var resolved = reactNative.Image.resolveAssetSource(defaultSource);
+      if (resolved) {
+        return resolved.uri;
+      }
+      return null;
+    } // iOS or other number mapped assets
+    // In iOS the number is passed, and bridged automatically into a UIImage
+
+    return defaultSource;
+  };
+  function FastImageBase(_ref) {
+    var source = _ref.source,
+      defaultSource = _ref.defaultSource,
+      tintColor = _ref.tintColor,
+      onLoadStart = _ref.onLoadStart,
+      onProgress = _ref.onProgress,
+      onLoad = _ref.onLoad,
+      onError = _ref.onError,
+      onLoadEnd = _ref.onLoadEnd,
+      style = _ref.style,
+      fallback = _ref.fallback,
+      children = _ref.children,
+      _ref$resizeMode = _ref.resizeMode,
+      resizeMode = _ref$resizeMode === void 0 ? 'cover' : _ref$resizeMode,
+      forwardedRef = _ref.forwardedRef,
+      props = _$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/objectWithoutProperties")(_ref, _excluded);
+    if (fallback) {
+      var cleanedSource = Object.assign({}, source);
+      delete cleanedSource.cache;
+      var _resolvedSource = reactNative.Image.resolveAssetSource(cleanedSource);
+      return /*#__PURE__*/React__default['default'].createElement(reactNative.View, {
+        style: [styles.imageContainer, style],
+        ref: forwardedRef
+      }, /*#__PURE__*/React__default['default'].createElement(reactNative.Image, _extends__default['default']({}, props, {
+        style: [reactNative.StyleSheet.absoluteFill, {
+          tintColor: tintColor
+        }],
+        source: _resolvedSource,
+        defaultSource: defaultSource,
+        onLoadStart: onLoadStart,
+        onProgress: onProgress,
+        onLoad: onLoad,
+        onError: onError,
+        onLoadEnd: onLoadEnd,
+        resizeMode: resizeMode
+      })), children);
+    }
+    var resolvedSource = reactNative.Image.resolveAssetSource(source);
+    var resolvedDefaultSource = resolveDefaultSource(defaultSource);
+    return /*#__PURE__*/React__default['default'].createElement(reactNative.View, {
+      style: [styles.imageContainer, style],
+      ref: forwardedRef
+    }, /*#__PURE__*/React__default['default'].createElement(FastImageView, _extends__default['default']({}, props, {
+      tintColor: tintColor,
+      style: reactNative.StyleSheet.absoluteFill,
+      source: resolvedSource,
+      defaultSource: resolvedDefaultSource,
+      onFastImageLoadStart: onLoadStart,
+      onFastImageProgress: onProgress,
+      onFastImageLoad: onLoad,
+      onFastImageError: onError,
+      onFastImageLoadEnd: onLoadEnd,
+      resizeMode: resizeMode
+    })), children);
+  }
+  var FastImageMemo = /*#__PURE__*/React.memo(FastImageBase);
+  var FastImageComponent = /*#__PURE__*/React.forwardRef(function (props, ref) {
+    return /*#__PURE__*/React__default['default'].createElement(FastImageMemo, _extends__default['default']({
+      forwardedRef: ref
+    }, props));
+  });
+  FastImageComponent.displayName = 'FastImage';
+  var FastImage = FastImageComponent;
+  FastImage.resizeMode = resizeMode;
+  FastImage.cacheControl = cacheControl;
+  FastImage.priority = priority;
+  FastImage.preload = function (sources) {
+    return reactNative.NativeModules.FastImageView.preload(sources);
+  };
+  FastImage.clearMemoryCache = function () {
+    return reactNative.NativeModules.FastImageView.clearMemoryCache();
+  };
+  FastImage.clearDiskCache = function () {
+    return reactNative.NativeModules.FastImageView.clearDiskCache();
+  };
+  var styles = reactNative.StyleSheet.create({
+    imageContainer: {
+      overflow: 'hidden'
+    }
+  }); // Types of requireNativeComponent are not correct.
+
+  var FastImageView = reactNative.requireNativeComponent('FastImageView', FastImage, {
+    nativeOnly: {
+      onFastImageLoadStart: true,
+      onFastImageProgress: true,
+      onFastImageLoad: true,
+      onFastImageError: true,
+      onFastImageLoadEnd: true
+    }
+  });
+  module.exports = FastImage;
+},1467,[41,1,524,150],"node_modules\\react-native-fast-image\\dist\\index.cjs.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      position: 'relative',
+      height: 241,
+      paddingTop: 40,
+      width: '100%'
+    },
+    actionButton: {
+      position: 'absolute',
+      top: 2,
+      right: 16,
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      borderRadius: 12,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 2
+    },
+    actionButtonDeep: {
+      backgroundColor: 'rgba(0,0,0,0.2)'
+    },
+    actionButtonLight: {
+      backgroundColor: 'rgba(0,0,0,0.05)'
+    },
+    actionText: {
+      fontSize: 12,
+      lineHeight: 17,
+      fontWeight: '400'
+    },
+    actionTextDeep: {
+      color: 'rgba(255,255,255,0.8)'
+    },
+    actionTextLight: {
+      color: 'rgba(51,51,51,0.8)'
+    },
+    actionIcon: {
+      marginLeft: 2
+    },
+    staticImage: {
+      width: '100%',
+      height: 210
+    },
+    gifImage: {
+      width: '100%',
+      height: 210
+    }
+  });
+  var _default = exports.default = styles;
+},1468,[1],"src\\components\\LockVisual\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -207191,7 +208997,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: 16
     }
   });
-},1376,[1],"src\\pages\\index\\style.ts");
+},1469,[1],"src\\pages\\index\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -207488,37 +209294,37 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             });
           }
         })]
-      }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").Fragment, {
-        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsxs)(_reactNative.ScrollView, {
-          contentContainerStyle: _$$_REQUIRE(_dependencyMap[18], "./style").styles.content,
-          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_Header.default, {
-            unreadCount: unreadCount,
-            lockInfo: detail
-          }), hasDevice && detail != null && detail.id ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_Content.default, {
+      }) :
+      /*#__PURE__*/
+      //  主体内容
+      (0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsxs)(_reactNative.ScrollView, {
+        showsVerticalScrollIndicator: false,
+        contentContainerStyle: _$$_REQUIRE(_dependencyMap[18], "./style").styles.content,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_Header.default, {
+          unreadCount: unreadCount,
+          lockInfo: detail
+        }), hasDevice && detail != null && detail.id ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_Content.default, {
+          detail: detail,
+          reload: function reload() {
+            void load();
+          },
+          optioning: false,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_LockVisual.default, {
             detail: detail,
-            backgroundType: undefined,
-            reload: function reload() {
-              void load();
-            },
-            isMultiple: !!(detail != null && detail.isGroup),
-            optioning: false,
-            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_LockVisual.default, {
-              detail: detail,
-              currentDeviceStatus: currentDeviceStatus,
-              deviceStatus: deviceStatus,
-              inconsistentStatus: false,
-              gifNonce: gifNonce
-            })
-          }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_NoDevices.default, {
-            unreadCount: unreadCount,
-            hasDevice: hasDevice
-          })]
-        })
+            currentDeviceStatus: currentDeviceStatus,
+            deviceStatus: deviceStatus,
+            inconsistentStatus: false,
+            gifNonce: gifNonce
+          })
+        }, 'single') : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime").jsx)(_NoDevices.default, {
+          unreadCount: unreadCount,
+          hasDevice: hasDevice
+        })]
       })
     });
   };
   var _default = exports.default = Index;
-},1377,[3,202,83,24,41,1,1269,1364,1365,1366,537,536,1372,1367,1355,1375,968,90,1376],"src\\pages\\index\\index.tsx");
+},1470,[3,202,83,24,41,1,1269,1448,1449,1450,537,536,1466,1453,1439,1452,968,90,1469],"src\\pages\\index\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -207648,7 +209454,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         icon: 'shopping',
         label: '商城',
         onPress: function onPress() {
-          return navigation.navigate('Mall');
+          return navigation.navigate('Shopping');
         }
       }, {
         icon: 'order',
@@ -207719,7 +209525,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           style: _styles.default.card,
           onPress: function onPress() {
             if (!hasToken) return requireLogin();
-            navigation.navigate('Staff');
+            navigation.navigate('MemberList');
           },
           children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_reactNative.View, {
             style: _styles.default.memberRow,
@@ -207729,9 +209535,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               color: "#333333"
             }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_reactNative.View, {
               style: _styles.default.memberTextBox,
-              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
                 style: _styles.default.memberTitle,
-                children: ["\u6210\u5458", total ? `（${total}）` : '']
+                children: "\u6210\u5458"
               }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_reactNative.Text, {
                 style: _styles.default.memberDesc,
                 children: "\u6DFB\u52A0\u6210\u5458\uFF0C\u6388\u6743\u4F7F\u7528\u5730\u9501"
@@ -207789,7 +209595,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           })
         }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[15], "react/jsx-runtime").jsx)(_popConfirm.default, {
           ref: logoutRef,
-          marginTop32: true,
           textWeight: "bold",
           title: "\u786E\u5B9A\u8981\u9000\u51FA\u767B\u5F55",
           cancelText: "\u6682\u4E0D\u9000\u51FA",
@@ -207799,7 +209604,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1378,[3,83,24,41,1,1269,536,1270,1379,970,1229,965,1375,542,966,90],"src\\pages\\mine\\index.tsx");
+},1471,[3,83,24,41,1,1269,536,1270,1472,970,1229,965,1452,542,966,90],"src\\pages\\mine\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -207895,7 +209700,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1379,[1],"src\\pages\\mine\\styles.ts");
+},1472,[1],"src\\pages\\mine\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -207908,7 +209713,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _sms = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "./com/sms"));
   var _password = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./com/password"));
   var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./styles"));
-  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "../../iconfont"));
+  var _AppIcon = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "../../components/AppIcon"));
   var _push = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[9], "../../utils/push"));
   var _popConfirm = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[10], "../../components/popConfirm"));
   var _GradientButton = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[11], "../../components/GradientButton"));
@@ -208232,7 +210037,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             style: {
               marginTop: 16
             },
-            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[19], "react/jsx-runtime").jsx)(_iconfont.default, {
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[19], "react/jsx-runtime").jsx)(_AppIcon.default, {
               size: 17,
               name: agree ? 'selected' : 'unselected',
               color: agree ? '#333333' : '#E1E1E1',
@@ -208418,6 +210223,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         },
         submitBtn: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[19], "react/jsx-runtime").jsx)(_GradientButton.default, {
           width: 124,
+          height: 42,
           style: _styles.default.popSubmit,
           colors: ['#282828', '#4A4A4A'],
           onPress: loginType === 'mini' ? /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
@@ -208487,7 +210293,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Login;
-},1380,[3,83,24,41,1,1381,1396,1398,1270,944,536,540,1266,1175,542,1383,968,965,970,90,1389,966],"src\\pages\\login\\index.tsx");
+},1473,[3,83,24,41,1,1474,1484,1486,1487,944,536,540,1266,1175,542,1451,968,965,970,90,1476,966],"src\\pages\\login\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -208616,7 +210422,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Sms;
-},1381,[3,83,24,41,1,937,1382,970,968,1383,1355,90,1389],"src\\pages\\login\\com\\sms\\index.tsx");
+},1474,[3,83,24,41,1,937,1475,970,968,1451,1439,90,1476],"src\\pages\\login\\com\\sms\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -208706,245 +210512,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = loginStyles;
-},1382,[1],"src\\pages\\login\\com\\sms\\styles.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[0], "./common")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[0], "./common")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[0], "./common")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[1], "./user")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[1], "./user")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[1], "./user")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[2], "./device")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[2], "./device")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[2], "./device")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[3], "./bluetooth")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[3], "./bluetooth")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[3], "./bluetooth")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[4], "./order")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[4], "./order")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[4], "./order")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[5], "./setting")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[5], "./setting")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[5], "./setting")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[6], "./mall")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[6], "./mall")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[6], "./mall")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[7], "./combine")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[7], "./combine")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[7], "./combine")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[8], "./deviceInfo")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[8], "./deviceInfo")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[8], "./deviceInfo")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[9], "./deviceTest")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[9], "./deviceTest")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[9], "./deviceTest")[key];
-      }
-    });
-  });
-  Object.keys(_$$_REQUIRE(_dependencyMap[10], "./bindDevice")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[10], "./bindDevice")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[10], "./bindDevice")[key];
-      }
-    });
-  });
-},1383,[957,1375,1367,1179,1384,1385,1386,1387,1370,1388,1178],"src\\services\\index.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.postOrderPay = exports.getPayResult = exports.getOrderList = exports.getOrderDetail = exports.createOrder = void 0;
-  /**
-   * 订单相关接口
-   */
-
-  // 获取订单列表
-  var getOrderList = exports.getOrderList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/order/userOrderList', 'POST');
-
-  // 创建订单
-  var createOrder = exports.createOrder = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/order/create', 'POST');
-
-  // 获取订单详情
-  var getOrderDetail = exports.getOrderDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/order/userOrderDetail', 'GET');
-
-  // 订单支付
-  var postOrderPay = exports.postOrderPay = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/custom/trade/pay', 'POST');
-
-  // 获取支付结果
-  var getPayResult = exports.getPayResult = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/custom/trade/query', 'POST');
-},1384,[958],"src\\services\\order.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.saveOrUpdate = exports.getTextParsing = exports.getDetail = exports.deleteAddress = void 0;
-  /**
-   * 设置相关接口
-   */
-
-  // 删除地址
-  var deleteAddress = exports.deleteAddress = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/address/delete', 'GET');
-
-  // 保存或更新地址
-  var saveOrUpdate = exports.saveOrUpdate = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/address/saveOrUpdate', 'POST');
-
-  // 获取地址详情
-  var getDetail = exports.getDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/address/detail', 'GET');
-
-  // 文本解析
-  var getTextParsing = exports.getTextParsing = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/user/address/textParsing', 'POST');
-},1385,[958],"src\\services\\setting.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.getGoodsList = exports.getGoodsDetail = void 0;
-  /**
-   * 商城相关接口
-   */
-
-  // 获取商品列表
-  var getGoodsList = exports.getGoodsList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/product/list', 'POST');
-
-  // 获取商品详情
-  var getGoodsDetail = exports.getGoodsDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/mall/product/detail', 'GET');
-},1386,[958],"src\\services\\mall.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.saveGroup = exports.memberList = exports.memberEdit = exports.memberDelete = exports.groupSubList = exports.groupChooseList = exports.deviceDelete = exports.defaultName = void 0;
-  /**
-   * 组合设备相关接口
-   */
-
-  // 创建组合设备选择列表
-  var groupChooseList = exports.groupChooseList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/groupChooseList', 'POST');
-
-  // 保存组合
-  var saveGroup = exports.saveGroup = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/saveGroup', 'POST');
-
-  // 组合子列表
-  var groupSubList = exports.groupSubList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/groupSubList', 'POST');
-
-  // 成员列表
-  var memberList = exports.memberList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/member/list', 'POST');
-
-  // 成员编辑
-  var memberEdit = exports.memberEdit = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/member/save', 'POST');
-
-  // 成员删除
-  var memberDelete = exports.memberDelete = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/member/delete', 'POST');
-
-  // 设备删除
-  var deviceDelete = exports.deviceDelete = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/deleteGroup', 'POST');
-
-  // 获取默认组合名称
-  var defaultName = exports.defaultName = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/userLock/group/defaultName', 'GET');
-},1387,[958],"src\\services\\combine.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.testDeviceOperation = exports.resetTestDevice = exports.modifyTestDevice = exports.getTestOperateResult = exports.getTestDeviceReason = exports.getTestDeviceList = exports.getTestDeviceDetail = void 0;
-  /**
-   * 设备测试相关接口
-   */
-
-  // 获取测试设备列表
-  var getTestDeviceList = exports.getTestDeviceList = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/list', 'POST');
-
-  // 测试设备操作
-  var testDeviceOperation = exports.testDeviceOperation = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/operation', 'POST');
-
-  // 获取测试设备详情
-  var getTestDeviceDetail = exports.getTestDeviceDetail = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/detail', 'GET');
-
-  // 修改测试设备
-  var modifyTestDevice = exports.modifyTestDevice = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/modify', 'POST');
-
-  // 获取测试设备原因
-  var getTestDeviceReason = exports.getTestDeviceReason = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/reason', 'GET');
-
-  // 重置测试设备
-  var resetTestDevice = exports.resetTestDevice = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/reset', 'POST');
-
-  // 获取测试操作结果
-  var getTestOperateResult = exports.getTestOperateResult = (0, _$$_REQUIRE(_dependencyMap[0], "../utils/request").createFetch)('/boke/deviceTest/optStatus', 'GET');
-},1388,[958],"src\\services\\deviceTest.ts");
+},1475,[1],"src\\pages\\login\\com\\sms\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -208985,6 +210553,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return _$$_REQUIRE(_dependencyMap[1], "./RequireAuth").RequireAuth;
     }
   });
+  Object.defineProperty(exports, "Stepper", {
+    enumerable: true,
+    get: function get() {
+      return _Stepper.default;
+    }
+  });
   Object.defineProperty(exports, "TextInput", {
     enumerable: true,
     get: function get() {
@@ -208996,7 +210570,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _TextInput = _$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "./TextInput"));
   var _InputCode = _$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./InputCode"));
   var _Popup = _$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./Popup"));
-},1389,[1180,1390,3,1269,537,1391,1392,1394],"src\\components\\index.ts");
+  var _Stepper = _$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "./Stepper"));
+},1476,[1180,1477,3,1269,537,1478,1479,1481,1483],"src\\components\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209050,7 +210625,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#FFFFFF'
     }
   });
-},1390,[41,1,1265,1266,90],"src\\components\\RequireAuth.tsx");
+},1477,[41,1,1265,1266,90],"src\\components\\RequireAuth.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209070,15 +210645,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    * 主题化的 TextInput 组件
    * 自动应用全局光标颜色和选中颜色
    */
-  var TextInput = exports.TextInput = _react.default.forwardRef(function (_ref, ref) {
-    var _ref$cursorColor = _ref.cursorColor,
-      cursorColor = _ref$cursorColor === void 0 ? _$$_REQUIRE(_dependencyMap[4], "../../context/theme").theme.input.cursorColor : _ref$cursorColor,
-      _ref$selectionColor = _ref.selectionColor,
-      selectionColor = _ref$selectionColor === void 0 ? _$$_REQUIRE(_dependencyMap[4], "../../context/theme").theme.input.selectionColor : _ref$selectionColor,
-      _ref$underlineColorAn = _ref.underlineColorAndroid,
-      underlineColorAndroid = _ref$underlineColorAn === void 0 ? _$$_REQUIRE(_dependencyMap[4], "../../context/theme").theme.input.underlineColorAndroid : _ref$underlineColorAn,
-      props = (0, _objectWithoutProperties2.default)(_ref, _excluded);
-    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.TextInput, Object.assign({}, props, {
+  var TextInput = exports.TextInput = _react.default.forwardRef(function (props, ref) {
+    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[4], "../../context/ThemeContext").useTheme)(),
+      theme = _useTheme.theme;
+    var _props$cursorColor = props.cursorColor,
+      cursorColor = _props$cursorColor === void 0 ? theme.colors.text.primary : _props$cursorColor,
+      _props$selectionColor = props.selectionColor,
+      selectionColor = _props$selectionColor === void 0 ? theme.colors.text.primary : _props$selectionColor,
+      _props$underlineColor = props.underlineColorAndroid,
+      underlineColorAndroid = _props$underlineColor === void 0 ? 'transparent' : _props$underlineColor,
+      restProps = (0, _objectWithoutProperties2.default)(props, _excluded);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.TextInput, Object.assign({}, restProps, {
       ref: ref,
       cursorColor: cursorColor,
       selectionColor: selectionColor,
@@ -209086,7 +210663,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }));
   });
   var _default = exports.default = TextInput;
-},1391,[3,150,41,1,1230,90],"src\\components\\TextInput\\index.tsx");
+},1478,[3,150,41,1,1229,90],"src\\components\\TextInput\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209326,7 +210903,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   });
   InputCode.displayName = 'InputCode';
   var _default = exports.default = InputCode;
-},1392,[3,24,41,1,1393,90],"src\\components\\InputCode\\index.tsx");
+},1479,[3,24,41,1,1480,90],"src\\components\\InputCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209387,7 +210964,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1393,[1],"src\\components\\InputCode\\styles.ts");
+},1480,[1],"src\\components\\InputCode\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209534,7 +211111,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1394,[3,24,41,1,1270,1395,90,542],"src\\components\\Popup\\index.tsx");
+},1481,[3,24,41,1,1270,1482,90,542],"src\\components\\Popup\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209589,7 +211166,127 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1395,[1],"src\\components\\Popup\\styles.ts");
+},1482,[1],"src\\components\\Popup\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../../iconfont"));
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\Stepper\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var Stepper = function Stepper(_ref) {
+    var style = _ref.style,
+      onChange = _ref.onChange,
+      type = _ref.type,
+      _ref$initValue = _ref.initValue,
+      initValue = _ref$initValue === void 0 ? 1 : _ref$initValue,
+      size = _ref.size,
+      min = _ref.min,
+      max = _ref.max;
+    var _useState = (0, _react.useState)(initValue),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      value = _useState2[0],
+      setValue = _useState2[1];
+    (0, _react.useEffect)(function () {
+      if (typeof initValue === 'number' && initValue >= 0) {
+        setValue(initValue);
+      }
+    }, [initValue]);
+    var clamp = function clamp(v) {
+      var next = v;
+      if (typeof min === 'number' && next < min) {
+        next = min;
+      }
+      if (typeof max === 'number' && next > max) {
+        next = max;
+      }
+      return next;
+    };
+    var update = function update(next) {
+      var finalValue = clamp(next);
+      setValue(finalValue);
+      onChange == null || onChange(finalValue);
+    };
+    var handleReduce = function handleReduce() {
+      if (type === 'goods' && value <= 1) {
+        _$$_REQUIRE(_dependencyMap[5], "@ant-design/react-native").Toast.info('商品销售数量至少为1');
+        return;
+      }
+      update(value - 1);
+    };
+    var handleAdd = function handleAdd() {
+      update(value + 1);
+    };
+    var handleInputChange = function handleInputChange(text) {
+      var num = Number(text.replace(/[^\d]/g, ''));
+      if (Number.isNaN(num)) {
+        return;
+      }
+      update(num);
+    };
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsxs)(_reactNative.View, {
+      style: [styles.box, style],
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+        activeOpacity: 0.8,
+        style: styles.calculator,
+        onPress: handleReduce,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_iconfont.default, {
+          name: "minus",
+          color: "#CCCCCC",
+          size: size || 24
+        })
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.TextInput, {
+        value: String(value),
+        keyboardType: "numeric",
+        onChangeText: handleInputChange,
+        style: styles.input
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+        activeOpacity: 0.8,
+        style: styles.calculator,
+        onPress: handleAdd,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime").jsx)(_iconfont.default, {
+          name: "add",
+          color: "#333333",
+          size: size || 12
+        })
+      })]
+    });
+  };
+  var _default = exports.default = (0, _react.memo)(Stepper);
+  var styles = _reactNative.StyleSheet.create({
+    box: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#F2F2F2',
+      borderRadius: 8,
+      paddingVertical: 5,
+      width: 91
+    },
+    input: {
+      flex: 1,
+      margin: 0,
+      borderRadius: 0,
+      borderLeftWidth: 1,
+      borderRightWidth: 1,
+      borderColor: 'rgba(0, 0, 0, 0.1)',
+      height: 22,
+      padding: 0,
+      textAlign: 'center'
+    },
+    calculator: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 5,
+      flex: 1
+    }
+  });
+},1483,[3,24,41,1,1270,542,90],"src\\components\\Stepper\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209772,7 +211469,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Password;
-},1396,[3,83,24,41,1,937,1397,970,968,957,965,944,90,1389],"src\\pages\\login\\com\\password\\index.tsx");
+},1484,[3,83,24,41,1,937,1485,970,968,957,965,944,90,1476],"src\\pages\\login\\com\\password\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209858,7 +211555,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = passwordStyles;
-},1397,[1],"src\\pages\\login\\com\\password\\styles.ts");
+},1485,[1],"src\\pages\\login\\com\\password\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -209959,12 +211656,37 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: 'transparent'
     },
     popBtnText: {
-      height: '100%',
-      color: '#ffffff'
+      color: '#ffffff',
+      textAlign: 'center'
     }
   });
   var _default = exports.default = styles;
-},1398,[1],"src\\pages\\login\\styles.ts");
+},1486,[1],"src\\pages\\login\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _react = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "../iconfont"));
+  var _HarmonyIconImage = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../harmony/HarmonyIconImage"));
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\AppIcon.tsx"; // 统一的图标 Props，兼容原 SVG 版 IconFont 的用法
+  var isNativePlatform = _reactNative.Platform.OS === 'android' || _reactNative.Platform.OS === 'ios';
+  var AppIcon = function AppIcon(props) {
+    if (isNativePlatform) {
+      // Android / iOS：继续使用 SVG 版 IconFont，保持现有效果
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_iconfont.default, Object.assign({}, props));
+    }
+
+    // 其他平台统一当作 Harmony 处理：优先使用 PNG 图片图标，未配置时回退到 TTF
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_HarmonyIconImage.default, Object.assign({}, props));
+  };
+  var _default = exports.default = AppIcon;
+},1487,[3,41,1,1270,1271,90],"src\\components\\AppIcon.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210071,7 +211793,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ForgetPassword;
-},1399,[3,6,83,24,41,1,937,1400,970,968,1383,1355,90,1389],"src\\pages\\forgetPassword\\index.tsx");
+},1488,[3,6,83,24,41,1,937,1489,970,968,1451,1439,90,1476],"src\\pages\\forgetPassword\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210144,7 +211866,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = forgetPasswordStyles;
-},1400,[1],"src\\pages\\forgetPassword\\styles.ts");
+},1489,[1],"src\\pages\\forgetPassword\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210327,7 +212049,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = WebViewScreen;
-},1401,[3,24,41,1,1269,970,90,1402],"src\\pages\\webView\\index.tsx");
+},1490,[3,24,41,1,1269,970,90,1491],"src\\pages\\webView\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210341,7 +212063,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _WebView = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "./lib/WebView"));
   var _default = exports.default = _WebView.default;
-},1402,[3,1403],"node_modules\\react-native-webview\\index.js");
+},1491,[3,1492],"node_modules\\react-native-webview\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210365,7 +212087,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = WebView;
-},1403,[3,41,1,90],"node_modules\\react-native-webview\\lib\\WebView.js");
+},1492,[3,41,1,90],"node_modules\\react-native-webview\\lib\\WebView.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210580,7 +212302,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = LoginSms;
-},1404,[3,83,24,41,1,1392,1270,537,1405,970,1406,1355,542,968,1375,957,966,969,90,1389],"src\\pages\\loginSms\\index.tsx");
+},1493,[3,83,24,41,1,1479,1270,537,1494,970,1495,1439,542,968,1452,957,966,969,90,1476],"src\\pages\\loginSms\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210645,7 +212367,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = loginSmsStyles;
-},1405,[1],"src\\pages\\loginSms\\styles.ts");
+},1494,[1],"src\\pages\\loginSms\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210707,7 +212429,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       reset: reset
     };
   }
-},1406,[3,24,41],"src\\hooks\\useCountDown.ts");
+},1495,[3,24,41],"src\\hooks\\useCountDown.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -210951,7 +212673,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ForgetPasswordReset;
-},1407,[3,83,24,41,1,1270,944,1408,970,542,965,1375,969,90,1389],"src\\pages\\forgetPasswordReset\\index.tsx");
+},1496,[3,83,24,41,1,1270,944,1497,970,542,965,1452,969,90,1476],"src\\pages\\forgetPasswordReset\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -211018,7 +212740,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1408,[1],"src\\pages\\forgetPasswordReset\\styles.ts");
+},1497,[1],"src\\pages\\forgetPasswordReset\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -211207,7 +212929,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = MiniBind;
-},1409,[3,83,24,41,1,1410,970,1406,1355,542,957,965,944,969,90,1389],"src\\pages\\miniBind\\index.tsx");
+},1498,[3,83,24,41,1,1499,970,1495,1439,542,957,965,944,969,90,1476],"src\\pages\\miniBind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -211271,7 +212993,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1410,[1],"src\\pages\\miniBind\\styles.ts");
+},1499,[1],"src\\pages\\miniBind\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -211392,7 +213114,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = BindPhone;
-},1411,[3,83,24,41,1,1412,970,968,542,957,1355,90,1389],"src\\pages\\bindPhone\\index.tsx");
+},1500,[3,83,24,41,1,1501,970,968,542,957,1439,90,1476],"src\\pages\\bindPhone\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -211466,7 +213188,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1412,[1],"src\\pages\\bindPhone\\styles.ts");
+},1501,[1],"src\\pages\\bindPhone\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -211792,7 +213514,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1413,[3,83,24,41,1,1270,1414,542,1375,970,1068,1415,1069,968,90,1389],"src\\pages\\userInfo\\index.tsx");
+},1502,[3,83,24,41,1,1270,1503,542,1452,970,1068,1504,1069,968,90,1476],"src\\pages\\userInfo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -211895,7 +213617,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1414,[1],"src\\pages\\userInfo\\styles.ts");
+},1503,[1],"src\\pages\\userInfo\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -211924,8 +213646,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   function launchImageLibrary(options, callback) {
     return _reactNative.Platform.OS === 'web' ? (0, _$$_REQUIRE(_dependencyMap[2], "./platforms/web").imageLibrary)(options, callback) : (0, _$$_REQUIRE(_dependencyMap[3], "./platforms/native").imageLibrary)(options, callback);
   }
-},1415,[1,1416,1417,1418],"node_modules\\react-native-image-picker\\src\\index.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1416,[],"node_modules\\react-native-image-picker\\src\\types.ts");
+},1504,[1,1505,1506,1507],"node_modules\\react-native-image-picker\\src\\index.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1505,[],"node_modules\\react-native-image-picker\\src\\types.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212050,7 +213772,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     return (_webMediaTypes$mediaT = webMediaTypes[mediaType]) != null ? _webMediaTypes$mediaT : webMediaTypes.photo;
   }
-},1417,[3,83],"node_modules\\react-native-image-picker\\src\\platforms\\web.ts");
+},1506,[3,83],"node_modules\\react-native-image-picker\\src\\platforms\\web.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212088,7 +213810,7334 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     });
   }
-},1418,[1],"node_modules\\react-native-image-picker\\src\\platforms\\native.ts");
+},1507,[1],"node_modules\\react-native-image-picker\\src\\platforms\\native.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "../../iconfont"));
+  var _react = _$$_REQUIRE(_dependencyMap[5], "react");
+  var _AnimationPop = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "../../components/AnimationPop"));
+  var _PopCenter = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "../../components/PopCenter"));
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\deviceInfo\\index.tsx";
+  var footerBtn = function footerBtn() {
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.View, {
+      style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.footerBtnContainer,
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+        style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.footerBtn, _$$_REQUIRE(_dependencyMap[9], "./style").styles.cancelBtn],
+        onPress: function onPress() {
+          console.log('移交');
+        },
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+          style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.footerBtnText, _$$_REQUIRE(_dependencyMap[9], "./style").styles.cancelBtnText],
+          children: "\u79FB\u4EA4\u7BA1\u7406\u5458"
+        })
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+        style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.footerBtn, _$$_REQUIRE(_dependencyMap[9], "./style").styles.confirmBtn],
+        onPress: function onPress() {
+          console.log('移交');
+        },
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+          style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.footerBtnText, _$$_REQUIRE(_dependencyMap[9], "./style").styles.confirmBtnText],
+          children: "\u89E3\u9664\u7ED1\u5B9A"
+        })
+      })]
+    });
+  };
+  var DeviceInfo = function DeviceInfo() {
+    var _lockInfo$lockName, _lockInfo$deviceNo, _lockInfo$version;
+    var _ref = (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useRoute)(),
+      params = _ref.params;
+    var _useState = (0, _react.useState)(),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      lockInfo = _useState2[0],
+      setLockInfo = _useState2[1];
+    var _useState3 = (0, _react.useState)(),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      lockName = _useState4[0],
+      setLockName = _useState4[1];
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      showPowerModeTips = _useState6[0],
+      setShowPowerModeTips = _useState6[1];
+    var editNamePopRef = (0, _react.useRef)(null);
+    var pageContainerRef = (0, _react.useRef)(null);
+    var qrCodePopRef = (0, _react.useRef)(null);
+    var getLockInfo = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (!params.lockId) return;
+      var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../services").getInfo)({
+        id: params == null ? void 0 : params.lockId
+      });
+      if (res.code === 200 && res.success) {
+        setLockInfo(res.data);
+        setLockName(res.data.lockName);
+      }
+    }), [params]);
+    var handleNameConfirm = /*#__PURE__*/function () {
+      var _ref3 = (0, _asyncToGenerator2.default)(function* () {
+        if (!(lockName != null && lockName.trim())) {
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.info('请输入名称');
+          return;
+        }
+        var loadingToast = _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.loading('修改中...', 0);
+        try {
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../services").updateName)({
+            id: params == null ? void 0 : params.lockId,
+            lockName: lockName
+          });
+          if (res != null && res.success) {
+            var _editNamePopRef$curre, _pageContainerRef$cur;
+            _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.remove(loadingToast);
+            _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.success('修改成功');
+            (_editNamePopRef$curre = editNamePopRef.current) == null || _editNamePopRef$curre.close();
+            // 刷新数据
+            (_pageContainerRef$cur = pageContainerRef.current) == null || _pageContainerRef$cur.refresh();
+          } else {
+            _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.remove(loadingToast);
+            _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail((res == null ? void 0 : res.message) || '修改失败');
+          }
+        } catch (error) {
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.remove(loadingToast);
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('修改异常');
+        }
+      });
+      return function handleNameConfirm() {
+        return _ref3.apply(this, arguments);
+      };
+    }();
+    (0, _react.useEffect)(function () {
+      getLockInfo();
+    }, [getLockInfo]);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").PageContainer, {
+      ref: pageContainerRef,
+      onRefresh: getLockInfo,
+      backgroundColor: "#FFFFFF",
+      statusBarStyle: "dark-content",
+      safeAreaEdges: ['top', 'bottom'],
+      pageNavProps: {
+        text: '设备信息',
+        showBack: true
+      },
+      navBorder: true,
+      scrollable: true,
+      loading: !lockInfo,
+      padding: 0,
+      footer: footerBtn(),
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+        style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.container,
+        direction: "column",
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          direction: "row",
+          align: "center",
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardTitleLine
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardTitle,
+            children: "\u57FA\u7840\u4FE1\u606F"
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          isTouchView: true,
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows,
+          onPress: function onPress() {
+            var _editNamePopRef$curre2;
+            if (!params.isAdmin) return;
+            (_editNamePopRef$curre2 = editNamePopRef.current) == null || _editNamePopRef$curre2.open();
+          },
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+            children: "\u8BBE\u5907\u540D\u79F0"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue,
+            children: (_lockInfo$lockName = lockInfo == null ? void 0 : lockInfo.lockName) != null ? _lockInfo$lockName : ''
+          }), params.isAdmin && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+            name: 'a-headfor-20',
+            color: "#333",
+            size: 20
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+            children: "\u5730\u9501SN\u7801"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue,
+            children: (_lockInfo$deviceNo = lockInfo == null ? void 0 : lockInfo.deviceNo) != null ? _lockInfo$deviceNo : ''
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows, {
+            position: 'relative'
+          }],
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+            children: "\u4F9B\u7535\u6A21\u5F0F"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue, {
+              marginRight: 4
+            }],
+            children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? '市电版' : '电池版'
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+            onPressIn: function onPressIn() {
+              setShowPowerModeTips(true);
+            },
+            onPressOut: function onPressOut() {
+              setShowPowerModeTips(false);
+            },
+            name: 'a-styledescription',
+            color: "#333",
+            size: 20
+          }), showPowerModeTips && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.powerModeTooltip,
+            children: [(lockInfo == null ? void 0 : lockInfo.powerType) === 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.powerModeTooltipText,
+              children: "\u5E02\u7535\u6B3E\uFF1A\u9700\u8FDE\u63A5\u5BB6\u7528\u7535\u6E90\uFF0C\u7535\u529B\u6301\u7EED\u7A33\u5B9A"
+            }), (lockInfo == null ? void 0 : lockInfo.powerType) === 0 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.powerModeTooltipText,
+              children: "\u7535\u6C60\u6B3E\uFF1A\u5185\u7F6E\u7535\u6C60\uFF0C\u65E0\u9700\u5E03\u7EBF\uFF0C\u5B89\u88C5\u4F4D\u7F6E\u7075\u6D3B"
+            })]
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+            children: "\u4E8C\u7EF4\u7801"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+            direction: "row",
+            align: "center",
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.qrCodeBtn,
+              onPress: function onPress() {
+                var _qrCodePopRef$current;
+                return (_qrCodePopRef$current = qrCodePopRef.current) == null ? void 0 : _qrCodePopRef$current.open();
+              },
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.qrCodeBtnText,
+                children: "\u67E5\u770B"
+              })
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+              style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.qrCodeBtn, {
+                marginLeft: 12
+              }],
+              onPress: function onPress() {},
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.qrCodeBtnText,
+                children: "\u66F4\u6362\u4E8C\u7EF4\u7801"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: 'a-headfor-20',
+                color: "#333",
+                size: 20
+              })]
+            })]
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+            children: "\u56FA\u4EF6\u7248\u672C"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue,
+            children: ["\u5F53\u524D\u7248\u672C", (_lockInfo$version = lockInfo == null ? void 0 : lockInfo.version) != null ? _lockInfo$version : '']
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+            name: 'a-headfor-20',
+            color: "#333",
+            size: 20
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+            children: "\u8BBE\u5907\u65E5\u5FD7"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue,
+            children: '查看'
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+            name: 'a-headfor-20',
+            color: "#333",
+            size: 20
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLine
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          direction: "row",
+          align: "center",
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardTitleLine
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardTitle,
+            children: "\u529F\u80FD\u8BBE\u7F6E"
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+            children: "\u5145\u7535\u6307\u5BFC"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue,
+            children: '查看'
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+            name: 'a-headfor-20',
+            color: "#333",
+            size: 20
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: (_$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows, (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? {} : {
+            alignItems: 'flex-start'
+          }),
+          children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").Fragment, {
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+              children: "\u78B0\u649E\u8702\u9E23"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue,
+              children: (lockInfo == null ? void 0 : lockInfo.buzzerStatus) === 1 ? '已开启' : '未开启'
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+              name: 'a-headfor-20',
+              color: "#333",
+              size: 20
+            })]
+          }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").Fragment, {
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+              children: "\u78B0\u649E\u8702\u9E23"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue, {
+                alignSelf: 'flex-end',
+                flexDirection: 'column',
+                alignItems: 'flex-end'
+              }],
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+                direction: "row",
+                align: "center",
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue,
+                  children: "\u8702\u9E23\u6D4B\u8BD5"
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+                  style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.testBtn,
+                  onPress: function onPress() {},
+                  children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                    style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.testBtnText,
+                    children: "\u6D4B\u8BD5"
+                  })
+                })]
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.toastText,
+                children: `触发碰撞蜂鸣秒后停止蜂鸣`
+              })]
+            })]
+          })
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardRows,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardLable,
+            children: "\u79BB\u8F66\u5347\u9501"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cardValue,
+            children: `车辆离开${lockInfo == null ? void 0 : lockInfo.leaveUpTime}秒后升起`
+          }), (lockInfo == null ? void 0 : lockInfo.powerType) === 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+            name: 'a-headfor-20',
+            color: "#333",
+            size: 20
+          })]
+        })]
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_AnimationPop.default, {
+        ref: editNamePopRef,
+        direction: "bottom",
+        coverSafeArea: true,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.editContainer, {
+            paddingBottom: 8
+          }],
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.header,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.headerTitle,
+              children: "\u7F16\u8F91\u5730\u9501\u540D\u79F0"
+            })
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.editContent,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.editItem,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.editLabel,
+                children: '地锁名称'
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.TextInput, {
+                style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.input,
+                value: lockName,
+                onChangeText: setLockName,
+                placeholder: "\u8BF7\u8F93\u5165\u540D\u79F0",
+                placeholderTextColor: "#999",
+                maxLength: 20
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: 'redact',
+                color: "#999",
+                size: 20
+              })]
+            })
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.editFooter,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.editBtn, _$$_REQUIRE(_dependencyMap[9], "./style").styles.cancelPopBtn],
+              onPress: function onPress() {
+                var _editNamePopRef$curre3;
+                return (_editNamePopRef$curre3 = editNamePopRef.current) == null ? void 0 : _editNamePopRef$curre3.close();
+              },
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.cancelText,
+                children: "\u53D6\u6D88"
+              })
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              style: [_$$_REQUIRE(_dependencyMap[9], "./style").styles.editBtn, _$$_REQUIRE(_dependencyMap[9], "./style").styles.confirmPopBtn],
+              onPress: handleNameConfirm,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.confirmText,
+                children: "\u786E\u5B9A"
+              })
+            })]
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.closeIcon,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              onPress: function onPress() {
+                var _editNamePopRef$curre4;
+                return (_editNamePopRef$curre4 = editNamePopRef.current) == null ? void 0 : _editNamePopRef$curre4.close();
+              },
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+                name: 'close',
+                color: "#333",
+                size: 24
+              })
+            })
+          })]
+        })
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_PopCenter.default, {
+        height: 226,
+        ref: qrCodePopRef,
+        showHeader: false,
+        showCancel: false,
+        confirmText: "\u5173\u95ED",
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _$$_REQUIRE(_dependencyMap[9], "./style").styles.qrCodeContainer,
+          children: lockInfo != null && lockInfo.qrCode ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Image, {
+            source: {
+              uri: lockInfo.qrCode
+            },
+            style: {
+              width: 160,
+              height: 160
+            },
+            resizeMode: "contain"
+          }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: {
+              color: '#999999'
+            },
+            children: "\u6682\u65E0\u4E8C\u7EF4\u7801"
+          })
+        })
+      })]
+    });
+  };
+  var _default = exports.default = DeviceInfo;
+},1508,[3,83,24,1,1270,41,1462,1509,90,1511,970,1451,542,1476],"src\\pages\\deviceInfo\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "./styles"));
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\PopCenter\\index.tsx";
+  /**
+   * 居中弹窗
+   * 用于展示居中的弹窗，包含标题、内容、底部按钮等
+   *
+   * @param showHeader 是否显示标题栏
+   * @param title 弹窗标题
+   * @param children 弹窗内容
+   * @param footer 弹窗底部按钮
+   * @param maskClosable 是否点击遮罩关闭弹窗
+   * @param onConfirm 确认回调
+   * @param onCancel 取消回调
+   * @param showCancel 是否显示取消按钮
+   * @param confirmText 确认按钮文本
+   * @param cancelText 取消按钮文本
+   * @param contentStyle 弹窗内容样式
+   * @param bodyStyle 弹窗主体样式
+   * @param width 弹窗宽度
+   * @param height 弹窗高度
+   * @param btnWidth 底部按钮宽度
+   */
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var PopCenter = (0, _react.forwardRef)(function (_ref, ref) {
+    var _ref$showHeader = _ref.showHeader,
+      showHeader = _ref$showHeader === void 0 ? true : _ref$showHeader,
+      title = _ref.title,
+      children = _ref.children,
+      _ref$footer = _ref.footer,
+      footer = _ref$footer === void 0 ? true : _ref$footer,
+      _ref$maskClosable = _ref.maskClosable,
+      maskClosable = _ref$maskClosable === void 0 ? false : _ref$maskClosable,
+      onConfirm = _ref.onConfirm,
+      onCancel = _ref.onCancel,
+      _ref$confirmText = _ref.confirmText,
+      confirmText = _ref$confirmText === void 0 ? '确定' : _ref$confirmText,
+      _ref$cancelText = _ref.cancelText,
+      cancelText = _ref$cancelText === void 0 ? '取消' : _ref$cancelText,
+      _ref$showCancel = _ref.showCancel,
+      showCancel = _ref$showCancel === void 0 ? true : _ref$showCancel,
+      contentStyle = _ref.contentStyle,
+      bodyStyle = _ref.bodyStyle,
+      _ref$width = _ref.width,
+      width = _ref$width === void 0 ? 311 : _ref$width,
+      _ref$height = _ref.height,
+      height = _ref$height === void 0 ? 268 : _ref$height,
+      _ref$btnWidth = _ref.btnWidth,
+      btnWidth = _ref$btnWidth === void 0 ? 124 : _ref$btnWidth;
+    var _useState = (0, _react.useState)(false),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      visible = _useState2[0],
+      setVisible = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      mounted = _useState4[0],
+      setMounted = _useState4[1];
+    var opacity = (0, _react.useRef)(new _reactNative.Animated.Value(0)).current;
+    var animateIn = (0, _react.useCallback)(function () {
+      opacity.stopAnimation();
+      opacity.setValue(0);
+      _reactNative.Animated.timing(opacity, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true
+      }).start();
+    }, [opacity]);
+    var close = (0, _react.useCallback)(function () {
+      opacity.stopAnimation();
+      _reactNative.Animated.timing(opacity, {
+        toValue: 0,
+        duration: 160,
+        useNativeDriver: true
+      }).start(function (_ref2) {
+        var finished = _ref2.finished;
+        if (!finished) return;
+        setVisible(false);
+        setMounted(false);
+      });
+    }, [opacity]);
+    (0, _react.useEffect)(function () {
+      if (visible) {
+        setMounted(true);
+        animateIn();
+      }
+    }, [animateIn, visible]);
+    (0, _react.useEffect)(function () {
+      if (!visible) return;
+      return function () {
+        opacity.stopAnimation();
+      };
+    }, [opacity, visible]);
+    (0, _react.useImperativeHandle)(ref, function () {
+      return {
+        open: function open() {
+          return setVisible(true);
+        },
+        close: close
+      };
+    });
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_reactNative.Modal, {
+      transparent: true,
+      visible: mounted,
+      onRequestClose: close,
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Animated.View, {
+        style: [_styles.default.mask, {
+          opacity: opacity
+        }],
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Pressable, {
+          style: _styles.default.maskPressable,
+          onPress: function onPress() {
+            if (!maskClosable) return;
+            close();
+          }
+        })
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
+        style: _styles.default.centerWrapper,
+        pointerEvents: "box-none",
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_reactNative.Animated.View, {
+          style: [_styles.default.panel, {
+            width: width,
+            height: height,
+            opacity: opacity,
+            transform: [{
+              scale: opacity.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.98, 1]
+              })
+            }]
+          }, contentStyle],
+          children: [showHeader ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _styles.default.header,
+            children: typeof title === 'string' ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.title,
+              numberOfLines: 1,
+              children: title
+            }) : title != null ? title : null
+          }) : null, /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: [bodyStyle, {
+              flex: 1,
+              display: 'flex'
+            }],
+            children: children
+          }), typeof footer === 'boolean' ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _styles.default.footer,
+            children: [showCancel ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              activeOpacity: 0.8,
+              style: [_styles.default.footerBtn, _styles.default.cancalBtn, {
+                width: btnWidth
+              }],
+              onPress: onCancel ? onCancel : close,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: [_styles.default.footerBtnText, _styles.default.cancalBtnText],
+                children: cancelText
+              })
+            }) : null, /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+              activeOpacity: 0.8,
+              style: [_styles.default.footerBtn, _styles.default.confirmBtn, {
+                width: btnWidth
+              }],
+              onPress: onConfirm ? onConfirm : close,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: [_styles.default.footerBtnText, _styles.default.confirmBtnText],
+                children: confirmText
+              })
+            })]
+          }) : footer ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _styles.default.footer,
+            children: footer
+          }) : null]
+        })
+      })]
+    });
+  });
+  var _default = exports.default = PopCenter;
+},1509,[3,24,41,1,1510,90],"src\\components\\PopCenter\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      width: '100%',
+      height: '100%'
+    },
+    mask: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject, {
+      backgroundColor: 'rgba(0,0,0,0.45)'
+    }),
+    maskPressable: {
+      flex: 1
+    },
+    centerWrapper: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject, {
+      alignItems: 'center',
+      justifyContent: 'center'
+    }),
+    panel: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 16,
+      overflow: 'hidden',
+      padding: 24
+    },
+    header: {
+      width: '100%'
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: '#333333',
+      textAlign: 'center'
+    },
+    footer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 15
+    },
+    footerBtn: {
+      paddingVertical: 11,
+      borderRadius: 12,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    footerBtnText: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: '#999',
+      textAlign: 'center'
+    },
+    cancalBtn: {
+      backgroundColor: '#fff',
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: 'rgba(0,0,0,0.1)'
+    },
+    confirmBtn: {
+      backgroundColor: '#333333'
+    },
+    cancalBtnText: {
+      color: '#999999'
+    },
+    confirmBtnText: {
+      color: '#ffffff'
+    }
+  });
+  var _default = exports.default = styles;
+},1510,[1],"src\\components\\PopCenter\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.styles = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = exports.styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 24,
+      paddingTop: 16,
+      gap: 16
+    },
+    cardTitleLine: {
+      width: 2,
+      height: 12,
+      backgroundColor: '#333333',
+      borderRadius: 7
+    },
+    cardTitle: {
+      fontWeight: '500',
+      fontSize: 14,
+      color: '#333333',
+      textAlign: 'left',
+      marginLeft: 6
+    },
+    cardRows: {
+      // width: '100%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 6
+    },
+    cardLable: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: '#333333'
+    },
+    cardValue: {
+      flex: 1,
+      fontSize: 14,
+      fontWeight: '400',
+      color: '#333333',
+      textAlign: 'right'
+    },
+    cardLine: {
+      height: 1,
+      backgroundColor: 'rgba(0,0,0,0.1)',
+      marginVertical: 8
+    },
+    qrCodeBtn: {
+      paddingVertical: 5,
+      paddingHorizontal: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#f7f7fb',
+      borderRadius: 12
+    },
+    qrCodeBtnText: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: '#333333',
+      marginHorizontal: 2
+    },
+    testBtn: {
+      paddingVertical: 4,
+      paddingHorizontal: 20,
+      backgroundColor: '#333333',
+      marginLeft: 8,
+      borderRadius: 26
+    },
+    testBtnText: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: '#FFFFFF'
+    },
+    toastText: {
+      marginTop: 8,
+      fontSize: 14,
+      fontWeight: '400',
+      color: '#999999'
+    },
+    footerBtnContainer: {
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    },
+    footerBtn: {
+      paddingVertical: 13,
+      paddingHorizontal: 42,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderStyle: 'solid'
+    },
+    cancelBtn: {
+      borderColor: 'rgba(0,0,0,0.1)'
+    },
+    confirmBtn: {
+      borderColor: '#FF2B24'
+    },
+    footerBtnText: {
+      fontSize: 16,
+      fontWeight: '400',
+      textAlign: 'center'
+    },
+    cancelBtnText: {
+      color: '#999999'
+    },
+    confirmBtnText: {
+      color: '#FF2B24'
+    },
+    // 编辑弹窗
+    header: {
+      alignItems: 'center'
+    },
+    headerTitle: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: '#333'
+    },
+    editContainer: {
+      backgroundColor: '#fff',
+      borderRadius: 16,
+      paddingTop: 16,
+      paddingHorizontal: 24,
+      position: 'relative'
+    },
+    closeIcon: {
+      position: 'absolute',
+      top: 16,
+      right: 16
+    },
+    editContent: {
+      marginTop: 24,
+      marginBottom: 36
+    },
+    editItem: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    editLabel: {
+      fontSize: 14,
+      color: '#333',
+      fontWeight: '500'
+    },
+    input: {
+      flex: 1,
+      textAlign: 'right',
+      fontSize: 16,
+      color: '#333',
+      padding: 0,
+      marginRight: 4
+    },
+    editFooter: {
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    },
+    editBtn: {
+      flex: 1,
+      height: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 12
+    },
+    cancelPopBtn: {
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: 'rgba(0,0,0,0.1)',
+      marginRight: 15
+    },
+    confirmPopBtn: {
+      backgroundColor: '#333',
+      // Dark theme primary
+      marginLeft: 10
+    },
+    cancelText: {
+      color: '#666',
+      fontSize: 16
+    },
+    confirmText: {
+      color: '#fff',
+      fontSize: 16
+    },
+    // 电源模式提示
+    powerModeTooltip: {
+      position: 'absolute',
+      bottom: -34,
+      right: -8,
+      backgroundColor: '#333',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 12,
+      zIndex: 10
+    },
+    powerModeTooltipText: {
+      fontSize: 12,
+      fontWeight: '400',
+      color: '#fff',
+      textAlign: 'right'
+    },
+    qrCodeContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 8,
+      marginBottom: 16
+    }
+  });
+},1511,[1],"src\\pages\\deviceInfo\\style.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = MemberList;
+  var _toConsumableArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[5], "react-native");
+  var _popConfirm = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "../../components/popConfirm"));
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "../../iconfont"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "./styles"));
+  var _GradientButton = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[9], "../../components/GradientButton"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\memberList\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var PAGE_SIZE = 20;
+  function MemberList() {
+    var _this = this,
+      _currentRow$username;
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useNavigation)();
+    var _useState = (0, _react.useState)([]),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      list = _useState2[0],
+      setList = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      complete = _useState4[0],
+      setComplete = _useState4[1];
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      loading = _useState6[0],
+      setLoading = _useState6[1];
+    var _useState7 = (0, _react.useState)(false),
+      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
+      refreshing = _useState8[0],
+      setRefreshing = _useState8[1];
+    var _useState9 = (0, _react.useState)(false),
+      _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
+      initialLoading = _useState0[0],
+      setInitialLoading = _useState0[1];
+    var _useState1 = (0, _react.useState)(null),
+      _useState10 = (0, _slicedToArray2.default)(_useState1, 2),
+      currentRow = _useState10[0],
+      setCurrentRow = _useState10[1];
+    var deleteRef = (0, _react.useRef)(null);
+    var loadData = (0, _react.useCallback)(/*#__PURE__*/function () {
+      var _ref = (0, _asyncToGenerator2.default)(function* (refresh) {
+        if (loading) return;
+        if (refresh) {
+          setRefreshing(true);
+          setInitialLoading(true);
+        } else {
+          setLoading(true);
+        }
+        try {
+          var offset = refresh ? 0 : list.length;
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../services/user").getStaffList)({
+            pageSize: PAGE_SIZE,
+            offset: offset
+          });
+          if (res.code === 200 && res.success) {
+            var _data$list;
+            var data = res.data || {};
+            var rows = Array.isArray(data.list) ? data.list : (_data$list = data.list) != null ? _data$list : [];
+            setList(function (prev) {
+              return refresh ? rows : [].concat((0, _toConsumableArray2.default)(prev), (0, _toConsumableArray2.default)(rows));
+            });
+            setComplete(rows.length < PAGE_SIZE);
+          } else {
+            _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail(res.msg || res.message || '获取成员列表失败');
+          }
+        } catch (e) {
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('获取成员列表失败');
+        } finally {
+          setLoading(false);
+          setRefreshing(false);
+          setInitialLoading(false);
+        }
+      });
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }(), [list.length, loading]);
+    (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useFocusEffect)((0, _react.useCallback)(function () {
+      loadData(true);
+      return;
+    }, [loadData]));
+    var handleLoadMore = (0, _react.useCallback)(function () {
+      if (!loading && !complete && list.length > 0) {
+        void loadData(false);
+      }
+    }, [loading, complete, list.length, loadData]);
+    var handleRefresh = (0, _react.useCallback)(function () {
+      void loadData(true);
+    }, [loadData]);
+    var handleDeleteConfirm = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (!currentRow) return false;
+      try {
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../services/user").deleteStaff)({
+          id: currentRow.id
+        });
+        if (res.code === 200 && res.success) {
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.success('删除成功');
+          setList(function (prev) {
+            return prev.filter(function (item) {
+              return item.id !== currentRow.id;
+            });
+          });
+          setCurrentRow(null);
+          return true;
+        }
+        _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail(res.msg || res.message || '删除失败');
+        return false;
+      } catch (e) {
+        _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('删除失败');
+        return false;
+      }
+    }), [currentRow]);
+    var renderItem = (0, _react.useCallback)(function (_ref3) {
+      var item = _ref3.item;
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+        activeOpacity: 0.8,
+        style: _styles.default.card,
+        onPress: function onPress() {
+          // 这里可以跳转到成员编辑页面，后续根据需要实现
+          navigation.navigate('AddMember', {
+            id: item.id
+          });
+        },
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _styles.default.row,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.username,
+            children: item.username
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+            activeOpacity: 0.8,
+            style: _styles.default.editRow,
+            onPress: function onPress(e) {
+              // 阻止事件继续冒泡到外层卡片
+              e.stopPropagation == null || e.stopPropagation();
+              navigation.navigate('AddMember', {
+                id: item.id
+              });
+            },
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.username,
+              children: "\u7F16\u8F91"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_iconfont.default, {
+              name: "a-headfor-20",
+              size: 12,
+              color: "#333333"
+            })]
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: [_styles.default.row, {
+            marginTop: 10
+          }],
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.mobile,
+            children: item.mobile
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+            activeOpacity: 0.8,
+            onPress: function onPress(e) {
+              var _deleteRef$current;
+              e.stopPropagation == null || e.stopPropagation();
+              setCurrentRow(item);
+              (_deleteRef$current = deleteRef.current) == null || _deleteRef$current.open();
+            },
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.removeText,
+              children: "\u79FB\u9664"
+            })
+          })]
+        })]
+      });
+    }, []);
+    var keyExtractor = (0, _react.useCallback)(function (item) {
+      var _item$id;
+      return String((_item$id = item.id) != null ? _item$id : item.mobile);
+    }, []);
+    var listEmptyComponent = (0, _react.useMemo)(function () {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: _styles.default.emptyContainer,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Image, {
+          source: {
+            uri: 'https://g.18qjz.cn/img/boklock/empty.png'
+          },
+          resizeMode: "contain",
+          style: {
+            width: 80,
+            height: 80
+          }
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+          style: _styles.default.emptyText,
+          children: "\u6682\u65E0\u6210\u5458"
+        })]
+      });
+    }, []);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[14], "../../components").PageContainer, {
+      backgroundColor: "#F6F7FA",
+      statusBarStyle: "dark-content",
+      statusBarBackgroundColor: "#FFFFFF",
+      safeAreaEdges: ['top', 'bottom'],
+      scrollable: false,
+      pageNavProps: {
+        text: '成员管理',
+        showBack: true,
+        background: '#FFFFFF'
+      }
+      // loading={initialLoading}
+      ,
+      footer: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.View, {
+        style: _styles.default.footer,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_GradientButton.default, {
+          btnBorderRadius: 16,
+          width: 196,
+          height: 48,
+          colors: ['#4A4A4A', '#282828'],
+          style: _styles.default.buttonWrap,
+          onPress: function onPress() {
+            navigation.navigate('AddMember');
+          },
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.addButtonText,
+            children: "\u6DFB\u52A0\u6210\u5458"
+          })
+        })
+      }),
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: _styles.default.container,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.FlatList, {
+          data: list,
+          keyExtractor: keyExtractor,
+          renderItem: renderItem,
+          contentContainerStyle: _styles.default.listContent,
+          onEndReached: handleLoadMore,
+          onEndReachedThreshold: 0.3,
+          refreshControl: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.RefreshControl, {
+            refreshing: refreshing,
+            onRefresh: handleRefresh
+          }),
+          ListEmptyComponent: listEmptyComponent
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_popConfirm.default, {
+          ref: deleteRef,
+          marginTop32: true,
+          textWeight: "bold",
+          title: `确定要移除【${(_currentRow$username = currentRow == null ? void 0 : currentRow.username) != null ? _currentRow$username : ''}】吗？`,
+          onConfirm: handleDeleteConfirm
+        })]
+      })
+    });
+  }
+},1512,[3,6,83,24,41,1,536,1270,1513,540,970,1452,542,90,1476],"src\\pages\\memberList\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      paddingBottom: 16
+    },
+    listContent: {
+      paddingBottom: 80,
+      flexGrow: 1
+    },
+    card: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 12,
+      padding: 16,
+      marginTop: 12
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    username: {
+      fontSize: 14,
+      color: '#333333',
+      fontWeight: 'bold',
+      lineHeight: 20
+    },
+    mobile: {
+      fontSize: 14,
+      color: '#999999',
+      lineHeight: 20
+    },
+    editRow: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    removeText: {
+      fontSize: 14,
+      color: '#999999',
+      paddingRight: 12
+    },
+    footer: {
+      marginBottom: 34,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    buttonWrap: {
+      boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)',
+      borderRadius: 16
+    },
+    addButtonText: {
+      color: '#FFFFFF',
+      fontSize: 16,
+      fontWeight: 'bold',
+      lineHeight: 22
+    },
+    emptyText: {
+      textAlign: 'center',
+      color: '#999999',
+      fontSize: 14
+    },
+    emptyContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingBottom: 100
+    }
+  });
+  var _default = exports.default = styles;
+},1513,[1],"src\\pages\\memberList\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = AddMember;
+  var _toConsumableArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[5], "react-native");
+  var _lockItem = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./com/lockItem"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./styles"));
+  var _GradientButton = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "../../components/GradientButton"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\addMember\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var PAGE_SIZE = 20;
+  function AddMember() {
+    var _route$params,
+      _this = this,
+      _info$username,
+      _info$mobile;
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useNavigation)();
+    var route = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useRoute)();
+    var memberId = (_route$params = route.params) != null && _route$params.id ? Number(route.params.id) : undefined;
+    var _useState = (0, _react.useState)(null),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      info = _useState2[0],
+      setInfo = _useState2[1];
+    var _useState3 = (0, _react.useState)([]),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      locks = _useState4[0],
+      setLocks = _useState4[1];
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      complete = _useState6[0],
+      setComplete = _useState6[1];
+    var _useState7 = (0, _react.useState)(false),
+      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
+      loading = _useState8[0],
+      setLoading = _useState8[1];
+    var _useState9 = (0, _react.useState)(false),
+      _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
+      initialLoading = _useState0[0],
+      setInitialLoading = _useState0[1];
+    var hasSelected = (0, _react.useMemo)(function () {
+      return locks.some(function (item) {
+        return item.isBind;
+      });
+    }, [locks]);
+    var disabled = (0, _react.useMemo)(function () {
+      if (!info) return true;
+      if (!info.username || !info.mobile) return true;
+      if (!(0, _$$_REQUIRE(_dependencyMap[10], "../../utils").mobileExp)(info.mobile)) return true;
+      if (!hasSelected) return true;
+      return false;
+    }, [info, hasSelected]);
+    var loadDetail = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (!memberId) {
+        // 新增成员，不需要请求详情，只初始化空对象
+        setInfo({
+          id: 0,
+          userId: 0,
+          username: '',
+          mobile: ''
+        });
+        return;
+      }
+      var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../services/user").staffDetail)({
+        id: memberId
+      });
+      if (res.code === 200 && res.success) {
+        setInfo(res.data);
+      } else {
+        _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail(res.msg || res.message || '获取成员详情失败');
+      }
+    }), [memberId]);
+    var loadLocks = (0, _react.useCallback)(/*#__PURE__*/function () {
+      var _ref2 = (0, _asyncToGenerator2.default)(function* (refresh) {
+        if (loading) return;
+        if (refresh) {
+          setInitialLoading(true);
+        } else {
+          setLoading(true);
+        }
+        try {
+          var offset = refresh ? 0 : locks.length;
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../services/user").staffLockList)({
+            id: memberId,
+            pageSize: PAGE_SIZE,
+            offset: offset
+          });
+          if (res.code === 200 && res.success) {
+            var _data$list;
+            var data = res.data || {};
+            var rows = Array.isArray(data.list) ? data.list : (_data$list = data.list) != null ? _data$list : [];
+            setLocks(function (prev) {
+              return refresh ? rows : [].concat((0, _toConsumableArray2.default)(prev), (0, _toConsumableArray2.default)(rows));
+            });
+            setComplete(rows.length < PAGE_SIZE);
+          } else {
+            _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail(res.msg || res.message || '获取地锁列表失败');
+          }
+        } catch (e) {
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('获取地锁列表失败');
+        } finally {
+          setLoading(false);
+          setInitialLoading(false);
+        }
+      });
+      return function (_x) {
+        return _ref2.apply(this, arguments);
+      };
+    }(), [locks.length, memberId, loading]);
+    (0, _react.useEffect)(function () {
+      void (0, _asyncToGenerator2.default)(function* () {
+        setInitialLoading(true);
+        try {
+          yield loadDetail();
+          yield loadLocks(true);
+        } finally {
+          setInitialLoading(false);
+        }
+      })();
+    }, [loadDetail, loadLocks]);
+    var handleUpdateLock = (0, _react.useCallback)(function (next) {
+      setLocks(function (prev) {
+        return prev.map(function (item) {
+          return item.id === next.id ? next : item;
+        });
+      });
+    }, []);
+    var handleSubmit = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (!info) return;
+      if (!info.username) {
+        _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('请输入成员昵称');
+        return;
+      }
+      if (!info.mobile) {
+        _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('请输入手机号');
+        return;
+      }
+      if (!(0, _$$_REQUIRE(_dependencyMap[10], "../../utils").mobileExp)(info.mobile)) {
+        _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('请输入正确的手机号');
+        return;
+      }
+      var selectedLocks = locks.filter(function (item) {
+        return item.isBind;
+      });
+      if (selectedLocks.length === 0) {
+        _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('至少选择一个地锁');
+        return;
+      }
+      try {
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../services/user").modifyStaff)(Object.assign({}, info, {
+          lockList: selectedLocks
+        }));
+        if (res.code === 200 && res.success) {
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.success('操作成功');
+          navigation.goBack();
+        } else {
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail(res.msg || res.message || '操作失败');
+        }
+      } catch (e) {
+        _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('操作失败');
+      }
+    }), [info, locks, navigation]);
+    var renderLockItem = (0, _react.useCallback)(function (_ref5) {
+      var item = _ref5.item;
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_lockItem.default, {
+        data: item,
+        onChange: handleUpdateLock
+      });
+    }, [handleUpdateLock]);
+    var keyExtractor = (0, _react.useCallback)(function (item, index) {
+      var _item$id;
+      return String((_item$id = item.id) != null ? _item$id : index);
+    }, []);
+    var title = (0, _react.useMemo)(function () {
+      return memberId ? '编辑成员' : '新增成员';
+    }, [memberId]);
+    var listEmptyComponent = (0, _react.useMemo)(function () {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: _styles.default.emptyContainer,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Image, {
+          source: {
+            uri: 'https://g.18qjz.cn/img/boklock/empty.png'
+          },
+          resizeMode: "contain",
+          style: {
+            width: 80,
+            height: 80
+          }
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+          style: _styles.default.emptyText,
+          children: "\u6682\u65E0\u6210\u5458"
+        })]
+      });
+    }, []);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[14], "../../components").PageContainer, {
+      backgroundColor: "#FFFFFF",
+      statusBarStyle: "dark-content",
+      statusBarBackgroundColor: "#FFFFFF",
+      safeAreaEdges: ['top', 'bottom'],
+      scrollable: false,
+      pageNavProps: {
+        text: title,
+        showBack: true,
+        background: '#FFFFFF'
+      }
+      // loading={initialLoading}
+      ,
+      footer: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.View, {
+        style: _styles.default.footer,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_GradientButton.default, {
+          btnBorderRadius: 16,
+          width: 196,
+          height: 48,
+          colors: disabled ? ['#999999', '#999999'] : ['#333333', '#333333'],
+          style: _styles.default.submitButton,
+          onPress: function onPress() {
+            if (!disabled) {
+              void handleSubmit();
+            }
+          },
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.submitButtonText,
+            children: memberId ? '确定编辑' : '确定新增'
+          })
+        })
+      }),
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: _styles.default.container,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _styles.default.fieldRow,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.fieldLabel,
+            children: "\u6210\u5458\u6635\u79F0"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.TextInput, {
+            value: (_info$username = info == null ? void 0 : info.username) != null ? _info$username : '',
+            placeholder: "\u8BF7\u8F93\u5165",
+            placeholderTextColor: "#CCCCCC",
+            style: _styles.default.fieldInput,
+            textAlign: "right",
+            onChangeText: function onChangeText(text) {
+              return setInfo(function (prev) {
+                return prev ? Object.assign({}, prev, {
+                  username: text
+                }) : prev;
+              });
+            }
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _styles.default.fieldRow,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.fieldLabel,
+            children: "\u6210\u5458\u624B\u673A\u53F7\u7801"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.TextInput, {
+            value: (_info$mobile = info == null ? void 0 : info.mobile) != null ? _info$mobile : '',
+            placeholder: "\u8BF7\u8F93\u5165",
+            placeholderTextColor: "#CCCCCC",
+            style: _styles.default.fieldInput,
+            textAlign: "right",
+            keyboardType: "number-pad",
+            maxLength: 11,
+            onChangeText: function onChangeText(text) {
+              return setInfo(function (prev) {
+                return prev ? Object.assign({}, prev, {
+                  mobile: text
+                }) : prev;
+              });
+            }
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _styles.default.sectionHeader,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.sectionTitle,
+            children: "\u6388\u6743\u64CD\u4F5C\u5730\u9501"
+          })
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.FlatList, {
+          data: locks,
+          keyExtractor: keyExtractor,
+          renderItem: renderLockItem,
+          contentContainerStyle: _styles.default.lockListContent,
+          ListEmptyComponent: listEmptyComponent
+        })]
+      })
+    });
+  }
+},1514,[3,6,83,24,41,1,1515,1517,540,970,968,1452,542,90,1476],"src\\pages\\addMember\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = LockItem;
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _dayjs = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "dayjs"));
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../../../../iconfont"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./styles"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\addMember\\com\\lockItem\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  function LockItem(_ref) {
+    var _data$groupCount;
+    var data = _ref.data,
+      onChange = _ref.onChange;
+    var _useState = (0, _react.useState)(false),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      pickerVisible = _useState2[0],
+      setPickerVisible = _useState2[1];
+    var lockTypeText = (0, _react.useMemo)(function () {
+      if (data.lockType === 1) return '单个设备';
+      if (data.lockType === 2) return '组合设备';
+      return data.lockTypeName || '';
+    }, [data.lockType, data.lockTypeName]);
+    var onToggleBind = (0, _react.useCallback)(function () {
+      var next = Object.assign({}, data, {
+        isBind: !data.isBind
+      }, data.isForever === null || data.isForever === undefined ? {
+        isForever: true
+      } : {});
+      onChange(next);
+    }, [data, onChange]);
+    var onSelectForever = (0, _react.useCallback)(function () {
+      onChange(Object.assign({}, data, {
+        isBind: true,
+        isForever: true,
+        endTime: null
+      }));
+    }, [data, onChange]);
+    var onSelectCustom = (0, _react.useCallback)(function () {
+      var _data$endTime;
+      onChange(Object.assign({}, data, {
+        isBind: true,
+        isForever: false,
+        endTime: (_data$endTime = data.endTime) != null ? _data$endTime : (0, _dayjs.default)().add(30, 'day').valueOf()
+      }));
+    }, [data, onChange]);
+    var endDate = (0, _react.useMemo)(function () {
+      var _data$endTime2;
+      var v = (_data$endTime2 = data.endTime) != null ? _data$endTime2 : (0, _dayjs.default)().add(30, 'day').valueOf();
+      return new Date(v);
+    }, [data.endTime]);
+    var endDateText = (0, _react.useMemo)(function () {
+      if (!data.endTime) return (0, _dayjs.default)().add(30, 'day').format('YYYY-MM-DD');
+      return (0, _dayjs.default)(data.endTime).format('YYYY-MM-DD');
+    }, [data.endTime]);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").Fragment, {
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+        activeOpacity: 0.9,
+        style: _styles.default.card,
+        onPress: onToggleBind,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: [_styles.default.checkBox, data.isBind && _styles.default.checked],
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_iconfont.default, {
+            name: "tick-white",
+            color: "#FFFFFF",
+            size: 20
+          })
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _styles.default.content,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _styles.default.topRow,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.lockName,
+              numberOfLines: 1,
+              children: data.lockName
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.lockType,
+                children: lockTypeText
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                style: _styles.default.iconRow,
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Image, {
+                  source: data.imageUrl ? {
+                    uri: data.imageUrl
+                  } : undefined,
+                  style: _styles.default.lockImage,
+                  resizeMode: "cover"
+                }), data.lockType === 2 ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                  style: _styles.default.multiBox,
+                  children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_iconfont.default, {
+                    size: 6,
+                    color: "#333333",
+                    name: "multiplication"
+                  }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                    style: _styles.default.count,
+                    children: (_data$groupCount = data.groupCount) != null ? _data$groupCount : ''
+                  })]
+                }) : null]
+              })]
+            })]
+          }), data.isBind ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").Fragment, {
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _styles.default.line
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: _styles.default.validityRow,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.label,
+                children: "\u6709\u6548\u671F"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                style: _styles.default.rightArea,
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                  style: _styles.default.optionRow,
+                  children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+                    activeOpacity: 0.8,
+                    style: _styles.default.option,
+                    onPress: onSelectForever,
+                    children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_iconfont.default, {
+                      name: data.isForever ? 'selected' : 'unselected',
+                      size: 20,
+                      color: data.isForever ? '#333333' : '#E1E1E1'
+                    }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                      style: _styles.default.optionText,
+                      children: "\u6C38\u4E45"
+                    })]
+                  }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+                    activeOpacity: 0.8,
+                    style: [_styles.default.option, _styles.default.optionGap],
+                    onPress: onSelectCustom,
+                    children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_iconfont.default, {
+                      name: !data.isForever ? 'selected' : 'unselected',
+                      size: 18,
+                      color: !data.isForever ? '#333333' : '#E1E1E1'
+                    }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                      style: _styles.default.optionText,
+                      children: "\u81EA\u5B9A\u4E49"
+                    })]
+                  })]
+                }), !data.isForever ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+                  activeOpacity: 0.8,
+                  style: _styles.default.endtimeBox,
+                  onPress: function onPress() {
+                    return setPickerVisible(true);
+                  },
+                  children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                    style: _styles.default.optionText,
+                    children: "\u622A\u6B62\u81F3"
+                  }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                    style: _styles.default.endTime,
+                    children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                      style: _styles.default.endTimeText,
+                      children: endDateText
+                    }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_reactNative.View, {
+                      style: _styles.default.arrow,
+                      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_iconfont.default, {
+                        name: "a-headfor-20",
+                        size: 16,
+                        color: "#333333"
+                      })
+                    })]
+                  })]
+                }) : null]
+              })]
+            })]
+          }) : null]
+        })]
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[8], "@ant-design/react-native").DatePicker, {
+        visible: pickerVisible,
+        title: "\u9009\u62E9\u622A\u6B62\u65E5\u671F",
+        value: endDate,
+        mode: "date",
+        minDate: new Date(),
+        onVisibleChange: function onVisibleChange(v) {
+          return setPickerVisible(v);
+        },
+        onOk: function onOk(d) {
+          onChange(Object.assign({}, data, {
+            isBind: true,
+            isForever: false,
+            endTime: (0, _dayjs.default)(d).valueOf()
+          }));
+          setPickerVisible(false);
+        }
+      })]
+    });
+  }
+},1515,[3,24,41,1,603,1270,1516,90,542],"src\\pages\\addMember\\com\\lockItem\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    card: {
+      flexDirection: 'row',
+      marginTop: 12,
+      backgroundColor: '#F7F7FB',
+      borderRadius: 12,
+      overflow: 'hidden'
+    },
+    checkBox: {
+      backgroundColor: '#EAEAEE',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 2
+    },
+    checked: {
+      backgroundColor: '#333333'
+    },
+    content: {
+      flex: 1,
+      padding: 16
+    },
+    topRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    },
+    lockName: {
+      flex: 1,
+      fontSize: 16,
+      color: '#333333',
+      fontWeight: 'bold',
+      lineHeight: 22
+    },
+    lockType: {
+      fontSize: 10,
+      color: '#333333',
+      fontWeight: 'bold',
+      lineHeight: 14,
+      marginLeft: 5
+    },
+    iconRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'flex-end',
+      marginTop: 6
+    },
+    lockImage: {
+      width: 36,
+      height: 36,
+      top: 4
+    },
+    multiBox: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      marginLeft: 6
+    },
+    count: {
+      fontSize: 14,
+      color: '#333333',
+      fontWeight: 'bold',
+      lineHeight: 40
+    },
+    line: {
+      marginTop: 10,
+      marginBottom: 10,
+      height: _reactNative.StyleSheet.hairlineWidth,
+      backgroundColor: 'rgba(51,51,51,0.1)'
+    },
+    validityRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    },
+    label: {
+      fontSize: 14,
+      color: '#333333',
+      fontWeight: 'bold'
+    },
+    rightArea: {
+      flexDirection: 'column',
+      alignItems: 'flex-end'
+    },
+    optionRow: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    option: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    optionText: {
+      fontSize: 14,
+      color: '#333333',
+      marginLeft: 6,
+      fontWeight: 'bold'
+    },
+    optionGap: {
+      marginLeft: 14
+    },
+    endtimeBox: {
+      marginTop: 10,
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    endTime: {
+      marginLeft: 10,
+      borderWidth: 1,
+      borderColor: '#333333',
+      borderRadius: 10,
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    endTimeText: {
+      fontSize: 14,
+      color: '#333333'
+    },
+    arrow: {
+      marginLeft: 6
+    }
+  });
+  var _default = exports.default = styles;
+},1516,[1],"src\\pages\\addMember\\com\\lockItem\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      paddingBottom: 16,
+      backgroundColor: '#FFFFFF'
+    },
+    fieldRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      paddingVertical: 12
+    },
+    fieldLabel: {
+      fontSize: 14,
+      color: '#333333',
+      fontWeight: 'bold',
+      lineHeight: 20
+    },
+    fieldInput: {
+      flex: 1,
+      marginLeft: 16,
+      fontSize: 14,
+      color: '#333333',
+      paddingVertical: 0
+    },
+    sectionHeader: {
+      paddingHorizontal: 16,
+      paddingTop: 18,
+      paddingBottom: 6
+    },
+    sectionTitle: {
+      fontSize: 14,
+      color: '#333333',
+      fontWeight: '600'
+    },
+    lockListContent: {
+      paddingHorizontal: 16,
+      paddingTop: 4,
+      paddingBottom: 80
+    },
+    lockItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: '#F0F0F0'
+    },
+    lockInfo: {
+      flexDirection: 'column',
+      flex: 1,
+      marginRight: 12
+    },
+    lockName: {
+      fontSize: 14,
+      color: '#333333',
+      fontWeight: '500'
+    },
+    lockDesc: {
+      fontSize: 12,
+      color: '#999999',
+      marginTop: 4
+    },
+    lockRight: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    lockStatus: {
+      fontSize: 12,
+      color: '#999999',
+      marginRight: 8
+    },
+    lockStatusActive: {
+      color: '#333333'
+    },
+    footer: {
+      marginBottom: 34,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    submitButton: {
+      boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)'
+    },
+    submitButtonText: {
+      color: '#FFFFFF',
+      fontSize: 16,
+      fontWeight: 'bold',
+      lineHeight: 22
+    },
+    emptyText: {
+      textAlign: 'center',
+      color: '#999999',
+      fontSize: 14
+    },
+    emptyContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      flex: 1
+    },
+    emptyImage: {
+      width: 80,
+      height: 80
+    }
+  });
+  var _default = exports.default = styles;
+},1517,[1],"src\\pages\\addMember\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Shopping;
+  var _toConsumableArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[5], "react-native");
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "../../iconfont"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "./styles"));
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\shopping\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var CARD_HEIGHT = 164;
+  var CARD_WIDTH = (_reactNative.Dimensions.get('window').width - 32 - 13) / 2;
+  var GoodsCard = function GoodsCard(_ref) {
+    var data = _ref.data,
+      _onPress = _ref.onPress;
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+      activeOpacity: 0.9,
+      style: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        marginBottom: 12,
+        overflow: 'hidden',
+        width: CARD_WIDTH
+      },
+      onPress: function onPress() {
+        return _onPress(data.id);
+      },
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Image, {
+        source: {
+          uri: data.mainImage
+        },
+        style: {
+          width: '100%',
+          height: CARD_HEIGHT,
+          borderRadius: 12
+        },
+        resizeMode: "cover"
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: {
+          paddingLeft: 13,
+          paddingBottom: 12
+        },
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+          style: {
+            fontSize: 14,
+            color: '#333333',
+            fontWeight: 'bold',
+            marginVertical: 8
+          },
+          numberOfLines: 2,
+          children: data.productName
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[9], "../../components").Flex, {
+          align: "center",
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+            style: {
+              color: '#FF0000',
+              fontSize: 14,
+              fontWeight: 'bold'
+            },
+            children: ["\xA5", data.currentPrice]
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+            style: {
+              fontSize: 12,
+              marginLeft: 4,
+              color: '#CCCCCC',
+              textDecorationLine: 'line-through'
+            },
+            children: ["\xA5", data.originalPrice]
+          })]
+        })]
+      })]
+    });
+  };
+  var PAGE_SIZE = 10;
+  function Shopping() {
+    var _this2 = this;
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useNavigation)();
+    var _useState = (0, _react.useState)([]),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      goodsList = _useState2[0],
+      setGoodsList = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      loading = _useState4[0],
+      setLoading = _useState4[1];
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      complete = _useState6[0],
+      setComplete = _useState6[1];
+    var loadList = (0, _react.useCallback)(/*#__PURE__*/function () {
+      var _ref2 = (0, _asyncToGenerator2.default)(function* (reload) {
+        if (loading) return;
+        setLoading(true);
+        try {
+          var offset = reload ? 0 : goodsList.length;
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../services/mall").getGoodsList)({
+            offset: offset,
+            pageSize: PAGE_SIZE
+          });
+          if (res.code === 200 && res.success) {
+            var _res$data;
+            var list = ((_res$data = res.data) == null ? void 0 : _res$data.list) || [];
+            var next = reload ? list : [].concat((0, _toConsumableArray2.default)(goodsList), (0, _toConsumableArray2.default)(list));
+            setGoodsList(next);
+            setComplete(list.length < PAGE_SIZE);
+          } else {
+            _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail(res.msg || res.message || '获取商品列表失败');
+          }
+        } catch (e) {
+          _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail('获取商品列表失败');
+        } finally {
+          setLoading(false);
+        }
+      });
+      return function (_x) {
+        return _ref2.apply(this, arguments);
+      };
+    }(), [goodsList, loading]);
+    (0, _react.useEffect)(function () {
+      void loadList(true);
+    }, [loadList]);
+    var handlePressItem = (0, _react.useCallback)(function (id) {
+      navigation.navigate('GoodsDetail', {
+        id: id
+      });
+    }, [navigation]);
+    var footer = /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.View, {
+      style: _styles.default.bottomBtnContent,
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+        activeOpacity: 0.8,
+        style: _styles.default.bottomBtn,
+        onPress: function onPress() {
+          navigation.navigate('PickupCode');
+        },
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.Text, {
+          style: _styles.default.bottomBtnText,
+          children: "\u63D0\u8D27\u7801"
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_iconfont.default, {
+          name: "a-nextpage",
+          color: "#333333",
+          size: 20
+        })]
+      })
+    });
+    var renderItem = (0, _react.useCallback)(function (_ref3) {
+      var item = _ref3.item;
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(GoodsCard, {
+        data: item,
+        onPress: handlePressItem
+      });
+    }, [handlePressItem]);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[9], "../../components").PageContainer, {
+      backgroundColor: "#F6F7FA",
+      statusBarStyle: "dark-content",
+      statusBarBackgroundColor: "#FFFFFF",
+      safeAreaEdges: ['top', 'bottom'],
+      scrollable: false,
+      pageNavProps: {
+        text: '泊刻地锁商城',
+        showBack: true,
+        background: '#FFFFFF'
+      },
+      loading: loading && !goodsList.length,
+      footer: footer,
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.View, {
+        style: {
+          flex: 1
+        },
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime").jsx)(_reactNative.FlatList, {
+          style: {
+            flex: 1
+          },
+          data: goodsList,
+          keyExtractor: function keyExtractor(item) {
+            return String(item.id);
+          },
+          numColumns: 2,
+          renderItem: renderItem,
+          contentContainerStyle: _styles.default.container,
+          columnWrapperStyle: _styles.default.goodsList,
+          onEndReached: function onEndReached() {
+            if (!loading && !complete) {
+              void loadList(false);
+            }
+          },
+          onEndReachedThreshold: 0.3
+        })
+      })
+    });
+  }
+},1518,[3,6,83,24,41,1,1270,1519,90,1476,970,1456,542],"src\\pages\\shopping\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      paddingTop: 12,
+      paddingHorizontal: 16,
+      backgroundColor: '#F6F7FA',
+      paddingBottom: 12
+    },
+    goodsList: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between'
+    },
+    bottomBtnContent: {
+      width: '100%',
+      backgroundColor: '#F7F7FB',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingBottom: 10
+    },
+    bottomBtn: {
+      width: 108,
+      height: 36,
+      borderRadius: 12,
+      backgroundColor: '#FFFFFF',
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.05)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      boxShadow: '0 2px 12px 0 rgba(0, 0, 0, 0.25)'
+    },
+    bottomBtnText: {
+      fontSize: 14,
+      color: '#333333',
+      paddingLeft: 8,
+      fontWeight: 'bold'
+    }
+  });
+  var _default = exports.default = styles;
+},1519,[1],"src\\pages\\shopping\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = GoodsDetail;
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
+  var _GradientButton = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../../components/GradientButton"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./styles"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\goodsDetail\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  function GoodsDetail() {
+    var _route$params,
+      _this = this;
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useNavigation)();
+    var route = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useRoute)();
+    var productId = (_route$params = route.params) != null && _route$params.id ? String(route.params.id) : '';
+    var _useState = (0, _react.useState)(null),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      goodsDetail = _useState2[0],
+      setGoodsDetail = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      loading = _useState4[0],
+      setLoading = _useState4[1];
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      popupVisible = _useState6[0],
+      setPopupVisible = _useState6[1];
+    var _useState7 = (0, _react.useState)(1),
+      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
+      productNum = _useState8[0],
+      setProductNum = _useState8[1];
+    // 详情长图宽高比，用于自适应高度
+    var _useState9 = (0, _react.useState)([]),
+      _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
+      detailRatios = _useState0[0],
+      setDetailRatios = _useState0[1];
+    var loadDetail = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (!productId) {
+        _$$_REQUIRE(_dependencyMap[8], "@ant-design/react-native").Toast.fail('商品ID不存在');
+        navigation.goBack();
+        return;
+      }
+      setLoading(true);
+      try {
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[9], "../../services/mall").getGoodsDetail)({
+          productId: productId
+        });
+        if (res.code === 200 && res.success) {
+          setGoodsDetail(res.data);
+        } else {
+          _$$_REQUIRE(_dependencyMap[8], "@ant-design/react-native").Toast.fail(res.msg || res.message || '获取商品详情失败');
+          navigation.goBack();
+        }
+      } catch (e) {
+        _$$_REQUIRE(_dependencyMap[8], "@ant-design/react-native").Toast.fail('获取商品详情失败');
+        navigation.goBack();
+      } finally {
+        setLoading(false);
+      }
+    }), [productId, navigation]);
+    (0, _react.useEffect)(function () {
+      void loadDetail();
+    }, [loadDetail]);
+    var handleBuy = (0, _react.useCallback)(function () {
+      if (!goodsDetail) return;
+      setProductNum(1); // 重置数量为1
+      setPopupVisible(true);
+    }, [goodsDetail]);
+    var handleConfirmBuy = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (!goodsDetail) return;
+      try {
+        var _tokenRes$data;
+        // 获取小程序 token
+        var tokenRes = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../services/common").getMiniToken)({});
+        if (!tokenRes.success || !((_tokenRes$data = tokenRes.data) != null && _tokenRes$data.token)) {
+          _$$_REQUIRE(_dependencyMap[8], "@ant-design/react-native").Toast.fail('获取小程序token失败');
+          return;
+        }
+
+        // 构建跳转参数
+        var params = {
+          productId: goodsDetail.id,
+          productNum: productNum,
+          currentPrice: goodsDetail.currentPrice,
+          productName: goodsDetail.productName,
+          token: tokenRes.data.token
+        };
+
+        // 打开小程序购买页面
+        var queryString = Object.keys(params).map(function (key) {
+          return `${key}=${encodeURIComponent(String(params[key]))}`;
+        }).join('&');
+        var result = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/wechat").wechatOpenMiniProgram)(`pages/mall/buyResult/index?${queryString}`);
+        if (result.result) {
+          setPopupVisible(false);
+        } else {
+          _$$_REQUIRE(_dependencyMap[8], "@ant-design/react-native").Toast.fail(result.message || '打开小程序失败');
+        }
+      } catch (error) {
+        _$$_REQUIRE(_dependencyMap[8], "@ant-design/react-native").Toast.fail((error == null ? void 0 : error.message) || '购买失败，请重试');
+      }
+    }), [goodsDetail, productNum]);
+    var footer = /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.View, {
+      style: _styles.default.footer,
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_GradientButton.default, {
+        style: _styles.default.buyButton,
+        width: 191,
+        height: 48,
+        colors: ['#020101ff', '#282828'],
+        onPress: handleBuy,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+          style: _styles.default.buyButtonText,
+          children: "\u7ACB\u5373\u8D2D\u4E70"
+        })
+      })
+    });
+
+    // 计算详情长图的宽高比，保证在当前屏幕宽度下等比显示
+    (0, _react.useEffect)(function () {
+      if (!(goodsDetail != null && goodsDetail.detailImage) || goodsDetail.detailImage.length === 0) {
+        setDetailRatios([]);
+        return;
+      }
+      var urls = goodsDetail.detailImage;
+      var tasks = urls.map(function (url) {
+        return new Promise(function (resolve) {
+          _reactNative.Image.getSize(url, function (w, h) {
+            if (w > 0 && h > 0) {
+              resolve(w / h);
+            } else {
+              resolve(0.75); // 默认比例，防止为 0
+            }
+          }, function () {
+            return resolve(0.75);
+          });
+        });
+      });
+      void Promise.all(tasks).then(function (ratios) {
+        setDetailRatios(ratios);
+      });
+    }, [goodsDetail == null ? void 0 : goodsDetail.detailImage]);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").PageContainer, {
+      backgroundColor: "#F6F7FA",
+      statusBarStyle: "dark-content",
+      statusBarBackgroundColor: "#FFFFFF",
+      safeAreaEdges: ['top', 'bottom'],
+      scrollable: true,
+      pageNavProps: {
+        text: '商品详情',
+        showBack: true,
+        background: '#FFFFFF'
+      },
+      loading: loading,
+      footer: footer,
+      children: [goodsDetail && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").Fragment, {
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          direction: 'column',
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[8], "@ant-design/react-native").Carousel, {
+            autoplay: true,
+            autoplayInterval: 3000,
+            dots: true,
+            style: _styles.default.swiper,
+            children: goodsDetail.mainImage && goodsDetail.mainImage.length > 0 ? goodsDetail.mainImage.map(function (mainImage, index) {
+              return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.View, {
+                style: {
+                  width: '100%',
+                  height: '100%'
+                },
+                children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Image, {
+                  source: {
+                    uri: mainImage
+                  },
+                  style: {
+                    width: '100%',
+                    height: '100%'
+                  },
+                  resizeMode: "contain"
+                })
+              }, mainImage);
+            }) : null
+          })
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _styles.default.detailInfo,
+          direction: 'column',
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+            justify: 'between',
+            align: 'end',
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+              align: 'center',
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+                style: _styles.default.detailPrice,
+                children: ["\xA5", goodsDetail.currentPrice]
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+                style: _styles.default.detailOriginalPrice,
+                children: ["\xA5", goodsDetail.originalPrice]
+              })]
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+              style: _styles.default.detailSaleNum,
+              children: ["\u6708\u552E\uFF1A", goodsDetail.saleNum]
+            })]
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.detailName,
+            children: goodsDetail.productName
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+            style: _styles.default.detailStock,
+            children: ["\u5E93\u5B58\uFF1A", goodsDetail.stock]
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          style: _styles.default.detailTitle,
+          align: 'center',
+          justify: 'center',
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _styles.default.line
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.detailTitleText,
+            children: "\u5546\u54C1\u8BE6\u60C5"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _styles.default.line
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+          direction: "column",
+          justify: "center",
+          align: "center",
+          style: _styles.default.detail,
+          children: goodsDetail != null && goodsDetail.detailImage && goodsDetail.detailImage.length > 0 ? goodsDetail.detailImage.map(function (detailImage, index) {
+            return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              source: {
+                uri: detailImage
+              },
+              style: {
+                width: '100%',
+                aspectRatio: detailRatios[index] || 0.75
+              },
+              resizeMode: "cover"
+            }, index);
+          }) : null
+        })]
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").Popup, {
+        visible: popupVisible,
+        onClose: function onClose() {
+          return setPopupVisible(false);
+        },
+        title: "",
+        children: goodsDetail && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _styles.default.popupContent,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+            style: _styles.default.popupBody,
+            children: [goodsDetail.detailImage && goodsDetail.detailImage[0] ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              source: {
+                uri: goodsDetail.detailImage[0]
+              },
+              style: _styles.default.popupImage,
+              resizeMode: "cover"
+            }) : null, /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+              direction: "column",
+              style: _styles.default.popupInfo,
+              justify: "between",
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.popupTitle,
+                numberOfLines: 2,
+                children: goodsDetail.productName
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+                style: _styles.default.popupPrice,
+                children: ["\xA5", goodsDetail.currentPrice]
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+                align: "center",
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").Stepper, {
+                  initValue: productNum,
+                  min: 1,
+                  size: 24,
+                  max: goodsDetail.stock,
+                  onChange: function onChange(value) {
+                    setProductNum(Number(value));
+                  }
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+                  style: _styles.default.popupStock,
+                  children: ["\u5E93\u5B58\uFF1A", goodsDetail.stock]
+                })]
+              })]
+            })]
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+            justify: "center",
+            style: _styles.default.popupFooter,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_GradientButton.default, {
+              style: _styles.default.goodsPopupBuyBtn,
+              width: 156,
+              height: 48,
+              colors: ['#333333', '#333333'],
+              onPress: handleConfirmBuy,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[12], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.popupBuyText,
+                children: "\u8D2D\u4E70"
+              })
+            })
+          })]
+        })
+      })]
+    });
+  }
+},1520,[3,83,24,41,1,540,1521,970,542,1456,957,1175,90,1476],"src\\pages\\goodsDetail\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var screenWidth = _reactNative.Dimensions.get('window').width;
+  var styles = _reactNative.StyleSheet.create({
+    scrollContent: {
+      paddingBottom: 100
+    },
+    swiper: {
+      width: screenWidth,
+      height: 280,
+      backgroundColor: '#FFFFFF'
+    },
+    detailInfo: {
+      marginTop: 12,
+      marginHorizontal: 16,
+      paddingHorizontal: 16,
+      paddingTop: 16,
+      paddingBottom: 20,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 12
+    },
+    detailPrice: {
+      color: '#FF0000',
+      fontSize: 20,
+      fontWeight: 'bold'
+    },
+    detailOriginalPrice: {
+      fontSize: 12,
+      marginLeft: 8,
+      color: '#CCCCCC',
+      textDecorationLine: 'line-through'
+    },
+    detailSaleNum: {
+      fontSize: 12,
+      color: '#CCCCCC'
+    },
+    detailName: {
+      fontSize: 16,
+      color: '#333333',
+      marginVertical: 8,
+      fontWeight: 'bold'
+    },
+    detailStock: {
+      fontSize: 12,
+      color: '#999999'
+    },
+    detailTitle: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 20,
+      marginBottom: 16
+    },
+    detailTitleText: {
+      fontSize: 16,
+      color: '#333333',
+      marginHorizontal: 12
+    },
+    line: {
+      width: 24,
+      height: 1,
+      borderWidth: 1,
+      borderColor: 'rgba(51, 51, 51, 0.1)'
+    },
+    detail: {
+      width: '100%'
+    },
+    footer: {
+      width: '100%',
+      paddingBottom: 21,
+      // backgroundColor: 'rgba(255, 255, 255, 0.7)',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    buyButton: {
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    buyButtonText: {
+      color: '#FFFFFF',
+      fontSize: 16
+    },
+    popupContent: {
+      backgroundColor: '#FFFFFF',
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      padding: 24,
+      width: '100%',
+      position: 'relative'
+    },
+    popupBody: {
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+      marginTop: 0
+    },
+    popupImage: {
+      width: 100,
+      height: 100,
+      borderRadius: 15
+    },
+    popupInfo: {
+      flex: 1,
+      marginLeft: 12
+    },
+    popupTitle: {
+      fontSize: 16,
+      color: '#333333',
+      fontWeight: 'bold',
+      marginBottom: 0
+    },
+    popupPrice: {
+      fontSize: 16,
+      color: '#FF2B24',
+      fontWeight: 'bold',
+      marginBottom: 0
+    },
+    stepper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#E5E5E5',
+      borderRadius: 4
+    },
+    stepperBtn: {
+      width: 48,
+      height: 48,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    stepperBtnText: {
+      fontSize: 24,
+      color: '#333333',
+      fontWeight: '600'
+    },
+    stepperValue: {
+      minWidth: 60,
+      textAlign: 'center',
+      fontSize: 24,
+      color: '#333333',
+      paddingHorizontal: 12
+    },
+    popupStock: {
+      fontSize: 12,
+      color: '#333333',
+      marginLeft: 12
+    },
+    popupFooter: {
+      marginTop: 48,
+      paddingHorizontal: 0,
+      paddingTop: 0
+    },
+    goodsPopupBuyBtn: {
+      borderRadius: 12
+    },
+    popupBuyText: {
+      color: '#FFFFFF',
+      fontSize: 16,
+      fontWeight: 'bold'
+    }
+  });
+  var _default = exports.default = styles;
+},1521,[1],"src\\pages\\goodsDetail\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = PickupCode;
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
+  var _popConfirm = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../../components/popConfirm"));
+  var _GradientButton = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "../../components/GradientButton"));
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "../../iconfont"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "./styles"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\pickupCode\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  function PickupCode() {
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useNavigation)();
+    var confirmRef = (0, _react.useRef)(null);
+    var _useState = (0, _react.useState)(''),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      pickupCode = _useState2[0],
+      setPickupCode = _useState2[1];
+    var _useState3 = (0, _react.useState)(''),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      deviceImg = _useState4[0],
+      setDeviceImg = _useState4[1];
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      successVisible = _useState6[0],
+      setSuccessVisible = _useState6[1];
+
+    // 页面显示时检查是否有扫码或跳转传入的提货码
+    (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useFocusEffect)((0, _react.useCallback)(function () {
+      var loadCode = /*#__PURE__*/function () {
+        var _ref = (0, _asyncToGenerator2.default)(function* () {
+          try {
+            // 检查扫码传入的提货码
+            var scanRes = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getStorage)({
+              key: 'PICKUP_CODE_FROM_SCAN'
+            });
+            if (scanRes) {
+              setPickupCode(scanRes);
+              yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").removeStorage)({
+                key: 'PICKUP_CODE_FROM_SCAN'
+              });
+              return;
+            }
+
+            // 检查跳转传入的提货码
+            var jumpRes = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getStorage)({
+              key: 'pickupCodeJump'
+            });
+            if (jumpRes != null && jumpRes.path) {
+              var path = jumpRes.path;
+              var match = path.match(/[?&]pk=([^&]+)/);
+              var encodedPk = match && match[1];
+              if (encodedPk) {
+                setPickupCode(decodeURIComponent(encodedPk));
+              }
+              yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").removeStorage)({
+                key: 'pickupCodeJump'
+              });
+            }
+          } catch (e) {
+            // 忽略错误
+          }
+        });
+        return function loadCode() {
+          return _ref.apply(this, arguments);
+        };
+      }();
+      void loadCode();
+    }, []));
+
+    // 获取提货码详情
+    var handleGetCodeDetail = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var code = pickupCode.trim();
+      if (!code) {
+        _$$_REQUIRE(_dependencyMap[11], "@ant-design/react-native").Toast.fail('请输入提货码');
+        return false;
+      }
+      try {
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../services/mall").getPickupCodeDetail)({
+          pickupCode: code
+        });
+        if (res.code === 200 && res.success) {
+          var _res$data;
+          setDeviceImg(((_res$data = res.data) == null ? void 0 : _res$data.imageUrl) || '');
+          return true;
+        }
+        _$$_REQUIRE(_dependencyMap[11], "@ant-design/react-native").Toast.fail(res.msg || res.message || '提货码无效，请检查后重试');
+        return false;
+      } catch (e) {
+        _$$_REQUIRE(_dependencyMap[11], "@ant-design/react-native").Toast.fail('网络异常，请稍后重试');
+        return false;
+      }
+    }), [pickupCode]);
+
+    // 确认领取
+    var handleConfirmPickup = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var code = pickupCode.trim();
+      if (!code) {
+        _$$_REQUIRE(_dependencyMap[11], "@ant-design/react-native").Toast.fail('请输入提货码');
+        return false;
+      }
+      try {
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../services/mall").confirmPickupCode)({
+          pickupCode: code
+        });
+        if (res.code === 200 && res.success) {
+          return true;
+        }
+        _$$_REQUIRE(_dependencyMap[11], "@ant-design/react-native").Toast.fail(res.msg || res.message || '提货失败，请稍后重试');
+        return false;
+      } catch (e) {
+        _$$_REQUIRE(_dependencyMap[11], "@ant-design/react-native").Toast.fail('提货失败，请稍后重试');
+        return false;
+      }
+    }), [pickupCode]);
+
+    // 立即领取
+    var handleSubmit = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var ok = yield handleGetCodeDetail();
+      if (ok) {
+        var _confirmRef$current;
+        (_confirmRef$current = confirmRef.current) == null || _confirmRef$current.open();
+      }
+    }), [handleGetCodeDetail]);
+
+    // 确认领取
+    var handleConfirm = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var _confirmRef$current2;
+      var ok = yield handleConfirmPickup();
+      (_confirmRef$current2 = confirmRef.current) == null || _confirmRef$current2.close();
+      if (ok) {
+        setPickupCode('');
+        setSuccessVisible(true);
+      }
+    }), [handleConfirmPickup]);
+
+    // 扫码填入
+    var handleScan = (0, _react.useCallback)(function () {
+      navigation.navigate('ScanPickupCode');
+    }, []);
+
+    // 领取记录
+    var handleRecord = (0, _react.useCallback)(function () {
+      navigation.navigate('PickupCodeRecordList');
+    }, [navigation]);
+    var canSubmit = pickupCode.trim().length === 19;
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").PageContainer, {
+      backgroundColor: "transparent",
+      statusBarStyle: "light-content",
+      statusBarBackgroundColor: "transparent",
+      safeAreaEdges: ['top', 'bottom'],
+      scrollable: true,
+      pageNavProps: {
+        text: '提货码',
+        showBack: true,
+        background: 'transparent',
+        titleColor: '#FFFFFF'
+      },
+      backgroundImageHeight: 400,
+      backgroundImage: {
+        uri: 'https://g.18qjz.cn/img/boklock/pickupCode/rcvBg2.png'
+      },
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+        direction: "column",
+        justify: "between",
+        style: _styles.default.container,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+          direction: "column",
+          justify: "center",
+          align: "center",
+          style: _styles.default.codeBox,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.codeBoxTitle,
+            children: "\u51ED\u6709\u6548\u63D0\u8D27\u7801\u53EF\u9886\u53D6\u4E00\u53F0\u6CCA\u523B\u5730\u9501"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _styles.default.codeInput,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.TextInput, {
+              value: pickupCode,
+              onChangeText: setPickupCode,
+              placeholder: "\u8BF7\u8F93\u5165\u63D0\u8D27\u7801\uFF0C\u8BF7\u6CE8\u610F\u533A\u5206\u5927\u5C0F\u5199\uFF01",
+              placeholderTextColor: "#CCCCCC",
+              maxLength: 19,
+              style: _styles.default.codeInputText,
+              autoCapitalize: "characters"
+            })
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+            activeOpacity: 0.8,
+            style: _styles.default.scanBox,
+            onPress: handleScan,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_iconfont.default, {
+              name: "a-scanQRcodes1",
+              color: "#333333",
+              size: 16
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.scanBoxText,
+              children: "\u626B\u7801\u586B\u5165"
+            })]
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_GradientButton.default, {
+            colors: canSubmit ? ['#333333', '#333333'] : ['#CCCCCC', '#CCCCCC'],
+            width: 196,
+            height: 48,
+            style: _styles.default.submitBtn,
+            onPress: handleSubmit,
+            disabled: !canSubmit,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.submitBtnText,
+              children: "\u7ACB\u5373\u9886\u53D6"
+            })
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+            activeOpacity: 0.8,
+            style: _styles.default.bottomBtn,
+            onPress: handleRecord,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.bottomBtnText,
+              children: "\u9886\u53D6\u8BB0\u5F55"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_iconfont.default, {
+              name: "a-nextpage",
+              color: "#333333",
+              size: 16
+            })]
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+          direction: "column",
+          style: _styles.default.tipsBox,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.tipsTitle,
+            children: "\u63D0\u8D27\u8BF4\u660E\uFF1A"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.tipsItem,
+            children: "1\u3001\u51ED\u6709\u6548\u63D0\u8D27\u7801\u53EF\u9886\u53D6\u4E00\u53F0\u6CCA\u523B\u5730\u9501\uFF0C\u7801\u5230\u5373\u5F97\u3002"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.tipsItem,
+            children: "2\u3001\u8BF7\u51C6\u786E\u586B\u5199\u6536\u8D27\u5730\u5740\uFF0C\u4FE1\u606F\u786E\u8BA4\u540E\uFF0C\u5C06\u7531\u5BA2\u670D\u4EBA\u5458\u4E0E\u60A8\u786E\u8BA4\u53D1\u8D27\u4E8B\u5B9C\u3002"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.tipsItem,
+            children: "3\u3001\u4E25\u7981\u901A\u8FC7\u975E\u6B63\u5F53\u9014\u5F84\u83B7\u53D6\u6216\u4F7F\u7528\u63D0\u8D27\u7801\u3002\u5982\u53D1\u73B0\u8FDD\u89C4\u884C\u4E3A\uFF0C\u5E73\u53F0\u6709\u6743\u6536\u56DE\u5730\u9501\u5E76\u53D6\u6D88\u76F8\u5173\u6743\u76CA\u3002"
+          })]
+        })]
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_popConfirm.default, {
+        ref: confirmRef,
+        title: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+          direction: "column",
+          align: "center",
+          justify: "center",
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            children: "\u786E\u8BA4\u8981\u9886\u53D6\u5417\uFF1F"
+          }), deviceImg ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _styles.default.deviceImgBox,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              source: {
+                uri: deviceImg
+              },
+              style: _styles.default.deviceImage,
+              resizeMode: "contain"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+              direction: "row",
+              align: "end",
+              style: _styles.default.numBox,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.numBoxText,
+                children: "x"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.numBoxText2,
+                children: "1"
+              })]
+            })]
+          }) : null]
+        }),
+        cancelText: "\u53D6\u6D88",
+        confirmText: "\u786E\u5B9A\u9886\u53D6",
+        onConfirm: handleConfirm
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[14], "../../components").Popup, {
+        visible: successVisible,
+        onClose: function onClose() {
+          return setSuccessVisible(false);
+        },
+        title: "\u606D\u559C\u60A8\u9886\u53D6\u6210\u529F",
+        minHeight: 420,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _styles.default.successContent,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+            direction: "column",
+            align: "center",
+            justify: "center",
+            style: _styles.default.successContentBox,
+            children: [deviceImg ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: _styles.default.deviceImgBox,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Image, {
+                source: {
+                  uri: deviceImg
+                },
+                style: _styles.default.deviceImage,
+                resizeMode: "contain"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+                direction: "row",
+                align: "end",
+                style: _styles.default.numBox,
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: _styles.default.numBoxText,
+                  children: "x"
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: _styles.default.numBoxText2,
+                  children: "1"
+                })]
+              })]
+            }) : null, /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: _styles.default.qrCodeContent,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Image, {
+                source: {
+                  uri: 'https://g.18qjz.cn/img/boklock/pickupCode/custServiceQRCode.png'
+                },
+                style: _styles.default.qrCodeImage,
+                resizeMode: "contain"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[13], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.qrCodeContentText,
+                children: "\u53D1\u8D27\u53CA\u9884\u7EA6\u5B89\u88C5\u8BF7\u6DFB\u52A0\u5BA2\u670D\u4F01\u4E1A\u5FAE\u4FE1"
+              })]
+            })]
+          })
+        })
+      })]
+    });
+  }
+},1522,[3,83,24,41,1,536,540,1270,1523,970,968,542,1456,90,1476],"src\\pages\\pickupCode\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var screenWidth = _reactNative.Dimensions.get('window').width;
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      width: '100%',
+      paddingTop: 0,
+      paddingBottom: 37,
+      paddingHorizontal: 24
+    },
+    codeBox: {
+      marginTop: 115,
+      marginBottom: 20
+    },
+    codeBoxTitle: {
+      textAlign: 'center',
+      fontSize: 16,
+      color: '#FFFFFF',
+      fontWeight: 'bold'
+    },
+    codeInput: {
+      marginTop: 48,
+      width: '100%',
+      height: 48,
+      fontSize: 14,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: '#E5E5E5',
+      paddingHorizontal: 12,
+      backgroundColor: '#FFFFFF'
+    },
+    codeInputText: {
+      width: '100%',
+      height: '100%',
+      fontSize: 14,
+      color: '#333333'
+    },
+    scanBox: {
+      width: 102,
+      height: 30,
+      marginTop: 16,
+      borderRadius: 12,
+      marginBottom: 123,
+      backgroundColor: '#F7F7FB',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    scanBoxText: {
+      fontSize: 14,
+      lineHeight: 30,
+      color: '#333333',
+      marginLeft: 6,
+      fontWeight: 'bold'
+    },
+    submitBtn: {
+      marginBottom: 16,
+      borderRadius: 16
+    },
+    submitBtnText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#FFFFFF'
+    },
+    bottomBtn: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    bottomBtnText: {
+      fontSize: 14,
+      color: '#333333',
+      fontWeight: 'bold'
+    },
+    tipsBox: {
+      marginTop: 20
+    },
+    tipsTitle: {
+      fontSize: 12,
+      color: '#3D3D3D',
+      marginBottom: 8
+    },
+    tipsItem: {
+      color: '#999999',
+      fontSize: 12,
+      lineHeight: 17
+    },
+    deviceImgBox: {
+      width: 120,
+      height: 60,
+      marginTop: 20,
+      position: 'relative'
+    },
+    deviceImage: {
+      width: 120,
+      height: 60
+    },
+    numBox: {
+      position: 'absolute',
+      top: -10,
+      right: -10
+    },
+    numBoxText: {
+      fontSize: 18,
+      color: '#333333',
+      paddingBottom: 3,
+      fontWeight: 'bold'
+    },
+    numBoxText2: {
+      color: '#333333',
+      fontSize: 24,
+      fontWeight: 'bold'
+    },
+    successContent: {
+      paddingHorizontal: 24,
+      paddingBottom: 24
+    },
+    successContentBox: {
+      marginBottom: 24,
+      width: '100%'
+    },
+    qrCodeContent: {
+      width: '100%',
+      minHeight: 176,
+      marginTop: 32,
+      marginHorizontal: 26,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: '#EAEAEA',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    qrCodeImage: {
+      width: 120,
+      height: 120,
+      marginTop: 8
+    },
+    qrCodeContentText: {
+      fontSize: 14,
+      color: '#333333',
+      marginTop: 12,
+      textAlign: 'center'
+    },
+    popupTitle: {
+      fontSize: 16,
+      color: '#333333',
+      fontWeight: 'bold',
+      marginBottom: 0
+    }
+  });
+  var _default = exports.default = styles;
+},1523,[1],"src\\pages\\pickupCode\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = ScanPickupCode;
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "./styles"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\scanPickupCode\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  function ScanPickupCode() {
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[6], "@react-navigation/native").useNavigation)();
+    var _useCameraPermission = (0, _$$_REQUIRE(_dependencyMap[7], "react-native-vision-camera").useCameraPermission)(),
+      hasPermission = _useCameraPermission.hasPermission,
+      requestPermission = _useCameraPermission.requestPermission;
+    var _useState = (0, _react.useState)(true),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      isActive = _useState2[0],
+      setIsActive = _useState2[1];
+    var hasScannedRef = (0, _react.useRef)(false);
+    var device = (0, _$$_REQUIRE(_dependencyMap[7], "react-native-vision-camera").useCameraDevice)('back');
+
+    // 检查相机权限
+    (0, _react.useEffect)(function () {
+      var init = /*#__PURE__*/function () {
+        var _ref = (0, _asyncToGenerator2.default)(function* () {
+          yield requestPermission();
+        });
+        return function init() {
+          return _ref.apply(this, arguments);
+        };
+      }();
+      void init();
+    }, [navigation]);
+
+    // 页面聚焦时激活相机，失焦时停用
+    (0, _$$_REQUIRE(_dependencyMap[6], "@react-navigation/native").useFocusEffect)((0, _react.useCallback)(function () {
+      setIsActive(true);
+      hasScannedRef.current = false;
+      return function () {
+        setIsActive(false);
+      };
+    }, []));
+
+    // 处理扫码结果
+    var handleScanResult = (0, _react.useCallback)(/*#__PURE__*/function () {
+      var _ref2 = (0, _asyncToGenerator2.default)(function* (code) {
+        console.log('code', code);
+        if (hasScannedRef.current) return;
+        hasScannedRef.current = true;
+
+        // 解析提货码：匹配 https://m-boke(-dev)?.18qjz.cn/?pk=19位码
+        var match = code.match(/^https:\/\/m-boke(?:-dev)?\.18qjz\.cn\/?\?pk=([0-9A-Za-z-]{19})$/);
+        if (match && match[1]) {
+          var pk = match[1];
+          try {
+            yield (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").setStorage)({
+              key: 'PICKUP_CODE_FROM_SCAN',
+              data: pk
+            });
+            _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.success('识别成功');
+            setTimeout(function () {
+              navigation.goBack();
+            }, 500);
+          } catch (error) {
+            _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail('保存提货码失败');
+            hasScannedRef.current = false;
+          }
+        } else {
+          // 如果不是正确的提货码链接，显示错误并重置
+          _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail('请扫描正确的提货码');
+          setTimeout(function () {
+            hasScannedRef.current = false;
+          }, 2000);
+        }
+      });
+      return function (_x) {
+        return _ref2.apply(this, arguments);
+      };
+    }(), [navigation]);
+
+    // 配置扫码器
+    var codeScanner = _$$_REQUIRE(_dependencyMap[7], "react-native-vision-camera").useCodeScanner ? (0, _$$_REQUIRE(_dependencyMap[7], "react-native-vision-camera").useCodeScanner)({
+      codeTypes: ['qr'],
+      onCodeScanned: function onCodeScanned(codes) {
+        var _codes$;
+        if (codes && Array.isArray(codes) && codes.length > 0 && (_codes$ = codes[0]) != null && _codes$.value) {
+          void handleScanResult(codes[0].value);
+        }
+      }
+    }) : null;
+    if (!hasPermission) {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../../components").PageContainer, {
+        backgroundColor: "#000000",
+        statusBarStyle: "light-content",
+        statusBarBackgroundColor: "#000000",
+        safeAreaEdges: ['top', 'bottom'],
+        scrollable: false,
+        pageNavProps: {
+          text: '扫描',
+          showBack: true,
+          background: 'transparent',
+          titleColor: '#FFFFFF',
+          onBackPress: function onBackPress() {
+            return navigation.goBack();
+          }
+        },
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _styles.default.container,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[11], "../../components").Flex, {
+            direction: "column",
+            align: "center",
+            justify: "center",
+            style: _styles.default.cameraArea,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.ActivityIndicator, {
+              size: "large",
+              color: "#FFFFFF"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.tipText,
+              children: "\u6B63\u5728\u8BF7\u6C42\u76F8\u673A\u6743\u9650..."
+            })]
+          })
+        })
+      });
+    }
+    if (!device) {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../../components").PageContainer, {
+        backgroundColor: "#000000",
+        statusBarStyle: "light-content",
+        statusBarBackgroundColor: "#000000",
+        safeAreaEdges: ['top', 'bottom'],
+        scrollable: false,
+        pageNavProps: {
+          text: '扫描',
+          showBack: true,
+          background: 'transparent',
+          titleColor: '#FFFFFF',
+          onBackPress: function onBackPress() {
+            return navigation.goBack();
+          }
+        },
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _styles.default.container,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../../components").Flex, {
+            direction: "column",
+            align: "center",
+            justify: "center",
+            style: _styles.default.cameraArea,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.tipText,
+              children: "\u65E0\u6CD5\u8BBF\u95EE\u76F8\u673A\u8BBE\u5907"
+            })
+          })
+        })
+      });
+    }
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../../components").PageContainer, {
+      backgroundColor: "#000000",
+      statusBarStyle: "light-content",
+      statusBarBackgroundColor: "#000000",
+      safeAreaEdges: ['top', 'bottom'],
+      scrollable: false,
+      pageNavProps: {
+        text: '扫描',
+        showBack: true,
+        background: 'transparent',
+        titleColor: '#FFFFFF',
+        onBackPress: function onBackPress() {
+          return navigation.goBack();
+        }
+      },
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: _styles.default.container,
+        children: [_$$_REQUIRE(_dependencyMap[7], "react-native-vision-camera").Camera && device && codeScanner && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[7], "react-native-vision-camera").Camera, {
+          style: _styles.default.camera,
+          device: device,
+          isActive: isActive,
+          codeScanner: codeScanner
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _styles.default.cameraMask,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+            style: _styles.default.scanFrameWrapper,
+            children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              source: {
+                uri: 'https://g.18qjz.cn/img/boklock/device_scan.png'
+              },
+              style: _styles.default.scanFrame,
+              resizeMode: "contain"
+            })
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.tipText,
+            children: "\u8BF7\u5C06\u63D0\u8D27\u7801\u4E8C\u7EF4\u7801\u5BF9\u51C6\u6846\u5185"
+          })]
+        })]
+      })
+    });
+  }
+},1524,[3,83,24,41,1,1525,970,1526,968,542,90,1476],"src\\pages\\scanPickupCode\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var screenWidth = _reactNative.Dimensions.get('window').width;
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#000000',
+      position: 'relative'
+    },
+    customTitle: {
+      width: '100%',
+      height: 50,
+      zIndex: 10,
+      marginTop: 20
+    },
+    camera: {
+      flex: 1,
+      width: '100%'
+    },
+    cameraArea: {
+      flex: 1,
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    cameraMask: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    },
+    scanFrameWrapper: {
+      width: screenWidth * 0.7,
+      height: screenWidth * 0.7,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    scanFrame: {
+      width: '100%',
+      height: '100%'
+    },
+    tipText: {
+      marginTop: 24,
+      fontSize: 14,
+      color: '#FFFFFF',
+      textAlign: 'center'
+    }
+  });
+  var _default = exports.default = styles;
+},1525,[1],"src\\pages\\scanPickupCode\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[0], "./Camera")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[0], "./Camera")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[0], "./Camera")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[1], "./CameraError")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[1], "./CameraError")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[1], "./CameraError")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[2], "./types/CameraDevice")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[2], "./types/CameraDevice")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[2], "./types/CameraDevice")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[3], "./types/CameraProps")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[3], "./types/CameraProps")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[3], "./types/CameraProps")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[4], "./types/Frame")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[4], "./types/Frame")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[4], "./types/Frame")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[5], "./types/Orientation")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[5], "./types/Orientation")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[5], "./types/Orientation")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[6], "./types/OutputOrientation")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[6], "./types/OutputOrientation")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[6], "./types/OutputOrientation")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[7], "./types/PhotoFile")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[7], "./types/PhotoFile")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[7], "./types/PhotoFile")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[8], "./types/Snapshot")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[8], "./types/Snapshot")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[8], "./types/Snapshot")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[9], "./types/PixelFormat")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[9], "./types/PixelFormat")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[9], "./types/PixelFormat")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[10], "./types/Point")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[10], "./types/Point")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[10], "./types/Point")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[11], "./types/VideoFile")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[11], "./types/VideoFile")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[11], "./types/VideoFile")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[12], "./types/CodeScanner")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[12], "./types/CodeScanner")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[12], "./types/CodeScanner")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[13], "./devices/getCameraFormat")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[13], "./devices/getCameraFormat")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[13], "./devices/getCameraFormat")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[14], "./devices/getCameraDevice")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[14], "./devices/getCameraDevice")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[14], "./devices/getCameraDevice")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[15], "./devices/Templates")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[15], "./devices/Templates")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[15], "./devices/Templates")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[16], "./hooks/useCameraDevice")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[16], "./hooks/useCameraDevice")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[16], "./hooks/useCameraDevice")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[17], "./hooks/useCameraDevices")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[17], "./hooks/useCameraDevices")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[17], "./hooks/useCameraDevices")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[18], "./hooks/useCameraFormat")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[18], "./hooks/useCameraFormat")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[18], "./hooks/useCameraFormat")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[19], "./hooks/useCameraPermission")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[19], "./hooks/useCameraPermission")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[19], "./hooks/useCameraPermission")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[20], "./hooks/useCodeScanner")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[20], "./hooks/useCodeScanner")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[20], "./hooks/useCodeScanner")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[21], "./hooks/useFrameProcessor")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[21], "./hooks/useFrameProcessor")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[21], "./hooks/useFrameProcessor")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[22], "./frame-processors/runAsync")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[22], "./frame-processors/runAsync")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[22], "./frame-processors/runAsync")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[23], "./frame-processors/runAtTargetFps")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[23], "./frame-processors/runAtTargetFps")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[23], "./frame-processors/runAtTargetFps")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[24], "./frame-processors/VisionCameraProxy")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[24], "./frame-processors/VisionCameraProxy")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[24], "./frame-processors/VisionCameraProxy")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[25], "./skia/useSkiaFrameProcessor")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[25], "./skia/useSkiaFrameProcessor")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[25], "./skia/useSkiaFrameProcessor")[key];
+      }
+    });
+  });
+},1526,[1527,1529,1541,1542,1543,1544,1545,1546,1547,1548,1549,1550,1551,1552,1553,1554,1555,1556,1557,1558,1559,1560,1564,1565,1532,1566],"node_modules\\react-native-vision-camera\\src\\index.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.Camera = void 0;
+  var _toConsumableArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/objectWithoutProperties"));
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/asyncToGenerator"));
+  var _classCallCheck2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "@babel/runtime/helpers/classCallCheck"));
+  var _createClass2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "@babel/runtime/helpers/createClass"));
+  var _possibleConstructorReturn2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "@babel/runtime/helpers/possibleConstructorReturn"));
+  var _getPrototypeOf2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "@babel/runtime/helpers/getPrototypeOf"));
+  var _inherits2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[8], "@babel/runtime/helpers/inherits"));
+  var _react = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[9], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[10], "react-native");
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\Camera.tsx";
+  var _excluded = ["onRecordingError", "onRecordingFinished"],
+    _excluded2 = ["device", "frameProcessor", "codeScanner", "enableFpsGraph", "fps", "videoBitRate"];
+  function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+  function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); } //#region Types
+  //#endregion
+
+  function isSkiaFrameProcessor(frameProcessor) {
+    return (frameProcessor == null ? void 0 : frameProcessor.type) === 'drawable-skia';
+  }
+
+  //#region Camera Component
+  /**
+   * ### A powerful `<Camera>` component.
+   *
+   * Read the [VisionCamera documentation](https://react-native-vision-camera.com/) for more information.
+   *
+   * The `<Camera>` component's most important properties are:
+   *
+   * * {@linkcode CameraProps.device | device}: Specifies the {@linkcode CameraDevice} to use. Get a {@linkcode CameraDevice} by using
+   * the {@linkcode useCameraDevice | useCameraDevice(..)} hook, or manually by using
+   * the {@linkcode CameraDevices.getAvailableCameraDevices | CameraDevices.getAvailableCameraDevices()} function.
+   * * {@linkcode CameraProps.isActive | isActive}: A boolean value that specifies whether the Camera should
+   * actively stream video frames or not. This can be compared to a Video component, where `isActive` specifies whether the video
+   * is paused or not. If you fully unmount the `<Camera>` component instead of using `isActive={false}`, the Camera will take a bit longer to start again.
+   *
+   * @example
+   * ```tsx
+   * function App() {
+   *   const device = useCameraDevice('back')
+   *
+   *   if (device == null) return <NoCameraErrorView />
+   *   return (
+   *     <Camera
+   *       style={StyleSheet.absoluteFill}
+   *       device={device}
+   *       isActive={true}
+   *     />
+   *   )
+   * }
+   * ```
+   *
+   * @component
+   */
+  var Camera = exports.Camera = /*#__PURE__*/function (_React$PureComponent) {
+    /** @internal */
+    function Camera(props) {
+      var _this;
+      (0, _classCallCheck2.default)(this, Camera);
+      _this = _callSuper(this, Camera, [props]);
+      /** @internal */
+      _this.displayName = Camera.displayName;
+      _this.isNativeViewMounted = false;
+      _this.lastUIRotation = undefined;
+      _this.rotationHelper = new (_$$_REQUIRE(_dependencyMap[11], "./RotationHelper").RotationHelper)();
+      _this.onViewReady = _this.onViewReady.bind(_this);
+      _this.onAverageFpsChanged = _this.onAverageFpsChanged.bind(_this);
+      _this.onInitialized = _this.onInitialized.bind(_this);
+      _this.onStarted = _this.onStarted.bind(_this);
+      _this.onStopped = _this.onStopped.bind(_this);
+      _this.onPreviewStarted = _this.onPreviewStarted.bind(_this);
+      _this.onPreviewStopped = _this.onPreviewStopped.bind(_this);
+      _this.onShutter = _this.onShutter.bind(_this);
+      _this.onOutputOrientationChanged = _this.onOutputOrientationChanged.bind(_this);
+      _this.onPreviewOrientationChanged = _this.onPreviewOrientationChanged.bind(_this);
+      _this.onError = _this.onError.bind(_this);
+      _this.onCodeScanned = _this.onCodeScanned.bind(_this);
+      _this.ref = _react.default.createRef();
+      _this.lastFrameProcessor = undefined;
+      _this.state = {
+        isRecordingWithFlash: false,
+        averageFpsSamples: []
+      };
+      return _this;
+    }
+    (0, _inherits2.default)(Camera, _React$PureComponent);
+    return (0, _createClass2.default)(Camera, [{
+      key: "handle",
+      get: function get() {
+        var nodeHandle = (0, _reactNative.findNodeHandle)(this.ref.current);
+        if (nodeHandle == null || nodeHandle === -1) {
+          throw new (_$$_REQUIRE(_dependencyMap[12], "./CameraError").CameraRuntimeError)('system/view-not-found', "Could not get the Camera's native view tag! Does the Camera View exist in the native view-tree?");
+        }
+        return nodeHandle;
+      }
+
+      //#region View-specific functions (UIViewManager)
+      /**
+       * Take a single photo and write it's content to a temporary file.
+       *
+       * @throws {@linkcode CameraCaptureError} When any kind of error occured while capturing the photo.
+       * Use the {@linkcode CameraCaptureError.code | code} property to get the actual error
+       * @example
+       * ```ts
+       * const photo = await camera.current.takePhoto({
+       *   flash: 'on',
+       *   enableAutoRedEyeReduction: true
+       * })
+       * ```
+       */
+    }, {
+      key: "takePhoto",
+      value: function () {
+        var _takePhoto = (0, _asyncToGenerator2.default)(function* (options) {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.takePhoto(this.handle, options != null ? options : {});
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function takePhoto(_x) {
+          return _takePhoto.apply(this, arguments);
+        }
+        return takePhoto;
+      }()
+      /**
+       * Captures a snapshot of the Camera view and write it's content to a temporary file.
+       *
+       * - On iOS, `takeSnapshot` waits for a Frame from the video pipeline and therefore requires `video` to be enabled.
+       * - On Android, `takeSnapshot` performs a GPU view screenshot from the preview view.
+       *
+       * @throws {@linkcode CameraCaptureError} When any kind of error occured while capturing the photo.
+       * Use the {@linkcode CameraCaptureError.code | code} property to get the actual error
+       * @example
+       * ```ts
+       * const snapshot = await camera.current.takeSnapshot({
+       *   quality: 100
+       * })
+       * ```
+       */
+    }, {
+      key: "takeSnapshot",
+      value: (function () {
+        var _takeSnapshot = (0, _asyncToGenerator2.default)(function* (options) {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.takeSnapshot(this.handle, options != null ? options : {});
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function takeSnapshot(_x2) {
+          return _takeSnapshot.apply(this, arguments);
+        }
+        return takeSnapshot;
+      }())
+    }, {
+      key: "getBitRateMultiplier",
+      value: function getBitRateMultiplier(bitRate) {
+        if (typeof bitRate === 'number' || bitRate == null) return 1;
+        switch (bitRate) {
+          case 'extra-low':
+            return 0.6;
+          case 'low':
+            return 0.8;
+          case 'normal':
+            return 1;
+          case 'high':
+            return 1.2;
+          case 'extra-high':
+            return 1.4;
+        }
+      }
+
+      /**
+       * Start a new video recording.
+       *
+       * @throws {@linkcode CameraCaptureError} When any kind of error occured while starting the video recording.
+       * Use the {@linkcode CameraCaptureError.code | code} property to get the actual error
+       *
+       * @example
+       * ```ts
+       * camera.current.startRecording({
+       *   onRecordingFinished: (video) => console.log(video),
+       *   onRecordingError: (error) => console.error(error),
+       * })
+       * setTimeout(() => {
+       *   camera.current.stopRecording()
+       * }, 5000)
+       * ```
+       */
+    }, {
+      key: "startRecording",
+      value: function startRecording(options) {
+        var _this2 = this;
+        var onRecordingError = options.onRecordingError,
+          onRecordingFinished = options.onRecordingFinished,
+          passThruOptions = (0, _objectWithoutProperties2.default)(options, _excluded);
+        if (typeof onRecordingError !== 'function' || typeof onRecordingFinished !== 'function') throw new (_$$_REQUIRE(_dependencyMap[12], "./CameraError").CameraRuntimeError)('parameter/invalid-parameter', 'The onRecordingError or onRecordingFinished functions were not set!');
+        if (options.flash === 'on') {
+          // Enable torch for video recording
+          this.setState({
+            isRecordingWithFlash: true
+          });
+        }
+        var onRecordCallback = function onRecordCallback(video, error) {
+          if (_this2.state.isRecordingWithFlash) {
+            // disable torch again if it was enabled
+            _this2.setState({
+              isRecordingWithFlash: false
+            });
+          }
+          if (error != null) return onRecordingError(error);
+          if (video != null) return onRecordingFinished(video);
+        };
+        var nativeRecordVideoOptions = passThruOptions;
+        try {
+          // TODO: Use TurboModules to make this awaitable.
+          _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.startRecording(this.handle, nativeRecordVideoOptions, onRecordCallback);
+        } catch (e) {
+          throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+        }
+      }
+
+      /**
+       * Pauses the current video recording.
+       *
+       * @throws {@linkcode CameraCaptureError} When any kind of error occured while pausing the video recording.
+       * Use the {@linkcode CameraCaptureError.code | code} property to get the actual error
+       *
+       * @example
+       * ```ts
+       * // Start
+       * await camera.current.startRecording({
+       *   onRecordingFinished: (video) => console.log(video),
+       *   onRecordingError: (error) => console.error(error),
+       * })
+       * await timeout(1000)
+       * // Pause
+       * await camera.current.pauseRecording()
+       * await timeout(500)
+       * // Resume
+       * await camera.current.resumeRecording()
+       * await timeout(2000)
+       * // Stop
+       * await camera.current.stopRecording()
+       * ```
+       */
+    }, {
+      key: "pauseRecording",
+      value: (function () {
+        var _pauseRecording = (0, _asyncToGenerator2.default)(function* () {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.pauseRecording(this.handle);
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function pauseRecording() {
+          return _pauseRecording.apply(this, arguments);
+        }
+        return pauseRecording;
+      }()
+      /**
+       * Resumes a currently paused video recording.
+       *
+       * @throws {@linkcode CameraCaptureError} When any kind of error occured while resuming the video recording.
+       * Use the {@linkcode CameraCaptureError.code | code} property to get the actual error
+       *
+       * @example
+       * ```ts
+       * // Start
+       * await camera.current.startRecording({
+       *   onRecordingFinished: (video) => console.log(video),
+       *   onRecordingError: (error) => console.error(error),
+       * })
+       * await timeout(1000)
+       * // Pause
+       * await camera.current.pauseRecording()
+       * await timeout(500)
+       * // Resume
+       * await camera.current.resumeRecording()
+       * await timeout(2000)
+       * // Stop
+       * await camera.current.stopRecording()
+       * ```
+       */
+      )
+    }, {
+      key: "resumeRecording",
+      value: (function () {
+        var _resumeRecording = (0, _asyncToGenerator2.default)(function* () {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.resumeRecording(this.handle);
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function resumeRecording() {
+          return _resumeRecording.apply(this, arguments);
+        }
+        return resumeRecording;
+      }()
+      /**
+       * Stop the current video recording.
+       *
+       * @throws {@linkcode CameraCaptureError} When any kind of error occured while stopping the video recording.
+       * Use the {@linkcode CameraCaptureError.code | code} property to get the actual error
+       *
+       * @example
+       * ```ts
+       * await camera.current.startRecording({
+       *   onRecordingFinished: (video) => console.log(video),
+       *   onRecordingError: (error) => console.error(error),
+       * })
+       * setTimeout(async () => {
+       *   await camera.current.stopRecording()
+       * }, 5000)
+       * ```
+       */
+      )
+    }, {
+      key: "stopRecording",
+      value: (function () {
+        var _stopRecording = (0, _asyncToGenerator2.default)(function* () {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.stopRecording(this.handle);
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function stopRecording() {
+          return _stopRecording.apply(this, arguments);
+        }
+        return stopRecording;
+      }()
+      /**
+       * Cancel the current video recording. The temporary video file will be deleted,
+       * and the `startRecording`'s `onRecordingError` callback will be invoked with a `capture/recording-canceled` error.
+       *
+       * @throws {@linkcode CameraCaptureError} When any kind of error occured while canceling the video recording.
+       * Use the {@linkcode CameraCaptureError.code | code} property to get the actual error
+       *
+       * @example
+       * ```ts
+       * await camera.current.startRecording({
+       *   onRecordingFinished: (video) => console.log(video),
+       *   onRecordingError: (error) => {
+       *     if (error.code === 'capture/recording-canceled') {
+       *       // recording was canceled.
+       *     } else {
+       *       console.error(error)
+       *     }
+       *   },
+       * })
+       * setTimeout(async () => {
+       *   await camera.current.cancelRecording()
+       * }, 5000)
+       * ```
+       */
+      )
+    }, {
+      key: "cancelRecording",
+      value: (function () {
+        var _cancelRecording = (0, _asyncToGenerator2.default)(function* () {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.cancelRecording(this.handle);
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function cancelRecording() {
+          return _cancelRecording.apply(this, arguments);
+        }
+        return cancelRecording;
+      }()
+      /**
+       * Focus the camera to a specific point in the coordinate system.
+       * @param {Point} point The point to focus to. This should be relative
+       * to the Camera view's coordinate system and is expressed in points.
+       *  * `(0, 0)` means **top left**.
+       *  * `(CameraView.width, CameraView.height)` means **bottom right**.
+       *
+       * Make sure the value doesn't exceed the CameraView's dimensions.
+       *
+       * @throws {@linkcode CameraRuntimeError} When any kind of error occured while focussing.
+       * Use the {@linkcode CameraRuntimeError.code | code} property to get the actual error
+       * @example
+       * ```ts
+       * await camera.current.focus({
+       *   x: tapEvent.x,
+       *   y: tapEvent.y
+       * })
+       * ```
+       */
+      )
+    }, {
+      key: "focus",
+      value: (function () {
+        var _focus = (0, _asyncToGenerator2.default)(function* (point) {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.focus(this.handle, point);
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function focus(_x3) {
+          return _focus.apply(this, arguments);
+        }
+        return focus;
+      }() //#endregion
+      //#region Static Functions (NativeModule)
+      /**
+       * Get a list of all available camera devices on the current phone.
+       *
+       * If you use Hooks, use the `useCameraDevices(..)` hook instead.
+       *
+       * * For Camera Devices attached to the phone, it is safe to assume that this will never change.
+       * * For external Camera Devices (USB cameras, Mac continuity cameras, etc.) the available Camera Devices
+       * could change over time when the external Camera device gets plugged in or plugged out, so
+       * use {@link addCameraDevicesChangedListener | addCameraDevicesChangedListener(...)} to listen for such changes.
+       *
+       * @example
+       * ```ts
+       * const devices = Camera.getAvailableCameraDevices()
+       * const backCameras = devices.filter((d) => d.position === "back")
+       * const frontCameras = devices.filter((d) => d.position === "front")
+       * ```
+       */
+      )
+    }, {
+      key: "onError",
+      value:
+      //#endregion
+
+      //#region Events (Wrapped to maintain reference equality)
+      function onError(event) {
+        var error = event.nativeEvent;
+        var cause = (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").isErrorWithCause)(error.cause) ? error.cause : undefined;
+        // @ts-expect-error We're casting from unknown bridge types to TS unions, I expect it to hopefully work
+        var cameraError = new (_$$_REQUIRE(_dependencyMap[12], "./CameraError").CameraRuntimeError)(error.code, error.message, cause);
+        if (this.props.onError != null) {
+          this.props.onError(cameraError);
+        } else {
+          // User didn't pass an `onError` handler, so just log it to console
+          console.error(cameraError);
+        }
+      }
+    }, {
+      key: "onInitialized",
+      value: function onInitialized() {
+        var _this$props$onInitial, _this$props;
+        (_this$props$onInitial = (_this$props = this.props).onInitialized) == null || _this$props$onInitial.call(_this$props);
+      }
+    }, {
+      key: "onStarted",
+      value: function onStarted() {
+        var _this$props$onStarted, _this$props2;
+        (_this$props$onStarted = (_this$props2 = this.props).onStarted) == null || _this$props$onStarted.call(_this$props2);
+      }
+    }, {
+      key: "onStopped",
+      value: function onStopped() {
+        var _this$props$onStopped, _this$props3;
+        (_this$props$onStopped = (_this$props3 = this.props).onStopped) == null || _this$props$onStopped.call(_this$props3);
+      }
+    }, {
+      key: "onPreviewStarted",
+      value: function onPreviewStarted() {
+        var _this$props$onPreview, _this$props4;
+        (_this$props$onPreview = (_this$props4 = this.props).onPreviewStarted) == null || _this$props$onPreview.call(_this$props4);
+      }
+    }, {
+      key: "onPreviewStopped",
+      value: function onPreviewStopped() {
+        var _this$props$onPreview2, _this$props5;
+        (_this$props$onPreview2 = (_this$props5 = this.props).onPreviewStopped) == null || _this$props$onPreview2.call(_this$props5);
+      }
+    }, {
+      key: "onShutter",
+      value: function onShutter(event) {
+        var _this$props$onShutter, _this$props6;
+        (_this$props$onShutter = (_this$props6 = this.props).onShutter) == null || _this$props$onShutter.call(_this$props6, event.nativeEvent);
+      }
+    }, {
+      key: "onOutputOrientationChanged",
+      value: function onOutputOrientationChanged(_ref) {
+        var _this$props$onOutputO, _this$props7;
+        var outputOrientation = _ref.nativeEvent.outputOrientation;
+        this.rotationHelper.outputOrientation = outputOrientation;
+        (_this$props$onOutputO = (_this$props7 = this.props).onOutputOrientationChanged) == null || _this$props$onOutputO.call(_this$props7, outputOrientation);
+        this.maybeUpdateUIRotation();
+      }
+    }, {
+      key: "onPreviewOrientationChanged",
+      value: function onPreviewOrientationChanged(_ref2) {
+        var _this$props$onPreview3, _this$props8;
+        var previewOrientation = _ref2.nativeEvent.previewOrientation;
+        this.rotationHelper.previewOrientation = previewOrientation;
+        (_this$props$onPreview3 = (_this$props8 = this.props).onPreviewOrientationChanged) == null || _this$props$onPreview3.call(_this$props8, previewOrientation);
+        this.maybeUpdateUIRotation();
+        if (isSkiaFrameProcessor(this.props.frameProcessor)) {
+          // If we have a Skia Frame Processor, we need to update it's orientation so it knows how to render.
+          this.props.frameProcessor.previewOrientation.value = previewOrientation;
+        }
+      }
+    }, {
+      key: "maybeUpdateUIRotation",
+      value: function maybeUpdateUIRotation() {
+        var uiRotation = this.rotationHelper.uiRotation;
+        if (uiRotation !== this.lastUIRotation) {
+          var _this$props$onUIRotat, _this$props9;
+          (_this$props$onUIRotat = (_this$props9 = this.props).onUIRotationChanged) == null || _this$props$onUIRotat.call(_this$props9, uiRotation);
+          this.lastUIRotation = uiRotation;
+        }
+      }
+      //#endregion
+    }, {
+      key: "onCodeScanned",
+      value: function onCodeScanned(event) {
+        var codeScanner = this.props.codeScanner;
+        if (codeScanner == null) return;
+        codeScanner.onCodeScanned(event.nativeEvent.codes, event.nativeEvent.frame);
+      }
+
+      //#region Lifecycle
+    }, {
+      key: "setFrameProcessor",
+      value: function setFrameProcessor(frameProcessor) {
+        _$$_REQUIRE(_dependencyMap[14], "./frame-processors/VisionCameraProxy").VisionCameraProxy.setFrameProcessor(this.handle, frameProcessor);
+      }
+    }, {
+      key: "unsetFrameProcessor",
+      value: function unsetFrameProcessor() {
+        _$$_REQUIRE(_dependencyMap[14], "./frame-processors/VisionCameraProxy").VisionCameraProxy.removeFrameProcessor(this.handle);
+      }
+    }, {
+      key: "onViewReady",
+      value: function onViewReady() {
+        this.isNativeViewMounted = true;
+        if (this.props.frameProcessor != null) {
+          // user passed a `frameProcessor` but we didn't set it yet because the native view was not mounted yet. set it now.
+          this.setFrameProcessor(this.props.frameProcessor.frameProcessor);
+          this.lastFrameProcessor = this.props.frameProcessor.frameProcessor;
+        }
+      }
+    }, {
+      key: "onAverageFpsChanged",
+      value: function onAverageFpsChanged(_ref3) {
+        var averageFps = _ref3.nativeEvent.averageFps;
+        this.setState(function (state) {
+          var averageFpsSamples = [].concat((0, _toConsumableArray2.default)(state.averageFpsSamples), [averageFps]);
+          while (averageFpsSamples.length >= _$$_REQUIRE(_dependencyMap[15], "./FpsGraph").MAX_BARS + 1) {
+            // we keep a maximum of 30 FPS samples in our history
+            averageFpsSamples.shift();
+          }
+          return Object.assign({}, state, {
+            averageFpsSamples: averageFpsSamples
+          });
+        });
+      }
+
+      /** @internal */
+    }, {
+      key: "componentDidUpdate",
+      value: function componentDidUpdate() {
+        if (!this.isNativeViewMounted) return;
+        var frameProcessor = this.props.frameProcessor;
+        if ((frameProcessor == null ? void 0 : frameProcessor.frameProcessor) !== this.lastFrameProcessor) {
+          // frameProcessor argument identity changed. Update native to reflect the change.
+          if (frameProcessor != null) this.setFrameProcessor(frameProcessor.frameProcessor);else this.unsetFrameProcessor();
+          this.lastFrameProcessor = frameProcessor == null ? void 0 : frameProcessor.frameProcessor;
+        }
+      }
+      //#endregion
+
+      /** @internal */
+    }, {
+      key: "render",
+      value: function render() {
+        var _props$isMirrored, _props$enableBufferCo, _props$preview, _props$format$maxFps, _props$format;
+        // We remove the big `device` object from the props because we only need to pass `cameraId` to native.
+        var _this$props0 = this.props,
+          device = _this$props0.device,
+          frameProcessor = _this$props0.frameProcessor,
+          codeScanner = _this$props0.codeScanner,
+          enableFpsGraph = _this$props0.enableFpsGraph,
+          fps = _this$props0.fps,
+          videoBitRate = _this$props0.videoBitRate,
+          props = (0, _objectWithoutProperties2.default)(_this$props0, _excluded2);
+
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (device == null) {
+          throw new (_$$_REQUIRE(_dependencyMap[12], "./CameraError").CameraRuntimeError)('device/no-device', 'Camera: `device` is null! Select a valid Camera device. See: https://mrousavy.com/react-native-vision-camera/docs/guides/devices');
+        }
+        var shouldEnableBufferCompression = props.video === true && frameProcessor == null;
+        var torch = this.state.isRecordingWithFlash ? 'on' : props.torch;
+        var isRenderingWithSkia = isSkiaFrameProcessor(frameProcessor);
+        var shouldBeMirrored = device.position === 'front';
+
+        // minFps/maxFps is either the fixed `fps` value, or a value from the [min, max] tuple
+        var minFps = fps == null ? undefined : typeof fps === 'number' ? fps : fps[0];
+        var maxFps = fps == null ? undefined : typeof fps === 'number' ? fps : fps[1];
+
+        // bitrate is number (override) or string (multiplier)
+        var bitRateMultiplier;
+        var bitRateOverride;
+        if (typeof videoBitRate === 'number') {
+          // If the user passed an absolute number as a bit-rate, we just use this as a full override.
+          bitRateOverride = videoBitRate;
+        } else if (typeof videoBitRate === 'string' && videoBitRate !== 'normal') {
+          // If the user passed 'low'/'normal'/'high', we need to apply this as a multiplier to the native bitrate instead of absolutely setting it
+          bitRateMultiplier = this.getBitRateMultiplier(videoBitRate);
+        }
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[16], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[17], "./NativeCameraView").NativeCameraView, Object.assign({}, props, {
+          cameraId: device.id,
+          ref: this.ref,
+          torch: torch,
+          minFps: minFps,
+          maxFps: maxFps,
+          isMirrored: (_props$isMirrored = props.isMirrored) != null ? _props$isMirrored : shouldBeMirrored,
+          onViewReady: this.onViewReady,
+          onAverageFpsChanged: enableFpsGraph ? this.onAverageFpsChanged : undefined,
+          onInitialized: this.onInitialized,
+          onCodeScanned: this.onCodeScanned,
+          onStarted: this.onStarted,
+          onStopped: this.onStopped,
+          onPreviewStarted: this.onPreviewStarted,
+          onPreviewStopped: this.onPreviewStopped,
+          onShutter: this.onShutter,
+          videoBitRateMultiplier: bitRateMultiplier,
+          videoBitRateOverride: bitRateOverride,
+          onOutputOrientationChanged: this.onOutputOrientationChanged,
+          onPreviewOrientationChanged: this.onPreviewOrientationChanged,
+          onError: this.onError,
+          codeScannerOptions: codeScanner,
+          enableFrameProcessor: frameProcessor != null,
+          enableBufferCompression: (_props$enableBufferCo = props.enableBufferCompression) != null ? _props$enableBufferCo : shouldEnableBufferCompression,
+          preview: isRenderingWithSkia ? false : (_props$preview = props.preview) != null ? _props$preview : true,
+          children: [isRenderingWithSkia && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[16], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[18], "./skia/SkiaCameraCanvas").SkiaCameraCanvas, {
+            style: styles.customPreviewView,
+            offscreenTextures: frameProcessor.offscreenTextures,
+            resizeMode: props.resizeMode
+          }), enableFpsGraph && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[16], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[15], "./FpsGraph").FpsGraph, {
+            style: styles.fpsGraph,
+            averageFpsSamples: this.state.averageFpsSamples,
+            targetMaxFps: (_props$format$maxFps = (_props$format = props.format) == null ? void 0 : _props$format.maxFps) != null ? _props$format$maxFps : 60
+          })]
+        }));
+      }
+    }], [{
+      key: "getAvailableCameraDevices",
+      value: function getAvailableCameraDevices() {
+        return _$$_REQUIRE(_dependencyMap[19], "./CameraDevices").CameraDevices.getAvailableCameraDevices();
+      }
+      /**
+       * Adds a listener that gets called everytime the Camera Devices change, for example
+       * when an external Camera Device (USB or continuity Camera) gets plugged in or plugged out.
+       *
+       * If you use Hooks, use the `useCameraDevices()` hook instead.
+       */
+    }, {
+      key: "addCameraDevicesChangedListener",
+      value: function addCameraDevicesChangedListener(listener) {
+        return _$$_REQUIRE(_dependencyMap[19], "./CameraDevices").CameraDevices.addCameraDevicesChangedListener(listener);
+      }
+      /**
+       * Gets the current Camera Permission Status. Check this before mounting the Camera to ensure
+       * the user has permitted the app to use the camera.
+       *
+       * To actually prompt the user for camera permission, use {@linkcode Camera.requestCameraPermission | requestCameraPermission()}.
+       */
+    }, {
+      key: "getCameraPermissionStatus",
+      value: function getCameraPermissionStatus() {
+        return _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.getCameraPermissionStatus();
+      }
+      /**
+       * Gets the current Microphone-Recording Permission Status.
+       * Check this before enabling the `audio={...}` property to make sure the
+       * user has permitted the app to use the microphone.
+       *
+       * To actually prompt the user for microphone permission, use {@linkcode Camera.requestMicrophonePermission | requestMicrophonePermission()}.
+       */
+    }, {
+      key: "getMicrophonePermissionStatus",
+      value: function getMicrophonePermissionStatus() {
+        return _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.getMicrophonePermissionStatus();
+      }
+      /**
+       * Gets the current Location Permission Status.
+       * Check this before enabling the `location={...}` property to make sure the
+       * the user has permitted the app to use the location.
+       *
+       * To actually prompt the user for location permission, use {@linkcode Camera.requestLocationPermission | requestLocationPermission()}.
+       *
+       * Note: This method will throw a `system/location-not-enabled` error if the Location APIs are not enabled at build-time.
+       * See [the "GPS Location Tags" documentation](https://react-native-vision-camera.com/docs/guides/location) for more information.
+       */
+    }, {
+      key: "getLocationPermissionStatus",
+      value: function getLocationPermissionStatus() {
+        return _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.getLocationPermissionStatus();
+      }
+      /**
+       * Shows a "request permission" alert to the user, and resolves with the new camera permission status.
+       *
+       * If the user has previously blocked the app from using the camera, the alert will not be shown
+       * and `"denied"` will be returned.
+       *
+       * @throws {@linkcode CameraRuntimeError} When any kind of error occured while requesting permission.
+       * Use the {@linkcode CameraRuntimeError.code | code} property to get the actual error
+       */
+    }, {
+      key: "requestCameraPermission",
+      value: (function () {
+        var _requestCameraPermission = (0, _asyncToGenerator2.default)(function* () {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.requestCameraPermission();
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function requestCameraPermission() {
+          return _requestCameraPermission.apply(this, arguments);
+        }
+        return requestCameraPermission;
+      }()
+      /**
+       * Shows a "request permission" alert to the user, and resolves with the new microphone permission status.
+       *
+       * If the user has previously blocked the app from using the microphone, the alert will not be shown
+       * and `"denied"` will be returned.
+       *
+       * @throws {@linkcode CameraRuntimeError} When any kind of error occured while requesting permission.
+       * Use the {@linkcode CameraRuntimeError.code | code} property to get the actual error
+       */
+      )
+    }, {
+      key: "requestMicrophonePermission",
+      value: (function () {
+        var _requestMicrophonePermission = (0, _asyncToGenerator2.default)(function* () {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.requestMicrophonePermission();
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function requestMicrophonePermission() {
+          return _requestMicrophonePermission.apply(this, arguments);
+        }
+        return requestMicrophonePermission;
+      }()
+      /**
+       * Shows a "request permission" alert to the user, and resolves with the new location permission status.
+       *
+       * If the user has previously blocked the app from using the location, the alert will not be shown
+       * and `"denied"` will be returned.
+       *
+       * @throws {@linkcode CameraRuntimeError} When any kind of error occured while requesting permission.
+       * Use the {@linkcode CameraRuntimeError.code | code} property to get the actual error
+       */
+      )
+    }, {
+      key: "requestLocationPermission",
+      value: (function () {
+        var _requestLocationPermission = (0, _asyncToGenerator2.default)(function* () {
+          try {
+            return yield _$$_REQUIRE(_dependencyMap[13], "./NativeCameraModule").CameraModule.requestLocationPermission();
+          } catch (e) {
+            throw (0, _$$_REQUIRE(_dependencyMap[12], "./CameraError").tryParseNativeCameraError)(e);
+          }
+        });
+        function requestLocationPermission() {
+          return _requestLocationPermission.apply(this, arguments);
+        }
+        return requestLocationPermission;
+      }())
+    }]);
+  }(_react.default.PureComponent); //#endregion
+  /** @internal */
+  Camera.displayName = 'Camera';
+  var styles = _reactNative.StyleSheet.create({
+    customPreviewView: {
+      flex: 1
+    },
+    fpsGraph: {
+      elevation: 1,
+      position: 'absolute',
+      left: 15,
+      top: 30
+    }
+  });
+},1527,[3,6,150,83,12,13,49,51,52,41,1,1528,1529,1531,1532,1534,90,1535,1536,1540],"node_modules\\react-native-vision-camera\\src\\Camera.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.RotationHelper = void 0;
+  var _classCallCheck2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/classCallCheck"));
+  var _createClass2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/createClass"));
+  function orientationToDegrees(orientation) {
+    switch (orientation) {
+      case 'portrait':
+        return 0;
+      case 'landscape-right':
+        return 90;
+      case 'portrait-upside-down':
+        return 180;
+      case 'landscape-left':
+        return 270;
+    }
+  }
+  var RotationHelper = exports.RotationHelper = /*#__PURE__*/function () {
+    function RotationHelper() {
+      (0, _classCallCheck2.default)(this, RotationHelper);
+      /**
+       * Gets or sets the current preview orientation.
+       */
+      this.previewOrientation = 'portrait';
+      /**
+       * Gets or sets the current output orientation.
+       */
+      this.outputOrientation = 'portrait';
+    }
+    return (0, _createClass2.default)(RotationHelper, [{
+      key: "uiRotation",
+      get:
+      /**
+       * Gets the current target rotation (in degrees) that needs to be applied
+       * to all UI elements so they appear up-right.
+       */
+      function get() {
+        var previewDegrees = orientationToDegrees(this.previewOrientation);
+        var outputDegrees = orientationToDegrees(this.outputOrientation);
+        var diffDegrees = (outputDegrees - previewDegrees) % 360;
+        if (diffDegrees < -180) {
+          // Changes e.g. -270 to +90, so it is a shorter rotation on UI
+          return diffDegrees + 360;
+        } else if (diffDegrees > 180) {
+          // Changes e.g. +270 to -90, so it is a shorter rotation on UI
+          return diffDegrees - 360;
+        } else {
+          // It is a short rotation already, return it
+          return diffDegrees;
+        }
+      }
+    }]);
+  }();
+},1528,[3,12,13],"node_modules\\react-native-vision-camera\\src\\RotationHelper.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.tryParseNativeCameraError = exports.isErrorWithCause = exports.CameraRuntimeError = exports.CameraCaptureError = void 0;
+  var _classCallCheck2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/classCallCheck"));
+  var _createClass2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/createClass"));
+  var _possibleConstructorReturn2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/possibleConstructorReturn"));
+  var _inherits2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "@babel/runtime/helpers/inherits"));
+  var _getPrototypeOf2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "@babel/runtime/helpers/getPrototypeOf"));
+  var _set2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "@babel/runtime/helpers/set"));
+  var _wrapNativeSuper2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[7], "@babel/runtime/helpers/wrapNativeSuper"));
+  function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+  function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+  function _superPropSet(t, e, o, r, p, f) { return (0, _set2.default)((0, _getPrototypeOf2.default)(f ? t.prototype : t), e, o, r, p); }
+  /**
+   * Represents a JSON-style error cause. This contains native `NSError`/`Throwable` information, and can have recursive {@linkcode ErrorWithCause.cause | .cause} properties until the ultimate cause has been found.
+   */
+  /**
+   * Represents any kind of error that occured in the {@linkcode Camera} View Module.
+   */
+  var CameraError = /*#__PURE__*/function (_Error) {
+    /**
+     * @internal
+     */
+    function CameraError(code, message, cause) {
+      var _this;
+      (0, _classCallCheck2.default)(this, CameraError);
+      _this = _callSuper(this, CameraError, [`[${code}]: ${message}${cause != null ? ` (Cause: ${cause.message})` : ''}`]);
+      _superPropSet((_this, CameraError), "name", code, _this, 1, 1);
+      _superPropSet((_this, CameraError), "message", message, _this, 1, 1);
+      _this._code = code;
+      _this._message = message;
+      _this._cause = cause;
+      return _this;
+    }
+    (0, _inherits2.default)(CameraError, _Error);
+    return (0, _createClass2.default)(CameraError, [{
+      key: "code",
+      get: function get() {
+        return this._code;
+      }
+    }, {
+      key: "message",
+      get: function get() {
+        return this._message;
+      }
+    }, {
+      key: "cause",
+      get: function get() {
+        var c = this._cause;
+        if (c == null) return undefined;
+        return new Error(`[${c.code}]: ${c.message}`);
+      }
+    }, {
+      key: "toString",
+      value: function toString() {
+        var string = `[${this.code}]: ${this.message}`;
+        if (this._cause != null) string += ` (caused by ${JSON.stringify(this._cause)})`;
+        return string;
+      }
+    }]);
+  }(/*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
+  /**
+   * Represents any kind of error that occured while trying to capture a video or photo.
+   *
+   * See the ["Camera Errors" documentation](https://react-native-vision-camera.com/docs/guides/errors) for more information about Camera Errors.
+   */
+  var CameraCaptureError = exports.CameraCaptureError = /*#__PURE__*/function (_CameraError) {
+    function CameraCaptureError() {
+      (0, _classCallCheck2.default)(this, CameraCaptureError);
+      return _callSuper(this, CameraCaptureError, arguments);
+    }
+    (0, _inherits2.default)(CameraCaptureError, _CameraError);
+    return (0, _createClass2.default)(CameraCaptureError);
+  }(CameraError);
+  /**
+   * Represents any kind of error that occured in the Camera View Module.
+   *
+   * See the ["Camera Errors" documentation](https://react-native-vision-camera.com/docs/guides/errors) for more information about Camera Errors.
+   */
+  var CameraRuntimeError = exports.CameraRuntimeError = /*#__PURE__*/function (_CameraError2) {
+    function CameraRuntimeError() {
+      (0, _classCallCheck2.default)(this, CameraRuntimeError);
+      return _callSuper(this, CameraRuntimeError, arguments);
+    }
+    (0, _inherits2.default)(CameraRuntimeError, _CameraError2);
+    return (0, _createClass2.default)(CameraRuntimeError);
+  }(CameraError);
+  /**
+   * Checks if the given `error` is of type {@linkcode ErrorWithCause}
+   * @param {unknown} error Any unknown object to validate
+   * @returns `true` if the given `error` is of type {@linkcode ErrorWithCause}
+   */
+  var _isErrorWithCause = exports.isErrorWithCause = function isErrorWithCause(error) {
+    return typeof error === 'object' && error != null &&
+    // @ts-expect-error error is still unknown
+    typeof error.message === 'string' && (
+    // @ts-expect-error error is still unknown
+    typeof error.stacktrace === 'string' || error.stacktrace == null) && (
+    // @ts-expect-error error is still unknown
+    _isErrorWithCause(error.cause) || error.cause == null);
+  };
+  var isCameraErrorJson = function isCameraErrorJson(error) {
+    return typeof error === 'object' && error != null &&
+    // @ts-expect-error error is still unknown
+    typeof error.code === 'string' &&
+    // @ts-expect-error error is still unknown
+    typeof error.message === 'string' && (
+    // @ts-expect-error error is still unknown
+    typeof error.cause === 'object' || error.cause == null);
+  };
+
+  /**
+   * Tries to parse an error coming from native to a typed JS camera error.
+   * @param {CameraError} nativeError The native error instance. This is a JSON in the legacy native module architecture.
+   * @returns A {@linkcode CameraRuntimeError} or {@linkcode CameraCaptureError}, or the `nativeError` itself if it's not parsable
+   * @method
+   */
+  var tryParseNativeCameraError = exports.tryParseNativeCameraError = function tryParseNativeCameraError(nativeError) {
+    if (isCameraErrorJson(nativeError)) {
+      if (nativeError.code.startsWith('capture')) {
+        return new CameraCaptureError(nativeError.code, nativeError.message, nativeError.cause);
+      } else {
+        return new CameraRuntimeError(
+        // @ts-expect-error the code is string, we narrow it down to TS union.
+        nativeError.code, nativeError.message, nativeError.cause);
+      }
+    } else {
+      return nativeError;
+    }
+  };
+},1529,[3,12,13,49,52,51,1530,69],"node_modules\\react-native-vision-camera\\src\\CameraError.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  function set(e, r, t, o) {
+    return set = "undefined" != typeof Reflect && Reflect.set ? Reflect.set : function (e, r, t, o) {
+      var f,
+        i = _$$_REQUIRE(_dependencyMap[0], "./superPropBase.js")(e, r);
+      if (i) {
+        if ((f = Object.getOwnPropertyDescriptor(i, r)).set) return f.set.call(o, t), !0;
+        if (!f.writable) return !1;
+      }
+      if (f = Object.getOwnPropertyDescriptor(o, r)) {
+        if (!f.writable) return !1;
+        f.value = t, Object.defineProperty(o, r, f);
+      } else _$$_REQUIRE(_dependencyMap[1], "./defineProperty.js")(o, r, t);
+      return !0;
+    }, set(e, r, t, o);
+  }
+  function _set(e, r, t, o, f) {
+    if (!set(e, r, t, o || e) && f) throw new TypeError("failed to set property");
+    return t;
+  }
+  module.exports = _set, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},1530,[133,202],"node_modules\\@babel\\runtime\\helpers\\set.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.CameraModule = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var supportedPlatforms = ['ios', 'android', 'macos'];
+
+  // NativeModules automatically resolves 'CameraView' to 'CameraViewModule'
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  var CameraModule = exports.CameraModule = _reactNative.NativeModules.CameraView;
+  if (CameraModule == null) {
+    var _global$expo;
+    if (!supportedPlatforms.includes(_reactNative.Platform.OS)) {
+      throw new (_$$_REQUIRE(_dependencyMap[1], "./CameraError").CameraRuntimeError)('system/camera-module-not-found', `Failed to initialize VisionCamera: VisionCamera currently does not work on ${_reactNative.Platform.OS}.`);
+    }
+    var message = 'Failed to initialize VisionCamera: The native Camera Module (`NativeModules.CameraView`) could not be found.';
+    message += '\n* Make sure react-native-vision-camera is correctly autolinked (run `npx react-native config` to verify)';
+    if (_reactNative.Platform.OS === 'ios' || _reactNative.Platform.OS === 'macos') message += '\n* Make sure you ran `pod install` in the ios/ directory.';
+    if (_reactNative.Platform.OS === 'android') message += '\n* Make sure gradle is synced.';
+
+    // check if Expo
+    // @ts-expect-error expo global JSI modules are not typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    var ExpoConstants = (_global$expo = global.expo) == null || (_global$expo = _global$expo.modules) == null ? void 0 : _global$expo.ExponentConstants;
+    if (ExpoConstants != null) {
+      if (ExpoConstants.appOwnership === 'expo') {
+        // We're running Expo Go
+        throw new (_$$_REQUIRE(_dependencyMap[1], "./CameraError").CameraRuntimeError)('system/camera-module-not-found', `react-native-vision-camera is not supported in Expo Go! Use EAS/expo prebuild instead (\`expo run:${_reactNative.Platform.OS}\`). For more info, see https://docs.expo.dev/workflow/prebuild/.`);
+      } else {
+        // We're running Expo bare / standalone
+        message += '\n* Make sure you ran `expo prebuild`.';
+      }
+    }
+    message += '\n* Make sure you rebuilt the app.';
+    throw new (_$$_REQUIRE(_dependencyMap[1], "./CameraError").CameraRuntimeError)('system/camera-module-not-found', message);
+  }
+},1531,[1,1529],"node_modules\\react-native-vision-camera\\src\\NativeCameraModule.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.VisionCameraProxy = void 0;
+  /**
+   * An initialized native instance of a FrameProcessorPlugin.
+   * All memory allocated by this plugin will be deleted once this value goes out of scope.
+   */
+
+  var proxy;
+  try {
+    // 1. Load react-native-worklets-core
+    _$$_REQUIRE(_dependencyMap[0], "react-native-worklets-core");
+    // 2. If react-native-worklets-core could be loaded, try to install Frame Processor bindings
+    var result = _$$_REQUIRE(_dependencyMap[1], "../NativeCameraModule").CameraModule.installFrameProcessorBindings();
+    if (result !== true) throw new Error(`Failed to install Frame Processor JSI bindings! installFrameProcessorBindings() returned ${result}`);
+
+    // 3. Get global.VisionCameraProxy which was just installed by installFrameProcessorBindings()
+    // @ts-expect-error it's a global JSI variable injected by native
+    var globalProxy = global.VisionCameraProxy;
+    if (globalProxy == null) throw new Error('global.VisionCameraProxy is not installed! Was installFrameProcessorBindings() called?');
+    proxy = globalProxy;
+  } catch (e) {
+    // global.VisionCameraProxy is not injected!
+    // Just use dummy implementations that will throw when the user tries to use Frame Processors.
+    proxy = {
+      initFrameProcessorPlugin: function initFrameProcessorPlugin() {
+        throw new (_$$_REQUIRE(_dependencyMap[2], "./FrameProcessorsUnavailableError").FrameProcessorsUnavailableError)(e);
+      },
+      removeFrameProcessor: function removeFrameProcessor() {
+        throw new (_$$_REQUIRE(_dependencyMap[2], "./FrameProcessorsUnavailableError").FrameProcessorsUnavailableError)(e);
+      },
+      setFrameProcessor: function setFrameProcessor() {
+        throw new (_$$_REQUIRE(_dependencyMap[2], "./FrameProcessorsUnavailableError").FrameProcessorsUnavailableError)(e);
+      },
+      workletContext: undefined
+    };
+  }
+
+  /**
+   * The JSI Proxy for the Frame Processors Runtime.
+   *
+   * This will be replaced with a CxxTurboModule in the future.
+   */
+  var VisionCameraProxy = exports.VisionCameraProxy = proxy;
+},1532,[1531,1533],"node_modules\\react-native-vision-camera\\src\\frame-processors\\VisionCameraProxy.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.FrameProcessorsUnavailableError = void 0;
+  var _createClass2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/createClass"));
+  var _classCallCheck2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/classCallCheck"));
+  var _possibleConstructorReturn2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/possibleConstructorReturn"));
+  var _getPrototypeOf2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "@babel/runtime/helpers/getPrototypeOf"));
+  var _inherits2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "@babel/runtime/helpers/inherits"));
+  function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+  function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+  var FrameProcessorsUnavailableError = exports.FrameProcessorsUnavailableError = /*#__PURE__*/function (_CameraRuntimeError) {
+    function FrameProcessorsUnavailableError(reason) {
+      (0, _classCallCheck2.default)(this, FrameProcessorsUnavailableError);
+      return _callSuper(this, FrameProcessorsUnavailableError, ['system/frame-processors-unavailable', 'Frame Processors are not available, react-native-worklets-core is not installed! ' + `Error: ${reason instanceof Error ? reason.message : reason}`]);
+    }
+    (0, _inherits2.default)(FrameProcessorsUnavailableError, _CameraRuntimeError);
+    return (0, _createClass2.default)(FrameProcessorsUnavailableError);
+  }(_$$_REQUIRE(_dependencyMap[6], "../CameraError").CameraRuntimeError);
+},1533,[3,13,12,49,51,52,1529],"node_modules\\react-native-vision-camera\\src\\frame-processors\\FrameProcessorsUnavailableError.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.FpsGraph = FpsGraph;
+  exports.MAX_BARS = void 0;
+  var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/objectWithoutProperties"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\FpsGraph.tsx";
+  var _excluded = ["averageFpsSamples", "targetMaxFps", "style"];
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var MAX_BARS = exports.MAX_BARS = 30;
+  var WIDTH = 100;
+  var HEIGHT = 65;
+  var BAR_WIDTH = WIDTH / MAX_BARS;
+  function FpsGraph(_ref) {
+    var _this = this;
+    var averageFpsSamples = _ref.averageFpsSamples,
+      targetMaxFps = _ref.targetMaxFps,
+      style = _ref.style,
+      props = (0, _objectWithoutProperties2.default)(_ref, _excluded);
+    var maxFps = (0, _react.useMemo)(function () {
+      var currentMaxFps = averageFpsSamples.reduce(function (prev, curr) {
+        return Math.max(prev, curr);
+      }, 0);
+      return Math.max(currentMaxFps, targetMaxFps);
+    }, [averageFpsSamples, targetMaxFps]);
+    var latestFps = averageFpsSamples[averageFpsSamples.length - 1];
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsxs)(_reactNative.View, Object.assign({}, props, {
+      style: [styles.container, style],
+      children: [averageFpsSamples.map(function (fps, index) {
+        var height = fps / maxFps * HEIGHT;
+        if (Number.isNaN(height) || height < 0) {
+          // clamp to 0 if needed
+          height = 0;
+        }
+        return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: [styles.bar, {
+            height: height
+          }]
+        }, index);
+      }), latestFps != null && !Number.isNaN(latestFps) && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsx)(_reactNative.View, {
+        style: styles.centerContainer,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime").jsxs)(_reactNative.Text, {
+          style: styles.text,
+          children: [Math.round(latestFps), " FPS"]
+        })
+      })]
+    }));
+  }
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      width: WIDTH,
+      height: HEIGHT,
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'flex-end',
+      borderRadius: 5,
+      overflow: 'hidden'
+    },
+    bar: {
+      width: BAR_WIDTH,
+      height: 5,
+      backgroundColor: 'rgb(243, 74, 77)'
+    },
+    centerContainer: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject, {
+      justifyContent: 'center',
+      alignItems: 'center'
+    }),
+    text: {
+      position: 'absolute',
+      fontWeight: 'bold',
+      fontSize: 14,
+      color: 'rgb(255, 255, 255)'
+    }
+  });
+},1534,[3,150,41,1,90],"node_modules\\react-native-vision-camera\\src\\FpsGraph.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.NativeCameraView = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  // requireNativeComponent automatically resolves 'CameraView' to 'CameraViewManager'
+  var NativeCameraView = exports.NativeCameraView = (0, _reactNative.requireNativeComponent)('CameraView');
+},1535,[1],"node_modules\\react-native-vision-camera\\src\\NativeCameraView.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.SkiaCameraCanvas = void 0;
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/objectWithoutProperties"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\SkiaCameraCanvas.tsx";
+  var _excluded = ["offscreenTextures", "resizeMode", "children"];
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var _worklet_9026691158502_init_data = {
+    code: "function anonymous(){const{offscreenTextures,texture}=this.__closure;var _texture$value;const latestTexture=offscreenTextures.value.pop();if(latestTexture==null){return;}(_texture$value=texture.value)===null||_texture$value===void 0||_texture$value.dispose();texture.value=latestTexture;}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\SkiaCameraCanvas.tsx",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"offscreenTextures\",\"texture\",\"__closure\",\"_texture$value\",\"latestTexture\",\"value\",\"pop\",\"dispose\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/SkiaCameraCanvas.tsx\"],\"mappings\":\"AA0BmC,SAAAA,SAAMA,CAAA,QAAAC,iBAAA,CAAAC,OAAA,OAAAC,SAAA,KAAAC,cAAA,CAIrC,KAAM,CAAAC,aAAa,CAAGJ,iBAAiB,CAACK,KAAK,CAACC,GAAG,CAAC,CAAC,CACnD,GAAIF,aAAa,EAAI,IAAI,CAAE,CAEzB,OACF,CAGA,CAAAD,cAAA,CAAAF,OAAO,CAACI,KAAK,UAAAF,cAAA,WAAbA,cAAA,CAAeI,OAAO,CAAC,CAAC,CAGxBN,OAAO,CAACI,KAAK,CAAGD,aAAa,CAC/B\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  function SkiaCameraCanvasImpl(_ref) {
+    var offscreenTextures = _ref.offscreenTextures,
+      _ref$resizeMode = _ref.resizeMode,
+      resizeMode = _ref$resizeMode === void 0 ? 'cover' : _ref$resizeMode,
+      children = _ref.children,
+      props = (0, _objectWithoutProperties2.default)(_ref, _excluded);
+    var texture = _$$_REQUIRE(_dependencyMap[4], "../dependencies/ReanimatedProxy").ReanimatedProxy.useSharedValue(null);
+    var _useState = (0, _react.useState)(0),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      width = _useState2[0],
+      setWidth = _useState2[1];
+    var _useState3 = (0, _react.useState)(0),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      height = _useState4[0],
+      setHeight = _useState4[1];
+    _$$_REQUIRE(_dependencyMap[4], "../dependencies/ReanimatedProxy").ReanimatedProxy.useFrameCallback(function () {
+      var _e = [new global.Error(), -3, -27];
+      var anonymous = function anonymous() {
+        var _texture$value;
+        // 1. atomically pop() the latest rendered frame/texture from our queue
+        var latestTexture = offscreenTextures.value.pop();
+        if (latestTexture == null) {
+          // we don't have a new Frame from the Camera yet, skip this render.
+          return;
+        }
+
+        // 2. dispose the last rendered frame
+        (_texture$value = texture.value) == null || _texture$value.dispose();
+
+        // 3. set a new one which will be rendered then
+        texture.value = latestTexture;
+      };
+      anonymous.__closure = {
+        offscreenTextures: offscreenTextures,
+        texture: texture
+      };
+      anonymous.__workletHash = 9026691158502;
+      anonymous.__initData = _worklet_9026691158502_init_data;
+      anonymous.__stackDetails = _e;
+      return anonymous;
+    }());
+    var onLayout = (0, _react.useCallback)(function (_ref2) {
+      var layout = _ref2.nativeEvent.layout;
+      setWidth(Math.round(layout.width));
+      setHeight(Math.round(layout.height));
+    }, []);
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[6], "../dependencies/SkiaProxy").SkiaProxy.Canvas, Object.assign({}, props, {
+      onLayout: onLayout,
+      pointerEvents: "none",
+      children: [children, /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[6], "../dependencies/SkiaProxy").SkiaProxy.Image, {
+        x: 0,
+        y: 0,
+        width: width,
+        height: height,
+        fit: resizeMode,
+        image: texture
+      })]
+    }));
+  }
+  var SkiaCameraCanvas = exports.SkiaCameraCanvas = _react.default.memo(SkiaCameraCanvasImpl);
+},1536,[3,24,150,41,1537,90,1539],"node_modules\\react-native-vision-camera\\src\\skia\\SkiaCameraCanvas.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.ReanimatedProxy = void 0;
+  /**
+   * A proxy object that lazy-imports react-native-reanimated as soon as the
+   * caller tries to access a property on {@linkcode ReanimatedProxy}.
+   *
+   * If react-native-reanimated is not installed, accessing anything on
+   * {@linkcode ReanimatedProxy} will throw.
+   */
+  var ReanimatedProxy = exports.ReanimatedProxy = (0, _$$_REQUIRE(_dependencyMap[0], "./ModuleProxy").createModuleProxy)(function () {
+    try {
+      return _$$_REQUIRE(_dependencyMap[1], "react-native-reanimated");
+    } catch (e) {
+      throw new (_$$_REQUIRE(_dependencyMap[0], "./ModuleProxy").OptionalDependencyNotInstalledError)('react-native-reanimated');
+    }
+  });
+},1537,[1538,591],"node_modules\\react-native-vision-camera\\src\\dependencies\\ReanimatedProxy.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.createModuleProxy = exports.OptionalDependencyNotInstalledError = void 0;
+  var _createClass2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/createClass"));
+  var _classCallCheck2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/classCallCheck"));
+  var _possibleConstructorReturn2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/possibleConstructorReturn"));
+  var _getPrototypeOf2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "@babel/runtime/helpers/getPrototypeOf"));
+  var _inherits2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "@babel/runtime/helpers/inherits"));
+  var _wrapNativeSuper2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "@babel/runtime/helpers/wrapNativeSuper"));
+  function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+  function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+  /**
+   * Create a lazily-imported module proxy.
+   * This is useful for lazily requiring optional dependencies.
+   */
+  var createModuleProxy = exports.createModuleProxy = function createModuleProxy(getModule) {
+    var holder = {
+      module: undefined
+    };
+    var proxy = new Proxy(holder, {
+      get: function get(target, property) {
+        if (property === '$$typeof') {
+          // If inlineRequires is enabled, Metro will look up all imports
+          // with the $$typeof operator. In this case, this will throw the
+          // `OptionalDependencyNotInstalledError` error because we try to access the module
+          // even though we are not using it (Metro does it), so instead we return undefined
+          // to bail out of inlineRequires here.
+          // See https://github.com/mrousavy/react-native-vision-camera/pull/2953
+          return undefined;
+        }
+        if (target.module == null) {
+          // lazy initialize module via require()
+          // caller needs to make sure the require() call is wrapped in a try/catch
+          target.module = getModule();
+        }
+        return target.module[property];
+      }
+    });
+    return proxy;
+  };
+  var OptionalDependencyNotInstalledError = exports.OptionalDependencyNotInstalledError = /*#__PURE__*/function (_Error) {
+    function OptionalDependencyNotInstalledError(name) {
+      (0, _classCallCheck2.default)(this, OptionalDependencyNotInstalledError);
+      return _callSuper(this, OptionalDependencyNotInstalledError, [`${name} is not installed!`]);
+    }
+    (0, _inherits2.default)(OptionalDependencyNotInstalledError, _Error);
+    return (0, _createClass2.default)(OptionalDependencyNotInstalledError);
+  }(/*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
+},1538,[3,13,12,49,51,52,69],"node_modules\\react-native-vision-camera\\src\\dependencies\\ModuleProxy.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.SkiaProxy = void 0;
+  /**
+   * A proxy object that lazy-imports @shopify/react-native-skia as soon as the
+   * caller tries to access a property on {@linkcode SkiaProxy}.
+   *
+   * If @shopify/react-native-skia is not installed, accessing anything on
+   * {@linkcode SkiaProxy} will throw.
+   */
+  var SkiaProxy = exports.SkiaProxy = (0, _$$_REQUIRE(_dependencyMap[0], "./ModuleProxy").createModuleProxy)(function () {
+    try {
+      return _$$_REQUIRE(_dependencyMap[1], "@shopify/react-native-skia");
+    } catch (e) {
+      throw new (_$$_REQUIRE(_dependencyMap[0], "./ModuleProxy").OptionalDependencyNotInstalledError)('@shopify/react-native-skia');
+    }
+  });
+},1539,[1538],"node_modules\\react-native-vision-camera\\src\\dependencies\\SkiaProxy.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.CameraDevices = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var CameraDevicesManager = _reactNative.NativeModules.CameraDevices;
+  var constants = CameraDevicesManager.getConstants();
+  var devices = constants.availableCameraDevices;
+  var DEVICES_CHANGED_NAME = 'CameraDevicesChanged';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  var eventEmitter = new _reactNative.NativeEventEmitter(CameraDevicesManager);
+  eventEmitter.addListener(DEVICES_CHANGED_NAME, function (newDevices) {
+    devices = newDevices;
+  });
+  var CameraDevices = exports.CameraDevices = {
+    userPreferredCameraDevice: constants.userPreferredCameraDevice,
+    getAvailableCameraDevices: function getAvailableCameraDevices() {
+      return devices;
+    },
+    addCameraDevicesChangedListener: function addCameraDevicesChangedListener(callback) {
+      return eventEmitter.addListener(DEVICES_CHANGED_NAME, callback);
+    }
+  };
+},1540,[1],"node_modules\\react-native-vision-camera\\src\\CameraDevices.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1541,[],"node_modules\\react-native-vision-camera\\src\\types\\CameraDevice.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1542,[],"node_modules\\react-native-vision-camera\\src\\types\\CameraProps.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1543,[],"node_modules\\react-native-vision-camera\\src\\types\\Frame.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1544,[],"node_modules\\react-native-vision-camera\\src\\types\\Orientation.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1545,[],"node_modules\\react-native-vision-camera\\src\\types\\OutputOrientation.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1546,[],"node_modules\\react-native-vision-camera\\src\\types\\PhotoFile.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1547,[],"node_modules\\react-native-vision-camera\\src\\types\\Snapshot.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1548,[],"node_modules\\react-native-vision-camera\\src\\types\\PixelFormat.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1549,[],"node_modules\\react-native-vision-camera\\src\\types\\Point.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1550,[],"node_modules\\react-native-vision-camera\\src\\types\\VideoFile.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1551,[],"node_modules\\react-native-vision-camera\\src\\types\\CodeScanner.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.getCameraFormat = getCameraFormat;
+  function filtersToFilterMap(filters) {
+    return filters.reduce(function (map, curr, index) {
+      for (var key in curr) {
+        // @ts-expect-error keys are untyped
+        map[key] = {
+          // @ts-expect-error keys are untyped
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          target: curr[key],
+          priority: filters.length - index
+        };
+      }
+      return map;
+    }, {});
+  }
+
+  /**
+   * Get the best matching Camera format for the given device that satisfies your requirements using a sorting filter. By default, formats are sorted by highest to lowest resolution.
+   *
+   * The {@linkcode filters | filters} are ranked by priority, from highest to lowest.
+   * This means the first item you pass will have a higher priority than the second, and so on.
+   *
+   * @param device The Camera Device you're currently using
+   * @param filters The filters you want to use. The format that matches your filter the closest will be returned
+   * @returns The format that matches your filter the closest.
+   *
+   * @example
+   * ```ts
+   * const format = getCameraFormat(device, [
+   *   { videoResolution: { width: 3048, height: 2160 } },
+   *   { fps: 60 }
+   * ])
+   * ```
+   */
+  function getCameraFormat(device, filters) {
+    // Combine filters into a single filter map for constant-time lookup
+    var filter = filtersToFilterMap(filters);
+    var bestFormat = device.formats[0];
+    if (bestFormat == null) throw new (_$$_REQUIRE(_dependencyMap[0], "../CameraError").CameraRuntimeError)('device/invalid-device', `The given Camera Device (${device.id}) does not have any formats!`);
+
+    // Compare each format using a point scoring system
+    for (var format of device.formats) {
+      var leftPoints = 0;
+      var rightPoints = 0;
+
+      // Video Resolution
+      if (filter.videoResolution != null) {
+        var leftVideoResolution = bestFormat.videoWidth * bestFormat.videoHeight;
+        var rightVideoResolution = format.videoWidth * format.videoHeight;
+        if (filter.videoResolution.target === 'max') {
+          // We just want the maximum resolution
+          if (leftVideoResolution > rightVideoResolution) leftPoints += filter.videoResolution.priority;
+          if (rightVideoResolution > leftVideoResolution) rightPoints += filter.videoResolution.priority;
+        } else {
+          // Find video resolution closest to the filter (ignoring orientation)
+          var targetResolution = filter.videoResolution.target.width * filter.videoResolution.target.height;
+          var leftDiff = Math.abs(leftVideoResolution - targetResolution);
+          var rightDiff = Math.abs(rightVideoResolution - targetResolution);
+          if (leftDiff < rightDiff) leftPoints += filter.videoResolution.priority;
+          if (rightDiff < leftDiff) rightPoints += filter.videoResolution.priority;
+        }
+      }
+
+      // Photo Resolution
+      if (filter.photoResolution != null) {
+        var leftPhotoResolution = bestFormat.photoWidth * bestFormat.photoHeight;
+        var rightPhotoResolution = format.photoWidth * format.photoHeight;
+        if (filter.photoResolution.target === 'max') {
+          // We just want the maximum resolution
+          if (leftPhotoResolution > rightPhotoResolution) leftPoints += filter.photoResolution.priority;
+          if (rightPhotoResolution > leftPhotoResolution) rightPoints += filter.photoResolution.priority;
+        } else {
+          // Find closest photo resolution to the filter (ignoring orientation)
+          var _targetResolution = filter.photoResolution.target.width * filter.photoResolution.target.height;
+          var _leftDiff = Math.abs(leftPhotoResolution - _targetResolution);
+          var _rightDiff = Math.abs(rightPhotoResolution - _targetResolution);
+          if (_leftDiff < _rightDiff) leftPoints += filter.photoResolution.priority;
+          if (_rightDiff < _leftDiff) rightPoints += filter.photoResolution.priority;
+        }
+      }
+
+      // Find closest aspect ratio (video)
+      if (filter.videoAspectRatio != null) {
+        var leftAspect = bestFormat.videoWidth / bestFormat.videoHeight;
+        var rightAspect = format.videoWidth / format.videoHeight;
+        var _leftDiff2 = Math.abs(leftAspect - filter.videoAspectRatio.target);
+        var _rightDiff2 = Math.abs(rightAspect - filter.videoAspectRatio.target);
+        if (_leftDiff2 < _rightDiff2) leftPoints += filter.videoAspectRatio.priority;
+        if (_rightDiff2 < _leftDiff2) rightPoints += filter.videoAspectRatio.priority;
+      }
+
+      // Find closest aspect ratio (photo)
+      if (filter.photoAspectRatio != null) {
+        var _leftAspect = bestFormat.photoWidth / bestFormat.photoHeight;
+        var _rightAspect = format.photoWidth / format.photoHeight;
+        var _leftDiff3 = Math.abs(_leftAspect - filter.photoAspectRatio.target);
+        var _rightDiff3 = Math.abs(_rightAspect - filter.photoAspectRatio.target);
+        if (_leftDiff3 < _rightDiff3) leftPoints += filter.photoAspectRatio.priority;
+        if (_rightDiff3 < _leftDiff3) rightPoints += filter.photoAspectRatio.priority;
+      }
+
+      // Find closest max FPS
+      if (filter.fps != null) {
+        if (filter.fps.target === 'max') {
+          if (bestFormat.maxFps > format.maxFps) leftPoints += filter.fps.priority;
+          if (format.maxFps > bestFormat.maxFps) rightPoints += filter.fps.priority;
+        } else {
+          if (bestFormat.maxFps >= filter.fps.target) leftPoints += filter.fps.priority;
+          if (format.maxFps >= filter.fps.target) rightPoints += filter.fps.priority;
+        }
+      }
+
+      // Find closest ISO
+      if (filter.iso != null) {
+        if (filter.iso.target === 'max') {
+          if (bestFormat.maxISO > format.maxISO) leftPoints += filter.iso.priority;
+          if (format.maxISO > bestFormat.maxISO) rightPoints += filter.iso.priority;
+        } else if (filter.iso.target === 'min') {
+          if (bestFormat.minISO < format.minISO) leftPoints += filter.iso.priority;
+          if (format.minISO < bestFormat.minISO) rightPoints += filter.iso.priority;
+        } else {
+          if (filter.iso.target >= bestFormat.minISO && filter.iso.target <= bestFormat.maxISO) leftPoints += filter.iso.priority;
+          if (filter.iso.target >= format.minISO && filter.iso.target <= format.maxISO) rightPoints += filter.iso.priority;
+        }
+      }
+
+      // Find video stabilization mode
+      if (filter.videoStabilizationMode != null) {
+        if (bestFormat.videoStabilizationModes.includes(filter.videoStabilizationMode.target)) leftPoints += filter.videoStabilizationMode.priority;
+        if (format.videoStabilizationModes.includes(filter.videoStabilizationMode.target)) rightPoints += filter.videoStabilizationMode.priority;
+      }
+
+      // Find Photo HDR formats
+      if (filter.photoHdr != null) {
+        if (bestFormat.supportsPhotoHdr === filter.photoHdr.target) leftPoints += filter.photoHdr.priority;
+        if (format.supportsPhotoHdr === filter.photoHdr.target) rightPoints += filter.photoHdr.priority;
+      }
+
+      // Find Video HDR formats
+      if (filter.videoHdr != null) {
+        if (bestFormat.supportsVideoHdr === filter.videoHdr.target) leftPoints += filter.videoHdr.priority;
+        if (format.supportsVideoHdr === filter.videoHdr.target) rightPoints += filter.videoHdr.priority;
+      }
+
+      // Find matching AF system
+      if (filter.autoFocusSystem != null) {
+        if (bestFormat.autoFocusSystem === filter.autoFocusSystem.target) leftPoints += filter.autoFocusSystem.priority;
+        if (format.autoFocusSystem === filter.autoFocusSystem.target) rightPoints += filter.autoFocusSystem.priority;
+      }
+      if (rightPoints > leftPoints) bestFormat = format;
+    }
+    return bestFormat;
+  }
+},1552,[1529],"node_modules\\react-native-vision-camera\\src\\devices\\getCameraFormat.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.getCameraDevice = getCameraDevice;
+  /**
+   * Get the best matching Camera device that best satisfies your requirements using a sorting filter, or `undefined` if {@linkcode devices} does not contain any devices.
+   * @param position The position of the Camera device relative to the phone.
+   * @param filter The filter you want to use. The Camera device that matches your filter the closest will be returned
+   * @returns The Camera device that matches your filter the closest, or `undefined` if no such Camera Device exists on the given {@linkcode position}.
+   * @example
+   * ```ts
+   * const devices = Camera.getAvailableCameraDevices()
+   * const device = getCameraDevice(devices, 'back', {
+   *    physicalDevices: ['wide-angle-camera']
+   * })
+   * ```
+   */
+  function getCameraDevice(devices, position) {
+    var filter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var filtered = devices.filter(function (d) {
+      return d.position === position;
+    });
+    var bestDevice = filtered[0];
+    if (bestDevice == null) return undefined;
+
+    // Compare each device using a point scoring system
+    for (var device of filtered) {
+      var leftPoints = 0;
+      var rightPoints = 0;
+
+      // prefer higher hardware-level
+      if (bestDevice.hardwareLevel === 'full') leftPoints += 4;
+      if (device.hardwareLevel === 'full') rightPoints += 4;
+      if (filter.physicalDevices != null) {
+        // user did pass a physical device filter, two possible scenarios:
+        // 1. user wants all cameras ([ultra-wide, wide, tele]) to zoom. prefer those devices that have all 3 cameras.
+        // 2. user wants only one ([wide]) for faster performance. prefer those devices that only have one camera, if they have more, we rank them lower.
+        for (var d of bestDevice.physicalDevices) {
+          if (filter.physicalDevices.includes(d)) leftPoints += 1;else leftPoints -= 1;
+        }
+        for (var _d of device.physicalDevices) {
+          if (filter.physicalDevices.includes(_d)) rightPoints += 1;else rightPoints -= 1;
+        }
+      } else {
+        // user did not pass a physical device filter. prefer wide-angle-camera as a default
+        if (bestDevice.physicalDevices.includes('wide-angle-camera')) leftPoints += 2;
+        if (device.physicalDevices.includes('wide-angle-camera')) rightPoints += 2;
+        // if we have more than one device, we rank it lower. we only want a simple camera
+        if (bestDevice.physicalDevices.length > device.physicalDevices.length) leftPoints -= 1;
+        if (device.physicalDevices.length > bestDevice.physicalDevices.length) rightPoints -= 1;
+      }
+      if (rightPoints > leftPoints) bestDevice = device;
+    }
+    return bestDevice;
+  }
+},1553,[],"node_modules\\react-native-vision-camera\\src\\devices\\getCameraDevice.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.Templates = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var SnapchatResolution = {
+    width: 1920,
+    height: 1080
+  };
+  var InstagramResolution = {
+    width: 3840,
+    height: 2160
+  };
+  var ScreenAspectRatio = _reactNative.Dimensions.get('window').height / _reactNative.Dimensions.get('window').width;
+
+  /**
+   * Predefined templates for use in `useCameraFormat`/`getCameraFormat`.
+   * @example
+   * ```ts
+   * const format = useCameraFormat(device, Templates.Snapchat)
+   * ```
+   */
+  var Templates = exports.Templates = {
+    /**
+     * Highest resolution video recordings (e.g. 4k)
+     */
+    Video: [{
+      videoResolution: 'max'
+    }],
+    /**
+     * High resolution 60 FPS video recordings (e.g. 1080@60 FPS)
+     */
+    Video60Fps: [{
+      fps: 60
+    }, {
+      videoResolution: 'max'
+    }],
+    /**
+     * High-FPS video recordings (e.g. 720@240 FPS)
+     */
+    VideoSlowMotion: [{
+      fps: 240
+    }, {
+      videoResolution: 'max'
+    }],
+    /**
+     * High resolution video recordings with cinematic video stabilization
+     */
+    VideoStabilized: [{
+      videoResolution: 'max'
+    }, {
+      videoStabilizationMode: 'cinematic-extended'
+    }],
+    /**
+     * Highest resolution photo capture (e.g. 4k)
+     */
+    Photo: [{
+      photoResolution: 'max'
+    }],
+    /**
+     * Highest resolution photo capture with portrait screen aspect ratio (e.g. 4k)
+     */
+    PhotoPortrait: [{
+      photoResolution: 'max'
+    }, {
+      photoAspectRatio: ScreenAspectRatio
+    }],
+    /**
+     * HD-quality for faster Frame Processing (e.g. 720p)
+     */
+    FrameProcessing: [{
+      videoResolution: {
+        width: 1080,
+        height: 720
+      }
+    }],
+    /**
+     * Snapchat-style video recordings and photo capture
+     * Targets Full HD-quality for lower file sizes and portrait screen aspect ratio.
+     */
+    Snapchat: [{
+      videoAspectRatio: ScreenAspectRatio
+    }, {
+      videoResolution: SnapchatResolution
+    }, {
+      photoAspectRatio: ScreenAspectRatio
+    }, {
+      photoResolution: SnapchatResolution
+    }],
+    /**
+     * Instagram-style video recordings and photo capture.
+     * Targets 4k-quality and portrait screen aspect ratio.
+     */
+    Instagram: [{
+      videoAspectRatio: ScreenAspectRatio
+    }, {
+      videoResolution: InstagramResolution
+    }, {
+      photoAspectRatio: ScreenAspectRatio
+    }, {
+      photoResolution: InstagramResolution
+    }]
+  };
+},1554,[1],"node_modules\\react-native-vision-camera\\src\\devices\\Templates.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.useCameraDevice = useCameraDevice;
+  var _react = _$$_REQUIRE(_dependencyMap[0], "react");
+  /**
+   * Get the best matching Camera device that best satisfies your requirements using a sorting filter.
+   * @param position The position of the Camera device relative to the phone.
+   * @param filter The filter you want to use. The Camera device that matches your filter the closest will be returned
+   * @returns The Camera device that matches your filter the closest, or `undefined` if no such Camera Device exists on the given {@linkcode position}.
+   * @example
+   * ```ts
+   * const device = useCameraDevice('back', {
+   *    physicalDevices: ['wide-angle-camera']
+   * })
+   * ```
+   */
+  function useCameraDevice(position, filter) {
+    var devices = (0, _$$_REQUIRE(_dependencyMap[1], "./useCameraDevices").useCameraDevices)();
+    var device = (0, _react.useMemo)(function () {
+      return (0, _$$_REQUIRE(_dependencyMap[2], "../devices/getCameraDevice").getCameraDevice)(devices, position, filter);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [devices, position, JSON.stringify(filter)]);
+    return device;
+  }
+},1555,[41,1556,1553],"node_modules\\react-native-vision-camera\\src\\hooks\\useCameraDevice.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.useCameraDevices = useCameraDevices;
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _$$_REQUIRE(_dependencyMap[2], "react");
+  /**
+   * Get all available Camera Devices this phone has.
+   *
+   * Camera Devices attached to this phone (`back` or `front`) are always available,
+   * while `external` devices might be plugged in or out at any point,
+   * so the result of this function might update over time.
+   */
+  function useCameraDevices() {
+    var _useState = (0, _react.useState)(function () {
+        return _$$_REQUIRE(_dependencyMap[3], "../CameraDevices").CameraDevices.getAvailableCameraDevices();
+      }),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      devices = _useState2[0],
+      setDevices = _useState2[1];
+    (0, _react.useEffect)(function () {
+      var listener = _$$_REQUIRE(_dependencyMap[3], "../CameraDevices").CameraDevices.addCameraDevicesChangedListener(function (newDevices) {
+        setDevices(newDevices);
+      });
+      return function () {
+        return listener.remove();
+      };
+    }, []);
+    return devices;
+  }
+},1556,[3,24,41,1540],"node_modules\\react-native-vision-camera\\src\\hooks\\useCameraDevices.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.useCameraFormat = useCameraFormat;
+  var _react = _$$_REQUIRE(_dependencyMap[0], "react");
+  /**
+   * Get the best matching Camera format for the given device that satisfies your requirements using a sorting filter. By default, formats are sorted by highest to lowest resolution.
+   *
+   * The {@linkcode filters | filters} are ranked by priority, from highest to lowest.
+   * This means the first item you pass will have a higher priority than the second, and so on.
+   *
+   * @param device The Camera Device you're currently using
+   * @param filters The filters you want to use. The format that matches your filter the closest will be returned
+   * @returns The format that matches your filter the closest.
+   * @example
+   * ```ts
+   * const device = useCameraDevice(...)
+   * const format = useCameraFormat(device, [
+   *   { videoResolution: { width: 3048, height: 2160 } },
+   *   { fps: 60 }
+   * ])
+   * ```
+   */
+  function useCameraFormat(device, filters) {
+    var format = (0, _react.useMemo)(function () {
+      if (device == null) return undefined;
+      return (0, _$$_REQUIRE(_dependencyMap[1], "../devices/getCameraFormat").getCameraFormat)(device, filters);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [device, JSON.stringify(filters)]);
+    return format;
+  }
+},1557,[41,1552],"node_modules\\react-native-vision-camera\\src\\hooks\\useCameraFormat.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.useCameraPermission = useCameraPermission;
+  exports.useLocationPermission = useLocationPermission;
+  exports.useMicrophonePermission = useMicrophonePermission;
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _$$_REQUIRE(_dependencyMap[3], "react");
+  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
+  function usePermission(get, request) {
+    var _useState = (0, _react.useState)(function () {
+        return get() === 'granted';
+      }),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      hasPermission = _useState2[0],
+      setHasPermission = _useState2[1];
+    var requestPermission = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var result = yield request();
+      var hasPermissionNow = result === 'granted';
+      setHasPermission(hasPermissionNow);
+      return hasPermissionNow;
+    }), [request]);
+    (0, _react.useEffect)(function () {
+      // Refresh permission when app state changes, as user might have allowed it in Settings
+      var listener = _reactNative.AppState.addEventListener('change', function () {
+        setHasPermission(get() === 'granted');
+      });
+      return function () {
+        return listener.remove();
+      };
+    }, [get]);
+    return (0, _react.useMemo)(function () {
+      return {
+        hasPermission: hasPermission,
+        requestPermission: requestPermission
+      };
+    }, [hasPermission, requestPermission]);
+  }
+
+  /**
+   * Returns whether the user has granted permission to use the Camera, or not.
+   *
+   * If the user doesn't grant Camera Permission, you cannot use the `<Camera>`.
+   *
+   * @example
+   * ```tsx
+   * const { hasPermission, requestPermission } = useCameraPermission()
+   *
+   * if (!hasPermission) {
+   *   return <PermissionScreen onPress={requestPermission} />
+   * } else {
+   *   return <Camera ... />
+   * }
+   * ```
+   */
+  function useCameraPermission() {
+    return usePermission(_$$_REQUIRE(_dependencyMap[5], "../Camera").Camera.getCameraPermissionStatus, _$$_REQUIRE(_dependencyMap[5], "../Camera").Camera.requestCameraPermission);
+  }
+
+  /**
+   * Returns whether the user has granted permission to use the Microphone, or not.
+   *
+   * If the user doesn't grant Audio Permission, you can use the `<Camera>` but you cannot
+   * record videos with audio (the `audio={..}` prop).
+   *
+   * @example
+   * ```tsx
+   * const { hasPermission, requestPermission } = useMicrophonePermission()
+   * const canRecordAudio = hasPermission
+   *
+   * return <Camera video={true} audio={canRecordAudio} />
+   * ```
+   */
+  function useMicrophonePermission() {
+    return usePermission(_$$_REQUIRE(_dependencyMap[5], "../Camera").Camera.getMicrophonePermissionStatus, _$$_REQUIRE(_dependencyMap[5], "../Camera").Camera.requestMicrophonePermission);
+  }
+
+  /**
+   * Returns whether the user has granted permission to use the Location, or not.
+   *
+   * If the user doesn't grant Location Permission, you can use the `<Camera>` but you cannot
+   * capture photos or videos with GPS EXIF tags (the `location={..}` prop).
+   *
+   * @example
+   * ```tsx
+   * const { hasPermission, requestPermission } = useLocationPermission()
+   * const canCaptureLocation = hasPermission
+   *
+   * return <Camera photo={true} location={canCaptureLocation} />
+   * ```
+   */
+  function useLocationPermission() {
+    return usePermission(_$$_REQUIRE(_dependencyMap[5], "../Camera").Camera.getLocationPermissionStatus, _$$_REQUIRE(_dependencyMap[5], "../Camera").Camera.requestLocationPermission);
+  }
+},1558,[3,83,24,41,1,1527],"node_modules\\react-native-vision-camera\\src\\hooks\\useCameraPermission.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.useCodeScanner = useCodeScanner;
+  var _objectWithoutProperties2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/objectWithoutProperties"));
+  var _react = _$$_REQUIRE(_dependencyMap[2], "react");
+  var _excluded = ["onCodeScanned"];
+  function useCodeScanner(codeScanner) {
+    var onCodeScanned = codeScanner.onCodeScanned,
+      codeScannerOptions = (0, _objectWithoutProperties2.default)(codeScanner, _excluded);
+
+    // Memoize the  function once and use a ref on any identity changes
+    var ref = (0, _react.useRef)(onCodeScanned);
+    ref.current = onCodeScanned;
+    var callback = (0, _react.useCallback)(function (codes, frame) {
+      ref.current(codes, frame);
+    }, []);
+
+    // CodeScanner needs to be memoized so it doesn't trigger a Camera Session re-build
+    return (0, _react.useMemo)(function () {
+      return Object.assign({}, codeScannerOptions, {
+        onCodeScanned: callback
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(codeScannerOptions), callback]);
+  }
+},1559,[3,150,41],"node_modules\\react-native-vision-camera\\src\\hooks\\useCodeScanner.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.createFrameProcessor = createFrameProcessor;
+  exports.useFrameProcessor = useFrameProcessor;
+  var _react = _$$_REQUIRE(_dependencyMap[0], "react");
+  /**
+   * Create a new Frame Processor function which you can pass to the `<Camera>`.
+   * (See ["Frame Processors"](https://react-native-vision-camera.com/docs/guides/frame-processors))
+   *
+   * Make sure to add the `'worklet'` directive to the top of the Frame Processor function, otherwise it will not get compiled into a worklet.
+   *
+   * Also make sure to memoize the returned object, so that the Camera doesn't reset the Frame Processor Context each time.
+   * @worklet
+   */
+  function createFrameProcessor(frameProcessor) {
+    return {
+      frameProcessor: (0, _$$_REQUIRE(_dependencyMap[1], "../frame-processors/withFrameRefCounting").withFrameRefCounting)(frameProcessor),
+      type: 'readonly'
+    };
+  }
+
+  /**
+   * Returns a memoized Frame Processor function wich you can pass to the `<Camera>`.
+   * (See ["Frame Processors"](https://react-native-vision-camera.com/docs/guides/frame-processors))
+   *
+   * Make sure to add the `'worklet'` directive to the top of the Frame Processor function, otherwise it will not get compiled into a worklet.
+   *
+   * @worklet
+   * @param frameProcessor The Frame Processor
+   * @param dependencies The React dependencies which will be copied into the VisionCamera JS-Runtime.
+   * @returns The memoized Frame Processor.
+   * @example
+   * ```ts
+   * const frameProcessor = useFrameProcessor((frame) => {
+   *   'worklet'
+   *   const faces = scanFaces(frame)
+   *   console.log(`Faces: ${faces}`)
+   * }, [])
+   * ```
+   */
+  function useFrameProcessor(frameProcessor, dependencies) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return (0, _react.useMemo)(function () {
+      return createFrameProcessor(frameProcessor);
+    }, dependencies);
+  }
+},1560,[41,1561],"node_modules\\react-native-vision-camera\\src\\hooks\\useFrameProcessor.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.withFrameRefCounting = withFrameRefCounting;
+  /**
+   * A private API to wrap a Frame Processor with a ref-counting mechanism
+   * @worklet
+   * @internal
+   */
+  var _worklet_10826037594786_init_data = {
+    code: "function anonymous(frame){const{frameProcessor,throwErrorOnJS}=this.__closure;const internal=frame;internal.incrementRefCount();try{frameProcessor(frame);}catch(e){throwErrorOnJS(e);}finally{internal.decrementRefCount();}}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\frame-processors\\withFrameRefCounting.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"frame\",\"frameProcessor\",\"throwErrorOnJS\",\"__closure\",\"internal\",\"incrementRefCount\",\"e\",\"decrementRefCount\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/frame-processors/withFrameRefCounting.ts\"],\"mappings\":\"AASU,SAAAA,SAAUA,CAAAC,KAAA,QAAAC,cAAA,CAAAC,cAAA,OAAAC,SAAA,CAGhB,KAAM,CAAAC,QAAQ,CAAGJ,KAAsB,CACvCI,QAAQ,CAACC,iBAAiB,CAAC,CAAC,CAC5B,GAAI,CAEFJ,cAAc,CAACD,KAAK,CAAC,CACvB,CAAE,MAAOM,CAAC,CAAE,CAEVJ,cAAc,CAACI,CAAC,CAAC,CACnB,CAAC,OAAS,CAERF,QAAQ,CAACG,iBAAiB,CAAC,CAAC,CAC9B,CACF\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  function withFrameRefCounting(frameProcessor) {
+    return function () {
+      var _e = [new global.Error(), -3, -27];
+      var anonymous = function anonymous(frame) {
+        // Increment ref-count by one
+        var internal = frame;
+        internal.incrementRefCount();
+        try {
+          // Call sync frame processor
+          frameProcessor(frame);
+        } catch (e) {
+          // Re-throw error on JS Thread
+          (0, _$$_REQUIRE(_dependencyMap[0], "./throwErrorOnJS").throwErrorOnJS)(e);
+        } finally {
+          // Potentially delete Frame if we were the last ref (no runAsync)
+          internal.decrementRefCount();
+        }
+      };
+      anonymous.__closure = {
+        frameProcessor: frameProcessor,
+        throwErrorOnJS: _$$_REQUIRE(_dependencyMap[0], "./throwErrorOnJS").throwErrorOnJS
+      };
+      anonymous.__workletHash = 10826037594786;
+      anonymous.__initData = _worklet_10826037594786_init_data;
+      anonymous.__stackDetails = _e;
+      return anonymous;
+    }();
+  }
+},1561,[1562],"node_modules\\react-native-vision-camera\\src\\frame-processors\\withFrameRefCounting.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.throwErrorOnJS = void 0;
+  /**
+   * Rethrows the given message and stack as a JS Error on the JS Thread.
+   */
+  var rethrowErrorOnJS;
+  try {
+    var Worklets = _$$_REQUIRE(_dependencyMap[0], "../dependencies/WorkletsProxy").WorkletsProxy.Worklets;
+    rethrowErrorOnJS = Worklets.createRunOnJS(function (message, stack) {
+      var _global$ErrorUtils;
+      var error = new Error();
+      error.message = message;
+      error.stack = stack;
+      error.name = 'Frame Processor Error';
+      // @ts-expect-error this is react-native specific
+      error.jsEngine = 'VisionCamera';
+
+      // From react-native:
+      // @ts-expect-error it's untyped
+      var errorUtils = (_global$ErrorUtils = global.ErrorUtils) != null ? _global$ErrorUtils : global.__ErrorUtils;
+      if (errorUtils != null && typeof errorUtils.reportFatalError === 'function') {
+        // we can use the JS error reporter view from react native
+        errorUtils.reportFatalError(error);
+      } else {
+        // just log it to console.error as a fallback
+        console.error('Frame Processor Error:', error);
+      }
+    });
+  } catch (e) {
+    // react-native-worklets-core is not installed!
+    // Just use dummy implementations that will throw when the user tries to use Frame Processors.
+    rethrowErrorOnJS = function rethrowErrorOnJS() {
+      throw new (_$$_REQUIRE(_dependencyMap[1], "./FrameProcessorsUnavailableError").FrameProcessorsUnavailableError)(e);
+    };
+  }
+
+  /**
+   * Throws the given Error on the JS Thread using React Native's error reporter.
+   * @param error An {@linkcode Error}, or an object with a `message` property, otherwise a default messageg will be thrown.
+   */
+  var _worklet_15098164535596_init_data = {
+    code: "function throwErrorOnJS(error){const{rethrowErrorOnJS}=this.__closure;const safeError=error;const message=safeError!=null&&'message'in safeError?safeError.message:'Frame Processor threw an error.';rethrowErrorOnJS(message,safeError===null||safeError===void 0?void 0:safeError.stack);}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\frame-processors\\throwErrorOnJS.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"throwErrorOnJS\",\"error\",\"rethrowErrorOnJS\",\"__closure\",\"safeError\",\"message\",\"stack\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/frame-processors/throwErrorOnJS.ts\"],\"mappings\":\"AA6CO,SAAAA,cAASA,CAAeC,KAAA,CAAe,OAAAC,gBAAA,OAAAC,SAAA,CAE5C,KAAM,CAAAC,SAAS,CAAGH,KAA0B,CAC5C,KAAM,CAAAI,OAAO,CAAGD,SAAS,EAAI,IAAI,EAAI,SAAS,EAAI,CAAAA,SAAS,CAAGA,SAAS,CAACC,OAAO,CAAG,iCAAiC,CACnHH,gBAAgB,CAACG,OAAO,CAAED,SAAS,SAATA,SAAS,iBAATA,SAAS,CAAEE,KAAK,CAAC,CAC7C\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var throwErrorOnJS = exports.throwErrorOnJS = function () {
+    var _e = [new global.Error(), -2, -27];
+    var throwErrorOnJS = function throwErrorOnJS(error) {
+      var safeError = error;
+      var message = safeError != null && 'message' in safeError ? safeError.message : 'Frame Processor threw an error.';
+      rethrowErrorOnJS(message, safeError == null ? void 0 : safeError.stack);
+    };
+    throwErrorOnJS.__closure = {
+      rethrowErrorOnJS: rethrowErrorOnJS
+    };
+    throwErrorOnJS.__workletHash = 15098164535596;
+    throwErrorOnJS.__initData = _worklet_15098164535596_init_data;
+    throwErrorOnJS.__stackDetails = _e;
+    return throwErrorOnJS;
+  }();
+},1562,[1563,1533],"node_modules\\react-native-vision-camera\\src\\frame-processors\\throwErrorOnJS.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.WorkletsProxy = void 0;
+  /**
+   * A proxy object that lazy-imports react-native-worklets-core as soon as the
+   * caller tries to access a property on {@linkcode WorkletsProxy}.
+   *
+   * If react-native-worklets-core is not installed, accessing anything on
+   * {@linkcode WorkletsProxy} will throw.
+   */
+  var WorkletsProxy = exports.WorkletsProxy = (0, _$$_REQUIRE(_dependencyMap[0], "./ModuleProxy").createModuleProxy)(function () {
+    try {
+      return _$$_REQUIRE(_dependencyMap[1], "react-native-worklets-core");
+    } catch (e) {
+      throw new (_$$_REQUIRE(_dependencyMap[0], "./ModuleProxy").OptionalDependencyNotInstalledError)('react-native-worklets-core');
+    }
+  });
+},1563,[1538],"node_modules\\react-native-vision-camera\\src\\dependencies\\WorkletsProxy.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.runAsync = void 0;
+  /**
+   * A synchronized Shared Value to indicate whether the async context is currently executing
+   */
+  var isAsyncContextBusy;
+  /**
+   * Runs the given function on the async context, and sets {@linkcode isAsyncContextBusy} to false after it finished executing.
+   */
+  var runOnAsyncContext;
+  var _worklet_16206065739629_init_data = {
+    code: "function anonymous(frame,func){const{throwErrorOnJS,isAsyncContextBusy}=this.__closure;try{func();}catch(e){throwErrorOnJS(e);}finally{const internal=frame;internal.decrementRefCount();isAsyncContextBusy.value=false;}}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\frame-processors\\runAsync.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"frame\",\"func\",\"throwErrorOnJS\",\"isAsyncContextBusy\",\"__closure\",\"e\",\"internal\",\"decrementRefCount\",\"value\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/frame-processors/runAsync.ts\"],\"mappings\":\"AAmBkD,QAAC,CAAAA,SAAcA,CAAAC,KAAqB,CAAAC,IAAA,QAAAC,cAAA,CAAAC,kBAAA,OAAAC,SAAA,CAElF,GAAI,CAEFH,IAAI,CAAC,CAAC,CACR,CAAE,MAAOI,CAAC,CAAE,CAEVH,cAAc,CAACG,CAAC,CAAC,CACnB,CAAC,OAAS,CAER,KAAM,CAAAC,QAAQ,CAAGN,KAAsB,CACvCM,QAAQ,CAACC,iBAAiB,CAAC,CAAC,CAG5BJ,kBAAkB,CAACK,KAAK,CAAG,KAAK,CAClC,CACF\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  try {
+    var Worklets = _$$_REQUIRE(_dependencyMap[0], "../dependencies/WorkletsProxy").WorkletsProxy.Worklets;
+    isAsyncContextBusy = Worklets.createSharedValue(false);
+    var asyncContext = Worklets.createContext('VisionCamera.async');
+    runOnAsyncContext = asyncContext.createRunAsync(function () {
+      var _e = [new global.Error(), -3, -27];
+      var anonymous = function anonymous(frame, func) {
+        try {
+          // Call long-running function
+          func();
+        } catch (e) {
+          // Re-throw error on JS Thread
+          (0, _$$_REQUIRE(_dependencyMap[1], "./throwErrorOnJS").throwErrorOnJS)(e);
+        } finally {
+          // Potentially delete Frame if we were the last ref
+          var internal = frame;
+          internal.decrementRefCount();
+
+          // free up async context again, new calls can be made
+          isAsyncContextBusy.value = false;
+        }
+      };
+      anonymous.__closure = {
+        throwErrorOnJS: _$$_REQUIRE(_dependencyMap[1], "./throwErrorOnJS").throwErrorOnJS,
+        isAsyncContextBusy: isAsyncContextBusy
+      };
+      anonymous.__workletHash = 16206065739629;
+      anonymous.__initData = _worklet_16206065739629_init_data;
+      anonymous.__stackDetails = _e;
+      return anonymous;
+    }());
+  } catch (e) {
+    // react-native-worklets-core is not installed!
+    // Just use dummy implementations that will throw when the user tries to use Frame Processors.
+    isAsyncContextBusy = {
+      value: false
+    };
+    runOnAsyncContext = function runOnAsyncContext() {
+      throw new (_$$_REQUIRE(_dependencyMap[2], "./FrameProcessorsUnavailableError").FrameProcessorsUnavailableError)(e);
+    };
+  }
+
+  /**
+   * Runs the given {@linkcode func} asynchronously on a separate thread,
+   * allowing the Frame Processor to continue executing without dropping a Frame.
+   *
+   * Only one {@linkcode runAsync} call will execute at the same time,
+   * so {@linkcode runAsync} is **not parallel**, **but asynchronous**.
+   *
+   *
+   * For example, if your Camera is running at 60 FPS (16ms per frame), and a
+   * heavy ML face detection Frame Processor Plugin takes 500ms to execute,
+   * you have two options:
+   * - Run the plugin normally (synchronously in `useFrameProcessor`)
+   * but drop a lot of Frames, as we can only run at 2 FPS (500ms per frame)
+   * - Call the plugin inside {@linkcode runAsync} to allow the Camera to still
+   * run at 60 FPS, but offload the heavy ML face detection plugin to the
+   * asynchronous context, where it will run at 2 FPS.
+   *
+   * @note {@linkcode runAsync} cannot be used to draw to a Frame in a Skia Frame Processor.
+   * @param frame The current Frame of the Frame Processor.
+   * @param func The function to execute.
+   * @worklet
+   * @example
+   *
+   * ```ts
+   * const frameProcessor = useFrameProcessor((frame) => {
+   *   'worklet'
+   *   console.log('New Frame arrived!')
+   *
+   *   runAsync(frame, () => {
+   *     'worklet'
+   *     const faces = detectFaces(frame)
+   *     const face = faces[0]
+   *     console.log(`Detected a new face: ${face}`)
+   *   })
+   * })
+   * ```
+   */
+  var _worklet_10565796603945_init_data = {
+    code: "function runAsync(frame,func){const{isAsyncContextBusy,runOnAsyncContext}=this.__closure;if(isAsyncContextBusy.value){return;}const internal=frame;internal.incrementRefCount();isAsyncContextBusy.value=true;runOnAsyncContext(frame,func);}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\frame-processors\\runAsync.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"runAsync\",\"frame\",\"func\",\"isAsyncContextBusy\",\"runOnAsyncContext\",\"__closure\",\"value\",\"internal\",\"incrementRefCount\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/frame-processors/runAsync.ts\"],\"mappings\":\"AAkFO,SAAAA,QAASA,CAASC,KAAA,CAAYC,IAAE,CAAiB,OAAAC,kBAAA,CAAAC,iBAAA,OAAAC,SAAA,CAGtD,GAAIF,kBAAkB,CAACG,KAAK,CAAE,CAG5B,OACF,CAGA,KAAM,CAAAC,QAAQ,CAAGN,KAAsB,CACvCM,QAAQ,CAACC,iBAAiB,CAAC,CAAC,CAE5BL,kBAAkB,CAACG,KAAK,CAAG,IAAI,CAG/BF,iBAAiB,CAACH,KAAK,CAAEC,IAAI,CAAC,CAChC\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var runAsync = exports.runAsync = function () {
+    var _e = [new global.Error(), -3, -27];
+    var runAsync = function runAsync(frame, func) {
+      if (isAsyncContextBusy.value) {
+        // async context is currently busy, we cannot schedule new work in time.
+        // drop this frame/runAsync call.
+        return;
+      }
+
+      // Increment ref count by one
+      var internal = frame;
+      internal.incrementRefCount();
+      isAsyncContextBusy.value = true;
+
+      // Call in separate background context
+      runOnAsyncContext(frame, func);
+    };
+    runAsync.__closure = {
+      isAsyncContextBusy: isAsyncContextBusy,
+      runOnAsyncContext: runOnAsyncContext
+    };
+    runAsync.__workletHash = 10565796603945;
+    runAsync.__initData = _worklet_10565796603945_init_data;
+    runAsync.__stackDetails = _e;
+    return runAsync;
+  }();
+},1564,[1563,1562,1533],"node_modules\\react-native-vision-camera\\src\\frame-processors\\runAsync.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.runAtTargetFps = void 0;
+  var _worklet_15040007729724_init_data = {
+    code: "function getLastFrameProcessorCall(frameProcessorFuncId){var _global$__frameProces,_global$__frameProces2;return(_global$__frameProces=(_global$__frameProces2=global.__frameProcessorRunAtTargetFpsMap)===null||_global$__frameProces2===void 0?void 0:_global$__frameProces2[frameProcessorFuncId])!==null&&_global$__frameProces!==void 0?_global$__frameProces:0;}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\frame-processors\\runAtTargetFps.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"getLastFrameProcessorCall\",\"frameProcessorFuncId\",\"_global$__frameProces\",\"_global$__frameProces2\",\"global\",\"__frameProcessorRunAtTargetFpsMap\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/frame-processors/runAtTargetFps.ts\"],\"mappings\":\"AAKA,SAAAA,yBAASA,CAA0BC,oBAAA,CAA6B,CAAS,IAAAC,qBAAA,CAAAC,sBAAA,CAEvE,OAAAD,qBAAA,EAAAC,sBAAA,CAAOC,MAAM,CAACC,iCAAiC,UAAAF,sBAAA,iBAAxCA,sBAAA,CAA2CF,oBAAoB,CAAC,UAAAC,qBAAA,UAAAA,qBAAA,CAAI,CAAC,CAC9E\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var getLastFrameProcessorCall = function () {
+    var _e = [new global.Error(), 1, -27];
+    var getLastFrameProcessorCall = function getLastFrameProcessorCall(frameProcessorFuncId) {
+      var _global$__frameProces, _global$__frameProces2;
+      return (_global$__frameProces = (_global$__frameProces2 = global.__frameProcessorRunAtTargetFpsMap) == null ? void 0 : _global$__frameProces2[frameProcessorFuncId]) != null ? _global$__frameProces : 0;
+    };
+    getLastFrameProcessorCall.__closure = {};
+    getLastFrameProcessorCall.__workletHash = 15040007729724;
+    getLastFrameProcessorCall.__initData = _worklet_15040007729724_init_data;
+    getLastFrameProcessorCall.__stackDetails = _e;
+    return getLastFrameProcessorCall;
+  }();
+  var _worklet_9353692084576_init_data = {
+    code: "function setLastFrameProcessorCall(frameProcessorFuncId,value){if(global.__frameProcessorRunAtTargetFpsMap==null)global.__frameProcessorRunAtTargetFpsMap={};global.__frameProcessorRunAtTargetFpsMap[frameProcessorFuncId]=value;}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\frame-processors\\runAtTargetFps.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"setLastFrameProcessorCall\",\"frameProcessorFuncId\",\"value\",\"global\",\"__frameProcessorRunAtTargetFpsMap\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/frame-processors/runAtTargetFps.ts\"],\"mappings\":\"AASA,SAAAA,yBAASA,CAA0BC,oBAAA,CAA4BC,KAAE,CAAc,CAE7E,GAAIC,MAAM,CAACC,iCAAiC,EAAI,IAAI,CAAED,MAAM,CAACC,iCAAiC,CAAG,CAAC,CAAC,CACnGD,MAAM,CAACC,iCAAiC,CAACH,oBAAoB,CAAC,CAAGC,KAAK,CACxE\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var setLastFrameProcessorCall = function () {
+    var _e = [new global.Error(), 1, -27];
+    var setLastFrameProcessorCall = function setLastFrameProcessorCall(frameProcessorFuncId, value) {
+      if (global.__frameProcessorRunAtTargetFpsMap == null) global.__frameProcessorRunAtTargetFpsMap = {};
+      global.__frameProcessorRunAtTargetFpsMap[frameProcessorFuncId] = value;
+    };
+    setLastFrameProcessorCall.__closure = {};
+    setLastFrameProcessorCall.__workletHash = 9353692084576;
+    setLastFrameProcessorCall.__initData = _worklet_9353692084576_init_data;
+    setLastFrameProcessorCall.__stackDetails = _e;
+    return setLastFrameProcessorCall;
+  }();
+  /**
+   * Runs the given {@linkcode func} at the given target {@linkcode fps} rate.
+   *
+   * {@linkcode runAtTargetFps} still executes the given {@linkcode func} synchronously,
+   * so this is only useful for throttling calls to a plugin or logger.
+   *
+   * For example, if you want to scan faces only once per second to avoid excessive
+   * CPU usage, use {@linkcode runAtTargetFps runAtTargetFps(1, ...)}.
+   *
+   * @param fps The target FPS rate at which the given function should be executed
+   * @param func The function to execute.
+   * @returns The result of the function if it was executed, or `undefined` otherwise.
+   * @worklet
+   * @example
+   *
+   * ```ts
+   * const frameProcessor = useFrameProcessor((frame) => {
+   *   'worklet'
+   *   console.log('New Frame')
+   *   runAtTargetFps(5, () => {
+   *     'worklet'
+   *     const faces = detectFaces(frame)
+   *     console.log(`Detected a new face: ${faces[0]}`)
+   *   })
+   * })
+   * ```
+   */
+  var _worklet_4376297705441_init_data = {
+    code: "function runAtTargetFps(fps,func){const{getLastFrameProcessorCall,setLastFrameProcessorCall}=this.__closure;var _func$__workletHash;const funcId=(_func$__workletHash=func.__workletHash)!==null&&_func$__workletHash!==void 0?_func$__workletHash:'1';const targetIntervalMs=1000/fps;const now=performance.now();const diffToLastCall=now-getLastFrameProcessorCall(funcId);if(diffToLastCall>=targetIntervalMs){setLastFrameProcessorCall(funcId,now);return func();}return undefined;}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\frame-processors\\runAtTargetFps.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"runAtTargetFps\",\"fps\",\"func\",\"getLastFrameProcessorCall\",\"setLastFrameProcessorCall\",\"__closure\",\"_func$__workletHash\",\"funcId\",\"__workletHash\",\"targetIntervalMs\",\"now\",\"performance\",\"diffToLastCall\",\"undefined\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/frame-processors/runAtTargetFps.ts\"],\"mappings\":\"AA0CO,SAAAA,cAASA,CAAeC,GAAG,CAAWC,IAAE,CAAc,OAAAC,yBAAA,CAAAC,yBAAA,OAAAC,SAAA,CAAgB,IAAAC,mBAAA,CAI3E,KAAM,CAAAC,MAAM,EAAAD,mBAAA,CAAGJ,IAAI,CAACM,aAAa,UAAAF,mBAAA,UAAAA,mBAAA,CAAI,GAAG,CAExC,KAAM,CAAAG,gBAAgB,CAAG,IAAI,CAAGR,GAAG,CACnC,KAAM,CAAAS,GAAG,CAAGC,WAAW,CAACD,GAAG,CAAC,CAAC,CAC7B,KAAM,CAAAE,cAAc,CAAGF,GAAG,CAAGP,yBAAyB,CAACI,MAAM,CAAC,CAC9D,GAAIK,cAAc,EAAIH,gBAAgB,CAAE,CACtCL,yBAAyB,CAACG,MAAM,CAAEG,GAAG,CAAC,CAEtC,MAAO,CAAAR,IAAI,CAAC,CAAC,CACf,CACA,MAAO,CAAAW,SAAS,CAClB\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var runAtTargetFps = exports.runAtTargetFps = function () {
+    var _e = [new global.Error(), -3, -27];
+    var runAtTargetFps = function runAtTargetFps(fps, func) {
+      var _func$__workletHash;
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      var funcId = (_func$__workletHash = func.__workletHash) != null ? _func$__workletHash : '1';
+      var targetIntervalMs = 1000 / fps; // <-- 60 FPS => 16,6667ms interval
+      var now = performance.now();
+      var diffToLastCall = now - getLastFrameProcessorCall(funcId);
+      if (diffToLastCall >= targetIntervalMs) {
+        setLastFrameProcessorCall(funcId, now);
+        // Last Frame Processor call is already so long ago that we want to make a new call
+        return func();
+      }
+      return undefined;
+    };
+    runAtTargetFps.__closure = {
+      getLastFrameProcessorCall: getLastFrameProcessorCall,
+      setLastFrameProcessorCall: setLastFrameProcessorCall
+    };
+    runAtTargetFps.__workletHash = 4376297705441;
+    runAtTargetFps.__initData = _worklet_4376297705441_init_data;
+    runAtTargetFps.__stackDetails = _e;
+    return runAtTargetFps;
+  }();
+},1565,[],"node_modules\\react-native-vision-camera\\src\\frame-processors\\runAtTargetFps.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.createSkiaFrameProcessor = createSkiaFrameProcessor;
+  exports.useSkiaFrameProcessor = useSkiaFrameProcessor;
+  var _react = _$$_REQUIRE(_dependencyMap[0], "react");
+  /**
+   * Represents a Camera Frame that can be directly drawn to using Skia.
+   *
+   * @see {@linkcode useSkiaFrameProcessor}
+   * @see {@linkcode render}
+   */
+  var _worklet_8065211113380_init_data = {
+    code: "function getDegrees(orientation){switch(orientation){case'portrait':return 0;case'landscape-left':return 90;case'portrait-upside-down':return 180;case'landscape-right':return 270;}}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"getDegrees\",\"orientation\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AAiDA,SAAAA,UAASA,CAAWC,WAAA,CAAyB,CAE3C,OAAQA,WAAW,EACjB,IAAK,UAAU,CACb,MAAO,EAAC,CACV,IAAK,gBAAgB,CACnB,MAAO,GAAE,CACX,IAAK,sBAAsB,CACzB,MAAO,IAAG,CACZ,IAAK,iBAAiB,CACpB,MAAO,IAAG,CACd,CACF\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var getDegrees = function () {
+    var _e = [new global.Error(), 1, -27];
+    var getDegrees = function getDegrees(orientation) {
+      switch (orientation) {
+        case 'portrait':
+          return 0;
+        case 'landscape-left':
+          return 90;
+        case 'portrait-upside-down':
+          return 180;
+        case 'landscape-right':
+          return 270;
+      }
+    };
+    getDegrees.__closure = {};
+    getDegrees.__workletHash = 8065211113380;
+    getDegrees.__initData = _worklet_8065211113380_init_data;
+    getDegrees.__stackDetails = _e;
+    return getDegrees;
+  }();
+  var _worklet_13642310677304_init_data = {
+    code: "function getOrientation(degrees){const clamped=(degrees+360)%360;if(clamped>=315||clamped<=45)return'portrait';else if(clamped>=45&&clamped<=135)return'landscape-left';else if(clamped>=135&&clamped<=225)return'portrait-upside-down';else if(clamped>=225&&clamped<=315)return'landscape-right';else throw new Error(\"Invalid degrees! \"+degrees);}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"getOrientation\",\"degrees\",\"clamped\",\"Error\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AA+DA,SAAAA,cAASA,CAAeC,OAAA,CAAgB,CAEtC,KAAM,CAAAC,OAAO,CAAG,CAACD,OAAO,CAAG,GAAG,EAAI,GAAG,CACrC,GAAIC,OAAO,EAAI,GAAG,EAAIA,OAAO,EAAI,EAAE,CAAE,MAAO,UAAU,KACjD,IAAIA,OAAO,EAAI,EAAE,EAAIA,OAAO,EAAI,GAAG,CAAE,MAAO,gBAAgB,KAC5D,IAAIA,OAAO,EAAI,GAAG,EAAIA,OAAO,EAAI,GAAG,CAAE,MAAO,sBAAsB,KACnE,IAAIA,OAAO,EAAI,GAAG,EAAIA,OAAO,EAAI,GAAG,CAAE,MAAO,iBAAiB,KAC9D,MAAM,IAAI,CAAAC,KAAK,qBAAqBF,OAAS,CAAC,CACrD\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var getOrientation = function () {
+    var _e = [new global.Error(), 1, -27];
+    var getOrientation = function getOrientation(degrees) {
+      var clamped = (degrees + 360) % 360;
+      if (clamped >= 315 || clamped <= 45) return 'portrait';else if (clamped >= 45 && clamped <= 135) return 'landscape-left';else if (clamped >= 135 && clamped <= 225) return 'portrait-upside-down';else if (clamped >= 225 && clamped <= 315) return 'landscape-right';else throw new Error(`Invalid degrees! ${degrees}`);
+    };
+    getOrientation.__closure = {};
+    getOrientation.__workletHash = 13642310677304;
+    getOrientation.__initData = _worklet_13642310677304_init_data;
+    getOrientation.__stackDetails = _e;
+    return getOrientation;
+  }();
+  var _worklet_9987008482781_init_data = {
+    code: "function relativeTo(a,b){const{getOrientation,getDegrees}=this.__closure;return getOrientation(getDegrees(a)-getDegrees(b));}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"relativeTo\",\"a\",\"b\",\"getOrientation\",\"getDegrees\",\"__closure\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AAyEA,SAAAA,UAASA,CAAWC,CAAC,CAAaC,CAAG,CAAc,OAAAC,cAAA,CAAAC,UAAA,OAAAC,SAAA,CAEjD,MAAO,CAAAF,cAAc,CAACC,UAAU,CAACH,CAAC,CAAC,CAAGG,UAAU,CAACF,CAAC,CAAC,CAAC,CACtD\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var relativeTo = function () {
+    var _e = [new global.Error(), -3, -27];
+    var relativeTo = function relativeTo(a, b) {
+      return getOrientation(getDegrees(a) - getDegrees(b));
+    };
+    relativeTo.__closure = {
+      getOrientation: getOrientation,
+      getDegrees: getDegrees
+    };
+    relativeTo.__workletHash = 9987008482781;
+    relativeTo.__initData = _worklet_9987008482781_init_data;
+    relativeTo.__stackDetails = _e;
+    return relativeTo;
+  }();
+  /**
+   * Counter-rotates the {@linkcode canvas} by the {@linkcode frame}'s {@linkcode Frame.orientation orientation}
+   * to ensure the Frame will be drawn upright.
+   */
+  var _worklet_15894104595936_init_data = {
+    code: "function withRotatedFrame(frame,canvas,previewOrientation,func){const{relativeTo}=this.__closure;canvas.save();try{const orientation=relativeTo(frame.orientation,previewOrientation);switch(orientation){case'portrait':break;case'landscape-left':canvas.translate(frame.height,frame.width);canvas.rotate(270,0,0);break;case'portrait-upside-down':canvas.translate(frame.width,frame.height);canvas.rotate(180,0,0);break;case'landscape-right':canvas.translate(frame.height,0);canvas.rotate(90,0,0);break;default:throw new Error(\"Invalid frame.orientation: \"+frame.orientation+\"!\");}func();}finally{canvas.restore();}}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"withRotatedFrame\",\"frame\",\"canvas\",\"previewOrientation\",\"func\",\"relativeTo\",\"__closure\",\"save\",\"orientation\",\"translate\",\"height\",\"width\",\"rotate\",\"Error\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AA8EA,SAAAA,iBAAAC,KAAA,CAAAC,MAAA,CAAAC,kBAAA,CAAAC,IAAA,QAAAC,UAAA,OAAAC,SAAA,CACAJ,MAAA,CAAAK,IAAA,GACA,IAEA,KAAS,CAAAC,WAAA,CAAAH,UAA+B,CAAAJ,KAAgB,CAAEO,WAAA,CAAAL,kBAAyD,EAGjH,OAAAK,WAAA,EACA,IAAO,UAAM,CAGX,MACA,IAAM,gBAAc,CAElBN,MAAK,CAAAO,SAAU,CAAAR,KAAA,CAAAS,MAAA,CAAAT,KAAA,CAAAU,KAAA,EACbT,MAAA,CAAAU,MAAA,UACA,MACF,IAAK,sBAAgB,CAEnBV,MAAM,CAACO,SAAS,CAACR,KAAK,CAACU,KAAA,CAAMV,KAAE,CAAKS,MAAM,CAAC,CAC3CR,MAAM,CAACU,MAAM,CAAC,GAAG,CAAE,CAAC,CAAE,CAAC,CAAC,CACxB,MACF,IAAK,kBAEHV,MAAM,CAACO,SAAS,CAACR,KAAK,CAACS,MAAK,CAAE,GAC9BR,MAAM,CAACU,MAAM,CAAC,GAAG,CAAE,CAAC,CAAE,CAAC,CACvB,MACF,QACE,UAAAC,KAAA,+BAAAZ,KAAA,CAAAO,WAAA,M,KAIF,G,QACE,C\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var withRotatedFrame = function () {
+    var _e = [new global.Error(), -2, -27];
+    var withRotatedFrame = function withRotatedFrame(frame, canvas, previewOrientation, func) {
+      // 1. save current translation matrix
+      canvas.save();
+      try {
+        // 2. properly rotate canvas so Frame is rendered up-right.
+        var orientation = relativeTo(frame.orientation, previewOrientation);
+        switch (orientation) {
+          case 'portrait':
+            // do nothing
+            break;
+          case 'landscape-left':
+            // rotate two flips on (0,0) origin and move X + Y into view again
+            canvas.translate(frame.height, frame.width);
+            canvas.rotate(270, 0, 0);
+            break;
+          case 'portrait-upside-down':
+            // rotate three flips on (0,0) origin and move Y into view again
+            canvas.translate(frame.width, frame.height);
+            canvas.rotate(180, 0, 0);
+            break;
+          case 'landscape-right':
+            // rotate one flip on (0,0) origin and move X into view again
+            canvas.translate(frame.height, 0);
+            canvas.rotate(90, 0, 0);
+            break;
+          default:
+            throw new Error(`Invalid frame.orientation: ${frame.orientation}!`);
+        }
+
+        // 3. call actual processing code
+        func();
+      } finally {
+        // 4. restore matrix again to original base
+        canvas.restore();
+      }
+    };
+    withRotatedFrame.__closure = {
+      relativeTo: relativeTo
+    };
+    withRotatedFrame.__workletHash = 15894104595936;
+    withRotatedFrame.__initData = _worklet_15894104595936_init_data;
+    withRotatedFrame.__stackDetails = _e;
+    return withRotatedFrame;
+  }();
+  var _worklet_6815795929246_init_data = {
+    code: "function getSurfaceSize(frame){switch(frame.orientation){case'portrait':case'portrait-upside-down':return{width:frame.width,height:frame.height};case'landscape-left':case'landscape-right':return{width:frame.height,height:frame.width};}}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"getSurfaceSize\",\"frame\",\"orientation\",\"width\",\"height\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AA+HA,SAAAA,eAAAC,KAAA,SAAAA,KAAA,CAAAC,WAAA,EACA,eACA,2BACA,OACAC,KAAS,CAAAF,KAAA,CAAAE,KAAe,CAEtBC,MAAQ,CAAMH,KAAA,CAAAG,MACZ,EACA,IAAK,iB,IACH,iBAAO,C,MAAO,CAAeD,KAAA,CAAMF,KAAE,CAAKG,MAAC,CAAQA,MAAA,CAAAH,KAAA,CAAAE,KACrD,E\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  /**
+   * Get the size of the surface that will be used for rendering, which already accounts
+   * for the Frame's {@linkcode Frame.orientation orientation}.
+   */
+  var getSurfaceSize = function () {
+    var _e = [new global.Error(), 1, -27];
+    var getSurfaceSize = function getSurfaceSize(frame) {
+      switch (frame.orientation) {
+        case 'portrait':
+        case 'portrait-upside-down':
+          return {
+            width: frame.width,
+            height: frame.height
+          };
+        case 'landscape-left':
+        case 'landscape-right':
+          return {
+            width: frame.height,
+            height: frame.width
+          };
+      }
+    };
+    getSurfaceSize.__closure = {};
+    getSurfaceSize.__workletHash = 6815795929246;
+    getSurfaceSize.__initData = _worklet_6815795929246_init_data;
+    getSurfaceSize.__stackDetails = _e;
+    return getSurfaceSize;
+  }();
+  /**
+   * Create a new Frame Processor function which you can pass to the `<Camera>`.
+   * (See ["Frame Processors"](https://react-native-vision-camera.com/docs/guides/frame-processors))
+   *
+   * Make sure to add the `'worklet'` directive to the top of the Frame Processor function, otherwise it will not get compiled into a worklet.
+   *
+   * Also make sure to memoize the returned object, so that the Camera doesn't reset the Frame Processor Context each time.
+   *
+   * @worklet
+   * @example
+   * ```ts
+   * const surfaceHolder = Worklets.createSharedValue<SurfaceCache>({})
+   * const offscreenTextures = Worklets.createSharedValue<SkImage[]>([])
+   * const frameProcessor = createSkiaFrameProcessor((frame) => {
+   *   'worklet'
+   *   const faces = scanFaces(frame)
+   *
+   *   frame.render()
+   *   for (const face of faces) {
+   *     const rect = Skia.XYWHRect(face.x, face.y, face.width, face.height)
+   *     frame.drawRect(rect)
+   *   }
+   * }, surfaceHolder, offscreenTextures)
+   * ```
+   */
+  var _worklet_582989143795_init_data = {
+    code: "function anonymous(frame){const{Worklets,getSurfaceSize,surfaceHolder,Skia}=this.__closure;const threadId=Worklets.getCurrentThreadId();const size=getSurfaceSize(frame);if(surfaceHolder.value[threadId]==null||surfaceHolder.value[threadId].width!==size.width||surfaceHolder.value[threadId].height!==size.height){var _surfaceHolder$value$;const surface=Skia.Surface.MakeOffscreen(size.width,size.height);if(surface==null){throw new Error(\"Failed to create \"+size.width+\"x\"+size.height+\" Skia Surface!\");}(_surfaceHolder$value$=surfaceHolder.value[threadId])===null||_surfaceHolder$value$===void 0||_surfaceHolder$value$.surface.dispose();delete surfaceHolder.value[threadId];surfaceHolder.value[threadId]={surface:surface,width:size.width,height:size.height};}const surface=surfaceHolder.value[threadId].surface;return surface;}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"frame\",\"Worklets\",\"getSurfaceSize\",\"surfaceHolder\",\"Skia\",\"__closure\",\"threadId\",\"getCurrentThreadId\",\"size\",\"value\",\"width\",\"height\",\"_surfaceHolder$value$\",\"surface\",\"Surface\",\"MakeOffscreen\",\"Error\",\"dispose\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AAiLyB,QAAC,CAAAA,SAA4BA,CAAAC,KAAA,QAAAC,QAAA,CAAAC,cAAA,CAAAC,aAAA,CAAAC,IAAA,OAAAC,SAAA,CAqBlD,KAAM,CAAAC,QAAQ,CAAGL,QAAQ,CAACM,kBAAkB,CAAC,CAAC,CAC9C,KAAM,CAAAC,IAAI,CAAGN,cAAc,CAACF,KAAK,CAAC,CAClC,GACEG,aAAa,CAACM,KAAK,CAACH,QAAQ,CAAC,EAAI,IAAI,EACrCH,aAAa,CAACM,KAAK,CAACH,QAAQ,CAAC,CAACI,KAAK,GAAKF,IAAI,CAACE,KAAK,EAClDP,aAAa,CAACM,KAAK,CAACH,QAAQ,CAAC,CAACK,MAAM,GAAKH,IAAI,CAACG,MAAM,CACpD,KAAAC,qBAAA,CACA,KAAM,CAAAC,OAAO,CAAGT,IAAI,CAACU,OAAO,CAACC,aAAa,CAACP,IAAI,CAACE,KAAK,CAAEF,IAAI,CAACG,MAAM,CAAC,CACnE,GAAIE,OAAO,EAAI,IAAI,CAAE,CAEnB,KAAM,IAAI,CAAAG,KAAK,qBAAqBR,IAAI,CAACE,KAAK,KAAIF,IAAI,CAACG,MAAM,iBAAgB,CAAC,CAChF,CACA,CAAAC,qBAAA,CAAAT,aAAa,CAACM,KAAK,CAACH,QAAQ,CAAC,UAAAM,qBAAA,WAA7BA,qBAAA,CAA+BC,OAAO,CAACI,OAAO,CAAC,CAAC,CAChD,MAAO,CAAAd,aAAa,CAACM,KAAK,CAACH,QAAQ,CAAC,CACpCH,aAAa,CAACM,KAAK,CAACH,QAAQ,CAAC,CAAG,CAAEO,OAAO,CAAEA,OAAO,CAAEH,KAAK,CAAEF,IAAI,CAACE,KAAK,CAAEC,MAAM,CAAEH,IAAI,CAACG,MAAO,CAAC,CAC9F,CACA,KAAM,CAAAE,OAAO,CAAGV,aAAa,CAACM,KAAK,CAACH,QAAQ,CAAC,CAACO,OAAO,CACrD,MAAO,CAAAA,OAAO,CAChB\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var _worklet_1898684262240_init_data = {
+    code: "function anonymous(frame,canvas){const{Skia}=this.__closure;const nativeBuffer=frame.getNativeBuffer();const image=Skia.Image.MakeImageFromNativeBuffer(nativeBuffer.pointer);const canvasProxy=new Proxy(canvas,{get:function(_,property){switch(property){case'__skImage':return image;case'render':return function(paint){'worklet';if(paint!=null)canvas.drawImage(image,0,0,paint);else canvas.drawImage(image,0,0);};case'dispose':return function(){'worklet';image.dispose();nativeBuffer.delete();};}return canvas[property];}});return frame.withBaseClass(canvasProxy);}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"frame\",\"canvas\",\"Skia\",\"__closure\",\"nativeBuffer\",\"getNativeBuffer\",\"image\",\"Image\",\"MakeImageFromNativeBuffer\",\"pointer\",\"canvasProxy\",\"Proxy\",\"get\",\"_\",\"property\",\"paint\",\"drawImage\",\"dispose\",\"delete\",\"withBaseClass\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AA0N8B,QAAC,CAAAA,SAAcA,CAAAC,KAAiB,CAAmBC,MAAA,QAAAC,IAAA,OAAAC,SAAA,CAI7E,KAAM,CAAAC,YAAY,CAAIJ,KAAK,CAAmBK,eAAe,CAAC,CAAC,CAC/D,KAAM,CAAAC,KAAK,CAAGJ,IAAI,CAACK,KAAK,CAACC,yBAAyB,CAACJ,YAAY,CAACK,OAAO,CAAC,CAGxE,KAAM,CAAAC,WAAW,CAAG,GAAI,CAAAC,KAAK,CAACV,MAAM,CAAoB,CACtDW,GAAG,SAAAA,CAACC,CAAC,CAAEC,QAA8B,CAAE,CACrC,OAAQA,QAAQ,EACd,IAAK,WAAW,CACd,MAAO,CAAAR,KAAK,CACd,IAAK,QAAQ,CACX,MAAO,UAACS,KAAe,CAAK,CAC1B,SAAS,CACT,GAAIA,KAAK,EAAI,IAAI,CAAEd,MAAM,CAACe,SAAS,CAACV,KAAK,CAAE,CAAC,CAAE,CAAC,CAAES,KAAK,CAAC,KAClD,CAAAd,MAAM,CAACe,SAAS,CAACV,KAAK,CAAE,CAAC,CAAE,CAAC,CAAC,CACpC,CAAC,CACH,IAAK,SAAS,CACZ,MAAO,WAAM,CACX,SAAS,CAETA,KAAK,CAACW,OAAO,CAAC,CAAC,CACfb,YAAY,CAACc,MAAM,CAAC,CAAC,CACvB,CAAC,CACL,CACA,MAAO,CAAAjB,MAAM,CAACa,QAAQ,CAAC,CACzB,CACF,CAAC,CAAC,CAEF,MAAQ,CAAAd,KAAK,CAAmBmB,aAAa,CAACT,WAAW,CAAC,CAC5D\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var _worklet_15970859795382_init_data = {
+    code: "function anonymous(paint){const{canvas,image}=this.__closure;if(paint!=null)canvas.drawImage(image,0,0,paint);else canvas.drawImage(image,0,0);}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"paint\",\"canvas\",\"image\",\"__closure\",\"drawImage\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AAwOmB,QAAC,CAAAA,SAAoBA,CAAAC,KAAA,QAAAC,MAAA,CAAAC,KAAA,OAAAC,SAAA,CAE1B,GAAIH,KAAK,EAAI,IAAI,CAAEC,MAAM,CAACG,SAAS,CAACF,KAAK,CAAE,CAAC,CAAE,CAAC,CAAEF,KAAK,CAAC,KAClD,CAAAC,MAAM,CAACG,SAAS,CAACF,KAAK,CAAE,CAAC,CAAE,CAAC,CAAC,CACpC\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var _worklet_493171870223_init_data = {
+    code: "function anonymous(){const{image,nativeBuffer}=this.__closure;image.dispose();nativeBuffer.delete();}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"image\",\"nativeBuffer\",\"__closure\",\"dispose\",\"delete\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AA8OmB,SAAAA,SAAMA,CAAA,QAAAC,KAAA,CAAAC,YAAA,OAAAC,SAAA,CAGXF,KAAK,CAACG,OAAO,CAAC,CAAC,CACfF,YAAY,CAACG,MAAM,CAAC,CAAC,CACvB\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  var _worklet_15932634473054_init_data = {
+    code: "function anonymous(frame){const{getSkiaSurface,createDrawableProxy,Skia,withRotatedFrame,previewOrientation,frameProcessor,offscreenTextures}=this.__closure;const surface=getSkiaSurface(frame);const canvas=surface.getCanvas();const drawableFrame=createDrawableProxy(frame,canvas);try{const black=Skia.Color('black');canvas.clear(black);withRotatedFrame(frame,canvas,previewOrientation.value,function(){frameProcessor(drawableFrame);});surface.flush();}finally{drawableFrame.dispose();}const snapshot=surface.makeImageSnapshot();const snapshotCopy=snapshot.makeNonTextureImage();snapshot.dispose();offscreenTextures.value.push(snapshotCopy);while(offscreenTextures.value.length>1){const texture=offscreenTextures.value.shift();if(texture==null)break;texture.dispose();}}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"frame\",\"getSkiaSurface\",\"createDrawableProxy\",\"Skia\",\"withRotatedFrame\",\"previewOrientation\",\"frameProcessor\",\"offscreenTextures\",\"__closure\",\"surface\",\"canvas\",\"getCanvas\",\"drawableFrame\",\"black\",\"Color\",\"clear\",\"value\",\"flush\",\"dispose\",\"snapshot\",\"makeImageSnapshot\",\"snapshotCopy\",\"makeNonTextureImage\",\"push\",\"length\",\"texture\",\"shift\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AA6P0C,SAAAA,SAAUA,CAAAC,KAAA,QAAAC,cAAA,CAAAC,mBAAA,CAAAC,IAAA,CAAAC,gBAAA,CAAAC,kBAAA,CAAAC,cAAA,CAAAC,iBAAA,OAAAC,SAAA,CAI9C,KAAM,CAAAC,OAAO,CAAGR,cAAc,CAACD,KAAK,CAAC,CAGrC,KAAM,CAAAU,MAAM,CAAGD,OAAO,CAACE,SAAS,CAAC,CAAC,CAClC,KAAM,CAAAC,aAAa,CAAGV,mBAAmB,CAACF,KAAK,CAAEU,MAAM,CAAC,CAExD,GAAI,CAEF,KAAM,CAAAG,KAAK,CAAGV,IAAI,CAACW,KAAK,CAAC,OAAO,CAAC,CACjCJ,MAAM,CAACK,KAAK,CAACF,KAAK,CAAC,CAGnBT,gBAAgB,CAACJ,KAAK,CAAEU,MAAM,CAAEL,kBAAkB,CAACW,KAAK,CAAE,UAAM,CAE9DV,cAAc,CAACM,aAAa,CAAC,CAC/B,CAAC,CAAC,CAGFH,OAAO,CAACQ,KAAK,CAAC,CAAC,CACjB,CAAC,OAAS,CAERL,aAAa,CAACM,OAAO,CAAC,CAAC,CACzB,CAGA,KAAM,CAAAC,QAAQ,CAAGV,OAAO,CAACW,iBAAiB,CAAC,CAAC,CAC5C,KAAM,CAAAC,YAAY,CAAGF,QAAQ,CAACG,mBAAmB,CAAC,CAAC,CACnDH,QAAQ,CAACD,OAAO,CAAC,CAAC,CAClBX,iBAAiB,CAACS,KAAK,CAACO,IAAI,CAACF,YAAY,CAAC,CAG1C,MAAOd,iBAAiB,CAACS,KAAK,CAACQ,MAAM,CAAG,CAAC,CAAE,CAEzC,KAAM,CAAAC,OAAO,CAAGlB,iBAAiB,CAACS,KAAK,CAACU,KAAK,CAAC,CAAC,CAC/C,GAAID,OAAO,EAAI,IAAI,CAAE,MACrBA,OAAO,CAACP,OAAO,CAAC,CAAC,CACnB,CACF\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  function createSkiaFrameProcessor(frameProcessor, surfaceHolder, offscreenTextures, previewOrientation) {
+    var Skia = _$$_REQUIRE(_dependencyMap[1], "../dependencies/SkiaProxy").SkiaProxy.Skia;
+    var Worklets = _$$_REQUIRE(_dependencyMap[2], "../dependencies/WorkletsProxy").WorkletsProxy.Worklets;
+    var getSkiaSurface = function () {
+      var _e = [new global.Error(), -5, -27];
+      var anonymous = function anonymous(frame) {
+        // 1. The Frame Processor runs on an iOS `DispatchQueue`, which might use
+        //    multiple C++ Threads between runs (it's still serial though - not concurrent!)
+        // 2. react-native-skia uses `thread_local` Skia Contexts (`GrDirectContext`),
+        //    which means if a new Thread calls a Skia method, it also uses a new
+        //    Skia Context.
+        //
+        // This will cause issues if we cache the `SkSurface` between renders,
+        // as the next render might be on a different C++ Thread.
+        // When the next render uses a different C++ Thread, it will also use a
+        // different Skia Context (`GrDirectContext`) for creating the SkImage,
+        // than the one used for creating the `SkSurface` in the first render.
+        // This will cause the render to fail, as an SkImage can only be rendered
+        // to an SkSurface if both were created on the same Skia Context.
+        // To prevent this, we cache the SkSurface on a per-thread basis,
+        // so in my tests the DispatchQueue uses up to 10 different Threads,
+        // causing 10 different Surfaces to exist in memory.
+        // A true workaround would be to expose Skia Contexts to JS in RN Skia,
+        // but for now this is fine.
+        var threadId = Worklets.getCurrentThreadId();
+        var size = getSurfaceSize(frame);
+        if (surfaceHolder.value[threadId] == null || surfaceHolder.value[threadId].width !== size.width || surfaceHolder.value[threadId].height !== size.height) {
+          var _surfaceHolder$value$;
+          var _surface = Skia.Surface.MakeOffscreen(size.width, size.height);
+          if (_surface == null) {
+            // skia surface couldn't be allocated
+            throw new Error(`Failed to create ${size.width}x${size.height} Skia Surface!`);
+          }
+          (_surfaceHolder$value$ = surfaceHolder.value[threadId]) == null || _surfaceHolder$value$.surface.dispose();
+          delete surfaceHolder.value[threadId];
+          surfaceHolder.value[threadId] = {
+            surface: _surface,
+            width: size.width,
+            height: size.height
+          };
+        }
+        var surface = surfaceHolder.value[threadId].surface;
+        return surface;
+      };
+      anonymous.__closure = {
+        Worklets: Worklets,
+        getSurfaceSize: getSurfaceSize,
+        surfaceHolder: surfaceHolder,
+        Skia: Skia
+      };
+      anonymous.__workletHash = 582989143795;
+      anonymous.__initData = _worklet_582989143795_init_data;
+      anonymous.__stackDetails = _e;
+      return anonymous;
+    }();
+    var createDrawableProxy = function () {
+      var _e = [new global.Error(), -2, -27];
+      var anonymous = function anonymous(frame, canvas) {
+        // Convert Frame to SkImage/Texture
+        var nativeBuffer = frame.getNativeBuffer();
+        var image = Skia.Image.MakeImageFromNativeBuffer(nativeBuffer.pointer);
+
+        // Creates a `Proxy` that holds the SkCanvas, but also adds additional methods such as render() and dispose().
+        var canvasProxy = new Proxy(canvas, {
+          get: function get(_, property) {
+            switch (property) {
+              case '__skImage':
+                return image;
+              case 'render':
+                return function () {
+                  var _e = [new global.Error(), -3, -27];
+                  var anonymous = function anonymous(paint) {
+                    if (paint != null) canvas.drawImage(image, 0, 0, paint);else canvas.drawImage(image, 0, 0);
+                  };
+                  anonymous.__closure = {
+                    canvas: canvas,
+                    image: image
+                  };
+                  anonymous.__workletHash = 15970859795382;
+                  anonymous.__initData = _worklet_15970859795382_init_data;
+                  anonymous.__stackDetails = _e;
+                  return anonymous;
+                }();
+              case 'dispose':
+                return function () {
+                  var _e = [new global.Error(), -3, -27];
+                  var anonymous = function anonymous() {
+                    // dispose the Frame and the SkImage/Texture
+                    image.dispose();
+                    nativeBuffer.delete();
+                  };
+                  anonymous.__closure = {
+                    image: image,
+                    nativeBuffer: nativeBuffer
+                  };
+                  anonymous.__workletHash = 493171870223;
+                  anonymous.__initData = _worklet_493171870223_init_data;
+                  anonymous.__stackDetails = _e;
+                  return anonymous;
+                }();
+            }
+            return canvas[property];
+          }
+        });
+        return frame.withBaseClass(canvasProxy);
+      };
+      anonymous.__closure = {
+        Skia: Skia
+      };
+      anonymous.__workletHash = 1898684262240;
+      anonymous.__initData = _worklet_1898684262240_init_data;
+      anonymous.__stackDetails = _e;
+      return anonymous;
+    }();
+    return {
+      frameProcessor: (0, _$$_REQUIRE(_dependencyMap[3], "../frame-processors/withFrameRefCounting").withFrameRefCounting)(function () {
+        var _e = [new global.Error(), -8, -27];
+        var anonymous = function anonymous(frame) {
+          // 1. Set up Skia Surface with size of Frame
+          var surface = getSkiaSurface(frame);
+
+          // 2. Create DrawableFrame proxy which internally creates an SkImage/Texture
+          var canvas = surface.getCanvas();
+          var drawableFrame = createDrawableProxy(frame, canvas);
+          try {
+            // 3. Clear the current Canvas
+            var black = Skia.Color('black');
+            canvas.clear(black);
+
+            // 4. rotate the frame properly to make sure it's upright
+            withRotatedFrame(frame, canvas, previewOrientation.value, function () {
+              // 5. Run any user drawing operations
+              frameProcessor(drawableFrame);
+            });
+
+            // 6. Flush draw operations and submit to GPU
+            surface.flush();
+          } finally {
+            // 7. Delete the SkImage/Texture that holds the Frame
+            drawableFrame.dispose();
+          }
+
+          // 8. Capture rendered results as a Texture/SkImage to later render to screen
+          var snapshot = surface.makeImageSnapshot();
+          var snapshotCopy = snapshot.makeNonTextureImage();
+          snapshot.dispose();
+          offscreenTextures.value.push(snapshotCopy);
+
+          // 9. Close old textures that are still in the queue.
+          while (offscreenTextures.value.length > 1) {
+            // shift() atomically removes the first element, and is therefore thread-safe.
+            var texture = offscreenTextures.value.shift();
+            if (texture == null) break;
+            texture.dispose();
+          }
+        };
+        anonymous.__closure = {
+          getSkiaSurface: getSkiaSurface,
+          createDrawableProxy: createDrawableProxy,
+          Skia: Skia,
+          withRotatedFrame: withRotatedFrame,
+          previewOrientation: previewOrientation,
+          frameProcessor: frameProcessor,
+          offscreenTextures: offscreenTextures
+        };
+        anonymous.__workletHash = 15932634473054;
+        anonymous.__initData = _worklet_15932634473054_init_data;
+        anonymous.__stackDetails = _e;
+        return anonymous;
+      }()),
+      type: 'drawable-skia',
+      offscreenTextures: offscreenTextures,
+      previewOrientation: previewOrientation
+    };
+  }
+
+  /**
+   * Returns a memoized Skia Frame Processor function wich you can pass to the `<Camera>`.
+   *
+   * The Skia Frame Processor alows you to draw ontop of the Frame, and will manage it's internal offscreen Skia Canvas
+   * and onscreen Skia preview view.
+   *
+   * (See ["Frame Processors"](https://react-native-vision-camera.com/docs/guides/frame-processors))
+   *
+   * Make sure to add the `'worklet'` directive to the top of the Frame Processor function, otherwise it will not get compiled into a worklet.
+   *
+   * @worklet
+   * @param frameProcessor The Frame Processor
+   * @param dependencies The React dependencies which will be copied into the VisionCamera JS-Runtime.
+   * @returns The memoized Skia Frame Processor.
+   * @example
+   * ```ts
+   * const frameProcessor = useSkiaFrameProcessor((frame) => {
+   *   'worklet'
+   *   const faces = scanFaces(frame)
+   *
+   *   frame.render()
+   *   for (const face of faces) {
+   *     const rect = Skia.XYWHRect(face.x, face.y, face.width, face.height)
+   *     frame.drawRect(rect)
+   *   }
+   * }, [])
+   * ```
+   */
+  var _worklet_461319135471_init_data = {
+    code: "function anonymous(){const{surface,offscreenTextures}=this.__closure;const surfaces=Object.values(surface.value).map(function(v){return v.surface;});surface.value={};surfaces.forEach(function(s){return s.dispose();});while(offscreenTextures.value.length>0){const texture=offscreenTextures.value.shift();if(texture==null)break;texture.dispose();}}",
+    location: "D:\\xqkj\\bokeapp\\node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts",
+    sourceMap: "{\"version\":3,\"names\":[\"anonymous\",\"surface\",\"offscreenTextures\",\"__closure\",\"surfaces\",\"Object\",\"values\",\"value\",\"map\",\"v\",\"forEach\",\"s\",\"dispose\",\"length\",\"texture\",\"shift\"],\"sources\":[\"D:/xqkj/bokeapp/node_modules/react-native-vision-camera/src/skia/useSkiaFrameProcessor.ts\"],\"mappings\":\"AAsViD,SAAAA,SAAMA,CAAA,QAAAC,OAAA,CAAAC,iBAAA,OAAAC,SAAA,CAE/C,KAAM,CAAAC,QAAQ,CAAGC,MAAM,CAACC,MAAM,CAACL,OAAO,CAACM,KAAK,CAAC,CAACC,GAAG,CAAE,SAAAC,CAAC,QAAK,CAAAA,CAAC,CAACR,OAAO,GAAC,CACnEA,OAAO,CAACM,KAAK,CAAG,CAAC,CAAC,CAClBH,QAAQ,CAACM,OAAO,CAAE,SAAAC,CAAC,QAAK,CAAAA,CAAC,CAACC,OAAO,CAAC,CAAC,GAAC,CACpC,MAAOV,iBAAiB,CAACK,KAAK,CAACM,MAAM,CAAG,CAAC,CAAE,CACzC,KAAM,CAAAC,OAAO,CAAGZ,iBAAiB,CAACK,KAAK,CAACQ,KAAK,CAAC,CAAC,CAC/C,GAAID,OAAO,EAAI,IAAI,CAAE,MACrBA,OAAO,CAACF,OAAO,CAAC,CAAC,CACnB,CACF\",\"ignoreList\":[]}",
+    version: "3.10.1"
+  };
+  function useSkiaFrameProcessor(frameProcessor, dependencies) {
+    var surface = _$$_REQUIRE(_dependencyMap[2], "../dependencies/WorkletsProxy").WorkletsProxy.useSharedValue({});
+    var offscreenTextures = _$$_REQUIRE(_dependencyMap[2], "../dependencies/WorkletsProxy").WorkletsProxy.useSharedValue([]);
+    var previewOrientation = _$$_REQUIRE(_dependencyMap[2], "../dependencies/WorkletsProxy").WorkletsProxy.useSharedValue('portrait');
+    (0, _react.useEffect)(function () {
+      return function () {
+        var _VisionCameraProxy$wo;
+        // on unmount, we clean up the resources on the Worklet Context.
+        // this causes it to run _after_ the Frame Processor has finished executing,
+        // if it is currently executing - so we avoid race conditions here.
+        (_VisionCameraProxy$wo = _$$_REQUIRE(_dependencyMap[4], "../frame-processors/VisionCameraProxy").VisionCameraProxy.workletContext) == null || _VisionCameraProxy$wo.runAsync(function () {
+          var _e = [new global.Error(), -3, -27];
+          var anonymous = function anonymous() {
+            var surfaces = Object.values(surface.value).map(function (v) {
+              return v.surface;
+            });
+            surface.value = {};
+            surfaces.forEach(function (s) {
+              return s.dispose();
+            });
+            while (offscreenTextures.value.length > 0) {
+              var texture = offscreenTextures.value.shift();
+              if (texture == null) break;
+              texture.dispose();
+            }
+          };
+          anonymous.__closure = {
+            surface: surface,
+            offscreenTextures: offscreenTextures
+          };
+          anonymous.__workletHash = 461319135471;
+          anonymous.__initData = _worklet_461319135471_init_data;
+          anonymous.__stackDetails = _e;
+          return anonymous;
+        }());
+      };
+    }, [offscreenTextures, surface]);
+    return (0, _react.useMemo)(function () {
+      return createSkiaFrameProcessor(frameProcessor, surface, offscreenTextures, previewOrientation);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    dependencies);
+  }
+},1566,[41,1539,1563,1561,1532],"node_modules\\react-native-vision-camera\\src\\skia\\useSkiaFrameProcessor.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = PickupCodeRecordList;
+  var _toConsumableArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[5], "react-native");
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./styles"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\pickupCodeRecordList\\index.tsx"; // 状态：1 未填写地址，2 待发货，3 已发货
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var statusMap = {
+    1: {
+      text: '发货及预约安装\n请添加客服企业微信',
+      color: '#FF873D'
+    },
+    2: {
+      text: '我们会尽快安排发货\n感谢您的耐心等候！',
+      color: '#999999'
+    },
+    3: {
+      text: '已发货',
+      color: '#37C22A'
+    }
+  };
+  var formatPickupTime = function formatPickupTime(time) {
+    if (!time) return '';
+    if (time.length >= 16) return time.slice(0, 16);
+    return time;
+  };
+  var PAGE_SIZE = 20;
+  var DEFAULT_DEVICE_IMG = 'https://g.18qjz.cn/img/boklock/device_scan.png';
+  var EMPTY_IMG = 'https://g.18qjz.cn/img/boklock/order_empty.png';
+  function PickupCodeRecordList() {
+    var _this = this;
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useNavigation)();
+    var _useState = (0, _react.useState)([]),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      list = _useState2[0],
+      setList = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      complete = _useState4[0],
+      setComplete = _useState4[1];
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      loading = _useState6[0],
+      setLoading = _useState6[1];
+    var _useState7 = (0, _react.useState)(false),
+      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
+      refreshing = _useState8[0],
+      setRefreshing = _useState8[1];
+    var _useState9 = (0, _react.useState)(true),
+      _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
+      initialLoading = _useState0[0],
+      setInitialLoading = _useState0[1];
+    var loadData = (0, _react.useCallback)(/*#__PURE__*/function () {
+      var _ref = (0, _asyncToGenerator2.default)(function* (refresh) {
+        if (loading) return;
+        if (refresh) {
+          setRefreshing(true);
+          setInitialLoading(true);
+        } else {
+          setLoading(true);
+        }
+        try {
+          var offset = refresh ? 0 : list.length;
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[8], "../../services/mall").getPickupCodeRecordList)({
+            offset: offset,
+            pageSize: PAGE_SIZE
+          });
+          if (res.code === 200 && res.success) {
+            var data = res.data || res;
+            var rows = Array.isArray(data.list) ? data.list : Array.isArray(res.list) ? res.list : [];
+            setList(function (prev) {
+              return refresh ? rows : [].concat((0, _toConsumableArray2.default)(prev), (0, _toConsumableArray2.default)(rows));
+            });
+            setComplete(rows.length < PAGE_SIZE);
+          } else {
+            _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail(res.msg || res.message || '获取领取记录失败');
+          }
+        } catch (e) {
+          _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail('获取领取记录失败');
+        } finally {
+          setLoading(false);
+          setRefreshing(false);
+          setInitialLoading(false);
+        }
+      });
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }(), [list.length, loading]);
+    (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useFocusEffect)((0, _react.useCallback)(function () {
+      void loadData(true);
+    }, [loadData]));
+    var handleLoadMore = (0, _react.useCallback)(function () {
+      if (!loading && !complete && list.length > 0) {
+        void loadData(false);
+      }
+    }, [loading, complete, list.length, loadData]);
+    var handleRefresh = (0, _react.useCallback)(function () {
+      void loadData(true);
+    }, [loadData]);
+    var _useState1 = (0, _react.useState)(false),
+      _useState10 = (0, _slicedToArray2.default)(_useState1, 2),
+      qrPopupVisible = _useState10[0],
+      setQrPopupVisible = _useState10[1];
+    var handlePressItem = (0, _react.useCallback)(function (item) {
+      navigation.navigate('PickupCodeRecordDetail', {
+        id: item.id,
+        recordId: item.id,
+        fromList: 1
+      });
+    }, [navigation]);
+    var handlePressStatus = (0, _react.useCallback)(function (item) {
+      if (item.status !== 1) return;
+      setQrPopupVisible(true);
+    }, []);
+    var renderItem = (0, _react.useCallback)(function (_ref2) {
+      var _item$productType, _statusInfo$color, _statusInfo$text;
+      var item = _ref2.item;
+      var statusInfo = item.status != null ? statusMap[item.status] : null;
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: _styles.default.card,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.TouchableOpacity, {
+          activeOpacity: 0.8,
+          style: _styles.default.leftArea,
+          onPress: function onPress() {
+            return handlePressItem(item);
+          },
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+            source: {
+              uri: item.imageUrl || DEFAULT_DEVICE_IMG
+            },
+            style: _styles.default.deviceImg,
+            resizeMode: "contain"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _styles.default.textArea,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.title,
+              numberOfLines: 1,
+              children: (_item$productType = item.productType) != null ? _item$productType : '领取一台泊刻地锁'
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.time,
+              children: formatPickupTime(item.pickupTime)
+            })]
+          })]
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+          activeOpacity: 0.8,
+          style: [_styles.default.statusText, {
+            marginRight: 4
+          }],
+          onPress: function onPress() {
+            return handlePressStatus(item);
+          },
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: {
+              fontSize: 12,
+              color: (_statusInfo$color = statusInfo == null ? void 0 : statusInfo.color) != null ? _statusInfo$color : '#333333',
+              textAlign: 'right'
+            },
+            numberOfLines: 2,
+            children: (_statusInfo$text = statusInfo == null ? void 0 : statusInfo.text) != null ? _statusInfo$text : ''
+          })
+        })]
+      });
+    }, [handlePressItem, handlePressStatus]);
+    var emptyComponent = /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+      style: _styles.default.emptyContainer,
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+        source: {
+          uri: EMPTY_IMG
+        },
+        style: _styles.default.emptyImage,
+        resizeMode: "contain"
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+        style: _styles.default.emptyText,
+        children: "\u6682\u65E0\u9886\u53D6\u8BB0\u5F55"
+      })]
+    });
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_$$_REQUIRE(_dependencyMap[11], "../../components").PageContainer, {
+      backgroundColor: "#FFFFFF",
+      statusBarStyle: "dark-content",
+      statusBarBackgroundColor: "#FFFFFF",
+      safeAreaEdges: ['top', 'bottom'],
+      scrollable: false,
+      pageNavProps: {
+        text: '领取记录',
+        showBack: true,
+        background: '#FFFFFF'
+      },
+      loading: initialLoading && list.length === 0,
+      children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.FlatList, {
+        style: _styles.default.container,
+        contentContainerStyle: list.length === 0 ? {
+          flexGrow: 1
+        } : _styles.default.listWrapper,
+        data: list,
+        keyExtractor: function keyExtractor(item) {
+          return String(item.id);
+        },
+        renderItem: renderItem,
+        ListEmptyComponent: !initialLoading ? emptyComponent : null,
+        onEndReached: handleLoadMore,
+        onEndReachedThreshold: 0.3,
+        refreshControl: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.RefreshControl, {
+          refreshing: refreshing,
+          onRefresh: handleRefresh,
+          colors: ['#333333']
+        })
+      }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../../components").Popup, {
+        visible: qrPopupVisible,
+        onClose: function onClose() {
+          return setQrPopupVisible(false);
+        },
+        title: " ",
+        minHeight: 150,
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _styles.default.qrCodeContent,
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+            source: {
+              uri: 'https://g.18qjz.cn/img/boklock/pickupCode/custServiceQRCode.png'
+            },
+            style: _styles.default.qrCodeImage,
+            resizeMode: "contain"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.qrCodeContentText,
+            children: "\u53D1\u8D27\u53CA\u9884\u7EA6\u5B89\u88C5\u8BF7\u6DFB\u52A0\u5BA2\u670D\u4F01\u4E1A\u5FAE\u4FE1"
+          })]
+        })
+      })]
+    });
+  }
+},1567,[3,6,83,24,41,1,1568,970,1456,542,90,1476],"src\\pages\\pickupCodeRecordList\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF'
+    },
+    emptyImage: {
+      width: 120
+    },
+    listWrapper: {
+      paddingHorizontal: 16,
+      paddingVertical: 12
+    },
+    card: {
+      width: '100%',
+      paddingHorizontal: 16,
+      paddingVertical: 15,
+      marginBottom: 12,
+      borderRadius: 12,
+      backgroundColor: '#F7F7FB',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    },
+    leftArea: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    deviceImg: {
+      width: 60,
+      height: 30,
+      marginRight: 12
+    },
+    textArea: {},
+    title: {
+      fontSize: 14,
+      color: '#333333'
+    },
+    time: {
+      marginTop: 8,
+      fontSize: 12,
+      color: '#999999'
+    },
+    statusText: {
+      flex: 1,
+      fontSize: 12,
+      color: '#333333',
+      textAlign: 'right'
+    },
+    emptyContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 40
+    },
+    emptyText: {
+      fontSize: 14,
+      color: '#999999'
+    },
+    qrCodeContent: {
+      marginHorizontal: 40,
+      marginVertical: 24,
+      height: 176,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: '#EAEAEA',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    qrCodeImage: {
+      width: 120,
+      height: 120
+    },
+    qrCodeContentText: {
+      fontSize: 14,
+      color: '#333333',
+      marginTop: 12,
+      textAlign: 'center'
+    }
+  });
+  var _default = exports.default = styles;
+},1568,[1],"src\\pages\\pickupCodeRecordList\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = PickupCodeRecordDetail;
+  var _asyncToGenerator2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
+  var _iconfont = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "../../iconfont"));
+  var _styles = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./styles"));
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\pickupCodeRecordDetail\\index.tsx"; // 状态：1 未填写地址，2 待发货，3 已发货
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var formatPickupTime = function formatPickupTime(time) {
+    if (!time) return '';
+    if (time.length >= 16) return time.slice(0, 16);
+    return time;
+  };
+  var RCV_BG = 'https://g.18qjz.cn/img/boklock/pickupCode/rcvBg.png';
+  var CARD_IMG = 'https://g.18qjz.cn/img/boklock/pickupCode/card.png';
+  var STEP_IMG_2 = 'https://g.18qjz.cn/img/boklock/pickupCode/newStep2.png';
+  var STEP_IMG_3 = 'https://g.18qjz.cn/img/boklock/pickupCode/newStep3.png';
+  var QR_IMG = 'https://g.18qjz.cn/img/boklock/pickupCode/custServiceQRCode.png';
+  var EMPTY_IMG = 'https://g.18qjz.cn/img/boklock/order_empty.png';
+  function PickupCodeRecordDetail() {
+    var _route$params$id, _route$params, _route$params2, _route$params3, _route$params4, _detail$status;
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useNavigation)();
+    var route = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useRoute)();
+    var id = (_route$params$id = (_route$params = route.params) == null ? void 0 : _route$params.id) != null ? _route$params$id : (_route$params2 = route.params) == null ? void 0 : _route$params2.recordId;
+    var fromList = ((_route$params3 = route.params) == null ? void 0 : _route$params3.fromList) === 1 || ((_route$params4 = route.params) == null ? void 0 : _route$params4.fromList) === '1';
+    var idStr = id != null ? String(id) : '';
+    var _useState = (0, _react.useState)(null),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      detail = _useState2[0],
+      setDetail = _useState2[1];
+    var _useState3 = (0, _react.useState)(true),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      loading = _useState4[0],
+      setLoading = _useState4[1];
+    var loadDetail = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (!idStr) {
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[8], "../../services/mall").getPickupCodeRecordDetail)({
+          id: /^\d+$/.test(idStr) ? Number(idStr) : idStr
+        });
+        if (Number(res == null ? void 0 : res.code) === 200) {
+          var data = res.data || res.data === null ? res.data : {};
+          setDetail(data || null);
+        } else {
+          _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail((res == null ? void 0 : res.message) || (res == null ? void 0 : res.msg) || '获取详情失败');
+          navigation.goBack();
+        }
+      } catch (e) {
+        _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail('获取详情失败');
+        navigation.goBack();
+      } finally {
+        setLoading(false);
+      }
+    }), [idStr, navigation]);
+    (0, _react.useEffect)(function () {
+      void loadDetail();
+    }, [loadDetail]);
+    var handleCopyExpressNo = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var expressNo = (detail == null ? void 0 : detail.expressNo) || '';
+      if (!expressNo) return;
+      try {
+        yield _reactNative.Share.share({
+          message: expressNo,
+          title: '快递单号'
+        });
+        _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.success('已分享快递单号');
+      } catch (e) {
+        if ((e == null ? void 0 : e.message) !== 'User did not share') {
+          _$$_REQUIRE(_dependencyMap[9], "@ant-design/react-native").Toast.fail('复制失败，请手动复制');
+        }
+      }
+    }), [detail == null ? void 0 : detail.expressNo]);
+    if (loading) {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../../components").PageContainer, {
+        statusBarStyle: "light-content",
+        statusBarBackgroundColor: "transparent",
+        safeAreaEdges: ['top', 'bottom'],
+        scrollable: false,
+        pageNavProps: {
+          text: '领取详情',
+          showBack: true,
+          background: 'transparent',
+          titleColor: '#fff'
+        },
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: [_styles.default.container, _styles.default.emptyContainer],
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.ActivityIndicator, {
+            size: "large",
+            color: "#fff"
+          })
+        })
+      });
+    }
+
+    // 无 id 或接口未返回数据：展示空状态
+    if (!idStr || !(detail != null && detail.id)) {
+      return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../../components").PageContainer, {
+        backgroundColor: "#F8F7FC",
+        statusBarStyle: "dark-content",
+        statusBarBackgroundColor: "#FFFFFF",
+        safeAreaEdges: ['top', 'bottom'],
+        scrollable: true,
+        pageNavProps: {
+          text: '领取详情',
+          showBack: true,
+          background: '#FFFFFF'
+        },
+        children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: [_styles.default.content, _styles.default.emptyContainer],
+          children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+            source: {
+              uri: EMPTY_IMG
+            },
+            style: _styles.default.emptyImage,
+            resizeMode: "contain"
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+            style: _styles.default.emptyText,
+            children: "\u6682\u65E0\u6536\u8D27\u5730\u5740\u9700\u8981\u586B\u5199"
+          })]
+        })
+      });
+    }
+    var status = (_detail$status = detail.status) != null ? _detail$status : 1;
+    var pickupTime = formatPickupTime(detail.pickupTime);
+    var stepImg = status === 1 ? STEP_IMG_2 : STEP_IMG_3;
+    return /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_$$_REQUIRE(_dependencyMap[11], "../../components").PageContainer, {
+      backgroundColor: "transparent",
+      statusBarStyle: "light-content",
+      statusBarBackgroundColor: "transparent",
+      safeAreaEdges: ['top', 'bottom'],
+      scrollable: true,
+      pageNavProps: {
+        text: '领取详情',
+        showBack: true,
+        background: 'transparent',
+        titleColor: '#fff'
+      },
+      backgroundImage: {
+        uri: RCV_BG
+      },
+      backgroundImageHeight: 400,
+      children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+        style: _styles.default.content,
+        children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _styles.default.stepImageContent,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+            source: {
+              uri: stepImg
+            },
+            style: _styles.default.stepImage,
+            resizeMode: "contain"
+          })
+        }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _styles.default.innerContent,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _styles.default.cardImgWrapper,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              source: {
+                uri: CARD_IMG
+              },
+              style: _styles.default.cardImg,
+              resizeMode: "stretch"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+              style: _styles.default.cardInfo,
+              children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                style: {
+                  alignItems: 'center',
+                  marginBottom: 8
+                },
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                  style: {
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                  },
+                  children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+                    name: "star",
+                    color: "#283E77",
+                    size: 20
+                  }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                    style: _styles.default.cardInfoText,
+                    children: "\u9886\u53D6\u4E00\u53F0\u5730\u9501"
+                  }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+                    name: "star",
+                    color: "#283E77",
+                    size: 20
+                  })]
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: _styles.default.cardTimeText,
+                  children: pickupTime
+                })]
+              })
+            })]
+          })
+        }), fromList ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+          style: _styles.default.infoContent,
+          children: [status !== 1 && /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _styles.default.infoBox,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: _styles.default.row,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.label,
+                children: "\u6536\u8D27\u5730\u5740"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+                style: {
+                  flex: 1,
+                  alignItems: 'flex-end'
+                },
+                children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: _styles.default.value,
+                  children: [detail.receiverName, detail.receiverMobile].filter(Boolean).join(' ')
+                }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                  style: [_styles.default.value, _styles.default.addressValue],
+                  numberOfLines: 4,
+                  children: detail.receiverAddress || ''
+                })]
+              })]
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: _styles.default.row,
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.label,
+                children: "\u53D1\u8D27\u72B6\u6001"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: [_styles.default.value, {
+                  flex: 1
+                }],
+                children: status === 2 ? '我们会尽快安排发货，\n感谢您的耐心等候！' : status === 3 ? '已发货' : ''
+              })]
+            }), status === 3 && detail.expressNo ? /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+              style: [_styles.default.row, _styles.default.expressRow],
+              children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.label,
+                children: "\u5FEB\u9012\u5355\u53F7"
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+                style: _styles.default.expressNoText,
+                numberOfLines: 1,
+                children: detail.expressNo
+              }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.TouchableOpacity, {
+                style: _styles.default.copyIconWrap,
+                onPress: handleCopyExpressNo,
+                activeOpacity: 0.8,
+                children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_iconfont.default, {
+                  name: "copy1",
+                  color: "#999999",
+                  size: 18
+                })
+              })]
+            }) : null]
+          }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _styles.default.qrCodeContent,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              source: {
+                uri: QR_IMG
+              },
+              style: _styles.default.qrCodeImage,
+              resizeMode: "contain"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.qrCodeContentText,
+              children: "\u53D1\u8D27\u53CA\u9884\u7EA6\u5B89\u88C5\u8BF7\u6DFB\u52A0\u5BA2\u670D\u4F01\u4E1A\u5FAE\u4FE1"
+            })]
+          })]
+        }) : /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.View, {
+          style: _styles.default.infoContent,
+          children: /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsxs)(_reactNative.View, {
+            style: _styles.default.qrCodeContent,
+            children: [/*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Image, {
+              source: {
+                uri: QR_IMG
+              },
+              style: _styles.default.qrCodeImage,
+              resizeMode: "contain"
+            }), /*#__PURE__*/(0, _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime").jsx)(_reactNative.Text, {
+              style: _styles.default.qrCodeContentText,
+              children: "\u53D1\u8D27\u53CA\u9884\u7EA6\u5B89\u88C5\u8BF7\u6DFB\u52A0\u5BA2\u670D\u4F01\u4E1A\u5FAE\u4FE1"
+            })]
+          })
+        })]
+      })
+    });
+  }
+},1569,[3,83,24,41,1,1270,1570,970,1456,542,90,1476],"src\\pages\\pickupCodeRecordDetail\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1
+      // backgroundColor: '#FFFFFF',
+    },
+    content: {
+      flex: 1,
+      alignItems: 'center'
+    },
+    innerContent: {
+      width: '100%',
+      paddingHorizontal: 24
+    },
+    cardImgWrapper: {
+      position: 'relative',
+      width: '100%',
+      height: 148,
+      marginTop: 12
+    },
+    cardImg: {
+      width: '100%',
+      height: 148,
+      borderRadius: 12,
+      overflow: 'hidden'
+    },
+    cardInfo: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    emptyImage: {
+      width: 120
+    },
+    stepImageContent: {
+      width: 280,
+      height: 75,
+      marginTop: 22,
+      marginBottom: 22
+    },
+    stepImage: {
+      width: '100%',
+      height: '100%'
+    },
+    cardImage: {
+      width: '100%',
+      height: 148,
+      borderRadius: 12,
+      overflow: 'hidden'
+    },
+    cardInfoOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      paddingRight: 45,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end'
+    },
+    cardInfoText: {
+      color: '#283E77',
+      fontSize: 16,
+      lineHeight: 22,
+      marginHorizontal: 8,
+      textAlign: 'center'
+    },
+    cardTimeText: {
+      fontSize: 12,
+      color: '#999999',
+      textAlign: 'center',
+      lineHeight: 17
+    },
+    infoBox: {
+      width: '100%',
+      backgroundColor: '#F8F7FC',
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingTop: 16,
+      paddingBottom: 8,
+      marginTop: 28
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      paddingBottom: 12
+    },
+    label: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: 'bold',
+      color: '#333333',
+      width: 80
+    },
+    value: {
+      flex: 1,
+      fontSize: 14,
+      lineHeight: 20,
+      color: '#333333',
+      textAlign: 'right'
+    },
+    addressValue: {
+      marginTop: 4
+    },
+    expressRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      paddingBottom: 12
+    },
+    expressNoText: {
+      fontSize: 14,
+      color: '#333333',
+      marginRight: 12,
+      flex: 1
+    },
+    copyIconWrap: {
+      padding: 4
+    },
+    infoContent: {
+      width: '100%',
+      paddingHorizontal: 24,
+      marginTop: 16
+    },
+    qrCodeContent: {
+      marginTop: 50,
+      marginHorizontal: 80,
+      marginBottom: 26,
+      height: 176,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: '#EAEAEA',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    qrCodeImage: {
+      width: 120,
+      height: 120,
+      marginTop: 8
+    },
+    qrCodeContentText: {
+      fontSize: 14,
+      color: '#333333',
+      marginTop: 12,
+      textAlign: 'center'
+    },
+    emptyContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    emptyText: {
+      fontSize: 14,
+      color: '#999999',
+      marginTop: 16,
+      textAlign: 'center',
+      opacity: 0.5
+    }
+  });
+  var _default = exports.default = styles;
+},1570,[1],"src\\pages\\pickupCodeRecordDetail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212191,7 +221240,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   };
-},1419,[41,1,1420,1181,1267,90],"src\\navigation\\MainTabNavigator.tsx");
+},1571,[41,1,1572,1181,1267,90],"src\\navigation\\MainTabNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212238,7 +221287,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _BottomTabBarHeightCallbackContext = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[4], "./utils/BottomTabBarHeightCallbackContext"));
   var _BottomTabBarHeightContext = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[5], "./utils/BottomTabBarHeightContext"));
   var _useBottomTabBarHeight = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault")(_$$_REQUIRE(_dependencyMap[6], "./utils/useBottomTabBarHeight"));
-},1420,[3,1421,1425,1422,1423,1424,1435],"node_modules\\@react-navigation\\bottom-tabs\\src\\index.tsx");
+},1572,[3,1573,1577,1574,1575,1576,1587],"node_modules\\@react-navigation\\bottom-tabs\\src\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212318,7 +221367,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   var _default = exports.default = (0, _$$_REQUIRE(_dependencyMap[5], "@react-navigation/native").createNavigatorFactory)(BottomTabNavigator);
-},1421,[3,150,41,1236,1422,970,90],"node_modules\\@react-navigation\\bottom-tabs\\src\\navigators\\createBottomTabNavigator.tsx");
+},1573,[3,150,41,1236,1574,970,90],"node_modules\\@react-navigation\\bottom-tabs\\src\\navigators\\createBottomTabNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212463,7 +221512,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       overflow: 'hidden'
     }
   });
-},1422,[3,6,24,41,1,1423,1424,1425,90,1242,1182,1434],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabView.tsx");
+},1574,[3,6,24,41,1,1575,1576,1577,90,1242,1182,1586],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabView.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212472,7 +221521,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var React = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[0], "react"));
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var _default = exports.default = React.createContext(undefined);
-},1423,[41],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightCallbackContext.tsx");
+},1575,[41],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightCallbackContext.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212481,7 +221530,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var React = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[0], "react"));
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var _default = exports.default = React.createContext(undefined);
-},1424,[41],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightContext.tsx");
+},1576,[41],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightContext.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212784,7 +221833,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       flexDirection: 'row'
     }
   });
-},1425,[3,24,150,41,1,1423,1426,1427,970,1182,90,1242],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabBar.tsx");
+},1577,[3,24,150,41,1,1575,1578,1579,970,1182,90,1242],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabBar.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -212820,7 +221869,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     return isKeyboardShown;
   }
-},1426,[3,24,41,1],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useIsKeyboardShown.tsx");
+},1578,[3,24,41,1],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useIsKeyboardShown.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -213001,7 +222050,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       display: 'flex'
     }
   });
-},1427,[3,150,1428,41,1,1432,90,970],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabItem.tsx");
+},1579,[3,150,1580,41,1,1584,90,970],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabItem.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var skippedModels = [
   // To be honest, I don't really feel like keyword belongs in color convert, but eh.
@@ -213403,7 +222452,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return array;
   }
   module.exports = Color;
-},1428,[98,6,1429,24],"node_modules\\color\\index.js");
+},1580,[98,6,1581,24],"node_modules\\color\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* MIT license */
 
@@ -213594,7 +222643,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var str = Math.round(num).toString(16).toUpperCase();
     return str.length < 2 ? '0' + str : str;
   }
-},1429,[100,1430],"node_modules\\color-string\\index.js");
+},1581,[100,1582],"node_modules\\color-string\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -213618,7 +222667,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return fn(swizzle(arguments));
     };
   };
-},1430,[1431],"node_modules\\simple-swizzle\\index.js");
+},1582,[1583],"node_modules\\simple-swizzle\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   module.exports = function isArrayish(obj) {
     if (!obj || typeof obj === 'string') {
@@ -213626,7 +222675,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return obj instanceof Array || Array.isArray(obj) || obj.length >= 0 && (obj.splice instanceof Function || Object.getOwnPropertyDescriptor(obj, obj.length - 1) && obj.constructor.name !== 'String');
   };
-},1431,[],"node_modules\\simple-swizzle\\node_modules\\is-arrayish\\index.js");
+},1583,[],"node_modules\\simple-swizzle\\node_modules\\is-arrayish\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -213711,7 +222760,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       top: 7
     }
   });
-},1432,[3,41,1,1433,90],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\TabBarIcon.tsx");
+},1584,[3,41,1,1585,90],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\TabBarIcon.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -213808,7 +222857,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       overflow: 'hidden'
     }
   });
-},1433,[3,24,150,1428,41,1,970,90],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\Badge.tsx");
+},1585,[3,24,150,1580,41,1,970,90],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\Badge.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -213858,7 +222907,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       children: children
     }));
   }
-},1434,[3,150,41,1,1264,90,1242],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\ScreenFallback.tsx");
+},1586,[3,150,41,1,1264,90,1242],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\ScreenFallback.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -213874,13 +222923,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return height;
   }
-},1435,[41,3,1424],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useBottomTabBarHeight.tsx");
+},1587,[41,3,1576],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useBottomTabBarHeight.tsx");
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
   "name": "boklock",
   "displayName": "boklock"
 }
 ;
-},1436,[],"app.json");
+},1588,[],"app.json");
 __r(45);
 __r(0);

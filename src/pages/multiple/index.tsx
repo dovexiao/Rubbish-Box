@@ -278,7 +278,11 @@ const Index = () => {
         <>
           {/* 主体内容 */}
           <ScrollView contentContainerStyle={styles.content}>
-            <Header unreadCount={unreadCount} lockInfo={detail} />
+            <Header
+              unreadCount={unreadCount}
+              lockInfo={detail}
+              noDevices={detail && detail?.id ? false : true}
+            />
             {detail && detail?.id ? (
               <Content
                 key={'multiple'}

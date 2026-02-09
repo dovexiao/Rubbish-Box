@@ -12,7 +12,6 @@ import { LockInfoDTO } from '@/pages/index/typing';
 import { getLockDeviceList } from '@/services/device';
 import { updateName } from '@/services/deviceInfo';
 import { cacheGet } from '@/utils/cache';
-import Icon from '@/iconfont';
 import Flex from '@/components/Flex';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
 import { DeviceItem } from '../Item/index';
@@ -144,12 +143,12 @@ export const DeviceSwitch: React.FC<Props> = ({
         <Flex direction="row" align="center" justify="center">
           <Text
             style={[styles.switchText, { color: themeColor }]}
-            numberOfLines={1}
+            // numberOfLines={1}
           >
             {lockInfo?.lockName}
           </Text>
           <Text style={styles.switchLine} />
-          <Text style={styles.roleNameText}>{lockInfo?.roleName}</Text>
+          <Text style={styles.roleNameText}>{lockInfo?.roleName ?? ''}</Text>
           <IconFont name="pull-down" size={12} color={themeColor} />
         </Flex>
       </TouchableOpacity>

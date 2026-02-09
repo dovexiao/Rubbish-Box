@@ -18,10 +18,10 @@ export const styles = StyleSheet.create({
     backgroundColor: '#999',
   },
   roleNameText: {
-    fontWeight: 400,
     fontSize: 12,
     color: '#333333',
     marginRight: 8,
+    fontWeight: '400',
   },
   switchText: {
     fontSize: 14,
