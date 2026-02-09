@@ -140,6 +140,21 @@ export const routes = {
       label: '服务单详情',
     },
     {
+      name: 'Feedback',
+      component: require('@/pages/feedback').default,
+      label: '意见反馈',
+    },
+    {
+      name: 'FeedbackRecord',
+      component: require('@/pages/feedbackRecord').default,
+      label: '意见反馈记录',
+    },
+    {
+      name: 'FeedbackDetail',
+      component: require('@/pages/feedbackDetail').default,
+      label: '服务单详情',
+    },
+    {
       name: 'AdvertisingDisplay',
       component: require('@/pages/adDisplay').default,
       label: '广告展示',

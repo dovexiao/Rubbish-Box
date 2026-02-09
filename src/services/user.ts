@@ -154,6 +154,30 @@ export const updateBannerDetails = createFetch<any, any>(
   'POST',
 );
 
+// 提交意见反馈
+export const submitOpinion = createFetch<any, any>(
+  '/boke/opinion/submit',
+  'POST',
+);
+
+// 获取意见反馈列表
+export const getOpinionList = createFetch<any, any>(
+  '/boke/opinion/list',
+  'POST',
+);
+
+// 获取意见反馈详情
+export const getOpinionDetail = createFetch<any, any>(
+  '/boke/opinion/detail',
+  'POST',
+);
+
+// 提交意见反馈评价
+export const submitOpinionEvaluate = createFetch<any, any>(
+  '/boke/opinion/evaluate',
+  'POST',
+);
+
 // 保存贵宾邀请
 export const saveInvite = createFetch<any, any>(
   '/boke/userLockInvite/save',

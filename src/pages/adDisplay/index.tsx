@@ -1,22 +1,30 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   Image,
   Alert,
   Dimensions,
 } from 'react-native';
+import Video from 'react-native-video';
+import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/native';
-import { Carousel, Toast } from '@ant-design/react-native';
+import { Toast } from '@ant-design/react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer, Flex } from '@/components';
 import IconFont from '@/iconfont';
 import { getBannerDetails, updateBannerDetails } from '@/services/user';
 import { tencentUpload } from '@/utils';
 import styles from './styles';
+import PopConfirm from '@/components/popConfirm';
 
 const MAX_TEXT = 100;
 const MAX_FILES = 10;
@@ -28,14 +36,65 @@ export default function AdDisplay() {
   const [textLength, setTextLength] = useState(0);
   const [bannerImageUrls, setBannerImageUrls] = useState<string[]>([]);
   const [detail, setDetail] = useState<any>(null);
-  const [current, setCurrent] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const popConfirmRef = useRef<any>(null);
+  const screenWidth = Dimensions.get('window').width;
+  const carouselWidth = screenWidth - 32;
+  const carouselHeight = 170;
+  const carouselRef = useRef<ICarouselInstance>(null);
+  const autoPlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const itemList = useMemo(() => {
     const list: string[] = [...bannerImageUrls];
     if (bannerText?.trim()) list.push(bannerText.trim());
     return list;
   }, [bannerImageUrls, bannerText]);
+
+  const handleVideoEnd = useCallback(() => {
+    carouselRef.current?.next();
+  }, []);
+
+  // 只响应明显的左右滑动，把上下滑动交给外层页面滚动
+  const configurePanGesture = useCallback((panGesture: any) => {
+    panGesture?.activeOffsetX?.([-10, 10]);
+    panGesture?.failOffsetY?.([-10, 10]);
+  }, []);
+
+  const handleSnapToItem = useCallback(
+    (index: number) => {
+      if (autoPlayTimerRef.current) {
+        clearTimeout(autoPlayTimerRef.current);
+        autoPlayTimerRef.current = null;
+      }
+      setCurrentIndex(index);
+      const item = itemList[index];
+      const isVideo = item?.endsWith?.('.mp4');
+      if (!isVideo) {
+        autoPlayTimerRef.current = setTimeout(() => {
+          carouselRef.current?.next();
+          autoPlayTimerRef.current = null;
+        }, 2000);
+      }
+    },
+    [itemList],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
+    };
+  }, []);
+
+  const prevListLengthRef = useRef(0);
+  useEffect(() => {
+    if (prevListLengthRef.current === 0 && itemList.length > 0) {
+      prevListLengthRef.current = itemList.length;
+      handleSnapToItem(0);
+    } else {
+      prevListLengthRef.current = itemList.length;
+    }
+  }, [itemList.length, itemList, handleSnapToItem]);
 
   const loadDetail = useCallback(async () => {
     try {
@@ -57,17 +116,7 @@ export default function AdDisplay() {
   }, [loadDetail]);
 
   const showChooseType = useCallback(() => {
-    Alert.alert('选择类型', '', [
-      { text: '取消', style: 'cancel' },
-      {
-        text: '图片',
-        onPress: () => handleChooseImage(),
-      },
-      {
-        text: '视频',
-        onPress: () => handleChooseVideo(),
-      },
-    ]);
+    popConfirmRef.current.open();
   }, []);
 
   const handleUploadFiles = useCallback(
@@ -196,6 +245,7 @@ export default function AdDisplay() {
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
+      scrollable
       pageNavProps={{
         text: '广告展示',
         showBack: true,
@@ -226,25 +276,35 @@ export default function AdDisplay() {
             {itemList.length > 0 && (
               <>
                 <Carousel
-                  style={[
-                    styles.swiperBox,
-                    { width: Dimensions.get('window').width - 32 },
-                  ]}
-                  autoplay
-                  autoplayInterval={2000}
-                  dots={false}
-                  afterChange={index => setCurrent(index)}
-                  infinite
-                >
-                  {itemList.map((item, index) => (
-                    <View key={`${item}-${index}`} style={styles.swiperItem}>
+                  ref={carouselRef}
+                  width={carouselWidth}
+                  height={carouselHeight}
+                  style={[styles.swiperBox, { width: carouselWidth }]}
+                  data={itemList}
+                  loop
+                  autoPlay={false}
+                  onConfigurePanGesture={configurePanGesture}
+                  onSnapToItem={handleSnapToItem}
+                  renderItem={({ item, index }) => (
+                    <View style={styles.swiperItem}>
                       {item.endsWith?.('.mp4') ? (
-                        <View style={styles.videoPlaceholder}>
-                          <IconFont name="play" size={40} color="#fff" />
-                          <Text style={{ color: '#fff', marginTop: 8 }}>
-                            视频
-                          </Text>
-                        </View>
+                        index === currentIndex ? (
+                          <Video
+                            source={{ uri: item }}
+                            style={{ width: '100%', height: '100%' }}
+                            resizeMode="cover"
+                            repeat={false}
+                            paused={false}
+                            onEnd={handleVideoEnd}
+                          />
+                        ) : (
+                          <View style={styles.videoPlaceholder}>
+                            <IconFont name="play" size={40} color="#fff" />
+                            <Text style={{ color: '#fff', marginTop: 8 }}>
+                              视频
+                            </Text>
+                          </View>
+                        )
                       ) : /\.(png|jpe?g|webp|gif)$/i.test(item) ? (
                         <Image
                           source={{ uri: item }}
@@ -264,8 +324,8 @@ export default function AdDisplay() {
                         </>
                       )}
                     </View>
-                  ))}
-                </Carousel>
+                  )}
+                />
                 <View style={styles.dotWrap}>
                   {itemList.map((_, index) => (
                     <View
@@ -274,8 +334,9 @@ export default function AdDisplay() {
                         styles.dot,
                         {
                           backgroundColor:
-                            current === index ? '#333333' : '#000',
-                          opacity: current === index ? 1 : 0.2,
+                            currentIndex === index
+                              ? '#333333'
+                              : 'rgba(0,0,0,0.2)',
                         },
                       ]}
                     />
@@ -367,7 +428,24 @@ export default function AdDisplay() {
           />
           <Text style={styles.lengthToast}>{`${textLength}/${MAX_TEXT}`}</Text>
         </View>
+        <View style={{ height: 50 }} />
       </View>
+
+      {/* 视频类型 */}
+      <PopConfirm
+        title="选择类型"
+        ref={popConfirmRef}
+        confirmText="图片"
+        cancelText="视频"
+        onConfirm={() => {
+          popConfirmRef.current?.close();
+          handleChooseImage();
+        }}
+        onCancel={() => {
+          popConfirmRef.current?.close();
+          handleChooseVideo();
+        }}
+      ></PopConfirm>
     </PageContainer>
   );
 }
