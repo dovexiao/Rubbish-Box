@@ -1,9 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import dayjs from 'dayjs';
 import { useRoute } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
-import { PageContainer } from '@/components';
+import { Flex, PageContainer } from '@/components';
 import { getOpinionDetail, submitOpinionEvaluate } from '@/services/user';
 import styles from './styles';
 
@@ -52,9 +59,21 @@ export default function FeedbackDetail() {
       const data: DetailInfo = (res as any)?.data ?? res;
       setDetailInfo(data);
       setEvaluation([
-        { label: '服务态度', key: 'serviceAttitude', count: data.serviceAttitude || 0 },
-        { label: '响应速度', key: 'responseSpeed', count: data.responseSpeed || 0 },
-        { label: '服务质量', key: 'serviceQuality', count: data.serviceQuality || 0 },
+        {
+          label: '服务态度',
+          key: 'serviceAttitude',
+          count: data.serviceAttitude || 0,
+        },
+        {
+          label: '响应速度',
+          key: 'responseSpeed',
+          count: data.responseSpeed || 0,
+        },
+        {
+          label: '服务质量',
+          key: 'serviceQuality',
+          count: data.serviceQuality || 0,
+        },
       ]);
       setTextLength((data.evaluationContent || '').length);
     } catch (e) {
@@ -75,9 +94,7 @@ export default function FeedbackDetail() {
   const handleStarPress = (index: number, value: number) => {
     if (!detailInfo?.status || detailInfo.evaluationFlag) return;
     setEvaluation(prev =>
-      prev.map((item, i) =>
-        i === index ? { ...item, count: value } : item,
-      ),
+      prev.map((item, i) => (i === index ? { ...item, count: value } : item)),
     );
   };
 
@@ -85,7 +102,10 @@ export default function FeedbackDetail() {
     if (!detailInfo || !canSubmit || submitting) return;
     setSubmitting(true);
     try {
-      const params: any = { feedbackId: detailInfo.id, evaluationContent: detailInfo.evaluationContent || '' };
+      const params: any = {
+        feedbackId: detailInfo.id,
+        evaluationContent: detailInfo.evaluationContent || '',
+      };
       evaluation.forEach(item => {
         params[item.key] = item.count || 0;
       });
@@ -172,7 +192,9 @@ export default function FeedbackDetail() {
 
         {/* 处理进度 */}
         <View style={styles.section}>
-          <Text style={[styles.toastText, { marginBottom: 12 }]}>处理进度</Text>
+          <Text style={[styles.toastText, { marginBottom: 12, marginTop: 24 }]}>
+            处理进度
+          </Text>
 
           {/* 节点1：已处理 */}
           <View style={styles.timelineItem}>
@@ -191,7 +213,7 @@ export default function FeedbackDetail() {
               </View>
               {detailInfo.status === 2 && (
                 <View style={styles.feedbackContent}>
-                  <Text style={styles.value}>{detailInfo.handleResult || ''}</Text>
+                  <Text>{detailInfo.handleResult || ''}</Text>
                 </View>
               )}
             </View>
@@ -201,7 +223,6 @@ export default function FeedbackDetail() {
           <View style={styles.timelineItem}>
             <View style={styles.timelineLeft}>
               <View style={[styles.circle, styles.circleGray]} />
-              <View style={styles.line} />
             </View>
             <View style={styles.timelineRight}>
               <View style={styles.progressHeader}>
@@ -213,7 +234,7 @@ export default function FeedbackDetail() {
                 </Text>
               </View>
               <View style={styles.feedbackContent}>
-                <Text style={styles.value}>{detailInfo.content || ''}</Text>
+                <Text>{detailInfo.content || ''}</Text>
                 {detailInfo.images?.length ? (
                   <View style={styles.feedbackImageRow}>
                     {detailInfo.images.map((img, idx) => (
@@ -233,74 +254,75 @@ export default function FeedbackDetail() {
 
         {/* 评价 */}
         {detailInfo.status === 2 && (
-          <View style={styles.section}>
-            <Text style={styles.evaluateTitle}>请对本次服务进行评价</Text>
+          <View style={styles.evaluateBox}>
+            <Flex style={styles.evaluateContentBox}>
+              <Text style={styles.evaluateTitle}>请对本次服务进行评价</Text>
 
-            {evaluation.map((item, index) => (
-              <View key={item.key} style={styles.starsRow}>
-                <Text style={styles.starLabel}>{item.label}</Text>
-                {new Array(5).fill(0).map((_, i) => {
-                  const active = i < item.count;
-                  return (
-                    <TouchableOpacity
-                      key={i}
-                      activeOpacity={0.8}
-                      onPress={() => handleStarPress(index, i + 1)}
-                      disabled={detailInfo.evaluationFlag}
-                    >
-                      <Text
-                        style={[
-                          styles.star,
-                          active ? styles.starActive : styles.starInactive,
-                        ]}
+              {evaluation.map((item, index) => (
+                <View key={item.key} style={styles.starsRow}>
+                  <Text style={styles.starLabel}>{item.label}</Text>
+                  {new Array(5).fill(0).map((_, i) => {
+                    const active = i < item.count;
+                    return (
+                      <TouchableOpacity
+                        key={i}
+                        activeOpacity={0.8}
+                        onPress={() => handleStarPress(index, i + 1)}
+                        disabled={detailInfo.evaluationFlag}
                       >
-                        ★
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            ))}
+                        <Text
+                          style={[
+                            styles.star,
+                            active ? styles.starActive : styles.starInactive,
+                          ]}
+                        >
+                          ★
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ))}
 
-            <View style={styles.evaluateInputBox}>
-              <TextInput
-                style={styles.evaluateInput}
-                value={detailInfo.evaluationContent || ''}
-                onChangeText={text => {
-                  if (detailInfo.evaluationFlag) return;
-                  setDetailInfo(prev =>
-                    prev ? { ...prev, evaluationContent: text } : prev,
-                  );
-                  setTextLength(text.length);
-                }}
-                placeholder="可填写补充内容文字"
-                placeholderTextColor="#CCCCCC"
-                maxLength={140}
-                multiline
-                editable={!detailInfo.evaluationFlag}
-              />
-              <Text style={styles.lengthToast}>{`${textLength}/140`}</Text>
-            </View>
-
-            {!detailInfo.evaluationFlag && (
-              <View style={styles.evaluateFooter}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={handleSubmitEvaluate}
-                  disabled={!canSubmit || submitting}
-                  style={[
-                    styles.evaluateBtn,
-                    canSubmit && !submitting && styles.evaluateBtnActive,
-                  ]}
-                >
-                  <Text style={styles.evaluateBtnText}>提交</Text>
-                </TouchableOpacity>
+              <View style={styles.evaluateInputBox}>
+                <TextInput
+                  style={styles.evaluateInput}
+                  value={detailInfo.evaluationContent || ''}
+                  onChangeText={text => {
+                    if (detailInfo.evaluationFlag) return;
+                    setDetailInfo(prev =>
+                      prev ? { ...prev, evaluationContent: text } : prev,
+                    );
+                    setTextLength(text.length);
+                  }}
+                  placeholder="可填写补充内容文字"
+                  placeholderTextColor="#CCCCCC"
+                  maxLength={140}
+                  multiline
+                  editable={!detailInfo.evaluationFlag}
+                />
+                <Text style={styles.lengthToast}>{`${textLength}/140`}</Text>
               </View>
-            )}
+            </Flex>
+          </View>
+        )}
+
+        {!detailInfo.evaluationFlag && (
+          <View style={styles.evaluateFooter}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleSubmitEvaluate}
+              disabled={!canSubmit || submitting}
+              style={[
+                styles.evaluateBtn,
+                canSubmit && !submitting && styles.evaluateBtnActive,
+              ]}
+            >
+              <Text style={styles.evaluateBtnText}>提交</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
     </PageContainer>
   );
 }
-

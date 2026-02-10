@@ -140,6 +140,11 @@ export const routes = {
       label: '服务单详情',
     },
     {
+      name: 'Account',
+      component: require('@/pages/account').default,
+      label: '账号与安全',
+    },
+    {
       name: 'Feedback',
       component: require('@/pages/feedback').default,
       label: '意见反馈',
@@ -153,6 +158,16 @@ export const routes = {
       name: 'FeedbackDetail',
       component: require('@/pages/feedbackDetail').default,
       label: '服务单详情',
+    },
+    {
+      name: 'SkinPeeler',
+      component: require('@/pages/skinPeeler').default,
+      label: '换肤',
+    },
+    {
+      name: 'Setting',
+      component: require('@/pages/setting').default,
+      label: '设置',
     },
     {
       name: 'AdvertisingDisplay',

@@ -3,32 +3,29 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 24,
-    backgroundColor: '#F6F7FA',
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E5E5E5',
   },
   section: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    marginBottom: 16,
   },
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
   },
   toastText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 12,
+    fontWeight: 'bold',
     color: '#999999',
+    lineHeight: 17,
   },
   toastTextRight: {
-    fontSize: 14,
-    color: '#999999',
+    fontSize: 12,
+    lineHeight: 17,
   },
   processingColor: {
     color: '#FF873D',
@@ -40,16 +37,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 12,
+    gap: 12,
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#333333',
+    lineHeight: 20,
   },
   value: {
     fontSize: 14,
     color: '#333333',
+    lineHeight: 20,
+    flex: 1,
+    textAlign: 'right',
   },
   timelineItem: {
     flexDirection: 'row',
@@ -61,9 +63,9 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   circle: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 16,
+    height: 16,
+    borderRadius: 16,
     backgroundColor: '#E5E5E5',
   },
   circleBlack: {
@@ -73,30 +75,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5E5',
   },
   line: {
-    width: 2,
+    width: 1,
     flex: 1,
     backgroundColor: '#E5E5E5',
     marginTop: 2,
   },
   timelineRight: {
     flex: 1,
-    paddingBottom: 16,
+    paddingBottom: 24,
   },
   progressHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   feedbackContent: {
     padding: 12,
     borderRadius: 12,
     backgroundColor: '#F6F7FA',
-    marginTop: 4,
+    minHeight: 100,
+    textAlign: 'center',
   },
   feedbackImageRow: {
     flexDirection: 'row',
-    marginTop: 8,
+    marginTop: 12,
   },
   feedbackImage: {
     width: 60,
@@ -105,18 +108,29 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   evaluateBox: {
-    marginTop: 8,
+    width: '100%',
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  evaluateContentBox: {
+    flexDirection: 'column',
+    padding: 16,
+    marginVertical: 24,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#eeeeee',
   },
   evaluateTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 12,
+    marginBottom: 18,
+    lineHeight: 20,
   },
   starsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
   },
   starLabel: {
     fontSize: 14,
@@ -124,7 +138,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   star: {
-    fontSize: 18,
+    fontSize: 24,
     marginHorizontal: 2,
   },
   starActive: {
@@ -141,25 +155,26 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     backgroundColor: '#F7F6FA',
     borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 13,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    fontSize: 12,
     color: '#333333',
   },
   lengthToast: {
     alignSelf: 'flex-end',
-    marginTop: 4,
+    marginTop: 8,
     fontSize: 12,
     color: '#CCCCCC',
   },
   evaluateFooter: {
     marginTop: 16,
     alignItems: 'center',
+    marginBottom: 24,
   },
   evaluateBtn: {
     minWidth: 160,
-    height: 40,
-    borderRadius: 20,
+    height: 48,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#CCCCCC',
@@ -168,11 +183,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#333333',
   },
   evaluateBtnText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: 'bold',
+    lineHeight: 22,
   },
 });
 
 export default styles;
-

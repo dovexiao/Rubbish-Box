@@ -16,6 +16,8 @@ export const styles = StyleSheet.create({
   },
   headerContainer: {
     zIndex: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
   },
   footerContainer: {
     zIndex: 10,

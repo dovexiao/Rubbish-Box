@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { Flex, Tabs, Toast } from '@ant-design/react-native';
+import { Flex, Toast } from '@ant-design/react-native';
 import dayjs from 'dayjs';
 import { useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
@@ -32,7 +32,6 @@ export default function FeedbackRecord() {
   const navigation = useNavigation<any>();
   const [records, setRecords] = useState<OpinionItem[]>([]);
   const [currentTab, setCurrentTab] = useState(0);
-  const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +40,7 @@ export default function FeedbackRecord() {
       if (loading) return;
       setLoading(true);
       try {
-        const offset = reload ? 0 : page * 10;
+        const offset = reload ? 0 : records.length;
         const res = await getOpinionList({
           offset,
           pageSize: 10,
@@ -49,34 +48,30 @@ export default function FeedbackRecord() {
         });
         const list: OpinionItem[] =
           (res as any)?.data?.list ?? (res as any)?.list ?? [];
-        setRecords(prev =>
-          reload ? list : [...prev, ...list],
-        );
+        setRecords(prev => (reload ? list : [...prev, ...list]));
         setHasMore(list.length === 10);
-        if (reload) {
-          setPage(1);
-        } else if (list.length === 10) {
-          setPage(prev => prev + 1);
-        }
       } catch (e) {
         Toast.fail('获取反馈记录失败');
       } finally {
         setLoading(false);
       }
     },
-    [loading, page],
+    [loading, records.length],
   );
 
   useEffect(() => {
     fetchList(true, currentTab);
-  }, [currentTab, fetchList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTab]);
 
   const renderItem = ({ item }: { item: OpinionItem }) => {
     const statusText = STATUS_TEXT[item.status] ?? '';
     return (
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => navigation.navigate('FeedbackDetail', { feedbackId: item.id })}
+        onPress={() =>
+          navigation.navigate('FeedbackDetail', { feedbackId: item.id })
+        }
       >
         <View style={styles.recordItem}>
           <Flex style={styles.rowBetween} align="center">
@@ -91,7 +86,7 @@ export default function FeedbackRecord() {
               >
                 {statusText}
               </Text>
-              <IconFont name="a-headfor-20" size={16} color="#333333" />
+              <IconFont name="a-headfor-20" size={20} color="#333333" />
             </Flex>
           </Flex>
           <View style={styles.line} />
@@ -107,7 +102,7 @@ export default function FeedbackRecord() {
                 : ''}
             </Text>
           </Flex>
-          <View style={styles.descRow}>
+          <View style={styles.rowBetween}>
             <Text style={styles.label}>描述：</Text>
             <Text style={styles.value}>{item.content}</Text>
           </View>
@@ -131,15 +126,24 @@ export default function FeedbackRecord() {
     >
       <View style={styles.container}>
         <View style={styles.tabsWrapper}>
-          <Tabs
-            tabs={TABS.map(t => ({ title: t.title }))}
-            page={currentTab}
-            onChange={(_, index) => {
-              setCurrentTab(index);
-            }}
-            underlineStyle={{ backgroundColor: '#333333' }}
-            tabBarUnderlineStyle={{ backgroundColor: '#333333' }}
-          />
+          <View style={styles.tabsBox}>
+            {TABS.map((tab, index) => (
+              <TouchableOpacity
+                key={tab.key}
+                style={[styles.tab, currentTab === index && styles.tabActive]}
+                onPress={() => setCurrentTab(index)}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={
+                    currentTab === index ? styles.tabTextActive : styles.tabText
+                  }
+                >
+                  {tab.title}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         <FlatList
@@ -156,11 +160,7 @@ export default function FeedbackRecord() {
           ListEmptyComponent={
             !loading ? (
               <View style={styles.emptyBox}>
-                <IconFont
-                  name="order"
-                  size={40}
-                  color="#CCCCCC"
-                />
+                <IconFont name="order" size={40} color="#CCCCCC" />
                 <Text style={styles.emptyText}>暂无反馈记录</Text>
               </View>
             ) : null
@@ -170,4 +170,3 @@ export default function FeedbackRecord() {
     </PageContainer>
   );
 }
-

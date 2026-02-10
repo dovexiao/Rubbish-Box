@@ -3,56 +3,90 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 12,
+
     paddingHorizontal: 0,
     backgroundColor: '#F6F7FA',
   },
   tabsWrapper: {
     paddingHorizontal: 16,
-    marginBottom: 8,
+    marginBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    borderTopWidth: 1,
+    borderTopColor: '#E5E5E5',
+  },
+  tabsBox: {
+    width: 220,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  tab: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  tabActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#333333',
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#CCCCCC',
+  },
+  tabTextActive: {
+    fontSize: 14,
+    color: '#333333',
+    fontWeight: 'bold',
   },
   listContent: {
     paddingHorizontal: 16,
-    paddingBottom: 16,
   },
   recordItem: {
     borderRadius: 12,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     marginBottom: 12,
   },
   rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 12,
   },
   orderNoText: {
-    fontSize: 13,
-    color: '#666666',
+    fontSize: 12,
+    color: '#999999',
+    lineHeight: 17,
   },
   statusText: {
-    fontSize: 13,
-    color: '#999999',
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
   },
   statusProcessing: {
-    color: '#FF9F00',
+    color: '#ff873d',
   },
   statusDone: {
-    color: '#00B578',
+    color: '#37c22a',
   },
   line: {
     height: 1,
-    backgroundColor: '#F0F0F0',
-    marginVertical: 8,
+    backgroundColor: 'rgba(234, 234, 234, 0.9)',
+    marginVertical: 12,
   },
   label: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#333333',
+    fontWeight: 'bold',
+    minWidth: 58,
   },
   value: {
-    fontSize: 13,
-    color: '#666666',
+    fontSize: 14,
+    color: '#333333',
+    flex: 1,
+    textAlign: 'right',
   },
   descRow: {
     marginTop: 4,
@@ -69,4 +103,3 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
-
