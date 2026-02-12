@@ -109,5 +109,20 @@ export const routes = {
       component: require('@/pages/pickupCodeRecordDetail').default,
       label: '领取详情',
     },
+    {
+      name: 'CompositeManage',
+      component: require('@/pages/composit/manage').default,
+      label: '编辑组合设备',
+    },
+    {
+      name: 'DevicesMember',
+      component: require('@/pages/composit/member').default,
+      label: '成员列表',
+    },
+    {
+      name: 'CompositeShare',
+      component: require('@/pages/composit/share/index').default,
+      label: '组合设备分享',
+    },
   ],
 } as const;

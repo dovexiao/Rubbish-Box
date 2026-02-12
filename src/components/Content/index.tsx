@@ -17,6 +17,8 @@ import { LockInfoDTO } from '@/pages/index/typing';
 import { styles } from './style';
 import { groupSubList } from '@/services';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { BUZZER_STATUS, COVER_STATUS, LOCK_ROLE } from '@/constants';
+import Popup from '../Popup';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -25,6 +27,7 @@ interface ContentProps {
   onFresh?: (id?: number) => Promise<any> | void;
   onAnimation?: (params: any) => void;
   children?: React.ReactNode;
+  isMultiple?: boolean;
 }
 
 const Content: React.FC<ContentProps> = ({
@@ -32,6 +35,7 @@ const Content: React.FC<ContentProps> = ({
   reload,
   optioning,
   onFresh,
+  isMultiple = false,
   onAnimation,
   children,
 }) => {
@@ -39,6 +43,8 @@ const Content: React.FC<ContentProps> = ({
 
   const [operating, setOperating] = useState(false);
   const [groupList, setGroupList] = useState<any[]>([]);
+  const [manageMultipleRef, setManageMultipleRef] = useState(false);
+  const [deleteMultipleRef, setDeleteMultipleRef] = useState(false);
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -93,10 +99,10 @@ const Content: React.FC<ContentProps> = ({
   );
 
   const handleDeviceInfo = () => {
+    if (!detail?.id) return;
     if (detail?.isGroup) {
-      console.log('跳转设备列表');
+      console.log(11111);
     } else {
-      if (!detail?.id) return;
       navigation.navigate('DeviceInfo', {
         lockId: detail.id,
         isAdmin: detail?.role === 1,
@@ -118,7 +124,6 @@ const Content: React.FC<ContentProps> = ({
         />
       </Flex>
 
-      {/* 手动升降按钮 */}
       <Flex justify="between" style={styles.manualRow}>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -126,23 +131,90 @@ const Content: React.FC<ContentProps> = ({
           disabled={operating}
           onPress={() => handleOperate('rise')}
         >
+          {detail?.bluetoothStatus == 0 && (
+            <View style={styles.warningIcon}>
+              <Image
+                source={{
+                  uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png',
+                }}
+                style={{ width: 20, height: 20 }}
+              ></Image>
+            </View>
+          )}
           <View style={styles.manualIconCircle}>
-            <IconFont name="rise" size={24} color="#333333" />
+            <IconFont name="bluetooth-1" size={24} color="#333333" />
           </View>
-          <Text style={styles.manualText}>手动升锁</Text>
+          <Text style={styles.manualText}>自动升降</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.manualBtn}
-          disabled={operating}
-          onPress={() => handleOperate('fall')}
-        >
-          <View style={styles.manualIconCircle}>
-            <IconFont name="down" size={24} color="#333333" />
-          </View>
-          <Text style={styles.manualText}>手动降锁</Text>
-        </TouchableOpacity>
+        {detail?.noBleOpt == true ? null : (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.manualBtn}
+            disabled={operating}
+            onPress={() => handleOperate('rise')}
+          >
+            <View style={styles.manualIconCircle}>
+              <IconFont name="rise" size={24} color="#333333" />
+            </View>
+            <Text style={styles.manualText}>手动升锁</Text>
+          </TouchableOpacity>
+        )}
+        {detail?.noBleOpt == true ? null : (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.manualBtn}
+            disabled={operating}
+            onPress={() => handleOperate('fall')}
+          >
+            <View style={styles.manualIconCircle}>
+              <IconFont name="down" size={24} color="#333333" />
+            </View>
+            <Text style={styles.manualText}>手动降锁</Text>
+          </TouchableOpacity>
+        )}
+        {isMultiple ? (
+          detail?.role === 1 && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.manualBtn}
+              disabled={operating}
+              onPress={() => setManageMultipleRef(true)}
+            >
+              <View style={styles.manualIconCircle}>
+                <IconFont
+                  name="a-combinationmanagement"
+                  size={24}
+                  color="#333333"
+                />
+              </View>
+              <Text style={styles.manualText}>组合管理</Text>
+            </TouchableOpacity>
+          )
+        ) : detail?.powerType === 1 && detail.canOpenCover ? (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.manualBtn}
+            disabled={operating}
+            onPress={() => handleOperate('fall')}
+          >
+            <View style={styles.manualIconCircle}>
+              <IconFont
+                name={
+                  detail?.coverStatus === COVER_STATUS.OPEN ? 'unlock' : 'lock'
+                }
+                size={24}
+                color="#333333"
+              />
+            </View>
+            <Text style={styles.manualText}>
+              {detail?.coverStatus === COVER_STATUS.OPEN
+                ? '关闭锁盖'
+                : '打开锁盖'}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <></>
+        )}
       </Flex>
 
       {/* 地图 + 设备信息卡片 */}
@@ -238,24 +310,64 @@ const Content: React.FC<ContentProps> = ({
         </Pressable>
       </Flex>
 
-      {/* 成员共享 / 下载 App 等入口 */}
       <View style={styles.entryList}>
-        <TouchableOpacity style={styles.entryItem}>
+        <TouchableOpacity
+          style={styles.entryItem}
+          onPress={() => {
+            if (!detail?.id) return;
+            navigation.navigate('DevicesMember', {
+              lockId: detail.id,
+              type: detail?.isGroup ? 'group' : 'single',
+            });
+          }}
+        >
           <Flex justify="between" align="center">
             <IconFont name="member" size={16} color="#333333" />
             <Text style={styles.entryText}>成员共享</Text>
             <IconFont name="a-headfor-20" size={20} color="#333333" />
           </Flex>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.entryItem}>
-          <Flex justify="between" align="center">
-            <IconFont name="download" size={16} color="#333333" />
-            <Text style={styles.entryText}>下载APP</Text>
-            <IconFont name="a-headfor-20" size={20} color="#333333" />
-          </Flex>
-        </TouchableOpacity>
       </View>
+      <Popup
+        visible={manageMultipleRef}
+        title="管理组合设备"
+        onClose={() => setManageMultipleRef(false)}
+      >
+        <Flex
+          style={{ marginTop: 48 }}
+          direction="column"
+          justify="center"
+          align="center"
+        >
+          <Flex
+            isTouchView
+            justify="center"
+            align="center"
+            style={{
+              backgroundColor: '#333333',
+              ...styles.manageBtn,
+            }}
+            onPress={() => {
+              if (!detail?.id) return;
+              setManageMultipleRef(false);
+              navigation.navigate('CompositeManage', {
+                lockId: detail.id,
+              });
+            }}
+          >
+            <Text style={styles.manageBtnText}>编辑</Text>
+          </Flex>
+          <Flex
+            isTouchView
+            justify="center"
+            align="center"
+            onPress={() => setDeleteMultipleRef(true)}
+            style={{ ...styles.manageBtn, ...styles.manageDeteleBtn }}
+          >
+            <Text style={styles.manageDeteleBtnText}>删除</Text>
+          </Flex>
+        </Flex>
+      </Popup>
     </View>
   );
 };

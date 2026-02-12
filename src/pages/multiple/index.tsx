@@ -291,6 +291,7 @@ const Index = () => {
                   void load();
                 }}
                 optioning={false}
+                isMultiple={true}
               >
                 <LockVisual
                   detail={detail}

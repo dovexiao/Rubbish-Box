@@ -42,6 +42,7 @@ export const styles = StyleSheet.create({
     padding: 24,
   },
   navHeader: {
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     height: 44,
@@ -56,17 +57,17 @@ export const styles = StyleSheet.create({
   navHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    minWidth: 40,
   },
   navHeaderCenter: {
-    flex: 2,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   navHeaderRight: {
+    minWidth: 40,
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
     justifyContent: 'flex-end',
   },
   navHeaderBack: {
@@ -78,7 +79,7 @@ export const styles = StyleSheet.create({
     lineHeight: 24,
   },
   navHeaderTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
   },

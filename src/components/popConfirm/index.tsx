@@ -29,7 +29,8 @@ import GradientButton from '../GradientButton';
  */
 
 interface PopConfirmProps {
-  title: string | ReactNode;
+  title?: string | ReactNode;
+  children?: ReactNode;
   showClose?: boolean;
   confirmText?: string;
   cancelText?: string;
@@ -42,6 +43,8 @@ interface PopConfirmProps {
   btnWrapStyle?: ViewStyle;
   confirmBtnStyle?: ViewStyle;
   width?: number;
+  visible?: boolean;
+  onVisibleChange?: (visible: boolean) => void;
 }
 
 export interface PopConfirmRef {
@@ -52,6 +55,8 @@ export interface PopConfirmRef {
 const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
   (
     {
+      title,
+      children,
       showClose = true,
       confirmText = '确定',
       cancelText = '取消',
@@ -63,11 +68,23 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
       btnWrapStyle = {},
       confirmBtnStyle,
       width = 311,
-      ...props
+      submitBtn,
+      visible,
+      onVisibleChange,
     },
     ref,
   ) => {
-    const [visible, setVisible] = useState<boolean>(false);
+    const [innerVisible, setInnerVisible] = useState<boolean>(false);
+
+    const isControlled = typeof visible === 'boolean';
+    const mergedVisible = isControlled ? (visible as boolean) : innerVisible;
+
+    const setVisible = (next: boolean) => {
+      if (!isControlled) {
+        setInnerVisible(next);
+      }
+      onVisibleChange?.(next);
+    };
 
     useImperativeHandle(ref, () => ({
       open: () => setVisible(true),
@@ -80,7 +97,7 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
         modalType={'portal'}
         onClose={() => setVisible(false)}
         maskClosable
-        visible={visible}
+        visible={mergedVisible}
         bodyStyle={{
           paddingTop: 12,
           paddingHorizontal: 24,
@@ -93,7 +110,14 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
         }}
       >
         <Flex style={popupStyle.popupContainer}>
-          <Text style={popupStyle.popupTitle}>{props.title}</Text>
+          {title !== undefined &&
+            (typeof title === 'string' ? (
+              <Text style={popupStyle.popupTitle}>{title}</Text>
+            ) : (
+              title
+            ))}
+
+          {children}
           <Flex
             style={[btnWrapStyle, popupStyle.btnContainerWrapper]}
             justify={'center'}
@@ -115,8 +139,8 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
               </GradientButton>
             )}
 
-            {props?.submitBtn ? (
-              props.submitBtn
+            {submitBtn ? (
+              submitBtn
             ) : (
               <GradientButton
                 colors={confirmColors}

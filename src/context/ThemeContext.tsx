@@ -71,7 +71,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    // 兜底：在未被 ThemeProvider 包裹时提供一个默认主题，避免直接抛错导致页面崩溃
+    return {
+      themeType: 'dark',
+      theme: darkTheme,
+      toggleTheme: () => {},
+      setTheme: () => {},
+    } as ThemeContextType;
   }
   return context;
 };

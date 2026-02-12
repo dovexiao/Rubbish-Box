@@ -14,6 +14,10 @@ export {
   cacheRemove,
   cacheRemoveSync,
 } from './cache';
+/**
+ * Toast / Loading 工具（兼容 Taro.showToast / showLoading / hideLoading）
+ */
+export { showToast, showLoading, hideLoading } from './toast';
 import {
   DeviceEventEmitter,
   Platform,

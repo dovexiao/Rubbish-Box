@@ -9,6 +9,9 @@ export type RootStackParamList = {
   WebView: { url?: string; title?: string };
   ForgetPassword: undefined;
   ForgetPasswordSms?: { mobile: string; type: string };
+  CompositeManage: { lockId: number };
+  DevicesMember: { lockId: number; type: 'single' | 'group' };
+  CompositeShare: { lockId: number; lockType: number };
 };
 
 export type MainTabParamList = {

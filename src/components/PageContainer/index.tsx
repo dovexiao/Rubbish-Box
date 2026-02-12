@@ -14,6 +14,7 @@ import {
   ViewStyle,
   Text,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -73,7 +74,7 @@ interface PageContainerProps {
   /** 垂直内边距 */
   paddingVertical?: number;
   /** 安全区边界配置，默认 ['top', 'bottom'] */
-  safeAreaEdges?: Edge[];
+  safeAreaEdges?: any[];
   /** 是否启用 ScrollView */
   scrollable?: boolean;
   /** 键盘交互模式 */
@@ -119,7 +120,7 @@ interface PageContainerProps {
   /** 错误重试回调 */
   onRetry?: () => void;
   /** 触发 refresh 时的回调 */
-  onRefresh?: () => void;
+  onRefresh?: () => void | Promise<void>;
 }
 
 /** 刷新页面容器 */
@@ -189,6 +190,8 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
         setReloadSeed(prev => prev + 1);
       },
     }));
+
+    const [refreshing, setRefreshing] = useState(false);
 
     // 解析主题默认值
     const defaultBackgroundColor =
@@ -306,6 +309,23 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
           contentContainerStyle,
         ];
 
+        const enablePullDownRefresh = !!onRefresh;
+
+        const refreshControl = enablePullDownRefresh ? (
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => {
+              if (!onRefresh) return;
+              try {
+                setRefreshing(true);
+                await onRefresh();
+              } finally {
+                setRefreshing(false);
+              }
+            }}
+          />
+        ) : undefined;
+
         return (
           <KeyboardAwareScrollView
             key={reloadSeed}
@@ -313,7 +333,8 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
             contentContainerStyle={scrollContentStyle}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps={keyboardShouldPersistTaps}
-            bottomOffset={Platform.OS === 'ios' ? 0 : 20}
+            // bottomOffset={Platform.OS === 'ios' ? 0 : 20}
+            refreshControl={refreshControl}
           >
             {children}
           </KeyboardAwareScrollView>

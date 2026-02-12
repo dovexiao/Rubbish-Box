@@ -387,87 +387,76 @@ const Login = () => {
       </View>
       <PopConfirm
         ref={agreePopRef}
-        title={
-          <Flex direction="column" align="center" justify="center">
-            <Text style={styles.popTitle}>用户协议及隐私保护</Text>
-            <Text style={styles.popDesc}>
-              我已阅读并同意
-              <Text
-                style={styles.popDescLink}
-                onPress={async e => {
-                  e?.stopPropagation?.();
-                  try {
-                    await cacheSetSync('reopenPrivacyAfterWeb', true);
-                    await setStorage({ key: 'privacyOpenBy', data: 'login' });
-                  } catch {}
-                  agreePopRef.current?.close();
-                  navigation.navigate('WebView', {
-                    url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
-                    title: '泊刻地锁用户协议',
-                  });
-                }}
-              >
-                《泊刻地锁用户协议》
-              </Text>
-              和
-              <Text
-                style={styles.popDescLink}
-                onPress={async e => {
-                  e?.stopPropagation?.();
-                  try {
-                    await cacheSetSync('reopenPrivacyAfterWeb', true);
-                    await setStorage({ key: 'privacyOpenBy', data: 'login' });
-                  } catch {}
-                  agreePopRef.current?.close();
-                  navigation.navigate('WebView', {
-                    url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
-                    title: '泊刻地锁隐私政策',
-                  });
-                }}
-              >
-                《隐私政策》
-              </Text>
-            </Text>
-            <Text style={styles.popNotice}>
-              为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
-            </Text>
-          </Flex>
-        }
+        title={'用户协议及隐私保护'}
         cancelText="不同意"
         onCancel={() => {
           agreePopRef.current?.close();
           retainPopRef.current?.open();
         }}
-        submitBtn={
-          <GradientButton
-            width={124}
-            height={42}
-            style={styles.popSubmit}
-            colors={['#282828', '#4A4A4A']}
-            onPress={
-              loginType === 'mini'
-                ? async () => {
-                    await agreePopRef.current?.close();
-                    setAgree(true);
-                    await cacheSet({ key: 'agreePrivacy', data: true });
-                    await setStorage({ key: 'pushEnabled', data: true });
-                    setTimeout(() => {
-                      wxLogin();
-                    }, 300);
-                  }
-                : () => {
-                    setAgree(true);
-                    myNextTick(() => {
-                      agreePopRef.current?.close();
-                      eventCenter.trigger('onNext');
-                    });
-                  }
-            }
-          >
-            <Text style={styles.popBtnText}>同意并继续</Text>
-          </GradientButton>
+        confirmColors={['#282828', '#4A4A4A']}
+        onConfirm={
+          loginType === 'mini'
+            ? async () => {
+                await agreePopRef.current?.close();
+                setAgree(true);
+                await cacheSet({ key: 'agreePrivacy', data: true });
+                await setStorage({ key: 'pushEnabled', data: true });
+                setTimeout(() => {
+                  wxLogin();
+                }, 300);
+              }
+            : () => {
+                setAgree(true);
+                myNextTick(() => {
+                  agreePopRef.current?.close();
+                  eventCenter.trigger('onNext');
+                });
+              }
         }
-      />
+        confirmText="同意并继续"
+      >
+        <Text style={styles.popDesc}>
+          我已阅读并同意
+          <Text
+            style={styles.popDescLink}
+            onPress={async e => {
+              e?.stopPropagation?.();
+              try {
+                await cacheSetSync('reopenPrivacyAfterWeb', true);
+                await setStorage({ key: 'privacyOpenBy', data: 'login' });
+              } catch {}
+              agreePopRef.current?.close();
+              navigation.navigate('WebView', {
+                url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
+                title: '泊刻地锁用户协议',
+              });
+            }}
+          >
+            《泊刻地锁用户协议》
+          </Text>
+          和
+          <Text
+            style={styles.popDescLink}
+            onPress={async e => {
+              e?.stopPropagation?.();
+              try {
+                await cacheSetSync('reopenPrivacyAfterWeb', true);
+                await setStorage({ key: 'privacyOpenBy', data: 'login' });
+              } catch {}
+              agreePopRef.current?.close();
+              navigation.navigate('WebView', {
+                url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
+                title: '泊刻地锁隐私政策',
+              });
+            }}
+          >
+            《隐私政策》
+          </Text>
+        </Text>
+        <Text style={styles.popNotice}>
+          为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
+        </Text>
+      </PopConfirm>
 
       {/* 拒绝后的挽留说明弹窗（仅确认按钮） */}
       <PopConfirm
@@ -475,7 +464,8 @@ const Login = () => {
         showClose={false}
         confirmText="我知道了"
         onConfirm={async () => {
-          // 用户选择暂不登录，进入访客模式浏览首页
+          retainPopRef.current?.close();
+          return;
           try {
             await cacheSetSync('guestMode', true);
           } catch {}
@@ -496,7 +486,7 @@ const Login = () => {
             </Text>
           </Flex>
         }
-      />
+      ></PopConfirm>
     </PageContainer>
   );
 };

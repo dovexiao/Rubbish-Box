@@ -15,6 +15,13 @@ export const styles = StyleSheet.create({
   },
   manualBtn: {
     alignItems: 'center',
+    position: 'relative',
+  },
+  warningIcon: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    zIndex: 1,
   },
   manualIconCircle: {
     width: 60,
@@ -103,7 +110,10 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 16,
     backgroundColor: '#F9F9F9',
-    borderRadius: '0 0 8 8',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
     gap: 12,
   },
   infoRow: {
@@ -142,5 +152,27 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: '#333333',
+  },
+  manageBtn: {
+    width: 327,
+    height: 48,
+    borderRadius: 12,
+  },
+
+  manageBtnText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+
+  manageDeteleBtn: {
+    backgroundColor: 'transparent',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderWidth: 1,
+    marginTop: 12,
+    color: '#666',
+  },
+  manageDeteleBtnText: {
+    color: '#666',
   },
 });
