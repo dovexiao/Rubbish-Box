@@ -19,6 +19,7 @@ export default function Account() {
   const navigation = useNavigation<any>();
   const [detail, setDetail] = useState<AccountInfo | null>(null);
   const popConfirmRef = useRef<any>(null);
+  const unbindWechatRef = useRef<any>(null);
 
   const loadAccount = useCallback(async () => {
     try {
@@ -41,8 +42,7 @@ export default function Account() {
   };
 
   const handleWechat = () => {
-    // 微信绑定/解绑流程较复杂，先占位，后续按需迁移
-    Toast.info('微信账号绑定暂未迁移');
+    unbindWechatRef.current.open();
   };
 
   const handlePassword = () => {
@@ -144,6 +144,22 @@ export default function Account() {
               style={styles.popDesc}
             >{`当前绑定的手机号码为${detail?.mobile}`}</Text>
           </Flex>
+        }
+        confirmText="更换"
+        onConfirm={() => {
+          popConfirmRef.current.close();
+          navigation.navigate('ChangeMobile', {
+            mobile: detail?.mobile,
+          });
+        }}
+      />
+      {/* 微信 */}
+      <PopConfirm
+        ref={unbindWechatRef}
+        title={
+          detail?.bindWechatApp
+            ? '确定要解除绑定吗？'
+            : '确定要绑定当前登录的微信账号吗？'
         }
         confirmText="更换"
         onConfirm={() => {

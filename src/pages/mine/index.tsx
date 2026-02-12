@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Image, TouchableOpacity, View, Text } from 'react-native';
+import { Image, TouchableOpacity, View, Text, Linking } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import PageContainer from '@/components/PageContainer';
@@ -147,6 +147,11 @@ export default function Mine() {
         icon: 'a-skinpeeler' as const,
         label: '换肤',
         onPress: () => navigation.navigate('SkinPeeler'),
+      },
+      {
+        icon: 'a-customerservice' as const,
+        label: '联系客服',
+        onPress: () => Linking.openURL('tel:400-097-8660'),
       },
       {
         icon: 'setting' as const,

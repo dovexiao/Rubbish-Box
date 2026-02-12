@@ -145,6 +145,11 @@ export const routes = {
       label: '账号与安全',
     },
     {
+      name: 'ChangeMobile',
+      component: require('@/pages/changeMobile').default,
+      label: '更换手机号',
+    },
+    {
       name: 'Feedback',
       component: require('@/pages/feedback').default,
       label: '意见反馈',
