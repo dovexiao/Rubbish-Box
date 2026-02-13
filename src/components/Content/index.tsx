@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { BUZZER_STATUS, COVER_STATUS, LOCK_ROLE } from '@/constants';
 import { Flex, Popup, PopConfirm } from '@/components';
 import { showToast, makePhoneCall } from '@/utils';
+import MapComponent from '../Map';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -112,6 +113,18 @@ const Content: React.FC<ContentProps> = ({
   };
 
   const address = detail?.locationList?.[0]?.address || detail?.address || '';
+  const markers = useMemo(() => {
+    return detail?.locationList?.map(item => {
+      return {
+        iconPath: 'https://g.18qjz.cn/img/boklock/device_icon.png',
+        id: item.lockId,
+        latitude: item.latitude,
+        longitude: item.longitude,
+        width: 36,
+        height: 36,
+      };
+    });
+  }, [detail?.locationList]);
 
   return (
     <View style={styles.contentBox}>
@@ -220,25 +233,29 @@ const Content: React.FC<ContentProps> = ({
 
       {/* 地图 + 设备信息卡片 */}
       <Flex justify="between" style={styles.cardsRow}>
-        <View style={[styles.card, styles.mapCard]}>
-          <View style={styles.mapPreview}>
-            <Image
-              source={{
-                uri: 'https://g.18qjz.cn/img/boklock/map_placeholder.png',
-              }}
-              style={styles.mapImage as ImageStyle}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.cardTitle} numberOfLines={1}>
-            当前位置{detail?.isGroup ? '（组锁）' : '（单锁）'}
-          </Text>
-          {!!address && (
-            <Text style={styles.cardSubTitle} numberOfLines={2}>
-              {address}
-            </Text>
-          )}
-        </View>
+        <Flex
+          direction="column"
+          justify="between"
+          align="center"
+          style={[
+            styles.contentLeftBox,
+            // detail?.isGroup ? styles.multipleHeight : styles.singleHeight,
+          ]}
+        >
+          <MapComponent
+            style={{ flex: 1 }}
+            key={detail?.locationList?.[0]?.lockId}
+            address={detail?.locationList?.[0]?.formattedAddress}
+            longitude={detail?.locationList?.[0]?.longitude as number}
+            latitude={detail?.locationList?.[0]?.latitude as number}
+            markers={markers}
+            onClick={() => {
+              (navigation as any).navigate('DeviceAddress', {
+                addressInfo: detail?.locationList,
+              });
+            }}
+          />
+        </Flex>
 
         <Pressable style={[styles.card]} onPress={handleDeviceInfo}>
           <Flex justify="between" align="center" style={styles.cardHeader}>

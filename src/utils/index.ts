@@ -350,6 +350,12 @@ export const getMobPushDeviceInfo = async () => {
 };
 
 /**
+ * 获取当前应用包名（Android 为 applicationId，iOS 为 Bundle Identifier）
+ */
+export const getAppPackageName = (): Promise<string> =>
+  Promise.resolve(DeviceInfo.getBundleId());
+
+/**
  * 打开系统设置页面
  */
 export const openSettings = async (): Promise<void> => {
@@ -473,6 +479,51 @@ export const getBluetoothDeviceInfo = async (): Promise<
     return {};
   }
 };
+
+/**
+ * 从缓存中移除指定 deviceId 的蓝牙设备信息
+ */
+export const removeBluetoothDeviceInfo = async (
+  deviceId: string,
+): Promise<void> => {
+  try {
+    const cached = await getBluetoothDeviceInfo();
+    let updated = false;
+    const next: Record<string, any> = {};
+    for (const [key, val] of Object.entries(cached)) {
+      if (val?.deviceId !== deviceId) {
+        next[key] = val;
+      } else {
+        updated = true;
+      }
+    }
+    if (updated) {
+      await setStorage({ key: 'bluetoothDeviceInfoList', data: next });
+    }
+  } catch (e) {
+    console.error('[removeBluetoothDeviceInfo]', e);
+  }
+};
+
+/**
+ * 从 Base64 制造商数据中解析 MAC 地址（取后 6 字节）
+ */
+export function parseMacFromBase64(base64Str: string): string | null {
+  if (!base64Str) return null;
+  try {
+    const g = typeof globalThis !== 'undefined' ? globalThis : {};
+    const B = (g as any).Buffer;
+    const bytes = B ? new Uint8Array(B.from(base64Str, 'base64')) : null;
+    if (!bytes || bytes.length < 6) return null;
+    const macBytes = bytes.slice(bytes.length - 6);
+    return Array.from(macBytes)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+      .toUpperCase();
+  } catch {
+    return null;
+  }
+}
 
 /**
  * 获取网络状态

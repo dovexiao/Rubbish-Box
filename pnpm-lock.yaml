@@ -33,7 +33,7 @@ importers:
         version: 2.3.2(react@18.2.0)
       '@ant-design/react-native':
         specifier: ^5.4.3
-        version: 5.4.3(@ant-design/icons-react-native@2.3.2(react@18.2.0))(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react-dom@19.2.4(react@18.2.0))(react-native-gesture-handler@2.9.0(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.10.1(patch_hash=f1ca223efca94a3d4ac88a0f69d5f6767556b51a0d89a1ba2873627ec94e026a)(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+        version: 5.4.3(5hefrhi7npwckmnusqtspbqsrm)
       '@babel/runtime':
         specifier: ^7.18.9
         version: 7.28.6
@@ -70,6 +70,9 @@ importers:
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
+      element-china-area-data:
+        specifier: ^6.1.0
+        version: 6.1.0
       eventemitter3:
         specifier: ^5.0.4
         version: 5.0.4
@@ -114,10 +117,10 @@ importers:
         version: 4.10.3(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-intent-launcher:
         specifier: ^0.2.1
-        version: 0.2.1(patch_hash=abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8)
-      react-native-keyboard-aware-scroll-view:
-        specifier: ^0.9.5
-        version: 0.9.5(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))
+        version: 0.2.1(patch_hash=hvvohd6npqapgtwkmuclsfdw5i)
+      react-native-keyboard-controller:
+        specifier: ^1.20.5
+        version: 1.20.5(react-native-reanimated@4.2.1(react-native-worklets@0.7.1(@babel/core@7.28.5)(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1))(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1))(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
       react-native-linear-gradient:
         specifier: ^2.8.3
         version: 2.8.3(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -125,8 +128,8 @@ importers:
         specifier: ^3.8.0
         version: 3.10.1(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-reanimated:
-        specifier: 3.10.1
-        version: 3.10.1(patch_hash=f1ca223efca94a3d4ac88a0f69d5f6767556b51a0d89a1ba2873627ec94e026a)(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.2.1
+        version: 4.2.1(react-native-worklets@0.7.1(@babel/core@7.28.5)(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1))(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
       react-native-restart:
         specifier: ^0.0.27
         version: 0.0.27(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -137,20 +140,17 @@ importers:
         specifier: 3.18.2
         version: 3.18.2(patch_hash=3f13a2c35eafa147599a9f0d141150cfab6d61478250947066be7d49900369d0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-svg:
-        specifier: 13.10.0
-        version: 13.10.0(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
-      react-native-view-shot:
-        specifier: ^3.8.0
-        version: 3.8.0(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
-      react-native-vision-camera:
-        specifier: 4.0.0
-        version: 4.0.0(react-native-reanimated@3.10.1(patch_hash=f1ca223efca94a3d4ac88a0f69d5f6767556b51a0d89a1ba2873627ec94e026a)(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+        specifier: ^15.15.1
+        version: 15.15.1(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
       react-native-webview:
         specifier: ^11.26.1
         version: 11.26.1(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-wechat-lib:
         specifier: ^3.0.4
-        version: 3.0.4(patch_hash=17836b8729ba3b68e0887b573d4b79cc9001269f8840a4f67ec62af3611ab43a)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+        version: 3.0.4(patch_hash=nllf2gw26rrj656kzzszslcsza)(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
+      react-native-worklets:
+        specifier: ^0.7.1
+        version: 0.7.1(@babel/core@7.28.5)(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
       react-native-zip-archive:
         specifier: ^6.1.0
         version: 6.1.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -2147,12 +2147,13 @@ packages:
     resolution: {integrity: sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==}
     engines: {node: '>=10'}
 
-  chardet@2.1.1:
-    resolution: {integrity: sha512-PsezH1rqdV9VvyNhxxOW32/d75r01NY7TQCmOqomRo15ZSOKbpTFVsfjghxo6JloQUCGnH4k1LGu0R4yCLlWQQ==}
+  chrome-launcher@0.15.2:
+    resolution: {integrity: sha512-zdLEwNo3aUVzIhKhTtXfxhdvZhUghrnmkvcAq2NoDd+LeOHKf03H5jwZ8T/STsAlzyALkBVK552iaG1fGf1xVQ==}
+    engines: {node: '>=12.13.0'}
+    hasBin: true
 
-  chownr@2.0.0:
-    resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
-    engines: {node: '>=10'}
+  chromium-edge-launcher@0.2.0:
+    resolution: {integrity: sha512-JfJjUnq25y9yg4FABRRVPmBGWPZZi+AQXT4mxupb67766/0UlhG8PAZCz6xzEMXTbW3CsSoE8PcCWA49n35mKg==}
 
   ci-info@2.0.0:
     resolution: {integrity: sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==}
@@ -2490,6 +2491,9 @@ packages:
 
   electron-to-chromium@1.5.286:
     resolution: {integrity: sha512-9tfDXhJ4RKFNerfjdCcZfufu49vg620741MNs26a9+bhLThdB+plgMeou98CAaHu/WATj2iHOOHTp1hWtABj2A==}
+
+  element-china-area-data@6.1.0:
+    resolution: {integrity: sha512-IkpcjwQv2A/2AxFiSoaISZ+oMw1rZCPUSOg5sOCwT5jKc96TaawmKZeY81xfxXsO0QbKxU5LLc6AirhG52hUmg==}
 
   emittery@0.13.1:
     resolution: {integrity: sha512-DeWwawk6r5yR9jFgnDKYt4sLS0LmHJJi3ZOnb5/JdbYwj3nW+FxQnHIjhBKz8YLC7oRNPVM9NQ47I3CVx34eqQ==}
@@ -4429,8 +4433,8 @@ packages:
       react-native-windows:
         optional: true
 
-  react-native-reanimated@3.10.1:
-    resolution: {integrity: sha512-sfxg6vYphrDc/g4jf/7iJ7NRi+26z2+BszPmvmk0Vnrz6FL7HYljJqTf531F1x6tFmsf+FEAmuCtTUIXFLVo9w==}
+  react-native-reanimated@4.2.1:
+    resolution: {integrity: sha512-/NcHnZMyOvsD/wYXug/YqSKw90P9edN0kEPL5lP4PFf1aQ4F1V7MKe/E0tvfkXKIajy3Qocp5EiEnlcrK/+BZg==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
       react: '*'
@@ -4464,8 +4468,8 @@ packages:
     resolution: {integrity: sha512-f/YfIS2f5UB+gut7t/9BKGSCYbRA9/74A5R1MDp+FLYsuS+OSWoiM/D8Jko6OJB6Jcu3v6ONuddvZKHdIGpeiw==}
     engines: {node: '>=10.0.0', npm: '>=6.0.0'}
 
-  react-native-view-shot@3.8.0:
-    resolution: {integrity: sha512-4cU8SOhMn3YQIrskh+5Q8VvVRxQOu8/s1M9NAL4z5BY1Rm0HXMWkQJ4N0XsZ42+Yca+y86ISF3LC5qdLPvPuiA==}
+  react-native-webview@13.16.0:
+    resolution: {integrity: sha512-Nh13xKZWW35C0dbOskD7OX01nQQavOzHbCw9XoZmar4eXCo7AvrYJ0jlUfRVVIJzqINxHlpECYLdmAdFsl9xDA==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -5377,7 +5381,7 @@ snapshots:
     dependencies:
       react: 18.2.0
 
-  '@ant-design/react-native@5.4.3(@ant-design/icons-react-native@2.3.2(react@18.2.0))(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react-dom@19.2.4(react@18.2.0))(react-native-gesture-handler@2.9.0(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.10.1(patch_hash=f1ca223efca94a3d4ac88a0f69d5f6767556b51a0d89a1ba2873627ec94e026a)(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+  '@ant-design/react-native@5.4.3(5hefrhi7npwckmnusqtspbqsrm)':
     dependencies:
       '@ant-design/icons-react-native': 2.3.2(react@18.2.0)
       '@bang88/react-native-ultimate-listview': 4.1.1
@@ -8038,6 +8042,8 @@ snapshots:
 
   char-regex@1.0.2: {}
 
+  china-division@2.7.0: {}
+
   chardet@2.1.1: {}
 
   chownr@2.0.0: {}
@@ -8371,6 +8377,10 @@ snapshots:
   ee-first@1.1.1: {}
 
   electron-to-chromium@1.5.286: {}
+
+  element-china-area-data@6.1.0:
+    dependencies:
+      china-division: 2.7.0
 
   emittery@0.13.1: {}
 
@@ -11113,7 +11123,7 @@ snapshots:
       react: 18.2.0
       react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
-  react-native-reanimated@3.10.1(patch_hash=f1ca223efca94a3d4ac88a0f69d5f6767556b51a0d89a1ba2873627ec94e026a)(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+  react-native-reanimated@4.2.1(react-native-worklets@0.7.1(@babel/core@7.28.5)(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1))(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1):
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-arrow-functions': 7.27.1(@babel/core@7.29.0)
@@ -11155,13 +11165,14 @@ snapshots:
 
   react-native-uuid@2.0.3: {}
 
-  react-native-view-shot@3.8.0(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+  react-native-webview@13.16.0(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1):
     dependencies:
-      html2canvas: 1.4.1
-      react: 18.2.0
-      react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+      escape-string-regexp: 4.0.0
+      invariant: 2.2.4
+      react: 19.1.1
+      react-native: 0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1)
 
-  react-native-vision-camera@4.0.0(react-native-reanimated@3.10.1(patch_hash=f1ca223efca94a3d4ac88a0f69d5f6767556b51a0d89a1ba2873627ec94e026a)(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+  react-native-wechat-lib@3.0.4(patch_hash=nllf2gw26rrj656kzzszslcsza)(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.82.1(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1):
     dependencies:
       react: 18.2.0
       react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)

@@ -1,0 +1,170 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#333333',
+  },
+  mapContainer: {
+    width: '100%',
+    height: '100%',
+    flex: 1,
+    position: 'relative',
+  },
+  mapContent: {
+    width: '100%',
+    height: '100%',
+    flex: 1,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  locateIcon: {
+    position: 'absolute',
+    width: 48,
+    height: 48,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    right: 16,
+    bottom: 21,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  addressContainer: {
+    width: '100%',
+    minHeight: 182,
+    maxHeight: 340,
+    position: 'relative',
+  },
+  addressContainerInner: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    top: -5,
+    backgroundColor: '#FFFFFF',
+    paddingTop: 16,
+    paddingLeft: 24,
+    paddingRight: 24,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  addressTitle: {
+    width: '100%',
+    marginBottom: 24,
+    alignItems: 'center',
+  },
+  addressTitleText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#333333',
+    lineHeight: 22,
+    textAlign: 'center',
+  },
+  addressList: {
+    width: '100%',
+    flex: 1,
+  },
+  addressItem: {
+    width: '100%',
+    minHeight: 76,
+    paddingBottom: 8,
+    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  addressItemLast: {
+    borderBottomWidth: 0,
+  },
+  addressItemName: {
+    width: '100%',
+    marginBottom: 8,
+  },
+  addressItemNameText: {
+    width: '100%',
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
+  },
+  addressItemAddress: {
+    width: '100%',
+    marginBottom: 8,
+  },
+  addressItemAddressText: {
+    width: '100%',
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
+  },
+  addressItemSpace: {
+    width: '100%',
+    marginBottom: 8,
+  },
+  addressItemSpaceText: {
+    width: '100%',
+    fontSize: 12,
+    color: '#999999',
+    lineHeight: 17,
+  },
+  addressItemButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  addressItemButton: {
+    borderRadius: 12,
+  },
+  addressItemButtonRight: {
+    width: 56,
+    height: 30,
+    backgroundColor: '#333333',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addressItemButtonRightText: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: '#FFFFFF',
+    lineHeight: 17,
+    textAlign: 'center',
+  },
+  addressEmpty: {
+    width: '100%',
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addressEmptyText: {
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
+  },
+});
+
+export default styles;

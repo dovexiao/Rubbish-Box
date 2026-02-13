@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Image, TouchableOpacity, View, Text } from 'react-native';
+import { Image, TouchableOpacity, View, Text, Linking } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import PageContainer from '@/components/PageContainer';
@@ -126,7 +126,7 @@ export default function Mine() {
       {
         icon: 'order' as const,
         label: '我的订单',
-        onPress: () => navigation.navigate('MyOrder'),
+        onPress: () => navigation.navigate('Order'),
       },
       {
         icon: 'maintain' as const,
@@ -149,12 +149,17 @@ export default function Mine() {
         onPress: () => navigation.navigate('SkinPeeler'),
       },
       {
+        icon: 'a-customerservice' as const,
+        label: '联系客服',
+        onPress: () => Linking.openURL('tel:400-097-8660'),
+      },
+      {
         icon: 'setting' as const,
         label: '设置',
-        onPress: () => navigation.navigate('Setting'),
+        onPress: () => navigation.navigate('Setting', { isTest: info?.isTest }),
       },
     ],
-    [navigation],
+    [navigation, info],
   );
 
   return (

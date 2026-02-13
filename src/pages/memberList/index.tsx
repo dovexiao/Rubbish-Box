@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   FlatList,
   ListRenderItem,
@@ -58,7 +64,9 @@ export default function MemberList() {
 
         if (res.code === 200 && res.success) {
           const data = (res.data || {}) as any;
-          const rows: StaffItem[] = Array.isArray(data.list) ? data.list : data.list ?? [];
+          const rows: StaffItem[] = Array.isArray(data.list)
+            ? data.list
+            : data.list ?? [];
           setList(prev => (refresh ? rows : [...prev, ...rows]));
           setComplete(rows.length < PAGE_SIZE);
         } else {
@@ -110,71 +118,72 @@ export default function MemberList() {
     }
   }, [currentRow]);
 
-  const renderItem: ListRenderItem<StaffItem> = useCallback(
-    ({ item }) => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.card}
-          onPress={() => {
-            // 这里可以跳转到成员编辑页面，后续根据需要实现
-            navigation.navigate('AddMember', { id: item.id });
-          }}
-        >
-          <View style={styles.row}>
-            <Text style={styles.username}>{item.username}</Text>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.editRow}
-              onPress={e => {
-                // 阻止事件继续冒泡到外层卡片
-                e.stopPropagation?.();
-                navigation.navigate('AddMember', { id: item.id });
-              }}
-            >
-              <Text style={styles.username}>编辑</Text>
-              <IconFont name="a-headfor-20" size={12} color="#333333" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={[styles.row, { marginTop: 10 }]}>
-            <Text style={styles.mobile}>{item.mobile}</Text>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={e => {
-                e.stopPropagation?.();
-                setCurrentRow(item);
-                deleteRef.current?.open();
-              }}
-            >
-              <Text style={styles.removeText}>移除</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      );
-    },
-    [],
-  );
-
-  const keyExtractor = useCallback((item: StaffItem) => String(item.id ?? item.mobile), []);
-
-  const listEmptyComponent = useMemo(
-    () => {
-      return (
-        <View style={styles.emptyContainer}>
-          <Image source={{ uri: 'https://g.18qjz.cn/img/boklock/empty.png' }} resizeMode="contain" style={{ width: 80, height: 80 }} />
-          <Text style={styles.emptyText}>暂无成员</Text>
+  const renderItem: ListRenderItem<StaffItem> = useCallback(({ item }) => {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.card}
+        onPress={() => {
+          // 这里可以跳转到成员编辑页面，后续根据需要实现
+          navigation.navigate('AddMember', { id: item.id });
+        }}
+      >
+        <View style={styles.row}>
+          <Text style={styles.username}>{item.username}</Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.editRow}
+            onPress={e => {
+              // 阻止事件继续冒泡到外层卡片
+              e.stopPropagation?.();
+              navigation.navigate('AddMember', { id: item.id });
+            }}
+          >
+            <Text style={styles.username}>编辑</Text>
+            <IconFont name="a-headfor-20" size={12} color="#333333" />
+          </TouchableOpacity>
         </View>
-      );
-    },
+
+        <View style={[styles.row, { marginTop: 10 }]}>
+          <Text style={styles.mobile}>{item.mobile}</Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={e => {
+              e.stopPropagation?.();
+              setCurrentRow(item);
+              deleteRef.current?.open();
+            }}
+          >
+            <Text style={styles.removeText}>移除</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    );
+  }, []);
+
+  const keyExtractor = useCallback(
+    (item: StaffItem) => String(item.id ?? item.mobile),
     [],
   );
+
+  const listEmptyComponent = useMemo(() => {
+    return (
+      <View style={styles.emptyContainer}>
+        <Image
+          source={{ uri: 'https://g.18qjz.cn/img/boklock/empty.png' }}
+          resizeMode="contain"
+          style={{ width: 80, height: 80 }}
+        />
+        <Text style={styles.emptyText}>暂无成员</Text>
+      </View>
+    );
+  }, []);
 
   return (
     <PageContainer
       backgroundColor="#F6F7FA"
       statusBarStyle="dark-content"
-      statusBarBackgroundColor='#FFFFFF'
+      statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
       scrollable={false}
       pageNavProps={{
@@ -197,7 +206,7 @@ export default function MemberList() {
           >
             <Text style={styles.addButtonText}>添加成员</Text>
           </GradientButton>
-        </ View>
+        </View>
       }
     >
       <View style={styles.container}>
@@ -214,8 +223,6 @@ export default function MemberList() {
           ListEmptyComponent={listEmptyComponent}
         />
 
-
-
         <PopConfirm
           ref={deleteRef}
           marginTop32
@@ -227,4 +234,3 @@ export default function MemberList() {
     </PageContainer>
   );
 }
-

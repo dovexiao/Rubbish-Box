@@ -124,5 +124,120 @@ export const routes = {
       component: require('@/pages/composit/share/index').default,
       label: '组合设备分享',
     },
+    {
+      name: 'Order',
+      component: require('@/pages/order').default,
+      label: '我的订单',
+    },
+    {
+      name: 'OrderDetail',
+      component: require('@/pages/order/detail').default,
+      label: '订单详情',
+    },
+    {
+      name: 'OnlineRepair',
+      component: require('@/pages/maintain').default,
+      label: '在线报修',
+    },
+    {
+      name: 'MaintainLockChoose',
+      component: require('@/pages/maintain/lockChoose').default,
+      label: '选择地锁',
+    },
+    {
+      name: 'MaintainService',
+      component: require('@/pages/maintain/service').default,
+      label: '服务记录',
+    },
+    {
+      name: 'MaintainServiceDetail',
+      component: require('@/pages/maintain/serviceDetail').default,
+      label: '服务单详情',
+    },
+    {
+      name: 'Account',
+      component: require('@/pages/account').default,
+      label: '账号与安全',
+    },
+    {
+      name: 'ChangeMobile',
+      component: require('@/pages/changeMobile').default,
+      label: '更换手机号',
+    },
+    {
+      name: 'WechatUnbind',
+      component: require('@/pages/wechatUnbind').default,
+      label: '解除微信绑定',
+    },
+    {
+      name: 'PasswordSet',
+      component: require('@/pages/passwordSet').default,
+      label: '设置/修改登录密码',
+    },
+    {
+      name: 'Logoff',
+      component: require('@/pages/logoff').default,
+      label: '注销账号',
+    },
+    {
+      name: 'About',
+      component: require('@/pages/about').default,
+      label: '关于泊刻地锁',
+    },
+    {
+      name: 'AddressCreate',
+      component: require('@/pages/addressCreate').default,
+      label: '新增/编辑地址',
+    },
+    {
+      name: 'Address',
+      component: require('@/pages/address').default,
+      label: '收货地址',
+    },
+    {
+      name: 'Feedback',
+      component: require('@/pages/feedback').default,
+      label: '意见反馈',
+    },
+    {
+      name: 'FeedbackRecord',
+      component: require('@/pages/feedbackRecord').default,
+      label: '意见反馈记录',
+    },
+    {
+      name: 'TestDevice',
+      component: require('@/pages/testDevice').default,
+      label: '泊刻地锁工厂测试',
+    },
+    {
+      name: 'TestDeviceDetail',
+      component: require('@/pages/testDeviceDetail').default,
+      label: '泊刻地锁测试详情',
+    },
+    {
+      name: 'FeedbackDetail',
+      component: require('@/pages/feedbackDetail').default,
+      label: '服务单详情',
+    },
+    {
+      name: 'SkinPeeler',
+      component: require('@/pages/skinPeeler').default,
+      label: '换肤',
+    },
+    {
+      name: 'Setting',
+      component: require('@/pages/setting').default,
+      label: '设置',
+    },
+    {
+      name: 'AdvertisingDisplay',
+      component: require('@/pages/adDisplay').default,
+      label: '广告展示',
+    },
+    {
+      name: 'DeviceAddress',
+      component: require('@/pages/deviceAddress').default,
+      label: '设备位置',
+    },
   ],
 } as const;

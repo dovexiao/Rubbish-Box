@@ -113,7 +113,7 @@ async function onHotUpdateReady(callback: (bundleZipFile?: string) => void) {
 
   try {
     // 获取版本信息
-    const vInfo = await getVersion({ client });
+    const vInfo: any = await getVersion({ client });
 
     const dirPath = await getAppDirPath();
     const versionFile = `${dirPath}/boklock/bundle/version`;

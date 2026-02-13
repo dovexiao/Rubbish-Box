@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 16,
+    backgroundColor: '#F6F7FA',
   },
   listContent: {
     paddingBottom: 80,
@@ -26,12 +27,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333333',
     fontWeight: 'bold',
-    lineHeight: 20
+    lineHeight: 20,
   },
   mobile: {
     fontSize: 14,
     color: '#999999',
-    lineHeight: 20
+    lineHeight: 20,
   },
   editRow: {
     flexDirection: 'row',
@@ -45,17 +46,17 @@ const styles = StyleSheet.create({
   footer: {
     marginBottom: 34,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonWrap: {
     boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)',
-    borderRadius: 16
+    borderRadius: 16,
   },
   addButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    lineHeight: 22
+    lineHeight: 22,
   },
   emptyText: {
     textAlign: 'center',
@@ -69,8 +70,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 100,
-  }
+  },
 });
 
 export default styles;
-

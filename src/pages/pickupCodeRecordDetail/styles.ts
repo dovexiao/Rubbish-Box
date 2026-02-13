@@ -11,13 +11,11 @@ const styles = StyleSheet.create({
   },
   innerContent: {
     width: '100%',
-    paddingHorizontal: 24,
   },
   cardImgWrapper: {
     position: 'relative',
     width: '100%',
     height: 148,
-    marginTop: 12,
   },
   cardImg: {
     width: '100%',
@@ -29,9 +27,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    paddingRight: 45,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   emptyImage: {
@@ -126,12 +126,51 @@ const styles = StyleSheet.create({
   },
   infoContent: {
     width: '100%',
-    paddingHorizontal: 24,
-    marginTop: 16,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fillItem: {
+    width: '100%',
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#f7f7fb',
+    marginBottom: 8,
+    paddingHorizontal: 16,
+  },
+  fillLabel: {
+    color: '#333333',
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: 'bold',
+  },
+  fillInputContainer: {
+    flex: 1,
+  },
+  fillInputText: {
+    fontSize: 14,
+    textAlign: 'right',
+  },
+  fillAddressText: {
+    fontSize: 14,
+    color: '#333333',
   },
   qrCodeContent: {
-    marginTop: 50,
-    marginHorizontal: 80,
+    width: '100%',
+    marginTop: 80,
+    marginHorizontal: 50,
+    marginBottom: 26,
+    height: 176,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#EAEAEA',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qrCodeContent2: {
+    width: '100%',
+    marginTop: 32,
+    marginHorizontal: 50,
     marginBottom: 26,
     height: 176,
     borderRadius: 16,
@@ -151,6 +190,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
     textAlign: 'center',
   },
+  dividingLine: {
+    height: 1,
+    width: 60,
+    backgroundColor: 'rgba(51,51,51,0.1)',
+  },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
@@ -162,6 +206,24 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: 'center',
     opacity: 0.5,
+  },
+  tipsBox: {
+    marginTop: 10,
+  },
+  tipsTitle: {
+    fontSize: 12,
+    color: '#CCCCCC',
+    marginBottom: 8,
+  },
+  tipsItem: {
+    fontSize: 12,
+    color: '#CCCCCC',
+    lineHeight: 17,
+  },
+  submitBtnText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
 });
 

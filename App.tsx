@@ -21,6 +21,7 @@ import {
   cacheGetSync,
   cacheSet,
   eventCenter,
+  getAppPackageName,
   getBluetoothDeviceInfo,
   getCurrentPages,
   getStorage,
@@ -43,6 +44,7 @@ import { bind } from '@/services/bindDevice';
 import { openBluetoothProximity } from '@/services/bluetooth';
 import { Toast } from '@ant-design/react-native';
 import GradientButton from '@/components/GradientButton';
+import { AppUpdateDialogHost } from '@/components/AppUpdateDialog';
 import { ThemeProvider } from '@/context/ThemeContext';
 
 function App() {
@@ -75,10 +77,14 @@ function App() {
 
   // 微信 SDK 初始化
   useEffect(() => {
-    // 仅在 Android / iOS 上初始化微信 SDK，避免鸿蒙等平台因为缺少原生实现报错
-    if (Platform.OS === 'android' || Platform.OS === 'ios') {
-      WeChatInit();
-    }
+    WeChatInit();
+  }, []);
+
+  // 输出当前包名（便于排查环境/安装包）
+  useEffect(() => {
+    getAppPackageName().then((pkg) => {
+      console.log('[App] 当前包名:', pkg);
+    });
   }, []);
 
   // 高德地图 SDK 初始化（地图组件，不涉及隐私权限，可立即初始化）
