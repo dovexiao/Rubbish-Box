@@ -35,6 +35,7 @@ export const styles = StyleSheet.create({
   },
   cardsRow: {
     paddingHorizontal: 16,
+    gap: 6,
   },
   card: {
     flex: 1,
@@ -61,6 +62,21 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     borderColor: '#F0F0F0',
+  },
+  contentLeftBox: {
+    width: 165,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    paddingHorizontal: 4,
+    paddingTop: 4,
+    paddingBottom: 8,
+    overflow: 'hidden',
+  },
+  singleHeight: {
+    height: 130,
+  },
+  multipleHeight: {
+    height: 172,
   },
   mapImage: {
     width: '100%',

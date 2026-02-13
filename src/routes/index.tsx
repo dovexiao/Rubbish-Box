@@ -150,6 +150,36 @@ export const routes = {
       label: '更换手机号',
     },
     {
+      name: 'WechatUnbind',
+      component: require('@/pages/wechatUnbind').default,
+      label: '解除微信绑定',
+    },
+    {
+      name: 'PasswordSet',
+      component: require('@/pages/passwordSet').default,
+      label: '设置/修改登录密码',
+    },
+    {
+      name: 'Logoff',
+      component: require('@/pages/logoff').default,
+      label: '注销账号',
+    },
+    {
+      name: 'About',
+      component: require('@/pages/about').default,
+      label: '关于泊刻地锁',
+    },
+    {
+      name: 'AddressCreate',
+      component: require('@/pages/addressCreate').default,
+      label: '新增/编辑地址',
+    },
+    {
+      name: 'Address',
+      component: require('@/pages/address').default,
+      label: '收货地址',
+    },
+    {
       name: 'Feedback',
       component: require('@/pages/feedback').default,
       label: '意见反馈',
@@ -158,6 +188,16 @@ export const routes = {
       name: 'FeedbackRecord',
       component: require('@/pages/feedbackRecord').default,
       label: '意见反馈记录',
+    },
+    {
+      name: 'TestDevice',
+      component: require('@/pages/testDevice').default,
+      label: '泊刻地锁工厂测试',
+    },
+    {
+      name: 'TestDeviceDetail',
+      component: require('@/pages/testDeviceDetail').default,
+      label: '泊刻地锁测试详情',
     },
     {
       name: 'FeedbackDetail',
@@ -178,6 +218,11 @@ export const routes = {
       name: 'AdvertisingDisplay',
       component: require('@/pages/adDisplay').default,
       label: '广告展示',
+    },
+    {
+      name: 'DeviceAddress',
+      component: require('@/pages/deviceAddress').default,
+      label: '设备位置',
     },
   ],
 } as const;

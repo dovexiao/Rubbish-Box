@@ -22,6 +22,7 @@ import {
   cacheGetSync,
   cacheSet,
   eventCenter,
+  getAppPackageName,
   getBluetoothDeviceInfo,
   getCurrentPages,
   getStorage,
@@ -44,6 +45,7 @@ import { bind } from '@/services/bindDevice';
 import { openBluetoothProximity } from '@/services/bluetooth';
 import { Toast } from '@ant-design/react-native';
 import GradientButton from '@/components/GradientButton';
+import { AppUpdateDialogHost } from '@/components/AppUpdateDialog';
 import { ThemeProvider } from '@/context/ThemeContext';
 
 function App() {
@@ -77,6 +79,13 @@ function App() {
   // 微信 SDK 初始化
   useEffect(() => {
     WeChatInit();
+  }, []);
+
+  // 输出当前包名（便于排查环境/安装包）
+  useEffect(() => {
+    getAppPackageName().then((pkg) => {
+      console.log('[App] 当前包名:', pkg);
+    });
   }, []);
 
   // 高德地图 SDK 初始化（地图组件，不涉及隐私权限，可立即初始化）
@@ -617,10 +626,13 @@ function App() {
                         setGlobalPopConfirmConfig(null);
                       }}
                     >
-                      {globalPopConfirmConfig.children || undefined}
+                      {globalPopConfirmConfig.children ?? undefined}
                     </PopConfirm>
                   )}
                 </SafeAreaProvider>
+
+                {/* 全局应用更新弹窗宿主 */}
+                <AppUpdateDialogHost />
               </KeyboardProvider>
             </GestureHandlerRootView>
           </ThemeProvider>

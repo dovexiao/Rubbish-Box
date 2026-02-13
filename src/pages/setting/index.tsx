@@ -3,18 +3,19 @@ import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import DeviceInfo from 'react-native-device-info';
-import { PageContainer } from '@/components';
+import { PageContainer, showAppUpdateDialog } from '@/components';
 import IconFont from '@/iconfont';
 import appPush from '@/utils/push';
 import { cacheGetSync } from '@/utils/cache';
 import { getStorage, setStorage } from '@/utils';
-import { Modal } from '@ant-design/react-native';
+import appUpdate from '@/utils/appUpdate';
 import styles from './styles';
 
 export default function Setting() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const isTest = route.params?.isTest ?? false;
+  console.log(route.params, 'router');
 
   const [pushEnabled, setPushEnabled] = useState(false);
   const [currentVersion, setCurrentVersion] = useState('');
@@ -23,7 +24,13 @@ export default function Setting() {
     (async () => {
       try {
         const res: any = await getStorage({ key: 'pushEnabled' });
-        setPushEnabled(res?.data === true);
+        const agree = await cacheGetSync('agreePrivacy');
+        await setStorage({ key: 'pushEnabled', data: true });
+        if (agree) {
+          setPushEnabled(true);
+        } else {
+          setPushEnabled(res?.data === true);
+        }
       } catch {
         setPushEnabled(false);
       }
@@ -70,7 +77,7 @@ export default function Setting() {
   const handleTogglePush = useCallback(() => {
     const next = !pushEnabled;
     if (!next) {
-      Modal.alert(
+      Alert.alert(
         '关闭通知服务',
         '关闭后您将无法收到设备状态提醒等推送消息。确定要关闭吗？',
         [
@@ -88,9 +95,33 @@ export default function Setting() {
     }
   }, [pushEnabled, applyPushState]);
 
-  const handleCheckUpdate = useCallback(() => {
-    Toast.info('暂不支持手动检测更新');
+  const handleCheckUpdate = useCallback(async () => {
+    try {
+      const updater = appUpdate();
+      const loadingKey = Toast.loading('检查更新中...', 0);
+
+      Toast.remove(loadingKey);
+
+      const info: any = updater.getUpdateInfo();
+      if (!info.hasUpdate) {
+        Toast.show('当前已是最新版本');
+        return;
+      }
+
+      // 使用全局更新弹窗组件展示，具体更新逻辑交给 onConfirm
+      showAppUpdateDialog({
+        id: info.id,
+        version: info.version,
+        content: info.content,
+        packageUrl: info.packageUrl,
+        forceUpdate: info.forceUpdate,
+      });
+    } catch (e) {
+      Toast.fail('检查更新失败，请稍后重试');
+    }
   }, []);
+
+  console.log(isTest, 'isTest');
 
   return (
     <PageContainer
@@ -117,7 +148,7 @@ export default function Setting() {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.item}
-          onPress={() => Toast.info('收货地址管理暂未迁移')}
+          onPress={() => navigation.navigate('Address' as never)}
         >
           <Text style={styles.itemText}>收货地址</Text>
           <IconFont name="a-headfor-20" size={20} color="#333333" />
@@ -158,7 +189,7 @@ export default function Setting() {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.item}
-          onPress={() => Toast.info('关于泊刻地锁暂未迁移')}
+          onPress={() => navigation.navigate('About' as never)}
         >
           <Text style={styles.itemText}>关于泊刻地锁</Text>
           <IconFont name="a-headfor-20" size={20} color="#333333" />
@@ -168,7 +199,7 @@ export default function Setting() {
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.item}
-            onPress={() => Toast.info('工厂测试页暂未迁移')}
+            onPress={() => navigation.navigate('TestDevice' as never)}
           >
             <Text style={styles.itemText}>泊刻地锁工厂测试</Text>
             <IconFont name="a-headfor-20" size={20} color="#333333" />

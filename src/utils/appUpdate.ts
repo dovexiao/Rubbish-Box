@@ -95,7 +95,7 @@ async function onHotUpdateReady(callback: (bundleZipFile?: string) => void) {
 
   try {
     // 获取版本信息
-    const vInfo = await getVersion({ client });
+    const vInfo: any = await getVersion({ client });
 
     const dirPath = await getAppDirPath();
     const versionFile = `${dirPath}/boklock/bundle/version`;
@@ -104,7 +104,8 @@ async function onHotUpdateReady(callback: (bundleZipFile?: string) => void) {
       ? (await RNFS.readFile(versionFile, 'utf8')).split(/\r?\n/)[0]?.trim()
       : undefined;
 
-    const currentVersion = localVersion || Config.DEPLOY_VERSION || DeviceInfo.getVersion();
+    const currentVersion =
+      localVersion || Config.DEPLOY_VERSION || DeviceInfo.getVersion();
 
     if (
       vInfo &&
@@ -147,8 +148,8 @@ async function checkPgyerUpdate(callback: () => void) {
     const appKey = IOS_PLATFORM
       ? PGYER_APP_KEYS.ios
       : isReal
-        ? PGYER_APP_KEYS.android.real
-        : PGYER_APP_KEYS.android.dev;
+      ? PGYER_APP_KEYS.android.real
+      : PGYER_APP_KEYS.android.dev;
 
     const response = await axios.post(
       'https://www.pgyer.com/apiv2/app/check',
@@ -169,7 +170,8 @@ async function checkPgyerUpdate(callback: () => void) {
       const onlineBuildNo = pgyerData.buildVersionNo;
 
       if (currentBuildNo && onlineBuildNo) {
-        const needUpdateApp = parseInt(currentBuildNo) < parseInt(onlineBuildNo);
+        const needUpdateApp =
+          parseInt(currentBuildNo) < parseInt(onlineBuildNo);
 
         if (needUpdateApp) {
           if (IOS_PLATFORM) {
@@ -183,7 +185,10 @@ async function checkPgyerUpdate(callback: () => void) {
             const apkFilePath = `${cacheDirPath}/boklock/boklock.apk`;
 
             // 确保目录存在
-            const apkDir = apkFilePath.substring(0, apkFilePath.lastIndexOf('/'));
+            const apkDir = apkFilePath.substring(
+              0,
+              apkFilePath.lastIndexOf('/'),
+            );
             await RNFS.mkdir(apkDir);
 
             const downloadResult = await RNFS.downloadFile({
@@ -198,7 +203,10 @@ async function checkPgyerUpdate(callback: () => void) {
                   const zipBundleExist = await RNFS.exists(bundleZipFile);
                   if (zipBundleExist) {
                     try {
-                      const destPath = bundleZipFile.substring(0, bundleZipFile.lastIndexOf('/') + 1);
+                      const destPath = bundleZipFile.substring(
+                        0,
+                        bundleZipFile.lastIndexOf('/') + 1,
+                      );
                       // 使用 react-native-zip-archive 解压
                       await unzip(bundleZipFile, destPath);
                     } catch (error) {
@@ -245,12 +253,15 @@ async function checkPgyerUpdate(callback: () => void) {
  */
 async function checkAppStoreUpdate(callback: () => void) {
   try {
-    const response = await axios.get(`https://itunes.apple.com/CN/lookup?id=${IOS_APP_STORE_ID}`);
+    const response = await axios.get(
+      `https://itunes.apple.com/CN/lookup?id=${IOS_APP_STORE_ID}`,
+    );
     const currentVersion = DeviceInfo.getVersion();
     const onlineVersion = response.data.results?.[0]?.version;
 
     if (currentVersion && onlineVersion) {
-      const needUpdateApp = compareVersion(currentVersion).isBefore(onlineVersion);
+      const needUpdateApp =
+        compareVersion(currentVersion).isBefore(onlineVersion);
 
       if (needUpdateApp) {
         appUpdateInfo.url = response.data.results[0]?.trackViewUrl;
@@ -379,4 +390,3 @@ export default () => {
     },
   };
 };
-

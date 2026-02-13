@@ -1,10 +1,13 @@
 import { Toast } from "@ant-design/react-native";
 import { NativeModules } from "react-native";
 import Config from "react-native-config";
+import DeviceInfo from 'react-native-device-info';
 import * as WeChat from 'react-native-wechat-lib';
 const { AppModule } = NativeModules;
 const WECHAT_APP_ID: string | undefined = AppModule?.wechatAppId;
 let wechatRegisterPromise: Promise<boolean> | null = null;
+
+/** 微信开放平台要求：安卓包名与签名必须与后台配置一致。开发包 com.boklock.m.test 需在开放平台单独添加并填写 debug 签名 MD5。 */
 
 
 
@@ -39,6 +42,9 @@ export const isWxAppInstalled = async () => {
 
 export const WeChatInit = async () => {
   try {
+    const bundleId = DeviceInfo.getBundleId()
+    console.log('[WeChatInit] 当前包名:', bundleId, '(若微信提示包名不对，请到微信开放平台添加该包名及对应签名)')
+
     const registerResult = await WeChat.registerApp(
       'wx5c90e0d5806a55c4',
       'https://g.18qjz.cn/wechat/',

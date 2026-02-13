@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, AppState } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import { Flex, PageContainer } from '@/components';
 import IconFont from '@/iconfont';
-import { getAccountInfo } from '@/services/user';
+import { getAccountInfo, getThirdState, userThirdBind } from '@/services/user';
+import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
 import styles from './styles';
 import PopConfirm from '@/components/popConfirm';
 
@@ -20,6 +21,7 @@ export default function Account() {
   const [detail, setDetail] = useState<AccountInfo | null>(null);
   const popConfirmRef = useRef<any>(null);
   const unbindWechatRef = useRef<any>(null);
+  const appStateSubRef = useRef<any>(null);
 
   const loadAccount = useCallback(async () => {
     try {
@@ -45,16 +47,67 @@ export default function Account() {
     unbindWechatRef.current.open();
   };
 
+  // 微信绑定（已登录状态下绑定当前微信）
+  const goBindWechat = useCallback(async () => {
+    const isInstalledWeChat: any = await checkInstalledWeChat();
+    if (!isInstalledWeChat.result) {
+      Toast.fail(isInstalledWeChat.message || '请先安装微信');
+      return;
+    }
+    const loadingKey = Toast.loading('授权中...', 0);
+    const resPromise = wechatLogin();
+    const appStatePromise = new Promise<any>(resolve => {
+      appStateSubRef.current =
+        AppState.addEventListener?.('change', (s: string) => {
+          if (s === 'active') {
+            resolve({
+              result: false,
+              errCode: -998,
+              message: '用户手动返回应用，未完成授权',
+            });
+          }
+        });
+    });
+    let r: any;
+    try {
+      r = await Promise.race([resPromise, appStatePromise]);
+      if (r?.result) {
+        const thirdState = await getThirdState({});
+        const obj: any = { source: 1, code: r.code, state: thirdState };
+        const bindRes = await userThirdBind(obj);
+        if (Number((bindRes as any).code) === 200) {
+          const accountRes = await getAccountInfo({});
+          const data = (accountRes as any)?.data ?? accountRes ?? {};
+          setDetail(data);
+          Toast.success('绑定成功');
+        } else {
+          Toast.fail((bindRes as any).msg || (bindRes as any).message || '绑定失败');
+        }
+      } else {
+        if (r?.errCode !== -998) {
+          Toast.fail(r?.message || '授权失败');
+        }
+      }
+    } catch (e) {
+      Toast.fail('授权异常，请重试');
+    } finally {
+      Toast.remove(loadingKey);
+      appStateSubRef.current?.remove?.();
+      appStateSubRef.current = undefined;
+    }
+  }, []);
+
   const handlePassword = () => {
     if (!detail?.mobile) return;
-    navigation.navigate('ForgetPassword', {
+    navigation.navigate('PasswordSet', {
       mobile: detail.mobile,
-      from: 'Account',
+      type: detail?.setPwd ? 'edit' : 'add',
     });
   };
 
   const handleLogoff = () => {
-    Alert.alert('注销账号', '注销账号相关功能暂未迁移', [{ text: '知道了' }]);
+    if (!detail?.mobile) return;
+    navigation.navigate('Logoff', { mobile: detail.mobile });
   };
 
   return (
@@ -161,12 +214,16 @@ export default function Account() {
             ? '确定要解除绑定吗？'
             : '确定要绑定当前登录的微信账号吗？'
         }
-        confirmText="更换"
+        confirmText={detail?.bindWechatApp ? '解除' : '绑定'}
         onConfirm={() => {
-          popConfirmRef.current.close();
-          navigation.navigate('ChangeMobile', {
-            mobile: detail?.mobile,
-          });
+          unbindWechatRef.current?.close();
+          if (detail?.bindWechatApp) {
+            navigation.navigate('WechatUnbind', {
+              mobile: detail?.mobile,
+            });
+          } else {
+            goBindWechat();
+          }
         }}
       />
     </PageContainer>

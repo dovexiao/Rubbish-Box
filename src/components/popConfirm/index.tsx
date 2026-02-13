@@ -27,7 +27,7 @@ import GradientButton from '../GradientButton';
  * @param submitBtn 自定义确认按钮
  */
 
-interface PopConfirmProps {
+type PopConfirmProps = React.PropsWithChildren<{
   title: string | ReactNode;
   showClose?: boolean;
   ref: ForwardedRef<any>;
@@ -42,7 +42,7 @@ interface PopConfirmProps {
   btnWrapStyle?: ViewStyle;
   confirmBtnStyle?: ViewStyle;
   width?: number;
-}
+}>;
 
 const PopConfirm = ({
   showClose = true,
@@ -86,6 +86,7 @@ const PopConfirm = ({
     >
       <Flex style={popupStyle.popupContainer}>
         <Text style={popupStyle.popupTitle}>{props.title}</Text>
+        {props.children ? <View style={{ marginTop: 8 }}>{props.children}</View> : null}
         <Flex
           style={[btnWrapStyle, popupStyle.btnContainerWrapper]}
           justify={'center'}

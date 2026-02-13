@@ -156,10 +156,10 @@ export default function Mine() {
       {
         icon: 'setting' as const,
         label: '设置',
-        onPress: () => navigation.navigate('Setting'),
+        onPress: () => navigation.navigate('Setting', { isTest: info?.isTest }),
       },
     ],
-    [navigation],
+    [navigation, info],
   );
 
   return (

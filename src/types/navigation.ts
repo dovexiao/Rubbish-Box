@@ -8,7 +8,8 @@ export type RootStackParamList = {
   DeviceInfo: { lockId: number; isAdmin: boolean };
   WebView: { url?: string; title?: string };
   ForgetPassword: undefined;
-  ForgetPasswordSms?: { mobile: string; type: string };
+  ForgetPasswordSms: { mobile: string; type: string };
+  DeviceAddress: { addressInfo?: string | any[] };
 };
 
 export type MainTabParamList = {

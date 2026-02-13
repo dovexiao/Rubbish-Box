@@ -441,6 +441,7 @@ const Login = () => {
         submitBtn={
           <GradientButton
             width={124}
+            height={40}
             style={styles.popSubmit}
             colors={['#282828', '#4A4A4A']}
             onPress={
