@@ -4,7 +4,9 @@ buildscript {
         minSdkVersion = 24
         compileSdkVersion = 34
         targetSdkVersion = 34
-        ndkVersion = "27.1.12297006"
+        // 使用 React Native 0.72 官方推荐的 NDK 版本，避免三方 so（如 libreanimated.so）
+        // 在过新的 NDK 上出现 C++ 符号缺失（UnsatisfiedLinkError）
+        ndkVersion = "23.1.7779620"
         kotlinVersion = "1.8.22"
     }
     repositories {

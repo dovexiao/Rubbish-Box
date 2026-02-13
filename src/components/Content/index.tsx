@@ -306,7 +306,7 @@ const Content: React.FC<ContentProps> = ({
                 <IconFont name={'a-Upgradelock'} size={16} color="#ccc" />
                 <Text style={styles.infoLabel}>离车升锁</Text>
                 <Text style={styles.infoValue}>
-                  {detail?.battery ? `${detail?.leaveUpTime}s` : '暂无信息'}
+                  {detail?.battery ? `${detail?.leaveUpTime}s` : '20s'}
                 </Text>
               </View>
               <View style={styles.infoRow}>

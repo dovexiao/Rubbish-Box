@@ -35,6 +35,7 @@ import {
 import { tencentUpload } from '@/utils/request';
 import { showToast, showLoading, hideLoading } from '@/utils';
 import { generateShareImage, onShareAppMessage } from '@/utils/shareImage';
+import { stringify } from '@/utils/stringify';
 
 interface UserList {
   adminUserId: number;
@@ -83,9 +84,27 @@ const VipPage = () => {
   const [unUseCount, setUnUseCount] = useState<number | undefined>(undefined);
   const [showSharePopup, setShowSharePopup] = useState<boolean>(false);
   const [sharePopRef, setSharePopRef] = useState<boolean>(false);
+  const shareContentRef = useRef<any>(null);
+  const startTimePopRef = useRef<any>(null);
+  const endTimePopRef = useRef<any>(null);
+  const usageCountPopRef = useRef<any>(null);
+  const adminUserPopRef = useRef<any>(null);
+  const [userItem, setUserItem] = useState<UserList>({} as UserList);
+  const selector = [
+    { label: '不限', value: 0 },
+    { label: '1次', value: 1 },
+    { label: '2次', value: 2 },
+    { label: '3次', value: 3 },
+    { label: '4次', value: 4 },
+    { label: '5次', value: 5 },
+  ];
 
   const router = useRoute<any>();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    setIsAllSelected(selectedDeviceList?.length === deviceList?.length);
+  }, [selectedDeviceList]);
 
   const onLoad = async () => {
     const detail = router.params?.detail as unknown as LockInfoDTO;
@@ -206,40 +225,102 @@ const VipPage = () => {
   };
 
   const onShare = async (detail: any) => {
-    // showLoading({ title: '生成分享图片中...' });
-    // try {
-    //   let imagePath = await generateShareImage({
-    //     details: detail,
-    //     width: 750,
-    //     height: 600,
-    //     ref: this.hooks?.['shareContentRef'],
-    //   });
-    //   //替换为网络路径
-    //   imagePath = await this.handleUploadImages(imagePath);
-    //   if (!imagePath) {
-    //     return;
-    //   }
-    //   // 存储分享图片路径，供分享时使用
-    //   this.setState({
-    //     shareImagePath: imagePath,
-    //   });
-    //   // RN环境需要手动调分享API
-    //   if (process.env.TARO_ENV === 'rn') {
-    //     await onShareAppMessage({
-    //       // title: '贵宾邀请 - ' + (detail?.code || '邀请码'),
-    //       path: `/pages/user/vipCode/index?${stringify({
-    //         id: detail?.id,
-    //       })}`,
-    //       title: ``,
-    //       imageUrl: imagePath,
-    //     });
-    //   }
-    //   this.hooks?.['sharePopRef']?.current?.close?.();
-    // } catch (error) {
-    //   console.error('分享失败:', error);
-    //   showToast({ title: '分享失败，请重试', icon: 'none' });
-    // } finally {
-    //   hideLoading();
-    // }
+    showLoading({ title: '生成分享图片中...' });
+    try {
+      let imagePath = await generateShareImage({
+        details: detail,
+        width: 750,
+        height: 600,
+        ref: shareContentRef,
+      });
+      //替换为网络路径
+      imagePath = await handleUploadImages(imagePath);
+      if (!imagePath) {
+        return;
+      }
+      // 存储分享图片路径，供分享时使用
+      await setShareImagePath(imagePath);
+      await onShareAppMessage({
+        // title: '贵宾邀请 - ' + (detail?.code || '邀请码'),
+        path: `/pages/user/vipCode/index?${stringify({
+          id: detail?.id,
+        })}`,
+        title: ``,
+        imageUrl: imagePath,
+      });
+      setSharePopRef(false);
+    } catch (error) {
+      console.error('分享失败:', error);
+      showToast({ title: '分享失败，请重试', icon: 'none' });
+    } finally {
+      hideLoading();
+    }
   };
+
+  // RN 环境下没有 Taro.useShareAppMessage，这里用一个函数封装分享逻辑，
+  // 在按钮等交互里直接调用即可。
+  const shareConfig = useCallback(() => {
+    if (!shareDetail?.id || !shareImagePath) {
+      showToast({ title: '请先生成分享图片' });
+      return;
+    }
+
+    onShareAppMessage({
+      // title: `贵宾邀请 - ${shareDetail?.code || '邀请码'}`,
+      title: ``,
+      imageUrl: shareImagePath,
+      path: `/pages/user/vipCode/index?${stringify({
+        id: shareDetail.id,
+      })}`,
+    });
+  }, [shareDetail, shareImagePath]);
+
+  return (
+    <PageContainer
+      pageNavProps={{ showBack: true, text: '宾客邀请' }}
+      backgroundColor="#FFFFFF"
+      statusBarStyle="dark-content"
+      statusBarBackgroundColor="#FFFFFF"
+      safeAreaEdges={['top', 'bottom']}
+      footer={
+        <Flex
+          style={styles.pageFooter}
+          direction="column"
+          justify={'center'}
+          align="center"
+        >
+          <TouchableOpacity onPress={handleInvite} style={styles.footerBtn}>
+            <Text style={styles.footerBtnText}>生成贵宾码</Text>
+          </TouchableOpacity>
+          <Flex
+            style={[styles.mt24, { position: 'relative' }]}
+            direction={'row'}
+            justify={'center'}
+            align={'center'}
+            isTouchView
+            onPress={() => {
+              // navigateTo({ url: '/pages/user/vip/record' })
+            }}
+          >
+            <Text style={styles.vipRecord}>贵宾邀请记录</Text>
+            <IconFont
+              name={'a-headfor-20'}
+              size={32}
+              color="#333333"
+            ></IconFont>
+
+            {unUseCount > 0 && (
+              <View style={styles.messageBadge}>
+                <Text style={styles.messageBadgeText}>
+                  {unUseCount > 99 ? '99+' : unUseCount}
+                </Text>
+              </View>
+            )}
+          </Flex>
+        </Flex>
+      }
+    >
+      <></>
+    </PageContainer>
+  );
 };
