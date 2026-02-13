@@ -32,10 +32,7 @@ export const thirdLogin = createFetch<any, any>(
 );
 
 // 小程序登录
-export const miniLogin = createFetch<any, any>(
-  '/boke/user/mini/login',
-  'POST',
-);
+export const miniLogin = createFetch<any, any>('/boke/user/mini/login', 'POST');
 
 // 获取短信验证码
 export const getSmsCode = createFetch<any, any>(
@@ -73,3 +70,5 @@ export const getMiniToken = createFetch<any, any>(
   'GET',
 );
 
+// App 版本检测（安卓 / iOS / 鸿蒙）
+export const getAppVer = createFetch<any, any>('/boke/appver/version', 'GET');

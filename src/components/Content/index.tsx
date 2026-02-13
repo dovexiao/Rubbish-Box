@@ -7,7 +7,6 @@ import {
   Pressable,
   ImageStyle,
 } from 'react-native';
-import Flex from '../Flex';
 import IconFont from '@/iconfont';
 import { Toast } from '@ant-design/react-native';
 import { operateLock } from '@/services/device';
@@ -18,7 +17,8 @@ import { styles } from './style';
 import { groupSubList } from '@/services';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { BUZZER_STATUS, COVER_STATUS, LOCK_ROLE } from '@/constants';
-import Popup from '../Popup';
+import { Flex, Popup, PopConfirm } from '@/components';
+import { showToast, makePhoneCall } from '@/utils';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -45,6 +45,7 @@ const Content: React.FC<ContentProps> = ({
   const [groupList, setGroupList] = useState<any[]>([]);
   const [manageMultipleRef, setManageMultipleRef] = useState(false);
   const [deleteMultipleRef, setDeleteMultipleRef] = useState(false);
+  const [eleInstallRef, setEleInstallRef] = useState(false);
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -327,6 +328,37 @@ const Content: React.FC<ContentProps> = ({
             <IconFont name="a-headfor-20" size={20} color="#333333" />
           </Flex>
         </TouchableOpacity>
+        {detail?.mode == 1 && (
+          <TouchableOpacity
+            style={styles.entryItem}
+            onPress={() => {
+              if (!detail?.id) return;
+              navigation.navigate('DevicesMember', {
+                lockId: detail.id,
+                type: detail?.isGroup ? 'group' : 'single',
+              });
+            }}
+          >
+            <Flex justify="between" align="center">
+              <IconFont name="a-VIPInvitation" size={16} color="#333333" />
+              <Text style={styles.entryText}>贵宾邀请</Text>
+              <IconFont name="a-headfor-20" size={20} color="#333333" />
+            </Flex>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          style={styles.entryItem}
+          onPress={() => {
+            if (detail?.customerServicePhone) setEleInstallRef(true);
+            else showToast({ title: '敬请期待', icon: 'none' });
+          }}
+        >
+          <Flex justify="between" align="center">
+            <IconFont name="a-powersupply" size={16} color="#333333" />
+            <Text style={styles.entryText}>市电安装</Text>
+            <IconFont name="a-headfor-20" size={20} color="#333333" />
+          </Flex>
+        </TouchableOpacity>
       </View>
       <Popup
         visible={manageMultipleRef}
@@ -368,6 +400,18 @@ const Content: React.FC<ContentProps> = ({
           </Flex>
         </Flex>
       </Popup>
+      <PopConfirm
+        visible={eleInstallRef}
+        title={`市电联系${detail?.customerServicePhone}进行安装`}
+        confirmText="前往拨打"
+        cancelText="取消"
+        onConfirm={async () => {
+          setEleInstallRef(false);
+          await makePhoneCall({
+            phoneNumber: detail?.customerServicePhone || '',
+          });
+        }}
+      />
     </View>
   );
 };

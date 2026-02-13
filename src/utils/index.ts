@@ -18,6 +18,7 @@ export {
  * Toast / Loading 工具（兼容 Taro.showToast / showLoading / hideLoading）
  */
 export { showToast, showLoading, hideLoading } from './toast';
+import { showToast as innerShowToast } from './toast';
 import {
   DeviceEventEmitter,
   Platform,
@@ -118,6 +119,63 @@ export function cdnToCosDomain(cosPath: string) {
   );
 }
 
+// 生成指定区间的随机整数（含 min/max）
+export function randomNum(min: number, max: number): number {
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
+}
+
+// 简单版本号比较：返回 true 表示 current < target
+export function isVersionBefore(current: string, target: string): boolean {
+  if (!current || !target) return false;
+  const curParts = current.split('.').map(v => parseInt(v, 10) || 0);
+  const tarParts = target.split('.').map(v => parseInt(v, 10) || 0);
+  const len = Math.max(curParts.length, tarParts.length);
+  for (let i = 0; i < len; i++) {
+    const c = curParts[i] ?? 0;
+    const t = tarParts[i] ?? 0;
+    if (c < t) return true;
+    if (c > t) return false;
+  }
+  return false;
+}
+
+// 兼容旧项目 compareVersion(current).isBefore(target) 的用法
+export function compareVersion(current: string) {
+  return {
+    isBefore(target: string) {
+      return isVersionBefore(current, target);
+    },
+  };
+}
+
+/**
+ * 拨打电话（兼容 Taro.makePhoneCall）
+ * 示例：makePhoneCall({ phoneNumber: '13800000000' })
+ */
+export async function makePhoneCall(options: {
+  phoneNumber: string;
+}): Promise<void> {
+  const phone = (options?.phoneNumber || '').trim();
+  if (!phone) {
+    innerShowToast({ title: '手机号为空', icon: 'none' });
+    return;
+  }
+
+  const url = `tel:${phone}`;
+  try {
+    const canOpen = await Linking.canOpenURL(url);
+    if (!canOpen) {
+      innerShowToast({ title: '无法发起拨号', icon: 'error' });
+      return;
+    }
+    await Linking.openURL(url);
+  } catch (e) {
+    innerShowToast({ title: '无法发起拨号', icon: 'error' });
+  }
+}
+
 /**
  * 获取存储数据（兼容 Taro 风格的 API）
  * @param options 配置对象，包含 key
@@ -151,7 +209,7 @@ export async function removeStorage(options: { key: string }): Promise<void> {
 /**
  * 获取系统信息（兼容 Taro 风格）
  */
-async function getSystemInfo(): Promise<{
+export async function getSystemInfo(): Promise<{
   platform: string;
   brand?: string;
   model?: string;

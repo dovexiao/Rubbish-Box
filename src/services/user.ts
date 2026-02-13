@@ -131,10 +131,10 @@ export const getSkinList = createFetch<any, any>(
 );
 
 // 前端日志上报
-export const saveFrontLog = createFetch<
-  { code: string; content: string },
-  any
->('/boke/frontLog/save', 'POST');
+export const saveFrontLog = createFetch<{ code: string; content: string }, any>(
+  '/boke/frontLog/save',
+  'POST',
+);
 
 // 切换主题
 export const chooseSkin = createFetch<any, any>(
@@ -161,10 +161,7 @@ export const saveInvite = createFetch<any, any>(
 );
 
 // 获取地锁管理员列表
-export const getAdmins = createFetch<any, any>(
-  '/boke/userLock/admins',
-  'GET',
-);
+export const getAdmins = createFetch<any, any>('/boke/userLock/admins', 'GET');
 
 // 根据管理员查询地锁列表
 export const getLockListByAdmin = createFetch<any, any>(
@@ -191,10 +188,7 @@ export const getNameByMobile = createFetch<any, any>(
 );
 
 // 保存贵宾用户
-export const saveVip = createFetch<any, any>(
-  '/boke/invite/user/save',
-  'POST',
-);
+export const saveVip = createFetch<any, any>('/boke/invite/user/save', 'POST');
 
 // 删除贵宾用户
 export const deleteVip = createFetch<any, any>(
@@ -353,13 +347,15 @@ export const staffLockList = createFetch<any, any>(
 export const repairAdd = createFetch<any, any>('/boke/repair/add', 'POST');
 
 // 获取报修列表
-export const getRepairList = createFetch<any, any>(
-  '/boke/repair/page',
-  'POST',
-);
+export const getRepairList = createFetch<any, any>('/boke/repair/page', 'POST');
 
 // 获取报修详情
 export const getRepairDetail = (id: number) => {
   return createFetch<any, any>(`/boke/repair/detail/${id}`, 'GET')();
 };
 
+// 获取贵宾码未使用数量
+export const getUnUseCount = createFetch<any, any>(
+  '/boke/userLockInvite/unUseCount',
+  'GET',
+);

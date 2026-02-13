@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import dayjs from 'dayjs';
 import { getCosKey } from '@/services/common';
 import { CreateFetchResponse } from './http';
+import { DEPLOY_ENV } from '@/config';
 
 const REGION = 'ap-shanghai';
 const BUCKET = 'sbqfc-1307862547';
@@ -144,7 +145,7 @@ export default function tencentUpload(options: {
         _uploadId = uploadId;
       };
 
-      const deployEnv = 'dev';
+      const deployEnv = DEPLOY_ENV || 'dev';
       const path = (
         appointName
           ? `img/${deployEnv}/${appointName}`
