@@ -82,7 +82,7 @@ function App() {
 
   // 输出当前包名（便于排查环境/安装包）
   useEffect(() => {
-    getAppPackageName().then((pkg) => {
+    getAppPackageName().then(pkg => {
       console.log('[App] 当前包名:', pkg);
     });
   }, []);

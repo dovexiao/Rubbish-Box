@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
+import type { SafeAreaProviderProps as RNSafeAreaProviderProps } from 'react-native-safe-area-context';
 
 // 统一封装 safe-area，上层代码只从这里导出
 // Android / iOS 使用 react-native-safe-area-context
@@ -7,8 +8,10 @@ import { Platform } from 'react-native';
 
 // 为了避免在不支持的平台上初始化 native 组件，这里通过 Platform 条件 require
 
-type SafeAreaProviderProps = {
-  children?: React.ReactNode;
+// 直接复用 react-native-safe-area-context 提供的 SafeAreaProviderProps，
+// 并显式补充 accessibilityIgnoresInvertColors，避免 TS 对该属性报错
+type SafeAreaProviderProps = RNSafeAreaProviderProps & {
+  accessibilityIgnoresInvertColors?: boolean;
 };
 
 export type SafeAreaInsets = {

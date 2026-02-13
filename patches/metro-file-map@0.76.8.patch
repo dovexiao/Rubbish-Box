@@ -1,0 +1,43 @@
+diff --git a/src/watchers/NodeWatcher.js b/src/watchers/NodeWatcher.js
+index 1111111..2222222 100644
+--- a/src/watchers/NodeWatcher.js
++++ b/src/watchers/NodeWatcher.js
+@@ -141,18 +141,29 @@
+   _watchdir = (dir) => {
+     if (this.watched[dir]) {
+       return false;
+     }
+-    const watcher = fs.watch(
+-      dir,
+-      {
+-        persistent: true,
+-      },
+-      (event, filename) => this._normalizeChange(dir, event, filename)
+-    );
+-    this.watched[dir] = watcher;
+-    watcher.on("error", this._checkedEmitError);
++    let watcher;
++    try {
++      watcher = fs.watch(
++        dir,
++        {
++          persistent: true,
++        },
++        (event, filename) => this._normalizeChange(dir, event, filename)
++      );
++    } catch (error) {
++      // On some platforms (e.g. Windows) fs.watch throws synchronously for
++      // non-existent directories; treat these as ignorable instead of
++      // crashing Metro.
++      if (!isIgnorableFileError(error)) {
++        this.emit("error", error);
++      }
++      return false;
++    }
++    this.watched[dir] = watcher;
++    watcher.on("error", this._checkedEmitError);
+     if (this.root !== dir) {
+       this._register(dir, "d");
+     }
+     return true;
+   };

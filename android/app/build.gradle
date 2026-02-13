@@ -224,6 +224,11 @@ configurations.all {
     // 3dmap-9.6.0 已包含定位类，避免再引入 location-6.2.0 产生重复 class。
     exclude group: 'com.amap.api', module: 'location'
 
+    // 避免 zip4j 最新版本在 D8 dex 阶段触发 NullPointerException，强制使用一个稳定版本
+    resolutionStrategy {
+        force 'net.lingala.zip4j:zip4j:2.11.5'
+    }
+
 }
 
 dependencies {

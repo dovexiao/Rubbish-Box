@@ -80,10 +80,12 @@
     "react-native-screens": "3.18.2",
     "react-native-svg": "13.10.0",
     "react-native-view-shot": "^3.8.0",
+    "react-native-video": "^5.2.1",
     "react-native-vision-camera": "4.0.0",
     "react-native-webview": "^11.26.1",
     "react-native-wechat-lib": "^3.0.4",
     "react-native-zip-archive": "^6.1.0",
+    "react-native-reanimated-carousel": "^4.0.3",
     "rn-fetch-blob": "^0.12.0"
   },
   "devDependencies": {
@@ -132,7 +134,8 @@
       "react-native-intent-launcher": "patches/react-native-intent-launcher.patch",
       "react-native-wechat-lib": "patches/react-native-wechat-lib.patch",
       "react-native-screens@3.18.2": "patches/react-native-screens@3.18.2.patch",
-      "react-native-reanimated@3.10.1": "patches/react-native-reanimated@3.10.1.patch"
+      "react-native-reanimated@3.10.1": "patches/react-native-reanimated@3.10.1.patch",
+      "metro-file-map@0.76.8": "patches/metro-file-map@0.76.8.patch"
     },
     "overrides": {
       "@react-native-oh/react-native-harmony-cli": "0.0.41"
