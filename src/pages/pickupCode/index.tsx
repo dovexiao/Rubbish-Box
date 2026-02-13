@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex, Popup } from '@/components';
 import PopConfirm from '@/components/popConfirm';
@@ -26,36 +26,34 @@ export default function PickupCode() {
   const [successVisible, setSuccessVisible] = useState(false);
 
   // 页面显示时检查是否有扫码或跳转传入的提货码
-  useFocusEffect(
-    useCallback(() => {
-      const loadCode = async () => {
-        try {
-          // 检查扫码传入的提货码
-          const scanRes = await getStorage({ key: 'PICKUP_CODE_FROM_SCAN' });
-          if (scanRes) {
-            setPickupCode(scanRes);
-            await removeStorage({ key: 'PICKUP_CODE_FROM_SCAN' });
-            return;
-          }
-
-          // 检查跳转传入的提货码
-          const jumpRes = await getStorage({ key: 'pickupCodeJump' });
-          if (jumpRes?.path) {
-            const path = jumpRes.path as string;
-            const match = path.match(/[?&]pk=([^&]+)/);
-            const encodedPk = match && match[1];
-            if (encodedPk) {
-              setPickupCode(decodeURIComponent(encodedPk));
-            }
-            await removeStorage({ key: 'pickupCodeJump' });
-          }
-        } catch (e) {
-          // 忽略错误
+  useEffect(() => {
+    const loadCode = async () => {
+      try {
+        // 检查扫码传入的提货码
+        const scanRes = await getStorage({ key: 'PICKUP_CODE_FROM_SCAN' });
+        if (scanRes) {
+          setPickupCode(scanRes);
+          await removeStorage({ key: 'PICKUP_CODE_FROM_SCAN' });
+          return;
         }
-      };
-      void loadCode();
-    }, []),
-  );
+
+        // 检查跳转传入的提货码
+        const jumpRes = await getStorage({ key: 'pickupCodeJump' });
+        if (jumpRes?.path) {
+          const path = jumpRes.path as string;
+          const match = path.match(/[?&]pk=([^&]+)/);
+          const encodedPk = match && match[1];
+          if (encodedPk) {
+            setPickupCode(decodeURIComponent(encodedPk));
+          }
+          await removeStorage({ key: 'pickupCodeJump' });
+        }
+      } catch (e) {
+        // 忽略错误
+      }
+    };
+    void loadCode();
+  }, []);
 
   // 获取提货码详情
   const handleGetCodeDetail = useCallback(async () => {

@@ -1,6 +1,19 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Alert, Image, InteractionManager, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  Alert,
+  Image,
+  InteractionManager,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Toast } from '@ant-design/react-native';
 import { PageContainer, Popup, TextInput } from '@/components';
 import IconFont from '@/iconfont';
@@ -36,9 +49,10 @@ export default function UserInfo() {
   const [nickNameVisible, setNickNameVisible] = useState(false);
   const pickerBusyRef = useRef(false);
 
-  const canSaveNickName = useMemo(() => inputName.trim().length > 0, [inputName]);
-  ;
-
+  const canSaveNickName = useMemo(
+    () => inputName.trim().length > 0,
+    [inputName],
+  );
   const load = useCallback(async () => {
     setLoading(true);
     const t = Toast.loading('加载中...', 0);
@@ -64,12 +78,10 @@ export default function UserInfo() {
     }
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      void load();
-      return;
-    }, [load]),
-  );
+  useEffect(() => {
+    void load();
+    return;
+  }, [load]);
 
   const saveNickName = useCallback(async () => {
     const newName = inputName.trim();
@@ -102,7 +114,6 @@ export default function UserInfo() {
     }
   }, [detail, inputName, load]);
 
-
   const handleChangeAvatar = useCallback(async () => {
     if (pickerBusyRef.current) return;
     pickerBusyRef.current = true;
@@ -134,81 +145,72 @@ export default function UserInfo() {
       await new Promise<void>(resolve =>
         InteractionManager.runAfterInteractions(() => resolve()),
       );
-      launchFunction(
-        libraryOptions,
-        async (response: ImagePickerResponse) => {
-          if (response.didCancel) {
-            return;
-          }
+      launchFunction(libraryOptions, async (response: ImagePickerResponse) => {
+        if (response.didCancel) {
+          return;
+        }
 
-          if ((response as any).errorCode === 'permission') {
-            Alert.alert(
-              '需要权限',
-              '请在“设置-隐私与安全-照片”中允许访问相册。',
-              [
-                { text: '取消', style: 'cancel' },
-                {
-                  text: '去设置',
-                  onPress: () => {
-                    openSettings().catch(() => {
-                      Alert.alert('无法打开设置', '请手动前往系统设置开启权限');
-                    });
-                  },
+        if ((response as any).errorCode === 'permission') {
+          Alert.alert(
+            '需要权限',
+            '请在“设置-隐私与安全-照片”中允许访问相册。',
+            [
+              { text: '取消', style: 'cancel' },
+              {
+                text: '去设置',
+                onPress: () => {
+                  openSettings().catch(() => {
+                    Alert.alert('无法打开设置', '请手动前往系统设置开启权限');
+                  });
                 },
-              ],
+              },
+            ],
+          );
+          return;
+        }
+
+        if (response.errorMessage) {
+          // 处理其他类型的错误（非权限错误）
+          if (response.errorMessage.includes('Activity')) {
+            Alert.alert(
+              '功能不可用',
+              '图片选择功能暂时不可用，请检查设备权限设置',
+              [{ text: '确定', style: 'default' }],
             );
-            return;
+          } else {
+            Alert.alert('错误', `选择图片时发生错误: ${response.errorMessage}`);
           }
+          return;
+        }
 
-          if (response.errorMessage) {
-            // 处理其他类型的错误（非权限错误）
-            if (response.errorMessage.includes('Activity')) {
-              Alert.alert(
-                '功能不可用',
-                '图片选择功能暂时不可用，请检查设备权限设置',
-                [{ text: '确定', style: 'default' }],
-              );
-            } else {
-              Alert.alert(
-                '错误',
-                `选择图片时发生错误: ${response.errorMessage}`,
-              );
-            }
-            return;
-          }
-
-          if (response.assets && response.assets[0]) {
-            const asset = response.assets[0];
-            if (!asset.uri) return;
-            tencentUpload({
-              file: asset.uri,
-              filename: asset.fileName || '',
-              index: asset.fileSize || 0,
-            }).then(async (res) => {
-              if (res.code === 200 && res.success) {
-                const { Location } = res.data
-                const r = await updateInfo({
-                  nickName: nickName || '',
-                  avatar: `https://${Location}`,
-                  userId: detail?.userId ?? detail?.id,
-                });
-                if (r.code === 200 && r.success) {
-                  Toast.success('修改成功');
-                  await load();
-                } else {
-                  Toast.fail(r.msg || r.message || '修改失败');
-                }
+        if (response.assets && response.assets[0]) {
+          const asset = response.assets[0];
+          if (!asset.uri) return;
+          tencentUpload({
+            file: asset.uri,
+            filename: asset.fileName || '',
+            index: asset.fileSize || 0,
+          }).then(async res => {
+            if (res.code === 200 && res.success) {
+              const { Location } = res.data;
+              const r = await updateInfo({
+                nickName: nickName || '',
+                avatar: `https://${Location}`,
+                userId: detail?.userId ?? detail?.id,
+              });
+              if (r.code === 200 && r.success) {
+                Toast.success('修改成功');
+                await load();
+              } else {
+                Toast.fail(r.msg || r.message || '修改失败');
               }
-            });
-
-
-            if (asset.uri) {
-
             }
-          }
-        },
-      );
+          });
 
+          if (asset.uri) {
+          }
+        }
+      });
     } catch (error) {
       console.error('选择头像失败:', error);
       Toast.fail('选择头像失败');
@@ -216,7 +218,6 @@ export default function UserInfo() {
       pickerBusyRef.current = false;
     }
   }, []);
-
 
   return (
     <PageContainer
@@ -248,7 +249,6 @@ export default function UserInfo() {
           </View>
           <IconFont name="a-headfor-20" size={20} color="#333333" />
         </TouchableOpacity>
-
 
         {/* 昵称 */}
         <TouchableOpacity
@@ -312,7 +312,7 @@ export default function UserInfo() {
               placeholder="请输入昵称"
               style={styles.input}
               maxLength={20}
-              onChangeText={(v) => setInputName(v)}
+              onChangeText={v => setInputName(v)}
               returnKeyType="done"
             />
             <IconFont name="redact" size={20} color="#999999" />

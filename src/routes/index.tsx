@@ -37,7 +37,7 @@ export const routes = {
     {
       name: 'WebView',
       label: '网页浏览',
-      component: require('@/pages/webView').default,
+      component: require('@/pages/WebView').default,
     },
     {
       name: 'LoginSms',

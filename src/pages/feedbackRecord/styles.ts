@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     paddingHorizontal: 0,
     backgroundColor: '#F6F7FA',
   },
@@ -13,8 +12,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#ffffff',
-    borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
   },
   tabsBox: {
     width: 220,

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   FlatList,
   ListRenderItem,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toast, SearchBar } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import Flex from '@/components/Flex';
@@ -82,11 +82,9 @@ export default function TestDevice() {
     [deviceList.length, loading, searchValue],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      void loadList(true);
-    }, [loadList]),
-  );
+  useEffect(() => {
+    void loadList(true);
+  }, [loadList]);
 
   const onSearch = (value: string) => {
     setSearchValue(value.trim());

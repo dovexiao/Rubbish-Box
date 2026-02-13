@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -8,7 +8,7 @@ import {
   View,
   RefreshControl,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Flex, Tabs, Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import { getOrderList } from '@/services/order';
@@ -72,11 +72,9 @@ export default function Order() {
     [currentTab, orderList.length, loading],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      void loadList(true, TAB_LIST[currentTab].orderStatus);
-    }, [currentTab]),
-  );
+  useEffect(() => {
+    void loadList(true, TAB_LIST[currentTab].orderStatus);
+  }, [currentTab]);
 
   const handleTabChange = useCallback((index: number) => {
     setCurrentTab(index);

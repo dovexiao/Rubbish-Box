@@ -14,7 +14,7 @@ import {
   RefreshControl,
   Image,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import PopConfirm from '@/components/popConfirm';
@@ -83,12 +83,10 @@ export default function MemberList() {
     [list.length, loading],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      loadData(true);
-      return;
-    }, [loadData]),
-  );
+  useEffect(() => {
+    loadData(true);
+    return;
+  }, [loadData]);
 
   const handleLoadMore = useCallback(() => {
     if (!loading && !complete && list.length > 0) {
@@ -225,7 +223,6 @@ export default function MemberList() {
 
         <PopConfirm
           ref={deleteRef}
-          marginTop32
           textWeight="bold"
           title={`确定要移除【${currentRow?.username ?? ''}】吗？`}
           onConfirm={handleDeleteConfirm}

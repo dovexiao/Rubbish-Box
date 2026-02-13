@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Text, View, ActivityIndicator } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex } from '@/components';
 import { setStorage } from '@/utils';
@@ -30,15 +30,13 @@ export default function ScanPickupCode() {
   }, [navigation]);
 
   // 页面聚焦时激活相机，失焦时停用
-  useFocusEffect(
-    useCallback(() => {
-      setIsActive(true);
-      hasScannedRef.current = false;
-      return () => {
-        setIsActive(false);
-      };
-    }, []),
-  );
+  useEffect(() => {
+    setIsActive(true);
+    hasScannedRef.current = false;
+    return () => {
+      setIsActive(false);
+    };
+  }, []);
 
   // 处理扫码结果
   const handleScanResult = useCallback(

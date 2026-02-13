@@ -9,7 +9,6 @@ import {
   AppState,
   Button,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import { Flex, PageContainer } from '@/components';
 import { getThirdState, miniLogin, thirdLogin } from '@/services';
 import { tokenStorage } from '@/utils/storage';
@@ -169,34 +168,32 @@ const Login = () => {
   };
 
   // 页面加载时获取设备信息
-  useFocusEffect(
-    useCallback(() => {
-      const loadDeviceInfo = async () => {
-        let storageDevice: any = {};
-        try {
-          storageDevice = await getStorage({ key: 'deviceInfo' });
-          if (storageDevice?.data) {
-            device.current = storageDevice.data;
-          }
-        } catch (error) {
-          device.current = {};
+  useEffect(() => {
+    const loadDeviceInfo = async () => {
+      let storageDevice: any = {};
+      try {
+        storageDevice = await getStorage({ key: 'deviceInfo' });
+        if (storageDevice?.data) {
+          device.current = storageDevice.data;
         }
-      };
+      } catch (error) {
+        device.current = {};
+      }
+    };
 
-      loadDeviceInfo();
+    loadDeviceInfo();
 
-      // 清理函数（页面卸载时执行）
-      return () => {
-        // 清理事件监听
-        eventCenter.off('onNext');
-        // 清理应用状态监听
-        if (tempData.current?.appStateSub) {
-          tempData.current.appStateSub.remove?.();
-          tempData.current.appStateSub = undefined;
-        }
-      };
-    }, []),
-  );
+    // 清理函数（页面卸载时执行）
+    return () => {
+      // 清理事件监听
+      eventCenter.off('onNext');
+      // 清理应用状态监听
+      if (tempData.current?.appStateSub) {
+        tempData.current.appStateSub.remove?.();
+        tempData.current.appStateSub = undefined;
+      }
+    };
+  }, []);
 
   // 根据 agree 状态控制推送服务
   useEffect(() => {

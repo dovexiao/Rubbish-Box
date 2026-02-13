@@ -1,6 +1,12 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Image, TouchableOpacity, View, Text, Linking } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import PageContainer from '@/components/PageContainer';
 import PopConfirm from '@/components/popConfirm';
@@ -78,12 +84,10 @@ export default function Mine() {
     }
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      void load();
-      return;
-    }, [load]),
-  );
+  useEffect(() => {
+    void load();
+    return;
+  }, [load]);
 
   const requireLogin = useCallback(() => {
     Toast.info('请先登录');

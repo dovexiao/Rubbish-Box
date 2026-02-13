@@ -134,7 +134,6 @@
       "react-native-intent-launcher": "patches/react-native-intent-launcher.patch",
       "react-native-wechat-lib": "patches/react-native-wechat-lib.patch",
       "react-native-screens@3.18.2": "patches/react-native-screens@3.18.2.patch",
-      "react-native-reanimated@3.10.1": "patches/react-native-reanimated@3.10.1.patch",
       "metro-file-map@0.76.8": "patches/metro-file-map@0.76.8.patch"
     },
     "overrides": {

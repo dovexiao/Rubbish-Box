@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,7 @@ import {
   FlatList,
   ListRenderItem,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import IconFont from '@/iconfont';
@@ -71,11 +71,9 @@ export default function Address() {
     [list.length, loading],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      void loadList(true);
-    }, [loadList]),
-  );
+  useEffect(() => {
+    void loadList(true);
+  }, [loadList]);
 
   const handleDelete = async () => {
     if (!currentId) return;

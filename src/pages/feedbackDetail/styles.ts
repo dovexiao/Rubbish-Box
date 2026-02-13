@@ -4,8 +4,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
   },
   section: {
     backgroundColor: '#FFFFFF',

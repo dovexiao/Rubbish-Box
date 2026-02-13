@@ -1,6 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Platform, Linking, PermissionsAndroid } from 'react-native';
-import { useRoute, useFocusEffect } from '@react-navigation/native';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  Linking,
+  PermissionsAndroid,
+} from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { MapType, MapView, Marker } from 'react-native-amap3d';
 import IconFont from '@/iconfont';
 import { PageContainer } from '@/components';
@@ -196,15 +210,13 @@ export default function DeviceAddressScreen() {
   }, []);
 
   // 页面隐藏时（返回首页时）
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        isMountedRef.current = false;
-        // 清理引用，避免与首页的 MapView 冲突
-        mapRef.current = null;
-      };
-    }, []),
-  );
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      // 清理引用，避免与首页的 MapView 冲突
+      mapRef.current = null;
+    };
+  }, []);
 
   if (!locationReady) {
     return (
@@ -217,7 +229,8 @@ export default function DeviceAddressScreen() {
           text: '地图',
           showBack: true,
           background: '#FFFFFF',
-        }}>
+        }}
+      >
         <View style={styles.loading}>
           <Text style={styles.loadingText}>加载中...</Text>
         </View>
@@ -236,7 +249,8 @@ export default function DeviceAddressScreen() {
         text: '地图',
         showBack: true,
         background: '#FFFFFF',
-      }}>
+      }}
+    >
       <View style={styles.mapContainer}>
         <View style={styles.mapContent}>
           <MapView
@@ -260,7 +274,8 @@ export default function DeviceAddressScreen() {
                   116.4074,
               },
               zoom: 12,
-            }}>
+            }}
+          >
             {!!markers.length &&
               markers.map(item => (
                 <Marker
@@ -288,7 +303,8 @@ export default function DeviceAddressScreen() {
           <TouchableOpacity
             style={styles.locateIcon}
             onPress={handleLocate}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+          >
             <IconFont name="location1" color="#000000" size={24} />
           </TouchableOpacity>
         </View>
@@ -300,7 +316,8 @@ export default function DeviceAddressScreen() {
             {addressInfo?.length ? (
               <ScrollView
                 style={styles.addressList}
-                showsVerticalScrollIndicator={addressInfo.length > 1}>
+                showsVerticalScrollIndicator={addressInfo.length > 1}
+              >
                 {addressInfo.map((item: AddressInfoItem, index: number) => {
                   const isLast = index === addressInfo.length - 1;
                   return (
@@ -309,7 +326,8 @@ export default function DeviceAddressScreen() {
                       style={[
                         styles.addressItem,
                         isLast && styles.addressItemLast,
-                      ]}>
+                      ]}
+                    >
                       <View style={styles.addressItemName}>
                         <Text style={styles.addressItemNameText}>
                           {item.lockName}
@@ -318,7 +336,8 @@ export default function DeviceAddressScreen() {
                       <View style={styles.addressItemAddress}>
                         <Text
                           style={styles.addressItemAddressText}
-                          numberOfLines={1}>
+                          numberOfLines={1}
+                        >
                           {item.formattedAddress}
                         </Text>
                       </View>
@@ -343,7 +362,8 @@ export default function DeviceAddressScreen() {
                           onPress={() =>
                             openAMapNavigation(item.latitude, item.longitude)
                           }
-                          activeOpacity={0.7}>
+                          activeOpacity={0.7}
+                        >
                           <Text style={styles.addressItemButtonRightText}>
                             导航
                           </Text>

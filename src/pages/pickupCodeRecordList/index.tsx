@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -8,7 +8,7 @@ import {
   View,
   RefreshControl,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toast } from '@ant-design/react-native';
 import { PageContainer, Popup } from '@/components';
 import IconFont from '@/iconfont';
@@ -91,11 +91,9 @@ export default function PickupCodeRecordList() {
     [list.length, loading],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      void loadData(true);
-    }, [loadData]),
-  );
+  useEffect(() => {
+    void loadData(true);
+  }, [loadData]);
 
   const handleLoadMore = useCallback(() => {
     if (!loading && !complete && list.length > 0) {

@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
 import PageContainer from '@/components/PageContainer';
 
 // 定义路由参数类型
-type WebViewRouteParams = {
-  WebView: {
+const WebViewScreen: React.FC = () => {
+  const route = useRoute<any>();
+  const { url, title = '网页浏览' } = (route.params || {}) as {
     url?: string;
     title?: string;
   };
-};
-
-type WebViewRouteProp = RouteProp<WebViewRouteParams, 'WebView'>;
-
-const WebViewScreen: React.FC = () => {
-  const route = useRoute<WebViewRouteProp>();
-  const { url, title = '网页浏览' } = route.params || {};
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

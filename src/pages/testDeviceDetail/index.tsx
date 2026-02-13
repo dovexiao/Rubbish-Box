@@ -522,7 +522,7 @@ export default function TestDeviceDetailScreen() {
           <Flex style={styles.lockContentWrapper} justify={'center'}>
             <Image
               style={{ width: 120, height: 120 }}
-              src={'https://g.18qjz.cn/jijimaClient/occupy.png'}
+              source={{ uri: 'https://g.18qjz.cn/jijimaClient/occupy.png' }}
             />
 
             <Flex style={styles.lockContentTextWrapper} direction={'column'}>
@@ -621,7 +621,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -649,7 +651,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -730,7 +734,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -758,7 +764,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -821,7 +829,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -849,7 +859,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -920,7 +932,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -948,7 +962,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -1023,9 +1039,9 @@ export default function TestDeviceDetailScreen() {
                             width: 20,
                             height: 20,
                           }}
-                          src={
-                            'https://g.18qjz.cn/img/boklock/radio_default.png'
-                          }
+                          source={{
+                            uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                          }}
                         />
                       </View>
                       <Text
@@ -1053,9 +1069,9 @@ export default function TestDeviceDetailScreen() {
                             width: 20,
                             height: 20,
                           }}
-                          src={
-                            'https://g.18qjz.cn/img/boklock/radio_default.png'
-                          }
+                          source={{
+                            uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                          }}
                         />
                       </View>
                       <Text
@@ -1112,7 +1128,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
@@ -1140,7 +1158,9 @@ export default function TestDeviceDetailScreen() {
                           width: 20,
                           height: 20,
                         }}
-                        src={'https://g.18qjz.cn/img/boklock/radio_default.png'}
+                        source={{
+                          uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                        }}
                       />
                     </View>
                     <Text
