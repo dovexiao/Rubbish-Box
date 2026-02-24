@@ -87,7 +87,6 @@ const Header: React.FC<HeaderProps> = ({
     const map = themeType === 'dark' ? SIGNAL_STATUS_DEEP : SIGNAL_STATUS;
     return (map as any)[level];
   }, [themeType, lockInfo]);
-  console.log('unreadCount', unreadCount);
   const renderMessage = () => (
     <View
       style={[

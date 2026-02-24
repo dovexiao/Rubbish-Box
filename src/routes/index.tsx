@@ -41,7 +41,7 @@ export const routes = {
     },
     {
       name: 'LoginSms',
-      component: require('@/pages/loginSms').default,
+      component: require('@/pages/LoginSms').default,
       label: '登录短信',
     },
     {
@@ -68,6 +68,21 @@ export const routes = {
       name: 'DeviceInfo',
       component: require('@/pages/deviceInfo').default,
       label: '设备信息',
+    },
+    {
+      name: 'FirmwareVersion',
+      component: require('@/pages/firmwareVersion').default,
+      label: '固件版本',
+    },
+    {
+      name: 'VersionHistory',
+      component: require('@/pages/versionHistory').default,
+      label: '版本历史',
+    },
+    {
+      name: 'DeviceLog',
+      component: require('@/pages/deviceLog').default,
+      label: '设备日志',
     },
     {
       name: 'MemberList',

@@ -69,7 +69,6 @@ export const DeviceSwitch: React.FC<Props> = ({
         return;
       }
 
-      console.log(res.data);
       const list = (res.data as any)?.list || [];
       setDeviceList(reloadList ? list : [...deviceList, ...list]);
     },

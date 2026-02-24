@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
     lineHeight: 24,
   },
   navHeaderTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },

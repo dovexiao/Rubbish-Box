@@ -43,11 +43,13 @@ const Index = () => {
     message?: string;
   } | null>(null);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (id?: number) => {
     setLoading(true);
     try {
       // 获取首页锁信息
-      const lockRes = await getLockInfo({ type: 1 } as any);
+      const lockRes = id
+        ? await getLockInfo({ type: 1, id } as any)
+        : await getLockInfo({ type: 1 } as any);
       if (lockRes.success && lockRes.code === 200 && lockRes.data) {
         setDetail(lockRes.data);
         setHasDevice(true);
@@ -288,8 +290,8 @@ const Index = () => {
             <Content
               key={'single'}
               detail={detail}
-              reload={() => {
-                void load();
+              reload={(id: number) => {
+                void load(id);
               }}
               optioning={false}
             >

@@ -11,6 +11,9 @@ module.exports = {
         ignoreRestSiblings: true,
       },
     ],
+    // 允许使用内联样式
     'react-native/no-inline-styles': 'off',
+    // React Hooks 依赖数组完整性校验
+    'react-hooks/exhaustive-deps': 'warn',
   },
 };
