@@ -11,6 +11,7 @@ import { Toast } from '@ant-design/react-native';
 import { PageContainerRef } from '@/components/PageContainer';
 import PopCenter, { PopCenterRef } from '@/components/PopCenter';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { BatteryReminderPop } from './components/batteryReminderPop';
 
 const footerBtn = () => {
   return (
@@ -52,6 +53,7 @@ const DeviceInfo = () => {
   const editNamePopRef = useRef<AnimationPopRef>(null);
   const pageContainerRef = useRef<PageContainerRef>(null);
   const qrCodePopRef = useRef<PopCenterRef>(null);
+  const batteryReminderRef = useRef<AnimationPopRef>(null);
 
   const getLockInfo = useCallback(async () => {
     if (!params.lockId) return;
@@ -222,7 +224,11 @@ const DeviceInfo = () => {
           <View style={styles.cardTitleLine} />
           <Text style={styles.cardTitle}>功能设置</Text>
         </Flex>
-        <Flex style={styles.cardRows}>
+        <Flex
+          isTouchView
+          style={styles.cardRows}
+          onPress={() => batteryReminderRef.current.open()}
+        >
           <Text style={styles.cardLable}>充电指导</Text>
           <Text style={styles.cardValue}>{'查看'}</Text>
           <IconFont name={'a-headfor-20'} color="#333" size={20} />
@@ -343,6 +349,12 @@ const DeviceInfo = () => {
           )}
         </View>
       </PopCenter>
+
+      <BatteryReminderPop
+        ref={batteryReminderRef}
+        defaultDetails={lockInfo}
+        refresh={getLockInfo}
+      />
     </PageContainer>
   );
 };
