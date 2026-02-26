@@ -449,6 +449,7 @@ const Content: React.FC<ContentProps> = ({
         title={`市电联系${detail?.customerServicePhone}进行安装`}
         confirmText="前往拨打"
         cancelText="取消"
+        onCancel={() => setEleInstallRef(false)}
         onConfirm={async () => {
           setEleInstallRef(false);
           await makePhoneCall({

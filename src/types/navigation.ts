@@ -6,6 +6,9 @@ export type RootStackParamList = {
   MemberShare: undefined;
   VipInvite: undefined;
   DeviceInfo: { lockId: number; isAdmin: boolean };
+  DeviceLog: { lockId: number };
+  FirmwareVersion: { lockId: number; currentVersion: string };
+  VersionHistory: { lockId: number };
   WebView: { url?: string; title?: string };
   ForgetPassword: undefined;
   ForgetPasswordSms?: { mobile: string; type: string };

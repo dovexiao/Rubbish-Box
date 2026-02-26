@@ -9,8 +9,9 @@ import { lockInfoProps } from './typing';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
 import { Toast } from '@ant-design/react-native';
 import { PageContainerRef } from '@/components/PageContainer';
-import Popup from '@/components/Popup';
 import PopCenter, { PopCenterRef } from '@/components/PopCenter';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { BatteryReminderPop } from './components/batteryReminderPop';
 
 const footerBtn = () => {
   return (
@@ -43,6 +44,7 @@ const DeviceInfo = () => {
   const { params } = useRoute() as {
     params: { lockId: number; isAdmin: boolean };
   };
+  const navigation = useAppNavigation();
 
   const [lockInfo, setLockInfo] = useState<lockInfoProps>();
   const [lockName, setLockName] = useState<string>();
@@ -51,6 +53,7 @@ const DeviceInfo = () => {
   const editNamePopRef = useRef<AnimationPopRef>(null);
   const pageContainerRef = useRef<PageContainerRef>(null);
   const qrCodePopRef = useRef<PopCenterRef>(null);
+  const batteryReminderRef = useRef<AnimationPopRef>(null);
 
   const getLockInfo = useCallback(async () => {
     if (!params.lockId) return;
@@ -178,21 +181,40 @@ const DeviceInfo = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.qrCodeBtn, { marginLeft: 12 }]}
-              onPress={() => {}}
+              onPress={() => {
+                Toast.info('扫码组件待实现');
+              }}
             >
               <Text style={styles.qrCodeBtnText}>更换二维码</Text>
               <IconFont name={'a-headfor-20'} color="#333" size={20} />
             </TouchableOpacity>
           </Flex>
         </Flex>
-        <Flex style={styles.cardRows}>
+        <Flex
+          isTouchView
+          style={styles.cardRows}
+          onPress={() => {
+            if (!lockInfo?.id) return;
+            navigation.navigate('FirmwareVersion', {
+              lockId: lockInfo?.id,
+              currentVersion: lockInfo?.version || '',
+            });
+          }}
+        >
           <Text style={styles.cardLable}>固件版本</Text>
           <Text style={styles.cardValue}>
             当前版本{lockInfo?.version ?? ''}
           </Text>
           <IconFont name={'a-headfor-20'} color="#333" size={20} />
         </Flex>
-        <Flex style={styles.cardRows}>
+        <Flex
+          isTouchView
+          style={styles.cardRows}
+          onPress={() => {
+            if (!lockInfo?.id) return;
+            navigation.navigate('DeviceLog', { lockId: lockInfo?.id });
+          }}
+        >
           <Text style={styles.cardLable}>设备日志</Text>
           <Text style={styles.cardValue}>{'查看'}</Text>
           <IconFont name={'a-headfor-20'} color="#333" size={20} />
@@ -202,7 +224,11 @@ const DeviceInfo = () => {
           <View style={styles.cardTitleLine} />
           <Text style={styles.cardTitle}>功能设置</Text>
         </Flex>
-        <Flex style={styles.cardRows}>
+        <Flex
+          isTouchView
+          style={styles.cardRows}
+          onPress={() => batteryReminderRef.current.open()}
+        >
           <Text style={styles.cardLable}>充电指导</Text>
           <Text style={styles.cardValue}>{'查看'}</Text>
           <IconFont name={'a-headfor-20'} color="#333" size={20} />
@@ -323,6 +349,12 @@ const DeviceInfo = () => {
           )}
         </View>
       </PopCenter>
+
+      <BatteryReminderPop
+        ref={batteryReminderRef}
+        defaultDetails={lockInfo}
+        refresh={getLockInfo}
+      />
     </PageContainer>
   );
 };

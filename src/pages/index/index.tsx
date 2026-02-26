@@ -47,11 +47,9 @@ const Index = () => {
     setLoading(true);
     try {
       // 获取首页锁信息
-      const params: any = { type: 1 };
-      if (id !== undefined) {
-        params.id = id;
-      }
-      const lockRes = await getLockInfo(params as any);
+      const lockRes = id
+        ? await getLockInfo({ type: 1, id } as any)
+        : await getLockInfo({ type: 1 } as any);
       if (lockRes.success && lockRes.code === 200 && lockRes.data) {
         setDetail(lockRes.data);
         setHasDevice(true);
@@ -292,7 +290,7 @@ const Index = () => {
             <Content
               key={'single'}
               detail={detail}
-              reload={id => {
+              reload={(id: number) => {
                 void load(id);
               }}
               optioning={false}
