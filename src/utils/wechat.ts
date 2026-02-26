@@ -5,6 +5,8 @@ import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 const { AppModule } = NativeModules;
 const WECHAT_APP_ID: string | undefined = AppModule?.wechatAppId;
+const WECHAT_APP_ID_FALLBACK = 'wx5c90e0d5806a55c4';
+const WECHAT_UNIVERSAL_LINK = 'https://g.18qjz.cn/wechat/';
 let wechatRegisterPromise: Promise<boolean> | null = null;
 
 const isNativeMobile = Platform.OS === 'android' || Platform.OS === 'ios';
@@ -22,25 +24,36 @@ if (isNativeMobile) {
 }
 
 const ensureWeChatRegistered = () => {
+  const resolvedAppId = WECHAT_APP_ID || WECHAT_APP_ID_FALLBACK;
   if (!isNativeMobile) {
     return Promise.reject(new Error('当前平台暂不支持微信 SDK'));
   }
-  if (!WECHAT_APP_ID) {
+  if (!resolvedAppId) {
     return Promise.reject(new Error('WECHAT_APP_ID 未配置'));
   }
   if (!WeChat) {
     return Promise.reject(new Error('微信 SDK 模块未正确加载'));
   }
   if (!wechatRegisterPromise) {
-    wechatRegisterPromise = WeChat.registerApp(WECHAT_APP_ID)
-      .then((res: boolean) => {
-        return !!res;
-      })
-      .catch((err: any) => {
-        console.error('WeChat registerApp error', err);
-        wechatRegisterPromise = null;
-        throw err;
-      });
+    try {
+      const registerResult = WeChat.registerApp(
+        resolvedAppId,
+        WECHAT_UNIVERSAL_LINK,
+      );
+      wechatRegisterPromise = Promise.resolve(registerResult)
+        .then((res: boolean) => {
+          return !!res;
+        })
+        .catch((err: any) => {
+          console.error('WeChat registerApp error', err);
+          wechatRegisterPromise = null;
+          throw err;
+        });
+    } catch (err) {
+      console.error('WeChat registerApp sync error', err);
+      wechatRegisterPromise = null;
+      return Promise.reject(err);
+    }
   }
   return wechatRegisterPromise;
 };
@@ -60,23 +73,28 @@ export const isWxAppInstalled = async () => {
 
 export const WeChatInit = async () => {
   try {
+    if (!isNativeMobile) {
+      return false;
+    }
+
     const bundleId = DeviceInfo.getBundleId();
     console.log(
       '[WeChatInit] 当前包名:',
       bundleId,
       '(若微信提示包名不对，请到微信开放平台添加该包名及对应签名)',
     );
-
-    const registerResult = await WeChat.registerApp(
-      'wx5c90e0d5806a55c4',
-      'https://g.18qjz.cn/wechat/',
+    console.log(
+      '[WeChatInit] 使用微信AppID:',
+      WECHAT_APP_ID || WECHAT_APP_ID_FALLBACK,
     );
+
+    const registerResult = await ensureWeChatRegistered();
     console.log('[WeChatInit] registerApp 结果:', registerResult);
 
     if (registerResult) {
-      const installed = await WeChat.isWXAppInstalled();
+      const installed = await WeChat?.isWXAppInstalled?.();
       console.log('[WeChatInit] 微信是否已安装:', installed);
-      return installed;
+      return !!installed;
     }
     console.warn('[WeChatInit] registerApp 返回 false');
     return false;
@@ -101,13 +119,13 @@ export const wechatOpenMiniProgram = async (path?: string) => {
   try {
     console.log(path, '========>path');
     // showLoading({title: '正在打开小程序'})
-    const res = await WeChat.launchMiniProgram({
+    const res = await WeChat?.launchMiniProgram?.({
       userName: 'gh_00245e3a7d08', // 小程序原始id
       miniProgramType: Config.ENV === 'dev' ? 2 : 0, // 正式版
       path: path ? path : '/pages/login/index', //拉起小程序页面的可带参路径，不填默认拉起小程序首页
     });
 
-    return { result: true, code: res.errCode, message: '打开小程序成功' };
+    return { result: true, code: res?.errCode, message: '打开小程序成功' };
   } catch (e: any) {
     return {
       result: false,
@@ -128,10 +146,19 @@ export const wechatLogin = async () => {
         message: '当前平台暂不支持微信登录',
       };
     }
-    const authResponse = await WeChat.sendAuthRequest(
+    const authResponse = await WeChat?.sendAuthRequest?.(
       'snsapi_userinfo',
       `wechat_login_${Math.random().toString(36).substr(2, 10)}`,
     );
+
+    if (!authResponse) {
+      Toast.remove(loadingToast);
+      return {
+        result: false,
+        code: undefined,
+        message: '拉起微信失败，请重试',
+      };
+    }
     Toast.remove(loadingToast);
     switch (authResponse.errCode) {
       case 0: // 授权成功，返回code

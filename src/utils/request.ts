@@ -1,8 +1,13 @@
 import http, { del, get, post, put, type CreateFetchResponse } from './http';
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import type {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  AxiosStatic,
+} from 'axios';
 // 第三方请求不走带签名的 http 实例，单独使用 axios 基础实例，避免自动加业务头
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const axios = require('axios/dist/browser/axios.cjs') as typeof import('axios');
+const axios = require('axios/dist/browser/axios.cjs') as AxiosStatic;
 const thirdAxios: AxiosInstance = axios.create({ timeout: 30000 });
 import tencentUploadImpl from './tencentUpload';
 
@@ -136,4 +141,27 @@ export function thirdRequest<T = any>(
 /**
  * 腾讯云 COS 上传：对外从 utils/request 暴露，内部复用统一实现
  */
-export const tencentUpload = tencentUploadImpl;
+export function tencentUpload(options: {
+  file: any;
+  filename: string;
+  index: number;
+  randomFileName?: boolean;
+  appointName?: string;
+  folderName?: string;
+}) {
+  return new Promise(
+    (
+      resolve: (res: CreateFetchResponse<any> & { index?: number }) => void,
+      reject: (res: CreateFetchResponse<any> & { index?: number }) => void,
+    ) => {
+      tencentUploadImpl(options).then((res: any) => {
+        const code = Number(res?.code);
+        if (code !== 200) {
+          reject(res);
+          return;
+        }
+        resolve(res);
+      });
+    },
+  );
+}

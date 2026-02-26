@@ -18,7 +18,14 @@ import { groupSubList } from '@/services';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { BUZZER_STATUS, COVER_STATUS, LOCK_ROLE } from '@/constants';
 import { Flex, Popup, PopConfirm } from '@/components';
-import { showToast, makePhoneCall } from '@/utils';
+import {
+  showToast,
+  makePhoneCall,
+  showLoading,
+  hideLoading,
+  setStorage,
+} from '@/utils';
+import { deviceDelete } from '@/services/combine';
 import MapComponent from '../Map';
 
 interface ContentProps {
@@ -125,6 +132,20 @@ const Content: React.FC<ContentProps> = ({
       };
     });
   }, [detail?.locationList]);
+
+  const onDelete = async () => {
+    showLoading({ title: '删除中...' });
+    await setStorage({ key: 'pageType', data: 'reload' });
+    setDeleteMultipleRef(false);
+    setManageMultipleRef(false);
+    await deviceDelete({ id: detail?.id });
+    hideLoading();
+    showToast({ title: '删除成功' });
+    (navigation as any).reset({
+      index: 0,
+      routes: [{ name: 'Index' }],
+    });
+  };
 
   return (
     <View style={styles.contentBox}>
@@ -286,14 +307,12 @@ const Content: React.FC<ContentProps> = ({
                   justify={'between'}
                   align={'center'}
                 >
-                  <Image
-                    source={
-                      item?.imageUrl
-                        ? { uri: String(item.imageUrl) }
-                        : undefined
-                    }
-                    style={styles.groupItemImage as ImageStyle}
-                  />
+                  {item?.imageUrl && (
+                    <Image
+                      source={{ uri: String(item.imageUrl) }}
+                      style={styles.groupItemImage as ImageStyle}
+                    />
+                  )}
                   <Text numberOfLines={1} style={styles.groupItemLockName}>
                     {item?.lockName || ''}
                   </Text>
@@ -350,9 +369,10 @@ const Content: React.FC<ContentProps> = ({
             style={styles.entryItem}
             onPress={() => {
               if (!detail?.id) return;
-              navigation.navigate('DevicesMember', {
-                lockId: detail.id,
-                type: detail?.isGroup ? 'group' : 'single',
+              navigation.navigate('Vip', {
+                id: detail?.id,
+                role: detail?.role,
+                detail: detail,
               });
             }}
           >
@@ -417,6 +437,13 @@ const Content: React.FC<ContentProps> = ({
           </Flex>
         </Flex>
       </Popup>
+      <PopConfirm
+        visible={deleteMultipleRef}
+        title={`确定要删除此组合设备吗？`}
+        onConfirm={onDelete}
+        onCancel={() => setDeleteMultipleRef(false)}
+      />
+
       <PopConfirm
         visible={eleInstallRef}
         title={`市电联系${detail?.customerServicePhone}进行安装`}

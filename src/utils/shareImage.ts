@@ -1,6 +1,7 @@
 import { captureRef } from 'react-native-view-shot';
 import { RefObject } from 'react';
 import { shareMiniProgram } from 'react-native-wechat-lib';
+import { Platform } from 'react-native';
 import { DetailsProp } from '@/pages/vip/type';
 import { showToast, showLoading, hideLoading } from '@/utils';
 
@@ -40,7 +41,15 @@ export const onShareAppMessage = async ({
   imageUrl: string;
   path?: string;
 }) => {
-  shareMiniProgram({
+  if (Platform.OS !== 'android' && Platform.OS !== 'ios') {
+    return;
+  }
+
+  if (typeof shareMiniProgram !== 'function') {
+    return;
+  }
+
+  await shareMiniProgram({
     userName: 'gh_00245e3a7d08',
     path: path || `/pages/index/index`,
     webpageUrl: 'https://your-domain.com/fallback.html',

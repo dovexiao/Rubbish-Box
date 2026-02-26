@@ -85,11 +85,15 @@ export default function Popup({
 
     const showSubscription = Keyboard.addListener(showEvent, (e: any) => {
       const height = e.endCoordinates?.height || 0;
+      const keyboardOffset =
+        Platform.OS === 'android'
+          ? Math.max(0, Math.min(220, height - 120))
+          : height;
       // 先停止之前的动画
       currentPaddingBottom.stopAnimation();
       // 键盘弹起时，增加 paddingBottom，把 Modal 内容推上去
       Animated.timing(currentPaddingBottom, {
-        toValue: basePaddingBottom + height,
+        toValue: basePaddingBottom + keyboardOffset,
         duration: Platform.OS === 'ios' ? (e.duration || 250) : 200,
         useNativeDriver: false,
       }).start();

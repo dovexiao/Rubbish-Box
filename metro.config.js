@@ -86,6 +86,7 @@ baseConfig.resolver = {
       }
 
       if (moduleName === '@react-native-async-storage/async-storage') {
+        // Harmony 上统一重定向到持久化 shim，避免第三方/业务中直接 import 原生 AsyncStorage 时崩溃
         return resolve(
           {
             ...context,
@@ -128,6 +129,30 @@ baseConfig.resolver = {
             resolveRequest: null,
           },
           path.resolve(__dirname, 'src/harmony/screens-shim.tsx'),
+          platform,
+        );
+      }
+
+      if (moduleName === 'react-native-wechat-lib') {
+        // Harmony 上使用微信 SDK JS shim，避免加载库内部对 NativeModules.WeChat 的直接访问导致崩溃
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(__dirname, 'src/harmony/wechat-lib-shim.ts'),
+          platform,
+        );
+      }
+
+      if (moduleName === 'react-native-amap3d') {
+        // Harmony 上使用地图 SDK JS shim，避免 requireNativeComponent('AMapView') 崩溃
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(__dirname, 'src/harmony/amap3d-shim.tsx'),
           platform,
         );
       }

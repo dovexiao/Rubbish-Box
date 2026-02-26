@@ -2,14 +2,18 @@ import React, { ReactNode } from 'react';
 import { View, ViewStyle, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 
-interface FlexProps extends Omit<ViewStyle, 'flexDirection' | 'alignItems' | 'justifyContent' | 'flexWrap' | 'direction'> {
+interface FlexProps
+  extends Omit<
+    ViewStyle,
+    'flexDirection' | 'alignItems' | 'justifyContent' | 'flexWrap' | 'direction'
+  > {
   children?: ReactNode;
   align?: 'center' | 'end' | 'start' | 'baseline' | 'stretch';
   justify?: 'center' | 'end' | 'between' | 'around' | 'evenly' | 'stretch';
   direction?: 'row' | 'column';
   isTouchView?: boolean;
   wrap?: boolean;
-  onPress?: () => void;
+  onPress?: (e?: any) => void;
   activeOpacity?: number;
   style?: ViewStyle | ViewStyle[];
 }
@@ -81,7 +85,8 @@ const Flex: React.FC<FlexProps> = ({
         style={combinedStyle}
         onPress={onPress}
         activeOpacity={activeOpacity}
-        disabled={!onPress}>
+        disabled={!onPress}
+      >
         {children}
       </TouchableOpacity>
     );

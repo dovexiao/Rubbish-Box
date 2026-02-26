@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   KeyboardTypeOptions,
+  Keyboard,
+  Platform,
 } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import IconFont from '@/iconfont';
@@ -46,6 +48,7 @@ export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(
     } = props;
 
     const innerRef = useRef<RNTextInput | null>(null);
+    const focusedRef = useRef(false);
     const getCurrentText = (): string => {
       if (typeof value === 'string') return value;
       if (typeof defaultValue === 'string') return defaultValue;
@@ -72,6 +75,34 @@ export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(
     const handleChangeText = (text: string) => {
       setHasValue(text.length > 0);
       onChangeText?.(text);
+    };
+
+    useEffect(() => {
+      if (Platform.OS !== 'android') {
+        return;
+      }
+
+      const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+        // Android 上点击“收起键盘”时，输入框可能仍保持 focus，导致再次点击不弹键盘
+        // 在组件内部统一 blur，一次性修复所有页面
+        if (focusedRef.current) {
+          innerRef.current?.blur();
+        }
+      });
+
+      return () => {
+        hideSubscription.remove();
+      };
+    }, []);
+
+    const handleFocus: RNTextInputProps['onFocus'] = event => {
+      focusedRef.current = true;
+      props.onFocus?.(event);
+    };
+
+    const handleBlur: RNTextInputProps['onBlur'] = event => {
+      focusedRef.current = false;
+      props.onBlur?.(event);
     };
 
     const handleClear = () => {
@@ -109,11 +140,13 @@ export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(
           ref={setRefs}
           value={value}
           defaultValue={defaultValue}
-          style={style}
+          style={[styles.defaultInput, style]}
           cursorColor={cursorColor}
           selectionColor={selectionColor}
           underlineColorAndroid={underlineColorAndroid}
           onChangeText={handleChangeText}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           keyboardType={resolvedKeyboardType}
           secureTextEntry={resolvedSecureTextEntry}
         />
@@ -127,11 +160,13 @@ export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(
           ref={setRefs}
           value={value}
           defaultValue={defaultValue}
-          style={[styles.clearInput, style]}
+          style={[styles.defaultInput, styles.clearInput, style]}
           cursorColor={cursorColor}
           selectionColor={selectionColor}
           underlineColorAndroid={underlineColorAndroid}
           onChangeText={handleChangeText}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           keyboardType={resolvedKeyboardType}
           secureTextEntry={resolvedSecureTextEntry}
         />
@@ -159,6 +194,14 @@ export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(
 );
 
 const styles = StyleSheet.create({
+  defaultInput: {
+    padding: 0,
+    paddingLeft: 8,
+    fontSize: 14,
+    lineHeight: 20,
+    height: 20,
+    color: '#333333',
+  },
   clearContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -166,6 +209,7 @@ const styles = StyleSheet.create({
   clearInput: {
     flex: 1,
     paddingRight: 0,
+    paddingLeft: 8,
   },
 });
 

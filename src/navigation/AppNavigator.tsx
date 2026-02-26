@@ -4,7 +4,6 @@ import { routes } from '@/routes';
 import { MainTabNavigator } from '@/navigation/MainTabNavigator';
 import { useAuth } from '@/hooks/useAuth';
 import { Linking, View, Animated } from 'react-native';
-import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { CommonActions } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
@@ -64,7 +63,6 @@ const Stack = createNativeStackNavigator();
 
 export const AppNavigator: React.FC = () => {
   const { isLoggedIn, loading } = useAuth();
-  const navigation = useAppNavigation();
 
   // 加载中时先不渲染路由，避免闪一下登录页
   if (loading) {

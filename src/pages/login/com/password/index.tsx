@@ -182,11 +182,9 @@ const Password: React.FC<PasswordProps> = ({
         <TouchableOpacity
           style={[
             passwordStyles.btn,
-            mobile &&
-              password &&
-              !showError &&
-              agree &&
-              passwordStyles.btnActive,
+            mobile && password && !showError && agree
+              ? passwordStyles.btnActive
+              : {},
           ]}
           onPress={() => {
             Keyboard.dismiss();

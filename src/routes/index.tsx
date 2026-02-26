@@ -239,5 +239,25 @@ export const routes = {
       component: require('@/pages/deviceAddress').default,
       label: '设备位置',
     },
+    {
+      name: 'Vip',
+      component: require('@/pages/vip').default,
+      label: '宾客邀请',
+    },
+    {
+      name: 'VipInfo',
+      component: require('@/pages/vip/info').default,
+      label: '贵宾管理',
+    },
+    {
+      name: 'VipRecord',
+      component: require('@/pages/vip/record').default,
+      label: '贵宾邀请记录',
+    },
+    {
+      name: 'VipEditRecord',
+      component: require('@/pages/vip/editRecord').default,
+      label: '编辑宾客邀请记录',
+    },
   ],
 } as const;

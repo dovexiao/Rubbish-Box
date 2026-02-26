@@ -9,7 +9,6 @@ export interface ShowToastOptions {
 }
 
 let globalLoadingKey: any | null = null;
-
 /**
  * 类 Taro.showToast
  *

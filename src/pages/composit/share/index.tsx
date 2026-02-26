@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, AppState, Button } from 'react-native';
+import { View, Text, AppState, Button, Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from './styles';
 import { Flex, PageContainer, LinearGradient } from '@/components';
@@ -18,6 +18,17 @@ export default function ShareSuccessPage() {
 
   const shareToWeChat = async () => {
     if (isSharing) return;
+
+    if (Platform.OS !== 'android' && Platform.OS !== 'ios') {
+      showToast({ title: '当前平台暂不支持微信分享', icon: 'none' });
+      return;
+    }
+
+    if (!WeChatModule?.shareMiniProgram) {
+      showToast({ title: '微信分享能力不可用', icon: 'none' });
+      return;
+    }
+
     setIsSharing(true);
 
     const lockType = route.params?.lockType;

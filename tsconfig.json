@@ -1,14 +1,23 @@
 {
-  "extends": "@react-native/typescript-config",
   "compilerOptions": {
-    "esModuleInterop": true,
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["ES2020"],
+    "allowJs": true,
+    "jsx": "react-native",
+    "noEmit": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["*"]
-    },
-    "jsx": "react-native"
+      "@/*": ["*"],
+      "react-native": ["../node_modules/react-native/types"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["**/node_modules", "**/Pods"]

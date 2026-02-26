@@ -7,13 +7,12 @@ export const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingBottom: 130,
   },
   pageFooter: {
     width: '100%',
     position: 'absolute',
     bottom: 0,
-    height: 130,
+    height: 120,
     paddingBottom: 34,
     backgroundColor: '#ffffff',
     borderRadius: 0,
@@ -90,6 +89,9 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
     color: '#333333',
+  },
+  contentLabel: {
+    width: 120,
   },
   input: {
     textAlign: 'right',

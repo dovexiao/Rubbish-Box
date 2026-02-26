@@ -557,6 +557,7 @@ function App() {
                         backgroundColor: '#333',
                         marginLeft: 15,
                         borderRadius: 12,
+                        height: 42,
                       }}
                       onPress={async () => {
                         try {
