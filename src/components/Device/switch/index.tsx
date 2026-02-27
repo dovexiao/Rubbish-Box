@@ -18,6 +18,7 @@ import { DeviceItem } from '../Item/index';
 import { DeviceItemDTO } from '../Item/typing';
 import IconFont from '@/iconfont';
 import { styles } from './style';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 interface Props {
   lockInfo?: LockInfoDTO;
@@ -32,6 +33,8 @@ export const DeviceSwitch: React.FC<Props> = ({
   type,
   backgroundType,
 }) => {
+  const navigation = useAppNavigation();
+
   const [deviceList, setDeviceList] = useState<DeviceItemDTO[]>([]);
   const [loading, setLoading] = useState(false);
   const [lockName, setLockName] = useState('');
@@ -132,6 +135,18 @@ export const DeviceSwitch: React.FC<Props> = ({
     }
   };
 
+  const handleClick = () => {
+    if (lockInfo?.isGroup) {
+      navigation.navigate('CombineDevice', {
+        type: false,
+        id: lockInfo?.id,
+        lockName: lockInfo?.lockName,
+      });
+    } else {
+      navigation.navigate('BindDevice');
+    }
+  };
+
   return (
     <>
       <TouchableOpacity
@@ -187,7 +202,7 @@ export const DeviceSwitch: React.FC<Props> = ({
               style={styles.selectListBtn}
               onPress={() => {
                 devicePopRef.current?.close();
-                Toast.info('功能待接入');
+                handleClick();
               }}
             >
               <Text style={styles.selectListBtnText}>

@@ -18,4 +18,5 @@ export { default as NoDevices } from './NoDevices';
 export { default as GradientButton } from './GradientButton';
 export { default as LinearGradient } from './LinearGradient';
 export { default as Tag } from './Tag';
+export { default as Camera, type CameraRef, type CameraProps, type CameraScanResult } from './Camera';
 export { showAppUpdateDialog, AppUpdateDialogHost } from './AppUpdateDialog';
