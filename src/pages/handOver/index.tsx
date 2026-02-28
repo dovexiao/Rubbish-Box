@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, PopConfirm } from '@/components';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { getAccountInfo, getLockInfo, isCombDevice } from '@/services';
 import { styles } from './style';
 import { PopConfirmRef } from '@/components/popConfirm';
+import { showToast } from '@/utils';
 
 export default function HandOver() {
   const route = useRoute<any>();
@@ -62,15 +62,15 @@ export default function HandOver() {
       if (res?.code === 200 && res?.success) {
         const adminMobile = res?.data?.adminMobile;
         if (!adminMobile) {
-          Toast.fail('未获取到管理员手机号');
+          showToast('未获取到管理员手机号');
           return;
         }
         handleNext(String(adminMobile), res?.data?.bleName);
       } else {
-        Toast.fail(res?.message || res?.msg || '获取管理员信息失败');
+        showToast(res?.message || res?.msg || '获取管理员信息失败');
       }
     } catch {
-      Toast.fail('获取管理员信息失败');
+      showToast('获取管理员信息失败');
     }
   }, [handleNext, lockId, showPopConfirm]);
 
@@ -93,10 +93,10 @@ export default function HandOver() {
           await getAdminMobile();
         }
       } else {
-        Toast.fail(res?.message || res?.msg || '校验失败');
+        showToast(res?.message || res?.msg || '校验失败');
       }
     } catch {
-      Toast.fail('校验失败');
+      showToast('校验失败');
     }
   }, [getAdminMobile, lockId, showPopConfirm]);
 

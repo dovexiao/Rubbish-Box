@@ -83,7 +83,7 @@ export default function MapComponent(props: MapComponentProps) {
         };
       }
     } catch (error) {
-      console.error('地图初始化/定位失败:', error);
+      // console.error('地图初始化/定位失败:', error);
     } finally {
       setLocationReady(true);
     }

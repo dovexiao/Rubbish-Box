@@ -170,6 +170,30 @@ const LockVisual: React.FC<LockVisualProps> = props => {
               }
             />
           </View>
+
+          {detail.isGroup && (
+            <Flex
+              direction="row"
+              justify="center"
+              align={'center'}
+              style={styles.groupCount}
+            >
+              <IconFont
+                style={{ marginRight: 4, marginTop: 4 }}
+                name={'multiplication'}
+                size={14}
+                color={themeType === 'dark' ? '#ffffff' : '#333333'}
+              />
+              <Text
+                style={[
+                  styles.groupCountText,
+                  { color: themeType === 'dark' ? '#ffffff' : '#333333' },
+                ]}
+              >
+                {detail?.groupCount}
+              </Text>
+            </Flex>
+          )}
         </Flex>
       ) : null}
 

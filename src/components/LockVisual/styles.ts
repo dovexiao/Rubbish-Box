@@ -19,6 +19,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 2,
   },
+  groupCount: {
+    position: 'absolute',
+    top: 60,
+    left: 0,
+  },
+  groupCountText: {
+    fontSize: 32,
+    fontWeight: '500',
+    lineHeight: 45,
+  },
   actionButtonDeep: {
     backgroundColor: 'rgba(0,0,0,0.2)',
   },

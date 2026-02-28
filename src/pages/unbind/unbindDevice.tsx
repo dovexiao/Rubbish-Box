@@ -54,7 +54,7 @@ export default function UnbindDevice() {
 
   const requireCode = useCallback(async () => {
     if (!lockId) {
-      showToast({ title: '未找到设备信息', icon: 'none' });
+      showToast({ title: '未找到设备信息' });
       return;
     }
 
@@ -66,23 +66,23 @@ export default function UnbindDevice() {
 
     const res: any = await unbindSms({ id: lockId });
     if (res?.code === 200 && res?.success) {
-      showToast({ title: '已发送，待查收验证码', icon: 'none' });
+      showToast({ title: '已发送，待查收验证码' });
       start();
       setStep(1);
       return;
     }
-    showToast({ title: res?.message || res?.msg || '发送失败', icon: 'none' });
+    showToast({ title: res?.message || res?.msg || '发送失败' });
   }, [lockId, showError, start]);
 
   const onSubmit = useCallback(async () => {
     Keyboard.dismiss();
     const pure = (code || '').replace(/\D/g, '').slice(0, 6);
     if (pure.length !== 6) {
-      showToast({ title: '请输入验证码', icon: 'none' });
+      showToast({ title: '请输入验证码' });
       return;
     }
     if (!lockId || !bleNo) {
-      showToast({ title: '缺少必要参数', icon: 'none' });
+      showToast({ title: '缺少必要参数' });
       return;
     }
 
@@ -93,7 +93,6 @@ export default function UnbindDevice() {
       if (!(checkRes?.code === 200 && checkRes?.success && checkRes?.data)) {
         showToast({
           title: checkRes?.message || checkRes?.msg || '验证码错误',
-          icon: 'none',
         });
         setShowError(checkRes?.code === 515);
         stop();
@@ -104,7 +103,7 @@ export default function UnbindDevice() {
         (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
       const deviceId = deviceInfo[String(bleNo)]?.deviceId;
       if (!deviceId) {
-        showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'none' });
+        showToast({ title: '未找到蓝牙设备信息，请重新配对' });
         return;
       }
 
@@ -112,19 +111,18 @@ export default function UnbindDevice() {
       if (!(resetRes?.code === 200 && resetRes?.success)) {
         showToast({
           title: resetRes?.message || resetRes?.msg || '解绑失败',
-          icon: 'none',
         });
         return;
       }
       const newPin = resetRes?.data;
       if (!newPin) {
-        showToast({ title: '解绑失败', icon: 'none' });
+        showToast({ title: '解绑失败' });
         return;
       }
 
       const cmdRes = await sendChangePinByBluetooth({ deviceId, pin: newPin });
       if (!cmdRes?.success || !cmdRes?.newMac) {
-        showToast({ title: cmdRes?.msg || '解绑失败', icon: 'none' });
+        showToast({ title: cmdRes?.msg || '解绑失败' });
         return;
       }
 
@@ -136,7 +134,6 @@ export default function UnbindDevice() {
       if (!(apiRes?.code === 200 && apiRes?.success)) {
         showToast({
           title: apiRes?.message || apiRes?.msg || '解绑失败',
-          icon: 'none',
         });
         return;
       }
@@ -157,7 +154,6 @@ export default function UnbindDevice() {
       } else {
         showToast({
           title: res?.message || res?.msg || '解绑失败',
-          icon: 'none',
         });
         setShowError(res?.code === 515);
         setCode('');
@@ -165,7 +161,7 @@ export default function UnbindDevice() {
         stop();
       }
     } catch {
-      showToast({ title: '解绑失败', icon: 'none' });
+      showToast({ title: '解绑失败' });
     } finally {
       hideLoading();
     }

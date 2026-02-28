@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex } from '@/components';
 import { useCountDown } from '@/hooks/useCountDown';
 import {
@@ -10,7 +9,12 @@ import {
   resetBluetoothPin,
   settingBluetoothPin,
 } from '@/services';
-import { getBluetoothDeviceInfo } from '@/utils';
+import {
+  getBluetoothDeviceInfo,
+  hideLoading,
+  showLoading,
+  showToast,
+} from '@/utils';
 import { sendChangePinByBluetooth } from '@/utils/api';
 import { useRoute } from '@react-navigation/native';
 import Success from '../com/success';
@@ -58,7 +62,7 @@ export default function HandOverVerifyNew() {
   const getHandOverSendSmsNew = useCallback(async () => {
     if (!lockIds || !currentAdminCode) return;
     if (!isCnMobile(params.mobile)) {
-      Toast.info('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     const res: any = await handOverSendSmsNew({
@@ -71,21 +75,21 @@ export default function HandOverVerifyNew() {
       setSmsError(false);
       setStep(1);
       start();
-      Toast.success('验证码已发送');
+      showToast('验证码已发送');
       return;
     }
-    Toast.fail(res?.message || res?.msg || '发送失败');
+    showToast(res?.message || res?.msg || '发送失败');
   }, [currentAdminCode, isFirst, lockIds, params.mobile, start]);
 
   const onHandOverAdmin = useCallback(async () => {
     if (!lockIds || !currentAdminCode) return;
 
     if (!isCnMobile(params.mobile)) {
-      Toast.info('请输入手机号');
+      showToast('请输入手机号');
       return;
     }
     if (!params.code) {
-      Toast.info('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
 
@@ -95,11 +99,11 @@ export default function HandOverVerifyNew() {
       )) || {};
     const deviceId = deviceInfo[String(bleNo ?? '')]?.deviceId;
     if (!deviceId) {
-      Toast.fail('未找到蓝牙设备信息，请重新配对');
+      showToast('未找到蓝牙设备信息，请重新配对');
       return;
     }
 
-    const toastKey = Toast.loading('移交中...', 0);
+    showLoading({ title: '移交中...' });
     try {
       const checkAdminRes: any = await checkAdmin({
         lockIds: String(lockIds).split(','),
@@ -109,8 +113,8 @@ export default function HandOverVerifyNew() {
       });
 
       if (!(checkAdminRes?.code === 200 && checkAdminRes?.success)) {
-        Toast.remove(toastKey as any);
-        Toast.fail(checkAdminRes?.message || checkAdminRes?.msg || '校验失败');
+        hideLoading();
+        showToast(checkAdminRes?.message || checkAdminRes?.msg || '校验失败');
         setSmsError(checkAdminRes?.code === 515);
         setStep(0);
         return;
@@ -118,22 +122,22 @@ export default function HandOverVerifyNew() {
 
       const resetRes: any = await resetBluetoothPin({ id: lockIds });
       if (!(resetRes?.code === 200 && resetRes?.success)) {
-        Toast.remove(toastKey as any);
-        Toast.fail(resetRes?.message || resetRes?.msg || '移交失败');
+        hideLoading();
+        showToast(resetRes?.message || resetRes?.msg || '移交失败');
         return;
       }
 
       const newPin = resetRes?.data;
       if (!newPin) {
-        Toast.remove(toastKey as any);
-        Toast.fail('移交失败');
+        hideLoading();
+        showToast('移交失败');
         return;
       }
 
       const cmdRes = await sendChangePinByBluetooth({ deviceId, pin: newPin });
       if (!cmdRes?.success) {
-        Toast.remove(toastKey as any);
-        Toast.fail('移交失败');
+        hideLoading();
+        showToast('移交失败');
         return;
       }
 
@@ -143,8 +147,8 @@ export default function HandOverVerifyNew() {
         bleNo: cmdRes.newMac,
       });
       if (!(apiRes?.code === 200 && apiRes?.success)) {
-        Toast.remove(toastKey as any);
-        Toast.fail(apiRes?.message || apiRes?.msg || '移交失败');
+        hideLoading();
+        showToast(apiRes?.message || apiRes?.msg || '移交失败');
         return;
       }
 
@@ -155,18 +159,18 @@ export default function HandOverVerifyNew() {
         newAdminCode: params.code,
       });
 
-      Toast.remove(toastKey as any);
+      hideLoading();
       if (res?.code === 200 && res?.success) {
         stop();
         setIsSuccess(true);
       } else {
-        Toast.fail(res?.message || res?.msg || '移交失败');
+        showToast(res?.message || res?.msg || '移交失败');
         setSmsError(res?.code === 515);
         setStep(0);
       }
     } catch {
-      Toast.remove(toastKey as any);
-      Toast.fail('移交失败');
+      hideLoading();
+      showToast('移交失败');
     }
   }, [bleNo, currentAdminCode, lockIds, params.code, params.mobile, stop]);
 

@@ -1,20 +1,27 @@
 import React, {
-  ForwardedRef,
   ReactElement,
   ReactNode,
   useImperativeHandle,
   useState,
   forwardRef,
 } from 'react';
-import { Modal, Text, View } from '@ant-design/react-native';
-import { ViewStyle, TextStyle } from 'react-native';
+import {
+  Modal,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+  type TextStyle,
+  type ViewStyle,
+} from 'react-native';
 import Flex from '../Flex';
 import popupStyle from './styles';
 import GradientButton from '../GradientButton';
 
 /**
  * 确认弹窗
- * 用于确认用户操作，如删除、退出登录等：不存在UI展示
+ * 用于确认用户操作，如删除、退出登录等
  * @param title 弹窗标题
  * @param showClose 是否显示关闭按钮
  * @param ref 弹窗引用
@@ -45,6 +52,7 @@ interface PopConfirmProps {
   width?: number;
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
+  coverSafeArea?: boolean;
 }
 
 export interface PopConfirmRef {
@@ -71,6 +79,7 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
       submitBtn,
       visible,
       onVisibleChange,
+      coverSafeArea = true,
     },
     ref,
   ) => {
@@ -93,87 +102,123 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
 
     return (
       <Modal
-        transparent
-        modalType={'portal'}
-        onClose={() => setVisible(false)}
-        maskClosable
         visible={mergedVisible}
-        bodyStyle={{
-          paddingTop: 12,
-          paddingHorizontal: 24,
-          paddingBottom: 24,
-        }}
-        style={{
-          borderRadius: 16,
-          width: width,
-          display: 'flex',
-        }}
+        transparent
+        animationType="fade"
+        statusBarTranslucent={coverSafeArea}
+        presentationStyle={coverSafeArea ? 'overFullScreen' : undefined}
+        onRequestClose={() => setVisible(false)}
       >
-        <Flex style={popupStyle.popupContainer}>
-          {title !== undefined &&
-            (typeof title === 'string' ? (
-              <Text style={popupStyle.popupTitle}>{title}</Text>
-            ) : (
-              title
-            ))}
-
-          {children}
-          <Flex
-            style={[btnWrapStyle, popupStyle.btnContainerWrapper]}
-            justify={'center'}
-            align="center"
+        <View style={styles.modalRoot}>
+          {coverSafeArea ? (
+            <StatusBar
+              translucent
+              backgroundColor="transparent"
+              barStyle="light-content"
+            />
+          ) : null}
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setVisible(false);
+            }}
           >
-            {showClose && (
-              <GradientButton
-                colors={['transparent', 'transparent']}
-                width={124}
-                height={42}
-                onPress={async () => {
-                  onCancel ? await onCancel() : setVisible(false);
-                }}
-                style={[popupStyle.btnContainer, popupStyle.btnContainerClose]}
-              >
-                <Text style={popupStyle.btnContainerCloseText}>
-                  {cancelText}
-                </Text>
-              </GradientButton>
-            )}
+            <View style={styles.mask} />
+          </TouchableWithoutFeedback>
 
-            {submitBtn ? (
-              submitBtn
-            ) : (
-              <GradientButton
-                colors={confirmColors}
-                width={showClose ? 124 : 160}
-                height={42}
-                onPress={async () => {
-                  const result = await onConfirm?.();
-                  // 如果 onConfirm 返回 false，则不关闭 popup；其他情况（true/undefined）都关闭
-                  if (result !== false) {
-                    setVisible(false);
-                  }
-                }}
-                style={[popupStyle.btnContainer]}
-              >
-                <Text
-                  style={[
-                    popupStyle.btnContainerConfirmText,
-                    {
-                      color: confirmTextColor,
-                      fontWeight: textWeight,
-                      ...confirmBtnStyle,
-                    },
-                  ]}
+          <View style={styles.center} pointerEvents="box-none">
+            <View style={[styles.card, { width }]}>
+              <Flex style={popupStyle.popupContainer}>
+                {title !== undefined &&
+                  (typeof title === 'string' ? (
+                    <Text style={popupStyle.popupTitle}>{title}</Text>
+                  ) : (
+                    title
+                  ))}
+
+                {children}
+                <Flex
+                  style={[btnWrapStyle, popupStyle.btnContainerWrapper]}
+                  justify={'center'}
+                  align="center"
                 >
-                  {confirmText}
-                </Text>
-              </GradientButton>
-            )}
-          </Flex>
-        </Flex>
+                  {showClose && (
+                    <GradientButton
+                      colors={['transparent', 'transparent']}
+                      width={124}
+                      height={42}
+                      onPress={async () => {
+                        onCancel ? await onCancel() : setVisible(false);
+                      }}
+                      style={[
+                        popupStyle.btnContainer,
+                        popupStyle.btnContainerClose,
+                      ]}
+                    >
+                      <Text style={popupStyle.btnContainerCloseText}>
+                        {cancelText}
+                      </Text>
+                    </GradientButton>
+                  )}
+
+                  {submitBtn ? (
+                    submitBtn
+                  ) : (
+                    <GradientButton
+                      colors={confirmColors}
+                      width={showClose ? 124 : 160}
+                      height={42}
+                      onPress={async () => {
+                        const result = await onConfirm?.();
+                        if (result !== false) {
+                          setVisible(false);
+                        }
+                      }}
+                      style={[popupStyle.btnContainer]}
+                    >
+                      <Text
+                        style={[
+                          popupStyle.btnContainerConfirmText,
+                          {
+                            color: confirmTextColor,
+                            fontWeight: textWeight,
+                            ...confirmBtnStyle,
+                          },
+                        ]}
+                      >
+                        {confirmText}
+                      </Text>
+                    </GradientButton>
+                  )}
+                </Flex>
+              </Flex>
+            </View>
+          </View>
+        </View>
       </Modal>
     );
   },
 );
+
+const styles = StyleSheet.create({
+  modalRoot: {
+    flex: 1,
+  },
+  mask: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  center: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    paddingTop: 12,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+  },
+});
 
 export default PopConfirm;
