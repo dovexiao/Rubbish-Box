@@ -290,8 +290,8 @@ const Index = () => {
             <Content
               key={'single'}
               detail={detail}
-              reload={(id: number) => {
-                void load(id);
+              reload={async (id?: number) => {
+                await load(id);
               }}
               optioning={false}
             >

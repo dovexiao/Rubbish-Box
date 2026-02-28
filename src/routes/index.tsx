@@ -279,5 +279,45 @@ export const routes = {
       component: require('@/pages/binDevice').default,
       label: '绑定设备',
     },
+    {
+      name: 'CombineDevice',
+      component: require('@/pages/combineDevice').default,
+      label: '组合设备',
+    },
+    {
+      name: 'HandOver',
+      component: require('@/pages/handOver').default,
+      label: '移交设备',
+    },
+    {
+      name: 'HandOverDevice',
+      component: require('@/pages/handOver/handOverDevice').default,
+      label: '移交设备',
+    },
+    {
+      name: 'HandOverVerify',
+      component: require('@/pages/handOver/handOverVerify').default,
+      label: '移交设备验证',
+    },
+    {
+      name: 'HandOverVerifyNew',
+      component: require('@/pages/handOver/handOverVerifyNew').default,
+      label: '移交设备验证',
+    },
+    {
+      name: 'BluetoothSearch',
+      component: require('@/pages/bluetooth/search').default,
+      label: '蓝牙搜索',
+    },
+    {
+      name: 'Unbind',
+      component: require('@/pages/unbind').default,
+      label: '解除绑定须知',
+    },
+    {
+      name: 'UnbindDevice',
+      component: require('@/pages/unbind/unbindDevice').default,
+      label: '解除绑定',
+    },
   ],
 } as const;

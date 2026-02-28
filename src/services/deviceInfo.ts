@@ -40,6 +40,12 @@ export const unbindSms = createFetch<any, any>(
   'GET',
 );
 
+//  解除绑定验证码校验
+export const unbindSmsCheck = createFetch<any, any>(
+  '/boke/userLock/unbindSmsValid',
+  'POST',
+);
+
 // 解绑
 export const unbind = createFetch<any, any>('/boke/userLock/unbind', 'POST');
 
@@ -54,4 +60,3 @@ export const lastVersion = createFetch<any, any>(
   '/boke/userLock/lastVersion',
   'GET',
 );
-

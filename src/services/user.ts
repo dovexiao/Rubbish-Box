@@ -280,6 +280,12 @@ export const handOverVerify = createFetch<any, any>(
   'POST',
 );
 
+// 设备移交管理员-移交前校验（不执行移交）
+export const checkAdmin = createFetch<any, any>(
+  '/boke/userLock/transfer/admin/check',
+  'POST',
+);
+
 // 设备移交管理员-发送验证码给新管理员
 export const handOverSendSmsNew = createFetch<any, any>(
   '/boke/userLock/transfer/newAdmin/sendSms',
