@@ -62,21 +62,21 @@ const Password: React.FC<PasswordProps> = ({
         deviceInfoRes = await getStorage({ key: 'deviceInfo' });
       } catch {}
       const device = deviceInfoRes?.data || {};
-
       const res = await login({
         mobile,
         password,
         ...device,
       });
-
       if (res.code === 200) {
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
         try {
+          // 这个函数出不来
           await getMobPushDeviceInfo();
         } catch (e) {
           console.error('获取推送设备信息失败:', e);
         }
+        Toast.remove(loadingToast);
         console.log('密码登录成功 res', res);
         // 延迟执行导航，确保状态已更新和导航引用已准备好
         setTimeout(() => {

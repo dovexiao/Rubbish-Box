@@ -40,6 +40,8 @@ export type RootStackParamList = {
     id?: string | number;
     bleName?: string;
   };
+  Message: { lockId: number };
+  MessageDetail: { msgId: number };
 };
 
 export type MainTabParamList = {

@@ -18,6 +18,8 @@ import {
 } from '@/constants';
 import PopConfirm from '@/components/popConfirm';
 import { useTheme } from '@/context/ThemeContext';
+import { getSignalStatus } from '@/utils/biz';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 interface HeaderProps {
   /** 未读消息数 */
@@ -39,6 +41,7 @@ const Header: React.FC<HeaderProps> = ({
   noDevices = false,
 }) => {
   const { theme, themeType } = useTheme();
+  const navigation = useAppNavigation();
   const textColor = useMemo(() => {
     // 深色模式下 primary 为白色
     return themeType !== 'dark' || !lockInfo?.id
@@ -88,31 +91,60 @@ const Header: React.FC<HeaderProps> = ({
     return (map as any)[level];
   }, [themeType, lockInfo]);
   const renderMessage = () => (
-    <View
-      style={[
-        unreadCount > 99 ? styles.messgeWrapperMax : styles.messageWrapper,
-      ]}
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => {
+        navigation.navigate('Message', { lockId: lockInfo?.id });
+      }}
     >
-      <IconFont name="message" size={24} color={textColor} />
-      {unreadCount > 0 && (
-        <View
-          style={[
-            styles.messageBadge,
-            unreadCount > 99
-              ? styles.messageBadgeTextLengthMore
-              : styles.messageBadgeTextLength,
-          ]}
-        >
-          <Text style={styles.messageBadgeText}>
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </Text>
-        </View>
-      )}
-    </View>
+      <View
+        style={[
+          unreadCount > 99 ? styles.messgeWrapperMax : styles.messageWrapper,
+        ]}
+      >
+        <IconFont name="message" size={24} color={textColor} />
+        {unreadCount > 0 && (
+          <View
+            style={[
+              styles.messageBadge,
+              unreadCount > 99
+                ? styles.messageBadgeTextLengthMore
+                : styles.messageBadgeTextLength,
+            ]}
+          >
+            <Text style={styles.messageBadgeText}>
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </Text>
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
   );
 
   const isGroupOrNonMains = lockInfo?.isGroup || lockInfo?.powerType !== 1;
   const isHarmony = !['ios', 'android'].includes(Platform.OS);
+  const deviceStatus = lockInfo?.deviceStatus;
+
+  const statusDotStyle = useMemo(() => {
+    const isOffline = deviceStatus === 6;
+    const isFailure = deviceStatus === 7;
+    const offlineBackgroundStyle = isOffline
+      ? {
+          backgroundColor:
+            themeType === 'dark'
+              ? 'rgba(249, 249, 249, 0.41)'
+              : 'rgba(51, 51, 51, 0.3)',
+        }
+      : undefined;
+
+    return [
+      styles.greenDot,
+      styles.colSpace16,
+      !isOffline && !isFailure && styles.signalDot,
+      isFailure && styles.failureDot,
+      offlineBackgroundStyle,
+    ];
+  }, [deviceStatus, themeType]);
 
   return (
     <>
@@ -145,15 +177,19 @@ const Header: React.FC<HeaderProps> = ({
               )}
 
               {/* 信号 */}
-              {signalIcon && (
-                <View style={styles.colSpace16}>
-                  <Image
-                    source={{ uri: signalIcon }}
-                    style={styles.signalIcon}
-                    resizeMode="contain"
-                  />
-                </View>
-              )}
+              <View style={styles.colSpace16}>
+                <Image
+                  style={styles.signalIcon}
+                  source={{
+                    uri: getSignalStatus(
+                      lockInfo?.atCsq ?? 0,
+                      lockInfo?.deviceStatus,
+                      themeType,
+                    ),
+                  }}
+                  resizeMode="contain"
+                />
+              </View>
 
               {/* 分割线 */}
               {lockInfo && (
@@ -176,24 +212,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
 
               {/* 小绿点 / 状态点 */}
-              <View
-                style={[
-                  styles.greenDot,
-                  styles.colSpace16,
-                  lockInfo?.deviceStatus !== 6 &&
-                    lockInfo?.deviceStatus !== 7 &&
-                    styles.signalDot,
-                  lockInfo?.deviceStatus === 7 && styles.failureDot,
-                  lockInfo?.deviceStatus === 6
-                    ? {
-                        backgroundColor:
-                          themeType === 'dark'
-                            ? 'rgba(249, 249, 249, 0.41)'
-                            : 'rgba(51, 51, 51, 0.3)',
-                      }
-                    : null,
-                ]}
-              />
+              <View style={statusDotStyle} />
 
               {/* 故障文案 */}
               {lockInfo?.fallStatus === LOCK_STATUS.FAULT && (
@@ -278,7 +297,7 @@ const styles = StyleSheet.create({
   },
   line: {
     width: 1,
-    height: 20,
+    height: 12,
   },
   deepLineColor: {
     backgroundColor: 'rgba(255,255,255,0.3)',

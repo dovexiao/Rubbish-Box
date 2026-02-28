@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F5F7FA',
   },
   deviceItemActive: {
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#333',
   },

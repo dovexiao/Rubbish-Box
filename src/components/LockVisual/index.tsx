@@ -98,7 +98,7 @@ const LockVisual: React.FC<LockVisualProps> = props => {
       });
       return;
     } else {
-      navigation.navigate('BindDevice');
+      navigation.navigate('AddDevice');
     }
   };
 

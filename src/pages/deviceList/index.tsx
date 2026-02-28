@@ -296,7 +296,7 @@ export default function DeviceList() {
                     source={{
                       uri:
                         item?.powerType !== 1
-                          ? getBatteryStatus(item.battery, 'shallow')
+                          ? getBatteryStatus(item.battery, 'light')
                           : 'https://g.18qjz.cn/img/boklock/batteryIcon/deep_charging.png',
                     }}
                     style={{ width: 20, height: 20 }}
@@ -308,7 +308,7 @@ export default function DeviceList() {
               <Image
                 style={{ width: 20, height: 20 }}
                 source={{
-                  uri: getSignalStatus(item.atCsq),
+                  uri: getSignalStatus(item.atCsq, item.deviceStatus, 'light'),
                 }}
               />
 

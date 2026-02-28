@@ -294,7 +294,7 @@ const Content: React.FC<ContentProps> = ({
             <Flex
               style={styles.groupListBox}
               direction="column"
-              justify="between"
+              justify="center"
               align="center"
             >
               {(groupList || [])?.slice(0, 2)?.map(item => (
@@ -302,7 +302,6 @@ const Content: React.FC<ContentProps> = ({
                   key={item?.id}
                   style={styles.groupItem}
                   direction="row"
-                  justify={'between'}
                   align={'center'}
                 >
                   {item?.imageUrl && (

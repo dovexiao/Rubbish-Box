@@ -329,5 +329,15 @@ export const routes = {
       component: require('@/pages/unbind/unbindDevice').default,
       label: '解除绑定',
     },
+    {
+      name: 'Message',
+      component: require('@/pages/message').default,
+      label: '消息中心',
+    },
+    {
+      name: 'MessageDetail',
+      component: require('@/pages/messageDetail').default,
+      label: '消息详情',
+    },
   ],
 } as const;

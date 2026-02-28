@@ -105,6 +105,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 23,
     paddingHorizontal: 12,
+    gap: 20,
   },
   groupItem: {
     width: '100%',
