@@ -11,6 +11,7 @@ import {
   Animated,
   Modal,
   Pressable,
+  StatusBar,
   Text,
   TouchableOpacity,
   View,
@@ -59,6 +60,7 @@ export type PopCenterProps = {
   width?: number;
   height?: number;
   btnWidth?: number;
+  coverSafeArea?: boolean;
 };
 
 const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
@@ -79,6 +81,7 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
       width = 311,
       height = 268,
       btnWidth = 124,
+      coverSafeArea = true,
     },
     ref,
   ) => {
@@ -129,7 +132,20 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
     }));
 
     return (
-      <Modal transparent visible={mounted} onRequestClose={close}>
+      <Modal
+        transparent
+        visible={mounted}
+        onRequestClose={close}
+        statusBarTranslucent={coverSafeArea}
+        presentationStyle={coverSafeArea ? 'overFullScreen' : undefined}
+      >
+        {coverSafeArea && mounted ? (
+          <StatusBar
+            translucent
+            backgroundColor="rgba(0,0,0,0)"
+            barStyle="light-content"
+          />
+        ) : null}
         <Animated.View style={[styles.mask, { opacity }]}>
           <Pressable
             style={styles.maskPressable}

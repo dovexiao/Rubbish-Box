@@ -8,7 +8,6 @@ import {
   ImageStyle,
 } from 'react-native';
 import IconFont from '@/iconfont';
-import { Toast } from '@ant-design/react-native';
 import { operateLock } from '@/services/device';
 import { OPT_TYPE } from '@/constants';
 import { DeviceSwitch } from '../Device/switch';
@@ -74,10 +73,8 @@ const Content: React.FC<ContentProps> = ({
       if (!detail?.id || operating) return;
 
       setOperating(true);
-      const loadingToast = Toast.loading(
-        direction === 'fall' ? '降下中...' : '升起中...',
-        0,
-      );
+
+      showLoading({ title: direction === 'fall' ? '降下中...' : '升起中...' });
 
       try {
         const res = await operateLock({
@@ -86,21 +83,19 @@ const Content: React.FC<ContentProps> = ({
         } as any);
 
         if (res?.code === 200 || res?.success) {
-          Toast.success(
-            direction === 'fall' ? '已发送降锁指令' : '已发送升锁指令',
-          );
+          showToast(direction === 'fall' ? '已发送降锁指令' : '已发送升锁指令');
           if (onFresh) {
             await onFresh(detail.id);
           } else if (reload) {
             await reload(detail.id);
           }
         } else {
-          Toast.fail(res?.message || res?.msg || '操作失败');
+          showToast(res?.message || res?.msg || '操作失败');
         }
       } catch (e) {
-        Toast.fail('操作失败，请稍后重试');
+        showToast('操作失败，请稍后重试');
       } finally {
-        Toast.remove(loadingToast);
+        hideLoading();
         setOperating(false);
       }
     },
@@ -110,7 +105,10 @@ const Content: React.FC<ContentProps> = ({
   const handleDeviceInfo = () => {
     if (!detail?.id) return;
     if (detail?.isGroup) {
-      console.log(11111);
+      navigation.navigate('DeviceList', {
+        id: detail.id,
+        role: detail?.role,
+      });
     } else {
       navigation.navigate('DeviceInfo', {
         lockId: detail.id,

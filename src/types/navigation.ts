@@ -6,6 +6,7 @@ export type RootStackParamList = {
   MemberShare: undefined;
   VipInvite: undefined;
   DeviceInfo: { lockId: number; isAdmin: boolean };
+  DeviceList: { id: number; role: number };
   DeviceLog: { lockId: number };
   FirmwareVersion: { lockId: number; currentVersion: string };
   VersionHistory: { lockId: number };
