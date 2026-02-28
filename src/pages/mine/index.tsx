@@ -120,7 +120,7 @@ export default function Mine() {
       {
         icon: 'a-addequipments' as const,
         label: '添加设备',
-        onPress: () => navigation.navigate('AddDevice'),
+        onPress: () => navigation.navigate('BindDevice'),
       },
       {
         icon: 'shopping' as const,

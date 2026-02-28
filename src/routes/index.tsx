@@ -275,9 +275,14 @@ export const routes = {
       label: '编辑宾客邀请记录',
     },
     {
-      name: 'AddDevice',
-      component: require('@/pages/binDevice').default,
+      name: 'BindDevice',
+      component: require('@/pages/bindDevice').default,
       label: '绑定设备',
+    },
+    {
+      name: 'FindDevice',
+      component: require('@/pages/findDevice').default,
+      label: '查找设备',
     },
     {
       name: 'CombineDevice',

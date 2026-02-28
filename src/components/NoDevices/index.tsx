@@ -1,13 +1,14 @@
 import { Toast } from '@ant-design/react-native';
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 interface NoDevicesProps {
   unreadCount?: number;
   hasDevice?: boolean;
 }
 
 const NoDevices: React.FC<NoDevicesProps> = ({ hasDevice = false }) => {
+  const navigation = useAppNavigation();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>欢迎使用　泊刻地锁</Text>
@@ -30,9 +31,7 @@ const NoDevices: React.FC<NoDevicesProps> = ({ hasDevice = false }) => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            Toast.show({
-              content: '跳转添加设备',
-            });
+            navigation.navigate('BindDevice');
           }}
           style={styles.contentBox}
         >
