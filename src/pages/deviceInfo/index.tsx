@@ -338,14 +338,17 @@ const DeviceInfo = () => {
               onPress={() => qrCodePopRef.current?.open()}
             >
               <Text style={styles.qrCodeBtnText}>查看</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.qrCodeBtn, { marginLeft: 12 }]}
-              onPress={() => changeQrCodePopRef.current?.open()}
-            >
-              <Text style={styles.qrCodeBtnText}>更换二维码</Text>
               <IconFont name={'a-headfor-20'} color="#333" size={20} />
             </TouchableOpacity>
+            {deviceInfo?.role === 1 && (
+              <TouchableOpacity
+                style={[styles.qrCodeBtn, { marginLeft: 12 }]}
+                onPress={() => changeQrCodePopRef.current?.open()}
+              >
+                <Text style={styles.qrCodeBtnText}>更换二维码</Text>
+                <IconFont name={'a-headfor-20'} color="#333" size={20} />
+              </TouchableOpacity>
+            )}
           </Flex>
         </Flex>
         <Flex

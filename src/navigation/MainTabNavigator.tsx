@@ -16,7 +16,7 @@ export const MainTabNavigator: React.FC = () => {
       borderTopWidth: 1,
       borderTopColor: 'rgba(0,0,0,0.05)',
       height: 60 + insets.bottom,
-      paddingBottom: insets.bottom + 5,
+      paddingBottom: insets.bottom + 8,
     };
   }, [insets]);
 
@@ -47,15 +47,21 @@ export const MainTabNavigator: React.FC = () => {
     );
   };
 
-
   return (
     <Tab.Navigator
       initialRouteName="Index"
-      screenOptions={({ route }) => {
+      screenOptions={({ route }: { route: any }) => {
         const isCenter = route.name === 'Index';
         return {
-          tabBarIcon: ({ focused, color, size }) =>
-            getTabBarIcon(route, focused, color, size),
+          tabBarIcon: ({
+            focused,
+            color,
+            size,
+          }: {
+            focused: boolean;
+            color: string;
+            size: number;
+          }) => getTabBarIcon(route, focused, color, size),
           tabBarActiveTintColor: '#333333',
           tabBarInactiveTintColor: '#CCCCCC',
           tabBarStyle,
@@ -66,17 +72,17 @@ export const MainTabNavigator: React.FC = () => {
           // 每个 Tab 外层加红色边框，Index 固定宽度 50，其它平均铺满
           tabBarItemStyle: isCenter
             ? {
-              width: 50,
-              flexShrink: 0,
-              flexGrow: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }
+                width: 50,
+                flexShrink: 0,
+                flexGrow: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }
             : {
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            },
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              },
           headerShown: false,
         };
       }}
@@ -89,7 +95,7 @@ export const MainTabNavigator: React.FC = () => {
             name={route.name}
             options={{
               // 中间的 Index 完全不渲染 label，避免占位高度
-              tabBarLabel: isCenter ? (() => null) : route.label,
+              tabBarLabel: isCenter ? () => null : route.label,
               tabBarIconStyle: isCenter
                 ? { marginBottom: 0, marginTop: 4 }
                 : { marginBottom: 0 },
