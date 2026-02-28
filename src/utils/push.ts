@@ -52,16 +52,24 @@ export async function getMobPushDeviceInfo(): Promise<{
   try {
     // 获取 RegistrationID
     if (MobPushModule && MobPushModule.getRegistrationID) {
-      const registrationID = await new Promise<string | undefined>(resolve => {
-        try {
-          MobPushModule.getRegistrationID(({ res }: { res: string }) => {
-            resolve(res);
-          });
-        } catch (error) {
-          console.error('Error getting registration ID:', error);
-          resolve(undefined);
-        }
-      });
+      const registrationID = await Promise.race([
+        new Promise<string | undefined>(resolve => {
+          const timer = setTimeout(() => resolve(undefined), 2000);
+          try {
+            MobPushModule.getRegistrationID(({ res }: { res: string }) => {
+              clearTimeout(timer);
+              resolve(res);
+            });
+          } catch (error) {
+            clearTimeout(timer);
+            console.error('Error getting registration ID:', error);
+            resolve(undefined);
+          }
+        }),
+        new Promise<string | undefined>(resolve =>
+          setTimeout(() => resolve(undefined), 2500),
+        ),
+      ]);
       if (registrationID) {
         result.registrationID = registrationID;
       }
@@ -77,21 +85,24 @@ export async function getMobPushDeviceInfo(): Promise<{
       MobPushModule &&
       MobPushModule.getDeviceToken
     ) {
-      const deviceToken = await new Promise<string | undefined>(resolve => {
-        const timer = setTimeout(() => {
-          resolve(undefined);
-        }, 1000);
-        try {
-          MobPushModule.getDeviceToken(({ res }: { res: string }) => {
+      const deviceToken = await Promise.race([
+        new Promise<string | undefined>(resolve => {
+          const timer = setTimeout(() => resolve(undefined), 1000);
+          try {
+            MobPushModule.getDeviceToken(({ res }: { res: string }) => {
+              clearTimeout(timer);
+              resolve(res);
+            });
+          } catch (error) {
             clearTimeout(timer);
-            resolve(res);
-          });
-        } catch (error) {
-          clearTimeout(timer);
-          console.error('Error getting device token:', error);
-          resolve(undefined);
-        }
-      });
+            console.error('Error getting device token:', error);
+            resolve(undefined);
+          }
+        }),
+        new Promise<string | undefined>(resolve =>
+          setTimeout(() => resolve(undefined), 1500),
+        ),
+      ]);
       if (deviceToken) {
         result.deviceToken = deviceToken;
       }
