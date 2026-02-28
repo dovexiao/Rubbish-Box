@@ -60,7 +60,8 @@ class BluetoothModeManager {
 
     try {
       let realDeviceId = '';
-      const cached = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
+      const cached: any =
+        (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
 
       let cacheEntry: any;
       if (cached[deviceId]) {
@@ -89,7 +90,10 @@ class BluetoothModeManager {
       const sysInfo = await getSystemConnectedDevices();
       const data = sysInfo.data || [];
       const isPaired = data.some((item: any) => item.deviceId === realDeviceId);
-      const res = await checkIfDeviceIgnoredOnIOS(realDeviceId, cacheEntry?.bleNo);
+      const res = await checkIfDeviceIgnoredOnIOS(
+        realDeviceId,
+        cacheEntry?.bleNo,
+      );
       if (!isPaired || res.isIgnored) {
         await removeBluetoothDeviceInfo(realDeviceId);
         await disconnectBluetoothDevice(realDeviceId);

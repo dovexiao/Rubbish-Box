@@ -41,7 +41,7 @@ export const routes = {
     },
     {
       name: 'LoginSms',
-      component: require('@/pages/LoginSms').default,
+      component: require('@/pages/loginSms').default,
       label: '登录短信',
     },
     {
@@ -273,6 +273,11 @@ export const routes = {
       name: 'VipEditRecord',
       component: require('@/pages/vip/editRecord').default,
       label: '编辑宾客邀请记录',
+    },
+    {
+      name: 'AddDevice',
+      component: require('@/pages/binDevice').default,
+      label: '绑定设备',
     },
   ],
 } as const;

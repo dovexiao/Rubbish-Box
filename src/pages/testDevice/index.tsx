@@ -136,7 +136,7 @@ export default function TestDevice() {
   const renderHeader = () => (
     <View style={styles.searchWrapper}>
       <SearchBar
-        placeholder="请输入设备编号查询"
+        placeholder="请输入设备SN码查询"
         value={searchValue}
         onChange={v => setSearchValue(v)}
         onSubmit={v => onSearch(v)}
