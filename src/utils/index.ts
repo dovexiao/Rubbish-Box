@@ -786,7 +786,7 @@ export const getCurrentLocation = async (): Promise<{
           });
         },
         (error: any) => {
-          console.error('获取位置失败:', error);
+          // console.error('获取位置失败:', error);
           reject(error);
         },
       );

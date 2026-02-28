@@ -40,7 +40,7 @@ export default function UnbindNotice() {
 
   const handleNext = useCallback(async () => {
     if (!lockId) {
-      showToast({ title: '未找到设备信息', icon: 'none' });
+      showToast({ title: '未找到设备信息' });
       return;
     }
     const res: any = await getLockInfo({ id: lockId });
@@ -59,13 +59,12 @@ export default function UnbindNotice() {
     }
     showToast({
       title: res?.message || res?.msg || '获取设备信息失败',
-      icon: 'none',
     });
   }, [lockId, navigation]);
 
   const handlePressNext = useCallback(async () => {
     if (!lockId) {
-      showToast({ title: '未找到设备信息', icon: 'none' });
+      showToast({ title: '未找到设备信息' });
       return;
     }
     try {
@@ -85,10 +84,9 @@ export default function UnbindNotice() {
       }
       showToast({
         title: res?.message || res?.msg || '校验失败',
-        icon: 'none',
       });
     } catch {
-      showToast({ title: '校验失败', icon: 'none' });
+      showToast({ title: '校验失败' });
     }
   }, [handleNext, lockId]);
 

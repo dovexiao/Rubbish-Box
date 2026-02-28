@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex } from '@/components';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { getHandOverList } from '@/services';
 import { styles } from './style';
+import { showToast } from '@/utils';
 
 type Device = {
   id: number;
@@ -52,10 +52,10 @@ export default function HandOverDevice() {
           setComplete(list.length < PAGE_SIZE);
           setDeviceList(prev => (refresh ? list : [...prev, ...list]));
         } else {
-          Toast.fail(res?.message || res?.msg || '加载设备列表失败');
+          showToast(res?.message || res?.msg || '加载设备列表失败');
         }
       } catch {
-        Toast.fail('加载设备列表失败');
+        showToast('加载设备列表失败');
       } finally {
         setInitialLoading(false);
         setRefreshing(false);

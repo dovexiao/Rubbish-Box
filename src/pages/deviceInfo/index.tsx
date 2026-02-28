@@ -29,7 +29,6 @@ import {
 } from '@/services';
 import { lockInfoProps } from './typing';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
-import { Toast } from '@ant-design/react-native';
 import { PageContainerRef } from '@/components/PageContainer';
 import PopCenter, { PopCenterRef } from '@/components/PopCenter';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
@@ -37,7 +36,15 @@ import { BatteryReminderPop } from './components/batteryReminderPop';
 import { PopConfirmRef } from '@/components/popConfirm';
 import { LockInfoDTO } from '../index/typing';
 import BeeBuzzingCollisionPop from './components/beeBuzzingCollisionPop';
-import { cacheSetSync, eventCenter, loopFunc, navigateBack } from '@/utils';
+import {
+  cacheSetSync,
+  eventCenter,
+  loopFunc,
+  navigateBack,
+  showLoading,
+  hideLoading,
+  showToast,
+} from '@/utils';
 import LeaveRiseLockPop from './components/leaveRiseLockPop';
 import BluetoothStatus, {
   BluetoothStatusRef,
@@ -123,10 +130,10 @@ const DeviceInfo = () => {
 
   const handleNameConfirm = async () => {
     if (!lockName?.trim()) {
-      Toast.info('请输入名称');
+      showToast('请输入名称');
       return;
     }
-    const loadingToast = Toast.loading('修改中...', 0);
+    showLoading({ title: '修改中...' });
 
     try {
       const res = await updateName({
@@ -135,18 +142,18 @@ const DeviceInfo = () => {
       });
 
       if (res?.success) {
-        Toast.remove(loadingToast);
-        Toast.success('修改成功');
+        hideLoading();
+        showToast('修改成功');
         editNamePopRef.current?.close();
         // 刷新数据
         pageContainerRef.current?.refresh();
       } else {
-        Toast.remove(loadingToast);
-        Toast.fail(res?.message || '修改失败');
+        hideLoading();
+        showToast(res?.message || '修改失败');
       }
     } catch (error) {
-      Toast.remove(loadingToast);
-      Toast.fail('修改异常');
+      hideLoading();
+      showToast('修改异常');
     }
   };
 
@@ -155,22 +162,22 @@ const DeviceInfo = () => {
   }, [fetchLockInfo]);
   const handleBindQrCodeScan = useCallback(
     async (value: string) => {
-      const loadingToast = Toast.loading('绑定中...', 0);
+      showLoading({ title: '绑定中...' });
       try {
         const res = await changeQrCodeScan({
           id: params?.lockId,
           qrCode: value,
         });
-        Toast.remove(loadingToast);
+        hideLoading();
         if (res?.success) {
-          Toast.success('绑定成功');
+          showToast('绑定成功');
           // scanBindQrPopRef.current?.close();
           pageContainerRef.current?.refresh();
           return { ok: true, data: res };
         }
         return { ok: false, message: res?.message || '绑定失败', data: res };
       } catch (error: any) {
-        Toast.remove(loadingToast);
+        hideLoading();
         return { ok: false, message: '绑定异常', error };
       }
     },
@@ -182,9 +189,9 @@ const DeviceInfo = () => {
       id: params?.lockId,
     });
     if (res?.code === 200 && res?.success) {
-      Toast.success('蜂鸣测试成功');
+      showToast('蜂鸣测试成功');
     } else {
-      Toast.fail(res?.message || '蜂鸣测试失败');
+      showToast(res?.message || '蜂鸣测试失败');
     }
   };
 
@@ -192,7 +199,7 @@ const DeviceInfo = () => {
     buzzerTime: number,
     buzzerStatus: number,
   ) => {
-    Toast.loading('修改中...');
+    showLoading({ title: '修改中...' });
     const res = await modifyLockCrashBuzzer({
       buzzerTime,
       buzzerStatus,
@@ -201,20 +208,19 @@ const DeviceInfo = () => {
     if (res.success && res.code === 200) {
       loopOperateStatus(11);
     } else {
-      beeBuzzingCollisionRef.current?.close();
-      Toast.removeAll();
-      Toast.fail(res.message || '修改失败');
+      hideLoading();
+      showToast(res.message || '修改失败');
     }
     return res.success;
   };
 
   const deviceModifyLockLeaveTime = async (leaveUpTime: number) => {
-    Toast.loading('修改中...');
+    showLoading({ title: '修改中...' });
     const res = await modifyLockLeaveTime({ leaveUpTime, id: deviceInfo?.id });
     if (res.success) {
       fetchLockInfo();
     } else {
-      Toast.fail(res.message);
+      showToast(res.message || '修改失败');
     }
     return res.success;
   };
@@ -240,7 +246,7 @@ const DeviceInfo = () => {
           clearTimeout(timer);
           timer = null;
         }
-        Toast.removeAll();
+        hideLoading();
         return false;
       }
       return true;
@@ -248,8 +254,8 @@ const DeviceInfo = () => {
     timer = setTimeout(() => {
       eventCenter.trigger('onOptioned', false);
       stop();
-      Toast.removeAll();
-      Toast.fail('操作失败');
+      hideLoading();
+      showToast('操作失败');
     }, 10000);
     start();
   };
@@ -564,7 +570,7 @@ const DeviceInfo = () => {
         mask={false}
         maskClosable={false}
         onClose={() => {
-          Toast.removeAll();
+          hideLoading();
           setSafeAreaColor('dark-content');
         }}
         onScan={handleBindQrCodeScan}

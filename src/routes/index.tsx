@@ -70,6 +70,11 @@ export const routes = {
       label: '设备信息',
     },
     {
+      name: 'DeviceList',
+      component: require('@/pages/deviceList').default,
+      label: '设备列表',
+    },
+    {
       name: 'FirmwareVersion',
       component: require('@/pages/firmwareVersion').default,
       label: '固件版本',

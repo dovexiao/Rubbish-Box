@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
@@ -14,6 +13,7 @@ import { useCountDown } from '@/hooks/useCountDown';
 import { handOverSendSms, handOverVerify } from '@/services';
 import InputCode, { type InputCodeRef } from '../com/inputCode';
 import { styles } from './style';
+import { hideLoading, showLoading, showToast } from '@/utils';
 
 export default function HandOverVerify() {
   const route = useRoute<any>();
@@ -51,32 +51,32 @@ export default function HandOverVerify() {
       lockIds: String(deviceId).split(','),
     });
     if (res?.code === 200 && res?.success) {
-      Toast.success('已发送，待查收验证码');
+      showToast('已发送，待查收验证码');
       start();
       setStep(1);
       return;
     }
-    Toast.fail(res?.message || res?.msg || '发送失败');
+    showToast(res?.message || res?.msg || '发送失败');
   }, [deviceId, showError, start]);
 
   const onSubmit = useCallback(async () => {
     if (!deviceId) return;
     if (!code || code.length !== 6) {
-      Toast.info('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
 
-    const toastKey = Toast.loading('加载中...', 0);
+    showLoading({ title: '加载中...' });
     try {
       const res: any = await handOverVerify({
         lockIds: String(deviceId).split(','),
         currentAdminCode: code,
       });
-      Toast.remove(toastKey as any);
+      hideLoading();
       stop();
 
       if (res?.code === 200 && res?.success) {
-        Toast.success('验证成功');
+        showToast('验证成功');
         navigation.navigate('HandOverVerifyNew' as any, {
           lockIds: String(deviceId),
           currentAdminCode: code,
@@ -84,13 +84,13 @@ export default function HandOverVerify() {
           bleName,
         });
       } else {
-        Toast.fail(res?.message || res?.msg || '验证失败');
+        showToast(res?.message || res?.msg || '验证失败');
         setShowError(true);
       }
     } catch {
-      Toast.remove(toastKey as any);
+      hideLoading();
       stop();
-      Toast.fail('移交失败');
+      showToast('移交失败');
     }
   }, [bleName, bleNo, code, deviceId, navigation, stop]);
 
