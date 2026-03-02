@@ -239,6 +239,21 @@ export default function Mine() {
           })}
         </View>
 
+        {/* 测试页面 */}
+        <View style={styles.logoutBox}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.listItem}
+            onPress={() => {
+              navigation.navigate('TestPage');
+            }}
+          >
+            <IconFont name="exit" size={22} color="#333333" />
+            <Text style={styles.listLabel}>测试页面</Text>
+            <IconFont name="a-headfor-20" size={16} color="#333333" />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.logoutBox}>
           <TouchableOpacity
             activeOpacity={0.8}
