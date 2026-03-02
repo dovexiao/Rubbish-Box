@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { Image, TouchableOpacity, View, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/core';
 import PageContainer from '@/components/PageContainer';
 import PopConfirm from '@/components/popConfirm';
 import IconFont from '@/iconfont';
@@ -65,10 +66,11 @@ export default function Mine() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-    return;
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load]),
+  );
 
   const requireLogin = useCallback(() => {
     showToast('请先登录');

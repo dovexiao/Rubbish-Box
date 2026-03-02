@@ -48,9 +48,9 @@ export default function SkinPeeler() {
 
           // 简单映射：根据 code 设置深浅主题（可按实际业务调整）
           // 例如：后端约定某些 code 为暗色主题
-          if (themeCode === 'dark') {
+          if (themeCode === 'deep') {
             setTheme('dark');
-          } else if (themeCode === 'light') {
+          } else if (themeCode === 'shallow') {
             setTheme('light');
           }
 
@@ -116,4 +116,3 @@ export default function SkinPeeler() {
     </PageContainer>
   );
 }
-
