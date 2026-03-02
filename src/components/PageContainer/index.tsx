@@ -403,6 +403,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
           style={[
             styles.loadingOverlay,
             { backgroundColor: loadingBackgroundColor },
+            // { backgroundColor: '#f12345' },
             loadingStyle,
           ]}
           pointerEvents="auto"
@@ -421,7 +422,9 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
         {showStatusBar && (
           <StatusBar
             barStyle={defaultStatusBarStyle}
-            backgroundColor={defaultStatusBarBackgroundColor}
+            backgroundColor={
+              loading ? 'transparent' : defaultStatusBarBackgroundColor
+            }
             showHideTransition={'none'}
             translucent
           />
@@ -437,85 +440,91 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
             ]}
             resizeMode="cover"
           >
-            <SafeAreaView
-              style={[
-                styles.container,
-                {
-                  // 有背景图时内容背景透明，以便透出 ImageBackground
-                  backgroundColor: 'transparent',
-                },
-              ]}
-              edges={finalEdges}
-            >
-              {/* 全局 Loading */}
+            <View style={styles.container}>
+              <SafeAreaView
+                style={[
+                  styles.container,
+                  {
+                    // 有背景图时内容背景透明，以便透出 ImageBackground
+                    backgroundColor: 'transparent',
+                  },
+                ]}
+                edges={finalEdges}
+              >
+                {/* 页面主结构 */}
+                <View style={[styles.pageContainer, manualPaddingStyle]}>
+                  {/* 头部区域 */}
+                  {(header || pageNavProps) && (
+                    <View style={styles.headerContainer}>
+                      {renderNavHeader}
+                    </View>
+                  )}
+
+                  {/* 内容区域 */}
+                  {renderContent}
+
+                  {/* 底部区域 */}
+                  {footer && (
+                    <View
+                      style={[
+                        styles.footerContainer,
+                        // Android 底部额外 padding 适配
+                        Platform.OS === 'android' && {
+                          paddingBottom: insets.bottom + 20,
+                        },
+                      ]}
+                    >
+                      {footer}
+                    </View>
+                  )}
+                </View>
+              </SafeAreaView>
+
               {renderLoading()}
-
-              {/* 页面主结构 */}
-              <View style={[styles.pageContainer, manualPaddingStyle]}>
-                {/* 头部区域 */}
-                {(header || pageNavProps) && (
-                  <View style={styles.headerContainer}>{renderNavHeader}</View>
-                )}
-
-                {/* 内容区域 */}
-                {renderContent}
-
-                {/* 底部区域 */}
-                {footer && (
-                  <View
-                    style={[
-                      styles.footerContainer,
-                      // Android 底部额外 padding 适配
-                      Platform.OS === 'android' && {
-                        paddingBottom: insets.bottom + 20,
-                      },
-                    ]}
-                  >
-                    {footer}
-                  </View>
-                )}
-              </View>
-            </SafeAreaView>
+            </View>
           </ImageBackground>
         ) : (
           <View style={styles.backgroundImage}>
-            <SafeAreaView
-              style={[
-                styles.container,
-                {
-                  backgroundColor: defaultBackgroundColor,
-                },
-              ]}
-              edges={finalEdges}
-            >
-              {/* 全局 Loading */}
+            <View style={styles.container}>
+              <SafeAreaView
+                style={[
+                  styles.container,
+                  {
+                    backgroundColor: defaultBackgroundColor,
+                  },
+                ]}
+                edges={finalEdges}
+              >
+                {/* 页面主结构 */}
+                <View style={[styles.pageContainer, manualPaddingStyle]}>
+                  {/* 头部区域 */}
+                  {(header || pageNavProps) && (
+                    <View style={styles.headerContainer}>
+                      {renderNavHeader}
+                    </View>
+                  )}
+
+                  {/* 内容区域 */}
+                  {renderContent}
+
+                  {/* 底部区域 */}
+                  {footer && (
+                    <View
+                      style={[
+                        styles.footerContainer,
+                        Platform.OS === 'android' && {
+                          paddingBottom: insets.bottom + 20,
+                        },
+                      ]}
+                    >
+                      {footer}
+                    </View>
+                  )}
+                </View>
+              </SafeAreaView>
+
               {renderLoading()}
-
-              {/* 页面主结构 */}
-              <View style={[styles.pageContainer, manualPaddingStyle]}>
-                {/* 头部区域 */}
-                {(header || pageNavProps) && (
-                  <View style={styles.headerContainer}>{renderNavHeader}</View>
-                )}
-
-                {/* 内容区域 */}
-                {renderContent}
-
-                {/* 底部区域 */}
-                {footer && (
-                  <View
-                    style={[
-                      styles.footerContainer,
-                      Platform.OS === 'android' && {
-                        paddingBottom: insets.bottom + 20,
-                      },
-                    ]}
-                  >
-                    {footer}
-                  </View>
-                )}
-              </View>
-            </SafeAreaView>
+            </View>
           </View>
         )}
       </>

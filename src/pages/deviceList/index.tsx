@@ -60,7 +60,6 @@ export default function DeviceList() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [autoOpenMap, setAutoOpenMap] = useState<Record<string, boolean>>({});
   const [currentLock, setCurrentLock] = useState<ListItem | null>(null);
-  const [borderRadiusSize, setBorderRadiusSize] = useState(0);
 
   const coverConfirmRef = useRef<PopConfirmRef>(null);
 
