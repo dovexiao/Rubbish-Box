@@ -7,15 +7,15 @@ import React, {
 } from 'react';
 import { Image, TouchableOpacity, View, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import PageContainer from '@/components/PageContainer';
 import PopConfirm from '@/components/popConfirm';
 import IconFont from '@/iconfont';
-import { baseInfo, getStaffList, logout } from '@/services/user';
+import { baseInfo, logout } from '@/services/user';
 import { cacheGetSync, cacheRemove, cacheSetSync } from '@/utils/cache';
 import { tokenStorage } from '@/utils/storage';
 import styles from './styles';
 import { useTheme } from '@/context/ThemeContext';
+import { showToast } from '@/utils';
 
 type MineInfo = {
   id?: string | number;
@@ -31,30 +31,20 @@ export default function Mine() {
 
   const [hasToken, setHasToken] = useState(false);
   const [info, setInfo] = useState<MineInfo | undefined>(undefined);
-  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const logoutRef = useRef<any>(null);
-
-  const backgroundImage = useMemo(() => {
-    const url = info?.bgUrl;
-    if (url && typeof url === 'string' && url.startsWith('http')) {
-      return { uri: url };
-    }
-    return undefined;
-  }, [info?.bgUrl]);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const token = await cacheGetSync('token');
       const gm = await cacheGetSync('guestMode');
-      const has = !!token;
-      setHasToken(has);
+      setHasToken(!!token);
 
-      if (!has) {
+      if (!token) {
         setInfo(undefined);
-        setTotal(0);
+        requireLogin();
         return;
       }
 
@@ -63,21 +53,12 @@ export default function Mine() {
         await cacheSetSync('guestMode', false);
       }
 
-      const [staffRes, infoRes] = await Promise.all([
-        getStaffList({ offset: 0, pageSize: 20 }),
-        baseInfo({}),
-      ]);
-
-      if (staffRes.code === 200 && staffRes.success) {
-        setTotal(Number((staffRes.data as any)?.total || 0));
-      } else {
-        setTotal(0);
-      }
+      const [infoRes] = await Promise.all([baseInfo({})]);
 
       if (infoRes.code === 200 && infoRes.success) {
         setInfo((infoRes.data || {}) as MineInfo);
       } else {
-        Toast.fail(infoRes.msg || infoRes.message || '获取用户信息失败');
+        showToast(infoRes.msg || infoRes.message || '获取用户信息失败');
       }
     } finally {
       setLoading(false);
@@ -90,8 +71,8 @@ export default function Mine() {
   }, [load]);
 
   const requireLogin = useCallback(() => {
-    Toast.info('请先登录');
-    navigation.navigate('Login');
+    showToast('请先登录');
+    navigation.reset('Login');
   }, [navigation]);
 
   const onLogout = useCallback(async () => {
@@ -169,8 +150,8 @@ export default function Mine() {
   return (
     <PageContainer
       backgroundColor="#FCFBFE"
-      backgroundImage={backgroundImage}
-      statusBarBackgroundColor={backgroundImage ? 'transparent' : '#FFFFFF'}
+      backgroundImage={{ uri: info?.bgUrl }}
+      statusBarBackgroundColor={info?.bgUrl ? 'transparent' : '#FFFFFF'}
       scrollable
       loading={loading && hasToken && !info}
       safeAreaEdges={['top', 'bottom']}
@@ -237,21 +218,6 @@ export default function Mine() {
               </View>
             );
           })}
-        </View>
-
-        {/* 测试页面 */}
-        <View style={styles.logoutBox}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.listItem}
-            onPress={() => {
-              navigation.navigate('TestPage');
-            }}
-          >
-            <IconFont name="exit" size={22} color="#333333" />
-            <Text style={styles.listLabel}>测试页面</Text>
-            <IconFont name="a-headfor-20" size={16} color="#333333" />
-          </TouchableOpacity>
         </View>
 
         <View style={styles.logoutBox}>
