@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { AppState, Image, Text, TouchableOpacity, View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Flex, GradientButton, PageContainer } from '@/components';
 import { LOCK_BTN_COLORS, LOCK_STATUS } from '@/constants';
@@ -16,9 +16,11 @@ import {
   showLoading,
   showToast,
   getStorage,
+  openBluetoothSettings,
 } from '@/utils';
 import {
   checkIfDeviceIgnoredOnIOS,
+  getBluetoothState,
   sendChangePinByBluetooth,
   setNearbyPermission,
 } from '@/utils/api';
@@ -45,6 +47,7 @@ type RouteParams = {
   role?: string | number;
   mode?: string | number;
   hasMode?: boolean | string;
+  bindSuccessStatus?: boolean | string;
   blePin?: string;
   bleName?: string;
 };
@@ -60,10 +63,15 @@ export default function BluetoothControl() {
   const lockName = params.lockName || '';
   const bleName = params.bleName || '';
   const role = params.role;
+  const imageMap = params.imageMap || {};
+  const hasMode = String(params.hasMode) === 'true' || params.hasMode === true;
+  const bindSuccessStatus =
+    String(params.bindSuccessStatus) === 'true' ||
+    params.bindSuccessStatus === true;
 
-  const [bluetoothPin, setBluetoothPinState] = useState(params.blePin || '');
   const [isPaired, setIsPaired] = useState(false);
   const [isIgnored, setIsIgnored] = useState(false);
+  const [isBluetoothOpen, setIsBluetoothOpen] = useState(false);
   const [gifUrl, setGifUrl] = useState<string | undefined>(undefined);
   const [proximityEnabled, setProximityEnabled] = useState(
     String(params.bluetoothHasOpen) === 'true' ||
@@ -71,7 +79,6 @@ export default function BluetoothControl() {
   );
 
   const optionTypeRef = useRef<'pin' | 'toggle' | null>(null);
-  const settingPinRef = useRef<SettingPinRef>(null);
   const bluetoothStatusRef = useRef<BluetoothStatusRef>(null);
 
   const refreshPairStatus = useCallback(async () => {
@@ -96,32 +103,52 @@ export default function BluetoothControl() {
     }
   }, [bleNo]);
 
-  const loadPin = useCallback(async () => {
-    if (!lockId) return;
-    const res: any = await getBluetoothPin({ id: lockId });
-    if (res?.code === 200 || res?.code === '200' || res?.success) {
-      setBluetoothPinState(res?.data || res?.pin || '');
+  const checkBluetoothOpen = useCallback(async (): Promise<boolean> => {
+    try {
+      const state = await getBluetoothState();
+      const open = state === 'PoweredOn';
+      setIsBluetoothOpen(open);
+      return open;
+    } catch {
+      setIsBluetoothOpen(false);
+      return false;
     }
-  }, [lockId]);
+  }, []);
 
+  // 首次进入时检查一次
   useEffect(() => {
     void refreshPairStatus();
-    void loadPin();
-  }, [loadPin, refreshPairStatus]);
+    void checkBluetoothOpen();
+  }, [refreshPairStatus, checkBluetoothOpen]);
 
-  const updateDevicePairedStatus = useCallback(async () => {
-    const raw = await getStorage({ key: 'bluetoothDeviceInfoList' });
-    const map = (raw as any)?.data || {};
-    if (map && bleNo in map) {
-      const next = { ...map };
-      delete next[bleNo];
-      await setStorage({
-        key: 'bluetoothDeviceInfoList',
-        data: { data: next },
-      });
-    }
-    await removeStorage({ key: 'bluetoothDeviceInfo' });
-  }, [bleNo]);
+  // 从导航 focus 返回时刷新（在应用内路由切换时生效）
+  useEffect(() => {
+    const unsubscribe =
+      navigation && typeof (navigation as any).addListener === 'function'
+        ? (navigation as any).addListener('focus', () => {
+            void refreshPairStatus();
+            void checkBluetoothOpen();
+          })
+        : undefined;
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, [navigation, refreshPairStatus, checkBluetoothOpen]);
+
+  // 从系统设置或后台返回到前台时，刷新蓝牙状态和配对状态
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', state => {
+      if (state === 'active') {
+        void refreshPairStatus();
+        void checkBluetoothOpen();
+      }
+    });
+    return () => {
+      sub.remove();
+    };
+  }, [refreshPairStatus, checkBluetoothOpen]);
 
   const handleToggleProximity = useCallback(async () => {
     showLoading({ title: `${proximityEnabled ? '关闭' : '开启'}中...` });
@@ -165,85 +192,38 @@ export default function BluetoothControl() {
     }
   }, [bleNo, deviceNo, lockId, proximityEnabled]);
 
-  const handleChangePin = useCallback(
-    async (value: string) => {
-      showLoading({ title: '修改中...' });
-      try {
-        const saved = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
-        // @ts-ignore
-        const deviceId = saved?.[bleNo]?.deviceId;
-        if (!deviceId) {
-          showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'none' });
-          return;
-        }
-
-        const cmdRes = await sendChangePinByBluetooth({
-          deviceId,
-          deviceNo,
-          pin: value,
-        });
-        if (!cmdRes.success) {
-          showToast({ title: cmdRes.msg || '设备修改 PIN 失败', icon: 'none' });
-          return;
-        }
-
-        const apiRes: any = await settingBluetoothPin({
-          id: lockId,
-          pin: value,
-          bleNo: cmdRes.newMac,
-        });
-        if (
-          !(apiRes?.code === 200 || apiRes?.code === '200' || apiRes?.success)
-        ) {
-          showToast({
-            title: apiRes?.message || '服务端保存 PIN 失败',
-            icon: 'none',
-          });
-          return;
-        }
-
-        setBluetoothPinState(value);
-        await updateDevicePairedStatus();
-        setIsPaired(false);
-        showToast({ title: '修改 PIN 成功，请重新配对', icon: 'success' });
-      } finally {
-        hideLoading();
-      }
-    },
-    [bleNo, deviceNo, lockId, updateDevicePairedStatus],
-  );
+  const handleOpenBluetooth = async () => {
+    if (isBluetoothOpen) {
+      navigation.navigate('FindDevice' as any, {
+        lockName,
+        lockId,
+        bleNo,
+        deviceNo,
+        role,
+        hasMode,
+        bindSuccessStatus,
+        imageMap,
+        bleName,
+      });
+    } else {
+      await openBluetoothSettings();
+    }
+  };
 
   const hasPaired = useMemo(() => {
     return isPaired && !isIgnored;
   }, [isIgnored, isPaired]);
-
-  const footer =
-    String(role) === '1' ? (
-      <View style={styles.footer}>
-        <Text style={styles.footerLabel}>管理蓝牙配对PIN码：</Text>
-        <TouchableOpacity
-          activeOpacity={0.85}
-          onPress={() => {
-            optionTypeRef.current = 'pin';
-            bluetoothStatusRef.current?.open();
-          }}
-          style={styles.footerRight}
-        >
-          <Text style={styles.footerValue}>
-            {bluetoothPin || params.blePin || '暂无'}
-          </Text>
-          <Text style={styles.footerArrow}>›</Text>
-        </TouchableOpacity>
-      </View>
-    ) : null;
 
   return (
     <PageContainer
       backgroundColor="#FFFFFF"
       statusBarStyle="dark-content"
       safeAreaEdges={['top', 'bottom']}
-      pageNavProps={{ text: '自动升降', showBack: true, background: '#FFFFFF' }}
-      footer={footer}
+      pageNavProps={{
+        text: hasMode ? '配对成功' : '自动升降',
+        showBack: true,
+        background: '#FFFFFF',
+      }}
       padding={0}
     >
       <View style={styles.container}>
@@ -278,62 +258,97 @@ export default function BluetoothControl() {
                 </TouchableOpacity>
               ) : null}
             </View>
+
+            {bindSuccessStatus ? (
+              <View
+                style={{ width: '100%', marginTop: 24, alignItems: 'center' }}
+              >
+                <GradientButton
+                  colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
+                  width={220}
+                  height={44}
+                  round={false}
+                  btnBorderRadius={16}
+                  onPress={() => {
+                    navigation.navigate('Index' as any);
+                  }}
+                >
+                  <Text style={styles.btnText}>完成</Text>
+                </GradientButton>
+              </View>
+            ) : null}
           </View>
         ) : (
-          <View style={styles.unpairedBox}>
-            <Text style={styles.unpairedTitle}>开启自动升降</Text>
-            <Text style={styles.unpairedDesc}>
-              确认手机开启蓝牙，并靠近地锁完成配对
-            </Text>
-            <View style={styles.actions}>
-              <GradientButton
-                colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                width={220}
-                height={44}
-                round={false}
-                btnBorderRadius={16}
-                onPress={() => {
-                  navigation.navigate('BluetoothSearch' as any, {
-                    lockName,
-                    lockId,
-                    bleNo,
-                    deviceNo,
-                    imageMap: params.imageMap,
-                    pin: bluetoothPin,
-                    role,
-                    bleName,
-                  });
-                }}
-              >
-                <Text style={styles.btnText}>前往连接</Text>
-              </GradientButton>
-            </View>
-          </View>
+          <Flex
+            direction={'column'}
+            style={{
+              marginTop: 160,
+              paddingHorizontal: 12,
+            }}
+          >
+            <Flex direction={'column'} style={styles.card}>
+              <Flex style={styles.rowMargin32} align={'center'}>
+                <Text style={styles.cardItemText}>开启自动升降</Text>
+              </Flex>
+              <Flex style={styles.rowMargin} align={'start'}>
+                <View style={styles.dotWrapper}>
+                  <View style={styles.dot}></View>
+                </View>
+                <Text style={styles.cardItemText}>
+                  确认手机开启蓝牙，并靠近地锁
+                </Text>
+              </Flex>
+              <Flex style={styles.rowMargin} align={'start'}>
+                <View style={styles.dotWrapper}>
+                  <View style={styles.dot}></View>
+                </View>
+                <Text style={styles.cardItemText}>
+                  开启后，手机App靠近，自动降下地锁；离开后自动升起
+                </Text>
+              </Flex>
+            </Flex>
+
+            <Flex
+              direction={'column'}
+              justify={'center'}
+              align={'center'}
+              style={{
+                width: '100%',
+                marginTop: 44,
+              }}
+            >
+              {!isBluetoothOpen && (
+                <Text style={styles.buttonTipsText}>
+                  开启蓝牙，以便查找附近的设备
+                </Text>
+              )}
+
+              {/* 蓝牙未开启时显示开启蓝牙按钮 */}
+              {!isBluetoothOpen && (
+                <GradientButton
+                  colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
+                  width={160}
+                  onPress={() => handleOpenBluetooth()}
+                  style={styles.btn}
+                >
+                  <Text style={styles.btnText}>开启蓝牙</Text>
+                </GradientButton>
+              )}
+
+              {/* 蓝牙已开启但未配对时显示前往按钮 */}
+              {isBluetoothOpen && !isPaired && (
+                <GradientButton
+                  colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
+                  width={160}
+                  onPress={() => handleOpenBluetooth()}
+                  style={styles.btn}
+                >
+                  <Text style={styles.btnText}>前往开启</Text>
+                </GradientButton>
+              )}
+            </Flex>
+          </Flex>
         )}
-
-        <SettingPin
-          ref={settingPinRef}
-          pin={bluetoothPin}
-          onConfirm={handleChangePin}
-          onCancel={() => settingPinRef.current?.close()}
-        />
-
-        <BluetoothStatus
-          ref={bluetoothStatusRef}
-          type="pass"
-          details={{
-            ...params,
-            pin: bluetoothPin,
-            id: lockId || '',
-          }}
-          onSuccess={() => {
-            if (optionTypeRef.current === 'pin') {
-              settingPinRef.current?.open();
-            } else if (optionTypeRef.current === 'toggle') {
-              void handleToggleProximity();
-            }
-          }}
-        />
       </View>
     </PageContainer>
   );

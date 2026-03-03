@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -26,6 +32,7 @@ import {
 } from '@/utils';
 import { deviceDelete } from '@/services/combine';
 import MapComponent from '../Map';
+import AutoOperatePop, { AutoOperatePopRef } from '../autoOperatePop';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -35,6 +42,7 @@ interface ContentProps {
   onAnimation?: (params: any) => void;
   children?: React.ReactNode;
   isMultiple?: boolean;
+  isAutoOpenBluetooth?: boolean;
 }
 
 const Content: React.FC<ContentProps> = ({
@@ -45,6 +53,7 @@ const Content: React.FC<ContentProps> = ({
   isMultiple = false,
   onAnimation,
   children,
+  isAutoOpenBluetooth,
 }) => {
   const navigation = useAppNavigation();
 
@@ -53,6 +62,7 @@ const Content: React.FC<ContentProps> = ({
   const [manageMultipleRef, setManageMultipleRef] = useState(false);
   const [deleteMultipleRef, setDeleteMultipleRef] = useState(false);
   const [eleInstallRef, setEleInstallRef] = useState(false);
+  const popRef = useRef<AutoOperatePopRef>(null);
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -145,6 +155,29 @@ const Content: React.FC<ContentProps> = ({
     });
   };
 
+  const handleSetAutoOperate = (detail: any) => {
+    if (detail?.role === 2 && !detail?.bluetoothStatus) {
+      showToast({
+        title: '管理员已关闭此功能，请联系管理员打开',
+        icon: 'none',
+      });
+      return;
+    }
+    navigation.navigate('BluetoothControl', {
+      lockId: detail.id,
+      bluetoothStatus: detail?.bluetoothStatus,
+      lockName: detail.lockName,
+      bleNo: detail?.bleNo,
+      imageMap: detail?.imageMap,
+      buletoothHasOpen: !!detail?.bluetoothStatus,
+      deviceNo: detail?.deviceNo,
+      role: detail?.role,
+      mode: detail?.mode,
+      fromHomePage: true,
+      bleName: detail?.bleName,
+    });
+  };
+
   return (
     <View style={styles.contentBox}>
       {/* 上方设备模型/状态图 */}
@@ -159,12 +192,17 @@ const Content: React.FC<ContentProps> = ({
 
       <Flex justify="between" style={styles.manualRow}>
         <TouchableOpacity
-          activeOpacity={0.8}
+          activeOpacity={1}
           style={styles.manualBtn}
           disabled={operating}
-          onPress={() => handleOperate('rise')}
+          onPress={() => {
+            if (detail?.isGroup) {
+            } else {
+              handleSetAutoOperate(detail);
+            }
+          }}
         >
-          {detail?.bluetoothStatus == 0 && (
+          {!isAutoOpenBluetooth && (
             <View style={styles.warningIcon}>
               <Image
                 source={{
@@ -181,7 +219,7 @@ const Content: React.FC<ContentProps> = ({
         </TouchableOpacity>
         {detail?.noBleOpt == true ? null : (
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={1}
             style={styles.manualBtn}
             disabled={operating}
             onPress={() => handleOperate('rise')}
@@ -194,7 +232,7 @@ const Content: React.FC<ContentProps> = ({
         )}
         {detail?.noBleOpt == true ? null : (
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={1}
             style={styles.manualBtn}
             disabled={operating}
             onPress={() => handleOperate('fall')}
@@ -454,6 +492,12 @@ const Content: React.FC<ContentProps> = ({
             phoneNumber: detail?.customerServicePhone || '',
           });
         }}
+      />
+
+      <AutoOperatePop
+        ref={popRef}
+        lockList={groupList}
+        onChoose={handleSetAutoOperate}
       />
     </View>
   );

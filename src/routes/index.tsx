@@ -329,5 +329,10 @@ export const routes = {
       component: require('@/pages/unbind/unbindDevice').default,
       label: '解除绑定',
     },
+    {
+      name: 'BluetoothControl',
+      component: require('@/pages/bluetooth/control').default,
+      label: '自动升降',
+    },
   ],
 } as const;

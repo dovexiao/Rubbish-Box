@@ -1,3 +1,4 @@
+import { Flex } from '@ant-design/react-native';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -23,8 +24,8 @@ export const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    marginTop: 16,
-    padding: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 16,
     backgroundColor: '#f7f7fb',
     borderRadius: 12,
   },
@@ -76,8 +77,9 @@ export const styles = StyleSheet.create({
   },
   btnText: {
     color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: 'bold',
+    lineHeight: 22,
   },
   footer: {
     paddingVertical: 12,
@@ -105,5 +107,46 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     color: '#999999',
     marginTop: -1,
+  },
+  rowMargin32: {
+    marginBottom: 16,
+  },
+  cardItemText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#333333',
+    fontWeight: 'bold',
+    lineHeight: 20,
+  },
+  rowMargin: {
+    marginBottom: 8,
+  },
+  dotWrapper: {
+    width: 20,
+    height: 20,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#999999',
+    marginRight: 8,
+  },
+  buttonTipsText: {
+    fontSize: 14,
+    color: '#999999',
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  btn: {
+    height: 48,
+    borderRadius: 16,
+    marginTop: 8,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

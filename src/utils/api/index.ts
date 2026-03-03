@@ -138,6 +138,16 @@ export const openBluetooth = (): Promise<{ success: boolean }> => {
   });
 };
 
+/** 使用 react-native-ble-plx 获取当前蓝牙状态，PoweredOn 表示已开启 */
+export const getBluetoothState = async (): Promise<string> => {
+  try {
+    await ensureBleManagerAlive();
+    return await bleInstance.state();
+  } catch {
+    return 'Unknown';
+  }
+};
+
 // ---------- 系统已连接设备（兼容 { success, data } 形状） ----------
 
 export const getSystemConnectedDevices = async (): Promise<{
@@ -186,6 +196,7 @@ export const disconnectBluetoothDevice = (
 ): Promise<{ success: boolean }> => {
   return new Promise(async resolve => {
     try {
+      await ensureBleManagerAlive();
       await bleInstance.cancelDeviceConnection(deviceId);
       resolve({ success: true });
     } catch {
@@ -213,9 +224,13 @@ export const searchBluetoothDevices = async (
           // iOS: 跳转到系统蓝牙设置
           await Linking.openURL('App-Prefs:root=Bluetooth');
         } else {
-          await IntentLauncher.startActivity({
-            action: 'android.settings.BLUETOOTH_SETTINGS',
-          });
+          if (IntentLauncher && typeof IntentLauncher.startActivity === 'function') {
+            await IntentLauncher.startActivity({
+              action: 'android.settings.BLUETOOTH_SETTINGS',
+            });
+          } else {
+            await Linking.openSettings();
+          }
         }
       } catch (error) {
         await Linking.openSettings();
@@ -279,6 +294,7 @@ export const stopSearchBluetoothDevices = (
 ): Promise<{ success: boolean }> => {
   return new Promise(async resolve => {
     try {
+      await ensureBleManagerAlive();
       await bleInstance.stopDeviceScan();
     } catch {}
     resolve({ success: true });
@@ -300,6 +316,7 @@ export const checkIfDeviceIgnoredOnIOS = (
       const SCAN_TIMEOUT_MS = 10000;
       try {
         try {
+          await ensureBleManagerAlive();
           const connectedDevices = await bleInstance.connectedDevices([
             '0000fff0-0000-1000-8000-00805f9b34fb',
           ]);
@@ -408,6 +425,7 @@ export const isDeviceConnected = (
     const timeout = setTimeout(() => resolve({ success: false }), 3000);
     (async () => {
       try {
+        await ensureBleManagerAlive();
         const device = await bleInstance.devices([deviceIdentifier]);
         if (device?.[0]) {
           const isConnected = await device[0].isConnected();
@@ -445,6 +463,8 @@ export const notifyBLECharacteristicValueChange = (options: {
 }): Promise<{ success: boolean; msg?: string }> => {
   return new Promise(resolve => {
     try {
+      // 确保 BleManager 在弹窗/导航等场景下仍然有效
+      void ensureBleManagerAlive();
       bleInstance.monitorCharacteristicForDevice(
         options.deviceId,
         options.notifyServiceUuid,
@@ -878,11 +898,17 @@ export const openBluetoothSettings = (): Promise<boolean> => {
           .then(() => resolve(true))
           .catch(reject);
       } else {
-        IntentLauncher.startActivity({
-          action: 'android.settings.BLUETOOTH_SETTINGS',
-        })
-          .then(() => resolve(true))
-          .catch(reject);
+        if (IntentLauncher && typeof IntentLauncher.startActivity === 'function') {
+          IntentLauncher.startActivity({
+            action: 'android.settings.BLUETOOTH_SETTINGS',
+          })
+            .then(() => resolve(true))
+            .catch(reject);
+        } else {
+          Linking.openSettings()
+            .then(() => resolve(true))
+            .catch(reject);
+        }
       }
     } catch (error) {
       reject(error);

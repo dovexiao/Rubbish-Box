@@ -170,7 +170,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       // 状态展示
       loading = false,
       loadingStyle,
-      loadingIndicatorColor,
+      loadingIndicatorColor = 'rgba(0,0,0,0.3)',
       loadingBackgroundColor = 'rgba(0,0,0,0.3)',
       error,
       fullScreenError = false,

@@ -1,11 +1,7 @@
+/** @jsxRuntime classic */
+/** @jsx React.createElement */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-  Platform,
-} from 'react-native';
+import { Image, Text, TouchableOpacity, View, Platform } from 'react-native';
 import dayjs from 'dayjs';
 import { PageContainer, Flex, GradientButton } from '@/components';
 import {
@@ -46,14 +42,14 @@ const getStorage = async (options: { key: string }) => {
   return { data };
 };
 
-const setClipboardData = async (options: { data: string }) => {
-  try {
-    const Clipboard = require('@react-native-clipboard/clipboard').default;
-    if (Clipboard?.setString) {
-      Clipboard.setString(String(options.data));
-    }
-  } catch {}
-};
+// const setClipboardData = async (options: { data: string }) => {
+//   try {
+//     const Clipboard = require('@react-native-clipboard/clipboard').default;
+//     if (Clipboard?.setString) {
+//       Clipboard.setString(String(options.data));
+//     }
+//   } catch {}
+// };
 
 const tipsUserOperation = async (options: {
   title?: string;
@@ -62,10 +58,7 @@ const tipsUserOperation = async (options: {
   showToast({ title: options.content || options.title || '', icon: 'none' });
 };
 
-function useCountDown(options: {
-  targetDate?: number;
-  onEnd?: () => void;
-}) {
+function useCountDown(options: { targetDate?: number; onEnd?: () => void }) {
   const { targetDate, onEnd } = options;
   const onEndRef = useRef(onEnd);
   useEffect(() => {
@@ -133,13 +126,14 @@ export default function FindDevice(props: any) {
   const [state, setStateInner] = useState({
     bindSuccess: false,
     isPaired: false,
-    countdownTime: dayjs()
-      .add(120, 'seconds')
-      .valueOf() as unknown as number,
+    countdownTime: dayjs().add(120, 'seconds').valueOf() as unknown as number,
     searchBluetoothStatus:
-      SEARCH_BLUETOOTH_STATUS.SEARCHING as keyof typeof SEARCH_BLUETOOTH_STATUS,
+      SEARCH_BLUETOOTH_STATUS?.SEARCHING as keyof typeof SEARCH_BLUETOOTH_STATUS,
     needScan: Platform.OS === 'ios',
   });
+
+  const [step, setStep] = useState(0);
+  const [pairTargetTime, setPairTargetTime] = useState<number | undefined>();
 
   const setState = useCallback((patch: Partial<typeof state>) => {
     setStateInner(prev => ({ ...prev, ...patch }));
@@ -150,8 +144,7 @@ export default function FindDevice(props: any) {
       const res = (await getSavedDeviceInfo().catch(() => null)) || {};
       const info = await getSystemConnectedDevices();
       const isPaired =
-        info.data?.some((item: any) => item.deviceId === res.deviceId) ||
-        false;
+        info.data?.some((item: any) => item.deviceId === res.deviceId) || false;
       setState({ isPaired });
     } catch (error) {
       console.error('初始化蓝牙失败', error);
@@ -245,22 +238,25 @@ export default function FindDevice(props: any) {
     stateRef.current = state;
   }, [state]);
 
-  const searchBluetoothDevicesEnd = useCallback(async (searchRef?: any) => {
-    if (
-      stateRef.current.searchBluetoothStatus ===
-      SEARCH_BLUETOOTH_STATUS.SEARCHING
-    ) {
-      setState({
-        searchBluetoothStatus:
-          SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED as keyof typeof SEARCH_BLUETOOTH_STATUS,
-      });
-    }
-    if (searchRef) {
-      try {
-        await stopSearchBluetoothDevices(searchRef);
-      } catch {}
-    }
-  }, [setState]);
+  const searchBluetoothDevicesEnd = useCallback(
+    async (searchRef?: any) => {
+      if (
+        stateRef.current.searchBluetoothStatus ===
+        SEARCH_BLUETOOTH_STATUS.SEARCHING
+      ) {
+        setState({
+          searchBluetoothStatus:
+            SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED as keyof typeof SEARCH_BLUETOOTH_STATUS,
+        });
+      }
+      if (searchRef) {
+        try {
+          await stopSearchBluetoothDevices(searchRef);
+        } catch {}
+      }
+    },
+    [setState],
+  );
 
   const resetSearch = useCallback(
     (searchRef?: any) => {
@@ -286,20 +282,20 @@ export default function FindDevice(props: any) {
       }, 300);
     };
     runOnFocus();
-    const unsubscribe = navigation.addListener('focus', runOnFocus);
+    const unsubscribe =
+      navigation && typeof navigation.addListener === 'function'
+        ? navigation.addListener('focus', runOnFocus)
+        : undefined;
     return () => {
       if (timer) clearTimeout(timer);
-      unsubscribe();
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
     };
   }, [checkReturnFromSettings, init, navigation]);
 
   const powerIndicatorPopRef = useRef<PopCenterRef>(null);
-  const {
-    countdownTime,
-    searchBluetoothStatus,
-    isPaired,
-    needScan,
-  } = state;
+  const { countdownTime, searchBluetoothStatus, isPaired, needScan } = state;
 
   const [startSearch] = useState(false);
 
@@ -362,7 +358,14 @@ export default function FindDevice(props: any) {
     });
     await openBluetoothSettings();
     await handleTipsUserOperation(lockName || '', pin || '');
-  }, [lockName, pin, params, route?.name, route?.params, handleTipsUserOperation]);
+  }, [
+    lockName,
+    pin,
+    params,
+    route?.name,
+    route?.params,
+    handleTipsUserOperation,
+  ]);
 
   const handleBindSuccess = useCallback(async () => {
     try {
@@ -414,10 +417,10 @@ export default function FindDevice(props: any) {
 
       if (mode) {
         showToast({ title: '连接成功', icon: 'success' });
-        (navigation as any).navigate('BluetoothLinkSuccess');
+        navigation?.navigate?.('BluetoothLinkSuccess');
       } else {
         showToast({ title: '自动升降开启成功', icon: 'success' });
-        (navigation as any).navigate('BluetoothControl', {
+        navigation?.navigate?.('BluetoothControl', {
           lockName,
           bluetoothHasOpen: true,
           role,
@@ -451,6 +454,23 @@ export default function FindDevice(props: any) {
     targetDate: countdownTime,
   });
 
+  // step === 1 时，3 分钟倒计时；结束后自动回到 step 0
+  const [pairCountdown] = useCountDown({
+    onEnd: () => {
+      setStep(0);
+    },
+    targetDate: pairTargetTime,
+  });
+
+  // 进入 / 退出配对步骤时，控制倒计时起止
+  useEffect(() => {
+    if (step === 1) {
+      setPairTargetTime(Date.now() + 3 * 60 * 1000);
+    } else {
+      setPairTargetTime(undefined);
+    }
+  }, [step]);
+
   useEffect(() => {
     const t = setInterval(async () => {
       try {
@@ -476,7 +496,12 @@ export default function FindDevice(props: any) {
   }, [searchBluetoothStatus, startSearch, setState]);
 
   useEffect(() => {
-    if (startSearchDevice && searchRef && Platform.OS === 'ios' && !startSearch) {
+    if (
+      startSearchDevice &&
+      searchRef &&
+      Platform.OS === 'ios' &&
+      !startSearch
+    ) {
       void startSearchDevice(searchRef);
     }
     return () => {
@@ -499,7 +524,7 @@ export default function FindDevice(props: any) {
       safeAreaEdges={['top', 'bottom']}
       padding={0}
       pageNavProps={{
-        text: '连接蓝牙设备',
+        text: '进入蓝牙配对',
         showBack: true,
         background: '#ffffff',
       }}
@@ -525,134 +550,160 @@ export default function FindDevice(props: any) {
       scrollable={false}
     >
       <Flex direction="column" align="center" style={styles.content}>
-        {needScan ? (
+        {step === 0 ? (
           <>
-            <Image
-              source={{
-                uri: SEARCH_BLUETOOTH_STATUS_IMAGE[
-                  searchBluetoothStatus
-                ] as string,
-              }}
-              style={{ width: 320, height: 320 }}
-              resizeMode="contain"
-            />
-            <Flex style={styles.countdownContainer}>
-              {searchBluetoothStatus === SEARCH_BLUETOOTH_STATUS.SEARCHING ? (
-                <>
-                  <Text style={styles.countdownText}>正在连接中</Text>
-                  <Text style={[styles.countdownText, styles.countdownNumber]}>
-                    {Math.round(countdown / 1000)}s
-                  </Text>
-                </>
-              ) : (
-                <Text style={styles.countdownText}>
-                  {SEARCH_BLUETOOTH_STATUS_NAME[searchBluetoothStatus] ??
-                    (searchBluetoothStatus === SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS
-                      ? '已找到设备'
-                      : '搜索失败')}
-                </Text>
-              )}
-            </Flex>
-
-            {searchBluetoothStatus !==
-              SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS && (
-              <Flex direction="column" style={styles.card}>
-                <Flex style={styles.rowMargin} align="center">
-                  <View style={styles.dot} />
-                  <Text style={styles.cardItemText}>
-                    开启【{lockName || '未知名称'}】地锁电源
-                  </Text>
-                </Flex>
-                <Flex style={styles.cardItem} align="center">
-                  <View style={styles.dot} />
-                  <Text style={styles.cardItemText}>
-                    确认手机开启蓝牙，并靠近【{lockName || '未知名称'}】地锁
-                  </Text>
-                </Flex>
-                <Flex style={styles.cardItem} align="center">
-                  <View style={styles.dot} />
-                  <Text style={styles.cardItemText}>
-                    如果长时间未连接成功，请去系统设置蓝牙列表中忽略
-                    <Text style={styles.deviceName}>"{bleName}"</Text>
-                    ,并且重新搜索
-                  </Text>
-                </Flex>
-              </Flex>
-            )}
-          </>
-        ) : (
-          <>
-            <View style={styles.iconWrapper}>
-              <IconFont name="bluetooth-1" size={64} color="#333333" />
-            </View>
-            <View style={styles.titleWrapper}>
-              <Text style={styles.title}>请确保地锁通电</Text>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                style={styles.titleIcon}
-                onPress={() => powerIndicatorPopRef?.current?.open()}
-              >
-                <IconFont name="explain" size={36} color="#333333" />
-                <Text style={styles.titleIconText}>通电指南</Text>
-              </TouchableOpacity>
-            </View>
-
-            <Flex style={styles.infoSection} direction="column">
-              <Flex style={styles.infoBox}>
-                <View style={styles.infoContent}>
-                  <Text style={styles.infoLabel}>蓝牙名称</Text>
-                  <Text style={styles.infoValue}>{bleName}</Text>
-                </View>
-              </Flex>
-
-              <Flex style={styles.infoBox} align="center" justify="between">
-                <View style={styles.infoContent}>
-                  <Text style={styles.infoLabel}>PIN码</Text>
-                  <Text style={styles.pinValue}>{pin}</Text>
-                </View>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  style={styles.copyButton}
-                  onPress={() => {
-                    setClipboardData({ data: String(pin) });
-                    showToast({ title: '复制成功', icon: 'success' });
-                  }}
-                >
-                  <IconFont name="copy1" size={40} color="#6b7280" />
-                  <Text style={styles.copyText}>点击复制</Text>
-                </TouchableOpacity>
-              </Flex>
-            </Flex>
-
-            <Flex style={styles.footer} justify="center">
-              <GradientButton
-                colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                width={160}
-                height={44}
-                round={false}
-                btnBorderRadius={16}
-                onPress={() => handlePairing()}
-              >
-                <Flex style={styles.btnText} justify="center" align="center">
-                  <Text style={styles.btnTextInner}>跳转设置</Text>
-                </Flex>
-              </GradientButton>
-            </Flex>
-            <View style={styles.tips}>
-              <Text style={styles.tipsText}>
-                因机型不同，蓝牙搜索需要几分钟，请耐心等待
-              </Text>
-            </View>
-
-            <View style={styles.footerWrapper}>
+            <View style={styles.btnPositionImageContent}>
               <Image
                 source={{
-                  uri: 'https://g.18qjz.cn/img/boklock/bluetooth_link.gif',
+                  uri: 'https://g.18qjz.cn/img/boklock/btn_position.png',
                 }}
-                style={{ width: '65%', height: 350 }}
+                style={styles.btnPositionImage}
                 resizeMode="contain"
               />
             </View>
+            <Text style={styles.btnPositionImageText}>
+              按下按键进入蓝牙配对
+            </Text>
+
+            <Flex style={styles.deviceInfoSection} direction="column">
+              <Flex align="center" direction="row" justify="between">
+                <Text style={styles.deviceInfoItemLabel}>请确保地锁通电</Text>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  style={styles.deviceInfoItemIcon}
+                  onPress={() => powerIndicatorPopRef?.current?.open()}
+                >
+                  <IconFont name="explain" size={18} color="#FF873D" />
+                  <Text style={styles.deviceInfoItemIconText}>通电指南</Text>
+                </TouchableOpacity>
+              </Flex>
+            </Flex>
+          </>
+        ) : (
+          <>
+            {needScan ? (
+              <>
+                <Image
+                  source={{
+                    uri: SEARCH_BLUETOOTH_STATUS_IMAGE[
+                      searchBluetoothStatus
+                    ] as string,
+                  }}
+                  style={{ width: 320, height: 320 }}
+                  resizeMode="contain"
+                />
+                <Flex style={styles.countdownContainer}>
+                  {searchBluetoothStatus ===
+                  SEARCH_BLUETOOTH_STATUS.SEARCHING ? (
+                    <>
+                      <Text style={styles.countdownText}>正在连接中</Text>
+                      <Text
+                        style={[styles.countdownText, styles.countdownNumber]}
+                      >
+                        {Math.round(countdown / 1000)}s
+                      </Text>
+                    </>
+                  ) : (
+                    <Text style={styles.countdownText}>
+                      {SEARCH_BLUETOOTH_STATUS_NAME[searchBluetoothStatus] ??
+                        (searchBluetoothStatus ===
+                        SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS
+                          ? '已找到设备'
+                          : '搜索失败')}
+                    </Text>
+                  )}
+                </Flex>
+
+                {searchBluetoothStatus !==
+                  SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS && (
+                  <Flex direction="column" style={styles.card}>
+                    <Flex style={styles.rowMargin} align="center">
+                      <View style={styles.dot} />
+                      <Text style={styles.cardItemText}>
+                        开启【{lockName || '未知名称'}】地锁电源
+                      </Text>
+                    </Flex>
+                    <Flex style={styles.cardItem} align="center">
+                      <View style={styles.dot} />
+                      <Text style={styles.cardItemText}>
+                        确认手机开启蓝牙，并靠近【{lockName || '未知名称'}】地锁
+                      </Text>
+                    </Flex>
+                    <Flex style={styles.cardItem} align="center">
+                      <View style={styles.dot} />
+                      <Text style={styles.cardItemText}>
+                        如果长时间未连接成功，请去系统设置蓝牙列表中忽略
+                        <Text style={styles.deviceName}>"{bleName}"</Text>
+                        ,并且重新搜索
+                      </Text>
+                    </Flex>
+                  </Flex>
+                )}
+              </>
+            ) : (
+              <>
+                <View style={styles.iconWrapper}>
+                  <IconFont name="bluetooth-1" size={32} color="#333333" />
+                </View>
+                <View style={styles.titleWrapper}>
+                  <Text style={styles.title}>
+                    请前往蓝牙列表配对
+                    {Math.max(0, Math.round((pairCountdown || 0) / 1000))}s
+                  </Text>
+                </View>
+
+                <Flex style={styles.infoSection} direction="column">
+                  <Flex style={styles.infoBox}>
+                    <View style={styles.infoContent}>
+                      <Text style={styles.infoLabel}>蓝牙名称</Text>
+                      <Text style={styles.infoValue}>{bleName}</Text>
+                    </View>
+                  </Flex>
+                </Flex>
+
+                <Flex style={styles.footer} justify="center">
+                  <GradientButton
+                    colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
+                    width={160}
+                    height={44}
+                    round={false}
+                    btnBorderRadius={16}
+                    onPress={() => handlePairing()}
+                  >
+                    <Flex
+                      style={styles.btnText}
+                      justify="center"
+                      align="center"
+                    >
+                      <Text style={styles.btnTextInner}>跳转配对</Text>
+                    </Flex>
+                  </GradientButton>
+                </Flex>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  style={styles.cancelBtn}
+                  onPress={() => setStep(0)}
+                >
+                  <IconFont name="close" size={16} color="#333333" />
+                  <Text style={styles.cancelText}>取消配对</Text>
+                </TouchableOpacity>
+                <View style={styles.tips}>
+                  <Text style={styles.tipsText}>
+                    因机型不同，蓝牙搜索需要几分钟，请耐心等待
+                  </Text>
+                </View>
+
+                <View style={styles.footerWrapper}>
+                  <Image
+                    source={{
+                      uri: 'https://g.18qjz.cn/img/boklock/bluetooth_link.gif',
+                    }}
+                    style={{ width: '65%', height: 350 }}
+                    resizeMode="contain"
+                  />
+                </View>
+              </>
+            )}
           </>
         )}
       </Flex>

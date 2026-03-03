@@ -41,6 +41,16 @@ const BinDevice: React.FC = () => {
     };
   }, []);
 
+  // 从 FindDevice 等子页面返回时，重置识别状态，允许再次扫码
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      hasScannedRef.current = false;
+      popVisibleRef.current = false;
+      setIsActive(true);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const handleScanResult = useCallback(
     async (code: string) => {
       if (hasScannedRef.current || popVisibleRef.current) return;
@@ -67,6 +77,7 @@ const BinDevice: React.FC = () => {
               imageMap: data.imageMap,
               deviceNo: data.deviceNo,
               bleName: data.bleName,
+              pageName: 'BindDevice',
             } as never,
           );
         } else {

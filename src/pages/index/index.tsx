@@ -8,7 +8,14 @@ import { getLockInfo } from '@/services/device';
 import { unreadCount as fetchUnreadCount } from '@/services/user';
 import Flex from '@/components/Flex';
 import PopConfirm from '@/components/popConfirm';
-import { reLaunch, cacheGetSync, eventCenter } from '@/utils';
+import {
+  reLaunch,
+  cacheGetSync,
+  eventCenter,
+  getBluetoothDeviceInfo,
+  setStorage,
+  removeStorage,
+} from '@/utils';
 import LockVisual, {
   DeviceStatusFlags,
   LockVisualStatus,
@@ -16,6 +23,7 @@ import LockVisual, {
 import { LockInfoDTO } from './typing';
 import { FALL_STATUS } from '@/constants';
 import { styles } from './style';
+import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 
 const Index = () => {
   const [loading, setLoading] = useState(false);
@@ -24,6 +32,7 @@ const Index = () => {
   const [detail, setDetail] = useState<LockInfoDTO | undefined>(undefined);
   const [hasToken, setHasToken] = useState<boolean | null>(null);
   const [guestMode, setGuestMode] = useState(false);
+  const [isAutoOpenBluetooth, setIsAutoOpenBluetooth] = useState<boolean>(true);
   const [currentDeviceStatus, setCurrentDeviceStatus] =
     useState<LockVisualStatus>('rise');
   const [deviceStatus, setDeviceStatus] = useState<DeviceStatusFlags>({
@@ -222,6 +231,38 @@ const Index = () => {
   const bgImage =
     bgImageUri && bgImageUri !== 'null' ? { uri: bgImageUri } : undefined;
 
+  const hasBluetoothAutoOpen = async () => {
+    const result = await getBluetoothDeviceInfo().catch(() => ({}));
+    const bleNo = String(detail?.bleNo || '');
+    // @ts-ignore
+    const savedDeviceInfo = result?.[bleNo];
+    const deviceId = savedDeviceInfo?.deviceId;
+    const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo);
+
+    if (!deviceId || res.isIgnored || !savedDeviceInfo?.isPaired) {
+      const deviceMap =
+        (await getBluetoothDeviceInfo().catch(() => null)) || {};
+      if (deviceMap[bleNo]) {
+        const { [bleNo]: _, ...rest } = deviceMap;
+        setStorage({ key: 'bluetoothDeviceInfoList', data: rest });
+      }
+      removeStorage({ key: 'bluetoothDeviceInfo' });
+      setIsAutoOpenBluetooth(false);
+    } else {
+      setIsAutoOpenBluetooth(true);
+    }
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    timer = setInterval(hasBluetoothAutoOpen, 1000);
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, [hasBluetoothAutoOpen]);
+
   return (
     <PageContainer
       backgroundColor={bgImage ? 'transparent' : '#f6f7fa'}
@@ -294,6 +335,7 @@ const Index = () => {
                 await load(id);
               }}
               optioning={false}
+              isAutoOpenBluetooth={isAutoOpenBluetooth}
             >
               <LockVisual
                 detail={detail}

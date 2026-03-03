@@ -2,6 +2,7 @@
  * 导航工具函数（兼容 Taro 风格）
  */
 export { getCurrentPages, navigateBack, reLaunch } from './navigation';
+import { getCurrentPages } from './navigation';
 
 /**
  * 缓存工具函数
@@ -468,37 +469,46 @@ export const isSameMac = (mac1?: string, mac2?: string): boolean => {
 
 // 打开蓝牙设置（RN 端会在跳转前记录当前路由，便于从系统设置返回时恢复）
 export function openBluetoothSettings(value?: any): any {
-  // return new Promise(async (resolve, reject) => {
-  //   try {
-  //     // 在 RN 端，某些机型从系统设置返回会重启 APP，这里提前记录当前路由信息
-  //     if (process.env.TARO_ENV === 'rn' && value) {
-  //       try {
-  //         const ins = getCurrentInstance()
-  //         const path = ins?.router?.path
-  //         const params = ins?.router?.params
-  //         if (path) {
-  //           await setStorage({
-  //             key: 'rnReLaunchPath',
-  //             data: {path, params, value},
-  //           })
-  //         }
-  //       } catch (e) {
-  //         console.error('[openBluetoothSettings] 记录重启路径失败:', e)
-  //       }
-  //     }
-  //     if (platform.OS === 'ios') {
-  //       await Linking.openURL('App-Prefs:root=General')
-  //     } else {
-  //       await intentLauncher.startActivity({
-  //         action: 'android.settings.BLUETOOTH_SETTINGS',
-  //       })
-  //     }
-  //     resolve(true)
-  //   } catch (error) {
-  //     console.error('打开系统设置失败', error)
-  //     reject(error)
-  //   }
-  // })
+  return new Promise(async (resolve, reject) => {
+    try {
+      // 在 RN 端，某些机型从系统设置返回会重启 APP，这里提前记录当前路由信息
+      if (value) {
+        try {
+          const pages = getCurrentPages();
+          const current = pages[pages.length - 1];
+          const path = current?.routeName;
+          const params = current?.params;
+          if (path) {
+            await setStorage({
+              key: 'rnReLaunchPath',
+              data: { path, params, value },
+            });
+          }
+        } catch (e) {
+          console.error('[openBluetoothSettings] 记录重启路径失败:', e);
+        }
+      }
+      if (Platform.OS === 'ios') {
+        await Linking.openURL('App-Prefs:root=General');
+      } else {
+        if (
+          IntentLauncher &&
+          typeof IntentLauncher.startActivity === 'function'
+        ) {
+          await IntentLauncher.startActivity({
+            action: 'android.settings.BLUETOOTH_SETTINGS',
+          });
+        } else {
+          // 兜底：IntentLauncher 不可用时，使用系统设置入口
+          Linking.sendIntent('android.settings.BLUETOOTH_SETTINGS');
+        }
+      }
+      resolve(true);
+    } catch (error) {
+      console.error('打开系统设置失败', error);
+      reject(error);
+    }
+  });
 }
 
 // 获取本地存储的设备信息
