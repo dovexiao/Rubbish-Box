@@ -33,6 +33,7 @@ import {
 import { deviceDelete } from '@/services/combine';
 import MapComponent from '../Map';
 import AutoOperatePop, { AutoOperatePopRef } from '../autoOperatePop';
+import AnimationPop, { AnimationPopRef } from '../AnimationPop';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -59,10 +60,11 @@ const Content: React.FC<ContentProps> = ({
 
   const [operating, setOperating] = useState(false);
   const [groupList, setGroupList] = useState<any[]>([]);
-  const [manageMultipleRef, setManageMultipleRef] = useState(false);
   const [deleteMultipleRef, setDeleteMultipleRef] = useState(false);
   const [eleInstallRef, setEleInstallRef] = useState(false);
   const popRef = useRef<AutoOperatePopRef>(null);
+
+  const manageMultipleRef = useRef<AnimationPopRef>(null);
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -145,7 +147,7 @@ const Content: React.FC<ContentProps> = ({
     showLoading({ title: '删除中...' });
     await setStorage({ key: 'pageType', data: 'reload' });
     setDeleteMultipleRef(false);
-    setManageMultipleRef(false);
+    manageMultipleRef.current?.close();
     await deviceDelete({ id: detail?.id });
     hideLoading();
     showToast({ title: '删除成功' });
@@ -249,7 +251,7 @@ const Content: React.FC<ContentProps> = ({
               activeOpacity={0.8}
               style={styles.manualBtn}
               disabled={operating}
-              onPress={() => setManageMultipleRef(true)}
+              onPress={() => manageMultipleRef.current?.open()}
             >
               <View style={styles.manualIconCircle}>
                 <IconFont
@@ -332,7 +334,7 @@ const Content: React.FC<ContentProps> = ({
             <Flex
               style={styles.groupListBox}
               direction="column"
-              justify="between"
+              justify="center"
               align="center"
             >
               {(groupList || [])?.slice(0, 2)?.map(item => (
@@ -340,7 +342,6 @@ const Content: React.FC<ContentProps> = ({
                   key={item?.id}
                   style={styles.groupItem}
                   direction="row"
-                  justify={'between'}
                   align={'center'}
                 >
                   {item?.imageUrl && (
@@ -400,7 +401,7 @@ const Content: React.FC<ContentProps> = ({
             <IconFont name="a-headfor-20" size={20} color="#333333" />
           </Flex>
         </TouchableOpacity>
-        {detail?.mode == 1 && (
+        {detail?.powerType === 1 && (
           <TouchableOpacity
             style={styles.entryItem}
             onPress={() => {
@@ -433,13 +434,15 @@ const Content: React.FC<ContentProps> = ({
           </Flex>
         </TouchableOpacity>
       </View>
-      <Popup
-        visible={manageMultipleRef}
-        title="管理组合设备"
-        onClose={() => setManageMultipleRef(false)}
+
+      {/* 组合管理弹窗 */}
+      <AnimationPop
+        ref={manageMultipleRef}
+        direction="bottom"
+        title={'管理组合设备'}
       >
         <Flex
-          style={{ marginTop: 48 }}
+          style={{ marginTop: 24, marginBottom: 8 }}
           direction="column"
           justify="center"
           align="center"
@@ -454,7 +457,7 @@ const Content: React.FC<ContentProps> = ({
             }}
             onPress={() => {
               if (!detail?.id) return;
-              setManageMultipleRef(false);
+              manageMultipleRef.current?.close();
               navigation.navigate('CompositeManage', {
                 lockId: detail.id,
               });
@@ -466,13 +469,17 @@ const Content: React.FC<ContentProps> = ({
             isTouchView
             justify="center"
             align="center"
-            onPress={() => setDeleteMultipleRef(true)}
+            onPress={() => {
+              manageMultipleRef.current?.close();
+              setDeleteMultipleRef(true);
+            }}
             style={{ ...styles.manageBtn, ...styles.manageDeteleBtn }}
           >
             <Text style={styles.manageDeteleBtnText}>删除</Text>
           </Flex>
         </Flex>
-      </Popup>
+      </AnimationPop>
+
       <PopConfirm
         visible={deleteMultipleRef}
         title={`确定要删除此组合设备吗？`}

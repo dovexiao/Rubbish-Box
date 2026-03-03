@@ -334,5 +334,15 @@ export const routes = {
       component: require('@/pages/bluetooth/control').default,
       label: '自动升降',
     },
+    {
+      name: 'Message',
+      component: require('@/pages/message').default,
+      label: '消息中心',
+    },
+    {
+      name: 'MessageDetail',
+      component: require('@/pages/messageDetail').default,
+      label: '消息详情',
+    },
   ],
 } as const;

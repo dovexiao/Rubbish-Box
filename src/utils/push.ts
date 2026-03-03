@@ -4,7 +4,9 @@ const { MobPushModule, AppModule } = NativeModules;
 
 // 检查 MobPushModule 是否存在
 if (!MobPushModule) {
-  console.warn('MobPushModule is not available. Push notifications may not work.');
+  console.warn(
+    'MobPushModule is not available. Push notifications may not work.',
+  );
 }
 
 if (Platform.OS === 'ios' && MobPushModule) {
@@ -50,16 +52,24 @@ export async function getMobPushDeviceInfo(): Promise<{
   try {
     // 获取 RegistrationID
     if (MobPushModule && MobPushModule.getRegistrationID) {
-      const registrationID = await new Promise<string | undefined>((resolve) => {
-        try {
-          MobPushModule.getRegistrationID(({ res }: { res: string }) => {
-            resolve(res);
-          });
-        } catch (error) {
-          console.error('Error getting registration ID:', error);
-          resolve(undefined);
-        }
-      });
+      const registrationID = await Promise.race([
+        new Promise<string | undefined>(resolve => {
+          const timer = setTimeout(() => resolve(undefined), 2000);
+          try {
+            MobPushModule.getRegistrationID(({ res }: { res: string }) => {
+              clearTimeout(timer);
+              resolve(res);
+            });
+          } catch (error) {
+            clearTimeout(timer);
+            console.error('Error getting registration ID:', error);
+            resolve(undefined);
+          }
+        }),
+        new Promise<string | undefined>(resolve =>
+          setTimeout(() => resolve(undefined), 2500),
+        ),
+      ]);
       if (registrationID) {
         result.registrationID = registrationID;
       }
@@ -70,22 +80,29 @@ export async function getMobPushDeviceInfo(): Promise<{
 
   try {
     // 获取 DeviceToken (仅 Android)
-    if (Platform.OS !== 'ios' && MobPushModule && MobPushModule.getDeviceToken) {
-      const deviceToken = await new Promise<string | undefined>((resolve) => {
-        const timer = setTimeout(() => {
-          resolve(undefined);
-        }, 1000);
-        try {
-          MobPushModule.getDeviceToken(({ res }: { res: string }) => {
+    if (
+      Platform.OS !== 'ios' &&
+      MobPushModule &&
+      MobPushModule.getDeviceToken
+    ) {
+      const deviceToken = await Promise.race([
+        new Promise<string | undefined>(resolve => {
+          const timer = setTimeout(() => resolve(undefined), 1000);
+          try {
+            MobPushModule.getDeviceToken(({ res }: { res: string }) => {
+              clearTimeout(timer);
+              resolve(res);
+            });
+          } catch (error) {
             clearTimeout(timer);
-            resolve(res);
-          });
-        } catch (error) {
-          clearTimeout(timer);
-          console.error('Error getting device token:', error);
-          resolve(undefined);
-        }
-      });
+            console.error('Error getting device token:', error);
+            resolve(undefined);
+          }
+        }),
+        new Promise<string | undefined>(resolve =>
+          setTimeout(() => resolve(undefined), 1500),
+        ),
+      ]);
       if (deviceToken) {
         result.deviceToken = deviceToken;
       }
@@ -135,7 +152,7 @@ export default {
     safeCall('addPushReceiver');
     listeners[callback.toString()] = DeviceEventEmitter.addListener(
       'onCustomMessageReceive',
-      (result) => {
+      result => {
         callback(result);
       },
     );
@@ -153,7 +170,7 @@ export default {
     safeCall('addPushReceiver');
     listeners[callback.toString()] = DeviceEventEmitter.addListener(
       'onNotifyMessageReceive',
-      (result) => {
+      result => {
         callback(result);
       },
     );
@@ -171,7 +188,7 @@ export default {
     safeCall('addPushReceiver');
     listeners[callback.toString()] = DeviceEventEmitter.addListener(
       'onNotifyMessageOpenedReceive',
-      (result) => {
+      result => {
         callback(result);
       },
     );
@@ -187,9 +204,12 @@ export default {
   onTagsCallback: (callback: (result: any) => void) => {
     if (!MobPushModule) return;
     safeCall('addPushReceiver');
-    listeners[callback.toString()] = DeviceEventEmitter.addListener('onTagsCallback', (result) => {
-      callback(result);
-    });
+    listeners[callback.toString()] = DeviceEventEmitter.addListener(
+      'onTagsCallback',
+      result => {
+        callback(result);
+      },
+    );
   },
   offTagsCallback: (callback: (result: any) => void) => {
     const key = callback.toString();
@@ -202,9 +222,12 @@ export default {
   onAliasCallback: (callback: (result: any) => void) => {
     if (!MobPushModule) return;
     safeCall('addPushReceiver');
-    listeners[callback.toString()] = DeviceEventEmitter.addListener('onAliasCallback', (result) => {
-      callback(result);
-    });
+    listeners[callback.toString()] = DeviceEventEmitter.addListener(
+      'onAliasCallback',
+      result => {
+        callback(result);
+      },
+    );
   },
   offAliasCallback: (callback: (result: any) => void) => {
     const key = callback.toString();
@@ -214,8 +237,10 @@ export default {
     listeners[key].remove();
     delete listeners[key];
   },
-  getRegistrationID: (callback?: (res: string | undefined) => void): Promise<string | undefined> => {
-    return new Promise((resolve) => {
+  getRegistrationID: (
+    callback?: (res: string | undefined) => void,
+  ): Promise<string | undefined> => {
+    return new Promise(resolve => {
       if (!MobPushModule || !MobPushModule.getRegistrationID) {
         callback?.(undefined);
         resolve(undefined);
@@ -233,8 +258,10 @@ export default {
       }
     });
   },
-  getDeviceToken: (callback?: (res: string | undefined) => void): Promise<string | undefined> => {
-    return new Promise((resolve) => {
+  getDeviceToken: (
+    callback?: (res: string | undefined) => void,
+  ): Promise<string | undefined> => {
+    return new Promise(resolve => {
       if (Platform.OS !== 'ios') {
         if (!MobPushModule || !MobPushModule.getDeviceToken) {
           resolve(undefined);
@@ -322,7 +349,10 @@ export default {
       safeCall('addLocalNotification', params, callback);
     }
   },
-  removeLocalNotification: (notificationId: string, callback?: (result: any) => void) => {
+  removeLocalNotification: (
+    notificationId: string,
+    callback?: (result: any) => void,
+  ) => {
     if (Platform.OS !== 'ios') {
       safeCall('removeLocalNotification', notificationId, callback);
     }
@@ -384,7 +414,12 @@ export default {
       safeCall('startNotificationMonitor');
     }
   },
-  setSilenceTime: (startHour: number, startMinute: number, endHour: number, endMinute: number) => {
+  setSilenceTime: (
+    startHour: number,
+    startMinute: number,
+    endHour: number,
+    endMinute: number,
+  ) => {
     if (Platform.OS !== 'ios') {
       safeCall('setSilenceTime', startHour, startMinute, endHour, endMinute);
     }

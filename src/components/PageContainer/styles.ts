@@ -143,8 +143,8 @@ export const styles = StyleSheet.create({
   statusLoginLoginBtn: {
     width: 240,
     height: 44,
-    borderRadius: 22,
-    backgroundColor: '#2878FF',
+    borderRadius: 16,
+    backgroundColor: '#333333',
   },
   statusLoginLoginText: {
     fontSize: 16,

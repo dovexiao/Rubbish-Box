@@ -21,7 +21,6 @@ const statusBgColor: Record<number, string> = {
 
 function Status(props: { deviceStatus: number; overlay?: boolean }) {
   const { deviceStatus, overlay } = props;
-  console.log(deviceStatus, 'zheshi ');
   const color = statusColor[deviceStatus] ?? '';
   const bg = statusBgColor[deviceStatus] ?? '';
 

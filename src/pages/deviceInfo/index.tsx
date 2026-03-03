@@ -140,15 +140,13 @@ const DeviceInfo = () => {
         id: params?.lockId,
         lockName: lockName,
       });
-
+      hideLoading();
       if (res?.success) {
-        hideLoading();
         showToast('修改成功');
         editNamePopRef.current?.close();
         // 刷新数据
         pageContainerRef.current?.refresh();
       } else {
-        hideLoading();
         showToast(res?.message || '修改失败');
       }
     } catch (error) {
@@ -160,6 +158,7 @@ const DeviceInfo = () => {
   useEffect(() => {
     fetchLockInfo();
   }, [fetchLockInfo]);
+
   const handleBindQrCodeScan = useCallback(
     async (value: string) => {
       showLoading({ title: '绑定中...' });
@@ -205,10 +204,10 @@ const DeviceInfo = () => {
       buzzerStatus,
       id: deviceInfo?.id,
     });
+    hideLoading();
     if (res.success && res.code === 200) {
       loopOperateStatus(11);
     } else {
-      hideLoading();
       showToast(res.message || '修改失败');
     }
     return res.success;
@@ -217,6 +216,7 @@ const DeviceInfo = () => {
   const deviceModifyLockLeaveTime = async (leaveUpTime: number) => {
     showLoading({ title: '修改中...' });
     const res = await modifyLockLeaveTime({ leaveUpTime, id: deviceInfo?.id });
+    hideLoading();
     if (res.success) {
       fetchLockInfo();
     } else {
@@ -338,14 +338,17 @@ const DeviceInfo = () => {
               onPress={() => qrCodePopRef.current?.open()}
             >
               <Text style={styles.qrCodeBtnText}>查看</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.qrCodeBtn, { marginLeft: 12 }]}
-              onPress={() => changeQrCodePopRef.current?.open()}
-            >
-              <Text style={styles.qrCodeBtnText}>更换二维码</Text>
               <IconFont name={'a-headfor-20'} color="#333" size={20} />
             </TouchableOpacity>
+            {deviceInfo?.role === 1 && (
+              <TouchableOpacity
+                style={[styles.qrCodeBtn, { marginLeft: 12 }]}
+                onPress={() => changeQrCodePopRef.current?.open()}
+              >
+                <Text style={styles.qrCodeBtnText}>更换二维码</Text>
+                <IconFont name={'a-headfor-20'} color="#333" size={20} />
+              </TouchableOpacity>
+            )}
           </Flex>
         </Flex>
         <Flex

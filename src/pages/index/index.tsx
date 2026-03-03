@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, Image } from 'react-native';
+import { useFocusEffect } from '@react-navigation/core';
 import PageContainer from '@/components/PageContainer';
 import Header from '@/components/Header';
 import NoDevices from '@/components/NoDevices';
@@ -15,6 +16,7 @@ import {
   getBluetoothDeviceInfo,
   setStorage,
   removeStorage,
+  loopFunc,
 } from '@/utils';
 import LockVisual, {
   DeviceStatusFlags,
@@ -52,101 +54,131 @@ const Index = () => {
     message?: string;
   } | null>(null);
 
-  const load = useCallback(async (id?: number) => {
-    setLoading(true);
-    try {
-      // 获取首页锁信息
-      const lockRes = id
-        ? await getLockInfo({ type: 1, id } as any)
-        : await getLockInfo({ type: 1 } as any);
-      if (lockRes.success && lockRes.code === 200 && lockRes.data) {
-        setDetail(lockRes.data);
-        setHasDevice(true);
-        setError(null);
-        setCurrentDeviceStatus(() => {
-          const powerType = lockRes.data?.powerType;
-          const coverStatus = lockRes.data?.coverStatus;
-          const fallStatus = lockRes.data?.fallStatus;
-          // 非市电版本：只展示静态升起图
-          if (powerType !== 1) {
-            return 'rise';
-          }
-          // 市电版本 & 盖子已打开
-          if (coverStatus === 1 && powerType === 1) {
-            return 'openCover';
-          }
-          // 根据 fallStatus 判定
-          switch (fallStatus) {
-            case FALL_STATUS.RISE:
-              return 'rise';
-            case FALL_STATUS.FALL_SUCCESS:
-              return 'fall';
-            case FALL_STATUS.RISE_30:
-              return 'rise30';
-            case FALL_STATUS.RISE_120:
-              return 'rise120';
-            default:
-              return 'rise';
-          }
-        });
-      } else {
-        setDetail(undefined);
-        setHasDevice(false);
-        setError({
-          code: lockRes.code,
-          message: lockRes.message || lockRes.msg || '加载设备信息失败',
-        });
+  const load = useCallback(
+    async (id?: number, options?: { silent?: boolean }) => {
+      if (!options?.silent) {
+        setLoading(true);
       }
-
-      // 获取未读消息数
-      const unreadRes = await fetchUnreadCount({} as any);
-      if (unreadRes.success && unreadRes.code === 200) {
-        setUnreadCount(Number(unreadRes.data || 0));
-      } else {
-        setUnreadCount(0);
-      }
-    } catch (e) {
-      setHasDevice(false);
-      setDetail(undefined);
-      setError({ message: '网络异常，请稍后重试' });
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    // 初始进入首页时，根据 token / guestMode 判断是否拉取数据
-    (async () => {
       try {
-        const [token, guest] = await Promise.all([
-          cacheGetSync('token'),
-          cacheGetSync('guestMode'),
-        ]);
-        const hasTokenFlag = !!token;
-        const guestFlag = guest === true;
-        setHasToken(hasTokenFlag);
-        setGuestMode(guestFlag);
-
-        if (hasTokenFlag) {
-          await load();
-        } else {
-          // 未登录（含访客模式）不主动请求接口，直接展示引导/无设备提示
-          setLoading(false);
-          setHasDevice(false);
-          setDetail(undefined);
+        // 获取首页锁信息
+        const lockRes = id
+          ? await getLockInfo({ type: 1, id } as any)
+          : await getLockInfo({ type: 1 } as any);
+        if (lockRes.success && lockRes.code === 200 && lockRes.data) {
+          setDetail(lockRes.data);
+          setHasDevice(true);
           setError(null);
+          setCurrentDeviceStatus(() => {
+            const powerType = lockRes.data?.powerType;
+            const coverStatus = lockRes.data?.coverStatus;
+            const fallStatus = lockRes.data?.fallStatus;
+            // 非市电版本：只展示静态升起图
+            if (powerType !== 1) {
+              return 'rise';
+            }
+            // 市电版本 & 盖子已打开
+            if (coverStatus === 1 && powerType === 1) {
+              return 'openCover';
+            }
+            // 根据 fallStatus 判定
+            switch (fallStatus) {
+              case FALL_STATUS.RISE:
+                return 'rise';
+              case FALL_STATUS.FALL_SUCCESS:
+                return 'fall';
+              case FALL_STATUS.RISE_30:
+                return 'rise30';
+              case FALL_STATUS.RISE_120:
+                return 'rise120';
+              default:
+                return 'rise';
+            }
+          });
+        } else {
+          setDetail(undefined);
+          setHasDevice(false);
+          setError({
+            code: lockRes.code,
+            message: lockRes.message || lockRes.msg || '加载设备信息失败',
+          });
         }
-      } catch {
-        setHasToken(false);
-        setGuestMode(false);
-        setLoading(false);
+
+        // 获取未读消息数
+        const unreadRes = await fetchUnreadCount({} as any);
+        if (unreadRes.success && unreadRes.code === 200) {
+          setUnreadCount(Number(unreadRes.data || 0));
+        } else {
+          setUnreadCount(0);
+        }
+      } catch (e) {
         setHasDevice(false);
         setDetail(undefined);
-        setError({ message: '初始化失败，请稍后重试' });
+        setError({ message: '网络异常，请稍后重试' });
+        console.error(e);
+      } finally {
+        if (!options?.silent) {
+          setLoading(false);
+        }
       }
-    })();
-  }, [load]);
+    },
+    [],
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      let stopped = false;
+      let first = true;
+
+      const poller = loopFunc(async () => {
+        if (stopped) return false;
+        const silent = !first;
+        first = false;
+        try {
+          const [token, guest] = await Promise.all([
+            cacheGetSync('token'),
+            cacheGetSync('guestMode'),
+          ]);
+          if (stopped) return false;
+
+          const hasTokenFlag = !!token;
+          const guestFlag = guest === true;
+          setHasToken(hasTokenFlag);
+          setGuestMode(guestFlag);
+
+          if (hasTokenFlag) {
+            await load(undefined, { silent });
+            return true;
+          }
+
+          if (!silent) {
+            setLoading(false);
+            setHasDevice(false);
+            setDetail(undefined);
+            setError(null);
+          }
+          return false;
+        } catch {
+          if (stopped) return false;
+          if (!silent) {
+            setHasToken(false);
+            setGuestMode(false);
+            setLoading(false);
+            setHasDevice(false);
+            setDetail(undefined);
+            setError({ message: '初始化失败，请稍后重试' });
+          }
+          return true;
+        }
+      }, 10000);
+
+      poller.start();
+
+      return () => {
+        stopped = true;
+        poller.stop();
+      };
+    }, [load]),
+  );
 
   const showGuestWelcome = !hasToken && guestMode;
 
