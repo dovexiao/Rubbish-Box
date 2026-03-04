@@ -84,13 +84,14 @@ const debugStorageLog = (
   if (!__DEV__) return;
   try {
     const shimBackend = getHarmonyShimBackendNameSafe();
-    console.log(`[storage:${phase}]`, {
-      platform: Platform.OS,
-      backend: resolvedBackendName || 'unresolved',
-      ...(shimBackend ? { shimBackend } : null),
-      key,
-      ...payload,
-    });
+    // 取消本地存储的频繁打印，避免终端刷屏
+    // console.log(`[storage:${phase}]`, {
+    //   platform: Platform.OS,
+    //   backend: resolvedBackendName || 'unresolved',
+    //   ...(shimBackend ? { shimBackend } : null),
+    //   key,
+    //   ...payload,
+    // });
   } catch {}
 };
 
