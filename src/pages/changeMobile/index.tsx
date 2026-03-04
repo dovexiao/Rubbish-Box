@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import {
   changeMobileVerify,
@@ -10,7 +9,7 @@ import {
   getChangeNewCode,
   getCodeResent,
 } from '@/services/user';
-import { mobileExp } from '@/utils';
+import { hideLoading, mobileExp, showLoading, showToast } from '@/utils';
 import styles from './styles';
 
 type Step = 1 | 2;
@@ -70,11 +69,11 @@ export default function ChangeMobile() {
   // 发送原手机验证码（支持再次获取）
   const handleSendOldCode = async () => {
     if (!oldMobile) {
-      Toast.fail('缺少原手机号信息');
+      showToast('缺少原手机号信息');
       return;
     }
     if (!mobileExp(oldMobile)) {
-      Toast.fail('原手机号格式不正确');
+      showToast('原手机号格式不正确');
       return;
     }
     if (oldSending) return;
@@ -94,12 +93,12 @@ export default function ChangeMobile() {
         setOldSmsRequested(true);
         setOldError(null);
         setOldCountdown(60);
-        Toast.success('验证码已发送');
+        showToast('验证码已发送');
       } else {
-        Toast.fail(res.msg || '发送失败');
+        showToast(res.msg || '发送失败');
       }
     } catch (e) {
-      Toast.fail('发送验证码失败，请稍后重试');
+      showToast('发送验证码失败，请稍后重试');
     } finally {
       setOldSending(false);
     }
@@ -108,19 +107,19 @@ export default function ChangeMobile() {
   // 验证原手机
   const handleVerifyOld = async () => {
     if (!oldMobile) {
-      Toast.fail('缺少原手机号信息');
+      showToast('缺少原手机号信息');
       return;
     }
     if (!mobileExp(oldMobile)) {
-      Toast.fail('原手机号格式不正确');
+      showToast('原手机号格式不正确');
       return;
     }
     if (!oldCode.trim()) {
-      Toast.fail('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
     try {
-      Toast.loading('提交中...', 0);
+      showLoading({ title: '提交中...' });
       const params = {
         mobile: oldMobile,
         code: oldCode.trim(),
@@ -128,7 +127,7 @@ export default function ChangeMobile() {
       };
       console.log('[ChangeMobile] verify old mobile params:', params);
       const res = await changeMobileVerify(params);
-      Toast.removeAll();
+      hideLoading();
       const code = (res as any)?.code ?? (res as any)?.status;
       if (String(code) === '200') {
         setOldError(null);
@@ -136,26 +135,26 @@ export default function ChangeMobile() {
       } else if (String(code) === '515') {
         setOldError('验证码错误，请重新输入');
       } else {
-        Toast.fail((res as any)?.message || '验证失败');
+        showToast((res as any)?.message || '验证失败');
       }
     } catch (e) {
-      Toast.removeAll();
-      Toast.fail('验证失败，请稍后重试');
+      hideLoading();
+      showToast('验证失败，请稍后重试');
     }
   };
 
   // 发送新手机验证码（支持再次获取）
   const handleSendNewCode = async () => {
     if (!newMobile.trim()) {
-      Toast.fail('请输入新手机号');
+      showToast('请输入新手机号');
       return;
     }
     if (!mobileExp(newMobile)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (!flowId) {
-      Toast.fail('缺少验证流程信息，请先完成原手机号验证');
+      showToast('缺少验证流程信息，请先完成原手机号验证');
       return;
     }
     if (newSending) return;
@@ -177,12 +176,12 @@ export default function ChangeMobile() {
         setNewSmsRequested(true);
         setNewError(null);
         setNewCountdown(60);
-        Toast.success('验证码已发送');
+        showToast('验证码已发送');
       } else {
-        Toast.fail(res.msg || '发送验证码失败');
+        showToast(res.msg || '发送验证码失败');
       }
     } catch (e) {
-      Toast.fail('发送验证码失败，请稍后重试');
+      showToast('发送验证码失败，请稍后重试');
     } finally {
       setNewSending(false);
     }
@@ -191,24 +190,25 @@ export default function ChangeMobile() {
   // 验证新手机
   const handleVerifyNew = async () => {
     if (!newMobile.trim()) {
-      Toast.fail('请输入新手机号');
+      showToast('请输入新手机号');
       return;
     }
     if (!mobileExp(newMobile)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (!newCode.trim()) {
-      Toast.fail('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
     if (!flowId) {
-      Toast.fail('缺少验证流程信息，请重新获取验证码');
+      showToast('缺少验证流程信息，请重新获取验证码');
       return;
     }
     if (!canSubmitNew) return;
     try {
-      Toast.loading('提交中...', 0);
+      showLoading({ title: '提交中...' });
+
       const params = {
         mobile: newMobile.trim(),
         code: newCode.trim(),
@@ -216,20 +216,20 @@ export default function ChangeMobile() {
       };
       console.log('[ChangeMobile] verify new mobile params:', params);
       const res = await changeNewVerify(params);
-      Toast.removeAll();
+      hideLoading();
       const code = (res as any)?.code ?? (res as any)?.status;
       if (String(code) === '200') {
         setNewError(null);
-        Toast.success('手机号码更换成功');
+        showToast('手机号码更换成功');
         navigation.goBack();
       } else if (String(code) === '515') {
         setNewError('验证码错误，请重新输入');
       } else {
-        Toast.show((res as any)?.message || '提交失败');
+        showToast((res as any)?.message || '提交失败');
       }
     } catch (e) {
-      Toast.removeAll();
-      Toast.fail('提交失败，请稍后重试');
+      hideLoading();
+      showToast('提交失败，请稍后重试');
     }
   };
 
@@ -282,7 +282,7 @@ export default function ChangeMobile() {
               />
             </View>
 
-            <View style={[styles.inputRow, oldError && styles.errorBorder]}>
+            <View style={[styles.inputRow, oldError ? styles.errorBorder : {}]}>
               <TextInput
                 style={styles.input}
                 value={oldCode}

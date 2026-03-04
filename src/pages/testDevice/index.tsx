@@ -8,11 +8,12 @@ import {
   ListRenderItem,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast, SearchBar } from '@ant-design/react-native';
+import { SearchBar } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import Flex from '@/components/Flex';
 import { getTestDeviceList } from '@/services/deviceTest';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 const TEST_STATUS = {
   NORMAL: 0,
@@ -72,7 +73,7 @@ export default function TestDevice() {
         setHasMore(list.length >= PAGE_SIZE);
       } catch (error) {
         console.error('getTestDeviceList error:', error);
-        Toast.fail('获取测试设备列表失败');
+        showToast('获取测试设备列表失败');
       } finally {
         setLoading(false);
         setRefreshing(false);

@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import { wechatUnBind, getPrivateSendSms } from '@/services/user';
-import { mobileExp } from '@/utils';
+import { mobileExp, showToast } from '@/utils';
 import { POST_SOURCE, PURPOSE } from '@/constants';
 import styles from './styles';
 
@@ -43,11 +42,11 @@ export default function WechatUnbind() {
   const handleGetCode = async () => {
     const value = mobile.trim();
     if (!value) {
-      Toast.fail('请输入手机号');
+      showToast('请输入手机号');
       return;
     }
     if (!mobileExp(value)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (sending) return;
@@ -64,9 +63,9 @@ export default function WechatUnbind() {
       if (res.code === 200) {
         setSmsRequested(true);
         setCountdown(60);
-        Toast.success('验证码已发送');
+        showToast('验证码已发送');
       } else {
-        Toast.fail(res.msg || res.message || '发送失败');
+        showToast(res.msg || res.message || '发送失败');
       }
     } finally {
       setSending(false);
@@ -76,15 +75,15 @@ export default function WechatUnbind() {
   const handleSubmit = async () => {
     const value = mobile.trim();
     if (!value) {
-      Toast.fail('请输入手机号');
+      showToast('请输入手机号');
       return;
     }
     if (!mobileExp(value)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (!code.trim()) {
-      Toast.fail('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
     if (submitting) return;
@@ -100,15 +99,15 @@ export default function WechatUnbind() {
       const res = await wechatUnBind(params);
       if (res.code === 200) {
         setSmsError(false);
-        Toast.success('解绑成功');
+        showToast('解绑成功');
         setTimeout(() => {
           navigation.goBack();
         }, 1000);
       } else if (res.code === 515) {
         setSmsError(true);
-        Toast.fail('验证码错误');
+        showToast('验证码错误');
       } else {
-        Toast.fail(res.msg || res.message || '解绑失败');
+        showToast(res.msg || res.message || '解绑失败');
       }
     } finally {
       setSubmitting(false);

@@ -9,12 +9,12 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Flex, Tabs, Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import { getOrderList } from '@/services/order';
 import { OrderItem } from './com/orderItem';
 import type { OrderItemDTO } from './typing';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 const TAB_LIST = [
   { id: 'pending-shipment', name: '待发货', orderStatus: 20 },
@@ -62,7 +62,7 @@ export default function Order() {
         setOrderList(prev => (refresh ? list : [...prev, ...list]));
         setHasMore(list.length >= PAGE_SIZE);
       } catch (e) {
-        Toast.fail('获取订单列表失败');
+        showToast('获取订单列表失败');
       } finally {
         setLoading(false);
         setRefreshing(false);

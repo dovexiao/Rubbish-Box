@@ -7,12 +7,12 @@ import React, {
   useState,
 } from 'react';
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import Flex from '@/components/Flex';
 import GradientButton from '@/components/GradientButton';
 import PopConfirm, { type PopConfirmRef } from '@/components/popConfirm';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import { operateBuzzing } from '@/services';
+import { showToast } from '@/utils';
 
 export type BeeBuzzingCollisionPopRef = {
   open: () => void;
@@ -194,10 +194,10 @@ export const BeeBuzzingCollisionPop = forwardRef<
         onConfirm={async () => {
           const res: any = await operateBuzzing({ id: deviceId });
           if (res?.code === 200 && res?.success) {
-            Toast.success('蜂鸣测试成功');
+            showToast('蜂鸣测试成功');
             return true;
           }
-          Toast.fail(res?.message || '蜂鸣测试失败');
+          showToast(res?.message || '蜂鸣测试失败');
           return false;
         }}
       />

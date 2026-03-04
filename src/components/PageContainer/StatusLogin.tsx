@@ -12,7 +12,9 @@ const StatusLogin: React.FC = () => {
 
   return (
     <View style={styles.statusLoginContainer}>
-      <Text style={[styles.statusLoginTitle, { color: theme.colors.text.primary }]}>
+      <Text
+        style={[styles.statusLoginTitle, { color: theme.colors.text.primary }]}
+      >
         欢迎使用 泊刻地锁
       </Text>
       <Flex
@@ -33,7 +35,12 @@ const StatusLogin: React.FC = () => {
           resizeMode="contain"
         />
       </Flex>
-      <Text style={[styles.statusLoginToast, { color: theme.colors.text.secondary }]}>
+      <Text
+        style={[
+          styles.statusLoginToast,
+          { color: theme.colors.text.secondary },
+        ]}
+      >
         来添加你的第一台地锁吧！
       </Text>
       <Flex
@@ -42,7 +49,7 @@ const StatusLogin: React.FC = () => {
         align="center"
         style={styles.statusLoginLoginBtn}
         onPress={() => {
-          reLaunch({ url: '/pages/login/index' });
+          reLaunch('Login');
         }}
       >
         <Text style={styles.statusLoginLoginText}>登录</Text>
@@ -54,7 +61,7 @@ const StatusLogin: React.FC = () => {
         confirmText="登录"
         onConfirm={() => {
           popupRef.current?.close?.();
-          reLaunch({ url: '/pages/login/index' });
+          reLaunch('Login');
         }}
       />
     </View>

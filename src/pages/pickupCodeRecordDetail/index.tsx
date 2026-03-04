@@ -9,7 +9,7 @@ import {
   Share,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Input, PickerView, Toast } from '@ant-design/react-native';
+import { Input, PickerView } from '@ant-design/react-native';
 import { Flex, PageContainer, Popup } from '@/components';
 import IconFont from '@/iconfont';
 import {
@@ -19,6 +19,7 @@ import {
 import { regionData, getPickerResultByValues } from '@/utils/regionData';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
+import { hideLoading, showLoading, showToast } from '@/utils';
 
 // 状态：1 未填写地址，2 待发货，3 已发货
 const formatPickupTime = (time?: string) => {
@@ -83,11 +84,11 @@ export default function PickupCodeRecordDetail() {
         ) as RecordDetail;
         setDetail(data || null);
       } else {
-        Toast.fail(res?.message || res?.msg || '获取详情失败');
+        showToast(res?.message || res?.msg || '获取详情失败');
         navigation.goBack();
       }
     } catch (e) {
-      Toast.fail('获取详情失败');
+      showToast('获取详情失败');
       navigation.goBack();
     } finally {
       setLoading(false);
@@ -106,22 +107,22 @@ export default function PickupCodeRecordDetail() {
         message: expressNo,
         title: '快递单号',
       });
-      Toast.success('已分享快递单号');
+      showToast('已分享快递单号');
     } catch (e: any) {
       if (e?.message !== 'User did not share') {
-        Toast.fail('复制失败，请手动复制');
+        showToast('复制失败，请手动复制');
       }
     }
   }, [detail?.expressNo]);
 
   const confirmRegion = useCallback(() => {
     if (!pickerValue || pickerValue.length < 3) {
-      Toast.fail('请选择省市区');
+      showToast('请选择省市区');
       return;
     }
     const data = getPickerResultByValues(regionData, pickerValue);
     if (data.length < 3) {
-      Toast.fail('请选择省市区');
+      showToast('请选择省市区');
       return;
     }
     const province = data[0]?.label || '';
@@ -143,27 +144,27 @@ export default function PickupCodeRecordDetail() {
 
   const submitAddress = async () => {
     if (!recvName) {
-      Toast.show('请输入姓名');
+      showToast('请输入姓名');
       return;
     }
     if (!recvPhone || !/(1[3-9]\d{9})/.test(recvPhone)) {
-      Toast.show('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (!addressText) {
-      Toast.show('请选择地址');
+      showToast('请选择地址');
       return;
     }
     if (!detailAddress) {
-      Toast.show('请输入详细地址');
+      showToast('请输入详细地址');
       return;
     }
     const code = (detail?.pickupCode || '').trim();
     if (!code) {
-      Toast.show('提货码为空，请稍后重试');
+      showToast('提货码为空，请稍后重试');
       return;
     }
-    Toast.loading('提交中...');
+    showLoading({ title: '提交中...' });
     const address = `${addressText} ${detailAddress}`.trim();
 
     try {
@@ -173,19 +174,19 @@ export default function PickupCodeRecordDetail() {
         userPhone: recvPhone,
         address,
       });
-      Toast.removeAll();
+      hideLoading();
       if (res?.code === '200' || res?.code === 200) {
-        Toast.success('提交成功');
+        showToast('提交成功');
         fromList = true;
         await loadDetail();
         return;
       } else {
         const errorMsg = (res && (res.message || res.msg)) || '提交失败';
-        Toast.fail(errorMsg);
+        showToast(errorMsg);
       }
     } catch (e: any) {
-      Toast.removeAll();
-      Toast.fail('提交失败');
+      hideLoading();
+      showToast('提交失败');
     }
   };
 

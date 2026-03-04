@@ -7,10 +7,16 @@ import { useCountDown } from '@/hooks/useCountDown';
 import { getSmsCode, login } from '@/services/common';
 import { restPasswordVerify, thirdBind } from '@/services/user';
 import { SMS_PURPOSE } from '@/constants';
-import { cacheSetSync, getStorage, getMobPushDeviceInfo } from '@/utils';
+import {
+  cacheSetSync,
+  getStorage,
+  getMobPushDeviceInfo,
+  showToast,
+  hideLoading,
+  showLoading,
+} from '@/utils';
 import { tokenStorage } from '@/utils/storage';
 import { reLaunch } from '@/utils/navigation';
-import { Toast } from '@ant-design/react-native';
 import IconFont from '@/iconfont';
 import Flex from '@/components/Flex';
 import loginSmsStyles from './styles';
@@ -41,11 +47,11 @@ const LoginSms = () => {
     setShowError(false);
 
     if (!code || code.length !== 6) {
-      Toast.info('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
 
-    const loadingToast = Toast.loading('加载中...', 0);
+    showLoading({ title: '加载中...' });
 
     let device: any = {};
     try {
@@ -83,7 +89,7 @@ const LoginSms = () => {
         Keyboard.dismiss();
 
         if (type === SMS_PURPOSE.RESET_PASSWORD) {
-          Toast.remove(loadingToast);
+          hideLoading();
           navigation.navigate('ForgetPasswordReset', {
             tempToken: res.data,
           });
@@ -95,24 +101,22 @@ const LoginSms = () => {
           try {
             await getMobPushDeviceInfo();
           } catch {}
-          Toast.remove(loadingToast);
-          reLaunch({
-            url: '/pages/index/index',
-          });
+          hideLoading();
+          reLaunch('Index');
         }
       } else if (res.code === 515) {
         setShowError(true);
-        Toast.remove(loadingToast);
+        hideLoading();
       } else {
-        Toast.fail(res.msg || res.message || '验证失败');
+        showToast(res.msg || res.message || '验证失败');
         setCode('');
         setShowError(false);
         inputCodeRef.current?.clearCode();
-        Toast.remove(loadingToast);
+        hideLoading();
       }
     } catch (error) {
-      Toast.remove(loadingToast);
-      Toast.fail('验证失败，请重试');
+      hideLoading();
+      showToast('验证失败，请重试');
     }
   };
 
@@ -121,22 +125,22 @@ const LoginSms = () => {
     // 倒计时进行中不可重新获取验证码
     if (isCounting) return;
 
-    const loadingToast = Toast.loading('获取中...', 0);
+    showLoading({ title: '获取中...' });
     try {
       await getSmsCode({
         mobile,
         purpose: type,
         tempToken,
       });
-      Toast.remove(loadingToast);
+      hideLoading();
       // 获取新验证码时清空旧验证码与错误状态
       setCode('');
       setShowError(false);
       inputCodeRef.current?.clearCode();
       start();
     } catch (error) {
-      Toast.remove(loadingToast);
-      Toast.fail('获取验证码失败');
+      hideLoading();
+      showToast('获取验证码失败');
     }
   };
 

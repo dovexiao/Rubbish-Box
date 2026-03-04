@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PageContainer, Flex } from '@/components';
 import IconFont from '@/iconfont';
 import { getGoodsList } from '@/services/mall';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 type GoodsItemDTO = {
   id: number;
@@ -30,7 +30,7 @@ type GoodsCardProps = {
 };
 
 const CARD_HEIGHT = 164;
-const CARD_WIDTH = (Dimensions.get('window').width - 32 - 13) / 2
+const CARD_WIDTH = (Dimensions.get('window').width - 32 - 13) / 2;
 
 const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
   return (
@@ -41,7 +41,7 @@ const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
         borderRadius: 12,
         marginBottom: 12,
         overflow: 'hidden',
-        width: CARD_WIDTH
+        width: CARD_WIDTH,
       }}
       onPress={() => onPress(data.id)}
     >
@@ -56,7 +56,7 @@ const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
             fontSize: 14,
             color: '#333333',
             fontWeight: 'bold',
-            marginVertical: 8
+            marginVertical: 8,
           }}
           numberOfLines={2}
         >
@@ -115,10 +115,10 @@ export default function Shopping() {
           setGoodsList(next);
           setComplete(list.length < PAGE_SIZE);
         } else {
-          Toast.fail(res.msg || res.message || '获取商品列表失败');
+          showToast(res.msg || res.message || '获取商品列表失败');
         }
       } catch (e) {
-        Toast.fail('获取商品列表失败');
+        showToast('获取商品列表失败');
       } finally {
         setLoading(false);
       }
@@ -192,5 +192,3 @@ export default function Shopping() {
     </PageContainer>
   );
 }
-
-

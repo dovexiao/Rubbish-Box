@@ -1,5 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Keyboard, TouchableWithoutFeedback, TextInput as RNTextInput } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
+  TextInput as RNTextInput,
+} from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { PageContainer, Flex, TextInput } from '@/components';
 import IconFont from '@/iconfont';
@@ -7,9 +14,8 @@ import { restPassword } from '@/services/user';
 import { cacheSetSync, cacheGetSync } from '@/utils/cache';
 import push, { getMobPushDeviceInfo } from '@/utils/push';
 import { reLaunch } from '@/utils/navigation';
-import { Toast } from '@ant-design/react-native';
-import { getStorage } from '@/utils';
 import styles from './styles';
+import { hideLoading, showLoading, showToast } from '@/utils';
 
 const ForgetPasswordReset = () => {
   const route = useRoute<any>();
@@ -27,30 +33,30 @@ const ForgetPasswordReset = () => {
 
   const onSubmit = async () => {
     if (!password) {
-      Toast.info('请输入密码');
+      showToast('请输入密码');
       return;
     }
 
     if (!confirmPassword) {
-      Toast.info('请再次输入密码');
+      showToast('请再次输入密码');
       return;
     }
 
     if (password.length < 8 || password.length > 16) {
-      Toast.info('密码长度必须在8-16位之间');
+      showToast('密码长度必须在8-16位之间');
       setShowLengthError(true);
       return;
     }
 
     if (password !== confirmPassword) {
-      Toast.info('两次输入密码不一致');
+      showToast('两次输入密码不一致');
       setShowError(true);
       return;
     }
 
     setShowError(false);
     setShowLengthError(false);
-    const loadingToast = Toast.loading('提交中...', 0);
+    showLoading({ title: '提交中...' });
 
     try {
       // 获取设备信息
@@ -60,13 +66,14 @@ const ForgetPasswordReset = () => {
         if (sysInfo?.platform) {
           device.platform = sysInfo.platform === 'ios' ? 'ios' : 'android';
           device.brand = sysInfo.brand?.toLowerCase();
-          device.deviceId = device.platform !== 'ios' ? await push.getDeviceToken() : ''
+          device.deviceId =
+            device.platform !== 'ios' ? await push.getDeviceToken() : '';
           const registrationId = await Promise.race([
             push.getRegistrationID(),
             new Promise(resolve => setTimeout(() => resolve(''), 2000)),
-          ])
+          ]);
           if (registrationId) {
-            device.registrationId = registrationId
+            device.registrationId = registrationId;
           }
         }
       } catch (e) {
@@ -80,10 +87,10 @@ const ForgetPasswordReset = () => {
         ...device,
       });
 
-      Toast.remove(loadingToast);
+      hideLoading();
 
       if (res.code === 200) {
-        Toast.success('密码修改成功');
+        showToast('密码修改成功');
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
         try {
@@ -91,19 +98,17 @@ const ForgetPasswordReset = () => {
         } catch (e) {
           console.error('获取设备信息失败:', e);
         }
-        console.log('res======>')
-        reLaunch({
-          url: '/pages/index/index',
-        });
+        console.log('res======>');
+        reLaunch('Index');
       } else if (res.code === 515) {
-        Toast.removeAll()
+        hideLoading();
       } else {
-        Toast.removeAll()
-        Toast.fail(res.msg || res.message || '密码修改失败');
+        hideLoading();
+        showToast(res.msg || res.message || '密码修改失败');
       }
     } catch (error) {
-      Toast.remove(loadingToast);
-      Toast.fail('密码修改失败，请重试');
+      hideLoading();
+      showToast('密码修改失败，请重试');
       console.error('密码重置异常:', error);
     }
   };
@@ -114,7 +119,8 @@ const ForgetPasswordReset = () => {
         pageNavProps={{
           text: '',
           showBack: true,
-        }}>
+        }}
+      >
         <View style={styles.loadingContainer}>
           <Text>加载中...</Text>
         </View>
@@ -131,7 +137,12 @@ const ForgetPasswordReset = () => {
       loading={!tempToken}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Flex justify="center" direction="column" align="center" style={styles.container}>
+        <Flex
+          justify="center"
+          direction="column"
+          align="center"
+          style={styles.container}
+        >
           <Text style={styles.title}>重置登录密码</Text>
           <Flex justify="center" direction="column" align="center">
             <Flex
@@ -139,14 +150,15 @@ const ForgetPasswordReset = () => {
                 styles.content,
                 showLengthError ? styles.errorBorder : {},
               ]}
-              align="center">
+              align="center"
+            >
               <TextInput
                 ref={passwordInputRef}
                 placeholder="请输入8-16位密码，支持数字及符号"
                 placeholderTextColor="#CCCCCC"
                 style={styles.input}
                 value={password}
-                onChangeText={(v) => {
+                onChangeText={v => {
                   setPassword(v);
                   setShowLengthError(false);
                   setShowError(false);
@@ -170,18 +182,16 @@ const ForgetPasswordReset = () => {
             </Flex>
 
             <Flex
-              style={[
-                styles.content,
-                showError ? styles.errorBorder : {},
-              ]}
-              align="center">
+              style={[styles.content, showError ? styles.errorBorder : {}]}
+              align="center"
+            >
               <TextInput
                 ref={confirmPasswordInputRef}
                 placeholder="请再次输入密码"
                 placeholderTextColor="#CCCCCC"
                 style={styles.input}
                 value={confirmPassword}
-                onChangeText={(v) => {
+                onChangeText={v => {
                   setConfirmPassword(v);
                   setShowError(false);
                   setShowLengthError(false);
@@ -213,13 +223,14 @@ const ForgetPasswordReset = () => {
           <TouchableOpacity
             style={[
               styles.btn,
-              password && confirmPassword && styles.btnActive,
+              password && confirmPassword ? styles.btnActive : {},
             ]}
             onPress={() => {
               Keyboard.dismiss();
               onSubmit();
             }}
-            disabled={!password || !confirmPassword}>
+            disabled={!password || !confirmPassword}
+          >
             <Text style={styles.btnText}>完成并登录</Text>
           </TouchableOpacity>
         </Flex>

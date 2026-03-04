@@ -8,13 +8,13 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import { changePwdVerify, changePwd, getPrivateSendSms } from '@/services/user';
-import { mobileExp } from '@/utils';
+import { hideLoading, mobileExp, showLoading } from '@/utils';
 import { PURPOSE, POST_SOURCE } from '@/constants';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 type Step = 1 | 2;
 
@@ -69,11 +69,11 @@ export default function PasswordSet() {
   const handleGetCode = async () => {
     const value = mobile.trim();
     if (!value) {
-      Toast.fail('请输入手机号');
+      showToast('请输入手机号');
       return;
     }
     if (!mobileExp(value)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (sending) return;
@@ -89,9 +89,9 @@ export default function PasswordSet() {
       if (res.code === 200) {
         setSmsRequested(true);
         setCountdown(60);
-        Toast.success('验证码已发送');
+        showToast('验证码已发送');
       } else {
-        Toast.fail((res as any).msg || (res as any).message || '发送失败');
+        showToast((res as any).msg || (res as any).message || '发送失败');
       }
     } finally {
       setSending(false);
@@ -101,11 +101,11 @@ export default function PasswordSet() {
   const handleVerifySubmit = async () => {
     const value = mobile.trim();
     if (!value || !mobileExp(value)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (!code.trim()) {
-      Toast.fail('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
     if (verifySubmitting) return;
@@ -118,9 +118,9 @@ export default function PasswordSet() {
         setStep(2);
       } else if (res.code === 515) {
         setSmsError(true);
-        Toast.fail('验证码错误');
+        showToast('验证码错误');
       } else {
-        Toast.fail((res as any).msg || (res as any).message || '验证失败');
+        showToast((res as any).msg || (res as any).message || '验证失败');
       }
     } finally {
       setVerifySubmitting(false);
@@ -129,35 +129,35 @@ export default function PasswordSet() {
 
   const handlePasswordSubmit = async () => {
     if (password.length < 8 || password.length > 16) {
-      Toast.fail('密码长度必须在8-16位之间');
+      showToast('密码长度必须在8-16位之间');
       setShowError(true);
       return;
     }
     if (password !== confirmPassword) {
-      Toast.fail('两次输入密码不一致');
+      showToast('两次输入密码不一致');
       setShowError(true);
       return;
     }
     setShowError(false);
     if (pwdSubmitting) return;
     setPwdSubmitting(true);
-    const loadingToast = Toast.loading('提交中...', 0);
+    showLoading({ title: '提交中...' });
     try {
       const res = await changePwd({
         password,
         confirmPassword,
         tempToken: tempToken ?? undefined,
       });
-      Toast.remove(loadingToast);
+      hideLoading();
       if (res.code === 200) {
-        Toast.success(type === 'add' ? '密码设置成功' : '密码修改成功');
+        showToast(type === 'add' ? '密码设置成功' : '密码修改成功');
         setTimeout(() => navigation.goBack(), 1000);
       } else {
-        Toast.fail((res as any).msg || (res as any).message || '操作失败');
+        showToast((res as any).msg || (res as any).message || '操作失败');
       }
     } catch (e) {
-      Toast.remove(loadingToast);
-      Toast.fail('操作失败，请重试');
+      hideLoading();
+      showToast('操作失败，请重试');
     } finally {
       setPwdSubmitting(false);
     }

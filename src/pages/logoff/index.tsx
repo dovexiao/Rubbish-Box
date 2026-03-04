@@ -8,11 +8,10 @@ import {
   Alert,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { Flex, PageContainer, Popup } from '@/components';
 import IconFont from '@/iconfont';
 import { logout, getPrivateSendSms } from '@/services/user';
-import { mobileExp } from '@/utils';
+import { hideLoading, mobileExp, showLoading, showToast } from '@/utils';
 import { PURPOSE, POST_SOURCE } from '@/constants';
 import { reLaunch } from '@/utils/navigation';
 import { cacheRemove, cacheSetSync } from '@/utils/cache';
@@ -54,7 +53,7 @@ export default function Logoff() {
 
   const handleConfirmStep1 = () => {
     if (!agree) {
-      Toast.fail('请先勾选同意');
+      showToast('请先勾选同意');
       return;
     }
     setStep(2);
@@ -70,11 +69,11 @@ export default function Logoff() {
   const handleGetCode = async () => {
     const value = mobile.trim();
     if (!value) {
-      Toast.fail('请输入手机号');
+      showToast('请输入手机号');
       return;
     }
     if (!mobileExp(value)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (sending) return;
@@ -90,9 +89,9 @@ export default function Logoff() {
       if (Number((res as any).code) === 200) {
         setSmsRequested(true);
         setCountdown(60);
-        Toast.success('验证码已发送');
+        showToast('验证码已发送');
       } else {
-        Toast.fail((res as any).msg || (res as any).message || '发送失败');
+        showToast((res as any).msg || (res as any).message || '发送失败');
       }
     } finally {
       setSending(false);
@@ -102,22 +101,22 @@ export default function Logoff() {
   const handleLogoffSubmit = async () => {
     const value = mobile.trim();
     if (!value || !mobileExp(value)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (!code.trim()) {
-      Toast.fail('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
     if (submitting) return;
     setSubmitting(true);
     setSmsError(false);
-    const loadingToast = Toast.loading('提交中...', 0);
+    showLoading({ title: '提交中...' });
     try {
       const res = await logout({ mobile: value, code: code.trim() });
-      Toast.remove(loadingToast);
+      hideLoading();
       if (Number((res as any).code) === 200) {
-        Toast.success('已注销');
+        showToast('已注销');
         try {
           await cacheRemove({ key: 'token' });
         } catch {}
@@ -127,20 +126,20 @@ export default function Logoff() {
         try {
           await cacheSetSync('guestMode', true);
         } catch {}
-        reLaunch({ url: '/pages/login/index' });
+        reLaunch('Login');
       } else if (Number((res as any).code) === 515) {
         setSmsError(true);
-        Toast.fail('验证码错误');
+        showToast('验证码错误');
       } else {
         const msg = (res as any).msg || (res as any).message || '注销失败';
-        Toast.fail(msg);
+        showToast(msg);
         if (msg.includes('订单') || msg.includes('无法注销')) {
           setPopVisible(true);
         }
       }
     } catch (e) {
-      Toast.remove(loadingToast);
-      Toast.fail('注销失败，请重试');
+      hideLoading();
+      showToast('注销失败，请重试');
     } finally {
       setSubmitting(false);
     }

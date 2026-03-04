@@ -7,7 +7,6 @@ import {
   ListRenderItem,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import { getAddressList } from '@/services/user';
@@ -15,6 +14,7 @@ import { deleteAddress } from '@/services/setting';
 import PopConfirm from '@/components/popConfirm';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
+import { showToast } from '@/utils';
 
 interface AddressItem {
   id: number | string;
@@ -61,7 +61,7 @@ export default function Address() {
         setList(prev => (refresh ? dataList : [...prev, ...dataList]));
         setHasMore(dataList.length >= PAGE_SIZE);
       } catch (e) {
-        Toast.fail('获取地址列表失败');
+        showToast('获取地址列表失败');
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -80,12 +80,12 @@ export default function Address() {
     try {
       const res: any = await deleteAddress({ id: currentId });
       const ok = Number(res?.code) === 200 || res === true;
-      Toast.show(ok ? '删除地址成功' : res?.msg || res?.message || '删除失败');
+      showToast(ok ? '删除地址成功' : res?.msg || res?.message || '删除失败');
       if (ok) {
         void loadList(true);
       }
     } catch (e) {
-      Toast.fail('删除失败');
+      showToast('删除失败');
     }
   };
 

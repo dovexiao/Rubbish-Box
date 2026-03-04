@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, ActivityIndicator, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex, PopConfirm } from '@/components';
 import {
   useCameraPermission,
@@ -12,6 +11,7 @@ import {
 import type { PopConfirmRef } from '@/components/popConfirm';
 import { bindScan } from '@/services/bindDevice';
 import styles from './styles';
+import { hideLoading, reLaunch, showLoading, showToast } from '@/utils';
 
 const BinDevice: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -56,17 +56,17 @@ const BinDevice: React.FC = () => {
       if (hasScannedRef.current || popVisibleRef.current) return;
       hasScannedRef.current = true;
 
-      const loadingToast = Toast.loading('识别中...', 0);
+      showLoading({ title: '识别中...' });
       try {
         const res: any = await bindScan({
           code,
           userId: null,
         });
 
-        Toast.remove(loadingToast);
+        hideLoading();
 
         if (res?.code === 200) {
-          Toast.success('识别成功');
+          showToast('识别成功');
           const data = res.data || {};
 
           navigation.navigate(
@@ -89,7 +89,7 @@ const BinDevice: React.FC = () => {
         }
       } catch (error) {
         console.error('bindScan error:', error);
-        Toast.remove(loadingToast);
+        hideLoading();
         setErrorMsg('识别失败，请稍后重试');
         popVisibleRef.current = true;
         setIsActive(false);
@@ -243,7 +243,7 @@ const BinDevice: React.FC = () => {
           onCancel={() => {
             popVisibleRef.current = false;
             popRef.current?.close();
-            navigation.navigate('Index' as never);
+            reLaunch('Index');
           }}
           onConfirm={() => {
             popVisibleRef.current = false;

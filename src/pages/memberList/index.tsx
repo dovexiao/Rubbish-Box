@@ -15,13 +15,13 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import PopConfirm from '@/components/popConfirm';
 import IconFont from '@/iconfont';
 import { deleteStaff, getStaffList } from '@/services/user';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
+import { showToast } from '@/utils';
 
 type StaffItem = {
   id: number;
@@ -70,10 +70,10 @@ export default function MemberList() {
           setList(prev => (refresh ? rows : [...prev, ...rows]));
           setComplete(rows.length < PAGE_SIZE);
         } else {
-          Toast.fail(res.msg || res.message || '获取成员列表失败');
+          showToast(res.msg || res.message || '获取成员列表失败');
         }
       } catch (e) {
-        Toast.fail('获取成员列表失败');
+        showToast('获取成员列表失败');
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -103,15 +103,15 @@ export default function MemberList() {
     try {
       const res = await deleteStaff({ id: currentRow.id });
       if (res.code === 200 && res.success) {
-        Toast.success('删除成功');
+        showToast('删除成功');
         setList(prev => prev.filter(item => item.id !== currentRow.id));
         setCurrentRow(null);
         return true;
       }
-      Toast.fail(res.msg || res.message || '删除失败');
+      showToast(res.msg || res.message || '删除失败');
       return false;
     } catch (e) {
-      Toast.fail('删除失败');
+      showToast('删除失败');
       return false;
     }
   }, [currentRow]);

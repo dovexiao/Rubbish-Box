@@ -9,12 +9,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, TextInput, Flex } from '@/components';
 import IconFont from '@/iconfont';
 import { useRoute } from '@react-navigation/native';
 import { defaultName, groupChooseList, saveGroup } from '@/services';
-import { setStorage } from '@/utils';
+import { hideLoading, setStorage, showLoading, showToast } from '@/utils';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 type DeviceItem = {
@@ -56,9 +55,11 @@ export default function CombineDeviece() {
         if (res?.code === 200 && res?.success) {
           const name = (res as any)?.data ?? '';
           setGroupName(String(name));
+        } else {
+          showToast(res.msg || res.message);
         }
       } catch {
-        Toast.fail('获取默认名称失败');
+        showToast('获取默认名称失败');
       }
     })();
   }, []);
@@ -111,10 +112,10 @@ export default function CombineDeviece() {
             return prev;
           });
         } else {
-          Toast.fail(res?.msg || res?.message || '加载设备列表失败');
+          showToast(res?.msg || res?.message);
         }
       } catch {
-        Toast.fail('加载设备列表失败');
+        showToast('加载设备列表失败');
       } finally {
         setInitialLoading(false);
         setRefreshing(false);
@@ -151,33 +152,32 @@ export default function CombineDeviece() {
 
   const handleCreateGroup = useCallback(async () => {
     if (!groupName?.trim()) {
-      Toast.info('请填写设备名称');
+      showToast('请填写设备名称');
       return;
     }
     if (selectedDevices.length < 2) {
-      Toast.info('至少选择两个设备');
+      showToast('至少选择两个设备');
       return;
     }
 
-    const toastKey = Toast.loading('创建中...', 0);
+    showLoading({ title: '创建中...' });
     try {
       const res = await saveGroup({
         ids: selectedDevices,
         lockName: groupName.trim(),
       } as any);
-
+      hideLoading();
       if (res?.code === 200 && res?.success) {
         const groupId = (res as any)?.data ?? res;
         await setStorage({ key: 'createdGroupId', data: groupId });
-        Toast.success('创建成功');
-        navigation.navigate('Index' as any, { screen: 'Multiple' } as any);
+        showToast('创建成功');
+        navigation.navigate('MainTabs' as any, { screen: 'Multiple' } as any);
       } else {
-        Toast.fail(res?.msg || res?.message || '创建失败');
+        showToast(res?.msg || res?.message);
       }
     } catch {
-      Toast.fail('创建失败');
-    } finally {
-      Toast.remove(toastKey as any);
+      hideLoading();
+      showToast('创建失败');
     }
   }, [groupName, navigation, selectedDevices]);
 
@@ -323,10 +323,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    marginTop: 5,
+    marginTop: 12,
   },
   label: {
-    height: 50,
     fontSize: 14,
     fontWeight: '700',
     color: '#333333',
@@ -395,14 +394,12 @@ const styles = StyleSheet.create({
     height: 20,
   },
   pageFooter: {
-    height: 80,
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 8,
   },
   createToast: {
-    height: 20,
     marginBottom: 12,
     fontWeight: '400',
     fontSize: 14,
@@ -421,7 +418,7 @@ const styles = StyleSheet.create({
   sureCreateBtnText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '500',
   },
   disabledBtn: {
     backgroundColor: '#999999',

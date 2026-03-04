@@ -17,12 +17,11 @@ import {
 import Video from 'react-native-video';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer, Flex } from '@/components';
 import IconFont from '@/iconfont';
 import { getBannerDetails, updateBannerDetails } from '@/services/user';
-import { tencentUpload } from '@/utils';
+import { hideLoading, showLoading, showToast, tencentUpload } from '@/utils';
 import styles from './styles';
 import PopConfirm from '@/components/popConfirm';
 
@@ -107,7 +106,7 @@ export default function AdDisplay() {
       setTextLength((text || '').length);
       setDetail(data);
     } catch (e) {
-      Toast.fail('获取广告信息失败');
+      showToast('获取广告信息失败');
     }
   }, []);
 
@@ -143,7 +142,7 @@ export default function AdDisplay() {
   const handleChooseImage = useCallback(async () => {
     const remain = MAX_FILES - bannerImageUrls.length;
     if (remain <= 0) {
-      Toast.fail('最多上传10个文件');
+      showToast('最多上传10个文件');
       return;
     }
     launchImageLibrary(
@@ -155,20 +154,20 @@ export default function AdDisplay() {
       async res => {
         if (res.didCancel) return;
         if (res.errorCode || res.errorMessage) {
-          Toast.fail(res.errorMessage || '选择失败');
+          showToast(res.errorMessage || '选择失败');
           return;
         }
         const assets = res.assets || [];
         const uris = assets.map(a => a.uri).filter(Boolean) as string[];
         if (uris.length === 0) return;
         try {
-          Toast.loading('上传中...', 0);
+          showLoading({ title: '上传中...' });
           const list = await handleUploadFiles(uris, false);
-          Toast.removeAll();
+          hideLoading();
           setBannerImageUrls(prev => [...prev, ...list].slice(0, MAX_FILES));
         } catch (e) {
-          Toast.removeAll();
-          Toast.fail('上传失败，请重试');
+          hideLoading();
+          showToast('上传失败，请重试');
         }
       },
     );
@@ -177,7 +176,7 @@ export default function AdDisplay() {
   const handleChooseVideo = useCallback(async () => {
     const remain = MAX_FILES - bannerImageUrls.length;
     if (remain <= 0) {
-      Toast.fail('最多上传10个文件');
+      showToast('最多上传10个文件');
       return;
     }
     launchImageLibrary(
@@ -188,20 +187,20 @@ export default function AdDisplay() {
       async res => {
         if (res.didCancel) return;
         if (res.errorCode || res.errorMessage) {
-          Toast.fail(res.errorMessage || '选择失败');
+          showToast(res.errorMessage || '选择失败');
           return;
         }
         const assets = res.assets || [];
         const uri = assets[0]?.uri;
         if (!uri) return;
         try {
-          Toast.loading('上传中...', 0);
+          showLoading({ title: '上传中...' });
           const list = await handleUploadFiles([uri], true);
-          Toast.removeAll();
+          hideLoading();
           setBannerImageUrls(prev => [...prev, ...list].slice(0, MAX_FILES));
         } catch (e) {
-          Toast.removeAll();
-          Toast.fail('上传失败，请重试');
+          hideLoading();
+          showToast('上传失败，请重试');
         }
       },
     );
@@ -213,7 +212,7 @@ export default function AdDisplay() {
 
   const handleCreate = useCallback(async () => {
     if (!bannerText?.trim() && bannerImageUrls.length === 0) {
-      Toast.fail('请上传广告图片或文案信息');
+      showToast('请上传广告图片或文案信息');
       return;
     }
     if (submitting) return;
@@ -224,13 +223,13 @@ export default function AdDisplay() {
         bannerText: bannerText?.trim() || '',
       });
       if (Number(res?.code) === 200) {
-        Toast.success('更新广告成功');
+        showToast('更新广告成功');
         navigation.goBack();
       } else {
-        Toast.fail((res as any)?.message || (res as any)?.msg || '更新失败');
+        showToast((res as any)?.message || (res as any)?.msg || '更新失败');
       }
     } catch (e) {
-      Toast.fail('更新失败');
+      showToast('更新失败');
     } finally {
       setSubmitting(false);
     }

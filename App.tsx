@@ -440,13 +440,11 @@ function App() {
                   }
                 } else {
                   // 其他路径直接跳转
-                  reLaunch({ url: data.path });
+                  reLaunch(data.path);
                 }
               } catch (e) {
                 // URLSearchParams 失败则只跳路径
-                reLaunch({
-                  url: '/pages/index/index',
-                });
+                reLaunch('Index');
               }
             } catch (e) {
               console.error('处理 rnReLaunchPath 失败:', e);

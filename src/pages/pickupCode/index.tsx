@@ -8,13 +8,12 @@ import {
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex, Popup } from '@/components';
 import PopConfirm from '@/components/popConfirm';
 import GradientButton from '@/components/GradientButton';
 import IconFont from '@/iconfont';
 import { getPickupCodeDetail, confirmPickupCode } from '@/services/mall';
-import { getStorage, removeStorage } from '@/utils';
+import { getStorage, removeStorage, showToast } from '@/utils';
 import styles from './styles';
 
 export default function PickupCode() {
@@ -59,7 +58,7 @@ export default function PickupCode() {
   const handleGetCodeDetail = useCallback(async () => {
     const code = pickupCode.trim();
     if (!code) {
-      Toast.fail('请输入提货码');
+      showToast('请输入提货码');
       return false;
     }
 
@@ -69,10 +68,10 @@ export default function PickupCode() {
         setDeviceImg(res.data?.imageUrl || '');
         return true;
       }
-      Toast.fail(res.msg || res.message || '提货码无效，请检查后重试');
+      showToast(res.msg || res.message || '提货码无效，请检查后重试');
       return false;
     } catch (e: any) {
-      Toast.fail('网络异常，请稍后重试');
+      showToast('网络异常，请稍后重试');
       return false;
     }
   }, [pickupCode]);
@@ -81,7 +80,7 @@ export default function PickupCode() {
   const handleConfirmPickup = useCallback(async () => {
     const code = pickupCode.trim();
     if (!code) {
-      Toast.fail('请输入提货码');
+      showToast('请输入提货码');
       return false;
     }
 
@@ -90,10 +89,10 @@ export default function PickupCode() {
       if (res.code === 200 && res.success) {
         return true;
       }
-      Toast.fail(res.msg || res.message || '提货失败，请稍后重试');
+      showToast(res.msg || res.message || '提货失败，请稍后重试');
       return false;
     } catch (e: any) {
-      Toast.fail('提货失败，请稍后重试');
+      showToast('提货失败，请稍后重试');
       return false;
     }
   }, [pickupCode]);

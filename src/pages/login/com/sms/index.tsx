@@ -7,10 +7,15 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { TextInput } from '@/components';
-import { eventCenter, mobileExp } from '@/utils';
+import {
+  eventCenter,
+  hideLoading,
+  mobileExp,
+  showLoading,
+  showToast,
+} from '@/utils';
 import { getSmsCode } from '@/services';
 import { SMS_PURPOSE } from '@/constants';
-import Toast from '@ant-design/react-native/lib/toast';
 import { useNavigation } from '@react-navigation/native';
 import loginStyles from './styles';
 interface SmsProps {
@@ -44,9 +49,9 @@ const Sms: React.FC<SmsProps> = ({
     }
 
     setShowError(false);
-    const loadingToast = Toast.loading('发送中', 0);
+    showLoading({ title: '发送中...' });
     const res = await getSmsCode({ mobile, purpose: SMS_PURPOSE.LOGIN });
-    Toast.remove(loadingToast);
+    hideLoading();
     console.log('res', res);
 
     if (res.code === 200) {
@@ -54,7 +59,7 @@ const Sms: React.FC<SmsProps> = ({
     } else if (res.code === 521) {
       setShowError(true);
     } else {
-      Toast.fail(res.msg || '发送失败');
+      showToast(res.msg || '发送失败');
     }
   };
 
@@ -108,7 +113,7 @@ const Sms: React.FC<SmsProps> = ({
         <TouchableOpacity
           style={[
             loginStyles.btn,
-            mobile && !showError && loginStyles.btnActive,
+            mobile && !showError ? loginStyles.btnActive : {},
           ]}
           onPress={() => {
             Keyboard.dismiss();

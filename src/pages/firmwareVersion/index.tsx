@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { Flex, PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import { lastVersion } from '@/services/deviceInfo';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { showToast } from '@/utils';
 
 type LastVersionInfo = {
   version?: string;
@@ -39,11 +39,11 @@ export default function FirmwareVersion() {
       if (res?.code === 200 && res?.success) {
         setLatestInfo(res.data || null);
       } else {
-        Toast.fail(res?.message || res?.msg || '获取最新版本失败');
+        showToast(res?.message || res?.msg || '获取最新版本失败');
         setLatestInfo(null);
       }
     } catch (e) {
-      Toast.fail('获取最新版本失败');
+      showToast('获取最新版本失败');
       setLatestInfo(null);
     } finally {
       setInitialLoading(false);

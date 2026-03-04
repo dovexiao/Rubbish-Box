@@ -7,13 +7,13 @@ import {
   View,
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { Flex, PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import MyEmpty from '@/components/MyEmpty';
 import { getVersionRecords } from '@/services/deviceInfo';
 import { cacheGetSync } from '@/utils/cache';
 import { styles } from './style';
+import { showToast } from '@/utils';
 
 interface HistoryItem {
   /*日期标签（今天、昨天、7月1日等） */
@@ -145,7 +145,7 @@ export default function VersionHistory() {
           setComplete(loadedNow < PAGE_SIZE);
         }
       } catch (e: any) {
-        Toast.fail(e?.message || e?.msg || '获取历史记录失败');
+        showToast(e?.message || e?.msg || '获取历史记录失败');
       } finally {
         setInitialLoading(false);
         setRefreshing(false);

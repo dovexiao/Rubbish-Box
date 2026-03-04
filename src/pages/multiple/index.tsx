@@ -293,7 +293,7 @@ const Index = () => {
             align="center"
             style={styles.guestLoginBtn}
             onPress={() => {
-              reLaunch({ url: '/pages/login/index' });
+              reLaunch('Login');
             }}
           >
             <Text style={styles.guestLoginText}>登录</Text>
@@ -305,14 +305,17 @@ const Index = () => {
             confirmText="登录"
             onConfirm={() => {
               guestPopupRef.current?.close?.();
-              reLaunch({ url: '/pages/login/index' });
+              reLaunch('Login');
             }}
           />
         </View>
       ) : (
         <>
           {/* 主体内容 */}
-          <ScrollView contentContainerStyle={styles.content}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.content}
+          >
             <Header
               unreadCount={unreadCount}
               lockInfo={detail}

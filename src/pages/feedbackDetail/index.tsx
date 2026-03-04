@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import dayjs from 'dayjs';
 import { useRoute } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { Flex, PageContainer } from '@/components';
 import { getOpinionDetail, submitOpinionEvaluate } from '@/services/user';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 interface DetailInfo {
   id: number;
@@ -77,7 +77,7 @@ export default function FeedbackDetail() {
       ]);
       setTextLength((data.evaluationContent || '').length);
     } catch (e) {
-      Toast.fail('获取详情失败');
+      showToast('获取详情失败');
     }
   }, [feedbackId]);
 
@@ -112,13 +112,13 @@ export default function FeedbackDetail() {
       const res = await submitOpinionEvaluate(params);
       const code = (res as any)?.code ?? (res as any)?.status;
       if (String(code) === '200') {
-        Toast.success('提交成功');
+        showToast('提交成功');
         loadDetail();
       } else {
-        Toast.fail((res as any)?.message || '提交失败');
+        showToast((res as any)?.message || '提交失败');
       }
     } catch (e) {
-      Toast.fail('提交失败');
+      showToast('提交失败');
     } finally {
       setSubmitting(false);
     }

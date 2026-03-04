@@ -8,9 +8,9 @@ import React, {
 import { Text, TouchableOpacity, View } from 'react-native';
 import IconFont from '@/components/AppIcon';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
-import { Toast } from '@ant-design/react-native';
 import Video from 'react-native-video';
 import { styles } from './style';
+import { showToast } from '@/utils';
 
 export type BatteryReminderPopRef = {
   open: () => void;
@@ -100,7 +100,7 @@ export const BatteryReminderPop = forwardRef<
               resetVideo();
             }}
             onError={() => {
-              Toast.fail('视频加载失败');
+              showToast('视频加载失败');
               resetVideo();
             }}
             onFullscreenPlayerDidPresent={() => {

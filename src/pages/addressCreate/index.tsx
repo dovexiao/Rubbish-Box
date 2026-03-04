@@ -8,13 +8,14 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Toast, PickerView } from '@ant-design/react-native';
+import { PickerView } from '@ant-design/react-native';
 import { PageContainer, Popup } from '@/components';
 import IconFont from '@/iconfont';
 import { saveOrUpdate, getDetail } from '@/services/setting';
 import { regionData, getPickerResultByValues } from '@/utils/regionData';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
+import { hideLoading, showLoading, showToast } from '@/utils';
 
 interface AddressDetail {
   id?: number | string;
@@ -68,7 +69,7 @@ export default function AddressCreate() {
       setDetailAddress(d.detailAddress || '');
       // 若有 code，可尝试推回 pickerValue（可选）
     } catch (e) {
-      Toast.fail('获取地址详情失败');
+      showToast('获取地址详情失败');
     } finally {
       setLoading(false);
     }
@@ -86,12 +87,12 @@ export default function AddressCreate() {
 
   const confirmRegion = () => {
     if (!pickerValue || pickerValue.length < 3) {
-      Toast.fail('请选择省市区');
+      showToast('请选择省市区');
       return;
     }
     const data = getPickerResultByValues(regionData, pickerValue);
     if (data.length < 3) {
-      Toast.fail('请选择省市区');
+      showToast('请选择省市区');
       return;
     }
     const p = data[0];
@@ -112,19 +113,19 @@ export default function AddressCreate() {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Toast.info('请输入姓名');
+      showToast('请输入姓名');
       return;
     }
     if (!phone.trim() || !/(1[3-9]\d{9})/.test(phone.trim())) {
-      Toast.info('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (!province || !city || !county) {
-      Toast.info('请选择地区');
+      showToast('请选择地区');
       return;
     }
     if (!detailAddress.trim()) {
-      Toast.info('请输入详细地址');
+      showToast('请输入详细地址');
       return;
     }
 
@@ -132,7 +133,7 @@ export default function AddressCreate() {
     setSaving(true);
     const fullAddress = `${province}${city}${county}${detailAddress}`.trim();
     const title = id ? '编辑' : '新增';
-    const loadingToast = Toast.loading('提交中...', 0);
+    showLoading({ title: '提交中...' });
 
     try {
       const payload: any = {
@@ -149,17 +150,17 @@ export default function AddressCreate() {
         fullAddress,
       };
       const res: any = await saveOrUpdate(payload);
-      Toast.remove(loadingToast);
+      hideLoading();
       if (res === true || Number(res?.code) === 200) {
-        Toast.success(`${title}成功`);
+        showToast(`${title}成功`);
         navigation.goBack();
       } else {
         const msg = (res && (res.message || res.msg)) || `${title}失败`;
-        Toast.fail(msg);
+        showToast(msg);
       }
     } catch (e) {
-      Toast.remove(loadingToast);
-      Toast.fail('提交失败，请重试');
+      hideLoading();
+      showToast('提交失败，请重试');
     } finally {
       setSaving(false);
     }

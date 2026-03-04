@@ -1,9 +1,5 @@
-import {
-  NavigationContainerRef,
-  CommonActions,
-  StackActions,
-} from '@react-navigation/native';
-import Toast from '@ant-design/react-native/lib/toast';
+import { CommonActions, StackActions } from '@react-navigation/native';
+import { NavigationContainerRef } from '@react-navigation/core';
 import { HOME_STACK_ROUTE } from '@/constants';
 
 // 导航引用，在 App.tsx 中设置
@@ -38,7 +34,7 @@ export function navigateToHome() {
     navigationRef.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: HOME_STACK_ROUTE }],
+        routes: [{ name: 'MainTabs', params: { screen: 'Index' } }],
       }),
     );
   }
@@ -55,9 +51,9 @@ export function getCurrentPages(): Array<{ routeName: string; params?: any }> {
 
   try {
     const state = navigationRef.getState();
-    return state.routes.map(route => ({
-      routeName: route.name,
-      params: route.params,
+    return state.routes.map((route: any) => ({
+      routeName: route?.name,
+      params: route?.params,
     }));
   } catch (error) {
     console.error('Failed to get current pages:', error);
@@ -83,12 +79,15 @@ export function navigateBack() {
  * 重新启动到指定页面（兼容 Taro 风格）
  * 清空页面栈并导航到指定页面
  */
-export function reLaunch(options: { url: string }) {
-  const routeName = parseRouteName(options.url);
+export function reLaunch(url: string, params?: any) {
+  const routeName = parseRouteName(url);
 
   if (!routeName) {
     return;
   }
+  const tabScreens = new Set(['Index', 'Multiple', 'Mine']);
+  const isTabScreen = tabScreens.has(routeName);
+  const rootRouteName = isTabScreen ? 'MainTabs' : routeName;
 
   // 如果导航引用未准备好，等待一段时间后重试
   const tryNavigate = (retries = 5) => {
@@ -97,7 +96,15 @@ export function reLaunch(options: { url: string }) {
         navigationRef.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: routeName }],
+            routes: [
+              {
+                name: rootRouteName,
+                params:
+                  rootRouteName === 'MainTabs'
+                    ? { screen: routeName, params }
+                    : params,
+              },
+            ],
           }),
         );
       } catch (error) {
@@ -127,7 +134,7 @@ function parseRouteName(url: string): string | null {
     url.charAt(0) === url.charAt(0).toUpperCase() &&
     !url.includes('/')
   ) {
-    return normalizeStackRoute(url);
+    return url;
   }
 
   // 移除开头的斜杠

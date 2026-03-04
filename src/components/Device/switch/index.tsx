@@ -6,7 +6,6 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
-import Toast from '@ant-design/react-native/lib/toast';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { LockInfoDTO } from '@/pages/index/typing';
 import { getLockDeviceList } from '@/services/device';
@@ -19,6 +18,7 @@ import { DeviceItemDTO } from '../Item/typing';
 import IconFont from '@/iconfont';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { hideLoading, showLoading, showToast } from '@/utils';
 
 interface Props {
   lockInfo?: LockInfoDTO;
@@ -51,9 +51,7 @@ export const DeviceSwitch: React.FC<Props> = ({
 
   const handleOpenDeviceList = () => {
     devicePopRef.current?.open();
-    if (deviceList.length === 0) {
-      loadDeviceList();
-    }
+    loadDeviceList();
   };
 
   const loadDeviceList = useCallback(
@@ -68,7 +66,7 @@ export const DeviceSwitch: React.FC<Props> = ({
       } as any);
 
       if (!res?.success) {
-        Toast.fail(res?.message || '获取设备列表失败');
+        showToast(res?.message || '获取设备列表失败');
         return;
       }
 
@@ -82,15 +80,15 @@ export const DeviceSwitch: React.FC<Props> = ({
     devicePopRef.current?.close();
     if (lockInfo?.id === item.id) return;
 
-    const loadingToast = Toast.loading('切换设备中...', 0);
+    showLoading({ title: '切换设备中...' });
     try {
       if (reload) {
         await reload(item.id);
       }
-      Toast.remove(loadingToast);
+      hideLoading();
     } catch (error) {
-      Toast.remove(loadingToast);
-      Toast.fail('切换失败');
+      hideLoading();
+      showToast('切换失败');
     }
   };
 
@@ -106,11 +104,11 @@ export const DeviceSwitch: React.FC<Props> = ({
 
   const handleNameConfirm = async () => {
     if (!lockName.trim()) {
-      Toast.info('请输入名称');
+      showToast('请输入名称');
       return;
     }
     const userId = await cacheGet({ key: 'userId' });
-    const loadingToast = Toast.loading('修改中...', 0);
+    showLoading({ title: '修改中...' });
 
     try {
       const res = await updateName({
@@ -118,20 +116,18 @@ export const DeviceSwitch: React.FC<Props> = ({
         lockName: lockName,
         userId,
       });
-
+      hideLoading();
       if (res?.success) {
-        Toast.remove(loadingToast);
-        Toast.success('修改成功');
+        showToast('修改成功');
         editNamePopRef.current?.close();
         if (reload) await reload();
         loadDeviceList(); // Refresh list
       } else {
-        Toast.remove(loadingToast);
-        Toast.fail(res?.message || '修改失败');
+        showToast(res?.message || '修改失败');
       }
     } catch (error) {
-      Toast.remove(loadingToast);
-      Toast.fail('修改异常');
+      hideLoading();
+      showToast('修改异常');
     }
   };
 

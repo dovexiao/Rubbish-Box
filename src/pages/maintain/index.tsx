@@ -1,21 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Alert,
-  InteractionManager,
-} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { PageContainer, Flex } from '@/components';
+import { PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import { repairAdd } from '@/services/user';
-import { tencentUpload } from '@/utils';
+import { showToast, tencentUpload } from '@/utils';
 import styles from './styles';
 
 const MAX_LENGTH = 140;
@@ -43,7 +33,7 @@ export default function Maintain() {
   const handleChooseImage = useCallback(() => {
     const remain = MAX_IMAGES - (imageList.length + localUris.length);
     if (remain <= 0) {
-      Toast.fail(`最多上传${MAX_IMAGES}张图片`);
+      showToast(`最多上传${MAX_IMAGES}张图片`);
       return;
     }
     launchImageLibrary(
@@ -55,7 +45,7 @@ export default function Maintain() {
       res => {
         if (res.didCancel) return;
         if (res.errorCode || res.errorMessage) {
-          Toast.fail(res.errorMessage || '选择图片失败');
+          showToast(res.errorMessage || '选择图片失败');
           return;
         }
         const assets = res.assets || [];
@@ -85,7 +75,7 @@ export default function Maintain() {
             results.push(`https://${res.data.Location}`);
           }
         } catch (e) {
-          Toast.fail('图片上传失败');
+          showToast('图片上传失败');
           throw e;
         }
       }
@@ -97,11 +87,11 @@ export default function Maintain() {
   const handleCreate = useCallback(async () => {
     if (!canSubmit || submitting) return;
     if (!selectedLock?.id) {
-      Toast.fail('请选择报修设备');
+      showToast('请选择报修设备');
       return;
     }
     if (!description.trim()) {
-      Toast.fail('请描述问题');
+      showToast('请描述问题');
       return;
     }
 
@@ -118,17 +108,17 @@ export default function Maintain() {
         picList,
       });
       if (Number(res?.code) === 200) {
-        Toast.success('提交报修成功');
+        showToast('提交报修成功');
         setDescription('');
         setTextLength(0);
         setImageList([]);
         setLocalUris([]);
         navigation.navigate('MaintainService');
       } else {
-        Toast.fail(res?.message || res?.msg || '提交失败');
+        showToast(res?.message || res?.msg || '提交失败');
       }
     } catch (e) {
-      Toast.fail('提交失败');
+      showToast('提交失败');
     } finally {
       setSubmitting(false);
     }

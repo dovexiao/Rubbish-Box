@@ -1,23 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  ListRenderItem,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Carousel, Toast } from '@ant-design/react-native';
+import { Carousel } from '@ant-design/react-native';
 import { PageContainer, Flex, Popup, Stepper } from '@/components';
 import GradientButton from '@/components/GradientButton';
-import IconFont from '@/iconfont';
 import { getGoodsDetail } from '@/services/mall';
 import { getMiniToken } from '@/services/common';
 import { wechatOpenMiniProgram } from '@/utils/wechat';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 type GoodsDetailDTO = {
   id: number;
@@ -42,10 +33,9 @@ export default function GoodsDetail() {
   // 详情长图宽高比，用于自适应高度
   const [detailRatios, setDetailRatios] = useState<number[]>([]);
 
-
   const loadDetail = useCallback(async () => {
     if (!productId) {
-      Toast.fail('商品ID不存在');
+      showToast('商品ID不存在');
       navigation.goBack();
       return;
     }
@@ -56,11 +46,11 @@ export default function GoodsDetail() {
       if (res.code === 200 && res.success) {
         setGoodsDetail(res.data as GoodsDetailDTO);
       } else {
-        Toast.fail(res.msg || res.message || '获取商品详情失败');
+        showToast(res.msg || res.message || '获取商品详情失败');
         navigation.goBack();
       }
     } catch (e) {
-      Toast.fail('获取商品详情失败');
+      showToast('获取商品详情失败');
       navigation.goBack();
     } finally {
       setLoading(false);
@@ -84,7 +74,7 @@ export default function GoodsDetail() {
       // 获取小程序 token
       const tokenRes = await getMiniToken({});
       if (!tokenRes.success || !tokenRes.data?.token) {
-        Toast.fail('获取小程序token失败');
+        showToast('获取小程序token失败');
         return;
       }
 
@@ -109,13 +99,12 @@ export default function GoodsDetail() {
       if (result.result) {
         setPopupVisible(false);
       } else {
-        Toast.fail(result.message || '打开小程序失败');
+        showToast(result.message || '打开小程序失败');
       }
     } catch (error: any) {
-      Toast.fail(error?.message || '购买失败，请重试');
+      showToast(error?.message || '购买失败，请重试');
     }
   }, [goodsDetail, productNum]);
-
 
   const footer = (
     <View style={styles.footer}>
@@ -187,28 +176,33 @@ export default function GoodsDetail() {
             >
               {goodsDetail.mainImage && goodsDetail.mainImage.length > 0
                 ? goodsDetail.mainImage.map((mainImage, index) => (
-                  <View
-                    key={mainImage}
-                    style={{ width: '100%', height: '100%' }}
-                  >
-                    <Image
-                      source={{ uri: mainImage }}
+                    <View
+                      key={mainImage}
                       style={{ width: '100%', height: '100%' }}
-                      resizeMode="contain"
-                    />
-                  </View>
-                ))
+                    >
+                      <Image
+                        source={{ uri: mainImage }}
+                        style={{ width: '100%', height: '100%' }}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  ))
                 : null}
-
             </Carousel>
           </Flex>
           <Flex style={styles.detailInfo} direction={'column'}>
             <Flex justify={'between'} align={'end'}>
               <Flex align={'center'}>
-                <Text style={styles.detailPrice}>¥{goodsDetail.currentPrice}</Text>
-                <Text style={styles.detailOriginalPrice}>¥{goodsDetail.originalPrice}</Text>
+                <Text style={styles.detailPrice}>
+                  ¥{goodsDetail.currentPrice}
+                </Text>
+                <Text style={styles.detailOriginalPrice}>
+                  ¥{goodsDetail.originalPrice}
+                </Text>
               </Flex>
-              <Text style={styles.detailSaleNum}>月售：{goodsDetail.saleNum}</Text>
+              <Text style={styles.detailSaleNum}>
+                月售：{goodsDetail.saleNum}
+              </Text>
             </Flex>
             <Text style={styles.detailName}>{goodsDetail.productName}</Text>
             <Text style={styles.detailStock}>库存：{goodsDetail.stock}</Text>
@@ -228,16 +222,16 @@ export default function GoodsDetail() {
           >
             {goodsDetail?.detailImage && goodsDetail.detailImage.length > 0
               ? goodsDetail.detailImage.map((detailImage, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: detailImage }}
-                  style={{
-                    width: '100%',
-                    aspectRatio: detailRatios[index] || 0.75,
-                  }}
-                  resizeMode="cover"
-                />
-              ))
+                  <Image
+                    key={index}
+                    source={{ uri: detailImage }}
+                    style={{
+                      width: '100%',
+                      aspectRatio: detailRatios[index] || 0.75,
+                    }}
+                    resizeMode="cover"
+                  />
+                ))
               : null}
           </Flex>
         </>
@@ -260,11 +254,17 @@ export default function GoodsDetail() {
                 />
               ) : null}
 
-              <Flex direction="column" style={styles.popupInfo} justify="between">
+              <Flex
+                direction="column"
+                style={styles.popupInfo}
+                justify="between"
+              >
                 <Text style={styles.popupTitle} numberOfLines={2}>
                   {goodsDetail.productName}
                 </Text>
-                <Text style={styles.popupPrice}>¥{goodsDetail.currentPrice}</Text>
+                <Text style={styles.popupPrice}>
+                  ¥{goodsDetail.currentPrice}
+                </Text>
 
                 <Flex align="center">
                   <Stepper
@@ -273,10 +273,12 @@ export default function GoodsDetail() {
                     size={24}
                     max={goodsDetail.stock}
                     onChange={value => {
-                      setProductNum(Number(value))
+                      setProductNum(Number(value));
                     }}
                   />
-                  <Text style={styles.popupStock}>库存：{goodsDetail.stock}</Text>
+                  <Text style={styles.popupStock}>
+                    库存：{goodsDetail.stock}
+                  </Text>
                 </Flex>
               </Flex>
             </Flex>

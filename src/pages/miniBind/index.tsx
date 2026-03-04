@@ -1,5 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { PageContainer, Flex, InputCode } from '@/components';
 import type { InputCodeRef } from '@/components/InputCode';
@@ -9,7 +15,7 @@ import { SMS_PURPOSE } from '@/constants';
 import { cacheSetSync } from '@/utils/cache';
 import { getMobPushDeviceInfo } from '@/utils/push';
 import { getCurrentPages, navigateBack, reLaunch } from '@/utils/navigation';
-import { Toast } from '@ant-design/react-native';
+import { hideLoading, showLoading, showToast } from '@/utils';
 import styles from './styles';
 
 const MiniBind = () => {
@@ -35,11 +41,11 @@ const MiniBind = () => {
   // 提交验证码
   const onSubmit = async () => {
     if (!code || code.length !== 6) {
-      Toast.info('请输入验证码');
+      showToast('请输入验证码');
       return;
     }
 
-    const loadingToast = Toast.loading('加载中...', 0);
+    showLoading({ title: '加载中...' });
 
     try {
       const res = await login({
@@ -56,8 +62,8 @@ const MiniBind = () => {
         await cacheSetSync('guestMode', false);
         try {
           await getMobPushDeviceInfo();
-        } catch { }
-        Toast.remove(loadingToast);
+        } catch {}
+        hideLoading();
 
         // 延迟执行导航，确保状态已更新
         setTimeout(() => {
@@ -65,24 +71,22 @@ const MiniBind = () => {
           if (pages.length > 1) {
             navigateBack();
           } else {
-            reLaunch({
-              url: '/pages/index/index',
-            });
+            reLaunch('Index');
           }
         }, 300);
       } else if (res.code === 515) {
-        Toast.remove(loadingToast);
+        hideLoading();
         setShowError(true);
       } else {
-        Toast.remove(loadingToast);
-        Toast.fail(res.msg || res.message || '登录失败');
+        hideLoading();
+        showToast(res.msg || res.message || '登录失败');
         setCode('');
         setShowError(false);
         inputCodeRef.current?.clearCode();
       }
     } catch (error) {
-      Toast.remove(loadingToast);
-      Toast.fail('登录失败，请重试');
+      hideLoading();
+      showToast('登录失败，请重试');
       console.error('登录异常:', error);
     }
   };
@@ -92,21 +96,21 @@ const MiniBind = () => {
     // 倒计时进行中不可重新获取验证码
     if (isCounting) return;
 
-    const loadingToast = Toast.loading('获取中...', 0);
+    showLoading({ title: '获取中...' });
     try {
       await getSmsCode({
         mobile,
         purpose: type,
       });
-      Toast.remove(loadingToast);
+      hideLoading();
       // 获取新验证码时清空旧验证码与错误状态
       setCode('');
       setShowError(false);
       inputCodeRef.current?.clearCode();
       start();
     } catch (error) {
-      Toast.remove(loadingToast);
-      Toast.fail('获取验证码失败');
+      hideLoading();
+      showToast('获取验证码失败');
     }
   };
 
@@ -115,7 +119,8 @@ const MiniBind = () => {
       pageNavProps={{
         text: '',
         showBack: true,
-      }}>
+      }}
+    >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <Text style={styles.passwordTitle}>当前微信绑定至</Text>
@@ -127,8 +132,14 @@ const MiniBind = () => {
               activeOpacity={isCounting ? 1 : 0.7}
               style={styles.getAgain}
               onPress={getCode}
-              disabled={isCounting}>
-              <Text style={[styles.getAgainText, !isCounting && styles.getAgainTextActive]}>
+              disabled={isCounting}
+            >
+              <Text
+                style={[
+                  styles.getAgainText,
+                  !isCounting && styles.getAgainTextActive,
+                ]}
+              >
                 获取验证码
               </Text>
               {isCounting && count ? (
@@ -142,7 +153,7 @@ const MiniBind = () => {
             showError={showError}
             code={code}
             errorMessage="验证码错误"
-            onUpdate={(value) => {
+            onUpdate={value => {
               setCode(value);
               setShowError(false);
             }}
@@ -150,12 +161,10 @@ const MiniBind = () => {
 
           <View style={styles.btnBox}>
             <TouchableOpacity
-              style={[
-                styles.submitBtn,
-                code.length === 6 && styles.btnActive,
-              ]}
+              style={[styles.submitBtn, code.length === 6 && styles.btnActive]}
               onPress={onSubmit}
-              disabled={code.length !== 6}>
+              disabled={code.length !== 6}
+            >
               <Text style={styles.submitBtnText}>登录</Text>
             </TouchableOpacity>
           </View>

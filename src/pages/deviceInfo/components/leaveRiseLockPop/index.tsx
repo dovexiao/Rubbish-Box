@@ -7,10 +7,11 @@ import React, {
   useState,
 } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import { Toast } from '@ant-design/react-native';
+
 import Flex from '@/components/Flex';
 import GradientButton from '@/components/GradientButton';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
+import { showToast } from '@/utils';
 
 export type LeaveRiseLockPopRef = {
   open: () => void;
@@ -104,7 +105,7 @@ export const LeaveRiseLockPop = forwardRef<
               onPress={async () => {
                 const n = Number(leaveUpTime);
                 if (Number.isNaN(n) || n < 3 || n > 60) {
-                  Toast.info('请输入3-60s的时间');
+                  showToast('请输入3-60s的时间');
                   return;
                 }
                 const res = await onConfirm(n);

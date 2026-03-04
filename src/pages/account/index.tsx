@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, AppState } from 'react-native';
+import { View, Text, TouchableOpacity, AppState } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { Flex, PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import { getAccountInfo, getThirdState, userThirdBind } from '@/services/user';
 import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
 import styles from './styles';
 import PopConfirm from '@/components/popConfirm';
+import { hideLoading, showLoading, showToast } from '@/utils';
 
 interface AccountInfo {
   mobile?: string;
@@ -29,7 +29,7 @@ export default function Account() {
       const data = (res as any)?.data ?? res ?? {};
       setDetail(data);
     } catch (e) {
-      Toast.fail('获取账号信息失败');
+      showToast('获取账号信息失败');
     }
   }, []);
 
@@ -51,14 +51,15 @@ export default function Account() {
   const goBindWechat = useCallback(async () => {
     const isInstalledWeChat: any = await checkInstalledWeChat();
     if (!isInstalledWeChat.result) {
-      Toast.fail(isInstalledWeChat.message || '请先安装微信');
+      showToast(isInstalledWeChat.message || '请先安装微信');
       return;
     }
-    const loadingKey = Toast.loading('授权中...', 0);
+    showLoading({ title: '授权中...' });
     const resPromise = wechatLogin();
     const appStatePromise = new Promise<any>(resolve => {
-      appStateSubRef.current =
-        AppState.addEventListener?.('change', (s: string) => {
+      appStateSubRef.current = AppState.addEventListener?.(
+        'change',
+        (s: string) => {
           if (s === 'active') {
             resolve({
               result: false,
@@ -66,7 +67,8 @@ export default function Account() {
               message: '用户手动返回应用，未完成授权',
             });
           }
-        });
+        },
+      );
     });
     let r: any;
     try {
@@ -79,19 +81,21 @@ export default function Account() {
           const accountRes = await getAccountInfo({});
           const data = (accountRes as any)?.data ?? accountRes ?? {};
           setDetail(data);
-          Toast.success('绑定成功');
+          showToast('绑定成功');
         } else {
-          Toast.fail((bindRes as any).msg || (bindRes as any).message || '绑定失败');
+          showToast(
+            (bindRes as any).msg || (bindRes as any).message || '绑定失败',
+          );
         }
       } else {
         if (r?.errCode !== -998) {
-          Toast.fail(r?.message || '授权失败');
+          showToast(r?.message || '授权失败');
         }
       }
     } catch (e) {
-      Toast.fail('授权异常，请重试');
+      showToast('授权异常，请重试');
     } finally {
-      Toast.remove(loadingKey);
+      hideLoading();
       appStateSubRef.current?.remove?.();
       appStateSubRef.current = undefined;
     }

@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { Flex, Toast } from '@ant-design/react-native';
 import dayjs from 'dayjs';
 import { useNavigation } from '@react-navigation/native';
-import { PageContainer } from '@/components';
+import { Flex, PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import { getOpinionList } from '@/services/user';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 interface OpinionItem {
   id: number;
@@ -51,7 +51,7 @@ export default function FeedbackRecord() {
         setRecords(prev => (reload ? list : [...prev, ...list]));
         setHasMore(list.length === 10);
       } catch (e) {
-        Toast.fail('获取反馈记录失败');
+        showToast('获取反馈记录失败');
       } finally {
         setLoading(false);
       }

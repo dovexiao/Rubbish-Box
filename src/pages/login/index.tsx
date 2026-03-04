@@ -28,10 +28,12 @@ import {
   myNextTick,
   reLaunch,
   setStorage,
+  showToast,
+  showLoading,
+  hideLoading,
 } from '@/utils';
 import appPush from '@/utils/push';
 import PopConfirm from '@/components/popConfirm';
-import { Toast } from '@ant-design/react-native';
 import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
 import GradientButton from '@/components/GradientButton';
 
@@ -81,12 +83,12 @@ const Login = () => {
   const wxLogin = async () => {
     const isInstalledWeChat: any = await checkInstalledWeChat();
     if (!isInstalledWeChat.result) {
-      Toast.show(isInstalledWeChat.message);
+      showToast(isInstalledWeChat.message);
       return;
     }
 
     const res = wechatLogin();
-    Toast.loading('登录中...', 0);
+    showLoading({ title: '登录中...' });
 
     // 监听应用状态变化（用户可能从微信返回）
     const appStatePromise = new Promise<any>(resolve => {
@@ -104,7 +106,7 @@ const Login = () => {
     });
     let r: any;
     try {
-      Toast.loading('登录中...', 0);
+      showLoading({ title: '登录中...' });
       r = await Promise.race([res, appStatePromise]);
       if (r.result) {
         const thirdState = await getThirdState({});
@@ -132,19 +134,19 @@ const Login = () => {
               mobile: thirdLoginRes.data.mobile,
             });
           } else {
-            reLaunch({ url: '/pages/index/index' });
+            reLaunch('Index');
           }
         } else {
-          Toast.show(thirdLoginRes.message);
+          showToast(thirdLoginRes.message);
         }
       } else {
         if (r.errCode === -998) console.log('用户手动返回');
-        else Toast.show(r.message);
+        else showToast(r.message);
       }
     } catch (e) {
       console.log('一键登录异常:', e);
     } finally {
-      Toast.removeAll();
+      hideLoading();
       tempData.current.appStateSub?.remove?.();
       tempData.current.appStateSub = undefined;
     }
@@ -326,7 +328,7 @@ const Login = () => {
               try {
                 await tokenStorage.remove();
               } catch {}
-              reLaunch({ url: '/pages/index/index' });
+              reLaunch('Index');
             }}
           >
             暂不登录
@@ -470,7 +472,7 @@ const Login = () => {
             // 确保访客模式下没有残留登录 token
             await tokenStorage.remove();
           } catch {}
-          reLaunch({ url: '/pages/index/index' });
+          reLaunch('Index');
         }}
         title={
           <Flex direction="column" align="center" justify="center">

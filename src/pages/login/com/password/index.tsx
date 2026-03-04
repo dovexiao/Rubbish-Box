@@ -9,16 +9,18 @@ import {
   eventCenter,
   getCurrentPages,
   getStorage,
+  hideLoading,
   mobileExp,
   navigateBack,
   reLaunch,
+  showLoading,
+  showToast,
 } from '@/utils';
 import { cacheSetSync } from '@/utils/cache';
 import { getMobPushDeviceInfo } from '@/utils/push';
 import { Flex, TextInput } from '@/components';
 import IconFont from '@/iconfont';
 import { login } from '@/services/common';
-import Toast from '@ant-design/react-native/lib/toast';
 import passwordStyles from './styles';
 import { useNavigation } from '@react-navigation/native';
 
@@ -54,7 +56,7 @@ const Password: React.FC<PasswordProps> = ({
     }
 
     setShowError(false);
-    const loadingToast = Toast.loading('登录中', 0);
+    showLoading({ title: '登录中...' });
 
     try {
       let deviceInfoRes: any = {};
@@ -76,7 +78,7 @@ const Password: React.FC<PasswordProps> = ({
         } catch (e) {
           console.error('获取推送设备信息失败:', e);
         }
-        Toast.remove(loadingToast);
+        hideLoading();
         console.log('密码登录成功 res', res);
         // 延迟执行导航，确保状态已更新和导航引用已准备好
         setTimeout(() => {
@@ -84,22 +86,20 @@ const Password: React.FC<PasswordProps> = ({
           if (pages.length > 1) {
             navigateBack();
           } else {
-            reLaunch({
-              url: '/pages/index/index',
-            });
+            reLaunch('Index');
           }
         }, 300);
       } else if (res.code === 520 || res.code === 522) {
         setShowError(true);
         setErrorMessage(res.msg || '手机号码或密码错误');
       } else {
-        Toast.fail(res.msg || '登录失败');
+        showToast(res.msg || '登录失败');
       }
     } catch (error) {
       console.error('密码登录异常:', error);
-      Toast.fail('登录失败，请稍后重试');
+      showToast('登录失败，请稍后重试');
     } finally {
-      Toast.remove(loadingToast);
+      hideLoading();
     }
   };
 

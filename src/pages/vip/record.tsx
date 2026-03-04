@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, PopConfirm, Flex } from '@/components';
 import IconFont from '@/iconfont';
 import { cancelInvite, getDetails, getRecordList } from '@/services/user';
@@ -115,7 +114,7 @@ export default function VipRecordPage() {
       });
       setComplete(rows.length < PAGE_SIZE);
     } catch (e) {
-      Toast.fail('获取贵宾邀请记录失败');
+      showToast('获取贵宾邀请记录失败');
     } finally {
       loadingRef.current = false;
       setLoading(false);

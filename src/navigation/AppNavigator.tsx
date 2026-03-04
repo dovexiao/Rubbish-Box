@@ -70,7 +70,7 @@ export const AppNavigator: React.FC = () => {
     return null;
   }
 
-  const initialRouteName = isLoggedIn ? HOME_STACK_ROUTE : 'Login';
+  const initialRouteName = isLoggedIn ? 'MainTabs' : 'Login';
 
   return (
     <Stack.Navigator
@@ -94,7 +94,7 @@ export const AppNavigator: React.FC = () => {
       ))}
       {/* 主页面（需要登录） */}
       <Stack.Screen
-        name={HOME_STACK_ROUTE}
+        name="MainTabs"
         options={{
           orientation: 'portrait',
         }}

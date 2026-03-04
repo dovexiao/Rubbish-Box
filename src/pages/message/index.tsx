@@ -12,16 +12,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import { MESSAGE_TYPE } from '@/constants';
 import MyEmpty from '@/components/MyEmpty';
-import { cacheGetSync, showToast } from '@/utils';
+import { cacheGetSync, reLaunch, showToast } from '@/utils';
 import { getLockInfo } from '@/services/device';
 import { getMsgList, getUserLockExist, readMsg } from '@/services/user';
 import type { msgListProps, messagesProps } from './type';
 import { styles } from './style';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 type SectionItem = {
   title: string;
@@ -80,7 +80,7 @@ function markMessageRead(list: msgListProps[], msgId: number) {
 }
 
 export default function MessageScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useAppNavigation();
   const [messageList, setMessageList] = useState<msgListProps[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -151,7 +151,7 @@ export default function MessageScreen() {
           }
           const readRes = await readMsg({ id: msgId });
           if (readRes.code === 200 && readRes.data) {
-            navigation.navigate('Index', { lockId: id });
+            reLaunch('Index', { lockId: id });
           } else {
             showToast(readRes.msg || readRes.message);
           }

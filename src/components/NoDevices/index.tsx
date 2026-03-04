@@ -1,4 +1,3 @@
-import { Toast } from '@ant-design/react-native';
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
@@ -17,9 +16,7 @@ const NoDevices: React.FC<NoDevicesProps> = ({ hasDevice = false }) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              Toast.show({
-                content: '跳转组合设备',
-              });
+              navigation.navigate('CombineDevice');
             }}
             style={styles.combineBtn}
           >

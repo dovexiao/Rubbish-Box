@@ -9,11 +9,10 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Popup } from '@/components';
-import IconFont from '@/iconfont';
 import { getPickupCodeRecordList } from '@/services/mall';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 // 状态：1 未填写地址，2 待发货，3 已发货
 const statusMap: Record<number, { text: string; color: string }> = {
@@ -78,10 +77,10 @@ export default function PickupCodeRecordList() {
           setList(prev => (refresh ? rows : [...prev, ...rows]));
           setComplete(rows.length < PAGE_SIZE);
         } else {
-          Toast.fail(res.msg || res.message || '获取领取记录失败');
+          showToast(res.msg || res.message || '获取领取记录失败');
         }
       } catch (e) {
-        Toast.fail('获取领取记录失败');
+        showToast('获取领取记录失败');
       } finally {
         setLoading(false);
         setRefreshing(false);

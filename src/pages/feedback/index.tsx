@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer, Flex } from '@/components';
 import IconFont from '@/iconfont';
 import { getAccountInfo, submitOpinion } from '@/services/user';
-import { tencentUpload } from '@/utils';
+import { showToast, tencentUpload } from '@/utils';
 import styles from './styles';
 
 const MAX_IMAGES = 4;
@@ -47,7 +46,7 @@ export default function Feedback() {
   const handleChooseImage = useCallback(() => {
     const remain = MAX_IMAGES - imageList.length;
     if (remain <= 0) {
-      Toast.fail('最多上传4张图片');
+      showToast('最多上传4张图片');
       return;
     }
     launchImageLibrary(
@@ -59,7 +58,7 @@ export default function Feedback() {
       async res => {
         if (res.didCancel) return;
         if (res.errorCode || res.errorMessage) {
-          Toast.fail(res.errorMessage || '选择失败');
+          showToast(res.errorMessage || '选择失败');
           return;
         }
         const assets = res.assets || [];
@@ -85,7 +84,7 @@ export default function Feedback() {
             results.push(`https://${res.data.Location}`);
           }
         } catch {
-          Toast.fail('图片上传失败，请重试');
+          showToast('图片上传失败，请重试');
           return [];
         }
       }
@@ -96,11 +95,11 @@ export default function Feedback() {
 
   const handleSubmit = useCallback(async () => {
     if (!description.trim()) {
-      Toast.fail('请填写反馈内容');
+      showToast('请填写反馈内容');
       return;
     }
     if (!isMobile(userMobile)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
     if (submitting) return;
@@ -117,12 +116,12 @@ export default function Feedback() {
         userName,
         userMobile,
       });
-      Toast.success('提交成功');
+      showToast('提交成功');
       setDescription('');
       setImageList([]);
       setUserName('');
     } catch {
-      Toast.fail('提交失败，请重试');
+      showToast('提交失败，请重试');
     } finally {
       setSubmitting(false);
     }

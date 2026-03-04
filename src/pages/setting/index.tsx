@@ -1,13 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import DeviceInfo from 'react-native-device-info';
 import { PageContainer, showAppUpdateDialog } from '@/components';
 import IconFont from '@/iconfont';
 import appPush from '@/utils/push';
 import { cacheGetSync } from '@/utils/cache';
-import { getStorage, setStorage } from '@/utils';
+import {
+  getStorage,
+  hideLoading,
+  setStorage,
+  showLoading,
+  showToast,
+} from '@/utils';
 import appUpdate from '@/utils/appUpdate';
 import styles from './styles';
 
@@ -50,7 +55,7 @@ export default function Setting() {
     try {
       const agree = await cacheGetSync('agreePrivacy');
       if (enabled && !agree) {
-        Toast.info('请先同意隐私条款后再开启通知服务');
+        showToast('请先同意隐私条款后再开启通知服务');
         return false;
       }
       await setStorage({ key: 'pushEnabled', data: enabled });
@@ -69,7 +74,7 @@ export default function Setting() {
       }
       return true;
     } catch {
-      Toast.fail('更新通知服务状态失败');
+      showToast('更新通知服务状态失败');
       return false;
     }
   }, []);
@@ -98,13 +103,10 @@ export default function Setting() {
   const handleCheckUpdate = useCallback(async () => {
     try {
       const updater = appUpdate();
-      const loadingKey = Toast.loading('检查更新中...', 0);
-
-      Toast.remove(loadingKey);
 
       const info: any = updater.getUpdateInfo();
       if (!info.hasUpdate) {
-        Toast.show('当前已是最新版本');
+        showToast('当前已是最新版本');
         return;
       }
 
@@ -117,7 +119,7 @@ export default function Setting() {
         forceUpdate: info.forceUpdate,
       });
     } catch (e) {
-      Toast.fail('检查更新失败，请稍后重试');
+      showToast('检查更新失败，请稍后重试');
     }
   }, []);
 

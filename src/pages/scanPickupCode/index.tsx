@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Text, View, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex } from '@/components';
-import { setStorage } from '@/utils';
+import { setStorage, showToast } from '@/utils';
 import {
   useCameraPermission,
   useCameraDevice,
@@ -54,17 +53,17 @@ export default function ScanPickupCode() {
         const pk = match[1];
         try {
           await setStorage({ key: 'PICKUP_CODE_FROM_SCAN', data: pk });
-          Toast.success('识别成功');
+          showToast('识别成功');
           setTimeout(() => {
             navigation.goBack();
           }, 500);
         } catch (error) {
-          Toast.fail('保存提货码失败');
+          showToast('保存提货码失败');
           hasScannedRef.current = false;
         }
       } else {
         // 如果不是正确的提货码链接，显示错误并重置
-        Toast.fail('请扫描正确的提货码');
+        showToast('请扫描正确的提货码');
         setTimeout(() => {
           hasScannedRef.current = false;
         }, 2000);

@@ -1,7 +1,6 @@
 export type RootStackParamList = {
-  Index: undefined;
   Login: undefined;
-  MainTabs: undefined;
+  MainTabs: { screen?: string; params?: any } | undefined;
   DeviceDetail: { deviceId: string };
   MemberShare: undefined;
   VipInvite: undefined;

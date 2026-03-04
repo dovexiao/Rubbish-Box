@@ -17,6 +17,7 @@ import {
   showToast,
   getStorage,
   openBluetoothSettings,
+  reLaunch,
 } from '@/utils';
 import {
   checkIfDeviceIgnoredOnIOS,
@@ -270,7 +271,7 @@ export default function BluetoothControl() {
                   round={false}
                   btnBorderRadius={16}
                   onPress={() => {
-                    navigation.navigate('Index' as any);
+                    reLaunch('Index');
                   }}
                 >
                   <Text style={styles.btnText}>完成</Text>

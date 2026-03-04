@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import { chooseSkin, getSkinList } from '@/services/user';
 import { useTheme } from '@/context/ThemeContext';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 interface ThemeItem {
   code: string;
@@ -23,7 +23,7 @@ export default function SkinPeeler() {
       const list: ThemeItem[] = (res as any)?.data ?? res ?? [];
       setThemeList(list);
     } catch (e) {
-      Toast.fail('获取皮肤列表失败');
+      showToast('获取皮肤列表失败');
     }
   }, []);
 
@@ -54,12 +54,12 @@ export default function SkinPeeler() {
             setTheme('light');
           }
 
-          Toast.success('切换成功');
+          showToast('切换成功');
         } else {
-          Toast.fail((res as any)?.message || '切换失败');
+          showToast((res as any)?.message || '切换失败');
         }
       } catch (e) {
-        Toast.fail('切换失败');
+        showToast('切换失败');
       } finally {
         setLoading(false);
       }

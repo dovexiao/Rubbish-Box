@@ -158,7 +158,7 @@ const Content: React.FC<ContentProps> = ({
     showToast({ title: '删除成功' });
     (navigation as any).reset({
       index: 0,
-      routes: [{ name: HOME_STACK_ROUTE }],
+      routes: [{ name: 'MainTabs', params: { screen: 'Index' } }],
     });
   };
 
@@ -367,7 +367,7 @@ const Content: React.FC<ContentProps> = ({
                 <IconFont name={'a-Upgradelock'} size={16} color="#ccc" />
                 <Text style={styles.infoLabel}>离车升锁</Text>
                 <Text style={styles.infoValue}>
-                  {detail?.battery ? `${detail?.leaveUpTime}s` : '20s'}
+                  {detail?.leaveUpTime ? `${detail?.leaveUpTime}s` : '20s'}
                 </Text>
               </View>
               <View style={styles.infoRow}>

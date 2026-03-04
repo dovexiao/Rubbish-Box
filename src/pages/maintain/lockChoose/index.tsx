@@ -9,10 +9,10 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import { getLockList } from '@/services/device';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 type LockItem = {
   id: number;
@@ -52,7 +52,7 @@ export default function MaintainLockChoose() {
         setLockList(prev => (refresh ? list : [...prev, ...list]));
         setComplete(list.length < PAGE_SIZE);
       } catch (e) {
-        Toast.fail('获取设备列表失败');
+        showToast('获取设备列表失败');
       } finally {
         setLoading(false);
         setRefreshing(false);

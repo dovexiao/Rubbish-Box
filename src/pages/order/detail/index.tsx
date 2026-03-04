@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Image, ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex } from '@/components';
 import { getOrderDetail } from '@/services/order';
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/constants';
 import type { OrderDetailDTO } from '../typing';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 const formatTime = (time?: string) => {
   if (!time) return '';
@@ -24,7 +24,7 @@ export default function OrderDetail() {
 
   const loadDetail = useCallback(async () => {
     if (!orderNo) {
-      Toast.fail('订单号不存在');
+      showToast('订单号不存在');
       navigation.goBack();
       return;
     }
@@ -36,11 +36,11 @@ export default function OrderDetail() {
         const data = (res.data || res) as OrderDetailDTO;
         setDetail(data || null);
       } else {
-        Toast.fail(res?.message || res?.msg || '获取订单详情失败');
+        showToast(res?.message || res?.msg || '获取订单详情失败');
         navigation.goBack();
       }
     } catch (e) {
-      Toast.fail('获取订单详情失败');
+      showToast('获取订单详情失败');
       navigation.goBack();
     } finally {
       setLoading(false);

@@ -8,12 +8,13 @@ import {
   Image,
   RefreshControl,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/core';
 import { PageContainer } from '@/components';
 import IconFont from '@/iconfont';
 import { getRepairList } from '@/services/user';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 type RepairItem = {
   id: number;
@@ -52,10 +53,10 @@ export default function MaintainService() {
           setList(prev => (reload ? rows : [...prev, ...rows]));
           setComplete(rows.length < PAGE_SIZE);
         } else {
-          Toast.fail((res as any)?.message || (res as any)?.msg || '获取失败');
+          showToast((res as any)?.message || (res as any)?.msg || '获取失败');
         }
       } catch (e) {
-        Toast.fail('获取服务记录失败');
+        showToast('获取服务记录失败');
       } finally {
         setLoading(false);
         setRefreshing(false);

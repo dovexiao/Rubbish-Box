@@ -26,8 +26,18 @@ import { LockInfoDTO } from './typing';
 import { FALL_STATUS } from '@/constants';
 import { styles } from './style';
 import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
+import { useRoute } from '@react-navigation/native';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 const Index = () => {
+  const route = useRoute<any>();
+  const navigation = useAppNavigation();
+  const lockId = (() => {
+    const raw = route?.params?.lockId;
+    const parsed = typeof raw === 'string' ? Number(raw) : raw;
+    return Number.isFinite(parsed) ? (parsed as number) : undefined;
+  })();
+
   const [loading, setLoading] = useState(false);
   const [hasDevice, setHasDevice] = useState<boolean>(true);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -64,7 +74,14 @@ const Index = () => {
         const lockRes = id
           ? await getLockInfo({ type: 1, id } as any)
           : await getLockInfo({ type: 1 } as any);
+        // 清楚路由栈中的跳转参数
+        (navigation as any)?.setParams?.({ lockId: undefined });
         if (lockRes.success && lockRes.code === 200 && lockRes.data) {
+          if (lockRes.data?.isGroup) {
+            console.log('跳到组合设备');
+            reLaunch('Multiple', { lockId: lockRes.data.id });
+            return;
+          }
           setDetail(lockRes.data);
           setHasDevice(true);
           setError(null);
@@ -146,7 +163,7 @@ const Index = () => {
           setGuestMode(guestFlag);
 
           if (hasTokenFlag) {
-            await load(undefined, { silent });
+            await load(lockId, { silent });
             return true;
           }
 
@@ -177,7 +194,7 @@ const Index = () => {
         stopped = true;
         poller.stop();
       };
-    }, [load]),
+    }, [load, lockId]),
   );
 
   const showGuestWelcome = !hasToken && guestMode;
@@ -332,7 +349,7 @@ const Index = () => {
             align="center"
             style={styles.guestLoginBtn}
             onPress={() => {
-              reLaunch({ url: '/pages/login/index' });
+              reLaunch('Login');
             }}
           >
             <Text style={styles.guestLoginText}>登录</Text>
@@ -344,7 +361,7 @@ const Index = () => {
             confirmText="登录"
             onConfirm={() => {
               guestPopupRef.current?.close?.();
-              reLaunch({ url: '/pages/login/index' });
+              reLaunch('Login');
             }}
           />
         </View>

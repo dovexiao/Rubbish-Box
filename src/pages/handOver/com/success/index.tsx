@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Text, View } from 'react-native';
-import { setStorage } from '@/utils';
+import { reLaunch, setStorage } from '@/utils';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { styles } from './style';
 
@@ -18,7 +18,7 @@ export default function Success() {
   useEffect(() => {
     if (backNum !== 0) return;
     void setStorage({ key: 'pageType', data: 'reload' });
-    navigation.navigate('Index' as any);
+    reLaunch('Index');
   }, [backNum, navigation]);
 
   return (

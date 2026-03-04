@@ -5,20 +5,13 @@ import {
   ListRenderItem,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
-import IconFont from '@/iconfont';
 import LockItem from './com/lockItem';
-import {
-  modifyStaff,
-  staffDetail,
-  staffLockList,
-} from '@/services/user';
-import { mobileExp } from '@/utils';
+import { modifyStaff, staffDetail, staffLockList } from '@/services/user';
+import { mobileExp, showToast } from '@/utils';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
 
@@ -57,10 +50,7 @@ export default function AddMember() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
 
-  const hasSelected = useMemo(
-    () => locks.some(item => item.isBind),
-    [locks],
-  );
+  const hasSelected = useMemo(() => locks.some(item => item.isBind), [locks]);
 
   const disabled = useMemo(() => {
     if (!info) return true;
@@ -86,7 +76,7 @@ export default function AddMember() {
     if (res.code === 200 && res.success) {
       setInfo(res.data as ListItem);
     } else {
-      Toast.fail(res.msg || res.message || '获取成员详情失败');
+      showToast(res.msg || res.message || '获取成员详情失败');
     }
   }, [memberId]);
 
@@ -116,10 +106,10 @@ export default function AddMember() {
           setLocks(prev => (refresh ? rows : [...prev, ...rows]));
           setComplete(rows.length < PAGE_SIZE);
         } else {
-          Toast.fail(res.msg || res.message || '获取地锁列表失败');
+          showToast(res.msg || res.message || '获取地锁列表失败');
         }
       } catch (e) {
-        Toast.fail('获取地锁列表失败');
+        showToast('获取地锁列表失败');
       } finally {
         setLoading(false);
         setInitialLoading(false);
@@ -148,23 +138,23 @@ export default function AddMember() {
     if (!info) return;
 
     if (!info.username) {
-      Toast.fail('请输入成员昵称');
+      showToast('请输入成员昵称');
       return;
     }
 
     if (!info.mobile) {
-      Toast.fail('请输入手机号');
+      showToast('请输入手机号');
       return;
     }
 
     if (!mobileExp(info.mobile)) {
-      Toast.fail('请输入正确的手机号');
+      showToast('请输入正确的手机号');
       return;
     }
 
     const selectedLocks = locks.filter(item => item.isBind);
     if (selectedLocks.length === 0) {
-      Toast.fail('至少选择一个地锁');
+      showToast('至少选择一个地锁');
       return;
     }
 
@@ -175,21 +165,19 @@ export default function AddMember() {
       });
 
       if (res.code === 200 && res.success) {
-        Toast.success('操作成功');
+        showToast('操作成功');
         navigation.goBack();
       } else {
-        Toast.fail(res.msg || res.message || '操作失败');
+        showToast(res.msg || res.message || '操作失败');
       }
     } catch (e) {
-      Toast.fail('操作失败');
+      showToast('操作失败');
     }
   }, [info, locks, navigation]);
 
   const renderLockItem: ListRenderItem<LockListItem> = useCallback(
     ({ item }) => {
-      return (
-        <LockItem data={item} onChange={handleUpdateLock} />
-      );
+      return <LockItem data={item} onChange={handleUpdateLock} />;
     },
     [handleUpdateLock],
   );
@@ -199,22 +187,20 @@ export default function AddMember() {
     [],
   );
 
-  const title = useMemo(
-    () => (memberId ? '编辑成员' : '新增成员'),
-    [memberId],
-  );
+  const title = useMemo(() => (memberId ? '编辑成员' : '新增成员'), [memberId]);
 
-  const listEmptyComponent = useMemo(
-    () => {
-      return (
-        <View style={styles.emptyContainer}>
-          <Image source={{ uri: 'https://g.18qjz.cn/img/boklock/empty.png' }} resizeMode="contain" style={{ width: 80, height: 80 }} />
-          <Text style={styles.emptyText}>暂无成员</Text>
-        </View>
-      );
-    },
-    [],
-  );
+  const listEmptyComponent = useMemo(() => {
+    return (
+      <View style={styles.emptyContainer}>
+        <Image
+          source={{ uri: 'https://g.18qjz.cn/img/boklock/empty.png' }}
+          resizeMode="contain"
+          style={{ width: 80, height: 80 }}
+        />
+        <Text style={styles.emptyText}>暂无成员</Text>
+      </View>
+    );
+  }, []);
 
   return (
     <PageContainer
@@ -296,4 +282,3 @@ export default function AddMember() {
     </PageContainer>
   );
 }
-

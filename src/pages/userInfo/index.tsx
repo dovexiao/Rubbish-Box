@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Popup, TextInput } from '@/components';
 import IconFont from '@/iconfont';
 import {
@@ -26,7 +25,7 @@ import { baseInfo, updateInfo } from '@/services/user';
 import { checkAndRequestPhotoPermission } from '@/utils/permissions';
 import styles from './styles';
 import { openSettings } from 'react-native-permissions';
-import { tencentUpload } from '@/utils';
+import { hideLoading, showLoading, showToast, tencentUpload } from '@/utils';
 
 type BaseInfoData = {
   id?: number;
@@ -55,12 +54,12 @@ export default function UserInfo() {
   );
   const load = useCallback(async () => {
     setLoading(true);
-    const t = Toast.loading('加载中...', 0);
+    showLoading({ title: '加载中...' });
     try {
       const res = await baseInfo({});
       if (res.code !== 200 || !res.success) {
-        Toast.remove(t);
-        Toast.fail(res.msg || res.message || '获取用户信息失败');
+        hideLoading();
+        showToast(res.msg || res.message || '获取用户信息失败');
         return;
       }
 
@@ -69,10 +68,10 @@ export default function UserInfo() {
       setNickName(data.nickName || '');
       setInputName(data.nickName || '');
       setAvatar(data.avatar || '');
-      Toast.remove(t);
+      hideLoading();
     } catch (e) {
-      Toast.remove(t);
-      Toast.fail('获取用户信息失败');
+      hideLoading();
+      showToast('获取用户信息失败');
     } finally {
       setLoading(false);
     }
@@ -86,12 +85,12 @@ export default function UserInfo() {
   const saveNickName = useCallback(async () => {
     const newName = inputName.trim();
     if (!newName) {
-      Toast.info('昵称不能为空');
+      showToast('昵称不能为空');
       return false;
     }
     if (!detail) return false;
 
-    const t = Toast.loading('保存中...', 0);
+    showLoading({ title: '保存中...' });
     try {
       const payload = {
         ...detail,
@@ -99,17 +98,17 @@ export default function UserInfo() {
         userId: detail.userId ?? detail.id,
       };
       const res = await updateInfo(payload);
-      Toast.remove(t);
+      hideLoading();
       if (res.code === 200 && res.success) {
-        Toast.success('修改成功');
+        showToast('修改成功');
         await load();
         return true;
       }
-      Toast.fail(res.msg || res.message || '修改失败');
+      showToast(res.msg || res.message || '修改失败');
       return false;
     } catch {
-      Toast.remove(t);
-      Toast.fail('修改失败');
+      hideLoading();
+      showToast('修改失败');
       return false;
     }
   }, [detail, inputName, load]);
@@ -199,10 +198,10 @@ export default function UserInfo() {
                 userId: detail?.userId ?? detail?.id,
               });
               if (r.code === 200 && r.success) {
-                Toast.success('修改成功');
+                showToast('修改成功');
                 await load();
               } else {
-                Toast.fail(r.msg || r.message || '修改失败');
+                showToast(r.msg || r.message || '修改失败');
               }
             }
           });
@@ -213,7 +212,7 @@ export default function UserInfo() {
       });
     } catch (error) {
       console.error('选择头像失败:', error);
-      Toast.fail('选择头像失败');
+      showToast('选择头像失败');
     } finally {
       pickerBusyRef.current = false;
     }

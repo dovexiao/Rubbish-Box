@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import type { StyleProp, TextStyle } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { Button, Toast } from '@ant-design/react-native';
+import { Button } from '@ant-design/react-native';
 import { PageContainer, Popup, Tag } from '@/components';
 import Flex from '@/components/Flex';
 import {
@@ -13,7 +13,7 @@ import {
   resetTestDevice,
   testDeviceOperation,
 } from '@/services/deviceTest';
-import { loopFunc } from '@/utils';
+import { hideLoading, loopFunc, showLoading, showToast } from '@/utils';
 import { getSystemConnectedDevices, isSameMac } from '@/utils';
 import styles from './styles';
 import IconFont from '@/iconfont';
@@ -106,7 +106,7 @@ export default function TestDeviceDetailScreen() {
       setDetail(d);
       setTestResult(d.testReason ? (d.testResult as any) : undefined);
     } catch (e) {
-      Toast.fail('获取设备详情失败');
+      showToast('获取设备详情失败');
     } finally {
       setLoading(false);
     }
@@ -160,7 +160,7 @@ export default function TestDeviceDetailScreen() {
 
   const updateTestResult = async (params: Partial<TestDeviceDetail>) => {
     if (!deviceNo) return;
-    const loadingToast = Toast.loading('操作中...', 0);
+    showLoading({ title: '操作中...' });
     try {
       const payload: any = {
         deviceNo,
@@ -170,12 +170,12 @@ export default function TestDeviceDetailScreen() {
       if (res === true || Number(res?.code) === 200) {
         await fetchDetail();
       } else {
-        Toast.fail(res?.message || res?.msg || '操作失败');
+        showToast(res?.message || res?.msg || '操作失败');
       }
     } catch (e) {
-      Toast.fail('操作失败');
+      showToast('操作失败');
     } finally {
-      Toast.remove(loadingToast);
+      hideLoading();
     }
   };
 
@@ -194,7 +194,7 @@ export default function TestDeviceDetailScreen() {
         });
         if (res) {
           stop();
-          Toast.removeAll();
+          hideLoading();
           await fetchDetail();
           return false;
         }
@@ -204,8 +204,8 @@ export default function TestDeviceDetailScreen() {
       count += 1;
       if (count >= maxCount) {
         stop();
-        Toast.removeAll();
-        Toast.fail('操作超时');
+        hideLoading();
+        showToast('操作超时');
         return false;
       }
       return true;
@@ -219,7 +219,7 @@ export default function TestDeviceDetailScreen() {
     isOpen?: 0 | 1;
   }) => {
     if (!deviceNo) return;
-    const loadingToast = Toast.loading('操作中...', 0);
+    showLoading({ title: '操作中...' });
     try {
       const res: any = await testDeviceOperation({
         deviceNo,
@@ -227,32 +227,32 @@ export default function TestDeviceDetailScreen() {
       });
       if ((data.optType === TEST_OT_STATUS.BUZZER && res) || res === true) {
         await fetchDetail();
-        Toast.remove(loadingToast);
+        hideLoading();
       } else {
-        Toast.remove(loadingToast);
+        hideLoading();
         await getResult(data.optType);
       }
     } catch (e) {
-      Toast.remove(loadingToast);
-      Toast.fail('操作失败');
+      hideLoading();
+      showToast('操作失败');
     }
   };
 
   const handleReset = async () => {
     if (!deviceNo) return;
-    const loadingToast = Toast.loading('重测中...', 0);
+    showLoading({ title: '重测中...' });
     try {
       const res: any = await resetTestDevice({ deviceNo });
       if (res === true || Number(res?.code) === 200) {
         await fetchDetail();
-        Toast.success('重测已发起');
+        showToast('重测已发起');
       } else {
-        Toast.fail(res?.message || res?.msg || '重测失败');
+        showLoading(res?.message || res?.msg || '重测失败');
       }
     } catch (e) {
-      Toast.fail('重测失败');
+      showToast('重测失败');
     } finally {
-      Toast.remove(loadingToast);
+      hideLoading();
     }
   };
 
@@ -286,7 +286,7 @@ export default function TestDeviceDetailScreen() {
   //     linkDevice &&
   //     Object.keys(linkDevice).length > 0
   //   ) {
-  //     const loadingKey = Toast.loading('切换模式中...', 0);
+  //     showLoading({ title: '切换模式中...' });
   //     try {
   //       // 1. 通过蓝牙发送切换指令
   //       const cmdRes = await sendModeCommandByBluetooth({
@@ -295,8 +295,8 @@ export default function TestDeviceDetailScreen() {
   //       });
 
   //       if (!cmdRes?.success) {
-  //         Toast.remove(loadingKey);
-  //         Toast.fail(cmdRes?.msg || '蓝牙模式切换失败，请重试');
+  //         hideLoading();
+  //         showToast(cmdRes?.msg || '蓝牙模式切换失败，请重试');
   //         return;
   //       }
 
@@ -313,19 +313,19 @@ export default function TestDeviceDetailScreen() {
   //       );
 
   //       if (!apiRes || apiRes.code !== '200') {
-  //         Toast.remove(loadingKey);
-  //         Toast.fail(apiRes?.message || '模式切换失败，请稍后重试');
+  //         hideLoading();
+  //         showToast(apiRes?.message || '模式切换失败，请稍后重试');
   //         return;
   //       }
 
   //       // 4. 刷新详情
   //       await fetchDetail();
-  //       Toast.remove(loadingKey);
-  //       Toast.success('模式切换成功');
+  //       hideLoading();
+  //       showToast('模式切换成功');
   //       return;
   //     } catch (error) {
-  //       Toast.remove(loadingKey);
-  //       Toast.fail('模式切换异常，请稍后重试');
+  //       hideLoading();
+  //       showToast('模式切换异常，请稍后重试');
   //       return;
   //     }
   //   }
@@ -426,7 +426,7 @@ export default function TestDeviceDetailScreen() {
                   title: '确定本次测试结果为不合格吗？',
                   onConfirm: async () => {
                     if (!currentReason) {
-                      Toast.info('请输入不合格原因');
+                      showToast('请输入不合格原因');
                       return;
                     }
                     await updateTestResult({

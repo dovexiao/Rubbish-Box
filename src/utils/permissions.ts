@@ -6,7 +6,7 @@ import {
   RESULTS,
   openSettings,
 } from 'react-native-permissions';
-import { Toast } from '@ant-design/react-native';
+import { showToast } from '@/utils';
 
 /**
  * 检查相册权限
@@ -201,7 +201,7 @@ export async function openSystemSettings(): Promise<void> {
     }
   } catch (error) {
     console.error('打开设置页面失败:', error);
-    Toast.fail('无法打开设置页面');
+    showToast('无法打开设置页面');
   }
 }
 
@@ -217,11 +217,11 @@ export async function checkAndRequestPhotoPermission(): Promise<boolean> {
   }
 
   if (result.canOpenSettings) {
-    Toast.fail(result.message || '相册权限被拒绝');
+    showToast(result.message || '相册权限被拒绝');
     // 可以在这里添加打开设置的逻辑
     // await openSystemSettings();
   } else {
-    Toast.fail(result.message || '相册权限被拒绝');
+    showToast(result.message || '相册权限被拒绝');
   }
 
   return false;
@@ -239,11 +239,11 @@ export async function checkAndRequestCameraPermission(): Promise<boolean> {
   }
 
   if (result.canOpenSettings) {
-    Toast.fail(result.message || '相机权限被拒绝');
+    showToast(result.message || '相机权限被拒绝');
     // 可以在这里添加打开设置的逻辑
     // await openSystemSettings();
   } else {
-    Toast.fail(result.message || '相机权限被拒绝');
+    showToast(result.message || '相机权限被拒绝');
   }
 
   return false;
@@ -359,11 +359,11 @@ export async function checkAndRequestBluetoothPermission(): Promise<boolean> {
   }
 
   if (result.canOpenSettings) {
-    Toast.fail(result.message || '蓝牙权限被拒绝');
+    showToast(result.message || '蓝牙权限被拒绝');
     // 可以在这里添加打开设置的逻辑
     // await openSystemSettings();
   } else {
-    Toast.fail(result.message || '蓝牙权限被拒绝');
+    showToast(result.message || '蓝牙权限被拒绝');
   }
 
   return false;

@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Toast } from '@ant-design/react-native';
 import { PageContainer, Flex } from '@/components';
 import { getRepairDetail } from '@/services/user';
 import styles from './styles';
+import { showToast } from '@/utils';
 
 type ProgressItem = {
   progress: number;
@@ -43,7 +43,7 @@ export default function MaintainServiceDetail() {
 
   const loadDetail = useCallback(async () => {
     if (id == null) {
-      Toast.fail('参数错误');
+      showToast('参数错误');
       return;
     }
     setLoading(true);
@@ -56,10 +56,10 @@ export default function MaintainServiceDetail() {
           : [];
         setDetail({ ...data, progressList });
       } else {
-        Toast.fail(res.message);
+        showToast(res.message);
       }
     } catch (e) {
-      Toast.fail((e as any).message);
+      showToast((e as any).message);
     } finally {
       setLoading(false);
     }

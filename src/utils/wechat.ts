@@ -1,8 +1,8 @@
-import { Toast } from '@ant-design/react-native';
 import { NativeModules, Platform } from 'react-native';
 import Config from 'react-native-config';
 
 import DeviceInfo from 'react-native-device-info';
+import { hideLoading, showLoading } from '@/utils';
 const { AppModule } = NativeModules;
 const WECHAT_APP_ID: string | undefined = AppModule?.wechatAppId;
 const WECHAT_APP_ID_FALLBACK = 'wx5c90e0d5806a55c4';
@@ -162,10 +162,10 @@ export const wechatOpenMiniProgram = async (path?: string) => {
 };
 
 export const wechatLogin = async () => {
-  const loadingToast = Toast.loading('正在拉起微信', 0);
+  showLoading({ title: '正在拉起微信' });
   try {
     if (!isNativeMobile) {
-      Toast.remove(loadingToast);
+      hideLoading();
       return {
         result: false,
         code: undefined,
@@ -178,14 +178,14 @@ export const wechatLogin = async () => {
     );
 
     if (!authResponse) {
-      Toast.remove(loadingToast);
+      hideLoading();
       return {
         result: false,
         code: undefined,
         message: '拉起微信失败，请重试',
       };
     }
-    Toast.remove(loadingToast);
+    hideLoading();
     switch (authResponse.errCode) {
       case 0: // 授权成功，返回code
         return { result: true, code: authResponse.code, message: '授权成功' };
@@ -203,7 +203,7 @@ export const wechatLogin = async () => {
         };
     }
   } catch (e: any) {
-    Toast.remove(loadingToast);
+    hideLoading();
     return { result: false, code: undefined, message: '授权失败，请重试' };
   }
 };
