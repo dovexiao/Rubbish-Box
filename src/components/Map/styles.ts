@@ -9,6 +9,7 @@ export default StyleSheet.create({
     width: 157,
     flex: 1,
     overflow: 'hidden',
+    position: 'relative',
   },
   mapContent: {
     width: '100%',
@@ -43,5 +44,26 @@ export default StyleSheet.create({
   loadingText: {
     fontSize: 12,
     color: '#333333',
+  },
+  mapFallback: {
+    flex: 1,
+    minHeight: 120,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F6F7FB',
+  },
+  mapFallbackText: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#666666',
+  },
+  mapClickOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 1,
   },
 });

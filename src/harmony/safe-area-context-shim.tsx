@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dimensions, View, ViewProps } from 'react-native';
+import { Dimensions, View, ViewProps, ViewStyle } from 'react-native';
 
 // 与 react-native-safe-area-context 中 Edge 类型保持一致
 export type Edge = 'top' | 'right' | 'bottom' | 'left';
@@ -33,10 +33,33 @@ export const SafeAreaInsetsContext =
 export const SafeAreaFrameContext =
   React.createContext<typeof defaultFrame>(defaultFrame);
 
-// Harmony 上没有 RNCSafeAreaView，直接退化为普通 View（不主动加 padding），
-// 由上层 PageContainer 等组件自己基于 useSafeAreaInsets 决定是否添加内边距
-export const SafeAreaView: React.FC<SafeAreaViewProps> = props => {
-  return <View {...props} />;
+const DEFAULT_EDGES: Edge[] = ['top', 'right', 'bottom', 'left'];
+
+const buildEdgePadding = (edges: Edge[], insets: typeof defaultInsets) => {
+  const paddingStyle: ViewStyle = {};
+  if (edges.includes('top')) paddingStyle.paddingTop = insets.top;
+  if (edges.includes('right')) paddingStyle.paddingRight = insets.right;
+  if (edges.includes('bottom')) paddingStyle.paddingBottom = insets.bottom;
+  if (edges.includes('left')) paddingStyle.paddingLeft = insets.left;
+  return paddingStyle;
+};
+
+// Harmony 上缺少 RNCSafeAreaView，内部使用 View 并根据 edges 模拟 padding
+export const SafeAreaView: React.FC<SafeAreaViewProps> = ({
+  edges,
+  style,
+  children,
+  ...rest
+}) => {
+  const insets = React.useContext(SafeAreaInsetsContext);
+  const resolvedEdges = edges ?? DEFAULT_EDGES;
+  const edgePadding = buildEdgePadding(resolvedEdges, insets);
+
+  return (
+    <View {...rest} style={[edgePadding, style]}>
+      {children}
+    </View>
+  );
 };
 
 // Provider 在 Harmony 上不做任何原生处理，仅通过 Context 暴露默认 insets 与 frame

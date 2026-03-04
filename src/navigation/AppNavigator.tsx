@@ -5,6 +5,7 @@ import { MainTabNavigator } from '@/navigation/MainTabNavigator';
 import { useAuth } from '@/hooks/useAuth';
 import { Linking, View, Animated } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
+import { HOME_STACK_ROUTE } from '@/constants';
 
 const Stack = createNativeStackNavigator();
 
@@ -69,7 +70,7 @@ export const AppNavigator: React.FC = () => {
     return null;
   }
 
-  const initialRouteName = isLoggedIn ? 'Index' : 'Login';
+  const initialRouteName = isLoggedIn ? HOME_STACK_ROUTE : 'Login';
 
   return (
     <Stack.Navigator
@@ -93,7 +94,7 @@ export const AppNavigator: React.FC = () => {
       ))}
       {/* 主页面（需要登录） */}
       <Stack.Screen
-        name="Index"
+        name={HOME_STACK_ROUTE}
         options={{
           orientation: 'portrait',
         }}

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { AppState, AppStateStatus, Platform } from 'react-native';
+import { AppState, AppStateStatus, BackHandler, Platform } from 'react-native';
 import { SafeAreaProvider } from '@/libs/safeAreaContext';
 import {
   NavigationContainer,
@@ -66,6 +66,35 @@ function App() {
     confirmTextColor?: string;
     children?: React.ReactElement;
   } | null>(null);
+
+  // Harmony: 拦截系统返回（按键/手势），优先让 React Navigation 处理
+  useEffect(() => {
+    if (Platform.OS == 'ios' || Platform.OS == 'android') return;
+
+    const onBackPress = () => {
+      // 导航未就绪时交给系统处理
+      if (!navigationRef.isReady()) {
+        return false;
+      }
+
+      if (navigationRef.canGoBack()) {
+        navigationRef.goBack();
+        return true; // 已消费，避免直接退回桌面
+      }
+
+      // 栈中没有上一页时交给系统默认行为（退出应用）
+      return false;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [navigationRef]);
 
   // 设置导航引用，供 HTTP 拦截器使用
   useEffect(() => {

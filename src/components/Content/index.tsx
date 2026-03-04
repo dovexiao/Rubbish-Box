@@ -16,7 +16,12 @@ import { LockInfoDTO } from '@/pages/index/typing';
 import { styles } from './style';
 import { groupSubList } from '@/services';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
-import { BUZZER_STATUS, COVER_STATUS, LOCK_ROLE } from '@/constants';
+import {
+  BUZZER_STATUS,
+  COVER_STATUS,
+  HOME_STACK_ROUTE,
+  LOCK_ROLE,
+} from '@/constants';
 import { Flex, Popup, PopConfirm } from '@/components';
 import {
   showToast,
@@ -143,7 +148,7 @@ const Content: React.FC<ContentProps> = ({
     showToast({ title: '删除成功' });
     (navigation as any).reset({
       index: 0,
-      routes: [{ name: 'Index' }],
+      routes: [{ name: HOME_STACK_ROUTE }],
     });
   };
 

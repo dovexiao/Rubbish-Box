@@ -75,24 +75,26 @@ try {
 }
 
 let nativeAsyncStorage: AsyncStorageLike | null = null;
-try {
-  // 通过深路径导入，避免被 metro 对 "@react-native-async-storage/async-storage" 的别名重定向到当前 shim。
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-  const deepModule = require('@react-native-async-storage/async-storage/lib/module/index.js');
-  const candidate = (deepModule?.default || deepModule) as AsyncStorageLike;
-  if (
-    candidate &&
-    typeof candidate.setItem === 'function' &&
-    typeof candidate.getItem === 'function' &&
-    typeof candidate.removeItem === 'function'
-  ) {
-    nativeAsyncStorage = candidate;
+if (!isHarmonyRuntime) {
+  try {
+    // 通过深路径导入，避免被 metro 对 "@react-native-async-storage/async-storage" 的别名重定向到当前 shim。
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    const deepModule = require('@react-native-async-storage/async-storage/lib/module/index.js');
+    const candidate = (deepModule?.default || deepModule) as AsyncStorageLike;
+    if (
+      candidate &&
+      typeof candidate.setItem === 'function' &&
+      typeof candidate.getItem === 'function' &&
+      typeof candidate.removeItem === 'function'
+    ) {
+      nativeAsyncStorage = candidate;
+    }
+  } catch (e) {
+    console.warn(
+      '[async-storage-shim] native async-storage deep import unavailable:',
+      e,
+    );
   }
-} catch (e) {
-  console.warn(
-    '[async-storage-shim] native async-storage deep import unavailable:',
-    e,
-  );
 }
 
 const storageDir: string | null =
@@ -250,10 +252,7 @@ const readFromHarmonyPreferences = async (): Promise<Store | null> => {
     }
     return result;
   } catch (error) {
-    console.warn(
-      '[async-storage-shim] read HarmonyPreferences failed:',
-      error,
-    );
+    console.warn('[async-storage-shim] read HarmonyPreferences failed:', error);
     return null;
   }
 };
@@ -587,7 +586,10 @@ const persistInternal = async (): Promise<void> => {
       }
     }
 
-    if (storageBackendName === 'harmonyPreferences' && isRNFetchBlobAvailable()) {
+    if (
+      storageBackendName === 'harmonyPreferences' &&
+      isRNFetchBlobAvailable()
+    ) {
       try {
         await writeToRNFetchBlob(memoryStore);
         storageBackendName = 'rnFetchBlob';

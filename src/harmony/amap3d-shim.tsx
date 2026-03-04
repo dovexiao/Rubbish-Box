@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import { View, ViewProps } from 'react-native';
+import { View, ViewProps, StyleSheet, Text } from 'react-native';
 
 /**
  * Harmony 平台下的 react-native-amap3d 简易 shim。
@@ -18,7 +18,8 @@ export const MapType = {
 };
 
 export const AMapSdk = {
-  init: (_apiKey?: string) => {},
+  init: () => {},
+  getCurrentKey: () => undefined,
 };
 
 export interface MapViewProps extends ViewProps {
@@ -27,6 +28,18 @@ export interface MapViewProps extends ViewProps {
     target?: { latitude?: number; longitude?: number };
     zoom?: number;
   };
+  center?: {
+    latitude?: number;
+    longitude?: number;
+  };
+  zoomLevel?: number;
+  markers?: Array<{
+    id?: string;
+    latitude: number;
+    longitude: number;
+    title?: string;
+  }>;
+  mapViewStyle?: 'lite' | 'native';
   zoomGesturesEnabled?: boolean;
   rotateGesturesEnabled?: boolean;
   tiltGesturesEnabled?: boolean;
@@ -54,7 +67,14 @@ export const MapView = forwardRef<MapViewRef, MapViewProps>(
     }));
 
     return (
-      <View ref={containerRef} style={style} {...rest}>
+      <View ref={containerRef} style={[styles.container, style]} {...rest}>
+        <View style={styles.messageWrapper} pointerEvents="none">
+          <Text style={styles.title}>Harmony 地图 Shim</Text>
+          <Text style={styles.message}>
+            当前构建未启用 Harmony 原生地图。请在环境变量设置
+            HARMONY_NATIVE_MAP=on 并重新打包 Harmony 项目以加载原生地图。
+          </Text>
+        </View>
         {children}
       </View>
     );
@@ -83,3 +103,29 @@ const AMapShim = {
 };
 
 export default AMapShim;
+
+const styles = StyleSheet.create({
+  container: {
+    overflow: 'hidden',
+    backgroundColor: '#f7f7f7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+  },
+  messageWrapper: {
+    maxWidth: '90%',
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+    color: '#333333',
+  },
+  message: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+});

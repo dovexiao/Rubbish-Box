@@ -15,10 +15,11 @@ declare module 'react-native-config' {
     APP_NAME?: string;
     MAP_KEY_ANDROID?: string;
     MAP_KEY_IOS?: string;
+    MAP_KEY_HARMONY?: string;
+    MAP_KEY_OHOS?: string;
     // 在这里添加其他环境变量
   }
 
   export const Config: NativeConfig;
   export default Config;
 }
-

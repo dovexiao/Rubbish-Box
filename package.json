@@ -23,6 +23,7 @@
     "dev:bundle:android": "cross-env ENVFILE=.env.development react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "sync:harmony:sign": "node scripts/sync-harmony-signing.cjs",
     "dev:harmony": "pnpm run sync:harmony:sign && cross-env ENVFILE=.env.development react-native bundle-harmony --dev",
+    "link:harmony": "node ./node_modules/@react-native-community/cli/build/index.js link-harmony --harmony-project-path ..\\DevEcoStudioProjects\\boke_harmony --ets-rnoh-packages-factory-path-relative-to-harmony ./entry/src/main/ets/autogen/RNOHPackagesFactory.ets",
     "real:android": "cross-env ENVFILE=.env.production react-native run-android --mode=prodDebug --appId=com.boklock.m",
     "real:android:release": "cross-env ENVFILE=.env.production react-native run-android --mode=prodRelease",
     "real:ios": "cross-env ENVFILE=.env.production react-native run-ios --configuration Release",
@@ -103,6 +104,7 @@
     "@react-native-community/cli-platform-android": "^10.2.0",
     "@react-native-community/cli-platform-ios": "^10.2.0",
     "@react-native-oh/react-native-harmony": "0.72.116-2",
+    "@react-native-oh/react-native-harmony-cli": "0.77.50",
     "@react-native/metro-config": "0.76.8",
     "@react-native/typescript-config": "0.73.1",
     "@types/jest": "^29.0.3",
@@ -144,7 +146,8 @@
       "metro-file-map@0.76.8": "patches/metro-file-map@0.76.8.patch"
     },
     "overrides": {
-      "@react-native-oh/react-native-harmony-cli": "0.0.41"
+      "@react-native-oh/react-native-harmony-cli": "0.77.50",
+      "@react-native-oh/react-native-harmony>@react-native-oh/react-native-harmony-cli": "0.77.50"
     }
   }
 }

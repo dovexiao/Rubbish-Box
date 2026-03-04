@@ -15,10 +15,21 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { MapType, MapView, Marker } from 'react-native-amap3d';
+import {
+  MapType,
+  MapView,
+  Marker,
+  isUsingHarmonyMapShim,
+} from '@/utils/amap3d-adapter';
 import IconFont from '@/iconfont';
 import { PageContainer } from '@/components';
-import { initAMapSdk, initAMapGeolocation, getCurrentLocation } from '@/utils';
+import {
+  initAMapSdk,
+  initAMapGeolocation,
+  getCurrentLocation,
+  requestHarmonyLocationPermission,
+} from '@/utils';
+import { IS_HARMONY } from '@/constants';
 import styles from './styles';
 
 const EARTH_RADIUS = 6378137;
@@ -89,6 +100,21 @@ export default function DeviceAddressScreen() {
   const mapRef = useRef<any>(null);
   const isMountedRef = useRef<boolean>(true);
   const mapKeyRef = useRef<string>(`map-${Date.now()}-${Math.random()}`);
+  const [isHarmonyMapUnavailable, setIsHarmonyMapUnavailable] = useState(
+    isUsingHarmonyMapShim(),
+  );
+
+  useEffect(() => {
+    if (!IS_HARMONY || !isHarmonyMapUnavailable) {
+      return;
+    }
+    const timer = setInterval(() => {
+      if (!isUsingHarmonyMapShim()) {
+        setIsHarmonyMapUnavailable(false);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [isHarmonyMapUnavailable]);
 
   // 处理 addressInfo，可能是字符串或数组
   const addressInfo = useMemo(() => {
@@ -106,6 +132,20 @@ export default function DeviceAddressScreen() {
 
   const initLocation = async () => {
     if (!isMountedRef.current) return;
+
+    if (isHarmonyMapUnavailable) {
+      setLocationReady(true);
+      return;
+    }
+
+    if (IS_HARMONY) {
+      const granted = await requestHarmonyLocationPermission();
+      if (!granted) {
+        console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+        setLocationReady(true);
+        return;
+      }
+    }
 
     if (Platform.OS === 'android') {
       try {
@@ -198,45 +238,29 @@ export default function DeviceAddressScreen() {
   useEffect(() => {
     isMountedRef.current = true;
 
-    // 使用全局初始化函数，避免重复初始化
-    initAMapSdk();
-    initLocation();
+    // 使用全局初始化函数，避免重复初始�?
+    if (isHarmonyMapUnavailable) {
+      setLocationReady(true);
+    } else {
+      initAMapSdk();
+      initLocation();
+    }
 
     return () => {
       isMountedRef.current = false;
-      // 只清理引用，不手动销毁地图
+      // 只清理引用，不手动销毁地�?
       mapRef.current = null;
     };
-  }, []);
+  }, [isHarmonyMapUnavailable]);
 
   // 页面隐藏时（返回首页时）
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
-      // 清理引用，避免与首页的 MapView 冲突
+      // 清理引用，避免与首页�?MapView 冲突
       mapRef.current = null;
     };
   }, []);
-
-  if (!locationReady) {
-    return (
-      <PageContainer
-        backgroundColor="#FFFFFF"
-        statusBarStyle="dark-content"
-        statusBarBackgroundColor="#FFFFFF"
-        safeAreaEdges={['top', 'bottom']}
-        pageNavProps={{
-          text: '地图',
-          showBack: true,
-          background: '#FFFFFF',
-        }}
-      >
-        <View style={styles.loading}>
-          <Text style={styles.loadingText}>加载中...</Text>
-        </View>
-      </PageContainer>
-    );
-  }
 
   return (
     <PageContainer
@@ -253,60 +277,78 @@ export default function DeviceAddressScreen() {
     >
       <View style={styles.mapContainer}>
         <View style={styles.mapContent}>
-          <MapView
-            key={mapKeyRef.current}
-            ref={mapRef}
-            mapType={MapType.Navi}
-            compassEnabled={false}
-            rotateGesturesEnabled={false}
-            tiltGesturesEnabled={false}
-            scaleControlsEnabled={false}
-            zoomControlsEnabled={false}
-            initialCameraPosition={{
-              target: {
-                latitude:
-                  addressInfo?.[0]?.latitude ||
-                  userLocationInfo.current?.latitude ||
-                  39.9042,
-                longitude:
-                  addressInfo?.[0]?.longitude ||
-                  userLocationInfo.current?.longitude ||
-                  116.4074,
-              },
-              zoom: 12,
-            }}
-          >
-            {!!markers.length &&
-              markers.map(item => (
-                <Marker
-                  key={item.id}
-                  position={item.position}
-                  icon={item.icon}
-                />
-              ))}
+          {isHarmonyMapUnavailable ? (
+            <View style={styles.mapFallback}>
+              <IconFont name="location" color="#999999" size={32} />
+              <Text style={styles.mapFallbackText}>
+                Harmony 版本暂不支持地图展示
+              </Text>
+            </View>
+          ) : (
+            <>
+              <MapView
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  height: '100%',
+                  position: 'absolute',
+                  zIndex: 1,
+                }}
+                key={mapKeyRef.current}
+                ref={mapRef}
+                mapType={MapType.Navi}
+                compassEnabled={false}
+                rotateGesturesEnabled={false}
+                tiltGesturesEnabled={false}
+                scaleControlsEnabled={false}
+                zoomControlsEnabled={false}
+                initialCameraPosition={{
+                  target: {
+                    latitude:
+                      addressInfo?.[0]?.latitude ||
+                      userLocationInfo.current?.latitude ||
+                      39.9042,
+                    longitude:
+                      addressInfo?.[0]?.longitude ||
+                      userLocationInfo.current?.longitude ||
+                      116.4074,
+                  },
+                  zoom: 12,
+                }}
+              >
+                {!!markers.length &&
+                  markers.map(item => (
+                    <Marker
+                      key={item.id}
+                      position={item.position}
+                      icon={item.icon}
+                    />
+                  ))}
 
-            {userLocationInfo.current && (
-              <Marker
-                key={'000'}
-                position={{
-                  latitude: userLocationInfo.current.latitude,
-                  longitude: userLocationInfo.current.longitude,
-                }}
-                icon={{
-                  uri: 'https://g.18qjz.cn/img/boklock/local_icon.png',
-                  width: 24,
-                  height: 37,
-                }}
-              />
-            )}
-          </MapView>
-          <TouchableOpacity
-            style={styles.locateIcon}
-            onPress={handleLocate}
-            activeOpacity={0.7}
-          >
-            <IconFont name="location1" color="#000000" size={24} />
-          </TouchableOpacity>
+                {userLocationInfo.current && (
+                  <Marker
+                    key={'000'}
+                    position={{
+                      latitude: userLocationInfo.current.latitude,
+                      longitude: userLocationInfo.current.longitude,
+                    }}
+                    icon={{
+                      uri: 'https://g.18qjz.cn/img/boklock/local_icon.png',
+                      width: 24,
+                      height: 37,
+                    }}
+                  />
+                )}
+              </MapView>
+              <TouchableOpacity
+                style={styles.locateIcon}
+                onPress={handleLocate}
+                activeOpacity={0.7}
+              >
+                <IconFont name="location1" color="#000000" size={24} />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
         <View style={styles.addressContainer}>
           <View style={styles.addressContainerInner}>
@@ -381,6 +423,23 @@ export default function DeviceAddressScreen() {
           </View>
         </View>
       </View>
+      {!locationReady && !isHarmonyMapUnavailable && (
+        <View
+          style={[
+            styles.loading,
+            {
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 99,
+            },
+          ]}
+        >
+          <Text style={styles.loadingText}>加载中...</Text>
+        </View>
+      )}
     </PageContainer>
   );
 }

@@ -23,6 +23,16 @@ if (isNativeMobile) {
   }
 }
 
+type ShareMiniProgramOptions = {
+  title?: string;
+  userName: string;
+  path: string;
+  webpageUrl?: string;
+  thumbImageUrl?: string;
+  scene?: number;
+  miniProgramType?: number;
+};
+
 const ensureWeChatRegistered = () => {
   const resolvedAppId = WECHAT_APP_ID || WECHAT_APP_ID_FALLBACK;
   if (!isNativeMobile) {
@@ -56,6 +66,22 @@ const ensureWeChatRegistered = () => {
     }
   }
   return wechatRegisterPromise;
+};
+
+export const hasWeChatShareCapability = () =>
+  isNativeMobile && !!WeChat && typeof WeChat.shareMiniProgram === 'function';
+
+export const shareWeChatMiniProgram = async (
+  options: ShareMiniProgramOptions,
+) => {
+  if (!isNativeMobile) {
+    throw new Error('当前平台暂不支持微信分享');
+  }
+  if (!hasWeChatShareCapability()) {
+    throw new Error('微信分享能力不可用');
+  }
+  await ensureWeChatRegistered();
+  return WeChat.shareMiniProgram(options);
 };
 
 export const isWxAppInstalled = async () => {

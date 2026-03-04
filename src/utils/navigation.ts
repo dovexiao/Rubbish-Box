@@ -1,5 +1,10 @@
-import { NavigationContainerRef, CommonActions, StackActions } from '@react-navigation/native';
+import {
+  NavigationContainerRef,
+  CommonActions,
+  StackActions,
+} from '@react-navigation/native';
 import Toast from '@ant-design/react-native/lib/toast';
+import { HOME_STACK_ROUTE } from '@/constants';
 
 // 导航引用，在 App.tsx 中设置
 let navigationRef: NavigationContainerRef<any> | null = null;
@@ -33,7 +38,7 @@ export function navigateToHome() {
     navigationRef.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: 'Index' }],
+        routes: [{ name: HOME_STACK_ROUTE }],
       }),
     );
   }
@@ -50,7 +55,7 @@ export function getCurrentPages(): Array<{ routeName: string; params?: any }> {
 
   try {
     const state = navigationRef.getState();
-    return state.routes.map((route) => ({
+    return state.routes.map(route => ({
       routeName: route.name,
       params: route.params,
     }));
@@ -111,14 +116,18 @@ export function reLaunch(options: { url: string }) {
 
 /**
  * 解析路由名称
- * '/pages/index/index' -> 'Index'
+ * '/pages/index/index' -> 'MainTabs'
  * '/pages/login/index' -> 'Login'
- * 'Index' -> 'Index' (直接使用)
+ * 'Index' -> 'MainTabs'（直接使用 Home 栈）
  */
 function parseRouteName(url: string): string | null {
   // 如果已经是路由名称（首字母大写），直接返回
-  if (url && url.charAt(0) === url.charAt(0).toUpperCase() && !url.includes('/')) {
-    return url;
+  if (
+    url &&
+    url.charAt(0) === url.charAt(0).toUpperCase() &&
+    !url.includes('/')
+  ) {
+    return normalizeStackRoute(url);
   }
 
   // 移除开头的斜杠
@@ -130,14 +139,24 @@ function parseRouteName(url: string): string | null {
     // 取页面名称（第二个部分）
     const pageName = parts[1];
     // 首字母大写
-    return pageName.charAt(0).toUpperCase() + pageName.slice(1);
+    return normalizeStackRoute(
+      pageName.charAt(0).toUpperCase() + pageName.slice(1),
+    );
   }
 
   // 如果格式不匹配，尝试直接使用（首字母大写）
   if (cleanUrl) {
-    return cleanUrl.charAt(0).toUpperCase() + cleanUrl.slice(1);
+    return normalizeStackRoute(
+      cleanUrl.charAt(0).toUpperCase() + cleanUrl.slice(1),
+    );
   }
 
   return null;
 }
 
+function normalizeStackRoute(name: string): string {
+  if (name === 'Index') {
+    return HOME_STACK_ROUTE;
+  }
+  return name;
+}

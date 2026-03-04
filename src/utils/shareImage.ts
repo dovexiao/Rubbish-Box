@@ -1,9 +1,12 @@
 import { captureRef } from 'react-native-view-shot';
 import { RefObject } from 'react';
-import { shareMiniProgram } from 'react-native-wechat-lib';
 import { Platform } from 'react-native';
 import { DetailsProp } from '@/pages/vip/type';
 import { showToast, showLoading, hideLoading } from '@/utils';
+import {
+  hasWeChatShareCapability,
+  shareWeChatMiniProgram,
+} from '@/utils/wechat';
 
 interface ShareImageOptions {
   details: DetailsProp;
@@ -45,11 +48,11 @@ export const onShareAppMessage = async ({
     return;
   }
 
-  if (typeof shareMiniProgram !== 'function') {
+  if (!hasWeChatShareCapability()) {
     return;
   }
 
-  await shareMiniProgram({
+  await shareWeChatMiniProgram({
     userName: 'gh_00245e3a7d08',
     path: path || `/pages/index/index`,
     webpageUrl: 'https://your-domain.com/fallback.html',

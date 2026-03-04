@@ -28,7 +28,20 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
+  mapFallback: {
+    flex: 1,
+    minHeight: 240,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F6F7FB',
+  },
+  mapFallbackText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#666666',
+  },
   locateIcon: {
+    zIndex: 10,
     position: 'absolute',
     width: 48,
     height: 48,

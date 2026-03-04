@@ -6,7 +6,11 @@ import { Flex, PageContainer, LinearGradient } from '@/components';
 import IconFont from '@/iconfont';
 import GradientButton from '@/components/GradientButton';
 import { showToast } from '@/utils';
-import * as WeChatModule from 'react-native-wechat-lib';
+import {
+  hasWeChatShareCapability,
+  isWxAppInstalled,
+  shareWeChatMiniProgram,
+} from '@/utils/wechat';
 import { stringify } from '@/utils/stringify';
 
 export default function ShareSuccessPage() {
@@ -24,7 +28,7 @@ export default function ShareSuccessPage() {
       return;
     }
 
-    if (!WeChatModule?.shareMiniProgram) {
+    if (!hasWeChatShareCapability()) {
       showToast({ title: '微信分享能力不可用', icon: 'none' });
       return;
     }
@@ -34,7 +38,7 @@ export default function ShareSuccessPage() {
     const lockType = route.params?.lockType;
     const lockId = route.params?.lockId;
     try {
-      const installed = await WeChatModule.isWXAppInstalled?.();
+      const installed = await isWxAppInstalled();
       if (!installed) {
         showToast({ title: '未安装微信', icon: 'error' });
         setIsSharing(false);
@@ -53,7 +57,7 @@ export default function ShareSuccessPage() {
       miniProgramType: process.env.DEPLOY_ENV === 'dev' ? 2 : 0,
     };
 
-    const sharePromise = WeChatModule.shareMiniProgram(shareOptions);
+    const sharePromise = shareWeChatMiniProgram(shareOptions);
     const appStatePromise = new Promise<any>(resolve => {
       appStateSub.current = AppState.addEventListener('change', s => {
         if (s === 'active') {

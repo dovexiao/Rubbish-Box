@@ -2,6 +2,9 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const { resolve } = require('metro-resolver');
 const path = require('path');
 
+const isHarmonyPlatform = platformName =>
+  platformName !== 'ios' && platformName !== 'android';
+
 // 尝试加载 Harmony（RNOH）专用的 Metro 配置；
 // 若未安装 @react-native-oh/react-native-harmony，则静默跳过，避免影响现有 Android/iOS 开发。
 let harmonyConfig = {};
@@ -49,7 +52,7 @@ baseConfig.resolver = {
   // 针对特定平台/模块做定制解析
   resolveRequest(context, moduleName, platform) {
     // Harmony 平台下，用 JS shim 替代部分依赖原生模块的库，避免 NativeModule 为空时报错
-    if (platform === 'harmony') {
+    if (isHarmonyPlatform(platform)) {
       if (moduleName === 'react-native-svg') {
         // Harmony 上暂时没有原生 SVG 实现，使用 JS 占位 shim，保证图标至少有可见形态
         return resolve(
@@ -81,18 +84,6 @@ baseConfig.resolver = {
             resolveRequest: null,
           },
           path.resolve(__dirname, 'src/harmony/safe-area-context-shim.tsx'),
-          platform,
-        );
-      }
-
-      if (moduleName === '@react-native-async-storage/async-storage') {
-        // Harmony 上统一重定向到持久化 shim，避免第三方/业务中直接 import 原生 AsyncStorage 时崩溃
-        return resolve(
-          {
-            ...context,
-            resolveRequest: null,
-          },
-          path.resolve(__dirname, 'src/harmony/async-storage-shim.ts'),
           platform,
         );
       }
@@ -153,6 +144,18 @@ baseConfig.resolver = {
             resolveRequest: null,
           },
           path.resolve(__dirname, 'src/harmony/amap3d-shim.tsx'),
+          platform,
+        );
+      }
+
+      if (moduleName === '@react-native-async-storage/async-storage') {
+        // Harmony 上统一重定向到持久化 shim，避免第三方/业务直接 import 原生 AsyncStorage 时崩溃
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(__dirname, 'src/harmony/async-storage-shim.ts'),
           platform,
         );
       }

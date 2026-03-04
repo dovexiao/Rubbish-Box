@@ -48,6 +48,7 @@ export const APP_NAME = Config.APP_NAME || 'boklock';
 // 获取高德地图 API Key
 export const MAP_KEY_ANDROID = Config.MAP_KEY_ANDROID;
 export const MAP_KEY_IOS = Config.MAP_KEY_IOS;
+export const MAP_KEY_HARMONY = Config.MAP_KEY_HARMONY || Config.MAP_KEY_OHOS;
 
 // 导出配置对象（方便统一访问）
 export const config = {
@@ -62,6 +63,7 @@ export const config = {
   appName: APP_NAME,
   mapKeyAndroid: MAP_KEY_ANDROID,
   mapKeyIos: MAP_KEY_IOS,
+  mapKeyHarmony: MAP_KEY_HARMONY,
 };
 
 // 打印当前环境（开发时方便调试）
@@ -78,5 +80,6 @@ if (__DEV__) {
   console.log(`应用名称: ${APP_NAME}`);
   console.log(`高德地图 Android Key: ${MAP_KEY_ANDROID ? '已配置' : '未配置'}`);
   console.log(`高德地图 iOS Key: ${MAP_KEY_IOS ? '已配置' : '未配置'}`);
+  console.log(`高德地图 Harmony Key: ${MAP_KEY_HARMONY ? '已配置' : '未配置'}`);
   console.log('===============');
 }
