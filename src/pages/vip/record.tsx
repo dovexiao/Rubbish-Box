@@ -11,9 +11,8 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { Toast } from '@ant-design/react-native';
-import { PageContainer, Popup, PopConfirm, Flex } from '@/components';
+import { PageContainer, PopConfirm, Flex } from '@/components';
 import IconFont from '@/iconfont';
-import { DAY_OF_WEEK, INVITE_STATUS } from '@/constants';
 import { cancelInvite, getDetails, getRecordList } from '@/services/user';
 import { generateShareImage, onShareAppMessage } from '@/utils/shareImage';
 import { tencentUpload } from '@/utils/request';
@@ -22,6 +21,7 @@ import { showLoading, hideLoading, showToast } from '@/utils';
 import { styles } from './recordStyle';
 import { DetailsProp } from './type';
 import { WeChatCoverImage } from './com/weChatCoverImage';
+import InviteCodePop, { type InviteCodePopRef } from './com/InviteCodePop';
 
 const PAGE_SIZE = 20;
 
@@ -53,6 +53,8 @@ export default function VipRecordPage() {
   const loadingRef = useRef(false);
   const listLengthRef = useRef(0);
   const onEndReachedCalledDuringMomentum = useRef(true);
+
+  const animationPopRef = useRef<InviteCodePopRef>(null);
 
   const cdnDomain = (cosPath: string) =>
     cosPath.replace(
@@ -216,7 +218,8 @@ export default function VipRecordPage() {
           const detail = await fetchSimpleDetails(item.id);
           setShareDetail(detail);
           hideLoading();
-          setDetailPopupVisible(true);
+          // setDetailPopupVisible(true);
+          animationPopRef.current?.open();
         }}
       >
         <Flex direction="row" justify="between" align="center">
@@ -298,200 +301,24 @@ export default function VipRecordPage() {
         onConfirm={handleCancelInvite}
       />
 
-      <Popup
-        visible={detailPopupVisible}
-        onClose={() => {
-          setDetailPopupVisible(false);
-          setIsOption(false);
+      <InviteCodePop
+        ref={animationPopRef}
+        maxHeight={507}
+        styles={styles}
+        details={details}
+        shareDetail={shareDetail}
+        onEdit={() => {
+          if (!currentRow?.id) return;
+          navigation.navigate(
+            'VipEditRecord' as never,
+            {
+              currentId: currentRow.id,
+            } as never,
+          );
         }}
-        showClose={false}
-        minHeight={507}
-      >
-        <Flex
-          style={styles.num}
-          direction="row"
-          justify="between"
-          align="center"
-        >
-          {details?.status !== 10 &&
-          details?.status !== 20 &&
-          details?.status !== 5 &&
-          details?.leftTime !== 0 ? (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => {
-                setIsOption(v => !v);
-              }}
-            >
-              <IconFont name="more" size={24} color="#333333" />
-            </TouchableOpacity>
-          ) : (
-            <View style={{ width: 24 }} />
-          )}
-          <View>
-            <Text style={styles.popTitleText}>贵宾码</Text>
-          </View>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => {
-              setDetailPopupVisible(false);
-              setIsOption(false);
-            }}
-          >
-            <IconFont name="close" size={24} color="#333333" />
-          </TouchableOpacity>
-        </Flex>
-
-        {isOption && (
-          <View style={styles.fixBox}>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.fixBtn}
-              onPress={() => {
-                setIsOption(false);
-                setDetailPopupVisible(false);
-                navigation.navigate(
-                  'VipEditRecord' as never,
-                  {
-                    currentId: currentRow?.id,
-                  } as never,
-                );
-              }}
-            >
-              <Text style={styles.color333}>编辑</Text>
-            </TouchableOpacity>
-            <View style={styles.fixBoxLine} />
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.fixBtn}
-              onPress={() => {
-                setIsOption(false);
-                setDetailPopupVisible(false);
-                deleteRef.current?.open?.();
-              }}
-            >
-              <Text style={styles.redColor}>作废</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        <View style={styles.contentBox}>
-          <Flex
-            direction="row"
-            justify="between"
-            style={{ width: '100%', paddingLeft: 16, paddingRight: 16 }}
-          >
-            <Text style={styles.rowText1}>尊敬的贵宾</Text>
-            <Text
-              style={[
-                styles.tagBox,
-                details?.status === 1 && styles.color1,
-                (details?.status === 2 || details?.status === 5) &&
-                  styles.color2,
-                details?.status === 10 && styles.color10,
-                details?.status === 20 && styles.color20,
-              ]}
-            >
-              {INVITE_STATUS[details?.status as keyof typeof INVITE_STATUS]}
-            </Text>
-          </Flex>
-          <Text style={styles.inviteCode}>{details?.code}</Text>
-          <Text style={styles.popTime}>使用时间:</Text>
-          <Flex
-            direction="row"
-            justify="between"
-            align="center"
-            style={styles.timeBox}
-          >
-            <Flex
-              direction="column"
-              justify="between"
-              style={{ marginLeft: 10 }}
-            >
-              <Flex direction="row" align="center">
-                <Text style={[styles.dateText, styles.mr12, styles.mb8]}>
-                  {`${dayjs(details?.startTime).format('MM')}月${dayjs(
-                    details?.startTime,
-                  ).format('DD')}日`}
-                </Text>
-                <Text style={[styles.dateText, styles.mb8]}>
-                  {
-                    DAY_OF_WEEK[
-                      dayjs(
-                        details?.startTime,
-                      ).day() as keyof typeof DAY_OF_WEEK
-                    ]
-                  }
-                </Text>
-              </Flex>
-              <Text style={styles.dateTime}>
-                {`${dayjs(details?.startTime).format('HH')}：${dayjs(
-                  details?.startTime,
-                ).format('mm')}`}
-              </Text>
-            </Flex>
-            <IconFont name="arrows1" size={20} color="#333333" />
-            <Flex
-              direction="column"
-              justify="between"
-              style={{ marginLeft: 10 }}
-            >
-              <Flex direction="row" align="center">
-                <Text style={[styles.dateText, styles.mr12, styles.mb8]}>
-                  {`${dayjs(details?.endTime).format('MM')}月${dayjs(
-                    details?.endTime,
-                  ).format('DD')}日`}
-                </Text>
-                <Text style={[styles.dateText, styles.mb8]}>
-                  {
-                    DAY_OF_WEEK[
-                      dayjs(details?.endTime).day() as keyof typeof DAY_OF_WEEK
-                    ]
-                  }
-                </Text>
-              </Flex>
-              <Text style={styles.dateTime}>
-                {`${dayjs(details?.endTime).format('HH')}：${dayjs(
-                  details?.endTime,
-                ).format('mm')}`}
-              </Text>
-            </Flex>
-          </Flex>
-          <Flex direction="row" justify="center" align="center">
-            <Text style={styles.dateText}>使用次数：</Text>
-            <Text style={styles.dateText}>
-              {details?.noLimit ? '不限' : details?.limitTime}
-            </Text>
-          </Flex>
-        </View>
-
-        <View style={styles.popup}>
-          <Flex
-            style={{ width: '100%', marginTop: 31, marginBottom: 8 }}
-            direction="row"
-            justify="center"
-            align="center"
-          >
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.cancalBtn}
-              onPress={() => {
-                setDetailPopupVisible(false);
-              }}
-            >
-              <Text>取消</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={[styles.confirmBtn, styles.bgColor333]}
-              onPress={() => handleShare(shareDetail)}
-              disabled={!shareDetail}
-            >
-              <Text style={{ color: '#ffffff' }}>发送给贵宾</Text>
-            </TouchableOpacity>
-          </Flex>
-        </View>
-      </Popup>
+        onInvalidate={() => deleteRef.current?.open?.()}
+        onShare={() => handleShare(shareDetail)}
+      />
 
       {/* 隐藏的封面图UI */}
       {shareDetail && (

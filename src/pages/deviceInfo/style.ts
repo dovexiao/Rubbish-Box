@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
     gap: 16,
+    overflow: 'scroll',
   },
   cardTitleLine: {
     width: 2,
@@ -25,6 +26,13 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 6,
+  },
+  cardRowsTouch: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   cardLable: {
     fontSize: 14,
@@ -204,5 +212,84 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 8,
     marginBottom: 16,
+  },
+
+  scanPop: {
+    backgroundColor: '#000000',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    paddingBottom: 0,
+  },
+  scanCameraContainer: {
+    width: '100%',
+  },
+  scanCameraFill: {
+    flex: 1,
+  },
+  scanFrameWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scanFrame: {
+    width: 300,
+    height: 300,
+    marginTop: 82,
+    marginBottom: 32,
+  },
+  scanTipWrapper: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 16,
+  },
+  scanTipBox: {
+    paddingHorizontal: 23,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    gap: 6,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+  },
+  scanTipTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#FFFFFF',
+  },
+  scanTipText: {
+    width: 297,
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#FFFFFF',
+    lineHeight: 20,
+  },
+  scanTipImg: {
+    width: 343,
+    height: 166,
+    borderRadius: 4,
+  },
+  adminInfoTitle: {
+    marginVertical: 12,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333333',
+  },
+  adminInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    marginBottom: 34,
+  },
+  adminInfoText: {
+    width: '100%',
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
+    marginTop: 12,
   },
 });

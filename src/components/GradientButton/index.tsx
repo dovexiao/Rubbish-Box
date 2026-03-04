@@ -68,7 +68,7 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   const buttonStyle: ViewStyle = {
     width: width || '100%',
     height,
-    borderWidth: hasBorder ? 2 : 0,
+    borderWidth: hasBorder ? 1 : 0,
     borderColor: hasBorder ? 'rgba(0, 0, 0, 0.1)' : 'transparent',
     borderRadius,
   };

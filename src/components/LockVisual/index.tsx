@@ -7,6 +7,7 @@ import FastImage from 'react-native-fast-image';
 import styles from './styles';
 import { LockInfoDTO } from '@/pages/index/typing';
 import { useTheme } from '@/context/ThemeContext';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 export type LockVisualStatus =
   | 'rise'
@@ -35,13 +36,6 @@ export interface LockVisualProps {
   currentDeviceStatus: LockVisualStatus;
   gifNonce?: number | string;
   inconsistentStatus?: boolean;
-  backgroundType?: 'deep' | 'normal' | 'shallow' | string;
-  onPressAddDevice?: () => void;
-  onPressCombineDevice?: (payload: {
-    id?: number | string;
-    lockName?: string;
-    type: false;
-  }) => void;
 }
 
 const LockVisual: React.FC<LockVisualProps> = props => {
@@ -51,11 +45,9 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     currentDeviceStatus,
     gifNonce,
     inconsistentStatus,
-    backgroundType,
-    onPressAddDevice,
-    onPressCombineDevice,
   } = props;
   const { theme, themeType } = useTheme();
+  const navigation = useAppNavigation();
 
   const [lockStatus, setLockStatus] =
     useState<LockVisualStatus>(currentDeviceStatus);
@@ -99,14 +91,15 @@ const LockVisual: React.FC<LockVisualProps> = props => {
   const handlePressAction = () => {
     if (!showActionButton) return;
     if (detail?.isGroup) {
-      onPressCombineDevice?.({
+      navigation.navigate('CombineDevice', {
         id: detail?.id,
         lockName: detail?.lockName,
         type: false,
       });
       return;
+    } else {
+      navigation.navigate('BindDevice');
     }
-    onPressAddDevice?.();
   };
 
   const renderStaticImage = (uri?: string | null) => {
@@ -177,6 +170,30 @@ const LockVisual: React.FC<LockVisualProps> = props => {
               }
             />
           </View>
+
+          {detail.isGroup && (
+            <Flex
+              direction="row"
+              justify="center"
+              align={'center'}
+              style={styles.groupCount}
+            >
+              <IconFont
+                style={{ marginRight: 4, marginTop: 4 }}
+                name={'multiplication'}
+                size={14}
+                color={themeType === 'dark' ? '#ffffff' : '#333333'}
+              />
+              <Text
+                style={[
+                  styles.groupCountText,
+                  { color: themeType === 'dark' ? '#ffffff' : '#333333' },
+                ]}
+              >
+                {detail?.groupCount}
+              </Text>
+            </Flex>
+          )}
         </Flex>
       ) : null}
 

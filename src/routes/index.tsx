@@ -70,6 +70,11 @@ export const routes = {
       label: '设备信息',
     },
     {
+      name: 'DeviceList',
+      component: require('@/pages/deviceList').default,
+      label: '设备列表',
+    },
+    {
       name: 'FirmwareVersion',
       component: require('@/pages/firmwareVersion').default,
       label: '固件版本',
@@ -273,6 +278,71 @@ export const routes = {
       name: 'VipEditRecord',
       component: require('@/pages/vip/editRecord').default,
       label: '编辑宾客邀请记录',
+    },
+    {
+      name: 'BindDevice',
+      component: require('@/pages/bindDevice').default,
+      label: '绑定设备',
+    },
+    {
+      name: 'FindDevice',
+      component: require('@/pages/findDevice').default,
+      label: '查找设备',
+    },
+    {
+      name: 'CombineDevice',
+      component: require('@/pages/combineDevice').default,
+      label: '组合设备',
+    },
+    {
+      name: 'HandOver',
+      component: require('@/pages/handOver').default,
+      label: '移交设备',
+    },
+    {
+      name: 'HandOverDevice',
+      component: require('@/pages/handOver/handOverDevice').default,
+      label: '移交设备',
+    },
+    {
+      name: 'HandOverVerify',
+      component: require('@/pages/handOver/handOverVerify').default,
+      label: '移交设备验证',
+    },
+    {
+      name: 'HandOverVerifyNew',
+      component: require('@/pages/handOver/handOverVerifyNew').default,
+      label: '移交设备验证',
+    },
+    {
+      name: 'BluetoothSearch',
+      component: require('@/pages/bluetooth/search').default,
+      label: '蓝牙搜索',
+    },
+    {
+      name: 'Unbind',
+      component: require('@/pages/unbind').default,
+      label: '解除绑定须知',
+    },
+    {
+      name: 'UnbindDevice',
+      component: require('@/pages/unbind/unbindDevice').default,
+      label: '解除绑定',
+    },
+    {
+      name: 'BluetoothControl',
+      component: require('@/pages/bluetooth/control').default,
+      label: '自动升降',
+    },
+    {
+      name: 'Message',
+      component: require('@/pages/message').default,
+      label: '消息中心',
+    },
+    {
+      name: 'MessageDetail',
+      component: require('@/pages/messageDetail').default,
+      label: '消息详情',
     },
   ],
 } as const;

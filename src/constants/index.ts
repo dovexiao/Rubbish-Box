@@ -79,6 +79,8 @@ export const LOCK_STATUS_NAME = {
   [LOCK_STATUS.RISE]: '已升起',
   [LOCK_STATUS.FALL_ING]: '正在降下',
   [LOCK_STATUS.RISE_ING]: '正在升起',
+  [LOCK_STATUS.OFF_LINE]: '设备离线',
+  [LOCK_STATUS.FAULT]: '设备故障',
 };
 
 export const BATTERY_STATUS = {

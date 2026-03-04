@@ -1,0 +1,95 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  groupListContent: {
+    width: '100%',
+    padding: 24,
+  },
+  groupListItem: {
+    width: '100%',
+    backgroundColor: '#f7f7fb',
+    borderRadius: 12,
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingLeft: 12,
+    paddingRight: 12,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  groupListItemText: {
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
+    flex: 1,
+    marginRight: 12,
+  },
+  groupListItemButton: {
+    width: 80,
+    height: 29,
+    borderRadius: 41,
+    backgroundColor: '#333333',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  groupListItemButtonText: {
+    fontSize: 12,
+    color: '#ffffff',
+    lineHeight: 17,
+    fontWeight: '700',
+  },
+  groupListItemTextConnected: {
+    fontSize: 14,
+    color: '#1fc871',
+    lineHeight: 20,
+  },
+  groupListItemTextPairedFar: {
+    fontSize: 14,
+    color: '#ff873d',
+    lineHeight: 20,
+  },
+  popTitle: {
+    fontWeight: '700',
+    fontSize: 16,
+    color: '#333333',
+    lineHeight: 22,
+    textAlign: 'center',
+  },
+  popText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#999999',
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  vipCodeTitle: {
+    fontWeight: '400',
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  vipCodeText: {
+    fontSize: 14,
+    color: '#ff873d',
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  operationConfirmButton: {
+    width: 124,
+    height: 42,
+    backgroundColor: '#333333',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 15,
+  },
+  operationConfirmButtonText: {
+    fontSize: 12,
+    color: '#ffffff',
+    lineHeight: 17,
+    fontWeight: '700',
+  },
+});
+

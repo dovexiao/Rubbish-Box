@@ -161,11 +161,13 @@ export default function Order() {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            colors={['#333333']}
-          />
+          !initialLoading ? (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={['#333333']}
+            />
+          ) : undefined
         }
       />
     </PageContainer>

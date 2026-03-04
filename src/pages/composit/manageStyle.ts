@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   card: {
-    marginLeft: 16,
-    marginRight: 16,
+    marginHorizontal: 24,
     marginTop: 12,
     backgroundColor: '#f7f7fb',
     borderRadius: 12,
@@ -47,8 +46,19 @@ export const styles = StyleSheet.create({
     marginBottom: 40,
   },
 
+  paddingH16: {
+    paddingHorizontal: 16,
+  },
+
+  popTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333333',
+    lineHeight: 22,
+  },
   popSubTip: {
-    paddingTop: 14,
+    paddingTop: 16,
+    paddingBottom: 4,
     fontSize: 12,
     color: '#666',
     lineHeight: 17,
@@ -56,8 +66,9 @@ export const styles = StyleSheet.create({
   },
 
   itemContent: {
-    paddingLeft: 16,
-    paddingRight: 16,
+    marginHorizontal: 24,
+    marginTop: 12,
+    paddingVertical: 6,
   },
 
   itemContentValid: {
@@ -119,12 +130,17 @@ export const styles = StyleSheet.create({
   },
 
   btnContainerWrapper: {
-    marginTop: 29,
-    marginBottom: 8,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
 
   btnContainer: {
+    width: 156,
+    paddingVertical: 13,
     borderRadius: 12,
+    display: 'flex',
+    justifyContent: 'center',
+    alignContent: 'center',
   },
 
   btnContainerClose: {
@@ -136,6 +152,7 @@ export const styles = StyleSheet.create({
   btnContainerCloseText: {
     color: '#999999',
     fontSize: 16,
+    textAlign: 'center',
   },
 
   btnContainerConfirm: {
@@ -147,6 +164,7 @@ export const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 
   mt24: {
@@ -165,26 +183,17 @@ export const styles = StyleSheet.create({
   },
 
   addBox: {
-    marginLeft: 16,
-    // height: 48,
-    padding: 10,
-    backgroundColor: '#f6f7fa',
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    backgroundColor: '#f7f7fb',
     borderRadius: 12,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
   addBtnText: {
-    paddingRight: 8,
-    height: 20,
-    fontWeight: 'bold',
-    fontSize: 12,
+    marginHorizontal: 2,
+    fontWeight: '500',
+    fontSize: 14,
     color: '#333333',
     lineHeight: 20,
-    textAlign: 'center',
-    fontStyle: 'normal',
-    textTransform: 'none',
   },
 });

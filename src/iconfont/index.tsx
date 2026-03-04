@@ -436,6 +436,7 @@ const IconFont: FunctionComponent<Props> = props => {
 
   const { name, size, color, ...rest } = props;
 
+  // @ts-ignore
   return <HarmonyIconImage name={name} size={size} color={color} {...rest} />;
 };
 
