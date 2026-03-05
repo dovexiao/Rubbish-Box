@@ -20,12 +20,24 @@ export {
  */
 export { showToast, showLoading, hideLoading } from './toast';
 import { showToast as innerShowToast } from './toast';
+export type {
+  GetLocationOptions,
+  GetLocationResult,
+  LocationCoordinateType,
+} from './location';
+export {
+  getCurrentLocation,
+  getLocation,
+  initAMapGeolocation,
+  requestHarmonyLocationPermission,
+  startLocationUpdates,
+} from './location';
+
 import {
   DeviceEventEmitter,
   Platform,
   Linking,
   NativeModules,
-  TurboModuleRegistry,
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Config from 'react-native-config';
@@ -41,93 +53,8 @@ let IntentLauncher: any = null;
 let NetInfo: any = null;
 let BleManagerClass: any = null;
 let AMapSdk: any = null;
-let initAMapGeolocationLib: any = null;
-let Geolocation: any = null;
 const isHarmonyPlatform = Platform.OS !== 'ios' && Platform.OS !== 'android';
 let HarmonyAmapModule: any = null;
-type HarmonyLocationPayload = {
-  latitude: number;
-  longitude: number;
-  accuracy?: number;
-  altitude?: number;
-  speed?: number;
-  bearing?: number;
-  time?: number;
-};
-type HarmonyLocationBridge = {
-  getCurrentLocation?: (options?: {
-    enableHighAccuracy?: boolean;
-    timeoutMs?: number;
-  }) => Promise<HarmonyLocationPayload | null>;
-  isLocationEnabled?: () => Promise<boolean>;
-};
-let HarmonyLocationModule: HarmonyLocationBridge | null = null;
-
-const harmonyLocationModuleNames = [
-  'HarmonyLocation',
-  'HarmonyLocationTurboModule',
-];
-
-const getHarmonyLocationFromTurboRegistry =
-  (): HarmonyLocationBridge | null => {
-    const turboGet = (
-      TurboModuleRegistry as {
-        get?: <T>(name: string) => T | null | undefined;
-      }
-    )?.get;
-    if (typeof turboGet !== 'function') {
-      return null;
-    }
-    for (const name of harmonyLocationModuleNames) {
-      try {
-        const candidate = turboGet<HarmonyLocationBridge | null>(name);
-        if (candidate) {
-          if (__DEV__ && name !== 'HarmonyLocation') {
-            console.log(
-              `[Harmony] HarmonyLocation TurboModuleRegistry fallback resolved to ${name}`,
-            );
-          }
-          return candidate;
-        }
-      } catch (error) {
-        if (__DEV__) {
-          console.warn(
-            `[Harmony] TurboModuleRegistry.get(${name}) failed when resolving HarmonyLocation:`,
-            error,
-          );
-        }
-      }
-    }
-    return null;
-  };
-
-const resolveHarmonyLocationModule = (): HarmonyLocationBridge | null => {
-  if (HarmonyLocationModule) {
-    return HarmonyLocationModule;
-  }
-  const turboModule = getHarmonyLocationFromTurboRegistry();
-  if (turboModule) {
-    HarmonyLocationModule = turboModule;
-    return HarmonyLocationModule;
-  }
-  if (!NativeModules) {
-    return null;
-  }
-  const nativeModuleBucket = NativeModules as Record<string, unknown>;
-  for (const name of harmonyLocationModuleNames) {
-    const candidate = nativeModuleBucket[name];
-    if (candidate) {
-      HarmonyLocationModule = candidate as HarmonyLocationBridge;
-      if (__DEV__ && name !== 'HarmonyLocation') {
-        console.log(
-          `[Harmony] HarmonyLocation bridge name fallback resolved to ${name}`,
-        );
-      }
-      return HarmonyLocationModule;
-    }
-  }
-  return null;
-};
 
 if (isHarmonyPlatform) {
   try {
@@ -136,7 +63,6 @@ if (isHarmonyPlatform) {
   } catch (e) {
     console.warn('[Harmony] harmony-amap module not available:', e);
   }
-  HarmonyLocationModule = resolveHarmonyLocationModule();
 }
 
 if (isNativeMobile) {
@@ -166,15 +92,6 @@ if (isNativeMobile) {
     AMapSdk = require('react-native-amap3d').AMapSdk;
   } catch (e) {
     console.warn('react-native-amap3d module not available:', e);
-  }
-
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-    const geo = require('react-native-amap-geolocation');
-    initAMapGeolocationLib = geo.init;
-    Geolocation = geo.Geolocation;
-  } catch (e) {
-    console.warn('react-native-amap-geolocation module not available:', e);
   }
 }
 
@@ -822,203 +739,6 @@ export const checkBluetoothEnabled = async (manager: any): Promise<boolean> => {
 };
 
 /**
- * 初始化高德定位服务
- * @param apiKey 高德地图 API Key（可选，如果未提供则从环境变量读取）
- */
-export const initAMapGeolocation = async (apiKey?: string): Promise<void> => {
-  try {
-    if (isHarmonyPlatform) {
-      const harmonyLocation = resolveHarmonyLocationModule();
-      if (!harmonyLocation) {
-        console.warn(
-          '[Harmony] HarmonyLocation TurboModule 未找到，无法初始化定位',
-        );
-        return;
-      }
-      try {
-        await harmonyLocation.isLocationEnabled?.();
-        if (__DEV__) {
-          console.log('[Harmony] HarmonyLocation 模块初始化完成');
-        }
-      } catch (error) {
-        console.warn('[Harmony] HarmonyLocation 模块初始化失败:', error);
-      }
-      return;
-    }
-    // 检查模块是否正确加载
-    if (
-      !initAMapGeolocationLib ||
-      typeof initAMapGeolocationLib !== 'function'
-    ) {
-      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
-      return;
-    }
-
-    // 如果没有传入 apiKey，则从环境变量读取
-    const androidKey =
-      Config.MAP_KEY_ANDROID || '65e063bf30af1d5cb5d2bf648243bff1';
-    const iosKey = Config.MAP_KEY_IOS || '4d3d8b30420bb15896f580757451268d';
-
-    // 使用 init 函数初始化（传入平台特定的 key）
-    await initAMapGeolocationLib({
-      android: androidKey,
-      ios: iosKey,
-    });
-
-    if (__DEV__) {
-      console.log('高德定位服务初始化成功');
-    }
-  } catch (error) {
-    console.error('高德定位服务初始化失败:', error);
-  }
-};
-
-/**
- * 获取当前位置（高德定位）
- */
-export const getCurrentLocation = async (): Promise<{
-  latitude: number;
-  longitude: number;
-  accuracy?: number;
-  address?: string;
-  province?: string;
-  city?: string;
-  district?: string;
-  street?: string;
-  streetNumber?: string;
-} | null> => {
-  try {
-    if (isHarmonyPlatform) {
-      const harmonyLocation = resolveHarmonyLocationModule();
-      if (!harmonyLocation?.getCurrentLocation) {
-        console.warn(
-          '[Harmony] HarmonyLocation TurboModule 不可用，无法获取定位',
-        );
-        return null;
-      }
-      console.log('[Harmony] getCurrentLocation start');
-      const result = await harmonyLocation.getCurrentLocation({
-        enableHighAccuracy: true,
-        timeoutMs: 10000,
-      });
-      if (!result) {
-        return null;
-      }
-      console.log('[Harmony] getCurrentLocation success', result);
-      return {
-        latitude: result.latitude,
-        longitude: result.longitude,
-        accuracy: result.accuracy,
-        address: undefined,
-        province: undefined,
-        city: undefined,
-        district: undefined,
-        street: undefined,
-        streetNumber: undefined,
-      };
-    }
-    // 检查模块是否正确加载
-    if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
-      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
-      return null;
-    }
-
-    return new Promise((resolve, reject) => {
-      Geolocation.getCurrentPosition(
-        (position: any) => {
-          resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-            address: position.address,
-            province: position.province,
-            city: position.city,
-            district: position.district,
-            street: position.street,
-            streetNumber: position.streetNumber,
-          });
-        },
-        (error: any) => {
-          // console.error('获取位置失败:', error);
-          reject(error);
-        },
-      );
-    });
-  } catch (error) {
-    console.error('获取当前位置失败:', error);
-    return null;
-  }
-};
-
-// Harmony 平台的显式权限触发，供 UI 在调用定位前手动触发一次
-export const requestHarmonyLocationPermission = async (): Promise<boolean> => {
-  if (!isHarmonyPlatform) return true;
-  const harmonyLocation = resolveHarmonyLocationModule();
-  if (!harmonyLocation) {
-    console.warn('[Harmony] HarmonyLocation 模块未加载，无法请求权限');
-    return false;
-  }
-  try {
-    // 调用 isLocationEnabled 读取当前状态；必要时调用 getCurrentLocation 以触发权限弹框
-    const enabled = await harmonyLocation.isLocationEnabled?.();
-    if (enabled) {
-      console.log('[Harmony] 定位已授权');
-      return true;
-    }
-    await harmonyLocation.getCurrentLocation?.({ enableHighAccuracy: false });
-    return true;
-  } catch (error) {
-    console.warn('[Harmony] 请求定位权限失败:', error);
-    return false;
-  }
-};
-
-/**
- * 开始定位监听（高德定位）
- */
-export const startLocationUpdates = (
-  callback: (position: {
-    latitude: number;
-    longitude: number;
-    accuracy?: number;
-    address?: string;
-  }) => void,
-): (() => void) => {
-  try {
-    if (isHarmonyPlatform) {
-      console.info('[Harmony] 当前版本未启用持续定位监听');
-      return () => {};
-    }
-    // 检查模块是否正确加载
-    if (!Geolocation || typeof Geolocation.watchPosition !== 'function') {
-      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
-      return () => {}; // 返回空函数，避免调用时出错
-    }
-
-    const watchId = Geolocation.watchPosition(
-      (position: any) => {
-        callback({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          address: position.address,
-        });
-      },
-      (error: any) => {
-        console.error('定位监听错误:', error);
-      },
-    );
-
-    return () => {
-      Geolocation.clearWatch(watchId);
-    };
-  } catch (error) {
-    console.error('开始定位监听失败:', error);
-    return () => {}; // 返回空函数，避免调用时出错
-  }
-};
-
-/**
  * 初始化高德地图 SDK（用于 react-native-amap3d）
  * @param androidKey Android 平台的高德地图 API Key（可选，如果未提供则从环境变量读取）
  * @param iosKey iOS 平台的高德地图 API Key（可选，如果未提供则从环境变量读取）
@@ -1101,88 +821,7 @@ export function myNextTick(fn: any) {
   }, 0);
 }
 
-/**
- * 事件中心（兼容 Taro 风格）
- */
-class EventCenter {
-  private events: Map<string, Set<Function>> = new Map();
-
-  /**
-   * 监听事件
-   * @param eventName 事件名称
-   * @param callback 回调函数
-   */
-  on(eventName: string, callback: Function) {
-    if (!this.events.has(eventName)) {
-      this.events.set(eventName, new Set());
-    }
-    this.events.get(eventName)!.add(callback);
-  }
-
-  /**
-   * 移除事件监听
-   * @param eventName 事件名称
-   * @param callback 回调函数（可选，不传则移除该事件的所有监听）
-   */
-  off(eventName: string, callback?: Function) {
-    if (!this.events.has(eventName)) {
-      return;
-    }
-
-    if (callback) {
-      // 移除指定的回调
-      this.events.get(eventName)!.delete(callback);
-      // 如果该事件没有监听者了，删除事件
-      if (this.events.get(eventName)!.size === 0) {
-        this.events.delete(eventName);
-      }
-    } else {
-      // 移除该事件的所有监听
-      this.events.delete(eventName);
-    }
-  }
-
-  /**
-   * 触发事件
-   * @param eventName 事件名称
-   * @param args 传递给回调函数的参数
-   */
-  trigger(eventName: string, ...args: any[]) {
-    if (!this.events.has(eventName)) {
-      return;
-    }
-
-    const callbacks = this.events.get(eventName)!;
-    callbacks.forEach(callback => {
-      try {
-        callback(...args);
-      } catch (error) {
-        console.error(
-          `EventCenter: Error executing callback for event "${eventName}":`,
-          error,
-        );
-      }
-    });
-  }
-
-  /**
-   * 检查是否有监听者
-   * @param eventName 事件名称
-   */
-  has(eventName: string): boolean {
-    return this.events.has(eventName) && this.events.get(eventName)!.size > 0;
-  }
-
-  /**
-   * 清除所有事件监听
-   */
-  clear() {
-    this.events.clear();
-  }
-}
-
-// 导出单例实例
-export const eventCenter = new EventCenter();
+export { default as eventCenter } from './eventCenter';
 
 /**
  * 过滤对象中的 undefined 和 null 值（递归处理）
