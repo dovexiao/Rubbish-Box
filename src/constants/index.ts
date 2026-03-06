@@ -187,34 +187,34 @@ export const ORDER_STATUS_NAME = {
 export const OPT_TYPE = {
   FALL: 0,
   RISE: 1,
-};
+} as const;
 
 export const COVER_STATUS = {
   CLOSE: 0,
   OPEN: 1,
-};
+} as const;
 
 export const BLUETOOTH_STATUS = {
   CLOSE: 0,
   OPEN: 1,
-};
+} as const;
 
 export const BUZZER_STATUS = {
   CLOSE: 0,
   OPEN: 1,
-};
+} as const;
 
 export const ABOVE_STATUS = {
   CLOSE: 0,
   OPEN: 1,
-};
+} as const;
 
 export const OT_STATUS = {
   RISE: 0,
   DOWN: 2,
   BUZZER: 11,
   OPENCOVER: 13,
-};
+} as const;
 
 export const PURPOSE = {
   UNBIND: 4, //解绑

@@ -39,10 +39,15 @@ const Index = () => {
   });
   const [gifNonce, setGifNonce] = useState<number>(0);
   const [optioning, setOptioning] = useState<boolean>(false);
+  const optioningRef = useRef<boolean>(false);
   const [error, setError] = useState<{
     code?: number | string;
     message?: string;
   } | null>(null);
+
+  useEffect(() => {
+    optioningRef.current = optioning;
+  }, [optioning]);
 
   const load = useCallback(
     async (id?: number, options?: { silent?: boolean }) => {
@@ -123,6 +128,10 @@ const Index = () => {
 
       const poller = loopFunc(async () => {
         if (stopped) return false;
+
+        // 操作中暂停 10s 轮询请求（但不停止定时器），避免操作过程被后台刷新打断
+        if (optioningRef.current) return true;
+
         const silent = !first;
         first = false;
         try {
@@ -176,6 +185,14 @@ const Index = () => {
 
   const guestPopupRef = useRef<any>(null);
   const animationTimer = useRef<any>(null);
+  const prefetchTimer = useRef<any>(null);
+  const prefetchPromise = useRef<Promise<any> | null>(null);
+  const animationSeq = useRef(0);
+  const detailIdRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    detailIdRef.current = detail?.id;
+  }, [detail?.id]);
 
   const onAnimationEnd = () => {
     setDeviceStatus(prev => ({
@@ -189,6 +206,18 @@ const Index = () => {
       rising120: false,
       falling120: false,
     }));
+    setOptioning(false);
+    if (prefetchTimer.current) {
+      clearTimeout(prefetchTimer.current);
+      prefetchTimer.current = null;
+    }
+    const p = prefetchPromise.current;
+    prefetchPromise.current = null;
+    if (p) {
+      p.catch(() => {});
+    } else {
+      load(detailIdRef.current, { silent: true }).catch(() => {});
+    }
   };
   const onAnimation = useCallback(
     ({
@@ -219,6 +248,19 @@ const Index = () => {
         [type]: value,
       }));
       setGifNonce(prev => prev + 1);
+      animationSeq.current += 1;
+      const seq = animationSeq.current;
+      if (prefetchTimer.current) {
+        clearTimeout(prefetchTimer.current);
+        prefetchTimer.current = null;
+      }
+      prefetchPromise.current = null;
+      prefetchTimer.current = setTimeout(() => {
+        if (animationSeq.current !== seq) return;
+        const p = load(detailIdRef.current, { silent: true });
+        prefetchPromise.current = p;
+        p.catch(() => {});
+      }, 1400);
       if (animationTimer.current) {
         clearTimeout(animationTimer.current);
         animationTimer.current = null;
@@ -248,6 +290,11 @@ const Index = () => {
         clearTimeout(animationTimer.current);
         animationTimer.current = null;
       }
+      if (prefetchTimer.current) {
+        clearTimeout(prefetchTimer.current);
+        prefetchTimer.current = null;
+      }
+      prefetchPromise.current = null;
     };
   }, [onOptioned, onAnimation]);
 
@@ -328,8 +375,9 @@ const Index = () => {
                 reload={id => {
                   void load(id);
                 }}
-                optioning={false}
+                optioning={optioning}
                 isMultiple={true}
+                currentDeviceStatus={currentDeviceStatus}
               >
                 <LockVisual
                   detail={detail}
