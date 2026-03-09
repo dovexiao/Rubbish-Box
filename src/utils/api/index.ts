@@ -14,10 +14,10 @@ import {
   type Characteristic,
   type Device,
 } from 'react-native-ble-plx';
-import { getStorage, setStorage } from '@/utils';
+import { arrayBufferToBase64, getStorage, setStorage } from '@/utils';
 import { saveFrontLog } from '@/services';
 
-import { getSystemConnectedDevices as getSystemConnectedDevicesFromUtils } from '@/utils';
+import { requestBluetoothPermissions } from '@/utils';
 import { isSameMac, parseMacFromBase64 } from '@/utils';
 import { RefObject } from 'react';
 
@@ -148,21 +148,110 @@ export const getBluetoothState = async (): Promise<string> => {
   }
 };
 
-// ---------- 系统已连接设备（兼容 { success, data } 形状） ----------
+// ---------- 系统已连接设备（推荐：不受 UUID 限制，可获取 GATT/HID/A2DP/HFP 等） ----------
 
-export const getSystemConnectedDevices = async (): Promise<{
+/**
+ * 使用原生模块获取系统已连接的所有蓝牙设备（推荐）
+ * 优势：不受 UUID 限制，可以获取所有类型的已连接设备（GATT/HID/A2DP/HFP）
+ * @returns Promise 返回设备列表
+ */
+export const getSystemConnectedDevices = (): Promise<{
   success: boolean;
   data: any[];
   message?: string;
 }> => {
-  const res = await getSystemConnectedDevicesFromUtils();
-  const code = (res as any)?.code;
-  const data = (res as any)?.data ?? [];
-  return {
-    success: code === '200',
-    data: Array.isArray(data) ? data : [],
-    message: (res as any)?.message,
-  };
+  return new Promise(async resolve => {
+    try {
+      // 首次启动/权限弹窗等场景可能导致 BleManager 被销毁，这里兜底重建
+      await ensureBleManagerAlive();
+
+      // 先请求蓝牙权限（Android 12+ 必需）
+      if (Platform.OS === 'android') {
+        const permResult = await requestBluetoothPermissions();
+        if (!permResult.granted) {
+          resolve({
+            success: false,
+            data: [],
+            message: permResult.message || '蓝牙权限未授予',
+          });
+          return;
+        }
+      }
+
+      if (Platform.OS === 'ios') {
+        try {
+          const res = await bleInstance.connectedDevices([
+            '0000fff0-0000-1000-8000-00805f9b34fb',
+          ]);
+
+          const hasDevices = res?.length > 0;
+          resolve({
+            success: hasDevices,
+            data: hasDevices
+              ? res.map((device: any) => ({
+                  deviceId: device.id,
+                  name: device.name,
+                  address: device.id,
+                  isConnected: true,
+                  device: device,
+                }))
+              : [],
+            message: hasDevices ? undefined : '当前无已连接的设备',
+          });
+        } catch (error: any) {
+          console.error('[蓝牙] iOS 获取已连接设备失败:', error);
+          resolve({
+            success: false,
+            data: [],
+            message: error?.message || '获取已连接设备失败',
+          });
+        }
+      } else {
+        // Android 使用回调方式
+        const { BluetoothManager } = NativeModules;
+        if (!BluetoothManager || !BluetoothManager.getConnectedDevices) {
+          resolve({
+            success: false,
+            data: [],
+            message: 'BluetoothManager 模块不可用',
+          });
+          return;
+        }
+
+        BluetoothManager.getConnectedDevices((result: any) => {
+          if (result.success && result.devices?.length > 0) {
+            resolve({
+              success: true,
+              data: result.devices.map((device: any) => ({
+                deviceId: device.address,
+                name: device.name,
+                address: device.address,
+                type: device.typeDescription,
+                isConnected: device.isConnected,
+                bondState: device.bondStateDescription,
+                uuids: device.uuids,
+                device: device,
+              })),
+              message: undefined,
+            });
+          } else {
+            resolve({
+              success: false,
+              data: [],
+              message: result.message || '当前无已连接的设备',
+            });
+          }
+        });
+      }
+    } catch (error: any) {
+      console.error('[蓝牙] 获取系统设备失败:', error);
+      resolve({
+        success: false,
+        data: [],
+        message: error?.message || '获取系统已连接设备失败',
+      });
+    }
+  });
 };
 
 // ---------- 连接/断开 ----------
@@ -224,7 +313,10 @@ export const searchBluetoothDevices = async (
           // iOS: 跳转到系统蓝牙设置
           await Linking.openURL('App-Prefs:root=Bluetooth');
         } else {
-          if (IntentLauncher && typeof IntentLauncher.startActivity === 'function') {
+          if (
+            IntentLauncher &&
+            typeof IntentLauncher.startActivity === 'function'
+          ) {
             await IntentLauncher.startActivity({
               action: 'android.settings.BLUETOOTH_SETTINGS',
             });
@@ -532,31 +624,32 @@ export const sendDataToDevice = (options: {
 }): void => {
   const byteLength = options.value.byteLength;
   const speed = 20;
-  if (byteLength <= 0) return;
-  const toSend = options.once
-    ? options.value
-    : options.value.slice(0, byteLength > speed ? speed : byteLength);
-  const base64 = uint8ArrayToBase64(toSend);
-  bleInstance
-    .writeCharacteristicWithResponseForDevice(
-      options.deviceId,
-      options.writeServiceUuid,
-      options.writeCharacteristicUuid,
-      base64,
-    )
-    .then(() => {
-      if (byteLength > speed && !options.once) {
-        sendDataToDevice({
-          ...options,
-          value: options.value.slice(speed, byteLength),
-        });
-      } else {
-        options.lasterSuccess?.();
-      }
-    })
-    .catch(err => {
-      options.onError?.(err);
-    });
+  if (byteLength > 0) {
+    bleInstance
+      .writeCharacteristicWithResponseForDevice(
+        options.deviceId,
+        options.writeServiceUuid,
+        options.writeCharacteristicUuid,
+        arrayBufferToBase64(
+          options.once
+            ? options.value
+            : options.value.slice(0, byteLength > speed ? speed : byteLength),
+        ),
+      )
+      .then(res => {
+        if (byteLength > speed && !options.once) {
+          sendDataToDevice({
+            ...options,
+            value: options.value.slice(speed, byteLength),
+          });
+        } else {
+          options.lasterSuccess && options.lasterSuccess();
+        }
+      })
+      .catch(res => {
+        options.onError && options.onError(res);
+      });
+  }
 };
 
 // ---------- 模式指令（sendBleCommandWithAck + sendModeCommandByBluetooth） ----------
@@ -626,6 +719,7 @@ const sendBleCommandWithAck = async (options: {
   if (!deviceId) return { success: false, msg: '缺少设备ID' };
 
   const alreadyConnected = await isDeviceConnected(deviceId);
+  console.log(alreadyConnected, '===alreadyConnected');
   if (!alreadyConnected.success) {
     await connectBluetoothDevice(deviceId);
   }
@@ -668,6 +762,7 @@ const sendBleCommandWithAck = async (options: {
       notifyCharacteristicUuid: '0783b03e-8535-b5a0-7140-a304d2495cb8',
       notifyServiceUuid: '0000fff0-0000-1000-8000-00805f9b34fb',
       onData: ({ base64 }) => {
+        console.log(base64, '===base64');
         const text = decodeBase64ToText(base64);
         const match = text.match(/(200|206)/);
         if (match) {
@@ -865,7 +960,7 @@ export const setNearbyPermission = async (options: {
     successMsg: '操作成功',
     failMsg: '操作失败',
   });
-
+  console.log(result, '===result');
   // 上报前端日志
   try {
     await saveFrontLog({
@@ -898,7 +993,10 @@ export const openBluetoothSettings = (): Promise<boolean> => {
           .then(() => resolve(true))
           .catch(reject);
       } else {
-        if (IntentLauncher && typeof IntentLauncher.startActivity === 'function') {
+        if (
+          IntentLauncher &&
+          typeof IntentLauncher.startActivity === 'function'
+        ) {
           IntentLauncher.startActivity({
             action: 'android.settings.BLUETOOTH_SETTINGS',
           })

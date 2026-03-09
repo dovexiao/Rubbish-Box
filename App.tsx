@@ -285,179 +285,233 @@ function App() {
 
   // 应用状态变化处理（对应 useDidShow）
   useEffect(() => {
-    const subscription = AppState.addEventListener(
-      'change',
-      async (nextAppState: AppStateStatus) => {
-        if (nextAppState === 'active') {
-          // 清理可能遗留的全局 Loading
+    const runOnActiveLogic = async () => {
+      if (__DEV__) {
+        console.log('[rn][restore] runOnActiveLogic 执行');
+      }
+      // 清理可能遗留的全局 Loading
+      try {
+        Toast.removeAll();
+      } catch {}
+
+      // 应用激活时，检查并初始化推送
+      try {
+        const [agree, token, pushRes] = await Promise.all([
+          cacheGet({ key: 'agreePrivacy' }).catch(() => false),
+          cacheGet({ key: 'token' }).catch(() => undefined),
+          getStorage({ key: 'pushEnabled' }).catch(
+            () => ({ data: undefined } as any),
+          ),
+        ]);
+
+        const enabled = pushRes?.data === true;
+        const loggedIn = !!token;
+
+        if (agree && enabled && loggedIn) {
+          // 主动拉取一次推送设备信息
+          await getMobPushDeviceInfo();
+        }
+
+        // 处理从系统设置返回的逻辑（rnReLaunchPath）
+        try {
+          const rnReLaunchRes = await getStorage<{
+            path?: string;
+            params?: Record<string, any>;
+            value?: any;
+          }>({ key: 'rnReLaunchPath' }).catch(() => null);
+          // getStorage 返回的就是存入的值本身，不是 { data: xxx }
+          const data = rnReLaunchRes ?? undefined;
+          if (__DEV__) {
+            console.log(
+              '[rn][restore] rnReLaunchPath 读取结果',
+              data ? { path: data.path } : '(未存储或已清除，跳过恢复)',
+            );
+          }
+          if (!data?.path) return;
+
           try {
-            Toast.removeAll();
-          } catch {}
+            // 获取当前栈顶路由，判断app是否被杀掉
+            const pages = getCurrentPages();
+            const top = pages && pages[pages.length - 1];
+            const route =
+              (top as any)?.routeName ||
+              (top as any)?.route ||
+              (top as any)?.path;
 
-          // 应用激活时，检查并初始化推送
+            const normalize = (p?: string) =>
+              (p || '').replace(/^\//, '').replace(/^pages\//, '');
+            const currentRoute = normalize(route as string);
+            const targetRoute = normalize(data.path);
+            console.log('[rn][restore] currentRoute', currentRoute);
+            console.log('[rn][restore] targetRoute', targetRoute);
+
+            // 如果当前页面就是目标页面，说明app未被杀掉，由页面自己的onShow处理
+            if (currentRoute === targetRoute) {
+              await setStorage({
+                key: 'rnReLaunchPathProcessing',
+                data: true,
+              }).catch(() => {});
+              // 延迟检查，如果页面处理完会清除记录
+              setTimeout(async () => {
+                const stillExists = await getStorage({
+                  key: 'rnReLaunchPath',
+                }).catch(() => null);
+                if (stillExists?.path) {
+                  await removeStorage({ key: 'rnReLaunchPath' }).catch(
+                    () => {},
+                  );
+                }
+                await removeStorage({
+                  key: 'rnReLaunchPathProcessing',
+                }).catch(() => {});
+              }, 3000);
+              return;
+            }
+          } catch (e) {
+            console.log('[rn][restore] route check failed', e);
+          }
+
+          const { path, params } = data;
+          // 先清除记录，避免重复处理
+          await removeStorage({ key: 'rnReLaunchPath' }).catch(() => {});
+
           try {
-            const [agree, token, pushRes] = await Promise.all([
-              cacheGet({ key: 'agreePrivacy' }).catch(() => false),
-              cacheGet({ key: 'token' }).catch(() => undefined),
-              getStorage({ key: 'pushEnabled' }).catch(
-                () => ({ data: undefined } as any),
-              ),
-            ]);
-
-            const enabled = pushRes?.data === true;
-            const loggedIn = !!token;
-
-            if (agree && enabled && loggedIn) {
-              // 主动拉取一次推送设备信息
-              await getMobPushDeviceInfo();
+            // 检查是否正在处理中（避免与页面onShow重复处理）
+            const processing = await getStorage({
+              key: 'rnReLaunchPathProcessing',
+            }).catch(() => null);
+            if (processing) {
+              console.log('[rn][restore] 页面正在处理中，跳过app.tsx处理');
+              return;
             }
 
-            // 处理从系统设置返回的逻辑（rnReLaunchPath）
-            try {
-              const rnReLaunchRes = await getStorage({
-                key: 'rnReLaunchPath',
-              }).catch(() => null);
-              const data = rnReLaunchRes?.data as
-                | { path?: string; params?: Record<string, any>; value?: any }
-                | undefined;
-              if (!data?.path) return;
-
-              try {
-                // 获取当前栈顶路由，判断app是否被杀掉
-                const pages = getCurrentPages();
-                const top = pages && pages[pages.length - 1];
-                const route =
-                  (top as any)?.routeName ||
-                  (top as any)?.route ||
-                  (top as any)?.path;
-
-                const normalize = (p?: string) =>
-                  (p || '').replace(/^\//, '').replace(/^pages\//, '');
-                const currentRoute = normalize(route as string);
-                const targetRoute = normalize(data.path);
-
-                // 如果当前页面就是目标页面，说明app未被杀掉，由页面自己的onShow处理
-                if (currentRoute === targetRoute) {
-                  await setStorage({
-                    key: 'rnReLaunchPathProcessing',
-                    data: true,
-                  }).catch(() => {});
-                  // 延迟检查，如果页面处理完会清除记录
-                  setTimeout(async () => {
-                    const stillExists = await getStorage({
-                      key: 'rnReLaunchPath',
-                    }).catch(() => null);
-                    if (stillExists?.data) {
-                      await removeStorage({ key: 'rnReLaunchPath' }).catch(
-                        () => {},
-                      );
-                    }
-                    await removeStorage({
-                      key: 'rnReLaunchPathProcessing',
-                    }).catch(() => {});
-                  }, 3000);
-                  return;
+            const info = await getSystemConnectedDevices();
+            if (path === 'FindDevice') {
+              const isPaired =
+                info.data?.some((item: any) =>
+                  isSameMac(item.deviceId || item.mac, params?.bleNo),
+                ) || false;
+              const deviceInfo = info.data?.find((item: any) =>
+                isSameMac(item.deviceId || item.mac, params?.bleNo),
+              );
+              if (isPaired) {
+                const bluetoothDeviceInfoList =
+                  (await getBluetoothDeviceInfo().catch(() => null)) || {};
+                const { bleNo, imageMap, lockId, mode, pageName } =
+                  params || {};
+                let res: any;
+                let bindRes: any;
+                if (pageName?.includes('BindDevice')) {
+                  Toast.loading('绑定中...', 0);
+                  bindRes = await bind({
+                    deviceNo: params?.deviceNo,
+                    userId: null,
+                  });
+                  res = bindRes;
                 }
-              } catch (e) {
-                console.log('[rn][restore] route check failed', e);
-              }
-
-              const { path, params, value } = data;
-              // 先清除记录，避免重复处理
-              await removeStorage({ key: 'rnReLaunchPath' }).catch(() => {});
-
-              try {
-                // 检查是否正在处理中（避免与页面onShow重复处理）
-                const processing = await getStorage({
-                  key: 'rnReLaunchPathProcessing',
-                }).catch(() => null);
-                if (processing?.data) {
-                  console.log('[rn][restore] 页面正在处理中，跳过app.tsx处理');
-                  return;
-                }
-
-                const info = await getSystemConnectedDevices();
-                if (path?.includes('bindDevice') || path?.includes('search')) {
-                  const isPaired =
-                    info.data?.some((item: any) =>
-                      isSameMac(item.deviceId || item.mac, params?.bleNo),
-                    ) || false;
-                  const deviceInfo = info.data?.find((item: any) =>
-                    isSameMac(item.deviceId || item.mac, params?.bleNo),
-                  );
-                  if (isPaired) {
-                    const bluetoothDeviceInfoList =
-                      (await getBluetoothDeviceInfo().catch(() => null)) || {};
-                    const { bleNo, imageMap, lockId, mode } = params || {};
-                    let res: any;
-                    if (path?.includes('bindDevice')) {
-                      Toast.loading('绑定中...', 0);
-                      res = await bind({
-                        deviceNo: params?.deviceNo,
-                        userId: null,
+                // if (path?.includes('search') || path === 'FindDevice') {
+                //   Toast.loading('连接中...', 0);
+                //   res = await openBluetoothProximity({ id: lockId });
+                // }
+                Toast.removeAll();
+                if (res?.code === 200 || res?.code === '200') {
+                  if (pageName?.includes('BindDevice')) {
+                    Toast.success('绑定成功');
+                    if (bindRes?.data) {
+                      await setStorage({
+                        key: 'rnBindSuccessData',
+                        data: bindRes.data,
                       });
-                    }
-                    if (path?.includes('search')) {
-                      Toast.loading('连接中...', 0);
-                      res = await openBluetoothProximity({ id: lockId });
-                    }
-                    Toast.removeAll();
-                    if (res?.code === 200 || res?.code === '200') {
-                      if (path?.includes('bindDevice')) {
-                        Toast.success('绑定成功');
+                      // 先写入蓝牙设备列表，再 reLaunch，避免 reLaunch 导致后续代码不执行
+                      if (bleNo) {
+                        const newMap = { ...bluetoothDeviceInfoList };
+                        newMap[bleNo] = {
+                          bleNo: bleNo,
+                          deviceId: deviceInfo?.deviceId || deviceInfo?.mac,
+                          name: deviceInfo?.name || deviceInfo?.localName,
+                          imageMap: imageMap,
+                          isPaired: true,
+                        };
+                        await setStorage({
+                          key: 'bluetoothDeviceInfoList',
+                          data: newMap,
+                        });
                       }
-                      if (path?.includes('search') && !mode) {
-                        Toast.success('自动升降开启成功');
-                      }
-                      if (path?.includes('search') && mode) {
-                        Toast.success('连接成功');
-                      }
-
-                      try {
-                        if (bleNo) {
-                          const newMap = { ...bluetoothDeviceInfoList };
-                          newMap[bleNo] = {
-                            bleNo: bleNo,
-                            deviceId: deviceInfo?.deviceId || deviceInfo?.mac,
-                            name: deviceInfo?.name || deviceInfo?.localName,
-                            imageMap: imageMap,
-                            isPaired: true,
-                          };
-                          await setStorage({
-                            key: 'bluetoothDeviceInfoList',
-                            data: newMap,
-                          });
-                        }
-                      } catch (e) {
-                        console.error(
-                          '更新 bluetoothDeviceInfoList 映射失败:',
-                          e,
-                        );
-                      }
-                    } else {
-                      Toast.fail(res?.message || '操作失败');
+                      eventCenter.trigger('rnBindSuccess', bindRes.data);
+                      reLaunch('Index', { lockId: bindRes.data?.id });
                     }
                   }
+                  if (pageName?.includes('BluetoothControl') && !mode) {
+                    Toast.success('自动升降开启成功');
+                  }
+                  if (pageName?.includes('BluetoothControl') && mode) {
+                    Toast.success('连接成功');
+                  }
+
+                  try {
+                    if (bleNo && !pageName?.includes('BindDevice')) {
+                      const newMap = { ...bluetoothDeviceInfoList };
+                      newMap[bleNo] = {
+                        bleNo: bleNo,
+                        deviceId: deviceInfo?.deviceId || deviceInfo?.mac,
+                        name: deviceInfo?.name || deviceInfo?.localName,
+                        imageMap: imageMap,
+                        isPaired: true,
+                      };
+                      await setStorage({
+                        key: 'bluetoothDeviceInfoList',
+                        data: { data: newMap },
+                      });
+                    }
+                  } catch (e) {
+                    console.error('更新 bluetoothDeviceInfoList 映射失败:', e);
+                  }
                 } else {
-                  // 其他路径直接跳转
-                  reLaunch(data.path);
+                  Toast.fail(res?.message || '操作失败');
                 }
-              } catch (e) {
-                // URLSearchParams 失败则只跳路径
-                reLaunch('Index');
               }
-            } catch (e) {
-              console.error('处理 rnReLaunchPath 失败:', e);
+            } else {
+              // 其他路径直接跳转
+              reLaunch(data.path);
             }
-          } catch (error) {
-            console.error('应用激活处理失败:', error);
+          } catch (e) {
+            // URLSearchParams 失败则只跳路径
+            reLaunch('Index');
           }
+        } catch (e) {
+          console.error('处理 rnReLaunchPath 失败:', e);
+        }
+      } catch (error) {
+        console.error('应用激活处理失败:', error);
+      }
+    };
+
+    // 冷启动：App 被系统杀掉后重新打开时，AppState 一开始就是 'active'，不会触发 change，
+    // 因此挂载时若已是 active，延迟执行一次“从设置返回”的逻辑（延迟稍长以确保 AsyncStorage/导航已就绪）
+    let coldStartTimer: ReturnType<typeof setTimeout> | null = null;
+    if (AppState.currentState === 'active') {
+      if (__DEV__) {
+        console.log(
+          '[rn][restore] 冷启动检测到 active，将在 1.2s 后执行 runOnActiveLogic',
+        );
+      }
+      coldStartTimer = setTimeout(() => {
+        runOnActiveLogic();
+      }, 1200);
+    }
+
+    const subscription = AppState.addEventListener(
+      'change',
+      (nextAppState: AppStateStatus) => {
+        if (nextAppState === 'active') {
+          runOnActiveLogic();
         }
       },
     );
 
     return () => {
       subscription.remove();
+      if (coldStartTimer != null) clearTimeout(coldStartTimer);
     };
   }, []);
 

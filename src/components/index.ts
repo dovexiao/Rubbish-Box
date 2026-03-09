@@ -18,7 +18,13 @@ export { default as NoDevices } from './NoDevices';
 export { default as GradientButton } from './GradientButton';
 export { default as LinearGradient } from './LinearGradient';
 export { default as Tag } from './Tag';
-export { default as Camera, type CameraRef, type CameraProps, type CameraScanResult } from './Camera';
+export {
+  default as Camera,
+  type CameraRef,
+  type CameraProps,
+  type CameraScanResult,
+} from './Camera';
 export { showAppUpdateDialog, AppUpdateDialogHost } from './AppUpdateDialog';
 export { default as AutoOperatePop } from './autoOperatePop';
 export { default as CheckBluetooth } from './checkBluetooth';
+export { default as BluetoothStatus } from './bluetoothStatus';

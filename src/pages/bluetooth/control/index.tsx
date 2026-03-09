@@ -18,6 +18,7 @@ import {
   getStorage,
   openBluetoothSettings,
   reLaunch,
+  remenberPath,
 } from '@/utils';
 import {
   checkIfDeviceIgnoredOnIOS,
@@ -43,7 +44,7 @@ type RouteParams = {
   lockName?: string;
   imageMap?: any;
   bleNo?: string;
-  bluetoothHasOpen?: boolean | string;
+  buletoothHasOpen?: boolean | string;
   deviceNo?: string;
   role?: string | number;
   mode?: string | number;
@@ -75,11 +76,10 @@ export default function BluetoothControl() {
   const [isBluetoothOpen, setIsBluetoothOpen] = useState(false);
   const [gifUrl, setGifUrl] = useState<string | undefined>(undefined);
   const [proximityEnabled, setProximityEnabled] = useState(
-    String(params.bluetoothHasOpen) === 'true' ||
-      params.bluetoothHasOpen === true,
+    String(params.buletoothHasOpen) === 'true' ||
+      params.buletoothHasOpen === true,
   );
 
-  const optionTypeRef = useRef<'pin' | 'toggle' | null>(null);
   const bluetoothStatusRef = useRef<BluetoothStatusRef>(null);
 
   const refreshPairStatus = useCallback(async () => {
@@ -166,6 +166,7 @@ export default function BluetoothControl() {
         deviceNo,
         status: proximityEnabled ? 2 : 1,
       });
+      console.log(cmdRes, '===cmdRes');
       if (!cmdRes.success) {
         showToast({
           title:
@@ -188,8 +189,8 @@ export default function BluetoothControl() {
 
       setProximityEnabled(v => !v);
       showToast({ title: '操作成功', icon: 'success' });
-    } finally {
-      hideLoading();
+    } catch (error) {
+      console.error('handleToggleProximity error', error);
     }
   }, [bleNo, deviceNo, lockId, proximityEnabled]);
 
@@ -205,8 +206,13 @@ export default function BluetoothControl() {
         bindSuccessStatus,
         imageMap,
         bleName,
+        pageName: 'BluetoothControl',
       });
     } else {
+      await remenberPath({
+        path: route?.name,
+        params: { ...route?.params },
+      });
       await openBluetoothSettings();
     }
   };
@@ -240,25 +246,52 @@ export default function BluetoothControl() {
             <Text style={styles.statusText}>{`自动升降已${
               proximityEnabled ? '开启' : '关闭'
             }`}</Text>
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>功能说明</Text>
-              <Text style={styles.cardText}>- 手机 App 靠近，自动降下地锁</Text>
-              <Text style={styles.cardText}>- 用户离开后，地锁自动升起</Text>
-              {String(role) === '1' ? (
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  style={styles.toggleBtn}
-                  onPress={() => {
-                    optionTypeRef.current = 'toggle';
-                    bluetoothStatusRef.current?.open();
-                  }}
-                >
-                  <Text style={styles.toggleBtnText}>
-                    {proximityEnabled ? '关闭自动升降' : '开启自动升降'}
-                  </Text>
-                </TouchableOpacity>
-              ) : null}
-            </View>
+            <Flex
+              direction={'column'}
+              style={[styles.card, styles.connectedCard]}
+            >
+              <Flex
+                justify={'between'}
+                align={'center'}
+                style={{ width: '100%' }}
+              >
+                <Flex direction={'column'}>
+                  <Flex style={styles.rowMargin} align={'start'}>
+                    <View style={styles.dotWrapper}>
+                      <View style={styles.dot}></View>
+                    </View>
+                    <Text style={styles.cardItemTexts}>
+                      手机App靠近，自动降下地锁
+                    </Text>
+                  </Flex>
+                  <Flex style={styles.rowMargin} align={'start'}>
+                    <View style={styles.dotWrapper}>
+                      <View style={styles.dot}></View>
+                    </View>
+                    <Text style={styles.cardItemTexts}>
+                      用户离开后，地锁自动升起
+                    </Text>
+                  </Flex>
+                </Flex>
+                {role === 1 ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      bluetoothStatusRef.current?.open();
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: `https://g.18qjz.cn/img/boklock/switch_${
+                          proximityEnabled ? 'checked' : 'default'
+                        }.png`,
+                      }}
+                      style={{ width: 32, height: 20 }}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                ) : undefined}
+              </Flex>
+            </Flex>
 
             {bindSuccessStatus ? (
               <View
@@ -351,6 +384,17 @@ export default function BluetoothControl() {
           </Flex>
         )}
       </View>
+
+      <BluetoothStatus
+        ref={bluetoothStatusRef}
+        details={{
+          ...params,
+        }}
+        type="pass"
+        onSuccess={async () => {
+          await handleToggleProximity();
+        }}
+      />
     </PageContainer>
   );
 }

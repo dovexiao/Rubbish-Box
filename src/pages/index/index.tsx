@@ -14,6 +14,7 @@ import {
   cacheGetSync,
   eventCenter,
   getBluetoothDeviceInfo,
+  getStorage,
   setStorage,
   removeStorage,
   loopFunc,
@@ -180,6 +181,20 @@ const Index = () => {
         const silent = !first;
         first = false;
         try {
+          // 绑定成功后恢复：优先使用存储的 res.data，加载对应设备后清除
+          const bindSuccess = await getStorage({
+            key: 'rnBindSuccessData',
+          }).catch(() => null);
+          const bindData = (bindSuccess as any)?.data ?? bindSuccess;
+          if (bindData && (bindData.id != null || bindData.lockId != null)) {
+            const id = Number(bindData.id ?? bindData.lockId);
+            if (Number.isFinite(id)) {
+              await load(id, { silent });
+              await removeStorage({ key: 'rnBindSuccessData' });
+              return true;
+            }
+          }
+
           // 同时读取登录态与游客模式开关，用于决定首页应展示的 UI
           const [token, guest] = await Promise.all([
             cacheGetSync('token'),

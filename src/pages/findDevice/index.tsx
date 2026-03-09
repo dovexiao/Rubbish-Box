@@ -132,7 +132,7 @@ export default function FindDevice(props: any) {
     needScan: Platform.OS === 'ios',
   });
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [pairTargetTime, setPairTargetTime] = useState<number | undefined>();
 
   const setState = useCallback((patch: Partial<typeof state>) => {
@@ -352,8 +352,8 @@ export default function FindDevice(props: any) {
 
   const handlePairing = useCallback(async () => {
     await remenberPath({
-      path: route?.name,
-      params: route?.params,
+      path: route?.name || 'FindDevice',
+      params: route?.params ?? params,
       value: { ...params },
     });
     await openBluetoothSettings();
