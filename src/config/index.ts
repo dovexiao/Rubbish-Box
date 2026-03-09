@@ -9,14 +9,12 @@ import Config from 'react-native-config';
 // 环境类型
 export type EnvType = 'development' | 'production';
 
-// 从环境变量获取当前环境，如果没有设置则根据 __DEV__ 判断
-export const ENV: EnvType =
-  (Config.ENV as EnvType) || (__DEV__ ? 'development' : 'production');
+// 1) 先用 .env 里的 ENV
+export const ENV: EnvType = (Config.ENV as EnvType) || 'development';
 
-// 获取部署环境（dev/real/staging）
-// 优先使用环境变量中的 DEPLOY_ENV（通过不同打包命令传入），否则按 __DEV__ 默认 dev / real
-export const DEPLOY_ENV = Config.DEPLOY_ENV || (__DEV__ ? 'dev' : 'real');
-
+// 2) 部署环境优先用 .env 里的 DEPLOY_ENV，其次根据 ENV 推导
+export const DEPLOY_ENV =
+  Config.DEPLOY_ENV || (ENV === 'production' ? 'real' : 'dev');
 // 获取灰度标识
 export const GRAY = Config.GRAY === 'true';
 
