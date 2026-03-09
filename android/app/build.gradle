@@ -118,6 +118,7 @@ def getDeployVersionByProperty() {
 }
 
 android {
+    apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
@@ -146,6 +147,7 @@ android {
         versionCode getVersionCodeByProperty()
         // 用于增量更新版本比较
         buildConfigField "String", "DEPLOY_VERSION", "\"${getDeployVersionByProperty()}\""
+       
         
         // 从 react-native-config 读取环境变量并生成 BuildConfig 字段
         if (project.hasProperty("env")) {
