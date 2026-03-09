@@ -52,6 +52,7 @@
     "@react-native-community/segmented-control": "^2.2.2",
     "@react-native-community/slider": "^4.4.2",
     "@react-native-ohos/react-native-ble-plx": "3.2.1-rc.2",
+    "@react-native-ohos/react-native-vision-camera": "4.0.3",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
@@ -141,6 +142,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
+      "@react-native-ohos/react-native-vision-camera@4.0.3": "patches/@react-native-ohos+react-native-vision-camera@4.0.3.patch",
       "react-native-amap3d": "patches/react-native-amap3d.patch",
       "react-native-intent-launcher": "patches/react-native-intent-launcher.patch",
       "react-native-wechat-lib": "patches/react-native-wechat-lib.patch",

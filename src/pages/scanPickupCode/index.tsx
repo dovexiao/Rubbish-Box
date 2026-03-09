@@ -8,7 +8,7 @@ import {
   useCameraDevice,
   useCodeScanner,
   Camera,
-} from 'react-native-vision-camera';
+} from '@/harmony/vision-camera-shim';
 
 import styles from './styles';
 

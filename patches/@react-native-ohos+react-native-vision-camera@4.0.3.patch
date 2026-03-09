@@ -1,0 +1,147 @@
+diff --git a/harmony/vision_camera/src/main/ets/view/VisionCameraView.ets b/harmony/vision_camera/src/main/ets/view/VisionCameraView.ets
+index aa48796..eebc1ef 100644
+--- a/harmony/vision_camera/src/main/ets/view/VisionCameraView.ets
++++ b/harmony/vision_camera/src/main/ets/view/VisionCameraView.ets
+@@ -449,7 +449,17 @@ export struct VisionCameraView {
+   checkTakePhoto(args: (string | number | boolean | object)[]) {
+     if (this.currentProps.photo) {
+       Logger.debug(TAG, `registerCommandCallback: takePhoto,  ${JSON.stringify(args)}`)
+-      const options = args[0] as TakePhotoOptions;
++      const rawOptions = args[0];
++      let options: TakePhotoOptions = {} as TakePhotoOptions;
++      if (typeof rawOptions === 'string') {
++        try {
++          options = JSON.parse(rawOptions) as TakePhotoOptions;
++        } catch (error) {
++          Logger.error(TAG, `takePhoto options parse error: ${JSON.stringify(error)}`);
++        }
++      } else if (typeof rawOptions === 'object' && rawOptions) {
++        options = rawOptions as TakePhotoOptions;
++      }
+       if (this.currentProps.preview) {
+         this.takePhoto(options);
+         this.noViewPhoto = false;
+@@ -477,7 +487,17 @@ export struct VisionCameraView {
+           }
+           if (command === 'focus') {
+             Logger.debug(TAG, `registerCommandCallback: focus,  ${JSON.stringify(args)}`)
+-            const point = args[0] as Point;
++            const rawPoint = args[0];
++            let point: Point = { x: 0, y: 0 };
++            if (typeof rawPoint === 'string') {
++              try {
++                point = JSON.parse(rawPoint) as Point;
++              } catch (error) {
++                Logger.error(TAG, `focus point parse error: ${JSON.stringify(error)}`);
++              }
++            } else if (typeof rawPoint === 'object' && rawPoint) {
++              point = rawPoint as Point;
++            }
+             this.focus({
+               x: vp2px(point.x),
+               y: vp2px(point.y),
+@@ -521,7 +541,17 @@ export struct VisionCameraView {
+           if (command === 'startRecording') {
+             Logger.debug(TAG, "registerCommandCallback: startRecording " + this.cameraState);
+             if (this.cameraState === cameraState.VIDEO) {
+-              const options = args[0] as RecordVideoOptions;
++              const rawOptions = args[0];
++              let options: RecordVideoOptions = {} as RecordVideoOptions;
++              if (typeof rawOptions === 'string') {
++                try {
++                  options = JSON.parse(rawOptions) as RecordVideoOptions;
++                } catch (error) {
++                  Logger.error(TAG, `startRecording options parse error: ${JSON.stringify(error)}`);
++                }
++              } else if (typeof rawOptions === 'object' && rawOptions) {
++                options = rawOptions as RecordVideoOptions;
++              }
+               Logger.debug(TAG, `registerCommandCallback: startRecording.${JSON.stringify(options)}}`)
+               this.startRecording(options);
+             }
+diff --git a/src/NativeVisionCameraView.ts b/src/NativeVisionCameraView.ts
+index 730a6ff..4690fff 100644
+--- a/src/NativeVisionCameraView.ts
++++ b/src/NativeVisionCameraView.ts
+@@ -83,7 +83,6 @@ type CodeType =
+ 
+ interface CodeScanner {
+   codeTypes?: WithDefault<ReadonlyArray<CodeType>, null>;
+-  onCodeScanned: (codes: Code[], frame: CodeScannerFrame) => void
+   regionOfInterest?: {
+     x: Int32
+     y: Int32
+@@ -119,7 +118,7 @@ export interface NativeVisionCameraProps extends ViewProps {
+   onInitialized?: BubblingEventHandler<Readonly<{}>>;
+   onShutter?: BubblingEventHandler<{ type: 'photo' | 'snapshot' }>;
+   onError?: BubblingEventHandler<{ error: string }>;
+-  onCodeScanned?: (codes: Code[], frame: CodeScannerFrame) => void;
++  onCodeScanned?: BubblingEventHandler<Readonly<{}>>;
+ }
+ 
+ // export interface Point 
+@@ -133,17 +132,17 @@ export interface VisionCameraCommandsType {
+   getCameraPermissionStatus(viewRef: React.ElementRef<VisionCameraComponentType>): any;
+   addCameraDevicesChangedListener(viewRef: React.ElementRef<VisionCameraComponentType>): any;
+   getAvailableCameraDevices(viewRef: React.ElementRef<VisionCameraComponentType>): any;
+-  takePhoto: (viewRef: React.ElementRef<VisionCameraComponentType>, options?: TakePhotoOptions) => Promise<PhotoFile>;
+-  focus: (viewRef: React.ElementRef<VisionCameraComponentType>, point: Point) => Promise<void>;
++  takePhoto: (viewRef: React.ElementRef<VisionCameraComponentType>, options: string) => Promise<PhotoFile>;
++  focus: (viewRef: React.ElementRef<VisionCameraComponentType>, point: string) => Promise<void>;
+   setIsActive: (viewRef: React.ElementRef<VisionCameraComponentType>, isActive: boolean) => Promise<void>;
+-  startRecording: (viewRef: React.ElementRef<VisionCameraComponentType>, options: RecordVideoOptions) => void;
++  startRecording: (viewRef: React.ElementRef<VisionCameraComponentType>, options: string) => void;
+   stopRecording: (viewRef: React.ElementRef<VisionCameraComponentType>) => void;
+   pauseRecording: (viewRef: React.ElementRef<VisionCameraComponentType>) => void;
+   resumeRecording: (viewRef: React.ElementRef<VisionCameraComponentType>) => void;
+   cancelRecording: (viewRef: React.ElementRef<VisionCameraComponentType>) => void;
+ }
+ 
+-export const VisionCameraCommands: VisionCameraCommandsType = codegenNativeCommands<VisionCameraCommandsType>({
++export const Commands: VisionCameraCommandsType = codegenNativeCommands<VisionCameraCommandsType>({
+   supportedCommands: [
+     'takePhoto',
+     'focus',
+@@ -164,6 +163,8 @@ export const VisionCameraCommands: VisionCameraCommandsType = codegenNativeComma
+   ],
+ });
+ 
++export const VisionCameraCommands = Commands;
++
+ export default codegenNativeComponent<NativeVisionCameraProps>(
+   "VisionCameraView"
+ ) as VisionCameraComponentType;
+diff --git a/src/index.tsx b/src/index.tsx
+index 8751aa1..61ab252 100644
+--- a/src/index.tsx
++++ b/src/index.tsx
+@@ -134,7 +134,7 @@ export const Camera = forwardRef<VisionCameraRef, VisionCameraProps>(
+                     onCodeScannedListener.remove();
+                 });
+                 if (!VisionCameraRef.current) throw new Error("VisionCameraRef.current is NaN");
+-                VisionCameraCommands.takePhoto(VisionCameraRef.current, options);
++                VisionCameraCommands.takePhoto(VisionCameraRef.current, JSON.stringify(options ?? {}));
+             })
+         };
+ 
+@@ -142,7 +142,7 @@ export const Camera = forwardRef<VisionCameraRef, VisionCameraProps>(
+             (point: Point) => {
+                 if (!point) throw new Error("VisionCameraCommands focus point is Null");
+                 if (!VisionCameraRef.current) throw new Error("VisionCameraRef.current is NaN");
+-                return VisionCameraCommands.focus(VisionCameraRef.current, point);
++                return VisionCameraCommands.focus(VisionCameraRef.current, JSON.stringify(point));
+             },
+             []
+         );
+@@ -168,7 +168,10 @@ export const Camera = forwardRef<VisionCameraRef, VisionCameraProps>(
+                     onRecordingErrorListener.remove();
+                     onRecordingFinishedListener.remove();
+                 });
+-                return VisionCameraCommands.startRecording(VisionCameraRef.current, options);
++                const { onRecordingFinished, onRecordingError, ...nativeRecordOptions } = options;
++                void onRecordingFinished;
++                void onRecordingError;
++                return VisionCameraCommands.startRecording(VisionCameraRef.current, JSON.stringify(nativeRecordOptions));
+             },
+             []
+         );

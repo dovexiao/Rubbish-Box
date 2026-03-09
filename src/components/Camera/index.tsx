@@ -28,7 +28,7 @@ import {
   useCameraDevice,
   useCameraPermission,
   useCodeScanner,
-} from 'react-native-vision-camera';
+} from '@/harmony/vision-camera-shim';
 import Popup from '../Popup';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import IconFont from '@/iconfont';
@@ -203,7 +203,7 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
   const { hasPermission, requestPermission } = useCameraPermission();
   const device = useCameraDevice(devicePosition);
   const insets = useSafeAreaInsets();
-  const { height: screenHeight } = useWindowDimensions();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const isModal = present === 'modal';
 
   // errorPopupVisible/lastValue/lastResult 用于控制“扫码失败弹窗”的展示与内容
@@ -419,10 +419,20 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
       <View style={[styles.container, style]}>
         {/* 相机预览层：始终铺满 */}
         <RNCamera
-          style={[StyleSheet.absoluteFill, cameraStyle]}
+          style={[
+            {
+              width: screenWidth,
+              height: screenHeight,
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            },
+            cameraStyle,
+          ]}
           device={device}
           isActive={isModal ? active && modalVisible : active}
           codeScanner={codeScanner}
+          resizeMode="cover"
         />
         {/* 覆盖层：承载 header/content/footer（扫描框与提示 UI） */}
         <View style={[styles.overlay, overlayStyle]} pointerEvents="box-none">
