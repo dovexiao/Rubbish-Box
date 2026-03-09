@@ -14,7 +14,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#ffffff',
   },
-  btn: {},
   btnText: {
     width: '100%',
     height: '100%',
@@ -72,9 +71,9 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
   },
   iconWrapper: {
-    marginTop: 32,
-    width: 96,
-    height: 96,
+    marginTop: 16,
+    width: 64,
+    height: 64,
     borderRadius: 48,
     alignItems: 'center',
     justifyContent: 'center',
@@ -85,16 +84,19 @@ export const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    position: 'relative',
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
     color: '#333333',
   },
   titleIcon: {
     flexDirection: 'row',
     alignItems: 'center',
+    position: 'absolute',
+    right: 0,
   },
   titleIconText: {
     marginLeft: 6,
@@ -114,9 +116,6 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
   },
-  infoContent: {
-    width: '100%',
-  },
   infoLabel: {
     fontSize: 12,
     color: '#6b7280',
@@ -133,11 +132,11 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
   },
   copyButton: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
+    gap: 4,
   },
   copyText: {
-    marginLeft: 6,
     fontSize: 12,
     color: '#6b7280',
     fontWeight: '600',

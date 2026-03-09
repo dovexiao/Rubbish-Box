@@ -19,8 +19,9 @@ import {
   parseMacFromAdvertisData,
   parseMacFromBase64,
   remenberPath,
+  setClipboardData,
 } from '@/utils';
-import { openBluetoothProximity } from '@/services';
+import { openBluetoothProximity, tipsUserOperation } from '@/services';
 import IconFont from '@/iconfont';
 import {
   LOCK_BTN_COLORS,
@@ -49,23 +50,6 @@ const SEARCH_BLUETOOTH_STATUS = {
 const getStorage = async (options: { key: string }) => {
   const data = await getStorageRaw<any>(options);
   return { data };
-};
-
-const setClipboardData = async (options: { data: string }) => {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-    const Clipboard = require('@react-native-clipboard/clipboard').default;
-    if (Clipboard?.setString) {
-      Clipboard.setString(String(options.data));
-    }
-  } catch {}
-};
-
-const tipsUserOperation = async (options: {
-  title?: string;
-  content?: string;
-}) => {
-  showToast({ title: options.content || options.title || '', icon: 'none' });
 };
 
 function useCountDown(options: { targetDate?: number; onEnd?: () => void }) {
@@ -121,7 +105,7 @@ export default function BluetoothSearch(props: any) {
       role: string;
     };
   };
-  console.log(router, '这是search的路由参数');
+  // console.log(router, '这是search的路由参数');
   const navigation = props?.navigation as any;
 
   const [state, setStateInner] = useState({
@@ -564,7 +548,7 @@ export default function BluetoothSearch(props: any) {
               width={160}
               height={44}
               round={false}
-              btnBorderRadius={16}
+              btnBorderRadius={12}
               onPress={async () => {
                 resetSearch(searchRef);
               }}
@@ -588,7 +572,7 @@ export default function BluetoothSearch(props: any) {
                     searchBluetoothStatus
                   ] as string,
                 }}
-                style={{ width: 320, height: 320 }}
+                style={{ width: 160, height: 160 }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -636,7 +620,7 @@ export default function BluetoothSearch(props: any) {
         ) : (
           <>
             <View style={styles.iconWrapper}>
-              <IconFont name="bluetooth-1" size={64} color="#333333" />
+              <IconFont name="bluetooth-1" size={32} color="#333333" />
             </View>
             <View style={styles.titleWrapper}>
               <Text style={styles.title}>请确保地锁通电</Text>
@@ -645,21 +629,21 @@ export default function BluetoothSearch(props: any) {
                 style={styles.titleIcon}
                 onPress={() => powerIndicatorPopRef?.current?.open()}
               >
-                <IconFont name="explain" size={36} color="#333333" />
+                <IconFont name="explain" size={18} color="#333333" />
                 <Text style={styles.titleIconText}>通电指南</Text>
               </TouchableOpacity>
             </View>
 
             <Flex style={styles.infoSection} direction={'column'}>
               <Flex style={styles.infoBox}>
-                <View style={styles.infoContent}>
+                <View style={{ width: '100%' }}>
                   <Text style={styles.infoLabel}>蓝牙名称</Text>
                   <Text style={styles.infoValue}>{bleName}</Text>
                 </View>
               </Flex>
 
               <Flex style={styles.infoBox} align={'center'} justify={'between'}>
-                <View style={styles.infoContent}>
+                <View>
                   <Text style={styles.infoLabel}>PIN码</Text>
                   <Text style={styles.pinValue}>{pin}</Text>
                 </View>
@@ -667,13 +651,14 @@ export default function BluetoothSearch(props: any) {
                   activeOpacity={0.85}
                   style={styles.copyButton}
                   onPress={() => {
-                    void setClipboardData({
+                    setClipboardData({
                       data: String(pin),
                     });
                     showToast({ title: '复制成功', icon: 'success' });
+                    showToast({ title: pin });
                   }}
                 >
-                  <IconFont name="copy1" size={40} color="#6b7280" />
+                  <IconFont name="copy1" size={16} color="#6b7280" />
                   <Text style={styles.copyText}>点击复制</Text>
                 </TouchableOpacity>
               </Flex>
@@ -685,9 +670,9 @@ export default function BluetoothSearch(props: any) {
                 width={160}
                 height={44}
                 round={false}
-                btnBorderRadius={16}
+                btnBorderRadius={12}
                 onPress={async () => {
-                  handlePairing();
+                  await handlePairing();
                 }}
               >
                 <Flex style={styles.btnText} justify="center" align="center">

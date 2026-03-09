@@ -6,7 +6,7 @@ import {
   RESULTS,
   openSettings,
 } from 'react-native-permissions';
-import { showToast } from '@/utils';
+import { showToast } from './toast';
 
 /**
  * 检查相册权限

@@ -21,6 +21,10 @@ export {
  */
 export { showToast, showLoading, hideLoading } from './toast';
 import { showToast as innerShowToast } from './toast';
+export {
+  getBluetoothDeviceInfo,
+  removeBluetoothDeviceInfo,
+} from './bluetoothDeviceInfo';
 export type {
   GetLocationOptions,
   GetLocationResult,
@@ -561,45 +565,6 @@ export const remenberPath = async (options?: {
 };
 
 /**
- * 获取蓝牙设备信息
- */
-export const getBluetoothDeviceInfo = async (): Promise<
-  Record<string, any>
-> => {
-  try {
-    const info = await getStorage({ key: 'bluetoothDeviceInfoList' });
-    return (info as any) || {};
-  } catch {
-    return {};
-  }
-};
-
-/**
- * 从缓存中移除指定 deviceId 的蓝牙设备信息
- */
-export const removeBluetoothDeviceInfo = async (
-  deviceId: string,
-): Promise<void> => {
-  try {
-    const cached = await getBluetoothDeviceInfo();
-    let updated = false;
-    const next: Record<string, any> = {};
-    for (const [key, val] of Object.entries(cached)) {
-      if (val?.deviceId !== deviceId) {
-        next[key] = val;
-      } else {
-        updated = true;
-      }
-    }
-    if (updated) {
-      await setStorage({ key: 'bluetoothDeviceInfoList', data: next });
-    }
-  } catch (e) {
-    console.error('[removeBluetoothDeviceInfo]', e);
-  }
-};
-
-/**
  * 从 Base64 制造商数据中解析 MAC 地址（取后 6 字节）
  */
 export function parseMacFromBase64(base64Str: string): string | null {
@@ -720,213 +685,6 @@ export const checkBluetoothEnabled = async (manager: any): Promise<boolean> => {
   } catch (error) {
     console.error('检查蓝牙状态失败:', error);
     return false;
-  }
-};
-
-/**
- * 初始化高德定位服务
- * @param apiKey 高德地图 API Key（可选，如果未提供则从环境变量读取）
- */
-export const initAMapGeolocation = async (apiKey?: string): Promise<void> => {
-  try {
-    if (isHarmonyPlatform) {
-      const harmonyLocation = resolveHarmonyLocationModule();
-      if (!harmonyLocation) {
-        console.warn(
-          '[Harmony] HarmonyLocation TurboModule 未找到，无法初始化定位',
-        );
-        return;
-      }
-      try {
-        await harmonyLocation.isLocationEnabled?.();
-        if (__DEV__) {
-          console.log('[Harmony] HarmonyLocation 模块初始化完成');
-        }
-      } catch (error) {
-        console.warn('[Harmony] HarmonyLocation 模块初始化失败:', error);
-      }
-      return;
-    }
-    // 检查模块是否正确加载
-    if (
-      !initAMapGeolocationLib ||
-      typeof initAMapGeolocationLib !== 'function'
-    ) {
-      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
-      return;
-    }
-
-    // 如果没有传入 apiKey，则从环境变量读取
-    const androidKey =
-      Config.MAP_KEY_ANDROID || '65e063bf30af1d5cb5d2bf648243bff1';
-    const iosKey = Config.MAP_KEY_IOS || '4d3d8b30420bb15896f580757451268d';
-
-    // 使用 init 函数初始化（传入平台特定的 key）
-    await initAMapGeolocationLib({
-      android: androidKey,
-      ios: iosKey,
-    });
-
-    if (__DEV__) {
-      console.log('高德定位服务初始化成功');
-    }
-  } catch (error) {
-    console.error('高德定位服务初始化失败:', error);
-  }
-};
-
-/**
- * 获取当前位置（高德定位）
- */
-let _cachedLocation: any = null;
-let _cachedLocationTime = 0;
-
-export const getCurrentLocation = async (): Promise<{
-  latitude: number;
-  longitude: number;
-  accuracy?: number;
-  address?: string;
-  province?: string;
-  city?: string;
-  district?: string;
-  street?: string;
-  streetNumber?: string;
-} | null> => {
-  try {
-    if (isHarmonyPlatform) {
-      const harmonyLocation = resolveHarmonyLocationModule();
-      if (!harmonyLocation?.getCurrentLocation) {
-        console.warn(
-          '[Harmony] HarmonyLocation TurboModule 不可用，无法获取定位',
-        );
-        return null;
-      }
-      if (_cachedLocation && Date.now() - _cachedLocationTime < 30 * 1000) {
-        console.log('[Harmony] getCurrentLocation use cache');
-        return _cachedLocation;
-      }
-      console.log('[Harmony] getCurrentLocation start');
-      const result = await harmonyLocation.getCurrentLocation({
-        enableHighAccuracy: true,
-        timeoutMs: 10000,
-      });
-      if (!result) {
-        return null;
-      }
-      console.log('[Harmony] getCurrentLocation success', result);
-      const loc = {
-        latitude: result.latitude,
-        longitude: result.longitude,
-        accuracy: result.accuracy,
-        address: undefined,
-        province: undefined,
-        city: undefined,
-        district: undefined,
-        street: undefined,
-        streetNumber: undefined,
-      };
-      _cachedLocation = loc;
-      _cachedLocationTime = Date.now();
-      return loc;
-    }
-    // 检查模块是否正确加载
-    if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
-      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
-      return null;
-    }
-
-    return new Promise((resolve, reject) => {
-      Geolocation.getCurrentPosition(
-        (position: any) => {
-          resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-            address: position.address,
-            province: position.province,
-            city: position.city,
-            district: position.district,
-            street: position.street,
-            streetNumber: position.streetNumber,
-          });
-        },
-        (error: any) => {
-          // console.error('获取位置失败:', error);
-          reject(error);
-        },
-      );
-    });
-  } catch (error) {
-    console.error('获取当前位置失败:', error);
-    return null;
-  }
-};
-
-// Harmony 平台的显式权限触发，供 UI 在调用定位前手动触发一次
-export const requestHarmonyLocationPermission = async (): Promise<boolean> => {
-  if (!isHarmonyPlatform) return true;
-  const harmonyLocation = resolveHarmonyLocationModule();
-  if (!harmonyLocation) {
-    console.warn('[Harmony] HarmonyLocation 模块未加载，无法请求权限');
-    return false;
-  }
-  try {
-    // 调用 isLocationEnabled 读取当前状态；必要时调用 getCurrentLocation 以触发权限弹框
-    const enabled = await harmonyLocation.isLocationEnabled?.();
-    if (enabled) {
-      console.log('[Harmony] 定位已授权');
-      return true;
-    }
-    await harmonyLocation.getCurrentLocation?.({ enableHighAccuracy: false });
-    return true;
-  } catch (error) {
-    console.warn('[Harmony] 请求定位权限失败:', error);
-    return false;
-  }
-};
-
-/**
- * 开始定位监听（高德定位）
- */
-export const startLocationUpdates = (
-  callback: (position: {
-    latitude: number;
-    longitude: number;
-    accuracy?: number;
-    address?: string;
-  }) => void,
-): (() => void) => {
-  try {
-    if (isHarmonyPlatform) {
-      console.info('[Harmony] 当前版本未启用持续定位监听');
-      return () => {};
-    }
-    // 检查模块是否正确加载
-    if (!Geolocation || typeof Geolocation.watchPosition !== 'function') {
-      console.warn('高德定位模块未正确加载，可能是原生模块未链接');
-      return () => {}; // 返回空函数，避免调用时出错
-    }
-
-    const watchId = Geolocation.watchPosition(
-      (position: any) => {
-        callback({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          address: position.address,
-        });
-      },
-      (error: any) => {
-        console.error('定位监听错误:', error);
-      },
-    );
-
-    return () => {
-      Geolocation.clearWatch(watchId);
-    };
-  } catch (error) {
-    console.error('开始定位监听失败:', error);
-    return () => {}; // 返回空函数，避免调用时出错
   }
 };
 
@@ -1215,3 +973,17 @@ export function loopFunc(
 export function arrayBufferToBase64(arrayBuffer: any): string {
   return Buffer.from(arrayBuffer).toString('base64');
 }
+/**
+ * 复制内容到剪贴板
+ * @param {object} options 配置对象，包含 data 字符串
+ * @param {string} options.data 要复制的字符串内容
+ */
+export const setClipboardData = async (options: { data: string }) => {
+  try {
+    const text = String(options.data ?? '');
+    if (!text) return;
+    const mod = require('@react-native-clipboard/clipboard');
+    const Clipboard = mod?.default ?? mod;
+    if (Clipboard?.setString) Clipboard.setString(text);
+  } catch {}
+};

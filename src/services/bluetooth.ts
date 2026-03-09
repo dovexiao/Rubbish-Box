@@ -58,3 +58,8 @@ export const openBluetoothProximity = createFetch<any, any>(
   'POST',
 );
 
+// 提示用户操作
+export const tipsUserOperation = createFetch<any, any>(
+  '/boke/message/sendCustomMsg',
+  'POST',
+);

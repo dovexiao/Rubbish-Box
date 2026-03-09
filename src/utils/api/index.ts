@@ -18,10 +18,34 @@ import { arrayBufferToBase64, getStorage, setStorage } from '@/utils';
 import { saveFrontLog } from '@/services';
 
 import { requestBluetoothPermissions } from '@/utils';
-import { isSameMac, parseMacFromBase64 } from '@/utils';
 import { RefObject } from 'react';
+import { storageUtil } from '../storage';
+import { showToast } from '../toast';
 
 const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+
+const isSameMac = (mac1?: string, mac2?: string): boolean => {
+  if (!mac1 || !mac2) return false;
+  const normalize = (mac: string) => mac.replace(/[:-]/g, '').toLowerCase();
+  return normalize(mac1) === normalize(mac2);
+};
+
+const parseMacFromBase64 = (base64Str: string): string | null => {
+  if (!base64Str) return null;
+  try {
+    const g = typeof globalThis !== 'undefined' ? globalThis : {};
+    const B = (g as any).Buffer;
+    const bytes = B ? new Uint8Array(B.from(base64Str, 'base64')) : null;
+    if (!bytes || bytes.length < 6) return null;
+    const macBytes = bytes.slice(bytes.length - 6);
+    return Array.from(macBytes)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+      .toUpperCase();
+  } catch {
+    return null;
+  }
+};
 
 let bleInstance: BleManager;
 
@@ -109,17 +133,12 @@ export const openBluetooth = (): Promise<{ success: boolean }> => {
       sub?.remove?.();
     };
     try {
+      console.log('确认蓝牙模块是否激活');
       await ensureBleManagerAlive();
       const state = await bleInstance.state();
+      console.log('当前蓝牙状态:', state, Platform.OS);
       if (state === 'PoweredOn') {
         return resolve({ success: true });
-      }
-      if (Platform.OS === 'android') {
-        try {
-          await bleInstance.enable();
-        } catch (e) {
-          console.warn('[openBluetooth] enable() failed:', e);
-        }
       }
       sub = bleInstance.onStateChange(newState => {
         if (newState === 'PoweredOn') {
@@ -131,6 +150,20 @@ export const openBluetooth = (): Promise<{ success: boolean }> => {
         cleanup();
         resolve({ success: false });
       }, 8000);
+      if (Platform.OS === 'android') {
+        try {
+          console.log('尝试启用蓝牙模块');
+
+          const enabler = (bleInstance as any)?.enable;
+          if (typeof enabler === 'function') {
+            Promise.resolve(enabler.call(bleInstance)).catch(e => {
+              console.warn('[openBluetooth] enable() failed:', e);
+            });
+          }
+        } catch (e) {
+          console.warn('[openBluetooth] enable() failed:', e);
+        }
+      }
     } catch {
       cleanup();
       resolve({ success: false });
@@ -801,6 +834,53 @@ const sendBleCommandWithAck = async (options: {
   });
 };
 
+export const OperationCommandByBluetooth = async (options: {
+  deviceId: string;
+  deviceNo?: string;
+  operation: number; // 1: 升起 2: 降下
+  timeoutMs?: number;
+}): Promise<{
+  success: boolean;
+  code?: number;
+  deviceNo?: string;
+  msg?: string;
+}> => {
+  const { deviceId, operation, deviceNo, timeoutMs = 4000 } = options;
+  const result = await sendBleCommandWithAck({
+    deviceId,
+    type: 'operation',
+    operation,
+    deviceNo,
+    timeoutMs,
+    successMsg: '操作成功',
+    failMsg: '操作失败',
+  });
+
+  // 上报前端日志
+  try {
+    const res = await saveFrontLog({
+      code: 'manualLift',
+      content: JSON.stringify({
+        success: result.success,
+        code: result.code,
+        msg: result.msg,
+        deviceId,
+        operation,
+        deviceNo,
+        timestamp: Date.now(),
+        mark: '手动升降',
+      }),
+    });
+    if (res.code !== 200 || !res.success) {
+      showToast(res.msg || res.message);
+    }
+  } catch (error) {
+    console.error('上报前端日志失败:', error);
+  }
+
+  return result;
+};
+
 export const sendModeCommandByBluetooth = async (options: {
   deviceId: string;
   mode: number;
@@ -846,12 +926,15 @@ export const sendChangePinByBluetooth = async (options: {
 
   try {
     // 获取设备信息列表
-    const deviceInfoList = await getStorage({
-      key: 'bluetoothDeviceInfoList',
-    }).catch(() => ({
-      data: {},
-    }));
-    const deviceMap = deviceInfoList?.data || {};
+    const deviceInfoList = await storageUtil
+      .getItem<any>('bluetoothDeviceInfoList')
+      .catch(() => null);
+    const deviceMap =
+      deviceInfoList && typeof deviceInfoList === 'object'
+        ? 'data' in deviceInfoList
+          ? (deviceInfoList as any).data || {}
+          : (deviceInfoList as any)
+        : {};
 
     // 查找匹配的设备（通过deviceId）
     for (const [bleNo, info] of Object.entries(deviceMap)) {

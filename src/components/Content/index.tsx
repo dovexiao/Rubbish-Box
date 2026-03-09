@@ -36,12 +36,17 @@ import {
   getLocation,
   eventCenter,
   loopFunc,
+  getBluetoothDeviceInfo,
 } from '@/utils';
 import { deviceDelete } from '@/services/combine';
 import MapComponent from '../Map';
 import AutoOperatePop, { AutoOperatePopRef } from '../autoOperatePop';
 import AnimationPop, { AnimationPopRef } from '../AnimationPop';
 import { LockVisualStatus } from '../LockVisual';
+import BluetoothStatus, { BluetoothStatusRef } from '../bluetoothStatus';
+import { OperationCommandByBluetooth } from '@/utils/api';
+import { useAtom, useSetAtom } from 'jotai';
+import { bluetoothOperationLockFallStatusStore } from '@/store/store';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -69,9 +74,14 @@ const Content: React.FC<ContentProps> = ({
   const [groupList, setGroupList] = useState<any[]>([]);
   const [deleteMultipleRef, setDeleteMultipleRef] = useState(false);
   const [eleInstallRef, setEleInstallRef] = useState(false);
-  const popRef = useRef<AutoOperatePopRef>(null);
+  const [lockFallStatus, setLockStatus] = useAtom(
+    bluetoothOperationLockFallStatusStore,
+  );
 
+  const popRef = useRef<AutoOperatePopRef>(null);
   const manageMultipleRef = useRef<AnimationPopRef>(null);
+  const bluetoothConnectStatusRef = useRef<BluetoothStatusRef>(null);
+  const bluetoothControlRef = useRef<'RISE' | 'DOWN'>('RISE');
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -86,6 +96,9 @@ const Content: React.FC<ContentProps> = ({
       funs();
     }
   }, [detail]);
+
+  const sleep = (time: number) =>
+    new Promise(resolve => setTimeout(resolve, time));
 
   // 地锁操作
   const handleOperate = useCallback(
@@ -225,6 +238,58 @@ const Content: React.FC<ContentProps> = ({
     start();
   };
 
+  // 蓝牙操作地锁
+  const handleOperateByBluetooth = async (direction: 'RISE' | 'DOWN') => {
+    try {
+      const bleNo = detail?.bleNo;
+      const deviceMap =
+        (await getBluetoothDeviceInfo().catch(() => null)) || {};
+      const deviceId = bleNo
+        ? deviceMap?.[bleNo as string]?.deviceId
+        : undefined;
+      if (!deviceId || !bluetoothControlRef.current) {
+        bluetoothConnectStatusRef.current?.open();
+        return;
+      }
+
+      if (lockFallStatus === direction) {
+        showToast({
+          title: `地锁已经处于${direction === 'RISE' ? '升起' : '降下'}状态`,
+        });
+        return;
+      }
+
+      showLoading({
+        title: `${direction === 'RISE' ? '升起中...' : '降下中...'}`,
+      });
+
+      const operation = direction === 'RISE' ? 1 : 2;
+      const r = await OperationCommandByBluetooth({
+        deviceId: deviceId as string,
+        operation,
+        deviceNo: detail?.deviceNo,
+      });
+
+      if (r.success) {
+        await sleep(4000);
+        hideLoading();
+        setLockStatus(preV => direction);
+      } else {
+        await sleep(4000);
+        hideLoading();
+        showToast({ title: r.msg || '操作失败', icon: 'none' });
+      }
+    } catch (error) {
+      await sleep(4000);
+      hideLoading();
+      console.error(
+        direction === 'RISE' ? '手动升锁失败:' : '手动降锁失败:',
+        error,
+      );
+      bluetoothConnectStatusRef.current?.open();
+    }
+  };
+
   const handleDeviceInfo = () => {
     if (!detail?.id) return;
     if (detail?.isGroup) {
@@ -335,7 +400,14 @@ const Content: React.FC<ContentProps> = ({
             activeOpacity={1}
             style={styles.manualBtn}
             disabled={optioning}
-            onPress={() => handleOperate('RISE')}
+            onPress={() => {
+              if (detail?.powerType === 1) {
+                handleOperate('RISE');
+              } else {
+                // handleOperateByBluetooth('RISE');
+                bluetoothConnectStatusRef.current?.open();
+              }
+            }}
           >
             <View style={styles.manualIconCircle}>
               <IconFont name="rise" size={24} color="#333333" />
@@ -348,7 +420,14 @@ const Content: React.FC<ContentProps> = ({
             activeOpacity={1}
             style={styles.manualBtn}
             disabled={optioning}
-            onPress={() => handleOperate('DOWN')}
+            onPress={() => {
+              if (detail?.powerType === 1) {
+                handleOperate('DOWN');
+              } else {
+                // handleOperateByBluetooth('DOWN');
+                bluetoothConnectStatusRef.current?.open();
+              }
+            }}
           >
             <View style={styles.manualIconCircle}>
               <IconFont name="down" size={24} color="#333333" />
@@ -616,6 +695,18 @@ const Content: React.FC<ContentProps> = ({
         ref={popRef}
         lockList={groupList}
         onChoose={handleSetAutoOperate}
+      />
+
+      <BluetoothStatus
+        ref={bluetoothConnectStatusRef}
+        type="pass"
+        details={detail}
+        onSuccess={() => {
+          if (detail?.bluetoothStatus !== 0) {
+            setLockStatus('DOWN');
+          }
+          handleOperateByBluetooth(bluetoothControlRef.current);
+        }}
       />
     </View>
   );

@@ -261,7 +261,7 @@ const Login = () => {
           style={{ flex: 1 }}
           direction="column"
           align="center"
-          justify="center"
+          // justify="center"
         >
           <Image
             source={{ uri: 'https://g.18qjz.cn/img/boklock/logo.png' }}

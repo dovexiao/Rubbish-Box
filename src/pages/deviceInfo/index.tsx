@@ -81,13 +81,8 @@ const DeviceInfo = () => {
         <TouchableOpacity
           style={[styles.footerBtn, styles.cancelBtn]}
           onPress={async () => {
-            console.log('移交管理员');
             await setOptionType('1');
-            // bluetoothStatusUnbindRef.current?.open();
-            navigation.navigate('HandOver', {
-              id: deviceInfo?.id,
-              bleNo: deviceInfo?.bleNo,
-            });
+            bluetoothStatusUnbindRef.current?.open();
           }}
         >
           <Text style={[styles.footerBtnText, styles.cancelBtnText]}>
@@ -98,8 +93,7 @@ const DeviceInfo = () => {
           style={[styles.footerBtn, styles.confirmBtn]}
           onPress={async () => {
             await setOptionType('2');
-            // bluetoothStatusUnbindRef.current?.open();
-            navigation.navigate('Unbind', { id: deviceInfo?.id });
+            bluetoothStatusUnbindRef.current?.open();
           }}
         >
           <Text style={[styles.footerBtnText, styles.confirmBtnText]}>
@@ -653,6 +647,7 @@ const DeviceInfo = () => {
         }}
         type="pass"
         onSuccess={async () => {
+          console.log('确认按钮：', deviceInfo);
           if (optionType === '1') {
             navigation.navigate('HandOver', {
               id: deviceInfo?.id,
@@ -660,7 +655,9 @@ const DeviceInfo = () => {
             });
           } else {
             await cacheSetSync('deviceInfo', lockInfo);
-            navigation.navigate('HandOver');
+            navigation.navigate('Unbind', {
+              id: deviceInfo?.id,
+            });
           }
         }}
       />

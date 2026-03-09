@@ -523,7 +523,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
     const groupListBody = (
       <ScrollView style={{ maxHeight: 300, width: '100%' }}>
         <View style={styles.groupListContent}>
-          {groupList.map(item => (
+          {groupList.map((item: any) => (
             <View key={String(item.id)} style={styles.groupListItem}>
               <Text style={styles.groupListItemText} numberOfLines={1}>
                 {item.lockName}
