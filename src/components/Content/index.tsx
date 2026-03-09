@@ -14,41 +14,44 @@ import {
   ImageStyle,
 } from 'react-native';
 import IconFont from '@/iconfont';
-import { operateLock } from '@/services/device';
-import { OPT_TYPE } from '@/constants';
+import {
+  getGroupOperateResult,
+  getOperateResult,
+  operateLock,
+} from '@/services/device';
+import { OPT_TYPE, OT_STATUS } from '@/constants';
 import { DeviceSwitch } from '../Device/switch';
 import { LockInfoDTO } from '@/pages/index/typing';
 import { styles } from './style';
 import { groupSubList } from '@/services';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
-import {
-  BUZZER_STATUS,
-  COVER_STATUS,
-  HOME_STACK_ROUTE,
-  LOCK_ROLE,
-} from '@/constants';
-import { Flex, Popup, PopConfirm } from '@/components';
+import { COVER_STATUS, TEST_OT_STATUS } from '@/constants';
+import { Flex, PopConfirm } from '@/components';
 import {
   showToast,
   makePhoneCall,
   showLoading,
   hideLoading,
   setStorage,
+  getLocation,
+  eventCenter,
+  loopFunc,
 } from '@/utils';
 import { deviceDelete } from '@/services/combine';
 import MapComponent from '../Map';
 import AutoOperatePop, { AutoOperatePopRef } from '../autoOperatePop';
 import AnimationPop, { AnimationPopRef } from '../AnimationPop';
+import { LockVisualStatus } from '../LockVisual';
 
 interface ContentProps {
   detail?: LockInfoDTO;
   reload?: (id?: number) => Promise<any> | void;
   optioning?: boolean;
   onFresh?: (id?: number) => Promise<any> | void;
-  onAnimation?: (params: any) => void;
   children?: React.ReactNode;
   isMultiple?: boolean;
   isAutoOpenBluetooth?: boolean;
+  currentDeviceStatus: LockVisualStatus;
 }
 
 const Content: React.FC<ContentProps> = ({
@@ -57,13 +60,12 @@ const Content: React.FC<ContentProps> = ({
   optioning,
   onFresh,
   isMultiple = false,
-  onAnimation,
   children,
   isAutoOpenBluetooth,
+  currentDeviceStatus,
 }) => {
   const navigation = useAppNavigation();
 
-  const [operating, setOperating] = useState(false);
   const [groupList, setGroupList] = useState<any[]>([]);
   const [deleteMultipleRef, setDeleteMultipleRef] = useState(false);
   const [eleInstallRef, setEleInstallRef] = useState(false);
@@ -85,39 +87,143 @@ const Content: React.FC<ContentProps> = ({
     }
   }, [detail]);
 
+  // 地锁操作
   const handleOperate = useCallback(
-    async (direction: 'rise' | 'fall') => {
-      if (!detail?.id || operating) return;
+    async (direction: 'RISE' | 'DOWN') => {
+      if (!detail?.id || optioning) return;
 
-      setOperating(true);
+      eventCenter.trigger('onOptioned', true);
+      showLoading({ title: direction === 'DOWN' ? '降下中...' : '升起中...' });
 
-      showLoading({ title: direction === 'fall' ? '降下中...' : '升起中...' });
+      type SimpleLocation = { longitude: number; latitude: number };
+      let location: SimpleLocation | undefined;
+      try {
+        location = await Promise.race<SimpleLocation | undefined>([
+          getLocation({ type: 'gcj02', highAccuracyExpireTime: 1000 }).then(
+            res => ({
+              longitude: res.longitude,
+              latitude: res.latitude,
+            }),
+          ),
+          new Promise<undefined>(resolve =>
+            setTimeout(() => resolve(undefined), 1200),
+          ),
+        ]);
+      } catch (error) {
+        console.error('获取定位失败，请稍后再试', error);
+      }
 
       try {
         const res = await operateLock({
           id: detail.id,
-          optType: direction === 'fall' ? OPT_TYPE.FALL : OPT_TYPE.RISE,
+          optType: direction === 'DOWN' ? OPT_TYPE.FALL : OPT_TYPE.RISE,
+          longitude: location?.longitude,
+          latitude: location?.latitude,
         } as any);
 
-        if (res?.code === 200 || res?.success) {
-          showToast(direction === 'fall' ? '已发送降锁指令' : '已发送升锁指令');
+        if (res?.code !== 200) {
+          // showToast(direction === 'DOWN' ? '已发送降锁指令' : '已发送升锁指令');
+          eventCenter.trigger('onOptioned', false);
+          showToast(res?.msg || res.message);
           if (onFresh) {
             await onFresh(detail.id);
           } else if (reload) {
             await reload(detail.id);
           }
-        } else {
-          showToast(res?.message || res?.msg || '操作失败');
+          hideLoading();
+          return;
         }
+
+        loopLockStatus(
+          currentDeviceStatus,
+          OT_STATUS[direction],
+          isMultiple ? 'group' : 'single',
+        );
       } catch (e) {
         showToast('操作失败，请稍后重试');
-      } finally {
+        eventCenter.trigger('onOptioned', false);
         hideLoading();
-        setOperating(false);
       }
     },
-    [detail, onFresh, reload, operating],
+    [detail, onFresh, reload],
   );
+
+  // 地锁操作结果轮询
+  const loopLockStatus = async (
+    currentStatus: LockVisualStatus,
+    ot: (typeof OT_STATUS)[keyof typeof OT_STATUS],
+    deviceType: 'single' | 'group',
+    count = 10,
+  ) => {
+    let flag = 0;
+    const { start, stop } = loopFunc(
+      async () => {
+        try {
+          flag++;
+          const result = detail?.isGroup
+            ? await getGroupOperateResult({ id: detail?.id, ot })
+            : await getOperateResult({ deviceNo: detail?.deviceNo, ot });
+          // console.log(result, 'result地锁开关轮询')
+          if (result.code !== 200) {
+            showToast({ title: result.message, icon: 'none' });
+            eventCenter.trigger('onOptioned', false);
+            hideLoading();
+            eventCenter.trigger('onOptioned', false);
+            stop();
+            return false;
+          }
+
+          if (result.data && result.code === 200) {
+            hideLoading();
+            stop();
+
+            // 手动重置
+            if (ot === OT_STATUS.DOWN) {
+              eventCenter.trigger('onAnimation', {
+                type:
+                  currentStatus === 'rise30'
+                    ? 'falling30'
+                    : currentStatus === 'rise120'
+                    ? 'falling120'
+                    : 'falling',
+                value: true,
+              });
+            }
+            if (ot === OT_STATUS.RISE) {
+              eventCenter.trigger('onAnimation', {
+                type:
+                  currentStatus === 'rise30'
+                    ? 'rising30'
+                    : currentStatus === 'rise120'
+                    ? 'rising120'
+                    : 'rising',
+                value: true,
+              });
+            }
+            return false;
+          }
+
+          if (flag >= count) {
+            showToast({ title: '轮询超时' });
+            hideLoading();
+            eventCenter.trigger('onOptioned', false);
+            stop();
+            return false;
+          }
+          return true;
+        } catch (error) {
+          showToast({ title: '操作失败' });
+          hideLoading();
+          eventCenter.trigger('onOptioned', false);
+          stop();
+          return false;
+        }
+      },
+      1000,
+      count,
+    );
+    start();
+  };
 
   const handleDeviceInfo = () => {
     if (!detail?.id) return;
@@ -201,7 +307,7 @@ const Content: React.FC<ContentProps> = ({
         <TouchableOpacity
           activeOpacity={1}
           style={styles.manualBtn}
-          disabled={operating}
+          disabled={optioning}
           onPress={() => {
             if (detail?.isGroup) {
             } else {
@@ -226,10 +332,10 @@ const Content: React.FC<ContentProps> = ({
         </TouchableOpacity>
         {detail?.noBleOpt == true ? null : (
           <TouchableOpacity
-            activeOpacity={1}
+            activeOpacity={0.8}
             style={styles.manualBtn}
-            disabled={operating}
-            onPress={() => handleOperate('rise')}
+            disabled={optioning}
+            onPress={() => handleOperate('RISE')}
           >
             <View style={styles.manualIconCircle}>
               <IconFont name="rise" size={24} color="#333333" />
@@ -239,10 +345,10 @@ const Content: React.FC<ContentProps> = ({
         )}
         {detail?.noBleOpt == true ? null : (
           <TouchableOpacity
-            activeOpacity={1}
+            activeOpacity={0.8}
             style={styles.manualBtn}
-            disabled={operating}
-            onPress={() => handleOperate('fall')}
+            disabled={optioning}
+            onPress={() => handleOperate('DOWN')}
           >
             <View style={styles.manualIconCircle}>
               <IconFont name="down" size={24} color="#333333" />
@@ -255,7 +361,7 @@ const Content: React.FC<ContentProps> = ({
             <TouchableOpacity
               activeOpacity={0.8}
               style={styles.manualBtn}
-              disabled={operating}
+              disabled={optioning}
               onPress={() => manageMultipleRef.current?.open()}
             >
               <View style={styles.manualIconCircle}>
@@ -272,8 +378,8 @@ const Content: React.FC<ContentProps> = ({
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.manualBtn}
-            disabled={operating}
-            onPress={() => handleOperate('fall')}
+            disabled={optioning}
+            onPress={() => handleOperate('DOWN')}
           >
             <View style={styles.manualIconCircle}>
               <IconFont

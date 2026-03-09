@@ -12,12 +12,75 @@ import { BASE_URL, DEPLOY_ENV, DEPLOY_VERSION, GRAY } from '@/config';
 import { tokenStorage } from '@/utils/storage';
 import { navigateToLogin } from '@/utils/navigation';
 import { cacheGetSync, cacheRemove } from '@/utils/cache';
-import {
-  eventCenter,
-  filterUndefinedAndNull,
-  getSign,
-  randomStr,
-} from '@/utils';
+import eventCenter from '@/utils/eventCenter';
+
+/**
+ * 过滤对象中的 undefined / null（递归），用于 GET params 规整化。
+ */
+function filterUndefinedAndNull(obj: any): any {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+  const result: any = {};
+  Object.keys(obj).forEach(key => {
+    const value = obj[key];
+    if (value !== undefined && value !== null) {
+      result[key] = filterUndefinedAndNull(value);
+    }
+  });
+  return result;
+}
+
+/**
+ * 生成随机字符串，用于请求 nonce（X-M-KEY）。
+ */
+function randomStr(length: number = 16): string {
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+/**
+ * 生成业务签名（X-M-SIGN）。
+ *
+ * - 对齐既有后端签名规则：仅签名基础类型字段（对象/数组不参与）
+ * - 使用 HmacSHA256，key 固定为 'jdtz'
+ */
+function getSign(
+  data: Record<string, any>,
+  nonce: string,
+  secret?: string,
+): string {
+  const crypto = require('crypto-js');
+  const keys = Object.keys(data).sort();
+  const params: string[] = [];
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i] as string;
+    const value = data[key];
+
+    if (value !== null && value !== undefined && value !== '') {
+      if (
+        Array.isArray(value) ||
+        (typeof value === 'object' && value !== null)
+      ) {
+      } else {
+        params.push(key + '=' + encodeURIComponent(value));
+      }
+    }
+  }
+
+  params.push('nonce=' + nonce);
+
+  const signStr = params.join('&') + (secret || '');
+  const sign = crypto.HmacSHA256(signStr, 'jdtz').toString(crypto.enc.Hex);
+
+  return sign;
+}
 
 /**
  * 统一请求返回格式（参考 MyProject 的 CreateFetchResponse）
@@ -37,17 +100,23 @@ export interface CreateFetchResponse<T = any> {
  * 创建 axios 实例
  * 根据不同环境自动使用对应的 baseURL
  */
-const http: AxiosInstance = axios.create({
+const http: AxiosInstance = (axios as any).create({
   baseURL: BASE_URL,
   timeout: 30000,
 });
 
+/**
+ * 将后端返回的 code 规整为 number；无法解析时使用 fallback。
+ */
 function normalizeCode(code: any, fallback: number) {
   if (code === undefined || code === null || code === '') return fallback;
   const n = Number(code);
   return Number.isFinite(n) ? n : fallback;
 }
 
+/**
+ * 从后端响应中提取 message 字段，兼容 msg/message/error 多种字段名。
+ */
 function normalizeMessage(raw: any) {
   return (
     (raw?.msg as string) ||
@@ -57,6 +126,11 @@ function normalizeMessage(raw: any) {
   );
 }
 
+/**
+ * 获取请求头所需 token。
+ *
+ * 项目里 token 可能写入两处：cache('token') 与 tokenStorage；此处做兜底读取。
+ */
 async function getTokenForHeaders(): Promise<string> {
   // 项目里有两套 token 写入方式：cacheSetSync('token') 与 tokenStorage.set()
   // 这里优先读 cache，再兜底读 tokenStorage，保证请求头稳定。
@@ -66,6 +140,9 @@ async function getTokenForHeaders(): Promise<string> {
   return storageToken ? String(storageToken) : '';
 }
 
+/**
+ * 清理所有 token 存储（用于退出登录/被踢下线等场景）。
+ */
 async function clearAllToken() {
   try {
     await cacheRemove({ key: 'token' });
@@ -75,6 +152,10 @@ async function clearAllToken() {
   } catch {}
 }
 
+/**
+ * 根据业务 code 触发全局重新登录流程。
+ * @param code 业务 code（或与 HTTP status 对齐后的 code）
+ */
 function handleReLoginByCode(code: number) {
   // 206：账号在其他设备登录/登录失效（与 MyProject RN 逻辑对齐）
   if (code === 206) {
@@ -274,6 +355,9 @@ export function get<T = any>(
   return http.get<any, CreateFetchResponse<T>>(url, config);
 }
 
+/**
+ * POST 请求（默认 JSON body），返回统一结构 CreateFetchResponse。
+ */
 export function post<T = any>(
   url: string,
   data?: any,
@@ -282,6 +366,9 @@ export function post<T = any>(
   return http.post<any, CreateFetchResponse<T>>(url, data, config);
 }
 
+/**
+ * PUT 请求（默认 JSON body），返回统一结构 CreateFetchResponse。
+ */
 export function put<T = any>(
   url: string,
   data?: any,
@@ -290,6 +377,9 @@ export function put<T = any>(
   return http.put<any, CreateFetchResponse<T>>(url, data, config);
 }
 
+/**
+ * DELETE 请求，返回统一结构 CreateFetchResponse。
+ */
 export function del<T = any>(
   url: string,
   config?: AxiosRequestConfig,

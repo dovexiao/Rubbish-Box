@@ -20,12 +20,24 @@ export {
  */
 export { showToast, showLoading, hideLoading } from './toast';
 import { showToast as innerShowToast } from './toast';
+export type {
+  GetLocationOptions,
+  GetLocationResult,
+  LocationCoordinateType,
+} from './location';
+export {
+  getCurrentLocation,
+  getLocation,
+  initAMapGeolocation,
+  requestHarmonyLocationPermission,
+  startLocationUpdates,
+} from './location';
+
 import {
   DeviceEventEmitter,
   Platform,
   Linking,
   NativeModules,
-  TurboModuleRegistry,
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Config from 'react-native-config';
@@ -41,93 +53,8 @@ let IntentLauncher: any = null;
 let NetInfo: any = null;
 let BleManagerClass: any = null;
 let AMapSdk: any = null;
-let initAMapGeolocationLib: any = null;
-let Geolocation: any = null;
 const isHarmonyPlatform = Platform.OS !== 'ios' && Platform.OS !== 'android';
 let HarmonyAmapModule: any = null;
-type HarmonyLocationPayload = {
-  latitude: number;
-  longitude: number;
-  accuracy?: number;
-  altitude?: number;
-  speed?: number;
-  bearing?: number;
-  time?: number;
-};
-type HarmonyLocationBridge = {
-  getCurrentLocation?: (options?: {
-    enableHighAccuracy?: boolean;
-    timeoutMs?: number;
-  }) => Promise<HarmonyLocationPayload | null>;
-  isLocationEnabled?: () => Promise<boolean>;
-};
-let HarmonyLocationModule: HarmonyLocationBridge | null = null;
-
-const harmonyLocationModuleNames = [
-  'HarmonyLocation',
-  'HarmonyLocationTurboModule',
-];
-
-const getHarmonyLocationFromTurboRegistry =
-  (): HarmonyLocationBridge | null => {
-    const turboGet = (
-      TurboModuleRegistry as {
-        get?: <T>(name: string) => T | null | undefined;
-      }
-    )?.get;
-    if (typeof turboGet !== 'function') {
-      return null;
-    }
-    for (const name of harmonyLocationModuleNames) {
-      try {
-        const candidate = turboGet<HarmonyLocationBridge | null>(name);
-        if (candidate) {
-          if (__DEV__ && name !== 'HarmonyLocation') {
-            console.log(
-              `[Harmony] HarmonyLocation TurboModuleRegistry fallback resolved to ${name}`,
-            );
-          }
-          return candidate;
-        }
-      } catch (error) {
-        if (__DEV__) {
-          console.warn(
-            `[Harmony] TurboModuleRegistry.get(${name}) failed when resolving HarmonyLocation:`,
-            error,
-          );
-        }
-      }
-    }
-    return null;
-  };
-
-const resolveHarmonyLocationModule = (): HarmonyLocationBridge | null => {
-  if (HarmonyLocationModule) {
-    return HarmonyLocationModule;
-  }
-  const turboModule = getHarmonyLocationFromTurboRegistry();
-  if (turboModule) {
-    HarmonyLocationModule = turboModule;
-    return HarmonyLocationModule;
-  }
-  if (!NativeModules) {
-    return null;
-  }
-  const nativeModuleBucket = NativeModules as Record<string, unknown>;
-  for (const name of harmonyLocationModuleNames) {
-    const candidate = nativeModuleBucket[name];
-    if (candidate) {
-      HarmonyLocationModule = candidate as HarmonyLocationBridge;
-      if (__DEV__ && name !== 'HarmonyLocation') {
-        console.log(
-          `[Harmony] HarmonyLocation bridge name fallback resolved to ${name}`,
-        );
-      }
-      return HarmonyLocationModule;
-    }
-  }
-  return null;
-};
 
 if (isHarmonyPlatform) {
   try {
@@ -136,7 +63,6 @@ if (isHarmonyPlatform) {
   } catch (e) {
     console.warn('[Harmony] harmony-amap module not available:', e);
   }
-  HarmonyLocationModule = resolveHarmonyLocationModule();
 }
 
 if (isNativeMobile) {
@@ -166,15 +92,6 @@ if (isNativeMobile) {
     AMapSdk = require('react-native-amap3d').AMapSdk;
   } catch (e) {
     console.warn('react-native-amap3d module not available:', e);
-  }
-
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-    const geo = require('react-native-amap-geolocation');
-    initAMapGeolocationLib = geo.init;
-    Geolocation = geo.Geolocation;
-  } catch (e) {
-    console.warn('react-native-amap-geolocation module not available:', e);
   }
 }
 
@@ -1111,88 +1028,7 @@ export function myNextTick(fn: any) {
   }, 0);
 }
 
-/**
- * 事件中心（兼容 Taro 风格）
- */
-class EventCenter {
-  private events: Map<string, Set<Function>> = new Map();
-
-  /**
-   * 监听事件
-   * @param eventName 事件名称
-   * @param callback 回调函数
-   */
-  on(eventName: string, callback: Function) {
-    if (!this.events.has(eventName)) {
-      this.events.set(eventName, new Set());
-    }
-    this.events.get(eventName)!.add(callback);
-  }
-
-  /**
-   * 移除事件监听
-   * @param eventName 事件名称
-   * @param callback 回调函数（可选，不传则移除该事件的所有监听）
-   */
-  off(eventName: string, callback?: Function) {
-    if (!this.events.has(eventName)) {
-      return;
-    }
-
-    if (callback) {
-      // 移除指定的回调
-      this.events.get(eventName)!.delete(callback);
-      // 如果该事件没有监听者了，删除事件
-      if (this.events.get(eventName)!.size === 0) {
-        this.events.delete(eventName);
-      }
-    } else {
-      // 移除该事件的所有监听
-      this.events.delete(eventName);
-    }
-  }
-
-  /**
-   * 触发事件
-   * @param eventName 事件名称
-   * @param args 传递给回调函数的参数
-   */
-  trigger(eventName: string, ...args: any[]) {
-    if (!this.events.has(eventName)) {
-      return;
-    }
-
-    const callbacks = this.events.get(eventName)!;
-    callbacks.forEach(callback => {
-      try {
-        callback(...args);
-      } catch (error) {
-        console.error(
-          `EventCenter: Error executing callback for event "${eventName}":`,
-          error,
-        );
-      }
-    });
-  }
-
-  /**
-   * 检查是否有监听者
-   * @param eventName 事件名称
-   */
-  has(eventName: string): boolean {
-    return this.events.has(eventName) && this.events.get(eventName)!.size > 0;
-  }
-
-  /**
-   * 清除所有事件监听
-   */
-  clear() {
-    this.events.clear();
-  }
-}
-
-// 导出单例实例
-export const eventCenter = new EventCenter();
+export { default as eventCenter } from './eventCenter';
 
 /**
  * 过滤对象中的 undefined 和 null 值（递归处理）

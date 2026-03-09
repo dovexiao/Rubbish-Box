@@ -29,6 +29,12 @@ import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 
+/**
+ * 首页（单个设备）：
+ * - 周期性拉取锁详情（getLockInfo），并计算当前静态展示状态 currentDeviceStatus
+ * - 订阅 eventCenter 的 onAnimation/onOptioned 事件，驱动 LockVisual 播放动图与按钮禁用
+ * - 动画期间预取一次详情，尽量在动画结束时刻切到最新静态图
+ */
 const Index = () => {
   const route = useRoute<any>();
   const navigation = useAppNavigation();
@@ -59,11 +65,23 @@ const Index = () => {
   });
   const [gifNonce, setGifNonce] = useState<number>(0);
   const [optioning, setOptioning] = useState<boolean>(false);
+  const optioningRef = useRef<boolean>(false);
   const [error, setError] = useState<{
     code?: number | string;
     message?: string;
   } | null>(null);
 
+  useEffect(() => {
+    optioningRef.current = optioning;
+  }, [optioning]);
+
+  /**
+   * 拉取首页需要的后端数据：
+   * - 锁详情：getLockInfo(type=1)，并写入 detail
+   * - 未读数：fetchUnreadCount
+   *
+   * 静态图展示依赖 currentDeviceStatus，由详情中的 powerType/coverStatus/fallStatus 推导。
+   */
   const load = useCallback(
     async (id?: number, options?: { silent?: boolean }) => {
       if (!options?.silent) {
@@ -74,11 +92,10 @@ const Index = () => {
         const lockRes = id
           ? await getLockInfo({ type: 1, id } as any)
           : await getLockInfo({ type: 1 } as any);
-        // 清楚路由栈中的跳转参数
+        // 清除路由栈中的跳转参数
         (navigation as any)?.setParams?.({ lockId: undefined });
         if (lockRes.success && lockRes.code === 200 && lockRes.data) {
           if (lockRes.data?.isGroup) {
-            console.log('跳到组合设备');
             reLaunch('Multiple', { lockId: lockRes.data.id });
             return;
           }
@@ -141,16 +158,29 @@ const Index = () => {
     [],
   );
 
+  /**
+   * 页面聚焦后，每 10s 轮询一次：
+   * - 读取 token/guestMode 决定是否展示游客引导
+   * - 登录态下 silent=true（除首次）刷新锁详情，保证首页数据是最新的
+   */
   useFocusEffect(
     useCallback(() => {
+      console.log('轮询');
       let stopped = false;
       let first = true;
 
       const poller = loopFunc(async () => {
+        // loopFunc 约定：return true 表示继续下一轮；return false 表示停止轮询
         if (stopped) return false;
+
+        // 操作中暂停 10s 轮询请求（但不停止定时器），避免操作过程被后台刷新打断
+        if (optioningRef.current) return true;
+
+        // 首次进入页面：silent=false（允许出现 loading）；后续轮询：silent=true（静默刷新，避免 UI 抖动）
         const silent = !first;
         first = false;
         try {
+          // 同时读取登录态与游客模式开关，用于决定首页应展示的 UI
           const [token, guest] = await Promise.all([
             cacheGetSync('token'),
             cacheGetSync('guestMode'),
@@ -163,20 +193,24 @@ const Index = () => {
           setGuestMode(guestFlag);
 
           if (hasTokenFlag) {
+            // 已登录：刷新首页锁详情（含 currentDeviceStatus 推导）与未读数
             await load(lockId, { silent });
             return true;
           }
 
           if (!silent) {
+            // 未登录且首次进入：清空设备态，交给下方 UI 渲染游客引导/空态
             setLoading(false);
             setHasDevice(false);
             setDetail(undefined);
             setError(null);
           }
+          // 未登录时停止轮询，避免无 token 场景持续请求接口
           return false;
         } catch {
           if (stopped) return false;
           if (!silent) {
+            // 首次进入且初始化失败：展示错误态；后续 silent 轮询失败不打断当前页面展示
             setHasToken(false);
             setGuestMode(false);
             setLoading(false);
@@ -184,6 +218,7 @@ const Index = () => {
             setDetail(undefined);
             setError({ message: '初始化失败，请稍后重试' });
           }
+          // 异常场景继续轮询，让网络恢复后能自动拉起首页数据
           return true;
         }
       }, 10000);
@@ -191,6 +226,7 @@ const Index = () => {
       poller.start();
 
       return () => {
+        // 卸载/失焦时停止轮询，防止 setState 发生在卸载后
         stopped = true;
         poller.stop();
       };
@@ -199,10 +235,25 @@ const Index = () => {
 
   const showGuestWelcome = !hasToken && guestMode;
 
+  /**
+   * onAnimation/onAnimationEnd：控制 LockVisual 动图播放与结束时刻
+   * - deviceStatus：决定展示哪一种动图（rising/falling/openCovering...）
+   * - gifNonce：作为 url nonce，确保同一 gif 能重复播放（绕开缓存）
+   * - optioning：操作中禁用按钮（由 Content 触发 eventCenter.onOptioned）
+   * - 预取：动画进行到 1400ms 左右时提前拉一次详情，尽量让静态图在动画结束瞬间就能切到最新状态
+   */
   const guestPopupRef = useRef<any>(null);
   const animationTimer = useRef<any>(null);
+  const prefetchTimer = useRef<any>(null);
+  const prefetchPromise = useRef<Promise<any> | null>(null);
+  const animationSeq = useRef(0);
+  const detailIdRef = useRef<number | undefined>(undefined);
 
-  const onAnimationEnd = () => {
+  useEffect(() => {
+    detailIdRef.current = detail?.id;
+  }, [detail?.id]);
+
+  const onAnimationEnd = async () => {
     setDeviceStatus(prev => ({
       ...prev,
       rising: false,
@@ -214,6 +265,20 @@ const Index = () => {
       rising120: false,
       falling120: false,
     }));
+    setOptioning(false);
+    if (prefetchTimer.current) {
+      clearTimeout(prefetchTimer.current);
+      prefetchTimer.current = null;
+    }
+    // 如果动画期间已经触发过预取 load()，这里不强制重复请求；
+    // load() 内部会自行更新 detail/currentDeviceStatus。
+    const p = prefetchPromise.current;
+    prefetchPromise.current = null;
+    if (p) {
+      p.catch(() => {});
+    } else {
+      load(detailIdRef.current, { silent: true }).catch(() => {});
+    }
   };
   const onAnimation = useCallback(
     ({
@@ -231,6 +296,7 @@ const Index = () => {
         | 'falling120';
       value: boolean;
     }) => {
+      // 开始动画前先清空其它动图开关，保证同一时刻只有一种动图显示
       setDeviceStatus(prev => ({
         ...prev,
         rising: false,
@@ -244,6 +310,25 @@ const Index = () => {
         [type]: value,
       }));
       setGifNonce(prev => prev + 1);
+
+      // 为本次动画生成序列号，用于丢弃过期的预取定时器
+      animationSeq.current += 1;
+      const seq = animationSeq.current;
+      if (prefetchTimer.current) {
+        clearTimeout(prefetchTimer.current);
+        prefetchTimer.current = null;
+      }
+      prefetchPromise.current = null;
+
+      // 动画接近尾声时预取一次详情：让静态图更可能在动图结束瞬间就展示到最终状态
+      prefetchTimer.current = setTimeout(() => {
+        if (animationSeq.current !== seq) return;
+        const p = load(detailIdRef.current, { silent: true });
+        prefetchPromise.current = p;
+        p.catch(() => {});
+      }, 1400);
+
+      // 动画结束时刻：重置动图标记 + 触发最终详情刷新/消费预取
       if (animationTimer.current) {
         clearTimeout(animationTimer.current);
         animationTimer.current = null;
@@ -255,6 +340,12 @@ const Index = () => {
     [],
   );
 
+  /**
+   * Content 与页面解耦：
+   * - Content 在用户点击“升/降锁”等操作时触发 eventCenter.trigger('onOptioned'/'onAnimation')
+   * - 页面负责把这些事件映射为 state（deviceStatus/optioning/gifNonce）
+   * - LockVisual 只根据 props（currentDeviceStatus/deviceStatus/gifNonce）渲染静图/动图
+   */
   const onOptioned = useCallback(
     (option: boolean) => {
       setOptioning(option);
@@ -273,6 +364,11 @@ const Index = () => {
         clearTimeout(animationTimer.current);
         animationTimer.current = null;
       }
+      if (prefetchTimer.current) {
+        clearTimeout(prefetchTimer.current);
+        prefetchTimer.current = null;
+      }
+      prefetchPromise.current = null;
     };
   }, [onOptioned, onAnimation]);
 
@@ -383,8 +479,9 @@ const Index = () => {
               reload={async (id?: number) => {
                 await load(id);
               }}
-              optioning={false}
+              optioning={optioning}
               isAutoOpenBluetooth={isAutoOpenBluetooth}
+              currentDeviceStatus={currentDeviceStatus}
             >
               <LockVisual
                 detail={detail}
