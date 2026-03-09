@@ -11,16 +11,20 @@ export const styles = StyleSheet.create({
   pairedBox: {
     width: '100%',
     alignItems: 'center',
+    marginTop: 40,
+    paddingHorizontal: 12,
   },
   gif: {
-    width: 200,
-    height: 200,
+    width: 360,
+    height: 180,
   },
   statusText: {
-    marginTop: 12,
+    marginTop: 16,
     fontSize: 16,
     fontWeight: '700',
     color: '#333333',
+    textAlign: 'center',
+    lineHeight: 22,
   },
   card: {
     width: '100%',
@@ -29,11 +33,20 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f7f7fb',
     borderRadius: 12,
   },
+  connectedCard: {
+    marginTop: 24,
+  },
   cardTitle: {
     fontSize: 14,
     fontWeight: '700',
     color: '#333333',
     marginBottom: 8,
+  },
+  cardItemTexts: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#333333',
+    lineHeight: 20,
   },
   cardText: {
     fontSize: 14,

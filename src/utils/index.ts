@@ -3,7 +3,8 @@
  */
 export { getCurrentPages, navigateBack, reLaunch } from './navigation';
 import { getCurrentPages } from './navigation';
-
+import { Buffer } from 'buffer';
+global.Buffer = global.Buffer || Buffer;
 /**
  * 缓存工具函数
  */
@@ -443,41 +444,25 @@ export const jumpToPage = async (): Promise<{ remove?: () => void }> => {
 };
 
 /**
- * 获取系统已连接的蓝牙设备
+ * 获取系统已连接的蓝牙设备（实现见 @/utils/api，此处统一导出）
  */
-export const getSystemConnectedDevices = async (): Promise<{
-  code: string;
-  data?: any[];
-  message?: string;
-}> => {
-  try {
-    const { BluetoothManager } = NativeModules;
-    if (!BluetoothManager) {
-      return { code: 'ERROR', message: '蓝牙模块不可用' };
-    }
-
-    return new Promise(resolve => {
-      BluetoothManager.getConnectedDevices((result: any) => {
-        if (result.error) {
-          resolve({ code: 'ERROR', message: result.error });
-        } else {
-          resolve({ code: '200', data: result.devices || [] });
-        }
-      });
-    });
-  } catch (error) {
-    console.error('获取已连接设备失败:', error);
-    return { code: 'ERROR', message: '获取设备列表失败' };
-  }
-};
+export { getSystemConnectedDevices } from './api';
 
 /**
  * 检查两个 MAC 地址是否相同（忽略大小写和分隔符）
+ * 兼容 bleNo 等为 MAC 字节反序的格式（如 2384FAC8E8FC 与 FC:E8:C8:FA:84:23 视为同一设备）
  */
 export const isSameMac = (mac1?: string, mac2?: string): boolean => {
   if (!mac1 || !mac2) return false;
   const normalize = (mac: string) => mac.replace(/[:-]/g, '').toLowerCase();
-  return normalize(mac1) === normalize(mac2);
+  const reverseBytes = (hex: string) => {
+    const s = hex.replace(/[:-]/g, '').toLowerCase();
+    if (s.length !== 12) return s;
+    return (s.match(/.{2}/g) || []).reverse().join('');
+  };
+  const a = normalize(mac1);
+  const b = normalize(mac2);
+  return a === b || reverseBytes(a) === b;
 };
 
 // 打开蓝牙设置（RN 端会在跳转前记录当前路由，便于从系统设置返回时恢复）
@@ -583,7 +568,7 @@ export const getBluetoothDeviceInfo = async (): Promise<
 > => {
   try {
     const info = await getStorage({ key: 'bluetoothDeviceInfoList' });
-    return (info as any)?.data || {};
+    return (info as any) || {};
   } catch {
     return {};
   }
@@ -1018,4 +1003,8 @@ export function loopFunc(
   };
 
   return { start, stop };
+}
+
+export function arrayBufferToBase64(arrayBuffer: any): string {
+  return Buffer.from(arrayBuffer).toString('base64');
 }

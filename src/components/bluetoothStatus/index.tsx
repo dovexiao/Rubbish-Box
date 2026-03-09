@@ -418,7 +418,6 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
           role: targetDevice.role,
         });
       } else if (bluetoothErrorType === 'not_connected') {
-        console.log('前往连接', targetDevice);
         navigation.navigate('BluetoothSearch', {
           bleNo: targetDevice.bleNo,
           lockName: targetDevice.lockName,

@@ -332,7 +332,7 @@ const Content: React.FC<ContentProps> = ({
         </TouchableOpacity>
         {detail?.noBleOpt == true ? null : (
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={1}
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => handleOperate('RISE')}
@@ -345,7 +345,7 @@ const Content: React.FC<ContentProps> = ({
         )}
         {detail?.noBleOpt == true ? null : (
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={1}
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => handleOperate('DOWN')}
@@ -359,7 +359,7 @@ const Content: React.FC<ContentProps> = ({
         {isMultiple ? (
           detail?.role === 1 && (
             <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={1}
               style={styles.manualBtn}
               disabled={optioning}
               onPress={() => manageMultipleRef.current?.open()}
@@ -376,7 +376,7 @@ const Content: React.FC<ContentProps> = ({
           )
         ) : detail?.powerType === 1 && detail.canOpenCover ? (
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={1}
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => handleOperate('DOWN')}

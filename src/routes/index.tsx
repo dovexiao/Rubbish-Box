@@ -320,6 +320,11 @@ export const routes = {
       label: '蓝牙搜索',
     },
     {
+      name: 'BluetoothLinkSuccess',
+      component: require('@/pages/bluetooth/linkSuccess').default,
+      label: '蓝牙连接成功',
+    },
+    {
       name: 'Unbind',
       component: require('@/pages/unbind').default,
       label: '解除绑定须知',

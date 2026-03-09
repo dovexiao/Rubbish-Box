@@ -78,6 +78,10 @@ export const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 8,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   singleHeight: {
     height: 130,
