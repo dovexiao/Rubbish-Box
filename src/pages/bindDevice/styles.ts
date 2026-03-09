@@ -5,13 +5,13 @@ const screenWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: '#000',
     position: 'relative',
     flexDirection: 'column',
   },
   camera: {
-    flex: 1,
     width: '100%',
+    height: '100%',
   },
   cameraMask: {
     position: 'absolute',

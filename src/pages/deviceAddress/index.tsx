@@ -30,6 +30,7 @@ import {
   requestHarmonyLocationPermission,
 } from '@/utils';
 import { IS_HARMONY } from '@/constants';
+import type { HarmonyMarker } from '@/harmony/harmony-amap';
 import styles from './styles';
 
 const EARTH_RADIUS = 6378137;
@@ -195,6 +196,30 @@ export default function DeviceAddressScreen() {
     return [...newAddressList];
   }, [addressInfo]);
 
+  const isHarmonyNativeMap = IS_HARMONY && !isHarmonyMapUnavailable;
+  const harmonyMarkers = useMemo<HarmonyMarker[]>(() => {
+    if (!isHarmonyNativeMap) return [];
+    const _markers: HarmonyMarker[] = markers.map(item => ({
+      id: String(item.id),
+      latitude: item.position.latitude,
+      longitude: item.position.longitude,
+      icon: item.icon,
+    }));
+    if (userLocationInfo.current) {
+      _markers.push({
+        id: '000',
+        latitude: userLocationInfo.current.latitude,
+        longitude: userLocationInfo.current.longitude,
+        icon: {
+          uri: 'https://g.18qjz.cn/img/boklock/local_icon.png',
+          width: 24,
+          height: 37,
+        },
+      });
+    }
+    return _markers;
+  }, [isHarmonyNativeMap, markers, userLocationInfo.current]);
+
   const handleLocate = useCallback(() => {
     if (mapRef.current && userLocationInfo.current) {
       try {
@@ -220,17 +245,24 @@ export default function DeviceAddressScreen() {
         Platform.OS === 'ios'
           ? `iosamap://path?sourceApplication=app&dlat=${latitude}&dlon=${longitude}&t=0`
           : `amapuri://route/plan/?dlat=${latitude}&dlon=${longitude}&dev=0&t=0`;
+      const webUrl = `https://uri.amap.com/navigation?to=${longitude},${latitude},&mode=car&src=reactnative`;
 
-      Linking.canOpenURL(scheme)
-        .then(supported => {
-          if (supported) {
-            Linking.openURL(scheme);
-          } else {
-            const url = `https://uri.amap.com/navigation?to=${longitude},${latitude},&mode=car&src=reactnative`;
-            Linking.openURL(url);
-          }
-        })
-        .catch(err => console.error('导航失败', err));
+      if (IS_HARMONY) {
+        // 鸿蒙系统上直接尝试唤起高德地图，如果未安装（报错）则退级到网页版
+        Linking.openURL(scheme).catch(() => {
+          Linking.openURL(webUrl).catch(err => console.error('导航失败', err));
+        });
+      } else {
+        Linking.canOpenURL(scheme)
+          .then(supported => {
+            if (supported) {
+              Linking.openURL(scheme);
+            } else {
+              Linking.openURL(webUrl);
+            }
+          })
+          .catch(err => console.error('导航失败', err));
+      }
     },
     [],
   );
@@ -302,22 +334,41 @@ export default function DeviceAddressScreen() {
                 tiltGesturesEnabled={false}
                 scaleControlsEnabled={false}
                 zoomControlsEnabled={false}
-                initialCameraPosition={{
-                  target: {
-                    latitude:
-                      addressInfo?.[0]?.latitude ||
-                      userLocationInfo.current?.latitude ||
-                      39.9042,
-                    longitude:
-                      addressInfo?.[0]?.longitude ||
-                      userLocationInfo.current?.longitude ||
-                      116.4074,
-                  },
-                  zoom: 12,
-                }}
+                {...(isHarmonyNativeMap
+                  ? {
+                      center: {
+                        latitude:
+                          addressInfo?.[0]?.latitude ||
+                          userLocationInfo.current?.latitude ||
+                          39.9042,
+                        longitude:
+                          addressInfo?.[0]?.longitude ||
+                          userLocationInfo.current?.longitude ||
+                          116.4074,
+                      },
+                      zoomLevel: 12,
+                      markers: harmonyMarkers,
+                      mapViewStyle: 'native',
+                    }
+                  : {
+                      initialCameraPosition: {
+                        target: {
+                          latitude:
+                            addressInfo?.[0]?.latitude ||
+                            userLocationInfo.current?.latitude ||
+                            39.9042,
+                          longitude:
+                            addressInfo?.[0]?.longitude ||
+                            userLocationInfo.current?.longitude ||
+                            116.4074,
+                        },
+                        zoom: 12,
+                      },
+                    })}
               >
-                {!!markers.length &&
-                  markers.map(item => (
+                {!isHarmonyNativeMap &&
+                  !!markers.length &&
+                  markers.map((item: any) => (
                     <Marker
                       key={item.id}
                       position={item.position}
@@ -325,7 +376,7 @@ export default function DeviceAddressScreen() {
                     />
                   ))}
 
-                {userLocationInfo.current && (
+                {!isHarmonyNativeMap && userLocationInfo.current && (
                   <Marker
                     key={'000'}
                     position={{

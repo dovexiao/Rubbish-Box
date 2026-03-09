@@ -159,6 +159,20 @@ baseConfig.resolver = {
           platform,
         );
       }
+      if (moduleName === 'react-native-vision-camera') {
+        // Harmony 下屏蔽原始的 react-native-vision-camera 避免解析报错
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(
+            __dirname,
+            'node_modules/@react-native-ohos/react-native-vision-camera/src/index.tsx',
+          ),
+          platform,
+        );
+      }
     }
 
     // 强制 axios 在 React Native 中使用 browser bundle，避免引用 Node 的 crypto 等内置模块

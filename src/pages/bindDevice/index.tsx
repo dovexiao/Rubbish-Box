@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, ActivityIndicator, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PageContainer, Flex, PopConfirm } from '@/components';
+import { IS_HARMONY } from '@/constants';
 import {
   useCameraPermission,
   useCameraDevice,
   useCodeScanner,
   Camera,
-} from 'react-native-vision-camera';
+} from '@/harmony/vision-camera-shim';
+import { startHarmonyScan } from '@/harmony/harmony-scan';
 import type { PopConfirmRef } from '@/components/popConfirm';
 import { bindScan } from '@/services/bindDevice';
 import styles from './styles';
@@ -19,10 +21,12 @@ const BinDevice: React.FC = () => {
   const device = useCameraDevice('back');
 
   const [isActive, setIsActive] = useState(true);
+  const [harmonyScanFallback, setHarmonyScanFallback] = useState(false);
   const hasScannedRef = useRef(false);
   const popVisibleRef = useRef(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const popRef = useRef<PopConfirmRef>(null);
+  const fallbackRunningRef = useRef(false);
 
   // 请求相机权限
   useEffect(() => {
@@ -103,7 +107,7 @@ const BinDevice: React.FC = () => {
   const codeScanner = useCodeScanner
     ? useCodeScanner({
         codeTypes: ['qr'],
-        onCodeScanned: codes => {
+        onCodeScanned: (codes: any) => {
           if (
             codes &&
             Array.isArray(codes) &&
@@ -115,6 +119,24 @@ const BinDevice: React.FC = () => {
         },
       })
     : null;
+
+  useEffect(() => {
+    if (!IS_HARMONY || !harmonyScanFallback || !isActive) return;
+    if (fallbackRunningRef.current) return;
+    fallbackRunningRef.current = true;
+    startHarmonyScan()
+      .then(code => {
+        if (code) {
+          void handleScanResult(code);
+        }
+      })
+      .catch(err => {
+        console.warn('Harmony ScanKit fallback failed:', err);
+      })
+      .finally(() => {
+        fallbackRunningRef.current = false;
+      });
+  }, [harmonyScanFallback, isActive, handleScanResult]);
 
   if (!hasPermission) {
     return (
@@ -197,7 +219,23 @@ const BinDevice: React.FC = () => {
           style={styles.camera}
           device={device}
           isActive={isActive}
-          codeScanner={codeScanner as any}
+          codeScanner={
+            IS_HARMONY && harmonyScanFallback ? undefined : (codeScanner as any)
+          }
+          onError={(err: any) => {
+            const msg =
+              typeof err?.error === 'string'
+                ? err.error
+                : typeof err?.message === 'string'
+                ? err.message
+                : '';
+            if (
+              IS_HARMONY &&
+              /output\/stream configurations are invalid/i.test(msg)
+            ) {
+              setHarmonyScanFallback(true);
+            }
+          }}
         />
 
         <View style={styles.cameraMask}>

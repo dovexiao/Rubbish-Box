@@ -27,7 +27,7 @@ const HarmonyIconImage: React.FC<HarmonyIconImageProps> = ({
 
   const imageStyle: StyleProp<ImageStyle> = [
     { width: size, height: size },
-    // singleColor ? { tintColor: singleColor } : null,
+    singleColor ? { tintColor: singleColor } : null,
     style,
   ];
 

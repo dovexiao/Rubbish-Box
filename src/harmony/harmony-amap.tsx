@@ -34,6 +34,11 @@ export type HarmonyMarker = {
   latitude: number;
   longitude: number;
   title?: string;
+  icon?: {
+    uri?: string;
+    width?: number;
+    height?: number;
+  };
 };
 
 export interface HarmonyMapViewProps extends ViewProps {
@@ -69,8 +74,9 @@ let hasWarnedMissingNativeView = false;
 
 const hasNativeViewManager = (): boolean => {
   try {
-    if (UIManager.getViewManagerConfig) {
-      return !!UIManager.getViewManagerConfig(COMPONENT_NAME);
+    const hasGetViewManagerConfig = !!UIManager.getViewManagerConfig;
+    if (hasGetViewManagerConfig) {
+      return true;
     }
     return !!(UIManager as unknown as Record<string, unknown>)[COMPONENT_NAME];
   } catch (error) {
@@ -116,17 +122,14 @@ const dispatchCommand = (
   args: unknown[] = [],
 ) => {
   const viewId = target ? findNodeHandle(target) : null;
-  if (!viewId || !hasNativeViewManager()) {
+  if (!viewId) {
     return;
   }
-  const config = UIManager.getViewManagerConfig
-    ? UIManager.getViewManagerConfig(COMPONENT_NAME)
-    : null;
-  if (!config) {
-    return;
-  }
-  const commandId = config?.Commands?.[command] ?? command;
-  UIManager.dispatchViewManagerCommand(viewId, commandId, args);
+
+  // Directly send the command name instead of querying ViewManager config,
+  // as RNOH 0.72 componentCommandReceiver accepts the string command.
+  UIManager.dispatchViewManagerCommand(viewId, command, args);
+  console.log('[HarmonyAmap] dispatchViewManagerCommand sent:', command, args);
 };
 
 export const MapView = forwardRef<

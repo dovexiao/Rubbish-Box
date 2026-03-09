@@ -64,6 +64,7 @@ export default function MapComponent(props: MapComponentProps) {
 
   const [makersList, setMakersList] = useState<InternalMarker[]>([]);
   const [locationReady, setLocationReady] = useState(false);
+  const hasInitLocation = useRef(false);
   const [harmonyApiKey, setHarmonyApiKey] = useState<string | undefined>(
     INITIAL_HARMONY_MAP_KEY,
   );
@@ -195,7 +196,10 @@ export default function MapComponent(props: MapComponentProps) {
       setHarmonyApiKey(resolvedKey);
     }
     createMakers();
-    initLocation();
+    if (!hasInitLocation.current) {
+      hasInitLocation.current = true;
+      initLocation();
+    }
     return () => {
       mapRef.current = null;
     };
@@ -221,7 +225,7 @@ export default function MapComponent(props: MapComponentProps) {
     : 'auto';
 
   const isHarmonyNativeMap = IS_HARMONY && !isHarmonyMapUnavailable;
-  const useHarmonySafeMode = isHarmonyNativeMap;
+  const useHarmonySafeMode = false; // 原本这里强行设置为 true 会导致鸿蒙原生图标为空，现将其关闭以便传参
   const harmonyMarkers = useMemo<HarmonyMarker[]>(() => {
     if (!isHarmonyNativeMap || useHarmonySafeMode) {
       return [];
@@ -235,15 +239,13 @@ export default function MapComponent(props: MapComponentProps) {
         latitude: item.position.latitude,
         longitude: item.position.longitude,
         title: item.title,
+        icon: item.icon,
       });
       return acc;
     }, []);
   }, [isHarmonyNativeMap, makersList, useHarmonySafeMode]);
 
   useEffect(() => {
-    if (isHarmonyNativeMap) {
-      return;
-    }
     if (!mapRef.current?.moveCamera || centerLat == null || centerLng == null) {
       return;
     }

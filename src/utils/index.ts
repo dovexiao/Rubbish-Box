@@ -876,6 +876,9 @@ export const initAMapGeolocation = async (apiKey?: string): Promise<void> => {
 /**
  * 获取当前位置（高德定位）
  */
+let _cachedLocation: any = null;
+let _cachedLocationTime = 0;
+
 export const getCurrentLocation = async (): Promise<{
   latitude: number;
   longitude: number;
@@ -896,6 +899,10 @@ export const getCurrentLocation = async (): Promise<{
         );
         return null;
       }
+      if (_cachedLocation && Date.now() - _cachedLocationTime < 30 * 1000) {
+        console.log('[Harmony] getCurrentLocation use cache');
+        return _cachedLocation;
+      }
       console.log('[Harmony] getCurrentLocation start');
       const result = await harmonyLocation.getCurrentLocation({
         enableHighAccuracy: true,
@@ -905,7 +912,7 @@ export const getCurrentLocation = async (): Promise<{
         return null;
       }
       console.log('[Harmony] getCurrentLocation success', result);
-      return {
+      const loc = {
         latitude: result.latitude,
         longitude: result.longitude,
         accuracy: result.accuracy,
@@ -916,6 +923,9 @@ export const getCurrentLocation = async (): Promise<{
         street: undefined,
         streetNumber: undefined,
       };
+      _cachedLocation = loc;
+      _cachedLocationTime = Date.now();
+      return loc;
     }
     // 检查模块是否正确加载
     if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
