@@ -344,5 +344,10 @@ export const routes = {
       component: require('@/pages/messageDetail').default,
       label: '消息详情',
     },
+    {
+      name: 'MyDevice',
+      component: require('@/pages/myDevice').default,
+      label: '添加设备',
+    },
   ],
 } as const;

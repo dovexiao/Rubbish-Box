@@ -16,8 +16,8 @@ export const styles = StyleSheet.create({
   },
   headerContainer: {
     zIndex: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
+    // borderBottomWidth: 0.5,
+    // borderBottomColor: '#f4f4f4',
   },
   footerContainer: {
     zIndex: 10,
@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
   navHeaderBorder: {
     borderBottomWidth: 1,
     borderStyle: 'solid',
-    borderBottomColor: 'rgba(0,0,0,0.05)',
+    borderBottomColor: '#f4f4f4',
   },
   navHeaderLeft: {
     flexDirection: 'row',
