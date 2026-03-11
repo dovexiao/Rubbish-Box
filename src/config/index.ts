@@ -4,7 +4,12 @@
  * 通过 .env 文件配置不同环境的变量
  */
 
-import Config from 'react-native-config';
+import _Config from 'react-native-config';
+import StaticConfig from './env.static.json';
+
+// 对于 iOS 和 Android，使用原生的 react-native-config
+// 对于鸿蒙没有提供原生模块，则优雅降级为读取打包时注入的 StaticConfig
+const Config: any = _Config && _Config.ENV ? _Config : StaticConfig || {};
 
 // 环境类型
 export type EnvType = 'development' | 'production';

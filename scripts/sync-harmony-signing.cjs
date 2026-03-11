@@ -50,7 +50,9 @@ function ensureCertNotExpired(cerPath) {
   const expireAtMs = getCertExpireAt(cerPath);
   if (expireAtMs !== null && expireAtMs <= Date.now()) {
     throw new Error(
-      `当前签名证书已过期（${new Date(expireAtMs).toLocaleString()}）。请在 DevEco Studio 重新生成签名证书后重试。`,
+      `当前签名证书已过期（${new Date(
+        expireAtMs,
+      ).toLocaleString()}）。请在 DevEco Studio 重新生成签名证书后重试。`,
     );
   }
 }
@@ -63,18 +65,20 @@ function ensureProfileNotExpired(p7bPath) {
 
   if (expireAtMs <= Date.now()) {
     throw new Error(
-      `Profile(.p7b) 已过期（${new Date(expireAtMs).toLocaleString()}）。请在 DevEco Studio 重新生成签名 Profile。`,
+      `Profile(.p7b) 已过期（${new Date(
+        expireAtMs,
+      ).toLocaleString()}）。请在 DevEco Studio 重新生成签名 Profile。`,
     );
   }
 }
 
 function hasSigningConfig(content, configName) {
-  const pattern = new RegExp(`"name"\\s*:\\s*"${configName}"`);
+  const pattern = new RegExp(`"?name"?\\s*:\\s*"${configName}"`);
   return pattern.test(content);
 }
 
 function replaceSigningConfig(content, configName) {
-  const pattern = /("signingConfig"\s*:\s*")([^"]+)(")/;
+  const pattern = /("?signingConfig"?\s*:\s*")([^"]+)(")/;
   if (!pattern.test(content)) {
     throw new Error('build-profile.json5 中未找到 products.signingConfig 字段');
   }
@@ -82,7 +86,7 @@ function replaceSigningConfig(content, configName) {
 }
 
 function extractPathFieldFromText(content, fieldName) {
-  const pattern = new RegExp(`"${fieldName}"\\s*:\\s*"([^"]+)"`);
+  const pattern = new RegExp(`"?${fieldName}"?\\s*:\\s*"([^"]+)"`);
   const matched = content.match(pattern);
   if (!matched?.[1]) {
     return null;
@@ -92,7 +96,9 @@ function extractPathFieldFromText(content, fieldName) {
 
 function isExistingFile(filePath) {
   try {
-    return !!filePath && fs.existsSync(filePath) && fs.statSync(filePath).isFile();
+    return (
+      !!filePath && fs.existsSync(filePath) && fs.statSync(filePath).isFile()
+    );
   } catch {
     return false;
   }
@@ -137,7 +143,8 @@ function getMaterialExpireAt(certPath, p7bPath) {
 
 function extractSigningConfigs(content) {
   const configs = [];
-  const regex = /"name"\s*:\s*"([^"]+)"[\s\S]*?"material"\s*:\s*\{([\s\S]*?)\}\s*(?:,|\})/g;
+  const regex =
+    /"?name"?\s*:\s*"([^"]+)"[\s\S]*?"?material"?\s*:\s*\{([\s\S]*?)\}\s*(?:,|\})/g;
   let match;
 
   while ((match = regex.exec(content)) !== null) {
@@ -170,7 +177,9 @@ function pickSigningConfig(signingConfigs, preferredFromEnv) {
       throw new Error(`未找到指定签名配置：${preferredFromEnv}`);
     }
     if (!target.usable) {
-      throw new Error(`指定签名配置不可用：${preferredFromEnv}（证书文件缺失或已过期）`);
+      throw new Error(
+        `指定签名配置不可用：${preferredFromEnv}（证书文件缺失或已过期）`,
+      );
     }
     return target;
   }
@@ -214,7 +223,9 @@ function main() {
   ensureProfileNotExpired(selected.p7bPath);
 
   if (!hasSigningConfig(content, selected.name)) {
-    throw new Error(`build-profile.json5 中不存在 signingConfig: ${selected.name}`);
+    throw new Error(
+      `build-profile.json5 中不存在 signingConfig: ${selected.name}`,
+    );
   }
 
   content = replaceSigningConfig(content, selected.name);

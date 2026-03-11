@@ -1,13 +1,21 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
 import { Toast } from '@ant-design/react-native';
 import { eventCenter, setStorage } from '@/utils';
-import Popup from '@/components/Popup';
 import Flex from '@/components/Flex';
 import GradientButton from '@/components/GradientButton';
 import IconFont from '@/iconfont';
 import styles from './styles';
-
+import LinearGradient, {
+  LinearGradientProps,
+} from 'react-native-linear-gradient';
 export interface AppUpdateInfo {
   id: number;
   version: string;
@@ -88,12 +96,11 @@ export function AppUpdateDialogHost() {
   const handleSkip = async () => {
     if (!info?.version) return;
     try {
-      const today = new Date().toDateString();
       await setStorage({
         key: APP_UPDATE_SKIP_KEY,
         data: {
           id: info.id,
-          date: today,
+          timestamp: Date.now(),
           version: info.version,
         },
       });
@@ -109,89 +116,102 @@ export function AppUpdateDialogHost() {
   if (!info) return null;
 
   return (
-    <Popup
+    <Modal
       visible={visible}
-      onClose={handleClose}
-      title={null}
-      showClose={!forceUpdate}
-      minHeight={320}
-      bodyStyle={{ paddingHorizontal: 0, paddingBottom: 0, paddingTop: 0 }}
-      contentStyle={{ borderRadius: 24, overflow: 'hidden' }}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={handleClose}
     >
-      <View style={styles.wrap}>
-        <View style={styles.header}>
-          <Image
-            style={styles.headerBg}
-            source={{
-              uri: 'https://g.18qjz.cn/img/boklock/setting/updatePopBg.png',
-            }}
-            resizeMode="cover"
-          />
-          <View style={styles.headerContent}>
-            <View style={styles.versionBadge}>
-              <GradientButton
-                colors={['#FF6B8B', '#FF8E53']}
-                width="100%"
-                height={52}
-                round={false}
-                btnBorderRadius={26}
-                text=""
-              >
-                <Flex direction="row" align="center" style={styles.badge}>
-                  <Text style={styles.badgeText}>发现新版本</Text>
-                  <Text style={styles.badgeVer}>V{serverVersion}</Text>
-                </Flex>
-              </GradientButton>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 32,
+        }}
+      >
+        <View style={[styles.wrap]}>
+          <View style={styles.header}>
+            <View style={styles.headerBgContent}>
+              <Image
+                style={{ width: '100%', height: '100%' }}
+                source={{
+                  uri: 'https://g.18qjz.cn/img/boklock/setting/updatePopBg.png',
+                }}
+                resizeMode="contain"
+              />
+            </View>
+            <View style={styles.headerContent}>
+              <View style={styles.versionBadge}>
+                <LinearGradient
+                  colors={['#5374B2', '#202F4F']}
+                  style={{ height: 38 }}
+                  start={{ x: 0, y: 1 }}
+                  end={{ x: 0, y: 0 }}
+                >
+                  <Flex
+                    direction="row"
+                    align="center"
+                    justify="center"
+                    style={{ height: 34 }}
+                  >
+                    <Text style={styles.badgeText}>发现新版本</Text>
+                    <Text style={styles.badgeVer}>V{serverVersion}</Text>
+                  </Flex>
+                </LinearGradient>
+              </View>
             </View>
           </View>
-        </View>
 
-        <ScrollView style={styles.body}>
-          {contentLines.map((line, idx) => (
-            <Flex
-              key={idx}
-              direction="row"
-              align="center"
-              style={styles.line}
+          <ScrollView style={styles.body}>
+            {contentLines.map((line, idx) => (
+              <Flex
+                key={idx}
+                direction="row"
+                align="center"
+                style={styles.line}
+              >
+                <Text style={styles.lineText}>{line}</Text>
+              </Flex>
+            ))}
+          </ScrollView>
+
+          <View style={styles.updateBtnWrap}>
+            <GradientButton
+              colors={['#333333', '#333333']}
+              width="100%"
+              height={48}
+              round={false}
+              btnBorderRadius={24}
+              onPress={handleConfirm}
             >
-              <Text style={styles.lineText}>{line}</Text>
-            </Flex>
-          ))}
-        </ScrollView>
+              <Text
+                style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}
+              >
+                立即更新
+              </Text>
+            </GradientButton>
+          </View>
 
-        <View style={styles.updateBtnWrap}>
-          <GradientButton
-            colors={['#333333', '#333333']}
-            width="100%"
-            height={48}
-            round={false}
-            btnBorderRadius={24}
-            onPress={handleConfirm}
-          >
-            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>
-              立即更新
-            </Text>
-          </GradientButton>
+          {!forceUpdate && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.skipRow}
+              onPress={handleSkip}
+            >
+              <Flex align="center" justify="center">
+                <IconFont
+                  name="a-pop-upwindowsclose"
+                  size={24}
+                  color="#999999"
+                />
+                <Text style={styles.skipText}>暂不更新，明天提醒我</Text>
+              </Flex>
+            </TouchableOpacity>
+          )}
         </View>
-
-        {!forceUpdate && (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.skipRow}
-            onPress={handleSkip}
-          >
-            <Flex align="center" justify="center">
-              <IconFont
-                name="a-pop-upwindowsclose"
-                size={20}
-                color="rgba(0, 0, 0, 0.4)"
-              />
-              <Text style={styles.skipText}>暂不更新，明天提醒我</Text>
-            </Flex>
-          </TouchableOpacity>
-        )}
       </View>
-    </Popup>
+    </Modal>
   );
 }
-

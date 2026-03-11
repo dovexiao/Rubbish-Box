@@ -106,6 +106,7 @@ export const styles = StyleSheet.create({
   groupListBox: {
     marginTop: 10,
     backgroundColor: '#F9F9F9',
+    overflow: 'hidden',
     borderRadius: 8,
     paddingVertical: 23,
     paddingHorizontal: 12,
@@ -123,6 +124,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999999',
     marginLeft: 8,
+    maxWidth: 100,
   },
   infoList: {
     display: 'flex',

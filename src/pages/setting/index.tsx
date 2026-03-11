@@ -17,14 +17,8 @@ import { PageContainer, showAppUpdateDialog } from '@/components';
 import IconFont from '@/iconfont';
 import appPush from '@/utils/push';
 import { cacheGetSync } from '@/utils/cache';
-import {
-  getStorage,
-  hideLoading,
-  setStorage,
-  showLoading,
-  showToast,
-} from '@/utils';
-import appUpdate from '@/utils/appUpdate';
+import { getStorage, setStorage, showToast } from '@/utils';
+import appManager from '@/utils/env/rn/appManager';
 import styles from './styles';
 
 export default function Setting() {
@@ -212,10 +206,10 @@ export default function Setting() {
 
   const handleCheckUpdate = useCallback(async () => {
     try {
-      const updater = appUpdate();
+      const manager = appManager();
+      const info = await manager.checkAppVersion({ checkStorage: false });
 
-      const info: any = updater.getUpdateInfo();
-      if (!info.hasUpdate) {
+      if (!info) {
         showToast('当前已是最新版本');
         return;
       }
@@ -227,6 +221,8 @@ export default function Setting() {
         content: info.content,
         packageUrl: info.packageUrl,
         forceUpdate: info.forceUpdate,
+        isLast: info.isLast,
+        onConfirm: () => manager.applyAppVerUpdate(info),
       });
     } catch (e) {
       showToast('检查更新失败，请稍后重试');
