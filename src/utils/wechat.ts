@@ -253,11 +253,24 @@ export const wechatLogin = async () => {
       };
     }
     hideLoading();
+    console.log('[wechatLogin] authResponse:', authResponse);
     switch (authResponse.errCode) {
       case 0:
         return { result: true, code: authResponse.code, message: '授权成功' };
+      case -100:
+        return {
+          result: false,
+          code: undefined,
+          message: '微信未安装或拉起失败(errCode:-100)',
+        };
       case -1:
-        return { result: false, code: undefined, message: '授权失败，请重试' };
+        return {
+          result: false,
+          code: undefined,
+          message: authResponse.errStr
+            ? `授权失败: ${authResponse.errStr}`
+            : '授权失败，请重试',
+        };
       case -2:
         return { result: false, code: undefined, message: '用户取消授权' };
       case -4:
@@ -266,10 +279,13 @@ export const wechatLogin = async () => {
         return {
           result: false,
           code: undefined,
-          message: `授权失败，错误码：${authResponse.errCode}`,
+          message: `授权失败，错误码：${authResponse.errCode}${
+            authResponse.errStr ? ' ' + authResponse.errStr : ''
+          }`,
         };
     }
   } catch (e: any) {
+    console.warn('[wechatLogin] error:', e);
     hideLoading();
     return { result: false, code: undefined, message: '授权失败，请重试' };
   }
