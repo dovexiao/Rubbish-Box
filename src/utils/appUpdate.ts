@@ -16,12 +16,13 @@ import { getVersion } from '@/services/common';
 import Config from 'react-native-config';
 // 在 RN 环境中使用 axios 的 browser 版 bundle，避免加载 node 版依赖 crypto
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const axios = require('axios/dist/browser/axios.cjs') as typeof import('axios');
+const axios: any =
+  require('axios/dist/browser/axios.cjs') as typeof import('axios');
 
 const IOS_PLATFORM = Platform.OS === 'ios';
 
 // 按平台懒加载 RNFS，避免在鸿蒙环境中导入 react-native-fs 时报错
-let RNFS: typeof RNFSType | null = null;
+let RNFS: any = null;
 if (Platform.OS === 'ios' || Platform.OS === 'android') {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
   RNFS = require('react-native-fs');

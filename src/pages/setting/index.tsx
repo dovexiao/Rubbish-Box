@@ -1,29 +1,123 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+  NativeModules,
+  Platform,
+  TurboModuleRegistry,
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
+import Config from 'react-native-config';
+import appPackage from '../../../package.json';
 import { PageContainer, showAppUpdateDialog } from '@/components';
 import IconFont from '@/iconfont';
 import appPush from '@/utils/push';
 import { cacheGetSync } from '@/utils/cache';
-import {
-  getStorage,
-  hideLoading,
-  setStorage,
-  showLoading,
-  showToast,
-} from '@/utils';
-import appUpdate from '@/utils/appUpdate';
+import { getStorage, setStorage, showToast } from '@/utils';
+import appManager from '@/utils/env/rn/appManager';
 import styles from './styles';
 
 export default function Setting() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const isTest = route.params?.isTest ?? false;
-  console.log(route.params, 'router');
 
   const [pushEnabled, setPushEnabled] = useState(false);
   const [currentVersion, setCurrentVersion] = useState('');
+
+  const normalizeVersion = (value: unknown): string => {
+    const normalized = String(value || '').trim();
+    if (!normalized || normalized.toLowerCase() === 'unknown') {
+      return '';
+    }
+    return normalized;
+  };
+
+  const getTurboModuleSafely = (name: string): any => {
+    try {
+      return TurboModuleRegistry.get(name);
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const resolveVersion = useCallback(async (): Promise<string> => {
+    // 兜底版本：Harmony 当前实例未暴露可用 NativeModules 时，至少展示配置版本。
+    const configFallbackVersion = normalizeVersion(
+      (Config as unknown as Record<string, unknown>)?.DEPLOY_VERSION,
+    );
+    const packageFallbackVersion = normalizeVersion(
+      (appPackage as { version?: string })?.version,
+    );
+
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+      const appModule: any = NativeModules?.AppModule;
+      if (appModule) {
+        const appModuleVersionName = normalizeVersion(
+          await Promise.resolve(appModule?.getVersionName?.()),
+        );
+        if (appModuleVersionName) {
+          return appModuleVersionName;
+        }
+
+        const appModuleVersion = normalizeVersion(
+          await Promise.resolve(appModule?.getVersion?.()),
+        );
+        if (appModuleVersion) {
+          return appModuleVersion;
+        }
+
+        const appModuleConstVersion = normalizeVersion(
+          appModule?.versionName || appModule?.appVersion || appModule?.version,
+        );
+        if (appModuleConstVersion) {
+          return appModuleConstVersion;
+        }
+      }
+
+      const harmonyAppInfo: any =
+        NativeModules?.HarmonyAppInfo || getTurboModuleSafely('HarmonyAppInfo');
+      if (harmonyAppInfo) {
+        const nativeVersion = normalizeVersion(
+          await Promise.resolve(harmonyAppInfo?.getVersionName?.()),
+        );
+        if (nativeVersion) {
+          return nativeVersion;
+        }
+      }
+    }
+
+    const byDeviceInfo = (DeviceInfo.getVersion?.() || '').trim();
+    if (byDeviceInfo && byDeviceInfo.toLowerCase() !== 'unknown') {
+      return byDeviceInfo;
+    }
+
+    // Harmony 下 react-native-device-info 可能返回 unknown，兜底读取原生 RNDeviceInfo。
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+      const rnDeviceInfo: any =
+        NativeModules?.RNDeviceInfo || getTurboModuleSafely('RNDeviceInfo');
+      if (rnDeviceInfo) {
+        const byMethod =
+          typeof rnDeviceInfo?.getVersion === 'function'
+            ? normalizeVersion(await Promise.resolve(rnDeviceInfo.getVersion()))
+            : '';
+        if (byMethod) {
+          return byMethod;
+        }
+
+        const byConst = normalizeVersion(rnDeviceInfo?.appVersion);
+        if (byConst) {
+          return byConst;
+        }
+      }
+    }
+
+    return configFallbackVersion || packageFallbackVersion || '';
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -43,13 +137,23 @@ export default function Setting() {
   }, []);
 
   useEffect(() => {
-    try {
-      const v = DeviceInfo.getVersion();
-      setCurrentVersion(v);
-    } catch {
-      setCurrentVersion('');
-    }
-  }, []);
+    let mounted = true;
+    resolveVersion()
+      .then(v => {
+        if (mounted) {
+          setCurrentVersion(v);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setCurrentVersion('');
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [resolveVersion]);
 
   const applyPushState = useCallback(async (enabled: boolean) => {
     try {
@@ -102,10 +206,10 @@ export default function Setting() {
 
   const handleCheckUpdate = useCallback(async () => {
     try {
-      const updater = appUpdate();
+      const manager = appManager();
+      const info = await manager.checkAppVersion({ checkStorage: false });
 
-      const info: any = updater.getUpdateInfo();
-      if (!info.hasUpdate) {
+      if (!info) {
         showToast('当前已是最新版本');
         return;
       }
@@ -117,13 +221,13 @@ export default function Setting() {
         content: info.content,
         packageUrl: info.packageUrl,
         forceUpdate: info.forceUpdate,
+        isLast: info.isLast,
+        onConfirm: () => manager.applyAppVerUpdate(info),
       });
     } catch (e) {
       showToast('检查更新失败，请稍后重试');
     }
   }, []);
-
-  console.log(isTest, 'isTest');
 
   return (
     <PageContainer

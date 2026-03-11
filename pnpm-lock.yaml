@@ -11,20 +11,26 @@ overrides:
 patchedDependencies:
   '@react-native-ohos/react-native-vision-camera@4.0.3':
     hash: badcac378003f20204a4f31fd1195a71eca4c2ae87fc3d7e40809118291aafba
+    hash: badcac378003f20204a4f31fd1195a71eca4c2ae87fc3d7e40809118291aafba
     path: patches/@react-native-ohos+react-native-vision-camera@4.0.3.patch
   metro-file-map@0.76.8:
+    hash: fa9f2112f298fd59c19bd3519e25fc5f1f6370f1e7d6bca7d15b05a034a405b3
     hash: fa9f2112f298fd59c19bd3519e25fc5f1f6370f1e7d6bca7d15b05a034a405b3
     path: patches/metro-file-map@0.76.8.patch
   react-native-amap3d:
     hash: 14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb
+    hash: 14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb
     path: patches/react-native-amap3d.patch
   react-native-intent-launcher:
+    hash: abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8
     hash: abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8
     path: patches/react-native-intent-launcher.patch
   react-native-screens@3.18.2:
     hash: 3f13a2c35eafa147599a9f0d141150cfab6d61478250947066be7d49900369d0
+    hash: 3f13a2c35eafa147599a9f0d141150cfab6d61478250947066be7d49900369d0
     path: patches/react-native-screens@3.18.2.patch
   react-native-wechat-lib:
+    hash: 17836b8729ba3b68e0887b573d4b79cc9001269f8840a4f67ec62af3611ab43a
     hash: 17836b8729ba3b68e0887b573d4b79cc9001269f8840a4f67ec62af3611ab43a
     path: patches/react-native-wechat-lib.patch
 
@@ -62,6 +68,12 @@ importers:
       '@react-native-ohos/react-native-ble-plx':
         specifier: 3.2.1-rc.2
         version: 3.2.1-rc.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+      '@react-native-ohos/react-native-image-picker':
+        specifier: 7.0.4-rc.2
+        version: 7.0.4-rc.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+      '@react-native-ohos/react-native-video':
+        specifier: 5.2.4-rc.1
+        version: 5.2.4-rc.1
       '@react-native-ohos/react-native-vision-camera':
         specifier: 4.0.3
         version: 4.0.3(patch_hash=badcac378003f20204a4f31fd1195a71eca4c2ae87fc3d7e40809118291aafba)(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -86,6 +98,9 @@ importers:
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
+      cos-js-sdk-v5:
+        specifier: ^1.10.1
+        version: 1.10.1
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
@@ -1699,6 +1714,15 @@ packages:
       react: '*'
       react-native: '*'
 
+  '@react-native-ohos/react-native-image-picker@7.0.4-rc.2':
+    resolution: {integrity: sha512-NLJtLtByQ/+rDYIBZn8M7h1bYHmj4cw9VVuZGgtjcQhOlf3sme+2fJr/Nli8FrmypxJJHnqvkm0RDuS2g1Y2bQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  '@react-native-ohos/react-native-video@5.2.4-rc.1':
+    resolution: {integrity: sha512-H5aMPY3hakQKqgn5uAvzyDw22G28DI/+Pe6KIUilwPMrjDz/MLhFdi35pbibEC9UR1DyNjgTj6v5Xhxq0XkIIw==}
+
   '@react-native-ohos/react-native-vision-camera@4.0.3':
     resolution: {integrity: sha512-EG5e0ZpdkWUjVbM1jFCmrFmgj949wGpzlsJbP6EcxPsSZ2d5svdMQDVe++RME6XPza/my3K8mquCwml3hXu7nQ==}
     peerDependencies:
@@ -2447,6 +2471,9 @@ packages:
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
+  cos-js-sdk-v5@1.10.1:
+    resolution: {integrity: sha512-a4SRfCY5g6Z35C7OWe9te/S1zk77rVQzfpvZ33gmTdJQzKxbNbEG7Aw/v453XwVMsQB352FIf7KRMm5Ya/wlZQ==}
+
   cosmiconfig@5.2.1:
     resolution: {integrity: sha512-H65gsXo1SKjf8zmrJ67eJk8aIRKV5ff2D4uKZIBZShbhGSpEmsQOPW/SKMKYhSTrqR7ufy6RP69rPogdaPh/kA==}
     engines: {node: '>=4'}
@@ -2849,6 +2876,10 @@ packages:
 
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
+
+  fast-xml-parser@4.5.0:
+    resolution: {integrity: sha512-/PlTQCI96+fZMAOLMZK4CWG1ItCbfZ/0jx7UIJFChPNrx7tcEgerUgWbeieCM9MfHInUDyK8DWYZ+YrywDJuTg==}
+    hasBin: true
 
   fast-xml-parser@4.5.4:
     resolution: {integrity: sha512-jE8ugADnYOBsu1uaoayVl1tVKAMNOXyjwvv2U6udEA2ORBhDooJDWoGxTkhd4Qn4yh59JVVt/pKXtjPwx9OguQ==}
@@ -4691,6 +4722,12 @@ packages:
       react: '*'
       react-native: '*'
 
+  react-native-image-picker@7.0.3:
+    resolution: {integrity: sha512-mFbu8AzZ8tysO7xHsQ+TmxYYJYaBCL66s4AujjgCBEAyTufm2nhjhVOw2uq1zvMDVtGoyekzCJfH3JqVmXK/3w==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
   react-native-intent-launcher@0.2.1:
     resolution: {integrity: sha512-V1rzMQrMsvvLA8mJqw2lrHwMseeo8XEbzNI9c2YsR2oUTF2tzw4mHzV/mKuBxL2cJEksPekpA53vJeM8YtjwYA==}
 
@@ -4771,6 +4808,9 @@ packages:
   react-native-uuid@2.0.3:
     resolution: {integrity: sha512-f/YfIS2f5UB+gut7t/9BKGSCYbRA9/74A5R1MDp+FLYsuS+OSWoiM/D8Jko6OJB6Jcu3v6ONuddvZKHdIGpeiw==}
     engines: {node: '>=10.0.0', npm: '>=6.0.0'}
+
+  react-native-video@5.2.1:
+    resolution: {integrity: sha512-aJlr9MeTuQ0LpZ4n+EC9RvhoKeiPbLtI2Rxy8u7zo/wzGevbRpWHSBj9xZ5YDBXnAVXzuqyNIkGhdw7bfdIBZw==}
 
   react-native-video@5.2.2:
     resolution: {integrity: sha512-trGKq01v5Kdgg5roSEGXe94e7j4bAoBdEKn/0uaj+Fr93PANw6Hzv69NTF406/LiRrZElLNzbeNKdPl5bIekGA==}
@@ -7721,6 +7761,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@react-native-ohos/react-native-image-picker@7.0.4-rc.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      react: 18.2.0
+      react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+      react-native-image-picker: 7.0.3(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+
+  '@react-native-ohos/react-native-video@5.2.4-rc.1':
+    dependencies:
+      deprecated-react-native-prop-types: 2.3.0
+      keymirror: 0.1.1
+      prop-types: 15.8.1
+      react-native-video: 5.2.1
+      shaka-player: 2.5.23
+
   '@react-native-ohos/react-native-vision-camera@4.0.3(patch_hash=badcac378003f20204a4f31fd1195a71eca4c2ae87fc3d7e40809118291aafba)(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
     dependencies:
       react: 18.2.0
@@ -8650,6 +8704,10 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
+  cos-js-sdk-v5@1.10.1:
+    dependencies:
+      fast-xml-parser: 4.5.0
+
   cosmiconfig@5.2.1:
     dependencies:
       import-fresh: 2.0.0
@@ -9175,6 +9233,10 @@ snapshots:
   fast-json-stable-stringify@2.1.0: {}
 
   fast-levenshtein@2.0.6: {}
+
+  fast-xml-parser@4.5.0:
+    dependencies:
+      strnum: 1.1.2
 
   fast-xml-parser@4.5.4:
     dependencies:
@@ -11874,6 +11936,11 @@ snapshots:
       react: 18.2.0
       react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
+  react-native-image-picker@7.0.3(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+      react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+
   react-native-intent-launcher@0.2.1(patch_hash=abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8): {}
 
   react-native-iphone-x-helper@1.3.1(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)):
@@ -11953,6 +12020,13 @@ snapshots:
   react-native-swipe-gestures@1.0.5: {}
 
   react-native-uuid@2.0.3: {}
+
+  react-native-video@5.2.1:
+    dependencies:
+      deprecated-react-native-prop-types: 2.3.0
+      keymirror: 0.1.1
+      prop-types: 15.8.1
+      shaka-player: 2.5.23
 
   react-native-video@5.2.2:
     dependencies:

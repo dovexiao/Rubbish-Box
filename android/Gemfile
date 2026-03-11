@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+# source 'https://rubygems.org'
+source 'https://gems.ruby-china.com'
+
+# You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
+ruby ">= 2.6.10"
+
+# Ruby 3.4.0 has removed some libraries from the standard library.
+gem 'bigdecimal'
+gem 'logger'
+gem 'benchmark'
+gem 'mutex_m'
+gem 'abbrev'
+
+# Fastlane for CI/CD automation
+gem 'fastlane'
+
+# Automatically load plugins from fastlane/Pluginfile
+plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
+eval_gemfile(plugins_path) if File.exist?(plugins_path)

@@ -87,7 +87,7 @@ const Login = () => {
       return;
     }
 
-    const res = wechatLogin();
+    const res = await wechatLogin();
     showLoading({ title: '登录中...' });
 
     // 监听应用状态变化（用户可能从微信返回）
@@ -110,7 +110,7 @@ const Login = () => {
       r = await Promise.race([res, appStatePromise]);
       if (r.result) {
         const thirdState = await getThirdState({});
-        let obj: any = { source: 1, code: r.code, state: thirdState };
+        let obj: any = { source: 1, code: r.code, state: thirdState.data };
         let deviceInfoStorage: any = {};
         try {
           deviceInfoStorage = await getStorage({ key: 'deviceInfo' });

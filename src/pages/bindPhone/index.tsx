@@ -54,7 +54,11 @@ const BindPhone = () => {
         });
       } else if (res.code === 522) {
         setShowError(true);
-        setErrorMessage('此手机号码未注册');
+        setErrorMessage(
+          res.data == '临时token已失效'
+            ? '微信授权失效，请返回重新授权'
+            : '此手机号码未注册',
+        );
       } else {
         showToast(res.msg || res.message || '发送失败');
       }
@@ -67,6 +71,7 @@ const BindPhone = () => {
 
   return (
     <PageContainer
+      backgroundColor="#FFFFFF"
       pageNavProps={{
         text: '',
         showBack: true,
@@ -91,6 +96,7 @@ const BindPhone = () => {
                 }
               }}
               maxLength={11}
+              showClear
               keyboardType="numeric"
               returnKeyType="done"
               onSubmitEditing={Keyboard.dismiss}

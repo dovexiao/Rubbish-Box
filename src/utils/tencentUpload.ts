@@ -68,16 +68,140 @@ export default function tencentUpload(options: {
     } as any);
   };
 
-  // 鸿蒙等非 Android / iOS 平台暂不支持原生 COS SDK，直接返回失败结果，避免触发 NativeModule 链接错误
+  const {
+    file,
+    filename,
+    appointName,
+    folderName,
+    randomFileName = true,
+  } = options;
+
+  // 鸿蒙等非 Android / iOS 平台我们使用 cos-js-sdk-v5 支持上传
   if (!isNativeMobile) {
-    return Promise.resolve({
-      code: 599,
-      success: false,
-      data: null,
-      message: '当前平台暂不支持文件上传',
-      index,
-      header: {},
-    } as any);
+    return new Promise(resolve => {
+      void (async () => {
+        try {
+          // 注入全局环境变量避免 cos-js-sdk-v5 中由于 RN 不完全等同于浏览器导致的 require 报错
+          if (typeof global !== 'undefined') {
+            if (!global.navigator) {
+              (global as any).navigator = { userAgent: 'ReactNative' };
+            } else if (!global.navigator.userAgent) {
+              (global as any).navigator.userAgent = 'ReactNative';
+            }
+            if (!global.FileReader) {
+              class MockFileReader {
+                onload: any;
+                result: any;
+                readAsBinaryString() {}
+                readAsArrayBuffer() {}
+              }
+              (global as any).FileReader = MockFileReader;
+            } else if (!global.FileReader.prototype) {
+              (global as any).FileReader.prototype = {
+                readAsBinaryString: function () {},
+                readAsArrayBuffer: function () {},
+              };
+            }
+          }
+          const COS = require('cos-js-sdk-v5');
+          const cos = new COS({
+            Protocol: 'https:',
+            getAuthorization: async (_options: any, callback: any) => {
+              try {
+                const res: any = await getCosKey({});
+                if (res?.success) {
+                  const {
+                    tmpSecretId,
+                    tmpSecretKey,
+                    sessionToken,
+                    startTime,
+                    expiredTime,
+                  } = res.data || {};
+                  callback({
+                    TmpSecretId: tmpSecretId,
+                    TmpSecretKey: tmpSecretKey,
+                    SecurityToken: sessionToken,
+                    StartTime: startTime,
+                    ExpiredTime: expiredTime,
+                  });
+                } else {
+                  throw new Error(
+                    res?.message || res?.msg || '获取临时密钥失败',
+                  );
+                }
+              } catch (err: any) {
+                resolveFailed(resolve, err, err?.message || '获取临时密钥失败');
+              }
+            },
+          });
+
+          // 此处遵照腾讯云官方针对 React Native 给出的最佳实践方案：
+          // 利用全局原生支持的 fetch 功能将特定系统文件路径直接转码为底层 Blob，
+          // 因为纯 js-sdk 对于签名、头计算、甚至是文件分片，严重依赖于正确形态的 Blob/File 以及自带的 size 属性。
+          let fileBlob: any;
+          try {
+            const fetchRes = await fetch(file);
+            fileBlob = await fetchRes.blob();
+          } catch (e: any) {
+            console.warn('文件 fetch 转 Blob 失败', e);
+            return resolveFailed(resolve, e, '无法读取文件，请检查路径权限');
+          }
+
+          const ext = '.' + filename.substring(filename.lastIndexOf('.') + 1);
+          const date = dayjs();
+          const initFloder = `${date.get('year')}${
+            date.get('month') + 1
+          }${date.get('date')}${date.get('hour')}${date.get(
+            'minute',
+          )}${date.get('second')}`;
+          const folder = folderName
+            ? `${folderName}/${initFloder}`
+            : initFloder;
+
+          const deployEnv = DEPLOY_ENV || 'dev';
+          const path = (
+            appointName
+              ? `img/${deployEnv}/${appointName}`
+              : `img/${deployEnv}/${folder}/${
+                  randomFileName ? randomNum(10000, 100000) + ext : filename
+                }`
+          ).replace(/[\u4E00-\u9FFF\u0020]/g, '');
+
+          // 由于 React Native 的 XHR 无法对非浏览器 Blob 正确分片切分
+          // 在RN环境下必须用 putObject 配合 uri 引用来直接直传整个文件
+          cos.putObject(
+            {
+              Bucket: BUCKET,
+              Region: REGION,
+              Key: path,
+              Body: fileBlob,
+              onProgress: function (_progressData: any) {
+                // ...
+              },
+            },
+            (err: any, data: any) => {
+              if (err) {
+                resolveFailed(resolve, err, err?.message || '上传失败');
+              } else {
+                resolve({
+                  code: 200,
+                  success: true,
+                  data: {
+                    Location: `${BUCKET}.cos.${REGION}.myqcloud.com/${path}`,
+                    url: file,
+                  },
+                  message: '',
+                  index,
+                  header: {},
+                });
+              }
+            },
+          );
+        } catch (err: any) {
+          resolveFailed(resolve, err, err?.message || '初始化 JS COS SDK 失败');
+        }
+      })();
+    });
   }
 
   if (!Cos) {
@@ -91,18 +215,8 @@ export default function tencentUpload(options: {
     } as any);
   }
 
-  const {
-    file,
-    filename,
-    appointName,
-    folderName,
-    randomFileName = true,
-  } = options;
-
   return new Promise(
-    (
-      resolve: (res: CreateFetchResponse<any> & { index?: number }) => void,
-    ) => {
+    (resolve: (res: CreateFetchResponse<any> & { index?: number }) => void) => {
       void (async () => {
         try {
           if (typeof Cos?.initWithSessionCredentialCallback !== 'function') {
@@ -133,9 +247,7 @@ export default function tencentUpload(options: {
                     sessionToken,
                   };
                 }
-                throw new Error(
-                  res?.message || res?.msg || '获取临时密钥失败',
-                );
+                throw new Error(res?.message || res?.msg || '获取临时密钥失败');
               });
               cosInitialized = true;
             } catch (error: any) {
@@ -220,17 +332,24 @@ export default function tencentUpload(options: {
           const cosTransferManger = hasGetDefaultTransferManger
             ? Cos.getDefaultTransferManger()
             : Cos.getDefaultTransferManager();
-          if (!cosTransferManger || typeof cosTransferManger.upload !== 'function') {
+          if (
+            !cosTransferManger ||
+            typeof cosTransferManger.upload !== 'function'
+          ) {
             return resolveFailed(resolve, null, '上传管理器初始化失败');
           }
 
           let _uploadId: string | undefined = undefined;
           const ext = '.' + filename.substring(filename.lastIndexOf('.') + 1);
           const date = dayjs();
-          const initFloder = `${date.get('year')}${date.get('month') + 1}${date.get(
-            'date',
-          )}${date.get('hour')}${date.get('minute')}${date.get('second')}`;
-          const folder = folderName ? `${folderName}/${initFloder}` : initFloder;
+          const initFloder = `${date.get('year')}${
+            date.get('month') + 1
+          }${date.get('date')}${date.get('hour')}${date.get(
+            'minute',
+          )}${date.get('second')}`;
+          const folder = folderName
+            ? `${folderName}/${initFloder}`
+            : initFloder;
 
           const deployEnv = DEPLOY_ENV || 'dev';
           const path = (

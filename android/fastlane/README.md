@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane android dev
 ```
 
-构建开发环境 APK 并上传蒲公英
+dev
 
 ### android real
 
@@ -29,15 +29,31 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane android real
 ```
 
-构建生产环境 APK 并上传蒲公英
+real
 
-### android staging
+### android upload_to_pgyer_dev
 
 ```sh
-[bundle exec] fastlane android staging
+[bundle exec] fastlane android upload_to_pgyer_dev
 ```
 
-构建测试环境 APK 并上传蒲公英
+Upload dev build to Pgyer
+
+### android upload_to_pgyer_real
+
+```sh
+[bundle exec] fastlane android upload_to_pgyer_real
+```
+
+Upload real build to Pgyer
+
+### android clean
+
+```sh
+[bundle exec] fastlane android clean
+```
+
+清理构建产物（安全清理，先生成 codegen 再清理）
 
 ----
 

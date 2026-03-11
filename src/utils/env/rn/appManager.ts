@@ -1,18 +1,34 @@
 import { NativeModules, Platform, Linking } from 'react-native';
-import RNFetchBlob from 'rn-fetch-blob';
 import DeviceInfo from 'react-native-device-info';
-import RNRestart from 'react-native-restart';
 import { getVersion, getAppVer } from '@/services/common';
 import {
   getStorage,
   setStorage,
   isVersionBefore,
   compareVersion,
+  showLoading,
+  hideLoading,
 } from '@/utils';
 import { thirdRequest } from '../../request';
 
 const IOS_PLATFORM = Platform.OS === 'ios';
-const { AppModule } = NativeModules;
+const IS_ANDROID = Platform.OS === 'android';
+const IS_HARMONY = !IOS_PLATFORM && !IS_ANDROID;
+
+let RNFetchBlob: any = null;
+let RNRestart: any = null;
+if (IOS_PLATFORM || IS_ANDROID) {
+  try {
+    RNFetchBlob = require('rn-fetch-blob').default || require('rn-fetch-blob');
+    RNRestart =
+      require('react-native-restart').default ||
+      require('react-native-restart');
+  } catch (e) {
+    console.warn('Native modules load failed', e);
+  }
+}
+
+const { AppModule }: any = NativeModules;
 
 export const appPush: any = () => {};
 
@@ -37,7 +53,7 @@ const APP_UPDATE_SKIP_KEY = 'APP_UPDATE_SKIP_INFO';
 const APP_UPDATE_PENDING_INSTALL_KEY = 'APP_UPDATE_PENDING_INSTALL';
 
 //把字节转换成正常文件大小
-function getFilesize(size) {
+function getFilesize(size: number) {
   if (!size) return '';
   const num = 1024.0; //byte
   if (size < num) return size + 'B';
@@ -51,8 +67,12 @@ function initAppUpdateInfo() {
   appUpdateInfo.updateType = undefined;
   appUpdateInfo.status = UPDATE_STATUS.INIT;
 }
-async function onHotUpdateReady(callback) {
-  const client = Platform.OS === 'ios' ? 'ios' : 'android';
+async function onHotUpdateReady(callback: (bundleZipFile?: string) => void) {
+  if (IS_HARMONY || !RNFetchBlob) {
+    callback();
+    return;
+  }
+  const client = IOS_PLATFORM ? 'ios' : 'android';
   const vInfo = await getVersion({ client });
   try {
     const versionFile = AppModule.dirPath + '/boklock/bundle/version';
@@ -109,13 +129,12 @@ async function checkAppVersionByApi(checkStorage: boolean): Promise<
     }
 > {
   try {
-    const client = IOS_PLATFORM ? 'ios' : 'android';
+    const client = IS_HARMONY ? 'harmony' : IOS_PLATFORM ? 'ios' : 'android';
     const currentVersion = DeviceInfo.getVersion() || '';
     const res: any = await getAppVer({
       platform: client,
       version: currentVersion,
     });
-    console.log(res, '====');
     if (!res?.success || !res?.data) return false;
     const info = res.data as any;
     const id = info.id;
@@ -133,15 +152,28 @@ async function checkAppVersionByApi(checkStorage: boolean): Promise<
     // 非强制更新时，检查今天是否已经点击过“暂不更新”
     if (!forceUpdate && checkStorage) {
       try {
-        const skipRes: any = await getStorage({
+        const skipInfo: any = await getStorage({
           key: APP_UPDATE_SKIP_KEY,
-        }).catch(() => ({ data: undefined } as any));
-        const skipInfo = skipRes?.data as
-          | { id?: number; date?: string }
-          | undefined;
-        const today = new Date().toDateString();
-        if (skipInfo?.id === id && skipInfo?.date === today) {
-          return false;
+        }).catch(() => undefined);
+
+        const now = Date.now();
+
+        // 兼容旧版的 date 逻辑以及新版的 timestamp 逻辑
+        if (skipInfo?.id === id) {
+          if (skipInfo?.timestamp) {
+            // 需要严格等到第二天 0 点以后才提醒
+            // 比如 2月10日晚上23点点的，过了0点变成了2月11日，这就意味着可再次提示了
+            const lastDate = new Date(skipInfo.timestamp).toDateString();
+            const todayDate = new Date(now).toDateString();
+            if (lastDate === todayDate) {
+              return false; // 还在同一天，不弹
+            }
+          } else if (skipInfo?.date) {
+            const today = new Date().toDateString();
+            if (skipInfo.date === today) {
+              return false; // 还在同一天，不弹
+            }
+          }
         }
       } catch {}
     }
@@ -163,6 +195,7 @@ async function checkAppVersionByApi(checkStorage: boolean): Promise<
 // 基于 /boke/appver/version 的点击更新逻辑：
 // - Android：使用接口返回的 APK 下载地址下载到本地并安装
 // - iOS：直接跳转到 App Store
+// - Harmony: 直接跳转到应用市场或者下载链接
 async function applyAppVerUpdateByApi(info: {
   version: string;
   content: string;
@@ -187,6 +220,27 @@ async function applyAppVerUpdateByApi(info: {
     return;
   }
 
+  // 鸿蒙：不支持静默下载安装包，而是使用返回的 scheme url (如华为应用市场链接) 跳转去安装应用
+  // 鸿蒙包上架华为应用市场后，让后端在 packageUrl 里返回 store://appgallery.huawei.com/app/detail?id=APPID 或者 appmarket://details?id=APPID
+  if (IS_HARMONY) {
+    const marketUrl = info.packageUrl;
+    if (!marketUrl) {
+      throw new Error('缺少鸿蒙更新链接');
+    }
+    try {
+      try {
+        await setStorage({
+          key: APP_UPDATE_PENDING_INSTALL_KEY,
+          data: { version: info.version || '' },
+        });
+      } catch {}
+      await Linking.openURL(marketUrl);
+    } catch (e) {
+      throw new Error('跳转应用市场失败');
+    }
+    return;
+  }
+
   // Android：接口返回 APK 下载链接
   const downloadUrl = info.packageUrl;
   if (!downloadUrl) {
@@ -194,8 +248,30 @@ async function applyAppVerUpdateByApi(info: {
   }
 
   try {
+    showLoading({ title: '下载中...' });
     const apkFilePath = AppModule.cacheDirPath + '/boklock/boklock.apk';
-    await RNFetchBlob.config({ path: apkFilePath }).fetch('GET', downloadUrl);
+    let lastPercent = 0;
+
+    await RNFetchBlob.config({ path: apkFilePath })
+      .fetch('GET', downloadUrl)
+      .progress({ interval: 250 }, (received: string, total: string) => {
+        const receivedNum = Number(received);
+        const totalNum = Number(total);
+        if (totalNum > 0) {
+          const percent = Math.floor((receivedNum / totalNum) * 100);
+          if (percent !== lastPercent) {
+            lastPercent = percent;
+            // console.log(
+            //   `[AppUpdate] 当前下载进度: ${percent}% (${receivedNum}/${totalNum})`,
+            // );
+            // 此处准备了进度值，后续可替换为进度条 UI
+          }
+        } else {
+          console.log(`[AppUpdate] 已下载: ${receivedNum} bytes`);
+        }
+      });
+
+    hideLoading();
     const apkFileExist = await RNFetchBlob.fs.exists(apkFilePath);
     if (!apkFileExist) {
       throw new Error('APK 文件不存在，下载失败');
@@ -209,6 +285,7 @@ async function applyAppVerUpdateByApi(info: {
     } catch {}
     AppModule.installApk(apkFilePath);
   } catch (e) {
+    hideLoading();
     throw new Error('下载或安装失败,请检查网络后重试');
   }
 }
@@ -229,7 +306,7 @@ export default () => {
     }) => {
       return applyAppVerUpdateByApi(info);
     },
-    onUpdateReady: callback => {
+    onUpdateReady: (callback: () => void) => {
       if (appUpdateInfo.status === UPDATE_STATUS.DOWNLOAD_FINISH) {
         callback();
         return;
@@ -243,7 +320,7 @@ export default () => {
           url: `https://itunes.apple.com/CN/lookup?id=6754637381`,
           method: 'get',
         })
-          .then(res => {
+          .then((res: any) => {
             const currentVersion = DeviceInfo.getVersion();
             const onlineVersion = res.data.results?.[0]?.version;
             if (currentVersion && onlineVersion) {
@@ -256,7 +333,7 @@ export default () => {
                 callback();
               } else {
                 // 判断是否需要更新bundle
-                onHotUpdateReady(bundleZipFile => {
+                onHotUpdateReady((bundleZipFile?: string) => {
                   if (bundleZipFile) {
                     appUpdateInfo.url = bundleZipFile;
                     appUpdateInfo.updateType = 'bundle';
@@ -318,7 +395,7 @@ export default () => {
                       //     parseInt(percent.toString()),
                       //   )
                       // })
-                      .then(res => {
+                      .then((res: any) => {
                         function noticeUpdateApp() {
                           appUpdateInfo.url = apkFilePath;
                           appUpdateInfo.updateType = 'app';
@@ -326,7 +403,7 @@ export default () => {
                           callback();
                         }
                         // APP之后有很多次热更新，所以这里需要判断APP对应的Bundle是不是最新的
-                        onHotUpdateReady(async bundleZipFile => {
+                        onHotUpdateReady(async (bundleZipFile?: string) => {
                           if (bundleZipFile) {
                             const zipBundleExist = await RNFetchBlob.fs.exists(
                               bundleZipFile,
@@ -341,10 +418,10 @@ export default () => {
                                 ),
                                 'UTF-8',
                               )
-                                .then(path => {
+                                .then((path: any) => {
                                   noticeUpdateApp();
                                 })
-                                .catch(error => {
+                                .catch((error: any) => {
                                   noticeUpdateApp();
                                 });
                             } else {
@@ -361,7 +438,7 @@ export default () => {
                   }
                 } else {
                   // 判断是否需要更新bundle
-                  onHotUpdateReady(bundleZipFile => {
+                  onHotUpdateReady((bundleZipFile?: string) => {
                     if (bundleZipFile) {
                       appUpdateInfo.url = bundleZipFile;
                       appUpdateInfo.updateType = 'bundle';
@@ -394,7 +471,7 @@ export default () => {
             case 'app':
               if (IOS_PLATFORM) {
                 initAppUpdateInfo();
-                Linking.openURL(url).catch(err => {
+                Linking.openURL(url).catch((err: any) => {
                   console.log(err, 'jump app store err!');
                 });
               } else {
@@ -412,11 +489,11 @@ export default () => {
                   url.substring(0, url.lastIndexOf('/') + 1),
                   'UTF-8',
                 )
-                  .then(path => {
+                  .then((path: any) => {
                     initAppUpdateInfo();
                     RNRestart.restart(); // 重启应用
                   })
-                  .catch(error => {
+                  .catch((error: any) => {
                     initAppUpdateInfo();
                     console.error(error);
                   });

@@ -728,6 +728,7 @@ function App() {
               </GestureHandlerRootView>
             </ThemeProvider>
           </StoreProvider>
+          <AppUpdateDialogHost />
         </AntdProvider>
       </QueryClientProvider>
     </ErrorBoundary>

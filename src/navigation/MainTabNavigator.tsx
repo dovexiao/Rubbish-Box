@@ -1,12 +1,46 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useCallback } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image } from 'react-native';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { routes } from '@/routes';
+import appManager from '@/utils/env/rn/appManager';
+import { showAppUpdateDialog } from '@/components';
+
 const Tab = createBottomTabNavigator();
 
 export const MainTabNavigator: React.FC = () => {
   const insets = useSafeAreaInsets();
+  const lastCheckTimeRef = useRef<number>(0);
+
+  const handleCheckUpdateSilent = useCallback(async () => {
+    const now = Date.now();
+    // 20秒内多次切换只触发一次
+    if (now - lastCheckTimeRef.current < 20 * 1000) {
+      return;
+    }
+    lastCheckTimeRef.current = now;
+
+    try {
+      const manager = appManager();
+      const info = await manager.checkAppVersion({ checkStorage: true });
+
+      // 无感检测如果有更新且不是最新版才弹窗
+      if (info && !info.isLast) {
+        showAppUpdateDialog({
+          id: info.id,
+          version: info.version,
+          content: info.content,
+          packageUrl: info.packageUrl,
+          forceUpdate: info.forceUpdate,
+          isLast: info.isLast,
+          onConfirm: () => manager.applyAppVerUpdate(info),
+        });
+      }
+    } catch (e) {
+      // 无感检测，网络异常等不弹 Toast 报错
+    }
+  }, []);
+
   const tabBarStyle = useMemo(() => {
     return {
       backgroundColor: '#ffffff',
@@ -50,6 +84,9 @@ export const MainTabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       initialRouteName="Index"
+      screenListeners={{
+        state: handleCheckUpdateSilent,
+      }}
       screenOptions={({ route }: { route: any }) => {
         const isCenter = route.name === 'Index';
         return {

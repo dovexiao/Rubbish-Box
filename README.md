@@ -214,6 +214,19 @@ npm run ios
 yarn ios
 ```
 
+#### HarmonyOS (鸿蒙)
+
+鸿蒙开发仅启动 JS 侧打包或 Metro 服务，真正的 App 工程编译在 DevEco Studio 中进行（见 `boke_harmony/readme.md`）。
+
+```bash
+# 仅仅打包 JS bundle 文件并在本地运行用于被鸿蒙壳子加载
+## 开发环境 bundle
+pnpm dev:harmony
+
+## 生产环境 bundle
+pnpm real:harmony
+```
+
 ## 🔧 环境配置
 
 项目支持多环境配置（开发、测试、生产）。通过 `.env` 文件管理不同环境的配置，并结合 `react-native-config` 与 Gradle/env 脚本在原生侧注入。
@@ -269,6 +282,7 @@ APP_NAME=泊刻地锁
 # 开发环境
 npm run dev:android
 npm run dev:ios
+pnpm dev:harmony
 
 # 测试环境
 npm run staging:android
@@ -277,6 +291,7 @@ npm run staging:ios
 # 生产环境
 npm run real:android
 npm run real:ios
+pnpm real:harmony
 ```
 
 ## 📖 开发指南
@@ -466,6 +481,24 @@ cd android
 fastlane beta
 fastlane release
 ```
+
+### HarmonyOS（鸿蒙）构建
+
+在当前仓库 (bokeapp) 我们仅提供 JS 打包命令：
+
+```bash
+# 打包并将产生的 bundle 和 assets 文件夹复制到 DevEco 工程中
+pnpm run dev:harmony   # 测试环境配置
+pnpm run real:harmony  # 准上线/生成环境配置
+```
+
+如果你只想检查签名是否正确（独立跑官方校验脚本）：
+
+```bash
+pnpm run sync:harmony:sign
+```
+
+打完 JS Bundle 后，需使用华为官方开发的 **DevEco Studio** 打开工作区旁的 `boke_harmony` 进行原生编译与签名构建成 App。详情请参考鸿蒙端专门的说明：`../DevEcoStudioProjects/boke_harmony/readme.md`。
 
 ### 清理构建缓存
 

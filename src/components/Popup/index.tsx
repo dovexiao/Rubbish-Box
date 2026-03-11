@@ -1,7 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal } from '@ant-design/react-native';
 import type { ViewStyle } from 'react-native';
-import { Text, TouchableOpacity, View, Animated, Platform, Keyboard } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Animated,
+  Platform,
+  Keyboard,
+} from 'react-native';
 import IconFont from '@/iconfont';
 import styles from './styles';
 
@@ -28,6 +35,9 @@ export type PopupProps = {
 
   /** body 样式 */
   bodyStyle?: ViewStyle;
+
+  /** 原生弹窗模式(用于盖住全屏的某些情况) */
+  modalType?: 'modal' | 'portal';
 };
 
 export default function Popup({
@@ -41,9 +51,11 @@ export default function Popup({
   showClose = true,
   contentStyle,
   bodyStyle,
+  modalType = 'portal',
 }: PopupProps) {
   const basePaddingBottom = 20;
-  const [paddingBottomValue, setPaddingBottomValue] = useState(basePaddingBottom);
+  const [paddingBottomValue, setPaddingBottomValue] =
+    useState(basePaddingBottom);
   // 每次 visible 变化时重新创建 Animated.Value，避免 native driver 冲突
   const paddingBottomRef = useRef<Animated.Value | null>(null);
 
@@ -80,8 +92,10 @@ export default function Popup({
     if (!currentPaddingBottom) return;
 
     // iOS 使用 keyboardWillShow/keyboardWillHide，Android 使用 keyboardDidShow/keyboardDidHide
-    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
     const showSubscription = Keyboard.addListener(showEvent, (e: any) => {
       const height = e.endCoordinates?.height || 0;
@@ -94,7 +108,7 @@ export default function Popup({
       // 键盘弹起时，增加 paddingBottom，把 Modal 内容推上去
       Animated.timing(currentPaddingBottom, {
         toValue: basePaddingBottom + keyboardOffset,
-        duration: Platform.OS === 'ios' ? (e.duration || 250) : 200,
+        duration: Platform.OS === 'ios' ? e.duration || 250 : 200,
         useNativeDriver: false,
       }).start();
     });
@@ -105,7 +119,7 @@ export default function Popup({
       // 键盘收起时，恢复 paddingBottom
       Animated.timing(currentPaddingBottom, {
         toValue: basePaddingBottom,
-        duration: Platform.OS === 'ios' ? (e.duration || 250) : 200,
+        duration: Platform.OS === 'ios' ? e.duration || 250 : 200,
         useNativeDriver: false,
       }).start();
     });
@@ -127,7 +141,7 @@ export default function Popup({
       animationType="slide-up"
       maskClosable={maskClosable}
       onClose={onClose}
-      modalType="portal"
+      modalType={modalType}
       closable={false}
       style={{
         borderTopLeftRadius: 24,
@@ -137,17 +151,19 @@ export default function Popup({
       }}
     >
       <View
-        style={[
-          styles.sheet,
-          minHeight ? { minHeight } : null,
-          contentStyle,
-        ]}
+        style={[styles.sheet, minHeight ? { minHeight } : null, contentStyle]}
       >
         {(title !== undefined || showClose) && (
           <View style={styles.header}>
             {/* 左侧占位，保证标题居中 */}
 
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <View
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               {typeof title === 'string' ? (
                 <Text style={styles.title} numberOfLines={1}>
                   {title}
@@ -157,7 +173,11 @@ export default function Popup({
               )}
             </View>
             {showClose && (
-              <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.8}>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={onClose}
+                activeOpacity={0.8}
+              >
                 <IconFont name="close" size={20} color="#999999" />
               </TouchableOpacity>
             )}
@@ -171,4 +191,3 @@ export default function Popup({
     </Modal>
   );
 }
-
