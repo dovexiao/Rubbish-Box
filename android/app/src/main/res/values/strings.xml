@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">泊刻地锁</string>
     <!-- react-native-config: 指定 BuildConfig 的包名 -->
     <string name="build_config_package">com.boklock.m</string>
 </resources>
