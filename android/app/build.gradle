@@ -122,6 +122,12 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
+    externalNativeBuild {
+        cmake {
+            version "3.22.1"
+        }
+    }
+
     namespace "com.boklock.m"
     
     // 产品变体配置
@@ -131,11 +137,13 @@ android {
             dimension "default"
             // 从 .env.development 读取包名（通过 react-native-config）
             applicationId project.env.get("ANDROID_PACKAGE_NAME") ?: "com.boklock.m.test"
+            resValue "string", "app_name", "泊刻地锁测试"
         }
         prod {
             dimension "default"
             // 从 .env.production 读取包名（通过 react-native-config）
             applicationId project.env.get("ANDROID_PACKAGE_NAME") ?: "com.boklock.m"
+            resValue "string", "app_name", "泊刻地锁"
         }
     }
     
