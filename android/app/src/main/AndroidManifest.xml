@@ -60,14 +60,15 @@
 
     <application
       android:name=".MainApplication"
-      android:label="@string/app_name"
+      android:label="@string/APP_NAME"
       android:icon="${APP_ICON}"
       android:roundIcon="${APP_ROUND_ICON}"
       android:allowBackup="true"
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="true"
       android:allowNativeHeapPointerTagging="false"
-      tools:ignore="DataExtractionRules">
+      tools:ignore="DataExtractionRules"
+      tools:replace="android:label">
       <!-- 显式移除 notifee core 在库 Manifest 中声明的开机广播接收器，避免监听 BOOT_COMPLETED -->
       <receiver
         android:name="app.notifee.core.RebootBroadcastReceiver"
@@ -130,7 +131,8 @@
       <!-- MobPush 接收器 -->
       <receiver
         android:name="com.mob.pushsdk.MobPushReceiver"
-        android:exported="false">
+        android:exported="false"
+        tools:ignore="Instantiatable">
         <intent-filter>
           <action android:name="com.mob.push.action.MESSAGE" />
         </intent-filter>
@@ -155,12 +157,5 @@
         android:name="com.huawei.hms.support.api.push.PushMsgReceiver"
         android:exported="false"
         tools:replace="android:exported" />
-
-        <!-- "用于微信支付的回调" -->
-        <activity
-          android:name=".wxapi.WXPayEntryActivity"
-          android:label="@string/app_name"
-          android:exported="true"
-        />
     </application>
 </manifest>

@@ -26,9 +26,7 @@ platform :android do
     # API Key 已配置，User Key 需要在环境变量中配置
     pgyer(
       api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
-      user_key: ENV["PGYER_USER_KEY"] || "",
-      apk: apk_path,
-      password: ENV["PGYER_PASSWORD"] || "", # 可选：安装密码
+      install_type: "1",
       update_description: "开发环境构建 - #{version}"
     )
     
@@ -57,9 +55,7 @@ platform :android do
     # 上传到蒲公英
     pgyer(
       api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
-      user_key: ENV["PGYER_USER_KEY"] || "",
-      apk: apk_path,
-      password: ENV["PGYER_PASSWORD"] || "",
+      install_type: "1",
       update_description: "生产环境构建 - #{version}"
     )
     
@@ -88,9 +84,6 @@ platform :android do
     # 上传到蒲公英
     pgyer(
       api_key: ENV["PGYER_API_KEY"] || "5974674521be3a02a72a22e0a4e87105",
-      user_key: ENV["PGYER_USER_KEY"] || "",
-      apk: apk_path,
-      password: ENV["PGYER_PASSWORD"] || "",
       update_description: "测试环境构建 - #{version}"
     )
     

@@ -66,7 +66,7 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -146,6 +146,7 @@ android {
         versionCode getVersionCodeByProperty()
         // 用于增量更新版本比较
         buildConfigField "String", "DEPLOY_VERSION", "\"${getDeployVersionByProperty()}\""
+       
         
         // 从 react-native-config 读取环境变量并生成 BuildConfig 字段
         if (project.hasProperty("env")) {
@@ -155,6 +156,10 @@ android {
                 resValue "string", k, "\"$escaped\""
             }
         }
+        ndk {
+        abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+        resConfigs "zh", "en"
     }
 
     sourceSets {
@@ -199,7 +204,8 @@ android {
             signingConfig signingConfigs.debug
             // 添加下面这行以禁用crunch
             crunchPngs false
-            minifyEnabled enableProguardInReleaseBuilds
+            minifyEnabled true
+            shrinkResources true
             debuggable false
             buildConfigField "String", "DEPLOY_VERSION", "\"${getDeployVersionByProperty()}\""
         }

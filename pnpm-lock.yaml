@@ -11,20 +11,26 @@ overrides:
 patchedDependencies:
   '@react-native-ohos/react-native-vision-camera@4.0.3':
     hash: badcac378003f20204a4f31fd1195a71eca4c2ae87fc3d7e40809118291aafba
+    hash: badcac378003f20204a4f31fd1195a71eca4c2ae87fc3d7e40809118291aafba
     path: patches/@react-native-ohos+react-native-vision-camera@4.0.3.patch
   metro-file-map@0.76.8:
+    hash: fa9f2112f298fd59c19bd3519e25fc5f1f6370f1e7d6bca7d15b05a034a405b3
     hash: fa9f2112f298fd59c19bd3519e25fc5f1f6370f1e7d6bca7d15b05a034a405b3
     path: patches/metro-file-map@0.76.8.patch
   react-native-amap3d:
     hash: 14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb
+    hash: 14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb
     path: patches/react-native-amap3d.patch
   react-native-intent-launcher:
+    hash: abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8
     hash: abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8
     path: patches/react-native-intent-launcher.patch
   react-native-screens@3.18.2:
     hash: 3f13a2c35eafa147599a9f0d141150cfab6d61478250947066be7d49900369d0
+    hash: 3f13a2c35eafa147599a9f0d141150cfab6d61478250947066be7d49900369d0
     path: patches/react-native-screens@3.18.2.patch
   react-native-wechat-lib:
+    hash: 17836b8729ba3b68e0887b573d4b79cc9001269f8840a4f67ec62af3611ab43a
     hash: 17836b8729ba3b68e0887b573d4b79cc9001269f8840a4f67ec62af3611ab43a
     path: patches/react-native-wechat-lib.patch
 
@@ -105,7 +111,7 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
       jotai:
-        specifier: '2'
+        specifier: ^2.18.0
         version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@18.3.28)(react@18.2.0)
       react:
         specifier: 18.2.0

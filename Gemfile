@@ -17,3 +17,4 @@ gem 'mutex_m'
 
 # Fastlane for automation
 gem 'fastlane'
+gem 'fastlane-plugin-pgyer'
