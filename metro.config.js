@@ -166,6 +166,7 @@ baseConfig.resolver = {
           platform,
         );
       }
+
       if (moduleName === 'react-native-vision-camera') {
         // Harmony 下屏蔽原始的 react-native-vision-camera 避免解析报错
         return resolve(
