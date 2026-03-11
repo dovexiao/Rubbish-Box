@@ -353,6 +353,7 @@ const Content: React.FC<ContentProps> = ({
       mode: detail?.mode,
       fromHomePage: true,
       bleName: detail?.bleName,
+      needPin: detail?.needPin,
     });
   };
 
@@ -375,6 +376,7 @@ const Content: React.FC<ContentProps> = ({
           disabled={optioning}
           onPress={() => {
             if (detail?.isGroup) {
+              popRef.current?.open();
             } else {
               handleSetAutoOperate(detail);
             }

@@ -518,7 +518,7 @@ export function getSavedDeviceInfo(): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
       const result = await getStorage({ key: 'bluetoothDeviceInfo' });
-      resolve(result?.data);
+      resolve(result);
     } catch (error: any) {
       // 缺省键未找到时不视为错误，返回 undefined，避免无意义的异常上报
       if (error?.errMsg && String(error.errMsg).includes('data not found')) {

@@ -72,16 +72,18 @@ const BinDevice: React.FC = () => {
         if (res?.code === 200) {
           showToast('识别成功');
           const data = res.data || {};
+          console.log(data, '===data');
 
           navigation.navigate(
             'FindDevice' as never,
             {
               bleNo: data.bleNo,
-              blePin: data.blePin,
+              pin: data.blePin,
               imageMap: data.imageMap,
               deviceNo: data.deviceNo,
               bleName: data.bleName,
               pageName: 'BindDevice',
+              needPin: data.needPin,
             } as never,
           );
         } else {

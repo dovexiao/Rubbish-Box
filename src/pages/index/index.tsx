@@ -507,7 +507,7 @@ const Index = () => {
               />
             </Content>
           ) : (
-            <NoDevices unreadCount={unreadCount} hasDevice={hasDevice} />
+            <NoDevices unreadCount={unreadCount} />
           )}
         </ScrollView>
       )}

@@ -193,7 +193,7 @@ export default function UserInfo() {
             if (res.code === 200 && res.success) {
               const { Location } = res.data;
               const r = await updateInfo({
-                nickName: nickName || '',
+                ...detail,
                 avatar: `https://${Location}`,
                 userId: detail?.userId ?? detail?.id,
               });

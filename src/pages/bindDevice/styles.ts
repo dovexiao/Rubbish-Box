@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 313,
     height: 88,
-    marginBottom: 32,
+    marginBottom: 16,
     backgroundColor: 'rgba(0,0,0,0.8)',
     borderRadius: 12,
   },
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   toastImage: {
     width: 313,
     height: 166,
-    marginTop: 16,
+    // marginTop: 16,
   },
 });
 

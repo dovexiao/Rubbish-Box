@@ -24,9 +24,9 @@ boklock 是一个使用 React Native 开发的移动应用，支持 iOS 和 Andr
 
 ### 核心框架
 
-- **React Native** `0.82.1` - 跨平台移动应用框架
-- **React** `19.1.1` - UI 库
-- **TypeScript** `^5.8.3` - 类型安全的 JavaScript
+- **React Native** `0.72.5` - 跨平台移动应用框架
+- **React** `18.2.0` - UI 库
+- **TypeScript** `^5.5.4` - 类型安全的 JavaScript
 
 ### 导航与路由
 
@@ -44,7 +44,8 @@ boklock 是一个使用 React Native 开发的移动应用，支持 iOS 和 Andr
 
 ### 本地存储
 
-- **react-native-mmkv** `^2.12.2` - 高性能键值存储库
+- **@react-native-async-storage/async-storage** `^1.17.11` - 异步键值存储
+- 自定义 `storageUtil` 封装（见 `src/utils/storage.ts`），统一管理缓存读写
 
 ### 工具库
 
@@ -215,37 +216,51 @@ yarn ios
 
 ## 🔧 环境配置
 
-项目支持多环境配置（开发、测试、生产）。通过 `.env` 文件管理不同环境的配置。
+项目支持多环境配置（开发、测试、生产）。通过 `.env` 文件管理不同环境的配置，并结合 `react-native-config` 与 Gradle/env 脚本在原生侧注入。
 
 ### 环境文件
 
 在项目根目录创建以下环境配置文件：
 
-- `.env.development` - 开发环境
-- `.env.staging` - 测试环境
-- `.env.production` - 生产环境
+- `.env.development` - 开发环境（已使用）
+- `.env.production` - 生产环境（已使用）
+- `.env.staging` - 测试环境（可选，如需单独测试环境时再创建）
 
 ### 环境变量示例
 
 ```bash
 # .env.development
 ENV=development
-API_BASE_URL=https://dev-api.example.com
+DEPLOY_ENV=dev
+API_BASE_URL=https://boke-api-dev.18qjz.cn
 API_VERSION=v1
+
+# Android 包名 / App 名称
+ANDROID_PACKAGE_NAME=com.boklock.m.test
+IOS_BUNDLE_ID=com.boklock.dev.m
+APP_NAME=泊刻地锁测试
 ```
 
 ```bash
-# .env.staging
+# （可选）.env.staging
 ENV=staging
-API_BASE_URL=https://staging-api.example.com
+DEPLOY_ENV=staging
+API_BASE_URL=https://boke-api-dev.18qjz.cn
 API_VERSION=v1
+ANDROID_PACKAGE_NAME=com.boklock.m.test
+APP_NAME=泊刻地锁测试
 ```
 
 ```bash
 # .env.production
 ENV=production
-API_BASE_URL=https://api.example.com
+DEPLOY_ENV=real
+API_BASE_URL=https://boke-api.18qjz.cn
 API_VERSION=v1
+
+ANDROID_PACKAGE_NAME=com.boklock.m
+IOS_BUNDLE_ID=com.boklock.real.m
+APP_NAME=泊刻地锁
 ```
 
 ### 使用不同环境运行
@@ -515,20 +530,21 @@ function AboutPage() {
 }
 ```
 
-### 4. 智能存储
+### 4. 蓝牙设备管理
 
-提供基于 React Query 的智能存储 Hook，支持数据持久化和自动同步：
+应用深度集成蓝牙控制能力，基于 `react-native-ble-plx` 和原生模块：
 
-```typescript
-import { useSmartStorage } from '@/hooks/useSmartStorage';
+- **系统已连接设备恢复**：通过 `getSystemConnectedDevices` 获取系统已配对且已连接的设备（支持 Android/iOS），用于 App 启动或从外部唤起时自动恢复最近使用的锁。
+- **MAC 地址兼容处理**：`isSameMac` 工具支持大小写、分隔符及字节反转（有些固件上报为反序 MAC），提升匹配可靠性。
+- **BLE 连接状态守护**：`bluetoothModeManager.checkBeforeOperation` 会在发送开锁/近距离开锁等指令前检查 BLE 连接是否稳定，避免“系统已连但 GATT 断开”的情况。
+- **绑定成功恢复逻辑**：`App.tsx` 在绑定成功后将 `bindRes.data` 写入 `rnBindSuccessData`，`Index` 页在 `useFocusEffect` 中优先读取并按锁 `id` 加载，确保用户绑定后立即看到新设备。
 
-function MyComponent() {
-  const [userInfo, setUserInfo, isLoading] = useSmartStorage('userInfo');
+相关核心文件：
 
-  // 自动持久化到本地存储
-  setUserInfo({ name: 'John' });
-}
-```
+- `src/utils/api/index.ts`：蓝牙 API 封装（连接、写指令、系统已连接设备获取等）
+- `src/utils/index.ts`：`isSameMac` 等工具方法
+- `src/pages/index/index.tsx`：首页设备恢复逻辑
+- `src/pages/bluetooth/control/index.tsx`：蓝牙控制页（近距离开锁开关等）
 
 ### 5. HTTP 拦截器
 
@@ -676,9 +692,10 @@ npm run android
 
 **解决方案**:
 
-- 确保 `.env` 文件在项目根目录
-- 确保使用正确的环境变量前缀（如 `ENVFILE=.env.development`）
-- 重启 Metro 打包工具
+- 确保 `.env` 文件在项目根目录，且已创建 `.env.development` / `.env.production`
+- 运行脚本时通过 `ENVFILE` 显式指定环境（本项目脚本已内置，例如 `ENVFILE=.env.development`）
+- 检查 `src/config/index.ts` 中是否正确读取了 `Config.ENV` / `Config.DEPLOY_ENV` / `Config.API_BASE_URL`
+- 修改环境变量后，重新打包或至少重启 Metro 打包工具
 
 ### 5. TypeScript 类型错误
 

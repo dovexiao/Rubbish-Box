@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
 
   btnContainerClose: {
     borderStyle: 'solid',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
 
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     width: 156,
     height: 48,
     borderRadius: 12,
-    borderWidth: 2,
+    borderWidth: 1,
     borderStyle: 'solid',
     borderColor: 'rgba(0, 0, 0, 0.1)',
     display: 'flex',
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     height: 48,
     backgroundColor: '#333333',
     borderRadius: 12,
-    borderWidth: 2,
+    borderWidth: 1,
     borderStyle: 'solid',
     borderColor: 'rgba(0, 0, 0, 0.1)',
     display: 'flex',

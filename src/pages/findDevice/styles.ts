@@ -158,10 +158,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#FF873D',
-    lineHeight: 20,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#333333',
+    marginBottom: 8,
   },
   titleIcon: {
     flexDirection: 'row',
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   infoContent: {
-    width: '100%',
+    flex: 1,
   },
   infoLabel: {
     fontSize: 15,
@@ -205,13 +205,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   pinValue: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#333333',
-    fontWeight: '800',
+    fontWeight: '700',
+    letterSpacing: 4,
+    margin: 0,
   },
   copyButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
   },
   copyText: {
     marginLeft: 6,
@@ -223,6 +227,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingHorizontal: 25,
+    marginTop: 10,
   },
   tipsText: {
     fontSize: 15,

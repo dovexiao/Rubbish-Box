@@ -5,6 +5,7 @@ import { PageContainer, Flex } from '@/components';
 import { getRepairDetail } from '@/services/user';
 import styles from './styles';
 import { showToast } from '@/utils';
+import dayjs from 'dayjs';
 
 type ProgressItem = {
   progress: number;
@@ -25,12 +26,6 @@ type DetailData = {
   progressList: ProgressItem[];
   repairProgress: number;
   repairProgressName: string;
-};
-
-const formatTime = (time?: string) => {
-  if (!time) return '';
-  if (time.length >= 16) return time.slice(0, 16);
-  return time;
 };
 
 export default function MaintainServiceDetail() {
@@ -125,14 +120,16 @@ export default function MaintainServiceDetail() {
         <Flex style={styles.infoItem} justify="between" align="center">
           <Text style={styles.infoItemText}>提交时间</Text>
           <Text style={styles.infoItemTextRight}>
-            {formatTime(detail?.reportTime)}
+            {detail?.reportTime
+              ? dayjs(detail?.reportTime).format('YYYY-MM-DD HH:mm')
+              : '-'}
           </Text>
         </Flex>
         <Flex style={styles.infoItem} justify="between" align="center">
           <Text style={styles.infoItemText}>完工时间</Text>
           <Text style={styles.infoItemTextRight}>
             {detail?.completionTime
-              ? formatTime(detail?.completionTime)
+              ? dayjs(detail?.completionTime).format('YYYY-MM-DD HH:mm')
               : '未完工'}
           </Text>
         </Flex>
@@ -147,8 +144,8 @@ export default function MaintainServiceDetail() {
         <Flex
           style={styles.descriptInfo}
           justify="between"
-          align="start"
-          direction="column"
+          align="center"
+          direction="row"
         >
           <Text style={styles.infoItemText}>描述</Text>
           <Text style={styles.descriptionText}>
@@ -168,12 +165,11 @@ export default function MaintainServiceDetail() {
               <View
                 style={[
                   styles.circle,
-                  index === detail.progressList.length - 1 && styles.blackColor,
+                  item.progress == detail.progressList.length &&
+                    styles.blackColor,
                 ]}
               />
-              {index < detail.progressList.length - 1 && (
-                <View style={styles.line} />
-              )}
+              {item.progress !== 1 && <View style={styles.line} />}
             </View>
             <Flex direction="column" style={styles.pedding}>
               <Text style={styles.infoItemText}>{item.progressName}</Text>
@@ -181,7 +177,11 @@ export default function MaintainServiceDetail() {
                 <Text style={styles.time}>{item.personnelInfo}</Text>
               ) : null}
             </Flex>
-            <Text style={styles.time}>{formatTime(item.operateTime)}</Text>
+            <Text style={styles.time}>
+              {item.operateTime
+                ? dayjs(item.operateTime).format('YYYY-MM-DD HH:mm')
+                : '-'}
+            </Text>
           </Flex>
         ))}
       </ScrollView>

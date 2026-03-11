@@ -43,13 +43,11 @@ const ForgetPasswordReset = () => {
     }
 
     if (password.length < 8 || password.length > 16) {
-      showToast('密码长度必须在8-16位之间');
       setShowLengthError(true);
       return;
     }
 
     if (password !== confirmPassword) {
-      showToast('两次输入密码不一致');
       setShowError(true);
       return;
     }
@@ -133,8 +131,10 @@ const ForgetPasswordReset = () => {
       pageNavProps={{
         text: '',
         showBack: true,
+        background: '#FFFFFF',
       }}
       loading={!tempToken}
+      backgroundColor="#FFFFFF"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Flex

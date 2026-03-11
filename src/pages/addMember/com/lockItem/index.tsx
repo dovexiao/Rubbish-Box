@@ -85,11 +85,13 @@ export default function LockItem({ data, onChange }: Props) {
             <View>
               <Text style={styles.lockType}>{lockTypeText}</Text>
               <View style={styles.iconRow}>
-                <Image
-                  source={data.imageUrl ? { uri: data.imageUrl } : undefined}
-                  style={styles.lockImage}
-                  resizeMode="cover"
-                />
+                {data.imageUrl ? (
+                  <Image
+                    source={{ uri: data.imageUrl }}
+                    style={styles.lockImage}
+                    resizeMode="cover"
+                  />
+                ) : null}
                 {data.lockType === 2 ? (
                   <View style={styles.multiBox}>
                     <IconFont size={6} color="#333333" name="multiplication" />

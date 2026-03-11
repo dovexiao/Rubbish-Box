@@ -129,12 +129,10 @@ export default function PasswordSet() {
 
   const handlePasswordSubmit = async () => {
     if (password.length < 8 || password.length > 16) {
-      showToast('密码长度必须在8-16位之间');
       setShowError(true);
       return;
     }
     if (password !== confirmPassword) {
-      showToast('两次输入密码不一致');
       setShowError(true);
       return;
     }

@@ -350,7 +350,7 @@ export default function DeviceList() {
                   });
                   return;
                 }
-                navigation.navigate('BluetoothSearch', {
+                navigation.navigate('FindDevice', {
                   bleNo: String(item.bleNo ?? ''),
                   lockName: item.lockName,
                   lockId: item.id,
@@ -360,6 +360,7 @@ export default function DeviceList() {
                   role: String(item.role),
                   deviceNo: String(item.deviceNo ?? ''),
                   bleName: (item as any).bleName,
+                  needPin: (item as any).needPin,
                 } as any);
               }}
             >
@@ -375,7 +376,7 @@ export default function DeviceList() {
                 ) : // <View style={styles.warningDot} />
                 null}
               </View>
-              <Text style={styles.operationText}>自动模式</Text>
+              <Text style={styles.operationText}>自动升降</Text>
             </TouchableOpacity>
 
             <TouchableOpacity

@@ -43,9 +43,11 @@ const ForgetPassword = () => {
   return (
     <PageContainer
       style={forgetPasswordStyles.container}
+      backgroundColor="#FFFFFF"
       pageNavProps={{
         text: '忘记密码',
         showBack: true,
+        background: '#FFFFFF',
       }}
     >
       <View>

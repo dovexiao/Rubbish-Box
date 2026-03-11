@@ -24,6 +24,7 @@ export default StyleSheet.create({
   descriptInfo: {
     marginTop: 12,
     minHeight: 32,
+    width: '100%',
   },
   infoItemText: {
     fontSize: 14,
@@ -42,7 +43,6 @@ export default StyleSheet.create({
     fontSize: 14,
     color: '#333333',
     lineHeight: 20,
-    marginTop: 12,
   },
   circle: {
     width: 16,

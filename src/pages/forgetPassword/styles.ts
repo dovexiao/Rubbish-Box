@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const forgetPasswordStyles = StyleSheet.create({
   container: {
@@ -63,7 +63,7 @@ const forgetPasswordStyles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
-  }
+  },
 });
 
 export default forgetPasswordStyles;

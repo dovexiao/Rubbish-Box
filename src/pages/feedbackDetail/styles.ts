@@ -145,6 +145,11 @@ const styles = StyleSheet.create({
   starInactive: {
     color: '#CCCCCC',
   },
+  starText: {
+    marginLeft: 16,
+    fontSize: 14,
+    color: '#FFB400',
+  },
   evaluateInputBox: {
     marginTop: 12,
   },

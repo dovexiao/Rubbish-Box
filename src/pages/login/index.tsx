@@ -45,9 +45,9 @@ const Login = () => {
   const [loginType, setLoginType] = useState<LoginType>('sms');
   const [prevLoginType, setPrevLoginType] = useState<'sms' | 'password'>('sms');
   const [mobile, setMobile] = useState('');
-  const [needAuth, setNeedAuth] = useState(true);
-  const [tempToken, setTempToken] = useState<string | undefined>(undefined);
-  const [loading, setLoading] = useState(false);
+  // const [needAuth, setNeedAuth] = useState(true);
+  // const [tempToken, setTempToken] = useState<string | undefined>(undefined);
+  // const [loading, setLoading] = useState(false);
   const agreePopRef = useRef<any>(null);
   const retainPopRef = useRef<any>(null);
 
@@ -134,6 +134,7 @@ const Login = () => {
               mobile: thirdLoginRes.data.mobile,
             });
           } else {
+            showToast('登录成功');
             reLaunch('Index');
           }
         } else {

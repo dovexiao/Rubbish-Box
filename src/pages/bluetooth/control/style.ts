@@ -162,4 +162,31 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  footerContainer: {
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 37,
+  },
+  footerTextWrapper: {
+    width: '100%',
+    height: 48,
+    backgroundColor: '#f7f7fb',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#ff873d',
+    fontWeight: '700',
+    lineHeight: 20,
+  },
+  footerRightContent: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
 });

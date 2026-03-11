@@ -315,11 +315,6 @@ export const routes = {
       label: '移交设备验证',
     },
     {
-      name: 'BluetoothSearch',
-      component: require('@/pages/bluetooth/search').default,
-      label: '蓝牙搜索',
-    },
-    {
       name: 'BluetoothLinkSuccess',
       component: require('@/pages/bluetooth/linkSuccess').default,
       label: '蓝牙连接成功',

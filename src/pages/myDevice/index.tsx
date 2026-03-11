@@ -67,6 +67,8 @@ export default function MyDevice() {
   return (
     <PageContainer
       safeAreaEdges={['top', 'bottom']}
+      statusBarStyle="light-content"
+      statusBarBackgroundColor="#ffffff"
       pageNavProps={{
         text: '添加设备',
         showBack: true,
@@ -141,9 +143,9 @@ export default function MyDevice() {
               height: 20,
             }}
           >
-            <View style={styles.label}>
+            <Text style={styles.label}>
               {currentDevice?.groupCount === 1 ? '地锁名称' : '组合设备名称'}
-            </View>
+            </Text>
             <TextInput
               value={lockName}
               // closeable={true}

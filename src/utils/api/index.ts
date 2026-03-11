@@ -8,6 +8,7 @@ import {
   Linking,
   NativeModules,
 } from 'react-native';
+import CryptoJS from 'crypto-js';
 import IntentLauncher from 'react-native-intent-launcher';
 import {
   BleManager,

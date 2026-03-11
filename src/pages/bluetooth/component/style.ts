@@ -3,11 +3,10 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   box: {
     width: '100%',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
+    // paddingHorizontal: 20,
+    // paddingVertical: 24,
     backgroundColor: '#ffffff',
-    borderRadius: 16,
+    borderRadius: 12,
     alignItems: 'center',
   },
   title: {
@@ -25,14 +24,15 @@ export const styles = StyleSheet.create({
   inputWrap: {
     marginTop: 16,
     width: '100%',
+    position: 'relative',
   },
   inputTitle: {
     fontSize: 14,
     color: '#999999',
     lineHeight: 20,
-    marginBottom: 12,
   },
   digitsRow: {
+    marginTop: 8,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
   digitBox: {
     width: 40,
     height: 40,
-    borderRadius: 10,
+    borderRadius: 8,
     backgroundColor: '#f7f7fb',
     alignItems: 'center',
     justifyContent: 'center',
@@ -55,14 +55,14 @@ export const styles = StyleSheet.create({
   hiddenInput: {
     position: 'absolute',
     left: 0,
-    top: 0,
+    bottom: 0,
     width: '100%',
     height: 40,
     opacity: 0,
   },
   btnRow: {
     width: '100%',
-    marginTop: 16,
+    marginTop: 24,
   },
   btn: {
     width: 124,
@@ -90,4 +90,3 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-

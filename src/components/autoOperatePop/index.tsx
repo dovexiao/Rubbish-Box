@@ -135,7 +135,7 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
                     {lock?.lockName ?? ''}
                   </Text>
                   <Flex direction="column" justify="between" align="center">
-                    <IconFont name="bluetooth-1" size={40} color="#333333" />
+                    <IconFont name="bluetooth-1" size={20} color="#333333" />
                     <Text style={styles.text}>自动升降</Text>
                   </Flex>
                   {!isAutoOpen && (
@@ -144,7 +144,7 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
                         source={{
                           uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png',
                         }}
-                        style={{ width: 32, height: 32 }}
+                        style={{ width: 16, height: 16 }}
                         resizeMode="contain"
                       />
                     </View>

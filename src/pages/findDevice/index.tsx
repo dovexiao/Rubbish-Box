@@ -1,7 +1,15 @@
 /** @jsxRuntime classic */
 /** @jsx React.createElement */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Image, Text, TouchableOpacity, View, Platform } from 'react-native';
+import {
+  AppState,
+  type AppStateStatus,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  Platform,
+} from 'react-native';
 import dayjs from 'dayjs';
 import { PageContainer, Flex, GradientButton } from '@/components';
 import {
@@ -23,8 +31,9 @@ import {
   removeStorage,
   setStorage,
   showToast,
+  setClipboardData,
 } from '@/utils';
-import { openBluetoothProximity } from '@/services';
+import { bind, openBluetoothProximity } from '@/services';
 import IconFont from '@/iconfont';
 import {
   LOCK_BTN_COLORS,
@@ -36,20 +45,12 @@ import {
 import PowerIndicatorPop from '@/components/powerIndicatorPop';
 import type { PopCenterRef } from '@/components/PopCenter';
 import styles from './styles';
+import { Toast } from '@ant-design/react-native';
 
 const getStorage = async (options: { key: string }) => {
   const data = await getStorageRaw<any>(options);
   return { data };
 };
-
-// const setClipboardData = async (options: { data: string }) => {
-//   try {
-//     const Clipboard = require('@react-native-clipboard/clipboard').default;
-//     if (Clipboard?.setString) {
-//       Clipboard.setString(String(options.data));
-//     }
-//   } catch {}
-// };
 
 const tipsUserOperation = async (options: {
   title?: string;
@@ -96,7 +97,7 @@ function useCountDown(options: { targetDate?: number; onEnd?: () => void }) {
 }
 
 type RouteParams = {
-  bleNo?: string;
+  bleNo: string;
   lockName?: string;
   lockId?: number;
   imageMap?: Record<string, string>;
@@ -104,7 +105,9 @@ type RouteParams = {
   mode?: number;
   bleName?: string;
   deviceNo?: string;
-  role?: string;
+  role?: number;
+  needPin?: number;
+  pageName?: string;
 };
 
 export default function FindDevice(props: any) {
@@ -112,15 +115,17 @@ export default function FindDevice(props: any) {
   const route = props?.route;
   const params: RouteParams = route?.params || {};
   const {
+    bleNo,
     lockName,
-    bleNo = '',
     lockId,
     deviceNo,
     imageMap,
-    pin = '',
+    pin,
     mode,
     role,
-    bleName = '',
+    bleName,
+    needPin,
+    pageName,
   } = params;
 
   const [state, setStateInner] = useState({
@@ -131,9 +136,6 @@ export default function FindDevice(props: any) {
       SEARCH_BLUETOOTH_STATUS?.SEARCHING as keyof typeof SEARCH_BLUETOOTH_STATUS,
     needScan: Platform.OS === 'ios',
   });
-
-  const [step, setStep] = useState(1);
-  const [pairTargetTime, setPairTargetTime] = useState<number | undefined>();
 
   const setState = useCallback((patch: Partial<typeof state>) => {
     setStateInner(prev => ({ ...prev, ...patch }));
@@ -199,6 +201,7 @@ export default function FindDevice(props: any) {
             isPaired,
           },
         });
+        console.log(pageName, '===pageName');
       } else {
         await removeStorage({ key: 'rnReLaunchPath' }).catch(() => {});
       }
@@ -274,8 +277,13 @@ export default function FindDevice(props: any) {
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
+    let lastRunAt = 0;
     const runOnFocus = () => {
       if (timer) clearTimeout(timer);
+      const now = Date.now();
+      // 从系统设置返回时，AppState 与 navigation focus 可能都会触发，这里做个简单去抖
+      if (now - lastRunAt < 250) return;
+      lastRunAt = now;
       void init();
       timer = setTimeout(() => {
         void checkReturnFromSettings();
@@ -286,11 +294,21 @@ export default function FindDevice(props: any) {
       navigation && typeof navigation.addListener === 'function'
         ? navigation.addListener('focus', runOnFocus)
         : undefined;
+
+    const appStateSub = AppState.addEventListener(
+      'change',
+      (nextState: AppStateStatus) => {
+        if (nextState === 'active') {
+          runOnFocus();
+        }
+      },
+    );
     return () => {
       if (timer) clearTimeout(timer);
       if (typeof unsubscribe === 'function') {
         unsubscribe();
       }
+      appStateSub?.remove?.();
     };
   }, [checkReturnFromSettings, init, navigation]);
 
@@ -368,72 +386,127 @@ export default function FindDevice(props: any) {
   ]);
 
   const handleBindSuccess = useCallback(async () => {
+    const clearProcessingFlag = async () => {
+      await removeStorage({ key: 'rnReLaunchPathProcessing' }).catch(() => {});
+    };
     try {
       const deviceInfo = (await getSavedDeviceInfo().catch(() => null)) || {};
-      const res = await connectBluetoothDevice(deviceInfo.deviceId);
-      if (!res.success) {
-        showToast({
-          title: (res as any).error?.message || '连接设备失败',
-          icon: 'none',
-        });
-        return;
-      }
-
       const bluetoothDeviceInfoList =
         (await getBluetoothDeviceInfo().catch(() => null)) || {};
-      if (bleNo) {
-        const newMap = { ...(bluetoothDeviceInfoList || {}) };
-        newMap[bleNo] = { ...deviceInfo, isPaired: true };
-        await setStorage({ key: 'bluetoothDeviceInfoList', data: newMap });
-      }
+      const { bleNo } = deviceInfo || {};
+      // 绑定设备
+      console.log(pageName, '===pageName');
+      if (pageName?.includes('BindDevice')) {
+        Toast.loading('绑定中...', 0);
+        try {
+          const res = await bind({
+            deviceNo,
+            userId: null,
+          });
 
-      if (role === '1' && !mode) {
-        const cmdRes = await setNearbyPermission({
-          deviceId: deviceInfo.deviceId,
-          deviceNo,
-          status: 1,
-        });
-        if (!cmdRes.success) {
+          const ok = String(res?.code) === '200';
+          if (!ok) {
+            showToast({
+              title: res?.message || '绑定失败',
+              icon: 'none',
+            });
+            Toast.removeAll();
+            return;
+          }
+
+          const connectRes = await connectBluetoothDevice(deviceInfo.deviceId);
+          if (!connectRes.success) {
+            showToast({
+              title: connectRes.error?.message || '连接设备失败',
+              icon: 'none',
+            });
+            Toast.removeAll();
+            return;
+          }
+
+          if (bleNo) {
+            const nextMap = { ...(bluetoothDeviceInfoList || {}) };
+            nextMap[bleNo] = { ...deviceInfo, isPaired: true };
+            await setStorage({ key: 'bluetoothDeviceInfoList', data: nextMap });
+          }
+
+          await clearProcessingFlag();
+          Toast.removeAll();
           showToast({
-            title: cmdRes.msg || '开启近身功能失败',
+            title: '绑定成功',
+            icon: 'success',
+          });
+          setTimeout(() => {
+            navigation?.navigate?.('BluetoothLinkSuccess', {
+              pages: 'bindDevice',
+              id: res.data,
+            } as never);
+          }, 1000);
+        } catch {
+          Toast.removeAll();
+          showToast({
+            title: '绑定失败',
             icon: 'none',
           });
           return;
         }
-        const apiRes: any = await openBluetoothProximity({
-          id: lockId,
-          bluetoothStatus: 1,
-        });
-        if (!apiRes || apiRes.code !== '200') {
-          showToast({
-            title: apiRes?.message || '开启近身功能失败',
-            icon: 'none',
-          });
-          return;
-        }
-      }
-
-      await removeStorage({ key: 'rnReLaunchPathProcessing' }).catch(() => {});
-
-      if (mode) {
-        showToast({ title: '连接成功', icon: 'success' });
-        navigation?.navigate?.('BluetoothLinkSuccess');
       } else {
-        showToast({ title: '自动升降开启成功', icon: 'success' });
-        navigation?.navigate?.('BluetoothControl', {
-          lockName,
-          bluetoothHasOpen: true,
-          role,
-          bleNo,
-          imageMap,
-          pin,
-          lockId,
-          bindSuccessStatus: true,
-        });
+        console.log(role, mode, '===role, mode');
+        if (bleNo) {
+          const newMap = { ...(bluetoothDeviceInfoList || {}) };
+          newMap[bleNo] = { ...deviceInfo, isPaired: true };
+          await setStorage({ key: 'bluetoothDeviceInfoList', data: newMap });
+        }
+        console.log(role, mode, '===role, mode');
+        if (Number(role) === 1 && !mode) {
+          const cmdRes = await setNearbyPermission({
+            deviceId: deviceInfo.deviceId,
+            deviceNo,
+            status: 1,
+          });
+          if (!cmdRes.success) {
+            showToast({
+              title: cmdRes.msg || '开启近身功能失败',
+              icon: 'none',
+            });
+            return;
+          }
+          const apiRes: any = await openBluetoothProximity({
+            id: lockId,
+            bluetoothStatus: 1,
+          });
+          if (!apiRes || apiRes.code !== '200') {
+            showToast({
+              title: apiRes?.message || '开启近身功能失败',
+              icon: 'none',
+            });
+            return;
+          }
+        }
+
+        await clearProcessingFlag();
+
+        if (mode) {
+          showToast({ title: '连接成功', icon: 'success' });
+          navigation?.navigate?.('BluetoothLinkSuccess');
+        } else {
+          showToast({ title: '自动升降开启成功', icon: 'success' });
+          navigation?.navigate?.('BluetoothControl', {
+            lockName,
+            bluetoothHasOpen: true,
+            role,
+            bleNo,
+            imageMap,
+            pin,
+            lockId,
+            bindSuccessStatus: true,
+            needPin,
+          });
+        }
       }
     } catch (error) {
       console.error('连接失败:', error);
-      await removeStorage({ key: 'rnReLaunchPathProcessing' }).catch(() => {});
+      await clearProcessingFlag();
     }
   }, [
     bleNo,
@@ -453,23 +526,6 @@ export default function FindDevice(props: any) {
     },
     targetDate: countdownTime,
   });
-
-  // step === 1 时，3 分钟倒计时；结束后自动回到 step 0
-  const [pairCountdown] = useCountDown({
-    onEnd: () => {
-      setStep(0);
-    },
-    targetDate: pairTargetTime,
-  });
-
-  // 进入 / 退出配对步骤时，控制倒计时起止
-  useEffect(() => {
-    if (step === 1) {
-      setPairTargetTime(Date.now() + 3 * 60 * 1000);
-    } else {
-      setPairTargetTime(undefined);
-    }
-  }, [step]);
 
   useEffect(() => {
     const t = setInterval(async () => {
@@ -550,7 +606,7 @@ export default function FindDevice(props: any) {
       scrollable={false}
     >
       <Flex direction="column" align="center" style={styles.content}>
-        {step === 0 ? (
+        {!!!needPin ? (
           <>
             <View style={styles.btnPositionImageContent}>
               <Image
@@ -589,7 +645,7 @@ export default function FindDevice(props: any) {
                       searchBluetoothStatus
                     ] as string,
                   }}
-                  style={{ width: 320, height: 320 }}
+                  style={{ width: 160, height: 160 }}
                   resizeMode="contain"
                 />
                 <Flex style={styles.countdownContainer}>
@@ -646,10 +702,14 @@ export default function FindDevice(props: any) {
                   <IconFont name="bluetooth-1" size={32} color="#333333" />
                 </View>
                 <View style={styles.titleWrapper}>
-                  <Text style={styles.title}>
-                    请前往蓝牙列表配对
-                    {Math.max(0, Math.round((pairCountdown || 0) / 1000))}s
-                  </Text>
+                  <Text style={styles.title}>请确保地锁通电</Text>
+                  <TouchableOpacity
+                    style={styles.titleIcon}
+                    onPress={() => powerIndicatorPopRef?.current?.open()}
+                  >
+                    <IconFont name="explain" size={18} color="#333333" />
+                    <Text style={styles.titleIconText}>通电指南</Text>
+                  </TouchableOpacity>
                 </View>
 
                 <Flex style={styles.infoSection} direction="column">
@@ -661,7 +721,30 @@ export default function FindDevice(props: any) {
                   </Flex>
                 </Flex>
 
-                <Flex style={styles.footer} justify="center">
+                <Flex style={styles.infoSection} direction="column">
+                  <Flex style={styles.infoBox}>
+                    <View style={styles.infoContent}>
+                      <Text style={styles.infoLabel}>PIN码</Text>
+                      <Text style={styles.pinValue}>{pin}</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.copyButton}
+                      onPress={async () => {
+                        await setClipboardData({ data: String(pin) });
+                      }}
+                    >
+                      <IconFont name="copy1" size={20} color="#6b7280" />
+                      <Text style={{ fontSize: 12, color: '#6b7280' }}>
+                        点击复制
+                      </Text>
+                    </TouchableOpacity>
+                  </Flex>
+                </Flex>
+
+                <Flex
+                  style={(styles.footer, { marginTop: 8 })}
+                  justify="center"
+                >
                   <GradientButton
                     colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
                     width={160}
@@ -675,18 +758,11 @@ export default function FindDevice(props: any) {
                       justify="center"
                       align="center"
                     >
-                      <Text style={styles.btnTextInner}>跳转配对</Text>
+                      <Text style={styles.btnTextInner}>跳转设置</Text>
                     </Flex>
                   </GradientButton>
                 </Flex>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  style={styles.cancelBtn}
-                  onPress={() => setStep(0)}
-                >
-                  <IconFont name="close" size={16} color="#333333" />
-                  <Text style={styles.cancelText}>取消配对</Text>
-                </TouchableOpacity>
+
                 <View style={styles.tips}>
                   <Text style={styles.tipsText}>
                     因机型不同，蓝牙搜索需要几分钟，请耐心等待

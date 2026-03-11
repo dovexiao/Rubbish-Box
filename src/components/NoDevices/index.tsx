@@ -6,7 +6,7 @@ interface NoDevicesProps {
   hasDevice?: boolean;
 }
 
-const NoDevices: React.FC<NoDevicesProps> = ({ hasDevice = false }) => {
+const NoDevices: React.FC<NoDevicesProps> = ({ hasDevice }) => {
   const navigation = useAppNavigation();
   return (
     <View style={styles.container}>

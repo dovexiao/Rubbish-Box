@@ -192,7 +192,7 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
               {children}
             </View>
 
-            {typeof footer === 'boolean' ? (
+            {footer === false ? null : typeof footer === 'boolean' ? (
               <View style={styles.footer}>
                 {showCancel ? (
                   <TouchableOpacity

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAEAEE',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 2
+    paddingHorizontal: 2,
   },
   checked: {
     backgroundColor: '#333333',
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   lockImage: {
     width: 36,
     height: 36,
-    top: 4
+    top: 4,
   },
   multiBox: {
     flexDirection: 'row',
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333333',
     fontWeight: 'bold',
-    lineHeight: 40
+    lineHeight: 40,
   },
   line: {
     marginTop: 10,
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   validityRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
   label: {
@@ -124,4 +124,3 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
-

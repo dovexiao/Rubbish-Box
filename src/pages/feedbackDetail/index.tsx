@@ -43,6 +43,8 @@ const STATUS_TEXT: Record<number, string> = {
   2: '已处理',
 };
 
+const STAR_TEXT = ['不满意', '有待改进', '一般', '满意', '非常满意'];
+
 export default function FeedbackDetail() {
   const route = useRoute<any>();
   const feedbackId = route.params?.feedbackId;
@@ -281,6 +283,9 @@ export default function FeedbackDetail() {
                       </TouchableOpacity>
                     );
                   })}
+                  {item.count > 0 && (
+                    <Text style={styles.starText}>{STAR_TEXT[item.count - 1]}</Text>
+                  )}
                 </View>
               ))}
 

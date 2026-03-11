@@ -146,6 +146,8 @@ export interface LockInfoDTO {
   powerType: number; //电量类型
 
   bleName: string;
+
+  needPin: number;
 }
 
 interface LowBatteryNoticeList {

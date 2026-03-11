@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { PageContainer, Flex, GradientButton } from '@/components';
 import { LOCK_BTN_COLORS, LOCK_STATUS } from '@/constants';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { styles } from './style';
+import { reLaunch } from '@/utils';
 
 type RouteParams = {
   id?: string | number;
@@ -48,9 +49,11 @@ export default function BluetoothLinkSuccess() {
       <View style={styles.container}>
         <Flex direction="column" align="center" style={styles.content}>
           <Flex align="center" style={styles.iconWrapper}>
-            <View style={styles.iconCircle}>
-              <Text style={styles.iconEmoji}>✓</Text>
-            </View>
+            <Image
+              source={{ uri: 'https://g.18qjz.cn/img/boklock/success.png' }}
+              style={{ width: 48, height: 48 }}
+              resizeMode="contain"
+            />
             <Text style={styles.iconText}>
               {isAddPage ? '添加成功' : '连接成功'}
             </Text>
@@ -60,12 +63,17 @@ export default function BluetoothLinkSuccess() {
             <Text style={styles.tips}>{backNum}s 秒后返回至首页</Text>
             <GradientButton
               colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-              width={220}
+              width={160}
               height={44}
               round={false}
               btnBorderRadius={16}
               onPress={() => {
-                navigation.navigate('Index' as any);
+                reLaunch(
+                  'Index' as any,
+                  !!isAddPage
+                    ? { pages: 'addDevice', id: params?.id }
+                    : undefined,
+                );
               }}
             >
               <Text style={styles.btnText}>完成</Text>
@@ -76,4 +84,3 @@ export default function BluetoothLinkSuccess() {
     </PageContainer>
   );
 }
-

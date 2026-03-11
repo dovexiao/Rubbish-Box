@@ -11,27 +11,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconWrapper: {
-    marginTop: 180,
-    gap: 24,
+    marginTop: 115,
+    gap: 12,
     alignItems: 'center',
-  },
-  iconCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: '#16a34a',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconEmoji: {
-    fontSize: 48,
-    color: '#ffffff',
-    fontWeight: '700',
   },
   iconText: {
     fontSize: 20,
     color: '#333333',
-    lineHeight: 28,
+    lineHeight: 27,
     fontWeight: '700',
   },
   btnWrapper: {
@@ -39,7 +26,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tips: {
-    marginBottom: 24,
+    marginBottom: 16,
     fontSize: 16,
     color: '#999999',
     lineHeight: 22,
@@ -51,4 +38,3 @@ export const styles = StyleSheet.create({
     lineHeight: 22,
   },
 });
-

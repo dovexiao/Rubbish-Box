@@ -84,9 +84,11 @@ export default function MemberList() {
   );
 
   useEffect(() => {
-    loadData(true);
-    return;
-  }, [loadData]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      void loadData(true);
+    });
+    return unsubscribe;
+  }, [navigation, loadData]);
 
   const handleLoadMore = useCallback(() => {
     if (!loading && !complete && list.length > 0) {

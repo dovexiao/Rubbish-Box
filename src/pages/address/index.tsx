@@ -37,10 +37,11 @@ export default function Address() {
   const [initialLoading, setInitialLoading] = useState(true);
   const deleteRef = React.useRef<any>(null);
   const [currentId, setCurrentId] = useState<number | string | null>(null);
+  const listRef = React.useRef<AddressItem[]>([]);
 
   const loadList = useCallback(
     async (refresh: boolean) => {
-      if (loading) return;
+      if (loading || refreshing) return;
 
       if (refresh) {
         setRefreshing(true);
@@ -50,7 +51,7 @@ export default function Address() {
       }
 
       try {
-        const offset = refresh ? 0 : list.length;
+        const offset = refresh ? 0 : listRef.current.length;
         const res: any = await getAddressList({ pageSize: PAGE_SIZE, offset });
         const dataList: AddressItem[] = Array.isArray(res?.list)
           ? res.list
@@ -58,7 +59,11 @@ export default function Address() {
           ? res.data.list
           : [];
 
-        setList(prev => (refresh ? dataList : [...prev, ...dataList]));
+        setList(prev => {
+          const next = refresh ? dataList : [...prev, ...dataList];
+          listRef.current = next;
+          return next;
+        });
         setHasMore(dataList.length >= PAGE_SIZE);
       } catch (e) {
         showToast('获取地址列表失败');
@@ -68,12 +73,15 @@ export default function Address() {
         setInitialLoading(false);
       }
     },
-    [list.length, loading],
+    [loading, refreshing],
   );
 
   useEffect(() => {
-    void loadList(true);
-  }, [loadList]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      void loadList(true);
+    });
+    return unsubscribe;
+  }, [navigation, loadList]);
 
   const handleDelete = async () => {
     if (!currentId) return;
@@ -153,7 +161,7 @@ export default function Address() {
         showBack: true,
         background: '#FFFFFF',
       }}
-      loading={initialLoading}
+      // loading={initialLoading}
     >
       <View style={styles.container}>
         <FlatList

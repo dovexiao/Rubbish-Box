@@ -407,7 +407,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
       if (bluetoothErrorType === 'bluetooth_off') {
         await openBluetoothSettings();
       } else if (bluetoothErrorType === 'not_paired') {
-        navigation.navigate('BluetoothSearch' as any, {
+        navigation.navigate('FindDevice' as any, {
           bleNo: targetDevice.bleNo,
           lockName: targetDevice.lockName,
           lockId: targetDevice.id,
@@ -416,9 +416,11 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
           mode: targetDevice.mode ?? 1,
           deviceNo: targetDevice.deviceNo,
           role: targetDevice.role,
+          needPin: targetDevice.needPin,
+          pageName: 'BluetoothControl',
         });
       } else if (bluetoothErrorType === 'not_connected') {
-        navigation.navigate('BluetoothSearch', {
+        navigation.navigate('FindDevice', {
           bleNo: targetDevice.bleNo,
           lockName: targetDevice.lockName,
           lockId: targetDevice.id,
@@ -428,6 +430,8 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
           bleName: targetDevice.bleName,
           deviceNo: targetDevice.deviceNo,
           role: targetDevice.role,
+          needPin: targetDevice.needPin,
+          pageName: 'BluetoothControl',
         });
         setCurrentConnectDevice(null);
       }
@@ -456,7 +460,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
             return;
           }
           setGroupListVisible(false);
-          navigation.navigate('BluetoothSearch' as any, {
+          navigation.navigate('FindDevice' as any, {
             bleNo: item.bleNo,
             lockName: item.lockName,
             lockId: item.id,
@@ -464,6 +468,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
             pin: item.blePin ?? '',
             mode: item.mode ?? 1,
             bleName: item.bleName,
+            needPin: item.needPin,
           });
         } catch (error) {
           console.error('handleGroupItemConnect error', error);

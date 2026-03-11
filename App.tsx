@@ -387,6 +387,7 @@ function App() {
             }
 
             const info = await getSystemConnectedDevices();
+            console.log(info, path, '===info');
             if (path === 'FindDevice') {
               const isPaired =
                 info.data?.some((item: any) =>
@@ -395,6 +396,7 @@ function App() {
               const deviceInfo = info.data?.find((item: any) =>
                 isSameMac(item.deviceId || item.mac, params?.bleNo),
               );
+              console.log(isPaired, deviceInfo, '===isPaired, deviceInfo');
               if (isPaired) {
                 const bluetoothDeviceInfoList =
                   (await getBluetoothDeviceInfo().catch(() => null)) || {};
@@ -402,6 +404,8 @@ function App() {
                   params || {};
                 let res: any;
                 let bindRes: any;
+
+                console.log(pageName, '===pageName');
                 if (pageName?.includes('BindDevice')) {
                   Toast.loading('绑定中...', 0);
                   bindRes = await bind({
@@ -409,11 +413,11 @@ function App() {
                     userId: null,
                   });
                   res = bindRes;
+                } else {
+                  Toast.loading('连接中...', 0);
+                  res = await openBluetoothProximity({ id: lockId });
                 }
-                // if (path?.includes('search') || path === 'FindDevice') {
-                //   Toast.loading('连接中...', 0);
-                //   res = await openBluetoothProximity({ id: lockId });
-                // }
+
                 Toast.removeAll();
                 if (res?.code === 200 || res?.code === '200') {
                   if (pageName?.includes('BindDevice')) {
@@ -442,6 +446,7 @@ function App() {
                       reLaunch('Index', { lockId: bindRes.data?.id });
                     }
                   }
+                  console.log(pageName, mode, '===pageName');
                   if (pageName?.includes('BluetoothControl') && !mode) {
                     Toast.success('自动升降开启成功');
                   }

@@ -11,13 +11,13 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { PageContainer } from '@/components';
 import LockItem from './com/lockItem';
 import { modifyStaff, staffDetail, staffLockList } from '@/services/user';
-import { mobileExp, showToast } from '@/utils';
-import styles from './styles';
+import { hideLoading, mobileExp, showLoading, showToast } from '@/utils';
 import GradientButton from '@/components/GradientButton';
+import styles from './styles';
 
 type ListItem = {
-  id: number;
-  userId: number;
+  id: number | null;
+  userId: number | null;
   username: string;
   mobile: string;
 };
@@ -64,8 +64,8 @@ export default function AddMember() {
     if (!memberId) {
       // 新增成员，不需要请求详情，只初始化空对象
       setInfo({
-        id: 0,
-        userId: 0,
+        id: null,
+        userId: null,
         username: '',
         mobile: '',
       });
@@ -135,6 +135,7 @@ export default function AddMember() {
   }, []);
 
   const handleSubmit = useCallback(async () => {
+    showLoading({ title: '提交中...' });
     if (!info) return;
 
     if (!info.username) {
@@ -162,15 +163,21 @@ export default function AddMember() {
       const res = await modifyStaff({
         ...info,
         lockList: selectedLocks,
+        pageSize: PAGE_SIZE,
+        offset: locks.length ?? 0,
       });
+      console.log(res, '===res');
 
       if (res.code === 200 && res.success) {
+        hideLoading();
         showToast('操作成功');
         navigation.goBack();
       } else {
+        hideLoading();
         showToast(res.msg || res.message || '操作失败');
       }
     } catch (e) {
+      hideLoading();
       showToast('操作失败');
     }
   }, [info, locks, navigation]);

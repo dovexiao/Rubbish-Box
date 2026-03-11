@@ -79,7 +79,7 @@ const Password: React.FC<PasswordProps> = ({
           console.error('获取推送设备信息失败:', e);
         }
         hideLoading();
-        console.log('密码登录成功 res', res);
+        showToast('登录成功');
         // 延迟执行导航，确保状态已更新和导航引用已准备好
         setTimeout(() => {
           const pages = getCurrentPages();

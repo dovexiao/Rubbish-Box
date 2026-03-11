@@ -38,6 +38,7 @@ import {
 } from '@/services';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import IconFont from '@/iconfont';
 
 type RouteParams = {
   lockId?: number | string;
@@ -52,6 +53,7 @@ type RouteParams = {
   bindSuccessStatus?: boolean | string;
   blePin?: string;
   bleName?: string;
+  needPin?: number;
 };
 
 export default function BluetoothControl() {
@@ -67,6 +69,9 @@ export default function BluetoothControl() {
   const role = params.role;
   const imageMap = params.imageMap || {};
   const hasMode = String(params.hasMode) === 'true' || params.hasMode === true;
+  const blePin = params.blePin || '';
+  const needPin = params.needPin;
+  const mode = params.mode;
   const bindSuccessStatus =
     String(params.bindSuccessStatus) === 'true' ||
     params.bindSuccessStatus === true;
@@ -75,12 +80,15 @@ export default function BluetoothControl() {
   const [isIgnored, setIsIgnored] = useState(false);
   const [isBluetoothOpen, setIsBluetoothOpen] = useState(false);
   const [gifUrl, setGifUrl] = useState<string | undefined>(undefined);
+  const [bluetoothPin, setBluetoothPin] = useState<string>('');
   const [proximityEnabled, setProximityEnabled] = useState(
     String(params.buletoothHasOpen) === 'true' ||
       params.buletoothHasOpen === true,
   );
+  const optionTypeRef = useRef<number>(0);
 
   const bluetoothStatusRef = useRef<BluetoothStatusRef>(null);
+  const settingPinRef = useRef<SettingPinRef>(null);
 
   const refreshPairStatus = useCallback(async () => {
     const saved = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
@@ -116,10 +124,112 @@ export default function BluetoothControl() {
     }
   }, []);
 
+  const getPin = async () => {
+    const res = await getBluetoothPin({ id: lockId });
+    if (res.code === 200) {
+      setBluetoothPin(res.data);
+    }
+  };
+
+  /**
+   * 按模式修改 PIN：
+   * - mode 2：先 BLE 告知硬件，再 settingBluetoothPin 通知后端
+   * - mode 1：先 settingBluetoothPin，再轮询 getBluetoothPin 确认
+   */
+  const handlePinChangeByMode = async (options: {
+    mode?: string | number;
+    lockId: string | number | undefined;
+    value: string;
+    bleNo: string | number | undefined;
+    setBluetoothPin: (pin: string) => void;
+    closePopup: () => void;
+  }) => {
+    const { lockId, value, bleNo, setBluetoothPin, closePopup } = options;
+    // 续航模式：BLE -> 后端
+
+    try {
+      showLoading({ title: '修改中...' });
+
+      const saved = (await getBluetoothDeviceInfo().catch(() => null)) || {};
+      const deviceId = saved?.[bleNo as string].deviceId;
+      const bleNos = saved?.[bleNo as string]?.bleNo;
+
+      if (!deviceId) {
+        hideLoading();
+        showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'none' });
+        return;
+      }
+
+      const cmdRes = await sendChangePinByBluetooth({
+        deviceId,
+        deviceNo,
+        pin: value,
+      });
+      if (!cmdRes.success) {
+        hideLoading();
+        showToast({ title: cmdRes.msg || '设备修改 PIN 失败', icon: 'none' });
+        return;
+      }
+
+      const apiRes: any = await settingBluetoothPin({
+        id: lockId,
+        pin: value,
+        bleNo: cmdRes.newMac,
+      });
+      if (apiRes.code === '200') {
+        setBluetoothPin(value);
+        // 修改 PIN 码后，将设备配对状态设为 false
+        await updateDevicePairedStatus(bleNos);
+        hideLoading();
+        showToast({ title: '修改 PIN 成功', icon: 'success' });
+        closePopup();
+        // setTimeout(() => {
+        //   navigateTo({
+        //     url: `/pages/status/index?${stringify({
+        //       title: '修改PIN码成功',
+        //       deviceId: deviceId,
+        //       bleName: bleName,
+        //       bleNo: bleNo,
+        //     })}`,
+        //   });
+        // }, 500);
+      } else {
+        hideLoading();
+        showToast({
+          title: apiRes.message || '服务端保存 PIN 失败',
+          icon: 'none',
+        });
+      }
+    } catch (error) {
+      hideLoading();
+      console.error('修改 PIN 异常', error);
+      showToast({ title: '修改 PIN 失败，请稍后重试', icon: 'none' });
+    }
+  };
+
+  const updateDevicePairedStatus = async (bleNo: string) => {
+    try {
+      // 更新全局 store
+      // await openBluetoothProximity({id: lockId as string | number, bluetoothStatus: 0}, 'info')
+      const deviceMap =
+        (await getBluetoothDeviceInfo().catch(() => null)) || {};
+      if (deviceMap[bleNo]) {
+        const { [bleNo]: _, ...rest } = deviceMap;
+        await setStorage({ key: 'bluetoothDeviceInfoList', data: rest });
+      }
+
+      // 更新本地存储
+      removeStorage({ key: 'bluetoothDeviceInfo' });
+    } catch (error) {
+      console.error('更新设备配对状态失败:', error);
+    }
+  };
+
   // 首次进入时检查一次
   useEffect(() => {
     void refreshPairStatus();
     void checkBluetoothOpen();
+    void getPin();
   }, [refreshPairStatus, checkBluetoothOpen]);
 
   // 从导航 focus 返回时刷新（在应用内路由切换时生效）
@@ -202,10 +312,10 @@ export default function BluetoothControl() {
         bleNo,
         deviceNo,
         role,
-        hasMode,
-        bindSuccessStatus,
         imageMap,
         bleName,
+        needPin,
+        pin: bluetoothPin || blePin || '',
         pageName: 'BluetoothControl',
       });
     } else {
@@ -232,6 +342,27 @@ export default function BluetoothControl() {
         background: '#FFFFFF',
       }}
       padding={0}
+      footer={
+        role === 1 && !!needPin ? (
+          <Flex style={styles.footerContainer}>
+            <Flex style={styles.footerTextWrapper}>
+              <Text style={styles.footerText}>管理蓝牙配对PIN码：</Text>
+              <TouchableOpacity
+                style={styles.footerRightContent}
+                onPress={() => {
+                  bluetoothStatusRef.current?.open();
+                  optionTypeRef.current = 1;
+                }}
+              >
+                <Text style={styles.footerText}>
+                  {bluetoothPin || blePin || '暂无'}
+                </Text>
+                <IconFont name="a-headfor-121" size={20} color="#ff873d" />
+              </TouchableOpacity>
+            </Flex>
+          </Flex>
+        ) : undefined
+      }
     >
       <View style={styles.container}>
         {hasPaired ? (
@@ -277,6 +408,7 @@ export default function BluetoothControl() {
                   <TouchableOpacity
                     onPress={() => {
                       bluetoothStatusRef.current?.open();
+                      optionTypeRef.current = 2;
                     }}
                   >
                     <Image
@@ -389,10 +521,36 @@ export default function BluetoothControl() {
         ref={bluetoothStatusRef}
         details={{
           ...params,
+          pin: bluetoothPin || '',
+          id: lockId || '',
         }}
         type="pass"
         onSuccess={async () => {
-          await handleToggleProximity();
+          if (optionTypeRef?.current === 1) {
+            settingPinRef.current?.open();
+          } else if (optionTypeRef?.current === 2) {
+            await handleToggleProximity();
+          }
+        }}
+      />
+
+      <SettingPin
+        ref={settingPinRef}
+        pin={bluetoothPin ?? ''}
+        onConfirm={async (value: string) => {
+          await handlePinChangeByMode({
+            mode,
+            lockId: lockId as string | number,
+            value,
+            bleNo,
+            setBluetoothPin: (pin: string) => setBluetoothPin(pin),
+            closePopup: () => {
+              settingPinRef.current?.close();
+            },
+          });
+        }}
+        onCancel={() => {
+          settingPinRef.current?.close();
         }}
       />
     </PageContainer>

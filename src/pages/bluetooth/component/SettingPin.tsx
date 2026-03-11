@@ -65,10 +65,9 @@ const SettingPin = forwardRef<SettingPinRef, Props>(function SettingPin(
     <PopCenter
       ref={popRef}
       width={311}
-      height={268}
+      // height={268}
       showHeader={false}
       showCancel={false}
-      confirmText=" "
       maskClosable={false}
       footer={false}
     >
