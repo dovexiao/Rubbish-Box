@@ -15,7 +15,7 @@ export const getDeviceInfo = async () => {
       // 操作系统版本
       osVersion: await DeviceInfo.getSystemVersion(),
       // 操作系统名称
-      osName: Platform.OS === 'ios' ? 'iOS' : 'Android',
+      osName: Platform.OS === 'ios' ? 'iOS' : (Platform.OS === 'android' ? 'Android' : 'HarmonyOS'),
       // 应用版本号
       appVersion: await DeviceInfo.getVersion(),
       // 应用构建号
@@ -36,7 +36,7 @@ export const getDeviceInfo = async () => {
       deviceModel: '',
       deviceName: '',
       osVersion: '',
-      osName: Platform.OS === 'ios' ? 'iOS' : 'Android',
+      osName: Platform.OS === 'ios' ? 'iOS' : (Platform.OS === 'android' ? 'Android' : 'HarmonyOS'),
       appVersion: '',
       buildNumber: '',
       uniqueId: '',

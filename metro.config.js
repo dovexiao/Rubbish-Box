@@ -53,13 +53,6 @@ baseConfig.resolver = {
   resolveRequest(context, moduleName, platform) {
     // Harmony 平台下，用 JS shim 替代部分依赖原生模块的库，避免 NativeModule 为空时报错
     if (isHarmonyPlatform(platform)) {
-      if (moduleName === '@react-native-clipboard/clipboard') {
-        return resolve(
-          context,
-          path.resolve(__dirname, 'src/harmony/clipboard-shim.ts'),
-          platform,
-        );
-      }
       if (moduleName === 'react-native-svg') {
         // Harmony 上暂时没有原生 SVG 实现，使用 JS 占位 shim，保证图标至少有可见形态
         return resolve(

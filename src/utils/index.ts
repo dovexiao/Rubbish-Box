@@ -43,6 +43,7 @@ import {
   Platform,
   Linking,
   NativeModules,
+  TurboModuleRegistry,
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Config from 'react-native-config';
@@ -490,7 +491,26 @@ export function openBluetoothSettings(value?: any): any {
           console.error('[openBluetoothSettings] 记录重启路径失败:', e);
         }
       }
-      if (Platform.OS === 'ios') {
+      if (isHarmonyPlatform) {
+        try {
+          let hModule;
+          try {
+            hModule =
+              NativeModules?.HarmonyAppInfo ||
+              TurboModuleRegistry?.get('HarmonyAppInfo');
+          } catch (e) {
+            console.warn('获取 HarmonyAppInfo 模块失败:', e);
+          }
+
+          if (hModule && typeof hModule?.openBluetoothSettings === 'function') {
+            await hModule.openBluetoothSettings();
+          } else {
+            await Linking.openSettings();
+          }
+        } catch (e) {
+          console.warn('跳转鸿蒙设置页失败:', e);
+        }
+      } else if (Platform.OS === 'ios') {
         await Linking.openURL('App-Prefs:root=General');
       } else {
         if (
@@ -574,7 +594,34 @@ export function parseMacFromBase64(base64Str: string): string | null {
     const B = (g as any).Buffer;
     const bytes = B ? new Uint8Array(B.from(base64Str, 'base64')) : null;
     if (!bytes || bytes.length < 6) return null;
-    const macBytes = bytes.slice(bytes.length - 6);
+
+    let targetBytes = bytes;
+
+    // TLV parser for HarmonyOS raw broadcast payload (Length, Type, Value)
+    let i = 0;
+    while (i < bytes.length) {
+      let len = bytes[i];
+      if (len === 0 || i + 1 + len > bytes.length) break;
+      i += 1 + len;
+    }
+
+    if (i > 0 && i === bytes.length) {
+      let j = 0;
+      while (j < bytes.length) {
+        let len = bytes[j];
+        if (len === 0) break;
+        let type = bytes[j + 1];
+        if (type === 0xff) {
+          targetBytes = bytes.slice(j + 2, j + 1 + len);
+          break;
+        }
+        j += 1 + len;
+      }
+    }
+
+    if (targetBytes.length < 6) return null;
+
+    const macBytes = targetBytes.slice(targetBytes.length - 6);
     return Array.from(macBytes)
       .map(b => b.toString(16).padStart(2, '0'))
       .join('')
@@ -970,9 +1017,12 @@ export function loopFunc(
   return { start, stop };
 }
 
+import ClipboardShim from '@/harmony/clipboard-shim';
+
 export function arrayBufferToBase64(arrayBuffer: any): string {
   return Buffer.from(arrayBuffer).toString('base64');
 }
+
 /**
  * 复制内容到剪贴板
  * @param {object} options 配置对象，包含 data 字符串
@@ -982,8 +1032,13 @@ export const setClipboardData = async (options: { data: string }) => {
   try {
     const text = String(options.data ?? '');
     if (!text) return;
-    const mod = require('@react-native-clipboard/clipboard');
-    const Clipboard = mod?.default ?? mod;
-    if (Clipboard?.setString) Clipboard.setString(text);
-  } catch {}
+
+    if (ClipboardShim && typeof ClipboardShim.setString === 'function') {
+      ClipboardShim.setString(text);
+    } else {
+      console.warn('No valid Clipboard module found to execute copy.');
+    }
+  } catch (error) {
+    console.warn('Clipboard copy failed:', error);
+  }
 };

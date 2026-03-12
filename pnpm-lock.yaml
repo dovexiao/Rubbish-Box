@@ -59,6 +59,9 @@ importers:
       '@react-native-community/slider':
         specifier: ^4.4.2
         version: 4.5.7
+      '@react-native-ohos/clipboard':
+        specifier: 1.16.3-rc.1
+        version: 1.16.3-rc.1(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       '@react-native-ohos/react-native-ble-plx':
         specifier: 3.2.1-rc.2
         version: 3.2.1-rc.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -1590,6 +1593,19 @@ packages:
     peerDependencies:
       react-native: ^0.0.0-0 || >=0.60 <1.0
 
+  '@react-native-clipboard/clipboard@1.16.2':
+    resolution: {integrity: sha512-VqUYwVxo7DyHMz7v2LxLMaAOSu3pKFvzpqR4jQezdH0VyaudILTTcUf7dR4TroARU/lLkTU8nZA11UniTvGVXg==}
+    peerDependencies:
+      react: '>= 16.9.0'
+      react-native: '>= 0.61.5'
+      react-native-macos: '>= 0.61.0'
+      react-native-windows: '>= 0.61.0'
+    peerDependenciesMeta:
+      react-native-macos:
+        optional: true
+      react-native-windows:
+        optional: true
+
   '@react-native-clipboard/clipboard@1.16.3':
     resolution: {integrity: sha512-cMIcvoZKIrShzJHEaHbTAp458R9WOv0fB6UyC7Ek4Qk561Ow/DrzmmJmH/rAZg21Z6ixJ4YSdFDC14crqIBmCQ==}
     peerDependencies:
@@ -1706,6 +1722,19 @@ packages:
     resolution: {integrity: sha512-4wVYiB6QOAzFfn1vNxQQps55+sHxXrL8re3QwVnrD+DfuVcXjecJZKUGFqPCHQuP5/cvoQ8jpqqJdr5zzqCT6Q==}
     peerDependencies:
       react-native: 0.72.5
+
+  '@react-native-ohos/clipboard@1.16.3-rc.1':
+    resolution: {integrity: sha512-57VLuf6Bl1TxTUN/sdJx9/UJiBKKkwAnPNKvIXTIhcb6m9MwtFpRpURLZtThXseDb6l417zuQNzTeNV8YrcjTw==}
+    peerDependencies:
+      react: '>= 16.9.0'
+      react-native: '>= 0.61.5'
+      react-native-macos: '>= 0.61.0'
+      react-native-windows: '>= 0.61.0'
+    peerDependenciesMeta:
+      react-native-macos:
+        optional: true
+      react-native-windows:
+        optional: true
 
   '@react-native-ohos/react-native-ble-plx@3.2.1-rc.2':
     resolution: {integrity: sha512-DbuKYlRJ0sqll+GX8yHOJNctIhsjMTiDOO9VxgglGR6E3pmNMUp1LcmGeOukLoG0H02IkReoyQ2uX0WeMbWC2A==}
@@ -7405,6 +7434,11 @@ snapshots:
       merge-options: 3.0.4
       react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
+  '@react-native-clipboard/clipboard@1.16.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      react: 18.2.0
+      react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+
   '@react-native-clipboard/clipboard@1.16.3(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
     dependencies:
       react: 18.2.0
@@ -7814,6 +7848,12 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
+
+  '@react-native-ohos/clipboard@1.16.3-rc.1(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@react-native-clipboard/clipboard': 1.16.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+      react: 18.2.0
+      react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
   '@react-native-ohos/react-native-ble-plx@3.2.1-rc.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
     dependencies:

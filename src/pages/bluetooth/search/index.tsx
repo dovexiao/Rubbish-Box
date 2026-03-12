@@ -107,6 +107,7 @@ export default function BluetoothSearch(props: any) {
   };
   // console.log(router, '这是search的路由参数');
   const navigation = props?.navigation as any;
+  const isHarmonyOS = Platform.OS !== 'ios' && Platform.OS !== 'android';
 
   const [state, setStateInner] = useState({
     bindSuccess: false,
@@ -114,7 +115,7 @@ export default function BluetoothSearch(props: any) {
     countdownTime: dayjs().add(120, 'seconds').valueOf() as unknown as number,
     searchBluetoothStatus:
       SEARCH_BLUETOOTH_STATUS.SEARCHING as keyof typeof SEARCH_BLUETOOTH_STATUS,
-    needScan: Platform.OS === 'ios' ? true : false,
+    needScan: Platform.OS === 'ios' || isHarmonyOS ? true : false,
   });
 
   const setState = useCallback((patch: Partial<typeof state>) => {
@@ -128,7 +129,7 @@ export default function BluetoothSearch(props: any) {
     try {
       const res = (await getSavedDeviceInfo().catch(() => null)) || {};
       const info = await getSystemConnectedDevices();
-      const isPaired =
+      let isPaired =
         info.data?.some((item: any) => item.deviceId === res.deviceId) || false;
       setState({
         isPaired: isPaired,
@@ -165,18 +166,27 @@ export default function BluetoothSearch(props: any) {
         (await getSavedDeviceInfo().catch(() => null)) || {};
       const bleNo = router.params?.['bleNo'] as string;
       const info = await getSystemConnectedDevices();
-      const isPaired =
+
+      let isPaired = false;
+      let deviceInfo = null;
+
+      isPaired =
         info.data?.some(
           (item: any) =>
             isSameMac(item.deviceId, bleNo) ||
             isSameMac(item.deviceId, savedDeviceInfo.deviceId),
         ) || false;
 
-      const deviceInfo = info.data?.find(
+      deviceInfo = info.data?.find(
         (item: any) =>
           isSameMac(item.deviceId, bleNo) ||
           isSameMac(item.deviceId, savedDeviceInfo.deviceId),
       );
+
+      // 兜底补全信息（因为原生层给鸿蒙只返回了纯物理MAC，我们把原有的本地信息填回去）
+      if (Platform.OS !== 'ios' && Platform.OS !== 'android' && isPaired) {
+        deviceInfo = deviceInfo ? { ...savedDeviceInfo, ...deviceInfo } : null;
+      }
 
       if (isPaired && (savedDeviceInfo.deviceId || bleNo)) {
         await removeStorage({ key: 'rnReLaunchPath' }).catch(() => {});
@@ -501,7 +511,7 @@ export default function BluetoothSearch(props: any) {
     if (
       startSearchDevice &&
       searchRef &&
-      Platform.OS === 'ios' &&
+      (Platform.OS === 'ios' || isHarmonyOS) &&
       !startSearch
     ) {
       void startSearchDevice(searchRef);
