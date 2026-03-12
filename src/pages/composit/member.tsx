@@ -33,7 +33,7 @@ export default function MemberPage() {
   const navigation = useAppNavigation();
   const route = useRoute<any>();
   const [lockName, setLockName] = useState('');
-  const [list, setList] = useState<MemberItem[] | undefined>(undefined);
+  const [list, setList] = useState<MemberItem[]>([]);
   const [complete, setComplete] = useState(false);
   const [currentRow, setCurrentRow] = useState<MemberItem | undefined>(
     undefined,
@@ -58,12 +58,13 @@ export default function MemberPage() {
     const res = await memberList({
       pageSize: PAGE_SIZE,
       lockId: route.params?.lockId,
-      offset: refresh ? 0 : list.length ?? 0,
+      offset: refresh ? 0 : list.length,
     });
-    setComplete(res.data.list.length < PAGE_SIZE);
+    const dataList: MemberItem[] = res?.data?.list ?? [];
+    setComplete(dataList.length < PAGE_SIZE);
     setLockName(res.data.lockName);
     setTotal(res.data.total);
-    setList(refresh ? res.data.list : [...list, ...res.data.list]);
+    setList(refresh ? dataList : [...list, ...dataList]);
   };
 
   const onDelete = async () => {
@@ -161,9 +162,11 @@ export default function MemberPage() {
           <IconFont name="add" color="#333333" size={14} />
           <Text style={styles.addBtnText}>添加成员，授权使用地锁</Text>
         </TouchableOpacity>
-        {list?.map(item => {
-          return (
-            <View key={item.id} style={styles.card}>
+        <FlatList
+          data={list}
+          keyExtractor={item => String(item.id)}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
               <Flex align="center" justify="between">
                 <Text style={styles.username}>{item.username}</Text>
                 <TouchableOpacity
@@ -192,8 +195,8 @@ export default function MemberPage() {
                 </Text>
               </Flex>
             </View>
-          );
-        })}
+          )}
+        />
       </View>
       <PopConfirm
         visible={deleteRef}
@@ -212,7 +215,7 @@ export default function MemberPage() {
           <Flex style={styles.itemContent} align="center" justify="between">
             <Text style={[styles.label, styles.contentLabel]}>成员昵称</Text>
             <TextInput
-              style={{ flex: 1, textAlign: 'right', ...styles.input }}
+              style={{ flex: 1, ...styles.input }}
               placeholder="请输入"
               value={currentRow?.username}
               onChangeText={text => {
@@ -228,7 +231,7 @@ export default function MemberPage() {
               成员手机号码
             </Text>
             <TextInput
-              style={{ flex: 1, textAlign: 'right', ...styles.input }}
+              style={[styles.input, { flex: 1 }]}
               placeholder="请输入"
               type="phone"
               value={currentRow?.mobile}

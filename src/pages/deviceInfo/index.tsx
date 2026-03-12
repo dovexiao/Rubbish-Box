@@ -88,6 +88,7 @@ const DeviceInfo = () => {
               navigation.navigate('HandOver', {
                 id: deviceInfo?.id,
                 bleNo: deviceInfo?.bleNo,
+                needPin: deviceInfo?.needPin,
               });
             }
           }}
@@ -175,16 +176,16 @@ const DeviceInfo = () => {
           id: params?.lockId,
           qrCode: value,
         });
+
+        scanBindQrCameraRef.current?.close();
         hideLoading();
-        if (res?.success) {
-          showToast('绑定成功');
-          // scanBindQrPopRef.current?.close();
-          pageContainerRef.current?.refresh();
-          return { ok: true, data: res };
-        }
-        return { ok: false, message: res?.message || '绑定失败', data: res };
+        showToast({
+          title: res.code === 200 ? '绑定成功' : '绑定失败',
+          icon: res.code === 200 ? 'success' : 'none',
+        });
+        pageContainerRef.current?.refresh();
       } catch (error: any) {
-        hideLoading();
+        showToast('绑定异常');
         return { ok: false, message: '绑定异常', error };
       }
     },
@@ -212,9 +213,8 @@ const DeviceInfo = () => {
       buzzerStatus,
       id: deviceInfo?.id,
     });
-    hideLoading();
     if (res.success && res.code === 200) {
-      loopOperateStatus(11);
+      await loopOperateStatus(11, true);
     } else {
       showToast(res.message || '修改失败');
     }
@@ -233,23 +233,24 @@ const DeviceInfo = () => {
     return res.success;
   };
 
-  const loopOperateStatus = async (ot: number) => {
+  const loopOperateStatus = async (ot: number, hasAnimation?: boolean) => {
     let timer: any = null;
-    let result: any = null;
     const { start, stop } = loopFunc(async () => {
       const res = await getOperateResult({
         deviceNo: deviceInfo?.deviceNo,
         ot,
       });
-      result = res;
-      if (res) {
+      if (res.data) {
         fetchLockInfo();
         stop();
-        eventCenter.trigger('onAnimation', {
-          type:
-            deviceInfo?.coverStatus === 1 ? 'closeCovering' : 'openCovering',
-          value: true,
-        });
+        if (!hasAnimation) {
+          eventCenter.trigger('onAnimation', {
+            type:
+              deviceInfo?.coverStatus === 1 ? 'closeCovering' : 'openCovering',
+            value: true,
+          });
+        }
+
         if (timer) {
           clearTimeout(timer);
           timer = null;
@@ -260,7 +261,9 @@ const DeviceInfo = () => {
       return true;
     }, 1000);
     timer = setTimeout(() => {
-      eventCenter.trigger('onOptioned', false);
+      if (!hasAnimation) {
+        eventCenter.trigger('onOptioned', false);
+      }
       stop();
       hideLoading();
       showToast('操作失败');
@@ -305,7 +308,7 @@ const DeviceInfo = () => {
         </Flex>
         <Flex style={styles.cardRows}>
           <Text style={styles.cardLable}>地锁SN码</Text>
-          <Text style={styles.cardValue}>{lockInfo?.deviceNo ?? ''}</Text>
+          <Text style={styles.cardValue}>{lockInfo?.lockId ?? ''}</Text>
         </Flex>
         <Flex style={[styles.cardRows, { position: 'relative' }]}>
           <Text style={styles.cardLable}>供电模式</Text>

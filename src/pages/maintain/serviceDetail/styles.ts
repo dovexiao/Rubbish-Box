@@ -25,6 +25,7 @@ export default StyleSheet.create({
     marginTop: 12,
     minHeight: 32,
     width: '100%',
+    gap: 10,
   },
   infoItemText: {
     fontSize: 14,

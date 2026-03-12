@@ -16,7 +16,7 @@ import { cacheGetSync, cacheRemove, cacheSetSync } from '@/utils/cache';
 import { tokenStorage } from '@/utils/storage';
 import styles from './styles';
 import { useTheme } from '@/context/ThemeContext';
-import { showToast } from '@/utils';
+import { reLaunch, showToast } from '@/utils';
 
 type MineInfo = {
   id?: string | number;
@@ -74,7 +74,7 @@ export default function Mine() {
 
   const requireLogin = useCallback(() => {
     showToast('请先登录');
-    navigation.reset('Login');
+    reLaunch('Login');
   }, [navigation]);
 
   const onLogout = useCallback(async () => {
@@ -171,18 +171,31 @@ export default function Mine() {
           info.avatar.startsWith('http') ? (
             <Image source={{ uri: info.avatar }} style={styles.avatar} />
           ) : (
-            <View style={styles.avatar} />
+            <Image
+              source={{
+                uri: 'https://g.18qjz.cn/img/boklock/logo.png',
+              }}
+              resizeMode="contain"
+              style={styles.avatar}
+            />
           )}
         </TouchableOpacity>
 
-        <Text
-          style={[
-            styles.name,
-            themeType === 'dark' ? styles.darkName : styles.lightName,
-          ]}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            if (!hasToken) return requireLogin();
+          }}
         >
-          {hasToken ? info?.nickName ?? '' : '未登录'}
-        </Text>
+          <Text
+            style={[
+              styles.name,
+              themeType === 'dark' ? styles.darkName : styles.lightName,
+            ]}
+          >
+            {hasToken ? info?.nickName ?? '' : '去登录'}
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           activeOpacity={0.8}

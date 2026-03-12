@@ -5,7 +5,7 @@
 import React from 'react';
 import { Text, TextProps, StyleProp, TextStyle } from 'react-native';
 
-export type IconFontTTFName = 'a-pop-upwindowsclose' | 'star' | 'a-combinationunit' | 'a-styledescription' | 'a-add12' | 'a-scanQRcodes1' | 'copy1' | 'feedback' | 'a-nextpage' | 'a-previouspage' | 'a-addequipments' | 'a-batterylifepriority' | 'a-powersupply' | 'a-performancefirst' | 'more' | 'search' | 'a-downloadtheAPP' | 'a-operatingguide' | 'message1' | 'a-Equipmentlist' | 'a-customerservice' | 'lock' | 'order' | 'unlock' | 'park1' | 'pull-down' | 'a-VIPInvitation' | 'a-headfor-16-grey1' | 'bluetooth-1' | 'a-headfor-201' | 'down' | 'a-advertisingdisplay' | 'a-headfor-121' | 'exit' | 'a-combinationmanagement' | 'maintain' | 'share' | 'a-powermanagement' | 'a-equipmentinformation' | 'member-20' | 'message' | 'location1' | 'rise' | 'setting' | 'member' | 'a-skinpeeler' | 'shopping' | 'pen16' | 'pen24' | 'explain' | 'download' | 'play' | 'a-headfor-16-grey' | 'a-Videoguidance' | 'a-Upgradelock' | 'mine' | 'statistics1' | 'a-Lowbatteryreminder' | 'bell' | 'wrong-red' | 'right-green' | 'invisible' | 'visible' | 'back' | 'selected' | 'unselected' | 'multiplication' | 'tick-white' | 'minus' | 'telephone' | 'add' | 'camera' | 'refresh' | 'location' | 'redact' | 'close' | 'a-headfor-12' | 'a-headfor-20' | 'statistics' | 'manager' | 'arrows1';
+export type IconFontTTFName = 'camera1' | 'a-pop-upwindowsclose' | 'star' | 'a-combinationunit' | 'a-styledescription' | 'a-add12' | 'a-scanQRcodes1' | 'copy1' | 'feedback' | 'a-nextpage' | 'a-previouspage' | 'a-addequipments' | 'a-batterylifepriority' | 'a-powersupply' | 'a-performancefirst' | 'more' | 'search' | 'a-downloadtheAPP' | 'a-operatingguide' | 'message1' | 'a-Equipmentlist' | 'a-customerservice' | 'lock' | 'order' | 'unlock' | 'park1' | 'pull-down' | 'a-VIPInvitation' | 'a-headfor-16-grey1' | 'bluetooth-1' | 'a-headfor-201' | 'down' | 'a-advertisingdisplay' | 'a-headfor-121' | 'exit' | 'a-combinationmanagement' | 'maintain' | 'share' | 'a-powermanagement' | 'a-equipmentinformation' | 'member-20' | 'message' | 'location1' | 'rise' | 'setting' | 'member' | 'a-skinpeeler' | 'shopping' | 'pen16' | 'pen24' | 'explain' | 'download' | 'play' | 'a-headfor-16-grey' | 'a-Videoguidance' | 'a-Upgradelock' | 'mine' | 'statistics1' | 'a-Lowbatteryreminder' | 'bell' | 'wrong-red' | 'right-green' | 'invisible' | 'visible' | 'back' | 'selected' | 'unselected' | 'multiplication' | 'tick-white' | 'minus' | 'telephone' | 'add' | 'camera' | 'refresh' | 'location' | 'redact' | 'close' | 'a-headfor-12' | 'a-headfor-20' | 'statistics' | 'manager' | 'arrows1';
 
 export interface IconFontTTFProps extends TextProps {
   name: IconFontTTFName;
@@ -15,6 +15,7 @@ export interface IconFontTTFProps extends TextProps {
 }
 
 const glyphMap: Record<IconFontTTFName, string> = {
+  'camera1': '\ue71d',
   'a-pop-upwindowsclose': '\ue71b',
   'star': '\ue71a',
   'a-combinationunit': '\ue719',

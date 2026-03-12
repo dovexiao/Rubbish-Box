@@ -12,6 +12,7 @@ import {
   shareWeChatMiniProgram,
 } from '@/utils/wechat';
 import { stringify } from '@/utils/stringify';
+import { DEPLOY_ENV } from '@/config';
 
 export default function ShareSuccessPage() {
   const navigation = useNavigation();
@@ -54,7 +55,7 @@ export default function ShareSuccessPage() {
       webpageUrl: 'https://your-domain.com/fallback.html',
       thumbImageUrl: 'https://g.18qjz.cn/img/boklock/wechat_invite.png',
       scene: 0,
-      miniProgramType: process.env.DEPLOY_ENV === 'dev' ? 2 : 0,
+      miniProgramType: DEPLOY_ENV === 'dev' ? 2 : 0,
     };
 
     const sharePromise = shareWeChatMiniProgram(shareOptions);
@@ -99,7 +100,7 @@ export default function ShareSuccessPage() {
   };
 
   const goBack = () => {
-    if (route.params?.navigateBackCount === '2') {
+    if (route.params?.navigateBackCount === 2) {
       navigation.goBack();
       setTimeout(() => navigation.goBack(), 0);
     } else {

@@ -3,6 +3,7 @@ import Cos from 'react-native-cos-sdk';
 import dayjs from 'dayjs';
 import { randomNum } from '@/utils';
 import { getCosKey } from '@/services/common';
+import { DEPLOY_ENV } from '../../../config';
 
 const REGION = 'ap-shanghai';
 const BUCKET = 'sbqfc-1307862547';
@@ -88,10 +89,11 @@ export default function (options: {
       _uploadId = uploadId;
     };
 
+    const deployEnv = DEPLOY_ENV || 'dev';
     const path = (
       appointName
-        ? `img/${process.env.DEPLOY_ENV}/${appointName}`
-        : `img/${process.env.DEPLOY_ENV}/${folder}/${
+        ? `img/${deployEnv}/${appointName}`
+        : `img/${deployEnv}/${folder}/${
             randomFileName ? randomNum(10000, 100000) + ext : filename
           }`
     ).replace(/[\u4E00-\u9FFF\u0020]/g, '');

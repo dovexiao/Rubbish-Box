@@ -78,8 +78,7 @@ const Password: React.FC<PasswordProps> = ({
         } catch (e) {
           console.error('获取推送设备信息失败:', e);
         }
-        hideLoading();
-        showToast('登录成功');
+        showToast({ title: '登录成功', icon: 'success' });
         // 延迟执行导航，确保状态已更新和导航引用已准备好
         setTimeout(() => {
           const pages = getCurrentPages();

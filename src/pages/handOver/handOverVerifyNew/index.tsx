@@ -19,6 +19,7 @@ import { sendChangePinByBluetooth } from '@/utils/api';
 import { useRoute } from '@react-navigation/native';
 import Success from '../com/success';
 import { styles } from './style';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 const SMS_TEXT_TOAST: Record<number, string> = {
   0: '请输入验证码',
@@ -38,9 +39,12 @@ function isCnMobile(mobile?: string): boolean {
 
 export default function HandOverVerifyNew() {
   const route = useRoute<any>();
+  const navigation = useAppNavigation();
   const lockIds = route.params?.lockIds as string | undefined;
   const currentAdminCode = route.params?.currentAdminCode as string | undefined;
   const bleNo = route.params?.bleNo as string | undefined;
+  const bleName = route.params?.bleName as string | undefined;
+  const needPin = route.params?.needPin as number | undefined;
 
   const [step, setStep] = useState(0);
   const [smsError, setSmsError] = useState(false);
@@ -98,7 +102,8 @@ export default function HandOverVerifyNew() {
         () => ({} as Record<string, any>),
       )) || {};
     const deviceId = deviceInfo[String(bleNo ?? '')]?.deviceId;
-    if (!deviceId) {
+
+    if (!deviceId && !!needPin) {
       showToast('未找到蓝牙设备信息，请重新配对');
       return;
     }
@@ -120,36 +125,41 @@ export default function HandOverVerifyNew() {
         return;
       }
 
-      const resetRes: any = await resetBluetoothPin({ id: lockIds });
-      if (!(resetRes?.code === 200 && resetRes?.success)) {
-        hideLoading();
-        showToast(resetRes?.message || resetRes?.msg || '移交失败');
-        return;
-      }
+      if (!!needPin) {
+        const resetRes: any = await resetBluetoothPin({ id: lockIds });
+        if (!(resetRes?.code === 200 && resetRes?.success)) {
+          hideLoading();
+          showToast(resetRes?.message || resetRes?.msg || '移交失败');
+          return;
+        }
 
-      const newPin = resetRes?.data;
-      if (!newPin) {
-        hideLoading();
-        showToast('移交失败');
-        return;
-      }
+        const newPin = resetRes?.data;
+        if (!newPin) {
+          hideLoading();
+          showToast('移交失败');
+          return;
+        }
 
-      const cmdRes = await sendChangePinByBluetooth({ deviceId, pin: newPin });
-      if (!cmdRes?.success) {
-        hideLoading();
-        showToast('移交失败');
-        return;
-      }
+        const cmdRes = await sendChangePinByBluetooth({
+          deviceId,
+          pin: newPin,
+        });
+        if (!cmdRes?.success) {
+          hideLoading();
+          showToast('移交失败');
+          return;
+        }
 
-      const apiRes: any = await settingBluetoothPin({
-        id: lockIds,
-        pin: newPin,
-        bleNo: cmdRes.newMac,
-      });
-      if (!(apiRes?.code === 200 && apiRes?.success)) {
-        hideLoading();
-        showToast(apiRes?.message || apiRes?.msg || '移交失败');
-        return;
+        const apiRes: any = await settingBluetoothPin({
+          id: lockIds,
+          pin: newPin,
+          bleNo: cmdRes.newMac,
+        });
+        if (!(apiRes?.code === 200 && apiRes?.success)) {
+          hideLoading();
+          showToast(apiRes?.message || apiRes?.msg || '移交失败');
+          return;
+        }
       }
 
       const res: any = await handOverAdmin({
@@ -162,8 +172,18 @@ export default function HandOverVerifyNew() {
       hideLoading();
       if (res?.code === 200 && res?.success) {
         stop();
-        setIsSuccess(true);
+        hideLoading();
+        showToast({ title: '移交成功' });
+        setTimeout(() => {
+          navigation.navigate('UnBindSuccess', {
+            pages: 'handOverSuccess',
+            bleName,
+            bleNo,
+            deviceId,
+          });
+        }, 800);
       } else {
+        hideLoading();
         showToast(res?.message || res?.msg || '移交失败');
         setSmsError(res?.code === 515);
         setStep(0);

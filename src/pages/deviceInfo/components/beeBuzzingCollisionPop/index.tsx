@@ -175,10 +175,15 @@ export const BeeBuzzingCollisionPop = forwardRef<
                 round={false}
                 btnBorderRadius={12}
                 onPress={async () => {
-                  await onConfirm({
+                  const res = await onConfirm({
                     buzzerTime: Number(buzzerTime),
                     buzzerStatus: beeBuzzingCollision ? 1 : 0,
                   });
+                  if (res) {
+                    // 可能会操作失败,所以也需要重置
+                    shouldResetStateRef.current = true;
+                    popupRef.current?.close();
+                  }
                 }}
                 text="确定"
                 textStyle={[styles.font32, { color: '#FFFFFF' }]}

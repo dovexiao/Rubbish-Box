@@ -143,10 +143,10 @@ export default function Shopping() {
         activeOpacity={0.8}
         style={styles.bottomBtn}
         onPress={() => {
-          navigation.navigate('PickupCode');
+          navigation.navigate('PickupCodeDaily');
         }}
       >
-        <Text style={styles.bottomBtnText}>提货码</Text>
+        <Text style={styles.bottomBtnText}>绑定礼品卡</Text>
         <IconFont name="a-nextpage" color="#333333" size={20} />
       </TouchableOpacity>
     </View>

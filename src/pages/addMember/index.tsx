@@ -11,7 +11,13 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { PageContainer } from '@/components';
 import LockItem from './com/lockItem';
 import { modifyStaff, staffDetail, staffLockList } from '@/services/user';
-import { hideLoading, mobileExp, showLoading, showToast } from '@/utils';
+import {
+  eventCenter,
+  hideLoading,
+  mobileExp,
+  showLoading,
+  showToast,
+} from '@/utils';
 import GradientButton from '@/components/GradientButton';
 import styles from './styles';
 
@@ -166,12 +172,22 @@ export default function AddMember() {
         pageSize: PAGE_SIZE,
         offset: locks.length ?? 0,
       });
-      console.log(res, '===res');
 
       if (res.code === 200 && res.success) {
         hideLoading();
-        showToast('操作成功');
-        navigation.goBack();
+        showToast({ title: '操作成功', icon: 'success' });
+        eventCenter.trigger('refresh', {
+          reload: !memberId,
+          currentInfo: info,
+        });
+        if (!!locks.length) {
+          const lockInfo = locks?.[0];
+          navigation.navigate('CompositeShare', {
+            lockId: lockInfo?.id,
+            lockType: lockInfo.lockType == 1 ? 'single' : 'multiple',
+            navigateBackCount: 2,
+          });
+        }
       } else {
         hideLoading();
         showToast(res.msg || res.message || '操作失败');

@@ -18,6 +18,7 @@ import {
   getGroupOperateResult,
   getOperateResult,
   operateLock,
+  operateLockCover,
 } from '@/services/device';
 import { OPT_TYPE, OT_STATUS } from '@/constants';
 import { DeviceSwitch } from '../Device/switch';
@@ -47,6 +48,7 @@ import BluetoothStatus, { BluetoothStatusRef } from '../bluetoothStatus';
 import { OperationCommandByBluetooth } from '@/utils/api';
 import { useAtom, useSetAtom } from 'jotai';
 import { bluetoothOperationLockFallStatusStore } from '@/store/store';
+import { PopConfirmRef } from '../popConfirm';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -79,6 +81,7 @@ const Content: React.FC<ContentProps> = ({
   );
 
   const popRef = useRef<AutoOperatePopRef>(null);
+  const coverOpenRef = useRef<PopConfirmRef>(null);
   const manageMultipleRef = useRef<AnimationPopRef>(null);
   const bluetoothConnectStatusRef = useRef<BluetoothStatusRef>(null);
   const bluetoothControlRef = useRef<'RISE' | 'DOWN'>('RISE');
@@ -103,6 +106,7 @@ const Content: React.FC<ContentProps> = ({
   // 地锁操作
   const handleOperate = useCallback(
     async (direction: 'RISE' | 'DOWN') => {
+      console.log('handleOperate', detail);
       if (!detail?.id || optioning) return;
 
       eventCenter.trigger('onOptioned', true);
@@ -238,6 +242,46 @@ const Content: React.FC<ContentProps> = ({
     start();
   };
 
+  // 锁盖轮询
+  const loopOperateStatus = async (ot: EumOt[keyof EumOt]) => {
+    let timer: any = null;
+    const { start, stop } = loopFunc(async () => {
+      const res = await getOperateResult({
+        deviceNo: detail?.deviceNo,
+        ot,
+      });
+      if (res.data) {
+        if (onFresh) {
+          await onFresh(detail?.id);
+        } else if (reload) {
+          await reload(detail?.id);
+        }
+        stop();
+        eventCenter.trigger('onAnimation', {
+          type: detail?.coverStatus === 1 ? 'closeCovering' : 'openCovering',
+          value: true,
+        });
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        hideLoading();
+        return false;
+      }
+      return true;
+    }, 1000);
+    timer = setTimeout(() => {
+      eventCenter.trigger('onOptioned', false);
+      stop();
+      hideLoading();
+      showToast({
+        title: '操作失败',
+        icon: 'none',
+      });
+    }, 10000);
+    start();
+  };
+
   // 蓝牙操作地锁
   const handleOperateByBluetooth = async (direction: 'RISE' | 'DOWN') => {
     try {
@@ -303,6 +347,31 @@ const Content: React.FC<ContentProps> = ({
         isAdmin: detail?.role === 1,
       });
     }
+  };
+
+  const operateCover = async () => {
+    eventCenter.trigger('onOptioned', true);
+    showLoading({
+      title: `${
+        detail?.coverStatus === COVER_STATUS.OPEN ? '上锁' : '解锁'
+      }中...`,
+    });
+
+    const res = await operateLockCover({
+      id: detail?.id,
+    });
+
+    if (res.success) {
+      await loopOperateStatus(13);
+    } else {
+      eventCenter.trigger('onOptioned', false);
+      hideLoading();
+      showToast({
+        title: res.message,
+        icon: 'none',
+      });
+    }
+    return res.data;
   };
 
   const address = detail?.locationList?.[0]?.address || detail?.address || '';
@@ -460,7 +529,7 @@ const Content: React.FC<ContentProps> = ({
             activeOpacity={1}
             style={styles.manualBtn}
             disabled={optioning}
-            onPress={() => handleOperate('DOWN')}
+            onPress={() => coverOpenRef.current?.open()}
           >
             <View style={styles.manualIconCircle}>
               <IconFont
@@ -708,6 +777,20 @@ const Content: React.FC<ContentProps> = ({
             setLockStatus('DOWN');
           }
           handleOperateByBluetooth(bluetoothControlRef.current);
+        }}
+      />
+      <PopConfirm
+        ref={coverOpenRef}
+        title={`确定要${
+          detail?.coverStatus === COVER_STATUS.OPEN ? '关闭' : '打开'
+        }锁盖吗？`}
+        onConfirm={async () => {
+          coverOpenRef.current?.close();
+          if (detail?.powerType === 1) {
+            await operateCover();
+          } else {
+            bluetoothConnectStatusRef.current?.open();
+          }
         }}
       />
     </View>

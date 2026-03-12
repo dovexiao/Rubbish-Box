@@ -134,6 +134,7 @@ const Login = () => {
               mobile: thirdLoginRes.data.mobile,
             });
           } else {
+            hideLoading();
             showToast('登录成功');
             reLaunch('Index');
           }

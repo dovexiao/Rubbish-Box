@@ -1,6 +1,7 @@
 import { captureRef } from 'react-native-view-shot';
 import { RefObject } from 'react';
 import { Platform } from 'react-native';
+import { DEPLOY_ENV } from '@/config';
 import { DetailsProp } from '@/pages/vip/type';
 import { showToast, showLoading, hideLoading } from '@/utils';
 import {
@@ -57,7 +58,7 @@ export const onShareAppMessage = async ({
     path: path || `/pages/index/index`,
     webpageUrl: 'https://your-domain.com/fallback.html',
     scene: 0,
-    miniProgramType: process.env.DEPLOY_ENV === 'dev' ? 2 : 0, // 0 正式版 1 测试版 2 体验版
+    miniProgramType: DEPLOY_ENV === 'dev' ? 2 : 0, // 0 正式版 1 测试版 2 体验版
     title,
     thumbImageUrl: imageUrl,
   });

@@ -49,11 +49,13 @@ export default function UnbindNotice() {
       const bleNo = res?.data?.bleNo;
       const id = res?.data?.id;
       const bleName = res?.data?.bleName;
+      const needPin = res?.data?.needPin;
       navigation.navigate('UnbindDevice' as any, {
         phoneNumber: adminMobile,
         bleNo,
         id,
         bleName,
+        needPin,
       });
       return;
     }

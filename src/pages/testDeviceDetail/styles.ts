@@ -171,6 +171,63 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
   },
+  maskWrapper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    borderRadius: 12,
+  },
+  btnContainerWrapper: {
+    width: '100%',
+    marginBottom: 24,
+    paddingTop: 12,
+    paddingHorizontal: 12,
+  },
+  btnContainer: {
+    borderRadius: 12,
+    flex: 1,
+  },
+  btnContainerClose: {
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+  },
+  btnContainerCloseText: {
+    color: '#e86b6e',
+  },
+  btnContainerConfirm: {
+    marginLeft: 15,
+  },
+  btnContainerConfirmText: {
+    color: '#FFFFFF',
+  },
+  lockBtnTextFail: {
+    marginBottom: 12,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  resetBtn: {
+    borderRadius: 24,
+  },
+  historyUnqualifiedReason: {
+    marginTop: 6,
+  },
+  btnContainerText: {
+    width: '100%',
+    textAlign: 'center',
+  },
+  deviceContentWrapperModel2: {
+    position: 'relative',
+  },
+  deviceContentWrapper: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
 });
 
 export default styles;

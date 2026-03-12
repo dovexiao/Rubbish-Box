@@ -23,6 +23,7 @@ export default function HandOverVerify() {
   const deviceId = route.params?.id as string | undefined;
   const bleNo = route.params?.bleNo as string | undefined;
   const bleName = route.params?.bleName as string | undefined;
+  const needPin = route.params?.needPin as number | undefined;
 
   const [step, setStep] = useState(0);
   const [code, setCode] = useState('');
@@ -82,6 +83,7 @@ export default function HandOverVerify() {
           currentAdminCode: code,
           bleNo,
           bleName,
+          needPin,
         });
       } else {
         showToast(res?.message || res?.msg || '验证失败');

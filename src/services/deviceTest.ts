@@ -46,3 +46,11 @@ export const getTestOperateResult = createFetch<any, any>(
   'GET',
 );
 
+// 获取测试设备实时状态/结果（轮询用）
+export const getTestDeviceReslt = createFetch('/boke/deviceTest/status', 'GET');
+
+// 切换车辆存在检测方式（地磁 / 地磁+超声波）
+export const switchTestDevice = createFetch(
+  '/boke/deviceTest/switchCarCheckMethod',
+  'POST',
+);

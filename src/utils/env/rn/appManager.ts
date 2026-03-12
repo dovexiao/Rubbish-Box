@@ -9,6 +9,7 @@ import {
   showLoading,
   hideLoading,
 } from '@/utils';
+import { DEPLOY_ENV, DEPLOY_VERSION } from '@/config';
 import { thirdRequest } from '../../request';
 
 const IOS_PLATFORM = Platform.OS === 'ios';
@@ -82,7 +83,7 @@ async function onHotUpdateReady(callback: (bundleZipFile?: string) => void) {
           .split(/\r?\n/)[0]
           ?.trim()
       : undefined;
-    const currentVersion = localVersion || process.env.DEPLOY_VERSION;
+    const currentVersion = localVersion || DEPLOY_VERSION;
     if (
       vInfo.success &&
       vInfo.data &&
@@ -93,7 +94,7 @@ async function onHotUpdateReady(callback: (bundleZipFile?: string) => void) {
       RNFetchBlob.config({ path: bundleZipFile })
         .fetch(
           'GET',
-          `https://g.18qjz.cn/${process.env.DEPLOY_ENV}/sbqfc-fed/boklock/${client}/${vInfo.data}/build/boklock.zip`,
+          `https://g.18qjz.cn/${DEPLOY_ENV}/sbqfc-fed/boklock/${client}/${vInfo.data}/build/boklock.zip`,
         )
         // .progress({interval: 250}, (received, total) => {
         //   const percent = (received / total) * 100
@@ -315,7 +316,7 @@ export default () => {
         return;
       }
       appUpdateInfo.status = UPDATE_STATUS.CHECKING;
-      if (IOS_PLATFORM && process.env.DEPLOY_ENV === 'real') {
+      if (IOS_PLATFORM && DEPLOY_ENV === 'real') {
         thirdRequest<any>({
           url: `https://itunes.apple.com/CN/lookup?id=6754637381`,
           method: 'get',
@@ -364,7 +365,7 @@ export default () => {
             // ios的测试环境 android的测试和线上环境
             appKey: IOS_PLATFORM
               ? '3ad9b067ddaa7168d0ca30efbe39e8cb'
-              : process.env.DEPLOY_ENV === 'real'
+              : DEPLOY_ENV === 'real'
               ? '79662c89cc735315aad5c5410e33b320' // TODO boklockreal android apikey
               : '7df7e1ddc167c26ba719ff2ad896c37b', // TODO boklockdev android apikey
           },

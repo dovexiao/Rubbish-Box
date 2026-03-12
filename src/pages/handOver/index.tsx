@@ -16,6 +16,7 @@ export default function HandOver() {
   const lockId = route.params?.id as string | undefined;
   const adminUserId = route.params?.adminUserId as string | undefined;
   const bleNo = route.params?.bleNo as string | undefined;
+  const needPin = route.params?.needPin as number | undefined;
   const showPopConfirm = pages !== 'setting';
 
   const popConfirmRef = useRef<PopConfirmRef>(null);
@@ -35,6 +36,7 @@ export default function HandOver() {
           id: lockId,
           bleNo,
           bleName,
+          needPin,
         });
       } else {
         navigation.navigate('HandOverDevice' as any, {

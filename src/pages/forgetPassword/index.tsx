@@ -51,7 +51,7 @@ const ForgetPassword = () => {
       }}
     >
       <View>
-        <Text style={forgetPasswordStyles.passwordTitle}>忘记密码</Text>
+        <Text style={forgetPasswordStyles.passwordTitle}>验证手机号</Text>
         <Flex
           style={[
             forgetPasswordStyles.content,

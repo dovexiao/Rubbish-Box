@@ -28,6 +28,7 @@ type RouteParams = {
   bleNo?: string;
   id?: string | number;
   bleName?: string;
+  needPin?: number;
 };
 
 export default function UnbindDevice() {
@@ -38,6 +39,7 @@ export default function UnbindDevice() {
   const lockId = params.id;
   const bleNo = params.bleNo;
   const bleName = params.bleName;
+  const needPin = params.needPin;
 
   const [step, setStep] = useState<0 | 1>(0);
   const [showError, setShowError] = useState(false);
@@ -89,6 +91,8 @@ export default function UnbindDevice() {
     showLoading({ title: '加载中...' });
     try {
       console.log('lockId', lockId, 'code', code);
+      let cmdRes: any = null;
+      let deviceId: string | null = null;
       const checkRes: any = await unbindSmsCheck({ id: lockId, code: pure });
       if (!(checkRes?.code === 200 && checkRes?.success && checkRes?.data)) {
         showToast({
@@ -98,60 +102,79 @@ export default function UnbindDevice() {
         stop();
         return;
       }
-
       const deviceInfo: Record<string, any> =
         (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
-      const deviceId = deviceInfo[String(bleNo)]?.deviceId;
-      if (!deviceId) {
-        showToast({ title: '未找到蓝牙设备信息，请重新配对' });
-        return;
-      }
+      deviceId = deviceInfo[String(bleNo)]?.deviceId;
+      if (!!needPin) {
+        if (!deviceId) {
+          hideLoading();
+          showToast({ title: '未找到蓝牙设备信息，请重新配对' });
+          return;
+        }
 
-      const resetRes: any = await resetBluetoothPin({ id: lockId });
-      if (!(resetRes?.code === 200 && resetRes?.success)) {
-        showToast({
-          title: resetRes?.message || resetRes?.msg || '解绑失败',
+        const resetRes: any = await resetBluetoothPin({ id: lockId });
+        if (!(resetRes?.code === 200 && resetRes?.success)) {
+          hideLoading();
+          showToast({
+            title: resetRes?.message || resetRes?.msg || '解绑失败',
+          });
+          return;
+        }
+        const newPin = resetRes?.data;
+        if (!newPin) {
+          hideLoading();
+          showToast({ title: '解绑失败' });
+          return;
+        }
+
+        cmdRes = await sendChangePinByBluetooth({
+          deviceId,
+          pin: newPin,
         });
-        return;
-      }
-      const newPin = resetRes?.data;
-      if (!newPin) {
-        showToast({ title: '解绑失败' });
-        return;
-      }
+        if (!cmdRes?.success || !cmdRes?.newMac) {
+          hideLoading();
+          showToast({ title: cmdRes?.msg || '解绑失败' });
+          return;
+        }
 
-      const cmdRes = await sendChangePinByBluetooth({ deviceId, pin: newPin });
-      if (!cmdRes?.success || !cmdRes?.newMac) {
-        showToast({ title: cmdRes?.msg || '解绑失败' });
-        return;
-      }
-
-      const apiRes: any = await settingBluetoothPin({
-        id: lockId,
-        pin: newPin,
-        bleNo: cmdRes.newMac,
-      });
-      if (!(apiRes?.code === 200 && apiRes?.success)) {
-        showToast({
-          title: apiRes?.message || apiRes?.msg || '解绑失败',
+        const apiRes: any = await settingBluetoothPin({
+          id: lockId,
+          pin: newPin,
+          bleNo: cmdRes.newMac,
         });
-        return;
+        if (!(apiRes?.code === 200 && apiRes?.success)) {
+          hideLoading();
+          showToast({
+            title: apiRes?.message || apiRes?.msg || '解绑失败',
+          });
+          return;
+        }
       }
 
-      const res: any = await unbind({
+      const params: any = {
         id: lockId,
         code: pure,
-        bleNo: cmdRes.newMac,
-      });
+      };
+      if (cmdRes?.newMac) {
+        params.bleNo = cmdRes.newMac;
+      }
+
+      const res: any = await unbind(params);
 
       if (res?.code === 200 && res?.success) {
         stop();
         await removeBluetoothDeviceInfo(bleNo).catch(() => {});
+        hideLoading();
         showToast({ title: '解绑成功', icon: 'success' });
         setTimeout(() => {
-          navigation.goBack();
+          navigation.navigate('UnBindSuccess', {
+            bleName,
+            bleNo,
+            deviceId,
+          });
         }, 800);
       } else {
+        hideLoading();
         showToast({
           title: res?.message || res?.msg || '解绑失败',
         });
@@ -161,9 +184,8 @@ export default function UnbindDevice() {
         stop();
       }
     } catch {
-      showToast({ title: '解绑失败' });
-    } finally {
       hideLoading();
+      showToast({ title: '解绑失败' });
     }
   }, [bleNo, code, lockId, navigation, stop]);
 

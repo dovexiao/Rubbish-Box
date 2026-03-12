@@ -130,6 +130,11 @@ export const routes = {
       label: '领取详情',
     },
     {
+      name: 'PickupCodeDaily',
+      component: require('@/pages/pickupCodeDaily').default,
+      label: '绑定礼品卡',
+    },
+    {
       name: 'CompositeManage',
       component: require('@/pages/composit/manage').default,
       label: '编辑组合设备',
@@ -328,6 +333,11 @@ export const routes = {
       name: 'UnbindDevice',
       component: require('@/pages/unbind/unbindDevice').default,
       label: '解除绑定',
+    },
+    {
+      name: 'UnBindSuccess',
+      component: require('@/pages/unBindSuccess').default,
+      label: '解除绑定成功',
     },
     {
       name: 'BluetoothControl',
