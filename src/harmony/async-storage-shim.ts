@@ -157,13 +157,7 @@ const isRNFetchBlobAvailable = (): boolean =>
   typeof rnfbFs.readFile === 'function' &&
   typeof rnfbFs.writeFile === 'function';
 
-const isHarmonyPreferencesAvailable = (): boolean =>
-  !!harmonyPreferencesModule &&
-  typeof harmonyPreferencesModule.setItem === 'function' &&
-  typeof harmonyPreferencesModule.getItem === 'function' &&
-  typeof harmonyPreferencesModule.removeItem === 'function' &&
-  typeof harmonyPreferencesModule.clear === 'function' &&
-  typeof harmonyPreferencesModule.getAllKeys === 'function';
+const isHarmonyPreferencesAvailable = (): boolean => !!harmonyPreferencesModule;
 
 const hasStoreData = (data: Store | null): data is Store =>
   !!data && typeof data === 'object' && Object.keys(data).length > 0;
@@ -295,9 +289,19 @@ const writeToHarmonyPreferences = async (data: Store): Promise<void> => {
   }
 
   try {
-    await harmonyPreferencesModule!.clear();
+    const existingKeys = (await harmonyPreferencesModule!.getAllKeys()) || [];
+    // 先删除已不存在的 key
+    for (const key of existingKeys) {
+      if (!Object.prototype.hasOwnProperty.call(data, key)) {
+        await harmonyPreferencesModule!.removeItem(key);
+      }
+    }
+    // 覆盖/新增数据
     for (const [key, value] of Object.entries(data)) {
-      await harmonyPreferencesModule!.setItem(key, value);
+      const current = await harmonyPreferencesModule!.getItem(key);
+      if (current !== value) {
+        await harmonyPreferencesModule!.setItem(key, value);
+      }
     }
   } catch (error) {
     console.warn(

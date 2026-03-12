@@ -86,9 +86,10 @@ try {
 } catch (_) {}
 
 // ---------- 权限与开关 ----------
+const isHarmony: boolean = Platform.OS !== 'ios' && Platform.OS !== 'android';
 
 export const authBluetooth = async (): Promise<{ success: boolean }> => {
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === 'ios' || isHarmony) {
     return { success: true };
   }
   if (
@@ -172,7 +173,7 @@ export const openBluetooth = (): Promise<{ success: boolean }> => {
   });
 };
 
-/** 使用 react-native-ble-plx 获取当前蓝牙状态，PoweredOn 表示已开启 */
+/**
 export const getBluetoothState = async (): Promise<string> => {
   try {
     await ensureBleManagerAlive();
@@ -186,7 +187,7 @@ export const getBluetoothState = async (): Promise<string> => {
 
 /**
  * 使用原生模块获取系统已连接的所有蓝牙设备（推荐）
- * 优势：不受 UUID 限制，可以获取所有类型的已连接设备（GATT/HID/A2DP/HFP）
+ * 优势：不受 UUID 限制，可以获取所有类型的已连接设备（GATT/HID/A2DP/HFP等）
  * @returns Promise 返回设备列表
  */
 export const getSystemConnectedDevices = (): Promise<{
@@ -212,7 +213,42 @@ export const getSystemConnectedDevices = (): Promise<{
         }
       }
 
-      if (Platform.OS === 'ios') {
+      if (isHarmony) {
+        try {
+          let hModule;
+          try {
+            hModule =
+              NativeModules?.HarmonyAppInfo ||
+              (global as any).TurboModuleRegistry?.get('HarmonyAppInfo');
+          } catch (e) {}
+
+          let pairedMacs: string[] = [];
+          if (hModule && typeof hModule?.getPairedDevices === 'function') {
+            pairedMacs = (await hModule.getPairedDevices()) || [];
+          }
+
+          const hasDevices = pairedMacs.length > 0;
+          resolve({
+            success: hasDevices,
+            data: hasDevices
+              ? pairedMacs.map((mac: string) => ({
+                  deviceId: mac, // 鸿蒙系统下返回的配对设备是纯物理 MAC 地址
+                  name: '已配对设备',
+                  address: mac,
+                  isConnected: true,
+                }))
+              : [],
+            message: hasDevices ? undefined : '当前无已连接的设备',
+          });
+        } catch (error: any) {
+          console.error('[蓝牙] Harmony 获取已连接设备失败', error);
+          resolve({
+            success: false,
+            data: [],
+            message: error?.message || '获取已连接设备失败',
+          });
+        }
+      } else if (Platform.OS === 'ios') {
         try {
           const res = await bleInstance.connectedDevices([
             '0000fff0-0000-1000-8000-00805f9b34fb',
@@ -233,7 +269,7 @@ export const getSystemConnectedDevices = (): Promise<{
             message: hasDevices ? undefined : '当前无已连接的设备',
           });
         } catch (error: any) {
-          console.error('[蓝牙] iOS 获取已连接设备失败:', error);
+          console.error('[蓝牙] iOS 获取已连接设备失败', error);
           resolve({
             success: false,
             data: [],
@@ -346,6 +382,18 @@ export const searchBluetoothDevices = async (
         if (Platform.OS === 'ios') {
           // iOS: 跳转到系统蓝牙设置
           await Linking.openURL('App-Prefs:root=Bluetooth');
+        } else if (isHarmony) {
+          let hModule;
+          try {
+            hModule =
+              NativeModules?.HarmonyAppInfo ||
+              (global as any).TurboModuleRegistry?.get('HarmonyAppInfo');
+          } catch (e) {}
+          if (hModule && typeof hModule?.openBluetoothSettings === 'function') {
+            await hModule.openBluetoothSettings();
+          } else {
+            await Linking.openSettings();
+          }
         } else {
           if (
             IntentLauncher &&
@@ -385,7 +433,7 @@ export const searchBluetoothDevices = async (
       // 开始扫描
       bleInstance.startDeviceScan(
         null,
-        { allowDuplicates: false },
+        { allowDuplicates: true },
         (error, device: any) => {
           if (error) {
             bleInstance.stopDeviceScan();
@@ -410,7 +458,7 @@ export const searchBluetoothDevices = async (
       );
     });
   } catch (error) {
-    console.log('❌ searchBluetoothDevices 失败:', error);
+    console.log('🔍 searchBluetoothDevices 失败:', error);
     return { success: false };
   }
 };
@@ -427,14 +475,14 @@ export const stopSearchBluetoothDevices = (
   });
 };
 
-// ---------- iOS 设备是否被忽略；Android 用 NativeModules ----------
+// ---------- iOS 设备是否被忽略；Android 使用 NativeModules ----------
 
 export const checkIfDeviceIgnoredOnIOS = (
   deviceId: string,
   bleNo?: string,
 ): Promise<{ isIgnored: boolean; reason?: string }> => {
   return new Promise(async resolve => {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === 'ios' || isHarmony) {
       if (!deviceId) {
         resolve({ isIgnored: false, reason: '设备ID为空' });
         return;
@@ -472,7 +520,7 @@ export const checkIfDeviceIgnoredOnIOS = (
             try {
               bleInstance.startDeviceScan(
                 null,
-                { allowDuplicates: false },
+                { allowDuplicates: true },
                 (error, device) => {
                   if (error) {
                     clearTimeout(timer);
@@ -509,7 +557,7 @@ export const checkIfDeviceIgnoredOnIOS = (
       } catch (error: any) {
         resolve({
           isIgnored: false,
-          reason: `检查失败: ${error?.message || '未知错误'}`,
+          reason: `检查失败 ${error?.message || '未知错误'}`,
         });
       }
       return;
@@ -589,7 +637,7 @@ export const notifyBLECharacteristicValueChange = (options: {
 }): Promise<{ success: boolean; msg?: string }> => {
   return new Promise(resolve => {
     try {
-      // 确保 BleManager 在弹窗/导航等场景下仍然有效
+      // 确保 BleManager 在弹出导航等场景下仍然有效
       void ensureBleManagerAlive();
       bleInstance.monitorCharacteristicForDevice(
         options.deviceId,
@@ -686,7 +734,7 @@ export const sendDataToDevice = (options: {
   }
 };
 
-// ---------- 模式指令（sendBleCommandWithAck + sendModeCommandByBluetooth） ----------
+// ---------- 模式指令（sendBleCommandWithAck + sendModeCommandByBluetooth）----------
 
 type BleCommandType = 'mode' | 'pin' | 'operation' | 'near';
 
@@ -948,7 +996,7 @@ export const sendChangePinByBluetooth = async (options: {
 
     // 如果找到了设备信息，计算新的MAC地址
     if (oldBleNo) {
-      // 规范化旧 MAC：去掉冒号、转大写，只保留前 12 个十六进制字符
+      // 规范化旧 MAC：去掉冒号、转大写，只保留后 12 个十六进制字符
       const baseMac = (oldBleNo || '')
         .replace(/:/g, '')
         .toUpperCase()
@@ -981,7 +1029,7 @@ export const sendChangePinByBluetooth = async (options: {
   // 注意：硬件收到的MAC经过了 |0xc0 处理，所以返回给后端的MAC也需要同样处理
   let processedMac = newBleNo;
   if (processedMac && processedMac.length >= 12) {
-    // 获取最后一个字节（最后2个十六进制字符）
+    // 获取最后一个字节（最后 2 个十六进制字符）
     const lastByteHex = processedMac.slice(10, 12);
     const lastByte = parseInt(lastByteHex, 16);
     if (!isNaN(lastByte)) {
@@ -1070,12 +1118,29 @@ export const setNearbyPermission = async (options: {
 // ---------- 打开蓝牙设置（可选） ----------
 
 export const openBluetoothSettings = (): Promise<boolean> => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (Platform.OS === 'ios') {
         Linking.openURL('App-Prefs:root=General')
           .then(() => resolve(true))
           .catch(reject);
+      } else if (isHarmony) {
+        try {
+          let hModule;
+          try {
+            hModule =
+              NativeModules?.HarmonyAppInfo ||
+              (global as any).TurboModuleRegistry?.get('HarmonyAppInfo');
+          } catch (e) {}
+          if (hModule && typeof hModule?.openBluetoothSettings === 'function') {
+            await hModule.openBluetoothSettings();
+          } else {
+            await Linking.openSettings();
+          }
+          resolve(true);
+        } catch (e) {
+          reject(e);
+        }
       } else {
         if (
           IntentLauncher &&

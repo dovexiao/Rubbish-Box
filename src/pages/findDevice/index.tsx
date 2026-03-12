@@ -128,13 +128,14 @@ export default function FindDevice(props: any) {
     pageName,
   } = params;
 
+  const isHarmonyOs = Platform.OS !== 'ios' && Platform.OS !== 'android';
   const [state, setStateInner] = useState({
     bindSuccess: false,
     isPaired: false,
     countdownTime: dayjs().add(120, 'seconds').valueOf() as unknown as number,
     searchBluetoothStatus:
       SEARCH_BLUETOOTH_STATUS?.SEARCHING as keyof typeof SEARCH_BLUETOOTH_STATUS,
-    needScan: Platform.OS === 'ios',
+    needScan: Platform.OS === 'ios' || isHarmonyOs,
   });
 
   const setState = useCallback((patch: Partial<typeof state>) => {
@@ -145,8 +146,14 @@ export default function FindDevice(props: any) {
     try {
       const res = (await getSavedDeviceInfo().catch(() => null)) || {};
       const info = await getSystemConnectedDevices();
-      const isPaired =
-        info.data?.some((item: any) => item.deviceId === res.deviceId) || false;
+      let isPaired = false;
+      if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+        isPaired = !!res.deviceId;
+      } else {
+        isPaired =
+          info.data?.some((item: any) => item.deviceId === res.deviceId) ||
+          false;
+      }
       setState({ isPaired });
     } catch (error) {
       console.error('初始化蓝牙失败', error);
@@ -166,7 +173,6 @@ export default function FindDevice(props: any) {
       };
       const currentName = String(route?.name || 'FindDevice').toLowerCase();
       if (!data.path || !currentName.includes('find')) return;
-
       await setStorage({
         key: 'rnReLaunchPathProcessing',
         data: true,
@@ -175,21 +181,27 @@ export default function FindDevice(props: any) {
       const savedDeviceInfo =
         (await getSavedDeviceInfo().catch(() => null)) || {};
       const info = await getSystemConnectedDevices();
-      const isPaired =
+      console.log(info, '===info');
+
+      let isPaired = false;
+      let deviceInfo = null;
+
+      isPaired =
         info.data?.some(
           (item: any) =>
             isSameMac(item.deviceId, bleNo) ||
             isSameMac(item.deviceId, savedDeviceInfo.deviceId),
         ) || false;
 
-      const deviceInfo = info.data?.find(
+      deviceInfo = info.data?.find(
         (item: any) =>
           isSameMac(item.deviceId, bleNo) ||
           isSameMac(item.deviceId, savedDeviceInfo.deviceId),
       );
 
-      if (isPaired && (savedDeviceInfo.deviceId || bleNo) && deviceInfo) {
-        await removeStorage({ key: 'rnReLaunchPath' }).catch(() => {});
+      // 兜底补全信息（因为原生层给鸿蒙只返回了纯物理MAC，我们把原有的本地信息填回去）
+      if (Platform.OS !== 'ios' && Platform.OS !== 'android' && isPaired) {
+        deviceInfo = deviceInfo ? { ...savedDeviceInfo, ...deviceInfo } : null;
         setState({ isPaired: true });
         await setStorage({
           key: 'bluetoothDeviceInfo',
@@ -320,9 +332,11 @@ export default function FindDevice(props: any) {
   const searchRef = useRef({
     found: async (res: any) => {
       if (!res?.devices?.length) return;
+
       const targetDevice = res.devices.find(
         (device: any) =>
           (device.deviceId && device.deviceId.includes(bleNo)) ||
+          (device.deviceId && isSameMac(device.deviceId, bleNo)) ||
           (device.manufacturerData &&
             parseMacFromBase64(
               (device.manufacturerData as string) || '',
@@ -552,10 +566,12 @@ export default function FindDevice(props: any) {
   }, [searchBluetoothStatus, startSearch, setState]);
 
   useEffect(() => {
+    // 【关键修复】：这里原来只允许 iOS 触发自动搜索
+    // 现在需要放开，让鸿蒙系统进来也自动执行 `startSearchDevice`，否则就不会发起搜索
     if (
       startSearchDevice &&
       searchRef &&
-      Platform.OS === 'ios' &&
+      (Platform.OS === 'ios' || isHarmonyOs) &&
       !startSearch
     ) {
       void startSearchDevice(searchRef);
@@ -563,7 +579,7 @@ export default function FindDevice(props: any) {
     return () => {
       void stopSearchBluetoothDevices(searchRef);
     };
-  }, [startSearch, startSearchDevice]);
+  }, [startSearch, startSearchDevice, isHarmonyOs]);
 
   useEffect(() => {
     if (!isPaired) return;
@@ -731,6 +747,7 @@ export default function FindDevice(props: any) {
                       style={styles.copyButton}
                       onPress={async () => {
                         await setClipboardData({ data: String(pin) });
+                        await showToast({ title: '复制成功', icon: 'success' });
                       }}
                     >
                       <IconFont name="copy1" size={20} color="#6b7280" />

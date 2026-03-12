@@ -50,8 +50,8 @@ export default function BluetoothBindDevice() {
   const deviceNo = params.deviceNo || '';
   const bleName = params.bleName || '';
   const blePin = params.blePin || '';
-
-  const needScan = Platform.OS === 'ios';
+  const isHarmonyOS = Platform.OS !== 'ios' && Platform.OS !== 'android';
+  const needScan = Platform.OS === 'ios' || isHarmonyOS;
   const [searchStatus, setSearchStatus] = useState(
     SEARCH_BLUETOOTH_STATUS.SEARCHING as keyof typeof SEARCH_BLUETOOTH_STATUS,
   );
