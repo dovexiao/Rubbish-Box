@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import PageContainer from '@/components/PageContainer';
 import Flex from '@/components/Flex';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import PopConfirm, { type PopConfirmRef } from '@/components/popConfirm';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
@@ -253,7 +253,7 @@ export default function DeviceList() {
       >
         <Flex align="center">
           <Text style={styles.bottomBtnText}>设备日志</Text>
-          <IconFont name="a-headfor-20" size={18} color="#333333" />
+          <AppIcon name="a-headfor-20" size={18} color="#333333" />
         </Flex>
       </TouchableOpacity>
     </View>
@@ -325,7 +325,7 @@ export default function DeviceList() {
                 onPress={() => confirmOperateCover(item)}
               >
                 <View style={[styles.iconBox]}>
-                  <IconFont
+                  <AppIcon
                     name={
                       item.coverStatus === COVER_STATUS.OPEN ? 'unlock' : 'lock'
                     }
@@ -365,7 +365,7 @@ export default function DeviceList() {
               }}
             >
               <View style={styles.iconBox}>
-                <IconFont name="bluetooth-1" size={28} color="#333333" />
+                <AppIcon name="bluetooth-1" size={28} color="#333333" />
                 {!hasAutoOpen ? (
                   <Image
                     source={{
@@ -390,7 +390,7 @@ export default function DeviceList() {
               }}
             >
               <View style={styles.iconBox}>
-                <IconFont
+                <AppIcon
                   name="a-equipmentinformation"
                   size={28}
                   color="#333333"

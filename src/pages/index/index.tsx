@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { View, Text, ScrollView, Image, Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
 import PageContainer from '@/components/PageContainer';
 import Header from '@/components/Header';
@@ -406,7 +406,9 @@ const Index = () => {
         const { [bleNo]: _, ...rest } = deviceMap;
         setStorage({ key: 'bluetoothDeviceInfoList', data: rest });
       }
-      removeStorage({ key: 'bluetoothDeviceInfo' });
+      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+        removeStorage({ key: 'bluetoothDeviceInfo' });
+      }
       setIsAutoOpenBluetooth(false);
     } else {
       setIsAutoOpenBluetooth(true);

@@ -19,7 +19,7 @@ import {
 import { cacheSetSync } from '@/utils/cache';
 import { getMobPushDeviceInfo } from '@/utils/push';
 import { Flex, TextInput } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { login } from '@/services/common';
 import passwordStyles from './styles';
 import { useNavigation } from '@react-navigation/native';

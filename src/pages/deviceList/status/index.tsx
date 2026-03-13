@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 import Flex from '@/components/Flex';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { LOCK_STATUS, LOCK_STATUS_NAME } from '@/constants';
 import { styles } from './style';
 
@@ -35,7 +35,7 @@ function Status(props: { deviceStatus: number; overlay?: boolean }) {
       </Text>
       {overlay ? (
         <View style={styles.ml10}>
-          <IconFont name="pull-down" size={20} color={color} />
+          <AppIcon name="pull-down" size={20} color={color} />
         </View>
       ) : null}
     </Flex>

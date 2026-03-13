@@ -8,7 +8,7 @@ import {
   Flex,
   TextInput,
 } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getVipList, saveVip, deleteVip } from '@/services/user';
 import { PopConfirmRef } from '@/components/popConfirm';
 import { styles } from './infoStyle';
@@ -148,7 +148,7 @@ export default function VipInfoPage() {
     >
       <View style={styles.searchBoxWrap}>
         <View style={styles.searchBox}>
-          <IconFont name="search" size={16} color="#999999" />
+          <AppIcon name="search" size={16} color="#999999" />
           <TextInput
             style={{ marginLeft: 8, flex: 1, padding: 0 }}
             placeholder="输入宾客名称进行搜索"
@@ -175,7 +175,7 @@ export default function VipInfoPage() {
               >
                 <Flex align="center">
                   <Text style={styles.username}>编辑</Text>
-                  <IconFont name="a-headfor-20" size={12} color="#333333" />
+                  <AppIcon name="a-headfor-20" size={12} color="#333333" />
                 </Flex>
               </TouchableOpacity>
             </Flex>
@@ -250,7 +250,7 @@ export default function VipInfoPage() {
               onChangeText={v => setAddUsername(v.trim())}
             />
             {type === 'edit' && (
-              <IconFont name="redact" color="#cccccc" size={20} />
+              <AppIcon name="redact" color="#cccccc" size={20} />
             )}
           </Flex>
           <Flex direction="row" justify="between" align="center">
@@ -266,7 +266,7 @@ export default function VipInfoPage() {
               onChangeText={v => setAddMobile(v.trim())}
             />
             {type === 'edit' && (
-              <IconFont name="redact" color="#cccccc" size={20} />
+              <AppIcon name="redact" color="#cccccc" size={20} />
             )}
           </Flex>
           <Flex

@@ -7,6 +7,7 @@ import {
   PermissionsAndroid,
   Linking,
   NativeModules,
+  TurboModuleRegistry,
 } from 'react-native';
 import CryptoJS from 'crypto-js';
 import IntentLauncher from 'react-native-intent-launcher';
@@ -17,7 +18,6 @@ import {
 } from 'react-native-ble-plx';
 import { arrayBufferToBase64, getStorage, setStorage } from '@/utils';
 import { saveFrontLog } from '@/services';
-
 import { requestBluetoothPermissions } from '@/utils';
 import { RefObject } from 'react';
 import { storageUtil } from '../storage';
@@ -213,15 +213,19 @@ export const getSystemConnectedDevices = (): Promise<{
         }
       }
 
+      const getTurboModuleSafely = (name: string): any => {
+        try {
+          return TurboModuleRegistry.get(name);
+        } catch (error) {
+          return null;
+        }
+      };
+
       if (isHarmony) {
         try {
-          let hModule;
-          try {
-            hModule =
-              NativeModules?.HarmonyAppInfo ||
-              (global as any).TurboModuleRegistry?.get('HarmonyAppInfo');
-          } catch (e) {}
-
+          const hModule: any =
+            NativeModules?.HarmonyAppInfo ||
+            getTurboModuleSafely('HarmonyAppInfo');
           let pairedMacs: string[] = [];
           if (hModule && typeof hModule?.getPairedDevices === 'function') {
             pairedMacs = (await hModule.getPairedDevices()) || [];

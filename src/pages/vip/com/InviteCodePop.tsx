@@ -8,7 +8,7 @@ import React, {
 import { Text, TouchableOpacity, View } from 'react-native';
 import dayjs from 'dayjs';
 import Flex from '@/components/Flex';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { DAY_OF_WEEK, INVITE_STATUS } from '@/constants';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import type { DetailsProp } from '../type';
@@ -145,7 +145,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
                 setIsOption(v => !v);
               }}
             >
-              <IconFont name="more" size={24} color="#333333" />
+              <AppIcon name="more" size={24} color="#333333" />
             </TouchableOpacity>
           ) : (
             <View style={{ width: 24 }} />
@@ -154,7 +154,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
             <Text style={styles.popTitleText}>贵宾码</Text>
           </View>
           <TouchableOpacity activeOpacity={0.8} onPress={close}>
-            <IconFont name="close" size={24} color="#333333" />
+            <AppIcon name="close" size={24} color="#333333" />
           </TouchableOpacity>
         </Flex>
 
@@ -249,7 +249,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
                 ).format('mm')}`}
               </Text>
             </Flex>
-            <IconFont name="arrows1" size={20} color="#333333" />
+            <AppIcon name="arrows1" size={20} color="#333333" />
             <Flex
               direction="column"
               justify="between"

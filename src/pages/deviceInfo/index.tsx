@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import { styles } from './style';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import {
@@ -303,7 +303,7 @@ const DeviceInfo = () => {
           <Text style={styles.cardLable}>设备名称</Text>
           <Text style={styles.cardValue}>{lockInfo?.lockName ?? ''}</Text>
           {params.isAdmin && (
-            <IconFont name={'a-headfor-20'} color="#333" size={20} />
+            <AppIcon name={'a-headfor-20'} color="#333" size={20} />
           )}
         </Flex>
         <Flex style={styles.cardRows}>
@@ -315,7 +315,7 @@ const DeviceInfo = () => {
           <Text style={[styles.cardValue, { marginRight: 4 }]}>
             {lockInfo?.powerType === 1 ? '市电版' : '电池版'}
           </Text>
-          <IconFont
+          <AppIcon
             onPressIn={() => {
               setShowPowerModeTips(true);
             }}
@@ -349,7 +349,7 @@ const DeviceInfo = () => {
               onPress={() => qrCodePopRef.current?.open()}
             >
               <Text style={styles.qrCodeBtnText}>查看</Text>
-              <IconFont name={'a-headfor-20'} color="#333" size={20} />
+              <AppIcon name={'a-headfor-20'} color="#333" size={20} />
             </TouchableOpacity>
             {deviceInfo?.role === 1 && (
               <TouchableOpacity
@@ -357,7 +357,7 @@ const DeviceInfo = () => {
                 onPress={() => changeQrCodePopRef.current?.open()}
               >
                 <Text style={styles.qrCodeBtnText}>更换二维码</Text>
-                <IconFont name={'a-headfor-20'} color="#333" size={20} />
+                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
               </TouchableOpacity>
             )}
           </Flex>
@@ -377,7 +377,7 @@ const DeviceInfo = () => {
           <Text style={styles.cardValue}>
             当前版本{lockInfo?.version ?? ''}
           </Text>
-          <IconFont name={'a-headfor-20'} color="#333" size={20} />
+          <AppIcon name={'a-headfor-20'} color="#333" size={20} />
         </Flex>
         <Flex
           isTouchView
@@ -389,7 +389,7 @@ const DeviceInfo = () => {
         >
           <Text style={styles.cardLable}>设备日志</Text>
           <Text style={styles.cardValue}>{'查看'}</Text>
-          <IconFont name={'a-headfor-20'} color="#333" size={20} />
+          <AppIcon name={'a-headfor-20'} color="#333" size={20} />
         </Flex>
 
         {!params.isAdmin && (
@@ -400,7 +400,7 @@ const DeviceInfo = () => {
               onPress={() => adminRef?.current?.open()}
             >
               <Text style={styles.cardValue}>{'查看'}</Text>
-              <IconFont name={'a-headfor-20'} color="#333" size={20} />
+              <AppIcon name={'a-headfor-20'} color="#333" size={20} />
             </TouchableOpacity>
           </Flex>
         )}
@@ -430,7 +430,7 @@ const DeviceInfo = () => {
           >
             <Text style={styles.cardLable}>充电指导</Text>
             <Text style={styles.cardValue}>{'查看'}</Text>
-            <IconFont name={'a-headfor-20'} color="#333" size={20} />
+            <AppIcon name={'a-headfor-20'} color="#333" size={20} />
           </Flex>
         )}
 
@@ -453,7 +453,7 @@ const DeviceInfo = () => {
                 <Text style={styles.cardValue}>
                   {deviceInfo?.buzzerStatus === 1 ? '已开启' : '未开启'}
                 </Text>
-                <IconFont name={'a-headfor-20'} color="#333" size={20} />
+                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
               </TouchableOpacity>
             </>
           ) : (
@@ -493,7 +493,7 @@ const DeviceInfo = () => {
               style={styles.cardValue}
             >{`车辆离开${lockInfo?.leaveUpTime}秒后升起`}</Text>
             {lockInfo?.powerType === 1 && (
-              <IconFont name={'a-headfor-20'} color="#333" size={20} />
+              <AppIcon name={'a-headfor-20'} color="#333" size={20} />
             )}
           </TouchableOpacity>
         </Flex>
@@ -517,7 +517,7 @@ const DeviceInfo = () => {
                 placeholderTextColor="#999"
                 maxLength={20}
               />
-              <IconFont name={'redact'} color="#999" size={20} />
+              <AppIcon name={'redact'} color="#999" size={20} />
             </View>
           </View>
           <View style={styles.editFooter}>
@@ -537,7 +537,7 @@ const DeviceInfo = () => {
 
           <View style={styles.closeIcon}>
             <TouchableOpacity onPress={() => editNamePopRef.current?.close()}>
-              <IconFont name={'close'} color="#333" size={24} />
+              <AppIcon name={'close'} color="#333" size={24} />
             </TouchableOpacity>
           </View>
         </View>
@@ -643,7 +643,7 @@ const DeviceInfo = () => {
           <View style={{ width: 24, height: 24 }}></View>
           <Text style={styles.adminInfoTitle}>管理员信息</Text>
           <TouchableOpacity onPress={() => adminRef.current?.close()}>
-            <IconFont name={'close'} color="#333" size={24} />
+            <AppIcon name={'close'} color="#333" size={24} />
           </TouchableOpacity>
         </View>
         <View style={styles.adminInfo}>

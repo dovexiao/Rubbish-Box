@@ -1,3 +1,4 @@
+import AppIcon from '@/components/AppIcon';
 import React, {
   forwardRef,
   useEffect,
@@ -20,7 +21,6 @@ import {
 import { PickerView } from '@ant-design/react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Flex from '@/components/Flex';
-import Icon from '@/iconfont';
 import { styles as styleSheet } from './indexStyle';
 import { TextInput } from '@/components';
 
@@ -189,7 +189,7 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
                 onPress={() => setIsOpen(false)}
                 style={{ marginRight: 16 }}
               >
-                <Icon name={'close'} size={24} color="#333333" />
+                <AppIcon name={'close'} size={24} color="#333333" />
               </Flex>
             </Flex>
 
@@ -206,7 +206,7 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
                   onPress={() => setMode(true)}
                   style={{ marginRight: 24 }}
                 >
-                  <Icon
+                  <AppIcon
                     name={mode ? 'selected' : 'unselected'}
                     color={mode ? '#333333' : '#e1e1e1'}
                     size={24}
@@ -216,7 +216,7 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
                   </Text>
                 </Flex>
                 <Flex isTouchView onPress={() => setMode(false)} align="center">
-                  <Icon
+                  <AppIcon
                     name={mode ? 'unselected' : 'selected'}
                     color={mode ? '#e1e1e1' : '#333333'}
                     size={24}

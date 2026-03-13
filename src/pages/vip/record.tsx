@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { PageContainer, PopConfirm, Flex } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { cancelInvite, getDetails, getRecordList } from '@/services/user';
 import { generateShareImage, onShareAppMessage } from '@/utils/shareImage';
 import { tencentUpload } from '@/utils/request';
@@ -228,7 +228,7 @@ export default function VipRecordPage() {
             <Text style={styles.infoText}>{item.mobile}</Text>
           </Flex>
           <View>
-            <IconFont name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={20} color="#333333" />
           </View>
         </Flex>
         <View style={styles.itemLine} />

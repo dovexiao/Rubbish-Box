@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Flex, PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { lastVersion } from '@/services/deviceInfo';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
@@ -78,7 +78,7 @@ export default function FirmwareVersion() {
             activeOpacity={0.8}
           >
             <Text style={styles.titleText}>历史记录</Text>
-            <IconFont name="a-headfor-12" color="#333333" size={16} />
+            <AppIcon name="a-headfor-12" color="#333333" size={16} />
           </TouchableOpacity>
         ),
       }}

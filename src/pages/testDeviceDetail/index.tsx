@@ -20,7 +20,7 @@ import { hideLoading, loopFunc, showLoading, showToast } from '@/utils';
 import { getSystemConnectedDevices, isSameMac } from '@/utils';
 import { sendModeCommandByBluetooth } from '@/utils/api';
 import styles from './styles';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import PopCenter from '@/components/PopCenter';
 import UnqualifiedPop, { UnqualifiedPopRef } from './UnqualifiedPop';
 
@@ -771,7 +771,7 @@ export default function TestDeviceDetailScreen() {
                     onPress={() => setHowToConnectVisible(true)}
                   >
                     <Text>如何连接蓝牙</Text>
-                    <IconFont name="explain" size={18} color="#333333" />
+                    <AppIcon name="explain" size={18} color="#333333" />
                   </TouchableOpacity>
                 </Flex>
               </Flex>

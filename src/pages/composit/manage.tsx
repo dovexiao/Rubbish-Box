@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Flex from '@/components/Flex';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { PageContainer, PopConfirm, TextInput } from '@/components';
 import { groupSubList, saveGroup, groupChooseList } from '@/services/combine';
 import { ListItem, AddListItem } from './typing';
@@ -314,7 +314,7 @@ const ManageComposite = () => {
               onChangeText={setLockName}
               showClear
             />
-            <IconFont name="pen24" size={24} color="#333333" />
+            <AppIcon name="pen24" size={24} color="#333333" />
           </Flex>
           <Flex justify="between" align="center" style={styles.itemContent}>
             <Text style={styles.label}>选择设备组合：</Text>
@@ -329,7 +329,7 @@ const ManageComposite = () => {
               }}
             >
               <Text style={styles.addBtnText}>新增【市电款】设备</Text>
-              <IconFont name="add" size={12} color="#333333" />
+              <AppIcon name="add" size={12} color="#333333" />
             </Flex>
           </Flex>
         </View>
@@ -376,7 +376,7 @@ const ManageComposite = () => {
           >
             <Text style={{ width: 24, height: 24 }}></Text>
             <Text style={styles.popTitle}>新增【市电款】设备</Text>
-            <IconFont
+            <AppIcon
               onPress={() => addDeviceRef.current?.close()}
               name={'close'}
               size={24}

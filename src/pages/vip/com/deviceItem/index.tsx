@@ -1,7 +1,7 @@
+import AppIcon from '@/components/AppIcon';
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 import Flex from '@/components/Flex';
-import Icon from '@/iconfont';
 import { INVITE_USE_STATUS } from '@/constants';
 import { styles } from './indexStyle';
 
@@ -53,7 +53,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
           <Flex style={[{ width: '100%' }, styles.mt18]}>
             {data?.address ? (
               <Flex direction="row" style={{ flex: 1 }} align={'center'}>
-                <Icon name={'location'} size={24} color="#cccccc"></Icon>
+                <AppIcon name={'location'} size={24} color="#cccccc"></AppIcon>
                 <Text
                   style={[styles.addressText, { flexShrink: 1 }]}
                   numberOfLines={1}

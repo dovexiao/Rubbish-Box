@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { PageContainer, Flex, Popup } from '@/components';
 import PopConfirm from '@/components/popConfirm';
 import GradientButton from '@/components/GradientButton';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getPickupCodeDetail, confirmPickupCode } from '@/services/mall';
 import { getStorage, removeStorage, showToast } from '@/utils';
 import styles from './styles';
@@ -173,7 +173,7 @@ export default function PickupCode() {
             style={styles.scanBox}
             onPress={handleScan}
           >
-            <IconFont name="a-scanQRcodes1" color="#333333" size={16} />
+            <AppIcon name="a-scanQRcodes1" color="#333333" size={16} />
             <Text style={styles.scanBoxText}>扫码填入</Text>
           </TouchableOpacity>
 
@@ -194,7 +194,7 @@ export default function PickupCode() {
             onPress={handleRecord}
           >
             <Text style={styles.bottomBtnText}>领取记录</Text>
-            <IconFont name="a-nextpage" color="#333333" size={16} />
+            <AppIcon name="a-nextpage" color="#333333" size={16} />
           </TouchableOpacity>
         </Flex>
 

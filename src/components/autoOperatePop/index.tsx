@@ -11,7 +11,7 @@ import { getBluetoothDeviceInfo, removeStorage, setStorage } from '@/utils';
 import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 import Flex from '@/components/Flex';
 import Popup from '@/components/Popup';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 
 export type AutoOperatePopRef = {
   open: () => void;
@@ -135,7 +135,7 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
                     {lock?.lockName ?? ''}
                   </Text>
                   <Flex direction="column" justify="between" align="center">
-                    <IconFont name="bluetooth-1" size={20} color="#333333" />
+                    <AppIcon name="bluetooth-1" size={20} color="#333333" />
                     <Text style={styles.text}>自动升降</Text>
                   </Flex>
                   {!isAutoOpen && (

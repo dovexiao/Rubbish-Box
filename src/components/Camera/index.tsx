@@ -31,7 +31,7 @@ import {
 } from '@/harmony/vision-camera-shim';
 import Popup from '../Popup';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 
 /**
  * 扫码结果的统一约定：
@@ -387,7 +387,7 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
             else onClose?.();
           }}
         >
-          <IconFont name="back" color="#FFFFFF" size={24} />
+          <AppIcon name="back" color="#FFFFFF" size={24} />
         </TouchableOpacity>
         <Text style={styles.defaultHeaderTitle}>{title}</Text>
         <View style={styles.defaultHeaderRightPlaceholder} />

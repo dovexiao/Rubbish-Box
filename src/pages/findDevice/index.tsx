@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import dayjs from 'dayjs';
+import { showLoading, hideLoading } from '@/utils';
 import { PageContainer, Flex, GradientButton } from '@/components';
 import {
   searchBluetoothDevices,
@@ -34,7 +35,7 @@ import {
   setClipboardData,
 } from '@/utils';
 import { bind, openBluetoothProximity } from '@/services';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import {
   LOCK_BTN_COLORS,
   LOCK_STATUS,
@@ -137,6 +138,13 @@ export default function FindDevice(props: any) {
       SEARCH_BLUETOOTH_STATUS?.SEARCHING as keyof typeof SEARCH_BLUETOOTH_STATUS,
     needScan: Platform.OS === 'ios' || isHarmonyOs,
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const a = await getSavedDeviceInfo().catch(() => null);
+    };
+    fetchData();
+  }, []);
 
   const setState = useCallback((patch: Partial<typeof state>) => {
     setStateInner(prev => ({ ...prev, ...patch }));
@@ -345,7 +353,7 @@ export default function FindDevice(props: any) {
             parseMacFromAdvertisData(device.advertisData)?.includes(bleNo)),
       );
 
-      if (targetDevice) {
+      if (targetDevice && Object.keys(targetDevice).length > 0) {
         try {
           await setStorage({
             key: 'bluetoothDeviceInfo',
@@ -362,7 +370,7 @@ export default function FindDevice(props: any) {
         try {
           await stopSearchBluetoothDevices(searchRef);
         } catch {}
-        setState({
+        await setState({
           searchBluetoothStatus:
             SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS as keyof typeof SEARCH_BLUETOOTH_STATUS,
           countdownTime: undefined,
@@ -388,8 +396,10 @@ export default function FindDevice(props: any) {
       params: route?.params ?? params,
       value: { ...params },
     });
-    await openBluetoothSettings();
     await handleTipsUserOperation(lockName || '', pin || '');
+    setTimeout(async () => {
+      await openBluetoothSettings();
+    }, 1000);
   }, [
     lockName,
     pin,
@@ -411,7 +421,7 @@ export default function FindDevice(props: any) {
       // 绑定设备
       console.log(pageName, '===pageName');
       if (pageName?.includes('BindDevice')) {
-        Toast.loading('绑定中...', 0);
+        showLoading({ title: '绑定中...' });
         try {
           const res = await bind({
             deviceNo,
@@ -424,7 +434,7 @@ export default function FindDevice(props: any) {
               title: res?.message || '绑定失败',
               icon: 'none',
             });
-            Toast.removeAll();
+            hideLoading();
             return;
           }
 
@@ -434,7 +444,7 @@ export default function FindDevice(props: any) {
               title: connectRes.error?.message || '连接设备失败',
               icon: 'none',
             });
-            Toast.removeAll();
+            hideLoading();
             return;
           }
 
@@ -445,7 +455,7 @@ export default function FindDevice(props: any) {
           }
 
           await clearProcessingFlag();
-          Toast.removeAll();
+          hideLoading();
           showToast({
             title: '绑定成功',
             icon: 'success',
@@ -457,7 +467,7 @@ export default function FindDevice(props: any) {
             } as never);
           }, 1000);
         } catch {
-          Toast.removeAll();
+          hideLoading();
           showToast({
             title: '绑定失败',
             icon: 'none',
@@ -645,7 +655,7 @@ export default function FindDevice(props: any) {
                   style={styles.deviceInfoItemIcon}
                   onPress={() => powerIndicatorPopRef?.current?.open()}
                 >
-                  <IconFont name="explain" size={18} color="#FF873D" />
+                  <AppIcon name="explain" size={18} color="#FF873D" />
                   <Text style={styles.deviceInfoItemIconText}>通电指南</Text>
                 </TouchableOpacity>
               </Flex>
@@ -715,7 +725,7 @@ export default function FindDevice(props: any) {
             ) : (
               <>
                 <View style={styles.iconWrapper}>
-                  <IconFont name="bluetooth-1" size={32} color="#333333" />
+                  <AppIcon name="bluetooth-1" size={32} color="#333333" />
                 </View>
                 <View style={styles.titleWrapper}>
                   <Text style={styles.title}>请确保地锁通电</Text>
@@ -723,7 +733,7 @@ export default function FindDevice(props: any) {
                     style={styles.titleIcon}
                     onPress={() => powerIndicatorPopRef?.current?.open()}
                   >
-                    <IconFont name="explain" size={18} color="#333333" />
+                    <AppIcon name="explain" size={18} color="#333333" />
                     <Text style={styles.titleIconText}>通电指南</Text>
                   </TouchableOpacity>
                 </View>
@@ -750,7 +760,7 @@ export default function FindDevice(props: any) {
                         await showToast({ title: '复制成功', icon: 'success' });
                       }}
                     >
-                      <IconFont name="copy1" size={20} color="#6b7280" />
+                      <AppIcon name="copy1" size={20} color="#6b7280" />
                       <Text style={{ fontSize: 12, color: '#6b7280' }}>
                         点击复制
                       </Text>

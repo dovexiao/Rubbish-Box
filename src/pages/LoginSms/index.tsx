@@ -17,7 +17,7 @@ import {
 } from '@/utils';
 import { tokenStorage } from '@/utils/storage';
 import { reLaunch } from '@/utils/navigation';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import Flex from '@/components/Flex';
 import loginSmsStyles from './styles';
 
@@ -194,7 +194,7 @@ const LoginSms = () => {
             {isCounting && count ? (
               <Text style={loginSmsStyles.getAgainText}>({count}s)</Text>
             ) : (
-              <IconFont
+              <AppIcon
                 name="refresh"
                 size={20}
                 color={isCounting ? '#999' : '#333333'}

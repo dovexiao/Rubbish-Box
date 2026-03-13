@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { Toast } from '@ant-design/react-native';
 
 export interface StepperProps {
@@ -77,7 +77,7 @@ const Stepper: React.FC<StepperProps> = ({
   return (
     <View style={[styles.box, style]}>
       <TouchableOpacity activeOpacity={0.8} style={styles.calculator} onPress={handleReduce}>
-        <IconFont name="minus" color="#CCCCCC" size={size || 24} />
+        <AppIcon name="minus" color="#CCCCCC" size={size || 24} />
       </TouchableOpacity>
 
       <TextInput
@@ -88,7 +88,7 @@ const Stepper: React.FC<StepperProps> = ({
       />
 
       <TouchableOpacity activeOpacity={0.8} style={styles.calculator} onPress={handleAdd}>
-        <IconFont name="add" color="#333333" size={size || 12} />
+        <AppIcon name="add" color="#333333" size={size || 12} />
       </TouchableOpacity>
     </View>
   );

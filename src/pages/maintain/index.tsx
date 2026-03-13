@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { repairAdd } from '@/services/user';
 import { showToast, tencentUpload } from '@/utils';
 import styles from './styles';
@@ -151,7 +151,7 @@ export default function Maintain() {
             activeOpacity={0.8}
           >
             <Text style={styles.titleText}>服务记录</Text>
-            <IconFont name="a-headfor-12" color="#333333" size={16} />
+            <AppIcon name="a-headfor-12" color="#333333" size={16} />
           </TouchableOpacity>
         ),
       }}
@@ -182,7 +182,7 @@ export default function Maintain() {
           ) : (
             <Text style={styles.chooseText}>请选择</Text>
           )}
-          <IconFont name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={20} color="#333333" />
         </TouchableOpacity>
         <View style={styles.problemView}>
           <Text style={styles.toastTitle}>请描述您的问题</Text>
@@ -213,7 +213,7 @@ export default function Maintain() {
               onPress={handleChooseImage}
               activeOpacity={0.8}
             >
-              <IconFont name="camera" size={24} color="#CCCCCC" />
+              <AppIcon name="camera" size={24} color="#CCCCCC" />
               <Text style={styles.uploadText}>相册上传</Text>
             </TouchableOpacity>
             {imageList.map(uri => (

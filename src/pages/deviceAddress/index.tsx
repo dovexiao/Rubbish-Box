@@ -21,7 +21,7 @@ import {
   Marker,
   isUsingHarmonyMapShim,
 } from '@/utils/amap3d-adapter';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { PageContainer } from '@/components';
 import {
   initAMapSdk,
@@ -311,7 +311,7 @@ export default function DeviceAddressScreen() {
         <View style={styles.mapContent}>
           {isHarmonyMapUnavailable ? (
             <View style={styles.mapFallback}>
-              <IconFont name="location" color="#999999" size={32} />
+              <AppIcon name="location" color="#999999" size={32} />
               <Text style={styles.mapFallbackText}>
                 Harmony 版本暂不支持地图展示
               </Text>
@@ -396,7 +396,7 @@ export default function DeviceAddressScreen() {
                 onPress={handleLocate}
                 activeOpacity={0.7}
               >
-                <IconFont name="location1" color="#000000" size={24} />
+                <AppIcon name="location1" color="#000000" size={24} />
               </TouchableOpacity>
             </>
           )}

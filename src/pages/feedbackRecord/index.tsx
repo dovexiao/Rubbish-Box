@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import dayjs from 'dayjs';
 import { useNavigation } from '@react-navigation/native';
 import { Flex, PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getOpinionList } from '@/services/user';
 import styles from './styles';
 import { showToast } from '@/utils';
@@ -86,7 +86,7 @@ export default function FeedbackRecord() {
               >
                 {statusText}
               </Text>
-              <IconFont name="a-headfor-20" size={20} color="#333333" />
+              <AppIcon name="a-headfor-20" size={20} color="#333333" />
             </Flex>
           </Flex>
           <View style={styles.line} />
@@ -160,7 +160,7 @@ export default function FeedbackRecord() {
           ListEmptyComponent={
             !loading ? (
               <View style={styles.emptyBox}>
-                <IconFont name="order" size={40} color="#CCCCCC" />
+                <AppIcon name="order" size={40} color="#CCCCCC" />
                 <Text style={styles.emptyText}>暂无反馈记录</Text>
               </View>
             ) : null

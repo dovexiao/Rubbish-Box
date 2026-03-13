@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, View, Platform } from 'react-native';
 import Flex from '@/components/Flex';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { LOCK_ROLE } from '@/constants';
 import FastImage from 'react-native-fast-image';
 import styles from './styles';
@@ -81,7 +81,8 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     showRising120Gif ||
     showFalling120Gif;
 
-  const showActionButton = detail?.role === LOCK_ROLE.ADMIN;
+  // const showActionButton = detail?.role === LOCK_ROLE.ADMIN;
+  const showActionButton = true;
 
   const actionButtonText = useMemo(() => {
     if (!showActionButton) return '';
@@ -124,6 +125,19 @@ const LockVisual: React.FC<LockVisualProps> = props => {
   const renderGif = (uri?: string | null, key?: string) => {
     if (!uri || uri === 'null') return null;
     const finalUri = withNonce(uri, gifNonce);
+
+    const isHarmonyOs = Platform.OS !== 'ios' && Platform.OS !== 'android';
+    if (isHarmonyOs) {
+      return (
+        <Image
+          key={key}
+          source={{ uri: finalUri }}
+          style={styles.gifImage}
+          resizeMode="contain"
+        />
+      );
+    }
+
     return (
       <FastImage
         key={key}
@@ -160,7 +174,7 @@ const LockVisual: React.FC<LockVisualProps> = props => {
             {actionButtonText}
           </Text>
           <View style={styles.actionIcon}>
-            <IconFont
+            <AppIcon
               name={detail?.isGroup ? 'a-combinationunit' : 'a-add12'}
               size={16}
               color={
@@ -171,14 +185,14 @@ const LockVisual: React.FC<LockVisualProps> = props => {
             />
           </View>
 
-          {detail.isGroup && (
+          {detail?.isGroup && (
             <Flex
               direction="row"
               justify="center"
               align={'center'}
               style={styles.groupCount}
             >
-              <IconFont
+              <AppIcon
                 style={{ marginRight: 4, marginTop: 4 }}
                 name={'multiplication'}
                 size={14}

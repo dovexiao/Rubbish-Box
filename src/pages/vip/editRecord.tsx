@@ -1,9 +1,9 @@
+import AppIcon from '@/components/AppIcon';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { PageContainer, Popup, Flex } from '@/components';
-import Icon from '@/iconfont';
 import { DAY_OF_WEEK } from '@/constants';
 import {
   getAdmins,
@@ -323,7 +323,7 @@ export default function VipEditRecordPage() {
               )}：${dayjs(startTime).format('mm')}`}</Text>
             </Flex>
           </Flex>
-          <Icon name={'arrows1'} size={40} color="#333333"></Icon>
+          <AppIcon name={'arrows1'} size={40} color="#333333"></AppIcon>
           <Flex
             style={styles.timeBox}
             direction={'column'}
@@ -365,7 +365,7 @@ export default function VipEditRecordPage() {
               ? `${customUsageCount}次`
               : '不限'}
           </Text>
-          <Icon name={'a-headfor-20'} size={40} color="#333333"></Icon>
+          <AppIcon name={'a-headfor-20'} size={40} color="#333333"></AppIcon>
         </Flex>
       </Flex>
 
@@ -395,7 +395,7 @@ export default function VipEditRecordPage() {
             <Text numberOfLines={1} style={{ maxWidth: 70 }}>
               {adminUsername}
             </Text>
-            <Icon name={'pull-down'} size={24} color="#333333"></Icon>
+            <AppIcon name={'pull-down'} size={24} color="#333333"></AppIcon>
             <Text style={styles.chooseNum}>
               （已选择
               {(selectedDeviceList && selectedDeviceList?.length) ?? 0}个）
@@ -537,7 +537,7 @@ export default function VipEditRecordPage() {
               style={{ marginRight: 16 }}
               onTouchEnd={() => setAdminUserPopupVisible(false)}
             >
-              <Icon name={'close'} size={24} color="#333333"></Icon>
+              <AppIcon name={'close'} size={24} color="#333333"></AppIcon>
             </View>
           </Flex>
         }

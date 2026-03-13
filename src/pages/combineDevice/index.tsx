@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { PageContainer, TextInput, Flex } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { useRoute } from '@react-navigation/native';
 import { defaultName, groupChooseList, saveGroup } from '@/services';
 import { hideLoading, setStorage, showLoading, showToast } from '@/utils';
@@ -273,7 +273,7 @@ export default function CombineDeviece() {
             onChangeText={setGroupName}
           />
           <View style={{ marginLeft: 8 }}>
-            <IconFont name="redact" color="#333333" size={24} />
+            <AppIcon name="redact" color="#333333" size={24} />
           </View>
         </View>
 

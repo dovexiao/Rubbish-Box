@@ -3,7 +3,7 @@ import { View, Text, AppState, Button, Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from './styles';
 import { Flex, PageContainer, LinearGradient } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import GradientButton from '@/components/GradientButton';
 import { showToast } from '@/utils';
 import {
@@ -134,7 +134,7 @@ export default function ShareSuccessPage() {
           }}
         >
           <Flex style={styles.iconBox}>
-            <IconFont name="tick-white" color="#fff" size={40} />
+            <AppIcon name="tick-white" color="#fff" size={40} />
           </Flex>
         </LinearGradient>
         <Text style={styles.title}>添加成功</Text>

@@ -17,7 +17,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
 import PopConfirm from '@/components/popConfirm';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { deleteStaff, getStaffList } from '@/services/user';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
@@ -140,7 +140,7 @@ export default function MemberList() {
             }}
           >
             <Text style={styles.username}>编辑</Text>
-            <IconFont name="a-headfor-20" size={12} color="#333333" />
+            <AppIcon name="a-headfor-20" size={12} color="#333333" />
           </TouchableOpacity>
         </View>
 

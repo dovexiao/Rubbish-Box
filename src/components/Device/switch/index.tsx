@@ -15,7 +15,7 @@ import Flex from '@/components/Flex';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
 import { DeviceItem } from '../Item/index';
 import { DeviceItemDTO } from '../Item/typing';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { hideLoading, showLoading, showToast } from '@/utils';
@@ -159,7 +159,7 @@ export const DeviceSwitch: React.FC<Props> = ({
           </Text>
           <Text style={styles.switchLine} />
           <Text style={styles.roleNameText}>{lockInfo?.roleName ?? ''}</Text>
-          <IconFont name="pull-down" size={12} color={themeColor} />
+          <AppIcon name="pull-down" size={12} color={themeColor} />
         </Flex>
       </TouchableOpacity>
 
@@ -231,7 +231,7 @@ export const DeviceSwitch: React.FC<Props> = ({
                 placeholderTextColor="#999"
                 maxLength={20}
               />
-              <IconFont name={'redact'} color="#999" size={20} />
+              <AppIcon name={'redact'} color="#999" size={20} />
             </View>
           </View>
           <View style={styles.editFooter}>
@@ -251,7 +251,7 @@ export const DeviceSwitch: React.FC<Props> = ({
 
           <View style={styles.closeIcon}>
             <TouchableOpacity onPress={() => editNamePopRef.current?.close()}>
-              <IconFont name={'close'} color="#333" size={24} />
+              <AppIcon name={'close'} color="#333" size={24} />
             </TouchableOpacity>
           </View>
         </View>

@@ -15,7 +15,7 @@ import {
   View,
 } from 'react-native';
 import { PageContainer, Popup, TextInput } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import {
   ImagePickerResponse,
   launchImageLibrary,
@@ -246,7 +246,7 @@ export default function UserInfo() {
               <View style={styles.avatar} />
             )}
           </View>
-          <IconFont name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={20} color="#333333" />
         </TouchableOpacity>
 
         {/* 昵称 */}
@@ -264,7 +264,7 @@ export default function UserInfo() {
               {nickName || ''}
             </Text>
           </View>
-          <IconFont name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={20} color="#333333" />
         </TouchableOpacity>
       </View>
 
@@ -314,7 +314,7 @@ export default function UserInfo() {
               onChangeText={v => setInputName(v)}
               returnKeyType="done"
             />
-            <IconFont name="redact" size={20} color="#999999" />
+            <AppIcon name="redact" size={20} color="#999999" />
           </View>
         </View>
       </Popup>

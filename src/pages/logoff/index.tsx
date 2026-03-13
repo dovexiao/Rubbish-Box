@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Flex, PageContainer, Popup } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { logout, getPrivateSendSms } from '@/services/user';
 import { hideLoading, mobileExp, showLoading, showToast } from '@/utils';
 import { PURPOSE, POST_SOURCE } from '@/constants';
@@ -194,7 +194,7 @@ export default function Logoff() {
                   activeOpacity={0.8}
                   hitSlop={{ top: 8, bottom: 8, left: 0, right: 8 }}
                 >
-                  <IconFont
+                  <AppIcon
                     name={agree ? 'selected' : 'unselected'}
                     size={17}
                     color={agree ? '#333333' : '#999999'}

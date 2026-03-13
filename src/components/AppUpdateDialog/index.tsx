@@ -11,7 +11,7 @@ import { Toast } from '@ant-design/react-native';
 import { eventCenter, setStorage } from '@/utils';
 import Flex from '@/components/Flex';
 import GradientButton from '@/components/GradientButton';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import styles from './styles';
 import LinearGradient, {
   LinearGradientProps,
@@ -201,7 +201,7 @@ export function AppUpdateDialogHost() {
               onPress={handleSkip}
             >
               <Flex align="center" justify="center">
-                <IconFont
+                <AppIcon
                   name="a-pop-upwindowsclose"
                   size={24}
                   color="#999999"

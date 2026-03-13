@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getAddressList } from '@/services/user';
 import { deleteAddress } from '@/services/setting';
 import PopConfirm from '@/components/popConfirm';
@@ -121,7 +121,7 @@ export default function Address() {
           >
             <Text style={styles.itemEdit}>编辑</Text>
           </TouchableOpacity>
-          <IconFont name="a-headfor-20" size={12} color="#333333" />
+          <AppIcon name="a-headfor-20" size={12} color="#333333" />
         </View>
         <View style={styles.rowBottom}>
           <Text style={styles.itemAddress}>{`${item.province || ''}${

@@ -6,7 +6,7 @@ import { ActionSheet } from '@ant-design/react-native';
 import { PageContainer, Flex, Popup } from '@/components';
 import PopConfirm from '@/components/popConfirm';
 import GradientButton from '@/components/GradientButton';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import {
   confirmPickupCode,
   getPickupCodeDetail,
@@ -276,7 +276,7 @@ export default function PickupCodeDaily() {
             <View style={styles.rowLabel}>
               <Text style={styles.rowLabelText}>卡密</Text>
               <TouchableOpacity activeOpacity={0.8} onPress={handleScan}>
-                <IconFont name="a-scanQRcodes1" color="#333333" size={20} />
+                <AppIcon name="a-scanQRcodes1" color="#333333" size={20} />
               </TouchableOpacity>
             </View>
 
@@ -311,7 +311,7 @@ export default function PickupCodeDaily() {
               onPress={handleRecord}
             >
               <Text style={styles.recordBtnText}>绑定记录</Text>
-              <IconFont name="a-nextpage" color="#333333" size={16} />
+              <AppIcon name="a-nextpage" color="#333333" size={16} />
             </TouchableOpacity>
           </View>
 

@@ -198,7 +198,30 @@ async function main() {
   }
 
   generateMapFile(generated);
+  patchIndexTsx();
   log('全部转换完成。');
+}
+
+
+function patchIndexTsx() {
+  const p = path.join(iconfontDir, 'index.tsx');
+  if (!fs.existsSync(p)) return;
+
+  let txt = fs.readFileSync(p, 'utf8');
+
+  // 1. replace imports
+  if (!txt.includes('import HarmonyIconImage')) {
+    txt = txt.replace(/import \{ ViewProps \} from 'react-native';/, "import { ViewProps, Platform } from 'react-native';\nimport HarmonyIconImage from '@/harmony/HarmonyIconImage';");
+  }
+
+  // 2. replace the export part
+  if (!txt.includes('const isNativePlatform')) {
+    txt = txt.replace(/let IconFont: FunctionComponent<Props> = \(\{ name, size, color, \.\.\.rest \}\) => \{([\s\S]*?)IconFont = React\.memo \? React\.memo\(IconFont\) : IconFont;\s*export default IconFont;/g, function(match, inner) {
+      return 'const SvgIconFont: FunctionComponent<Props> = ({ name, size, color, ...rest }) => {' + inner + '\nconst isNativePlatform = Platform.OS === \'android\' || Platform.OS === \'ios\';\n\nlet IconFont: FunctionComponent<Props> = props => {\n  if (isNativePlatform) {\n    return <SvgIconFont {...props} />;\n  }\n\n  const { name, size, color, ...rest } = props;\n  return <HarmonyIconImage name={name as any} size={size} color={color} {...rest} />;\n};\n\nIconFont.defaultProps = {\n  size: 18,\n};\n\nIconFont = React.memo ? React.memo(IconFont) : IconFont;\n\nexport default IconFont;';
+    });
+    fs.writeFileSync(p, txt, 'utf8');
+    log('已自动修补 src/iconfont/index.tsx');
+  }
 }
 
 main().catch(e => {

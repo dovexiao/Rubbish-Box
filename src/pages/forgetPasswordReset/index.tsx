@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { PageContainer, Flex, TextInput } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { restPassword } from '@/services/user';
 import { cacheSetSync, cacheGetSync } from '@/utils/cache';
 import push, { getMobPushDeviceInfo } from '@/utils/push';
@@ -173,7 +173,7 @@ const ForgetPasswordReset = () => {
               <TouchableOpacity
                 onPress={() => setPasswordCanSee(!passwordCanSee)}
               >
-                <IconFont
+                <AppIcon
                   name={passwordCanSee ? 'visible' : 'invisible'}
                   size={20}
                   color="#999999"
@@ -204,7 +204,7 @@ const ForgetPasswordReset = () => {
               <TouchableOpacity
                 onPress={() => setConfirmPasswordCanSee(!confirmPasswordCanSee)}
               >
-                <IconFont
+                <AppIcon
                   name={confirmPasswordCanSee ? 'visible' : 'invisible'}
                   size={20}
                   color="#999999"

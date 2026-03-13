@@ -20,7 +20,7 @@ import { SafeAreaView, useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import StatusError from './StatusError';
 import StatusLogin from './StatusLogin';
 import { LOGIN } from '@/constants';
@@ -242,7 +242,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
                   <Text style={[styles.backButtonText, { color: titleColor }]}>
-                    <IconFont name="back" size={24} color={titleColor} />
+                    <AppIcon name="back" size={24} color={titleColor} />
                   </Text>
                 </TouchableOpacity>
               )}

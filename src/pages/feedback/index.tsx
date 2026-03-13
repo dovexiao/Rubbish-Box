@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer, Flex } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getAccountInfo, submitOpinion } from '@/services/user';
 import { showToast, tencentUpload } from '@/utils';
 import styles from './styles';
@@ -156,7 +156,7 @@ export default function Feedback() {
               意见反馈记录
             </Text>
             <View>
-              <IconFont name="a-headfor-12" color="#333333" size={16} />
+              <AppIcon name="a-headfor-12" color="#333333" size={16} />
             </View>
           </TouchableOpacity>
         ),
@@ -209,7 +209,7 @@ export default function Feedback() {
               style={[styles.imageItem, styles.uploader]}
               onPress={handleChooseImage}
             >
-              <IconFont name="camera" size={24} color="#CCCCCC" />
+              <AppIcon name="camera" size={24} color="#CCCCCC" />
               <Text style={styles.uploaderText}>相册上传</Text>
             </TouchableOpacity>
             {imageList.map(uri => (

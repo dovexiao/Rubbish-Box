@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { changePwdVerify, changePwd, getPrivateSendSms } from '@/services/user';
 import { hideLoading, mobileExp, showLoading } from '@/utils';
 import { PURPOSE, POST_SOURCE } from '@/constants';
@@ -271,7 +271,7 @@ export default function PasswordSet() {
                 <TouchableOpacity
                   onPress={() => setPasswordCanSee(!passwordCanSee)}
                 >
-                  <IconFont
+                  <AppIcon
                     name={passwordCanSee ? 'visible' : 'invisible'}
                     size={24}
                     color="#999999"
@@ -297,7 +297,7 @@ export default function PasswordSet() {
                     setConfirmPasswordCanSee(!confirmPasswordCanSee)
                   }
                 >
-                  <IconFont
+                  <AppIcon
                     name={confirmPasswordCanSee ? 'visible' : 'invisible'}
                     size={24}
                     color="#999999"

@@ -10,7 +10,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { PickerView } from '@ant-design/react-native';
 import { PageContainer, Popup } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { saveOrUpdate, getDetail } from '@/services/setting';
 import { regionData, getPickerResultByValues } from '@/utils/regionData';
 import styles from './styles';
@@ -234,7 +234,7 @@ export default function AddressCreate() {
                   {regionText}
                 </Text>
                 <View style={styles.arrowIconWrap}>
-                  <IconFont name="a-headfor-20" size={16} color="#333333" />
+                  <AppIcon name="a-headfor-20" size={16} color="#333333" />
                 </View>
               </View>
             </TouchableOpacity>
