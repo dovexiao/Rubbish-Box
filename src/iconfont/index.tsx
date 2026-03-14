@@ -2,7 +2,8 @@
 /* eslint-disable */
 
 import React, { FunctionComponent } from 'react';
-import { ViewProps } from 'react-native';
+import { ViewProps, Platform } from 'react-native';
+import HarmonyIconImage from '@/harmony/HarmonyIconImage';
 import { GProps } from 'react-native-svg';
 import IconCamera1 from './IconCamera1';
 import IconAPopUpwindowsclose from './IconAPopUpwindowsclose';

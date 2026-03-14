@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Flex, PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import MyEmpty from '@/components/MyEmpty';
 import { getVersionRecords } from '@/services/deviceInfo';
 import { cacheGetSync } from '@/utils/cache';
@@ -183,7 +183,7 @@ export default function VersionHistory() {
           return (
             <View key={String(record.id)} style={styles.itemContent}>
               <Flex style={styles.itemTop} align="center">
-                <IconFont name="explain" color="#333333" size={20} />
+                <AppIcon name="explain" color="#333333" size={20} />
                 <Text style={styles.itemName} numberOfLines={1}>
                   {`升级固件版本至${record?.version ?? ''}`}
                 </Text>

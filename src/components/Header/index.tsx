@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import Flex from '../Flex';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import {
   BATTERY_STATUS,
   BATTERY_STATUS_DEEP,
@@ -102,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({
           unreadCount > 99 ? styles.messgeWrapperMax : styles.messageWrapper,
         ]}
       >
-        <IconFont name="message" size={24} color={textColor} />
+        <AppIcon name="message" size={24} color={textColor} />
         {unreadCount > 0 && (
           <View
             style={[
@@ -207,7 +207,7 @@ const Header: React.FC<HeaderProps> = ({
               {/* 小车图标 */}
               {lockInfo?.aboveStatus === 1 && (
                 <View style={styles.colSpace16}>
-                  <IconFont name="park1" size={20} color={textColor} />
+                  <AppIcon name="park1" size={20} color={textColor} />
                 </View>
               )}
 

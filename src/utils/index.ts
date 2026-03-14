@@ -204,26 +204,53 @@ export async function makePhoneCall(options: {
 export async function getStorage<T = any>(options: {
   key: string;
 }): Promise<T | null> {
-  return storageUtil.getItem<T>(options.key);
+  try {
+    if (isHarmonyPlatform) {
+      const { cacheGetSync } = require('./cache');
+      const res = await cacheGetSync(options.key);
+      return res;
+    }
+    const res = await storageUtil.getItem<T>(options.key);
+    return res;
+  } catch (e) {
+    throw e;
+  }
 }
-
-/**
- * 设置存储数据（兼容 Taro 风格的 API）
- * @param options 配置对象，包含 key 和 data
- */
 export async function setStorage<T = any>(options: {
   key: string;
   data: T;
 }): Promise<void> {
-  return storageUtil.setItem(options.key, options.data);
-}
+  try {
+    let safeData = options.data;
+    if (safeData !== undefined) {
+      try {
+        safeData = JSON.parse(JSON.stringify(safeData));
+      } catch (err) {
+        console.warn('setStorage parse error:', err);
+      }
+    }
 
-/**
- * 删除存储数据（兼容 Taro 风格的 API）
- * @param options 配置对象，包含 key
- */
+    if (isHarmonyPlatform) {
+      const { cacheSetSync } = require('./cache');
+      await cacheSetSync(options.key, safeData);
+      return;
+    }
+    await storageUtil.setItem(options.key, safeData);
+  } catch (e) {
+    console.warn('setStorage error:', e);
+  }
+}
 export async function removeStorage(options: { key: string }): Promise<void> {
-  return storageUtil.removeItem(options.key);
+  try {
+    if (isHarmonyPlatform) {
+      const { cacheRemoveSync } = require('./cache');
+      await cacheRemoveSync(options.key);
+      return;
+    }
+    await storageUtil.removeItem(options.key);
+  } catch (e) {
+    console.warn('removeStorage error:', e);
+  }
 }
 
 /**

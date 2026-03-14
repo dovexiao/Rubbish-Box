@@ -9,7 +9,7 @@ import {
   Platform,
   Keyboard,
 } from 'react-native';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import styles from './styles';
 
 export type PopupProps = {
@@ -178,7 +178,7 @@ export default function Popup({
                 onPress={onClose}
                 activeOpacity={0.8}
               >
-                <IconFont name="close" size={20} color="#999999" />
+                <AppIcon name="close" size={20} color="#999999" />
               </TouchableOpacity>
             )}
           </View>

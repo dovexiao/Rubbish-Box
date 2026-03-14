@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Flex from '@/components/Flex';
-import Icon from '@/iconfont';
 import { DeviceItemProps } from './typing';
 import { styles } from './style';
+import AppIcon from '@/components/AppIcon';
 
 export const DeviceItem: React.FC<DeviceItemProps> = ({
   data,
@@ -42,7 +42,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
               onPress={() => onChangeName?.()}
             >
               <Text style={styles.editText}>编辑</Text>
-              <Icon name="pen16" color="#999999" size={16} />
+              <AppIcon name="pen16" color="#999999" size={16} />
             </TouchableOpacity>
           )}
         </Flex>
@@ -70,7 +70,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
             )}
             {data.groupCount !== 1 && (
               <>
-                <Icon
+                <AppIcon
                   name="multiplication"
                   color="#333333"
                   size={14}

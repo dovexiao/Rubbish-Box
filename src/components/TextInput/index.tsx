@@ -15,7 +15,7 @@ import {
   Platform,
 } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 
 export interface TextInputProps extends RNTextInputProps {
   // 是否显示一键清除按钮（×），默认不显示
@@ -204,7 +204,7 @@ export const TextInput = React.forwardRef<
           }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <IconFont name="close" size={14} color={'#fff'} />
+          <AppIcon name="close" size={14} color={'#fff'} />
         </TouchableOpacity>
       ) : null}
     </View>

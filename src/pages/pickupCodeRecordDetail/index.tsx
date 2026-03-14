@@ -11,7 +11,7 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Input, PickerView } from '@ant-design/react-native';
 import { Flex, PageContainer, Popup } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import {
   getPickupCodeRecordDetail,
   savePickupCodeAddress,
@@ -277,9 +277,9 @@ export default function PickupCodeRecordDetail() {
             <View style={styles.cardInfo}>
               <Flex direction="column" justify="center">
                 <Flex align="center">
-                  <IconFont name="star" color="#283E77" size={10} />
+                  <AppIcon name="star" color="#283E77" size={10} />
                   <Text style={styles.cardInfoText}>领取一台地锁</Text>
-                  <IconFont name="star" color="#283E77" size={10} />
+                  <AppIcon name="star" color="#283E77" size={10} />
                 </Flex>
                 <Text style={styles.cardTimeText}>{pickupTime}</Text>
               </Flex>
@@ -326,7 +326,7 @@ export default function PickupCodeRecordDetail() {
                         onPress={handleCopyExpressNo}
                         activeOpacity={0.8}
                       >
-                        <IconFont name="copy1" color="#999999" size={18} />
+                        <AppIcon name="copy1" color="#999999" size={18} />
                       </TouchableOpacity>
                     </View>
                   ) : null}
@@ -417,7 +417,7 @@ export default function PickupCodeRecordDetail() {
                     {addressText || '请选择'}
                   </Text>
                   {!addressText && (
-                    <IconFont name="a-headfor-20" size={16} color="#333333" />
+                    <AppIcon name="a-headfor-20" size={16} color="#333333" />
                   )}
                 </Flex>
               </Flex>

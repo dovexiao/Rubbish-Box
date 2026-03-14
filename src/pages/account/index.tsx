@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, AppState } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Flex, PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getAccountInfo, getThirdState, userThirdBind } from '@/services/user';
 import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
 import styles from './styles';
@@ -148,7 +148,7 @@ export default function Account() {
           <Text style={styles.label}>手机号</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text style={styles.value}>{detail?.mobile ?? ''}</Text>
-            <IconFont name="a-headfor-20" size={16} color="#333333" />
+            <AppIcon name="a-headfor-20" size={16} color="#333333" />
           </View>
         </TouchableOpacity>
 
@@ -171,7 +171,7 @@ export default function Account() {
                   }`
                 : '未绑定'}
             </Text>
-            <IconFont name="a-headfor-20" size={16} color="#333333" />
+            <AppIcon name="a-headfor-20" size={16} color="#333333" />
           </View>
         </TouchableOpacity>
 
@@ -186,7 +186,7 @@ export default function Account() {
             <Text style={[styles.value, !detail?.setPwd && styles.valueGray]}>
               {detail?.setPwd ? '已设置' : '未设置'}
             </Text>
-            <IconFont name="a-headfor-20" size={16} color="#333333" />
+            <AppIcon name="a-headfor-20" size={16} color="#333333" />
           </View>
         </TouchableOpacity>
       </View>

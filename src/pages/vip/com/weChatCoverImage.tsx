@@ -1,8 +1,8 @@
+import AppIcon from '@/components/AppIcon';
 import React, { RefObject } from 'react';
 import { View, Text } from 'react-native';
 import dayjs from 'dayjs';
 import Flex from '@/components/Flex';
-import Icon from '@/iconfont';
 import { DAY_OF_WEEK, INVITE_STATUS } from '@/constants';
 import { styles } from '../recordStyle';
 import { DetailsProp } from '../type';
@@ -76,7 +76,7 @@ export const WeChatCoverImage = ({
               'HH',
             )}：${dayjs(details?.startTime).format('mm')}`}</Text>
           </Flex>
-          <Icon name={'arrows1'} size={40} color="#333333"></Icon>
+          <AppIcon name={'arrows1'} size={40} color="#333333"></AppIcon>
           <Flex direction="column" justify="between" style={{ marginLeft: 10 }}>
             <Flex direction="row" align="center">
               <Text style={[styles.dateText, styles.mr12, styles.mb8]}>

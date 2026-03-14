@@ -22,7 +22,7 @@ import {
   GradientButton,
   PopConfirm,
 } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import dayjs from 'dayjs';
 import { stringify } from '@/utils/stringify';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
@@ -159,7 +159,7 @@ export default function MemberPage() {
             });
           }}
         >
-          <IconFont name="add" color="#333333" size={14} />
+          <AppIcon name="add" color="#333333" size={14} />
           <Text style={styles.addBtnText}>添加成员，授权使用地锁</Text>
         </TouchableOpacity>
         <FlatList
@@ -177,7 +177,7 @@ export default function MemberPage() {
                 >
                   <Flex align="center">
                     <Text style={styles.username}>编辑</Text>
-                    <IconFont name="a-headfor-20" size={18} color="#333333" />
+                    <AppIcon name="a-headfor-20" size={18} color="#333333" />
                   </Flex>
                 </TouchableOpacity>
               </Flex>
@@ -266,7 +266,7 @@ export default function MemberPage() {
                     });
                   }}
                 >
-                  <IconFont
+                  <AppIcon
                     name={currentRow?.isForever ? 'selected' : 'unselected'}
                     size={20}
                     color={currentRow?.isForever ? '#333333' : '#E1E1E1'}
@@ -286,7 +286,7 @@ export default function MemberPage() {
                   }}
                   style={styles.ml32}
                 >
-                  <IconFont
+                  <AppIcon
                     name={currentRow?.isForever ? 'unselected' : 'selected'}
                     size={20}
                     color={currentRow?.isForever ? '#E1E1E1' : '#333333'}
@@ -315,7 +315,7 @@ export default function MemberPage() {
                       {dayjs(currentRow?.endTime).format('YYYY-MM-DD')}
                     </Text>
                     <View style={styles.ml8}>
-                      <IconFont
+                      <AppIcon
                         name={'a-headfor-20'}
                         size={24}
                         color="#333333"

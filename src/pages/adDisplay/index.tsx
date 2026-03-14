@@ -20,7 +20,7 @@ import Video from 'react-native-video';
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer, Flex } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getBannerDetails, updateBannerDetails } from '@/services/user';
 import { hideLoading, showLoading, showToast, tencentUpload } from '@/utils';
 import styles from './styles';
@@ -387,7 +387,7 @@ export default function AdDisplay() {
                             />
                           ) : (
                             <View style={styles.videoPlaceholder}>
-                              <IconFont name="play" size={40} color="#fff" />
+                              <AppIcon name="play" size={40} color="#fff" />
                               <Text style={{ color: '#fff', marginTop: 8 }}>
                                 视
                               </Text>
@@ -451,7 +451,7 @@ export default function AdDisplay() {
             onPress={showChooseType}
             activeOpacity={0.8}
           >
-            <IconFont name="camera" size={24} color="#CCCCCC" />
+            <AppIcon name="camera" size={24} color="#CCCCCC" />
             <Text style={styles.uploadText}>相册上传</Text>
             <Text style={styles.uploadText}>({bannerImageUrls.length}/10)</Text>
           </TouchableOpacity>
@@ -471,7 +471,7 @@ export default function AdDisplay() {
                     },
                   ]}
                 >
-                  <IconFont name="play" size={20} color="#fff" />
+                  <AppIcon name="play" size={20} color="#fff" />
                 </View>
               ) : (
                 <Image

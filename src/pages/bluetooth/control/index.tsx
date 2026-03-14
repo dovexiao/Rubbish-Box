@@ -38,7 +38,7 @@ import {
 } from '@/services';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 
 type RouteParams = {
   lockId?: number | string;
@@ -357,7 +357,7 @@ export default function BluetoothControl() {
                 <Text style={styles.footerText}>
                   {bluetoothPin || blePin || '暂无'}
                 </Text>
-                <IconFont name="a-headfor-121" size={20} color="#ff873d" />
+                <AppIcon name="a-headfor-121" size={20} color="#ff873d" />
               </TouchableOpacity>
             </Flex>
           </Flex>

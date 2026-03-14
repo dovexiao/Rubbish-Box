@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/core';
 import { PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getRepairList } from '@/services/user';
 import styles from './styles';
 import { showToast } from '@/utils';
@@ -86,7 +86,7 @@ export default function MaintainService() {
           <Text style={[styles.text, { marginRight: 2 }]}>
             {item.repairProgressName}
           </Text>
-          <IconFont name="a-headfor-20" color="#333333" size={20} />
+          <AppIcon name="a-headfor-20" color="#333333" size={20} />
         </View>
         <View style={styles.diviler} />
         <View style={styles.itemTopBottom}>

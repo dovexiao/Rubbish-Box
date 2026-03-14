@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Calendar, LocaleConfig, DateData } from 'react-native-calendars';
 import DatePicker from 'react-native-date-picker';
 import Flex from '@/components/Flex';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 
 export interface DateTimePickerPopupProps {
   title?: React.ReactNode;
@@ -216,14 +216,14 @@ const DateTimePickerPopup = forwardRef<
                   <View>
                     {direction === 'left' ? (
                       <View style={{ transform: [{ rotate: '180deg' }] }}>
-                        <IconFont
+                        <AppIcon
                           name={'a-headfor-201'}
                           size={30}
                           color="#333333"
                         />
                       </View>
                     ) : (
-                      <IconFont
+                      <AppIcon
                         name={'a-headfor-201'}
                         size={30}
                         color="#333333"

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import dayjs from 'dayjs';
 import { DatePicker } from '@ant-design/react-native';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import styles from './styles';
 
 export type LockListItem = {
@@ -74,7 +74,7 @@ export default function LockItem({ data, onChange }: Props) {
     <>
       <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={onToggleBind}>
         <View style={[styles.checkBox, data.isBind && styles.checked]}>
-          <IconFont name="tick-white" color="#FFFFFF" size={20} />
+          <AppIcon name="tick-white" color="#FFFFFF" size={20} />
         </View>
 
         <View style={styles.content}>
@@ -94,7 +94,7 @@ export default function LockItem({ data, onChange }: Props) {
                 ) : null}
                 {data.lockType === 2 ? (
                   <View style={styles.multiBox}>
-                    <IconFont size={6} color="#333333" name="multiplication" />
+                    <AppIcon size={6} color="#333333" name="multiplication" />
                     <Text style={styles.count}>{data.groupCount ?? ''}</Text>
                   </View>
                 ) : null}
@@ -114,7 +114,7 @@ export default function LockItem({ data, onChange }: Props) {
                       style={styles.option}
                       onPress={onSelectForever}
                     >
-                      <IconFont
+                      <AppIcon
                         name={data.isForever ? 'selected' : 'unselected'}
                         size={20}
                         color={data.isForever ? '#333333' : '#E1E1E1'}
@@ -127,7 +127,7 @@ export default function LockItem({ data, onChange }: Props) {
                       style={[styles.option, styles.optionGap]}
                       onPress={onSelectCustom}
                     >
-                      <IconFont
+                      <AppIcon
                         name={!data.isForever ? 'selected' : 'unselected'}
                         size={18}
                         color={!data.isForever ? '#333333' : '#E1E1E1'}
@@ -146,7 +146,7 @@ export default function LockItem({ data, onChange }: Props) {
                       <View style={styles.endTime}>
                         <Text style={styles.endTimeText}>{endDateText}</Text>
                         <View style={styles.arrow}>
-                          <IconFont name="a-headfor-20" size={16} color="#333333" />
+                          <AppIcon name="a-headfor-20" size={16} color="#333333" />
                         </View>
                       </View>
                     </TouchableOpacity>

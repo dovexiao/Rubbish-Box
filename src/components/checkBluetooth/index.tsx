@@ -9,7 +9,7 @@ import React, {
 import { Text, View } from 'react-native';
 import Flex from '@/components/Flex';
 import Popup from '@/components/Popup';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getBluetoothDeviceInfo, loopFunc, showToast } from '@/utils';
 import { isDeviceConnected } from '@/utils/api';
 import { styles } from './styles';
@@ -177,7 +177,7 @@ const CheckBluetooth = forwardRef<CheckBluetoothRef, Props>(function CheckBlueto
               </View>
               <View>
                 {item.checked ? (
-                  <IconFont name="selected" size={20} color="#333333" />
+                  <AppIcon name="selected" size={20} color="#333333" />
                 ) : null}
               </View>
             </View>

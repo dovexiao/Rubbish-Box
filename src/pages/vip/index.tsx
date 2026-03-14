@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Flex from '@/components/Flex';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import Popup from '@/components/Popup';
 import { PageContainer, TextInput } from '@/components';
 import DateTimePickerPopup from '@/components/CustomDateTimePickerPopup';
@@ -346,11 +346,11 @@ const VipPage = () => {
             }}
           >
             <Text style={styles.vipRecord}>贵宾邀请记录</Text>
-            <IconFont
+            <AppIcon
               name={'a-headfor-20'}
               size={16}
               color="#333333"
-            ></IconFont>
+            ></AppIcon>
 
             {(unUseCount ?? 0) > 0 && (
               <View style={styles.messageBadge}>
@@ -391,11 +391,11 @@ const VipPage = () => {
             }}
           >
             <Text style={styles.titleRightText}>贵宾管理</Text>
-            <IconFont
+            <AppIcon
               name={'a-headfor-16-grey'}
               size={16}
               color="#999999"
-            ></IconFont>
+            ></AppIcon>
           </Flex>
         </Flex>
 
@@ -526,7 +526,7 @@ const VipPage = () => {
                 )}：${dayjs(startTime).format('mm')}`}</Text>
               </Flex>
             </Flex>
-            <IconFont name={'arrows1'} size={20} color="#333333"></IconFont>
+            <AppIcon name={'arrows1'} size={20} color="#333333"></AppIcon>
             <Flex
               style={styles.timeBox}
               direction={'column'}
@@ -573,11 +573,11 @@ const VipPage = () => {
                 ? `${customUsageCount}次`
                 : '不限'}
             </Text>
-            <IconFont
+            <AppIcon
               name={'a-headfor-20'}
               size={20}
               color="#333333"
-            ></IconFont>
+            ></AppIcon>
           </Flex>
         </Flex>
 
@@ -615,7 +615,7 @@ const VipPage = () => {
               >
                 {adminUsername}
               </Text>
-              <IconFont name={'pull-down'} size={12} color="#333333"></IconFont>
+              <AppIcon name={'pull-down'} size={12} color="#333333"></AppIcon>
               <Text style={styles.chooseNum}>
                 （已选择
                 {(selectedDeviceList && selectedDeviceList?.length) ?? 0}
@@ -838,7 +838,7 @@ const VipPage = () => {
             <View></View>
             <Text style={styles.titleTextPop}>贵宾码</Text>
             <Flex isTouchView onPress={() => setSharePopupVisible(false)}>
-              <IconFont name={'close'} size={24} color="#333333"></IconFont>
+              <AppIcon name={'close'} size={24} color="#333333"></AppIcon>
             </Flex>
           </Flex>
           <View style={styles.contentBox}>
@@ -885,7 +885,7 @@ const VipPage = () => {
                   'mm',
                 )}`}</Text>
               </Flex>
-              <IconFont name={'arrows1'} size={20} color="#333333"></IconFont>
+              <AppIcon name={'arrows1'} size={20} color="#333333"></AppIcon>
               <Flex
                 direction="column"
                 justify="between"

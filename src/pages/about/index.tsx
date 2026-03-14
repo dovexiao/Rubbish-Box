@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import styles from './styles';
 
 const USER_AGREEMENT_URL =
@@ -37,7 +37,7 @@ export default function About() {
           onPress={() => openWeb(USER_AGREEMENT_URL, '用户协议')}
         >
           <Text style={styles.itemText}>用户协议</Text>
-          <IconFont name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={20} color="#333333" />
         </TouchableOpacity>
 
         {/* 隐私政策 */}
@@ -47,7 +47,7 @@ export default function About() {
           onPress={() => openWeb(PRIVACY_POLICY_URL, '隐私政策')}
         >
           <Text style={styles.itemText}>隐私政策</Text>
-          <IconFont name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={20} color="#333333" />
         </TouchableOpacity>
       </View>
     </PageContainer>

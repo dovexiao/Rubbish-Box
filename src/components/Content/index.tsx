@@ -13,7 +13,7 @@ import {
   Pressable,
   ImageStyle,
 } from 'react-native';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import {
   getGroupOperateResult,
   getOperateResult,
@@ -462,7 +462,7 @@ const Content: React.FC<ContentProps> = ({
             </View>
           )}
           <View style={styles.manualIconCircle}>
-            <IconFont name="bluetooth-1" size={24} color="#333333" />
+            <AppIcon name="bluetooth-1" size={24} color="#333333" />
           </View>
           <Text style={styles.manualText}>自动升降</Text>
         </TouchableOpacity>
@@ -481,7 +481,7 @@ const Content: React.FC<ContentProps> = ({
             }}
           >
             <View style={styles.manualIconCircle}>
-              <IconFont name="rise" size={24} color="#333333" />
+              <AppIcon name="rise" size={24} color="#333333" />
             </View>
             <Text style={styles.manualText}>手动升锁</Text>
           </TouchableOpacity>
@@ -501,7 +501,7 @@ const Content: React.FC<ContentProps> = ({
             }}
           >
             <View style={styles.manualIconCircle}>
-              <IconFont name="down" size={24} color="#333333" />
+              <AppIcon name="down" size={24} color="#333333" />
             </View>
             <Text style={styles.manualText}>手动降锁</Text>
           </TouchableOpacity>
@@ -515,7 +515,7 @@ const Content: React.FC<ContentProps> = ({
               onPress={() => manageMultipleRef.current?.open()}
             >
               <View style={styles.manualIconCircle}>
-                <IconFont
+                <AppIcon
                   name="a-combinationmanagement"
                   size={24}
                   color="#333333"
@@ -532,7 +532,7 @@ const Content: React.FC<ContentProps> = ({
             onPress={() => coverOpenRef.current?.open()}
           >
             <View style={styles.manualIconCircle}>
-              <IconFont
+              <AppIcon
                 name={
                   detail?.coverStatus === COVER_STATUS.OPEN ? 'unlock' : 'lock'
                 }
@@ -579,7 +579,7 @@ const Content: React.FC<ContentProps> = ({
 
         <Pressable style={[styles.card]} onPress={handleDeviceInfo}>
           <Flex justify="between" align="center" style={styles.cardHeader}>
-            <IconFont
+            <AppIcon
               name={
                 detail?.isGroup ? 'a-Equipmentlist' : 'a-equipmentinformation'
               }
@@ -589,7 +589,7 @@ const Content: React.FC<ContentProps> = ({
             <Text style={styles.cardTitle}>
               {detail?.isGroup ? '设备列表' : '设备信息'}
             </Text>
-            <IconFont name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={20} color="#333333" />
           </Flex>
           {detail?.isGroup ? (
             <Flex
@@ -620,14 +620,14 @@ const Content: React.FC<ContentProps> = ({
           ) : (
             <View style={styles.infoList}>
               <View style={styles.infoRow}>
-                <IconFont name={'a-Upgradelock'} size={16} color="#ccc" />
+                <AppIcon name={'a-Upgradelock'} size={16} color="#ccc" />
                 <Text style={styles.infoLabel}>离车升锁</Text>
                 <Text style={styles.infoValue}>
                   {detail?.leaveUpTime ? `${detail?.leaveUpTime}s` : '20s'}
                 </Text>
               </View>
               <View style={styles.infoRow}>
-                <IconFont name={'bell'} size={16} color="#ccc" />
+                <AppIcon name={'bell'} size={16} color="#ccc" />
                 <Text style={styles.infoLabel}>蜂鸣碰撞</Text>
                 <Image
                   style={{ width: 16, height: 16 }}
@@ -657,9 +657,9 @@ const Content: React.FC<ContentProps> = ({
           }}
         >
           <Flex justify="between" align="center">
-            <IconFont name="member" size={16} color="#333333" />
+            <AppIcon name="member" size={16} color="#333333" />
             <Text style={styles.entryText}>成员共享</Text>
-            <IconFont name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={20} color="#333333" />
           </Flex>
         </TouchableOpacity>
         {detail?.powerType === 1 && (
@@ -675,9 +675,9 @@ const Content: React.FC<ContentProps> = ({
             }}
           >
             <Flex justify="between" align="center">
-              <IconFont name="a-VIPInvitation" size={16} color="#333333" />
+              <AppIcon name="a-VIPInvitation" size={16} color="#333333" />
               <Text style={styles.entryText}>贵宾邀请</Text>
-              <IconFont name="a-headfor-20" size={20} color="#333333" />
+              <AppIcon name="a-headfor-20" size={20} color="#333333" />
             </Flex>
           </TouchableOpacity>
         )}
@@ -689,9 +689,9 @@ const Content: React.FC<ContentProps> = ({
           }}
         >
           <Flex justify="between" align="center">
-            <IconFont name="a-powersupply" size={16} color="#333333" />
+            <AppIcon name="a-powersupply" size={16} color="#333333" />
             <Text style={styles.entryText}>市电安装</Text>
-            <IconFont name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={20} color="#333333" />
           </Flex>
         </TouchableOpacity>
       </View>

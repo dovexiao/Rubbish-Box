@@ -23,7 +23,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 
 export interface AnimationPopRef {
   open: () => void;
@@ -370,7 +370,7 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
                 <View style={{ width: 24, height: 24 }}></View>
                 <Text style={styles.title}>{title}</Text>
                 <TouchableOpacity onPress={() => setOpen(false)}>
-                  <IconFont name="close" size={24} color="#333333" />
+                  <AppIcon name="close" size={24} color="#333333" />
                 </TouchableOpacity>
               </View>
             ) : (

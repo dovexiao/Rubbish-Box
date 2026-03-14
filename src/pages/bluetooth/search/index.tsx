@@ -22,7 +22,7 @@ import {
   setClipboardData,
 } from '@/utils';
 import { openBluetoothProximity, tipsUserOperation } from '@/services';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import {
   LOCK_BTN_COLORS,
   LOCK_STATUS,
@@ -630,7 +630,7 @@ export default function BluetoothSearch(props: any) {
         ) : (
           <>
             <View style={styles.iconWrapper}>
-              <IconFont name="bluetooth-1" size={32} color="#333333" />
+              <AppIcon name="bluetooth-1" size={32} color="#333333" />
             </View>
             <View style={styles.titleWrapper}>
               <Text style={styles.title}>请确保地锁通电</Text>
@@ -639,7 +639,7 @@ export default function BluetoothSearch(props: any) {
                 style={styles.titleIcon}
                 onPress={() => powerIndicatorPopRef?.current?.open()}
               >
-                <IconFont name="explain" size={18} color="#333333" />
+                <AppIcon name="explain" size={18} color="#333333" />
                 <Text style={styles.titleIconText}>通电指南</Text>
               </TouchableOpacity>
             </View>
@@ -668,7 +668,7 @@ export default function BluetoothSearch(props: any) {
                     showToast({ title: pin });
                   }}
                 >
-                  <IconFont name="copy1" size={16} color="#6b7280" />
+                  <AppIcon name="copy1" size={16} color="#6b7280" />
                   <Text style={styles.copyText}>点击复制</Text>
                 </TouchableOpacity>
               </Flex>

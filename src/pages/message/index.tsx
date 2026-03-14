@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 import { PageContainer } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { MESSAGE_TYPE } from '@/constants';
 import MyEmpty from '@/components/MyEmpty';
 import { cacheGetSync, reLaunch, showToast } from '@/utils';
@@ -216,14 +216,14 @@ export default function MessageScreen() {
             <Text style={styles.itemName} numberOfLines={1}>
               {headerTitle}
             </Text>
-            <IconFont name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={20} color="#333333" />
           </View>
 
           <View style={styles.divider} />
 
           <View style={styles.messageBody}>
             <View style={styles.messageMetaRow}>
-              <IconFont name="explain" size={20} color="#333333" />
+              <AppIcon name="explain" size={20} color="#333333" />
               <Text style={styles.messageType} numberOfLines={1}>
                 {typeText}
               </Text>

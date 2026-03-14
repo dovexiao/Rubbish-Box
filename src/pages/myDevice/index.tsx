@@ -8,7 +8,7 @@ import {
   Flex,
   GradientButton,
 } from '@/components/index';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { cacheGet } from '@/utils/cache';
 import { updateName } from '@/services/deviceInfo';
 import { getLockDeviceList } from '@/services/device';
@@ -153,7 +153,7 @@ export default function MyDevice() {
               style={{ flex: 1, padding: 0, textAlign: 'right' }}
               onChangeText={e => setLockName(e)}
             />
-            <IconFont name="redact" color="#999999" size={20} />
+            <AppIcon name="redact" color="#999999" size={20} />
           </Flex>
           <View style={styles.popupFooter}>
             <TouchableOpacity

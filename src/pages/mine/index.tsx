@@ -10,13 +10,14 @@ import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/core';
 import PageContainer from '@/components/PageContainer';
 import PopConfirm from '@/components/popConfirm';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { baseInfo, logout } from '@/services/user';
 import { cacheGetSync, cacheRemove, cacheSetSync } from '@/utils/cache';
 import { tokenStorage } from '@/utils/storage';
 import styles from './styles';
 import { useTheme } from '@/context/ThemeContext';
 import { reLaunch, showToast } from '@/utils';
+import IconFont from '@/iconfont';
 
 type MineInfo = {
   id?: string | number;
@@ -201,7 +202,7 @@ export default function Mine() {
           }}
         >
           <View style={styles.memberRow}>
-            <IconFont name="member-20" size={20} color="#333333" />
+            <AppIcon name="member-20" size={20} color="#333333" />
             <View style={styles.memberTextBox}>
               <Text style={styles.memberTitle}>成员</Text>
               <Text style={styles.memberDesc}>添加成员，授权使用地锁</Text>
@@ -221,9 +222,9 @@ export default function Mine() {
                     it.onPress();
                   }}
                 >
-                  <IconFont name={it.icon} size={22} color="#333333" />
+                  <AppIcon name={it.icon} size={22} color="#333333" />
                   <Text style={styles.listLabel}>{it.label}</Text>
-                  <IconFont name="a-headfor-20" size={16} color="#333333" />
+                  <AppIcon name="a-headfor-20" size={16} color="#333333" />
                 </TouchableOpacity>
               </View>
             );

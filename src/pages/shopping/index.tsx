@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PageContainer, Flex } from '@/components';
-import IconFont from '@/iconfont';
+import AppIcon from '@/components/AppIcon';
 import { getGoodsList } from '@/services/mall';
 import styles from './styles';
 import { showToast } from '@/utils';
@@ -147,7 +147,7 @@ export default function Shopping() {
         }}
       >
         <Text style={styles.bottomBtnText}>绑定礼品卡</Text>
-        <IconFont name="a-nextpage" color="#333333" size={20} />
+        <AppIcon name="a-nextpage" color="#333333" size={20} />
       </TouchableOpacity>
     </View>
   );
