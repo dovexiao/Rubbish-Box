@@ -1,7 +1,14 @@
 #import "AppDelegate.h"
 #import <React/RCTLinkingManager.h>
 #import <React/RCTBundleURLProvider.h>
-#import <RCTWeChat/WXApi.h>
+
+// 可选引入微信 SDK，如果工程里存在 WechatOpenSDK
+#if __has_include(<WechatOpenSDK/WXApi.h>)
+#import <WechatOpenSDK/WXApi.h>
+#define HAS_WECHAT_SDK 1
+#else
+#define HAS_WECHAT_SDK 0
+#endif
 
 @implementation AppDelegate
 
@@ -47,13 +54,10 @@
     
     // 通知 React Native 层应用已激活
     [[NSNotificationCenter defaultCenter] postNotificationName:@"AppDidBecomeActive" object:nil];
-    
-    [super applicationDidBecomeActive:application];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     NSLog(@"📱 [AppDelegate] 应用即将进入非活动状态 (applicationWillResignActive)");
-    [super applicationWillResignActive:application];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
@@ -65,7 +69,6 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     NSLog(@"📱 [AppDelegate] 应用即将进入前台 (applicationWillEnterForeground)");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"AppWillEnterForeground" object:nil];
-    [super applicationWillEnterForeground:application];
 }
 
 #pragma mark - UNUserNotificationCenterDelegate

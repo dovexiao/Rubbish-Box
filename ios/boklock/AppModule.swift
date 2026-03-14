@@ -3,12 +3,12 @@ import React
 
 @objc(AppModule)
 class AppModule: NSObject, RCTBridgeModule {
-  
-  static func requiresMainQueueSetup() -> Bool {
+
+  @objc static func requiresMainQueueSetup() -> Bool {
     return false
   }
-  
-  func moduleName() -> String! {
+
+  @objc static func moduleName() -> String! {
     return "AppModule"
   }
   

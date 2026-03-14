@@ -81,3 +81,14 @@ yarn-error.log
 .env.staging
 .env.production
 !.env.example
+
+node_modules
+android/.gradle
+android/build
+android/cache
+android/bin
+android/gems
+android/extensions
+android/specifications
+ios/Pods
+*.log

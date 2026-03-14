@@ -1,8 +1,7 @@
 #import <RCTAppDelegate.h>
-#import <Expo/Expo.h>
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate : EXAppDelegateWrapper <UNUserNotificationCenterDelegate>
+@interface AppDelegate : RCTAppDelegate <UNUserNotificationCenterDelegate>
 
 // 显式声明代理方法
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center

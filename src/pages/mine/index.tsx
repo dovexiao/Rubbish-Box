@@ -35,6 +35,7 @@ export default function Mine() {
   const [loading, setLoading] = useState(false);
 
   const logoutRef = useRef<any>(null);
+  const logintRef = useRef<any>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -45,7 +46,7 @@ export default function Mine() {
 
       if (!token) {
         setInfo(undefined);
-        requireLogin();
+        // requireLogin();
         return;
       }
 
@@ -73,8 +74,7 @@ export default function Mine() {
   );
 
   const requireLogin = useCallback(() => {
-    showToast('请先登录');
-    reLaunch('Login');
+    logintRef.current?.open();
   }, [navigation]);
 
   const onLogout = useCallback(async () => {
@@ -153,7 +153,7 @@ export default function Mine() {
     <PageContainer
       backgroundColor="#FCFBFE"
       backgroundImage={{ uri: info?.bgUrl }}
-      statusBarBackgroundColor={info?.bgUrl ? 'transparent' : '#FFFFFF'}
+      statusBarBackgroundColor={info?.bgUrl ? 'transparent' : 'transparent'}
       scrollable
       loading={loading && hasToken && !info}
       safeAreaEdges={['top', 'bottom']}
@@ -187,12 +187,7 @@ export default function Mine() {
             if (!hasToken) return requireLogin();
           }}
         >
-          <Text
-            style={[
-              styles.name,
-              themeType === 'dark' ? styles.darkName : styles.lightName,
-            ]}
-          >
+          <Text style={[styles.name, styles.lightName]}>
             {hasToken ? info?.nickName ?? '' : '去登录'}
           </Text>
         </TouchableOpacity>
@@ -235,20 +230,22 @@ export default function Mine() {
           })}
         </View>
 
-        <View style={styles.logoutBox}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.listItem}
-            onPress={() => {
-              if (!hasToken) return requireLogin();
-              logoutRef.current?.open();
-            }}
-          >
-            <IconFont name="exit" size={22} color="#333333" />
-            <Text style={styles.listLabel}>退出登录</Text>
-            <IconFont name="a-headfor-20" size={16} color="#333333" />
-          </TouchableOpacity>
-        </View>
+        {hasToken && (
+          <View style={styles.logoutBox}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.listItem}
+              onPress={() => {
+                if (!hasToken) return requireLogin();
+                logoutRef.current?.open();
+              }}
+            >
+              <IconFont name="exit" size={22} color="#333333" />
+              <Text style={styles.listLabel}>退出登录</Text>
+              <IconFont name="a-headfor-20" size={16} color="#333333" />
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* 退出登录弹窗 */}
         <PopConfirm
@@ -258,6 +255,15 @@ export default function Mine() {
           cancelText="暂不退出"
           confirmText="确定退出"
           onConfirm={onLogout}
+        />
+
+        <PopConfirm
+          ref={logintRef}
+          textWeight="bold"
+          title="请先登录"
+          cancelText="取消"
+          confirmText="去登录"
+          onConfirm={() => reLaunch('Login')}
         />
       </View>
     </PageContainer>

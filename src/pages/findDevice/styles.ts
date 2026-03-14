@@ -12,6 +12,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#ffffff',
   },
+  iconWrapper2: {
+    marginTop: 32,
+    marginBottom: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f3f4f6',
+  },
+  tipsLabel: {
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 17,
+    width: '100%',
+    marginBottom: 8,
+  },
   btnPositionImageContent: {
     width: '100%',
     height: 184,
@@ -23,7 +40,7 @@ const styles = StyleSheet.create({
     // Android
     elevation: 8,
     shadowColor: '#000',
-    marginTop: 114,
+    marginBottom: 24,
     overflow: 'hidden',
   },
   btnPositionImage: {
@@ -240,6 +257,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+  },
+  footetText: {
+    fontWeight: '500',
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
+    marginBottom: 24,
   },
 });
 

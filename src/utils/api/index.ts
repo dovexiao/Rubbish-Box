@@ -173,7 +173,6 @@ export const openBluetooth = (): Promise<{ success: boolean }> => {
   });
 };
 
-/**
 export const getBluetoothState = async (): Promise<string> => {
   try {
     await ensureBleManagerAlive();

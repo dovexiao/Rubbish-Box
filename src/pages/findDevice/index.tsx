@@ -32,6 +32,7 @@ import {
   setStorage,
   showToast,
   setClipboardData,
+  getStorage,
 } from '@/utils';
 import { bind, openBluetoothProximity } from '@/services';
 import IconFont from '@/iconfont';
@@ -46,11 +47,6 @@ import PowerIndicatorPop from '@/components/powerIndicatorPop';
 import type { PopCenterRef } from '@/components/PopCenter';
 import styles from './styles';
 import { Toast } from '@ant-design/react-native';
-
-const getStorage = async (options: { key: string }) => {
-  const data = await getStorageRaw<any>(options);
-  return { data };
-};
 
 const tipsUserOperation = async (options: {
   title?: string;
@@ -601,22 +597,42 @@ export default function FindDevice(props: any) {
         background: '#ffffff',
       }}
       footer={
-        needScan &&
-        searchBluetoothStatus !== SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS ? (
-          <Flex style={styles.footer} justify="center">
-            <GradientButton
-              colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-              width={160}
-              height={44}
-              round={false}
-              btnBorderRadius={16}
-              onPress={() => resetSearch(searchRef)}
-            >
-              <Flex style={styles.btnText} justify="center" align="center">
-                <Text style={styles.btnTextInner}>重新搜索</Text>
-              </Flex>
-            </GradientButton>
-          </Flex>
+        // iOS / 鸿蒙：先搜索，失败显示“重新搜索”，成功且无需 PIN 时显示“跳转设置”
+        needScan ? (
+          searchBluetoothStatus !== SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS ? (
+            <Flex style={styles.footer} justify="center">
+              <GradientButton
+                colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
+                width={160}
+                height={44}
+                round={false}
+                btnBorderRadius={16}
+                onPress={() => resetSearch(searchRef)}
+              >
+                <Flex style={styles.btnText} justify="center" align="center">
+                  <Text style={styles.btnTextInner}>重新搜索</Text>
+                </Flex>
+              </GradientButton>
+            </Flex>
+          ) : !!!needPin ? (
+            <Flex direction="column" align="center" justify="center">
+              <Text style={styles.footetText}>
+                因机型不同，蓝牙搜索需要几分钟，请耐心等待
+              </Text>
+              <GradientButton
+                colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
+                width={160}
+                height={44}
+                round={false}
+                btnBorderRadius={16}
+                onPress={() => handlePairing()}
+              >
+                <Flex style={styles.btnText} justify="center" align="center">
+                  <Text style={styles.btnTextInner}>跳转设置</Text>
+                </Flex>
+              </GradientButton>
+            </Flex>
+          ) : undefined
         ) : undefined
       }
       scrollable={false}
@@ -624,6 +640,10 @@ export default function FindDevice(props: any) {
       <Flex direction="column" align="center" style={styles.content}>
         {!!!needPin ? (
           <>
+            <View style={styles.iconWrapper2}>
+              <IconFont name="bluetooth-1" size={35} color="#333333" />
+            </View>
+            <Text style={styles.tipsLabel}>请确保地锁通电</Text>
             <View style={styles.btnPositionImageContent}>
               <Image
                 source={{
@@ -633,21 +653,14 @@ export default function FindDevice(props: any) {
                 resizeMode="contain"
               />
             </View>
-            <Text style={styles.btnPositionImageText}>
-              按下按键进入蓝牙配对
-            </Text>
+            <Text style={styles.tipsLabel}>请连接以下蓝牙</Text>
 
-            <Flex style={styles.deviceInfoSection} direction="column">
-              <Flex align="center" direction="row" justify="between">
-                <Text style={styles.deviceInfoItemLabel}>请确保地锁通电</Text>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  style={styles.deviceInfoItemIcon}
-                  onPress={() => powerIndicatorPopRef?.current?.open()}
-                >
-                  <IconFont name="explain" size={18} color="#FF873D" />
-                  <Text style={styles.deviceInfoItemIconText}>通电指南</Text>
-                </TouchableOpacity>
+            <Flex style={styles.infoSection} direction="column">
+              <Flex style={styles.infoBox}>
+                <View style={styles.infoContent}>
+                  <Text style={styles.infoLabel}>蓝牙名称</Text>
+                  <Text style={styles.infoValue}>{bleName}</Text>
+                </View>
               </Flex>
             </Flex>
           </>

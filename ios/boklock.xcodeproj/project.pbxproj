@@ -7,27 +7,157 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		66B0583C94F2464E9F1DD98A /* antoutline.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6FD87C62DDD4412CBE4162A7 /* antoutline.ttf */; };
-		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		90CF046A02224B73B1CA8399 /* antfill.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA5AFED6349497980A3949F /* antfill.ttf */; };
+		CB9BA3CD2F65B33500142A27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9BA3CC2F65B33500142A27 /* main.m */; };
+		CBD617642F644D7300BC703F /* CashierPushServices.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CBD6175D2F644D7300BC703F /* CashierPushServices.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CBD617A32F644F2600BC703F /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617A22F644F2600BC703F /* CoreTelephony.framework */; };
+		CBD617A52F644F4F00BC703F /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617A42F644F4000BC703F /* libc++.tbd */; };
+		CBD617A72F644F7100BC703F /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617A62F644F6500BC703F /* libsqlite3.tbd */; };
+		CBD617A92F644F8B00BC703F /* libz.1.2.5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617A82F644F8300BC703F /* libz.1.2.5.tbd */; };
+		CBD617AB2F644FB200BC703F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617AA2F644FB200BC703F /* SystemConfiguration.framework */; };
+		CBD617AD2F644FBB00BC703F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617AC2F644FBB00BC703F /* WebKit.framework */; };
+		CBD617DD2F6453DB00BC703F /* MobPushServiceExtension.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617D42F6453DB00BC703F /* MobPushServiceExtension.xcframework */; };
+		CBD617DE2F6453DB00BC703F /* MOBFoundation.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617D62F6453DB00BC703F /* MOBFoundation.xcframework */; };
+		CBD617E02F6453DB00BC703F /* AppModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD617CF2F6453DB00BC703F /* AppModule.swift */; };
+		CBD617E12F6453DB00BC703F /* AppModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD617CE2F6453DB00BC703F /* AppModule.m */; };
+		CBD617E22F6453DB00BC703F /* MobPushModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD617D22F6453DB00BC703F /* MobPushModule.m */; };
+		CBD617E32F6453DB00BC703F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CBD617CC2F6453DB00BC703F /* AppDelegate.mm */; };
+		CBD617E42F6453DB00BC703F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBD617D02F6453DB00BC703F /* Assets.xcassets */; };
+		CBD617ED2F65495900BC703F /* MobPush.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617B82F64524700BC703F /* MobPush.xcframework */; };
+		CBD618102F65570A00BC703F /* XDAudioManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD6180E2F65570A00BC703F /* XDAudioManager.m */; };
+		CBD618112F65570A00BC703F /* NotificationServices.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD6180C2F65570A00BC703F /* NotificationServices.m */; };
+		CBD618122F65570A00BC703F /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD6180A2F65570A00BC703F /* NotificationService.swift */; };
+		CBD618142F65570A00BC703F /* 6.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F62F65570A00BC703F /* 6.mp3 */; };
+		CBD618152F65570A00BC703F /* 万.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617FF2F65570A00BC703F /* 万.mp3 */; };
+		CBD618162F65570A00BC703F /* 3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F32F65570A00BC703F /* 3.mp3 */; };
+		CBD618172F65570A00BC703F /* alipay.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618022F65570A00BC703F /* alipay.mp3 */; };
+		CBD618182F65570A00BC703F /* 4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F42F65570A00BC703F /* 4.mp3 */; };
+		CBD618192F65570A00BC703F /* 百.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617FA2F65570A00BC703F /* 百.mp3 */; };
+		CBD6181A2F65570A00BC703F /* 1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F12F65570A00BC703F /* 1.mp3 */; };
+		CBD6181B2F65570A00BC703F /* cancel.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618032F65570A00BC703F /* cancel.mp3 */; };
+		CBD6181C2F65570A00BC703F /* 9.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F92F65570A00BC703F /* 9.mp3 */; };
+		CBD6181D2F65570A00BC703F /* 8.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F82F65570A00BC703F /* 8.mp3 */; };
+		CBD6181E2F65570A00BC703F /* 点.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617FB2F65570A00BC703F /* 点.mp3 */; };
+		CBD6181F2F65570A00BC703F /* 亿.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618002F65570A00BC703F /* 亿.mp3 */; };
+		CBD618202F65570A00BC703F /* wechat.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618062F65570A00BC703F /* wechat.mp3 */; };
+		CBD618212F65570A00BC703F /* 0.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F02F65570A00BC703F /* 0.mp3 */; };
+		CBD618222F65570A00BC703F /* 十.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617FE2F65570A00BC703F /* 十.mp3 */; };
+		CBD618232F65570A00BC703F /* 千.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617FD2F65570A00BC703F /* 千.mp3 */; };
+		CBD618242F65570A00BC703F /* jixiaopu.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618042F65570A00BC703F /* jixiaopu.mp3 */; };
+		CBD618252F65570A00BC703F /* 5.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F52F65570A00BC703F /* 5.mp3 */; };
+		CBD618262F65570A00BC703F /* 7.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F72F65570A00BC703F /* 7.mp3 */; };
+		CBD618272F65570A00BC703F /* 零.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617FC2F65570A00BC703F /* 零.mp3 */; };
+		CBD618282F65570A00BC703F /* 元.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618012F65570A00BC703F /* 元.mp3 */; };
+		CBD618292F65570A00BC703F /* 2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD617F22F65570A00BC703F /* 2.mp3 */; };
+		CBD6182A2F65570A00BC703F /* money.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618052F65570A00BC703F /* money.mp3 */; };
+		CBD618312F6557F100BC703F /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CBD6182F2F6557F100BC703F /* Info.plist */; };
+		CBD618322F6557F100BC703F /* boklockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD6182E2F6557F100BC703F /* boklockTests.m */; };
 		D850CDDBD053AF84D6F349E9 /* libPods-boklock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC5F90C915F2B6987376264 /* libPods-boklock.a */; };
 		F09BFA090CD720F34698B524 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		CBD617622F644D7300BC703F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CBD6175C2F644D7300BC703F;
+			remoteInfo = CashierPushServices;
+		};
+		CBD617C62F6452FE00BC703F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+			remoteInfo = boklock;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CBD617652F644D7300BC703F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				CBD617642F644D7300BC703F /* CashierPushServices.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* boklock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = boklock.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = boklock/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = boklock/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = boklock/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2E3F2C5444B9BC14F10786E3 /* Pods-boklock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boklock.release.xcconfig"; path = "Target Support Files/Pods-boklock/Pods-boklock.release.xcconfig"; sourceTree = "<group>"; };
 		686A7DDF204A99BAB4654250 /* Pods-boklock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boklock.debug.xcconfig"; path = "Target Support Files/Pods-boklock/Pods-boklock.debug.xcconfig"; sourceTree = "<group>"; };
-		6FD87C62DDD4412CBE4162A7 /* antoutline.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = antoutline.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antoutline.ttf"; sourceTree = "<group>"; };
-		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = boklock/AppDelegate.swift; sourceTree = "<group>"; };
+		6FD87C62DDD4412CBE4162A7 /* antoutline.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = antoutline.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antoutline.ttf"; sourceTree = "<group>"; };
 		7FC5F90C915F2B6987376264 /* libPods-boklock.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-boklock.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = boklock/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		9FA5AFED6349497980A3949F /* antfill.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = antfill.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antfill.ttf"; sourceTree = "<group>"; };
+		9FA5AFED6349497980A3949F /* antfill.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = antfill.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antfill.ttf"; sourceTree = "<group>"; };
+		CB9BA3CC2F65B33500142A27 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CBD6175D2F644D7300BC703F /* CashierPushServices.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CashierPushServices.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBD617A22F644F2600BC703F /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		CBD617A42F644F4000BC703F /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		CBD617A62F644F6500BC703F /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		CBD617A82F644F8300BC703F /* libz.1.2.5.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.5.tbd; path = usr/lib/libz.1.2.5.tbd; sourceTree = SDKROOT; };
+		CBD617AA2F644FB200BC703F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		CBD617AC2F644FBB00BC703F /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		CBD617B42F64522B00BC703F /* MOBFoundation.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MOBFoundation.xcframework; path = boklock/SDK/Required/MOBFoundation.xcframework; sourceTree = "<group>"; };
+		CBD617B82F64524700BC703F /* MobPush.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobPush.xcframework; path = boklock/SDK/MobPush/MobPush.xcframework; sourceTree = "<group>"; };
+		CBD617BB2F64526200BC703F /* MobPushServiceExtension.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobPushServiceExtension.xcframework; path = boklock/SDK/MobPush/MobPushServiceExtension.xcframework; sourceTree = "<group>"; };
+		CBD617C22F6452FE00BC703F /* boklockTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = boklockTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBD617CB2F6453DB00BC703F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		CBD617CC2F6453DB00BC703F /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		CBD617CD2F6453DB00BC703F /* AppModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppModule.h; sourceTree = "<group>"; };
+		CBD617CE2F6453DB00BC703F /* AppModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppModule.m; sourceTree = "<group>"; };
+		CBD617CF2F6453DB00BC703F /* AppModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModule.swift; sourceTree = "<group>"; };
+		CBD617D02F6453DB00BC703F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CBD617D12F6453DB00BC703F /* MobPushModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobPushModule.h; sourceTree = "<group>"; };
+		CBD617D22F6453DB00BC703F /* MobPushModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MobPushModule.m; sourceTree = "<group>"; };
+		CBD617D32F6453DB00BC703F /* MobPush.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = MobPush.xcframework; sourceTree = "<group>"; };
+		CBD617D42F6453DB00BC703F /* MobPushServiceExtension.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = MobPushServiceExtension.xcframework; sourceTree = "<group>"; };
+		CBD617D62F6453DB00BC703F /* MOBFoundation.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = MOBFoundation.xcframework; sourceTree = "<group>"; };
+		CBD617D92F6453DB00BC703F /* SSZipArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
+		CBD617DA2F6453DB00BC703F /* SSZipArchive.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
+		CBD617DB2F6453DB00BC703F /* SSZipCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSZipCommon.h; sourceTree = "<group>"; };
+		CBD617E52F6453E100BC703F /* boklock-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "boklock-Bridging-Header.h"; sourceTree = "<group>"; };
+		CBD617F02F65570A00BC703F /* 0.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 0.mp3; sourceTree = "<group>"; };
+		CBD617F12F65570A00BC703F /* 1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 1.mp3; sourceTree = "<group>"; };
+		CBD617F22F65570A00BC703F /* 2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 2.mp3; sourceTree = "<group>"; };
+		CBD617F32F65570A00BC703F /* 3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 3.mp3; sourceTree = "<group>"; };
+		CBD617F42F65570A00BC703F /* 4.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 4.mp3; sourceTree = "<group>"; };
+		CBD617F52F65570A00BC703F /* 5.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 5.mp3; sourceTree = "<group>"; };
+		CBD617F62F65570A00BC703F /* 6.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 6.mp3; sourceTree = "<group>"; };
+		CBD617F72F65570A00BC703F /* 7.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 7.mp3; sourceTree = "<group>"; };
+		CBD617F82F65570A00BC703F /* 8.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 8.mp3; sourceTree = "<group>"; };
+		CBD617F92F65570A00BC703F /* 9.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 9.mp3; sourceTree = "<group>"; };
+		CBD617FA2F65570A00BC703F /* 百.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "百.mp3"; sourceTree = "<group>"; };
+		CBD617FB2F65570A00BC703F /* 点.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "点.mp3"; sourceTree = "<group>"; };
+		CBD617FC2F65570A00BC703F /* 零.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "零.mp3"; sourceTree = "<group>"; };
+		CBD617FD2F65570A00BC703F /* 千.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "千.mp3"; sourceTree = "<group>"; };
+		CBD617FE2F65570A00BC703F /* 十.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "十.mp3"; sourceTree = "<group>"; };
+		CBD617FF2F65570A00BC703F /* 万.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "万.mp3"; sourceTree = "<group>"; };
+		CBD618002F65570A00BC703F /* 亿.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "亿.mp3"; sourceTree = "<group>"; };
+		CBD618012F65570A00BC703F /* 元.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "元.mp3"; sourceTree = "<group>"; };
+		CBD618022F65570A00BC703F /* alipay.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alipay.mp3; sourceTree = "<group>"; };
+		CBD618032F65570A00BC703F /* cancel.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cancel.mp3; sourceTree = "<group>"; };
+		CBD618042F65570A00BC703F /* jixiaopu.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = jixiaopu.mp3; sourceTree = "<group>"; };
+		CBD618052F65570A00BC703F /* money.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = money.mp3; sourceTree = "<group>"; };
+		CBD618062F65570A00BC703F /* wechat.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = wechat.mp3; sourceTree = "<group>"; };
+		CBD618082F65570A00BC703F /* CashierPushServices.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CashierPushServices.entitlements; sourceTree = "<group>"; };
+		CBD618092F65570A00BC703F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CBD6180A2F65570A00BC703F /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		CBD6180B2F65570A00BC703F /* NotificationServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationServices.h; sourceTree = "<group>"; };
+		CBD6180C2F65570A00BC703F /* NotificationServices.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationServices.m; sourceTree = "<group>"; };
+		CBD6180D2F65570A00BC703F /* XDAudioManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XDAudioManager.h; sourceTree = "<group>"; };
+		CBD6180E2F65570A00BC703F /* XDAudioManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XDAudioManager.m; sourceTree = "<group>"; };
+		CBD6182E2F6557F100BC703F /* boklockTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = boklockTests.m; sourceTree = "<group>"; };
+		CBD6182F2F6557F100BC703F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -36,7 +166,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBD617AD2F644FBB00BC703F /* WebKit.framework in Frameworks */,
+				CBD617A52F644F4F00BC703F /* libc++.tbd in Frameworks */,
+				CBD617A32F644F2600BC703F /* CoreTelephony.framework in Frameworks */,
+				CBD617A92F644F8B00BC703F /* libz.1.2.5.tbd in Frameworks */,
+				CBD617ED2F65495900BC703F /* MobPush.xcframework in Frameworks */,
+				CBD617DD2F6453DB00BC703F /* MobPushServiceExtension.xcframework in Frameworks */,
+				CBD617DE2F6453DB00BC703F /* MOBFoundation.xcframework in Frameworks */,
+				CBD617A72F644F7100BC703F /* libsqlite3.tbd in Frameworks */,
+				CBD617AB2F644FB200BC703F /* SystemConfiguration.framework in Frameworks */,
 				D850CDDBD053AF84D6F349E9 /* libPods-boklock.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBD6175A2F644D7300BC703F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBD617BF2F6452FE00BC703F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,11 +199,23 @@
 		13B07FAE1A68108700A75B9A /* boklock */ = {
 			isa = PBXGroup;
 			children = (
-				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				761780EC2CA45674006654EE /* AppDelegate.swift */,
+				CB9BA3CC2F65B33500142A27 /* main.m */,
+				CBD617CB2F6453DB00BC703F /* AppDelegate.h */,
+				CBD617CC2F6453DB00BC703F /* AppDelegate.mm */,
+				CBD617CD2F6453DB00BC703F /* AppModule.h */,
+				CBD617CE2F6453DB00BC703F /* AppModule.m */,
+				CBD617CF2F6453DB00BC703F /* AppModule.swift */,
+				CBD617D02F6453DB00BC703F /* Assets.xcassets */,
+				CBD617D12F6453DB00BC703F /* MobPushModule.h */,
+				CBD617D22F6453DB00BC703F /* MobPushModule.m */,
+				CBD617D82F6453DB00BC703F /* SDK */,
+				CBD617D92F6453DB00BC703F /* SSZipArchive.h */,
+				CBD617DA2F6453DB00BC703F /* SSZipArchive.m */,
+				CBD617DB2F6453DB00BC703F /* SSZipCommon.h */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				CBD617E52F6453E100BC703F /* boklock-Bridging-Header.h */,
 			);
 			name = boklock;
 			sourceTree = "<group>";
@@ -58,6 +223,15 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CBD617BB2F64526200BC703F /* MobPushServiceExtension.xcframework */,
+				CBD617B82F64524700BC703F /* MobPush.xcframework */,
+				CBD617B42F64522B00BC703F /* MOBFoundation.xcframework */,
+				CBD617AC2F644FBB00BC703F /* WebKit.framework */,
+				CBD617AA2F644FB200BC703F /* SystemConfiguration.framework */,
+				CBD617A82F644F8300BC703F /* libz.1.2.5.tbd */,
+				CBD617A62F644F6500BC703F /* libsqlite3.tbd */,
+				CBD617A42F644F4000BC703F /* libc++.tbd */,
+				CBD617A22F644F2600BC703F /* CoreTelephony.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				7FC5F90C915F2B6987376264 /* libPods-boklock.a */,
 			);
@@ -71,7 +245,6 @@
 				6FD87C62DDD4412CBE4162A7 /* antoutline.ttf */,
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -84,6 +257,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				CBD618302F6557F100BC703F /* boklockTests */,
+				CBD6180F2F65570A00BC703F /* CashierPushServices */,
 				13B07FAE1A68108700A75B9A /* boklock */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -100,6 +275,8 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* boklock.app */,
+				CBD6175D2F644D7300BC703F /* CashierPushServices.appex */,
+				CBD617C22F6452FE00BC703F /* boklockTest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,6 +288,86 @@
 				2E3F2C5444B9BC14F10786E3 /* Pods-boklock.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		CBD617D52F6453DB00BC703F /* MobPush */ = {
+			isa = PBXGroup;
+			children = (
+				CBD617D32F6453DB00BC703F /* MobPush.xcframework */,
+				CBD617D42F6453DB00BC703F /* MobPushServiceExtension.xcframework */,
+			);
+			path = MobPush;
+			sourceTree = "<group>";
+		};
+		CBD617D72F6453DB00BC703F /* Required */ = {
+			isa = PBXGroup;
+			children = (
+				CBD617D62F6453DB00BC703F /* MOBFoundation.xcframework */,
+			);
+			path = Required;
+			sourceTree = "<group>";
+		};
+		CBD617D82F6453DB00BC703F /* SDK */ = {
+			isa = PBXGroup;
+			children = (
+				CBD617D52F6453DB00BC703F /* MobPush */,
+				CBD617D72F6453DB00BC703F /* Required */,
+			);
+			path = SDK;
+			sourceTree = "<group>";
+		};
+		CBD618072F65570A00BC703F /* source */ = {
+			isa = PBXGroup;
+			children = (
+				CBD617F02F65570A00BC703F /* 0.mp3 */,
+				CBD617F12F65570A00BC703F /* 1.mp3 */,
+				CBD617F22F65570A00BC703F /* 2.mp3 */,
+				CBD617F32F65570A00BC703F /* 3.mp3 */,
+				CBD617F42F65570A00BC703F /* 4.mp3 */,
+				CBD617F52F65570A00BC703F /* 5.mp3 */,
+				CBD617F62F65570A00BC703F /* 6.mp3 */,
+				CBD617F72F65570A00BC703F /* 7.mp3 */,
+				CBD617F82F65570A00BC703F /* 8.mp3 */,
+				CBD617F92F65570A00BC703F /* 9.mp3 */,
+				CBD617FA2F65570A00BC703F /* 百.mp3 */,
+				CBD617FB2F65570A00BC703F /* 点.mp3 */,
+				CBD617FC2F65570A00BC703F /* 零.mp3 */,
+				CBD617FD2F65570A00BC703F /* 千.mp3 */,
+				CBD617FE2F65570A00BC703F /* 十.mp3 */,
+				CBD617FF2F65570A00BC703F /* 万.mp3 */,
+				CBD618002F65570A00BC703F /* 亿.mp3 */,
+				CBD618012F65570A00BC703F /* 元.mp3 */,
+				CBD618022F65570A00BC703F /* alipay.mp3 */,
+				CBD618032F65570A00BC703F /* cancel.mp3 */,
+				CBD618042F65570A00BC703F /* jixiaopu.mp3 */,
+				CBD618052F65570A00BC703F /* money.mp3 */,
+				CBD618062F65570A00BC703F /* wechat.mp3 */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
+		CBD6180F2F65570A00BC703F /* CashierPushServices */ = {
+			isa = PBXGroup;
+			children = (
+				CBD618072F65570A00BC703F /* source */,
+				CBD618082F65570A00BC703F /* CashierPushServices.entitlements */,
+				CBD618092F65570A00BC703F /* Info.plist */,
+				CBD6180A2F65570A00BC703F /* NotificationService.swift */,
+				CBD6180B2F65570A00BC703F /* NotificationServices.h */,
+				CBD6180C2F65570A00BC703F /* NotificationServices.m */,
+				CBD6180D2F65570A00BC703F /* XDAudioManager.h */,
+				CBD6180E2F65570A00BC703F /* XDAudioManager.m */,
+			);
+			path = CashierPushServices;
+			sourceTree = "<group>";
+		};
+		CBD618302F6557F100BC703F /* boklockTests */ = {
+			isa = PBXGroup;
+			children = (
+				CBD6182E2F6557F100BC703F /* boklockTests.m */,
+				CBD6182F2F6557F100BC703F /* Info.plist */,
+			);
+			path = boklockTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -127,15 +384,52 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
 				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
+				CBD617652F644D7300BC703F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CBD617632F644D7300BC703F /* PBXTargetDependency */,
 			);
 			name = boklock;
 			productName = boklock;
 			productReference = 13B07F961A680F5B00A75B9A /* boklock.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CBD6175C2F644D7300BC703F /* CashierPushServices */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBD617692F644D7300BC703F /* Build configuration list for PBXNativeTarget "CashierPushServices" */;
+			buildPhases = (
+				CBD617592F644D7300BC703F /* Sources */,
+				CBD6175A2F644D7300BC703F /* Frameworks */,
+				CBD6175B2F644D7300BC703F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CashierPushServices;
+			productName = CashierPushServices;
+			productReference = CBD6175D2F644D7300BC703F /* CashierPushServices.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		CBD617C12F6452FE00BC703F /* boklockTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBD617C82F6452FE00BC703F /* Build configuration list for PBXNativeTarget "boklockTest" */;
+			buildPhases = (
+				CBD617BE2F6452FE00BC703F /* Sources */,
+				CBD617BF2F6452FE00BC703F /* Frameworks */,
+				CBD617C02F6452FE00BC703F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CBD617C72F6452FE00BC703F /* PBXTargetDependency */,
+			);
+			name = boklockTest;
+			productName = boklockTest;
+			productReference = CBD617C22F6452FE00BC703F /* boklockTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -143,10 +437,18 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 2630;
+					};
+					CBD6175C2F644D7300BC703F = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					CBD617C12F6452FE00BC703F = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 				};
 			};
@@ -164,6 +466,8 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* boklock */,
+				CBD6175C2F644D7300BC703F /* CashierPushServices */,
+				CBD617C12F6452FE00BC703F /* boklockTest */,
 			);
 		};
 /* End PBXProject section */
@@ -174,10 +478,48 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
-				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				F09BFA090CD720F34698B524 /* PrivacyInfo.xcprivacy in Resources */,
 				90CF046A02224B73B1CA8399 /* antfill.ttf in Resources */,
+				CBD617E42F6453DB00BC703F /* Assets.xcassets in Resources */,
 				66B0583C94F2464E9F1DD98A /* antoutline.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBD6175B2F644D7300BC703F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBD618142F65570A00BC703F /* 6.mp3 in Resources */,
+				CBD618152F65570A00BC703F /* 万.mp3 in Resources */,
+				CBD618162F65570A00BC703F /* 3.mp3 in Resources */,
+				CBD618172F65570A00BC703F /* alipay.mp3 in Resources */,
+				CBD618182F65570A00BC703F /* 4.mp3 in Resources */,
+				CBD618192F65570A00BC703F /* 百.mp3 in Resources */,
+				CBD6181A2F65570A00BC703F /* 1.mp3 in Resources */,
+				CBD6181B2F65570A00BC703F /* cancel.mp3 in Resources */,
+				CBD6181C2F65570A00BC703F /* 9.mp3 in Resources */,
+				CBD6181D2F65570A00BC703F /* 8.mp3 in Resources */,
+				CBD6181E2F65570A00BC703F /* 点.mp3 in Resources */,
+				CBD6181F2F65570A00BC703F /* 亿.mp3 in Resources */,
+				CBD618202F65570A00BC703F /* wechat.mp3 in Resources */,
+				CBD618212F65570A00BC703F /* 0.mp3 in Resources */,
+				CBD618222F65570A00BC703F /* 十.mp3 in Resources */,
+				CBD618232F65570A00BC703F /* 千.mp3 in Resources */,
+				CBD618242F65570A00BC703F /* jixiaopu.mp3 in Resources */,
+				CBD618252F65570A00BC703F /* 5.mp3 in Resources */,
+				CBD618262F65570A00BC703F /* 7.mp3 in Resources */,
+				CBD618272F65570A00BC703F /* 零.mp3 in Resources */,
+				CBD618282F65570A00BC703F /* 元.mp3 in Resources */,
+				CBD618292F65570A00BC703F /* 2.mp3 in Resources */,
+				CBD6182A2F65570A00BC703F /* money.mp3 in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBD617C02F6452FE00BC703F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBD618312F6557F100BC703F /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,9 +550,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-boklock/Pods-boklock-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-boklock/Pods-boklock-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -247,9 +593,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-boklock/Pods-boklock-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-boklock/Pods-boklock-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -263,11 +613,46 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+				CB9BA3CD2F65B33500142A27 /* main.m in Sources */,
+				CBD617E02F6453DB00BC703F /* AppModule.swift in Sources */,
+				CBD617E12F6453DB00BC703F /* AppModule.m in Sources */,
+				CBD617E22F6453DB00BC703F /* MobPushModule.m in Sources */,
+				CBD617E32F6453DB00BC703F /* AppDelegate.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBD617592F644D7300BC703F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBD618102F65570A00BC703F /* XDAudioManager.m in Sources */,
+				CBD618112F65570A00BC703F /* NotificationServices.m in Sources */,
+				CBD618122F65570A00BC703F /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBD617BE2F6452FE00BC703F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBD618322F6557F100BC703F /* boklockTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CBD617632F644D7300BC703F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CBD6175C2F644D7300BC703F /* CashierPushServices */;
+			targetProxy = CBD617622F644D7300BC703F /* PBXContainerItemProxy */;
+		};
+		CBD617C72F6452FE00BC703F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 13B07F861A680F5B00A75B9A /* boklock */;
+			targetProxy = CBD617C62F6452FE00BC703F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
@@ -277,17 +662,18 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 22UTUU6RT8;
 				ENABLE_BITCODE = NO;
+				ENABLE_DEBUG_DYLIB = NO;
 				INFOPLIST_FILE = boklock/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -297,6 +683,7 @@
 				PRODUCT_NAME = boklock;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = boklock_dev;
+				SWIFT_OBJC_BRIDGING_HEADER = "boklock-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -310,16 +697,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 22UTUU6RT8;
+				ENABLE_DEBUG_DYLIB = NO;
 				INFOPLIST_FILE = boklock/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -329,6 +717,7 @@
 				PRODUCT_NAME = boklock;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = boklock_real;
+				SWIFT_OBJC_BRIDGING_HEADER = "boklock-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -339,7 +728,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -367,7 +756,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -375,6 +764,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -395,6 +785,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -402,6 +793,19 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -415,7 +819,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -443,9 +847,13 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -463,6 +871,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -471,10 +880,197 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CBD617662F644D7300BC703F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 22UTUU6RT8;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CashierPushServices/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CashierPushServices;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boklock.dev.m.cashier;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = boklock_dev_cashier;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CBD617672F644D7300BC703F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 22UTUU6RT8;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CashierPushServices/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CashierPushServices;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boklock.real.m.cashierpush;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = boklock_real_cashierpush;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CBD617C92F6452FE00BC703F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 22UTUU6RT8;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boklock.real.m.boklockTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/boklock.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/boklock";
+			};
+			name = Debug;
+		};
+		CBD617CA2F6452FE00BC703F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 22UTUU6RT8;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boklock.real.m.boklockTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/boklock.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/boklock";
 			};
 			name = Release;
 		};
@@ -495,6 +1091,24 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CBD617692F644D7300BC703F /* Build configuration list for PBXNativeTarget "CashierPushServices" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBD617662F644D7300BC703F /* Debug */,
+				CBD617672F644D7300BC703F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CBD617C82F6452FE00BC703F /* Build configuration list for PBXNativeTarget "boklockTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBD617C92F6452FE00BC703F /* Debug */,
+				CBD617CA2F6452FE00BC703F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
