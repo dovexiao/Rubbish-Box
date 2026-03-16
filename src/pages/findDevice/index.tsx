@@ -610,7 +610,7 @@ export default function FindDevice(props: any) {
       footer={
         // iOS / 鸿蒙：先搜索，失败显示“重新搜索”，成功且无需 PIN 时显示“跳转设置”
         needScan ? (
-          searchBluetoothStatus !== SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS ? (
+          searchBluetoothStatus === SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED ? (
             <Flex style={styles.footer} justify="center">
               <GradientButton
                 colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
