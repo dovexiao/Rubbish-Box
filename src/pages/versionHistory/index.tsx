@@ -157,7 +157,7 @@ export default function VersionHistory() {
 
   useEffect(() => {
     void loadList('initial');
-  }, [loadList]);
+  }, []);
 
   const keyExtractor = useCallback((item: HistoryItem) => {
     return String(item?.date || item?.dateLabel || '');

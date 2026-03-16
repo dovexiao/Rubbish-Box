@@ -17,7 +17,6 @@ import { tokenStorage } from '@/utils/storage';
 import styles from './styles';
 import { useTheme } from '@/context/ThemeContext';
 import { reLaunch, showToast } from '@/utils';
-import IconFont from '@/iconfont';
 
 type MineInfo = {
   id?: string | number;
@@ -241,9 +240,9 @@ export default function Mine() {
                 logoutRef.current?.open();
               }}
             >
-              <IconFont name="exit" size={22} color="#333333" />
+              <AppIcon name="exit" size={22} color="#333333" />
               <Text style={styles.listLabel}>退出登录</Text>
-              <IconFont name="a-headfor-20" size={16} color="#333333" />
+              <AppIcon name="a-headfor-20" size={16} color="#333333" />
             </TouchableOpacity>
           </View>
         )}

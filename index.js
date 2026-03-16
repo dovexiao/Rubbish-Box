@@ -41,6 +41,9 @@ if (
             'WeChat MiniProgram is not supported on Harmony platform',
           );
         },
+        shareMiniProgram: async () => {
+          throw new Error('WeChat Share is not supported on Harmony platform');
+        },
       };
     }
     return originalGetEnforcing(name);

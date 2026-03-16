@@ -315,17 +315,19 @@ const DeviceInfo = () => {
           <Text style={[styles.cardValue, { marginRight: 4 }]}>
             {lockInfo?.powerType === 1 ? '市电版' : '电池版'}
           </Text>
-          <AppIcon
-            onPressIn={() => {
-              setShowPowerModeTips(true);
+          <TouchableOpacity
+            onPress={() => {
+              setShowPowerModeTips(!showPowerModeTips);
             }}
-            onPressOut={() => {
-              setShowPowerModeTips(false);
-            }}
-            name={'a-styledescription'}
-            color="#333"
-            size={20}
-          />
+            // onPressIn={() => {
+            //   setShowPowerModeTips(true);
+            // }}
+            // onPressOut={() => {
+            //   setShowPowerModeTips(false);
+            // }}
+          >
+            <AppIcon name={'a-styledescription'} color="#333" size={20} />
+          </TouchableOpacity>
           {showPowerModeTips && (
             <View style={styles.powerModeTooltip}>
               {lockInfo?.powerType === 1 && (

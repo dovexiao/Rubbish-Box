@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   goodsList: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
 
   bottomBtnContent: {
@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F7FB',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 10,
     paddingBottom: 10,
   },
   bottomBtn: {
@@ -41,4 +42,3 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
-

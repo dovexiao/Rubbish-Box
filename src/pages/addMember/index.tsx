@@ -263,7 +263,7 @@ export default function AddMember() {
         <View style={styles.fieldRow}>
           <Text style={styles.fieldLabel}>成员昵称</Text>
           <TextInput
-            value={info?.username ?? ''}
+            defaultValue={info?.username ?? ''}
             placeholder="请输入"
             placeholderTextColor="#CCCCCC"
             style={styles.fieldInput}
@@ -277,7 +277,7 @@ export default function AddMember() {
         <View style={styles.fieldRow}>
           <Text style={styles.fieldLabel}>成员手机号码</Text>
           <TextInput
-            value={info?.mobile ?? ''}
+            defaultValue={info?.mobile ?? ''}
             placeholder="请输入"
             placeholderTextColor="#CCCCCC"
             style={styles.fieldInput}

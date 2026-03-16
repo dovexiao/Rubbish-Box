@@ -307,7 +307,7 @@ export default function UserInfo() {
           <View style={styles.inputRow}>
             <Text style={styles.inputLabel}>昵称</Text>
             <TextInput
-              value={inputName}
+              defaultValue={inputName}
               placeholder="请输入昵称"
               style={styles.input}
               maxLength={20}

@@ -5,10 +5,12 @@ import AppIcon from '@/components/AppIcon';
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/constants';
 import type { OrderItemDTO } from '../../typing';
 import styles from './styles';
+import dayjs from 'dayjs';
 
 const formatTime = (time?: string) => {
   if (!time) return '';
-  if (time.length >= 19) return time.slice(0, 19);
+  time = dayjs(time).format('YYYY-MM-DD HH:mm:ss');
+  // if (time.length >= 19) return time.slice(0, 19);
   return time;
 };
 

@@ -470,7 +470,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                       style={[
                         styles.footerContainer,
                         // Android 底部额外 padding 适配
-                        Platform.OS === 'android' && {
+                        Platform.OS !== 'ios' && {
                           paddingBottom: insets.bottom + 20,
                         },
                       ]}
@@ -513,7 +513,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                     <View
                       style={[
                         styles.footerContainer,
-                        Platform.OS === 'android' && {
+                        Platform.OS !== 'ios' && {
                           paddingBottom: insets.bottom + 20,
                         },
                       ]}

@@ -77,6 +77,7 @@ export default function GoodsDetail() {
         showToast('获取小程序token失败');
         return;
       }
+      console.log(tokenRes, '====');
 
       // 构建跳转参数
       const params: Record<string, string | number> = {
@@ -270,7 +271,7 @@ export default function GoodsDetail() {
                   <Stepper
                     initValue={productNum}
                     min={1}
-                    size={24}
+                    size={12}
                     max={goodsDetail.stock}
                     onChange={value => {
                       setProductNum(Number(value));

@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { routes } from '@/routes';
 import appManager from '@/utils/env/rn/appManager';
 import { showAppUpdateDialog } from '@/components';
+import { pad } from 'crypto-js';
 
 const Tab = createBottomTabNavigator();
 

@@ -106,8 +106,8 @@ export async function checkPhotoPermission(): Promise<{
 
       return { granted: false, message: '相册权限状态未知' };
     } else {
-      // 其他平台（如鸿蒙）暂不支持权限库，统一视为未授权但不中断逻辑
-      return { granted: false, message: '当前平台暂不支持相册权限检查' };
+      // 其他平台（如鸿蒙）暂不支持权限库，统一视为已授权，由系统API或原生侧内部处理权限拦截
+      return { granted: true };
     }
   } catch (error: any) {
     console.error('检查相册权限失败:', error);
@@ -180,7 +180,7 @@ export async function checkCameraPermission(): Promise<{
       return { granted: false, message: '相机权限状态未知' };
     } else {
       // 其他平台（如鸿蒙）
-      return { granted: false, message: '当前平台暂不支持相机权限检查' };
+      return { granted: true };
     }
   } catch (error: any) {
     console.error('检查相机权限失败:', error);
@@ -339,7 +339,7 @@ export async function checkBluetoothPermission(): Promise<{
       }
     } else {
       // 其他平台（如鸿蒙）暂不支持当前权限库的蓝牙能力
-      return { granted: false, message: '当前平台暂不支持蓝牙权限检查' };
+      return { granted: true };
     }
   } catch (error: any) {
     console.error('检查蓝牙权限失败:', error);

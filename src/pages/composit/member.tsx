@@ -217,7 +217,7 @@ export default function MemberPage() {
             <TextInput
               style={{ flex: 1, ...styles.input }}
               placeholder="请输入"
-              value={currentRow?.username}
+              defaultValue={currentRow?.username}
               onChangeText={text => {
                 setCurrentRow({
                   ...currentRow,
@@ -234,7 +234,7 @@ export default function MemberPage() {
               style={[styles.input, { flex: 1 }]}
               placeholder="请输入"
               type="phone"
-              value={currentRow?.mobile}
+              defaultValue={currentRow?.mobile}
               maxLength={11}
               onChangeText={text =>
                 setCurrentRow({
