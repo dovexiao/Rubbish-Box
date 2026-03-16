@@ -313,21 +313,27 @@ const DeviceInfo = () => {
         <Flex style={[styles.cardRows, { position: 'relative' }]}>
           <Text style={styles.cardLable}>供电模式</Text>
           <Text style={[styles.cardValue, { marginRight: 4 }]}>
-            {lockInfo?.powerType === 1 ? '市电版' : '电池版'}
+            {lockInfo?.powerType === 1
+              ? '市电版'
+              : lockInfo?.powerType === 0
+              ? '电池版'
+              : '未知'}
           </Text>
-          <TouchableOpacity
-            onPress={() => {
-              setShowPowerModeTips(!showPowerModeTips);
-            }}
-            // onPressIn={() => {
-            //   setShowPowerModeTips(true);
-            // }}
-            // onPressOut={() => {
-            //   setShowPowerModeTips(false);
-            // }}
-          >
-            <AppIcon name={'a-styledescription'} color="#333" size={20} />
-          </TouchableOpacity>
+          {typeof lockInfo?.powerType == 'number' && (
+            <TouchableOpacity
+              onPress={() => {
+                setShowPowerModeTips(!showPowerModeTips);
+              }}
+              // onPressIn={() => {
+              //   setShowPowerModeTips(true);
+              // }}
+              // onPressOut={() => {
+              //   setShowPowerModeTips(false);
+              // }}
+            >
+              <AppIcon name={'a-styledescription'} color="#333" size={20} />
+            </TouchableOpacity>
+          )}
           {showPowerModeTips && (
             <View style={styles.powerModeTooltip}>
               {lockInfo?.powerType === 1 && (

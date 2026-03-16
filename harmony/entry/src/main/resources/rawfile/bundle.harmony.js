@@ -1256,6 +1256,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               return _launchMiniProgram.apply(this, arguments);
             }
             return launchMiniProgram;
+          }(),
+          shareMiniProgram: function () {
+            var _shareMiniProgram = (0, _asyncToGenerator2.default)(function* () {
+              throw new Error('WeChat Share is not supported on Harmony platform');
+            });
+            function shareMiniProgram() {
+              return _shareMiniProgram.apply(this, arguments);
+            }
+            return shareMiniProgram;
           }()
         };
       }
@@ -228207,10 +228216,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             message: '相册权限状态未知'
           };
         } else {
-          // 其他平台（如鸿蒙）暂不支持权限库，统一视为未授权但不中断逻辑
+          // 其他平台（如鸿蒙）暂不支持权限库，统一视为已授权，由系统API或原生侧内部处理权限拦截
           return {
-            granted: false,
-            message: '当前平台暂不支持相册权限检查'
+            granted: true
           };
         }
       } catch (error) {
@@ -228300,8 +228308,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         } else {
           // 其他平台（如鸿蒙）
           return {
-            granted: false,
-            message: '当前平台暂不支持相机权限检查'
+            granted: true
           };
         }
       } catch (error) {
@@ -228492,8 +228499,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         } else {
           // 其他平台（如鸿蒙）暂不支持当前权限库的蓝牙能力
           return {
-            granted: false,
-            message: '当前平台暂不支持蓝牙权限检查'
+            granted: true
           };
         }
       } catch (error) {
@@ -241705,7 +241711,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }), renderContent, footer && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
                 style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.footerContainer,
                 // Android 底部额外 padding 适配
-                _reactNative.Platform.OS === 'android' && {
+                _reactNative.Platform.OS !== 'ios' && {
                   paddingBottom: insets.bottom + 20
                 }],
                 children: footer
@@ -241728,7 +241734,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 style: _$$_REQUIRE(_dependencyMap[12], "./styles").styles.headerContainer,
                 children: renderNavHeader
               }), renderContent, footer && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-                style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.footerContainer, _reactNative.Platform.OS === 'android' && {
+                style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.footerContainer, _reactNative.Platform.OS !== 'ios' && {
                   paddingBottom: insets.bottom + 20
                 }],
                 children: footer
@@ -256116,15 +256122,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _popConfirm = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "../../components/popConfirm"));
   var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "../../components/AppIcon"));
   var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[8], "./styles"));
-  var _iconfont = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[9], "../../iconfont"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime");
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\mine\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   function Mine() {
     var _info$nickName,
       _this = this;
-    var navigation = (0, _$$_REQUIRE(_dependencyMap[11], "@react-navigation/native").useNavigation)();
-    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[12], "../../context/ThemeContext").useTheme)(),
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useNavigation)();
+    var _useTheme = (0, _$$_REQUIRE(_dependencyMap[11], "../../context/ThemeContext").useTheme)(),
       theme = _useTheme.theme,
       themeType = _useTheme.themeType;
     var _useState = (0, _react.useState)(false),
@@ -256144,8 +256149,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var load = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       setLoading(true);
       try {
-        var token = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/cache").cacheGetSync)('token');
-        var gm = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/cache").cacheGetSync)('guestMode');
+        var token = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/cache").cacheGetSync)('token');
+        var gm = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/cache").cacheGetSync)('guestMode');
         setHasToken(!!token);
         if (!token) {
           setInfo(undefined);
@@ -256155,21 +256160,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
         // 仅在存在有效 token 时必定拉取数据；若此前为访客模式则自愈为 false
         if (gm === true) {
-          yield (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/cache").cacheSetSync)('guestMode', false);
+          yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/cache").cacheSetSync)('guestMode', false);
         }
-        var _yield$Promise$all = yield Promise.all([(0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").baseInfo)({})]),
+        var _yield$Promise$all = yield Promise.all([(0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").baseInfo)({})]),
           _yield$Promise$all2 = (0, _slicedToArray2.default)(_yield$Promise$all, 1),
           infoRes = _yield$Promise$all2[0];
         if (infoRes.code === 200 && infoRes.success) {
           setInfo(infoRes.data || {});
         } else {
-          (0, _$$_REQUIRE(_dependencyMap[15], "../../utils").showToast)(infoRes.msg || infoRes.message || '获取用户信息失败');
+          (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)(infoRes.msg || infoRes.message || '获取用户信息失败');
         }
       } finally {
         setLoading(false);
       }
     }), []);
-    (0, _$$_REQUIRE(_dependencyMap[16], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+    (0, _$$_REQUIRE(_dependencyMap[15], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
       load();
     }, [load]));
     var requireLogin = (0, _react.useCallback)(function () {
@@ -256179,18 +256184,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var onLogout = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       try {
         // 服务端退出（失败也不影响本地清理）
-        yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").logout)({});
+        yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").logout)({});
       } catch (_unused) {}
       try {
-        yield (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/cache").cacheRemove)({
+        yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/cache").cacheRemove)({
           key: 'token'
         });
       } catch (_unused2) {}
       try {
-        yield _$$_REQUIRE(_dependencyMap[17], "../../utils/storage").tokenStorage.remove();
+        yield _$$_REQUIRE(_dependencyMap[16], "../../utils/storage").tokenStorage.remove();
       } catch (_unused3) {}
       try {
-        yield (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/cache").cacheSetSync)('guestMode', true);
+        yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/cache").cacheSetSync)('guestMode', true);
       } catch (_unused4) {}
       navigation.reset({
         index: 0,
@@ -256356,14 +256361,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               if (!hasToken) return requireLogin();
               (_logoutRef$current = logoutRef.current) == null || _logoutRef$current.open();
             },
-            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_iconfont.default, {
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "exit",
               size: 22,
               color: "#333333"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
               style: _styles.default.listLabel,
               children: "\u9000\u51FA\u767B\u5F55"
-            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_iconfont.default, {
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "a-headfor-20",
               size: 16,
               color: "#333333"
@@ -256383,13 +256388,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           cancelText: "\u53D6\u6D88",
           confirmText: "\u53BB\u767B\u5F55",
           onConfirm: function onConfirm() {
-            return (0, _$$_REQUIRE(_dependencyMap[15], "../../utils").reLaunch)('Login');
+            return (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").reLaunch)('Login');
           }
         })]
       })
     });
   }
-},1575,[1,2,25,42,3,1333,552,1334,1576,1335,88,679,1294,644,804,782,684,645],"src\\pages\\mine\\index.tsx");
+},1575,[1,2,25,42,3,1333,552,1334,1576,88,679,1294,644,804,782,684,645],"src\\pages\\mine\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -259506,7 +259511,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _styles.default.inputLabel,
               children: "\u6635\u79F0"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").TextInput, {
-              value: inputName,
+              defaultValue: inputName,
               placeholder: "\u8BF7\u8F93\u5165\u6635\u79F0",
               style: _styles.default.input,
               maxLength: 20,
@@ -260184,17 +260189,23 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue, {
               marginRight: 4
             }],
-            children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? '市电版' : '电池版'
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-            onPressIn: function onPressIn() {
-              setShowPowerModeTips(true);
-            },
-            onPressOut: function onPressOut() {
-              setShowPowerModeTips(false);
-            },
-            name: 'a-styledescription',
-            color: "#333",
-            size: 20
+            children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? '市电版' : (lockInfo == null ? void 0 : lockInfo.powerType) === 0 ? '电池版' : '未知'
+          }), typeof (lockInfo == null ? void 0 : lockInfo.powerType) == 'number' && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+            onPress: function onPress() {
+              setShowPowerModeTips(!showPowerModeTips);
+            }
+            // onPressIn={() => {
+            //   setShowPowerModeTips(true);
+            // }}
+            // onPressOut={() => {
+            //   setShowPowerModeTips(false);
+            // }}
+            ,
+            children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+              name: 'a-styledescription',
+              color: "#333",
+              size: 20
+            })
           }), showPowerModeTips && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
             style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.powerModeTooltip,
             children: [(lockInfo == null ? void 0 : lockInfo.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
@@ -263627,7 +263638,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }(), [list, lockId]);
     (0, _react.useEffect)(function () {
       void loadList('initial');
-    }, [loadList]);
+    }, []);
     var keyExtractor = (0, _react.useCallback)(function (item) {
       return String((item == null ? void 0 : item.date) || (item == null ? void 0 : item.dateLabel) || '');
     }, []);
@@ -264627,7 +264638,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             style: _styles.default.fieldLabel,
             children: "\u6210\u5458\u6635\u79F0"
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TextInput, {
-            value: (_info$username = info == null ? void 0 : info.username) != null ? _info$username : '',
+            defaultValue: (_info$username = info == null ? void 0 : info.username) != null ? _info$username : '',
             placeholder: "\u8BF7\u8F93\u5165",
             placeholderTextColor: "#CCCCCC",
             style: _styles.default.fieldInput,
@@ -264646,7 +264657,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             style: _styles.default.fieldLabel,
             children: "\u6210\u5458\u624B\u673A\u53F7\u7801"
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TextInput, {
-            value: (_info$mobile = info == null ? void 0 : info.mobile) != null ? _info$mobile : '',
+            defaultValue: (_info$mobile = info == null ? void 0 : info.mobile) != null ? _info$mobile : '',
             placeholder: "\u8BF7\u8F93\u5165",
             placeholderTextColor: "#CCCCCC",
             style: _styles.default.fieldInput,
@@ -265337,6 +265348,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#F7F7FB',
       alignItems: 'center',
       justifyContent: 'center',
+      paddingTop: 10,
       paddingBottom: 10
     },
     bottomBtn: {
@@ -265444,6 +265456,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           (0, _$$_REQUIRE(_dependencyMap[9], "../../utils").showToast)('获取小程序token失败');
           return;
         }
+        console.log(tokenRes, '====');
 
         // 构建跳转参数
         var params = {
@@ -265635,7 +265648,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "../../components").Stepper, {
                   initValue: productNum,
                   min: 1,
-                  size: 24,
+                  size: 12,
                   max: goodsDetail.stock,
                   onChange: function onChange(value) {
                     setProductNum(Number(value));
@@ -265739,7 +265752,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     footer: {
       width: '100%',
-      paddingBottom: 21,
+      paddingTop: 10,
+      paddingBottom: 10,
       // backgroundColor: 'rgba(255, 255, 255, 0.7)',
       alignItems: 'center',
       justifyContent: 'center'
@@ -281979,7 +281993,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 flex: 1
               }, _$$_REQUIRE(_dependencyMap[15], "./memberStyle").styles.input),
               placeholder: "\u8BF7\u8F93\u5165",
-              value: currentRow == null ? void 0 : currentRow.username,
+              defaultValue: currentRow == null ? void 0 : currentRow.username,
               onChangeText: function onChangeText(text) {
                 setCurrentRow(Object.assign({}, currentRow, {
                   username: text
@@ -281999,7 +282013,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }],
               placeholder: "\u8BF7\u8F93\u5165",
               type: "phone",
-              value: currentRow == null ? void 0 : currentRow.mobile,
+              defaultValue: currentRow == null ? void 0 : currentRow.mobile,
               maxLength: 11,
               onChangeText: function onChangeText(text) {
                 return setCurrentRow(Object.assign({}, currentRow, {
@@ -282359,15 +282373,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       var _ref = (0, _asyncToGenerator2.default)(function* () {
         var _route$params, _route$params2;
         if (isSharing) return;
-        if (_reactNative.Platform.OS !== 'android' && _reactNative.Platform.OS !== 'ios') {
-          (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils").showToast)({
-            title: '当前平台暂不支持微信分享',
-            icon: 'none'
-          });
-          return;
-        }
-        if (!(0, _$$_REQUIRE(_dependencyMap[10], "../../../utils/wechat").hasWeChatShareCapability)()) {
-          (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils").showToast)({
+        if (!(0, _$$_REQUIRE(_dependencyMap[9], "../../../utils/wechat").hasWeChatShareCapability)()) {
+          (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils").showToast)({
             title: '微信分享能力不可用',
             icon: 'none'
           });
@@ -282377,9 +282384,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var lockType = (_route$params = route.params) == null ? void 0 : _route$params.lockType;
         var lockId = (_route$params2 = route.params) == null ? void 0 : _route$params2.lockId;
         try {
-          var installed = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils/wechat").isWxAppInstalled)();
+          var installed = yield (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils/wechat").isWxAppInstalled)();
           if (!installed) {
-            (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils").showToast)({
               title: '未安装微信',
               icon: 'error'
             });
@@ -282401,7 +282408,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           scene: 0,
           miniProgramType: _$$_REQUIRE(_dependencyMap[12], "../../../config").DEPLOY_ENV === 'dev' ? 2 : 0
         };
-        var sharePromise = (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils/wechat").shareWeChatMiniProgram)(shareOptions);
+        var sharePromise = (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils/wechat").shareWeChatMiniProgram)(shareOptions);
         var appStatePromise = new Promise(function (resolve) {
           appStateSub.current = _reactNative.AppState.addEventListener('change', function (s) {
             if (s === 'active') {
@@ -282425,28 +282432,28 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var _result, _result2, _result3;
           result = yield Promise.race([sharePromise, appStatePromise, timeoutPromise]);
           if (((_result = result) == null ? void 0 : _result.errCode) === 0) {
-            (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils").showToast)({
               title: '分享成功',
               icon: 'success'
             });
           } else if (((_result2 = result) == null ? void 0 : _result2.errCode) === -998) {
-            (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils").showToast)({
               title: '用户返回应用，未完成分享',
               icon: 'none'
             });
           } else if (((_result3 = result) == null ? void 0 : _result3.errCode) === -999) {
-            (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils").showToast)({
               title: '分享超时',
               icon: 'none'
             });
           } else {
-            (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils").showToast)({
               title: '分享失败',
               icon: 'error'
             });
           }
         } catch (e) {
-          (0, _$$_REQUIRE(_dependencyMap[9], "../../../utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[10], "../../../utils").showToast)({
             title: '分享异常',
             icon: 'error'
           });
@@ -282569,7 +282576,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1658,[1,2,25,42,3,1334,556,88,679,782,780,1656,598,1531,1659],"src\\pages\\composit\\share\\index.tsx");
+},1658,[1,2,25,42,3,1334,556,88,679,780,782,1656,598,1531,1659],"src\\pages\\composit\\share\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -282885,29 +282892,31 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
   var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "../../../../components/AppIcon"));
   var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./styles"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime");
+  var _dayjs = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "dayjs"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\order\\com\\orderItem\\index.tsx";
   var formatTime = function formatTime(time) {
     if (!time) return '';
-    if (time.length >= 19) return time.slice(0, 19);
+    time = (0, _dayjs.default)(time).format('YYYY-MM-DD HH:mm:ss');
+    // if (time.length >= 19) return time.slice(0, 19);
     return time;
   };
   function OrderItem(_ref) {
     var data = _ref.data,
       onPress = _ref.onPress;
-    var statusKey = _$$_REQUIRE(_dependencyMap[6], "../../../../constants").ORDER_STATUS[data.orderStatus];
-    var statusName = statusKey ? _$$_REQUIRE(_dependencyMap[6], "../../../../constants").ORDER_STATUS_NAME[statusKey] : '';
+    var statusKey = _$$_REQUIRE(_dependencyMap[7], "../../../../constants").ORDER_STATUS[data.orderStatus];
+    var statusName = statusKey ? _$$_REQUIRE(_dependencyMap[7], "../../../../constants").ORDER_STATUS_NAME[statusKey] : '';
     return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
       activeOpacity: 0.8,
       style: _styles.default.orderItem,
       onPress: onPress,
-      children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+      children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
         justify: "between",
         align: "center",
         children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
           style: _styles.default.orderNoText,
           children: ["\u8BA2\u5355\u53F7\uFF1A", data.orderNo]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
           align: "center",
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
             style: _styles.default.statusText,
@@ -282920,13 +282929,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })]
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
         style: _styles.default.line
-      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
         align: "center",
         justify: "between",
         style: {
           width: '100%'
         },
-        children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+        children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
           align: "center",
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
             style: _styles.default.cardImageContent,
@@ -282937,7 +282946,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _styles.default.cardImage,
               resizeMode: "contain"
             })
-          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
             direction: "column",
             style: _styles.default.cardContent,
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
@@ -282949,7 +282958,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               children: ["\xA5", data.currentPrice]
             })]
           })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
           align: "end",
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
             style: _styles.default.defaultText,
@@ -282959,7 +282968,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             children: data.productNum
           })]
         })]
-      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
         style: [_styles.default.cardItem],
         justify: "between",
         children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
@@ -282969,7 +282978,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           style: _styles.default.cardPrice,
           children: ["\xA5", data.actualPayAmount]
         })]
-      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
         style: [_styles.default.cardItem],
         justify: "between",
         children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
@@ -282979,7 +282988,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           style: _styles.default.defaultText,
           children: formatTime(data.orderTime)
         })]
-      }), data.expressNo ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[7], "../../../../components").Flex, {
+      }), data.expressNo ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[8], "../../../../components").Flex, {
         style: [_styles.default.cardItem],
         justify: "between",
         children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
@@ -282992,7 +283001,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }) : null]
     });
   }
-},1662,[1,42,3,1334,1663,88,777,1531],"src\\pages\\order\\com\\orderItem\\index.tsx");
+},1662,[1,42,3,1334,1663,574,88,777,1531],"src\\pages\\order\\com\\orderItem\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -320372,30 +320381,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     value: true
   });
   exports.default = FindDevice;
-  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
-  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/asyncToGenerator"));
+  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
   var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
   var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
   var _dayjs = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "dayjs"));
   var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "../../components/AppIcon"));
   var _powerIndicatorPop = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "../../components/powerIndicatorPop"));
   var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[8], "./styles"));
-  var _iconfont = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[9], "../../iconfont"));
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\findDevice\\index.tsx";
   /** @jsxRuntime classic */
   /** @jsx React.createElement */
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-  var tipsUserOperation = /*#__PURE__*/function () {
-    var _ref = (0, _asyncToGenerator2.default)(function* (options) {
-      (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").showToast)({
-        title: options.content || options.title || '',
-        icon: 'none'
-      });
-    });
-    return function tipsUserOperation(_x) {
-      return _ref.apply(this, arguments);
-    };
-  }();
   function useCountDown(options) {
     var targetDate = options.targetDate,
       onEnd = options.onEnd;
@@ -320454,7 +320451,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         bindSuccess: false,
         isPaired: false,
         countdownTime: (0, _dayjs.default)().add(120, 'seconds').valueOf(),
-        searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS == null ? void 0 : _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING,
+        searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS == null ? void 0 : _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING,
         needScan: _reactNative.Platform.OS === 'ios' || isHarmonyOs
       }),
       _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
@@ -320462,13 +320459,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       setStateInner = _useState4[1];
     (0, _react.useEffect)(function () {
       var fetchData = /*#__PURE__*/function () {
-        var _ref2 = (0, _asyncToGenerator2.default)(function* () {
+        var _ref = (0, _asyncToGenerator2.default)(function* () {
           var a = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getSavedDeviceInfo)().catch(function () {
             return null;
           });
         });
         return function fetchData() {
-          return _ref2.apply(this, arguments);
+          return _ref.apply(this, arguments);
         };
       }();
       fetchData();
@@ -320483,7 +320480,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var res = (yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getSavedDeviceInfo)().catch(function () {
           return null;
         })) || {};
-        var info = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/api").getSystemConnectedDevices)();
+        var info = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").getSystemConnectedDevices)();
         var _isPaired = false;
         if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
           _isPaired = !!res.deviceId;
@@ -320519,7 +320516,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var savedDeviceInfo = (yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getSavedDeviceInfo)().catch(function () {
           return null;
         })) || {};
-        var info = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/api").getSystemConnectedDevices)();
+        var info = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").getSystemConnectedDevices)();
         console.log(info, '===info');
         var _isPaired2 = false;
         var deviceInfo = null;
@@ -320563,23 +320560,23 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }), [route == null ? void 0 : route.name, params, bleNo, setState]);
     var startSearchDevice = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref5 = (0, _asyncToGenerator2.default)(function* (searchRef) {
+      var _ref4 = (0, _asyncToGenerator2.default)(function* (searchRef) {
         try {
           setState({
-            searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING,
+            searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING,
             countdownTime: (0, _dayjs.default)().add(120, 'seconds').valueOf()
           });
           if (searchRef) {
-            yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/api").searchBluetoothDevices)(searchRef);
+            yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").searchBluetoothDevices)(searchRef);
           }
         } catch (error) {
           setState({
-            searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED
+            searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED
           });
         }
       });
-      return function (_x2) {
-        return _ref5.apply(this, arguments);
+      return function (_x) {
+        return _ref4.apply(this, arguments);
       };
     }(), [setState]);
     var stateRef = (0, _react.useRef)(state);
@@ -320587,26 +320584,26 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       stateRef.current = state;
     }, [state]);
     var searchBluetoothDevicesEnd = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref6 = (0, _asyncToGenerator2.default)(function* (searchRef) {
-        if (stateRef.current.searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING) {
+      var _ref5 = (0, _asyncToGenerator2.default)(function* (searchRef) {
+        if (stateRef.current.searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING) {
           setState({
-            searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED
+            searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED
           });
         }
         if (searchRef) {
           try {
-            yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/api").stopSearchBluetoothDevices)(searchRef);
+            yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").stopSearchBluetoothDevices)(searchRef);
           } catch (_unused) {}
         }
       });
-      return function (_x3) {
-        return _ref6.apply(this, arguments);
+      return function (_x2) {
+        return _ref5.apply(this, arguments);
       };
     }(), [setState]);
     var resetSearch = (0, _react.useCallback)(function (searchRef) {
       setState({
         countdownTime: (0, _dayjs.default)().add(120, 'seconds').valueOf(),
-        searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING
+        searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING
       });
       startSearchDevice(searchRef);
     }, [setState, startSearchDevice]);
@@ -320671,30 +320668,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               });
             } catch (_unused2) {}
             try {
-              yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/api").stopSearchBluetoothDevices)(searchRef);
+              yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").stopSearchBluetoothDevices)(searchRef);
             } catch (_unused3) {}
             yield setState({
-              searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS,
+              searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS,
               countdownTime: undefined,
               needScan: false
             });
           }
         });
-        function found(_x4) {
+        function found(_x3) {
           return _found.apply(this, arguments);
         }
         return found;
       }()
     });
     var handleTipsUserOperation = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref7 = (0, _asyncToGenerator2.default)(function* (deviceName, pinCode) {
-        yield tipsUserOperation({
+      var _ref6 = (0, _asyncToGenerator2.default)(function* (deviceName, pinCode) {
+        yield (0, _$$_REQUIRE(_dependencyMap[12], "../../services").tipsUserOperation)({
           title: '温馨提示',
           content: `进入设置首页 > 找到蓝牙并进入 > 找到${deviceName}蓝牙名称，输入${pinCode}进行配对`
         });
       });
-      return function (_x5, _x6) {
-        return _ref7.apply(this, arguments);
+      return function (_x4, _x5) {
+        return _ref6.apply(this, arguments);
       };
     }(), []);
     var handlePairing = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
@@ -320711,13 +320708,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }), [lockName, pin, params, route == null ? void 0 : route.name, route == null ? void 0 : route.params, handleTipsUserOperation]);
     var handleBindSuccess = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       var clearProcessingFlag = /*#__PURE__*/function () {
-        var _ref1 = (0, _asyncToGenerator2.default)(function* () {
+        var _ref0 = (0, _asyncToGenerator2.default)(function* () {
           yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").removeStorage)({
             key: 'rnReLaunchPathProcessing'
           }).catch(function () {});
         });
         return function clearProcessingFlag() {
-          return _ref1.apply(this, arguments);
+          return _ref0.apply(this, arguments);
         };
       }();
       try {
@@ -320727,8 +320724,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var bluetoothDeviceInfoList = (yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getBluetoothDeviceInfo)().catch(function () {
           return null;
         })) || {};
-        var _ref10 = deviceInfo || {},
-          _bleNo = _ref10.bleNo;
+        var _ref1 = deviceInfo || {},
+          _bleNo = _ref1.bleNo;
         // 绑定设备
         console.log(pageName, '===pageName');
         if (pageName != null && pageName.includes('BindDevice')) {
@@ -320736,7 +320733,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             title: '绑定中...'
           });
           try {
-            var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services").bind)({
+            var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../services").bind)({
               deviceNo: deviceNo,
               userId: null
             });
@@ -320749,7 +320746,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").hideLoading)();
               return;
             }
-            var connectRes = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/api").connectBluetoothDevice)(deviceInfo.deviceId);
+            var connectRes = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").connectBluetoothDevice)(deviceInfo.deviceId);
             if (!connectRes.success) {
               var _connectRes$error;
               (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").showToast)({
@@ -320803,7 +320800,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
           console.log(role, mode, '===role, mode');
           if (Number(role) === 1 && !mode) {
-            var cmdRes = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/api").setNearbyPermission)({
+            var cmdRes = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").setNearbyPermission)({
               deviceId: deviceInfo.deviceId,
               deviceNo: deviceNo,
               status: 1
@@ -320815,7 +320812,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               });
               return;
             }
-            var apiRes = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services").openBluetoothProximity)({
+            var apiRes = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../services").openBluetoothProximity)({
               id: lockId,
               bluetoothStatus: 1
             });
@@ -320886,7 +320883,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       };
     }, [setState]);
     (0, _react.useEffect)(function () {
-      if (searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS || searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED || startSearch) {
+      if (searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS || searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED || startSearch) {
         setState({
           countdownTime: undefined
         });
@@ -320899,7 +320896,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         void startSearchDevice(searchRef);
       }
       return function () {
-        void (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/api").stopSearchBluetoothDevices)(searchRef);
+        void (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").stopSearchBluetoothDevices)(searchRef);
       };
     }, [startSearch, startSearchDevice, isHarmonyOs]);
     (0, _react.useEffect)(function () {
@@ -320911,7 +320908,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return clearTimeout(timer);
       };
     }, [isPaired, handleBindSuccess]);
-    return /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").PageContainer, {
+    return /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").PageContainer, {
       backgroundColor: "#ffffff",
       statusBarStyle: "dark-content",
       safeAreaEdges: ['top', 'bottom'],
@@ -320923,17 +320920,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       },
       footer:
       // iOS / 鸿蒙：先搜索，失败显示“重新搜索”，成功且无需 PIN 时显示“跳转设置”
-      needScan ? searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED ? /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+      needScan ? searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED ? /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
         style: _styles.default.footer,
         justify: "center",
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 614,
+          lineNumber: 606,
           columnNumber: 13
         }
-      }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").GradientButton, {
-        colors: _$$_REQUIRE(_dependencyMap[11], "../../constants").LOCK_BTN_COLORS[_$$_REQUIRE(_dependencyMap[11], "../../constants").LOCK_STATUS.FALL_SUCCESS],
+      }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").GradientButton, {
+        colors: _$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_BTN_COLORS[_$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_STATUS.FALL_SUCCESS],
         width: 160,
         height: 44,
         round: false,
@@ -320944,17 +320941,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 615,
+          lineNumber: 607,
           columnNumber: 15
         }
-      }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+      }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
         style: _styles.default.btnText,
         justify: "center",
         align: "center",
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 623,
+          lineNumber: 615,
           columnNumber: 17
         }
       }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -320962,17 +320959,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 624,
+          lineNumber: 616,
           columnNumber: 19
         }
-      }, "\u91CD\u65B0\u641C\u7D22")))) : !!!needPin ? /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+      }, "\u91CD\u65B0\u641C\u7D22")))) : !!!needPin ? /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
         direction: "column",
         align: "center",
         justify: "center",
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 629,
+          lineNumber: 621,
           columnNumber: 13
         }
       }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -320980,11 +320977,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 630,
+          lineNumber: 622,
           columnNumber: 15
         }
-      }, "\u56E0\u673A\u578B\u4E0D\u540C\uFF0C\u84DD\u7259\u641C\u7D22\u9700\u8981\u51E0\u5206\u949F\uFF0C\u8BF7\u8010\u5FC3\u7B49\u5F85"), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").GradientButton, {
-        colors: _$$_REQUIRE(_dependencyMap[11], "../../constants").LOCK_BTN_COLORS[_$$_REQUIRE(_dependencyMap[11], "../../constants").LOCK_STATUS.FALL_SUCCESS],
+      }, "\u56E0\u673A\u578B\u4E0D\u540C\uFF0C\u84DD\u7259\u641C\u7D22\u9700\u8981\u51E0\u5206\u949F\uFF0C\u8BF7\u8010\u5FC3\u7B49\u5F85"), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").GradientButton, {
+        colors: _$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_BTN_COLORS[_$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_STATUS.FALL_SUCCESS],
         width: 160,
         height: 44,
         round: false,
@@ -320995,17 +320992,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 633,
+          lineNumber: 625,
           columnNumber: 15
         }
-      }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+      }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
         style: _styles.default.btnText,
         justify: "center",
         align: "center",
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 641,
+          lineNumber: 633,
           columnNumber: 17
         }
       }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321013,7 +321010,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 642,
+          lineNumber: 634,
           columnNumber: 19
         }
       }, "\u8DF3\u8F6C\u8BBE\u7F6E")))) : undefined : undefined,
@@ -321021,17 +321018,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 600,
+        lineNumber: 592,
         columnNumber: 5
       }
-    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       direction: "column",
       align: "center",
       style: _styles.default.content,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 651,
+        lineNumber: 643,
         columnNumber: 7
       }
     }, !!!needPin ? /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321039,17 +321036,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 654,
+        lineNumber: 646,
         columnNumber: 13
       }
-    }, /*#__PURE__*/_react.default.createElement(_iconfont.default, {
+    }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
       name: "bluetooth-1",
       size: 35,
       color: "#333333",
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 655,
+        lineNumber: 647,
         columnNumber: 15
       }
     })), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321057,7 +321054,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 657,
+        lineNumber: 649,
         columnNumber: 13
       }
     }, "\u8BF7\u786E\u4FDD\u5730\u9501\u901A\u7535"), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321065,7 +321062,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 658,
+        lineNumber: 650,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Image, {
@@ -321077,7 +321074,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 659,
+        lineNumber: 651,
         columnNumber: 15
       }
     })), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321085,24 +321082,24 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 667,
+        lineNumber: 659,
         columnNumber: 13
       }
-    }, "\u8BF7\u8FDE\u63A5\u4EE5\u4E0B\u84DD\u7259"), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, "\u8BF7\u8FDE\u63A5\u4EE5\u4E0B\u84DD\u7259"), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.infoSection,
       direction: "column",
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 669,
+        lineNumber: 661,
         columnNumber: 13
       }
-    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.infoBox,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 670,
+        lineNumber: 662,
         columnNumber: 15
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321110,7 +321107,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 671,
+        lineNumber: 663,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321118,7 +321115,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 672,
+        lineNumber: 664,
         columnNumber: 19
       }
     }, "\u84DD\u7259\u540D\u79F0"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321126,12 +321123,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 673,
+        lineNumber: 665,
         columnNumber: 19
       }
     }, bleName))))) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, needScan ? /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.Image, {
       source: {
-        uri: _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS_IMAGE[searchBluetoothStatus]
+        uri: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS_IMAGE[searchBluetoothStatus]
       },
       style: {
         width: 160,
@@ -321141,23 +321138,23 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 682,
+        lineNumber: 674,
         columnNumber: 17
       }
-    }), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.countdownContainer,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 691,
+        lineNumber: 683,
         columnNumber: 17
       }
-    }, searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING ? /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
+    }, searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING ? /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
       style: _styles.default.countdownText,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 695,
+        lineNumber: 687,
         columnNumber: 23
       }
     }, "\u6B63\u5728\u8FDE\u63A5\u4E2D"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321165,7 +321162,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 696,
+        lineNumber: 688,
         columnNumber: 23
       }
     }, Math.round(countdown / 1000), "s")) : /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321173,25 +321170,25 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 703,
+        lineNumber: 695,
         columnNumber: 21
       }
-    }, (_SEARCH_BLUETOOTH_STA = _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS_NAME[searchBluetoothStatus]) != null ? _SEARCH_BLUETOOTH_STA : searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS ? '已找到设备' : '搜索失败')), searchBluetoothStatus !== _$$_REQUIRE(_dependencyMap[11], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS && /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, (_SEARCH_BLUETOOTH_STA = _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS_NAME[searchBluetoothStatus]) != null ? _SEARCH_BLUETOOTH_STA : searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS ? '已找到设备' : '搜索失败')), searchBluetoothStatus !== _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS && /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       direction: "column",
       style: _styles.default.card,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 715,
+        lineNumber: 707,
         columnNumber: 19
       }
-    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.rowMargin,
       align: "center",
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 716,
+        lineNumber: 708,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321199,7 +321196,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 717,
+        lineNumber: 709,
         columnNumber: 23
       }
     }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321207,57 +321204,57 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 718,
+        lineNumber: 710,
         columnNumber: 23
       }
-    }, "\u5F00\u542F\u3010", lockName || '未知名称', "\u3011\u5730\u9501\u7535\u6E90")), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, "\u5F00\u542F\u3010", lockName || '未知名称', "\u3011\u5730\u9501\u7535\u6E90")), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.cardItem,
       align: "center",
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 714,
+        columnNumber: 21
+      }
+    }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
+      style: _styles.default.dot,
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 715,
+        columnNumber: 23
+      }
+    }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
+      style: _styles.default.cardItemText,
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 716,
+        columnNumber: 23
+      }
+    }, "\u786E\u8BA4\u624B\u673A\u5F00\u542F\u84DD\u7259\uFF0C\u5E76\u9760\u8FD1\u3010", lockName || '未知名称', "\u3011\u5730\u9501")), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+      style: _styles.default.cardItem,
+      align: "center",
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 720,
+        columnNumber: 21
+      }
+    }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
+      style: _styles.default.dot,
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 721,
+        columnNumber: 23
+      }
+    }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
+      style: _styles.default.cardItemText,
       __self: this,
       __source: {
         fileName: _jsxFileName,
         lineNumber: 722,
-        columnNumber: 21
-      }
-    }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
-      style: _styles.default.dot,
-      __self: this,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 723,
-        columnNumber: 23
-      }
-    }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
-      style: _styles.default.cardItemText,
-      __self: this,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 724,
-        columnNumber: 23
-      }
-    }, "\u786E\u8BA4\u624B\u673A\u5F00\u542F\u84DD\u7259\uFF0C\u5E76\u9760\u8FD1\u3010", lockName || '未知名称', "\u3011\u5730\u9501")), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
-      style: _styles.default.cardItem,
-      align: "center",
-      __self: this,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 728,
-        columnNumber: 21
-      }
-    }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
-      style: _styles.default.dot,
-      __self: this,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 729,
-        columnNumber: 23
-      }
-    }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
-      style: _styles.default.cardItemText,
-      __self: this,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 730,
         columnNumber: 23
       }
     }, "\u5982\u679C\u957F\u65F6\u95F4\u672A\u8FDE\u63A5\u6210\u529F\uFF0C\u8BF7\u53BB\u7CFB\u7EDF\u8BBE\u7F6E\u84DD\u7259\u5217\u8868\u4E2D\u5FFD\u7565", /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321265,7 +321262,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 732,
+        lineNumber: 724,
         columnNumber: 25
       }
     }, "\"", bleName, "\""), ",\u5E76\u4E14\u91CD\u65B0\u641C\u7D22")))) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321273,7 +321270,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 741,
+        lineNumber: 733,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321283,7 +321280,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 742,
+        lineNumber: 734,
         columnNumber: 19
       }
     })), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321291,7 +321288,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 744,
+        lineNumber: 736,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321299,7 +321296,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 745,
+        lineNumber: 737,
         columnNumber: 19
       }
     }, "\u8BF7\u786E\u4FDD\u5730\u9501\u901A\u7535"), /*#__PURE__*/_react.default.createElement(_reactNative.TouchableOpacity, {
@@ -321311,7 +321308,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 746,
+        lineNumber: 738,
         columnNumber: 19
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321321,7 +321318,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 750,
+        lineNumber: 742,
         columnNumber: 21
       }
     }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321329,24 +321326,24 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 751,
+        lineNumber: 743,
         columnNumber: 21
       }
-    }, "\u901A\u7535\u6307\u5357"))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, "\u901A\u7535\u6307\u5357"))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.infoSection,
       direction: "column",
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 755,
+        lineNumber: 747,
         columnNumber: 17
       }
-    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.infoBox,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 756,
+        lineNumber: 748,
         columnNumber: 19
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321354,7 +321351,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 757,
+        lineNumber: 749,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321362,7 +321359,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 758,
+        lineNumber: 750,
         columnNumber: 23
       }
     }, "\u84DD\u7259\u540D\u79F0"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321370,24 +321367,24 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 759,
+        lineNumber: 751,
         columnNumber: 23
       }
-    }, bleName)))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, bleName)))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.infoSection,
       direction: "column",
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 764,
+        lineNumber: 756,
         columnNumber: 17
       }
-    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.infoBox,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 765,
+        lineNumber: 757,
         columnNumber: 19
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321395,7 +321392,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 766,
+        lineNumber: 758,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321403,7 +321400,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 767,
+        lineNumber: 759,
         columnNumber: 23
       }
     }, "PIN\u7801"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321411,7 +321408,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 768,
+        lineNumber: 760,
         columnNumber: 23
       }
     }, pin)), /*#__PURE__*/_react.default.createElement(_reactNative.TouchableOpacity, {
@@ -321428,7 +321425,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 770,
+        lineNumber: 762,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321438,7 +321435,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 777,
+        lineNumber: 769,
         columnNumber: 23
       }
     }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321449,10 +321446,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 778,
+        lineNumber: 770,
         columnNumber: 23
       }
-    }, "\u70B9\u51FB\u590D\u5236")))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, "\u70B9\u51FB\u590D\u5236")))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: (_styles.default.footer, {
         marginTop: 8
       }),
@@ -321460,11 +321457,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 785,
+        lineNumber: 777,
         columnNumber: 17
       }
-    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").GradientButton, {
-      colors: _$$_REQUIRE(_dependencyMap[11], "../../constants").LOCK_BTN_COLORS[_$$_REQUIRE(_dependencyMap[11], "../../constants").LOCK_STATUS.FALL_SUCCESS],
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").GradientButton, {
+      colors: _$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_BTN_COLORS[_$$_REQUIRE(_dependencyMap[9], "../../constants").LOCK_STATUS.FALL_SUCCESS],
       width: 160,
       height: 44,
       round: false,
@@ -321475,17 +321472,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 789,
+        lineNumber: 781,
         columnNumber: 19
       }
-    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.btnText,
       justify: "center",
       align: "center",
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 797,
+        lineNumber: 789,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321493,7 +321490,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 802,
+        lineNumber: 794,
         columnNumber: 23
       }
     }, "\u8DF3\u8F6C\u8BBE\u7F6E")))), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321501,7 +321498,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 807,
+        lineNumber: 799,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321509,7 +321506,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 808,
+        lineNumber: 800,
         columnNumber: 19
       }
     }, "\u56E0\u673A\u578B\u4E0D\u540C\uFF0C\u84DD\u7259\u641C\u7D22\u9700\u8981\u51E0\u5206\u949F\uFF0C\u8BF7\u8010\u5FC3\u7B49\u5F85")), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321517,7 +321514,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 813,
+        lineNumber: 805,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Image, {
@@ -321532,7 +321529,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 814,
+        lineNumber: 806,
         columnNumber: 19
       }
     }))))), /*#__PURE__*/_react.default.createElement(_powerIndicatorPop.default, {
@@ -321540,12 +321537,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 827,
+        lineNumber: 819,
         columnNumber: 7
       }
     }));
   }
-},1965,[1,25,2,42,3,574,1334,1966,1967,1335,782,777,789,803,1531],"src\\pages\\findDevice\\index.tsx");
+},1965,[1,2,25,42,3,574,1334,1966,1967,777,782,789,803,1531],"src\\pages\\findDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {

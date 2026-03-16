@@ -48,7 +48,6 @@ import PowerIndicatorPop from '@/components/powerIndicatorPop';
 import type { PopCenterRef } from '@/components/PopCenter';
 import styles from './styles';
 import { Toast } from '@ant-design/react-native';
-import IconFont from '@/iconfont';
 
 function useCountDown(options: { targetDate?: number; onEnd?: () => void }) {
   const { targetDate, onEnd } = options;
@@ -645,7 +644,7 @@ export default function FindDevice(props: any) {
         {!!!needPin ? (
           <>
             <View style={styles.iconWrapper2}>
-              <IconFont name="bluetooth-1" size={35} color="#333333" />
+              <AppIcon name="bluetooth-1" size={35} color="#333333" />
             </View>
             <Text style={styles.tipsLabel}>请确保地锁通电</Text>
             <View style={styles.btnPositionImageContent}>
