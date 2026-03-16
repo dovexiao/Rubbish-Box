@@ -138,7 +138,8 @@ export default function MessageScreen() {
 
   useEffect(() => {
     void fetchList(true);
-  }, [fetchList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleEnterDevice = useCallback(
     async (id: number, msgId: number) => {
