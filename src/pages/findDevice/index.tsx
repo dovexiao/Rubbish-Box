@@ -35,7 +35,7 @@ import {
   setClipboardData,
   getStorage,
 } from '@/utils';
-import { bind, openBluetoothProximity } from '@/services';
+import { bind, openBluetoothProximity, tipsUserOperation } from '@/services';
 import AppIcon from '@/components/AppIcon';
 import {
   LOCK_BTN_COLORS,
@@ -49,13 +49,6 @@ import type { PopCenterRef } from '@/components/PopCenter';
 import styles from './styles';
 import { Toast } from '@ant-design/react-native';
 import IconFont from '@/iconfont';
-
-const tipsUserOperation = async (options: {
-  title?: string;
-  content?: string;
-}) => {
-  showToast({ title: options.content || options.title || '', icon: 'none' });
-};
 
 function useCountDown(options: { targetDate?: number; onEnd?: () => void }) {
   const { targetDate, onEnd } = options;
