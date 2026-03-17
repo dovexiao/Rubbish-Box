@@ -22,7 +22,7 @@ export const generateShareImage = async (
   if (ref) {
     try {
       return await captureRef(ref, {
-        format: 'png',
+        format: 'jpg',
         quality: 1,
         result: 'tmpfile',
       });
@@ -45,7 +45,8 @@ export const onShareAppMessage = async ({
   imageUrl: string;
   path?: string;
 }) => {
-  if (Platform.OS !== 'android' && Platform.OS !== 'ios') {
+  const isHarmony = Platform.OS !== 'android' && Platform.OS !== 'ios';
+  if (Platform.OS !== 'android' && Platform.OS !== 'ios' && !isHarmony) {
     return;
   }
 
@@ -53,13 +54,18 @@ export const onShareAppMessage = async ({
     return;
   }
 
-  await shareWeChatMiniProgram({
-    userName: 'gh_00245e3a7d08',
-    path: path || `/pages/index/index`,
-    webpageUrl: 'https://your-domain.com/fallback.html',
-    scene: 0,
-    miniProgramType: DEPLOY_ENV === 'dev' ? 2 : 0, // 0 正式版 1 测试版 2 体验版
-    title,
-    thumbImageUrl: imageUrl,
-  });
+  showLoading({ title: '拉起微信中...' });
+  try {
+    await shareWeChatMiniProgram({
+      userName: 'gh_00245e3a7d08',
+      path: path || `/pages/index/index`,
+      webpageUrl: 'https://your-domain.com/fallback.html',
+      scene: 0,
+      miniProgramType: DEPLOY_ENV === 'dev' ? 2 : 0, // 0 正式版 1 测试版 2 体验版
+      title,
+      thumbImageUrl: imageUrl,
+    });
+  } finally {
+    hideLoading();
+  }
 };
