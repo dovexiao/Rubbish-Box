@@ -8,6 +8,7 @@ import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
 import styles from './styles';
 import PopConfirm from '@/components/popConfirm';
 import { hideLoading, showLoading, showToast } from '@/utils';
+import { useFocusEffect } from '@react-navigation/core';
 
 interface AccountInfo {
   mobile?: string;
@@ -33,9 +34,11 @@ export default function Account() {
     }
   }, []);
 
-  useEffect(() => {
-    loadAccount();
-  }, [loadAccount]);
+  useFocusEffect(
+    useCallback(() => {
+      loadAccount();
+    }, [loadAccount]),
+  );
 
   const handleChangeMobile = () => {
     if (!detail?.mobile) return;
@@ -73,10 +76,13 @@ export default function Account() {
     let r: any;
     try {
       r = await Promise.race([resPromise, appStatePromise]);
+      console.log('r', r);
       if (r?.result) {
         const thirdState = await getThirdState({});
-        const obj: any = { source: 1, code: r.code, state: thirdState };
+        const obj: any = { source: 1, code: r.code, state: thirdState.data };
+        console.log('obj', obj);
         const bindRes = await userThirdBind(obj);
+        console.log('bindRes', bindRes);
         if (Number((bindRes as any).code) === 200) {
           const accountRes = await getAccountInfo({});
           const data = (accountRes as any)?.data ?? accountRes ?? {};

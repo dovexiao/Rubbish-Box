@@ -25,7 +25,7 @@ export default StyleSheet.create({
     marginTop: 12,
     minHeight: 32,
     width: '100%',
-    gap: 10,
+    gap: 20,
   },
   infoItemText: {
     fontSize: 14,
@@ -40,10 +40,11 @@ export default StyleSheet.create({
     lineHeight: 20,
   },
   descriptionText: {
-    textAlign: 'left',
+    textAlign: 'right',
     fontSize: 14,
     color: '#333333',
     lineHeight: 20,
+    flex: 1,
   },
   circle: {
     width: 16,

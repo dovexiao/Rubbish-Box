@@ -87,15 +87,16 @@ const Login = () => {
       return;
     }
 
-    const res = await wechatLogin();
-    showLoading({ title: '登录中...' });
-
-    // 监听应用状态变化（用户可能从微信返回）
+    // 监听应用状态变化（用户可能从微信返回/中断授权）
+    // 必须先注册监听，再发起微信授权；否则如果微信回调没有触发，后续逻辑会卡死。
+    let settled = false;
     const appStatePromise = new Promise<any>(resolve => {
       tempData.current.appStateSub =
         AppState.addEventListener &&
         AppState.addEventListener('change', s => {
-          if (s === 'active') {
+          console.log('s', s);
+          if (s === 'active' && !settled) {
+            settled = true;
             resolve({
               result: false,
               errCode: -998,
@@ -104,10 +105,27 @@ const Login = () => {
           }
         });
     });
+
+    const timeoutPromise = new Promise<any>(resolve => {
+      setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        resolve({
+          result: false,
+          errCode: -997,
+          message: '微信登录超时，请重试',
+        });
+      }, 60_000);
+    });
+
+    const wechatPromise = wechatLogin().then(r => {
+      settled = true;
+      return r;
+    });
     let r: any;
     try {
       showLoading({ title: '登录中...' });
-      r = await Promise.race([res, appStatePromise]);
+      r = await Promise.race([wechatPromise, appStatePromise, timeoutPromise]);
       if (r.result) {
         const thirdState = await getThirdState({});
         let obj: any = { source: 1, code: r.code, state: thirdState.data };
@@ -120,7 +138,9 @@ const Login = () => {
         } else {
           obj = { ...obj, ...device.current };
         }
+        console.log('obj', obj);
         const thirdLoginRes = await thirdLogin({ ...obj });
+        console.log('thirdLoginRes', thirdLoginRes);
         if (thirdLoginRes.code === 200) {
           await cacheSetSync('token', thirdLoginRes.data.token);
           await cacheSetSync('guestMode', false);
@@ -143,6 +163,7 @@ const Login = () => {
         }
       } else {
         if (r.errCode === -998) console.log('用户手动返回');
+        else if (r.errCode === -997) showToast(r.message);
         else showToast(r.message);
       }
     } catch (e) {

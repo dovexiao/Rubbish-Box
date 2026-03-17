@@ -285,7 +285,7 @@ const DeviceInfo = () => {
       scrollable
       loading={!lockInfo}
       padding={0}
-      footer={footerBtn()}
+      footer={deviceInfo?.role === 1 ? footerBtn() : undefined}
     >
       <Flex style={styles.container} direction="column">
         <Flex direction="row" align="center">
@@ -442,54 +442,59 @@ const DeviceInfo = () => {
           </Flex>
         )}
 
-        <Flex
-          style={
-            (styles.cardRows,
-            lockInfo?.powerType === 1 ? {} : { alignItems: 'flex-start' })
-          }
-        >
-          {lockInfo?.powerType === 1 ? (
-            <>
-              <Text style={styles.cardLable}>碰撞蜂鸣</Text>
-              <TouchableOpacity
-                style={styles.cardRowsTouch}
-                onPress={() => {
-                  if (lockInfo?.powerType !== 1) return;
-                  beeBuzzingCollisionRef.current?.open();
-                }}
-              >
-                <Text style={styles.cardValue}>
-                  {deviceInfo?.buzzerStatus === 1 ? '已开启' : '未开启'}
-                </Text>
-                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <Text style={styles.cardLable}>碰撞蜂鸣</Text>
-              <View
-                style={[
-                  styles.cardValue,
-                  {
-                    alignSelf: 'flex-end',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                  },
-                ]}
-              >
-                <Flex direction="row" align="center">
-                  <Text style={styles.cardValue}>蜂鸣测试</Text>
-                  <TouchableOpacity style={styles.testBtn} onPress={testBuzzer}>
-                    <Text style={styles.testBtnText}>测试</Text>
-                  </TouchableOpacity>
-                </Flex>
-                <Text style={styles.toastText}>{`触发碰撞蜂鸣${
-                  deviceInfo?.buzzerTime ?? '10'
-                }秒后停止蜂鸣`}</Text>
-              </View>
-            </>
-          )}
-        </Flex>
+        {deviceInfo?.powerType === 1 && (
+          <Flex
+            style={
+              (styles.cardRows,
+              lockInfo?.powerType === 1 ? {} : { alignItems: 'flex-start' })
+            }
+          >
+            {lockInfo?.powerType === 1 ? (
+              <>
+                <Text style={styles.cardLable}>碰撞蜂鸣</Text>
+                <TouchableOpacity
+                  style={styles.cardRowsTouch}
+                  onPress={() => {
+                    if (lockInfo?.powerType !== 1) return;
+                    beeBuzzingCollisionRef.current?.open();
+                  }}
+                >
+                  <Text style={styles.cardValue}>
+                    {deviceInfo?.buzzerStatus === 1 ? '已开启' : '未开启'}
+                  </Text>
+                  <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <Text style={styles.cardLable}>碰撞蜂鸣</Text>
+                <View
+                  style={[
+                    styles.cardValue,
+                    {
+                      alignSelf: 'flex-end',
+                      flexDirection: 'column',
+                      alignItems: 'flex-end',
+                    },
+                  ]}
+                >
+                  <Flex direction="row" align="center">
+                    <Text style={styles.cardValue}>蜂鸣测试</Text>
+                    <TouchableOpacity
+                      style={styles.testBtn}
+                      onPress={testBuzzer}
+                    >
+                      <Text style={styles.testBtnText}>测试</Text>
+                    </TouchableOpacity>
+                  </Flex>
+                  <Text style={styles.toastText}>{`触发碰撞蜂鸣${
+                    deviceInfo?.buzzerTime ?? '10'
+                  }秒后停止蜂鸣`}</Text>
+                </View>
+              </>
+            )}
+          </Flex>
+        )}
 
         <Flex style={styles.cardRows}>
           <Text style={styles.cardLable}>离车升锁</Text>

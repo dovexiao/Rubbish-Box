@@ -71,7 +71,7 @@ const VipPage = () => {
   const [pickerValue, setPickerValue] = useState<string | undefined>(undefined);
   const [noLimit, setNoLimit] = useState(1);
   const [active, setActive] = useState(true); // 是否直接选择次数
-  const [customUsageCount, setCustomUsageCount] = useState<number>(1); // 自定义使用次数
+  const [customUsageCount, setCustomUsageCount] = useState<number>(0); // 自定义使用次数
   const [adminUsername, setAdminUsername] = useState<string | undefined>(); // 当前选择的用户
   const [adminUserId, setAdminUserId] = useState<number | undefined>();
   const [userList, setUserList] = useState<UserList[]>([]);
@@ -131,7 +131,7 @@ const VipPage = () => {
 
   const getCount = async () => {
     const res: any = await getUnUseCount({});
-    setUnUseCount(res ?? 0);
+    setUnUseCount(res.data ?? 0);
   };
 
   const getUserList = async () => {
@@ -207,7 +207,7 @@ const VipPage = () => {
     });
     if (res.code == 200) {
       const shareDetail = await getSimpleDetails(res?.data);
-      setShareDetail(shareDetail);
+      setShareDetail(shareDetail.data);
       setSharePopupVisible(true);
     }
   };
@@ -346,11 +346,7 @@ const VipPage = () => {
             }}
           >
             <Text style={styles.vipRecord}>贵宾邀请记录</Text>
-            <AppIcon
-              name={'a-headfor-20'}
-              size={16}
-              color="#333333"
-            ></AppIcon>
+            <AppIcon name={'a-headfor-20'} size={16} color="#333333"></AppIcon>
 
             {(unUseCount ?? 0) > 0 && (
               <View style={styles.messageBadge}>
@@ -365,8 +361,7 @@ const VipPage = () => {
     >
       <View
         style={{
-          paddingLeft: 16,
-          paddingRight: 16,
+          paddingHorizontal: 16,
           paddingTop: 12,
           paddingBottom: 120,
           backgroundColor: '#f6f7fa',
@@ -573,11 +568,7 @@ const VipPage = () => {
                 ? `${customUsageCount}次`
                 : '不限'}
             </Text>
-            <AppIcon
-              name={'a-headfor-20'}
-              size={20}
-              color="#333333"
-            ></AppIcon>
+            <AppIcon name={'a-headfor-20'} size={20} color="#333333"></AppIcon>
           </Flex>
         </Flex>
 

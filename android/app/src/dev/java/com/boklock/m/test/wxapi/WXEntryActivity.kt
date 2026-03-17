@@ -1,4 +1,4 @@
-package com.boklock.m.wxapi
+package com.boklock.m.test.wxapi
 
 import android.app.Activity
 import android.content.Intent
@@ -19,3 +19,4 @@ class WXEntryActivity : Activity() {
     finish()
   }
 }
+

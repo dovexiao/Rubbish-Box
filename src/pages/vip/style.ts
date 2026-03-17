@@ -22,8 +22,8 @@ export const styles = StyleSheet.create({
   },
   editPageFooter: {
     width: '100%',
-    position: 'absolute',
-    bottom: 0,
+    // position: 'absolute',
+    // bottom: 0,
     height: 98,
     paddingBottom: 34,
     backgroundColor: '#ffffff',
@@ -97,7 +97,7 @@ export const styles = StyleSheet.create({
     textAlign: 'right',
   },
   titleBox: {
-    width: 327,
+    width: '100%',
     height: 20,
   },
   titleLine: {
@@ -123,6 +123,7 @@ export const styles = StyleSheet.create({
     width: 72,
     height: 20,
     borderRadius: 0,
+    marginLeft: 'auto',
   },
   titleRightText: {
     height: 20,

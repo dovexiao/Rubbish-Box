@@ -646,23 +646,25 @@ const Content: React.FC<ContentProps> = ({
       </Flex>
 
       <View style={styles.entryList}>
-        <TouchableOpacity
-          style={styles.entryItem}
-          onPress={() => {
-            if (!detail?.id) return;
-            navigation.navigate('DevicesMember', {
-              lockId: detail.id,
-              type: detail?.isGroup ? 'group' : 'single',
-            });
-          }}
-        >
-          <Flex justify="between" align="center">
-            <AppIcon name="member" size={16} color="#333333" />
-            <Text style={styles.entryText}>成员共享</Text>
-            <AppIcon name="a-headfor-20" size={20} color="#333333" />
-          </Flex>
-        </TouchableOpacity>
-        {detail?.powerType === 1 && (
+        {detail?.role === 1 && (
+          <TouchableOpacity
+            style={styles.entryItem}
+            onPress={() => {
+              if (!detail?.id) return;
+              navigation.navigate('DevicesMember', {
+                lockId: detail.id,
+                type: detail?.isGroup ? 'group' : 'single',
+              });
+            }}
+          >
+            <Flex justify="between" align="center">
+              <AppIcon name="member" size={16} color="#333333" />
+              <Text style={styles.entryText}>成员共享</Text>
+              <AppIcon name="a-headfor-20" size={20} color="#333333" />
+            </Flex>
+          </TouchableOpacity>
+        )}
+        {detail?.mode === 1 && (
           <TouchableOpacity
             style={styles.entryItem}
             onPress={() => {

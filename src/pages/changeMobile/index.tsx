@@ -37,6 +37,7 @@ export default function ChangeMobile() {
   const [newSending, setNewSending] = useState(false);
   const [newCountdown, setNewCountdown] = useState(0);
   const [newSmsRequested, setNewSmsRequested] = useState(false);
+  const [newFlowId, setNewFlowId] = useState<string | null>(null);
 
   const canNextOld = useMemo(
     () => !!oldMobile && oldCode.trim().length > 0,
@@ -82,10 +83,8 @@ export default function ChangeMobile() {
       const isResend = !!(oldError || oldSmsRequested);
       const api = isResend ? getCodeResent : getChangeMobileCode;
       const params: any = isResend
-        ? { mobile: oldMobile, flowId }
-        : { mobile: oldMobile };
-
-      console.log('[ChangeMobile] send old code params:', params);
+        ? { mobile: oldMobile, flowId, old: true }
+        : { mobile: oldMobile, old: true };
 
       const res = await api(params);
       if (res.code == 200) {
@@ -107,11 +106,11 @@ export default function ChangeMobile() {
   // 验证原手机
   const handleVerifyOld = async () => {
     if (!oldMobile) {
-      showToast('缺少原手机号信息');
+      showToast('请输入手机号');
       return;
     }
     if (!mobileExp(oldMobile)) {
-      showToast('原手机号格式不正确');
+      showToast('请输入正确的手机号');
       return;
     }
     if (!oldCode.trim()) {
@@ -124,14 +123,15 @@ export default function ChangeMobile() {
         mobile: oldMobile,
         code: oldCode.trim(),
         flowId,
+        old: true,
       };
-      console.log('[ChangeMobile] verify old mobile params:', params);
       const res = await changeMobileVerify(params);
       hideLoading();
       const code = (res as any)?.code ?? (res as any)?.status;
       if (String(code) === '200') {
         setOldError(null);
         setStep(2);
+        setNewFlowId(params.flowId);
       } else if (String(code) === '515') {
         setOldError('验证码错误，请重新输入');
       } else {
@@ -167,8 +167,9 @@ export default function ChangeMobile() {
         flowId,
         old: false,
       };
-
-      console.log('[ChangeMobile] send new code params:', params);
+      if (newFlowId) {
+        params.flowId = newFlowId;
+      }
 
       const res = await api(params);
       if (res.code == 200) {
@@ -214,7 +215,9 @@ export default function ChangeMobile() {
         code: newCode.trim(),
         flowId,
       };
-      console.log('[ChangeMobile] verify new mobile params:', params);
+      if (newFlowId) {
+        params.flowId = newFlowId;
+      }
       const res = await changeNewVerify(params);
       hideLoading();
       const code = (res as any)?.code ?? (res as any)?.status;

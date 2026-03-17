@@ -1,4 +1,4 @@
-﻿import {
+import {
   NativeModules,
   Platform,
   TurboModuleRegistry,
@@ -10,7 +10,7 @@ import { hideLoading, showLoading } from '@/utils';
 
 const { AppModule } = NativeModules;
 const WECHAT_APP_ID: string | undefined = AppModule?.wechatAppId;
-const WECHAT_APP_ID_FALLBACK = 'wx5c90e0d5806a55c4';
+const WECHAT_APP_ID_FALLBACK = 'wxd9c0f6b6c3c8d8df';
 const WECHAT_UNIVERSAL_LINK = 'https://g.18qjz.cn/wechat/';
 
 let wechatRegisterPromise: Promise<boolean> | null = null;
@@ -237,8 +237,8 @@ export const wechatLogin = async () => {
       };
     }
 
-    // Use \ properly so powershell doesn't replace it and we don't break JS
-    const randomStr = Math.random().toString(36).substring(2, 10);
+    // Avoid deprecated String.prototype.substr
+    const randomStr = Math.random().toString(36).slice(2, 12);
     const authResponse = await WeChat?.sendAuthRequest?.(
       'snsapi_userinfo',
       `wechat_login_${randomStr}`,
@@ -254,6 +254,7 @@ export const wechatLogin = async () => {
     }
     hideLoading();
     console.log('[wechatLogin] authResponse:', authResponse);
+
     switch (authResponse.errCode) {
       case 0:
         return { result: true, code: authResponse.code, message: '授权成功' };

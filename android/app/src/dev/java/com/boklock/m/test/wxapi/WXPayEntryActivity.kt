@@ -1,11 +1,11 @@
-package com.boklock.m.wxapi
+package com.boklock.m.test.wxapi
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.wechatlib.WeChatLibModule
 
-class WXEntryActivity : Activity() {
+class WXPayEntryActivity : Activity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     WeChatLibModule.handleIntent(intent)
@@ -19,3 +19,4 @@ class WXEntryActivity : Activity() {
     finish()
   }
 }
+
