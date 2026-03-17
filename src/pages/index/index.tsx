@@ -429,7 +429,7 @@ const Index = () => {
     <PageContainer
       backgroundColor={bgImage ? 'transparent' : '#f6f7fa'}
       style={styles.pageContainer}
-      loading={loading}
+      // loading={loading}
       error={error}
       fullScreenError={!showGuestWelcome && !hasDevice && !loading}
       onRetry={() => {

@@ -1,6 +1,6 @@
 import AppIcon from '@/components/AppIcon';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, Image, ScrollView } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { PageContainer, Popup, Flex } from '@/components';
@@ -220,6 +220,7 @@ export default function VipEditRecordPage() {
       backgroundColor="#F6F7FA"
       statusBarStyle="dark-content"
       safeAreaEdges={['top', 'bottom']}
+      contentContainerStyle={{ paddingHorizontal: 16 }}
       scrollable
       footer={
         <Flex
@@ -230,7 +231,9 @@ export default function VipEditRecordPage() {
           isTouchView
           onPress={handleInvite}
         >
-          <Text style={styles.footerBtnText}>确定编辑</Text>
+          <TouchableOpacity onPress={handleInvite} style={styles.footerBtn}>
+            <Text style={styles.footerBtnText}>确定编辑</Text>
+          </TouchableOpacity>
         </Flex>
       }
     >
@@ -323,7 +326,7 @@ export default function VipEditRecordPage() {
               )}：${dayjs(startTime).format('mm')}`}</Text>
             </Flex>
           </Flex>
-          <AppIcon name={'arrows1'} size={40} color="#333333"></AppIcon>
+          <AppIcon name={'arrows1'} size={20} color="#333333"></AppIcon>
           <Flex
             style={styles.timeBox}
             direction={'column'}
@@ -365,7 +368,7 @@ export default function VipEditRecordPage() {
               ? `${customUsageCount}次`
               : '不限'}
           </Text>
-          <AppIcon name={'a-headfor-20'} size={40} color="#333333"></AppIcon>
+          <AppIcon name={'a-headfor-20'} size={20} color="#333333"></AppIcon>
         </Flex>
       </Flex>
 

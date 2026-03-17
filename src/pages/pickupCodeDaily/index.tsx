@@ -1,5 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  PermissionsAndroid,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { ActionSheet } from '@ant-design/react-native';
@@ -175,6 +183,25 @@ export default function PickupCodeDaily() {
     }
   }, []);
 
+  const ensureCameraPermission = useCallback(async () => {
+    if (Platform.OS !== 'android') return true;
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: '需要相机权限',
+          message: '用于拍照识别卡密',
+          buttonPositive: '允许',
+          buttonNegative: '拒绝',
+          buttonNeutral: '稍后',
+        },
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch {
+      return false;
+    }
+  }, []);
+
   const handleScan = useCallback(() => {
     ActionSheet.showActionSheetWithOptions(
       {
@@ -182,9 +209,14 @@ export default function PickupCodeDaily() {
         options: ['拍照', '从相册选择', '取消'],
         cancelButtonIndex: 2,
       },
-      index => {
+      async index => {
         if (index === 2 || index === undefined) return; // 取消
         if (index === 0) {
+          const ok = await ensureCameraPermission();
+          if (!ok) {
+            showToast('未获得相机权限');
+            return;
+          }
           launchCamera(
             { mediaType: 'photo', quality: 0.8, saveToPhotos: false },
             res => {
@@ -221,7 +253,7 @@ export default function PickupCodeDaily() {
         }
       },
     );
-  }, [processImageUri]);
+  }, [ensureCameraPermission, processImageUri]);
 
   const handleRecord = useCallback(() => {
     navigation.navigate('PickupCodeRecordList');

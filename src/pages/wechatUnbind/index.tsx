@@ -26,12 +26,6 @@ export default function WechatUnbind() {
   );
 
   useEffect(() => {
-    if (mobileFromRoute) {
-      setMobile(mobileFromRoute);
-    }
-  }, [mobileFromRoute]);
-
-  useEffect(() => {
     if (countdown <= 0) return;
     const timer = setInterval(() => {
       setCountdown(prev => (prev <= 1 ? 0 : prev - 1));
@@ -144,7 +138,6 @@ export default function WechatUnbind() {
               onChangeText={setMobile}
               keyboardType="number-pad"
               maxLength={11}
-              editable={!mobileFromRoute}
             />
           </View>
 

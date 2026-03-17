@@ -25,6 +25,7 @@ import { getBannerDetails, updateBannerDetails } from '@/services/user';
 import { hideLoading, showLoading, showToast, tencentUpload } from '@/utils';
 import styles from './styles';
 import PopConfirm from '@/components/popConfirm';
+import RNFS from 'react-native-fs';
 
 const MAX_TEXT = 100;
 const MAX_FILES = 10;
@@ -195,10 +196,35 @@ export default function AdDisplay() {
       const results: string[] = [];
       for (let i = 0; i < uris.length; i++) {
         const uri = uris[i];
-        const filename =
-          uri.split('/').pop() || `file_${i}.${isVideo ? 'mp4' : 'jpg'}`;
+
+        // Android 视频通常返回 content://，部分原生上传 SDK 无法直接读取该 URI
+        // 先拷贝到缓存目录转换成 file:// 再上传
+        let uploadUri = uri;
+        if (
+          isVideo &&
+          Platform.OS === 'android' &&
+          typeof uri === 'string' &&
+          uri.startsWith('content://')
+        ) {
+          const destPath = `${
+            RNFS.CachesDirectoryPath
+          }/upload_video_${Date.now()}_${i}.mp4`;
+          try {
+            await RNFS.copyFile(uri, destPath);
+            uploadUri = `file://${destPath}`;
+          } catch (e) {
+            console.warn('[upload] copy content:// failed', e);
+            uploadUri = uri;
+          }
+        }
+
+        const rawName = uri.split('/').pop() || '';
+        const hasExt = rawName.includes('.') && !rawName.endsWith('.');
+        const filename = hasExt
+          ? rawName
+          : `file_${i}.${isVideo ? 'mp4' : 'jpg'}`;
         const res = await tencentUpload({
-          file: uri,
+          file: uploadUri,
           filename,
           index: i,
         });
@@ -262,13 +288,16 @@ export default function AdDisplay() {
           showToast(res.errorMessage || '选择失败');
           return;
         }
+        console.log('res', res);
         const assets = res.assets || [];
         const uri = assets[0]?.uri;
         if (!uri) return;
+        console.log('uri', uri);
         try {
           showLoading({ title: '上传中...' });
           const list = await handleUploadFiles([uri], true);
           hideLoading();
+          console.log('list', list);
           setBannerImageUrls(prev => [...prev, ...list].slice(0, MAX_FILES));
         } catch (e) {
           hideLoading();
@@ -389,7 +418,7 @@ export default function AdDisplay() {
                             <View style={styles.videoPlaceholder}>
                               <AppIcon name="play" size={40} color="#fff" />
                               <Text style={{ color: '#fff', marginTop: 8 }}>
-                                视
+                                视频
                               </Text>
                             </View>
                           )
@@ -455,6 +484,7 @@ export default function AdDisplay() {
             <Text style={styles.uploadText}>相册上传</Text>
             <Text style={styles.uploadText}>({bannerImageUrls.length}/10)</Text>
           </TouchableOpacity>
+
           {bannerImageUrls.map(url => (
             <View
               key={url}
