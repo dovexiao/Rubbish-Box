@@ -25,7 +25,11 @@ import { getBannerDetails, updateBannerDetails } from '@/services/user';
 import { hideLoading, showLoading, showToast, tencentUpload } from '@/utils';
 import styles from './styles';
 import PopConfirm from '@/components/popConfirm';
-import RNFS from 'react-native-fs';
+
+let RNFS: any = null;
+if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  RNFS = require('react-native-fs');
+}
 
 const MAX_TEXT = 100;
 const MAX_FILES = 10;
