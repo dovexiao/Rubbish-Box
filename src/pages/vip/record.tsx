@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
@@ -322,7 +323,11 @@ export default function VipRecordPage() {
       {/* 隐藏的封面图UI */}
       {shareDetail && (
         <WeChatCoverImage
-          style={{ position: 'absolute', top: -9999, left: -9999 }}
+          style={
+            Platform.OS === 'android' || Platform.OS === 'ios'
+              ? { position: 'absolute', top: -9999, left: -9999 }
+              : { position: 'absolute', top: 0, left: 0, zIndex: -999 }
+          }
           shareContentRef={shareContentRef}
           details={shareDetail}
         />

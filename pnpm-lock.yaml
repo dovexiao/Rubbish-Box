@@ -59,6 +59,9 @@ importers:
       '@react-native-community/slider':
         specifier: ^4.4.2
         version: 4.5.7
+      '@react-native-oh-tpl/react-native-view-shot':
+        specifier: 3.8.0-0.3.2
+        version: 3.8.0-0.3.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       '@react-native-ohos/clipboard':
         specifier: 1.16.3-rc.1
         version: 1.16.3-rc.1(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -210,7 +213,7 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4(patch_hash=17836b8729ba3b68e0887b573d4b79cc9001269f8840a4f67ec62af3611ab43a)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-zip-archive:
-        specifier: ^6.1.0
+        specifier: ^6.0.0
         version: 6.1.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       rn-fetch-blob:
         specifier: ^0.12.0
@@ -1711,6 +1714,12 @@ packages:
 
   '@react-native-community/slider@4.5.7':
     resolution: {integrity: sha512-WMDDZjNF2Bd8M8TrSqKf5xhM9ikdfCHtSPur64Ow3bB/OVrKufUQZ59NmYdNZNeGPvcHHTsafuYTY8zfZfbchQ==}
+
+  '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2':
+    resolution: {integrity: sha512-SovSCe4fPz+A7KXJ8NisTCcPwvRmAjtXIWSxKVyGWrkishZ6Ru3ApdoJySf4y18dugW3qrV4MuQElicGkujGQQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   '@react-native-oh/react-native-harmony-cli@0.77.50':
     resolution: {integrity: sha512-TsYQERcWVq3zH3yVoHSsSM/DY2NdGwLgo20jmOJdj50cSMaaibazzNvAVtGAl/dKn0uGtiC6RELKpaBzTIrCSQ==}
@@ -7788,6 +7797,13 @@ snapshots:
       react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
   '@react-native-community/slider@4.5.7': {}
+
+  '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      html2canvas: 1.4.1
+      react: 18.2.0
+      react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+      react-native-view-shot: 3.8.0(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
 
   '@react-native-oh/react-native-harmony-cli@0.77.50(@babel/preset-env@7.29.0(@babel/core@7.29.0))(@types/node@25.3.5)(metro@0.76.9)':
     dependencies:

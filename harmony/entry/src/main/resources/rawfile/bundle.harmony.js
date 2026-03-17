@@ -1274,7 +1274,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   _reactNative.AppRegistry.registerComponent(_$$_REQUIRE(_dependencyMap[6], "./app.json").name, function () {
     return _App.default;
   });
-},0,[1,2,3,537,1166,864,2016],"index.js");
+},0,[1,2,3,537,1166,864,2017],"index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   function _interopRequireDefault(e) {
     return e && e.__esModule ? e : {
@@ -238371,7 +238371,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   };
-},1297,[1,42,88,1298,1330,1331,1999],"src\\navigation\\AppNavigator.tsx");
+},1297,[1,42,88,1298,1330,1331,2000],"src\\navigation\\AppNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -240996,7 +240996,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       label: '添加设备'
     }]
   };
-},1331,[1332,1574,1575,1577,1583,1585,1588,1591,1593,1595,1597,1604,1620,1624,1626,1629,1631,1633,1637,1639,1641,1643,1645,1647,1651,1653,1655,1658,1660,1664,1666,1668,1670,1672,1674,1676,1678,1680,1682,1684,1686,1688,1690,1692,1694,1696,1699,1701,1703,1707,1709,1711,1957,1959,1961,1962,1965,1968,1969,1971,1973,1977,1981,1983,1985,1987,1989,1993,1995,1997],"src\\routes\\index.tsx");
+},1331,[1332,1574,1575,1577,1583,1585,1588,1591,1593,1595,1597,1604,1620,1624,1626,1629,1631,1633,1637,1639,1641,1643,1645,1647,1651,1653,1655,1658,1660,1664,1666,1668,1670,1672,1674,1676,1678,1680,1682,1684,1686,1688,1690,1692,1694,1696,1699,1701,1703,1707,1709,1711,1958,1960,1962,1963,1966,1969,1970,1972,1974,1978,1982,1984,1986,1988,1990,1994,1996,1998],"src\\routes\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -291668,6 +291668,7 @@ __d(function(global, require, _importDefaultUnused, _importAllUnused, module, ex
     "@react-native-community/netinfo": "^9.3.10",
     "@react-native-community/segmented-control": "^2.2.2",
     "@react-native-community/slider": "^4.4.2",
+    "@react-native-oh-tpl/react-native-view-shot": "3.8.0-0.3.2",
     "@react-native-ohos/clipboard": "1.16.3-rc.1",
     "@react-native-ohos/react-native-ble-plx": "3.2.1-rc.2",
     "@react-native-ohos/react-native-image-picker": "7.0.4-rc.2",
@@ -294768,10 +294769,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             })
           })]
         }), shareDetail && /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[24], "./com/weChatCoverImage").WeChatCoverImage, {
-          style: {
+          style: _reactNative.Platform.OS === 'android' || _reactNative.Platform.OS === 'ios' ? {
             position: 'absolute',
             top: -9999,
             left: -9999
+          } : {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            zIndex: -999
           },
           shareContentRef: shareContentRef,
           details: shareDetail
@@ -294780,7 +294786,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = VipPage;
-},1711,[1,7,2,25,42,3,553,1334,1523,1712,1947,574,88,679,804,782,572,780,1949,1656,1531,1952,777,1953,1955],"src\\pages\\vip\\index.tsx");
+},1711,[1,7,2,25,42,3,553,1334,1523,1712,1947,574,88,679,804,782,572,780,1949,1656,1531,1953,777,1954,1956],"src\\pages\\vip\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -316548,7 +316554,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       if (ref) {
         try {
           return yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-view-shot").captureRef)(ref, {
-            format: 'png',
+            format: 'jpg',
             quality: 1,
             result: 'tmpfile'
           });
@@ -316573,22 +316579,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       var title = _ref2.title,
         imageUrl = _ref2.imageUrl,
         path = _ref2.path;
-      if (_reactNative.Platform.OS !== 'android' && _reactNative.Platform.OS !== 'ios') {
+      var isHarmony = _reactNative.Platform.OS !== 'android' && _reactNative.Platform.OS !== 'ios';
+      if (_reactNative.Platform.OS !== 'android' && _reactNative.Platform.OS !== 'ios' && !isHarmony) {
         return;
       }
       if (!(0, _$$_REQUIRE(_dependencyMap[5], "./wechat").hasWeChatShareCapability)()) {
         return;
       }
-      yield (0, _$$_REQUIRE(_dependencyMap[5], "./wechat").shareWeChatMiniProgram)({
-        userName: 'gh_00245e3a7d08',
-        path: path || `/pages/index/index`,
-        webpageUrl: 'https://your-domain.com/fallback.html',
-        scene: 0,
-        miniProgramType: _$$_REQUIRE(_dependencyMap[6], "../config").DEPLOY_ENV === 'dev' ? 2 : 0,
-        // 0 正式版 1 测试版 2 体验版
-        title: title,
-        thumbImageUrl: imageUrl
+      (0, _$$_REQUIRE(_dependencyMap[4], "./").showLoading)({
+        title: '拉起微信中...'
       });
+      try {
+        yield (0, _$$_REQUIRE(_dependencyMap[5], "./wechat").shareWeChatMiniProgram)({
+          userName: 'gh_00245e3a7d08',
+          path: path || `/pages/index/index`,
+          webpageUrl: 'https://your-domain.com/fallback.html',
+          scene: 0,
+          miniProgramType: _$$_REQUIRE(_dependencyMap[6], "../config").DEPLOY_ENV === 'dev' ? 2 : 0,
+          // 0 正式版 1 测试版 2 体验版
+          title: title,
+          thumbImageUrl: imageUrl
+        });
+      } finally {
+        (0, _$$_REQUIRE(_dependencyMap[4], "./").hideLoading)();
+      }
     });
     return function onShareAppMessage(_x2) {
       return _ref3.apply(this, arguments);
@@ -316612,14 +316626,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _inherits2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "@babel/runtime/helpers/inherits"));
   var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[6], "react"));
   var _reactNative = _$$_REQUIRE(_dependencyMap[7], "react-native");
-  var _RNViewShot = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[8], "./RNViewShot"));
+  var _NativeModule = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[8], "./NativeModule"));
   var _jsxRuntime = _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime");
-  var _jsxFileName = "D:\\xqkj\\bokeapp\\node_modules\\react-native-view-shot\\src\\index.js";
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\index.js";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
   function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-  var neverEndingPromise = new Promise(function () {});
-  if (!_RNViewShot.default) {
+  if (!_NativeModule.default) {
     console.warn("react-native-view-shot: NativeModules.RNViewShot is undefined. Make sure the library is linked on the native side.");
   }
   var acceptedFormats = ["png", "jpg"].concat(_reactNative.Platform.OS === "android" ? ["webm", "raw"] : []);
@@ -316666,7 +316679,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   function ensureModuleIsLoaded() {
-    if (!_RNViewShot.default) {
+    if (!_NativeModule.default) {
       throw new Error("react-native-view-shot: NativeModules.RNViewShot is undefined. Make sure the library is linked on the native side.");
     }
   }
@@ -316693,7 +316706,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return `- ${e}`;
       }).join("\n"));
     }
-    return _RNViewShot.default.captureRef(view, options);
+    return _NativeModule.default.captureRef(view, options);
   }
   function releaseCapture(uri) {
     if (typeof uri !== "string") {
@@ -316701,7 +316714,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         console.warn("Invalid argument to releaseCapture. Got: " + uri);
       }
     } else {
-      _RNViewShot.default.releaseCapture(uri);
+      _NativeModule.default.releaseCapture(uri);
     }
   }
   function captureScreen(optionsObject) {
@@ -316714,7 +316727,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return `- ${e}`;
       }).join("\n"));
     }
-    return _RNViewShot.default.captureScreen(options);
+    return _NativeModule.default.captureScreen(options);
   }
   function checkCompatibleProps(props) {
     if (!props.captureMode && props.onCapture) {} else if (props.captureMode && !props.onCapture) {
@@ -316789,9 +316802,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return (0, _createClass2.default)(ViewShot, [{
       key: "componentDidMount",
       value: function componentDidMount() {
+        var _this3 = this;
         if (__DEV__) checkCompatibleProps(this.props);
         if (this.props.captureMode === "mount") {
-          this.capture();
+          setTimeout(function () {
+            _this3.capture();
+          }, 100);
         } else {
           this.syncCaptureLoop(this.props.captureMode);
         }
@@ -316829,15 +316845,25 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   }(_react.Component);
   ViewShot.captureRef = captureRef;
   ViewShot.releaseCapture = releaseCapture;
-},1950,[1,13,14,50,52,53,42,3,1951,88],"node_modules\\react-native-view-shot\\src\\index.js");
+},1950,[1,13,14,50,52,53,42,3,1951,88],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.default = void 0;
   var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
-  var _default = exports.default = _reactNative.NativeModules.RNViewShot;
-},1951,[3],"node_modules\\react-native-view-shot\\src\\RNViewShot.js");
+  var isTurboModuleEnabled = global.__turboModuleProxy != null;
+  var RNViewShot = isTurboModuleEnabled ? _$$_REQUIRE(_dependencyMap[1], "./NativeViewShot").default : _reactNative.NativeModules.RNViewShot;
+  var _default = exports.default = RNViewShot;
+},1951,[3,1952],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\NativeModule.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var _default = exports.default = _reactNative.TurboModuleRegistry.getEnforcing('ViewShotTurboModule');
+},1952,[3],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\NativeViewShot.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -317359,7 +317385,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textTransform: 'none'
     }
   });
-},1952,[3],"src\\pages\\vip\\style.ts");
+},1953,[3],"src\\pages\\vip\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -317478,7 +317504,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }) : null]
     });
   };
-},1953,[1,1334,42,3,553,88,1954,777],"src\\pages\\vip\\com\\deviceItem\\index.tsx");
+},1954,[1,1334,42,3,553,88,1955,777],"src\\pages\\vip\\com\\deviceItem\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -317576,7 +317602,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 9
     }
   });
-},1954,[3],"src\\pages\\vip\\com\\deviceItem\\indexStyle.ts");
+},1955,[3],"src\\pages\\vip\\com\\deviceItem\\indexStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -317597,6 +317623,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       style = _ref.style;
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
       ref: shareContentRef,
+      collapsable: false,
       style: Object.assign({
         width: 425,
         height: 339,
@@ -317690,7 +317717,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   };
-},1955,[1,1334,42,3,574,553,88,1956,777],"src\\pages\\vip\\com\\weChatCoverImage.tsx");
+},1956,[1,1334,42,3,574,553,88,1957,777],"src\\pages\\vip\\com\\weChatCoverImage.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -317966,7 +317993,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 12
     }
   });
-},1956,[3],"src\\pages\\vip\\recordStyle.ts");
+},1957,[3],"src\\pages\\vip\\recordStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -318344,7 +318371,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1957,[1,7,2,25,42,3,1334,88,804,1531,1958],"src\\pages\\vip\\info.tsx");
+},1958,[1,7,2,25,42,3,1334,88,804,1531,1959],"src\\pages\\vip\\info.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -318586,7 +318613,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#333333'
     }
   });
-},1958,[3],"src\\pages\\vip\\infoStyle.ts");
+},1959,[3],"src\\pages\\vip\\infoStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -318963,17 +318990,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           return handleShare(shareDetail);
         }
       }), shareDetail && /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "./com/weChatCoverImage").WeChatCoverImage, {
-        style: {
+        style: _reactNative.Platform.OS === 'android' || _reactNative.Platform.OS === 'ios' ? {
           position: 'absolute',
           top: -9999,
           left: -9999
+        } : {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: -999
         },
         shareContentRef: shareContentRef,
         details: shareDetail
       })]
     });
   }
-},1959,[1,7,2,25,42,3,574,1334,1960,88,679,572,782,804,1949,780,1956,1531,1955],"src\\pages\\vip\\record.tsx");
+},1960,[1,7,2,25,42,3,574,1334,1961,88,679,572,782,804,1949,780,1957,1531,1956],"src\\pages\\vip\\record.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -319249,7 +319281,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           style: {
             width: '100%',
             marginTop: 31,
-            marginBottom: 8
+            marginBottom: 16
           },
           direction: "row",
           justify: "center",
@@ -319280,7 +319312,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = InviteCodePop;
-},1960,[1,25,42,3,574,553,1334,1525,88,777],"src\\pages\\vip\\com\\InviteCodePop.tsx");
+},1961,[1,25,42,3,574,553,1334,1525,88,777],"src\\pages\\vip\\com\\InviteCodePop.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -319943,7 +319975,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1961,[1,2,7,25,1334,42,3,574,1712,1947,88,679,804,782,1531,1952,777,1953],"src\\pages\\vip\\editRecord.tsx");
+},1962,[1,2,7,25,1334,42,3,574,1712,1947,88,679,804,782,1531,1953,777,1954],"src\\pages\\vip\\editRecord.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -320250,7 +320282,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = BinDevice;
-},1962,[1,2,25,42,3,1963,88,679,1546,782,813,777,1964,1531],"src\\pages\\bindDevice\\index.tsx");
+},1963,[1,2,25,42,3,1964,88,679,1546,782,813,777,1965,1531],"src\\pages\\bindDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -320347,7 +320379,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1963,[3],"src\\pages\\bindDevice\\styles.ts");
+},1964,[3],"src\\pages\\bindDevice\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -320374,7 +320406,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return _ref.apply(this, arguments);
     };
   }();
-},1964,[1,2,3,777],"src\\harmony\\harmony-scan.ts");
+},1965,[1,2,3,777],"src\\harmony\\harmony-scan.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -321542,7 +321574,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }));
   }
-},1965,[1,2,25,42,3,574,1334,1966,1967,777,782,789,803,1531],"src\\pages\\findDevice\\index.tsx");
+},1966,[1,2,25,42,3,574,1334,1967,1968,777,782,789,803,1531],"src\\pages\\findDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -321634,7 +321666,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = PowerIndicatorPop;
-},1966,[1,25,42,3,553,1523,88],"src\\components\\powerIndicatorPop\\index.tsx");
+},1967,[1,25,42,3,553,1523,88],"src\\components\\powerIndicatorPop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -321911,7 +321943,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1967,[3],"src\\pages\\findDevice\\styles.ts");
+},1968,[3],"src\\pages\\findDevice\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -322373,7 +322405,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 16
     }
   });
-},1968,[1,7,2,25,42,3,1334,88,1515,679,803,782,1531],"src\\pages\\combineDevice\\index.tsx");
+},1969,[1,7,2,25,42,3,1334,88,1515,679,803,782,1531],"src\\pages\\combineDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -322555,7 +322587,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1969,[1,2,25,42,3,88,679,1515,803,782,1531,1970],"src\\pages\\handOver\\index.tsx");
+},1970,[1,2,25,42,3,88,679,1515,803,782,1531,1971],"src\\pages\\handOver\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -322624,7 +322656,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},1970,[3],"src\\pages\\handOver\\style.ts");
+},1971,[3],"src\\pages\\handOver\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -322846,7 +322878,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1971,[1,7,2,25,42,3,88,679,1515,803,782,1972,1531],"src\\pages\\handOver\\handOverDevice\\index.tsx");
+},1972,[1,7,2,25,42,3,88,679,1515,803,782,1973,1531],"src\\pages\\handOver\\handOverDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -322950,7 +322982,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 16
     }
   });
-},1972,[3],"src\\pages\\handOver\\handOverDevice\\style.ts");
+},1973,[3],"src\\pages\\handOver\\handOverDevice\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323109,7 +323141,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1973,[1,2,25,42,3,1974,88,679,1515,1590,803,782,1531,1976],"src\\pages\\handOver\\handOverVerify\\index.tsx");
+},1974,[1,2,25,42,3,1975,88,679,1515,1590,803,782,1531,1977],"src\\pages\\handOver\\handOverVerify\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323190,7 +323222,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = InputCode;
-},1974,[1,25,42,3,88,1975],"src\\pages\\handOver\\com\\inputCode\\index.tsx");
+},1975,[1,25,42,3,88,1976],"src\\pages\\handOver\\com\\inputCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -323233,7 +323265,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       opacity: 0
     }
   });
-},1975,[3],"src\\pages\\handOver\\com\\inputCode\\style.ts");
+},1976,[3],"src\\pages\\handOver\\com\\inputCode\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -323329,7 +323361,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},1976,[3],"src\\pages\\handOver\\handOverVerify\\style.ts");
+},1977,[3],"src\\pages\\handOver\\handOverVerify\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323618,7 +323650,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1977,[1,2,25,42,3,1978,88,679,1515,1590,782,803,789,1531,1980],"src\\pages\\handOver\\handOverVerifyNew\\index.tsx");
+},1978,[1,2,25,42,3,1979,88,679,1515,1590,782,803,789,1531,1981],"src\\pages\\handOver\\handOverVerifyNew\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323675,7 +323707,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1978,[1,25,42,3,88,1515,782,1979],"src\\pages\\handOver\\com\\success\\index.tsx");
+},1979,[1,25,42,3,88,1515,782,1980],"src\\pages\\handOver\\com\\success\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -323720,7 +323752,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},1979,[3],"src\\pages\\handOver\\com\\success\\style.ts");
+},1980,[3],"src\\pages\\handOver\\com\\success\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -323838,7 +323870,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},1980,[3],"src\\pages\\handOver\\handOverVerifyNew\\style.ts");
+},1981,[3],"src\\pages\\handOver\\handOverVerifyNew\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323935,7 +323967,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1981,[1,25,42,3,88,679,1515,1531,1982,777,782],"src\\pages\\bluetooth\\linkSuccess\\index.tsx");
+},1982,[1,25,42,3,88,679,1515,1531,1983,777,782],"src\\pages\\bluetooth\\linkSuccess\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -323980,7 +324012,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lineHeight: 22
     }
   });
-},1982,[3],"src\\pages\\bluetooth\\linkSuccess\\style.ts");
+},1983,[3],"src\\pages\\bluetooth\\linkSuccess\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -324152,7 +324184,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1983,[1,2,25,42,3,1333,552,88,679,1515,782,803,1984],"src\\pages\\unbind\\index.tsx");
+},1984,[1,2,25,42,3,1333,552,88,679,1515,782,803,1985],"src\\pages\\unbind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -324227,7 +324259,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 24
     }
   });
-},1984,[3],"src\\pages\\unbind\\style.ts");
+},1985,[3],"src\\pages\\unbind\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -324490,7 +324522,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1985,[1,2,25,42,3,1333,1536,88,679,1515,1590,782,811,803,789,1986],"src\\pages\\unbind\\unbindDevice.tsx");
+},1986,[1,2,25,42,3,1333,1536,88,679,1515,1590,782,811,803,789,1987],"src\\pages\\unbind\\unbindDevice.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -324575,7 +324607,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},1986,[3],"src\\pages\\unbind\\unbindDeviceStyle.ts");
+},1987,[3],"src\\pages\\unbind\\unbindDeviceStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -324787,7 +324819,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1987,[1,2,25,42,3,1988,88,679,789,782,1531],"src\\pages\\unBindSuccess\\index.tsx");
+},1988,[1,2,25,42,3,1989,88,679,789,782,1531],"src\\pages\\unBindSuccess\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -324847,7 +324879,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1988,[3],"src\\pages\\unBindSuccess\\styles.ts");
+},1989,[3],"src\\pages\\unBindSuccess\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -325435,7 +325467,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1989,[1,150,2,25,42,3,1526,1990,1334,88,679,1515,782,789,803,1531,1992,777],"src\\pages\\bluetooth\\control\\index.tsx");
+},1990,[1,150,2,25,42,3,1526,1991,1334,88,679,1515,782,789,803,1531,1993,777],"src\\pages\\bluetooth\\control\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -325567,7 +325599,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = SettingPin;
-},1990,[1,25,42,3,553,1605,88,1991],"src\\pages\\bluetooth\\component\\SettingPin.tsx");
+},1991,[1,25,42,3,553,1605,88,1992],"src\\pages\\bluetooth\\component\\SettingPin.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -325664,7 +325696,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontWeight: '700'
     }
   });
-},1991,[3],"src\\pages\\bluetooth\\component\\style.ts");
+},1992,[3],"src\\pages\\bluetooth\\component\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -325860,7 +325892,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       gap: 4
     }
   });
-},1992,[3],"src\\pages\\bluetooth\\control\\style.ts");
+},1993,[3],"src\\pages\\bluetooth\\control\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -326165,7 +326197,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1993,[1,2,25,7,42,3,1334,1627,88,1515,782,804,777,1994,1531],"src\\pages\\message\\index.tsx");
+},1994,[1,2,25,7,42,3,1334,1627,88,1515,782,804,777,1995,1531],"src\\pages\\message\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -326264,7 +326296,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       height: 16
     }
   });
-},1994,[3],"src\\pages\\message\\style.ts");
+},1995,[3],"src\\pages\\message\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -326487,7 +326519,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1995,[1,2,25,42,3,556,88,679,804,782,1531,1996],"src\\pages\\messageDetail\\index.tsx");
+},1996,[1,2,25,42,3,556,88,679,804,782,1531,1997],"src\\pages\\messageDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -326566,7 +326598,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#FFFFFF'
     }
   });
-},1996,[3],"src\\pages\\messageDetail\\style.ts");
+},1997,[3],"src\\pages\\messageDetail\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -326781,7 +326813,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1997,[1,2,25,3,42,1334,1525,1998,88,679,782,805,644,811,1531,1571],"src\\pages\\myDevice\\index.tsx");
+},1998,[1,2,25,3,42,1334,1525,1999,88,679,782,805,644,811,1531,1571],"src\\pages\\myDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -326907,7 +326939,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1998,[3],"src\\pages\\myDevice\\styles.ts");
+},1999,[3],"src\\pages\\myDevice\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -327049,7 +327081,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   };
-},1999,[1,2,42,3,1705,88,2000,1241,1531,1331],"src\\navigation\\MainTabNavigator.tsx");
+},2000,[1,2,42,3,1705,88,2001,1241,1531,1331],"src\\navigation\\MainTabNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -327097,7 +327129,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _BottomTabBarHeightCallbackContext = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./utils/BottomTabBarHeightCallbackContext"));
   var _BottomTabBarHeightContext = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "./utils/BottomTabBarHeightContext"));
   var _useBottomTabBarHeight = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./utils/useBottomTabBarHeight"));
-},2000,[1,2001,2005,2002,2003,2004,2015],"node_modules\\@react-navigation\\bottom-tabs\\src\\index.tsx");
+},2001,[1,2002,2006,2003,2004,2005,2016],"node_modules\\@react-navigation\\bottom-tabs\\src\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -327179,7 +327211,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   var _default = exports.default = (0, _$$_REQUIRE(_dependencyMap[6], "@react-navigation/native").createNavigatorFactory)(BottomTabNavigator);
-},2001,[1,150,42,1301,2002,88,679],"node_modules\\@react-navigation\\bottom-tabs\\src\\navigators\\createBottomTabNavigator.tsx");
+},2002,[1,150,42,1301,2003,88,679],"node_modules\\@react-navigation\\bottom-tabs\\src\\navigators\\createBottomTabNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -327326,7 +327358,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       overflow: 'hidden'
     }
   });
-},2002,[1,7,25,42,3,2003,2004,2005,88,1307,1242,2014],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabView.tsx");
+},2003,[1,7,25,42,3,2004,2005,2006,88,1307,1242,2015],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabView.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -327335,7 +327367,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var React = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[0], "react"));
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var _default = exports.default = React.createContext(undefined);
-},2003,[42],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightCallbackContext.tsx");
+},2004,[42],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightCallbackContext.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -327344,7 +327376,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var React = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[0], "react"));
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var _default = exports.default = React.createContext(undefined);
-},2004,[42],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightContext.tsx");
+},2005,[42],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightContext.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -327649,7 +327681,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       flexDirection: 'row'
     }
   });
-},2005,[1,25,150,42,3,2003,2006,2007,88,679,1242,1307],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabBar.tsx");
+},2006,[1,25,150,42,3,2004,2007,2008,88,679,1242,1307],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabBar.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -327686,7 +327718,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     return isKeyboardShown;
   }
-},2006,[1,25,42,3],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useIsKeyboardShown.tsx");
+},2007,[1,25,42,3],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useIsKeyboardShown.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -327869,7 +327901,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       display: 'flex'
     }
   });
-},2007,[1,150,2008,42,3,2012,88,679],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabItem.tsx");
+},2008,[1,150,2009,42,3,2013,88,679],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabItem.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _slicedToArray = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/slicedToArray");
   var _toConsumableArray = _$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray");
@@ -328273,7 +328305,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return array;
   }
   module.exports = Color;
-},2008,[25,7,98,2009],"node_modules\\color\\index.js");
+},2009,[25,7,98,2010],"node_modules\\color\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* MIT license */
 
@@ -328464,7 +328496,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var str = Math.round(num).toString(16).toUpperCase();
     return str.length < 2 ? '0' + str : str;
   }
-},2009,[100,2010],"node_modules\\color-string\\index.js");
+},2010,[100,2011],"node_modules\\color-string\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -328488,7 +328520,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return fn(swizzle(arguments));
     };
   };
-},2010,[2011],"node_modules\\simple-swizzle\\index.js");
+},2011,[2012],"node_modules\\simple-swizzle\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   module.exports = function isArrayish(obj) {
     if (!obj || typeof obj === 'string') {
@@ -328496,7 +328528,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return obj instanceof Array || Array.isArray(obj) || obj.length >= 0 && (obj.splice instanceof Function || Object.getOwnPropertyDescriptor(obj, obj.length - 1) && obj.constructor.name !== 'String');
   };
-},2011,[],"node_modules\\simple-swizzle\\node_modules\\is-arrayish\\index.js");
+},2012,[],"node_modules\\simple-swizzle\\node_modules\\is-arrayish\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -328583,7 +328615,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       top: 7
     }
   });
-},2012,[1,42,3,2013,88],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\TabBarIcon.tsx");
+},2013,[1,42,3,2014,88],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\TabBarIcon.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -328682,7 +328714,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       overflow: 'hidden'
     }
   });
-},2013,[1,25,150,2008,42,3,88,679],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\Badge.tsx");
+},2014,[1,25,150,2009,42,3,88,679],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\Badge.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -328734,7 +328766,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       children: children
     }));
   }
-},2014,[1,150,42,3,88,1329,1307],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\ScreenFallback.tsx");
+},2015,[1,150,42,3,88,1329,1307],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\ScreenFallback.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -328751,13 +328783,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return height;
   }
-},2015,[1,42,2004],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useBottomTabBarHeight.tsx");
+},2016,[1,42,2005],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useBottomTabBarHeight.tsx");
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
   "name": "boklock",
   "displayName": "boklock"
 }
 ;
-},2016,[],"app.json");
+},2017,[],"app.json");
 __r(46);
 __r(0);

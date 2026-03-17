@@ -286,7 +286,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
 
         <View style={styles.popup}>
           <Flex
-            style={{ width: '100%', marginTop: 31, marginBottom: 8 }}
+            style={{ width: '100%', marginTop: 31, marginBottom: 16 }}
             direction="row"
             justify="center"
             align="center"

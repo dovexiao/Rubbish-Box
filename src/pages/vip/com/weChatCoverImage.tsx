@@ -19,6 +19,7 @@ export const WeChatCoverImage = ({
   return (
     <View
       ref={shareContentRef}
+      collapsable={false}
       style={{
         width: 425,
         height: 339,
