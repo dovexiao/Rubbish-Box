@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   agree: {
     fontSize: 12,
-    color: '#999999',
+    color: '#666666',
     lineHeight: 17,
   },
   agreeLink: {
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   fastDesc: {
     fontSize: 12,
-    color: '#999999',
+    color: '#666666',
     lineHeight: 17,
     marginHorizontal: 12,
   },
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   popDesc: {
     fontSize: 14,
-    color: '#999999',
+    color: '#666666',
     lineHeight: 20,
     textAlign: 'center',
     marginTop: 8,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   popNotice: {
     fontSize: 13,
-    color: '#999999',
+    color: '#666666',
     // lineHeight: 1.6,
     marginTop: 8,
   },

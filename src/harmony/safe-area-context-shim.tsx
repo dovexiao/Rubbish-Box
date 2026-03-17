@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Dimensions, View, ViewProps, ViewStyle } from 'react-native';
+import {
+  Dimensions,
+  View,
+  ViewProps,
+  ViewStyle,
+  StatusBar,
+} from 'react-native';
 
 // 与 react-native-safe-area-context 中 Edge 类型保持一致
 export type Edge = 'top' | 'right' | 'bottom' | 'left';
@@ -9,7 +15,9 @@ export interface SafeAreaViewProps extends ViewProps {
 }
 
 // Harmony 上无法获取系统状态栏高度，这里给一个经验值，避免内容顶到最上方
-const HARMONY_STATUS_BAR_HEIGHT = 32;
+const HARMONY_STATUS_BAR_HEIGHT = StatusBar.currentHeight
+  ? StatusBar.currentHeight
+  : 54;
 
 // 默认安全区内边距：顶部预留一段距离，其它为 0
 const defaultInsets = {

@@ -31,11 +31,11 @@ const loginStyles = StyleSheet.create({
   },
   tip: {
     marginTop: 16,
-    width: 654 / 2
+    width: 654 / 2,
   },
   tipText: {
     fontSize: 12,
-    color: '#CCCCCC',
+    color: '#666666',
     lineHeight: 17,
   },
   btn: {
@@ -63,7 +63,7 @@ const loginStyles = StyleSheet.create({
     marginTop: 16,
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   changeTypeDesc: {
     fontWeight: 'bold',
@@ -80,7 +80,7 @@ const loginStyles = StyleSheet.create({
     top: -26,
     left: '50%',
     marginLeft: -42,
-  }
+  },
 });
 
 export default loginStyles;

@@ -197,8 +197,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
     // 解析主题默认值
     const defaultBackgroundColor =
       backgroundColor ?? theme.colors.background.primary;
-    const defaultStatusBarStyle =
-      statusBarStyle ?? theme.colors.statusBar.barStyle;
+    const defaultStatusBarStyle = statusBarStyle ?? ((defaultBackgroundColor.toLowerCase() === '#ffffff' || defaultBackgroundColor.toLowerCase() === '#fff') ? 'dark-content' : theme.colors.statusBar.barStyle);
     const defaultStatusBarBackgroundColor =
       statusBarBackgroundColor ?? theme.colors.statusBar.backgroundColor;
 
