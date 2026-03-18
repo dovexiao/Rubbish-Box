@@ -180630,7 +180630,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNativeDeviceInfo = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "react-native-device-info"));
   var AppModule = _reactNative.NativeModules.AppModule;
   var WECHAT_APP_ID = AppModule == null ? void 0 : AppModule.wechatAppId;
-  var WECHAT_APP_ID_FALLBACK = 'wx5c90e0d5806a55c4';
+  var WECHAT_APP_ID_FALLBACK = 'wxd9c0f6b6c3c8d8df';
   var WECHAT_UNIVERSAL_LINK = 'https://g.18qjz.cn/wechat/';
   var wechatRegisterPromise = null;
   var isHarmony = _reactNative.Platform.OS !== 'android' && _reactNative.Platform.OS !== 'ios';
@@ -180850,8 +180850,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           };
         }
 
-        // Use \ properly so powershell doesn't replace it and we don't break JS
-        var randomStr = Math.random().toString(36).substring(2, 10);
+        // Avoid deprecated String.prototype.substr
+        var randomStr = Math.random().toString(36).slice(2, 12);
         var authResponse = yield (_WeChat4 = WeChat) == null || _WeChat4.sendAuthRequest == null ? void 0 : _WeChat4.sendAuthRequest('snsapi_userinfo', `wechat_login_${randomStr}`);
         if (!authResponse) {
           (0, _$$_REQUIRE(_dependencyMap[6], "./").hideLoading)();
@@ -232250,7 +232250,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\harmony\\safe-area-context-shim.tsx"; // 与 react-native-safe-area-context 中 Edge 类型保持一致
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   // Harmony 上无法获取系统状态栏高度，这里给一个经验值，避免内容顶到最上方
-  var HARMONY_STATUS_BAR_HEIGHT = 32;
+  var HARMONY_STATUS_BAR_HEIGHT = _reactNative.StatusBar.currentHeight ? _reactNative.StatusBar.currentHeight : 54;
 
   // 默认安全区内边距：顶部预留一段距离，其它为 0
   var defaultInsets = {
@@ -241504,7 +241504,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
     // 解析主题默认值
     var defaultBackgroundColor = backgroundColor != null ? backgroundColor : theme.colors.background.primary;
-    var defaultStatusBarStyle = statusBarStyle != null ? statusBarStyle : theme.colors.statusBar.barStyle;
+    var defaultStatusBarStyle = statusBarStyle != null ? statusBarStyle : defaultBackgroundColor.toLowerCase() === '#ffffff' || defaultBackgroundColor.toLowerCase() === '#fff' ? 'dark-content' : theme.colors.statusBar.barStyle;
     var defaultStatusBarBackgroundColor = statusBarBackgroundColor != null ? statusBarBackgroundColor : theme.colors.statusBar.backgroundColor;
 
     // 1. 导航栏处理 (Navigation Header)
@@ -248821,7 +248821,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })]
       }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
         style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryList,
-        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+        children: [(detail == null ? void 0 : detail.role) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
           style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryItem,
           onPress: function onPress() {
             if (!(detail != null && detail.id)) return;
@@ -248846,7 +248846,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               color: "#333333"
             })]
           })
-        }), (detail == null ? void 0 : detail.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+        }), (detail == null ? void 0 : detail.mode) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
           style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryItem,
           onPress: function onPress() {
             if (!(detail != null && detail.id)) return;
@@ -256015,8 +256015,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, [hasBluetoothAutoOpen]);
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_PageContainer.default, {
       backgroundColor: bgImage ? 'transparent' : '#f6f7fa',
-      style: _$$_REQUIRE(_dependencyMap[23], "./style").styles.pageContainer,
-      loading: loading,
+      style: _$$_REQUIRE(_dependencyMap[23], "./style").styles.pageContainer
+      // loading={loading}
+      ,
       error: error,
       fullScreenError: !showGuestWelcome && !hasDevice && !loading,
       onRetry: function onRetry() {
@@ -256564,31 +256565,69 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)(isInstalledWeChat.message);
           return;
         }
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/wechat").wechatLogin)();
-        (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showLoading)({
-          title: '登录中...'
-        });
 
-        // 监听应用状态变化（用户可能从微信返回）
+        // 监听应用状态变化（用户可能从微信返回/中断授权）
+        // 必须先注册监听，再发起微信授权；否则如果微信回调没有触发，后续逻辑会卡死。
+        var settled = false;
+        var hasGoneBackground = false;
         var appStatePromise = new Promise(function (resolve) {
           tempData.current.appStateSub = _reactNative.AppState.addEventListener && _reactNative.AppState.addEventListener('change', function (s) {
-            if (s === 'active') {
-              resolve({
-                result: false,
-                errCode: -998,
-                message: '用户手动返回应用，未完成登录'
-              });
+            console.log('s', s);
+            if (s === 'inactive' || s === 'background') {
+              hasGoneBackground = true;
+            }
+            if (s === 'active' && !settled) {
+              // 去过后台后再进入 active 才被认为是从外部返回
+              if (hasGoneBackground) {
+                settled = true;
+                resolve({
+                  result: false,
+                  errCode: -998,
+                  message: '用户手动返回应用，未完成登录'
+                });
+              }
             }
           });
+        });
+        var timeoutPromise = new Promise(function (resolve) {
+          setTimeout(function () {
+            if (settled) return;
+            settled = true;
+            resolve({
+              result: false,
+              errCode: -997,
+              message: hasGoneBackground ? '微信登录超时，请重试' : ''
+            });
+          }, 60000);
+        });
+        var wechatPromise = (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/wechat").wechatLogin)().then(function (r) {
+          settled = true;
+          return r;
         });
         var r;
         try {
           (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showLoading)({
             title: '登录中...'
           });
-          r = yield Promise.race([res, appStatePromise]);
+
+          // 鸿蒙专属策略：如果短暂时间内没有去后台（也就是用户点了系统取消，或者正在犹豫），
+          // 我们单纯把前端的 Loading 遮罩撤掉，让用户可以点击其他区域，但后台仍旧保持监听。
+          // 防止因为鸿蒙 wechatSDK 不回调错误而造成的界面永久卡死。
+          var harmonyHideTimer;
+          if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
+            harmonyHideTimer = setTimeout(function () {
+              if (!hasGoneBackground && !settled) {
+                (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").hideLoading)();
+              }
+            }, 3000);
+          }
+          r = yield Promise.race([wechatPromise, appStatePromise, timeoutPromise]);
+          if (harmonyHideTimer) clearTimeout(harmonyHideTimer);
           if (r.result) {
             var _deviceInfoStorage;
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showLoading)({
+              title: '登录中...'
+            }); // 无论之前有没有被隐去都重新调起
             var thirdState = yield (0, _$$_REQUIRE(_dependencyMap[15], "../../services").getThirdState)({});
             var obj = {
               source: 1,
@@ -256607,7 +256646,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             } else {
               obj = Object.assign({}, obj, device.current);
             }
+            console.log('obj', obj);
             var thirdLoginRes = yield (0, _$$_REQUIRE(_dependencyMap[15], "../../services").thirdLogin)(Object.assign({}, obj));
+            console.log('thirdLoginRes', thirdLoginRes);
             if (thirdLoginRes.code === 200) {
               yield (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").cacheSetSync)('token', thirdLoginRes.data.token);
               yield (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").cacheSetSync)('guestMode', false);
@@ -256629,7 +256670,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)(thirdLoginRes.message);
             }
           } else {
-            if (r.errCode === -998) console.log('用户手动返回');else (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)(r.message);
+            if (r.errCode === -998) console.log('用户手动返回');else if (r.errCode === -996) console.log('取消或未响应权限弹框(鸿蒙)');else if (r.errCode === -997) {
+              if (r.message) (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)(r.message);
+            } else if (r.message) (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)(r.message);
           }
         } catch (e) {
           console.log('一键登录异常:', e);
@@ -257237,7 +257280,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     tipText: {
       fontSize: 12,
-      color: '#CCCCCC',
+      color: '#666666',
       lineHeight: 17
     },
     btn: {
@@ -257590,7 +257633,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     agree: {
       fontSize: 12,
-      color: '#999999',
+      color: '#666666',
       lineHeight: 17
     },
     agreeLink: {
@@ -257609,7 +257652,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     fastDesc: {
       fontSize: 12,
-      color: '#999999',
+      color: '#666666',
       lineHeight: 17,
       marginHorizontal: 12
     },
@@ -257630,7 +257673,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     popDesc: {
       fontSize: 14,
-      color: '#999999',
+      color: '#666666',
       lineHeight: 20,
       textAlign: 'center',
       marginTop: 8,
@@ -257643,7 +257686,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     popNotice: {
       fontSize: 13,
-      color: '#999999',
+      color: '#666666',
       // lineHeight: 1.6,
       marginTop: 8
     },
@@ -257731,6 +257774,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[12], "../../components").PageContainer, {
       style: _styles.default.container,
       backgroundColor: "#FFFFFF",
+      statusBarStyle: "dark-content",
       pageNavProps: {
         text: '忘记密码',
         showBack: true,
@@ -260137,7 +260181,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       scrollable: true,
       loading: !lockInfo,
       padding: 0,
-      footer: footerBtn(),
+      footer: (deviceInfo == null ? void 0 : deviceInfo.role) === 1 ? footerBtn() : undefined,
       children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
         style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.container,
         direction: "column",
@@ -260359,7 +260403,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             color: "#333",
             size: 20
           })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+        }), (deviceInfo == null ? void 0 : deviceInfo.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
           style: (_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows, (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? {} : {
             alignItems: 'flex-start'
           }),
@@ -280591,48 +280635,73 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return _ref6.apply(this, arguments);
       };
     }(), []);
+    var ensureCameraPermission = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (_reactNative.Platform.OS !== 'android') return true;
+      try {
+        var granted = yield _reactNative.PermissionsAndroid.request(_reactNative.PermissionsAndroid.PERMISSIONS.CAMERA, {
+          title: '需要相机权限',
+          message: '用于拍照识别卡密',
+          buttonPositive: '允许',
+          buttonNegative: '拒绝',
+          buttonNeutral: '稍后'
+        });
+        return granted === _reactNative.PermissionsAndroid.RESULTS.GRANTED;
+      } catch (_unused5) {
+        return false;
+      }
+    }), []);
     var handleScan = (0, _react.useCallback)(function () {
       _$$_REQUIRE(_dependencyMap[13], "@ant-design/react-native").ActionSheet.showActionSheetWithOptions({
         title: '选择图片',
         options: ['拍照', '从相册选择', '取消'],
         cancelButtonIndex: 2
-      }, function (index) {
-        if (index === 2 || index === undefined) return; // 取消
-        if (index === 0) {
-          (0, _$$_REQUIRE(_dependencyMap[14], "react-native-image-picker").launchCamera)({
-            mediaType: 'photo',
-            quality: 0.8,
-            saveToPhotos: false
-          }, function (res) {
-            var _res$assets;
-            if (res.didCancel) return;
-            if (res.errorCode || res.errorMessage) {
-              (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)(res.errorMessage || '拍照失败');
+      }, /*#__PURE__*/function () {
+        var _ref8 = (0, _asyncToGenerator2.default)(function* (index) {
+          if (index === 2 || index === undefined) return; // 取消
+          if (index === 0) {
+            var ok = yield ensureCameraPermission();
+            if (!ok) {
+              (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)('未获得相机权限');
               return;
             }
-            var uri = (_res$assets = res.assets) == null || (_res$assets = _res$assets[0]) == null ? void 0 : _res$assets.uri;
-            if (uri) void processImageUri(uri);else (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)('未获取到图片');
-          });
-          return;
-        }
-        if (index === 1) {
-          (0, _$$_REQUIRE(_dependencyMap[14], "react-native-image-picker").launchImageLibrary)({
-            mediaType: 'photo',
-            selectionLimit: 1,
-            quality: 0.8
-          }, function (res) {
-            var _res$assets2;
-            if (res.didCancel) return;
-            if (res.errorCode || res.errorMessage) {
-              (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)(res.errorMessage || '选择失败');
-              return;
-            }
-            var uri = (_res$assets2 = res.assets) == null || (_res$assets2 = _res$assets2[0]) == null ? void 0 : _res$assets2.uri;
-            if (uri) void processImageUri(uri);else (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)('未获取到图片');
-          });
-        }
-      });
-    }, [processImageUri]);
+            (0, _$$_REQUIRE(_dependencyMap[14], "react-native-image-picker").launchCamera)({
+              mediaType: 'photo',
+              quality: 0.8,
+              saveToPhotos: false
+            }, function (res) {
+              var _res$assets;
+              if (res.didCancel) return;
+              if (res.errorCode || res.errorMessage) {
+                (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)(res.errorMessage || '拍照失败');
+                return;
+              }
+              var uri = (_res$assets = res.assets) == null || (_res$assets = _res$assets[0]) == null ? void 0 : _res$assets.uri;
+              if (uri) void processImageUri(uri);else (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)('未获取到图片');
+            });
+            return;
+          }
+          if (index === 1) {
+            (0, _$$_REQUIRE(_dependencyMap[14], "react-native-image-picker").launchImageLibrary)({
+              mediaType: 'photo',
+              selectionLimit: 1,
+              quality: 0.8
+            }, function (res) {
+              var _res$assets2;
+              if (res.didCancel) return;
+              if (res.errorCode || res.errorMessage) {
+                (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)(res.errorMessage || '选择失败');
+                return;
+              }
+              var uri = (_res$assets2 = res.assets) == null || (_res$assets2 = _res$assets2[0]) == null ? void 0 : _res$assets2.uri;
+              if (uri) void processImageUri(uri);else (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)('未获取到图片');
+            });
+          }
+        });
+        return function (_x2) {
+          return _ref8.apply(this, arguments);
+        };
+      }());
+    }, [ensureCameraPermission, processImageUri]);
     var handleRecord = (0, _react.useCallback)(function () {
       navigation.navigate('PickupCodeRecordList');
     }, [navigation]);
@@ -284517,7 +284586,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 12,
       minHeight: 32,
       width: '100%',
-      gap: 10
+      gap: 20
     },
     infoItemText: {
       fontSize: 14,
@@ -284532,10 +284601,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lineHeight: 20
     },
     descriptionText: {
-      textAlign: 'left',
+      textAlign: 'right',
       fontSize: 14,
       color: '#333333',
-      lineHeight: 20
+      lineHeight: 20,
+      flex: 1
     },
     circle: {
       width: 16,
@@ -284602,9 +284672,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)('获取账号信息失败');
       }
     }), []);
-    (0, _react.useEffect)(function () {
+    (0, _$$_REQUIRE(_dependencyMap[12], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
       loadAccount();
-    }, [loadAccount]);
+    }, [loadAccount]));
     var handleChangeMobile = function handleChangeMobile() {
       if (!(detail != null && detail.mobile)) return;
       // 这里仅保留占位，具体改号流程可按需要后续迁移
@@ -284616,7 +284686,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
     // 微信绑定（已登录状态下绑定当前微信）
     var goBindWechat = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-      var isInstalledWeChat = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/wechat").checkInstalledWeChat)();
+      var isInstalledWeChat = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/wechat").checkInstalledWeChat)();
       if (!isInstalledWeChat.result) {
         (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showToast)(isInstalledWeChat.message || '请先安装微信');
         return;
@@ -284624,7 +284694,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       (0, _$$_REQUIRE(_dependencyMap[11], "../../utils").showLoading)({
         title: '授权中...'
       });
-      var resPromise = (0, _$$_REQUIRE(_dependencyMap[12], "../../utils/wechat").wechatLogin)();
+      var resPromise = (0, _$$_REQUIRE(_dependencyMap[13], "../../utils/wechat").wechatLogin)();
       var appStatePromise = new Promise(function (resolve) {
         appStateSubRef.current = _reactNative.AppState.addEventListener == null ? void 0 : _reactNative.AppState.addEventListener('change', function (s) {
           if (s === 'active') {
@@ -284640,14 +284710,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       try {
         var _r;
         r = yield Promise.race([resPromise, appStatePromise]);
+        console.log('r', r);
         if ((_r = r) != null && _r.result) {
           var thirdState = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../services/user").getThirdState)({});
           var obj = {
             source: 1,
             code: r.code,
-            state: thirdState
+            state: thirdState.data
           };
+          console.log('obj', obj);
           var bindRes = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../services/user").userThirdBind)(obj);
+          console.log('bindRes', bindRes);
           if (Number(bindRes.code) === 200) {
             var _ref4, _data2;
             var accountRes = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../services/user").getAccountInfo)({});
@@ -284686,7 +284759,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         mobile: detail.mobile
       });
     };
-    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").PageContainer, {
       backgroundColor: "#FFFFFF",
       statusBarStyle: "dark-content",
       statusBarBackgroundColor: "#FFFFFF",
@@ -284777,7 +284850,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })]
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_popConfirm.default, {
         ref: popConfirmRef,
-        title: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+        title: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
           direction: "column",
           align: "center",
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
@@ -284813,7 +284886,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1674,[1,2,25,42,3,1334,1675,552,88,679,804,782,780,1531],"src\\pages\\account\\index.tsx");
+},1674,[1,2,25,42,3,1334,1675,552,88,679,804,782,684,780,1531],"src\\pages\\account\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -284966,6 +285039,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState26 = (0, _slicedToArray2.default)(_useState25, 2),
       newSmsRequested = _useState26[0],
       setNewSmsRequested = _useState26[1];
+    var _useState27 = (0, _react.useState)(null),
+      _useState28 = (0, _slicedToArray2.default)(_useState27, 2),
+      newFlowId = _useState28[0],
+      setNewFlowId = _useState28[1];
     var canNextOld = (0, _react.useMemo)(function () {
       return !!oldMobile && oldCode.trim().length > 0;
     }, [oldMobile, oldCode]);
@@ -285017,11 +285094,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var api = isResend ? _$$_REQUIRE(_dependencyMap[9], "../../services/user").getCodeResent : _$$_REQUIRE(_dependencyMap[9], "../../services/user").getChangeMobileCode;
           var params = isResend ? {
             mobile: oldMobile,
-            flowId: flowId
+            flowId: flowId,
+            old: true
           } : {
-            mobile: oldMobile
+            mobile: oldMobile,
+            old: true
           };
-          console.log('[ChangeMobile] send old code params:', params);
           var res = yield api(params);
           if (res.code == 200) {
             setFlowId(res.data);
@@ -285047,11 +285125,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var handleVerifyOld = /*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2.default)(function* () {
         if (!oldMobile) {
-          (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").showToast)('缺少原手机号信息');
+          (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").showToast)('请输入手机号');
           return;
         }
         if (!(0, _$$_REQUIRE(_dependencyMap[8], "../../utils").mobileExp)(oldMobile)) {
-          (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").showToast)('原手机号格式不正确');
+          (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").showToast)('请输入正确的手机号');
           return;
         }
         if (!oldCode.trim()) {
@@ -285066,15 +285144,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var params = {
             mobile: oldMobile,
             code: oldCode.trim(),
-            flowId: flowId
+            flowId: flowId,
+            old: true
           };
-          console.log('[ChangeMobile] verify old mobile params:', params);
           var res = yield (0, _$$_REQUIRE(_dependencyMap[9], "../../services/user").changeMobileVerify)(params);
           (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").hideLoading)();
           var code = (_code = res == null ? void 0 : res.code) != null ? _code : res == null ? void 0 : res.status;
           if (String(code) === '200') {
             setOldError(null);
             setStep(2);
+            setNewFlowId(params.flowId);
           } else if (String(code) === '515') {
             setOldError('验证码错误，请重新输入');
           } else {
@@ -285115,7 +285194,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             flowId: flowId,
             old: false
           };
-          console.log('[ChangeMobile] send new code params:', params);
+          if (newFlowId) {
+            params.flowId = newFlowId;
+          }
           var res = yield api(params);
           if (res.code == 200) {
             setFlowId(res.data);
@@ -285167,7 +285248,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             code: newCode.trim(),
             flowId: flowId
           };
-          console.log('[ChangeMobile] verify new mobile params:', params);
+          if (newFlowId) {
+            params.flowId = newFlowId;
+          }
           var res = yield (0, _$$_REQUIRE(_dependencyMap[9], "../../services/user").changeNewVerify)(params);
           (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").hideLoading)();
           var code = (_code2 = res == null ? void 0 : res.code) != null ? _code2 : res == null ? void 0 : res.status;
@@ -285460,11 +285543,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return !!mobile && code.trim().length > 0;
     }, [mobile, code]);
     (0, _react.useEffect)(function () {
-      if (mobileFromRoute) {
-        setMobile(mobileFromRoute);
-      }
-    }, [mobileFromRoute]);
-    (0, _react.useEffect)(function () {
       if (countdown <= 0) return;
       var timer = setInterval(function () {
         setCountdown(function (prev) {
@@ -285587,8 +285665,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               value: mobile,
               onChangeText: setMobile,
               keyboardType: "number-pad",
-              maxLength: 11,
-              editable: !mobileFromRoute
+              maxLength: 11
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
             style: [_styles.default.inputRow, smsError && _styles.default.errorBorder],
@@ -292353,6 +292430,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _jsxRuntime = _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\adDisplay\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var RNFS = null;
+  if (_reactNative.Platform.OS === 'ios' || _reactNative.Platform.OS === 'android') {
+    RNFS = _$$_REQUIRE(_dependencyMap[11], "react-native-fs");
+  }
   var MAX_TEXT = 100;
   var MAX_FILES = 10;
   var DEFAULT_BG = 'https://g.18qjz.cn/img/boklock/default_ad_bg.png';
@@ -292360,7 +292441,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var _bannerText$trim$leng,
       _bannerText$trim,
       _this = this;
-    var navigation = (0, _$$_REQUIRE(_dependencyMap[11], "@react-navigation/native").useNavigation)();
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[12], "@react-navigation/native").useNavigation)();
     var _useState = (0, _react.useState)(''),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       bannerText = _useState2[0],
@@ -292525,7 +292606,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var loadDetail = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       try {
         var _data, _data$bannerImageUrls, _data$bannerText;
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../services/user").getBannerDetails)({});
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").getBannerDetails)({});
         var data = (_data = res.data) != null ? _data : res;
         var urls = (_data$bannerImageUrls = data == null ? void 0 : data.bannerImageUrls) != null ? _data$bannerImageUrls : [];
         var text = (_data$bannerText = data == null ? void 0 : data.bannerText) != null ? _data$bannerText : '';
@@ -292534,7 +292615,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         setTextLength((text || '').length);
         setDetail(data);
       } catch (e) {
-        (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)('获取广告信息失败');
+        (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)('获取广告信息失败');
       }
     }), []);
     (0, _react.useEffect)(function () {
@@ -292549,9 +292630,25 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         for (var i = 0; i < uris.length; i++) {
           var _res$data;
           var uri = uris[i];
-          var filename = uri.split('/').pop() || `file_${i}.${isVideo ? 'mp4' : 'jpg'}`;
-          var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").tencentUpload)({
-            file: uri,
+
+          // Android 视频通常返回 content://，部分原生上传 SDK 无法直接读取该 URI
+          // 先拷贝到缓存目录转换成 file:// 再上传
+          var uploadUri = uri;
+          if (isVideo && _reactNative.Platform.OS === 'android' && typeof uri === 'string' && uri.startsWith('content://')) {
+            var destPath = `${RNFS.CachesDirectoryPath}/upload_video_${Date.now()}_${i}.mp4`;
+            try {
+              yield RNFS.copyFile(uri, destPath);
+              uploadUri = `file://${destPath}`;
+            } catch (e) {
+              console.warn('[upload] copy content:// failed', e);
+              uploadUri = uri;
+            }
+          }
+          var rawName = uri.split('/').pop() || '';
+          var hasExt = rawName.includes('.') && !rawName.endsWith('.');
+          var filename = hasExt ? rawName : `file_${i}.${isVideo ? 'mp4' : 'jpg'}`;
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").tencentUpload)({
+            file: uploadUri,
             filename: filename,
             index: i
           });
@@ -292568,10 +292665,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var handleChooseImage = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       var remain = MAX_FILES - bannerImageUrls.length;
       if (remain <= 0) {
-        (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)('最多上传10个文件');
+        (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)('最多上传10个文件');
         return;
       }
-      (0, _$$_REQUIRE(_dependencyMap[14], "react-native-image-picker").launchImageLibrary)({
+      (0, _$$_REQUIRE(_dependencyMap[15], "react-native-image-picker").launchImageLibrary)({
         mediaType: 'photo',
         selectionLimit: remain,
         quality: 0.8
@@ -292579,7 +292676,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var _ref4 = (0, _asyncToGenerator2.default)(function* (res) {
           if (res.didCancel) return;
           if (res.errorCode || res.errorMessage) {
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)(res.errorMessage || '选择失败');
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)(res.errorMessage || '选择失败');
             return;
           }
           var assets = res.assets || [];
@@ -292588,17 +292685,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }).filter(Boolean);
           if (uris.length === 0) return;
           try {
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showLoading)({
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showLoading)({
               title: '上传中...'
             });
             var list = yield handleUploadFiles(uris, false);
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").hideLoading)();
             setBannerImageUrls(function (prev) {
               return [].concat((0, _toConsumableArray2.default)(prev), (0, _toConsumableArray2.default)(list)).slice(0, MAX_FILES);
             });
           } catch (e) {
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").hideLoading)();
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)('上传失败，请重试');
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)('上传失败，请重试');
           }
         });
         return function (_x3) {
@@ -292609,10 +292706,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var handleChooseVideo = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       var remain = MAX_FILES - bannerImageUrls.length;
       if (remain <= 0) {
-        (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)('最多上传10个文件');
+        (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)('最多上传10个文件');
         return;
       }
-      (0, _$$_REQUIRE(_dependencyMap[14], "react-native-image-picker").launchImageLibrary)({
+      (0, _$$_REQUIRE(_dependencyMap[15], "react-native-image-picker").launchImageLibrary)({
         mediaType: 'video',
         selectionLimit: 1
       }, /*#__PURE__*/function () {
@@ -292620,24 +292717,27 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var _assets$;
           if (res.didCancel) return;
           if (res.errorCode || res.errorMessage) {
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)(res.errorMessage || '选择失败');
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)(res.errorMessage || '选择失败');
             return;
           }
+          console.log('res', res);
           var assets = res.assets || [];
           var uri = (_assets$ = assets[0]) == null ? void 0 : _assets$.uri;
           if (!uri) return;
+          console.log('uri', uri);
           try {
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showLoading)({
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showLoading)({
               title: '上传中...'
             });
             var list = yield handleUploadFiles([uri], true);
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").hideLoading)();
+            console.log('list', list);
             setBannerImageUrls(function (prev) {
               return [].concat((0, _toConsumableArray2.default)(prev), (0, _toConsumableArray2.default)(list)).slice(0, MAX_FILES);
             });
           } catch (e) {
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").hideLoading)();
-            (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)('上传失败，请重试');
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)('上传失败，请重试');
           }
         });
         return function (_x4) {
@@ -292654,30 +292754,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     var handleCreate = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       if (!(bannerText != null && bannerText.trim()) && bannerImageUrls.length === 0) {
-        (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)('请上传广告图片或文案信息');
+        (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)('请上传广告图片或文案信息');
         return;
       }
       if (submitting) return;
       setSubmitting(true);
       try {
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "../../services/user").updateBannerDetails)({
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").updateBannerDetails)({
           bannerImageUrls: bannerImageUrls,
           bannerText: (bannerText == null ? void 0 : bannerText.trim()) || ''
         });
         if (Number(res == null ? void 0 : res.code) === 200) {
-          (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)('更新广告成功');
+          (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)('更新广告成功');
           navigation.goBack();
         } else {
-          (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)((res == null ? void 0 : res.message) || (res == null ? void 0 : res.msg) || '更新失败');
+          (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)((res == null ? void 0 : res.message) || (res == null ? void 0 : res.msg) || '更新失败');
         }
       } catch (e) {
-        (0, _$$_REQUIRE(_dependencyMap[13], "../../utils").showToast)('更新失败');
+        (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").showToast)('更新失败');
       } finally {
         setSubmitting(false);
       }
     }), [bannerText, bannerImageUrls, submitting, navigation]);
     var hasPreview = bannerImageUrls.length > 0 || ((_bannerText$trim$leng = bannerText == null || (_bannerText$trim = bannerText.trim()) == null ? void 0 : _bannerText$trim.length) != null ? _bannerText$trim$leng : 0) > 0;
-    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[15], "../../components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[16], "../../components").PageContainer, {
       backgroundColor: "#F6F7FA",
       statusBarStyle: "dark-content",
       statusBarBackgroundColor: "#FFFFFF",
@@ -292705,7 +292805,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
         style: _styles.default.content,
         children: [hasPreview && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[15], "../../components").Flex, {
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[16], "../../components").Flex, {
             style: _styles.default.titleRow,
             align: "center",
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -292762,7 +292862,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                         color: '#fff',
                         marginTop: 8
                       },
-                      children: "\u89C6"
+                      children: "\u89C6\u9891"
                     })]
                   }) : /\.(png|jpe?g|webp|gif)$/i.test(item) ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
                     source: {
@@ -292803,7 +292903,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 }, index);
               })
             })]
-          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[15], "../../components").Flex, {
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[16], "../../components").Flex, {
             style: [_styles.default.titleRow, {
               marginTop: 16
             }],
@@ -292873,7 +292973,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               })]
             }, url);
           })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[15], "../../components").Flex, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[16], "../../components").Flex, {
           style: [_styles.default.titleRow, {
             marginTop: 16
           }],
@@ -292927,7 +293027,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1707,[1,2,7,25,42,3,1611,1334,1708,552,88,679,804,782,1599,1531],"src\\pages\\adDisplay\\index.tsx");
+},1707,[1,2,7,25,42,3,1611,1334,1708,552,88,568,679,804,782,1599,1531],"src\\pages\\adDisplay\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -293761,7 +293861,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState20 = (0, _slicedToArray2.default)(_useState19, 2),
       active = _useState20[0],
       setActive = _useState20[1]; // 是否直接选择次数
-    var _useState21 = (0, _react.useState)(1),
+    var _useState21 = (0, _react.useState)(0),
       _useState22 = (0, _slicedToArray2.default)(_useState21, 2),
       customUsageCount = _useState22[0],
       setCustomUsageCount = _useState22[1]; // 自定义使用次数
@@ -293865,8 +293965,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     var getCount = /*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2.default)(function* () {
+        var _res$data;
         var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").getUnUseCount)({});
-        setUnUseCount(res != null ? res : 0);
+        setUnUseCount((_res$data = res.data) != null ? _res$data : 0);
       });
       return function getCount() {
         return _ref2.apply(this, arguments);
@@ -293874,9 +293975,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }();
     var getUserList = /*#__PURE__*/function () {
       var _ref3 = (0, _asyncToGenerator2.default)(function* () {
-        var _res$data;
+        var _res$data2;
         var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").getAdmins)({});
-        var list = (_res$data = res == null ? void 0 : res.data) != null ? _res$data : [];
+        var list = (_res$data2 = res == null ? void 0 : res.data) != null ? _res$data2 : [];
         setUserList(list);
         if (list.length > 0) {
           var first = list[0];
@@ -293976,7 +294077,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         });
         if (res.code == 200) {
           var _shareDetail = yield getSimpleDetails(res == null ? void 0 : res.data);
-          setShareDetail(_shareDetail);
+          setShareDetail(_shareDetail.data);
           setSharePopupVisible(true);
         }
       });
@@ -294157,8 +294258,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }),
       children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
         style: {
-          paddingLeft: 16,
-          paddingRight: 16,
+          paddingHorizontal: 16,
           paddingTop: 12,
           paddingBottom: 120,
           backgroundColor: '#f6f7fa'
@@ -316893,8 +316993,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     editPageFooter: {
       width: '100%',
-      position: 'absolute',
-      bottom: 0,
+      // position: 'absolute',
+      // bottom: 0,
       height: 98,
       paddingBottom: 34,
       backgroundColor: '#ffffff',
@@ -316974,7 +317074,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'right'
     },
     titleBox: {
-      width: 327,
+      width: '100%',
       height: 20
     },
     titleLine: {
@@ -317001,7 +317101,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     titleRight: {
       width: 72,
       height: 20,
-      borderRadius: 0
+      borderRadius: 0,
+      marginLeft: 'auto'
     },
     titleRightText: {
       height: 20,
@@ -319565,6 +319666,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: "#F6F7FA",
       statusBarStyle: "dark-content",
       safeAreaEdges: ['top', 'bottom'],
+      contentContainerStyle: {
+        paddingHorizontal: 16
+      },
       scrollable: true,
       footer: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
         style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.editPageFooter,
@@ -319573,9 +319677,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         align: "center",
         isTouchView: true,
         onPress: handleInvite,
-        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.footerBtnText,
-          children: "\u786E\u5B9A\u7F16\u8F91"
+        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+          onPress: handleInvite,
+          style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.footerBtn,
+          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.footerBtnText,
+            children: "\u786E\u5B9A\u7F16\u8F91"
+          })
         })
       }),
       children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
@@ -319674,7 +319782,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             })]
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
             name: 'arrows1',
-            size: 40,
+            size: 20,
             color: "#333333"
           }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "../../components").Flex, {
             style: _$$_REQUIRE(_dependencyMap[15], "./style").styles.timeBox,
@@ -319722,7 +319830,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             children: customUsageCount !== 0 && customUsageCount !== undefined && customUsageCount !== null ? `${customUsageCount}次` : '不限'
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
             name: 'a-headfor-20',
-            size: 40,
+            size: 20,
             color: "#333333"
           })]
         })]

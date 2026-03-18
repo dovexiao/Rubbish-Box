@@ -8,6 +8,7 @@ import {
   Pressable,
   AppState,
   Button,
+  Platform,
 } from 'react-native';
 import { Flex, PageContainer } from '@/components';
 import { getThirdState, miniLogin, thirdLogin } from '@/services';
@@ -90,18 +91,25 @@ const Login = () => {
     // 监听应用状态变化（用户可能从微信返回/中断授权）
     // 必须先注册监听，再发起微信授权；否则如果微信回调没有触发，后续逻辑会卡死。
     let settled = false;
+    let hasGoneBackground = false;
     const appStatePromise = new Promise<any>(resolve => {
       tempData.current.appStateSub =
         AppState.addEventListener &&
         AppState.addEventListener('change', s => {
           console.log('s', s);
+          if (s === 'inactive' || s === 'background') {
+            hasGoneBackground = true;
+          }
           if (s === 'active' && !settled) {
-            settled = true;
-            resolve({
-              result: false,
-              errCode: -998,
-              message: '用户手动返回应用，未完成登录',
-            });
+            // 去过后台后再进入 active 才被认为是从外部返回
+            if (hasGoneBackground) {
+              settled = true;
+              resolve({
+                result: false,
+                errCode: -998,
+                message: '用户手动返回应用，未完成登录',
+              });
+            }
           }
         });
     });
@@ -113,7 +121,7 @@ const Login = () => {
         resolve({
           result: false,
           errCode: -997,
-          message: '微信登录超时，请重试',
+          message: hasGoneBackground ? '微信登录超时，请重试' : '',
         });
       }, 60_000);
     });
@@ -125,8 +133,24 @@ const Login = () => {
     let r: any;
     try {
       showLoading({ title: '登录中...' });
+
+      // 鸿蒙专属策略：如果短暂时间内没有去后台（也就是用户点了系统取消，或者正在犹豫），
+      // 我们单纯把前端的 Loading 遮罩撤掉，让用户可以点击其他区域，但后台仍旧保持监听。
+      // 防止因为鸿蒙 wechatSDK 不回调错误而造成的界面永久卡死。
+      let harmonyHideTimer: any;
+      if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+        harmonyHideTimer = setTimeout(() => {
+          if (!hasGoneBackground && !settled) {
+            hideLoading();
+          }
+        }, 3000);
+      }
+
       r = await Promise.race([wechatPromise, appStatePromise, timeoutPromise]);
+      if (harmonyHideTimer) clearTimeout(harmonyHideTimer);
+
       if (r.result) {
+        showLoading({ title: '登录中...' }); // 无论之前有没有被隐去都重新调起
         const thirdState = await getThirdState({});
         let obj: any = { source: 1, code: r.code, state: thirdState.data };
         let deviceInfoStorage: any = {};
@@ -163,8 +187,10 @@ const Login = () => {
         }
       } else {
         if (r.errCode === -998) console.log('用户手动返回');
-        else if (r.errCode === -997) showToast(r.message);
-        else showToast(r.message);
+        else if (r.errCode === -996) console.log('取消或未响应权限弹框(鸿蒙)');
+        else if (r.errCode === -997) {
+          if (r.message) showToast(r.message);
+        } else if (r.message) showToast(r.message);
       }
     } catch (e) {
       console.log('一键登录异常:', e);
