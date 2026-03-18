@@ -47,7 +47,6 @@ import {
 import PowerIndicatorPop from '@/components/powerIndicatorPop';
 import type { PopCenterRef } from '@/components/PopCenter';
 import styles from './styles';
-import { Toast } from '@ant-design/react-native';
 
 function useCountDown(options: { targetDate?: number; onEnd?: () => void }) {
   const { targetDate, onEnd } = options;
@@ -128,13 +127,6 @@ export default function FindDevice(props: any) {
     needScan: Platform.OS === 'ios' || isHarmonyOs,
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const a = await getSavedDeviceInfo().catch(() => null);
-    };
-    fetchData();
-  }, []);
-
   const setState = useCallback((patch: Partial<typeof state>) => {
     setStateInner(prev => ({ ...prev, ...patch }));
   }, []);
@@ -143,19 +135,27 @@ export default function FindDevice(props: any) {
     try {
       const res = (await getSavedDeviceInfo().catch(() => null)) || {};
       const info = await getSystemConnectedDevices();
+      const isValidSavedDevice = res.bleNo === bleNo && !!res.deviceId;
       let isPaired = false;
+
       if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
-        isPaired = !!res.deviceId;
+        isPaired =
+          info.data?.some(
+            (item: any) =>
+              isSameMac(item.deviceId, bleNo) ||
+              (isValidSavedDevice && isSameMac(item.deviceId, res.deviceId)),
+          ) || false;
       } else {
         isPaired =
-          info.data?.some((item: any) => item.deviceId === res.deviceId) ||
-          false;
+          isValidSavedDevice &&
+          (info.data?.some((item: any) => item.deviceId === res.deviceId) ||
+            false);
       }
       setState({ isPaired });
     } catch (error) {
       console.error('初始化蓝牙失败', error);
     }
-  }, [setState]);
+  }, [setState, bleNo]);
 
   const checkReturnFromSettings = useCallback(async () => {
     try {
@@ -180,6 +180,9 @@ export default function FindDevice(props: any) {
       const info = await getSystemConnectedDevices();
       console.log(info, '===info');
 
+      const isValidSavedDevice =
+        savedDeviceInfo.bleNo === bleNo && !!savedDeviceInfo.deviceId;
+
       let isPaired = false;
       let deviceInfo = null;
 
@@ -187,13 +190,15 @@ export default function FindDevice(props: any) {
         info.data?.some(
           (item: any) =>
             isSameMac(item.deviceId, bleNo) ||
-            isSameMac(item.deviceId, savedDeviceInfo.deviceId),
+            (isValidSavedDevice &&
+              isSameMac(item.deviceId, savedDeviceInfo.deviceId)),
         ) || false;
 
       deviceInfo = info.data?.find(
         (item: any) =>
           isSameMac(item.deviceId, bleNo) ||
-          isSameMac(item.deviceId, savedDeviceInfo.deviceId),
+          (isValidSavedDevice &&
+            isSameMac(item.deviceId, savedDeviceInfo.deviceId)),
       );
 
       // 兜底补全信息（因为原生层给鸿蒙只返回了纯物理MAC，我们把原有的本地信息填回去）
@@ -410,6 +415,7 @@ export default function FindDevice(props: any) {
       // 绑定设备
       console.log(pageName, '===pageName');
       if (pageName?.includes('BindDevice')) {
+        console.log('触发绑定');
         showLoading({ title: '绑定中...' });
         try {
           const res = await bind({

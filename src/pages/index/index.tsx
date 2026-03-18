@@ -129,6 +129,11 @@ const Index = () => {
                 return 'rise';
             }
           });
+        } else if (lockRes.code === 520 || lockRes.code === 522) {
+          // 520 或 522 视作账号下没有绑定任何地锁或者该地锁不存在
+          setDetail(undefined);
+          setHasDevice(false);
+          setError(null);
         } else {
           setDetail(undefined);
           setHasDevice(false);

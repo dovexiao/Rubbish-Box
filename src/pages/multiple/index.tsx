@@ -91,6 +91,10 @@ const Index = () => {
                 return 'rise';
             }
           });
+        } else if (lockRes.code === 520 || lockRes.code === 522) {
+          setDetail(undefined);
+          setHasDevice(false);
+          setError(null);
         } else {
           setDetail(undefined);
           setHasDevice(false);
