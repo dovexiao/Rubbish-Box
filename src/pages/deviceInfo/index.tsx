@@ -216,6 +216,7 @@ const DeviceInfo = () => {
     if (res.success && res.code === 200) {
       await loopOperateStatus(11, true);
     } else {
+      hideLoading();
       showToast(res.message || '修改失败');
     }
     return res.success;

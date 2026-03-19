@@ -1,0 +1,20 @@
+diff --git a/harmony/rn_bleplx/src/main/ets/common/BleUtils.ts b/harmony/rn_bleplx/src/main/ets/common/BleUtils.ts
+index 476513a..5bca6fd 100644
+--- a/harmony/rn_bleplx/src/main/ets/common/BleUtils.ts
++++ b/harmony/rn_bleplx/src/main/ets/common/BleUtils.ts
+@@ -24,11 +24,13 @@
+ 
+ import { ValuesBucket } from '@kit.ArkData';
+ import { ble } from '@kit.ConnectivityKit';
+-import { buffer } from '@kit.ArkTS';
++import { buffer, util } from '@kit.ArkTS';
+ 
+ // Base64转ArrayBuffer
+ export function base64ToArrayBuffer(string: string): ArrayBuffer {
+-  let dataArray = new Uint8Array(buffer.from(string, 'base64').buffer);
++  // Use util.Base64Helper to avoid ArkTS buffer view length edge cases.
++  let base64Helper = new util.Base64Helper();
++  let dataArray = base64Helper.decodeSync(string);
+   return dataArray.buffer;
+ }
+ 

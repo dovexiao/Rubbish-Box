@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 12,
   },
   popupContainer: {
-    paddingTop: 24,
+    paddingTop: 12,
     paddingLeft: 24,
     paddingRight: 24,
     paddingBottom: 16,
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#333333',
     borderRadius: 6,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     paddingVertical: 4,
     marginHorizontal: 8,
     backgroundColor: '#ffffff',

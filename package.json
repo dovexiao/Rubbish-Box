@@ -158,7 +158,8 @@
       "react-native-intent-launcher": "patches/react-native-intent-launcher.patch",
       "react-native-wechat-lib": "patches/react-native-wechat-lib.patch",
       "react-native-screens@3.18.2": "patches/react-native-screens@3.18.2.patch",
-      "metro-file-map@0.76.8": "patches/metro-file-map@0.76.8.patch"
+      "metro-file-map@0.76.8": "patches/metro-file-map@0.76.8.patch",
+      "@react-native-ohos/react-native-ble-plx@3.2.1-rc.2": "patches/@react-native-ohos+react-native-ble-plx@3.2.1-rc.2.patch"
     },
     "overrides": {
       "@react-native-oh/react-native-harmony-cli": "0.77.50",
