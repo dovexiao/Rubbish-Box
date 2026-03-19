@@ -180,6 +180,10 @@ export default function AddMember() {
           reload: !memberId,
           currentInfo: info,
         });
+        if (memberId) {
+          navigation.goBack();
+          return;
+        }
         if (!!locks.length) {
           const lockInfo = locks?.[0];
           navigation.navigate('CompositeShare', {

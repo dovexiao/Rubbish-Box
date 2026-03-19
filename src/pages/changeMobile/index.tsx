@@ -85,10 +85,12 @@ export default function ChangeMobile() {
       const params: any = isResend
         ? { mobile: oldMobile, flowId, old: true }
         : { mobile: oldMobile, old: true };
-
       const res = await api(params);
       if (res.code == 200) {
-        setFlowId(res.data);
+        if (!isResend) {
+          setFlowId(res.data);
+        }
+
         setOldSmsRequested(true);
         setOldError(null);
         setOldCountdown(60);

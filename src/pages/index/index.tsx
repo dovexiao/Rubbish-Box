@@ -399,10 +399,11 @@ const Index = () => {
   const hasBluetoothAutoOpen = async () => {
     const result = await getBluetoothDeviceInfo().catch(() => ({}));
     const bleNo = String(detail?.bleNo || '');
+    const bleName = String(detail?.bleName || '');
     // @ts-ignore
     const savedDeviceInfo = result?.[bleNo];
     const deviceId = savedDeviceInfo?.deviceId;
-    const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo);
+    const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo, bleName);
 
     if (!deviceId || res.isIgnored || !savedDeviceInfo?.isPaired) {
       const deviceMap =

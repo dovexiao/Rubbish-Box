@@ -40,7 +40,7 @@ class BluetoothModeManager {
         needUserAction: true,
       };
     }
-    console.log('检测蓝牙开关', openBluetooth, typeof openBluetooth);
+
     try {
       const openResult = await openBluetooth();
       if (!openResult.success) {
@@ -60,12 +60,10 @@ class BluetoothModeManager {
         needUserAction: false,
       };
     }
-    console.log('检测设备配对状态');
     try {
       let realDeviceId = '';
       const cached: any =
         (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
-      console.log('缓存设备信息:', cached);
 
       let cacheEntry: any;
       if (cached[deviceId]) {
@@ -90,18 +88,15 @@ class BluetoothModeManager {
           needUserAction: true,
         };
       }
-      console.log('系统已连接设备:', realDeviceId);
 
       const sysInfo = await getSystemConnectedDevices();
       const data = sysInfo.data || [];
       const isPaired = data.some((item: any) => item.deviceId === realDeviceId);
-      console.log('系统已连接设备:', isPaired);
 
       const res = await checkIfDeviceIgnoredOnIOS(
         realDeviceId,
         cacheEntry?.bleNo,
       );
-      console.log('系统已忽略设备:', res.isIgnored);
 
       if (!isPaired || res.isIgnored) {
         await removeBluetoothDeviceInfo(realDeviceId);

@@ -2,6 +2,7 @@ import {
   Camera,
   type CameraRef,
   Flex,
+  GradientButton,
   PageContainer,
   PopConfirm,
 } from '@/components';
@@ -26,6 +27,7 @@ import {
   modifyLockLeaveTime,
   operateBuzzing,
   updateName,
+  changeQrCode,
 } from '@/services';
 import { lockInfoProps } from './typing';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
@@ -63,6 +65,7 @@ const DeviceInfo = () => {
   const [safeAreaColor, setSafeAreaColor] =
     useState<StatusBarStyle>('dark-content');
   const [optionType, setOptionType] = useState<string>('1');
+  const [confirmContent, setConfirmContent] = useState<any>({});
 
   const editNamePopRef = useRef<AnimationPopRef>(null);
   const pageContainerRef = useRef<PageContainerRef>(null);
@@ -74,6 +77,7 @@ const DeviceInfo = () => {
   const scanBindQrCameraRef = useRef<CameraRef>(null);
   const adminRef = useRef<AnimationPopRef>(null);
   const bluetoothStatusUnbindRef = useRef<BluetoothStatusRef>(null);
+  const confirmRef = useRef<PopConfirmRef>(null);
 
   const footerBtn = () => {
     return (
@@ -85,6 +89,7 @@ const DeviceInfo = () => {
               await setOptionType('1');
               bluetoothStatusUnbindRef.current?.open();
             } else {
+              console.log(deviceInfo, '===deviceInfo');
               navigation.navigate('HandOver', {
                 id: deviceInfo?.id,
                 bleNo: deviceInfo?.bleNo,
@@ -164,6 +169,22 @@ const DeviceInfo = () => {
     }
   };
 
+  const handleChangeQRcode = async () => {
+    const res = await changeQrCode({
+      id: params?.lockId,
+      code: confirmContent?.code,
+      userId: null,
+    });
+    confirmRef.current?.close();
+    showToast({
+      title: res.code == 200 ? '更换成功' : res.message || '更换失败',
+      icon: res.code == 200 ? 'success' : 'error',
+    });
+    scanBindQrCameraRef.current?.close();
+    setConfirmContent({});
+    pageContainerRef.current?.refresh();
+  };
+
   useEffect(() => {
     fetchLockInfo();
   }, [fetchLockInfo]);
@@ -174,19 +195,32 @@ const DeviceInfo = () => {
       try {
         const res = await changeQrCodeScan({
           id: params?.lockId,
-          qrCode: value,
+          code: value,
         });
 
-        scanBindQrCameraRef.current?.close();
-        hideLoading();
-        showToast({
-          title: res.code === 200 ? '绑定成功' : '绑定失败',
-          icon: res.code === 200 ? 'success' : 'none',
-        });
-        pageContainerRef.current?.refresh();
+        if (res?.code === 200 && res?.data) {
+          setConfirmContent({
+            content: {
+              title: '识别成功',
+              content: undefined,
+              img: res.data,
+              confirmText: '确定更换二维码',
+            },
+            code: value,
+          });
+        } else {
+          setConfirmContent({
+            content: {
+              title: '识别失败',
+              content: res.message,
+              img: undefined,
+              confirmText: '重试',
+            },
+          });
+        }
+        confirmRef.current?.open();
       } catch (error: any) {
-        showToast('绑定异常');
-        return { ok: false, message: '绑定异常', error };
+        console.log(error, '===error');
       }
     },
     [params?.lockId],
@@ -672,25 +706,67 @@ const DeviceInfo = () => {
       <BluetoothStatus
         ref={bluetoothStatusUnbindRef}
         details={{
-          ...lockInfo,
-          pin: lockInfo?.blePin,
+          ...deviceInfo,
         }}
         type="pass"
         onSuccess={async () => {
-          console.log('确认按钮：', deviceInfo);
           if (optionType === '1') {
             navigation.navigate('HandOver', {
               id: deviceInfo?.id,
               bleNo: deviceInfo?.bleNo,
+              needPin: deviceInfo?.needPin,
             });
           } else {
             await cacheSetSync('deviceInfo', lockInfo);
             navigation.navigate('Unbind', {
               id: deviceInfo?.id,
+              needPin: deviceInfo?.needPin,
             });
           }
         }}
       />
+
+      <PopConfirm
+        ref={confirmRef}
+        title={
+          <Flex direction="column" justify="center" align="center">
+            <Text>{confirmContent?.content?.title}</Text>
+            {confirmContent?.content?.img ? (
+              <Image
+                source={{ uri: confirmContent?.content?.img }}
+                style={{ width: 120, height: 120 }}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text>{confirmContent?.content?.content}</Text>
+            )}
+          </Flex>
+        }
+        showClose
+        cancelText="取消"
+        submitBtn={
+          <GradientButton
+            colors={['#282828', '#4A4A4A']}
+            width={124}
+            height={40}
+            onPress={async () => {
+              confirmContent?.content?.img
+                ? handleChangeQRcode()
+                : confirmRef.current?.close();
+            }}
+            style={[styles.btnContainer, styles.btnContainerConfirm]}
+          >
+            <Text style={styles.btnContainerConfirmText}>
+              {confirmContent?.content?.confirmText}
+            </Text>
+          </GradientButton>
+        }
+        onCancel={() => {
+          confirmRef.current?.close();
+          scanBindQrCameraRef.current?.close();
+          setConfirmContent({});
+        }}
+      ></PopConfirm>
     </PageContainer>
   );
 };

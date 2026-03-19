@@ -53,14 +53,14 @@ export default function UnBindSuccess() {
         setLinkCheckDone(true);
         return;
       }
-      const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo);
+      const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo, bleName);
       setHasLink(!!res?.isIgnored);
       setLinkCheckDone(true);
     } catch {
       setHasLink(false);
       setLinkCheckDone(true);
     }
-  }, [bleNo, deviceId]);
+  }, [bleNo, deviceId, bleName]);
 
   const handleSuccessBack = useCallback(async () => {
     if (pages) {

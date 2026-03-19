@@ -387,16 +387,19 @@ function App() {
             }
 
             const info = await getSystemConnectedDevices();
-            console.log(info, path, '===info');
+            console.log(info, path, params, '===info');
             if (path === 'FindDevice') {
               const isPaired =
                 info.data?.some((item: any) =>
                   isSameMac(item.deviceId || item.mac, params?.bleNo),
-                ) || false;
-              const deviceInfo = info.data?.find((item: any) =>
-                isSameMac(item.deviceId || item.mac, params?.bleNo),
-              );
-              console.log(isPaired, deviceInfo, '===isPaired, deviceInfo');
+                ) ||
+                info.data?.some((item: any) => item.name === params?.bleName) ||
+                false;
+              const deviceInfo =
+                info.data?.find((item: any) =>
+                  isSameMac(item.deviceId || item.mac, params?.bleNo),
+                ) ||
+                info.data?.find((item: any) => item.name === params?.bleName);
               if (isPaired) {
                 const bluetoothDeviceInfoList =
                   (await getBluetoothDeviceInfo().catch(() => null)) || {};
@@ -405,7 +408,6 @@ function App() {
                 let res: any;
                 let bindRes: any;
 
-                console.log(pageName, '===pageName');
                 if (pageName?.includes('BindDevice')) {
                   Toast.loading('绑定中...', 0);
                   bindRes = await bind({
@@ -442,11 +444,12 @@ function App() {
                           data: newMap,
                         });
                       }
+
                       eventCenter.trigger('rnBindSuccess', bindRes.data);
                       reLaunch('Index', { lockId: bindRes.data?.id });
                     }
                   }
-                  console.log(pageName, mode, '===pageName');
+
                   if (pageName?.includes('BluetoothControl') && !mode) {
                     Toast.success('自动升降开启成功');
                   }

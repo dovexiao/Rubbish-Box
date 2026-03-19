@@ -292,4 +292,19 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 12,
   },
+  btnContainer: {
+    borderRadius: 12,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btnContainerConfirm: {
+    marginLeft: 15,
+  },
+  btnContainerConfirmText: {
+    flex: 1,
+    color: '#ffffff',
+    textWrap: 'nowrap',
+    textAlign: 'center',
+  },
 });

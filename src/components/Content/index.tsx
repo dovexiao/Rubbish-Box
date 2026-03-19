@@ -313,6 +313,7 @@ const Content: React.FC<ContentProps> = ({
         operation,
         deviceNo: detail?.deviceNo,
       });
+      console.log(r, '===r');
 
       if (r.success) {
         await sleep(4000);
@@ -475,7 +476,7 @@ const Content: React.FC<ContentProps> = ({
               if (detail?.powerType === 1) {
                 handleOperate('RISE');
               } else {
-                // handleOperateByBluetooth('RISE');
+                bluetoothControlRef.current = 'RISE';
                 bluetoothConnectStatusRef.current?.open();
               }
             }}
@@ -495,7 +496,7 @@ const Content: React.FC<ContentProps> = ({
               if (detail?.powerType === 1) {
                 handleOperate('DOWN');
               } else {
-                // handleOperateByBluetooth('DOWN');
+                bluetoothControlRef.current = 'DOWN';
                 bluetoothConnectStatusRef.current?.open();
               }
             }}

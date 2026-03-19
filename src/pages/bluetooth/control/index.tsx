@@ -33,6 +33,7 @@ import BluetoothStatus, {
 import SettingPin, { type SettingPinRef } from '../component/SettingPin';
 import {
   getBluetoothPin,
+  getBluetoothStatus,
   openBluetoothProximity,
   settingBluetoothPin,
 } from '@/services';
@@ -95,7 +96,12 @@ export default function BluetoothControl() {
     // @ts-ignore
     const entry = saved?.[bleNo];
     const deviceId = entry?.deviceId;
-    const ignoredRes = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo);
+    const bleName = String(entry?.bleName || '');
+    const ignoredRes = await checkIfDeviceIgnoredOnIOS(
+      deviceId,
+      bleNo,
+      bleName,
+    );
     setIsIgnored(!!ignoredRes.isIgnored);
     setIsPaired(
       !!(entry?.deviceId && entry?.isPaired && !ignoredRes.isIgnored),
@@ -176,23 +182,21 @@ export default function BluetoothControl() {
         pin: value,
         bleNo: cmdRes.newMac,
       });
-      if (apiRes.code === '200') {
+      if (apiRes.code === 200) {
         setBluetoothPin(value);
         // 修改 PIN 码后，将设备配对状态设为 false
         await updateDevicePairedStatus(bleNos);
         hideLoading();
         showToast({ title: '修改 PIN 成功', icon: 'success' });
         closePopup();
-        // setTimeout(() => {
-        //   navigateTo({
-        //     url: `/pages/status/index?${stringify({
-        //       title: '修改PIN码成功',
-        //       deviceId: deviceId,
-        //       bleName: bleName,
-        //       bleNo: bleNo,
-        //     })}`,
-        //   });
-        // }, 500);
+        setTimeout(() => {
+          navigation.navigate('UnBindSuccess', {
+            title: '修改PIN码成功',
+            deviceId: deviceId,
+            bleName: bleName,
+            bleNo: bleNo,
+          });
+        }, 500);
       } else {
         hideLoading();
         showToast({
@@ -264,6 +268,102 @@ export default function BluetoothControl() {
   const handleToggleProximity = useCallback(async () => {
     showLoading({ title: `${proximityEnabled ? '关闭' : '开启'}中...` });
     try {
+      const needPinNum = Number(needPin ?? 0);
+      const targetServerStatus = proximityEnabled ? 0 : 1;
+
+      // needPin != 1：不需要 BLE 交互，直接调用后端并轮询确认
+      if (needPinNum !== 1) {
+        const apiRes: any = await openBluetoothProximity({
+          id: lockId,
+          bluetoothStatus: targetServerStatus,
+        });
+
+        if (
+          !(apiRes?.code === 200 || apiRes?.code === '200' || apiRes?.success)
+        ) {
+          hideLoading();
+          showToast({
+            title: apiRes?.message || '服务端同步失败',
+            icon: 'none',
+          });
+          return;
+        }
+
+        const extractStatus = (data: any): number | undefined => {
+          const tryNumber = (v: any): number | undefined => {
+            if (typeof v === 'number' && Number.isFinite(v)) return v;
+            if (typeof v === 'string') {
+              const n = Number(v);
+              return Number.isFinite(n) ? n : undefined;
+            }
+            return undefined;
+          };
+
+          if (data === undefined || data === null) return undefined;
+          if (typeof data !== 'object') return tryNumber(data);
+
+          const candidates = [
+            'bluetoothStatus',
+            'status',
+            'open',
+            'isOpen',
+            'enabled',
+            'enable',
+            'proximityStatus',
+          ];
+          for (const k of candidates) {
+            const n = tryNumber((data as any)?.[k]);
+            if (n !== undefined) return n;
+          }
+
+          const nested = (data as any)?.data ?? (data as any)?.content;
+          if (nested && nested !== data) return extractStatus(nested);
+          return undefined;
+        };
+
+        const pollOk = async (): Promise<boolean> => {
+          const start = Date.now();
+          const timeoutMs = 15000;
+          const intervalMs = 1000;
+
+          while (Date.now() - start < timeoutMs) {
+            try {
+              const res: any = await getBluetoothStatus({ id: lockId });
+              const codeOk =
+                res?.success === true ||
+                res?.code === 200 ||
+                res?.code === '200';
+
+              if (codeOk) {
+                const current = extractStatus(res?.data);
+                if (current === targetServerStatus) return true;
+              }
+            } catch {
+              // 轮询继续
+            }
+
+            await new Promise(resolve => setTimeout(resolve, intervalMs));
+          }
+
+          return false;
+        };
+
+        const ok = await pollOk();
+        if (!ok) {
+          hideLoading();
+          showToast({
+            title: '轮询蓝牙状态失败，请稍后重试',
+            icon: 'none',
+          });
+          return;
+        }
+
+        setProximityEnabled(v => !v);
+        hideLoading();
+        showToast({ title: '操作成功', icon: 'success' });
+        return;
+      }
+
       const saved = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
       // @ts-ignore
       const deviceId = saved?.[bleNo]?.deviceId;
@@ -276,7 +376,6 @@ export default function BluetoothControl() {
         deviceNo,
         status: proximityEnabled ? 2 : 1,
       });
-      console.log(cmdRes, '===cmdRes');
       if (!cmdRes.success) {
         showToast({
           title:
@@ -300,6 +399,7 @@ export default function BluetoothControl() {
       setProximityEnabled(v => !v);
       showToast({ title: '操作成功', icon: 'success' });
     } catch (error) {
+      hideLoading();
       console.error('handleToggleProximity error', error);
     }
   }, [bleNo, deviceNo, lockId, proximityEnabled]);

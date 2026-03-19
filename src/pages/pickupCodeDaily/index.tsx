@@ -205,7 +205,7 @@ export default function PickupCodeDaily() {
   const handleScan = useCallback(() => {
     ActionSheet.showActionSheetWithOptions(
       {
-        title: '选择图片',
+        title: '',
         options: ['拍照', '从相册选择', '取消'],
         cancelButtonIndex: 2,
       },

@@ -46,10 +46,11 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
       try {
         const result = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
         const bleNo = String(item?.bleNo || '');
+        const bleName = String(item?.bleName || '');
         // @ts-ignore
         const savedDeviceInfo = result?.[bleNo];
         const deviceId = savedDeviceInfo?.deviceId;
-        const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo);
+        const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo, bleName);
 
         if (!deviceId || res.isIgnored || !savedDeviceInfo?.isPaired) {
           const deviceMap: any =

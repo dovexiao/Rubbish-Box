@@ -116,7 +116,7 @@ export default function HandOverVerifyNew() {
         newAdminMobile: params.mobile,
         newAdminCode: params.code,
       });
-
+      console.log(checkAdminRes, '===checkAdminRes');
       if (!(checkAdminRes?.code === 200 && checkAdminRes?.success)) {
         hideLoading();
         showToast(checkAdminRes?.message || checkAdminRes?.msg || '校验失败');
@@ -144,6 +144,7 @@ export default function HandOverVerifyNew() {
           deviceId,
           pin: newPin,
         });
+
         if (!cmdRes?.success) {
           hideLoading();
           showToast('移交失败');
@@ -155,6 +156,7 @@ export default function HandOverVerifyNew() {
           pin: newPin,
           bleNo: cmdRes.newMac,
         });
+
         if (!(apiRes?.code === 200 && apiRes?.success)) {
           hideLoading();
           showToast(apiRes?.message || apiRes?.msg || '移交失败');

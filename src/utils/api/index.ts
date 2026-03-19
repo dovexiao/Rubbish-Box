@@ -253,6 +253,21 @@ export const getSystemConnectedDevices = (): Promise<{
         }
       } else if (Platform.OS === 'ios') {
         try {
+          // iOS：蓝牙状态可能为 unknown，直接调用 connectedDevices 会抛错
+          // 这里先确保蓝牙处于 PoweredOn（或等待其变为 PoweredOn）
+          const btState = await bleInstance.state();
+          if (btState !== 'PoweredOn') {
+            const openRes = await openBluetooth();
+            if (!openRes?.success) {
+              resolve({
+                success: false,
+                data: [],
+                message: '蓝牙未开启或状态未知',
+              });
+              return;
+            }
+          }
+
           const res = await bleInstance.connectedDevices([
             '0000fff0-0000-1000-8000-00805f9b34fb',
           ]);
@@ -483,6 +498,7 @@ export const stopSearchBluetoothDevices = (
 export const checkIfDeviceIgnoredOnIOS = (
   deviceId: string,
   bleNo?: string,
+  bleName?: string,
 ): Promise<{ isIgnored: boolean; reason?: string }> => {
   return new Promise(async resolve => {
     if (Platform.OS === 'ios' || isHarmony) {
@@ -575,10 +591,11 @@ export const checkIfDeviceIgnoredOnIOS = (
     }
     BluetoothManager.getBondedDevices((result: any) => {
       if (result?.success && Array.isArray(result.devices)) {
-        const isBonded = result.devices.some(
-          (d: any) =>
-            isSameMac(d.mac, deviceId) || isSameMac(d.mac, bleNo ?? ''),
-        );
+        const isBonded =
+          result.devices.some(
+            (d: any) =>
+              isSameMac(d.mac, deviceId) || isSameMac(d.mac, bleNo ?? ''),
+          ) || result.devices.some((d: any) => d.name === bleName);
         resolve({
           isIgnored: !isBonded,
           reason: isBonded ? '设备未被忽略' : '设备已被忽略',
@@ -742,7 +759,8 @@ export const sendDataToDevice = (options: {
 type BleCommandType = 'mode' | 'pin' | 'operation' | 'near';
 
 const calcChecksum = (bytes: number[]): number => {
-  return bytes.reduce((acc, cur) => acc + (cur & 0xff), 0) & 0xff;
+  const sum = bytes.reduce((acc, cur) => acc + (cur & 0xff), 0);
+  return sum & 0xff;
 };
 
 const buildPacket = (bytes: number[]): Uint8Array => {
@@ -804,9 +822,11 @@ const sendBleCommandWithAck = async (options: {
   if (!deviceId) return { success: false, msg: '缺少设备ID' };
 
   const alreadyConnected = await isDeviceConnected(deviceId);
-  console.log(alreadyConnected, '===alreadyConnected');
   if (!alreadyConnected.success) {
-    await connectBluetoothDevice(deviceId);
+    const res = await connectBluetoothDevice(deviceId);
+    if (!res.success) {
+      return { success: false, msg: res.error?.message || '连接设备失败' };
+    }
   }
 
   let body: number[];
@@ -847,7 +867,6 @@ const sendBleCommandWithAck = async (options: {
       notifyCharacteristicUuid: '0783b03e-8535-b5a0-7140-a304d2495cb8',
       notifyServiceUuid: '0000fff0-0000-1000-8000-00805f9b34fb',
       onData: ({ base64 }) => {
-        console.log(base64, '===base64');
         const text = decodeBase64ToText(base64);
         const match = text.match(/(200|206)/);
         if (match) {
@@ -1095,7 +1114,7 @@ export const setNearbyPermission = async (options: {
     successMsg: '操作成功',
     failMsg: '操作失败',
   });
-  console.log(result, '===result');
+
   // 上报前端日志
   try {
     await saveFrontLog({

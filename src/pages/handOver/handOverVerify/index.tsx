@@ -24,6 +24,7 @@ export default function HandOverVerify() {
   const bleNo = route.params?.bleNo as string | undefined;
   const bleName = route.params?.bleName as string | undefined;
   const needPin = route.params?.needPin as number | undefined;
+  console.log(route.params, '===route.params');
 
   const [step, setStep] = useState(0);
   const [code, setCode] = useState('');
@@ -73,6 +74,7 @@ export default function HandOverVerify() {
         lockIds: String(deviceId).split(','),
         currentAdminCode: code,
       });
+      console.log(res, '===res');
       hideLoading();
       stop();
 

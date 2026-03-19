@@ -282,7 +282,7 @@ export const handOverVerify = createFetch<any, any>(
 
 // 设备移交管理员-移交前校验（不执行移交）
 export const checkAdmin = createFetch<any, any>(
-  '/boke/userLock/transfer/admin/check',
+  '/boke/userLock/transfer/newAdmin/verifyCode',
   'POST',
 );
 
