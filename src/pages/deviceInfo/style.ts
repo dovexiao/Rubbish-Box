@@ -160,6 +160,7 @@ export const styles = StyleSheet.create({
     marginRight: 4,
   },
   editFooter: {
+    paddingBottom: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

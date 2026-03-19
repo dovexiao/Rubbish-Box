@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 蓝牙等原生能力 API（迁移自 Taro utils/api）
  * 依赖：react-native-ble-plx, buffer（Uint8Array -> base64 可选）
  */
@@ -350,10 +350,103 @@ export const connectBluetoothDevice = (
   return new Promise(async resolve => {
     try {
       await ensureBleManagerAlive();
-      let connectedDevice = await bleInstance.connectToDevice(deviceId);
+
+      // 在鸿蒙底层，调用 connectToDevice 时，如果该 Mac 从未被该 session 的 ble-plx 实例化扫描过，
+      // 可能会直接抛出 "Device xx:xx not found" 的错误。在这里通过 pre-fetch 缓存尽量避免
+      if (isHarmony) {
+        try {
+          await bleInstance.connectedDevices([
+            '0000fff0-0000-1000-8000-00805f9b34fb',
+          ]);
+        } catch (e) {}
+      }
+
+      let connectedDevice = await bleInstance
+        .connectToDevice(deviceId)
+        .catch(async (e: any) => {
+          const errMsg = String(e?.message || '').toLowerCase();
+
+          // 如果抛出的是设备已经连接，说明物理已连，直接返回一个仅包裹 discover 用的外壳
+          if (
+            errMsg.includes('already connected') ||
+            errMsg.includes('connected')
+          ) {
+            try {
+              return await bleInstance.discoverAllServicesAndCharacteristicsForDevice(
+                deviceId,
+              );
+            } catch (innerErr) {
+              const devs = await bleInstance
+                .connectedDevices(['0000fff0-0000-1000-8000-00805f9b34fb'])
+                .catch(() => []);
+              const target = devs.find(
+                d => d.id === deviceId || isSameMac(d.id, deviceId),
+              );
+              if (target) return target;
+
+              const cached = await bleInstance
+                .devices([deviceId])
+                .catch(() => []);
+              if (cached && cached.length > 0) return cached[0];
+            }
+          }
+
+          // 兜底补丁：如果依然抛出 not found，执行一次静默极速扫描，迫使 ble-plx 实例化此对象，再从新连接
+          if (isHarmony && errMsg.includes('not found')) {
+            return new Promise<any>((res, rej) => {
+              let isHandled = false;
+              let scanTimer: ReturnType<typeof setTimeout> | null = null;
+              const handleFinish = (hasFound: boolean, errInfo: any) => {
+                if (isHandled) return;
+                isHandled = true;
+                if (scanTimer) clearTimeout(scanTimer);
+                bleInstance.stopDeviceScan();
+                if (hasFound) {
+                  bleInstance.connectToDevice(deviceId).then(res).catch(rej);
+                } else {
+                  rej(errInfo || e);
+                }
+              };
+
+              bleInstance.startDeviceScan(null, null, (errScan, device) => {
+                if (
+                  device &&
+                  (device.id === deviceId || isSameMac(device.id, deviceId))
+                ) {
+                  handleFinish(true, null);
+                }
+              });
+              // 给2秒扫描容错时间
+              scanTimer = setTimeout(() => {
+                handleFinish(false, e);
+              }, 2000);
+            });
+          }
+          throw e;
+        });
+
       if (!connectedDevice) return resolve({ success: false });
       connectedDevice =
         await connectedDevice.discoverAllServicesAndCharacteristics();
+
+      if (isHarmony) {
+        // 打印系统服务树，排查 UUID 大小写或短格式问题
+        try {
+          const services = await connectedDevice.services();
+          for (const s of services) {
+            const chars = await s.characteristics();
+            console.log(
+              chars.map((c: any) => c.uuid),
+              `[Harmony BLE] Service: ${s.uuid}, Characteristics:`,
+            );
+          }
+        } catch (err) {
+          console.log('[Harmony BLE] Query services error', err);
+        }
+
+        // 鸿蒙系统下，discover后立刻拿去监听通知可能会因为底层服务树还没映射完毕导致报错，这里多给一点点初始化时间
+        await sleep(200);
+      }
       resolve({
         success: true,
         data: {
@@ -616,8 +709,58 @@ export const isDeviceConnected = (
   deviceIdentifier: string,
 ): Promise<{ success: boolean }> => {
   return new Promise(resolve => {
-    const timeout = setTimeout(() => resolve({ success: false }), 3000);
+    // 鸿蒙系统下底层 API 返回较慢，调长超时时间；其他系统保持原有 3000ms
+    const timeoutMs = isHarmony ? 8000 : 3000;
+    const timeout = setTimeout(() => resolve({ success: false }), timeoutMs);
     (async () => {
+      // 鸿蒙专属校验逻辑（与安卓 iOS 彻底隔离）
+      if (isHarmony) {
+        try {
+          const sysDevices = await getSystemConnectedDevices();
+          const sysConnected = sysDevices.data?.some(
+            (d: any) =>
+              d.deviceId === deviceIdentifier ||
+              isSameMac(d.deviceId, deviceIdentifier),
+          );
+
+          // 如果底层压根没连上，直接返回 false 让外面去触发连接
+          if (!sysConnected) {
+            clearTimeout(timeout);
+            resolve({ success: false });
+            return;
+          }
+
+          // 如果系统物理底层连着此设备，还要确认识 react-native-ble-plx 并在本上下文中缓存/发现了服务
+          // 否则会引发后续通知写入时的 Device xx:xx not found
+          await ensureBleManagerAlive();
+          const pDevices = await bleInstance
+            .devices([deviceIdentifier])
+            .catch(() => []);
+          if (pDevices && pDevices.length > 0) {
+            const isBlePlxConnected = await pDevices[0]
+              .isConnected()
+              .catch(() => false);
+            if (isBlePlxConnected) {
+              // 【解决 Characteristic not found 的必杀技】即使系统和对象都表示已连，鸿蒙端下也必须补一刀 discover，不然缓存服务为空
+              await pDevices[0]
+                .discoverAllServicesAndCharacteristics()
+                .catch(() => {});
+              await sleep(200); // 鸿蒙系统下，discover后稍微等一下让服务树映射完毕
+              clearTimeout(timeout);
+              resolve({ success: true });
+              return;
+            }
+          }
+
+          // 系统连了但 ble-plx 不处于连接有效状态，返回 false 逼迫业务去走 connectBluetoothDevice 发现服务
+          clearTimeout(timeout);
+          resolve({ success: false });
+          return;
+        } catch (error) {
+          console.log('[isDeviceConnected] 鸿蒙系统设备检查异常:', error);
+        }
+      }
+
       try {
         await ensureBleManagerAlive();
         const device = await bleInstance.devices([deviceIdentifier]);
@@ -641,6 +784,38 @@ export const isDeviceConnected = (
       }
     })();
   });
+};
+
+// 鸿蒙蓝牙 UUID 大小写兼容探针：从设备真实缓存特征树里找到和我们需要 UUID 字母顺序一致的那条原型 UUID 串
+export const getRealUUIDsForHarmony = async (
+  deviceId: string,
+  serviceUuidTarget: string,
+  characteristicUuidTarget: string,
+) => {
+  if (!isHarmony)
+    return { sUuid: serviceUuidTarget, cUuid: characteristicUuidTarget };
+  try {
+    const services = await bleInstance.servicesForDevice(deviceId);
+    const srv = services.find(
+      s => s.uuid.toLowerCase() === serviceUuidTarget.toLowerCase(),
+    );
+    if (srv) {
+      const chars = await bleInstance.characteristicsForDevice(
+        deviceId,
+        srv.uuid,
+      );
+      const ch = chars.find(
+        c => c.uuid.toLowerCase() === characteristicUuidTarget.toLowerCase(),
+      );
+      if (ch) {
+        return { sUuid: srv.uuid, cUuid: ch.uuid };
+      }
+      return { sUuid: srv.uuid, cUuid: characteristicUuidTarget };
+    }
+  } catch (e) {
+    console.log('[Harmony BLE] getRealUUIDsForHarmony Query Fail:', e);
+  }
+  return { sUuid: serviceUuidTarget, cUuid: characteristicUuidTarget };
 };
 
 // ---------- Notify / 写数据 / 解码 ----------
@@ -669,6 +844,17 @@ export const notifyBLECharacteristicValueChange = (options: {
             return;
           }
           const base64 = characteristic?.value || '';
+          console.log(
+            '[Harmony BLE] Raw Characteristic in Monitor:',
+            characteristic?.uuid,
+            'Value:',
+            characteristic?.value,
+          );
+
+          if (isHarmony && !base64) {
+            return;
+          }
+
           options.onData?.({
             base64,
             characteristic: characteristic ?? undefined,
@@ -687,7 +873,19 @@ const decodeBase64ToText = (base64: string): string => {
   try {
     const BufferRef = (globalThis as any).Buffer;
     if (BufferRef) {
-      return BufferRef.from(base64, 'base64').toString();
+      return BufferRef.from(base64, 'base64').toString('utf8');
+    }
+    const atobRef = (globalThis as any).atob;
+    if (typeof atobRef === 'function') {
+      const binary = atobRef(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      if (typeof TextDecoder !== 'undefined') {
+        return new TextDecoder('utf-8').decode(bytes);
+      }
+      return binary;
     }
     return '';
   } catch {
@@ -697,20 +895,34 @@ const decodeBase64ToText = (base64: string): string => {
 
 const uint8ArrayToBase64 = (arr: Uint8Array): string => {
   try {
-    const BufferRef = (globalThis as any).Buffer;
-    if (BufferRef) {
-      return BufferRef.from(
-        arr.buffer,
-        arr.byteOffset,
-        arr.byteLength,
-      ).toString('base64');
-    }
     let binary = '';
-    for (let i = 0; i < arr.length; i++) {
+    const len = arr.byteLength;
+    for (let i = 0; i < len; i++) {
       binary += String.fromCharCode(arr[i]);
     }
-    return (globalThis as any).btoa?.(binary) ?? '';
-  } catch {
+    const btoaRef = (globalThis as any).btoa;
+    if (typeof btoaRef === 'function') {
+      return btoaRef(binary);
+    }
+
+    // 如果没有 btoa，我们手写一个 base64 算法以防万一
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    let base64 = '';
+    for (let i = 0; i < len; i += 3) {
+      const c1 = arr[i];
+      const c2 = i + 1 < len ? arr[i + 1] : 0;
+      const c3 = i + 2 < len ? arr[i + 2] : 0;
+
+      base64 += chars[c1 >> 2];
+      base64 += chars[((c1 & 3) << 4) | (c2 >> 4)];
+      base64 += i + 1 < len ? chars[((c2 & 15) << 2) | (c3 >> 6)] : '=';
+      base64 += i + 2 < len ? chars[c3 & 63] : '=';
+    }
+
+    return base64;
+  } catch (e) {
+    console.log('[Harmony BLE] base64 encode error:', e);
     return '';
   }
 };
@@ -727,17 +939,25 @@ export const sendDataToDevice = (options: {
   const byteLength = options.value.byteLength;
   const speed = 20;
   if (byteLength > 0) {
-    bleInstance
-      .writeCharacteristicWithResponseForDevice(
-        options.deviceId,
-        options.writeServiceUuid,
-        options.writeCharacteristicUuid,
-        arrayBufferToBase64(
-          options.once
-            ? options.value
-            : options.value.slice(0, byteLength > speed ? speed : byteLength),
-        ),
-      )
+    const rawData = uint8ArrayToBase64(
+      options.once
+        ? options.value
+        : options.value.slice(0, byteLength > speed ? speed : byteLength),
+    );
+
+    // [Final Fix] Use withoutResponse directly on HarmonyOS to prevent deadlock.
+    const writeMethod = isHarmony
+      ? bleInstance.writeCharacteristicWithoutResponseForDevice.bind(
+          bleInstance,
+        )
+      : bleInstance.writeCharacteristicWithResponseForDevice.bind(bleInstance);
+
+    writeMethod(
+      options.deviceId,
+      options.writeServiceUuid,
+      options.writeCharacteristicUuid,
+      rawData,
+    )
       .then(res => {
         if (byteLength > speed && !options.once) {
           sendDataToDevice({
@@ -748,8 +968,38 @@ export const sendDataToDevice = (options: {
           options.lasterSuccess && options.lasterSuccess();
         }
       })
-      .catch(res => {
-        options.onError && options.onError(res);
+      .catch(err => {
+        console.log(
+          '[Harmony BLE] Write Failed!',
+          err,
+          typeof err === 'object' ? err.reason : '',
+        );
+        // Only fallback on Android/iOS, abort and bubble up on HarmonyOS to avoid queue deadlock
+        if (!isHarmony) {
+          bleInstance
+            .writeCharacteristicWithoutResponseForDevice(
+              options.deviceId,
+              options.writeServiceUuid,
+              options.writeCharacteristicUuid,
+              rawData,
+            )
+            .then(() => {
+              if (byteLength > speed && !options.once) {
+                sendDataToDevice({
+                  ...options,
+                  value: options.value.slice(speed, byteLength),
+                });
+              } else {
+                options.lasterSuccess && options.lasterSuccess();
+              }
+            })
+            .catch(err2 => {
+              console.log('[Harmony BLE] Write Fallback Failed', err2);
+              options.onError && options.onError(err2);
+            });
+        } else {
+          options.onError && options.onError(err);
+        }
       });
   }
 };
@@ -846,6 +1096,28 @@ const sendBleCommandWithAck = async (options: {
   }
   const packet = buildPacket([...body, calcChecksum(body)]);
 
+  let targetNotifySUrl = '0000fff0-0000-1000-8000-00805f9b34fb';
+  let targetNotifyCUrl = '0783b03e-8535-b5a0-7140-a304d2495cb8';
+  let targetWriteSUrl = '0000fff0-0000-1000-8000-00805f9b34fb';
+  let targetWriteCUrl = '0783b03e-8535-b5a0-7140-a304d2495cba';
+
+  if (isHarmony) {
+    const notifyUUIDs = await getRealUUIDsForHarmony(
+      deviceId,
+      targetNotifySUrl,
+      targetNotifyCUrl,
+    );
+    targetNotifySUrl = notifyUUIDs.sUuid;
+    targetNotifyCUrl = notifyUUIDs.cUuid;
+    const writeUUIDs = await getRealUUIDsForHarmony(
+      deviceId,
+      targetWriteSUrl,
+      targetWriteCUrl,
+    );
+    targetWriteSUrl = writeUUIDs.sUuid;
+    targetWriteCUrl = writeUUIDs.cUuid;
+  }
+
   return new Promise(resolve => {
     let settled = false;
     const finish = (result: {
@@ -864,8 +1136,8 @@ const sendBleCommandWithAck = async (options: {
 
     notifyBLECharacteristicValueChange({
       deviceId,
-      notifyCharacteristicUuid: '0783b03e-8535-b5a0-7140-a304d2495cb8',
-      notifyServiceUuid: '0000fff0-0000-1000-8000-00805f9b34fb',
+      notifyCharacteristicUuid: targetNotifyCUrl,
+      notifyServiceUuid: targetNotifySUrl,
       onData: ({ base64 }) => {
         const text = decodeBase64ToText(base64);
         const match = text.match(/(200|206)/);
@@ -892,8 +1164,8 @@ const sendBleCommandWithAck = async (options: {
 
     sendDataToDevice({
       deviceId,
-      writeCharacteristicUuid: '0783b03e-8535-b5a0-7140-a304d2495cba',
-      writeServiceUuid: '0000fff0-0000-1000-8000-00805f9b34fb',
+      writeCharacteristicUuid: targetWriteCUrl,
+      writeServiceUuid: targetWriteSUrl,
       value: packet,
       once: true,
       lasterSuccess: () => {},

@@ -45,6 +45,7 @@ import { openBluetoothProximity } from '@/services/bluetooth';
 import { Toast } from '@ant-design/react-native';
 import GradientButton from '@/components/GradientButton';
 import { AppUpdateDialogHost } from '@/components/AppUpdateDialog';
+import { GlobalLoading, GlobalToast } from '@/components';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { StoreProvider } from '@/store/provider';
 
@@ -732,6 +733,8 @@ function App() {
             </ThemeProvider>
           </StoreProvider>
           <AppUpdateDialogHost />
+          <GlobalLoading />
+          <GlobalToast />
         </AntdProvider>
       </QueryClientProvider>
     </ErrorBoundary>

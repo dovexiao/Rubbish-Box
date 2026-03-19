@@ -241124,6 +241124,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   return 'rise';
               }
             });
+          } else if (lockRes.code === 520 || lockRes.code === 522) {
+            setDetail(undefined);
+            setHasDevice(false);
+            setError(null);
           } else {
             setDetail(undefined);
             setHasDevice(false);
@@ -255710,6 +255714,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   return 'rise';
               }
             });
+          } else if (lockRes.code === 520 || lockRes.code === 522) {
+            // 520 或 522 视作账号下没有绑定任何地锁或者该地锁不存在
+            setDetail(undefined);
+            setHasDevice(false);
+            setError(null);
           } else {
             setDetail(undefined);
             setHasDevice(false);
@@ -320597,19 +320606,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
       state = _useState4[0],
       setStateInner = _useState4[1];
-    (0, _react.useEffect)(function () {
-      var fetchData = /*#__PURE__*/function () {
-        var _ref = (0, _asyncToGenerator2.default)(function* () {
-          var a = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getSavedDeviceInfo)().catch(function () {
-            return null;
-          });
-        });
-        return function fetchData() {
-          return _ref.apply(this, arguments);
-        };
-      }();
-      fetchData();
-    }, []);
     var setState = (0, _react.useCallback)(function (patch) {
       setStateInner(function (prev) {
         return Object.assign({}, prev, patch);
@@ -320621,14 +320617,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           return null;
         })) || {};
         var info = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").getSystemConnectedDevices)();
+        var isValidSavedDevice = res.bleNo === bleNo && !!res.deviceId;
         var _isPaired = false;
         if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
-          _isPaired = !!res.deviceId;
-        } else {
           var _info$data;
           _isPaired = ((_info$data = info.data) == null ? void 0 : _info$data.some(function (item) {
-            return item.deviceId === res.deviceId;
+            return (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, bleNo) || isValidSavedDevice && (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, res.deviceId);
           })) || false;
+        } else {
+          var _info$data2;
+          _isPaired = isValidSavedDevice && (((_info$data2 = info.data) == null ? void 0 : _info$data2.some(function (item) {
+            return item.deviceId === res.deviceId;
+          })) || false);
         }
         setState({
           isPaired: _isPaired
@@ -320636,10 +320636,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       } catch (error) {
         console.error('初始化蓝牙失败', error);
       }
-    }), [setState]);
+    }), [setState, bleNo]);
     var checkReturnFromSettings = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       try {
-        var _info$data2, _info$data3;
+        var _info$data3, _info$data4;
         var rnReLaunchPathRes = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getStorage)({
           key: 'rnReLaunchPath'
         }).catch(function () {
@@ -320658,13 +320658,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })) || {};
         var info = yield (0, _$$_REQUIRE(_dependencyMap[11], "../../utils/api").getSystemConnectedDevices)();
         console.log(info, '===info');
+        var isValidSavedDevice = savedDeviceInfo.bleNo === bleNo && !!savedDeviceInfo.deviceId;
         var _isPaired2 = false;
         var deviceInfo = null;
-        _isPaired2 = ((_info$data2 = info.data) == null ? void 0 : _info$data2.some(function (item) {
-          return (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, bleNo) || (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, savedDeviceInfo.deviceId);
+        _isPaired2 = ((_info$data3 = info.data) == null ? void 0 : _info$data3.some(function (item) {
+          return (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, bleNo) || isValidSavedDevice && (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, savedDeviceInfo.deviceId);
         })) || false;
-        deviceInfo = (_info$data3 = info.data) == null ? void 0 : _info$data3.find(function (item) {
-          return (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, bleNo) || (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, savedDeviceInfo.deviceId);
+        deviceInfo = (_info$data4 = info.data) == null ? void 0 : _info$data4.find(function (item) {
+          return (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, bleNo) || isValidSavedDevice && (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").isSameMac)(item.deviceId, savedDeviceInfo.deviceId);
         });
 
         // 兜底补全信息（因为原生层给鸿蒙只返回了纯物理MAC，我们把原有的本地信息填回去）
@@ -320700,7 +320701,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }), [route == null ? void 0 : route.name, params, bleNo, setState]);
     var startSearchDevice = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref4 = (0, _asyncToGenerator2.default)(function* (searchRef) {
+      var _ref3 = (0, _asyncToGenerator2.default)(function* (searchRef) {
         try {
           setState({
             searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING,
@@ -320716,7 +320717,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function (_x) {
-        return _ref4.apply(this, arguments);
+        return _ref3.apply(this, arguments);
       };
     }(), [setState]);
     var stateRef = (0, _react.useRef)(state);
@@ -320724,7 +320725,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       stateRef.current = state;
     }, [state]);
     var searchBluetoothDevicesEnd = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref5 = (0, _asyncToGenerator2.default)(function* (searchRef) {
+      var _ref4 = (0, _asyncToGenerator2.default)(function* (searchRef) {
         if (stateRef.current.searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING) {
           setState({
             searchBluetoothStatus: _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_FAILED
@@ -320737,7 +320738,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function (_x2) {
-        return _ref5.apply(this, arguments);
+        return _ref4.apply(this, arguments);
       };
     }(), [setState]);
     var resetSearch = (0, _react.useCallback)(function (searchRef) {
@@ -320824,14 +320825,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }()
     });
     var handleTipsUserOperation = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref6 = (0, _asyncToGenerator2.default)(function* (deviceName, pinCode) {
+      var _ref5 = (0, _asyncToGenerator2.default)(function* (deviceName, pinCode) {
         yield (0, _$$_REQUIRE(_dependencyMap[12], "../../services").tipsUserOperation)({
           title: '温馨提示',
           content: `进入设置首页 > 找到蓝牙并进入 > 找到${deviceName}蓝牙名称，输入${pinCode}进行配对`
         });
       });
       return function (_x4, _x5) {
-        return _ref6.apply(this, arguments);
+        return _ref5.apply(this, arguments);
       };
     }(), []);
     var handlePairing = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
@@ -320848,13 +320849,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }), [lockName, pin, params, route == null ? void 0 : route.name, route == null ? void 0 : route.params, handleTipsUserOperation]);
     var handleBindSuccess = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       var clearProcessingFlag = /*#__PURE__*/function () {
-        var _ref0 = (0, _asyncToGenerator2.default)(function* () {
+        var _ref9 = (0, _asyncToGenerator2.default)(function* () {
           yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").removeStorage)({
             key: 'rnReLaunchPathProcessing'
           }).catch(function () {});
         });
         return function clearProcessingFlag() {
-          return _ref0.apply(this, arguments);
+          return _ref9.apply(this, arguments);
         };
       }();
       try {
@@ -320864,11 +320865,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var bluetoothDeviceInfoList = (yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").getBluetoothDeviceInfo)().catch(function () {
           return null;
         })) || {};
-        var _ref1 = deviceInfo || {},
-          _bleNo = _ref1.bleNo;
+        var _ref0 = deviceInfo || {},
+          _bleNo = _ref0.bleNo;
         // 绑定设备
         console.log(pageName, '===pageName');
         if (pageName != null && pageName.includes('BindDevice')) {
+          console.log('触发绑定');
           (0, _$$_REQUIRE(_dependencyMap[10], "../../utils").showLoading)({
             title: '绑定中...'
           });
@@ -321066,7 +321068,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 606,
+          lineNumber: 612,
           columnNumber: 13
         }
       }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").GradientButton, {
@@ -321081,7 +321083,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 607,
+          lineNumber: 613,
           columnNumber: 15
         }
       }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321091,7 +321093,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 615,
+          lineNumber: 621,
           columnNumber: 17
         }
       }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321099,7 +321101,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 616,
+          lineNumber: 622,
           columnNumber: 19
         }
       }, "\u91CD\u65B0\u641C\u7D22")))) : !!!needPin ? /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321109,7 +321111,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 621,
+          lineNumber: 627,
           columnNumber: 13
         }
       }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321117,7 +321119,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 622,
+          lineNumber: 628,
           columnNumber: 15
         }
       }, "\u56E0\u673A\u578B\u4E0D\u540C\uFF0C\u84DD\u7259\u641C\u7D22\u9700\u8981\u51E0\u5206\u949F\uFF0C\u8BF7\u8010\u5FC3\u7B49\u5F85"), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").GradientButton, {
@@ -321132,7 +321134,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 625,
+          lineNumber: 631,
           columnNumber: 15
         }
       }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321142,7 +321144,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 633,
+          lineNumber: 639,
           columnNumber: 17
         }
       }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321150,7 +321152,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 634,
+          lineNumber: 640,
           columnNumber: 19
         }
       }, "\u8DF3\u8F6C\u8BBE\u7F6E")))) : undefined : undefined,
@@ -321158,7 +321160,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 592,
+        lineNumber: 598,
         columnNumber: 5
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321168,7 +321170,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 643,
+        lineNumber: 649,
         columnNumber: 7
       }
     }, !!!needPin ? /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321176,7 +321178,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 646,
+        lineNumber: 652,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321186,7 +321188,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 647,
+        lineNumber: 653,
         columnNumber: 15
       }
     })), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321194,7 +321196,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 649,
+        lineNumber: 655,
         columnNumber: 13
       }
     }, "\u8BF7\u786E\u4FDD\u5730\u9501\u901A\u7535"), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321202,7 +321204,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 650,
+        lineNumber: 656,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Image, {
@@ -321214,7 +321216,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 651,
+        lineNumber: 657,
         columnNumber: 15
       }
     })), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321222,7 +321224,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 659,
+        lineNumber: 665,
         columnNumber: 13
       }
     }, "\u8BF7\u8FDE\u63A5\u4EE5\u4E0B\u84DD\u7259"), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321231,7 +321233,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 661,
+        lineNumber: 667,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321239,7 +321241,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 662,
+        lineNumber: 668,
         columnNumber: 15
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321247,7 +321249,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 663,
+        lineNumber: 669,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321255,7 +321257,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 664,
+        lineNumber: 670,
         columnNumber: 19
       }
     }, "\u84DD\u7259\u540D\u79F0"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321263,7 +321265,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 665,
+        lineNumber: 671,
         columnNumber: 19
       }
     }, bleName))))) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, needScan ? /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.Image, {
@@ -321278,7 +321280,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 674,
+        lineNumber: 680,
         columnNumber: 17
       }
     }), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321286,7 +321288,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 683,
+        lineNumber: 689,
         columnNumber: 17
       }
     }, searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCHING ? /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321294,7 +321296,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 687,
+        lineNumber: 693,
         columnNumber: 23
       }
     }, "\u6B63\u5728\u8FDE\u63A5\u4E2D"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321302,7 +321304,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 688,
+        lineNumber: 694,
         columnNumber: 23
       }
     }, Math.round(countdown / 1000), "s")) : /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321310,7 +321312,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 695,
+        lineNumber: 701,
         columnNumber: 21
       }
     }, (_SEARCH_BLUETOOTH_STA = _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS_NAME[searchBluetoothStatus]) != null ? _SEARCH_BLUETOOTH_STA : searchBluetoothStatus === _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS ? '已找到设备' : '搜索失败')), searchBluetoothStatus !== _$$_REQUIRE(_dependencyMap[9], "../../constants").SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS && /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321319,36 +321321,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 707,
+        lineNumber: 713,
         columnNumber: 19
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.rowMargin,
-      align: "center",
-      __self: this,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 708,
-        columnNumber: 21
-      }
-    }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
-      style: _styles.default.dot,
-      __self: this,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 709,
-        columnNumber: 23
-      }
-    }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
-      style: _styles.default.cardItemText,
-      __self: this,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 710,
-        columnNumber: 23
-      }
-    }, "\u5F00\u542F\u3010", lockName || '未知名称', "\u3011\u5730\u9501\u7535\u6E90")), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
-      style: _styles.default.cardItem,
       align: "center",
       __self: this,
       __source: {
@@ -321372,7 +321349,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         lineNumber: 716,
         columnNumber: 23
       }
-    }, "\u786E\u8BA4\u624B\u673A\u5F00\u542F\u84DD\u7259\uFF0C\u5E76\u9760\u8FD1\u3010", lockName || '未知名称', "\u3011\u5730\u9501")), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+    }, "\u5F00\u542F\u3010", lockName || '未知名称', "\u3011\u5730\u9501\u7535\u6E90")), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
       style: _styles.default.cardItem,
       align: "center",
       __self: this,
@@ -321397,12 +321374,37 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         lineNumber: 722,
         columnNumber: 23
       }
+    }, "\u786E\u8BA4\u624B\u673A\u5F00\u542F\u84DD\u7259\uFF0C\u5E76\u9760\u8FD1\u3010", lockName || '未知名称', "\u3011\u5730\u9501")), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
+      style: _styles.default.cardItem,
+      align: "center",
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 726,
+        columnNumber: 21
+      }
+    }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
+      style: _styles.default.dot,
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 727,
+        columnNumber: 23
+      }
+    }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
+      style: _styles.default.cardItemText,
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 728,
+        columnNumber: 23
+      }
     }, "\u5982\u679C\u957F\u65F6\u95F4\u672A\u8FDE\u63A5\u6210\u529F\uFF0C\u8BF7\u53BB\u7CFB\u7EDF\u8BBE\u7F6E\u84DD\u7259\u5217\u8868\u4E2D\u5FFD\u7565", /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
       style: _styles.default.deviceName,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 724,
+        lineNumber: 730,
         columnNumber: 25
       }
     }, "\"", bleName, "\""), ",\u5E76\u4E14\u91CD\u65B0\u641C\u7D22")))) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321410,7 +321412,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 733,
+        lineNumber: 739,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321420,7 +321422,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 734,
+        lineNumber: 740,
         columnNumber: 19
       }
     })), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321428,7 +321430,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 736,
+        lineNumber: 742,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321436,7 +321438,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 737,
+        lineNumber: 743,
         columnNumber: 19
       }
     }, "\u8BF7\u786E\u4FDD\u5730\u9501\u901A\u7535"), /*#__PURE__*/_react.default.createElement(_reactNative.TouchableOpacity, {
@@ -321448,7 +321450,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 738,
+        lineNumber: 744,
         columnNumber: 19
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321458,7 +321460,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 742,
+        lineNumber: 748,
         columnNumber: 21
       }
     }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321466,7 +321468,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 743,
+        lineNumber: 749,
         columnNumber: 21
       }
     }, "\u901A\u7535\u6307\u5357"))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321475,7 +321477,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 747,
+        lineNumber: 753,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321483,7 +321485,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 748,
+        lineNumber: 754,
         columnNumber: 19
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321491,7 +321493,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 749,
+        lineNumber: 755,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321499,7 +321501,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 750,
+        lineNumber: 756,
         columnNumber: 23
       }
     }, "\u84DD\u7259\u540D\u79F0"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321507,7 +321509,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 751,
+        lineNumber: 757,
         columnNumber: 23
       }
     }, bleName)))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321516,7 +321518,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 756,
+        lineNumber: 762,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321524,7 +321526,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 757,
+        lineNumber: 763,
         columnNumber: 19
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321532,7 +321534,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 758,
+        lineNumber: 764,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321540,7 +321542,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 759,
+        lineNumber: 765,
         columnNumber: 23
       }
     }, "PIN\u7801"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321548,7 +321550,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 760,
+        lineNumber: 766,
         columnNumber: 23
       }
     }, pin)), /*#__PURE__*/_react.default.createElement(_reactNative.TouchableOpacity, {
@@ -321565,7 +321567,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 762,
+        lineNumber: 768,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321575,7 +321577,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 769,
+        lineNumber: 775,
         columnNumber: 23
       }
     }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321586,7 +321588,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 770,
+        lineNumber: 776,
         columnNumber: 23
       }
     }, "\u70B9\u51FB\u590D\u5236")))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321597,7 +321599,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 777,
+        lineNumber: 783,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").GradientButton, {
@@ -321612,7 +321614,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 781,
+        lineNumber: 787,
         columnNumber: 19
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "../../components").Flex, {
@@ -321622,7 +321624,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 789,
+        lineNumber: 795,
         columnNumber: 21
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321630,7 +321632,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 794,
+        lineNumber: 800,
         columnNumber: 23
       }
     }, "\u8DF3\u8F6C\u8BBE\u7F6E")))), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321638,7 +321640,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 799,
+        lineNumber: 805,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321646,7 +321648,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 800,
+        lineNumber: 806,
         columnNumber: 19
       }
     }, "\u56E0\u673A\u578B\u4E0D\u540C\uFF0C\u84DD\u7259\u641C\u7D22\u9700\u8981\u51E0\u5206\u949F\uFF0C\u8BF7\u8010\u5FC3\u7B49\u5F85")), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321654,7 +321656,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 805,
+        lineNumber: 811,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Image, {
@@ -321669,7 +321671,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 806,
+        lineNumber: 812,
         columnNumber: 19
       }
     }))))), /*#__PURE__*/_react.default.createElement(_powerIndicatorPop.default, {
@@ -321677,7 +321679,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 819,
+        lineNumber: 825,
         columnNumber: 7
       }
     }));

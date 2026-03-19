@@ -5,7 +5,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { AppState, Image, Text, TouchableOpacity, View } from 'react-native';
+import {
+  AppState,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  Platform,
+} from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Flex, GradientButton, PageContainer } from '@/components';
 import { LOCK_BTN_COLORS, LOCK_STATUS } from '@/constants';
@@ -25,8 +32,9 @@ import {
   getBluetoothState,
   sendChangePinByBluetooth,
   setNearbyPermission,
+  getSystemConnectedDevices,
 } from '@/utils/api';
-import { getBluetoothDeviceInfo } from '@/utils';
+import { getBluetoothDeviceInfo, isSameMac } from '@/utils';
 import BluetoothStatus, {
   type BluetoothStatusRef,
 } from '@/components/bluetoothStatus';
@@ -78,6 +86,7 @@ export default function BluetoothControl() {
     params.bindSuccessStatus === true;
 
   const [isPaired, setIsPaired] = useState(false);
+  const [showPage, setShowPage] = useState(false);
   const [isIgnored, setIsIgnored] = useState(false);
   const [isBluetoothOpen, setIsBluetoothOpen] = useState(false);
   const [gifUrl, setGifUrl] = useState<string | undefined>(undefined);
@@ -92,6 +101,7 @@ export default function BluetoothControl() {
   const settingPinRef = useRef<SettingPinRef>(null);
 
   const refreshPairStatus = useCallback(async () => {
+    showLoading({ title: '蓝牙状态校验中...' });
     const saved = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
     // @ts-ignore
     const entry = saved?.[bleNo];
@@ -103,9 +113,37 @@ export default function BluetoothControl() {
       bleName,
     );
     setIsIgnored(!!ignoredRes.isIgnored);
-    setIsPaired(
-      !!(entry?.deviceId && entry?.isPaired && !ignoredRes.isIgnored),
-    );
+    if (['android', 'ios'].includes(Platform.OS)) {
+      hideLoading();
+      setIsPaired(
+        !!(entry?.deviceId && entry?.isPaired && !ignoredRes.isIgnored),
+      );
+    } else {
+      let currentIsPaired = !!(
+        entry?.deviceId &&
+        entry?.isPaired &&
+        !ignoredRes.isIgnored
+      );
+
+      // 优化1：如果本地判断没配对，就不需要去走鸿蒙原生 API 了，省下那干等的 5 秒钟
+      if (currentIsPaired) {
+        try {
+          const info = await getSystemConnectedDevices();
+          const sysPaired =
+            info.data?.some(
+              (item: any) =>
+                isSameMac(item.deviceId, bleNo) ||
+                (deviceId && isSameMac(item.deviceId, deviceId)),
+            ) || false;
+          currentIsPaired = currentIsPaired && sysPaired;
+        } catch (error) {
+          console.error('获取系统配对设备失败', error);
+        }
+      }
+      hideLoading();
+      setIsPaired(currentIsPaired);
+      setShowPage(true);
+    }
 
     const img = entry?.imageMap;
     if (img) {
@@ -465,7 +503,7 @@ export default function BluetoothControl() {
       }
     >
       <View style={styles.container}>
-        {hasPaired ? (
+        {hasPaired || !showPage ? (
           <View style={styles.pairedBox}>
             {gifUrl ? (
               <Image
