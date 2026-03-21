@@ -74,6 +74,7 @@ export function showLoading(options?: ShowLoadingOptions): void {
 export function hideLoading(): void {
   if (globalLoadingKey) {
     Toast.remove(globalLoadingKey);
+    Toast.removeAll();
     globalLoadingKey = null;
   }
   // 隐藏全局高层级 Modal loading

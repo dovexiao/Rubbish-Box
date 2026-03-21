@@ -180,6 +180,9 @@ export const styles = StyleSheet.create({
     width: 327,
     height: 48,
     borderRadius: 12,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   manageBtnText: {

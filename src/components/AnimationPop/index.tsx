@@ -276,7 +276,12 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
         return [{ translateY: translate }];
       case 'bottom':
         return [
-          { translateY: Animated.add(translate as any, keyboardOffsetAnim) },
+          {
+            translateY: Animated.add(
+              translate as any,
+              Animated.add(keyboardOffsetAnim, insets.bottom),
+            ),
+          },
         ];
       case 'left':
       case 'right':

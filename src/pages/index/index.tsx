@@ -96,10 +96,6 @@ const Index = () => {
         // 清除路由栈中的跳转参数
         (navigation as any)?.setParams?.({ lockId: undefined });
         if (lockRes.success && lockRes.code === 200 && lockRes.data) {
-          if (lockRes.data?.isGroup) {
-            reLaunch('Multiple', { lockId: lockRes.data.id });
-            return;
-          }
           setDetail(lockRes.data);
           setHasDevice(true);
           setError(null);
@@ -442,6 +438,7 @@ const Index = () => {
         void load();
       }}
       backgroundImage={bgImage}
+      safeAreaEdges={['top']}
     >
       {showGuestWelcome ? (
         <View style={styles.guestContainer}>

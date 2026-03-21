@@ -149,6 +149,9 @@ export const styles = StyleSheet.create({
   fixBtn: {
     width: '100%',
     flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   color333: {

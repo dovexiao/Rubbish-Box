@@ -36,7 +36,6 @@ import {
 import appPush from '@/utils/push';
 import PopConfirm from '@/components/popConfirm';
 import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
-import GradientButton from '@/components/GradientButton';
 
 type LoginType = 'sms' | 'password' | 'mini';
 

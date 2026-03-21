@@ -199,7 +199,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12,
-    zIndex: 10,
+    zIndex: 1000,
   },
   powerModeTooltipText: {
     fontSize: 12,
@@ -305,7 +305,6 @@ export const styles = StyleSheet.create({
   btnContainerConfirmText: {
     flex: 1,
     color: '#ffffff',
-    textWrap: 'nowrap',
     textAlign: 'center',
   },
 });

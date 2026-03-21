@@ -96,8 +96,12 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
     };
 
     useImperativeHandle(ref, () => ({
-      open: () => setVisible(true),
-      close: () => setVisible(false),
+      open: () => {
+        setVisible(true);
+      },
+      close: () => {
+        setVisible(false);
+      },
     }));
 
     return (

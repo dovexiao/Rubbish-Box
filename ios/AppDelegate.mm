@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 #import <React/RCTLinkingManager.h>
 #import <React/RCTBundleURLProvider.h>
+#import <UserNotifications/UserNotifications.h>
 
 // 可选引入微信 SDK，如果工程里存在 WechatOpenSDK
 #if __has_include(<WechatOpenSDK/WXApi.h>)
@@ -63,7 +64,6 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     NSLog(@"📱 [AppDelegate] 应用进入后台 (applicationDidEnterBackground)");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"AppDidEnterBackground" object:nil];
-    [super applicationDidEnterBackground:application];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {

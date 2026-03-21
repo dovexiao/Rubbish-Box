@@ -149,9 +149,9 @@ export default function VipRecordPage() {
       await cancelInvite({ id: currentRow.id } as any);
       await loadList(true);
       setCurrentRow(undefined);
+      hideLoading();
     } catch (e) {
       showToast({ title: '作废失败，请重试', icon: 'error' });
-    } finally {
       hideLoading();
     }
   }, [currentRow?.id, loadList]);
@@ -316,7 +316,10 @@ export default function VipRecordPage() {
             } as never,
           );
         }}
-        onInvalidate={() => deleteRef.current?.open?.()}
+        onInvalidate={() => {
+          animationPopRef.current?.close();
+          setTimeout(() => deleteRef.current?.open?.(), 600);
+        }}
         onShare={() => handleShare(shareDetail)}
       />
 

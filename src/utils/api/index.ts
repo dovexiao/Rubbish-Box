@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 蓝牙等原生能力 API（迁移自 Taro utils/api）
  * 依赖：react-native-ble-plx, buffer（Uint8Array -> base64 可选）
  */
@@ -152,19 +152,18 @@ export const openBluetooth = (): Promise<{ success: boolean }> => {
         cleanup();
         resolve({ success: false });
       }, 8000);
-      if (Platform.OS === 'android') {
-        try {
-          console.log('尝试启用蓝牙模块');
-
-          const enabler = (bleInstance as any)?.enable;
-          if (typeof enabler === 'function') {
-            Promise.resolve(enabler.call(bleInstance)).catch(e => {
-              console.warn('[openBluetooth] enable() failed:', e);
-            });
-          }
-        } catch (e) {
-          console.warn('[openBluetooth] enable() failed:', e);
+      // iOS 也需要主动触发 enable 才可能弹出系统开启蓝牙弹窗
+      //（bleInstance.enable 仅在部分环境/版本存在，因此做函数存在性判断）
+      try {
+        console.log('尝试启用蓝牙模块');
+        const enabler = (bleInstance as any)?.enable;
+        if (typeof enabler === 'function') {
+          Promise.resolve(enabler.call(bleInstance)).catch(e => {
+            console.warn('[openBluetooth] enable() failed:', e);
+          });
         }
+      } catch (e) {
+        console.warn('[openBluetooth] enable() failed:', e);
       }
     } catch {
       cleanup();

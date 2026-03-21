@@ -87,9 +87,13 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
   ) => {
     const [visible, setVisible] = useState(false);
     const [mounted, setMounted] = useState(false);
+    // 关闭过程中禁用交互，但不要在 visible 切回 false 之前 stop/触发 cleanup
+    // 否则会导致 opacity 关闭动画被 cancel，进而表现为“点击关闭没反应”
+    const [isClosing, setIsClosing] = useState(false);
     const opacity = useRef(new Animated.Value(0)).current;
 
     const animateIn = useCallback(() => {
+      setIsClosing(false);
       opacity.stopAnimation();
       opacity.setValue(0);
       Animated.timing(opacity, {
@@ -101,14 +105,18 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
 
     const close = useCallback(() => {
       opacity.stopAnimation();
+      // 关闭过程中禁用点击，但保持 visible=true，避免下面 visible cleanup stopAnimation()
+      setIsClosing(true);
       Animated.timing(opacity, {
         toValue: 0,
         duration: 160,
         useNativeDriver: true,
       }).start(({ finished }) => {
         if (!finished) return;
-        setVisible(false);
+        // iOS 关闭后必须卸载 Modal，否则可能导致底层页面交互卡住
         setMounted(false);
+        setVisible(false);
+        setIsClosing(false);
       });
     }, [opacity]);
 
@@ -127,7 +135,10 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
     }, [opacity, visible]);
 
     useImperativeHandle(ref, () => ({
-      open: () => setVisible(true),
+      open: () => {
+        setIsClosing(false);
+        setVisible(true);
+      },
       close,
     }));
 
@@ -146,9 +157,17 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
             barStyle="light-content"
           />
         ) : null}
-        <Animated.View style={[styles.mask, { opacity }]}>
+        <Animated.View
+          style={[styles.mask, { opacity }]}
+          pointerEvents={
+            maskClosable && visible && !isClosing ? 'auto' : 'none'
+          }
+        >
           <Pressable
             style={styles.maskPressable}
+            pointerEvents={
+              maskClosable && visible && !isClosing ? 'auto' : 'none'
+            }
             onPress={() => {
               if (!maskClosable) return;
               close();
@@ -175,6 +194,7 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
               },
               contentStyle,
             ]}
+            pointerEvents={visible && !isClosing ? 'auto' : 'none'}
           >
             {showHeader ? (
               <View style={styles.header}>
