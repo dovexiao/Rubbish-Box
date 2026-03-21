@@ -11,6 +11,7 @@ import { GradientButton, PageContainer } from '@/components';
 import {
   getStorage,
   openBluetoothSettings,
+  reLaunch,
   removeStorage,
   setStorage,
   showToast,
@@ -54,7 +55,7 @@ export default function UnBindSuccess() {
         return;
       }
       const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo, bleName);
-      setHasLink(!!res?.isIgnored);
+      setHasLink(!res?.isIgnored);
       setLinkCheckDone(true);
     } catch {
       setHasLink(false);
@@ -66,19 +67,13 @@ export default function UnBindSuccess() {
     if (pages) {
       showToast({ title: '移交成功', icon: 'success' });
       await setStorage({ key: 'pageType', data: 'reload' }).catch(() => {});
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Index', params: { pages: 'handOverSuccess' } }],
-      });
+      reLaunch('Index', { pages: 'handOverSuccess' });
     } else {
       showToast({ title: '解除绑定成功', icon: 'success' });
       await setStorage({ key: 'type', data: 'reload' }).catch(() => {});
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Index' }],
-      });
+      reLaunch('Index');
     }
-  }, [navigation, pages]);
+  }, [pages]);
 
   const checkReturnFromSettings = useCallback(async () => {
     try {
@@ -118,6 +113,7 @@ export default function UnBindSuccess() {
   }, [navigation, checkLink, checkReturnFromSettings]);
 
   useEffect(() => {
+    console.log(linkCheckDone, hasLink, '===linkCheckDone, hasLink');
     if (!linkCheckDone) return;
     if (hasLink) {
       void handleSuccessBack();

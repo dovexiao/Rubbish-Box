@@ -292,13 +292,6 @@ const Content: React.FC<ContentProps> = ({
         ? deviceMap?.[bleNo as string]?.deviceId
         : undefined;
 
-      console.log('[Content] handleOperateByBluetooth', {
-        direction,
-        bleNo,
-        deviceId,
-        hasControl: !!bluetoothControlRef.current,
-      });
-
       if (!deviceId || !bluetoothControlRef.current) {
         bluetoothConnectStatusRef.current?.open();
         return;
@@ -321,7 +314,6 @@ const Content: React.FC<ContentProps> = ({
         operation,
         deviceNo: detail?.deviceNo,
       });
-      console.log('[Content] OperationCommandByBluetooth result:', r);
 
       if (r.success) {
         await sleep(4000);
@@ -335,10 +327,6 @@ const Content: React.FC<ContentProps> = ({
     } catch (error) {
       await sleep(4000);
       hideLoading();
-      console.error(
-        direction === 'RISE' ? '手动升锁失败:' : '手动降锁失败:',
-        error,
-      );
       bluetoothConnectStatusRef.current?.open();
     }
   };

@@ -131,9 +131,27 @@ export default function FindDevice(props: any) {
     setStateInner(prev => ({ ...prev, ...patch }));
   }, []);
 
+  const unwrapStorageData = useCallback((value: any) => {
+    let current = value;
+    for (let i = 0; i < 2; i += 1) {
+      if (
+        current &&
+        typeof current === 'object' &&
+        'data' in current &&
+        (current as any).data
+      ) {
+        current = (current as any).data;
+      } else {
+        break;
+      }
+    }
+    return current || {};
+  }, []);
+
   const init = useCallback(async () => {
     try {
-      const res = (await getSavedDeviceInfo().catch(() => null)) || {};
+      const savedRaw = (await getSavedDeviceInfo().catch(() => null)) || {};
+      const res = unwrapStorageData(savedRaw);
       const info = await getSystemConnectedDevices();
       const isValidSavedDevice = res.bleNo === bleNo && !!res.deviceId;
       let isPaired = false;
@@ -155,7 +173,7 @@ export default function FindDevice(props: any) {
     } catch (error) {
       console.error('初始化蓝牙失败', error);
     }
-  }, [setState, bleNo]);
+  }, [setState, bleNo, unwrapStorageData]);
 
   const checkReturnFromSettings = useCallback(async () => {
     try {
@@ -164,7 +182,7 @@ export default function FindDevice(props: any) {
       }).catch(() => null);
       if (!rnReLaunchPathRes) return;
 
-      const data = rnReLaunchPathRes as {
+      const data = unwrapStorageData(rnReLaunchPathRes) as {
         path?: string;
         params?: Record<string, any>;
       };
@@ -175,10 +193,10 @@ export default function FindDevice(props: any) {
         data: true,
       }).catch(() => {});
 
-      const savedDeviceInfo =
-        (await getSavedDeviceInfo().catch(() => null)) || {};
+      const savedDeviceInfo = unwrapStorageData(
+        (await getSavedDeviceInfo().catch(() => null)) || {},
+      );
       const info = await getSystemConnectedDevices();
-      console.log(info, '===info');
 
       const isValidSavedDevice =
         savedDeviceInfo.bleNo === bleNo && !!savedDeviceInfo.deviceId;
@@ -207,18 +225,20 @@ export default function FindDevice(props: any) {
       // 兜底补全信息（因为原生层给鸿蒙只返回了纯物理MAC，我们把原有的本地信息填回去）
       if (isPaired) {
         deviceInfo = deviceInfo ? { ...savedDeviceInfo, ...deviceInfo } : null;
-        setState({ isPaired: true });
-        await setStorage({
-          key: 'bluetoothDeviceInfo',
-          data: {
-            bleNo,
-            deviceId: deviceInfo.deviceId,
-            name: deviceInfo.name || deviceInfo.localName,
-            imageMap: params?.imageMap,
-            isPaired,
-          },
-        });
-        console.log(pageName, '===pageName');
+        if (deviceInfo?.deviceId) {
+          setState({ isPaired: true });
+          await setStorage({
+            key: 'bluetoothDeviceInfo',
+            data: {
+              bleNo,
+              deviceId: deviceInfo.deviceId,
+              name: deviceInfo.name || deviceInfo.localName,
+              imageMap: params?.imageMap,
+              isPaired,
+            },
+          });
+          console.log(pageName, '===pageName');
+        }
       } else {
         await removeStorage({ key: 'rnReLaunchPath' }).catch(() => {});
       }
@@ -228,7 +248,7 @@ export default function FindDevice(props: any) {
       console.error('检查系统设置返回状态失败:', error);
       await removeStorage({ key: 'rnReLaunchPathProcessing' }).catch(() => {});
     }
-  }, [route?.name, params, bleNo, setState]);
+  }, [route?.name, params, bleNo, setState, unwrapStorageData]);
 
   const startSearchDevice = useCallback(
     async (searchRef?: any) => {
@@ -349,7 +369,6 @@ export default function FindDevice(props: any) {
           (device.advertisData &&
             parseMacFromAdvertisData(device.advertisData)?.includes(bleNo)),
       );
-
       if (targetDevice && Object.keys(targetDevice).length > 0) {
         try {
           await setStorage({
@@ -411,10 +430,35 @@ export default function FindDevice(props: any) {
       await removeStorage({ key: 'rnReLaunchPathProcessing' }).catch(() => {});
     };
     try {
-      const deviceInfo = (await getSavedDeviceInfo().catch(() => null)) || {};
+      const savedRaw = (await getSavedDeviceInfo().catch(() => null)) || {};
+      let deviceInfo = unwrapStorageData(savedRaw);
       const bluetoothDeviceInfoList =
         (await getBluetoothDeviceInfo().catch(() => null)) || {};
-      const { bleNo } = deviceInfo || {};
+      if (!deviceInfo?.deviceId) {
+        const connected = await getSystemConnectedDevices().catch(() => null);
+        const fallbackDevice =
+          connected?.data?.find(
+            (item: any) =>
+              isSameMac(item.deviceId || item.mac, bleNo) ||
+              (bleName && item?.name === bleName),
+          ) || null;
+        if (fallbackDevice?.deviceId || fallbackDevice?.mac) {
+          deviceInfo = {
+            ...deviceInfo,
+            bleNo,
+            deviceId: fallbackDevice.deviceId || fallbackDevice.mac,
+            name: fallbackDevice.name || fallbackDevice.localName || bleName,
+            imageMap,
+            isPaired: true,
+          };
+          await setStorage({
+            key: 'bluetoothDeviceInfo',
+            data: deviceInfo,
+          }).catch(() => {});
+        }
+      }
+
+      const savedBleNo = deviceInfo?.bleNo || bleNo;
       // 绑定设备
       console.log(pageName, '===pageName');
       if (pageName?.includes('BindDevice')) {
@@ -427,7 +471,7 @@ export default function FindDevice(props: any) {
           });
 
           const ok = String(res?.code) === '200';
-          console.log(res, '===res');
+          console.log(res, ok, '===res');
           if (!ok) {
             showToast({
               title: res?.message || '绑定失败',
@@ -437,7 +481,17 @@ export default function FindDevice(props: any) {
             return;
           }
 
+          if (!deviceInfo?.deviceId) {
+            showToast({
+              title: '未获取到蓝牙设备信息，请返回重试',
+              icon: 'none',
+            });
+            hideLoading();
+            return;
+          }
+
           const connectRes = await connectBluetoothDevice(deviceInfo.deviceId);
+          console.log(connectRes, '===connectRes');
           if (!connectRes.success) {
             showToast({
               title: connectRes.error?.message || '连接设备失败',
@@ -447,9 +501,10 @@ export default function FindDevice(props: any) {
             return;
           }
 
-          if (bleNo) {
+          if (savedBleNo) {
             const nextMap = { ...(bluetoothDeviceInfoList || {}) };
-            nextMap[bleNo] = { ...deviceInfo, isPaired: true };
+            nextMap[savedBleNo] = { ...deviceInfo, isPaired: true };
+
             await setStorage({ key: 'bluetoothDeviceInfoList', data: nextMap });
           }
 
@@ -474,13 +529,11 @@ export default function FindDevice(props: any) {
           return;
         }
       } else {
-        console.log(role, mode, '===role, mode');
-        if (bleNo) {
+        if (savedBleNo) {
           const newMap = { ...(bluetoothDeviceInfoList || {}) };
-          newMap[bleNo] = { ...deviceInfo, isPaired: true };
+          newMap[savedBleNo] = { ...deviceInfo, isPaired: true };
           await setStorage({ key: 'bluetoothDeviceInfoList', data: newMap });
         }
-        console.log(role, mode, '===role, mode');
         if (Number(role) === 1 && !mode) {
           const cmdRes = await setNearbyPermission({
             deviceId: deviceInfo.deviceId,
@@ -498,7 +551,7 @@ export default function FindDevice(props: any) {
             id: lockId,
             bluetoothStatus: 1,
           });
-          if (!apiRes || apiRes.code !== '200') {
+          if (!apiRes || apiRes.code !== 200) {
             showToast({
               title: apiRes?.message || '开启近身功能失败',
               icon: 'none',
@@ -533,6 +586,7 @@ export default function FindDevice(props: any) {
     }
   }, [
     bleNo,
+    bleName,
     deviceNo,
     imageMap,
     lockId,
@@ -541,6 +595,7 @@ export default function FindDevice(props: any) {
     navigation,
     pin,
     role,
+    unwrapStorageData,
   ]);
 
   const [countdown] = useCountDown({

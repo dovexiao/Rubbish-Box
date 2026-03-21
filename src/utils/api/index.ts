@@ -490,8 +490,24 @@ export const searchBluetoothDevices = async (
       try {
         // 跳转到系统设置
         if (Platform.OS === 'ios') {
-          // iOS: 跳转到系统蓝牙设置
-          await Linking.openURL('App-Prefs:root=Bluetooth');
+          const candidates = [
+            'App-Prefs:root=Bluetooth',
+            'App-Prefs:root=General',
+            'app-settings:',
+          ];
+          let opened = false;
+          for (const url of candidates) {
+            try {
+              const canOpen = await Linking.canOpenURL(url);
+              if (!canOpen) continue;
+              await Linking.openURL(url);
+              opened = true;
+              break;
+            } catch {}
+          }
+          if (!opened) {
+            await Linking.openSettings();
+          }
         } else if (isHarmony) {
           let hModule;
           try {
@@ -1414,9 +1430,25 @@ export const openBluetoothSettings = (): Promise<boolean> => {
   return new Promise(async (resolve, reject) => {
     try {
       if (Platform.OS === 'ios') {
-        Linking.openURL('App-Prefs:root=General')
-          .then(() => resolve(true))
-          .catch(reject);
+        const candidates = [
+          'App-Prefs:root=Bluetooth',
+          'App-Prefs:root=General',
+          'app-settings:',
+        ];
+        let opened = false;
+        for (const url of candidates) {
+          try {
+            const canOpen = await Linking.canOpenURL(url);
+            if (!canOpen) continue;
+            await Linking.openURL(url);
+            opened = true;
+            break;
+          } catch {}
+        }
+        if (!opened) {
+          await Linking.openSettings();
+        }
+        resolve(true);
       } else if (isHarmony) {
         try {
           let hModule;

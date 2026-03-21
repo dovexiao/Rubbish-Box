@@ -344,8 +344,6 @@ function App() {
               (p || '').replace(/^\//, '').replace(/^pages\//, '');
             const currentRoute = normalize(route as string);
             const targetRoute = normalize(data.path);
-            console.log('[rn][restore] currentRoute', currentRoute);
-            console.log('[rn][restore] targetRoute', targetRoute);
 
             // 如果当前页面就是目标页面，说明app未被杀掉，由页面自己的onShow处理
             if (currentRoute === targetRoute) {
@@ -482,7 +480,7 @@ function App() {
               }
             } else {
               // 其他路径直接跳转
-              reLaunch(data.path);
+              reLaunch(data.path, params);
             }
           } catch (e) {
             // URLSearchParams 失败则只跳路径

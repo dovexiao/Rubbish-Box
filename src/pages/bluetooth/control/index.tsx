@@ -503,7 +503,8 @@ export default function BluetoothControl() {
       }
     >
       <View style={styles.container}>
-        {hasPaired || !showPage ? (
+        {hasPaired ||
+        (!showPage && Platform.OS !== 'ios' && Platform.OS !== 'android') ? (
           <View style={styles.pairedBox}>
             {gifUrl ? (
               <Image

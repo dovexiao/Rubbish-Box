@@ -538,7 +538,23 @@ export function openBluetoothSettings(value?: any): any {
           console.warn('跳转鸿蒙设置页失败:', e);
         }
       } else if (Platform.OS === 'ios') {
-        await Linking.openURL('App-Prefs:root=General');
+        const openIosSettings = async () => {
+          const candidates = [
+            'App-Prefs:root=Bluetooth',
+            'App-Prefs:root=General',
+            'app-settings:',
+          ];
+          for (const url of candidates) {
+            try {
+              const canOpen = await Linking.canOpenURL(url);
+              if (!canOpen) continue;
+              await Linking.openURL(url);
+              return;
+            } catch {}
+          }
+          await Linking.openSettings();
+        };
+        await openIosSettings();
       } else {
         if (
           IntentLauncher &&
