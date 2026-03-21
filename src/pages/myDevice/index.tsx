@@ -75,6 +75,7 @@ export default function MyDevice() {
         background: '#FFFFFF',
       }}
       navBorder
+      backgroundColor="#ffffff"
     >
       <ScrollView style={styles.container}>
         <GradientButton

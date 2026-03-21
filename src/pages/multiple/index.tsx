@@ -312,6 +312,7 @@ const Index = () => {
       style={styles.pageContainer}
       loading={loading}
       error={error}
+      safeAreaEdges={['top']}
       fullScreenError={!showGuestWelcome && !hasDevice && !loading}
       onRetry={() => {
         void load();

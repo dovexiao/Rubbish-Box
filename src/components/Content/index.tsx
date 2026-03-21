@@ -291,6 +291,14 @@ const Content: React.FC<ContentProps> = ({
       const deviceId = bleNo
         ? deviceMap?.[bleNo as string]?.deviceId
         : undefined;
+
+      console.log('[Content] handleOperateByBluetooth', {
+        direction,
+        bleNo,
+        deviceId,
+        hasControl: !!bluetoothControlRef.current,
+      });
+
       if (!deviceId || !bluetoothControlRef.current) {
         bluetoothConnectStatusRef.current?.open();
         return;
@@ -313,7 +321,7 @@ const Content: React.FC<ContentProps> = ({
         operation,
         deviceNo: detail?.deviceNo,
       });
-      console.log(r, '===r');
+      console.log('[Content] OperationCommandByBluetooth result:', r);
 
       if (r.success) {
         await sleep(4000);
@@ -473,7 +481,7 @@ const Content: React.FC<ContentProps> = ({
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => {
-              if (detail?.powerType === 1) {
+              if (detail?.powerType === 1 || detail?.isGroup) {
                 handleOperate('RISE');
               } else {
                 bluetoothControlRef.current = 'RISE';
@@ -493,7 +501,7 @@ const Content: React.FC<ContentProps> = ({
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => {
-              if (detail?.powerType === 1) {
+              if (detail?.powerType === 1 || detail?.isGroup) {
                 handleOperate('DOWN');
               } else {
                 bluetoothControlRef.current = 'DOWN';
@@ -729,18 +737,17 @@ const Content: React.FC<ContentProps> = ({
           >
             <Text style={styles.manageBtnText}>编辑</Text>
           </Flex>
-          <Flex
-            isTouchView
-            justify="center"
-            align="center"
+          {/* iOS：先关闭组合管理弹窗，再延迟打开确认框，避免 Modal 层级未完成导致 PopConfirm 不显示 */}
+          <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => {
               manageMultipleRef.current?.close();
-              setDeleteMultipleRef(true);
+              setTimeout(() => setDeleteMultipleRef(true), 600);
             }}
             style={{ ...styles.manageBtn, ...styles.manageDeteleBtn }}
           >
             <Text style={styles.manageDeteleBtnText}>删除</Text>
-          </Flex>
+          </TouchableOpacity>
         </Flex>
       </AnimationPop>
 

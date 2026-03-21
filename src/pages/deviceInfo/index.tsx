@@ -757,7 +757,11 @@ const DeviceInfo = () => {
             }}
             style={[styles.btnContainer, styles.btnContainerConfirm]}
           >
-            <Text style={styles.btnContainerConfirmText}>
+            <Text
+              style={styles.btnContainerConfirmText}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {confirmContent?.content?.confirmText}
             </Text>
           </GradientButton>

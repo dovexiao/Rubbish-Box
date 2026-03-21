@@ -162,9 +162,9 @@ export default function FindDevice(props: any) {
       const rnReLaunchPathRes = await getStorage({
         key: 'rnReLaunchPath',
       }).catch(() => null);
-      if (!rnReLaunchPathRes?.data) return;
+      if (!rnReLaunchPathRes) return;
 
-      const data = rnReLaunchPathRes.data as {
+      const data = rnReLaunchPathRes as {
         path?: string;
         params?: Record<string, any>;
       };
@@ -192,17 +192,20 @@ export default function FindDevice(props: any) {
             isSameMac(item.deviceId, bleNo) ||
             (isValidSavedDevice &&
               isSameMac(item.deviceId, savedDeviceInfo.deviceId)),
-        ) || false;
+        ) ||
+        info.data?.some((item: any) => item.name === bleName) ||
+        false;
 
-      deviceInfo = info.data?.find(
-        (item: any) =>
-          isSameMac(item.deviceId, bleNo) ||
-          (isValidSavedDevice &&
-            isSameMac(item.deviceId, savedDeviceInfo.deviceId)),
-      );
+      deviceInfo =
+        info.data?.find(
+          (item: any) =>
+            isSameMac(item.deviceId, bleNo) ||
+            (isValidSavedDevice &&
+              isSameMac(item.deviceId, savedDeviceInfo.deviceId)),
+        ) || info.data?.find((item: any) => item.name === bleName);
 
       // 兜底补全信息（因为原生层给鸿蒙只返回了纯物理MAC，我们把原有的本地信息填回去）
-      if (Platform.OS !== 'ios' && Platform.OS !== 'android' && isPaired) {
+      if (isPaired) {
         deviceInfo = deviceInfo ? { ...savedDeviceInfo, ...deviceInfo } : null;
         setState({ isPaired: true });
         await setStorage({
@@ -424,6 +427,7 @@ export default function FindDevice(props: any) {
           });
 
           const ok = String(res?.code) === '200';
+          console.log(res, '===res');
           if (!ok) {
             showToast({
               title: res?.message || '绑定失败',

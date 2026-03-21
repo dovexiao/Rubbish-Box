@@ -156,7 +156,8 @@ export default function Mine() {
       statusBarBackgroundColor={info?.bgUrl ? 'transparent' : 'transparent'}
       scrollable
       loading={loading && hasToken && !info}
-      safeAreaEdges={['top', 'bottom']}
+      // iOS TabBar 已处理底部安全区，Mine 再叠加会导致底部内容离 TabBar 留白
+      safeAreaEdges={['top']}
     >
       <View style={styles.contentBox}>
         <TouchableOpacity

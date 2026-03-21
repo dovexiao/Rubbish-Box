@@ -71,7 +71,7 @@ export const darkTheme = {
     },
     statusBar: {
       barStyle: 'light-content' as 'dark-content' | 'light-content',
-      backgroundColor: palette.transparent,
+      backgroundColor: palette.white,
     },
   },
 };

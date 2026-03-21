@@ -197,7 +197,12 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
     // 解析主题默认值
     const defaultBackgroundColor =
       backgroundColor ?? theme.colors.background.primary;
-    const defaultStatusBarStyle = statusBarStyle ?? ((defaultBackgroundColor.toLowerCase() === '#ffffff' || defaultBackgroundColor.toLowerCase() === '#fff') ? 'dark-content' : theme.colors.statusBar.barStyle);
+    const defaultStatusBarStyle =
+      statusBarStyle ??
+      (defaultBackgroundColor.toLowerCase() === '#ffffff' ||
+      defaultBackgroundColor.toLowerCase() === '#fff'
+        ? 'dark-content'
+        : theme.colors.statusBar.barStyle);
     const defaultStatusBarBackgroundColor =
       statusBarBackgroundColor ?? theme.colors.statusBar.backgroundColor;
 
@@ -418,6 +423,25 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
     // 5. Main Render
     return (
       <>
+        {/* iOS 状态栏背景兜底：RN 的 StatusBar backgroundColor 在某些情况下不生效 */}
+        {Platform.OS === 'ios' &&
+          showStatusBar &&
+          !!statusBarBackgroundColor &&
+          !loading && (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: insets.top,
+                backgroundColor: statusBarBackgroundColor,
+                zIndex: 999,
+              }}
+            />
+          )}
+
         {/* 状态栏配置 */}
         {showStatusBar && (
           <StatusBar
@@ -426,7 +450,8 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
               loading ? 'transparent' : defaultStatusBarBackgroundColor
             }
             showHideTransition={'none'}
-            translucent
+            // iOS 必须 translucent=true，才能让页面的兜底 View 覆盖状态栏区域
+            translucent={true}
           />
         )}
 

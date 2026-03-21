@@ -126,12 +126,17 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
       const checkResult: BluetoothCheckResult =
         await bluetoothModeManager.checkBeforeOperation(props.details?.bleNo);
 
+      console.log('[BluetoothStatus] checkResult:', checkResult, {
+        bleNo: props.details?.bleNo,
+        type: props.type,
+      });
+
       if (!checkResult.success) {
         const type = (checkResult.errorType || 'unknown') as ModalType;
         setBluetoothErrorType(type);
         setTimeout(() => {
           bluetoothPopupRef.current?.open();
-        }, 50);
+        }, 600);
         return;
       }
 

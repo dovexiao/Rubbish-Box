@@ -43,7 +43,7 @@ export const ANDROID_PACKAGE_NAME =
   Config.ANDROID_PACKAGE_NAME || 'com.boklock.m.test';
 
 // 获取 iOS Bundle ID
-export const IOS_BUNDLE_ID = Config.IOS_BUNDLE_ID || 'com.boklock.m.test';
+export const IOS_BUNDLE_ID = Config.IOS_BUNDLE_ID || 'com.boklock.dev.m';
 
 // 获取应用名称
 export const APP_NAME = Config.APP_NAME || 'boklock';
