@@ -55,6 +55,7 @@
     "@react-native-community/segmented-control": "^2.2.2",
     "@react-native-community/slider": "^4.4.2",
     "@react-native-oh-tpl/react-native-view-shot": "3.8.0-0.3.2",
+    "@react-native-oh-tpl/react-native-webview": "13.10.4",
     "@react-native-ohos/clipboard": "1.16.3-rc.1",
     "@react-native-ohos/react-native-ble-plx": "3.2.1-rc.2",
     "@react-native-ohos/react-native-image-picker": "7.0.4-rc.2",

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
 import PageContainer from '@/components/PageContainer';
@@ -152,8 +152,20 @@ const WebViewScreen: React.FC = () => {
             scalesPageToFit={true}
             mixedContentMode="compatibility"
             onHttpError={syntheticEvent => {
+              // 鸿蒙/安卓可能会抛出子资源（如 favicon、打点等）的 404 错误
+              // 我们这里只对主文档 url 的 404 进行拦截，确保已成功渲染的网页不会被覆盖
+              if (Platform.OS === 'harmony') {
+                // 彻底忽略鸿蒙上的 HttpError 误杀：
+                // 鸿蒙原生 WebView 的 bug 会将即使是单纯由于 favicon.ico 的 404
+                // 也通报为整个当前页面的 404 导致误杀渲染好的主页面。
+                return;
+              }
               const { nativeEvent } = syntheticEvent;
-              if (nativeEvent.statusCode >= 400) {
+              const failingUrl = nativeEvent.url || '';
+              if (
+                nativeEvent.statusCode >= 400 &&
+                (failingUrl === url || failingUrl === `${url}/`)
+              ) {
                 setError(`加载失败 (${nativeEvent.statusCode})`);
                 setLoading(false);
               }
