@@ -50,8 +50,8 @@ export const MainTabNavigator: React.FC = () => {
       paddingHorizontal: 16,
       borderTopWidth: 1,
       borderTopColor: 'rgba(0,0,0,0.05)',
-      height: 60 + insets.bottom,
-      paddingBottom: insets.bottom + 8,
+      height: 80 + insets.bottom,
+      paddingBottom: insets.bottom + 20,
     };
   }, [insets]);
 

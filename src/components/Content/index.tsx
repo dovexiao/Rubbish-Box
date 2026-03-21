@@ -714,7 +714,7 @@ const Content: React.FC<ContentProps> = ({
         title={'管理组合设备'}
       >
         <Flex
-          style={{ marginTop: 24, marginBottom: 8 }}
+          style={{ marginTop: 24, marginBottom: 36 }}
           direction="column"
           justify="center"
           align="center"
