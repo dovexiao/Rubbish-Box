@@ -716,11 +716,32 @@ export const isDeviceConnected = (
       // 鸿蒙专属校验逻辑（与安卓 iOS 彻底隔离）
       if (isHarmony) {
         try {
-          const sysDevices = await getSystemConnectedDevices();
-          const sysConnected = sysDevices.data?.some(
-            (d: any) =>
-              d.deviceId === deviceIdentifier ||
-              isSameMac(d.deviceId, deviceIdentifier),
+          const getTurboModuleSafely = (name: string): any => {
+            try {
+              return TurboModuleRegistry.get(name);
+            } catch (error) {
+              return null;
+            }
+          };
+          const hModule: any =
+            NativeModules?.HarmonyAppInfo ||
+            getTurboModuleSafely('HarmonyAppInfo');
+          let connectedMacs: string[] = [];
+
+          if (
+            hModule &&
+            typeof hModule?.getConnectedBLEDevices === 'function'
+          ) {
+            connectedMacs = (await hModule.getConnectedBLEDevices()) || [];
+          } else {
+            // Fallback: 如果原生方法还没重新编译，只能走旧配对列表
+            const sysDevices = await getSystemConnectedDevices();
+            connectedMacs = sysDevices.data?.map((d: any) => d.deviceId) || [];
+          }
+
+          const sysConnected = connectedMacs.some(
+            (mac: string) =>
+              mac === deviceIdentifier || isSameMac(mac, deviceIdentifier),
           );
 
           // 如果底层压根没连上，直接返回 false 让外面去触发连接
@@ -1155,24 +1176,39 @@ const sendBleCommandWithAck = async (options: {
         clearTimeout(timer);
         finish({ success: false, msg: err?.message || '发送失败' });
       },
-    }).then(res => {
+    }).then(async res => {
       if (!res?.success) {
         clearTimeout(timer);
         finish({ success: false, msg: res?.msg || '发送失败' });
+        return;
       }
-    });
 
-    sendDataToDevice({
-      deviceId,
-      writeCharacteristicUuid: targetWriteCUrl,
-      writeServiceUuid: targetWriteSUrl,
-      value: packet,
-      once: true,
-      lasterSuccess: () => {},
-      onError: err => {
-        clearTimeout(timer);
-        finish({ success: false, msg: err?.message || '发送失败' });
-      },
+      if (isHarmony) {
+        const sleep = (ms: number) =>
+          new Promise(resolve => setTimeout(resolve, ms));
+        await sleep(500); // Wait for the OS to finalize notification listener before writing
+      }
+
+      sendDataToDevice({
+        deviceId,
+        writeCharacteristicUuid: targetWriteCUrl,
+        writeServiceUuid: targetWriteSUrl,
+        value: packet,
+        once: true,
+        lasterSuccess: () => {
+          if (isHarmony && type === 'pin') {
+            // 鸿蒙专属：修改 PIN 的指令一旦下发成功，锁端会立即更新 MAC 地址并单方面断开连接
+            // 底层往往来不及吐出带 200 的 ACK 且没有触发断开异常，导致上层产生“超时未收到设备响应”
+            // 直接认定为成功
+            clearTimeout(timer);
+            finish({ success: true, code: 200, msg: successMsg });
+          }
+        },
+        onError: err => {
+          clearTimeout(timer);
+          finish({ success: false, msg: err?.message || '发送失败' });
+        },
+      });
     });
   });
 };
