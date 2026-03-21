@@ -25,7 +25,8 @@ export const styles = StyleSheet.create({
     height: 0,
     borderStyle: 'solid',
     borderWidth: 0.5,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
+    // borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderColor: 'rgba(179, 189, 199, 0.2)',
   },
 
   deviceNameText: {

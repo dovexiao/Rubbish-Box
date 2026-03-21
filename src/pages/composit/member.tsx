@@ -164,9 +164,10 @@ export default function MemberPage() {
         </TouchableOpacity>
         <FlatList
           data={list}
+          style={{ marginTop: 12, marginBottom: 24 }}
           keyExtractor={item => String(item.id)}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
+          renderItem={({ item, index }) => (
+            <View style={[styles.card, { marginTop: index === 0 ? 0 : 12 }]}>
               <Flex align="center" justify="between">
                 <Text style={styles.username}>{item.username}</Text>
                 <TouchableOpacity
