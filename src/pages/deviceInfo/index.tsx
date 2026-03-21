@@ -125,8 +125,9 @@ const DeviceInfo = () => {
   };
 
   const fetchLockInfo = useCallback(async () => {
-    if (!params.lockId) return;
-    const res = await getInfo({
+    try {
+      if (!params.lockId) return;
+      const res = await getInfo({
       id: params?.lockId,
     });
     if (res.code === 200 && res.success) {
@@ -138,7 +139,12 @@ const DeviceInfo = () => {
       id: params?.lockId,
     });
     if (result.code === 200 && result.success) {
-      setDeviceInfo(result.data);
+        setDeviceInfo(result.data);
+      }
+    } catch (error) {
+      console.error('fetchLockInfo Error', error);
+    } finally {
+      console.log('fetchLockInfo finishes');
     }
   }, [params]);
 

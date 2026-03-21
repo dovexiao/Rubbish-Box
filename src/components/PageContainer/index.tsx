@@ -320,7 +320,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                 setRefreshing(true);
                 await onRefresh();
               } finally {
-                setRefreshing(false);
+                setTimeout(() => setRefreshing(false), 500);
               }
             }}
           />
@@ -357,10 +357,12 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       paddingVertical,
       contentContainerStyle,
       contentStyle,
-      keyboardShouldPersistTaps,
-      onRetry,
-      reloadSeed,
-    ]);
+        keyboardShouldPersistTaps,
+        onRetry,
+        reloadSeed,
+        refreshing,
+        onRefresh,
+      ]);
 
     // 3. 安全区与背景图适配 (Safe Area & Background)
 

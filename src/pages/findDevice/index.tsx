@@ -202,7 +202,7 @@ export default function FindDevice(props: any) {
       );
 
       // 兜底补全信息（因为原生层给鸿蒙只返回了纯物理MAC，我们把原有的本地信息填回去）
-      if (Platform.OS !== 'ios' && Platform.OS !== 'android' && isPaired) {
+      if (isPaired) {
         deviceInfo = deviceInfo ? { ...savedDeviceInfo, ...deviceInfo } : null;
         setState({ isPaired: true });
         await setStorage({

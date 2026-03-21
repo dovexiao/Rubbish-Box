@@ -175,6 +175,21 @@ baseConfig.resolver = {
         );
       }
 
+      if (moduleName === 'react-native-webview') {
+        // Harmony 平台：重新定向到含有 TurboModule 兼容的鸿蒙专用 npm 包
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(
+            __dirname,
+            'node_modules/@react-native-oh-tpl/react-native-webview/src/index.ts',
+          ),
+          platform,
+        );
+      }
+
       if (moduleName === 'react-native-view-shot') {
         // Harmony 平台：重新定向到含有 TurboModule 兼容的鸿蒙专用 npm 包，保持所有 React 层验证逻辑
         return resolve(
