@@ -72,7 +72,6 @@ const BinDevice: React.FC = () => {
         if (res?.code === 200) {
           showToast('识别成功');
           const data = res.data || {};
-          console.log(data, '===data');
 
           navigation.navigate(
             'FindDevice' as never,
@@ -88,9 +87,11 @@ const BinDevice: React.FC = () => {
           );
         } else {
           setErrorMsg(res?.message || '识别失败，请重试');
-          popVisibleRef.current = true;
           setIsActive(false);
-          popRef.current?.open();
+          setTimeout(() => {
+            popVisibleRef.current = true;
+            popRef.current?.open();
+          }, 600);
           hasScannedRef.current = false;
         }
       } catch (error) {
