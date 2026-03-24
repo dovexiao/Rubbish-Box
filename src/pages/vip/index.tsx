@@ -14,6 +14,7 @@ import {
   ImageStyle,
   FlatList,
   Platform,
+  InteractionManager,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Flex from '@/components/Flex';
@@ -80,6 +81,7 @@ const VipPage = () => {
   const [shareImagePath, setShareImagePath] = useState<string | undefined>();
   const [unUseCount, setUnUseCount] = useState<number>(0);
   const [sharePopupVisible, setSharePopupVisible] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const shareContentRef = useRef<any>(null);
   const startTimePopRef = useRef<any>(null);
   const endTimePopRef = useRef<any>(null);
@@ -255,6 +257,11 @@ const VipPage = () => {
   };
 
   const onShare = async (detail: any) => {
+    if (isSharing) return;
+    setIsSharing(true);
+    // iOS 从微信返回时，先关闭弹窗可避免 Portal Modal 遮罩残留导致页面假死
+    setSharePopupVisible(false);
+
     showLoading({ title: '生成分享图片中...' });
     try {
       const isInstalledWeChat: any = await checkInstalledWeChat();
@@ -266,6 +273,10 @@ const VipPage = () => {
         hideLoading();
         return;
       }
+
+      await new Promise<void>(resolve => {
+        InteractionManager.runAfterInteractions(() => resolve());
+      });
 
       let imagePath = await generateShareImage({
         details: detail,
@@ -293,6 +304,7 @@ const VipPage = () => {
       console.error('分享失败:', error);
       showToast({ title: '分享失败，请重试', icon: 'none' });
     } finally {
+      setIsSharing(false);
       hideLoading();
     }
   };
@@ -818,7 +830,7 @@ const VipPage = () => {
         <Popup
           visible={sharePopupVisible}
           onClose={() => setSharePopupVisible(false)}
-          minHeight={507}
+          minHeight={510}
           showClose={false}
         >
           <Flex
@@ -945,6 +957,7 @@ const VipPage = () => {
                   styles.shareBtn,
                 ]}
                 onPress={() => {
+                  if (isSharing) return;
                   if (!shareDetail) return;
                   void onShare(shareDetail);
                 }}

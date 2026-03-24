@@ -6,7 +6,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import Flex from '@/components/Flex';
 import GradientButton from '@/components/GradientButton';
 import PopConfirm, { type PopConfirmRef } from '@/components/popConfirm';
@@ -46,6 +53,16 @@ export const BeeBuzzingCollisionPop = forwardRef<
     setBeeBuzzingCollision(isOpen);
     setBuzzerTime(String(time ?? ''));
   }, [isOpen, time]);
+
+  const openTestConfirm = useCallback(() => {
+    // iOS 下两个 Modal 叠加显示偶发失败，先收起底部弹层再展示确认弹窗更稳定。
+    if (Platform.OS === 'ios') {
+      popupRef.current?.close();
+      setTimeout(() => testConfirmRef.current?.open?.(), 360);
+      return;
+    }
+    setTimeout(() => testConfirmRef.current?.open?.(), 120);
+  }, []);
 
   useEffect(() => {
     refreshState();
@@ -122,9 +139,7 @@ export const BeeBuzzingCollisionPop = forwardRef<
                       height={24}
                       round={false}
                       btnBorderRadius={6}
-                      onPress={() => {
-                        testConfirmRef.current?.open();
-                      }}
+                      onPress={openTestConfirm}
                       text="测试"
                       textStyle={styles.testBtnText}
                     />

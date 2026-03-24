@@ -454,6 +454,7 @@ export default function DeviceList() {
           currentLock?.coverStatus === COVER_STATUS.OPEN ? '关闭' : '打开'
         }锁盖吗？`}
         onConfirm={async () => {
+          coverConfirmRef.current?.close();
           await operateCover();
         }}
       />

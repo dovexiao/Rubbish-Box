@@ -455,7 +455,9 @@ const Login = () => {
             : () => {
                 setAgree(true);
                 myNextTick(() => {
-                  agreePopRef.current?.close();
+                  setTimeout(() => {
+                    agreePopRef.current?.close();
+                  }, 600);
                   eventCenter.trigger('onNext');
                 });
               }
@@ -511,7 +513,9 @@ const Login = () => {
         showClose={false}
         confirmText="我知道了"
         onConfirm={async () => {
-          retainPopRef.current?.close();
+          setTimeout(() => {
+            retainPopRef.current?.close();
+          }, 600);
           return;
           try {
             await cacheSetSync('guestMode', true);

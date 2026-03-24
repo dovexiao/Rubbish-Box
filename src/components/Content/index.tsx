@@ -499,7 +499,10 @@ const Content: React.FC<ContentProps> = ({
                 handleOperate('RISE');
               } else {
                 bluetoothControlRef.current = 'RISE';
-                bluetoothConnectStatusRef.current?.open();
+                setTimeout(
+                  () => bluetoothConnectStatusRef.current?.open?.(),
+                  600,
+                );
               }
             }}
           >
@@ -519,7 +522,10 @@ const Content: React.FC<ContentProps> = ({
                 handleOperate('DOWN');
               } else {
                 bluetoothControlRef.current = 'DOWN';
-                bluetoothConnectStatusRef.current?.open();
+                setTimeout(
+                  () => bluetoothConnectStatusRef.current?.open?.(),
+                  600,
+                );
               }
             }}
           >
@@ -813,7 +819,7 @@ const Content: React.FC<ContentProps> = ({
           if (detail?.powerType === 1) {
             await operateCover();
           } else {
-            bluetoothConnectStatusRef.current?.open();
+            setTimeout(() => bluetoothConnectStatusRef.current?.open?.(), 600);
           }
         }}
       />

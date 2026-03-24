@@ -46,8 +46,7 @@ case $1 in
     bundle install
     
     # 执行 fastlane 构建并上传蒲公英
-    # SKIP_BUNDLING=1 表示跳过 React Native 的 bundle 步骤（fastlane 会处理）
-    cross-env SKIP_BUNDLING=1 DEPLOY_VERSION=$version NODE_ENV=production DEPLOY_ENV=dev ENVFILE=.env.development bundle exec fastlane dev
+    cross-env DEPLOY_VERSION=$version NODE_ENV=production DEPLOY_ENV=dev ENVFILE=.env.development bundle exec fastlane dev
     
     cd ..
     ;;
@@ -90,8 +89,7 @@ case $1 in
     bundle install
     
     # 执行 fastlane 构建并上传蒲公英
-    # SKIP_BUNDLING=1 表示跳过 React Native 的 bundle 步骤（fastlane 会处理）
-    cross-env SKIP_BUNDLING=1 DEPLOY_VERSION=$version NODE_ENV=production DEPLOY_ENV=real ENVFILE=.env.production bundle exec fastlane real
+    cross-env DEPLOY_VERSION=$version NODE_ENV=production DEPLOY_ENV=real ENVFILE=.env.production bundle exec fastlane real
     
     cd ..
     ;;
@@ -134,7 +132,7 @@ case $1 in
     bundle install
     
     # 执行 fastlane 构建并上传蒲公英
-    cross-env SKIP_BUNDLING=1 DEPLOY_VERSION=$version NODE_ENV=production DEPLOY_ENV=staging ENVFILE=.env.staging bundle exec fastlane staging
+    cross-env DEPLOY_VERSION=$version NODE_ENV=production DEPLOY_ENV=staging ENVFILE=.env.staging bundle exec fastlane staging
     
     cd ..
     ;;

@@ -363,7 +363,6 @@ const Index = () => {
         }
       }
     }
-
     if (hasInvalid) {
       await setStorage({ key: 'bluetoothDeviceInfoList', data: nextDeviceMap });
       if (Platform.OS === 'ios' || Platform.OS === 'android') {

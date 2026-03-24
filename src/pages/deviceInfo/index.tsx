@@ -128,17 +128,17 @@ const DeviceInfo = () => {
     try {
       if (!params.lockId) return;
       const res = await getInfo({
-      id: params?.lockId,
-    });
-    if (res.code === 200 && res.success) {
-      setLockInfo(res.data);
-      setLockName(res.data.lockName);
-    }
+        id: params?.lockId,
+      });
+      if (res.code === 200 && res.success) {
+        setLockInfo(res.data);
+        setLockName(res.data.lockName);
+      }
 
-    const result = await getLockInfo({
-      id: params?.lockId,
-    });
-    if (result.code === 200 && result.success) {
+      const result = await getLockInfo({
+        id: params?.lockId,
+      });
+      if (result.code === 200 && result.success) {
         setDeviceInfo(result.data);
       }
     } catch (error) {
@@ -233,9 +233,11 @@ const DeviceInfo = () => {
   );
 
   const testBuzzer = async () => {
+    showLoading({ title: '测试中...' });
     const res = await operateBuzzing({
       id: params?.lockId,
     });
+    console.log(res, '===res');
     if (res?.code === 200 && res?.success) {
       showToast('蜂鸣测试成功');
     } else {
@@ -523,7 +525,10 @@ const DeviceInfo = () => {
                     <Text style={styles.cardValue}>蜂鸣测试</Text>
                     <TouchableOpacity
                       style={styles.testBtn}
-                      onPress={testBuzzer}
+                      onPress={async () => {
+                        console.log('===testBuzzer');
+                        await testBuzzer();
+                      }}
                     >
                       <Text style={styles.testBtnText}>测试</Text>
                     </TouchableOpacity>

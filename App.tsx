@@ -201,7 +201,7 @@ function App() {
         const by = byRes?.data;
         // 仅当来源非 login（或未设置）时由 App 层重弹
         if (!agreed && needReopen && by !== 'login') {
-          agreePopRef.current?.open?.();
+          setTimeout(() => agreePopRef.current?.open?.(), 600);
         }
         // 无论是否打开，均重置标记
         try {
@@ -220,7 +220,7 @@ function App() {
   useEffect(() => {
     const handler = (config: any) => {
       setGlobalPopConfirmConfig(config);
-      globalPopConfirmRef.current?.open();
+      setTimeout(() => globalPopConfirmRef.current?.open?.(), 600);
     };
     eventCenter.on('global:popConfirm:show', handler);
     return () => {
@@ -637,7 +637,7 @@ function App() {
                     cancelText="不同意"
                     onCancel={() => {
                       agreePopRef.current?.close?.();
-                      retainPopRef.current?.open?.();
+                      setTimeout(() => retainPopRef.current?.open?.(), 600);
                     }}
                     submitBtn={
                       <GradientButton

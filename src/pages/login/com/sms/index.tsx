@@ -65,6 +65,8 @@ const Sms: React.FC<SmsProps> = ({
       }
     } catch {
       showToast('发送失败，请重试');
+    } finally {
+      hideLoading();
     }
   };
 
@@ -86,6 +88,12 @@ const Sms: React.FC<SmsProps> = ({
       hideLoading();
     };
   }, [mobile, agree]);
+
+  useEffect(() => {
+    return () => {
+      hideLoading();
+    };
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

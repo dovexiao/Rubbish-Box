@@ -2,11 +2,20 @@
 
 default_platform(:ios)
 
+def bundle_react_native_ios(envfile)
+  sh("rm -f ../ios/main.jsbundle")
+  sh("mkdir -p ../ios")
+  sh("mkdir -p ../ios/assets")
+  sh("cd .. && npx cross-env ENVFILE=#{envfile} react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios/assets")
+  UI.success("✅ 已生成 iOS JSBundle: ios/main.jsbundle")
+end
+
 platform :ios do
   desc "构建开发环境 iOS 并上传蒲公英"
   lane :dev do
     # 设置版本号
     version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    bundle_react_native_ios(".env.development")
     
     # 构建 IPA
     build_app(
@@ -45,6 +54,7 @@ platform :ios do
   lane :real do
     # 设置版本号
     version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    bundle_react_native_ios(".env.production")
     
     # 构建 IPA
     build_app(
@@ -82,6 +92,7 @@ platform :ios do
   lane :staging do
     # 设置版本号
     version = ENV["DEPLOY_VERSION"] || Time.now.strftime("%Y%m%d%H%M%S")
+    bundle_react_native_ios(".env.staging")
     
     # 构建 IPA
     build_app(

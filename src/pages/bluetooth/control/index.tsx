@@ -666,7 +666,7 @@ export default function BluetoothControl() {
         type="pass"
         onSuccess={async () => {
           if (optionTypeRef?.current === 1) {
-            settingPinRef.current?.open();
+            setTimeout(() => settingPinRef.current?.open?.(), 600);
           } else if (optionTypeRef?.current === 2) {
             await handleToggleProximity();
           }

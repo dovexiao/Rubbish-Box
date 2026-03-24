@@ -283,31 +283,32 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
             </Text>
           </Flex>
         </View>
-
-        <View style={styles.popup}>
-          <Flex
-            style={{ width: '100%', marginTop: 31, marginBottom: 16 }}
-            direction="row"
-            justify="center"
-            align="center"
-          >
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.cancalBtn}
-              onPress={close}
+        {details?.status === 1 && (
+          <View style={styles.popup}>
+            <Flex
+              style={{ width: '100%', marginTop: 31, marginBottom: 16 }}
+              direction="row"
+              justify="center"
+              align="center"
             >
-              <Text>取消</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={[styles.confirmBtn, styles.bgColor333]}
-              onPress={() => onShare?.()}
-              disabled={!shareDetail}
-            >
-              <Text style={{ color: '#ffffff' }}>发送给贵宾</Text>
-            </TouchableOpacity>
-          </Flex>
-        </View>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.cancalBtn}
+                onPress={close}
+              >
+                <Text>取消</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={[styles.confirmBtn, styles.bgColor333]}
+                onPress={() => onShare?.()}
+                disabled={!shareDetail}
+              >
+                <Text style={{ color: '#ffffff' }}>发送给贵宾</Text>
+              </TouchableOpacity>
+            </Flex>
+          </View>
+        )}
       </AnimationPop>
     );
   },
