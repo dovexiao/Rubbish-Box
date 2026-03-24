@@ -203,8 +203,9 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       defaultBackgroundColor.toLowerCase() === '#fff'
         ? 'dark-content'
         : theme.colors.statusBar.barStyle);
-    const defaultStatusBarBackgroundColor =
-      statusBarBackgroundColor ?? theme.colors.statusBar.backgroundColor;
+    const defaultStatusBarBackgroundColor = backgroundImage
+      ? 'transparent'
+      : statusBarBackgroundColor ?? theme.colors.statusBar.backgroundColor;
 
     // 1. 导航栏处理 (Navigation Header)
     const renderNavHeader = useMemo(() => {
@@ -362,12 +363,12 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       paddingVertical,
       contentContainerStyle,
       contentStyle,
-        keyboardShouldPersistTaps,
-        onRetry,
-        reloadSeed,
-        refreshing,
-        onRefresh,
-      ]);
+      keyboardShouldPersistTaps,
+      onRetry,
+      reloadSeed,
+      refreshing,
+      onRefresh,
+    ]);
 
     // 3. 安全区与背景图适配 (Safe Area & Background)
 
@@ -428,7 +429,8 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
         {/* iOS 状态栏背景兜底：RN 的 StatusBar backgroundColor 在某些情况下不生效 */}
         {Platform.OS === 'ios' &&
           showStatusBar &&
-          !!statusBarBackgroundColor &&
+          !!defaultStatusBarBackgroundColor &&
+          defaultStatusBarBackgroundColor !== 'transparent' &&
           !loading && (
             <View
               pointerEvents="none"
@@ -438,7 +440,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                 left: 0,
                 right: 0,
                 height: insets.top,
-                backgroundColor: statusBarBackgroundColor,
+                backgroundColor: defaultStatusBarBackgroundColor,
                 zIndex: 999,
               }}
             />
