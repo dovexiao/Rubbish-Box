@@ -205,7 +205,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
         : theme.colors.statusBar.barStyle);
     const defaultStatusBarBackgroundColor = backgroundImage
       ? 'transparent'
-      : statusBarBackgroundColor ?? theme.colors.statusBar.backgroundColor;
+      : statusBarBackgroundColor ?? defaultBackgroundColor;
 
     // 1. 导航栏处理 (Navigation Header)
     const renderNavHeader = useMemo(() => {
