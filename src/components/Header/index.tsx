@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({
     </TouchableOpacity>
   );
 
-  const isGroupOrNonMains = lockInfo?.isGroup || lockInfo?.powerType !== 1;
+  const isGroupOrNonMains = lockInfo?.isGroup;
   const isHarmony = !['ios', 'android'].includes(Platform.OS);
   const deviceStatus = lockInfo?.deviceStatus;
 

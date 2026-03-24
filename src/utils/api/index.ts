@@ -31,6 +31,17 @@ const isSameMac = (mac1?: string, mac2?: string): boolean => {
   return normalize(mac1) === normalize(mac2);
 };
 
+export const formatMacForHarmony = (id: string): string => {
+  const isHarmony = Platform.OS != 'android' && Platform.OS != 'ios';
+  if (isHarmony && id && id.length === 12 && !id.includes(':')) {
+    return id
+      .replace(/(.{2})/g, '$1:')
+      .slice(0, -1)
+      .toUpperCase();
+  }
+  return id || '';
+};
+
 const parseMacFromBase64 = (base64Str: string): string | null => {
   if (!base64Str) return null;
   try {
@@ -390,41 +401,152 @@ export const connectBluetoothDevice = (
             }
           }
 
-          // 兜底补丁：如果依然抛出 not found，执行一次静默极速扫描，迫使 ble-plx 实例化此对象，再从新连接
-          if (isHarmony && errMsg.includes('not found')) {
-            return new Promise<any>((res, rej) => {
+          // 兜底补丁：如果在鸿蒙下抛出 not found 或 connection failed，可能是底层对象未完成实例化或处于离线失效状态，进行一次静默扫描再尝试连接
+          if (
+            isHarmony &&
+            (errMsg.includes('not found') ||
+              errMsg.includes('connection failed') ||
+              errMsg.includes('disconnected'))
+          ) {
+            return new Promise<any>(async (res, rej) => {
+              console.log(
+                '[Harmony BLE] Cleaning up zombie connection before fallback scan...',
+              );
+              await bleInstance
+                .cancelDeviceConnection(deviceId)
+                .catch(() => {});
+              await sleep(1500); // 留给底层断开释放并让设备重新开始广播的时间
+
+              try {
+                await bleInstance.stopDeviceScan();
+              } catch (stopErr) {}
+              await sleep(300);
+
               let isHandled = false;
               let scanTimer: ReturnType<typeof setTimeout> | null = null;
-              const handleFinish = (hasFound: boolean, errInfo: any) => {
+              const handleFinish = (
+                hasFound: boolean,
+                targetIdToConnect?: string,
+                errInfo?: any,
+              ) => {
                 if (isHandled) return;
                 isHandled = true;
                 if (scanTimer) clearTimeout(scanTimer);
                 bleInstance.stopDeviceScan();
-                if (hasFound) {
-                  bleInstance.connectToDevice(deviceId).then(res).catch(rej);
+                if (hasFound && targetIdToConnect) {
+                  console.log(
+                    `[Harmony BLE] fallback scan found device ${targetIdToConnect}, attempting connectToDevice again...`,
+                  );
+                  bleInstance
+                    .connectToDevice(targetIdToConnect)
+                    .then(res)
+                    .catch(rej);
                 } else {
+                  console.log(
+                    '[Harmony BLE] fallback scan failed to find device.',
+                  );
                   rej(errInfo || e);
                 }
               };
 
-              bleInstance.startDeviceScan(null, null, (errScan, device) => {
-                if (
-                  device &&
-                  (device.id === deviceId || isSameMac(device.id, deviceId))
-                ) {
-                  handleFinish(true, null);
+              let targetBleNo = '';
+              try {
+                const deviceInfoList = await storageUtil
+                  .getItem<any>('bluetoothDeviceInfoList')
+                  .catch(() => null);
+                const deviceMap =
+                  deviceInfoList && typeof deviceInfoList === 'object'
+                    ? 'data' in deviceInfoList
+                      ? (deviceInfoList as any).data || {}
+                      : (deviceInfoList as any)
+                    : {};
+                for (const [bleNo, info] of Object.entries(deviceMap)) {
+                  if ((info as any)?.deviceId === deviceId) {
+                    targetBleNo = bleNo;
+                    break;
+                  }
                 }
-              });
-              // 给2秒扫描容错时间
+              } catch (err) {}
+
+              if (targetBleNo) {
+                console.log(
+                  '[Harmony BLE] fallback scan reverse lookup targetBleNo:',
+                  targetBleNo,
+                );
+              }
+
+              let seen: Record<string, boolean> = {};
+              bleInstance.startDeviceScan(
+                null,
+                { allowDuplicates: false },
+                (errScan, device) => {
+                  if (errScan) {
+                    console.log(
+                      '[Harmony BLE] fallback scan error:',
+                      errScan.message,
+                    );
+                    return;
+                  }
+                  if (device) {
+                    if (!seen[device.id]) {
+                      seen[device.id] = true;
+                      console.log(
+                        `[Harmony BLE] fallback scan saw: ${device.id} name: ${
+                          device.name
+                        } localName: ${
+                          device.localName
+                        } serviceData: ${JSON.stringify(
+                          device.serviceData,
+                        )} manufacturerData: ${device.manufacturerData}`,
+                      );
+                    }
+                    if (
+                      device.id === deviceId ||
+                      isSameMac(device.id, deviceId)
+                    ) {
+                      handleFinish(true, device.id);
+                    } else if (
+                      targetBleNo &&
+                      isSameMac(device.id, targetBleNo)
+                    ) {
+                      console.log(
+                        '[Harmony BLE] fallback scan matched original bleNo MAC!',
+                      );
+                      handleFinish(true, device.id);
+                    } else if (
+                      targetBleNo &&
+                      device.name &&
+                      device.name.includes(
+                        targetBleNo.substring(
+                          Math.max(0, targetBleNo.length - 6),
+                        ),
+                      )
+                    ) {
+                      console.log(
+                        '[Harmony BLE] fallback scan matched device name containing bleNo!',
+                      );
+                      handleFinish(true, device.id);
+                    }
+                  }
+                },
+              );
+              // 给至少5秒扫描容错时间
               scanTimer = setTimeout(() => {
+                console.log('[Harmony BLE] fallback scan timeout!');
                 handleFinish(false, e);
-              }, 2000);
+              }, 10000);
             });
           }
           throw e;
         });
 
-      if (!connectedDevice) return resolve({ success: false });
+      if (!connectedDevice) {
+        console.log('[Harmony BLE] connectToDevice returned null');
+        return resolve({
+          success: false,
+          error: new Error('connectToDevice returned null'),
+        });
+      }
       connectedDevice =
         await connectedDevice.discoverAllServicesAndCharacteristics();
 
@@ -444,7 +566,7 @@ export const connectBluetoothDevice = (
         }
 
         // 鸿蒙系统下，discover后立刻拿去监听通知可能会因为底层服务树还没映射完毕导致报错，这里多给一点点初始化时间
-        await sleep(200);
+        await sleep(1500);
       }
       resolve({
         success: true,
@@ -454,8 +576,9 @@ export const connectBluetoothDevice = (
           device: connectedDevice,
         },
       });
-    } catch {
-      resolve({ success: false });
+    } catch (error) {
+      console.log('[Harmony BLE] Outer connectBluetoothDevice catch', error);
+      resolve({ success: false, error });
     }
   });
 };
@@ -981,12 +1104,10 @@ export const sendDataToDevice = (options: {
         : options.value.slice(0, byteLength > speed ? speed : byteLength),
     );
 
-    // [Final Fix] Use withoutResponse directly on HarmonyOS to prevent deadlock.
-    const writeMethod = isHarmony
-      ? bleInstance.writeCharacteristicWithoutResponseForDevice.bind(
-          bleInstance,
-        )
-      : bleInstance.writeCharacteristicWithResponseForDevice.bind(bleInstance);
+    // 恢复双端重试机制：将写命令的发送首选恢复为带响应的写入
+    // 这点对于部分严格的地锁硬件固件非常重要，如果无脑WithoutResponse可能直接死等
+    const writeMethod =
+      bleInstance.writeCharacteristicWithResponseForDevice.bind(bleInstance);
 
     writeMethod(
       options.deviceId,
@@ -1010,32 +1131,28 @@ export const sendDataToDevice = (options: {
           err,
           typeof err === 'object' ? err.reason : '',
         );
-        // Only fallback on Android/iOS, abort and bubble up on HarmonyOS to avoid queue deadlock
-        if (!isHarmony) {
-          bleInstance
-            .writeCharacteristicWithoutResponseForDevice(
-              options.deviceId,
-              options.writeServiceUuid,
-              options.writeCharacteristicUuid,
-              rawData,
-            )
-            .then(() => {
-              if (byteLength > speed && !options.once) {
-                sendDataToDevice({
-                  ...options,
-                  value: options.value.slice(speed, byteLength),
-                });
-              } else {
-                options.lasterSuccess && options.lasterSuccess();
-              }
-            })
-            .catch(err2 => {
-              console.log('[Harmony BLE] Write Fallback Failed', err2);
-              options.onError && options.onError(err2);
-            });
-        } else {
-          options.onError && options.onError(err);
-        }
+        // 对所有系统（包括鸿蒙）开启 Fallback 支持：如果不被支持抛错，再自动进入 catch 包退回 WithoutResponse
+        bleInstance
+          .writeCharacteristicWithoutResponseForDevice(
+            options.deviceId,
+            options.writeServiceUuid,
+            options.writeCharacteristicUuid,
+            rawData,
+          )
+          .then(() => {
+            if (byteLength > speed && !options.once) {
+              sendDataToDevice({
+                ...options,
+                value: options.value.slice(speed, byteLength),
+              });
+            } else {
+              options.lasterSuccess && options.lasterSuccess();
+            }
+          })
+          .catch(err2 => {
+            console.log('[Harmony BLE] Write Fallback Failed', err2);
+            options.onError && options.onError(err2);
+          });
       });
   }
 };
@@ -1101,7 +1218,7 @@ const sendBleCommandWithAck = async (options: {
     pin,
     mac,
     status,
-    timeoutMs = 4000,
+    timeoutMs = 6000,
     successMsg,
     failMsg,
   } = options;
@@ -1201,7 +1318,7 @@ const sendBleCommandWithAck = async (options: {
       if (isHarmony) {
         const sleep = (ms: number) =>
           new Promise(resolve => setTimeout(resolve, ms));
-        await sleep(500); // Wait for the OS to finalize notification listener before writing
+        await sleep(1500); // Wait for the OS to finalize notification listener before writing
       }
 
       sendDataToDevice({
@@ -1239,7 +1356,7 @@ export const OperationCommandByBluetooth = async (options: {
   deviceNo?: string;
   msg?: string;
 }> => {
-  const { deviceId, operation, deviceNo, timeoutMs = 4000 } = options;
+  const { deviceId, operation, deviceNo, timeoutMs = 6000 } = options;
   const result = await sendBleCommandWithAck({
     deviceId,
     type: 'operation',
@@ -1286,7 +1403,7 @@ export const sendModeCommandByBluetooth = async (options: {
   code?: number;
   msg?: string;
 }> => {
-  const { deviceId, mode, deviceNo, timeoutMs = 4000 } = options;
+  const { deviceId, mode, deviceNo, timeoutMs = 6000 } = options;
   const result = await sendBleCommandWithAck({
     deviceId,
     type: 'mode',
@@ -1311,7 +1428,7 @@ export const sendChangePinByBluetooth = async (options: {
   msg?: string;
   newMac?: string;
 }> => {
-  const { deviceId, pin, deviceNo, timeoutMs = 4000 } = options;
+  const { deviceId, pin, deviceNo, timeoutMs = 6000 } = options;
 
   // 先获取旧的MAC地址，计算新的MAC地址
   let oldBleNo: string | null = null;
@@ -1427,7 +1544,7 @@ export const setNearbyPermission = async (options: {
   deviceNo?: string;
   msg?: string;
 }> => {
-  const { deviceId, status, deviceNo, timeoutMs = 4000 } = options;
+  const { deviceId, status, deviceNo, timeoutMs = 6000 } = options;
   const result = await sendBleCommandWithAck({
     deviceId,
     type: 'near',

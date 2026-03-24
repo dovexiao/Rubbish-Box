@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, Image, Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
+import FastImage from 'react-native-fast-image';
 import PageContainer from '@/components/PageContainer';
 import Header from '@/components/Header';
 import NoDevices from '@/components/NoDevices';
@@ -391,6 +392,31 @@ const Index = () => {
   const bgImageUri = detail?.imageMap?.bgPng;
   const bgImage =
     bgImageUri && bgImageUri !== 'null' ? { uri: bgImageUri } : undefined;
+
+  useEffect(() => {
+    const imageMap = detail?.imageMap;
+    if (!imageMap) return;
+
+    const urls = Object.values(imageMap)
+      .filter((uri): uri is string => typeof uri === 'string')
+      .filter(uri => !!uri && uri !== 'null');
+    const uniqUrls = Array.from(new Set(urls));
+    if (uniqUrls.length === 0) return;
+
+    // 统一预热首屏可能会显示的静态图与动图，避免首次蓝牙操作动图偶现空白。
+    uniqUrls.forEach(uri => {
+      Image.prefetch(uri).catch(() => {});
+    });
+
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      FastImage.preload(
+        uniqUrls.map(uri => ({
+          uri,
+          priority: FastImage.priority.normal,
+        })),
+      );
+    }
+  }, [detail?.imageMap]);
 
   const hasBluetoothAutoOpen = async () => {
     const result = await getBluetoothDeviceInfo().catch(() => ({}));

@@ -103,6 +103,24 @@ const Content: React.FC<ContentProps> = ({
   const sleep = (time: number) =>
     new Promise(resolve => setTimeout(resolve, time));
 
+  const getBluetoothAnimationType = (
+    direction: 'RISE' | 'DOWN',
+    currentStatus: LockVisualStatus,
+  ) => {
+    if (direction === 'DOWN') {
+      return currentStatus === 'rise30'
+        ? 'falling30'
+        : currentStatus === 'rise120'
+        ? 'falling120'
+        : 'falling';
+    }
+    return currentStatus === 'rise30'
+      ? 'rising30'
+      : currentStatus === 'rise120'
+      ? 'rising120'
+      : 'rising';
+  };
+
   // 地锁操作
   const handleOperate = useCallback(
     async (direction: 'RISE' | 'DOWN') => {
@@ -285,6 +303,7 @@ const Content: React.FC<ContentProps> = ({
   // 蓝牙操作地锁
   const handleOperateByBluetooth = async (direction: 'RISE' | 'DOWN') => {
     try {
+      eventCenter.trigger('onOptioned', true);
       const bleNo = detail?.bleNo;
       const deviceMap =
         (await getBluetoothDeviceInfo().catch(() => null)) || {};
@@ -297,12 +316,13 @@ const Content: React.FC<ContentProps> = ({
         return;
       }
 
-      if (lockFallStatus === direction) {
-        showToast({
-          title: `地锁已经处于${direction === 'RISE' ? '升起' : '降下'}状态`,
-        });
-        return;
-      }
+      // 前端不再拦截蓝牙发送，允许同一状态重复发送以处理被卡住或状态不同步的情况
+      // if (lockFallStatus === direction) {
+      //   showToast({
+      //     title: `地锁已经处于${direction === 'RISE' ? '升起' : '降下'}状态`,
+      //   });
+      //   return;
+      // }
 
       showLoading({
         title: `${direction === 'RISE' ? '升起中...' : '降下中...'}`,
@@ -316,17 +336,23 @@ const Content: React.FC<ContentProps> = ({
       });
 
       if (r.success) {
-        await sleep(4000);
+        eventCenter.trigger('onAnimation', {
+          type: getBluetoothAnimationType(direction, currentDeviceStatus),
+          value: true,
+        });
+        await sleep(1200);
         hideLoading();
         setLockStatus(preV => direction);
       } else {
         await sleep(4000);
         hideLoading();
+        eventCenter.trigger('onOptioned', false);
         showToast({ title: r.msg || '操作失败', icon: 'none' });
       }
     } catch (error) {
       await sleep(4000);
       hideLoading();
+      eventCenter.trigger('onOptioned', false);
       bluetoothConnectStatusRef.current?.open();
     }
   };
