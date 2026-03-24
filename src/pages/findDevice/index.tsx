@@ -706,7 +706,63 @@ export default function FindDevice(props: any) {
       scrollable={false}
     >
       <Flex direction="column" align="center" style={styles.content}>
-        {!!!needPin ? (
+        {needScan ? (
+          <>
+            <Image
+              source={{
+                uri: SEARCH_BLUETOOTH_STATUS_IMAGE[
+                  searchBluetoothStatus
+                ] as string,
+              }}
+              style={{ width: 160, height: 160 }}
+              resizeMode="contain"
+            />
+            <Flex style={styles.countdownContainer}>
+              {searchBluetoothStatus === SEARCH_BLUETOOTH_STATUS.SEARCHING ? (
+                <>
+                  <Text style={styles.countdownText}>正在连接中</Text>
+                  <Text style={[styles.countdownText, styles.countdownNumber]}>
+                    {Math.round(countdown / 1000)}s
+                  </Text>
+                </>
+              ) : (
+                <Text style={styles.countdownText}>
+                  {SEARCH_BLUETOOTH_STATUS_NAME[searchBluetoothStatus] ??
+                    (searchBluetoothStatus ===
+                    SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS
+                      ? '已找到设备'
+                      : '搜索失败')}
+                </Text>
+              )}
+            </Flex>
+
+            {searchBluetoothStatus !==
+              SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS && (
+              <Flex direction="column" style={styles.card}>
+                <Flex style={styles.rowMargin} align="center">
+                  <View style={styles.dot} />
+                  <Text style={styles.cardItemText}>
+                    开启【{lockName || '未知名称'}】地锁电源
+                  </Text>
+                </Flex>
+                <Flex style={styles.cardItem} align="center">
+                  <View style={styles.dot} />
+                  <Text style={styles.cardItemText}>
+                    确认手机开启蓝牙，并靠近【{lockName || '未知名称'}】地锁
+                  </Text>
+                </Flex>
+                <Flex style={styles.cardItem} align="center">
+                  <View style={styles.dot} />
+                  <Text style={styles.cardItemText}>
+                    如果长时间未连接成功，请去系统设置蓝牙列表中忽略
+                    <Text style={styles.deviceName}>"{bleName}"</Text>
+                    ,并且重新搜索
+                  </Text>
+                </Flex>
+              </Flex>
+            )}
+          </>
+        ) : !!!needPin ? (
           <>
             <View style={styles.iconWrapper2}>
               <AppIcon name="bluetooth-1" size={35} color="#333333" />
@@ -734,150 +790,80 @@ export default function FindDevice(props: any) {
           </>
         ) : (
           <>
-            {needScan ? (
-              <>
-                <Image
-                  source={{
-                    uri: SEARCH_BLUETOOTH_STATUS_IMAGE[
-                      searchBluetoothStatus
-                    ] as string,
+            <View style={styles.iconWrapper}>
+              <AppIcon name="bluetooth-1" size={32} color="#333333" />
+            </View>
+            <View style={styles.titleWrapper}>
+              <Text style={styles.title}>请确保地锁通电</Text>
+              <TouchableOpacity
+                style={styles.titleIcon}
+                onPress={() => powerIndicatorPopRef?.current?.open()}
+              >
+                <AppIcon name="explain" size={18} color="#333333" />
+                <Text style={styles.titleIconText}>通电指南</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Flex style={styles.infoSection} direction="column">
+              <Flex style={styles.infoBox}>
+                <View style={styles.infoContent}>
+                  <Text style={styles.infoLabel}>蓝牙名称</Text>
+                  <Text style={styles.infoValue}>{bleName}</Text>
+                </View>
+              </Flex>
+            </Flex>
+
+            <Flex style={styles.infoSection} direction="column">
+              <Flex style={styles.infoBox}>
+                <View style={styles.infoContent}>
+                  <Text style={styles.infoLabel}>PIN码</Text>
+                  <Text style={styles.pinValue}>{pin}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.copyButton}
+                  onPress={async () => {
+                    await setClipboardData({ data: String(pin) });
+                    await showToast({ title: '复制成功', icon: 'success' });
                   }}
-                  style={{ width: 160, height: 160 }}
-                  resizeMode="contain"
-                />
-                <Flex style={styles.countdownContainer}>
-                  {searchBluetoothStatus ===
-                  SEARCH_BLUETOOTH_STATUS.SEARCHING ? (
-                    <>
-                      <Text style={styles.countdownText}>正在连接中</Text>
-                      <Text
-                        style={[styles.countdownText, styles.countdownNumber]}
-                      >
-                        {Math.round(countdown / 1000)}s
-                      </Text>
-                    </>
-                  ) : (
-                    <Text style={styles.countdownText}>
-                      {SEARCH_BLUETOOTH_STATUS_NAME[searchBluetoothStatus] ??
-                        (searchBluetoothStatus ===
-                        SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS
-                          ? '已找到设备'
-                          : '搜索失败')}
-                    </Text>
-                  )}
-                </Flex>
-
-                {searchBluetoothStatus !==
-                  SEARCH_BLUETOOTH_STATUS.SEARCH_SUCCESS && (
-                  <Flex direction="column" style={styles.card}>
-                    <Flex style={styles.rowMargin} align="center">
-                      <View style={styles.dot} />
-                      <Text style={styles.cardItemText}>
-                        开启【{lockName || '未知名称'}】地锁电源
-                      </Text>
-                    </Flex>
-                    <Flex style={styles.cardItem} align="center">
-                      <View style={styles.dot} />
-                      <Text style={styles.cardItemText}>
-                        确认手机开启蓝牙，并靠近【{lockName || '未知名称'}】地锁
-                      </Text>
-                    </Flex>
-                    <Flex style={styles.cardItem} align="center">
-                      <View style={styles.dot} />
-                      <Text style={styles.cardItemText}>
-                        如果长时间未连接成功，请去系统设置蓝牙列表中忽略
-                        <Text style={styles.deviceName}>"{bleName}"</Text>
-                        ,并且重新搜索
-                      </Text>
-                    </Flex>
-                  </Flex>
-                )}
-              </>
-            ) : (
-              <>
-                <View style={styles.iconWrapper}>
-                  <AppIcon name="bluetooth-1" size={32} color="#333333" />
-                </View>
-                <View style={styles.titleWrapper}>
-                  <Text style={styles.title}>请确保地锁通电</Text>
-                  <TouchableOpacity
-                    style={styles.titleIcon}
-                    onPress={() => powerIndicatorPopRef?.current?.open()}
-                  >
-                    <AppIcon name="explain" size={18} color="#333333" />
-                    <Text style={styles.titleIconText}>通电指南</Text>
-                  </TouchableOpacity>
-                </View>
-
-                <Flex style={styles.infoSection} direction="column">
-                  <Flex style={styles.infoBox}>
-                    <View style={styles.infoContent}>
-                      <Text style={styles.infoLabel}>蓝牙名称</Text>
-                      <Text style={styles.infoValue}>{bleName}</Text>
-                    </View>
-                  </Flex>
-                </Flex>
-
-                <Flex style={styles.infoSection} direction="column">
-                  <Flex style={styles.infoBox}>
-                    <View style={styles.infoContent}>
-                      <Text style={styles.infoLabel}>PIN码</Text>
-                      <Text style={styles.pinValue}>{pin}</Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.copyButton}
-                      onPress={async () => {
-                        await setClipboardData({ data: String(pin) });
-                        await showToast({ title: '复制成功', icon: 'success' });
-                      }}
-                    >
-                      <AppIcon name="copy1" size={20} color="#6b7280" />
-                      <Text style={{ fontSize: 12, color: '#6b7280' }}>
-                        点击复制
-                      </Text>
-                    </TouchableOpacity>
-                  </Flex>
-                </Flex>
-
-                <Flex
-                  style={(styles.footer, { marginTop: 8 })}
-                  justify="center"
                 >
-                  <GradientButton
-                    colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                    width={160}
-                    height={44}
-                    round={false}
-                    btnBorderRadius={16}
-                    onPress={() => handlePairing()}
-                  >
-                    <Flex
-                      style={styles.btnText}
-                      justify="center"
-                      align="center"
-                    >
-                      <Text style={styles.btnTextInner}>跳转设置</Text>
-                    </Flex>
-                  </GradientButton>
-                </Flex>
-
-                <View style={styles.tips}>
-                  <Text style={styles.tipsText}>
-                    因机型不同，蓝牙搜索需要几分钟，请耐心等待
+                  <AppIcon name="copy1" size={20} color="#6b7280" />
+                  <Text style={{ fontSize: 12, color: '#6b7280' }}>
+                    点击复制
                   </Text>
-                </View>
+                </TouchableOpacity>
+              </Flex>
+            </Flex>
 
-                <View style={styles.footerWrapper}>
-                  <Image
-                    source={{
-                      uri: 'https://g.18qjz.cn/img/boklock/bluetooth_link.gif',
-                    }}
-                    style={{ width: '65%', height: 350 }}
-                    resizeMode="contain"
-                  />
-                </View>
-              </>
-            )}
+            <Flex style={(styles.footer, { marginTop: 8 })} justify="center">
+              <GradientButton
+                colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
+                width={160}
+                height={44}
+                round={false}
+                btnBorderRadius={16}
+                onPress={() => handlePairing()}
+              >
+                <Flex style={styles.btnText} justify="center" align="center">
+                  <Text style={styles.btnTextInner}>跳转设置</Text>
+                </Flex>
+              </GradientButton>
+            </Flex>
+
+            <View style={styles.tips}>
+              <Text style={styles.tipsText}>
+                因机型不同，蓝牙搜索需要几分钟，请耐心等待
+              </Text>
+            </View>
+
+            <View style={styles.footerWrapper}>
+              <Image
+                source={{
+                  uri: 'https://g.18qjz.cn/img/boklock/bluetooth_link.gif',
+                }}
+                style={{ width: '65%', height: 350 }}
+                resizeMode="contain"
+              />
+            </View>
           </>
         )}
       </Flex>
