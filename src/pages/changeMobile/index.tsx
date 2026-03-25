@@ -17,6 +17,8 @@ type Step = 1 | 2;
 export default function ChangeMobile() {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
+  const [hasGetCode, setHasGetCode] = useState(false);
+  const [hasGetCode2, setHasGetCode2] = useState(false);
 
   // 当前步骤 & 流程 id
   const [step, setStep] = useState<Step>(1);
@@ -40,13 +42,13 @@ export default function ChangeMobile() {
   const [newFlowId, setNewFlowId] = useState<string | null>(null);
 
   const canNextOld = useMemo(
-    () => !!oldMobile && oldCode.trim().length > 0,
-    [oldMobile, oldCode],
+    () => !!oldMobile && oldCode.trim().length > 0 && hasGetCode,
+    [oldMobile, oldCode, hasGetCode],
   );
 
   const canSubmitNew = useMemo(
-    () => mobileExp(newMobile) && newCode.trim().length > 0,
-    [newMobile, newCode],
+    () => mobileExp(newMobile) && newCode.trim().length > 0 && hasGetCode2,
+    [newMobile, newCode, hasGetCode2],
   );
 
   // 原手机倒计时
@@ -79,6 +81,7 @@ export default function ChangeMobile() {
     }
     if (oldSending) return;
     setOldSending(true);
+    setHasGetCode(true);
     try {
       const isResend = !!(oldError || oldSmsRequested);
       const api = isResend ? getCodeResent : getChangeMobileCode;
@@ -161,6 +164,7 @@ export default function ChangeMobile() {
     }
     if (newSending) return;
     setNewSending(true);
+    setHasGetCode2(true);
     try {
       const isResend = !!(newError || newSmsRequested);
       const api = isResend ? getCodeResent : getChangeNewCode;
@@ -253,6 +257,7 @@ export default function ChangeMobile() {
     ? '再次获取'
     : '获取验证码';
 
+  console.log(hasGetCode, '====');
   return (
     <PageContainer
       backgroundColor="#FFFFFF"
