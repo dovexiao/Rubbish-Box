@@ -6,7 +6,7 @@ const loginStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: 81,
+    marginTop: 70,
   },
   content: {
     marginTop: 16,

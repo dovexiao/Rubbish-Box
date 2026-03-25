@@ -12,14 +12,15 @@ import StaticConfig from './env.static.json';
 const Config: any = _Config && _Config.ENV ? _Config : StaticConfig || {};
 
 // 环境类型
-export type EnvType = 'development' | 'production';
+export type EnvType = 'development' | 'production' | 'dev' | 'real';
 
 // 1) 先用 .env 里的 ENV
 export const ENV: EnvType = (Config.ENV as EnvType) || 'development';
 
 // 2) 部署环境优先用 .env 里的 DEPLOY_ENV，其次根据 ENV 推导
 export const DEPLOY_ENV =
-  Config.DEPLOY_ENV || (ENV === 'production' ? 'real' : 'dev');
+  Config.DEPLOY_ENV ||
+  (ENV === 'production' || ENV === 'real' ? 'real' : 'dev');
 // 获取灰度标识
 export const GRAY = Config.GRAY === 'true';
 
