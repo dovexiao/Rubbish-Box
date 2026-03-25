@@ -98,16 +98,61 @@ const VipPage = () => {
   ];
   const [username, setUsername] = useState('');
   const [mobile, setMobile] = useState('');
+  const usernameRef = useRef('');
+  const mobileRef = useRef('');
+  const usernameInputRef = useRef<any>(null);
+  const mobileInputRef = useRef<any>(null);
 
-  const pickStringFromResult = (result: any, key: string): string => {
-    if (typeof result === 'string') return result;
-    if (result && typeof result === 'object') {
-      if (typeof result[key] === 'string') return result[key];
-      if (result.data && typeof result.data === 'object') {
-        if (typeof result.data[key] === 'string') return result.data[key];
-      }
+  const setInputTextByRef = (inputRef: React.RefObject<any>, text: string) => {
+    try {
+      inputRef.current?.setNativeProps?.({ text });
+    } catch {}
+  };
+
+  const resolveMobileByUsername = async (rawUsername?: string) => {
+    const finalUsername = (rawUsername ?? usernameRef.current ?? '').trim();
+    if (!finalUsername) {
+      return;
     }
-    return '';
+    usernameRef.current = finalUsername;
+    setUsername(finalUsername);
+    const res = await getMobileByName({
+      username: finalUsername,
+    });
+    const resolvedMobile = res?.data ?? '';
+    if (resolvedMobile && resolvedMobile !== '') {
+      mobileRef.current = resolvedMobile;
+      setMobile(resolvedMobile);
+      setInputTextByRef(mobileInputRef, resolvedMobile);
+      setInfo((prev: any) => ({
+        ...prev,
+        username: finalUsername,
+        mobile: resolvedMobile,
+      }));
+    }
+  };
+
+  const resolveUsernameByMobile = async (rawMobile?: string) => {
+    const finalMobile = (rawMobile ?? mobileRef.current ?? '').trim();
+    if (!finalMobile) {
+      return;
+    }
+    mobileRef.current = finalMobile;
+    setMobile(finalMobile);
+    const res = await getNameByMobile({
+      mobile: finalMobile,
+    });
+    const resolvedUsername = res?.data ?? '';
+    if (resolvedUsername && resolvedUsername !== '') {
+      usernameRef.current = resolvedUsername;
+      setUsername(resolvedUsername);
+      setInputTextByRef(usernameInputRef, resolvedUsername);
+      setInfo((prev: any) => ({
+        ...prev,
+        mobile: finalMobile,
+        username: resolvedUsername,
+      }));
+    }
   };
 
   const router = useRoute<any>();
@@ -173,6 +218,9 @@ const VipPage = () => {
   };
 
   const handleInvite = async () => {
+    const finalUsername = (usernameRef.current || username || '').trim();
+    const finalMobile = (mobileRef.current || mobile || '').trim();
+
     if (!startTime) {
       showToast({ title: '请选择开始时间' });
       return;
@@ -200,8 +248,8 @@ const VipPage = () => {
     const res: any = await saveInvite({
       adminUserId,
       userLockIds: selectedDeviceList,
-      username,
-      mobile,
+      username: finalUsername,
+      mobile: finalMobile,
       startTime,
       endTime,
       limitTime: noLimit ? null : customUsageCount,
@@ -209,6 +257,7 @@ const VipPage = () => {
       // status: 0,  // 状态：1-生效中 2-已使用 10-过期未用 20-已作废
     });
     if (res.code == 200) {
+      await getCount();
       const shareDetail = await getSimpleDetails(res?.data);
       setShareDetail(shareDetail.data);
       setSharePopupVisible(true);
@@ -219,7 +268,6 @@ const VipPage = () => {
     const res: any = await simpleDetails({
       id,
     });
-    console.log(res, '====');
 
     setShareDetail(res);
     return res;
@@ -411,35 +459,17 @@ const VipPage = () => {
           <Flex style={styles.itemContent} align="center" justify="between">
             <Text style={[styles.label]}>姓名</Text>
             <TextInput
+              ref={usernameInputRef}
               placeholder="请输入姓名"
               maxLength={11}
-              value={username}
+              defaultValue={username}
               placeholderTextColor="#CCCCCC"
               style={styles.input}
               onChangeText={text => {
-                setUsername(text);
-                setInfo((prev: any) => ({
-                  ...prev,
-                  username: text,
-                }));
+                usernameRef.current = text;
               }}
-              onEndEditing={async event => {
-                const finalUsername = (event?.nativeEvent?.text ?? '').trim();
-                if (!finalUsername) {
-                  return;
-                }
-                const res = await getMobileByName({
-                  username: finalUsername,
-                });
-                const resolvedMobile = pickStringFromResult(res, 'mobile');
-                if (resolvedMobile) {
-                  setMobile(resolvedMobile);
-                  setInfo((prev: any) => ({
-                    ...prev,
-                    username: finalUsername,
-                    mobile: resolvedMobile,
-                  }));
-                }
+              onBlur={async event => {
+                await resolveMobileByUsername(event?.nativeEvent?.text);
               }}
             />
           </Flex>
@@ -450,36 +480,18 @@ const VipPage = () => {
           >
             <Text style={[styles.label]}>手机号码</Text>
             <TextInput
+              ref={mobileInputRef}
               placeholder="请输入手机号"
-              value={mobile}
+              defaultValue={mobile}
               keyboardType="numeric"
               maxLength={11}
               placeholderTextColor="#CCCCCC"
               style={styles.input}
               onChangeText={text => {
-                setMobile(text);
-                setInfo((prev: any) => ({
-                  ...prev,
-                  mobile: text,
-                }));
+                mobileRef.current = text;
               }}
-              onEndEditing={async event => {
-                const finalMobile = (event?.nativeEvent?.text ?? '').trim();
-                if (!finalMobile) {
-                  return;
-                }
-                const res = await getNameByMobile({
-                  mobile: finalMobile,
-                });
-                const resolvedUsername = pickStringFromResult(res, 'username');
-                if (resolvedUsername) {
-                  setUsername(resolvedUsername);
-                  setInfo((prev: any) => ({
-                    ...prev,
-                    mobile: finalMobile,
-                    username: resolvedUsername,
-                  }));
-                }
+              onBlur={async event => {
+                await resolveUsernameByMobile(event?.nativeEvent?.text);
               }}
             />
           </Flex>

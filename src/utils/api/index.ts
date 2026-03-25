@@ -732,7 +732,7 @@ export const checkIfDeviceIgnoredOnIOS = (
   bleName?: string,
 ): Promise<{ isIgnored: boolean; reason?: string }> => {
   return new Promise(async resolve => {
-    if (Platform.OS === 'ios' || isHarmony) {
+    if (Platform.OS === 'ios') {
       if (!deviceId) {
         resolve({ isIgnored: false, reason: '设备ID为空' });
         return;

@@ -330,233 +330,238 @@ const DeviceInfo = () => {
       padding={0}
       footer={deviceInfo?.role === 1 ? footerBtn() : undefined}
     >
-      <Flex style={styles.container} direction="column">
-        <Flex direction="row" align="center">
-          <View style={styles.cardTitleLine} />
-          <Text style={styles.cardTitle}>基础信息</Text>
-        </Flex>
-        <Flex
-          isTouchView
-          style={styles.cardRows}
-          onPress={() => {
-            if (!params.isAdmin) return;
-            editNamePopRef.current?.open();
-          }}
-        >
-          <Text style={styles.cardLable}>设备名称</Text>
-          <Text style={styles.cardValue}>{lockInfo?.lockName ?? ''}</Text>
-          {params.isAdmin && (
-            <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-          )}
-        </Flex>
-        <Flex style={styles.cardRows}>
-          <Text style={styles.cardLable}>地锁SN码</Text>
-          <Text style={styles.cardValue}>{lockInfo?.lockId ?? ''}</Text>
-        </Flex>
-        <Flex style={[styles.cardRows, { position: 'relative' }]}>
-          <Text style={styles.cardLable}>供电模式</Text>
-          <Text style={[styles.cardValue, { marginRight: 4 }]}>
-            {lockInfo?.powerType === 1
-              ? '市电版'
-              : lockInfo?.powerType === 0
-              ? '电池版'
-              : '未知'}
-          </Text>
-          {typeof lockInfo?.powerType == 'number' && (
-            <TouchableOpacity
-              onPress={() => {
-                setShowPowerModeTips(!showPowerModeTips);
-              }}
-              // onPressIn={() => {
-              //   setShowPowerModeTips(true);
-              // }}
-              // onPressOut={() => {
-              //   setShowPowerModeTips(false);
-              // }}
-            >
-              <AppIcon name={'a-styledescription'} color="#333" size={20} />
-            </TouchableOpacity>
-          )}
-          {showPowerModeTips && (
-            <View style={styles.powerModeTooltip}>
-              {lockInfo?.powerType === 1 && (
-                <Text style={styles.powerModeTooltipText}>
-                  市电款：需连接家用电源，电力持续稳定
-                </Text>
-              )}
-              {lockInfo?.powerType === 0 && (
-                <Text style={styles.powerModeTooltipText}>
-                  电池款：内置电池，无需布线，安装位置灵活
-                </Text>
-              )}
-            </View>
-          )}
-        </Flex>
-        <Flex style={styles.cardRows}>
-          <Text style={styles.cardLable}>二维码</Text>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => {
+          if (showPowerModeTips) {
+            setShowPowerModeTips(false);
+          }
+        }}
+        style={{ flex: 1 }}
+      >
+        <Flex style={styles.container} direction="column">
           <Flex direction="row" align="center">
-            <TouchableOpacity
-              style={styles.qrCodeBtn}
-              onPress={() => qrCodePopRef.current?.open()}
-            >
-              <Text style={styles.qrCodeBtnText}>查看</Text>
-              <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-            </TouchableOpacity>
-            {deviceInfo?.role === 1 && (
-              <TouchableOpacity
-                style={[styles.qrCodeBtn, { marginLeft: 12 }]}
-                onPress={() => changeQrCodePopRef.current?.open()}
-              >
-                <Text style={styles.qrCodeBtnText}>更换二维码</Text>
-                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-              </TouchableOpacity>
-            )}
+            <View style={styles.cardTitleLine} />
+            <Text style={styles.cardTitle}>基础信息</Text>
           </Flex>
-        </Flex>
-        <Flex
-          isTouchView
-          style={styles.cardRows}
-          onPress={() => {
-            if (!lockInfo?.id) return;
-            navigation.navigate('FirmwareVersion', {
-              lockId: lockInfo?.id,
-              currentVersion: lockInfo?.version || '',
-            });
-          }}
-        >
-          <Text style={styles.cardLable}>固件版本</Text>
-          <Text style={styles.cardValue}>
-            当前版本{lockInfo?.version ?? ''}
-          </Text>
-          <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-        </Flex>
-        <Flex
-          isTouchView
-          style={styles.cardRows}
-          onPress={() => {
-            if (!lockInfo?.id) return;
-            navigation.navigate('DeviceLog', { lockId: lockInfo?.id });
-          }}
-        >
-          <Text style={styles.cardLable}>设备日志</Text>
-          <Text style={styles.cardValue}>{'查看'}</Text>
-          <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-        </Flex>
-
-        {!params.isAdmin && (
-          <Flex style={styles.cardRows}>
-            <Text style={styles.cardLable}>管理员信息</Text>
-            <TouchableOpacity
-              style={styles.cardRowsTouch}
-              onPress={() => adminRef?.current?.open()}
-            >
-              <Text style={styles.cardValue}>{'查看'}</Text>
-              <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-            </TouchableOpacity>
-          </Flex>
-        )}
-
-        <Flex style={styles.cardLine} />
-        <Flex direction="row" align="center">
-          <View style={styles.cardTitleLine} />
-          <Text style={styles.cardTitle}>功能设置</Text>
-        </Flex>
-        {lockInfo?.powerType == 0 && (
-          <Flex
-            // isTouchView
-            style={styles.cardRows}
-            // onPress={() => batteryReminderRef.current?.open()}
-          >
-            <Text style={styles.cardLable}>电量提醒</Text>
-            <Text style={styles.cardValue}>{`电量低于${
-              deviceInfo?.warnBattery ?? 20
-            }%时提醒`}</Text>
-          </Flex>
-        )}
-        {lockInfo?.powerType == 0 && (
           <Flex
             isTouchView
             style={styles.cardRows}
-            onPress={() => batteryReminderRef.current?.open()}
+            onPress={() => {
+              if (!params.isAdmin) return;
+              editNamePopRef.current?.open();
+            }}
           >
-            <Text style={styles.cardLable}>充电指导</Text>
+            <Text style={styles.cardLable}>设备名称</Text>
+            <Text style={styles.cardValue}>{lockInfo?.lockName ?? ''}</Text>
+            {params.isAdmin && (
+              <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+            )}
+          </Flex>
+          <Flex style={styles.cardRows}>
+            <Text style={styles.cardLable}>地锁SN码</Text>
+            <Text style={styles.cardValue}>{lockInfo?.lockId ?? ''}</Text>
+          </Flex>
+          <Flex style={[styles.cardRows, { position: 'relative' }]}>
+            <Text style={styles.cardLable}>供电模式</Text>
+            <Text style={[styles.cardValue, { marginRight: 4 }]}>
+              {lockInfo?.powerType === 1
+                ? '市电版'
+                : lockInfo?.powerType === 0
+                ? '电池版'
+                : '未知'}
+            </Text>
+            {typeof lockInfo?.powerType == 'number' && (
+              <TouchableOpacity
+                onPress={e => {
+                  e && e.stopPropagation?.();
+                  setShowPowerModeTips(!showPowerModeTips);
+                }}
+              >
+                <AppIcon name={'a-styledescription'} color="#333" size={20} />
+              </TouchableOpacity>
+            )}
+            {showPowerModeTips && (
+              <View style={styles.powerModeTooltip}>
+                {lockInfo?.powerType === 1 && (
+                  <Text style={styles.powerModeTooltipText}>
+                    市电款：需连接家用电源，电力持续稳定
+                  </Text>
+                )}
+                {lockInfo?.powerType === 0 && (
+                  <Text style={styles.powerModeTooltipText}>
+                    电池款：内置电池，无需布线，安装位置灵活
+                  </Text>
+                )}
+              </View>
+            )}
+          </Flex>
+          <Flex style={styles.cardRows}>
+            <Text style={styles.cardLable}>二维码</Text>
+            <Flex direction="row" align="center">
+              <TouchableOpacity
+                style={styles.qrCodeBtn}
+                onPress={() => qrCodePopRef.current?.open()}
+              >
+                <Text style={styles.qrCodeBtnText}>查看</Text>
+                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+              </TouchableOpacity>
+              {deviceInfo?.role === 1 && (
+                <TouchableOpacity
+                  style={[styles.qrCodeBtn, { marginLeft: 12 }]}
+                  onPress={() => changeQrCodePopRef.current?.open()}
+                >
+                  <Text style={styles.qrCodeBtnText}>更换二维码</Text>
+                  <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+                </TouchableOpacity>
+              )}
+            </Flex>
+          </Flex>
+          <Flex
+            isTouchView
+            style={styles.cardRows}
+            onPress={() => {
+              if (!lockInfo?.id) return;
+              navigation.navigate('FirmwareVersion', {
+                lockId: lockInfo?.id,
+                currentVersion: lockInfo?.version || '',
+              });
+            }}
+          >
+            <Text style={styles.cardLable}>固件版本</Text>
+            <Text style={styles.cardValue}>
+              当前版本{lockInfo?.version ?? ''}
+            </Text>
+            <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+          </Flex>
+          <Flex
+            isTouchView
+            style={styles.cardRows}
+            onPress={() => {
+              if (!lockInfo?.id) return;
+              navigation.navigate('DeviceLog', { lockId: lockInfo?.id });
+            }}
+          >
+            <Text style={styles.cardLable}>设备日志</Text>
             <Text style={styles.cardValue}>{'查看'}</Text>
             <AppIcon name={'a-headfor-20'} color="#333" size={20} />
           </Flex>
-        )}
 
-        {deviceInfo?.powerType === 1 && (
-          <Flex
-            style={
-              (styles.cardRows,
-              lockInfo?.powerType === 1 ? {} : { alignItems: 'flex-start' })
-            }
-          >
-            {lockInfo?.powerType === 1 ? (
-              <>
-                <Text style={styles.cardLable}>碰撞蜂鸣</Text>
-                <TouchableOpacity
-                  style={styles.cardRowsTouch}
-                  onPress={() => {
-                    if (lockInfo?.powerType !== 1) return;
-                    beeBuzzingCollisionRef.current?.open();
-                  }}
-                >
-                  <Text style={styles.cardValue}>
-                    {deviceInfo?.buzzerStatus === 1 ? '已开启' : '未开启'}
-                  </Text>
-                  <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-                </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                <Text style={styles.cardLable}>碰撞蜂鸣</Text>
-                <View
-                  style={[
-                    styles.cardValue,
-                    {
-                      alignSelf: 'flex-end',
-                      flexDirection: 'column',
-                      alignItems: 'flex-end',
-                    },
-                  ]}
-                >
-                  <Flex direction="row" align="center">
-                    <Text style={styles.cardValue}>蜂鸣测试</Text>
-                    <TouchableOpacity
-                      style={styles.testBtn}
-                      onPress={async () => {
-                        console.log('===testBuzzer');
-                        await testBuzzer();
-                      }}
-                    >
-                      <Text style={styles.testBtnText}>测试</Text>
-                    </TouchableOpacity>
-                  </Flex>
-                  <Text style={styles.toastText}>{`触发碰撞蜂鸣${
-                    deviceInfo?.buzzerTime ?? '10'
-                  }秒后停止蜂鸣`}</Text>
-                </View>
-              </>
-            )}
+          {!params.isAdmin && (
+            <Flex style={styles.cardRows}>
+              <Text style={styles.cardLable}>管理员信息</Text>
+              <TouchableOpacity
+                style={styles.cardRowsTouch}
+                onPress={() => adminRef?.current?.open()}
+              >
+                <Text style={styles.cardValue}>{'查看'}</Text>
+                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+              </TouchableOpacity>
+            </Flex>
+          )}
+
+          <Flex style={styles.cardLine} />
+          <Flex direction="row" align="center">
+            <View style={styles.cardTitleLine} />
+            <Text style={styles.cardTitle}>功能设置</Text>
           </Flex>
-        )}
-
-        <Flex style={styles.cardRows}>
-          <Text style={styles.cardLable}>离车升锁</Text>
-          <TouchableOpacity
-            style={styles.cardRowsTouch}
-            onPress={() => leaveRiseLockRef.current?.open()}
-          >
-            <Text
-              style={styles.cardValue}
-            >{`车辆离开${lockInfo?.leaveUpTime}秒后升起`}</Text>
-            {lockInfo?.powerType === 1 && (
+          {lockInfo?.powerType == 0 && (
+            <Flex
+              // isTouchView
+              style={styles.cardRows}
+              // onPress={() => batteryReminderRef.current?.open()}
+            >
+              <Text style={styles.cardLable}>电量提醒</Text>
+              <Text style={styles.cardValue}>{`电量低于${
+                deviceInfo?.warnBattery ?? 20
+              }%时提醒`}</Text>
+            </Flex>
+          )}
+          {lockInfo?.powerType == 0 && (
+            <Flex
+              isTouchView
+              style={styles.cardRows}
+              onPress={() => batteryReminderRef.current?.open()}
+            >
+              <Text style={styles.cardLable}>充电指导</Text>
+              <Text style={styles.cardValue}>{'查看'}</Text>
               <AppIcon name={'a-headfor-20'} color="#333" size={20} />
-            )}
-          </TouchableOpacity>
+            </Flex>
+          )}
+
+          {deviceInfo?.powerType === 1 && (
+            <Flex
+              style={
+                (styles.cardRows,
+                lockInfo?.powerType === 1 ? {} : { alignItems: 'flex-start' })
+              }
+            >
+              {lockInfo?.powerType === 1 ? (
+                <>
+                  <Text style={styles.cardLable}>碰撞蜂鸣</Text>
+                  <TouchableOpacity
+                    style={styles.cardRowsTouch}
+                    onPress={() => {
+                      if (lockInfo?.powerType !== 1) return;
+                      beeBuzzingCollisionRef.current?.open();
+                    }}
+                  >
+                    <Text style={styles.cardValue}>
+                      {deviceInfo?.buzzerStatus === 1 ? '已开启' : '未开启'}
+                    </Text>
+                    <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.cardLable}>碰撞蜂鸣</Text>
+                  <View
+                    style={[
+                      styles.cardValue,
+                      {
+                        alignSelf: 'flex-end',
+                        flexDirection: 'column',
+                        alignItems: 'flex-end',
+                      },
+                    ]}
+                  >
+                    <Flex direction="row" align="center">
+                      <Text style={styles.cardValue}>蜂鸣测试</Text>
+                      <TouchableOpacity
+                        style={styles.testBtn}
+                        onPress={async () => {
+                          console.log('===testBuzzer');
+                          await testBuzzer();
+                        }}
+                      >
+                        <Text style={styles.testBtnText}>测试</Text>
+                      </TouchableOpacity>
+                    </Flex>
+                    <Text style={styles.toastText}>{`触发碰撞蜂鸣${
+                      deviceInfo?.buzzerTime ?? '10'
+                    }秒后停止蜂鸣`}</Text>
+                  </View>
+                </>
+              )}
+            </Flex>
+          )}
+
+          <Flex style={styles.cardRows}>
+            <Text style={styles.cardLable}>离车升锁</Text>
+            <TouchableOpacity
+              style={styles.cardRowsTouch}
+              onPress={() => leaveRiseLockRef.current?.open()}
+            >
+              <Text
+                style={styles.cardValue}
+              >{`车辆离开${lockInfo?.leaveUpTime}秒后升起`}</Text>
+              {lockInfo?.powerType === 1 && (
+                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+              )}
+            </TouchableOpacity>
+          </Flex>
         </Flex>
-      </Flex>
+      </TouchableOpacity>
 
       {/* 编辑地锁名称弹窗 */}
       <AnimationPop ref={editNamePopRef} direction="bottom" coverSafeArea>

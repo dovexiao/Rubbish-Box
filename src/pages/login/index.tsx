@@ -1,17 +1,7 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  Alert,
-  TouchableOpacity,
-  Pressable,
-  AppState,
-  Button,
-  Platform,
-} from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, Image, Pressable, AppState, Platform } from 'react-native';
 import { Flex, PageContainer } from '@/components';
-import { getThirdState, miniLogin, thirdLogin } from '@/services';
+import { getThirdState, thirdLogin } from '@/services';
 import { tokenStorage } from '@/utils/storage';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import Sms from './com/sms';
