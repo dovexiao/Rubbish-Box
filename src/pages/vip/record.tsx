@@ -260,6 +260,12 @@ export default function VipRecordPage() {
     </View>
   );
 
+  useEffect(() => {
+    return () => {
+      onShareAppMessage;
+    };
+  }, []);
+
   return (
     <PageContainer
       backgroundColor="#F6F7FA"
@@ -303,7 +309,7 @@ export default function VipRecordPage() {
 
       <InviteCodePop
         ref={animationPopRef}
-        maxHeight={507}
+        // maxHeight={507}
         styles={styles}
         details={details}
         shareDetail={shareDetail}
@@ -317,7 +323,7 @@ export default function VipRecordPage() {
           );
         }}
         onInvalidate={() => {
-          animationPopRef.current?.close();
+          setTimeout(() => animationPopRef.current?.close?.(), 600);
           setTimeout(() => deleteRef.current?.open?.(), 600);
         }}
         onShare={() => handleShare(shareDetail)}

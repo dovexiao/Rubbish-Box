@@ -327,6 +327,12 @@ const VipPage = () => {
     });
   }, [shareDetail, shareImagePath]);
 
+  useEffect(() => {
+    return () => {
+      onShareAppMessage;
+    };
+  }, []);
+
   return (
     <PageContainer
       pageNavProps={{ showBack: true, text: '宾客邀请' }}

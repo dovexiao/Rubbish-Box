@@ -10,6 +10,14 @@ def bundle_react_native_ios(envfile)
   UI.success("✅ 已生成 iOS JSBundle: ios/main.jsbundle")
 end
 
+def build_app_with_env(options, envfile)
+  build_app(
+    **options,
+    # 让 react-native-config 在 iOS 编译阶段读取指定 .env，避免回退到静态 dev 配置
+    xcargs: "ENVFILE=#{envfile}"
+  )
+end
+
 platform :ios do
   desc "构建开发环境 iOS 并上传蒲公英"
   lane :dev do
@@ -18,19 +26,22 @@ platform :ios do
     bundle_react_native_ios(".env.development")
     
     # 构建 IPA
-    build_app(
-      workspace: "boklock.xcworkspace",
-      scheme: "boklock",
-      configuration: "Debug",
-      export_method: "development",
-      export_options: {
-        method: "development",
-        provisioningProfiles: {
-          # 替换为你的 Provisioning Profile UUID
-          "com.boklock.dev.m" => "your-dev-provisioning-profile-name"
-        }
+    build_app_with_env(
+      {
+        workspace: "boklock.xcworkspace",
+        scheme: "boklock",
+        configuration: "Debug",
+        export_method: "development",
+        export_options: {
+          method: "development",
+          provisioningProfiles: {
+            # 替换为你的 Provisioning Profile UUID
+            "com.boklock.dev.m" => "your-dev-provisioning-profile-name"
+          }
+        },
+        skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
       },
-      skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
+      ".env.development"
     )
     
     # 查找 IPA 文件
@@ -57,19 +68,22 @@ platform :ios do
     bundle_react_native_ios(".env.production")
     
     # 构建 IPA
-    build_app(
-      workspace: "boklock.xcworkspace",
-      scheme: "boklock",
-      configuration: "Release",
-      export_method: "app-store", # 或 "ad-hoc" / "enterprise"
-      export_options: {
-        method: "app-store",
-        provisioningProfiles: {
-          # 替换为你的 Provisioning Profile UUID
-          "com.boklock.real.m" => "your-prod-provisioning-profile-name"
-        }
+    build_app_with_env(
+      {
+        workspace: "boklock.xcworkspace",
+        scheme: "boklock",
+        configuration: "Release",
+        export_method: "app-store", # 或 "ad-hoc" / "enterprise"
+        export_options: {
+          method: "app-store",
+          provisioningProfiles: {
+            # 替换为你的 Provisioning Profile UUID
+            "com.boklock.real.m" => "your-prod-provisioning-profile-name"
+          }
+        },
+        skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
       },
-      skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
+      ".env.production"
     )
     
     # 查找 IPA 文件
@@ -95,18 +109,21 @@ platform :ios do
     bundle_react_native_ios(".env.staging")
     
     # 构建 IPA
-    build_app(
-      workspace: "boklock.xcworkspace",
-      scheme: "boklock",
-      configuration: "Debug",
-      export_method: "development",
-      export_options: {
-        method: "development",
-        provisioningProfiles: {
-          "com.boklock.dev.m" => "your-dev-provisioning-profile-name"
-        }
+    build_app_with_env(
+      {
+        workspace: "boklock.xcworkspace",
+        scheme: "boklock",
+        configuration: "Debug",
+        export_method: "development",
+        export_options: {
+          method: "development",
+          provisioningProfiles: {
+            "com.boklock.dev.m" => "your-dev-provisioning-profile-name"
+          }
+        },
+        skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
       },
-      skip_build_archive: ENV["SKIP_BUNDLING"] == "1" ? false : false
+      ".env.staging"
     )
     
     # 查找 IPA 文件

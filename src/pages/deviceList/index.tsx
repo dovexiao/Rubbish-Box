@@ -350,17 +350,19 @@ export default function DeviceList() {
                   });
                   return;
                 }
-                navigation.navigate('FindDevice', {
-                  bleNo: String(item.bleNo ?? ''),
-                  lockName: item.lockName,
-                  lockId: item.id,
-                  imageMap: (item as any).imageMap ?? {},
-                  pin: String((item as any).blePin ?? ''),
-                  mode: item.mode,
-                  role: String(item.role),
-                  deviceNo: String(item.deviceNo ?? ''),
-                  bleName: (item as any).bleName,
-                  needPin: (item as any).needPin,
+                navigation.navigate('BluetoothControl', {
+                  lockId: item?.id,
+                  bluetoothStatus: !!item?.bluetoothStatus,
+                  lockName: item?.lockName,
+                  bleNo: item?.bleNo,
+                  imageMap: item?.imageMap,
+                  bluetoothHasOpen: item?.bluetoothStatus,
+                  deviceNo: item?.deviceNo,
+                  mode: item?.mode,
+                  role: item?.role,
+                  blePin: item?.blePin,
+                  bleName: item?.bleName,
+                  needPin: item?.needPin,
                 } as any);
               }}
             >

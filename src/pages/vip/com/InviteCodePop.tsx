@@ -73,7 +73,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
       details,
       shareDetail,
       styles,
-      maxHeight = 507,
+      maxHeight = 550,
       onEdit,
       onInvalidate,
       onShare,

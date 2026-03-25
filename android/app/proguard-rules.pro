@@ -8,6 +8,10 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+# react-native-config 使用反射读取应用 BuildConfig 字段（release 里可能被 R8 裁剪导致读取不到）
+-keep class com.boklock.m.BuildConfig { *; }
+-keep class com.boklock.m.test.BuildConfig { *; }
+
 # 高德地图
 -keep class com.amap.api.** { *; }
 -keep class com.autonavi.** { *; }

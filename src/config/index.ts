@@ -69,8 +69,10 @@ export const config = {
   mapKeyHarmony: MAP_KEY_HARMONY,
 };
 
-// 打印当前环境（开发时方便调试）
-if (__DEV__) {
+// 打印当前环境（用于排查打包时 ENV 是否生效；仅打印一次避免刷屏）
+const alreadyLogged = (globalThis as any).__boklock_env_logged__ === true;
+if (!alreadyLogged) {
+  (globalThis as any).__boklock_env_logged__ = true;
   console.log('=== 环境配置 ===');
   console.log(`当前环境: ${ENV}`);
   console.log(`部署环境: ${DEPLOY_ENV}`);

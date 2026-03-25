@@ -14,6 +14,8 @@ ENV['LC_ALL'] = 'en_US.UTF-8'
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
 
+require 'pathname'
+
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
@@ -21,9 +23,34 @@ default_platform(:android)
 
 # 读取环境变量（从项目根目录）
 def load_env_file(env_type)
-  env_file = env_type == 'dev' ? '../../.env.dev' : '../../.env.real'
-  if File.exist?(env_file)
-    File.readlines(env_file).each do |line|
+  # 优先使用 build.sh 传入的 ENVFILE（例如 .env.production / .env.development）
+  # 然后把它拷贝成根目录 .env，确保 react-native-config 会读取到正确内容
+  root_dir = File.expand_path('../../', __dir__)
+  passed_env_file = ENV['ENVFILE']
+  env_file = passed_env_file && !passed_env_file.to_s.strip.empty? ? passed_env_file : (env_type == 'dev' ? '.env.dev' : '.env.real')
+
+  abs_env_file =
+    if Pathname.new(env_file).absolute?
+      env_file
+    else
+      File.expand_path(env_file, root_dir)
+    end
+
+  # react-native-config 的 dotenv.gradle 会从 "$project.rootDir/../$envFile" 读取 env，
+  # 其中 project.rootDir 通常是 android/app，所以最终会去 android/<envFile> 目录找。
+  # 因此这里需要把 env 文件复制到 android/ 下（文件名保持一致）。
+  android_dir = File.join(root_dir, 'android')
+  target_env_android = File.join(android_dir, File.basename(abs_env_file))
+
+  unless File.exist?(abs_env_file)
+    UI.important("⚠️  环境文件不存在: #{abs_env_file}")
+    return
+  end
+
+  # 确保 react-native-config 读取到正确 .env
+  sh("cp '#{abs_env_file}' '#{target_env_android}'")
+
+  File.readlines(abs_env_file).each do |line|
       line.strip!
       next if line.empty? || line.start_with?('#')
       
@@ -31,17 +58,16 @@ def load_env_file(env_type)
       next unless key && value
       
       ENV[key.strip] = value.strip.gsub(/^["']|["']$/, '')
-    end
-    UI.success("✅ 已加载环境配置: #{env_file}")
-  else
-    UI.important("⚠️  环境文件不存在: #{env_file}")
   end
+
+  UI.success("✅ 已加载环境配置: #{abs_env_file} -> #{target_env_android}")
 end
 
 platform :android do
   desc "dev"
   lane :dev do
     # 加载开发环境配置
+    ENV['ENVFILE'] = '.env.development'
     load_env_file('dev')
     # sh("cd ../.. && cp .env.dev .env") 
     
@@ -51,7 +77,9 @@ platform :android do
       task: ":app:generateCodegenArtifactsFromSchema",
       properties: {
         "DEPLOY_VERSION" => ENV['DEPLOY_VERSION'],
-        "DEPLOY_ENV" => ENV['DEPLOY_ENV']
+        "DEPLOY_ENV" => ENV['DEPLOY_ENV'],
+        # 强制 react-native-config 使用指定 env 文件，避免 flavor 推断/ENVFILE 失效回退到默认 dev
+        "defaultEnvFile" => ".env.development"
       }
     )
     
@@ -60,20 +88,43 @@ platform :android do
       task: "assembleDevRelease",
       properties: {
         "DEPLOY_VERSION" => ENV['DEPLOY_VERSION'],
-        "DEPLOY_ENV" => ENV['DEPLOY_ENV']
+        "DEPLOY_ENV" => ENV['DEPLOY_ENV'],
+        "defaultEnvFile" => ".env.development"
       },
-      flags: "--no-daemon"
+      flags: "--no-daemon -DENVFILE=.env.development"
     )
+
+    # 确保上传的是本次 dev flavor 的 apk（避免 fastlane/pgyer 抓到旧包）
+    apk_path = lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH] || nil
+    if !apk_path
+      project_root = File.expand_path('../../', __dir__)
+      apk_candidates = Dir[
+        File.join(
+          project_root,
+          'android',
+          'app',
+          'build',
+          'outputs',
+          'apk',
+          'dev',
+          'release',
+          '*.apk'
+        )
+      ]
+      apk_path = apk_candidates.max_by { |f| File.mtime(f) } if apk_candidates.any?
+    end
     
     # 上传到蒲公英（插件会自动查找 APK，并通过签名自动识别证书）
     api_key = ENV['PGYER_API_KEY'] || '5974674521be3a02a72a22e0a4e87105'
     install_type = ENV['PGYER_INSTALL_TYPE'] || '1'
-    pgyer(api_key: api_key, install_type: install_type.to_s)
+    UI.user_error!("未找到 dev release APK，请检查 app/build/outputs/apk/dev/release") unless apk_path
+    pgyer(api_key: api_key, install_type: install_type.to_s, apk: apk_path)
   end
 
   desc "real"
   lane :real do
     # 加载生产环境配置
+    ENV['ENVFILE'] = '.env.production'
     load_env_file('real')
     # sh("cd ../.. && cp .env.real .env")
     
@@ -83,7 +134,8 @@ platform :android do
       task: ":app:generateCodegenArtifactsFromSchema",
       properties: {
         "DEPLOY_VERSION" => ENV['DEPLOY_VERSION'],
-        "DEPLOY_ENV" => ENV['DEPLOY_ENV']
+        "DEPLOY_ENV" => ENV['DEPLOY_ENV'],
+        "defaultEnvFile" => ".env.production"
       }
     )
     
@@ -92,15 +144,37 @@ platform :android do
       task: "assembleProdRelease",
       properties: {
         "DEPLOY_VERSION" => ENV['DEPLOY_VERSION'],
-        "DEPLOY_ENV" => ENV['DEPLOY_ENV']
+        "DEPLOY_ENV" => ENV['DEPLOY_ENV'],
+        "defaultEnvFile" => ".env.production"
       },
-      flags: "--no-daemon"
+      flags: "--no-daemon -DENVFILE=.env.production"
     )
+
+    # 确保上传的是本次 prod flavor 的 apk（避免 fastlane/pgyer 抓到旧包）
+    apk_path = lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH] || nil
+    if !apk_path
+      project_root = File.expand_path('../../', __dir__)
+      apk_candidates = Dir[
+        File.join(
+          project_root,
+          'android',
+          'app',
+          'build',
+          'outputs',
+          'apk',
+          'prod',
+          'release',
+          '*.apk'
+        )
+      ]
+      apk_path = apk_candidates.max_by { |f| File.mtime(f) } if apk_candidates.any?
+    end
     
     # 上传到蒲公英（插件会自动查找 APK，并通过签名自动识别证书）
     api_key = ENV['PGYER_API_KEY'] || '5974674521be3a02a72a22e0a4e87105'
     install_type = ENV['PGYER_INSTALL_TYPE'] || '1'
-    pgyer(api_key: api_key, install_type: install_type.to_s)
+    UI.user_error!("未找到 prod release APK，请检查 app/build/outputs/apk/prod/release") unless apk_path
+    pgyer(api_key: api_key, install_type: install_type.to_s, apk: apk_path)
   end
 
   desc "Upload dev build to Pgyer"

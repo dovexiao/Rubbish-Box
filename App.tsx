@@ -11,6 +11,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import AntdProvider from '@ant-design/react-native/lib/provider';
 import { AppNavigator } from '@/navigation/AppNavigator';
 import { queryClient } from '@/config/queryClient';
+import { BASE_URL, DEPLOY_ENV } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { setNavigationRef } from '@/utils/navigation';
 import PopConfirm from '@/components/popConfirm';
@@ -115,6 +116,8 @@ function App() {
   useEffect(() => {
     getAppPackageName().then(pkg => {
       console.log('[App] 当前包名:', pkg);
+      console.log('[App] 部署环境:', DEPLOY_ENV);
+      console.log('[App] API 地址:', BASE_URL);
     });
   }, []);
 
