@@ -55,7 +55,7 @@
 		CBD6182A2F65570A00BC703F /* money.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618052F65570A00BC703F /* money.mp3 */; };
 		CBD618312F6557F100BC703F /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CBD6182F2F6557F100BC703F /* Info.plist */; };
 		CBD618322F6557F100BC703F /* boklockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD6182E2F6557F100BC703F /* boklockTests.m */; };
-		CBF206702F75280000944A76 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = CBF2066F2F75280000944A76 /* main.jsbundle */; };
+		CBF206712F75727E00944A76 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = CBF2066F2F75280000944A76 /* main.jsbundle */; };
 		D850CDDBD053AF84D6F349E9 /* libPods-boklock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC5F90C915F2B6987376264 /* libPods-boklock.a */; };
 		F09BFA090CD720F34698B524 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -488,7 +488,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CBF206702F75280000944A76 /* main.jsbundle in Resources */,
+				CBF206712F75727E00944A76 /* main.jsbundle in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				F09BFA090CD720F34698B524 /* PrivacyInfo.xcprivacy in Resources */,
 				90CF046A02224B73B1CA8399 /* antfill.ttf in Resources */,
@@ -821,6 +821,8 @@
 					"-ld_classic",
 					"-Wl",
 					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
 					"-Wl -ld_classic ",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
@@ -898,6 +900,8 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
+					"-Wl",
+					"-ld_classic",
 					"-Wl",
 					"-ld_classic",
 					"-Wl",
