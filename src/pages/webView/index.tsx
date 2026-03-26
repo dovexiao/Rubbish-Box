@@ -78,6 +78,7 @@ const WebViewScreen: React.FC = () => {
   return (
     <PageContainer
       backgroundColor={'#F5F5F5'}
+      statusBarStyle="dark-content"
       paddingHorizontal={0}
       scrollable={false}
       pageNavProps={{ text: title, showBack: true }}
@@ -154,7 +155,7 @@ const WebViewScreen: React.FC = () => {
             onHttpError={syntheticEvent => {
               // 鸿蒙/安卓可能会抛出子资源（如 favicon、打点等）的 404 错误
               // 我们这里只对主文档 url 的 404 进行拦截，确保已成功渲染的网页不会被覆盖
-              if (Platform.OS === 'harmony') {
+              if (Platform.OS !== 'android' && Platform.OS !== 'ios') {
                 // 彻底忽略鸿蒙上的 HttpError 误杀：
                 // 鸿蒙原生 WebView 的 bug 会将即使是单纯由于 favicon.ico 的 404
                 // 也通报为整个当前页面的 404 导致误杀渲染好的主页面。

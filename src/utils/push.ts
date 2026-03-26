@@ -17,14 +17,20 @@ const listeners: Record<string, any> = {};
 
 // 创建一个安全的包装函数，检查 MobPushModule 是否存在
 const safeCall = (method: string, ...args: any[]): any => {
-  if (!MobPushModule || !MobPushModule[method]) {
-    if (__DEV__) {
-      console.warn(`MobPushModule.${method} is not available`);
-    }
+  if (!MobPushModule) {
     return;
   }
   try {
-    return MobPushModule[method](...args);
+    const fn = MobPushModule[method];
+    if (typeof fn !== 'function') {
+      if (__DEV__) {
+        console.warn(
+          `MobPushModule.${method} is not available or not a function`,
+        );
+      }
+      return;
+    }
+    return fn(...args);
   } catch (error) {
     console.error(`Error calling MobPushModule.${method}:`, error);
     return;
