@@ -39,13 +39,11 @@ case $1 in
     # 安装 CocoaPods 依赖
     cd ios
     pod install
-    cd ..
     
     # 安装 Ruby 依赖
-    cd ios
     bundle install
     
-    # 执行 fastlane 构建并上传蒲公英
+    # 执行 fastlane 构建并上传蒲公英（在ios目录下执行）
     npx cross-env DEPLOY_VERSION=$version NODE_ENV=production DEPLOY_ENV=dev ENVFILE=.env.development bundle exec fastlane dev
     
     cd ..
@@ -82,13 +80,11 @@ case $1 in
     # 安装 CocoaPods 依赖
     cd ios
     pod install
-    cd ..
     
     # 安装 Ruby 依赖
-    cd ios
     bundle install
     
-    # 执行 fastlane 构建并上传蒲公英
+    # 执行 fastlane 构建并上传蒲公英（在ios目录下执行）
     npx cross-env DEPLOY_VERSION=$version NODE_ENV=production DEPLOY_ENV=real ENVFILE=.env.production bundle exec fastlane real
     
     cd ..

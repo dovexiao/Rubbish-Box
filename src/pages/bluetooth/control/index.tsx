@@ -63,12 +63,14 @@ type RouteParams = {
   blePin?: string;
   bleName?: string;
   needPin?: number;
+  version?: string;
 };
 
 export default function BluetoothControl() {
   const route = useRoute() as any;
   const navigation = useAppNavigation();
   const params: RouteParams = route?.params || {};
+  console.log('BluetoothControl route params:', params);
 
   const bleNo = String(params.bleNo || '');
   const deviceNo = String(params.deviceNo || '');
@@ -84,6 +86,7 @@ export default function BluetoothControl() {
   const bindSuccessStatus =
     String(params.bindSuccessStatus) === 'true' ||
     params.bindSuccessStatus === true;
+  const version = Number(params.version);
 
   const [isPaired, setIsPaired] = useState(false);
   const [showPage, setShowPage] = useState(false);
@@ -390,7 +393,9 @@ export default function BluetoothControl() {
         if (!ok) {
           hideLoading();
           showToast({
-            title: '轮询蓝牙状态失败，请稍后重试',
+            title: `${
+              proximityEnabled ? '关闭' : '开启'
+            }近身功能失败，请稍后重试`,
             icon: 'none',
           });
           return;
@@ -454,6 +459,7 @@ export default function BluetoothControl() {
         bleName,
         needPin,
         pin: bluetoothPin || blePin || '',
+        version,
         pageName: 'BluetoothControl',
       });
     } else {
@@ -543,7 +549,7 @@ export default function BluetoothControl() {
                     </Text>
                   </Flex>
                 </Flex>
-                {role === 1 ? (
+                {role === 1 && version > 12 ? (
                   <TouchableOpacity
                     onPress={() => {
                       bluetoothStatusRef.current?.open();

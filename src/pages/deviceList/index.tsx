@@ -363,6 +363,7 @@ export default function DeviceList() {
                   blePin: item?.blePin,
                   bleName: item?.bleName,
                   needPin: item?.needPin,
+                  version: item?.compVer,
                 } as any);
               }}
             >
@@ -412,6 +413,8 @@ export default function DeviceList() {
       <Text style={styles.emptyText}>暂无设备</Text>
     </View>
   );
+
+  console.log(list, '===list');
 
   return (
     <PageContainer

@@ -23,6 +23,7 @@ export interface ListItem {
   bleName: string;
   canOpenCover?: boolean;
   needPin?: number;
+  compVer?: string;
 }
 
 export interface MemberItem {

@@ -197,11 +197,10 @@ export default function VipRecordPage() {
           return;
         }
         await onShareAppMessage(sharePayload);
+        hideLoading();
       } catch (error) {
         console.error('分享失败:', error);
         showToast({ title: '分享封面图生成失败，请重试', icon: 'error' });
-      } finally {
-        hideLoading();
       }
     },
     [handleUploadImages],
@@ -263,6 +262,7 @@ export default function VipRecordPage() {
   useEffect(() => {
     return () => {
       onShareAppMessage;
+      animationPopRef.current?.close();
     };
   }, []);
 

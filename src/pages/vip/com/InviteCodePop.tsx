@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Platform, Text, TouchableOpacity, View } from 'react-native';
 import dayjs from 'dayjs';
 import Flex from '@/components/Flex';
 import AppIcon from '@/components/AppIcon';
@@ -301,7 +301,11 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={[styles.confirmBtn, styles.bgColor333]}
-                onPress={() => onShare?.()}
+                onPress={() => {
+                  // 统一先关闭弹层，避免跳转到微信后返回时弹层遮罩残留导致页面卡住
+                  close();
+                  onShare?.();
+                }}
                 disabled={!shareDetail}
               >
                 <Text style={{ color: '#ffffff' }}>发送给贵宾</Text>

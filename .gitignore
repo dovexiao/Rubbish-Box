@@ -87,6 +87,7 @@ android/extensions
 android/specifications
 ios/Pods
 *.log
+.pnpm-store/
 
 # React Native iOS build/bundle generated artifacts
 ios/ios/

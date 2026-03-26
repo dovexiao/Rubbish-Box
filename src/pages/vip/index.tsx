@@ -977,6 +977,9 @@ const VipPage = () => {
                 onPress={() => {
                   if (isSharing) return;
                   if (!shareDetail) return;
+                  if (Platform.OS === 'ios') {
+                    setSharePopupVisible(false);
+                  }
                   void onShare(shareDetail);
                 }}
               >

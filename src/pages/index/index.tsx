@@ -434,7 +434,11 @@ const Index = () => {
         const { [bleNo]: _, ...rest } = deviceMap;
         setStorage({ key: 'bluetoothDeviceInfoList', data: rest });
       }
-      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+
+      if (
+        (Platform.OS === 'ios' || Platform.OS === 'android') &&
+        !!savedDeviceInfo
+      ) {
         removeStorage({ key: 'bluetoothDeviceInfo' });
       }
       setIsAutoOpenBluetooth(false);

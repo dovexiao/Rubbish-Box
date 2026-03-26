@@ -8,6 +8,7 @@ import {
 } from '@/components';
 import {
   Image,
+  Platform,
   StatusBarStyle,
   Text,
   TextInput,
@@ -51,6 +52,7 @@ import LeaveRiseLockPop from './components/leaveRiseLockPop';
 import BluetoothStatus, {
   BluetoothStatusRef,
 } from '@/components/bluetoothStatus';
+import { Modal } from '@ant-design/react-native';
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
@@ -89,7 +91,6 @@ const DeviceInfo = () => {
               await setOptionType('1');
               bluetoothStatusUnbindRef.current?.open();
             } else {
-              console.log(deviceInfo, '===deviceInfo');
               navigation.navigate('HandOver', {
                 id: deviceInfo?.id,
                 bleNo: deviceInfo?.bleNo,
@@ -224,7 +225,12 @@ const DeviceInfo = () => {
             },
           });
         }
-        confirmRef.current?.open();
+
+        if (Platform.OS === 'ios') {
+          scanBindQrCameraRef.current?.close();
+        }
+
+        setTimeout(() => confirmRef.current?.open?.(), 600);
       } catch (error: any) {
         console.log(error, '===error');
       }
@@ -747,7 +753,9 @@ const DeviceInfo = () => {
         ref={confirmRef}
         title={
           <Flex direction="column" justify="center" align="center">
-            <Text>{confirmContent?.content?.title}</Text>
+            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+              {confirmContent?.content?.title}
+            </Text>
             {confirmContent?.content?.img ? (
               <Image
                 source={{ uri: confirmContent?.content?.img }}
@@ -787,7 +795,7 @@ const DeviceInfo = () => {
           scanBindQrCameraRef.current?.close();
           setConfirmContent({});
         }}
-      ></PopConfirm>
+      />
     </PageContainer>
   );
 };
