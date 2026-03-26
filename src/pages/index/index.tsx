@@ -30,6 +30,8 @@ import { styles } from './style';
 import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { BleManager } from 'react-native-ble-plx';
+import { getSystemConnectedDevices } from '@/utils/api';
 
 /**
  * 首页（单个设备）：
@@ -72,6 +74,8 @@ const Index = () => {
     code?: number | string;
     message?: string;
   } | null>(null);
+
+  const bleInstance = new BleManager();
 
   useEffect(() => {
     optioningRef.current = optioning;
@@ -419,6 +423,13 @@ const Index = () => {
   }, [detail?.imageMap]);
 
   const hasBluetoothAutoOpen = async () => {
+    //蓝牙没开直接 设false，避免后续流程
+    const state = await bleInstance.state();
+    if (state == 'PoweredOff') {
+      await setIsAutoOpenBluetooth(false);
+      return;
+    }
+
     const result = await getBluetoothDeviceInfo().catch(() => ({}));
     const bleNo = String(detail?.bleNo || '');
     const bleName = String(detail?.bleName || '');
@@ -426,6 +437,30 @@ const Index = () => {
     const savedDeviceInfo = result?.[bleNo];
     const deviceId = savedDeviceInfo?.deviceId;
     const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo, bleName);
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+      let sysConnected = false;
+      let connectedDevices: any = await getSystemConnectedDevices().catch(
+        () => null,
+      );
+      console.log(connectedDevices, deviceId, 'connectedDevices');
+      if (connectedDevices) {
+        connectedDevices = JSON.parse(JSON.stringify(connectedDevices.data));
+        const connectedDevice = connectedDevices?.find((v: any) => {
+          return v.deviceId == deviceId;
+        });
+        if (!connectedDevice) {
+          removeStorage({ key: 'bluetoothDeviceInfo' });
+          setIsAutoOpenBluetooth(false);
+          return;
+        }
+
+        if (connectedDevice?.isConnected) {
+          sysConnected = true;
+        }
+        setIsAutoOpenBluetooth(sysConnected);
+        return;
+      }
+    }
 
     if (!deviceId || res.isIgnored || !savedDeviceInfo?.isPaired) {
       const deviceMap =
@@ -434,9 +469,9 @@ const Index = () => {
         const { [bleNo]: _, ...rest } = deviceMap;
         setStorage({ key: 'bluetoothDeviceInfoList', data: rest });
       }
-      if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        removeStorage({ key: 'bluetoothDeviceInfo' });
-      }
+      // if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      removeStorage({ key: 'bluetoothDeviceInfo' });
+      // }
       setIsAutoOpenBluetooth(false);
     } else {
       setIsAutoOpenBluetooth(true);
