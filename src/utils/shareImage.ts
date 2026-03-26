@@ -1,6 +1,6 @@
 import { captureRef } from 'react-native-view-shot';
 import { RefObject } from 'react';
-import { Platform } from 'react-native';
+import { Platform, AppState } from 'react-native';
 import { DEPLOY_ENV } from '@/config';
 import { DetailsProp } from '@/pages/vip/type';
 import { showToast, showLoading, hideLoading } from '@/utils';
@@ -54,18 +54,63 @@ export const onShareAppMessage = async ({
     return;
   }
 
+  const currentState = AppState.currentState;
+  const appStateListener = AppState.addEventListener('change', state => {
+    if (currentState === 'background' && state === 'active') {
+      // 用户从微信返回时，尽快恢复 UI，避免长时间 loading
+      hideLoading();
+      showToast({
+        title: '已返回应用，若微信未登录请重新登录后重试',
+        icon: 'none',
+      });
+    }
+  });
+
   showLoading({ title: '拉起微信中...' });
   try {
-    await shareWeChatMiniProgram({
-      userName: 'gh_00245e3a7d08',
-      path: path || `/pages/index/index`,
-      webpageUrl: 'https://your-domain.com/fallback.html',
-      scene: 0,
-      miniProgramType: DEPLOY_ENV === 'dev' ? 2 : 0, // 0 正式版 1 测试版 2 体验版
-      title,
-      thumbImageUrl: imageUrl,
-    });
+    const timeoutMs = 5000;
+    const shareResult = await Promise.race([
+      shareWeChatMiniProgram({
+        userName: 'gh_00245e3a7d08',
+        path: path || `/pages/index/index`,
+        webpageUrl: 'https://your-domain.com/fallback.html',
+        scene: 0,
+        miniProgramType: DEPLOY_ENV === 'dev' ? 2 : 0, // 0 正式版 1 测试版 2 体验版
+        title,
+        thumbImageUrl: imageUrl,
+      }),
+      new Promise<any>((_, reject) =>
+        setTimeout(() => reject(new Error('微信分享超时，请重试')), timeoutMs),
+      ),
+    ]);
+
+    console.log('微信分享结果:', shareResult);
+
+    if (
+      shareResult &&
+      typeof shareResult === 'object' &&
+      'errCode' in shareResult
+    ) {
+      const errCode = shareResult.errCode;
+      if (errCode === -2) {
+        showToast({ title: '已取消分享', icon: 'none' });
+        return shareResult;
+      }
+      if (errCode !== 0) {
+        throw new Error(
+          `微信分享失败，错误码：${errCode} ${shareResult.errStr || ''}`,
+        );
+      }
+    }
+
+    return shareResult;
+  } catch (error: any) {
+    const message =
+      error?.message || '微信分享失败，请关闭微信后重试（可能未登录）';
+    showToast({ title: message, icon: 'error' });
+    throw error;
   } finally {
+    appStateListener.remove();
     hideLoading();
   }
 };

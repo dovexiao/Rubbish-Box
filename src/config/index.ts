@@ -69,23 +69,3 @@ export const config = {
   mapKeyIos: MAP_KEY_IOS,
   mapKeyHarmony: MAP_KEY_HARMONY,
 };
-
-// 打印当前环境（用于排查打包时 ENV 是否生效；仅打印一次避免刷屏）
-const alreadyLogged = (globalThis as any).__boklock_env_logged__ === true;
-if (!alreadyLogged) {
-  (globalThis as any).__boklock_env_logged__ = true;
-  console.log('=== 环境配置 ===');
-  console.log(`当前环境: ${ENV}`);
-  console.log(`部署环境: ${DEPLOY_ENV}`);
-  console.log(`灰度标识: ${GRAY}`);
-  console.log(`部署版本: ${DEPLOY_VERSION}`);
-  console.log(`API 地址: ${BASE_URL}`);
-  console.log(`API 版本: ${API_VERSION}`);
-  console.log(`Android 包名: ${ANDROID_PACKAGE_NAME}`);
-  console.log(`iOS Bundle ID: ${IOS_BUNDLE_ID}`);
-  console.log(`应用名称: ${APP_NAME}`);
-  console.log(`高德地图 Android Key: ${MAP_KEY_ANDROID ? '已配置' : '未配置'}`);
-  console.log(`高德地图 iOS Key: ${MAP_KEY_IOS ? '已配置' : '未配置'}`);
-  console.log(`高德地图 Harmony Key: ${MAP_KEY_HARMONY ? '已配置' : '未配置'}`);
-  console.log('===============');
-}

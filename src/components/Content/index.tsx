@@ -446,6 +446,7 @@ const Content: React.FC<ContentProps> = ({
       fromHomePage: true,
       bleName: detail?.bleName,
       needPin: detail?.needPin,
+      version: detail?.compVer,
     });
   };
 

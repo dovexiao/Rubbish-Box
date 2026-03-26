@@ -1,7 +1,7 @@
 PODS:
   - AMap3DMap (10.0.1000):
     - AMapFoundation (>= 1.8.0)
-  - AMapFoundation (1.8.2)
+  - AMapFoundation (1.8.6)
   - AMapLocation (2.9.0):
     - AMapFoundation (>= 1.7.0)
   - boost (1.76.0)
@@ -493,13 +493,13 @@ PODS:
     - React-RCTImage
   - RNSVG (13.10.0):
     - React-Core
-  - RNZipArchive (6.0.0):
+  - RNZipArchive (6.1.2):
     - React-Core
-    - RNZipArchive/Core (= 6.0.0)
-    - SSZipArchive (= 2.2.3)
-  - RNZipArchive/Core (6.0.0):
+    - RNZipArchive/Core (= 6.1.2)
+    - SSZipArchive (~> 2.2)
+  - RNZipArchive/Core (6.1.2):
     - React-Core
-    - SSZipArchive (= 2.2.3)
+    - SSZipArchive (~> 2.2)
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
@@ -753,7 +753,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AMap3DMap: 2896b8d63034aaf79720a402573362ca2fef0dec
-  AMapFoundation: 9885c48fc3a78fdfb84a0299a2293e56ea3c9fec
+  AMapFoundation: d539ff40e882c872bef6c6682bf1e3a2d4a03026
   AMapLocation: f5eb11e11c62f0f599f80b578eec8a1f70deb985
   boost: d9857fa6515e4f9985f29bf6f2e40cb03f54f859
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
@@ -828,7 +828,7 @@ SPEC CHECKSUMS:
   RNReanimated: f6f47ab6afca5c924255917beda5edc7e9dafe41
   RNScreens: 10cefd0dd5c6ccd8651c6ca8b276790ea10a7f20
   RNSVG: 51fc2eb4e3fc8056fa19c34101461fc26a4326f9
-  RNZipArchive: 1a5eade3dee129cf3658a3c764fe0115739a57d5
+  RNZipArchive: 29236989a51e92d44e0a5d4c02555426e4e4726c
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
@@ -837,6 +837,6 @@ SPEC CHECKSUMS:
   WechatOpenSDK: a363db41205f57abbc05bb6b80bf2d2ed1ea40bf
   Yoga: 86fed2e4d425ee4c6eab3813ba1791101ee153c6
 
-PODFILE CHECKSUM: c0d9b4f1fbb708b5399c6d562f5ff8d1b2018c91
+PODFILE CHECKSUM: 5dfc3ce9985b2b35a40973c04b2bf6f9bf847f79
 
 COCOAPODS: 1.15.2

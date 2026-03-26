@@ -62,7 +62,12 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
               data: { data: rest },
             });
           }
-          await removeStorage({ key: 'bluetoothDeviceInfo' });
+          // 只有当 bluetoothDeviceInfoList 中存在该 bleNo 映射时，
+          // 才删除 bluetoothDeviceInfo，避免在“配对流程中临时写入 bluetoothDeviceInfo”
+          // 时被误删。
+          if (!!savedDeviceInfo) {
+            await removeStorage({ key: 'bluetoothDeviceInfo' });
+          }
           return false;
         }
         return true;

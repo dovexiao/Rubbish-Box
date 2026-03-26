@@ -37,12 +37,17 @@ import {
   jumpToPage,
   initAMapSdk,
   initAMapGeolocation,
+  hideLoading,
+  showToast,
 } from '@/utils';
 import appPush from '@/utils/push';
 import { WeChatInit } from '@/utils/wechat';
 import appUpdate from '@/utils/appUpdate';
 import { bind } from '@/services/bindDevice';
-import { openBluetoothProximity } from '@/services/bluetooth';
+import {
+  getBluetoothStatus,
+  openBluetoothProximity,
+} from '@/services/bluetooth';
 import { Toast } from '@ant-design/react-native';
 import GradientButton from '@/components/GradientButton';
 import { AppUpdateDialogHost } from '@/components/AppUpdateDialog';
@@ -389,7 +394,6 @@ function App() {
             }
 
             const info = await getSystemConnectedDevices();
-            console.log(info, path, params, '===info');
             if (path === 'FindDevice') {
               const isPaired =
                 info.data?.some((item: any) =>
@@ -405,7 +409,7 @@ function App() {
               if (isPaired) {
                 const bluetoothDeviceInfoList =
                   (await getBluetoothDeviceInfo().catch(() => null)) || {};
-                const { bleNo, imageMap, lockId, mode, pageName } =
+                const { bleNo, imageMap, lockId, mode, pageName, needPin } =
                   params || {};
                 let res: any;
                 let bindRes: any;
@@ -453,6 +457,88 @@ function App() {
                   }
 
                   if (pageName?.includes('BluetoothControl') && !mode) {
+                    if (!!needPin) {
+                      const extractStatus = (data: any): number | undefined => {
+                        const tryNumber = (v: any): number | undefined => {
+                          if (typeof v === 'number' && Number.isFinite(v))
+                            return v;
+                          if (typeof v === 'string') {
+                            const n = Number(v);
+                            return Number.isFinite(n) ? n : undefined;
+                          }
+                          return undefined;
+                        };
+
+                        if (data === undefined || data === null)
+                          return undefined;
+                        if (typeof data !== 'object') return tryNumber(data);
+
+                        const candidates = [
+                          'bluetoothStatus',
+                          'status',
+                          'open',
+                          'isOpen',
+                          'enabled',
+                          'enable',
+                          'proximityStatus',
+                        ];
+                        for (const k of candidates) {
+                          const n = tryNumber((data as any)?.[k]);
+                          if (n !== undefined) return n;
+                        }
+
+                        const nested =
+                          (data as any)?.data ?? (data as any)?.content;
+                        if (nested && nested !== data)
+                          return extractStatus(nested);
+                        return undefined;
+                      };
+
+                      const pollOk = async (): Promise<boolean> => {
+                        const start = Date.now();
+                        const timeoutMs = 15000;
+                        const intervalMs = 1000;
+
+                        while (Date.now() - start < timeoutMs) {
+                          try {
+                            const res: any = await getBluetoothStatus({
+                              id: lockId,
+                            });
+                            const codeOk =
+                              res?.success === true ||
+                              res?.code === 200 ||
+                              res?.code === '200';
+
+                            if (codeOk) {
+                              const current = extractStatus(res?.data);
+                              if (current === 1) return true;
+                            }
+                          } catch {
+                            // 轮询继续
+                          }
+
+                          await new Promise(resolve =>
+                            setTimeout(resolve, intervalMs),
+                          );
+                        }
+
+                        return false;
+                      };
+
+                      const ok = await pollOk();
+                      if (!ok) {
+                        hideLoading();
+                        showToast({
+                          title: '自动动升降开启失败，请重试',
+                          icon: 'none',
+                        });
+                        return;
+                      }
+
+                      hideLoading();
+                      Toast.success('自动升降开启成功');
+                      return;
+                    }
                     Toast.success('自动升降开启成功');
                   }
                   if (pageName?.includes('BluetoothControl') && mode) {

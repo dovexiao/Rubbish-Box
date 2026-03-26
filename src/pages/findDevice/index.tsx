@@ -35,7 +35,12 @@ import {
   setClipboardData,
   getStorage,
 } from '@/utils';
-import { bind, openBluetoothProximity, tipsUserOperation } from '@/services';
+import {
+  bind,
+  getBluetoothStatus,
+  openBluetoothProximity,
+  tipsUserOperation,
+} from '@/services';
 import AppIcon from '@/components/AppIcon';
 import {
   LOCK_BTN_COLORS,
@@ -97,6 +102,7 @@ type RouteParams = {
   role?: number;
   needPin?: number;
   pageName?: string;
+  version?: number;
 };
 
 export default function FindDevice(props: any) {
@@ -115,6 +121,7 @@ export default function FindDevice(props: any) {
     bleName,
     needPin,
     pageName,
+    version,
   } = params;
 
   const isHarmonyOs = Platform.OS !== 'ios' && Platform.OS !== 'android';
@@ -237,7 +244,6 @@ export default function FindDevice(props: any) {
               isPaired,
             },
           });
-          console.log(pageName, '===pageName');
         }
       } else {
         await removeStorage({ key: 'rnReLaunchPath' }).catch(() => {});
@@ -460,9 +466,7 @@ export default function FindDevice(props: any) {
 
       const savedBleNo = deviceInfo?.bleNo || bleNo;
       // 绑定设备
-      console.log(pageName, '===pageName');
       if (pageName?.includes('BindDevice')) {
-        console.log('触发绑定');
         showLoading({ title: '绑定中...' });
         try {
           const res = await bind({
@@ -471,7 +475,6 @@ export default function FindDevice(props: any) {
           });
 
           const ok = String(res?.code) === '200';
-          console.log(res, ok, '===res');
           if (!ok) {
             showToast({
               title: res?.message || '绑定失败',
@@ -491,7 +494,6 @@ export default function FindDevice(props: any) {
           }
 
           const connectRes = await connectBluetoothDevice(deviceInfo.deviceId);
-          console.log(connectRes, '===connectRes');
           if (!connectRes.success) {
             showToast({
               title: connectRes.error?.message || '连接设备失败',
@@ -535,6 +537,112 @@ export default function FindDevice(props: any) {
           await setStorage({ key: 'bluetoothDeviceInfoList', data: newMap });
         }
         if (Number(role) === 1 && !mode) {
+          // 物理按键配对需要轮询
+          if (!!needPin) {
+            const apiRes: any = await openBluetoothProximity({
+              id: lockId,
+              bluetoothStatus: 1,
+            });
+
+            if (
+              !(
+                apiRes?.code === 200 ||
+                apiRes?.code === '200' ||
+                apiRes?.success
+              )
+            ) {
+              hideLoading();
+              showToast({
+                title: apiRes?.message || '服务端同步失败',
+                icon: 'none',
+              });
+              return;
+            }
+
+            const extractStatus = (data: any): number | undefined => {
+              const tryNumber = (v: any): number | undefined => {
+                if (typeof v === 'number' && Number.isFinite(v)) return v;
+                if (typeof v === 'string') {
+                  const n = Number(v);
+                  return Number.isFinite(n) ? n : undefined;
+                }
+                return undefined;
+              };
+
+              if (data === undefined || data === null) return undefined;
+              if (typeof data !== 'object') return tryNumber(data);
+
+              const candidates = [
+                'bluetoothStatus',
+                'status',
+                'open',
+                'isOpen',
+                'enabled',
+                'enable',
+                'proximityStatus',
+              ];
+              for (const k of candidates) {
+                const n = tryNumber((data as any)?.[k]);
+                if (n !== undefined) return n;
+              }
+
+              const nested = (data as any)?.data ?? (data as any)?.content;
+              if (nested && nested !== data) return extractStatus(nested);
+              return undefined;
+            };
+
+            const pollOk = async (): Promise<boolean> => {
+              const start = Date.now();
+              const timeoutMs = 15000;
+              const intervalMs = 1000;
+
+              while (Date.now() - start < timeoutMs) {
+                try {
+                  const res: any = await getBluetoothStatus({ id: lockId });
+                  const codeOk =
+                    res?.success === true ||
+                    res?.code === 200 ||
+                    res?.code === '200';
+
+                  if (codeOk) {
+                    const current = extractStatus(res?.data);
+                    if (current === 1) return true;
+                  }
+                } catch {
+                  // 轮询继续
+                }
+
+                await new Promise(resolve => setTimeout(resolve, intervalMs));
+              }
+
+              return false;
+            };
+
+            const ok = await pollOk();
+            if (!ok) {
+              hideLoading();
+              showToast({
+                title: '自动升降开启失败，请稍后重试',
+                icon: 'none',
+              });
+              return;
+            }
+            await clearProcessingFlag();
+            showToast({ title: '自动升降开启成功', icon: 'success' });
+            navigation?.navigate?.('BluetoothControl', {
+              lockName,
+              bluetoothHasOpen: true,
+              role,
+              bleNo,
+              imageMap,
+              pin,
+              lockId,
+              bindSuccessStatus: true,
+              needPin,
+              version,
+            });
+            return;
+          }
           const cmdRes = await setNearbyPermission({
             deviceId: deviceInfo.deviceId,
             deviceNo,
@@ -577,6 +685,7 @@ export default function FindDevice(props: any) {
             lockId,
             bindSuccessStatus: true,
             needPin,
+            version,
           });
         }
       }
