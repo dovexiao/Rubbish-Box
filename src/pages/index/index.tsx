@@ -442,7 +442,7 @@ const Index = () => {
       let connectedDevices: any = await getSystemConnectedDevices().catch(
         () => null,
       );
-      console.log(connectedDevices, deviceId, 'connectedDevices');
+
       if (connectedDevices) {
         connectedDevices = JSON.parse(JSON.stringify(connectedDevices.data));
         const connectedDevice = connectedDevices?.find((v: any) => {

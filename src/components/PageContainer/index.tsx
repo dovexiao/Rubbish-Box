@@ -199,8 +199,9 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       backgroundColor ?? theme.colors.background.primary;
     const defaultStatusBarStyle =
       statusBarStyle ??
-      (defaultBackgroundColor.toLowerCase() === '#ffffff' ||
-      defaultBackgroundColor.toLowerCase() === '#fff'
+      (['#ffffff', '#fff', '#f5f5f5', '#f6f7fa'].includes(
+        defaultBackgroundColor.toLowerCase(),
+      )
         ? 'dark-content'
         : theme.colors.statusBar.barStyle);
     const defaultStatusBarBackgroundColor = backgroundImage
