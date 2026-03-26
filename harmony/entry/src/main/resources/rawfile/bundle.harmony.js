@@ -115589,6 +115589,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     (0, _react.useEffect)(function () {
       (0, _$$_REQUIRE(_dependencyMap[15], "./src/utils").getAppPackageName)().then(function (pkg) {
         console.log('[App] 当前包名:', pkg);
+        console.log('[App] 部署环境:', _$$_REQUIRE(_dependencyMap[16], "./src/config").DEPLOY_ENV);
+        console.log('[App] API 地址:', _$$_REQUIRE(_dependencyMap[16], "./src/config").BASE_URL);
       });
     }, []);
 
@@ -115701,8 +115703,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             var by = byRes == null ? void 0 : byRes.data;
             // 仅当来源非 login（或未设置）时由 App 层重弹
             if (!agreed && needReopen && by !== 'login') {
-              var _agreePopRef$current2;
-              (_agreePopRef$current2 = agreePopRef.current) == null || _agreePopRef$current2.open == null || _agreePopRef$current2.open();
+              setTimeout(function () {
+                var _agreePopRef$current2;
+                return (_agreePopRef$current2 = agreePopRef.current) == null || _agreePopRef$current2.open == null ? void 0 : _agreePopRef$current2.open();
+              }, 600);
             }
             // 无论是否打开，均重置标记
             try {
@@ -115730,9 +115734,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // 监听全局 PopConfirm 显示事件
     (0, _react.useEffect)(function () {
       var handler = function handler(config) {
-        var _globalPopConfirmRef$;
         setGlobalPopConfirmConfig(config);
-        (_globalPopConfirmRef$ = globalPopConfirmRef.current) == null || _globalPopConfirmRef$.open();
+        setTimeout(function () {
+          var _globalPopConfirmRef$;
+          return (_globalPopConfirmRef$ = globalPopConfirmRef.current) == null || _globalPopConfirmRef$.open == null ? void 0 : _globalPopConfirmRef$.open();
+        }, 600);
       };
       _$$_REQUIRE(_dependencyMap[15], "./src/utils").eventCenter.on('global:popConfirm:show', handler);
       return function () {
@@ -115753,7 +115759,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var updateInfo = updateManager.getUpdateInfo();
         if (updateInfo.hasUpdate) {
           var updateType = updateInfo.updateType === 'app' ? '应用更新' : '热更新';
-          _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.info(`发现新版本`, 2000);
+          _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.info(`发现新版本`, 2000);
           // 可以在这里显示更新提示
           setTimeout(function () {
             updateManager.applyUpdate();
@@ -115817,7 +115823,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
           // 清理可能遗留的全局 Loading
           try {
-            _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.removeAll();
+            _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.removeAll();
           } catch (_unused3) {}
 
           // 应用激活时，检查并初始化推送
@@ -115946,23 +115952,23 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                     var res;
                     var bindRes;
                     if (pageName != null && pageName.includes('BindDevice')) {
-                      _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.loading('绑定中...', 0);
-                      bindRes = yield (0, _$$_REQUIRE(_dependencyMap[17], "./src/services/bindDevice").bind)({
+                      _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.loading('绑定中...', 0);
+                      bindRes = yield (0, _$$_REQUIRE(_dependencyMap[18], "./src/services/bindDevice").bind)({
                         deviceNo: params == null ? void 0 : params.deviceNo,
                         userId: null
                       });
                       res = bindRes;
                     } else {
-                      _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.loading('连接中...', 0);
-                      res = yield (0, _$$_REQUIRE(_dependencyMap[18], "./src/services/bluetooth").openBluetoothProximity)({
+                      _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.loading('连接中...', 0);
+                      res = yield (0, _$$_REQUIRE(_dependencyMap[19], "./src/services/bluetooth").openBluetoothProximity)({
                         id: lockId
                       });
                     }
-                    _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.removeAll();
+                    _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.removeAll();
                     if (((_res = res) == null ? void 0 : _res.code) === 200 || ((_res2 = res) == null ? void 0 : _res2.code) === '200') {
                       if (pageName != null && pageName.includes('BindDevice')) {
                         var _bindRes;
-                        _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.success('绑定成功');
+                        _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.success('绑定成功');
                         if ((_bindRes = bindRes) != null && _bindRes.data) {
                           var _bindRes$data;
                           yield (0, _$$_REQUIRE(_dependencyMap[15], "./src/utils").setStorage)({
@@ -115991,10 +115997,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                         }
                       }
                       if (pageName != null && pageName.includes('BluetoothControl') && !mode) {
-                        _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.success('自动升降开启成功');
+                        _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.success('自动升降开启成功');
                       }
                       if (pageName != null && pageName.includes('BluetoothControl') && mode) {
-                        _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.success('连接成功');
+                        _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.success('连接成功');
                       }
                       try {
                         if (bleNo && !(pageName != null && pageName.includes('BindDevice'))) {
@@ -116018,7 +116024,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                       }
                     } else {
                       var _res3;
-                      _$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Toast.fail(((_res3 = res) == null ? void 0 : _res3.message) || '操作失败');
+                      _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Toast.fail(((_res3 = res) == null ? void 0 : _res3.message) || '操作失败');
                     }
                   }
                 } else {
@@ -116082,42 +116088,42 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }));
       }
     };
-    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[19], "./src/components/ErrorBoundary").ErrorBoundary, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[20], "./src/components/ErrorBoundary").ErrorBoundary, {
       onError: handleError,
       onNavigateHome: navigateHome,
-      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[20], "@tanstack/react-query").QueryClientProvider, {
-        client: _$$_REQUIRE(_dependencyMap[21], "./src/config/queryClient").queryClient,
+      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[21], "@tanstack/react-query").QueryClientProvider, {
+        client: _$$_REQUIRE(_dependencyMap[22], "./src/config/queryClient").queryClient,
         children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_provider.default, {
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[22], "./src/store/provider").StoreProvider, {
-            children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[23], "./src/context/ThemeContext").ThemeProvider, {
-              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[24], "./src/libs/gestureHandler").GestureHandlerRootView, {
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[23], "./src/store/provider").StoreProvider, {
+            children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[24], "./src/context/ThemeContext").ThemeProvider, {
+              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[25], "./src/libs/gestureHandler").GestureHandlerRootView, {
                 style: {
                   flex: 1
                 },
-                children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[25], "./src/libs/safeAreaContext").SafeAreaProvider, {
+                children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[26], "./src/libs/safeAreaContext").SafeAreaProvider, {
                   accessibilityIgnoresInvertColors: true,
                   children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[12], "@react-navigation/native").NavigationContainer, {
                     ref: navigationRef,
-                    children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[26], "./src/navigation/AppNavigator").AppNavigator, {})
+                    children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[27], "./src/navigation/AppNavigator").AppNavigator, {})
                   }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_popConfirm.default, {
                     ref: agreePopRef,
                     title: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                       direction: "column",
                       align: "center",
                       justify: "center",
-                      children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                      children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                         style: {
                           fontSize: 16,
                           fontWeight: '600',
                           marginBottom: 12
                         },
                         children: "\u7528\u6237\u534F\u8BAE\u53CA\u9690\u79C1\u4FDD\u62A4"
-                      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                         style: {
                           fontSize: 14,
                           lineHeight: 20
                         },
-                        children: ["\u6211\u5DF2\u9605\u8BFB\u5E76\u540C\u610F", /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                        children: ["\u6211\u5DF2\u9605\u8BFB\u5E76\u540C\u610F", /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                           style: {
                             color: '#1E80FF'
                           },
@@ -116150,7 +116156,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                             };
                           }()),
                           children: "\u300A\u6CCA\u523B\u5730\u9501\u7528\u6237\u534F\u8BAE\u300B"
-                        }), "\u548C", /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                        }), "\u548C", /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                           style: {
                             color: '#1E80FF'
                           },
@@ -116184,7 +116190,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                           }()),
                           children: "\u300A\u9690\u79C1\u653F\u7B56\u300B"
                         })]
-                      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                         style: {
                           fontSize: 12,
                           color: '#999',
@@ -116195,9 +116201,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                     }),
                     cancelText: "\u4E0D\u540C\u610F",
                     onCancel: function onCancel() {
-                      var _agreePopRef$current5, _retainPopRef$current;
+                      var _agreePopRef$current5;
                       (_agreePopRef$current5 = agreePopRef.current) == null || _agreePopRef$current5.close == null || _agreePopRef$current5.close();
-                      (_retainPopRef$current = retainPopRef.current) == null || _retainPopRef$current.open == null || _retainPopRef$current.open();
+                      setTimeout(function () {
+                        var _retainPopRef$current;
+                        return (_retainPopRef$current = retainPopRef.current) == null || _retainPopRef$current.open == null ? void 0 : _retainPopRef$current.open();
+                      }, 600);
                     },
                     submitBtn: /*#__PURE__*/(0, _jsxRuntime.jsx)(_GradientButton.default, {
                       width: 124,
@@ -116221,7 +116230,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                           console.error('保存隐私协议同意状态失败:', error);
                         }
                       }),
-                      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                         style: {
                           color: '#fff'
                         },
@@ -116236,25 +116245,25 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                       direction: "column",
                       align: "center",
                       justify: "center",
-                      children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                      children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                         style: {
                           fontSize: 16,
                           fontWeight: '600',
                           marginBottom: 12
                         },
                         children: "\u6E29\u99A8\u63D0\u793A"
-                      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                         style: {
                           fontSize: 14,
                           lineHeight: 20,
                           textAlign: 'center'
                         },
-                        children: ["\u4E3A\u4FDD\u969C\u60A8\u987A\u5229\u7ED1\u5B9A\u8BBE\u5907\u548C\u6B63\u5E38\u4F7F\u7528\u5B9A\u4F4D\u3001\u84DD\u7259\u3001\u901A\u77E5\u7B49\u529F\u80FD\uFF0C\u4EE5\u53CA\u8BBE\u5907\u72B6\u6001\u63D0\u9192\u7684\u6B63\u5E38\u6536\u53D6\uFF0C\u5EFA\u8BAE\u60A8\u540C\u610F", /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                        children: ["\u4E3A\u4FDD\u969C\u60A8\u987A\u5229\u7ED1\u5B9A\u8BBE\u5907\u548C\u6B63\u5E38\u4F7F\u7528\u5B9A\u4F4D\u3001\u84DD\u7259\u3001\u901A\u77E5\u7B49\u529F\u80FD\uFF0C\u4EE5\u53CA\u8BBE\u5907\u72B6\u6001\u63D0\u9192\u7684\u6B63\u5E38\u6536\u53D6\uFF0C\u5EFA\u8BAE\u60A8\u540C\u610F", /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                           style: {
                             color: '#1E80FF'
                           },
                           children: "\u300A\u6CCA\u523B\u5730\u9501\u7528\u6237\u534F\u8BAE\u300B"
-                        }), "\u548C", /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
+                        }), "\u548C", /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Text, {
                           style: {
                             color: '#1E80FF'
                           },
@@ -116289,13 +116298,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 })
               })
             })
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[27], "./src/components/AppUpdateDialog").AppUpdateDialogHost, {}), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[28], "./src/components").GlobalLoading, {}), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[28], "./src/components").GlobalToast, {})]
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[28], "./src/components/AppUpdateDialog").AppUpdateDialogHost, {}), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[29], "./src/components").GlobalLoading, {}), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[29], "./src/components").GlobalToast, {})]
         })
       })
     });
   }
   var _default = exports.default = App;
-},518,[1,2,25,42,3,519,533,534,539,540,537,88,660,659,761,763,796,794,787,1221,1224,1269,1270,1275,1277,1222,1278,1513,1512],"App.tsx");
+},518,[1,2,25,42,3,519,533,534,539,540,537,88,660,659,761,763,579,796,794,787,1221,1224,1269,1270,1275,1277,1222,1278,1513,1512],"App.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
   "use client";
@@ -119151,7 +119160,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
   var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
+  var _react = _$$_REQUIRE(_dependencyMap[3], "react");
   var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
   var _Flex = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "../Flex"));
   var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./styles"));
@@ -119174,7 +119183,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    * @param textWeight 按钮字体加粗
    * @param submitBtn 自定义确认按钮
    */
-  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var PopConfirm = (0, _react.forwardRef)(function (_ref, ref) {
     var title = _ref.title,
       children = _ref.children,
@@ -137909,7 +137917,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var ENV = exports.ENV = Config.ENV || 'development';
 
   // 2) 部署环境优先用 .env 里的 DEPLOY_ENV，其次根据 ENV 推导
-  var DEPLOY_ENV = exports.DEPLOY_ENV = Config.DEPLOY_ENV || (ENV === 'production' ? 'real' : 'dev');
+  var DEPLOY_ENV = exports.DEPLOY_ENV = Config.DEPLOY_ENV || (ENV === 'production' || ENV === 'real' ? 'real' : 'dev');
   // 获取灰度标识
   var GRAY = exports.GRAY = Config.GRAY === 'true';
 
@@ -137957,8 +137965,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     mapKeyHarmony: MAP_KEY_HARMONY
   };
 
-  // 打印当前环境（开发时方便调试）
-  if (__DEV__) {
+  // 打印当前环境（用于排查打包时 ENV 是否生效；仅打印一次避免刷屏）
+  var alreadyLogged = globalThis.__boklock_env_logged__ === true;
+  if (!alreadyLogged) {
+    globalThis.__boklock_env_logged__ = true;
     console.log('=== 环境配置 ===');
     console.log(`当前环境: ${ENV}`);
     console.log(`部署环境: ${DEPLOY_ENV}`);
@@ -137978,11 +137988,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
   "ENV": "development",
-  "DEPLOY_ENV": "dev",
   "API_BASE_URL": "https://boke-api-dev.18qjz.cn",
-  "MAP_KEY_ANDROID": "f21504be6a33824b71fc7ef7ea78e243",
-  "MAP_KEY_IOS": "f21504be6a33824b71fc7ef7ea78e243",
-  "MAP_KEY_HARMONY": "91cd78bf8fd5555e2431651d676f134f"
+  "API_VERSION": "v1",
+  "ANDROID_PACKAGE_NAME": "com.boklock.m.test",
+  "IOS_BUNDLE_ID": "com.boklock.dev.m",
+  "APP_NAME": "泊刻地锁测试",
+  "MAP_KEY_ANDROID": "4b3048de96b6aad0964ccaa7bf73ca93",
+  "MAP_KEY_IOS": "d5d21e20980f689673e0923b1888c287"
 };
 },580,[],"src\\config\\env.static.json");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
@@ -181970,7 +181982,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var checkIfDeviceIgnoredOnIOS = exports.checkIfDeviceIgnoredOnIOS = function checkIfDeviceIgnoredOnIOS(deviceId, bleNo, bleName) {
     return new Promise(/*#__PURE__*/function () {
       var _ref13 = (0, _asyncToGenerator2.default)(function* (resolve) {
-        if (_reactNative.Platform.OS === 'ios' || isHarmony) {
+        if (_reactNative.Platform.OS === 'ios') {
           if (!deviceId) {
             resolve({
               isIgnored: false,
@@ -239819,7 +239831,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // 解析主题默认值
     var defaultBackgroundColor = backgroundColor != null ? backgroundColor : theme.colors.background.primary;
     var defaultStatusBarStyle = statusBarStyle != null ? statusBarStyle : defaultBackgroundColor.toLowerCase() === '#ffffff' || defaultBackgroundColor.toLowerCase() === '#fff' ? 'dark-content' : theme.colors.statusBar.barStyle;
-    var defaultStatusBarBackgroundColor = backgroundImage ? 'transparent' : statusBarBackgroundColor != null ? statusBarBackgroundColor : theme.colors.statusBar.backgroundColor;
+    var defaultStatusBarBackgroundColor = backgroundImage ? 'transparent' : statusBarBackgroundColor != null ? statusBarBackgroundColor : defaultBackgroundColor;
 
     // 1. 导航栏处理 (Navigation Header)
     var renderNavHeader = (0, _react.useMemo)(function () {
@@ -245995,7 +246007,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })
       });
     };
-    var isGroupOrNonMains = lockInfo == null ? void 0 : lockInfo.isGroup;
+    var isGroupOrNonMains = (lockInfo == null ? void 0 : lockInfo.isGroup) || noDevices;
     var isHarmony = !['ios', 'android'].includes(_reactNative.Platform.OS);
     var deviceStatus = lockInfo == null ? void 0 : lockInfo.deviceStatus;
     var statusDotStyle = (0, _react.useMemo)(function () {
@@ -246056,7 +246068,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 size: 20,
                 color: textColor
               })
-            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+            }), !noDevices && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
               style: statusDotStyle
             }), (lockInfo == null ? void 0 : lockInfo.fallStatus) === _$$_REQUIRE(_dependencyMap[10], "../../constants").LOCK_STATUS.FAULT && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
               style: styles.colSpace16,
@@ -246983,9 +246995,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             if ((detail == null ? void 0 : detail.powerType) === 1 || detail != null && detail.isGroup) {
               handleOperate('RISE');
             } else {
-              var _bluetoothConnectStat3;
               bluetoothControlRef.current = 'RISE';
-              (_bluetoothConnectStat3 = bluetoothConnectStatusRef.current) == null || _bluetoothConnectStat3.open();
+              setTimeout(function () {
+                var _bluetoothConnectStat3;
+                return (_bluetoothConnectStat3 = bluetoothConnectStatusRef.current) == null || _bluetoothConnectStat3.open == null ? void 0 : _bluetoothConnectStat3.open();
+              }, 600);
             }
           },
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -247007,9 +247021,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             if ((detail == null ? void 0 : detail.powerType) === 1 || detail != null && detail.isGroup) {
               handleOperate('DOWN');
             } else {
-              var _bluetoothConnectStat4;
               bluetoothControlRef.current = 'DOWN';
-              (_bluetoothConnectStat4 = bluetoothConnectStatusRef.current) == null || _bluetoothConnectStat4.open();
+              setTimeout(function () {
+                var _bluetoothConnectStat4;
+                return (_bluetoothConnectStat4 = bluetoothConnectStatusRef.current) == null || _bluetoothConnectStat4.open == null ? void 0 : _bluetoothConnectStat4.open();
+              }, 600);
             }
           },
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -247332,8 +247348,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           if ((detail == null ? void 0 : detail.powerType) === 1) {
             yield operateCover();
           } else {
-            var _bluetoothConnectStat5;
-            (_bluetoothConnectStat5 = bluetoothConnectStatusRef.current) == null || _bluetoothConnectStat5.open();
+            setTimeout(function () {
+              var _bluetoothConnectStat5;
+              return (_bluetoothConnectStat5 = bluetoothConnectStatusRef.current) == null || _bluetoothConnectStat5.open == null ? void 0 : _bluetoothConnectStat5.open();
+            }, 600);
           }
         })
       })]
@@ -255592,8 +255610,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }) : function () {
           setAgree(true);
           (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").myNextTick)(function () {
-            var _agreePopRef$current5;
-            (_agreePopRef$current5 = agreePopRef.current) == null || _agreePopRef$current5.close();
+            setTimeout(function () {
+              var _agreePopRef$current5;
+              (_agreePopRef$current5 = agreePopRef.current) == null || _agreePopRef$current5.close();
+            }, 600);
             _$$_REQUIRE(_dependencyMap[14], "../../utils").eventCenter.trigger('onNext');
           });
         },
@@ -255658,8 +255678,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         showClose: false,
         confirmText: "\u6211\u77E5\u9053\u4E86",
         onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-          var _retainPopRef$current2;
-          (_retainPopRef$current2 = retainPopRef.current) == null || _retainPopRef$current2.close();
+          setTimeout(function () {
+            var _retainPopRef$current2;
+            (_retainPopRef$current2 = retainPopRef.current) == null || _retainPopRef$current2.close();
+          }, 600);
           return;
           try {
             yield (0, _$$_REQUIRE(_dependencyMap[14], "../../utils").cacheSetSync)('guestMode', true);
@@ -255758,6 +255780,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
         } catch (_unused) {
           (0, _$$_REQUIRE(_dependencyMap[8], "../../../../utils").showToast)('发送失败，请重试');
+        } finally {
+          (0, _$$_REQUIRE(_dependencyMap[8], "../../../../utils").hideLoading)();
         }
       });
       return function onNext() {
@@ -255783,6 +255807,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         (0, _$$_REQUIRE(_dependencyMap[8], "../../../../utils").hideLoading)();
       };
     }, [mobile, agree]);
+    (0, _react.useEffect)(function () {
+      return function () {
+        (0, _$$_REQUIRE(_dependencyMap[8], "../../../../utils").hideLoading)();
+      };
+    }, []);
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableWithoutFeedback, {
       onPress: _reactNative.Keyboard.dismiss,
       children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
@@ -255843,7 +255872,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      marginTop: 81
+      marginTop: 70
     },
     content: {
       marginTop: 16,
@@ -256120,7 +256149,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      marginTop: 81,
+      marginTop: 70,
       paddingHorizontal: 24
     },
     content: {
@@ -256214,7 +256243,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     logo: {
       width: 191,
       height: 66,
-      marginTop: 86
+      marginTop: 68
     },
     logoTitle: {
       fontSize: 14,
@@ -258673,8 +258702,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       pickerBusyRef.current = true;
       try {
         // 检查相册权限（Android 需要，iOS 也需要）
-        var hasPermission = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils/permissions").checkAndRequestPhotoPermission)();
-        if (!hasPermission) {
+        var photoPermission = yield (0, _$$_REQUIRE(_dependencyMap[10], "../../utils/permissions").checkPhotoPermission)();
+        if (!photoPermission.granted) {
+          if (photoPermission.canOpenSettings) {
+            yield new Promise(function (resolve) {
+              _reactNative.Alert.alert('需要相册权限', photoPermission.message || '相册权限已被永久拒绝，请前往设置开启', [{
+                text: '取消',
+                style: 'cancel',
+                onPress: function onPress() {
+                  return resolve();
+                }
+              }, {
+                text: '去设置',
+                onPress: function onPress() {
+                  (0, _$$_REQUIRE(_dependencyMap[11], "react-native-permissions").openSettings)().catch(function () {
+                    _reactNative.Alert.alert('无法打开设置', '请手动前往系统设置开启权限');
+                  }).finally(function () {
+                    return resolve();
+                  });
+                }
+              }]);
+            });
+          } else {
+            (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").showToast)(photoPermission.message || '相册权限被拒绝');
+          }
           pickerBusyRef.current = false;
           return;
         }
@@ -258689,7 +258740,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           presentationStyle: 'fullScreen',
           selectionLimit: 1
         });
-        var launchFunction = _$$_REQUIRE(_dependencyMap[11], "react-native-image-picker").launchImageLibrary;
+        var launchFunction = _$$_REQUIRE(_dependencyMap[12], "react-native-image-picker").launchImageLibrary;
         yield new Promise(function (resolve) {
           return setTimeout(resolve, 300);
         });
@@ -258710,7 +258761,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }, {
                 text: '去设置',
                 onPress: function onPress() {
-                  (0, _$$_REQUIRE(_dependencyMap[12], "react-native-permissions").openSettings)().catch(function () {
+                  (0, _$$_REQUIRE(_dependencyMap[11], "react-native-permissions").openSettings)().catch(function () {
                     _reactNative.Alert.alert('无法打开设置', '请手动前往系统设置开启权限');
                   });
                 }
@@ -258893,7 +258944,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1585,[1,2,25,42,3,1315,1586,88,763,785,1196,1587,1197,1512],"src\\pages\\userInfo\\index.tsx");
+},1585,[1,2,25,42,3,1315,1586,88,763,785,1196,1197,1587,1512],"src\\pages\\userInfo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -259432,9 +259483,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }(), [params == null ? void 0 : params.lockId]);
     var testBuzzer = /*#__PURE__*/function () {
       var _ref8 = (0, _asyncToGenerator2.default)(function* () {
+        (0, _$$_REQUIRE(_dependencyMap[15], "../../utils").showLoading)({
+          title: '测试中...'
+        });
         var res = yield (0, _$$_REQUIRE(_dependencyMap[16], "../../services").operateBuzzing)({
           id: params == null ? void 0 : params.lockId
         });
+        console.log(res, '===res');
         if ((res == null ? void 0 : res.code) === 200 && res != null && res.success) {
           (0, _$$_REQUIRE(_dependencyMap[15], "../../utils").showToast)('蜂鸣测试成功');
         } else {
@@ -259545,177 +259600,162 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       loading: !lockInfo,
       padding: 0,
       footer: (deviceInfo == null ? void 0 : deviceInfo.role) === 1 ? footerBtn() : undefined,
-      children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-        style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.container,
-        direction: "column",
-        children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          direction: "row",
-          align: "center",
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardTitleLine
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardTitle,
-            children: "\u57FA\u7840\u4FE1\u606F"
-          })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          isTouchView: true,
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
-          onPress: function onPress() {
-            var _editNamePopRef$curre2;
-            if (!params.isAdmin) return;
-            (_editNamePopRef$curre2 = editNamePopRef.current) == null || _editNamePopRef$curre2.open();
-          },
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u8BBE\u5907\u540D\u79F0"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-            children: (_lockInfo$lockName = lockInfo == null ? void 0 : lockInfo.lockName) != null ? _lockInfo$lockName : ''
-          }), params.isAdmin && /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-            name: 'a-headfor-20',
-            color: "#333",
-            size: 20
-          })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u5730\u9501SN\u7801"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-            children: (_lockInfo$lockId = lockInfo == null ? void 0 : lockInfo.lockId) != null ? _lockInfo$lockId : ''
-          })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows, {
-            position: 'relative'
-          }],
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u4F9B\u7535\u6A21\u5F0F"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue, {
-              marginRight: 4
-            }],
-            children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? '市电版' : (lockInfo == null ? void 0 : lockInfo.powerType) === 0 ? '电池版' : '未知'
-          }), typeof (lockInfo == null ? void 0 : lockInfo.powerType) == 'number' && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-            onPress: function onPress() {
-              setShowPowerModeTips(!showPowerModeTips);
-            }
-            // onPressIn={() => {
-            //   setShowPowerModeTips(true);
-            // }}
-            // onPressOut={() => {
-            //   setShowPowerModeTips(false);
-            // }}
-            ,
-            children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-              name: 'a-styledescription',
-              color: "#333",
-              size: 20
-            })
-          }), showPowerModeTips && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.powerModeTooltip,
-            children: [(lockInfo == null ? void 0 : lockInfo.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.powerModeTooltipText,
-              children: "\u5E02\u7535\u6B3E\uFF1A\u9700\u8FDE\u63A5\u5BB6\u7528\u7535\u6E90\uFF0C\u7535\u529B\u6301\u7EED\u7A33\u5B9A"
-            }), (lockInfo == null ? void 0 : lockInfo.powerType) === 0 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.powerModeTooltipText,
-              children: "\u7535\u6C60\u6B3E\uFF1A\u5185\u7F6E\u7535\u6C60\uFF0C\u65E0\u9700\u5E03\u7EBF\uFF0C\u5B89\u88C5\u4F4D\u7F6E\u7075\u6D3B"
-            })]
-          })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u4E8C\u7EF4\u7801"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+      children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+        activeOpacity: 1,
+        onPress: function onPress() {
+          if (showPowerModeTips) {
+            setShowPowerModeTips(false);
+          }
+        },
+        style: {
+          flex: 1
+        },
+        children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.container,
+          direction: "column",
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
             direction: "row",
             align: "center",
-            children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
-              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.qrCodeBtn,
-              onPress: function onPress() {
-                var _qrCodePopRef$current;
-                return (_qrCodePopRef$current = qrCodePopRef.current) == null ? void 0 : _qrCodePopRef$current.open();
-              },
-              children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.qrCodeBtnText,
-                children: "\u67E5\u770B"
-              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-                name: 'a-headfor-20',
-                color: "#333",
-                size: 20
-              })]
-            }), (deviceInfo == null ? void 0 : deviceInfo.role) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
-              style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.qrCodeBtn, {
-                marginLeft: 12
-              }],
-              onPress: function onPress() {
-                var _changeQrCodePopRef$c;
-                return (_changeQrCodePopRef$c = changeQrCodePopRef.current) == null ? void 0 : _changeQrCodePopRef$c.open();
-              },
-              children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.qrCodeBtnText,
-                children: "\u66F4\u6362\u4E8C\u7EF4\u7801"
-              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-                name: 'a-headfor-20',
-                color: "#333",
-                size: 20
-              })]
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardTitleLine
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardTitle,
+              children: "\u57FA\u7840\u4FE1\u606F"
             })]
-          })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          isTouchView: true,
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
-          onPress: function onPress() {
-            if (!(lockInfo != null && lockInfo.id)) return;
-            navigation.navigate('FirmwareVersion', {
-              lockId: lockInfo == null ? void 0 : lockInfo.id,
-              currentVersion: (lockInfo == null ? void 0 : lockInfo.version) || ''
-            });
-          },
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u56FA\u4EF6\u7248\u672C"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-            children: ["\u5F53\u524D\u7248\u672C", (_lockInfo$version = lockInfo == null ? void 0 : lockInfo.version) != null ? _lockInfo$version : '']
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-            name: 'a-headfor-20',
-            color: "#333",
-            size: 20
-          })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          isTouchView: true,
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
-          onPress: function onPress() {
-            if (!(lockInfo != null && lockInfo.id)) return;
-            navigation.navigate('DeviceLog', {
-              lockId: lockInfo == null ? void 0 : lockInfo.id
-            });
-          },
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u8BBE\u5907\u65E5\u5FD7"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-            children: '查看'
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-            name: 'a-headfor-20',
-            color: "#333",
-            size: 20
-          })]
-        }), !params.isAdmin && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u7BA1\u7406\u5458\u4FE1\u606F"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRowsTouch,
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            isTouchView: true,
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
             onPress: function onPress() {
-              var _adminRef$current;
-              return adminRef == null || (_adminRef$current = adminRef.current) == null ? void 0 : _adminRef$current.open();
+              var _editNamePopRef$curre2;
+              if (!params.isAdmin) return;
+              (_editNamePopRef$curre2 = editNamePopRef.current) == null || _editNamePopRef$curre2.open();
             },
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+              children: "\u8BBE\u5907\u540D\u79F0"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
+              children: (_lockInfo$lockName = lockInfo == null ? void 0 : lockInfo.lockName) != null ? _lockInfo$lockName : ''
+            }), params.isAdmin && /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+              name: 'a-headfor-20',
+              color: "#333",
+              size: 20
+            })]
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+              children: "\u5730\u9501SN\u7801"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
+              children: (_lockInfo$lockId = lockInfo == null ? void 0 : lockInfo.lockId) != null ? _lockInfo$lockId : ''
+            })]
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows, {
+              position: 'relative'
+            }],
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+              children: "\u4F9B\u7535\u6A21\u5F0F"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue, {
+                marginRight: 4
+              }],
+              children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? '市电版' : (lockInfo == null ? void 0 : lockInfo.powerType) === 0 ? '电池版' : '未知'
+            }), typeof (lockInfo == null ? void 0 : lockInfo.powerType) == 'number' && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+              onPress: function onPress(e) {
+                e && (e.stopPropagation == null ? void 0 : e.stopPropagation());
+                setShowPowerModeTips(!showPowerModeTips);
+              },
+              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+                name: 'a-styledescription',
+                color: "#333",
+                size: 20
+              })
+            }), showPowerModeTips && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.powerModeTooltip,
+              children: [(lockInfo == null ? void 0 : lockInfo.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.powerModeTooltipText,
+                children: "\u5E02\u7535\u6B3E\uFF1A\u9700\u8FDE\u63A5\u5BB6\u7528\u7535\u6E90\uFF0C\u7535\u529B\u6301\u7EED\u7A33\u5B9A"
+              }), (lockInfo == null ? void 0 : lockInfo.powerType) === 0 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.powerModeTooltipText,
+                children: "\u7535\u6C60\u6B3E\uFF1A\u5185\u7F6E\u7535\u6C60\uFF0C\u65E0\u9700\u5E03\u7EBF\uFF0C\u5B89\u88C5\u4F4D\u7F6E\u7075\u6D3B"
+              })]
+            })]
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+              children: "\u4E8C\u7EF4\u7801"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+              direction: "row",
+              align: "center",
+              children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.qrCodeBtn,
+                onPress: function onPress() {
+                  var _qrCodePopRef$current;
+                  return (_qrCodePopRef$current = qrCodePopRef.current) == null ? void 0 : _qrCodePopRef$current.open();
+                },
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                  style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.qrCodeBtnText,
+                  children: "\u67E5\u770B"
+                }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+                  name: 'a-headfor-20',
+                  color: "#333",
+                  size: 20
+                })]
+              }), (deviceInfo == null ? void 0 : deviceInfo.role) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+                style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.qrCodeBtn, {
+                  marginLeft: 12
+                }],
+                onPress: function onPress() {
+                  var _changeQrCodePopRef$c;
+                  return (_changeQrCodePopRef$c = changeQrCodePopRef.current) == null ? void 0 : _changeQrCodePopRef$c.open();
+                },
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                  style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.qrCodeBtnText,
+                  children: "\u66F4\u6362\u4E8C\u7EF4\u7801"
+                }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+                  name: 'a-headfor-20',
+                  color: "#333",
+                  size: 20
+                })]
+              })]
+            })]
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            isTouchView: true,
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
+            onPress: function onPress() {
+              if (!(lockInfo != null && lockInfo.id)) return;
+              navigation.navigate('FirmwareVersion', {
+                lockId: lockInfo == null ? void 0 : lockInfo.id,
+                currentVersion: (lockInfo == null ? void 0 : lockInfo.version) || ''
+              });
+            },
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+              children: "\u56FA\u4EF6\u7248\u672C"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
+              children: ["\u5F53\u524D\u7248\u672C", (_lockInfo$version = lockInfo == null ? void 0 : lockInfo.version) != null ? _lockInfo$version : '']
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+              name: 'a-headfor-20',
+              color: "#333",
+              size: 20
+            })]
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            isTouchView: true,
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
+            onPress: function onPress() {
+              if (!(lockInfo != null && lockInfo.id)) return;
+              navigation.navigate('DeviceLog', {
+                lockId: lockInfo == null ? void 0 : lockInfo.id
+              });
+            },
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+              children: "\u8BBE\u5907\u65E5\u5FD7"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
               style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
               children: '查看'
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
@@ -259723,124 +259763,147 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               color: "#333",
               size: 20
             })]
-          })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLine
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          direction: "row",
-          align: "center",
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardTitleLine
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardTitle,
-            children: "\u529F\u80FD\u8BBE\u7F6E"
-          })]
-        }), (lockInfo == null ? void 0 : lockInfo.powerType) == 0 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex
-        // isTouchView
-        , {
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows
-          // onPress={() => batteryReminderRef.current?.open()}
-          ,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u7535\u91CF\u63D0\u9192"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-            children: `电量低于${(_deviceInfo$warnBatte = deviceInfo == null ? void 0 : deviceInfo.warnBattery) != null ? _deviceInfo$warnBatte : 20}%时提醒`
-          })]
-        }), (lockInfo == null ? void 0 : lockInfo.powerType) == 0 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          isTouchView: true,
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
-          onPress: function onPress() {
-            var _batteryReminderRef$c;
-            return (_batteryReminderRef$c = batteryReminderRef.current) == null ? void 0 : _batteryReminderRef$c.open();
-          },
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u5145\u7535\u6307\u5BFC"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-            children: '查看'
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-            name: 'a-headfor-20',
-            color: "#333",
-            size: 20
-          })]
-        }), (deviceInfo == null ? void 0 : deviceInfo.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          style: (_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows, (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? {} : {
-            alignItems: 'flex-start'
-          }),
-          children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
+          }), !params.isAdmin && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
               style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-              children: "\u78B0\u649E\u8702\u9E23"
+              children: "\u7BA1\u7406\u5458\u4FE1\u606F"
             }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
               style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRowsTouch,
               onPress: function onPress() {
-                var _beeBuzzingCollisionR;
-                if ((lockInfo == null ? void 0 : lockInfo.powerType) !== 1) return;
-                (_beeBuzzingCollisionR = beeBuzzingCollisionRef.current) == null || _beeBuzzingCollisionR.open();
+                var _adminRef$current;
+                return adminRef == null || (_adminRef$current = adminRef.current) == null ? void 0 : _adminRef$current.open();
               },
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                 style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-                children: (deviceInfo == null ? void 0 : deviceInfo.buzzerStatus) === 1 ? '已开启' : '未开启'
+                children: '查看'
               }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                 name: 'a-headfor-20',
                 color: "#333",
                 size: 20
               })]
             })]
-          }) : /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLine
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            direction: "row",
+            align: "center",
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardTitleLine
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardTitle,
+              children: "\u529F\u80FD\u8BBE\u7F6E"
+            })]
+          }), (lockInfo == null ? void 0 : lockInfo.powerType) == 0 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex
+          // isTouchView
+          , {
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows
+            // onPress={() => batteryReminderRef.current?.open()}
+            ,
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
               style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-              children: "\u78B0\u649E\u8702\u9E23"
-            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-              style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue, {
-                alignSelf: 'flex-end',
-                flexDirection: 'column',
-                alignItems: 'flex-end'
-              }],
-              children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-                direction: "row",
-                align: "center",
-                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                  style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-                  children: "\u8702\u9E23\u6D4B\u8BD5"
-                }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-                  style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.testBtn,
-                  onPress: testBuzzer,
-                  children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                    style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.testBtnText,
-                    children: "\u6D4B\u8BD5"
-                  })
-                })]
-              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.toastText,
-                children: `触发碰撞蜂鸣${(_deviceInfo$buzzerTim = deviceInfo == null ? void 0 : deviceInfo.buzzerTime) != null ? _deviceInfo$buzzerTim : '10'}秒后停止蜂鸣`
-              })]
+              children: "\u7535\u91CF\u63D0\u9192"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
+              children: `电量低于${(_deviceInfo$warnBatte = deviceInfo == null ? void 0 : deviceInfo.warnBattery) != null ? _deviceInfo$warnBatte : 20}%时提醒`
             })]
-          })
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
-          style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
-            children: "\u79BB\u8F66\u5347\u9501"
-          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
-            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRowsTouch,
+          }), (lockInfo == null ? void 0 : lockInfo.powerType) == 0 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            isTouchView: true,
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
             onPress: function onPress() {
-              var _leaveRiseLockRef$cur;
-              return (_leaveRiseLockRef$cur = leaveRiseLockRef.current) == null ? void 0 : _leaveRiseLockRef$cur.open();
+              var _batteryReminderRef$c;
+              return (_batteryReminderRef$c = batteryReminderRef.current) == null ? void 0 : _batteryReminderRef$c.open();
             },
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+              children: "\u5145\u7535\u6307\u5BFC"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
               style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
-              children: `车辆离开${lockInfo == null ? void 0 : lockInfo.leaveUpTime}秒后升起`
-            }), (lockInfo == null ? void 0 : lockInfo.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+              children: '查看'
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: 'a-headfor-20',
               color: "#333",
               size: 20
             })]
+          }), (deviceInfo == null ? void 0 : deviceInfo.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            style: (_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows, (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? {} : {
+              alignItems: 'flex-start'
+            }),
+            children: (lockInfo == null ? void 0 : lockInfo.powerType) === 1 ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
+              children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+                children: "\u78B0\u649E\u8702\u9E23"
+              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRowsTouch,
+                onPress: function onPress() {
+                  var _beeBuzzingCollisionR;
+                  if ((lockInfo == null ? void 0 : lockInfo.powerType) !== 1) return;
+                  (_beeBuzzingCollisionR = beeBuzzingCollisionRef.current) == null || _beeBuzzingCollisionR.open();
+                },
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                  style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
+                  children: (deviceInfo == null ? void 0 : deviceInfo.buzzerStatus) === 1 ? '已开启' : '未开启'
+                }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+                  name: 'a-headfor-20',
+                  color: "#333",
+                  size: 20
+                })]
+              })]
+            }) : /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
+              children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+                children: "\u78B0\u649E\u8702\u9E23"
+              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+                style: [_$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue, {
+                  alignSelf: 'flex-end',
+                  flexDirection: 'column',
+                  alignItems: 'flex-end'
+                }],
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+                  direction: "row",
+                  align: "center",
+                  children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                    style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
+                    children: "\u8702\u9E23\u6D4B\u8BD5"
+                  }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+                    style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.testBtn,
+                    onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+                      console.log('===testBuzzer');
+                      yield testBuzzer();
+                    }),
+                    children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                      style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.testBtnText,
+                      children: "\u6D4B\u8BD5"
+                    })
+                  })]
+                }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                  style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.toastText,
+                  children: `触发碰撞蜂鸣${(_deviceInfo$buzzerTim = deviceInfo == null ? void 0 : deviceInfo.buzzerTime) != null ? _deviceInfo$buzzerTim : '10'}秒后停止蜂鸣`
+                })]
+              })]
+            })
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").Flex, {
+            style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRows,
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardLable,
+              children: "\u79BB\u8F66\u5347\u9501"
+            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+              style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardRowsTouch,
+              onPress: function onPress() {
+                var _leaveRiseLockRef$cur;
+                return (_leaveRiseLockRef$cur = leaveRiseLockRef.current) == null ? void 0 : _leaveRiseLockRef$cur.open();
+              },
+              children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _$$_REQUIRE(_dependencyMap[14], "./style").styles.cardValue,
+                children: `车辆离开${lockInfo == null ? void 0 : lockInfo.leaveUpTime}秒后升起`
+              }), (lockInfo == null ? void 0 : lockInfo.powerType) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+                name: 'a-headfor-20',
+                color: "#333",
+                size: 20
+              })]
+            })]
           })]
-        })]
+        })
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AnimationPop.default, {
         ref: editNamePopRef,
         direction: "bottom",
@@ -259978,24 +260041,24 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         isOpen: (deviceInfo == null ? void 0 : deviceInfo.buzzerStatus) === 1,
         time: (_deviceInfo$buzzerTim2 = deviceInfo == null ? void 0 : deviceInfo.buzzerTime) != null ? _deviceInfo$buzzerTim2 : 10,
         onConfirm: (/*#__PURE__*/function () {
-          var _ref12 = (0, _asyncToGenerator2.default)(function* (_ref11) {
-            var buzzerTime = _ref11.buzzerTime,
-              buzzerStatus = _ref11.buzzerStatus;
+          var _ref13 = (0, _asyncToGenerator2.default)(function* (_ref12) {
+            var buzzerTime = _ref12.buzzerTime,
+              buzzerStatus = _ref12.buzzerStatus;
             return yield deviceModifyLockCrashBuzzer(buzzerTime, buzzerStatus);
           });
           return function (_x7) {
-            return _ref12.apply(this, arguments);
+            return _ref13.apply(this, arguments);
           };
         }())
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_leaveRiseLockPop.default, {
         ref: leaveRiseLockRef,
         time: (_deviceInfo$leaveUpTi = deviceInfo == null ? void 0 : deviceInfo.leaveUpTime) != null ? _deviceInfo$leaveUpTi : 0,
         onConfirm: (/*#__PURE__*/function () {
-          var _ref13 = (0, _asyncToGenerator2.default)(function* (leaveUpTime) {
+          var _ref14 = (0, _asyncToGenerator2.default)(function* (leaveUpTime) {
             return yield deviceModifyLockLeaveTime(leaveUpTime);
           });
           return function (_x8) {
-            return _ref13.apply(this, arguments);
+            return _ref14.apply(this, arguments);
           };
         }())
       }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_AnimationPop.default, {
@@ -260429,18 +260492,34 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       setBeeBuzzingCollision(isOpen);
       setBuzzerTime(String(time != null ? time : ''));
     }, [isOpen, time]);
+    var openTestConfirm = (0, _react.useCallback)(function () {
+      // iOS 下两个 Modal 叠加显示偶发失败，先收起底部弹层再展示确认弹窗更稳定。
+      if (_reactNative.Platform.OS === 'ios') {
+        var _popupRef$current;
+        (_popupRef$current = popupRef.current) == null || _popupRef$current.close();
+        setTimeout(function () {
+          var _testConfirmRef$curre;
+          return (_testConfirmRef$curre = testConfirmRef.current) == null || _testConfirmRef$curre.open == null ? void 0 : _testConfirmRef$curre.open();
+        }, 360);
+        return;
+      }
+      setTimeout(function () {
+        var _testConfirmRef$curre2;
+        return (_testConfirmRef$curre2 = testConfirmRef.current) == null || _testConfirmRef$curre2.open == null ? void 0 : _testConfirmRef$curre2.open();
+      }, 120);
+    }, []);
     (0, _react.useEffect)(function () {
       refreshState();
     }, [refreshState]);
     (0, _react.useImperativeHandle)(ref, function () {
       return {
         open: function open() {
-          var _popupRef$current;
-          (_popupRef$current = popupRef.current) == null || _popupRef$current.open();
+          var _popupRef$current2;
+          (_popupRef$current2 = popupRef.current) == null || _popupRef$current2.open();
         },
         close: function close() {
-          var _popupRef$current2;
-          (_popupRef$current2 = popupRef.current) == null || _popupRef$current2.close();
+          var _popupRef$current3;
+          (_popupRef$current3 = popupRef.current) == null || _popupRef$current3.close();
         }
       };
     }, []);
@@ -260501,10 +260580,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                     height: 24,
                     round: false,
                     btnBorderRadius: 6,
-                    onPress: function onPress() {
-                      var _testConfirmRef$curre;
-                      (_testConfirmRef$curre = testConfirmRef.current) == null || _testConfirmRef$curre.open();
-                    },
+                    onPress: openTestConfirm,
                     text: "\u6D4B\u8BD5",
                     textStyle: styles.testBtnText
                   })]
@@ -260542,9 +260618,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 btnBorderRadius: 12,
                 hasBorder: true,
                 onPress: function onPress() {
-                  var _popupRef$current3;
+                  var _popupRef$current4;
                   shouldResetStateRef.current = true;
-                  (_popupRef$current3 = popupRef.current) == null || _popupRef$current3.close();
+                  (_popupRef$current4 = popupRef.current) == null || _popupRef$current4.close();
                 },
                 text: "\u53D6\u6D88",
                 textColor: "#999999",
@@ -260565,10 +260641,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                     buzzerStatus: beeBuzzingCollision ? 1 : 0
                   });
                   if (res) {
-                    var _popupRef$current4;
+                    var _popupRef$current5;
                     // 可能会操作失败,所以也需要重置
                     shouldResetStateRef.current = true;
-                    (_popupRef$current4 = popupRef.current) == null || _popupRef$current4.close();
+                    (_popupRef$current5 = popupRef.current) == null || _popupRef$current5.close();
                   }
                 }),
                 text: "\u786E\u5B9A",
@@ -262498,7 +262574,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             activeOpacity: 0.85,
             style: _$$_REQUIRE(_dependencyMap[18], "./style").styles.operationWrap,
             onPress: function onPress() {
-              var _item$bleNo2, _imageMap, _blePin, _item$deviceNo;
               if (item.role === 2 && !item.bluetoothStatus) {
                 (0, _$$_REQUIRE(_dependencyMap[17], "../../utils").showToast)({
                   title: '管理员已关闭此功能，请联系管理员打开',
@@ -262506,17 +262581,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 });
                 return;
               }
-              navigation.navigate('FindDevice', {
-                bleNo: String((_item$bleNo2 = item.bleNo) != null ? _item$bleNo2 : ''),
-                lockName: item.lockName,
-                lockId: item.id,
-                imageMap: (_imageMap = item.imageMap) != null ? _imageMap : {},
-                pin: String((_blePin = item.blePin) != null ? _blePin : ''),
-                mode: item.mode,
-                role: String(item.role),
-                deviceNo: String((_item$deviceNo = item.deviceNo) != null ? _item$deviceNo : ''),
-                bleName: item.bleName,
-                needPin: item.needPin
+              navigation.navigate('BluetoothControl', {
+                lockId: item == null ? void 0 : item.id,
+                bluetoothStatus: !!(item != null && item.bluetoothStatus),
+                lockName: item == null ? void 0 : item.lockName,
+                bleNo: item == null ? void 0 : item.bleNo,
+                imageMap: item == null ? void 0 : item.imageMap,
+                bluetoothHasOpen: item == null ? void 0 : item.bluetoothStatus,
+                deviceNo: item == null ? void 0 : item.deviceNo,
+                mode: item == null ? void 0 : item.mode,
+                role: item == null ? void 0 : item.role,
+                blePin: item == null ? void 0 : item.blePin,
+                bleName: item == null ? void 0 : item.bleName,
+                needPin: item == null ? void 0 : item.needPin
               });
             },
             children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
@@ -262606,6 +262683,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         ref: coverConfirmRef,
         title: `确定要${(currentLock == null ? void 0 : currentLock.coverStatus) === _$$_REQUIRE(_dependencyMap[13], "../../constants").COVER_STATUS.OPEN ? '关闭' : '打开'}锁盖吗？`,
         onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+          var _coverConfirmRef$curr2;
+          (_coverConfirmRef$curr2 = coverConfirmRef.current) == null || _coverConfirmRef$curr2.close();
           yield operateCover();
         })
       })]
@@ -266639,11 +266718,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var pickupTime = formatPickupTime(detail.pickupTime);
     var stepImg = status === 1 ? STEP_IMG_2 : STEP_IMG_3;
     return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "../../components").PageContainer, {
-      backgroundColor: "transparent",
       statusBarStyle: "light-content",
       statusBarBackgroundColor: "transparent",
       safeAreaEdges: ['top', 'bottom'],
       scrollable: true,
+      backgroundColor: "#F6F7FA",
       pageNavProps: {
         text: '领取详情',
         showBack: true,
@@ -284425,78 +284504,86 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var _route$params;
     var route = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useRoute)();
     var navigation = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useNavigation)();
+    var _useState = (0, _react.useState)(false),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      hasGetCode = _useState2[0],
+      setHasGetCode = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      hasGetCode2 = _useState4[0],
+      setHasGetCode2 = _useState4[1];
 
     // 当前步骤 & 流程 id
-    var _useState = (0, _react.useState)(1),
-      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      step = _useState2[0],
-      setStep = _useState2[1];
-    var _useState3 = (0, _react.useState)(null),
-      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
-      flowId = _useState4[0],
-      setFlowId = _useState4[1];
+    var _useState5 = (0, _react.useState)(1),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      step = _useState6[0],
+      setStep = _useState6[1];
+    var _useState7 = (0, _react.useState)(null),
+      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
+      flowId = _useState8[0],
+      setFlowId = _useState8[1];
 
     // 原手机号（只展示，不可编辑）
-    var _useState5 = (0, _react.useState)(''),
-      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
-      oldMobile = _useState6[0],
-      setOldMobile = _useState6[1];
-    var _useState7 = (0, _react.useState)(''),
-      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
-      oldCode = _useState8[0],
-      setOldCode = _useState8[1];
-    var _useState9 = (0, _react.useState)(null),
+    var _useState9 = (0, _react.useState)(''),
       _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
-      oldError = _useState0[0],
-      setOldError = _useState0[1];
-    var _useState1 = (0, _react.useState)(false),
+      oldMobile = _useState0[0],
+      setOldMobile = _useState0[1];
+    var _useState1 = (0, _react.useState)(''),
       _useState10 = (0, _slicedToArray2.default)(_useState1, 2),
-      oldSending = _useState10[0],
-      setOldSending = _useState10[1];
-    var _useState11 = (0, _react.useState)(0),
+      oldCode = _useState10[0],
+      setOldCode = _useState10[1];
+    var _useState11 = (0, _react.useState)(null),
       _useState12 = (0, _slicedToArray2.default)(_useState11, 2),
-      oldCountdown = _useState12[0],
-      setOldCountdown = _useState12[1];
+      oldError = _useState12[0],
+      setOldError = _useState12[1];
     var _useState13 = (0, _react.useState)(false),
       _useState14 = (0, _slicedToArray2.default)(_useState13, 2),
-      oldSmsRequested = _useState14[0],
-      setOldSmsRequested = _useState14[1];
+      oldSending = _useState14[0],
+      setOldSending = _useState14[1];
+    var _useState15 = (0, _react.useState)(0),
+      _useState16 = (0, _slicedToArray2.default)(_useState15, 2),
+      oldCountdown = _useState16[0],
+      setOldCountdown = _useState16[1];
+    var _useState17 = (0, _react.useState)(false),
+      _useState18 = (0, _slicedToArray2.default)(_useState17, 2),
+      oldSmsRequested = _useState18[0],
+      setOldSmsRequested = _useState18[1];
 
     // 新手机号
-    var _useState15 = (0, _react.useState)(''),
-      _useState16 = (0, _slicedToArray2.default)(_useState15, 2),
-      newMobile = _useState16[0],
-      setNewMobile = _useState16[1];
-    var _useState17 = (0, _react.useState)(''),
-      _useState18 = (0, _slicedToArray2.default)(_useState17, 2),
-      newCode = _useState18[0],
-      setNewCode = _useState18[1];
-    var _useState19 = (0, _react.useState)(null),
+    var _useState19 = (0, _react.useState)(''),
       _useState20 = (0, _slicedToArray2.default)(_useState19, 2),
-      newError = _useState20[0],
-      setNewError = _useState20[1];
-    var _useState21 = (0, _react.useState)(false),
+      newMobile = _useState20[0],
+      setNewMobile = _useState20[1];
+    var _useState21 = (0, _react.useState)(''),
       _useState22 = (0, _slicedToArray2.default)(_useState21, 2),
-      newSending = _useState22[0],
-      setNewSending = _useState22[1];
-    var _useState23 = (0, _react.useState)(0),
+      newCode = _useState22[0],
+      setNewCode = _useState22[1];
+    var _useState23 = (0, _react.useState)(null),
       _useState24 = (0, _slicedToArray2.default)(_useState23, 2),
-      newCountdown = _useState24[0],
-      setNewCountdown = _useState24[1];
+      newError = _useState24[0],
+      setNewError = _useState24[1];
     var _useState25 = (0, _react.useState)(false),
       _useState26 = (0, _slicedToArray2.default)(_useState25, 2),
-      newSmsRequested = _useState26[0],
-      setNewSmsRequested = _useState26[1];
-    var _useState27 = (0, _react.useState)(null),
+      newSending = _useState26[0],
+      setNewSending = _useState26[1];
+    var _useState27 = (0, _react.useState)(0),
       _useState28 = (0, _slicedToArray2.default)(_useState27, 2),
-      newFlowId = _useState28[0],
-      setNewFlowId = _useState28[1];
+      newCountdown = _useState28[0],
+      setNewCountdown = _useState28[1];
+    var _useState29 = (0, _react.useState)(false),
+      _useState30 = (0, _slicedToArray2.default)(_useState29, 2),
+      newSmsRequested = _useState30[0],
+      setNewSmsRequested = _useState30[1];
+    var _useState31 = (0, _react.useState)(null),
+      _useState32 = (0, _slicedToArray2.default)(_useState31, 2),
+      newFlowId = _useState32[0],
+      setNewFlowId = _useState32[1];
     var canNextOld = (0, _react.useMemo)(function () {
-      return !!oldMobile && oldCode.trim().length > 0;
-    }, [oldMobile, oldCode]);
+      return !!oldMobile && oldCode.trim().length > 0 && hasGetCode;
+    }, [oldMobile, oldCode, hasGetCode]);
     var canSubmitNew = (0, _react.useMemo)(function () {
-      return (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").mobileExp)(newMobile) && newCode.trim().length > 0;
-    }, [newMobile, newCode]);
+      return (0, _$$_REQUIRE(_dependencyMap[8], "../../utils").mobileExp)(newMobile) && newCode.trim().length > 0 && hasGetCode2;
+    }, [newMobile, newCode, hasGetCode2]);
 
     // 原手机倒计时
     (0, _react.useEffect)(function () {
@@ -284537,6 +284624,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         if (oldSending) return;
         setOldSending(true);
+        setHasGetCode(true);
         try {
           var isResend = !!(oldError || oldSmsRequested);
           var api = isResend ? _$$_REQUIRE(_dependencyMap[9], "../../services/user").getCodeResent : _$$_REQUIRE(_dependencyMap[9], "../../services/user").getChangeMobileCode;
@@ -284636,6 +284724,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         if (newSending) return;
         setNewSending(true);
+        setHasGetCode2(true);
         try {
           var isResend = !!(newError || newSmsRequested);
           var api = isResend ? _$$_REQUIRE(_dependencyMap[9], "../../services/user").getCodeResent : _$$_REQUIRE(_dependencyMap[9], "../../services/user").getChangeNewCode;
@@ -284726,6 +284815,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var newIsCounting = newCountdown > 0;
     var oldCodeButtonText = oldIsCounting ? `${oldCountdown}s` : oldError || oldSmsRequested ? '再次获取' : '获取验证码';
     var newCodeButtonText = newIsCounting ? `${newCountdown}s` : newError || newSmsRequested ? '再次获取' : '获取验证码';
+    console.log(hasGetCode, '====');
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[10], "../../components").PageContainer, {
       backgroundColor: "#FFFFFF",
       statusBarStyle: "dark-content",
@@ -291180,7 +291270,7 @@ __d(function(global, require, _importDefaultUnused, _importAllUnused, module, ex
     "build:dev:apk:win": "powershell -NoProfile -Command \"$v=(Get-Date).ToString('yyyyMMddHHmmss'); $env:NODE_ENV='production'; $env:DEPLOY_ENV='dev'; $env:DEPLOY_VERSION=$v; Copy-Item .env.dev .env -Force; Set-Location android; if (Test-Path .\\app\\build) { Remove-Item .\\app\\build -Recurse -Force }; ./gradlew.bat clean; ./gradlew.bat assembleDevRelease -PDEPLOY_ENV=dev -PDEPLOY_VERSION=$v; $apk=(Get-ChildItem -Path .\\app\\build\\outputs -Filter *.apk -Recurse | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName; if (-not $apk) { throw 'No APK found after build' }; $env:FASTLANE_APK_PATH=$apk; Write-Host \"Using APK: $apk\"; $env:LANG='en_US.UTF-8'; $env:LC_ALL='en_US.UTF-8'; $env:RUBYOPT='-EUTF-8'; if (Test-Path Gemfile) { bundle install }; bundle exec fastlane android upload_to_pgyer_dev; Set-Location ..\"",
     "build:dev:ios": "./build.sh dev:ios",
     "build:real:apk": "./build.sh real:apk",
-    "build:real:apk:win": "powershell -NoProfile -Command \"$v=(Get-Date).ToString('yyyyMMddHHmmss'); $env:NODE_ENV='production'; $env:DEPLOY_ENV='real'; $env:DEPLOY_VERSION=$v; Copy-Item .env.real .env -Force; Set-Location android; if (Test-Path .\\app\\build) { Remove-Item .\\app\\build -Recurse -Force }; ./gradlew.bat clean; ./gradlew.bat assembleRealRelease -PDEPLOY_ENV=real -PDEPLOY_VERSION=$v; $apk=(Get-ChildItem -Path .\\app\\build\\outputs -Filter *.apk -Recurse | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName; if (-not $apk) { throw 'No APK found after build' }; $env:FASTLANE_APK_PATH=$apk; Write-Host \"Using APK: $apk\"; $env:LANG='en_US.UTF-8'; $env:LC_ALL='en_US.UTF-8'; $env:RUBYOPT='-EUTF-8'; if (Test-Path Gemfile) { bundle install }; bundle exec fastlane android upload_to_pgyer_real; Set-Location ..\"",
+    "build:real:apk:win": "powershell -NoProfile -Command \"$v=(Get-Date).ToString('yyyyMMddHHmmss'); $env:NODE_ENV='production'; $env:DEPLOY_ENV='real'; $env:DEPLOY_VERSION=$v; Copy-Item .env.real .env -Force; Set-Location android; if (Test-Path .\\app\\build) { Remove-Item .\\app\\build -Recurse -Force }; ./gradlew.bat clean; ./gradlew.bat assembleProdRelease -PDEPLOY_ENV=real -PDEPLOY_VERSION=$v; $apk=(Get-ChildItem -Path .\\app\\build\\outputs -Filter *.apk -Recurse | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName; if (-not $apk) { throw 'No APK found after build' }; $env:FASTLANE_APK_PATH=$apk; Write-Host \"Using APK: $apk\"; $env:LANG='en_US.UTF-8'; $env:LC_ALL='en_US.UTF-8'; $env:RUBYOPT='-EUTF-8'; if (Test-Path Gemfile) { bundle install }; bundle exec fastlane android upload_to_pgyer_real; Set-Location ..\"",
     "build:real:ios": "./build.sh real:ios",
     "build:staging:apk": "./build.sh staging:apk",
     "build:staging:ios": "./build.sh staging:ios",
@@ -293268,7 +293358,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\vip\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var VipPage = function VipPage() {
-    var _selector$find, _ref10, _shareDetail$limitTim;
+    var _selector$find, _ref14, _shareDetail$limitTim;
     var _useState = (0, _react.useState)(null),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       detail = _useState2[0],
@@ -293345,18 +293435,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState36 = (0, _slicedToArray2.default)(_useState35, 2),
       sharePopupVisible = _useState36[0],
       setSharePopupVisible = _useState36[1];
+    var _useState37 = (0, _react.useState)(false),
+      _useState38 = (0, _slicedToArray2.default)(_useState37, 2),
+      isSharing = _useState38[0],
+      setIsSharing = _useState38[1];
     var shareContentRef = (0, _react.useRef)(null);
     var startTimePopRef = (0, _react.useRef)(null);
     var endTimePopRef = (0, _react.useRef)(null);
     var usageCountPopRef = (0, _react.useRef)(null);
-    var _useState37 = (0, _react.useState)(false),
-      _useState38 = (0, _slicedToArray2.default)(_useState37, 2),
-      adminUserPopupVisible = _useState38[0],
-      setAdminUserPopupVisible = _useState38[1];
-    var _useState39 = (0, _react.useState)({}),
+    var _useState39 = (0, _react.useState)(false),
       _useState40 = (0, _slicedToArray2.default)(_useState39, 2),
-      userItem = _useState40[0],
-      setUserItem = _useState40[1];
+      adminUserPopupVisible = _useState40[0],
+      setAdminUserPopupVisible = _useState40[1];
+    var _useState41 = (0, _react.useState)({}),
+      _useState42 = (0, _slicedToArray2.default)(_useState41, 2),
+      userItem = _useState42[0],
+      setUserItem = _useState42[1];
     var selector = [{
       label: '不限',
       value: 0
@@ -293376,31 +293470,91 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       label: '5次',
       value: 5
     }];
-    var _useState41 = (0, _react.useState)(''),
-      _useState42 = (0, _slicedToArray2.default)(_useState41, 2),
-      username = _useState42[0],
-      setUsername = _useState42[1];
     var _useState43 = (0, _react.useState)(''),
       _useState44 = (0, _slicedToArray2.default)(_useState43, 2),
-      mobile = _useState44[0],
-      setMobile = _useState44[1];
-    var pickStringFromResult = function pickStringFromResult(result, key) {
-      if (typeof result === 'string') return result;
-      if (result && typeof result === 'object') {
-        if (typeof result[key] === 'string') return result[key];
-        if (result.data && typeof result.data === 'object') {
-          if (typeof result.data[key] === 'string') return result.data[key];
-        }
-      }
-      return '';
+      username = _useState44[0],
+      setUsername = _useState44[1];
+    var _useState45 = (0, _react.useState)(''),
+      _useState46 = (0, _slicedToArray2.default)(_useState45, 2),
+      mobile = _useState46[0],
+      setMobile = _useState46[1];
+    var usernameRef = (0, _react.useRef)('');
+    var mobileRef = (0, _react.useRef)('');
+    var usernameInputRef = (0, _react.useRef)(null);
+    var mobileInputRef = (0, _react.useRef)(null);
+    var setInputTextByRef = function setInputTextByRef(inputRef, text) {
+      try {
+        var _inputRef$current;
+        (_inputRef$current = inputRef.current) == null || _inputRef$current.setNativeProps == null || _inputRef$current.setNativeProps({
+          text: text
+        });
+      } catch (_unused) {}
     };
-    var router = (0, _$$_REQUIRE(_dependencyMap[13], "@react-navigation/native").useRoute)();
-    var navigation = (0, _$$_REQUIRE(_dependencyMap[13], "@react-navigation/native").useNavigation)();
+    var resolveMobileByUsername = /*#__PURE__*/function () {
+      var _ref = (0, _asyncToGenerator2.default)(function* (rawUsername) {
+        var _ref2, _res$data;
+        var finalUsername = ((_ref2 = rawUsername != null ? rawUsername : usernameRef.current) != null ? _ref2 : '').trim();
+        if (!finalUsername) {
+          return;
+        }
+        usernameRef.current = finalUsername;
+        setUsername(finalUsername);
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").getMobileByName)({
+          username: finalUsername
+        });
+        var resolvedMobile = (_res$data = res == null ? void 0 : res.data) != null ? _res$data : '';
+        if (resolvedMobile && resolvedMobile !== '') {
+          mobileRef.current = resolvedMobile;
+          setMobile(resolvedMobile);
+          setInputTextByRef(mobileInputRef, resolvedMobile);
+          setInfo(function (prev) {
+            return Object.assign({}, prev, {
+              username: finalUsername,
+              mobile: resolvedMobile
+            });
+          });
+        }
+      });
+      return function resolveMobileByUsername(_x) {
+        return _ref.apply(this, arguments);
+      };
+    }();
+    var resolveUsernameByMobile = /*#__PURE__*/function () {
+      var _ref3 = (0, _asyncToGenerator2.default)(function* (rawMobile) {
+        var _ref4, _res$data2;
+        var finalMobile = ((_ref4 = rawMobile != null ? rawMobile : mobileRef.current) != null ? _ref4 : '').trim();
+        if (!finalMobile) {
+          return;
+        }
+        mobileRef.current = finalMobile;
+        setMobile(finalMobile);
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").getNameByMobile)({
+          mobile: finalMobile
+        });
+        var resolvedUsername = (_res$data2 = res == null ? void 0 : res.data) != null ? _res$data2 : '';
+        if (resolvedUsername && resolvedUsername !== '') {
+          usernameRef.current = resolvedUsername;
+          setUsername(resolvedUsername);
+          setInputTextByRef(usernameInputRef, resolvedUsername);
+          setInfo(function (prev) {
+            return Object.assign({}, prev, {
+              mobile: finalMobile,
+              username: resolvedUsername
+            });
+          });
+        }
+      });
+      return function resolveUsernameByMobile(_x2) {
+        return _ref3.apply(this, arguments);
+      };
+    }();
+    var router = (0, _$$_REQUIRE(_dependencyMap[14], "@react-navigation/native").useRoute)();
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[14], "@react-navigation/native").useNavigation)();
     (0, _react.useEffect)(function () {
       setIsAllSelected(selectedDeviceList.length > 0 && selectedDeviceList.length === deviceList.length);
     }, [selectedDeviceList, deviceList.length]);
     var onLoad = /*#__PURE__*/function () {
-      var _ref = (0, _asyncToGenerator2.default)(function* () {
+      var _ref5 = (0, _asyncToGenerator2.default)(function* () {
         var _router$params;
         var detail = (_router$params = router.params) == null ? void 0 : _router$params.detail;
         setDetail(detail);
@@ -293408,7 +293562,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         yield getCount();
       });
       return function onLoad() {
-        return _ref.apply(this, arguments);
+        return _ref5.apply(this, arguments);
       };
     }();
     (0, _react.useEffect)(function () {
@@ -293416,20 +293570,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     var getCount = /*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2.default)(function* () {
-        var _res$data;
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").getUnUseCount)({});
-        setUnUseCount((_res$data = res.data) != null ? _res$data : 0);
+      var _ref6 = (0, _asyncToGenerator2.default)(function* () {
+        var _res$data3;
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").getUnUseCount)({});
+        setUnUseCount((_res$data3 = res.data) != null ? _res$data3 : 0);
       });
       return function getCount() {
-        return _ref2.apply(this, arguments);
+        return _ref6.apply(this, arguments);
       };
     }();
     var getUserList = /*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2.default)(function* () {
-        var _res$data2;
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").getAdmins)({});
-        var list = (_res$data2 = res == null ? void 0 : res.data) != null ? _res$data2 : [];
+      var _ref7 = (0, _asyncToGenerator2.default)(function* () {
+        var _res$data4;
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").getAdmins)({});
+        var list = (_res$data4 = res == null ? void 0 : res.data) != null ? _res$data4 : [];
         setUserList(list);
         if (list.length > 0) {
           var first = list[0];
@@ -293441,11 +293595,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function getUserList() {
-        return _ref3.apply(this, arguments);
+        return _ref7.apply(this, arguments);
       };
     }();
     var handleSelected = /*#__PURE__*/function () {
-      var _ref4 = (0, _asyncToGenerator2.default)(function* (id) {
+      var _ref8 = (0, _asyncToGenerator2.default)(function* (id) {
         if (selectedDeviceList.includes(id)) {
           setSelectedDeviceList(selectedDeviceList.filter(function (item) {
             return item !== id;
@@ -293454,14 +293608,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           setSelectedDeviceList([].concat((0, _toConsumableArray2.default)(selectedDeviceList), [id]));
         }
       });
-      return function handleSelected(_x) {
-        return _ref4.apply(this, arguments);
+      return function handleSelected(_x3) {
+        return _ref8.apply(this, arguments);
       };
     }();
     var getDeviceList = /*#__PURE__*/function () {
-      var _ref5 = (0, _asyncToGenerator2.default)(function* (id, reload) {
+      var _ref9 = (0, _asyncToGenerator2.default)(function* (id, reload) {
         var _res$data$list;
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").getLockListByAdmin)({
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").getLockListByAdmin)({
           offset: reload ? 0 : deviceList.length,
           pageSize: 10,
           adminUserId: id
@@ -293474,12 +293628,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }));
         setIsAllSelected(true);
       });
-      return function getDeviceList(_x2, _x3) {
-        return _ref5.apply(this, arguments);
+      return function getDeviceList(_x4, _x5) {
+        return _ref9.apply(this, arguments);
       };
     }();
     var handleInvite = /*#__PURE__*/function () {
-      var _ref6 = (0, _asyncToGenerator2.default)(function* () {
+      var _ref0 = (0, _asyncToGenerator2.default)(function* () {
+        var finalUsername = (usernameRef.current || username || '').trim();
+        var finalMobile = (mobileRef.current || mobile || '').trim();
         if (!startTime) {
           (0, _$$_REQUIRE(_dependencyMap[15], "../../utils").showToast)({
             title: '请选择开始时间'
@@ -293516,11 +293672,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           });
           return;
         }
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").saveInvite)({
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").saveInvite)({
           adminUserId: adminUserId,
           userLockIds: selectedDeviceList,
-          username: username,
-          mobile: mobile,
+          username: finalUsername,
+          mobile: finalMobile,
           startTime: startTime,
           endTime: endTime,
           limitTime: noLimit ? null : customUsageCount,
@@ -293528,33 +293684,33 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           // status: 0,  // 状态：1-生效中 2-已使用 10-过期未用 20-已作废
         });
         if (res.code == 200) {
+          yield getCount();
           var _shareDetail = yield getSimpleDetails(res == null ? void 0 : res.data);
           setShareDetail(_shareDetail.data);
           setSharePopupVisible(true);
         }
       });
       return function handleInvite() {
-        return _ref6.apply(this, arguments);
+        return _ref0.apply(this, arguments);
       };
     }();
     var getSimpleDetails = /*#__PURE__*/function () {
-      var _ref7 = (0, _asyncToGenerator2.default)(function* (id) {
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").simpleDetails)({
+      var _ref1 = (0, _asyncToGenerator2.default)(function* (id) {
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "../../services/user").simpleDetails)({
           id: id
         });
-        console.log(res, '====');
         setShareDetail(res);
         return res;
       });
-      return function getSimpleDetails(_x4) {
-        return _ref7.apply(this, arguments);
+      return function getSimpleDetails(_x6) {
+        return _ref1.apply(this, arguments);
       };
     }();
     var cdnDomain = function cdnDomain(cosPath) {
       return cosPath.replace('sbqfc-1307862547.cos.ap-shanghai.myqcloud.com', 'https://g.18qjz.cn');
     };
     var handleUploadImages = /*#__PURE__*/function () {
-      var _ref8 = (0, _asyncToGenerator2.default)(function* (file) {
+      var _ref10 = (0, _asyncToGenerator2.default)(function* (file) {
         try {
           var _fl$data;
           var fl = yield (0, _$$_REQUIRE(_dependencyMap[16], "../../utils/request").tencentUpload)({
@@ -293587,12 +293743,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           return '';
         }
       });
-      return function handleUploadImages(_x5) {
-        return _ref8.apply(this, arguments);
+      return function handleUploadImages(_x7) {
+        return _ref10.apply(this, arguments);
       };
     }();
     var onShare = /*#__PURE__*/function () {
-      var _ref9 = (0, _asyncToGenerator2.default)(function* (detail) {
+      var _ref11 = (0, _asyncToGenerator2.default)(function* (detail) {
+        if (isSharing) return;
+        setIsSharing(true);
+        // iOS 从微信返回时，先关闭弹窗可避免 Portal Modal 遮罩残留导致页面假死
+        setSharePopupVisible(false);
         (0, _$$_REQUIRE(_dependencyMap[15], "../../utils").showLoading)({
           title: '生成分享图片中...'
         });
@@ -293606,6 +293766,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             (0, _$$_REQUIRE(_dependencyMap[15], "../../utils").hideLoading)();
             return;
           }
+          yield new Promise(function (resolve) {
+            _reactNative.InteractionManager.runAfterInteractions(function () {
+              return resolve();
+            });
+          });
           var imagePath = yield (0, _$$_REQUIRE(_dependencyMap[18], "../../utils/shareImage").generateShareImage)({
             details: detail,
             width: 750,
@@ -293635,11 +293800,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             icon: 'none'
           });
         } finally {
+          setIsSharing(false);
           (0, _$$_REQUIRE(_dependencyMap[15], "../../utils").hideLoading)();
         }
       });
-      return function onShare(_x6) {
-        return _ref9.apply(this, arguments);
+      return function onShare(_x8) {
+        return _ref11.apply(this, arguments);
       };
     }();
 
@@ -293661,6 +293827,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })}`
       });
     }, [shareDetail, shareImagePath]);
+    (0, _react.useEffect)(function () {
+      return function () {
+        _$$_REQUIRE(_dependencyMap[18], "../../utils/shareImage").onShareAppMessage;
+      };
+    }, []);
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[20], "../../components").PageContainer, {
       pageNavProps: {
         showBack: true,
@@ -293753,42 +293924,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: [_$$_REQUIRE(_dependencyMap[21], "./style").styles.label],
               children: "\u59D3\u540D"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[20], "../../components").TextInput, {
+              ref: usernameInputRef,
               placeholder: "\u8BF7\u8F93\u5165\u59D3\u540D",
               maxLength: 11,
-              value: username,
+              defaultValue: username,
               placeholderTextColor: "#CCCCCC",
               style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.input,
               onChangeText: function onChangeText(text) {
-                setUsername(text);
-                setInfo(function (prev) {
-                  return Object.assign({}, prev, {
-                    username: text
-                  });
-                });
+                usernameRef.current = text;
               },
-              onEndEditing: (/*#__PURE__*/function () {
-                var _ref0 = (0, _asyncToGenerator2.default)(function* (event) {
-                  var _event$nativeEvent$te, _event$nativeEvent;
-                  var finalUsername = ((_event$nativeEvent$te = event == null || (_event$nativeEvent = event.nativeEvent) == null ? void 0 : _event$nativeEvent.text) != null ? _event$nativeEvent$te : '').trim();
-                  if (!finalUsername) {
-                    return;
-                  }
-                  var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").getMobileByName)({
-                    username: finalUsername
-                  });
-                  var resolvedMobile = pickStringFromResult(res, 'mobile');
-                  if (resolvedMobile) {
-                    setMobile(resolvedMobile);
-                    setInfo(function (prev) {
-                      return Object.assign({}, prev, {
-                        username: finalUsername,
-                        mobile: resolvedMobile
-                      });
-                    });
-                  }
+              onBlur: (/*#__PURE__*/function () {
+                var _ref12 = (0, _asyncToGenerator2.default)(function* (event) {
+                  var _event$nativeEvent;
+                  yield resolveMobileByUsername(event == null || (_event$nativeEvent = event.nativeEvent) == null ? void 0 : _event$nativeEvent.text);
                 });
-                return function (_x7) {
-                  return _ref0.apply(this, arguments);
+                return function (_x9) {
+                  return _ref12.apply(this, arguments);
                 };
               }())
             })]
@@ -293800,43 +293951,23 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: [_$$_REQUIRE(_dependencyMap[21], "./style").styles.label],
               children: "\u624B\u673A\u53F7\u7801"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[20], "../../components").TextInput, {
+              ref: mobileInputRef,
               placeholder: "\u8BF7\u8F93\u5165\u624B\u673A\u53F7",
-              value: mobile,
+              defaultValue: mobile,
               keyboardType: "numeric",
               maxLength: 11,
               placeholderTextColor: "#CCCCCC",
               style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.input,
               onChangeText: function onChangeText(text) {
-                setMobile(text);
-                setInfo(function (prev) {
-                  return Object.assign({}, prev, {
-                    mobile: text
-                  });
-                });
+                mobileRef.current = text;
               },
-              onEndEditing: (/*#__PURE__*/function () {
-                var _ref1 = (0, _asyncToGenerator2.default)(function* (event) {
-                  var _event$nativeEvent$te2, _event$nativeEvent2;
-                  var finalMobile = ((_event$nativeEvent$te2 = event == null || (_event$nativeEvent2 = event.nativeEvent) == null ? void 0 : _event$nativeEvent2.text) != null ? _event$nativeEvent$te2 : '').trim();
-                  if (!finalMobile) {
-                    return;
-                  }
-                  var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "../../services/user").getNameByMobile)({
-                    mobile: finalMobile
-                  });
-                  var resolvedUsername = pickStringFromResult(res, 'username');
-                  if (resolvedUsername) {
-                    setUsername(resolvedUsername);
-                    setInfo(function (prev) {
-                      return Object.assign({}, prev, {
-                        mobile: finalMobile,
-                        username: resolvedUsername
-                      });
-                    });
-                  }
+              onBlur: (/*#__PURE__*/function () {
+                var _ref13 = (0, _asyncToGenerator2.default)(function* (event) {
+                  var _event$nativeEvent2;
+                  yield resolveUsernameByMobile(event == null || (_event$nativeEvent2 = event.nativeEvent) == null ? void 0 : _event$nativeEvent2.text);
                 });
-                return function (_x8) {
-                  return _ref1.apply(this, arguments);
+                return function (_x0) {
+                  return _ref13.apply(this, arguments);
                 };
               }())
             })]
@@ -293987,7 +294118,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 color: "#333333"
               }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
                 style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.chooseNum,
-                children: ["\uFF08\u5DF2\u9009\u62E9", (_ref10 = selectedDeviceList && (selectedDeviceList == null ? void 0 : selectedDeviceList.length)) != null ? _ref10 : 0, "\u4E2A\uFF09"]
+                children: ["\uFF08\u5DF2\u9009\u62E9", (_ref14 = selectedDeviceList && (selectedDeviceList == null ? void 0 : selectedDeviceList.length)) != null ? _ref14 : 0, "\u4E2A\uFF09"]
               })]
             })]
           }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
@@ -294175,7 +294306,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           onClose: function onClose() {
             return setSharePopupVisible(false);
           },
-          minHeight: 507,
+          minHeight: 510,
           showClose: false,
           children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
             style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.numPop,
@@ -294308,6 +294439,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 isTouchView: true,
                 style: [_$$_REQUIRE(_dependencyMap[21], "./style").styles.confirmBtnPop, _$$_REQUIRE(_dependencyMap[21], "./style").styles.bgColor333, _$$_REQUIRE(_dependencyMap[21], "./style").styles.shareBtn],
                 onPress: function onPress() {
+                  if (isSharing) return;
                   if (!shareDetail) return;
                   void onShare(shareDetail);
                 },
@@ -294338,7 +294470,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = VipPage;
-},1699,[1,7,2,25,42,3,534,1315,1504,1700,1935,555,88,660,785,763,553,761,1937,1644,1512,1941,758,1942,1944],"src\\pages\\vip\\index.tsx");
+},1699,[1,7,2,25,42,3,534,1315,1504,1700,1935,555,88,785,660,763,553,761,1937,1644,1512,1941,758,1942,1944],"src\\pages\\vip\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -316523,7 +316655,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       width: 120
     },
     input: {
-      textAlign: 'right'
+      textAlign: 'right',
+      minWidth: 120
     },
     titleBox: {
       width: '100%',
@@ -318486,6 +318619,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         children: ["\u5171 ", (_list$length = list == null ? void 0 : list.length) != null ? _list$length : 0, " \u6761\u8BB0\u5F55"]
       })]
     });
+    (0, _react.useEffect)(function () {
+      return function () {
+        _$$_REQUIRE(_dependencyMap[14], "../../utils/shareImage").onShareAppMessage;
+      };
+    }, []);
     return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "../../components").PageContainer, {
       backgroundColor: "#F6F7FA",
       statusBarStyle: "dark-content",
@@ -318529,8 +318667,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         title: "\u786E\u5B9A\u8981\u4F5C\u5E9F\u6B64\u8D35\u5BBE\u7801\uFF1F",
         onConfirm: handleCancelInvite
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_InviteCodePop.default, {
-        ref: animationPopRef,
-        maxHeight: 507,
+        ref: animationPopRef
+        // maxHeight={507}
+        ,
         styles: _$$_REQUIRE(_dependencyMap[16], "./recordStyle").styles,
         details: details,
         shareDetail: shareDetail,
@@ -318541,8 +318680,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           });
         },
         onInvalidate: function onInvalidate() {
-          var _animationPopRef$curr2;
-          (_animationPopRef$curr2 = animationPopRef.current) == null || _animationPopRef$curr2.close();
+          setTimeout(function () {
+            var _animationPopRef$curr2;
+            return (_animationPopRef$curr2 = animationPopRef.current) == null || _animationPopRef$curr2.close == null ? void 0 : _animationPopRef$curr2.close();
+          }, 600);
           setTimeout(function () {
             var _deleteRef$current;
             return (_deleteRef$current = deleteRef.current) == null || _deleteRef$current.open == null ? void 0 : _deleteRef$current.open();
@@ -318623,7 +318764,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       shareDetail = _ref.shareDetail,
       styles = _ref.styles,
       _ref$maxHeight = _ref.maxHeight,
-      maxHeight = _ref$maxHeight === void 0 ? 507 : _ref$maxHeight,
+      maxHeight = _ref$maxHeight === void 0 ? 550 : _ref$maxHeight,
       onEdit = _ref.onEdit,
       onInvalidate = _ref.onInvalidate,
       onShare = _ref.onShare;
@@ -318837,7 +318978,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             children: details != null && details.noLimit ? '不限' : details == null ? void 0 : details.limitTime
           })]
         })]
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+      }), (details == null ? void 0 : details.status) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
         style: styles.popup,
         children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
           style: {
@@ -325162,8 +325303,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         type: "pass",
         onSuccess: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
           if ((optionTypeRef == null ? void 0 : optionTypeRef.current) === 1) {
-            var _settingPinRef$curren;
-            (_settingPinRef$curren = settingPinRef.current) == null || _settingPinRef$curren.open();
+            setTimeout(function () {
+              var _settingPinRef$curren;
+              return (_settingPinRef$curren = settingPinRef.current) == null || _settingPinRef$curren.open == null ? void 0 : _settingPinRef$curren.open();
+            }, 600);
           } else if ((optionTypeRef == null ? void 0 : optionTypeRef.current) === 2) {
             yield handleToggleProximity();
           }
@@ -326713,7 +326856,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             forceUpdate: info.forceUpdate,
             isLast: info.isLast,
             onConfirm: function onConfirm() {
-              return manager.applyAppVerUpdate(info);
+              setTimeout(function () {
+                return manager.applyAppVerUpdate(info);
+              }, 600);
             }
           });
         }
