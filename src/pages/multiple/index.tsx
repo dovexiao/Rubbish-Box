@@ -22,7 +22,7 @@ import LockVisual, {
   DeviceStatusFlags,
   LockVisualStatus,
 } from '@/components/LockVisual';
-import { LockInfoDTO } from '@/pages/index/typing';
+import type { LockInfoDTO } from '@/pages/index/typing';
 import { FALL_STATUS } from '@/constants';
 import { styles } from '@/pages/index/style';
 import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';

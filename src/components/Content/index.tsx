@@ -22,7 +22,7 @@ import {
 } from '@/services/device';
 import { OPT_TYPE, OT_STATUS } from '@/constants';
 import { DeviceSwitch } from '../Device/switch';
-import { LockInfoDTO } from '@/pages/index/typing';
+import type { LockInfoDTO } from '@/pages/index/typing';
 import { styles } from './style';
 import { groupSubList } from '@/services';
 import { useAppNavigation } from '@/hooks/useAppNavigation';

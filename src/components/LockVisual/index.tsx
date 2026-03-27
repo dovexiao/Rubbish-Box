@@ -5,7 +5,7 @@ import AppIcon from '@/components/AppIcon';
 import { LOCK_ROLE } from '@/constants';
 import FastImage from 'react-native-fast-image';
 import styles from './styles';
-import { LockInfoDTO } from '@/pages/index/typing';
+import type { LockInfoDTO } from '@/pages/index/typing';
 import { useTheme } from '@/context/ThemeContext';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 

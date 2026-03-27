@@ -2,7 +2,7 @@ import { captureRef } from 'react-native-view-shot';
 import { RefObject } from 'react';
 import { Platform, AppState } from 'react-native';
 import { DEPLOY_ENV } from '@/config';
-import { DetailsProp } from '@/pages/vip/type';
+import type { DetailsProp } from '@/pages/vip/type';
 import { showToast, showLoading, hideLoading } from '@/utils';
 import {
   hasWeChatShareCapability,
