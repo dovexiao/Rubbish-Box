@@ -12,6 +12,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { PageContainer, PopConfirm, Flex } from '@/components';
+import type { DetailsProp } from './type';
 import AppIcon from '@/components/AppIcon';
 import { cancelInvite, getDetails, getRecordList } from '@/services/user';
 import { generateShareImage, onShareAppMessage } from '@/utils/shareImage';
@@ -19,7 +20,6 @@ import { tencentUpload } from '@/utils/request';
 import { checkInstalledWeChat } from '@/utils/wechat';
 import { showLoading, hideLoading, showToast } from '@/utils';
 import { styles } from './recordStyle';
-import { DetailsProp } from './type';
 import { WeChatCoverImage } from './com/weChatCoverImage';
 import InviteCodePop, { type InviteCodePopRef } from './com/InviteCodePop';
 

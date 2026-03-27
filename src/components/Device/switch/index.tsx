@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
-import { LockInfoDTO } from '@/pages/index/typing';
+import type { LockInfoDTO } from '@/pages/index/typing';
 import { getLockDeviceList } from '@/services/device';
 import { updateName } from '@/services/deviceInfo';
 import { cacheGet } from '@/utils/cache';

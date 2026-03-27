@@ -26,9 +26,9 @@ import { DeviceItem } from './com/deviceItem';
 import UseCountPop from './com/useCountPop';
 import { WeChatCoverImage } from './com/weChatCoverImage';
 import { styles } from './style';
-import { LockInfoDTO } from '@/pages/index/typing';
+import type { LockInfoDTO } from '@/pages/index/typing';
 import dayjs from 'dayjs';
-import { DetailsProp } from './type';
+import type { DetailsProp } from './type';
 import {
   getAdmins,
   saveInvite,
