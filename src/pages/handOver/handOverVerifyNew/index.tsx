@@ -116,7 +116,7 @@ export default function HandOverVerifyNew() {
         newAdminMobile: params.mobile,
         newAdminCode: params.code,
       });
-      console.log(checkAdminRes, '===checkAdminRes');
+
       if (!(checkAdminRes?.code === 200 && checkAdminRes?.success)) {
         hideLoading();
         showToast(checkAdminRes?.message || checkAdminRes?.msg || '校验失败');

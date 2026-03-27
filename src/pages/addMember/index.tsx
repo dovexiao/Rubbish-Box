@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   FlatList,
   Image,
@@ -40,7 +46,7 @@ type LockListItem = {
   imageUrl: string;
 };
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 5;
 
 export default function AddMember() {
   const navigation = useNavigation<any>();
@@ -54,9 +60,15 @@ export default function AddMember() {
   const [locks, setLocks] = useState<LockListItem[]>([]);
   const [complete, setComplete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [currentLockList, setCurrentLockList] = useState<LockListItem[]>([]);
   const [initialLoading, setInitialLoading] = useState(false);
+  const loadingRef = useRef(false);
+  const offsetRef = useRef(0);
 
-  const hasSelected = useMemo(() => locks.some(item => item.isBind), [locks]);
+  const hasSelected = useMemo(
+    () => currentLockList.some(item => item.isBind),
+    [currentLockList],
+  );
 
   const disabled = useMemo(() => {
     if (!info) return true;
@@ -79,8 +91,10 @@ export default function AddMember() {
     }
 
     const res = await staffDetail({ id: memberId });
+
     if (res.code === 200 && res.success) {
       setInfo(res.data as ListItem);
+      setCurrentLockList(res.data.lockList as LockListItem[]);
     } else {
       showToast(res.msg || res.message || '获取成员详情失败');
     }
@@ -88,7 +102,8 @@ export default function AddMember() {
 
   const loadLocks = useCallback(
     async (refresh: boolean) => {
-      if (loading) return;
+      if (loadingRef.current) return;
+      loadingRef.current = true;
 
       if (refresh) {
         setInitialLoading(true);
@@ -97,7 +112,7 @@ export default function AddMember() {
       }
 
       try {
-        const offset = refresh ? 0 : locks.length;
+        const offset = refresh ? 0 : offsetRef.current;
         const res = await staffLockList({
           id: memberId,
           pageSize: PAGE_SIZE,
@@ -110,7 +125,18 @@ export default function AddMember() {
             ? data.list
             : data.list ?? [];
           setLocks(prev => (refresh ? rows : [...prev, ...rows]));
-          setComplete(rows.length < PAGE_SIZE);
+          offsetRef.current = refresh
+            ? rows.length
+            : offsetRef.current + rows.length;
+          const total =
+            typeof data.total === 'number' && Number.isFinite(data.total)
+              ? data.total
+              : undefined;
+          if (typeof total === 'number') {
+            setComplete(offset + rows.length >= total);
+          } else {
+            setComplete(rows.length < PAGE_SIZE);
+          }
         } else {
           showToast(res.msg || res.message || '获取地锁列表失败');
         }
@@ -119,9 +145,10 @@ export default function AddMember() {
       } finally {
         setLoading(false);
         setInitialLoading(false);
+        loadingRef.current = false;
       }
     },
-    [locks.length, memberId, loading],
+    [memberId],
   );
 
   useEffect(() => {
@@ -129,14 +156,25 @@ export default function AddMember() {
       setInitialLoading(true);
       try {
         await loadDetail();
+        offsetRef.current = 0;
+        setComplete(false);
         await loadLocks(true);
       } finally {
         setInitialLoading(false);
       }
     })();
-  }, [loadDetail, loadLocks]);
+  }, [loadDetail, memberId]);
 
   const handleUpdateLock = useCallback((next: LockListItem) => {
+    setCurrentLockList(prev => {
+      const exists = prev.some(item => item.id === next.id);
+      if (exists) {
+        return prev.map(item =>
+          item.id === next.id ? { ...item, ...next } : item,
+        );
+      }
+      return [...prev, next];
+    });
     setLocks(prev => prev.map(item => (item.id === next.id ? next : item)));
   }, []);
 
@@ -159,7 +197,7 @@ export default function AddMember() {
       return;
     }
 
-    const selectedLocks = locks.filter(item => item.isBind);
+    const selectedLocks = currentLockList.filter(item => item.isBind);
     if (selectedLocks.length === 0) {
       showToast('至少选择一个地锁');
       return;
@@ -169,8 +207,6 @@ export default function AddMember() {
       const res = await modifyStaff({
         ...info,
         lockList: selectedLocks,
-        pageSize: PAGE_SIZE,
-        offset: locks.length ?? 0,
       });
 
       if (res.code === 200 && res.success) {
@@ -304,6 +340,25 @@ export default function AddMember() {
           renderItem={renderLockItem}
           contentContainerStyle={styles.lockListContent}
           ListEmptyComponent={listEmptyComponent}
+          refreshing={initialLoading}
+          onRefresh={() => {
+            void loadLocks(true);
+          }}
+          onEndReached={() => {
+            if (!loading && !complete) {
+              void loadLocks(false);
+            }
+          }}
+          onEndReachedThreshold={0.2}
+          ListFooterComponent={() => {
+            if (loading) {
+              return <Text style={styles.footerText}>加载中...</Text>;
+            }
+            if (complete && locks.length > 0) {
+              return <Text style={styles.footerText}>已加载全部</Text>;
+            }
+            return null;
+          }}
         />
       </View>
     </PageContainer>

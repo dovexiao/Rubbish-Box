@@ -90,7 +90,6 @@ export default function UnbindDevice() {
 
     showLoading({ title: '加载中...' });
     try {
-      console.log('lockId', lockId, 'code', code);
       let cmdRes: any = null;
       let deviceId: string | null = null;
       const checkRes: any = await unbindSmsCheck({ id: lockId, code: pure });
@@ -163,9 +162,16 @@ export default function UnbindDevice() {
 
       if (res?.code === 200 && res?.success) {
         stop();
-        const targetRemoveId = (Platform.OS === 'ios' || Platform.OS === 'android') ? String(bleNo) : (deviceId || String(bleNo));
+        const targetRemoveId =
+          Platform.OS === 'ios' || Platform.OS === 'android'
+            ? String(bleNo)
+            : deviceId || String(bleNo);
         await removeBluetoothDeviceInfo(targetRemoveId).catch(() => {});
-        if (Platform.OS !== 'ios' && Platform.OS !== 'android' && targetRemoveId) {
+        if (
+          Platform.OS !== 'ios' &&
+          Platform.OS !== 'android' &&
+          targetRemoveId
+        ) {
           try {
             const { disconnectBluetoothDevice } = require('@/utils/api');
             await disconnectBluetoothDevice(targetRemoveId);
