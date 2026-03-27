@@ -538,7 +538,7 @@ export default function FindDevice(props: any) {
         }
         if (Number(role) === 1 && !mode) {
           // 物理按键配对需要轮询
-          if (!!needPin) {
+          if (!!!needPin) {
             const apiRes: any = await openBluetoothProximity({
               id: lockId,
               bluetoothStatus: 1,

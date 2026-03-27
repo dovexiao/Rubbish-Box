@@ -457,7 +457,7 @@ function App() {
                   }
 
                   if (pageName?.includes('BluetoothControl') && !mode) {
-                    if (!!needPin) {
+                    if (!!!needPin) {
                       const pollOk = async (): Promise<boolean> => {
                         const start = Date.now();
                         const timeoutMs = 10000;
