@@ -449,7 +449,10 @@ const Index = () => {
           return v.deviceId == deviceId;
         });
         if (!connectedDevice) {
-          removeStorage({ key: 'bluetoothDeviceInfo' });
+          // console.log(!!savedDeviceInfo, savedDeviceInfo, '===');
+          if (!!savedDeviceInfo) {
+            removeStorage({ key: 'bluetoothDeviceInfo' });
+          }
           setIsAutoOpenBluetooth(false);
           return;
         }
@@ -479,15 +482,27 @@ const Index = () => {
     }
   };
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
-    timer = setInterval(hasBluetoothAutoOpen, 1000);
-    return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
-    };
-  }, [hasBluetoothAutoOpen]);
+  // if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+  useFocusEffect(
+    useCallback(() => {
+      let timer: NodeJS.Timeout | null = null;
+      timer = setInterval(hasBluetoothAutoOpen, 1000);
+      return () => {
+        if (timer) clearInterval(timer);
+      };
+    }, [hasBluetoothAutoOpen]),
+  );
+  // }
+
+  // useEffect(() => {
+  //   let timer: NodeJS.Timeout | null = null;
+  //   timer = setInterval(hasBluetoothAutoOpen, 1000);
+  //   return () => {
+  //     if (timer) {
+  //       clearInterval(timer);
+  //     }
+  //   };
+  // }, [hasBluetoothAutoOpen]);
 
   return (
     <PageContainer
