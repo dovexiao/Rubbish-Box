@@ -49,6 +49,7 @@ import { OperationCommandByBluetooth } from '@/utils/api';
 import { useAtom, useSetAtom } from 'jotai';
 import { bluetoothOperationLockFallStatusStore } from '@/store/store';
 import { PopConfirmRef } from '../popConfirm';
+import PopCenter from '../PopCenter';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -85,6 +86,9 @@ const Content: React.FC<ContentProps> = ({
   const manageMultipleRef = useRef<AnimationPopRef>(null);
   const bluetoothConnectStatusRef = useRef<BluetoothStatusRef>(null);
   const bluetoothControlRef = useRef<'RISE' | 'DOWN'>('RISE');
+  const groupToastPop = useRef<AutoOperatePopRef>(null);
+  const deviceNum = useRef<number>(0);
+  const optionRef = useRef<string>('');
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -170,6 +174,9 @@ const Content: React.FC<ContentProps> = ({
           return;
         }
 
+        deviceNum.current = res.data;
+        optionRef.current = direction;
+
         loopLockStatus(
           currentDeviceStatus,
           OT_STATUS[direction],
@@ -235,6 +242,15 @@ const Content: React.FC<ContentProps> = ({
                     : 'rising',
                 value: true,
               });
+            }
+
+            if (
+              deviceType === 'group' &&
+              deviceNum.current !== detail?.groupCount
+            ) {
+              setTimeout(() => {
+                groupToastPop.current?.open();
+              }, 600);
             }
             return false;
           }
@@ -825,6 +841,42 @@ const Content: React.FC<ContentProps> = ({
           }
         }}
       />
+
+      <PopCenter height={240} ref={groupToastPop}>
+        <Flex
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          direction="column"
+          justify={'between'}
+          align="center"
+        >
+          <Text style={styles.toastTitle}>温馨提示</Text>
+          <Flex style={{ width: '100%' }} direction="column" align="center">
+            <Text style={styles.toastContentText}>
+              {deviceNum.current}台地锁
+              {optionRef.current === 'RISE' ? '升起' : '降下'}
+              成功
+            </Text>
+            <Text style={styles.toastContentText}>
+              （其他地锁可能存在上方有车、锁盖解锁、设备离线的情况）
+            </Text>
+          </Flex>
+          <Text
+            style={styles.dumpText}
+            onPress={() => {
+              groupToastPop.current?.close();
+              navigation.navigate('DeviceList', {
+                id: detail?.id,
+                role: detail?.role,
+              });
+            }}
+          >
+            前往设备列表查看
+          </Text>
+        </Flex>
+      </PopCenter>
     </View>
   );
 };

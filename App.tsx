@@ -16,7 +16,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { setNavigationRef } from '@/utils/navigation';
 import PopConfirm from '@/components/popConfirm';
 import Flex from '@/components/Flex';
-import { Text, Button } from '@ant-design/react-native';
+import { Text, Button, View } from '@ant-design/react-native';
 import {
   cacheGet,
   cacheGetSync,
@@ -754,7 +754,24 @@ function App() {
                   {globalPopConfirmConfig && (
                     <PopConfirm
                       ref={globalPopConfirmRef}
-                      title={globalPopConfirmConfig.title}
+                      title={
+                        <Flex
+                          direction="column"
+                          align="center"
+                          justify="center"
+                        >
+                          <View
+                            style={{
+                              paddingTop: 24,
+                              fontSize: 16,
+                              fontWeight: '500',
+                              textAlign: 'center',
+                            }}
+                          >
+                            {globalPopConfirmConfig.title}
+                          </View>
+                        </Flex>
+                      }
                       confirmText={globalPopConfirmConfig.confirmText || '确定'}
                       cancelText={globalPopConfirmConfig.cancelText || '取消'}
                       showClose={globalPopConfirmConfig.showClose !== false}

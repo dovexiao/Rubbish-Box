@@ -70,7 +70,6 @@ export default function BluetoothControl() {
   const route = useRoute() as any;
   const navigation = useAppNavigation();
   const params: RouteParams = route?.params || {};
-  console.log('BluetoothControl route params:', params);
 
   const bleNo = String(params.bleNo || '');
   const deviceNo = String(params.deviceNo || '');

@@ -858,6 +858,21 @@ export default function FindDevice(props: any) {
                 </View>
               </Flex>
             </Flex>
+
+            <Flex style={(styles.footer, { marginTop: 8 })} justify="center">
+              <GradientButton
+                colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
+                width={160}
+                height={44}
+                round={false}
+                btnBorderRadius={16}
+                onPress={() => handlePairing()}
+              >
+                <Flex style={styles.btnText} justify="center" align="center">
+                  <Text style={styles.btnTextInner}>跳转设置</Text>
+                </Flex>
+              </GradientButton>
+            </Flex>
           </>
         ) : (
           <>
