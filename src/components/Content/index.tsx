@@ -124,7 +124,6 @@ const Content: React.FC<ContentProps> = ({
   // 地锁操作
   const handleOperate = useCallback(
     async (direction: 'RISE' | 'DOWN') => {
-      console.log('handleOperate', detail);
       if (!detail?.id || optioning) return;
 
       eventCenter.trigger('onOptioned', true);
@@ -157,15 +156,17 @@ const Content: React.FC<ContentProps> = ({
         } as any);
 
         if (res?.code !== 200) {
-          // showToast(direction === 'DOWN' ? '已发送降锁指令' : '已发送升锁指令');
+          hideLoading();
           eventCenter.trigger('onOptioned', false);
-          showToast(res?.msg || res.message);
+          setTimeout(() => {
+            showToast({ title: res?.msg || res.message, icon: 'error' });
+          }, 600);
+
           if (onFresh) {
             await onFresh(detail.id);
           } else if (reload) {
             await reload(detail.id);
           }
-          hideLoading();
           return;
         }
 
@@ -335,6 +336,7 @@ const Content: React.FC<ContentProps> = ({
         deviceNo: detail?.deviceNo,
       });
 
+      console.log(r, '===r');
       if (r.success) {
         eventCenter.trigger('onAnimation', {
           type: getBluetoothAnimationType(direction, currentDeviceStatus),
@@ -345,7 +347,6 @@ const Content: React.FC<ContentProps> = ({
         setLockStatus(preV => direction);
       } else {
         await sleep(4000);
-        hideLoading();
         eventCenter.trigger('onOptioned', false);
         showToast({ title: r.msg || '操作失败', icon: 'none' });
       }

@@ -27,6 +27,12 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 6,
   },
+  powerModeRow: {
+    position: 'relative',
+  },
+  powerModeRowActive: {
+    zIndex: 10,
+  },
   cardRowsTouch: {
     flex: 1,
     display: 'flex',

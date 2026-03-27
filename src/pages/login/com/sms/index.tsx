@@ -54,19 +54,27 @@ const Sms: React.FC<SmsProps> = ({
       showLoading({ title: '发送中...' });
       const res = await getSmsCode({ mobile, purpose: SMS_PURPOSE.LOGIN });
       if (res.code === 200) {
-        hideLoading();
+        setTimeout(() => {
+          hideLoading();
+        }, 600);
         navigation.navigate('LoginSms', { mobile, type: SMS_PURPOSE.LOGIN });
       } else if (res.code === 521) {
-        hideLoading();
+        setTimeout(() => {
+          hideLoading();
+        }, 600);
         setShowError(true);
       } else {
-        hideLoading();
+        setTimeout(() => {
+          hideLoading();
+        }, 600);
         showToast(res.message || '发送失败');
       }
     } catch {
       showToast('发送失败，请重试');
     } finally {
-      hideLoading();
+      setTimeout(() => {
+        hideLoading();
+      }, 600);
     }
   };
 
@@ -85,7 +93,9 @@ const Sms: React.FC<SmsProps> = ({
     eventCenter.on('onNext', handler);
     return () => {
       eventCenter.off('onNext', handler);
-      hideLoading();
+      setTimeout(() => {
+        hideLoading();
+      }, 600);
     };
   }, [mobile, agree]);
 

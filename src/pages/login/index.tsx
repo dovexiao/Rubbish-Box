@@ -153,7 +153,6 @@ const Login = () => {
         }
         console.log('obj', obj);
         const thirdLoginRes = await thirdLogin({ ...obj });
-        console.log('thirdLoginRes', thirdLoginRes);
         if (thirdLoginRes.code === 200) {
           await cacheSetSync('token', thirdLoginRes.data.token);
           await cacheSetSync('guestMode', false);
@@ -167,8 +166,7 @@ const Login = () => {
               mobile: thirdLoginRes.data.mobile,
             });
           } else {
-            hideLoading();
-            showToast('登录成功');
+            setTimeout(() => showToast('登录成功'), 600);
             reLaunch('Index');
           }
         } else {
@@ -447,6 +445,7 @@ const Login = () => {
                 myNextTick(() => {
                   setTimeout(() => {
                     agreePopRef.current?.close();
+                    hideLoading();
                   }, 600);
                   eventCenter.trigger('onNext');
                 });

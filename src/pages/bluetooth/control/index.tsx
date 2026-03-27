@@ -330,55 +330,18 @@ export default function BluetoothControl() {
           return;
         }
 
-        const extractStatus = (data: any): number | undefined => {
-          const tryNumber = (v: any): number | undefined => {
-            if (typeof v === 'number' && Number.isFinite(v)) return v;
-            if (typeof v === 'string') {
-              const n = Number(v);
-              return Number.isFinite(n) ? n : undefined;
-            }
-            return undefined;
-          };
-
-          if (data === undefined || data === null) return undefined;
-          if (typeof data !== 'object') return tryNumber(data);
-
-          const candidates = [
-            'bluetoothStatus',
-            'status',
-            'open',
-            'isOpen',
-            'enabled',
-            'enable',
-            'proximityStatus',
-          ];
-          for (const k of candidates) {
-            const n = tryNumber((data as any)?.[k]);
-            if (n !== undefined) return n;
-          }
-
-          const nested = (data as any)?.data ?? (data as any)?.content;
-          if (nested && nested !== data) return extractStatus(nested);
-          return undefined;
-        };
-
         const pollOk = async (): Promise<boolean> => {
           const start = Date.now();
-          const timeoutMs = 15000;
+          const timeoutMs = 10000;
           const intervalMs = 1000;
 
           while (Date.now() - start < timeoutMs) {
             try {
-              const res: any = await getBluetoothStatus({ id: lockId });
-              const codeOk =
-                res?.success === true ||
-                res?.code === 200 ||
-                res?.code === '200';
-
-              if (codeOk) {
-                const current = extractStatus(res?.data);
-                if (current === targetServerStatus) return true;
-              }
+              const res: any = await getBluetoothStatus({
+                id: lockId,
+                bluetoothStatus: targetServerStatus,
+              });
+              if (res?.data) return true;
             } catch {
               // 轮询继续
             }
@@ -391,7 +354,6 @@ export default function BluetoothControl() {
 
         const ok = await pollOk();
         if (!ok) {
-          hideLoading();
           showToast({
             title: `${
               proximityEnabled ? '关闭' : '开启'
@@ -402,8 +364,10 @@ export default function BluetoothControl() {
         }
 
         setProximityEnabled(v => !v);
-        hideLoading();
-        showToast({ title: '操作成功', icon: 'success' });
+        setTimeout(
+          () => showToast({ title: '操作成功', icon: 'success' }),
+          600,
+        );
         return;
       }
 

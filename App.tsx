@@ -458,61 +458,21 @@ function App() {
 
                   if (pageName?.includes('BluetoothControl') && !mode) {
                     if (!!needPin) {
-                      const extractStatus = (data: any): number | undefined => {
-                        const tryNumber = (v: any): number | undefined => {
-                          if (typeof v === 'number' && Number.isFinite(v))
-                            return v;
-                          if (typeof v === 'string') {
-                            const n = Number(v);
-                            return Number.isFinite(n) ? n : undefined;
-                          }
-                          return undefined;
-                        };
-
-                        if (data === undefined || data === null)
-                          return undefined;
-                        if (typeof data !== 'object') return tryNumber(data);
-
-                        const candidates = [
-                          'bluetoothStatus',
-                          'status',
-                          'open',
-                          'isOpen',
-                          'enabled',
-                          'enable',
-                          'proximityStatus',
-                        ];
-                        for (const k of candidates) {
-                          const n = tryNumber((data as any)?.[k]);
-                          if (n !== undefined) return n;
-                        }
-
-                        const nested =
-                          (data as any)?.data ?? (data as any)?.content;
-                        if (nested && nested !== data)
-                          return extractStatus(nested);
-                        return undefined;
-                      };
-
                       const pollOk = async (): Promise<boolean> => {
                         const start = Date.now();
-                        const timeoutMs = 15000;
+                        const timeoutMs = 10000;
                         const intervalMs = 1000;
 
                         while (Date.now() - start < timeoutMs) {
                           try {
                             const res: any = await getBluetoothStatus({
                               id: lockId,
+                              bluetoothStatus: 1,
                             });
                             const codeOk =
-                              res?.success === true ||
-                              res?.code === 200 ||
-                              res?.code === '200';
+                              res?.success === true || res?.code === 200;
 
-                            if (codeOk) {
-                              const current = extractStatus(res?.data);
-                              if (current === 1) return true;
-                            }
+                            if (res?.data) return true;
                           } catch {
                             // 轮询继续
                           }
@@ -527,16 +487,18 @@ function App() {
 
                       const ok = await pollOk();
                       if (!ok) {
-                        hideLoading();
-                        showToast({
-                          title: '自动动升降开启失败，请重试',
-                          icon: 'none',
-                        });
+                        setTimeout(() => {
+                          showToast({
+                            title: '自动动升降开启失败，请重试',
+                            icon: 'none',
+                          });
+                        }, 600);
                         return;
                       }
 
-                      hideLoading();
-                      Toast.success('自动升降开启成功');
+                      setTimeout(() => {
+                        Toast.success('自动升降开启成功');
+                      }, 600);
                       return;
                     }
                     Toast.success('自动升降开启成功');

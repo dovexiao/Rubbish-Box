@@ -368,7 +368,13 @@ const DeviceInfo = () => {
             <Text style={styles.cardLable}>地锁SN码</Text>
             <Text style={styles.cardValue}>{lockInfo?.lockId ?? ''}</Text>
           </Flex>
-          <Flex style={[styles.cardRows, { position: 'relative' }]}>
+          <Flex
+            style={[
+              styles.cardRows,
+              styles.powerModeRow,
+              { zIndex: showPowerModeTips ? 10 : 1 },
+            ]}
+          >
             <Text style={styles.cardLable}>供电模式</Text>
             <Text style={[styles.cardValue, { marginRight: 4 }]}>
               {lockInfo?.powerType === 1

@@ -15,7 +15,7 @@ export interface ListItem {
   bluetoothStatus?: number;
   bleNo?: string;
   deviceNo?: string;
-  imageMap?: string;
+  imageMap?: any;
   aboveStatus: number;
   mode: number;
   powerType: number;

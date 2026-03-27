@@ -544,13 +544,7 @@ export default function FindDevice(props: any) {
               bluetoothStatus: 1,
             });
 
-            if (
-              !(
-                apiRes?.code === 200 ||
-                apiRes?.code === '200' ||
-                apiRes?.success
-              )
-            ) {
+            if (!(apiRes?.code === 200 || apiRes?.success)) {
               hideLoading();
               showToast({
                 title: apiRes?.message || '服务端同步失败',
@@ -559,55 +553,18 @@ export default function FindDevice(props: any) {
               return;
             }
 
-            const extractStatus = (data: any): number | undefined => {
-              const tryNumber = (v: any): number | undefined => {
-                if (typeof v === 'number' && Number.isFinite(v)) return v;
-                if (typeof v === 'string') {
-                  const n = Number(v);
-                  return Number.isFinite(n) ? n : undefined;
-                }
-                return undefined;
-              };
-
-              if (data === undefined || data === null) return undefined;
-              if (typeof data !== 'object') return tryNumber(data);
-
-              const candidates = [
-                'bluetoothStatus',
-                'status',
-                'open',
-                'isOpen',
-                'enabled',
-                'enable',
-                'proximityStatus',
-              ];
-              for (const k of candidates) {
-                const n = tryNumber((data as any)?.[k]);
-                if (n !== undefined) return n;
-              }
-
-              const nested = (data as any)?.data ?? (data as any)?.content;
-              if (nested && nested !== data) return extractStatus(nested);
-              return undefined;
-            };
-
             const pollOk = async (): Promise<boolean> => {
               const start = Date.now();
-              const timeoutMs = 15000;
+              const timeoutMs = 10000;
               const intervalMs = 1000;
 
               while (Date.now() - start < timeoutMs) {
                 try {
-                  const res: any = await getBluetoothStatus({ id: lockId });
-                  const codeOk =
-                    res?.success === true ||
-                    res?.code === 200 ||
-                    res?.code === '200';
-
-                  if (codeOk) {
-                    const current = extractStatus(res?.data);
-                    if (current === 1) return true;
-                  }
+                  const res: any = await getBluetoothStatus({
+                    id: lockId,
+                    bluetoothStatus: 1,
+                  });
+                  if (res?.data) return true;
                 } catch {
                   // 轮询继续
                 }
@@ -628,7 +585,10 @@ export default function FindDevice(props: any) {
               return;
             }
             await clearProcessingFlag();
-            showToast({ title: '自动升降开启成功', icon: 'success' });
+            setTimeout(
+              () => showToast({ title: '自动升降开启成功', icon: 'success' }),
+              600,
+            );
             navigation?.navigate?.('BluetoothControl', {
               lockName,
               bluetoothHasOpen: true,
@@ -643,11 +603,13 @@ export default function FindDevice(props: any) {
             });
             return;
           }
+
           const cmdRes = await setNearbyPermission({
             deviceId: deviceInfo.deviceId,
             deviceNo,
             status: 1,
           });
+
           if (!cmdRes.success) {
             showToast({
               title: cmdRes.msg || '开启近身功能失败',

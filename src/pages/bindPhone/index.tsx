@@ -44,9 +44,10 @@ const BindPhone = () => {
         tempToken: token,
       });
 
-      hideLoading();
-
       if (res.code === 200) {
+        setTimeout(() => {
+          hideLoading();
+        }, 600);
         navigation.navigate('LoginSms', {
           mobile,
           type: SMS_PURPOSE.BIND_PHONE,
