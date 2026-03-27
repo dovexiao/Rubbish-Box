@@ -116315,7 +116315,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                     })
                   }), globalPopConfirmConfig && /*#__PURE__*/(0, _jsxRuntime.jsx)(_popConfirm.default, {
                     ref: globalPopConfirmRef,
-                    title: globalPopConfirmConfig.title,
+                    title: /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
+                      direction: "column",
+                      align: "center",
+                      justify: "center",
+                      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").View, {
+                        style: {
+                          paddingTop: 24,
+                          fontSize: 16,
+                          fontWeight: '500',
+                          textAlign: 'center'
+                        },
+                        children: globalPopConfirmConfig.title
+                      })
+                    }),
                     confirmText: globalPopConfirmConfig.confirmText || '确定',
                     cancelText: globalPopConfirmConfig.cancelText || '取消',
                     showClose: globalPopConfirmConfig.showClose !== false,
@@ -116346,7 +116359,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   var _default = exports.default = App;
-},518,[1,2,25,42,3,519,533,534,539,540,537,88,660,659,761,763,579,796,794,787,1221,1224,1269,1270,1275,1277,1222,1278,1513,1512],"App.tsx");
+},518,[1,2,25,42,3,519,533,534,539,540,537,88,660,659,761,763,579,796,794,787,1221,1224,1269,1270,1275,1277,1222,1278,1515,1514],"App.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
   "use client";
@@ -239269,7 +239282,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       label: '添加设备'
     }]
   };
-},1312,[1313,1557,1558,1560,1566,1568,1576,1579,1581,1583,1585,1592,1608,1612,1614,1617,1619,1621,1625,1627,1629,1631,1633,1635,1639,1641,1643,1646,1648,1652,1654,1656,1658,1660,1662,1664,1666,1668,1670,1672,1674,1676,1678,1680,1682,1684,1687,1689,1691,1695,1697,1699,1946,1948,1950,1951,1954,1957,1958,1960,1962,1966,1970,1972,1974,1976,1978,1982,1984,1986],"src\\routes\\index.tsx");
+},1312,[1313,1559,1560,1562,1568,1570,1578,1581,1583,1585,1587,1594,1608,1612,1614,1617,1619,1621,1625,1627,1629,1631,1633,1635,1639,1641,1643,1646,1648,1652,1654,1656,1658,1660,1662,1664,1666,1668,1670,1672,1674,1676,1678,1680,1682,1684,1687,1689,1691,1695,1697,1699,1946,1948,1950,1951,1954,1957,1958,1960,1962,1966,1970,1972,1974,1976,1978,1982,1984,1986],"src\\routes\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -239757,7 +239770,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Index;
-},1313,[1,150,202,2,25,42,3,1314,1495,1498,1499,534,533,1522,88,786,758,785,665,763,770,1556],"src\\pages\\multiple\\index.tsx");
+},1313,[1,150,202,2,25,42,3,1314,1495,1498,1499,534,533,1524,88,786,758,785,665,763,770,1558],"src\\pages\\multiple\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -245418,14 +245431,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       style: _$$_REQUIRE(_dependencyMap[7], "./styles").styles.statusLoginContainer,
       children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
         style: [_$$_REQUIRE(_dependencyMap[7], "./styles").styles.statusLoginTitle, {
-          color: theme.colors.text.primary
+          color: '#333333'
         }],
         children: "\u6B22\u8FCE\u4F7F\u7528 \u6CCA\u523B\u5730\u9501"
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
         align: "center",
         justify: "center",
         style: [_$$_REQUIRE(_dependencyMap[7], "./styles").styles.statusLoginAddBtn, {
-          backgroundColor: themeType === 'dark' ? '#2C2C2C' : '#F5F7FA'
+          backgroundColor: '#F5F7FA'
         }],
         isTouchView: true,
         onPress: function onPress() {
@@ -246543,7 +246556,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _autoOperatePop = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "../autoOperatePop"));
   var _AnimationPop = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[8], "../AnimationPop"));
   var _bluetoothStatus = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[9], "../bluetoothStatus"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[10], "react/jsx-runtime");
+  var _PopCenter = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[10], "../PopCenter"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[11], "react/jsx-runtime");
   var _this = this,
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\Content\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
@@ -246558,7 +246572,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       children = _ref.children,
       isAutoOpenBluetooth = _ref.isAutoOpenBluetooth,
       currentDeviceStatus = _ref.currentDeviceStatus;
-    var navigation = (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/hooks/useAppNavigation").useAppNavigation)();
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/hooks/useAppNavigation").useAppNavigation)();
     var _useState = (0, _react.useState)([]),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       groupList = _useState2[0],
@@ -246571,7 +246585,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
       eleInstallRef = _useState6[0],
       setEleInstallRef = _useState6[1];
-    var _useAtom = (0, _$$_REQUIRE(_dependencyMap[12], "jotai").useAtom)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/store/store").bluetoothOperationLockFallStatusStore),
+    var _useAtom = (0, _$$_REQUIRE(_dependencyMap[13], "jotai").useAtom)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/store/store").bluetoothOperationLockFallStatusStore),
       _useAtom2 = (0, _slicedToArray2.default)(_useAtom, 2),
       lockFallStatus = _useAtom2[0],
       setLockStatus = _useAtom2[1];
@@ -246580,12 +246594,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var manageMultipleRef = (0, _react.useRef)(null);
     var bluetoothConnectStatusRef = (0, _react.useRef)(null);
     var bluetoothControlRef = (0, _react.useRef)('RISE');
+    var groupToastPop = (0, _react.useRef)(null);
+    var deviceNum = (0, _react.useRef)(0);
+    var optionRef = (0, _react.useRef)('');
     (0, _react.useEffect)(function () {
       if (detail != null && detail.isGroup) {
         var funs = /*#__PURE__*/function () {
           var _getGroupSubList = (0, _asyncToGenerator2.default)(function* () {
             var _res$data;
-            var res = yield (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/services").groupSubList)({
+            var res = yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/services").groupSubList)({
               id: detail == null ? void 0 : detail.id,
               pageSize: 30,
               offset: 0
@@ -246616,13 +246633,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var handleOperate = (0, _react.useCallback)(/*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2.default)(function* (direction) {
         if (!(detail != null && detail.id) || optioning) return;
-        _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', true);
-        (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+        _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', true);
+        (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
           title: direction === 'DOWN' ? '降下中...' : '升起中...'
         });
         var location;
         try {
-          location = yield Promise.race([(0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").getLocation)({
+          location = yield Promise.race([(0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").getLocation)({
             type: 'gcj02',
             highAccuracyExpireTime: 1000
           }).then(function (res) {
@@ -246640,17 +246657,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         try {
           var _location, _location2;
-          var res = yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/services/device").operateLock)({
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/services/device").operateLock)({
             id: detail.id,
-            optType: direction === 'DOWN' ? _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").OPT_TYPE.FALL : _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").OPT_TYPE.RISE,
+            optType: direction === 'DOWN' ? _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").OPT_TYPE.FALL : _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").OPT_TYPE.RISE,
             longitude: (_location = location) == null ? void 0 : _location.longitude,
             latitude: (_location2 = location) == null ? void 0 : _location2.latitude
           });
           if ((res == null ? void 0 : res.code) !== 200) {
-            (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-            _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+            (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
             setTimeout(function () {
-              (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                 title: (res == null ? void 0 : res.msg) || res.message,
                 icon: 'error'
               });
@@ -246662,11 +246679,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }
             return;
           }
-          loopLockStatus(currentDeviceStatus, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").OT_STATUS[direction], isMultiple ? 'group' : 'single');
+          deviceNum.current = res.data;
+          optionRef.current = direction;
+          loopLockStatus(currentDeviceStatus, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").OT_STATUS[direction], isMultiple ? 'group' : 'single');
         } catch (e) {
-          (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)('操作失败，请稍后重试');
-          _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
-          (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+          (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)('操作失败，请稍后重试');
+          _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+          (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
         }
       });
       return function (_x) {
@@ -246679,63 +246698,69 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       var _ref3 = (0, _asyncToGenerator2.default)(function* (currentStatus, ot, deviceType) {
         var count = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
         var flag = 0;
-        var _loopFunc = (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+        var _loopFunc = (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
             try {
               flag++;
-              var result = detail != null && detail.isGroup ? yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/services/device").getGroupOperateResult)({
+              var result = detail != null && detail.isGroup ? yield (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/services/device").getGroupOperateResult)({
                 id: detail == null ? void 0 : detail.id,
                 ot: ot
-              }) : yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/services/device").getOperateResult)({
+              }) : yield (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/services/device").getOperateResult)({
                 deviceNo: detail == null ? void 0 : detail.deviceNo,
                 ot: ot
               });
               // console.log(result, 'result地锁开关轮询')
               if (result.code !== 200) {
-                (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                   title: result.message,
                   icon: 'none'
                 });
-                _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
-                (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-                _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+                _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+                (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+                _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
                 stop();
                 return false;
               }
               if (result.data && result.code === 200) {
-                (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+                (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
                 stop();
 
                 // 手动重置
-                if (ot === _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").OT_STATUS.DOWN) {
-                  _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onAnimation', {
+                if (ot === _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").OT_STATUS.DOWN) {
+                  _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onAnimation', {
                     type: currentStatus === 'rise30' ? 'falling30' : currentStatus === 'rise120' ? 'falling120' : 'falling',
                     value: true
                   });
                 }
-                if (ot === _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").OT_STATUS.RISE) {
-                  _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onAnimation', {
+                if (ot === _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").OT_STATUS.RISE) {
+                  _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onAnimation', {
                     type: currentStatus === 'rise30' ? 'rising30' : currentStatus === 'rise120' ? 'rising120' : 'rising',
                     value: true
                   });
                 }
+                if (deviceType === 'group' && deviceNum.current !== (detail == null ? void 0 : detail.groupCount)) {
+                  setTimeout(function () {
+                    var _groupToastPop$curren;
+                    (_groupToastPop$curren = groupToastPop.current) == null || _groupToastPop$curren.open();
+                  }, 600);
+                }
                 return false;
               }
               if (flag >= count) {
-                (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                   title: '轮询超时'
                 });
-                (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-                _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+                (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+                _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
                 stop();
                 return false;
               }
               return true;
             } catch (error) {
-              (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                 title: '操作失败'
               });
-              (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-              _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+              (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+              _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
               stop();
               return false;
             }
@@ -246753,8 +246778,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var loopOperateStatus = /*#__PURE__*/function () {
       var _ref5 = (0, _asyncToGenerator2.default)(function* (ot) {
         var timer = null;
-        var _loopFunc2 = (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-            var res = yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/services/device").getOperateResult)({
+        var _loopFunc2 = (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+            var res = yield (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/services/device").getOperateResult)({
               deviceNo: detail == null ? void 0 : detail.deviceNo,
               ot: ot
             });
@@ -246765,7 +246790,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 yield reload(detail == null ? void 0 : detail.id);
               }
               stop();
-              _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onAnimation', {
+              _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onAnimation', {
                 type: (detail == null ? void 0 : detail.coverStatus) === 1 ? 'closeCovering' : 'openCovering',
                 value: true
               });
@@ -246773,7 +246798,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 clearTimeout(timer);
                 timer = null;
               }
-              (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+              (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
               return false;
             }
             return true;
@@ -246781,10 +246806,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           start = _loopFunc2.start,
           stop = _loopFunc2.stop;
         timer = setTimeout(function () {
-          _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+          _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
           stop();
-          (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-          (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+          (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '操作失败',
             icon: 'none'
           });
@@ -246801,9 +246826,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       var _ref7 = (0, _asyncToGenerator2.default)(function* (direction) {
         try {
           var _deviceMap;
-          _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', true);
+          _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', true);
           var bleNo = detail == null ? void 0 : detail.bleNo;
-          var deviceMap = (yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
+          var deviceMap = (yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
             return null;
           })) || {};
           var deviceId = bleNo ? deviceMap == null || (_deviceMap = deviceMap[bleNo]) == null ? void 0 : _deviceMap.deviceId : undefined;
@@ -246821,30 +246846,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           //   return;
           // }
 
-          (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+          (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
             title: `${direction === 'RISE' ? '升起中...' : '降下中...'}`
           });
           var operation = direction === 'RISE' ? 1 : 2;
-          var r = yield (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/api").OperationCommandByBluetooth)({
+          var r = yield (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/api").OperationCommandByBluetooth)({
             deviceId: deviceId,
             operation: operation,
             deviceNo: detail == null ? void 0 : detail.deviceNo
           });
           console.log(r, '===r');
           if (r.success) {
-            _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onAnimation', {
+            _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onAnimation', {
               type: getBluetoothAnimationType(direction, currentDeviceStatus),
               value: true
             });
             yield sleep(1200);
-            (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
             setLockStatus(function (preV) {
               return direction;
             });
           } else {
             yield sleep(4000);
-            _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
-            (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+            (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: r.msg || '操作失败',
               icon: 'none'
             });
@@ -246852,8 +246877,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         } catch (error) {
           var _bluetoothConnectStat2;
           yield sleep(4000);
-          (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-          _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+          (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+          _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
           (_bluetoothConnectStat2 = bluetoothConnectStatusRef.current) == null || _bluetoothConnectStat2.open();
         }
       });
@@ -246877,19 +246902,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     var operateCover = /*#__PURE__*/function () {
       var _ref8 = (0, _asyncToGenerator2.default)(function* () {
-        _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', true);
-        (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
-          title: `${(detail == null ? void 0 : detail.coverStatus) === _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? '上锁' : '解锁'}中...`
+        _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', true);
+        (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+          title: `${(detail == null ? void 0 : detail.coverStatus) === _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? '上锁' : '解锁'}中...`
         });
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/services/device").operateLockCover)({
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/services/device").operateLockCover)({
           id: detail == null ? void 0 : detail.id
         });
         if (res.success) {
           yield loopOperateStatus(13);
         } else {
-          _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
-          (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-          (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onOptioned', false);
+          (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+          (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: res.message,
             icon: 'none'
           });
@@ -246917,20 +246942,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var onDelete = /*#__PURE__*/function () {
       var _ref9 = (0, _asyncToGenerator2.default)(function* () {
         var _manageMultipleRef$cu;
-        (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+        (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
           title: '删除中...'
         });
-        yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
+        yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
           key: 'pageType',
           data: 'reload'
         });
         setDeleteMultipleRef(false);
         (_manageMultipleRef$cu = manageMultipleRef.current) == null || _manageMultipleRef$cu.close();
-        yield (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/services/combine").deviceDelete)({
+        yield (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/services/combine").deviceDelete)({
           id: detail == null ? void 0 : detail.id
         });
-        (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-        (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+        (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '删除成功'
         });
         navigation.reset({
@@ -246949,7 +246974,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }();
     var handleSetAutoOperate = function handleSetAutoOperate(detail) {
       if ((detail == null ? void 0 : detail.role) === 2 && !(detail != null && detail.bluetoothStatus)) {
-        (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '管理员已关闭此功能，请联系管理员打开',
           icon: 'none'
         });
@@ -246972,21 +246997,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     };
     return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-      style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.contentBox,
-      children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+      style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.contentBox,
+      children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
         direction: "column",
         align: "center",
-        children: [children, /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[22], "../Device/switch").DeviceSwitch, {
+        children: [children, /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[23], "../Device/switch").DeviceSwitch, {
           lockInfo: detail,
           reload: reload,
           type: detail != null && detail.isGroup ? 2 : 1
         })]
-      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
         justify: "between",
-        style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualRow,
+        style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualRow,
         children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
           activeOpacity: 1,
-          style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualBtn,
+          style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualBtn,
           disabled: optioning,
           onPress: function onPress() {
             if (detail != null && detail.isGroup) {
@@ -246997,7 +247022,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }
           },
           children: [!isAutoOpenBluetooth && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.warningIcon,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.warningIcon,
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
               source: {
                 uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png'
@@ -247008,19 +247033,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualIconCircle,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualIconCircle,
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "bluetooth-1",
               size: 24,
               color: "#333333"
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualText,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualText,
             children: "\u81EA\u52A8\u5347\u964D"
           })]
         }), (detail == null ? void 0 : detail.noBleOpt) == true ? null : /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
           activeOpacity: 1,
-          style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualBtn,
+          style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualBtn,
           disabled: optioning,
           onPress: function onPress() {
             if ((detail == null ? void 0 : detail.powerType) === 1 || detail != null && detail.isGroup) {
@@ -247034,19 +247059,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }
           },
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualIconCircle,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualIconCircle,
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "rise",
               size: 24,
               color: "#333333"
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualText,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualText,
             children: "\u624B\u52A8\u5347\u9501"
           })]
         }), (detail == null ? void 0 : detail.noBleOpt) == true ? null : /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
           activeOpacity: 1,
-          style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualBtn,
+          style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualBtn,
           disabled: optioning,
           onPress: function onPress() {
             if ((detail == null ? void 0 : detail.powerType) === 1 || detail != null && detail.isGroup) {
@@ -247060,63 +247085,63 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }
           },
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualIconCircle,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualIconCircle,
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "down",
               size: 24,
               color: "#333333"
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualText,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualText,
             children: "\u624B\u52A8\u964D\u9501"
           })]
         }), isMultiple ? (detail == null ? void 0 : detail.role) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
           activeOpacity: 1,
-          style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualBtn,
+          style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualBtn,
           disabled: optioning,
           onPress: function onPress() {
             var _manageMultipleRef$cu2;
             return (_manageMultipleRef$cu2 = manageMultipleRef.current) == null ? void 0 : _manageMultipleRef$cu2.open();
           },
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualIconCircle,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualIconCircle,
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "a-combinationmanagement",
               size: 24,
               color: "#333333"
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualText,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualText,
             children: "\u7EC4\u5408\u7BA1\u7406"
           })]
         }) : (detail == null ? void 0 : detail.powerType) === 1 && detail.canOpenCover ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
           activeOpacity: 1,
-          style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualBtn,
+          style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualBtn,
           disabled: optioning,
           onPress: function onPress() {
             var _coverOpenRef$current;
             return (_coverOpenRef$current = coverOpenRef.current) == null ? void 0 : _coverOpenRef$current.open();
           },
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualIconCircle,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualIconCircle,
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-              name: (detail == null ? void 0 : detail.coverStatus) === _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? 'unlock' : 'lock',
+              name: (detail == null ? void 0 : detail.coverStatus) === _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? 'unlock' : 'lock',
               size: 24,
               color: "#333333"
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manualText,
-            children: (detail == null ? void 0 : detail.coverStatus) === _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? '关闭锁盖' : '打开锁盖'
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualText,
+            children: (detail == null ? void 0 : detail.coverStatus) === _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? '关闭锁盖' : '打开锁盖'
           })]
         }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_jsxRuntime.Fragment, {})]
-      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
         justify: "between",
-        style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.cardsRow,
-        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+        style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.cardsRow,
+        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
           direction: "column",
           justify: "between",
           align: "center",
-          style: [_$$_REQUIRE(_dependencyMap[20], "./style").styles.contentLeftBox
+          style: [_$$_REQUIRE(_dependencyMap[21], "./style").styles.contentLeftBox
           // detail?.isGroup ? styles.multipleHeight : styles.singleHeight,
           ],
           children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_Map.default, {
@@ -247134,69 +247159,69 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }
           }, detail == null || (_detail$locationList3 = detail.locationList) == null || (_detail$locationList3 = _detail$locationList3[0]) == null ? void 0 : _detail$locationList3.lockId)
         }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Pressable, {
-          style: [_$$_REQUIRE(_dependencyMap[20], "./style").styles.card],
+          style: [_$$_REQUIRE(_dependencyMap[21], "./style").styles.card],
           onPress: handleDeviceInfo,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             justify: "between",
             align: "center",
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.cardHeader,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.cardHeader,
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: detail != null && detail.isGroup ? 'a-Equipmentlist' : 'a-equipmentinformation',
               size: 20,
               color: '#333'
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.cardTitle,
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.cardTitle,
               children: detail != null && detail.isGroup ? '设备列表' : '设备信息'
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "a-headfor-20",
               size: 20,
               color: "#333333"
             })]
-          }), detail != null && detail.isGroup ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.groupListBox,
+          }), detail != null && detail.isGroup ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.groupListBox,
             direction: "column",
             justify: "center",
             align: "center",
             children: (_ref0 = groupList || []) == null || (_ref0 = _ref0.slice(0, 2)) == null ? void 0 : _ref0.map(function (item) {
-              return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
-                style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.groupItem,
+              return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+                style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.groupItem,
                 direction: "row",
                 align: 'center',
                 children: [(item == null ? void 0 : item.imageUrl) && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
                   source: {
                     uri: String(item.imageUrl)
                   },
-                  style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.groupItemImage
+                  style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.groupItemImage
                 }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                   numberOfLines: 1,
-                  style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.groupItemLockName,
+                  style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.groupItemLockName,
                   children: (item == null ? void 0 : item.lockName) || ''
                 })]
               }, item == null ? void 0 : item.id);
             })
           }) : /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.infoList,
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.infoList,
             children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-              style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.infoRow,
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.infoRow,
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                 name: 'a-Upgradelock',
                 size: 16,
                 color: "#ccc"
               }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.infoLabel,
+                style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.infoLabel,
                 children: "\u79BB\u8F66\u5347\u9501"
               }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.infoValue,
+                style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.infoValue,
                 children: detail != null && detail.leaveUpTime ? `${detail == null ? void 0 : detail.leaveUpTime}s` : '20s'
               })]
             }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-              style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.infoRow,
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.infoRow,
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                 name: 'bell',
                 size: 16,
                 color: "#ccc"
               }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.infoLabel,
+                style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.infoLabel,
                 children: "\u8702\u9E23\u78B0\u649E"
               }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
                 style: {
@@ -247211,9 +247236,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           })]
         })]
       }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-        style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryList,
+        style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.entryList,
         children: [(detail == null ? void 0 : detail.role) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-          style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryItem,
+          style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.entryItem,
           onPress: function onPress() {
             if (!(detail != null && detail.id)) return;
             navigation.navigate('DevicesMember', {
@@ -247221,7 +247246,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               type: detail != null && detail.isGroup ? 'group' : 'single'
             });
           },
-          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             justify: "between",
             align: "center",
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
@@ -247229,7 +247254,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               size: 16,
               color: "#333333"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryText,
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.entryText,
               children: "\u6210\u5458\u5171\u4EAB"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "a-headfor-20",
@@ -247238,7 +247263,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             })]
           })
         }), (detail == null ? void 0 : detail.mode) === 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-          style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryItem,
+          style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.entryItem,
           onPress: function onPress() {
             if (!(detail != null && detail.id)) return;
             navigation.navigate('Vip', {
@@ -247247,7 +247272,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               detail: detail
             });
           },
-          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             justify: "between",
             align: "center",
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
@@ -247255,7 +247280,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               size: 16,
               color: "#333333"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryText,
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.entryText,
               children: "\u8D35\u5BBE\u9080\u8BF7"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "a-headfor-20",
@@ -247264,14 +247289,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             })]
           })
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-          style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryItem,
+          style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.entryItem,
           onPress: function onPress() {
-            if (detail != null && detail.customerServicePhone) setEleInstallRef(true);else (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            if (detail != null && detail.customerServicePhone) setEleInstallRef(true);else (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: '敬请期待',
               icon: 'none'
             });
           },
-          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             justify: "between",
             align: "center",
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
@@ -247279,7 +247304,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               size: 16,
               color: "#333333"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.entryText,
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.entryText,
               children: "\u5E02\u7535\u5B89\u88C5"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "a-headfor-20",
@@ -247292,7 +247317,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         ref: manageMultipleRef,
         direction: "bottom",
         title: '管理组合设备',
-        children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+        children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
           style: {
             marginTop: 24,
             marginBottom: 36
@@ -247300,13 +247325,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           direction: "column",
           justify: "center",
           align: "center",
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             isTouchView: true,
             justify: "center",
             align: "center",
             style: Object.assign({
               backgroundColor: '#333333'
-            }, _$$_REQUIRE(_dependencyMap[20], "./style").styles.manageBtn),
+            }, _$$_REQUIRE(_dependencyMap[21], "./style").styles.manageBtn),
             onPress: function onPress() {
               var _manageMultipleRef$cu3;
               if (!(detail != null && detail.id)) return;
@@ -247316,7 +247341,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               });
             },
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manageBtnText,
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manageBtnText,
               children: "\u7F16\u8F91"
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
@@ -247328,21 +247353,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 return setDeleteMultipleRef(true);
               }, 600);
             },
-            style: Object.assign({}, _$$_REQUIRE(_dependencyMap[20], "./style").styles.manageBtn, _$$_REQUIRE(_dependencyMap[20], "./style").styles.manageDeteleBtn),
+            style: Object.assign({}, _$$_REQUIRE(_dependencyMap[21], "./style").styles.manageBtn, _$$_REQUIRE(_dependencyMap[21], "./style").styles.manageDeteleBtn),
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[20], "./style").styles.manageDeteleBtnText,
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manageDeteleBtnText,
               children: "\u5220\u9664"
             })
           })]
         })
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
         visible: deleteMultipleRef,
         title: `确定要删除此组合设备吗？`,
         onConfirm: onDelete,
         onCancel: function onCancel() {
           return setDeleteMultipleRef(false);
         }
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
         visible: eleInstallRef,
         title: `市电联系${detail == null ? void 0 : detail.customerServicePhone}进行安装`,
         confirmText: "\u524D\u5F80\u62E8\u6253",
@@ -247352,7 +247377,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         },
         onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
           setEleInstallRef(false);
-          yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils").makePhoneCall)({
+          yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").makePhoneCall)({
             phoneNumber: (detail == null ? void 0 : detail.customerServicePhone) || ''
           });
         })
@@ -247370,9 +247395,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
           handleOperateByBluetooth(bluetoothControlRef.current);
         }
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
         ref: coverOpenRef,
-        title: `确定要${(detail == null ? void 0 : detail.coverStatus) === _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? '关闭' : '打开'}锁盖吗？`,
+        title: `确定要${(detail == null ? void 0 : detail.coverStatus) === _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? '关闭' : '打开'}锁盖吗？`,
         onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
           var _coverOpenRef$current2;
           (_coverOpenRef$current2 = coverOpenRef.current) == null || _coverOpenRef$current2.close();
@@ -247385,11 +247410,51 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }, 600);
           }
         })
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_PopCenter.default, {
+        height: 240,
+        ref: groupToastPop,
+        children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          style: {
+            width: '100%',
+            height: '100%'
+          },
+          direction: "column",
+          justify: 'between',
+          align: "center",
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.toastTitle,
+            children: "\u6E29\u99A8\u63D0\u793A"
+          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+            style: {
+              width: '100%'
+            },
+            direction: "column",
+            align: "center",
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.toastContentText,
+              children: [deviceNum.current, "\u53F0\u5730\u9501", optionRef.current === 'RISE' ? '升起' : '降下', "\u6210\u529F"]
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.toastContentText,
+              children: "\uFF08\u5176\u4ED6\u5730\u9501\u53EF\u80FD\u5B58\u5728\u4E0A\u65B9\u6709\u8F66\u3001\u9501\u76D6\u89E3\u9501\u3001\u8BBE\u5907\u79BB\u7EBF\u7684\u60C5\u51B5\uFF09"
+            })]
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+            style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.dumpText,
+            onPress: function onPress() {
+              var _groupToastPop$curren2;
+              (_groupToastPop$curren2 = groupToastPop.current) == null || _groupToastPop$curren2.close();
+              navigation.navigate('DeviceList', {
+                id: detail == null ? void 0 : detail.id,
+                role: detail == null ? void 0 : detail.role
+              });
+            },
+            children: "\u524D\u5F80\u8BBE\u5907\u5217\u8868\u67E5\u770B"
+          })]
+        })
       })]
     });
   };
   var _default = exports.default = Content;
-},1499,[1,2,25,42,3,1315,1500,1503,1506,1507,88,1496,1271,1510,784,763,786,758,770,791,1511,1512,1552],"src\\components\\Content\\index.tsx");
+},1499,[1,2,25,42,3,1315,1500,1503,1506,1507,1510,88,1496,1271,1512,784,763,786,758,770,791,1513,1514,1554],"src\\components\\Content\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -249503,6 +249568,290 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   });
 },1509,[3],"src\\components\\bluetoothStatus\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./styles"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime");
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\PopCenter\\index.tsx";
+  /**
+   * 居中弹窗
+   * 用于展示居中的弹窗，包含标题、内容、底部按钮等
+   *
+   * @param showHeader 是否显示标题栏
+   * @param title 弹窗标题
+   * @param children 弹窗内容
+   * @param footer 弹窗底部按钮
+   * @param maskClosable 是否点击遮罩关闭弹窗
+   * @param onConfirm 确认回调
+   * @param onCancel 取消回调
+   * @param showCancel 是否显示取消按钮
+   * @param confirmText 确认按钮文本
+   * @param cancelText 取消按钮文本
+   * @param contentStyle 弹窗内容样式
+   * @param bodyStyle 弹窗主体样式
+   * @param width 弹窗宽度
+   * @param height 弹窗高度
+   * @param btnWidth 底部按钮宽度
+   */
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var PopCenter = (0, _react.forwardRef)(function (_ref, ref) {
+    var _ref$showHeader = _ref.showHeader,
+      showHeader = _ref$showHeader === void 0 ? true : _ref$showHeader,
+      title = _ref.title,
+      children = _ref.children,
+      _ref$footer = _ref.footer,
+      footer = _ref$footer === void 0 ? true : _ref$footer,
+      _ref$maskClosable = _ref.maskClosable,
+      maskClosable = _ref$maskClosable === void 0 ? false : _ref$maskClosable,
+      onConfirm = _ref.onConfirm,
+      onCancel = _ref.onCancel,
+      _ref$confirmText = _ref.confirmText,
+      confirmText = _ref$confirmText === void 0 ? '确定' : _ref$confirmText,
+      _ref$cancelText = _ref.cancelText,
+      cancelText = _ref$cancelText === void 0 ? '取消' : _ref$cancelText,
+      _ref$showCancel = _ref.showCancel,
+      showCancel = _ref$showCancel === void 0 ? true : _ref$showCancel,
+      contentStyle = _ref.contentStyle,
+      bodyStyle = _ref.bodyStyle,
+      _ref$width = _ref.width,
+      width = _ref$width === void 0 ? 311 : _ref$width,
+      _ref$height = _ref.height,
+      height = _ref$height === void 0 ? 268 : _ref$height,
+      _ref$btnWidth = _ref.btnWidth,
+      btnWidth = _ref$btnWidth === void 0 ? 124 : _ref$btnWidth,
+      _ref$coverSafeArea = _ref.coverSafeArea,
+      coverSafeArea = _ref$coverSafeArea === void 0 ? true : _ref$coverSafeArea;
+    var _useState = (0, _react.useState)(false),
+      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+      visible = _useState2[0],
+      setVisible = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      mounted = _useState4[0],
+      setMounted = _useState4[1];
+    // 关闭过程中禁用交互，但不要在 visible 切回 false 之前 stop/触发 cleanup
+    // 否则会导致 opacity 关闭动画被 cancel，进而表现为“点击关闭没反应”
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      isClosing = _useState6[0],
+      setIsClosing = _useState6[1];
+    var opacity = (0, _react.useRef)(new _reactNative.Animated.Value(0)).current;
+    var animateIn = (0, _react.useCallback)(function () {
+      setIsClosing(false);
+      opacity.stopAnimation();
+      opacity.setValue(0);
+      _reactNative.Animated.timing(opacity, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true
+      }).start();
+    }, [opacity]);
+    var close = (0, _react.useCallback)(function () {
+      opacity.stopAnimation();
+      // 关闭过程中禁用点击，但保持 visible=true，避免下面 visible cleanup stopAnimation()
+      setIsClosing(true);
+      _reactNative.Animated.timing(opacity, {
+        toValue: 0,
+        duration: 160,
+        useNativeDriver: true
+      }).start(function (_ref2) {
+        var finished = _ref2.finished;
+        if (!finished) return;
+        // iOS 关闭后必须卸载 Modal，否则可能导致底层页面交互卡住
+        setMounted(false);
+        setVisible(false);
+        setIsClosing(false);
+      });
+    }, [opacity]);
+    (0, _react.useEffect)(function () {
+      if (visible) {
+        setMounted(true);
+        animateIn();
+      }
+    }, [animateIn, visible]);
+    (0, _react.useEffect)(function () {
+      if (!visible) return;
+      return function () {
+        opacity.stopAnimation();
+      };
+    }, [opacity, visible]);
+    (0, _react.useImperativeHandle)(ref, function () {
+      return {
+        open: function open() {
+          setIsClosing(false);
+          setVisible(true);
+        },
+        close: close
+      };
+    });
+    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Modal, {
+      transparent: true,
+      visible: mounted,
+      onRequestClose: close,
+      statusBarTranslucent: coverSafeArea,
+      presentationStyle: coverSafeArea ? 'overFullScreen' : undefined,
+      children: [coverSafeArea && mounted ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.StatusBar, {
+        translucent: true,
+        backgroundColor: "rgba(0,0,0,0)",
+        barStyle: "light-content"
+      }) : null, /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Animated.View, {
+        style: [_styles.default.mask, {
+          opacity: opacity
+        }],
+        pointerEvents: maskClosable && visible && !isClosing ? 'auto' : 'none',
+        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Pressable, {
+          style: _styles.default.maskPressable,
+          pointerEvents: maskClosable && visible && !isClosing ? 'auto' : 'none',
+          onPress: function onPress() {
+            if (!maskClosable) return;
+            close();
+          }
+        })
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: _styles.default.centerWrapper,
+        pointerEvents: "box-none",
+        children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Animated.View, {
+          style: [_styles.default.panel, {
+            width: width,
+            height: height,
+            opacity: opacity,
+            transform: [{
+              scale: opacity.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.98, 1]
+              })
+            }]
+          }, contentStyle],
+          pointerEvents: visible && !isClosing ? 'auto' : 'none',
+          children: [showHeader ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+            style: _styles.default.header,
+            children: typeof title === 'string' ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _styles.default.title,
+              numberOfLines: 1,
+              children: title
+            }) : title != null ? title : null
+          }) : null, /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+            style: [bodyStyle, {
+              flex: 1,
+              display: 'flex'
+            }],
+            children: children
+          }), footer === false ? null : typeof footer === 'boolean' ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+            style: _styles.default.footer,
+            children: [showCancel ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+              activeOpacity: 0.8,
+              style: [_styles.default.footerBtn, _styles.default.cancalBtn, {
+                width: btnWidth
+              }],
+              onPress: onCancel ? onCancel : close,
+              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: [_styles.default.footerBtnText, _styles.default.cancalBtnText],
+                children: cancelText
+              })
+            }) : null, /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+              activeOpacity: 0.8,
+              style: [_styles.default.footerBtn, _styles.default.confirmBtn, {
+                width: btnWidth
+              }],
+              onPress: onConfirm ? onConfirm : close,
+              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: [_styles.default.footerBtnText, _styles.default.confirmBtnText],
+                children: confirmText
+              })
+            })]
+          }) : footer ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+            style: _styles.default.footer,
+            children: footer
+          }) : null]
+        })
+      })]
+    });
+  });
+  var _default = exports.default = PopCenter;
+},1510,[1,25,42,3,1511,88],"src\\components\\PopCenter\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      width: '100%',
+      height: '100%'
+    },
+    mask: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject, {
+      backgroundColor: 'rgba(0,0,0,0.45)'
+    }),
+    maskPressable: {
+      flex: 1
+    },
+    centerWrapper: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject, {
+      alignItems: 'center',
+      justifyContent: 'center'
+    }),
+    panel: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 16,
+      overflow: 'hidden',
+      padding: 24
+    },
+    header: {
+      width: '100%'
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: '#333333',
+      textAlign: 'center'
+    },
+    footer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 15
+    },
+    footerBtn: {
+      paddingVertical: 11,
+      borderRadius: 12,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    footerBtnText: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: '#999',
+      textAlign: 'center'
+    },
+    cancalBtn: {
+      backgroundColor: '#fff',
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: 'rgba(0,0,0,0.1)'
+    },
+    confirmBtn: {
+      backgroundColor: '#333333'
+    },
+    cancalBtnText: {
+      color: '#999999'
+    },
+    confirmBtnText: {
+      color: '#ffffff'
+    }
+  });
+  var _default = exports.default = styles;
+},1511,[3],"src\\components\\PopCenter\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
@@ -249514,7 +249863,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 非市电版本地锁，蓝牙操作状态
   var bluetoothOperationLockFallStatusStore = exports.bluetoothOperationLockFallStatusStore = (0, _$$_REQUIRE(_dependencyMap[1], "jotai").atom)('RISE');
-},1510,[1272,1271],"src\\store\\store.ts");
+},1512,[1272,1271],"src\\store\\store.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -249715,9 +250064,32 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     manageDeteleBtnText: {
       color: '#666'
+    },
+    toastTitle: {
+      height: 22,
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#333333',
+      lineHeight: 22,
+      textAlign: 'center',
+      marginBottom: 16
+    },
+    toastContentText: {
+      fontSize: 14,
+      color: '#333333',
+      lineHeight: 20,
+      textAlign: 'center',
+      width: '100%'
+    },
+    dumpText: {
+      fontWeight: '500',
+      fontSize: 16,
+      color: '#2828ff',
+      lineHeight: 22,
+      marginBottom: 16
     }
   });
-},1511,[3],"src\\components\\Content\\style.ts");
+},1513,[3],"src\\components\\Content\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -249885,7 +250257,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _autoOperatePop = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[21], "./autoOperatePop"));
   var _checkBluetooth = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[22], "./checkBluetooth"));
   var _bluetoothStatus = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[23], "./bluetoothStatus"));
-},1512,[1,1513,1221,1515,1516,1517,1314,534,1518,1519,1504,1521,533,1495,1499,1522,1498,537,1525,1526,1528,1503,1550,1507],"src\\components\\index.ts");
+},1514,[1,1515,1221,1517,1518,1519,1314,534,1520,1521,1504,1523,533,1495,1499,1524,1498,537,1527,1528,1530,1503,1552,1507],"src\\components\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -250114,7 +250486,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1513,[1,2,25,42,3,534,537,1315,1514,538,88,763,796],"src\\components\\AppUpdateDialog\\index.tsx");
+},1515,[1,2,25,42,3,534,537,1315,1516,538,88,763,796],"src\\components\\AppUpdateDialog\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -250202,7 +250574,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1514,[3],"src\\components\\AppUpdateDialog\\styles.ts");
+},1516,[3],"src\\components\\AppUpdateDialog\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -250281,7 +250653,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: 14
     }
   });
-},1515,[1,25,42,3,88,763],"src\\components\\GlobalLoading.tsx");
+},1517,[1,25,42,3,88,763],"src\\components\\GlobalLoading.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -250393,7 +250765,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 0
     }
   });
-},1516,[1,25,42,3,88,763],"src\\components\\GlobalToast.tsx");
+},1518,[1,25,42,3,88,763],"src\\components\\GlobalToast.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -250448,7 +250820,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#FFFFFF'
     }
   });
-},1517,[42,3,88,1311,1496],"src\\components\\RequireAuth.tsx");
+},1519,[42,3,88,1311,1496],"src\\components\\RequireAuth.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -250656,7 +251028,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = TextInput;
-},1518,[1,25,150,42,3,1315,88,1275],"src\\components\\TextInput\\index.tsx");
+},1520,[1,25,150,42,3,1315,88,1275],"src\\components\\TextInput\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -250898,7 +251270,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   });
   InputCode.displayName = 'InputCode';
   var _default = exports.default = InputCode;
-},1519,[1,25,42,3,1520,88],"src\\components\\InputCode\\index.tsx");
+},1521,[1,25,42,3,1522,88],"src\\components\\InputCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -250959,7 +251331,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1520,[3],"src\\components\\InputCode\\styles.ts");
+},1522,[3],"src\\components\\InputCode\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -251081,7 +251453,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       flex: 1
     }
   });
-},1521,[1,25,42,3,1315,88,796],"src\\components\\Stepper\\index.tsx");
+},1523,[1,25,42,3,1315,88,796],"src\\components\\Stepper\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -251233,7 +251605,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = LockVisual;
-},1522,[1,25,42,3,534,1315,1523,1524,88,1275,1496],"src\\components\\LockVisual\\index.tsx");
+},1524,[1,25,42,3,534,1315,1525,1526,88,1275,1496],"src\\components\\LockVisual\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -251375,7 +251747,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   module.exports = FastImage;
-},1523,[150,521,42,3],"node_modules\\react-native-fast-image\\dist\\index.cjs.js");
+},1525,[150,521,42,3],"node_modules\\react-native-fast-image\\dist\\index.cjs.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -251441,7 +251813,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1524,[3],"src\\components\\LockVisual\\styles.ts");
+},1526,[3],"src\\components\\LockVisual\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -251450,7 +251822,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _reactNativeLinearGradient = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "react-native-linear-gradient"));
   var _default = exports.default = _reactNativeLinearGradient.default;
-},1525,[1,538],"src\\components\\LinearGradient\\index.tsx");
+},1527,[1,538],"src\\components\\LinearGradient\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -251474,7 +251846,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }) : children
     });
   }
-},1526,[1,42,3,1527,88],"src\\components\\Tag\\index.tsx");
+},1528,[1,42,3,1529,88],"src\\components\\Tag\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -251497,7 +251869,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1527,[3],"src\\components\\Tag\\styles.ts");
+},1529,[3],"src\\components\\Tag\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -251985,7 +252357,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     })
   });
   var _default = exports.default = Camera;
-},1528,[1,2,25,42,3,1504,1315,88,1529,1222],"src\\components\\Camera\\index.tsx");
+},1530,[1,2,25,42,3,1504,1315,88,1531,1222],"src\\components\\Camera\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -252031,7 +252403,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var useCodeScanner = exports.useCodeScanner = _camera.useCodeScanner;
   var useCameraFormat = exports.useCameraFormat = _camera.useCameraFormat;
   var useFrameProcessor = exports.useFrameProcessor = _camera.useFrameProcessor;
-},1529,[1,42,88,758,1530,1530],"src\\harmony\\vision-camera-shim.tsx");
+},1531,[1,42,88,758,1532,1532],"src\\harmony\\vision-camera-shim.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -252514,7 +252886,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   Camera.getLocationPermissionStatus = _NativeVisionCameraModule.default.getLocationPermissionStatus;
   Camera.requestLocationPermission = _NativeVisionCameraModule.default.requestLocationPermission;
   var _default = exports.default = Camera;
-},1530,[1,150,42,3,1531,1532,88,1533,1534,1535,1536,1537,1538,1539,1540,1543,1544,1545,1546,1547,1548,1549],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\index.tsx");
+},1532,[1,150,42,3,1533,1534,88,1535,1536,1537,1538,1539,1540,1541,1542,1545,1546,1547,1548,1549,1550,1551],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -252658,7 +253030,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _$$_REQUIRE(_dependencyMap[5], "react-native/Libraries/ReactNative/RendererProxy").dispatchCommand(ref, "cancelRecording", []);
     }
   };
-},1531,[1,269,257,254,228,38],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\NativeVisionCameraView.ts");
+},1533,[1,269,257,254,228,38],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\NativeVisionCameraView.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -252671,30 +253043,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    * found in the LICENSE file.
    */
   var _default = exports.default = _reactNative.TurboModuleRegistry.getEnforcing('VisionCameraModule');
-},1532,[3],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\NativeVisionCameraModule.ts");
+},1534,[3],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\NativeVisionCameraModule.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-},1533,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\CameraDevice.ts");
+},1535,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\CameraDevice.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-},1534,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\Frame.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1535,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\Orientation.ts");
+},1536,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\Frame.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1537,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\Orientation.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-},1536,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\PhotoFile.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1537,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\PixelFormat.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1538,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\Point.ts");
+},1538,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\PhotoFile.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1539,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\PixelFormat.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1540,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\Point.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-},1539,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\CodeScanner.ts");
+},1541,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\CodeScanner.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -252820,7 +253192,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return bestFormat;
   }
-},1540,[1541],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\devices\\getCameraFormat.ts");
+},1542,[1543],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\devices\\getCameraFormat.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -252952,7 +253324,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return nativeError;
     }
   };
-},1541,[1,13,14,50,53,52,1542,70],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\CameraError.ts");
+},1543,[1,13,14,50,53,52,1544,70],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\types\\CameraError.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   function set(e, r, t, o) {
     return set = "undefined" != typeof Reflect && Reflect.set ? Reflect.set : function (e, r, t, o) {
@@ -252974,7 +253346,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return t;
   }
   module.exports = _set, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},1542,[133,202],"node_modules\\@babel\\runtime\\helpers\\set.js");
+},1544,[133,202],"node_modules\\@babel\\runtime\\helpers\\set.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -253009,7 +253381,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return bestDevice;
   }
-},1543,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\devices\\getCameraDevice.ts");
+},1545,[],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\devices\\getCameraDevice.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -253077,7 +253449,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       photoResolution: InstagramResolution
     }]
   };
-},1544,[3],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\devices\\Templates.ts");
+},1546,[3],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\devices\\Templates.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -253095,7 +253467,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     [devices, position, JSON.stringify(filter)]);
     return device;
   }
-},1545,[42,1546],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCameraDevice.ts");
+},1547,[42,1548],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCameraDevice.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -253123,7 +253495,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     return devices;
   }
-},1546,[1,25,42,1532,3],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCameraDevices.ts");
+},1548,[1,25,42,1534,3],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCameraDevices.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -253138,7 +253510,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, [device, JSON.stringify(filters)]);
     return format;
   }
-},1547,[42,1540],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCameraFormat.ts");
+},1549,[42,1542],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCameraFormat.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -253189,7 +253561,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   function useLocationPermission() {
     return usePermission(_NativeVisionCameraModule.default.getLocationPermissionStatus, _NativeVisionCameraModule.default.requestLocationPermission);
   }
-},1548,[1,2,25,42,3,1532],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCameraPermission.ts");
+},1550,[1,2,25,42,3,1534],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCameraPermission.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -253215,7 +253587,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [JSON.stringify(codeScannerOptions), callback]);
   }
-},1549,[1,150,42],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCodeScanner.ts");
+},1551,[1,150,42],"node_modules\\@react-native-ohos\\react-native-vision-camera\\src\\hooks\\useCodeScanner.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -253414,7 +253786,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = CheckBluetooth;
-},1550,[1,2,25,42,3,534,1504,1315,88,763,770,1551],"src\\components\\checkBluetooth\\index.tsx");
+},1552,[1,2,25,42,3,534,1504,1315,88,763,770,1553],"src\\components\\checkBluetooth\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -253458,7 +253830,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lineHeight: 22
     }
   });
-},1551,[3],"src\\components\\checkBluetooth\\styles.ts");
+},1553,[3],"src\\components\\checkBluetooth\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -253764,7 +254136,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   };
-},1552,[1,7,2,25,42,3,534,1506,1315,88,1496,1222,786,763,625,792,1553,1554],"src\\components\\Device\\switch\\index.tsx");
+},1554,[1,7,2,25,42,3,534,1506,1315,88,1496,1222,786,763,625,792,1555,1556],"src\\components\\Device\\switch\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -253903,7 +254275,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: 16
     }
   });
-},1553,[3],"src\\components\\Device\\switch\\style.ts");
+},1555,[3],"src\\components\\Device\\switch\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -254014,7 +254386,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   };
-},1554,[1,42,3,534,1315,88,1555],"src\\components\\Device\\Item\\index.tsx");
+},1556,[1,42,3,534,1315,88,1557],"src\\components\\Device\\Item\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -254070,7 +254442,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontWeight: 'bold'
     }
   });
-},1555,[3],"src\\components\\Device\\Item\\style.ts");
+},1557,[3],"src\\components\\Device\\Item\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -254158,7 +254530,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: 16
     }
   });
-},1556,[3],"src\\pages\\index\\style.ts");
+},1558,[3],"src\\pages\\index\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -254793,7 +255165,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Index;
-},1557,[1,150,202,2,25,42,3,1523,1314,1495,1498,1499,534,533,1522,88,660,1496,773,786,758,785,665,763,770,1556],"src\\pages\\index\\index.tsx");
+},1559,[1,150,202,2,25,42,3,1525,1314,1495,1498,1499,534,533,1524,88,660,1496,773,786,758,785,665,763,770,1558],"src\\pages\\index\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -255082,7 +255454,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1558,[1,2,25,42,3,1314,533,1315,1559,88,660,1275,625,785,763,665,626],"src\\pages\\mine\\index.tsx");
+},1560,[1,2,25,42,3,1314,533,1315,1561,88,660,1275,625,785,763,665,626],"src\\pages\\mine\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -255178,7 +255550,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1559,[3],"src\\pages\\mine\\styles.ts");
+},1561,[3],"src\\pages\\mine\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -255798,7 +256170,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Login;
-},1560,[1,2,25,42,3,1561,1563,1565,1315,539,533,88,1496,761,763,784,625,1512,626],"src\\pages\\login\\index.tsx");
+},1562,[1,2,25,42,3,1563,1565,1567,1315,539,533,88,1496,761,763,784,625,1514,626],"src\\pages\\login\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -255953,7 +256325,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Sms;
-},1561,[1,2,25,42,3,1562,88,660,763,784,758,1512],"src\\pages\\login\\com\\sms\\index.tsx");
+},1563,[1,2,25,42,3,1564,88,660,763,784,758,1514],"src\\pages\\login\\com\\sms\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -256043,7 +256415,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = loginStyles;
-},1562,[3],"src\\pages\\login\\com\\sms\\styles.ts");
+},1564,[3],"src\\pages\\login\\com\\sms\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -256231,7 +256603,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Password;
-},1563,[1,2,25,42,3,1564,88,660,763,552,625,539,1512],"src\\pages\\login\\com\\password\\index.tsx");
+},1565,[1,2,25,42,3,1566,88,660,763,552,625,539,1514],"src\\pages\\login\\com\\password\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -256317,7 +256689,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = passwordStyles;
-},1564,[3],"src\\pages\\login\\com\\password\\styles.ts");
+},1566,[3],"src\\pages\\login\\com\\password\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -256424,7 +256796,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1565,[3],"src\\pages\\login\\styles.ts");
+},1567,[3],"src\\pages\\login\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -256537,7 +256909,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ForgetPassword;
-},1566,[1,7,2,25,42,3,1567,88,660,763,784,758,1512],"src\\pages\\forgetPassword\\index.tsx");
+},1568,[1,7,2,25,42,3,1569,88,660,763,784,758,1514],"src\\pages\\forgetPassword\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -256610,7 +256982,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = forgetPasswordStyles;
-},1567,[3],"src\\pages\\forgetPassword\\styles.ts");
+},1569,[3],"src\\pages\\forgetPassword\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -256805,7 +257177,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = WebViewScreen;
-},1568,[1,25,42,3,1314,88,660,1569],"src\\pages\\webView\\index.tsx");
+},1570,[1,25,42,3,1314,88,660,1571],"src\\pages\\webView\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -256820,7 +257192,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _WebView = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "./WebView"));
   var _default = exports.default = _WebView.default;
-},1569,[1,1570],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\index.ts");
+},1571,[1,1572],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -257114,7 +257486,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     isFileUploadSupported: isFileUploadSupported
   });
   var _default = exports.default = WebView;
-},1570,[1,2,202,25,150,42,3,23,1571,1572,1573,88,1574],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\WebView.harmony.tsx");
+},1572,[1,2,202,25,150,42,3,23,1573,1574,1575,88,1576],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\WebView.harmony.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -257304,7 +257676,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _$$_REQUIRE(_dependencyMap[5], "react-native/Libraries/ReactNative/RendererProxy").dispatchCommand(ref, "clearHistory", []);
     }
   };
-},1571,[1,269,257,254,228,38],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\RNCWebViewNativeComponent.ts");
+},1573,[1,269,257,254,228,38],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\RNCWebViewNativeComponent.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -257315,7 +257687,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   // Use of this source code is governed by a Apache-2.0 license that can be
   // found in the LICENSE file.
   var _default = exports.default = _reactNative.TurboModuleRegistry.getEnforcing('RNCWebViewModule');
-},1572,[3],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\NativeRNCWebViewModule.ts");
+},1574,[3],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\NativeRNCWebViewModule.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -257360,7 +257732,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1573,[3],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\react-native-webview\\src\\WebView.styles.ts");
+},1575,[3],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\react-native-webview\\src\\WebView.styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -257554,7 +257926,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lastErrorEvent: lastErrorEvent
     };
   };
-},1574,[1,25,7,1575,42,3,1573,88],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\react-native-webview\\src\\WebViewShared.tsx");
+},1576,[1,25,7,1577,42,3,1575,88],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\react-native-webview\\src\\WebViewShared.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -257565,7 +257937,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return string.replace(matchOperatorsRegex, '\\$&');
   };
-},1575,[],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\escape-string-regexp\\index.js");
+},1577,[],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\escape-string-regexp\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -257789,7 +258161,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = LoginSms;
-},1576,[1,2,25,42,3,1519,1315,534,1577,88,660,1578,758,763,785,552,626,659,1512],"src\\pages\\loginSms\\index.tsx");
+},1578,[1,2,25,42,3,1521,1315,534,1579,88,660,1580,758,763,785,552,626,659,1514],"src\\pages\\loginSms\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -257854,7 +258226,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = loginSmsStyles;
-},1577,[3],"src\\pages\\loginSms\\styles.ts");
+},1579,[3],"src\\pages\\loginSms\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -257917,7 +258289,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       reset: reset
     };
   }
-},1578,[1,25,42],"src\\hooks\\useCountDown.ts");
+},1580,[1,25,42],"src\\hooks\\useCountDown.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -258163,7 +258535,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ForgetPasswordReset;
-},1579,[1,2,25,42,3,1315,539,1580,88,660,763,625,785,659,1512],"src\\pages\\forgetPasswordReset\\index.tsx");
+},1581,[1,2,25,42,3,1315,539,1582,88,660,763,625,785,659,1514],"src\\pages\\forgetPasswordReset\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -258230,7 +258602,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1580,[3],"src\\pages\\forgetPasswordReset\\styles.ts");
+},1582,[3],"src\\pages\\forgetPasswordReset\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -258423,7 +258795,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = MiniBind;
-},1581,[1,2,25,42,3,1582,88,660,1578,758,763,552,625,539,659,1512],"src\\pages\\miniBind\\index.tsx");
+},1583,[1,2,25,42,3,1584,88,660,1580,758,763,552,625,539,659,1514],"src\\pages\\miniBind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -258487,7 +258859,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1582,[3],"src\\pages\\miniBind\\styles.ts");
+},1584,[3],"src\\pages\\miniBind\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -258616,7 +258988,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = BindPhone;
-},1583,[1,2,25,42,3,1584,88,660,763,552,758,1512],"src\\pages\\bindPhone\\index.tsx");
+},1585,[1,2,25,42,3,1586,88,660,763,552,758,1514],"src\\pages\\bindPhone\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -258690,7 +259062,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1584,[3],"src\\pages\\bindPhone\\styles.ts");
+},1586,[3],"src\\pages\\bindPhone\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -259042,7 +259414,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1585,[1,2,25,42,3,1315,1586,88,763,785,1196,1197,1587,1512],"src\\pages\\userInfo\\index.tsx");
+},1587,[1,2,25,42,3,1315,1588,88,763,785,1196,1197,1589,1514],"src\\pages\\userInfo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -259145,7 +259517,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1586,[3],"src\\pages\\userInfo\\styles.ts");
+},1588,[3],"src\\pages\\userInfo\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -259174,8 +259546,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   function launchImageLibrary(options, callback) {
     return _reactNative.Platform.OS === 'web' ? (0, _$$_REQUIRE(_dependencyMap[2], "react-native-image-picker/src/platforms/web").imageLibrary)(options, callback) : (0, _$$_REQUIRE(_dependencyMap[3], "react-native-image-picker/src/platforms/native").imageLibrary)(options, callback);
   }
-},1587,[3,1588,1589,1590],"node_modules\\@react-native-ohos\\react-native-image-picker\\src\\index.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1588,[],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\types.ts");
+},1589,[3,1590,1591,1592],"node_modules\\@react-native-ohos\\react-native-image-picker\\src\\index.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1590,[],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\types.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -259301,7 +259673,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     return (_webMediaTypes$mediaT = webMediaTypes[mediaType]) != null ? _webMediaTypes$mediaT : webMediaTypes.photo;
   }
-},1589,[1,2],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\web.ts");
+},1591,[1,2],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\web.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -259344,7 +259716,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     });
   }
-},1590,[3,1591],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\native.ts");
+},1592,[3,1593],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\native.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -259352,7 +259724,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
   var _default = exports.default = _reactNative.TurboModuleRegistry.get('ImagePicker');
-},1591,[3],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\NativeImagePicker.ts");
+},1593,[3],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\NativeImagePicker.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -260277,291 +260649,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = DeviceInfo;
-},1592,[1,2,25,3,1315,42,1506,1593,1595,1596,1507,88,660,1496,1597,763,784,1512,1598],"src\\pages\\deviceInfo\\index.tsx");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
-  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./styles"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime");
-  var _this = this,
-    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\PopCenter\\index.tsx";
-  /**
-   * 居中弹窗
-   * 用于展示居中的弹窗，包含标题、内容、底部按钮等
-   *
-   * @param showHeader 是否显示标题栏
-   * @param title 弹窗标题
-   * @param children 弹窗内容
-   * @param footer 弹窗底部按钮
-   * @param maskClosable 是否点击遮罩关闭弹窗
-   * @param onConfirm 确认回调
-   * @param onCancel 取消回调
-   * @param showCancel 是否显示取消按钮
-   * @param confirmText 确认按钮文本
-   * @param cancelText 取消按钮文本
-   * @param contentStyle 弹窗内容样式
-   * @param bodyStyle 弹窗主体样式
-   * @param width 弹窗宽度
-   * @param height 弹窗高度
-   * @param btnWidth 底部按钮宽度
-   */
-  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-  var PopCenter = (0, _react.forwardRef)(function (_ref, ref) {
-    var _ref$showHeader = _ref.showHeader,
-      showHeader = _ref$showHeader === void 0 ? true : _ref$showHeader,
-      title = _ref.title,
-      children = _ref.children,
-      _ref$footer = _ref.footer,
-      footer = _ref$footer === void 0 ? true : _ref$footer,
-      _ref$maskClosable = _ref.maskClosable,
-      maskClosable = _ref$maskClosable === void 0 ? false : _ref$maskClosable,
-      onConfirm = _ref.onConfirm,
-      onCancel = _ref.onCancel,
-      _ref$confirmText = _ref.confirmText,
-      confirmText = _ref$confirmText === void 0 ? '确定' : _ref$confirmText,
-      _ref$cancelText = _ref.cancelText,
-      cancelText = _ref$cancelText === void 0 ? '取消' : _ref$cancelText,
-      _ref$showCancel = _ref.showCancel,
-      showCancel = _ref$showCancel === void 0 ? true : _ref$showCancel,
-      contentStyle = _ref.contentStyle,
-      bodyStyle = _ref.bodyStyle,
-      _ref$width = _ref.width,
-      width = _ref$width === void 0 ? 311 : _ref$width,
-      _ref$height = _ref.height,
-      height = _ref$height === void 0 ? 268 : _ref$height,
-      _ref$btnWidth = _ref.btnWidth,
-      btnWidth = _ref$btnWidth === void 0 ? 124 : _ref$btnWidth,
-      _ref$coverSafeArea = _ref.coverSafeArea,
-      coverSafeArea = _ref$coverSafeArea === void 0 ? true : _ref$coverSafeArea;
-    var _useState = (0, _react.useState)(false),
-      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      visible = _useState2[0],
-      setVisible = _useState2[1];
-    var _useState3 = (0, _react.useState)(false),
-      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
-      mounted = _useState4[0],
-      setMounted = _useState4[1];
-    // 关闭过程中禁用交互，但不要在 visible 切回 false 之前 stop/触发 cleanup
-    // 否则会导致 opacity 关闭动画被 cancel，进而表现为“点击关闭没反应”
-    var _useState5 = (0, _react.useState)(false),
-      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
-      isClosing = _useState6[0],
-      setIsClosing = _useState6[1];
-    var opacity = (0, _react.useRef)(new _reactNative.Animated.Value(0)).current;
-    var animateIn = (0, _react.useCallback)(function () {
-      setIsClosing(false);
-      opacity.stopAnimation();
-      opacity.setValue(0);
-      _reactNative.Animated.timing(opacity, {
-        toValue: 1,
-        duration: 180,
-        useNativeDriver: true
-      }).start();
-    }, [opacity]);
-    var close = (0, _react.useCallback)(function () {
-      opacity.stopAnimation();
-      // 关闭过程中禁用点击，但保持 visible=true，避免下面 visible cleanup stopAnimation()
-      setIsClosing(true);
-      _reactNative.Animated.timing(opacity, {
-        toValue: 0,
-        duration: 160,
-        useNativeDriver: true
-      }).start(function (_ref2) {
-        var finished = _ref2.finished;
-        if (!finished) return;
-        // iOS 关闭后必须卸载 Modal，否则可能导致底层页面交互卡住
-        setMounted(false);
-        setVisible(false);
-        setIsClosing(false);
-      });
-    }, [opacity]);
-    (0, _react.useEffect)(function () {
-      if (visible) {
-        setMounted(true);
-        animateIn();
-      }
-    }, [animateIn, visible]);
-    (0, _react.useEffect)(function () {
-      if (!visible) return;
-      return function () {
-        opacity.stopAnimation();
-      };
-    }, [opacity, visible]);
-    (0, _react.useImperativeHandle)(ref, function () {
-      return {
-        open: function open() {
-          setIsClosing(false);
-          setVisible(true);
-        },
-        close: close
-      };
-    });
-    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Modal, {
-      transparent: true,
-      visible: mounted,
-      onRequestClose: close,
-      statusBarTranslucent: coverSafeArea,
-      presentationStyle: coverSafeArea ? 'overFullScreen' : undefined,
-      children: [coverSafeArea && mounted ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.StatusBar, {
-        translucent: true,
-        backgroundColor: "rgba(0,0,0,0)",
-        barStyle: "light-content"
-      }) : null, /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Animated.View, {
-        style: [_styles.default.mask, {
-          opacity: opacity
-        }],
-        pointerEvents: maskClosable && visible && !isClosing ? 'auto' : 'none',
-        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Pressable, {
-          style: _styles.default.maskPressable,
-          pointerEvents: maskClosable && visible && !isClosing ? 'auto' : 'none',
-          onPress: function onPress() {
-            if (!maskClosable) return;
-            close();
-          }
-        })
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-        style: _styles.default.centerWrapper,
-        pointerEvents: "box-none",
-        children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Animated.View, {
-          style: [_styles.default.panel, {
-            width: width,
-            height: height,
-            opacity: opacity,
-            transform: [{
-              scale: opacity.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.98, 1]
-              })
-            }]
-          }, contentStyle],
-          pointerEvents: visible && !isClosing ? 'auto' : 'none',
-          children: [showHeader ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _styles.default.header,
-            children: typeof title === 'string' ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _styles.default.title,
-              numberOfLines: 1,
-              children: title
-            }) : title != null ? title : null
-          }) : null, /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: [bodyStyle, {
-              flex: 1,
-              display: 'flex'
-            }],
-            children: children
-          }), footer === false ? null : typeof footer === 'boolean' ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-            style: _styles.default.footer,
-            children: [showCancel ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-              activeOpacity: 0.8,
-              style: [_styles.default.footerBtn, _styles.default.cancalBtn, {
-                width: btnWidth
-              }],
-              onPress: onCancel ? onCancel : close,
-              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: [_styles.default.footerBtnText, _styles.default.cancalBtnText],
-                children: cancelText
-              })
-            }) : null, /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-              activeOpacity: 0.8,
-              style: [_styles.default.footerBtn, _styles.default.confirmBtn, {
-                width: btnWidth
-              }],
-              onPress: onConfirm ? onConfirm : close,
-              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: [_styles.default.footerBtnText, _styles.default.confirmBtnText],
-                children: confirmText
-              })
-            })]
-          }) : footer ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-            style: _styles.default.footer,
-            children: footer
-          }) : null]
-        })
-      })]
-    });
-  });
-  var _default = exports.default = PopCenter;
-},1593,[1,25,42,3,1594,88],"src\\components\\PopCenter\\index.tsx");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
-  var styles = _reactNative.StyleSheet.create({
-    container: {
-      flex: 1,
-      width: '100%',
-      height: '100%'
-    },
-    mask: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject, {
-      backgroundColor: 'rgba(0,0,0,0.45)'
-    }),
-    maskPressable: {
-      flex: 1
-    },
-    centerWrapper: Object.assign({}, _reactNative.StyleSheet.absoluteFillObject, {
-      alignItems: 'center',
-      justifyContent: 'center'
-    }),
-    panel: {
-      backgroundColor: '#FFFFFF',
-      borderRadius: 16,
-      overflow: 'hidden',
-      padding: 24
-    },
-    header: {
-      width: '100%'
-    },
-    title: {
-      fontSize: 16,
-      fontWeight: '500',
-      color: '#333333',
-      textAlign: 'center'
-    },
-    footer: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 15
-    },
-    footerBtn: {
-      paddingVertical: 11,
-      borderRadius: 12,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    footerBtnText: {
-      fontSize: 14,
-      fontWeight: '400',
-      color: '#999',
-      textAlign: 'center'
-    },
-    cancalBtn: {
-      backgroundColor: '#fff',
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor: 'rgba(0,0,0,0.1)'
-    },
-    confirmBtn: {
-      backgroundColor: '#333333'
-    },
-    cancalBtnText: {
-      color: '#999999'
-    },
-    confirmBtnText: {
-      color: '#ffffff'
-    }
-  });
-  var _default = exports.default = styles;
-},1594,[3],"src\\components\\PopCenter\\styles.ts");
+},1594,[1,2,25,3,1315,42,1506,1510,1595,1596,1507,88,660,1496,1597,763,784,1514,1598],"src\\pages\\deviceInfo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -263233,7 +263321,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1612,[1,2,25,42,3,1315,88,1496,660,792,763,1512,1613],"src\\pages\\firmwareVersion\\index.tsx");
+},1612,[1,2,25,42,3,1315,88,1496,660,792,763,1514,1613],"src\\pages\\firmwareVersion\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -263512,7 +263600,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1614,[1,2,25,7,42,3,1315,1615,88,660,625,792,763,1616,1512],"src\\pages\\versionHistory\\index.tsx");
+},1614,[1,2,25,7,42,3,1315,1615,88,660,625,792,763,1616,1514],"src\\pages\\versionHistory\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -263781,7 +263869,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = DeviceLog;
-},1617,[1,2,7,25,42,3,88,660,786,1512,1618],"src\\pages\\deviceLog\\index.tsx");
+},1617,[1,2,7,25,42,3,88,660,786,1514,1618],"src\\pages\\deviceLog\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -264080,7 +264168,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1619,[1,7,2,25,42,3,533,1315,1620,537,88,660,785,763,1512],"src\\pages\\memberList\\index.tsx");
+},1619,[1,7,2,25,42,3,533,1315,1620,537,88,660,785,763,1514],"src\\pages\\memberList\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -264478,7 +264566,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1621,[1,7,2,25,42,3,1622,537,1624,88,660,763,785,1512],"src\\pages\\addMember\\index.tsx");
+},1621,[1,7,2,25,42,3,1622,537,1624,88,660,763,785,1514],"src\\pages\\addMember\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -265114,7 +265202,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1625,[1,7,2,25,42,3,1315,1626,88,1512,660,790,763],"src\\pages\\shopping\\index.tsx");
+},1625,[1,7,2,25,42,3,1315,1626,88,1514,660,790,763],"src\\pages\\shopping\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -265421,7 +265509,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 uri: goodsDetail.detailImage[0]
               },
               style: _styles.default.popupImage,
-              resizeMode: "cover"
+              resizeMode: "contain"
             }) : null, /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
               direction: "column",
               style: _styles.default.popupInfo,
@@ -265468,7 +265556,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1627,[1,2,25,42,3,537,1628,88,660,763,790,552,761,1512,796],"src\\pages\\goodsDetail\\index.tsx");
+},1627,[1,2,25,42,3,537,1628,88,660,763,790,552,761,1514,796],"src\\pages\\goodsDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -265966,7 +266054,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1629,[1,2,25,42,3,533,537,1315,1630,88,660,763,790,1512],"src\\pages\\pickupCode\\index.tsx");
+},1629,[1,2,25,42,3,533,537,1315,1630,88,660,763,790,1514],"src\\pages\\pickupCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -266324,7 +266412,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1631,[1,2,25,42,3,1632,88,660,1529,763,1512],"src\\pages\\scanPickupCode\\index.tsx");
+},1631,[1,2,25,42,3,1632,88,660,1531,763,1514],"src\\pages\\scanPickupCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -266621,7 +266709,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1633,[1,7,2,25,42,3,1634,88,660,790,763,1512],"src\\pages\\pickupCodeRecordList\\index.tsx");
+},1633,[1,7,2,25,42,3,1634,88,660,790,763,1514],"src\\pages\\pickupCodeRecordList\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -267251,7 +267339,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1635,[1,2,25,42,3,1315,1636,537,88,660,790,763,1637,1512,796],"src\\pages\\pickupCodeRecordDetail\\index.tsx");
+},1635,[1,2,25,42,3,1315,1636,537,88,660,790,763,1637,1514,796],"src\\pages\\pickupCodeRecordDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -280662,7 +280750,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1639,[1,2,25,42,3,533,537,1315,1640,88,660,763,790,796,1587,1512],"src\\pages\\pickupCodeDaily\\index.tsx");
+},1639,[1,2,25,42,3,533,537,1315,1640,88,660,763,790,796,1589,1514],"src\\pages\\pickupCodeDaily\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -281352,7 +281440,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ManageComposite;
-},1641,[1,7,2,25,42,3,534,1315,1506,88,660,791,763,1642,1512],"src\\pages\\composit\\manage.tsx");
+},1641,[1,7,2,25,42,3,534,1315,1506,88,660,791,763,1642,1514],"src\\pages\\composit\\manage.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -281972,7 +282060,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1643,[1,7,2,25,3,42,1315,555,88,1496,660,791,763,1644,1512,1645,796],"src\\pages\\composit\\member.tsx");
+},1643,[1,7,2,25,3,42,1315,555,88,1496,660,791,763,1644,1514,1645,796],"src\\pages\\composit\\member.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -282398,7 +282486,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1646,[1,2,25,42,3,1315,537,88,660,761,763,1644,579,1512,1647],"src\\pages\\composit\\share\\index.tsx");
+},1646,[1,2,25,42,3,1315,537,88,660,761,763,1644,579,1514,1647],"src\\pages\\composit\\share\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -282633,7 +282721,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1648,[1,7,2,25,42,3,1649,88,660,788,763,1650,1512],"src\\pages\\order\\index.tsx");
+},1648,[1,7,2,25,42,3,1649,88,660,788,763,1650,1514],"src\\pages\\order\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -282823,7 +282911,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }) : null]
     });
   }
-},1650,[1,42,3,1315,1651,555,88,758,1512],"src\\pages\\order\\com\\orderItem\\index.tsx");
+},1650,[1,42,3,1315,1651,555,88,758,1514],"src\\pages\\order\\com\\orderItem\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -283118,7 +283206,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1652,[1,2,25,42,3,1653,88,660,763,788,1512,758],"src\\pages\\order\\detail\\index.tsx");
+},1652,[1,2,25,42,3,1653,88,660,763,788,1514,758],"src\\pages\\order\\detail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -283492,7 +283580,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1654,[1,2,7,25,42,3,1315,1655,88,660,763,1587,785,1512],"src\\pages\\maintain\\index.tsx");
+},1654,[1,2,7,25,42,3,1315,1655,88,660,763,1589,785,1514],"src\\pages\\maintain\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -283794,7 +283882,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1656,[1,7,2,25,42,3,1657,88,660,786,763,1512],"src\\pages\\maintain\\lockChoose\\index.tsx");
+},1656,[1,7,2,25,42,3,1657,88,660,786,763,1514],"src\\pages\\maintain\\lockChoose\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -284017,7 +284105,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1658,[1,7,2,25,42,3,1315,1659,88,660,785,763,665,1512],"src\\pages\\maintain\\service\\index.tsx");
+},1658,[1,7,2,25,42,3,1315,1659,88,660,785,763,665,1514],"src\\pages\\maintain\\service\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -284307,7 +284395,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1660,[1,7,2,25,42,3,1661,555,88,660,763,785,1512],"src\\pages\\maintain\\serviceDetail\\index.tsx");
+},1660,[1,7,2,25,42,3,1661,555,88,660,763,785,1514],"src\\pages\\maintain\\serviceDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -284639,7 +284727,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1662,[1,2,25,42,3,1315,1663,533,88,660,785,763,665,761,1512],"src\\pages\\account\\index.tsx");
+},1662,[1,2,25,42,3,1315,1663,533,88,660,785,763,665,761,1514],"src\\pages\\account\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -285159,7 +285247,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1664,[1,2,25,42,3,1665,88,660,763,785,1512],"src\\pages\\changeMobile\\index.tsx");
+},1664,[1,2,25,42,3,1665,88,660,763,785,1514],"src\\pages\\changeMobile\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -285468,7 +285556,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1666,[1,2,25,42,3,1667,88,660,763,758,785,1512],"src\\pages\\wechatUnbind\\index.tsx");
+},1666,[1,2,25,42,3,1667,88,660,763,758,785,1514],"src\\pages\\wechatUnbind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -285922,7 +286010,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1668,[1,2,25,42,3,1315,1669,88,660,763,758,785,1512],"src\\pages\\passwordSet\\index.tsx");
+},1668,[1,2,25,42,3,1315,1669,88,660,763,758,785,1514],"src\\pages\\passwordSet\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -286381,7 +286469,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1670,[1,2,25,42,3,1315,1671,88,660,763,758,785,625,626,659,1512],"src\\pages\\logoff\\index.tsx");
+},1670,[1,2,25,42,3,1315,1671,88,660,763,758,785,625,626,659,1514],"src\\pages\\logoff\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -286651,7 +286739,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1672,[1,42,3,1315,1673,88,660,1512],"src\\pages\\about\\index.tsx");
+},1672,[1,42,3,1315,1673,88,660,1514],"src\\pages\\about\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -287017,7 +287105,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1674,[1,2,25,42,3,1315,1675,537,88,660,789,763,1637,1512,796],"src\\pages\\addressCreate\\index.tsx");
+},1674,[1,2,25,42,3,1315,1675,537,88,660,789,763,1637,1514,796],"src\\pages\\addressCreate\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -287342,7 +287430,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1676,[1,7,2,25,42,3,1315,533,1677,537,88,660,785,763,789,1512],"src\\pages\\address\\index.tsx");
+},1676,[1,7,2,25,42,3,1315,533,1677,537,88,660,785,763,789,1514],"src\\pages\\address\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -287747,7 +287835,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1678,[1,7,2,25,42,3,1315,1679,88,660,785,763,1587,1512],"src\\pages\\feedback\\index.tsx");
+},1678,[1,7,2,25,42,3,1315,1679,88,660,785,763,1589,1514],"src\\pages\\feedback\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -288076,7 +288164,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1680,[1,7,2,25,42,3,555,1315,1681,88,660,785,763,1512],"src\\pages\\feedbackRecord\\index.tsx");
+},1680,[1,7,2,25,42,3,555,1315,1681,88,660,785,763,1514],"src\\pages\\feedbackRecord\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -288396,7 +288484,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1682,[1,7,2,25,202,42,3,534,1683,88,660,793,763,796,1512],"src\\pages\\testDevice\\index.tsx");
+},1682,[1,7,2,25,202,42,3,534,1683,88,660,793,763,796,1514],"src\\pages\\testDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -290051,7 +290139,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1684,[1,2,25,42,3,534,1599,1685,1315,1593,1686,88,660,793,763,770,1512,796],"src\\pages\\testDeviceDetail\\index.tsx");
+},1684,[1,2,25,42,3,534,1599,1685,1315,1510,1686,88,660,793,763,770,1514,796],"src\\pages\\testDeviceDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -290393,7 +290481,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = UnqualifiedPop;
-},1686,[1,2,25,42,3,1685,88,1512],"src\\pages\\testDeviceDetail\\UnqualifiedPop.tsx");
+},1686,[1,2,25,42,3,1685,88,1514],"src\\pages\\testDeviceDetail\\UnqualifiedPop.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -290722,7 +290810,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1687,[1,2,25,42,3,555,1688,88,660,785,763,1512],"src\\pages\\feedbackDetail\\index.tsx");
+},1687,[1,2,25,42,3,555,1688,88,660,785,763,1514],"src\\pages\\feedbackDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -291057,7 +291145,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1689,[1,2,25,42,3,1690,88,1275,785,763,1512],"src\\pages\\skinPeeler\\index.tsx");
+},1689,[1,2,25,42,3,1690,88,1275,785,763,1514],"src\\pages\\skinPeeler\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -291454,7 +291542,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1691,[1,2,25,42,3,541,548,1692,1315,539,1693,1694,88,660,763,625,1512],"src\\pages\\setting\\index.tsx");
+},1691,[1,2,25,42,3,541,548,1692,1315,539,1693,1694,88,660,763,625,1514],"src\\pages\\setting\\index.tsx");
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
   "name": "boklock",
@@ -292801,7 +292889,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1695,[1,2,7,25,42,3,1599,1315,1696,533,88,549,660,785,763,1587,1512],"src\\pages\\adDisplay\\index.tsx");
+},1695,[1,2,7,25,42,3,1599,1315,1696,533,88,549,660,785,763,1589,1514],"src\\pages\\adDisplay\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -293380,7 +293468,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1697,[1,7,2,25,42,3,1315,1698,88,660,1502,758,763,1512],"src\\pages\\deviceAddress\\index.tsx");
+},1697,[1,7,2,25,42,3,1315,1698,88,660,1502,758,763,1514],"src\\pages\\deviceAddress\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -294705,7 +294793,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = VipPage;
-},1699,[1,7,2,25,42,3,534,1315,1504,1700,1935,555,88,785,660,763,553,761,1937,1644,1512,1941,758,1942,1944],"src\\pages\\vip\\index.tsx");
+},1699,[1,7,2,25,42,3,534,1315,1504,1700,1935,555,88,785,660,763,553,761,1937,1644,1514,1941,758,1942,1944],"src\\pages\\vip\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -316357,7 +316445,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = UseCountPop;
-},1935,[1,25,1315,42,3,534,88,1223,1936,796,1512],"src\\pages\\vip\\com\\useCountPop\\index.tsx");
+},1935,[1,25,1315,42,3,534,88,1223,1936,796,1514],"src\\pages\\vip\\com\\useCountPop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -318336,7 +318424,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1946,[1,7,2,25,42,3,1315,88,785,1512,1947],"src\\pages\\vip\\info.tsx");
+},1946,[1,7,2,25,42,3,1315,88,785,1514,1947],"src\\pages\\vip\\info.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -318983,7 +319071,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1948,[1,7,2,25,42,3,555,1315,1949,88,660,553,763,785,1937,761,1945,1512,1944],"src\\pages\\vip\\record.tsx");
+},1948,[1,7,2,25,42,3,555,1315,1949,88,660,553,763,785,1937,761,1945,1514,1944],"src\\pages\\vip\\record.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -319962,7 +320050,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1950,[1,2,7,25,1315,42,3,555,1700,1935,88,660,785,763,1512,1941,758,1942],"src\\pages\\vip\\editRecord.tsx");
+},1950,[1,2,7,25,1315,42,3,555,1700,1935,88,660,785,763,1514,1941,758,1942],"src\\pages\\vip\\editRecord.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -320270,7 +320358,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = BinDevice;
-},1951,[1,2,25,42,3,1952,88,660,1529,763,794,758,1953,1512],"src\\pages\\bindDevice\\index.tsx");
+},1951,[1,2,25,42,3,1952,88,660,1531,763,794,758,1953,1514],"src\\pages\\bindDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -321394,12 +321482,56 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         lineNumber: 857,
         columnNumber: 19
       }
-    }, bleName))))) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
+    }, bleName)))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+      style: (_styles.default.footer, {
+        marginTop: 8
+      }),
+      justify: "center",
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 862,
+        columnNumber: 13
+      }
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").GradientButton, {
+      colors: _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/constants").LOCK_BTN_COLORS[_$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/constants").LOCK_STATUS.FALL_SUCCESS],
+      width: 160,
+      height: 44,
+      round: false,
+      btnBorderRadius: 16,
+      onPress: function onPress() {
+        return handlePairing();
+      },
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 863,
+        columnNumber: 15
+      }
+    }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+      style: _styles.default.btnText,
+      justify: "center",
+      align: "center",
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 871,
+        columnNumber: 17
+      }
+    }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
+      style: _styles.default.btnTextInner,
+      __self: this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 872,
+        columnNumber: 19
+      }
+    }, "\u8DF3\u8F6C\u8BBE\u7F6E"))))) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
       style: _styles.default.iconWrapper,
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 864,
+        lineNumber: 879,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321409,7 +321541,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 865,
+        lineNumber: 880,
         columnNumber: 15
       }
     })), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321417,7 +321549,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 867,
+        lineNumber: 882,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321425,7 +321557,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 868,
+        lineNumber: 883,
         columnNumber: 15
       }
     }, "\u8BF7\u786E\u4FDD\u5730\u9501\u901A\u7535"), /*#__PURE__*/_react.default.createElement(_reactNative.TouchableOpacity, {
@@ -321437,7 +321569,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 869,
+        lineNumber: 884,
         columnNumber: 15
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321447,7 +321579,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 873,
+        lineNumber: 888,
         columnNumber: 17
       }
     }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321455,7 +321587,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 874,
+        lineNumber: 889,
         columnNumber: 17
       }
     }, "\u901A\u7535\u6307\u5357"))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
@@ -321464,7 +321596,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 878,
+        lineNumber: 893,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
@@ -321472,7 +321604,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 879,
+        lineNumber: 894,
         columnNumber: 15
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321480,7 +321612,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 880,
+        lineNumber: 895,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321488,7 +321620,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 881,
+        lineNumber: 896,
         columnNumber: 19
       }
     }, "\u84DD\u7259\u540D\u79F0"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321496,7 +321628,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 882,
+        lineNumber: 897,
         columnNumber: 19
       }
     }, bleName)))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
@@ -321505,7 +321637,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 887,
+        lineNumber: 902,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
@@ -321513,7 +321645,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 888,
+        lineNumber: 903,
         columnNumber: 15
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321521,7 +321653,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 889,
+        lineNumber: 904,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321529,7 +321661,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 890,
+        lineNumber: 905,
         columnNumber: 19
       }
     }, "PIN\u7801"), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321537,7 +321669,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 891,
+        lineNumber: 906,
         columnNumber: 19
       }
     }, pin)), /*#__PURE__*/_react.default.createElement(_reactNative.TouchableOpacity, {
@@ -321554,7 +321686,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 893,
+        lineNumber: 908,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_AppIcon.default, {
@@ -321564,7 +321696,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 900,
+        lineNumber: 915,
         columnNumber: 19
       }
     }), /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321575,7 +321707,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 901,
+        lineNumber: 916,
         columnNumber: 19
       }
     }, "\u70B9\u51FB\u590D\u5236")))), /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
@@ -321586,7 +321718,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 908,
+        lineNumber: 923,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").GradientButton, {
@@ -321601,7 +321733,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 909,
+        lineNumber: 924,
         columnNumber: 15
       }
     }, /*#__PURE__*/_react.default.createElement(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
@@ -321611,7 +321743,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 917,
+        lineNumber: 932,
         columnNumber: 17
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321619,7 +321751,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 918,
+        lineNumber: 933,
         columnNumber: 19
       }
     }, "\u8DF3\u8F6C\u8BBE\u7F6E")))), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321627,7 +321759,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 923,
+        lineNumber: 938,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
@@ -321635,7 +321767,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 924,
+        lineNumber: 939,
         columnNumber: 15
       }
     }, "\u56E0\u673A\u578B\u4E0D\u540C\uFF0C\u84DD\u7259\u641C\u7D22\u9700\u8981\u51E0\u5206\u949F\uFF0C\u8BF7\u8010\u5FC3\u7B49\u5F85")), /*#__PURE__*/_react.default.createElement(_reactNative.View, {
@@ -321643,7 +321775,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 929,
+        lineNumber: 944,
         columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(_reactNative.Image, {
@@ -321658,7 +321790,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 930,
+        lineNumber: 945,
         columnNumber: 15
       }
     })))), /*#__PURE__*/_react.default.createElement(_powerIndicatorPop.default, {
@@ -321666,12 +321798,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       __self: this,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 941,
+        lineNumber: 956,
         columnNumber: 7
       }
     }));
   }
-},1954,[1,2,25,42,3,555,1315,1955,1956,758,763,770,784,1512],"src\\pages\\findDevice\\index.tsx");
+},1954,[1,2,25,42,3,555,1315,1955,1956,758,763,770,784,1514],"src\\pages\\findDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -322502,7 +322634,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 16
     }
   });
-},1957,[1,7,2,25,42,3,1315,88,1496,660,784,763,1512],"src\\pages\\combineDevice\\index.tsx");
+},1957,[1,7,2,25,42,3,1315,88,1496,660,784,763,1514],"src\\pages\\combineDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -322684,7 +322816,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1958,[1,2,25,42,3,88,660,1496,784,763,1512,1959],"src\\pages\\handOver\\index.tsx");
+},1958,[1,2,25,42,3,88,660,1496,784,763,1514,1959],"src\\pages\\handOver\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -322975,7 +323107,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1960,[1,7,2,25,42,3,88,660,1496,784,763,1961,1512],"src\\pages\\handOver\\handOverDevice\\index.tsx");
+},1960,[1,7,2,25,42,3,88,660,1496,784,763,1961,1514],"src\\pages\\handOver\\handOverDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -323240,7 +323372,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1962,[1,2,25,42,3,1963,88,660,1496,1578,784,763,1512,1965],"src\\pages\\handOver\\handOverVerify\\index.tsx");
+},1962,[1,2,25,42,3,1963,88,660,1496,1580,784,763,1514,1965],"src\\pages\\handOver\\handOverVerify\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323750,7 +323882,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1966,[1,2,25,42,3,1967,88,660,1496,1578,763,784,770,1512,1969],"src\\pages\\handOver\\handOverVerifyNew\\index.tsx");
+},1966,[1,2,25,42,3,1967,88,660,1496,1580,763,784,770,1514,1969],"src\\pages\\handOver\\handOverVerifyNew\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -324071,7 +324203,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1970,[1,25,42,3,88,660,1496,763,1512,1971,758],"src\\pages\\bluetooth\\linkSuccess\\index.tsx");
+},1970,[1,25,42,3,88,660,1496,763,1514,1971,758],"src\\pages\\bluetooth\\linkSuccess\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -324634,7 +324766,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1974,[1,2,25,42,3,1314,1519,88,660,1496,1578,763,792,784,770,770,1975],"src\\pages\\unbind\\unbindDevice.tsx");
+},1974,[1,2,25,42,3,1314,1521,88,660,1496,1580,763,792,784,770,770,1975],"src\\pages\\unbind\\unbindDevice.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -324921,7 +325053,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1976,[1,2,25,42,3,1977,88,660,770,763,1512],"src\\pages\\unBindSuccess\\index.tsx");
+},1976,[1,2,25,42,3,1977,88,660,770,763,1514],"src\\pages\\unBindSuccess\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -325005,7 +325137,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var route = (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useRoute)();
     var navigation = (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/hooks/useAppNavigation").useAppNavigation)();
     var params = (route == null ? void 0 : route.params) || {};
-    console.log('BluetoothControl route params:', params);
     var bleNo = String(params.bleNo || '');
     var deviceNo = String(params.deviceNo || '');
     var lockId = params.lockId;
@@ -325663,7 +325794,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1978,[1,150,2,25,42,3,1507,1979,1315,88,660,1496,763,770,784,1512,1981,758],"src\\pages\\bluetooth\\control\\index.tsx");
+},1978,[1,150,2,25,42,3,1507,1979,1315,88,660,1496,763,770,784,1514,1981,758],"src\\pages\\bluetooth\\control\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -325795,7 +325926,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = SettingPin;
-},1979,[1,25,42,3,534,1593,88,1980],"src\\pages\\bluetooth\\component\\SettingPin.tsx");
+},1979,[1,25,42,3,534,1510,88,1980],"src\\pages\\bluetooth\\component\\SettingPin.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -326221,6 +326352,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     var handleEnterDevice = (0, _react.useCallback)(/*#__PURE__*/function () {
       var _ref5 = (0, _asyncToGenerator2.default)(function* (id, msgId) {
+        console.log(id, msgId, '---');
+        return;
         try {
           var existRes = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/user").getUserLockExist)({
             id: id
@@ -326295,6 +326428,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             void handleMessageDetail(item.id);
             return;
           }
+          console.log(item, '====');
           void handleEnterDevice(Number(item.lockId), item.id);
         },
         style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.itemContent,
@@ -326393,7 +326527,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1982,[1,2,25,7,42,3,1315,1615,88,1496,763,785,758,1983,1512],"src\\pages\\message\\index.tsx");
+},1982,[1,2,25,7,42,3,1315,1615,88,1496,763,785,758,1983,1514],"src\\pages\\message\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -326715,7 +326849,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1984,[1,2,25,42,3,537,88,660,785,763,1512,1985],"src\\pages\\messageDetail\\index.tsx");
+},1984,[1,2,25,42,3,537,88,660,785,763,1514,1985],"src\\pages\\messageDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -327010,7 +327144,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1986,[1,2,25,3,42,1315,1506,1987,88,660,763,786,625,792,1512,1554],"src\\pages\\myDevice\\index.tsx");
+},1986,[1,2,25,3,42,1315,1506,1987,88,660,763,786,625,792,1514,1556],"src\\pages\\myDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -327280,7 +327414,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   };
-},1988,[1,2,42,3,1693,88,1989,1222,1512,1312],"src\\navigation\\MainTabNavigator.tsx");
+},1988,[1,2,42,3,1693,88,1989,1222,1514,1312],"src\\navigation\\MainTabNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {

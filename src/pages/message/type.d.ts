@@ -1,28 +1,30 @@
 export interface messagesProps {
   /*消息ID */
-  id: number
+  id: number;
   /*消息类型（1-电量不足提醒 2-碰撞蜂鸣） */
-  messageType: number
+  messageType: number;
   /*消息类型名称 */
-  messageTypeName: string
+  messageTypeName: string;
   /*消息内容 */
-  messageContent: string
+  messageContent: string;
   /*设备ID */
-  deviceId: number
+  deviceId: number;
   /*地锁ID */
-  lockId: number
+  lockId: number;
   /*地锁名称 */
-  lockName: string
+  lockName: string;
   /*创建时间 */
-  createTime: string
+  createTime: string;
   /**是否已读（0-未读 1-已读） */
-  isRead: number
+  isRead: number;
+  //组合设备id
+  groupId: number;
 }
 export interface msgListProps {
   /*日期标签（今天、昨天、7月1日等） */
-  dateLabel: string
+  dateLabel: string;
   /*日期（yyyy-MM-dd格式） */
-  date: string
+  date: string;
   /*该天的消息列表 */
-  messages: messagesProps[]
+  messages: messagesProps[];
 }
