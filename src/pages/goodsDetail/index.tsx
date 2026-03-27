@@ -252,7 +252,7 @@ export default function GoodsDetail() {
                 <Image
                   source={{ uri: goodsDetail.detailImage[0] }}
                   style={styles.popupImage}
-                  resizeMode="cover"
+                  resizeMode="contain"
                 />
               ) : null}
 
