@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 8,
     fontSize: 14,
-    color: '#999999',
-  },
+    color: '#666666',
+    },
 });
 
 export default styles;

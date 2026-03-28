@@ -130,7 +130,7 @@ export const styles = StyleSheet.create({
     paddingTop: 80,
   },
   emptyText: {
-    color: '#999999',
+    color: '#666666',
     fontSize: 14,
   },
 });

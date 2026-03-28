@@ -78,7 +78,7 @@ export const AppNavigator: React.FC = () => {
       initialRouteName={initialRouteName}
       screenOptions={{
         headerShown: false,
-        animation: 'fade',
+        animation: 'default',
       }}
     >
       {/* 登录页面 */}
@@ -104,5 +104,3 @@ export const AppNavigator: React.FC = () => {
     </Stack.Navigator>
   );
 };
-
-

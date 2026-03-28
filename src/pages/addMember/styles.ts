@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    color: '#999999',
+    color: '#666666',
     fontSize: 14,
   },
   emptyContainer: {
