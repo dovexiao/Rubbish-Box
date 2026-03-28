@@ -259,6 +259,7 @@ export default function TestDeviceDetailScreen() {
   }, []);
 
   const updateTestResult = async (params: Partial<TestDeviceDetail>) => {
+    console.log('params====', params);
     if (!deviceNo) return;
     showLoading({ title: '操作中...' });
     try {
@@ -632,7 +633,7 @@ export default function TestDeviceDetailScreen() {
                       });
                       return;
                     }
-                    const isDown = detail.fourGLiftStatus === 2;
+                    const isDown = testDeviceReslt.fourGLiftStatus === 2;
                     setConfirmPopup({
                       visible: true,
                       title: `确认${isDown ? '升起' : '降下'}地锁吗？`,
@@ -661,6 +662,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.fourGLiftTestStatus === 0 && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           fourGLiftTestStatus: 1,
@@ -691,6 +693,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           fourGLiftTestStatus: 2,
@@ -788,6 +791,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.bluetoothProximityStatus === 0 && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           bluetoothProximityStatus: 1,
@@ -818,6 +822,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           bluetoothProximityStatus: 2,
@@ -910,6 +915,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.buzzerTestStatus === BUZZER_STATUS.CLOSE && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           buzzerTestStatus: 1,
@@ -940,6 +946,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           buzzerTestStatus: 2,
@@ -1042,6 +1049,7 @@ export default function TestDeviceDetailScreen() {
                   {detail.coverTestStatus === COVER_STATUS.CLOSE && (
                     <Flex>
                       <Flex
+                        isTouchView
                         onPress={async () => {
                           await updateTestResult({
                             coverTestStatus: 1,
@@ -1072,6 +1080,7 @@ export default function TestDeviceDetailScreen() {
                         style={{
                           marginLeft: 48,
                         }}
+                        isTouchView
                         onPress={async () => {
                           await updateTestResult({
                             coverTestStatus: 2,
@@ -1145,6 +1154,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.fireTestStatus === 0 && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           fireTestStatus: 1,
@@ -1175,6 +1185,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           fireTestStatus: 2,
@@ -1248,6 +1259,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.tempTestStatus === 0 && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           tempTestStatus: 1,
@@ -1278,6 +1290,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           tempTestStatus: 2,
@@ -1400,6 +1413,7 @@ export default function TestDeviceDetailScreen() {
                 ) : detail.aboveMixtureTestStatus === 0 ? (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           aboveMixtureTestStatus: 1,
@@ -1421,6 +1435,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{ marginLeft: 48 }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           aboveMixtureTestStatus: 2,
@@ -1535,6 +1550,7 @@ export default function TestDeviceDetailScreen() {
                 ) : detail.aboveGeoTestStatus === 0 ? (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           aboveGeoTestStatus: 1,
@@ -1556,6 +1572,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{ marginLeft: 48 }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           aboveGeoTestStatus: 2,

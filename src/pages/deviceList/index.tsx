@@ -163,11 +163,13 @@ export default function DeviceList() {
                 title: result?.message || result?.msg || '操作失败',
                 icon: 'none',
               });
+              poller.stop();
               return false;
             }
 
             if (result?.data) {
               const nextInfo: any = await getLockInfo({ id: item?.id });
+
               if (nextInfo?.code === 200 && nextInfo?.success) {
                 setList(prev =>
                   prev.map(it => (it.id === item.id ? nextInfo.data : it)),
@@ -175,6 +177,7 @@ export default function DeviceList() {
               } else {
                 void loadList(true);
               }
+              poller.stop();
               return false;
             }
             return true;
@@ -227,8 +230,10 @@ export default function DeviceList() {
                 title: result?.message || result?.msg || '操作失败',
                 icon: 'none',
               });
+              poller.stop();
               return false;
             }
+
             if (result?.data) {
               if (shouldOpenConfirmRef.current) {
                 coverConfirmRef.current?.close();
@@ -238,6 +243,7 @@ export default function DeviceList() {
                 shouldOpenConfirmRef.current = false;
               }
               void loadList(true);
+              poller.stop();
               return false;
             }
             return true;
