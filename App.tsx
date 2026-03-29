@@ -1,5 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { AppState, AppStateStatus, BackHandler, Platform } from 'react-native';
+import {
+  AppState,
+  AppStateStatus,
+  BackHandler,
+  LogBox,
+  Platform,
+} from 'react-native';
 import { SafeAreaProvider } from '@/libs/safeAreaContext';
 import {
   NavigationContainer,
@@ -54,6 +60,11 @@ import { AppUpdateDialogHost } from '@/components/AppUpdateDialog';
 import { GlobalLoading, GlobalToast } from '@/components';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { StoreProvider } from '@/store/provider';
+
+// Harmony debug mode: silence in-app LogBox overlays.
+if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+  LogBox.ignoreAllLogs(true);
+}
 
 function App() {
   const navigationRef = useNavigationContainerRef<any>();

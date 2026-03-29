@@ -115534,8 +115534,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _appUpdate = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/appUpdate"));
   var _GradientButton = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/components/GradientButton"));
   var _jsxRuntime = _$$_REQUIRE(_dependencyMap[11], "react/jsx-runtime");
-  var _jsxFileName = "D:\\xqkj\\bokeapp\\App.tsx";
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\App.tsx"; // Harmony debug mode: silence in-app LogBox overlays.
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
+    _reactNative.LogBox.ignoreAllLogs(true);
+  }
   function App() {
     var navigationRef = (0, _$$_REQUIRE(_dependencyMap[12], "@react-navigation/native").useNavigationContainerRef)();
     var agreePopRef = (0, _react.useRef)(null);
@@ -119697,6 +119700,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     MobPushModule.addPushReceiver = function () {};
   }
   var listeners = {};
+  var OPTIONAL_MOB_PUSH_METHODS = new Set(['stopPush', 'restartPush']);
 
   // 创建一个安全的包装函数，检查 MobPushModule 是否存在
   var safeCall = function safeCall(method) {
@@ -119706,6 +119710,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     try {
       var fn = MobPushModule[method];
       if (typeof fn !== 'function') {
+        var isHarmony = _reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android';
+        if (isHarmony && OPTIONAL_MOB_PUSH_METHODS.has(method)) {
+          return;
+        }
         if (__DEV__) {
           console.warn(`MobPushModule.${method} is not available or not a function`);
         }
@@ -120008,10 +120016,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     },
     stopPush: function stopPush() {
-      return safeCall('stopPush');
+      if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
+        return;
+      }
+      safeCall('stopPush');
     },
     restartPush: function restartPush() {
-      return safeCall('restartPush');
+      if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
+        return;
+      }
+      safeCall('restartPush');
     },
     setAlias: function setAlias(alias) {
       return safeCall('setAlias', alias);
@@ -236636,7 +236650,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       initialRouteName: initialRouteName,
       screenOptions: {
         headerShown: false,
-        animation: 'fade'
+        animation: 'default'
       },
       children: [_$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/routes").routes.pages.map(function (route) {
         return /*#__PURE__*/(0, _jsxRuntime.jsx)(Stack.Screen, {
@@ -254206,7 +254220,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       alignItems: 'center'
     },
     emptyText: {
-      color: '#999',
+      color: '#666666',
       fontSize: 14
     },
     editContainer: {
@@ -262590,6 +262604,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 title: (result == null ? void 0 : result.message) || (result == null ? void 0 : result.msg) || '操作失败',
                 icon: 'none'
               });
+              poller.stop();
               return false;
             }
             if (result != null && result.data) {
@@ -262605,6 +262620,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               } else {
                 void loadList(true);
               }
+              poller.stop();
               return false;
             }
             return true;
@@ -262656,6 +262672,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 title: (result == null ? void 0 : result.message) || (result == null ? void 0 : result.msg) || '操作失败',
                 icon: 'none'
               });
+              poller.stop();
               return false;
             }
             if (result != null && result.data) {
@@ -262669,6 +262686,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 shouldOpenConfirmRef.current = false;
               }
               void loadList(true);
+              poller.stop();
               return false;
             }
             return true;
@@ -263205,7 +263223,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       paddingTop: 80
     },
     emptyText: {
-      color: '#999999',
+      color: '#666666',
       fontSize: 14
     }
   });
@@ -263647,8 +263665,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       fontSize: 14,
-      color: '#999999',
-      opacity: 0.5,
+      color: '#666666',
       marginTop: 16
     }
   });
@@ -264235,7 +264252,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       textAlign: 'center',
-      color: '#999999',
+      color: '#666666',
       fontSize: 14
     },
     emptyContainer: {
@@ -264266,7 +264283,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _jsxRuntime = _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\addMember\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-  var PAGE_SIZE = 20;
+  var PAGE_SIZE = 5;
   function AddMember() {
     var _route$params,
       _this = this,
@@ -264291,15 +264308,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
       loading = _useState8[0],
       setLoading = _useState8[1];
-    var _useState9 = (0, _react.useState)(false),
+    var _useState9 = (0, _react.useState)([]),
       _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
-      initialLoading = _useState0[0],
-      setInitialLoading = _useState0[1];
+      currentLockList = _useState0[0],
+      setCurrentLockList = _useState0[1];
+    var _useState1 = (0, _react.useState)(false),
+      _useState10 = (0, _slicedToArray2.default)(_useState1, 2),
+      initialLoading = _useState10[0],
+      setInitialLoading = _useState10[1];
+    var loadingRef = (0, _react.useRef)(false);
+    var offsetRef = (0, _react.useRef)(0);
     var hasSelected = (0, _react.useMemo)(function () {
-      return locks.some(function (item) {
+      return currentLockList.some(function (item) {
         return item.isBind;
       });
-    }, [locks]);
+    }, [currentLockList]);
     var disabled = (0, _react.useMemo)(function () {
       if (!info) return true;
       if (!info.username || !info.mobile) return true;
@@ -264323,20 +264346,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
       if (res.code === 200 && res.success) {
         setInfo(res.data);
+        setCurrentLockList(res.data.lockList);
       } else {
         (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)(res.msg || res.message || '获取成员详情失败');
       }
     }), [memberId]);
     var loadLocks = (0, _react.useCallback)(/*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2.default)(function* (refresh) {
-        if (loading) return;
+        if (loadingRef.current) return;
+        loadingRef.current = true;
         if (refresh) {
           setInitialLoading(true);
         } else {
           setLoading(true);
         }
         try {
-          var offset = refresh ? 0 : locks.length;
+          var offset = refresh ? 0 : offsetRef.current;
           var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/services/user").staffLockList)({
             id: memberId,
             pageSize: PAGE_SIZE,
@@ -264349,7 +264374,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             setLocks(function (prev) {
               return refresh ? rows : [].concat((0, _toConsumableArray2.default)(prev), (0, _toConsumableArray2.default)(rows));
             });
-            setComplete(rows.length < PAGE_SIZE);
+            offsetRef.current = refresh ? rows.length : offsetRef.current + rows.length;
+            var total = typeof data.total === 'number' && Number.isFinite(data.total) ? data.total : undefined;
+            if (typeof total === 'number') {
+              setComplete(offset + rows.length >= total);
+            } else {
+              setComplete(rows.length < PAGE_SIZE);
+            }
           } else {
             (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)(res.msg || res.message || '获取地锁列表失败');
           }
@@ -264358,24 +264389,38 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         } finally {
           setLoading(false);
           setInitialLoading(false);
+          loadingRef.current = false;
         }
       });
       return function (_x) {
         return _ref2.apply(this, arguments);
       };
-    }(), [locks.length, memberId, loading]);
+    }(), [memberId]);
     (0, _react.useEffect)(function () {
       void (0, _asyncToGenerator2.default)(function* () {
         setInitialLoading(true);
         try {
           yield loadDetail();
+          offsetRef.current = 0;
+          setComplete(false);
           yield loadLocks(true);
         } finally {
           setInitialLoading(false);
         }
       })();
-    }, [loadDetail, loadLocks]);
+    }, [loadDetail, memberId]);
     var handleUpdateLock = (0, _react.useCallback)(function (next) {
+      setCurrentLockList(function (prev) {
+        var exists = prev.some(function (item) {
+          return item.id === next.id;
+        });
+        if (exists) {
+          return prev.map(function (item) {
+            return item.id === next.id ? Object.assign({}, item, next) : item;
+          });
+        }
+        return [].concat((0, _toConsumableArray2.default)(prev), [next]);
+      });
       setLocks(function (prev) {
         return prev.map(function (item) {
           return item.id === next.id ? next : item;
@@ -264399,7 +264444,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)('请输入正确的手机号');
         return;
       }
-      var selectedLocks = locks.filter(function (item) {
+      var selectedLocks = currentLockList.filter(function (item) {
         return item.isBind;
       });
       if (selectedLocks.length === 0) {
@@ -264407,11 +264452,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return;
       }
       try {
-        var _locks$length;
         var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/services/user").modifyStaff)(Object.assign({}, info, {
-          lockList: selectedLocks,
-          pageSize: PAGE_SIZE,
-          offset: (_locks$length = locks.length) != null ? _locks$length : 0
+          lockList: selectedLocks
         }));
         if (res.code === 200 && res.success) {
           (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
@@ -264561,7 +264603,32 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           keyExtractor: keyExtractor,
           renderItem: renderLockItem,
           contentContainerStyle: _styles.default.lockListContent,
-          ListEmptyComponent: listEmptyComponent
+          ListEmptyComponent: listEmptyComponent,
+          refreshing: initialLoading,
+          onRefresh: function onRefresh() {
+            void loadLocks(true);
+          },
+          onEndReached: function onEndReached() {
+            if (!loading && !complete) {
+              void loadLocks(false);
+            }
+          },
+          onEndReachedThreshold: 0.2,
+          ListFooterComponent: function ListFooterComponent() {
+            if (loading) {
+              return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _styles.default.footerText,
+                children: "\u52A0\u8F7D\u4E2D..."
+              });
+            }
+            if (complete && locks.length > 0) {
+              return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _styles.default.footerText,
+                children: "\u5DF2\u52A0\u8F7D\u5168\u90E8"
+              });
+            }
+            return null;
+          }
         })]
       })
     });
@@ -264980,7 +265047,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       alignItems: 'center'
     },
     submitButton: {
-      boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)'
+      // boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)',
     },
     submitButtonText: {
       color: '#FFFFFF',
@@ -264990,7 +265057,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       textAlign: 'center',
-      color: '#999999',
+      color: '#666666',
       fontSize: 14
     },
     emptyContainer: {
@@ -265001,6 +265068,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     emptyImage: {
       width: 80,
       height: 80
+    },
+    footerText: {
+      fontSize: 12,
+      color: '#999999',
+      marginTop: 8,
+      textAlign: 'center'
     }
   });
   var _default = exports.default = styles;
@@ -265339,9 +265412,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         // 构建跳转参数
         var params = {
           productId: goodsDetail.id,
+          orderAmount: goodsDetail.currentPrice,
+          addressId: -1,
           productNum: productNum,
-          currentPrice: goodsDetail.currentPrice,
-          productName: goodsDetail.productName,
+          productDetail: goodsDetail,
           token: tokenRes.data.token
         };
 
@@ -266772,7 +266846,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       fontSize: 14,
-      color: '#999999'
+      color: '#666666'
     },
     qrCodeContent: {
       marginHorizontal: 40,
@@ -267548,10 +267622,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       fontSize: 14,
-      color: '#999999',
+      color: '#666666',
       marginTop: 16,
-      textAlign: 'center',
-      opacity: 0.5
+      textAlign: 'center'
     },
     tipsBox: {
       marginTop: 10
@@ -282787,7 +282860,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       fontSize: 14,
-      color: '#999999',
+      color: '#666666',
       marginTop: 16
     }
   });
@@ -283929,7 +284002,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       fontSize: 14,
-      color: '#999999',
+      color: '#666666',
       marginTop: 16
     }
   });
@@ -284164,7 +284237,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       fontSize: 14,
-      color: '#999999',
+      color: '#666666',
       marginTop: 16
     }
   });
@@ -287522,7 +287595,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     emptyText: {
       marginTop: 8,
       fontSize: 14,
-      color: '#999999'
+      color: '#666666'
     }
   });
   var _default = exports.default = styles;
@@ -288266,7 +288339,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     emptyText: {
       marginTop: 8,
       fontSize: 14,
-      color: '#999999'
+      color: '#666666'
     }
   });
   var _default = exports.default = styles;
@@ -288295,6 +288368,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   var TEST_STATUS_TEXT = (0, _defineProperty2.default)((0, _defineProperty2.default)((0, _defineProperty2.default)({}, TEST_STATUS.NORMAL, '暂无测试'), TEST_STATUS.FAIL, '不合格'), TEST_STATUS.QUALIFIED, '合格');
   var PAGE_SIZE = 10;
+  var itemDedupeKey = function itemDedupeKey(item) {
+    var _item$deviceNo, _item$lockId;
+    return `${(_item$deviceNo = item.deviceNo) != null ? _item$deviceNo : ''}__${(_item$lockId = item.lockId) != null ? _item$lockId : ''}`;
+  };
   function TestDevice() {
     var _this = this;
     var navigation = (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useNavigation)();
@@ -288322,9 +288399,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState10 = (0, _slicedToArray2.default)(_useState1, 2),
       searchValue = _useState10[0],
       setSearchValue = _useState10[1];
+    var searchRef = (0, _react.useRef)('');
+    var offsetRef = (0, _react.useRef)(0);
+    var loadingRef = (0, _react.useRef)(false);
     var loadList = (0, _react.useCallback)(/*#__PURE__*/function () {
       var _ref = (0, _asyncToGenerator2.default)(function* (reload, deviceNo) {
-        if (loading) return;
+        if (loadingRef.current) return;
+        loadingRef.current = true;
         if (reload) {
           setRefreshing(true);
           setInitialLoading(true);
@@ -288332,18 +288413,35 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           setLoading(true);
         }
         try {
-          var _res$data;
-          var offset = reload ? 0 : deviceList.length;
+          var _res$data, _res$data2;
+          var offset = reload ? 0 : offsetRef.current;
+          var lockId = deviceNo !== undefined ? deviceNo || undefined : searchRef.current.trim() || undefined;
           var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/deviceTest").getTestDeviceList)({
             offset: offset,
             pageSize: PAGE_SIZE,
-            lockId: deviceNo != null ? deviceNo : searchValue || undefined
+            lockId: lockId
           });
           var list = Array.isArray(res == null ? void 0 : res.list) ? res.list : Array.isArray(res == null || (_res$data = res.data) == null ? void 0 : _res$data.list) ? res.data.list : [];
+          var total = typeof (res == null ? void 0 : res.total) === 'number' && Number.isFinite(res.total) ? res.total : typeof (res == null || (_res$data2 = res.data) == null ? void 0 : _res$data2.total) === 'number' && Number.isFinite(res.data.total) ? res.data.total : undefined;
           setDeviceList(function (prev) {
-            return reload ? list : [].concat((0, _toConsumableArray2.default)(prev), (0, _toConsumableArray2.default)(list));
+            if (reload) return list;
+            var seen = new Set(prev.map(itemDedupeKey));
+            var next = (0, _toConsumableArray2.default)(prev);
+            for (var item of list) {
+              var k = itemDedupeKey(item);
+              if (!seen.has(k)) {
+                seen.add(k);
+                next.push(item);
+              }
+            }
+            return next;
           });
-          setHasMore(list.length >= PAGE_SIZE);
+          offsetRef.current = reload ? list.length : offsetRef.current + list.length;
+          if (typeof total === 'number') {
+            setHasMore(offset + list.length < total);
+          } else {
+            setHasMore(list.length >= PAGE_SIZE);
+          }
         } catch (error) {
           console.error('getTestDeviceList error:', error);
           (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)('获取测试设备列表失败');
@@ -288351,21 +288449,26 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           setLoading(false);
           setRefreshing(false);
           setInitialLoading(false);
+          loadingRef.current = false;
         }
       });
       return function (_x, _x2) {
         return _ref.apply(this, arguments);
       };
-    }(), [deviceList.length, loading, searchValue]);
+    }(), []);
     (0, _react.useEffect)(function () {
+      offsetRef.current = 0;
       void loadList(true);
     }, [loadList]);
     var onSearch = function onSearch(value) {
-      setSearchValue(value.trim());
-      void loadList(true, value.trim());
+      var trimmed = value.trim();
+      setSearchValue(trimmed);
+      searchRef.current = trimmed;
+      offsetRef.current = 0;
+      void loadList(true, trimmed);
     };
     var renderItem = function renderItem(_ref2) {
-      var _TEST_STATUS_TEXT$ite, _item$lockId;
+      var _TEST_STATUS_TEXT$ite, _item$lockId2;
       var item = _ref2.item,
         index = _ref2.index;
       var statusText = (_TEST_STATUS_TEXT$ite = TEST_STATUS_TEXT[item.testResult]) != null ? _TEST_STATUS_TEXT$ite : item.testResultName;
@@ -288386,6 +288489,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           },
           children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
             align: "center",
+            style: {
+              flex: 1
+            },
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
               source: {
                 uri: 'https://g.18qjz.cn/jijimaClient/occupy.png'
@@ -288397,12 +288503,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               resizeMode: "contain"
             }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
               style: _styles.default.snText,
-              children: ["\u8BBE\u5907SN\u7801\uFF1A", (_item$lockId = item.lockId) != null ? _item$lockId : '暂无']
+              numberOfLines: 1,
+              children: ["\u8BBE\u5907SN\u7801\uFF1A", (_item$lockId2 = item.lockId) != null ? _item$lockId2 : '暂无']
             })]
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
             align: "start",
             style: {
-              height: '100%'
+              height: '100%',
+              flexShrink: 0
             },
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
               style: statusStyle,
@@ -288413,27 +288521,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     };
     var keyExtractor = function keyExtractor(item, index) {
-      return `${item.deviceNo || 'device'}-${index}`;
-    };
-    var renderHeader = function renderHeader() {
-      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-        style: _styles.default.searchWrapper,
-        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "@ant-design/react-native").SearchBar, {
-          placeholder: "\u8BF7\u8F93\u5165\u8BBE\u5907SN\u7801\u67E5\u8BE2",
-          value: searchValue,
-          onChange: function onChange(v) {
-            return setSearchValue(v);
-          },
-          onSubmit: function onSubmit(v) {
-            return onSearch(v);
-          },
-          onBlur: function onBlur() {
-            return onSearch(searchValue);
-          },
-          returnKeyType: "search",
-          style: _styles.default.searchBar
-        })
-      });
+      return itemDedupeKey(item) || `row-${index}`;
     };
     var renderEmpty = function renderEmpty() {
       return !initialLoading ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -288450,7 +288538,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })
       }) : null;
     };
-    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
       backgroundColor: "#FFFFFF",
       statusBarStyle: "dark-content",
       statusBarBackgroundColor: "#FFFFFF",
@@ -288461,30 +288549,45 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         background: '#FFFFFF'
       },
       loading: initialLoading,
-      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+      children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
         style: _styles.default.container,
-        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.FlatList, {
+        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+          style: _styles.default.searchWrapper,
+          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "@ant-design/react-native").SearchBar, {
+            placeholder: "\u8BF7\u8F93\u5165\u8BBE\u5907SN\u7801\u67E5\u8BE2",
+            value: searchValue,
+            onChange: function onChange(v) {
+              setSearchValue(v);
+              searchRef.current = v;
+            },
+            onSubmit: function onSubmit(v) {
+              return onSearch(v);
+            },
+            returnKeyType: "search",
+            style: _styles.default.searchBar
+          })
+        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.FlatList, {
           data: deviceList,
           keyExtractor: keyExtractor,
           renderItem: renderItem,
-          ListHeaderComponent: renderHeader,
           contentContainerStyle: _styles.default.listWrapper,
+          keyboardShouldPersistTaps: "handled",
+          keyboardDismissMode: "on-drag",
           onEndReachedThreshold: 0.3,
           onEndReached: function onEndReached() {
-            if (!loading && hasMore) {
-              void loadList(false);
-            }
+            if (loadingRef.current || !hasMore) return;
+            void loadList(false);
           },
           refreshing: refreshing,
           onRefresh: function onRefresh() {
             return void loadList(true);
           },
           ListEmptyComponent: renderEmpty
-        })
+        })]
       })
     });
   }
-},1682,[1,7,2,25,202,42,3,534,1683,88,660,793,763,796,1514],"src\\pages\\testDevice\\index.tsx");
+},1682,[1,7,2,25,202,42,3,534,1683,88,660,793,763,1514,796],"src\\pages\\testDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -288768,6 +288871,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     var updateTestResult = /*#__PURE__*/function () {
       var _ref7 = (0, _asyncToGenerator2.default)(function* (params) {
+        console.log('params====', params);
         if (!deviceNo) return;
         (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
           title: '操作中...'
@@ -289146,7 +289250,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                     });
                     return;
                   }
-                  var isDown = detail.fourGLiftStatus === 2;
+                  var isDown = testDeviceReslt.fourGLiftStatus === 2;
                   setConfirmPopup({
                     visible: true,
                     title: `确认${isDown ? '升起' : '降下'}地锁吗？`,
@@ -289173,6 +289277,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               justify: 'center',
               children: [detail.fourGLiftTestStatus === 0 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       fourGLiftTestStatus: 1
@@ -289200,6 +289305,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: {
                     marginLeft: 48
                   },
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       fourGLiftTestStatus: 2
@@ -289290,6 +289396,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               justify: 'center',
               children: [detail.bluetoothProximityStatus === 0 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       bluetoothProximityStatus: 1
@@ -289317,6 +289424,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: {
                     marginLeft: 48
                   },
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       bluetoothProximityStatus: 2
@@ -289412,6 +289520,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               justify: 'center',
               children: [detail.buzzerTestStatus === BUZZER_STATUS.CLOSE && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       buzzerTestStatus: 1
@@ -289439,6 +289548,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: {
                     marginLeft: 48
                   },
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       buzzerTestStatus: 2
@@ -289535,6 +289645,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               justify: 'center',
               children: [detail.coverTestStatus === COVER_STATUS.CLOSE && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       coverTestStatus: 1
@@ -289562,6 +289673,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: {
                     marginLeft: 48
                   },
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       coverTestStatus: 2
@@ -289616,6 +289728,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               justify: 'center',
               children: [detail.fireTestStatus === 0 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       fireTestStatus: 1
@@ -289643,6 +289756,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: {
                     marginLeft: 48
                   },
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       fireTestStatus: 2
@@ -289697,6 +289811,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               justify: 'center',
               children: [detail.tempTestStatus === 0 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       tempTestStatus: 1
@@ -289724,6 +289839,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: {
                     marginLeft: 48
                   },
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       tempTestStatus: 2
@@ -289829,6 +289945,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 children: "\u5DF2\u9009\u62E9\u5730\u78C1\u68C0\u6D4B\uFF0C\u6B64\u9879\u4E0D\u53EF\u9009"
               }) : detail.aboveMixtureTestStatus === 0 ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       aboveMixtureTestStatus: 1,
@@ -289857,6 +289974,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: {
                     marginLeft: 48
                   },
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       aboveMixtureTestStatus: 2,
@@ -289965,6 +290083,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 children: "\u5DF2\u9009\u62E9\u5730\u78C1+\u8D85\u58F0\u6CE2\uFF0C\u6B64\u9879\u4E0D\u53EF\u9009"
               }) : detail.aboveGeoTestStatus === 0 ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       aboveGeoTestStatus: 1,
@@ -289993,6 +290112,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: {
                     marginLeft: 48
                   },
+                  isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
                       aboveGeoTestStatus: 2,
@@ -322629,8 +322749,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       fontSize: 14,
-      color: '#999999',
-      opacity: 0.5,
+      color: '#666666',
       marginTop: 16
     }
   });
@@ -323206,8 +323325,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     emptyText: {
       fontSize: 14,
-      color: '#999999',
-      opacity: 0.5,
+      color: '#666666',
       marginTop: 16
     }
   });
@@ -323235,7 +323353,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var bleNo = (_route$params3 = route.params) == null ? void 0 : _route$params3.bleNo;
     var bleName = (_route$params4 = route.params) == null ? void 0 : _route$params4.bleName;
     var needPin = (_route$params5 = route.params) == null ? void 0 : _route$params5.needPin;
-    console.log(route.params, '===route.params');
     var _useState = (0, _react.useState)(0),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       step = _useState2[0],
@@ -323712,7 +323829,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           newAdminMobile: params.mobile,
           newAdminCode: params.code
         });
-        console.log(checkAdminRes, '===checkAdminRes');
         if (!((checkAdminRes == null ? void 0 : checkAdminRes.code) === 200 && checkAdminRes != null && checkAdminRes.success)) {
           (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
           (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)((checkAdminRes == null ? void 0 : checkAdminRes.message) || (checkAdminRes == null ? void 0 : checkAdminRes.msg) || '校验失败');
@@ -324590,7 +324706,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
       try {
         var _deviceInfo$String, _cmdRes4;
-        console.log('lockId', lockId, 'code', code);
         var cmdRes = null;
         var deviceId = null;
         var checkRes = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/services/deviceInfo").unbindSmsCheck)({
@@ -326351,9 +326466,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     var handleEnterDevice = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref5 = (0, _asyncToGenerator2.default)(function* (id, msgId) {
-        console.log(id, msgId, '---');
-        return;
+      var _ref5 = (0, _asyncToGenerator2.default)(function* (id, msgId, groupId) {
         try {
           var existRes = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/user").getUserLockExist)({
             id: id
@@ -326367,9 +326480,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               id: msgId
             });
             if (readRes.code === 200 && readRes.data) {
-              (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index', {
-                lockId: id
-              });
+              if (groupId) {
+                (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Multiple', {
+                  lockId: groupId
+                });
+              } else {
+                (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index', {
+                  lockId: id
+                });
+              }
             } else {
               (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)(readRes.msg || readRes.message);
             }
@@ -326380,7 +326499,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)('跳转失败');
         }
       });
-      return function (_x2, _x3) {
+      return function (_x2, _x3, _x4) {
         return _ref5.apply(this, arguments);
       };
     }(), [navigation]);
@@ -326401,7 +326520,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)('操作失败');
         }
       });
-      return function (_x4) {
+      return function (_x5) {
         return _ref6.apply(this, arguments);
       };
     }(), []);
@@ -326429,7 +326548,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             return;
           }
           console.log(item, '====');
-          void handleEnterDevice(Number(item.lockId), item.id);
+          void handleEnterDevice(Number(item.lockId), item.id, Number(item.groupId));
         },
         style: _$$_REQUIRE(_dependencyMap[13], "./style").styles.itemContent,
         children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {

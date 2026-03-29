@@ -376,12 +376,13 @@ const Index = () => {
   };
 
   useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
-    timer = setInterval(hasBluetoothAutoOpen, 1000);
+    const { start, stop } = loopFunc(async () => {
+      await hasBluetoothAutoOpen();
+      return true;
+    }, 1000);
+    start();
     return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
+      stop();
     };
   }, [hasBluetoothAutoOpen]);
 

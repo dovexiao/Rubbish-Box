@@ -15,6 +15,8 @@ if (Platform.OS === 'ios' && MobPushModule) {
 
 const listeners: Record<string, any> = {};
 
+const OPTIONAL_MOB_PUSH_METHODS = new Set(['stopPush', 'restartPush']);
+
 // 创建一个安全的包装函数，检查 MobPushModule 是否存在
 const safeCall = (method: string, ...args: any[]): any => {
   if (!MobPushModule) {
@@ -23,6 +25,10 @@ const safeCall = (method: string, ...args: any[]): any => {
   try {
     const fn = MobPushModule[method];
     if (typeof fn !== 'function') {
+      const isHarmony = Platform.OS !== 'ios' && Platform.OS !== 'android';
+      if (isHarmony && OPTIONAL_MOB_PUSH_METHODS.has(method)) {
+        return;
+      }
       if (__DEV__) {
         console.warn(
           `MobPushModule.${method} is not available or not a function`,
@@ -339,8 +345,18 @@ export default {
       callback?.(false);
     }
   },
-  stopPush: () => safeCall('stopPush'),
-  restartPush: () => safeCall('restartPush'),
+  stopPush: () => {
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+      return;
+    }
+    safeCall('stopPush');
+  },
+  restartPush: () => {
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+      return;
+    }
+    safeCall('restartPush');
+  },
   setAlias: (alias: string) => safeCall('setAlias', alias),
   getAlias: () => safeCall('getAlias'),
   deleteAlias: () => safeCall('deleteAlias'),

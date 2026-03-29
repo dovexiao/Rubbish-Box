@@ -30,8 +30,7 @@ import { styles } from './style';
 import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
-import { BleManager } from 'react-native-ble-plx';
-import { getSystemConnectedDevices } from '@/utils/api';
+import { getSystemConnectedDevices, getBluetoothState } from '@/utils/api';
 
 /**
  * 首页（单个设备）：
@@ -74,8 +73,6 @@ const Index = () => {
     code?: number | string;
     message?: string;
   } | null>(null);
-
-  const bleInstance = new BleManager();
 
   useEffect(() => {
     optioningRef.current = optioning;
@@ -424,8 +421,8 @@ const Index = () => {
 
   const hasBluetoothAutoOpen = async () => {
     //蓝牙没开直接 设false，避免后续流程
-    const state = await bleInstance.state();
-    if (state == 'PoweredOff') {
+    const state = await getBluetoothState();
+    if (state !== 'PoweredOn') {
       await setIsAutoOpenBluetooth(false);
       return;
     }
@@ -485,10 +482,15 @@ const Index = () => {
   // if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
   useFocusEffect(
     useCallback(() => {
-      let timer: NodeJS.Timeout | null = null;
-      timer = setInterval(hasBluetoothAutoOpen, 1000);
+      let stopLoop: (() => void) | null = null;
+      const { start, stop } = loopFunc(async () => {
+        await hasBluetoothAutoOpen();
+        return true;
+      }, 1000);
+      stopLoop = stop;
+      start();
       return () => {
-        if (timer) clearInterval(timer);
+        if (stopLoop) stopLoop();
       };
     }, [hasBluetoothAutoOpen]),
   );
