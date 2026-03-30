@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Image, Pressable, AppState, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  AppState,
+  Platform,
+  DeviceEventEmitter,
+} from 'react-native';
 import { Flex, PageContainer } from '@/components';
 import { getThirdState, thirdLogin } from '@/services';
 import { tokenStorage } from '@/utils/storage';
@@ -198,10 +206,12 @@ const Login = () => {
   };
 
   const radioClick = async () => {
-    setAgree(!agree);
-    await cacheSet({ key: 'agreePrivacy', data: !agree });
-    if (!agree) {
+    const newState = !agree;
+    setAgree(newState);
+    await cacheSet({ key: 'agreePrivacy', data: newState });
+    if (newState) {
       await setStorage({ key: 'pushEnabled', data: true });
+      DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
     }
   };
 
@@ -422,6 +432,7 @@ const Login = () => {
       </View>
       <PopConfirm
         ref={agreePopRef}
+        maskClosable={false}
         title={'用户协议及隐私保护'}
         cancelText="不同意"
         onCancel={() => {
@@ -436,12 +447,16 @@ const Login = () => {
                 setAgree(true);
                 await cacheSet({ key: 'agreePrivacy', data: true });
                 await setStorage({ key: 'pushEnabled', data: true });
+                DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
                 setTimeout(() => {
                   wxLogin();
                 }, 300);
               }
-            : () => {
+            : async () => {
                 setAgree(true);
+                await cacheSet({ key: 'agreePrivacy', data: true });
+                await setStorage({ key: 'pushEnabled', data: true });
+                DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
                 myNextTick(() => {
                   setTimeout(() => {
                     agreePopRef.current?.close();

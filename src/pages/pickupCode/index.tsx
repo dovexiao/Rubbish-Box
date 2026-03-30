@@ -178,14 +178,18 @@ export default function PickupCode() {
           </TouchableOpacity>
 
           <GradientButton
-            colors={canSubmit ? ['#333333', '#333333'] : ['#CCCCCC', '#CCCCCC']}
+            colors={canSubmit ? ['#333333', '#333333'] : ['#EEEEEE', '#EEEEEE']}
             width={196}
             height={48}
             style={styles.submitBtn}
             onPress={handleSubmit}
             disabled={!canSubmit}
           >
-            <Text style={styles.submitBtnText}>立即领取</Text>
+            <Text
+              style={[styles.submitBtnText, !canSubmit && { color: '#666666' }]}
+            >
+              立即领取
+            </Text>
           </GradientButton>
 
           <TouchableOpacity

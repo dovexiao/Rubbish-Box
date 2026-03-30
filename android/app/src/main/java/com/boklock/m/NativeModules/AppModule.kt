@@ -21,6 +21,12 @@ import java.nio.charset.Charset
 class AppModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
   override fun getName() = "AppModule"
 
+  @ReactMethod
+  fun setPrivacyAgreed(agreed: Boolean) {
+    val prefs = reactContext.getSharedPreferences("AppPrefs", android.content.Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("privacy_agreed", agreed).apply()
+  }
+
   private fun getUncompressedSize(zipFilePath: String, charset: String): Long {
     var totalSize: Long = 0
     try {

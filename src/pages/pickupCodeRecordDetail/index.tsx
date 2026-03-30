@@ -449,7 +449,7 @@ export default function PickupCodeRecordDetail() {
                   colors={
                     canSubmitAddress
                       ? ['#333333', '#333333']
-                      : ['#cccccc', '#cccccc']
+                      : ['#EEEEEE', '#EEEEEE']
                   }
                   width={196}
                   height={48}
@@ -458,7 +458,14 @@ export default function PickupCodeRecordDetail() {
                     submitAddress();
                   }}
                 >
-                  <Text style={styles.submitBtnText}>提交</Text>
+                  <Text
+                    style={[
+                      styles.submitBtnText,
+                      !canSubmitAddress && { color: '#666666' },
+                    ]}
+                  >
+                    提交
+                  </Text>
                 </GradientButton>
               </Flex>
             </View>

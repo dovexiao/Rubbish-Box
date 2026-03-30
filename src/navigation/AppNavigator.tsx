@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { routes } from '@/routes';
 import { MainTabNavigator } from '@/navigation/MainTabNavigator';
 import { useAuth } from '@/hooks/useAuth';
-import { Linking, View, Animated } from 'react-native';
+import { Linking, View, Animated, Platform } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
 import { HOME_STACK_ROUTE } from '@/constants';
 
@@ -78,7 +78,9 @@ export const AppNavigator: React.FC = () => {
       initialRouteName={initialRouteName}
       screenOptions={{
         headerShown: false,
-        animation: 'default',
+        animation: 'slide_from_right',
+        animationDuration:
+          Platform.OS !== 'ios' && Platform.OS !== 'android' ? 250 : 0,
       }}
     >
       {/* 登录页面 */}

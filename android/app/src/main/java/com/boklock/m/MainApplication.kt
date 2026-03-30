@@ -111,12 +111,14 @@ class MainApplication : Application(), ReactApplication {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load()
     }
-
+    
+    // 初始化应用时，由于用户还未同意隐私协议，强制设置为否，阻止 MobSDK 收集隐私信息
     try {
-      // 初始化 MobSDK，若 plugin 已处理此步则无害
-      MobSDK.init(this)
+      val prefs = getSharedPreferences("AppPrefs", android.content.Context.MODE_PRIVATE)
+      val agreed = prefs.getBoolean("privacy_agreed", false)
+      MobSDK.submitPolicyGrantResult(agreed)
     } catch (e: Throwable) {
-      Log.w("MobSDK", "MobSDK.init failed: ${e.localizedMessage}")
+      Log.w("MobSDK", "MobSDK.submitPolicyGrantResult failed: ${e.localizedMessage}")
     }
   }
 

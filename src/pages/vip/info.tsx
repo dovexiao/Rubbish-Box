@@ -290,12 +290,19 @@ export default function VipInfoPage() {
               activeOpacity={0.8}
               style={[
                 styles.confirmBtn,
-                canSubmit ? styles.bgColor333 : styles.bgColor999,
+                canSubmit ? styles.bgColor333 : { backgroundColor: '#EEEEEE' },
               ]}
               onPress={handleSave}
               disabled={!canSubmit}
             >
-              <Text style={styles.confirmBtnText}>确定</Text>
+              <Text
+                style={[
+                  styles.confirmBtnText,
+                  !canSubmit && { color: '#666666' },
+                ]}
+              >
+                确定
+              </Text>
             </TouchableOpacity>
           </Flex>
         </View>

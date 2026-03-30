@@ -53,6 +53,7 @@ interface PopConfirmProps {
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
   coverSafeArea?: boolean;
+  maskClosable?: boolean;
 }
 
 export interface PopConfirmRef {
@@ -80,6 +81,7 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
       visible,
       onVisibleChange,
       coverSafeArea = true,
+      maskClosable = true,
     },
     ref,
   ) => {
@@ -123,7 +125,9 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
           ) : null}
           <TouchableWithoutFeedback
             onPress={() => {
-              setVisible(false);
+              if (maskClosable) {
+                setVisible(false);
+              }
             }}
           >
             <View style={styles.mask} />

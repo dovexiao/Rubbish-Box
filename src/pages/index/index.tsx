@@ -19,6 +19,9 @@ import {
   setStorage,
   removeStorage,
   loopFunc,
+  initAMapSdk,
+  initAMapGeolocation,
+  requestBluetoothPermissions,
 } from '@/utils';
 import LockVisual, {
   DeviceStatusFlags,
@@ -69,6 +72,7 @@ const Index = () => {
   const [gifNonce, setGifNonce] = useState<number>(0);
   const [optioning, setOptioning] = useState<boolean>(false);
   const optioningRef = useRef<boolean>(false);
+  const [permissionsReady, setPermissionsReady] = useState(false);
   const [error, setError] = useState<{
     code?: number | string;
     message?: string;
@@ -77,6 +81,26 @@ const Index = () => {
   useEffect(() => {
     optioningRef.current = optioning;
   }, [optioning]);
+
+  useEffect(() => {
+    // 只有在首页挂载（用户已登录且进入主界面）时，才按需初始化高德 SDK 和定位，避免违规或冗余的预加载
+    initAMapSdk();
+    initAMapGeolocation();
+    //延时获取 避免闪退
+    setTimeout(() => {
+      initBluetooth();
+    }, 2000);
+  }, []);
+
+  const initBluetooth = async () => {
+    const bluetoothResult = await requestBluetoothPermissions();
+    if (bluetoothResult.granted) {
+      setPermissionsReady(true);
+      console.log('蓝牙权限已授予');
+    } else {
+      setPermissionsReady(false);
+    }
+  };
 
   /**
    * 拉取首页需要的后端数据：
@@ -419,7 +443,18 @@ const Index = () => {
     }
   }, [detail?.imageMap]);
 
-  const hasBluetoothAutoOpen = async () => {
+  const hasBluetoothAutoOpen = useCallback(async () => {
+    // 等到权限申请完毕，并且已经拉取到了设备，再进行蓝牙状态查询，避免启动太早冲突闪退
+
+    if (!permissionsReady) {
+      setIsAutoOpenBluetooth(false);
+      return;
+    }
+    if (!detail?.id) {
+      setIsAutoOpenBluetooth(false);
+      return;
+    }
+
     //蓝牙没开直接 设false，避免后续流程
     const state = await getBluetoothState();
     if (state !== 'PoweredOn') {
@@ -477,7 +512,7 @@ const Index = () => {
     } else {
       setIsAutoOpenBluetooth(true);
     }
-  };
+  }, [permissionsReady, detail]);
 
   // if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
   useFocusEffect(

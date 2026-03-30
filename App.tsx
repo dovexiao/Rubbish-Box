@@ -5,6 +5,8 @@ import {
   BackHandler,
   LogBox,
   Platform,
+  NativeModules,
+  DeviceEventEmitter,
 } from 'react-native';
 import { SafeAreaProvider } from '@/libs/safeAreaContext';
 import {
@@ -41,8 +43,6 @@ import {
   initAppPush,
   getMobPushDeviceInfo,
   jumpToPage,
-  initAMapSdk,
-  initAMapGeolocation,
   hideLoading,
   showToast,
 } from '@/utils';
@@ -123,11 +123,6 @@ function App() {
     };
   }, [navigationRef]);
 
-  // 微信 SDK 初始化
-  useEffect(() => {
-    WeChatInit();
-  }, []);
-
   // 输出当前包名（便于排查环境/安装包）
   useEffect(() => {
     getAppPackageName().then(pkg => {
@@ -137,25 +132,15 @@ function App() {
     });
   }, []);
 
-  // 高德地图 SDK 初始化（地图组件，不涉及隐私权限，可立即初始化）
-  useEffect(() => {
-    initAMapSdk();
-  }, []);
-
   // 处理隐私协议同意后的初始化
   const handlePrivacyAgreed = async () => {
     try {
-      // 初始化高德定位服务和蓝牙权限仅在 Android / iOS 上执行
-      if (Platform.OS === 'android' || Platform.OS === 'ios') {
-        // 初始化高德定位服务（涉及位置权限，需要在隐私协议同意后初始化）
-        await initAMapGeolocation();
-
-        // 请求蓝牙权限
-        const bluetoothResult = await requestBluetoothPermissions();
-        if (bluetoothResult.granted) {
-          console.log('蓝牙权限已授予');
-        }
+      if (Platform.OS === 'android') {
+        NativeModules.AppModule?.setPrivacyAgreed?.(true);
       }
+
+      // 微信 SDK 初始化
+      WeChatInit();
 
       // 检查推送服务状态
       const [token, pushRes] = await Promise.all([
@@ -203,6 +188,18 @@ function App() {
       }
     };
     checkPrivacyAgreement();
+
+    // 监听后续（如登录页）同意隐私协议的事件
+    const privacyListener = DeviceEventEmitter.addListener(
+      'ON_PRIVACY_AGREED',
+      () => {
+        handlePrivacyAgreed();
+      },
+    );
+
+    return () => {
+      privacyListener.remove();
+    };
   }, []);
 
   // 监听从 Web 协议页返回后的重开指令（App 层处理，当 privacyOpenBy 不是 'login' 时）
@@ -619,6 +616,7 @@ function App() {
                   {/* 全局隐私政策弹窗（首次进入App弹出） */}
                   <PopConfirm
                     ref={agreePopRef}
+                    maskClosable={false}
                     title={
                       <Flex direction="column" align="center" justify="center">
                         <Text
@@ -729,6 +727,7 @@ function App() {
                   <PopConfirm
                     ref={retainPopRef}
                     showClose={false}
+                    maskClosable={false}
                     confirmText="我知道了"
                     title={
                       <Flex direction="column" align="center" justify="center">

@@ -326,7 +326,7 @@ export default function PickupCodeDaily() {
 
             <GradientButton
               colors={
-                canSubmit ? ['#333333', '#333333'] : ['#CCCCCC', '#CCCCCC']
+                canSubmit ? ['#333333', '#333333'] : ['#EEEEEE', '#EEEEEE']
               }
               width={196}
               height={48}
@@ -334,7 +334,14 @@ export default function PickupCodeDaily() {
               onPress={handleSubmit}
               disabled={!canSubmit}
             >
-              <Text style={styles.submitBtnText}>绑定领取</Text>
+              <Text
+                style={[
+                  styles.submitBtnText,
+                  !canSubmit && { color: '#666666' },
+                ]}
+              >
+                绑定领取
+              </Text>
             </GradientButton>
 
             <TouchableOpacity
