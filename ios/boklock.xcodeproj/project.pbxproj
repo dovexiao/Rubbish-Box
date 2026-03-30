@@ -10,6 +10,7 @@
 		66B0583C94F2464E9F1DD98A /* antoutline.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6FD87C62DDD4412CBE4162A7 /* antoutline.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		90CF046A02224B73B1CA8399 /* antfill.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA5AFED6349497980A3949F /* antfill.ttf */; };
+		BC7E4F1195EE271C85D7CFE8 /* libPods-boklockTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F750B137F9B770CBFC3070B /* libPods-boklockTest.a */; };
 		CB9BA3CD2F65B33500142A27 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9BA3CC2F65B33500142A27 /* main.m */; };
 		CBD617642F644D7300BC703F /* CashierPushServices.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CBD6175D2F644D7300BC703F /* CashierPushServices.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CBD617A32F644F2600BC703F /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBD617A22F644F2600BC703F /* CoreTelephony.framework */; };
@@ -54,6 +55,7 @@
 		CBD6182A2F65570A00BC703F /* money.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CBD618052F65570A00BC703F /* money.mp3 */; };
 		CBD618312F6557F100BC703F /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CBD6182F2F6557F100BC703F /* Info.plist */; };
 		CBD618322F6557F100BC703F /* boklockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD6182E2F6557F100BC703F /* boklockTests.m */; };
+		CBF206712F75727E00944A76 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = CBF2066F2F75280000944A76 /* main.jsbundle */; };
 		D850CDDBD053AF84D6F349E9 /* libPods-boklock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC5F90C915F2B6987376264 /* libPods-boklock.a */; };
 		F09BFA090CD720F34698B524 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -90,10 +92,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1319F1C46FA368DEC3836407 /* Pods-boklockTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boklockTest.release.xcconfig"; path = "Target Support Files/Pods-boklockTest/Pods-boklockTest.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* boklock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = boklock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = boklock/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = boklock/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		163968801AD85EBE781A8DEA /* Pods-boklockTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boklockTest.debug.xcconfig"; path = "Target Support Files/Pods-boklockTest/Pods-boklockTest.debug.xcconfig"; sourceTree = "<group>"; };
 		2E3F2C5444B9BC14F10786E3 /* Pods-boklock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boklock.release.xcconfig"; path = "Target Support Files/Pods-boklock/Pods-boklock.release.xcconfig"; sourceTree = "<group>"; };
+		3F750B137F9B770CBFC3070B /* libPods-boklockTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-boklockTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		686A7DDF204A99BAB4654250 /* Pods-boklock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boklock.debug.xcconfig"; path = "Target Support Files/Pods-boklock/Pods-boklock.debug.xcconfig"; sourceTree = "<group>"; };
 		6FD87C62DDD4412CBE4162A7 /* antoutline.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = antoutline.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antoutline.ttf"; sourceTree = "<group>"; };
 		7FC5F90C915F2B6987376264 /* libPods-boklock.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-boklock.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -158,6 +163,7 @@
 		CBD6180E2F65570A00BC703F /* XDAudioManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XDAudioManager.m; sourceTree = "<group>"; };
 		CBD6182E2F6557F100BC703F /* boklockTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = boklockTests.m; sourceTree = "<group>"; };
 		CBD6182F2F6557F100BC703F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CBF2066F2F75280000944A76 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; name = main.jsbundle; path = ios/main.jsbundle; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -190,6 +196,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC7E4F1195EE271C85D7CFE8 /* libPods-boklockTest.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +241,7 @@
 				CBD617A22F644F2600BC703F /* CoreTelephony.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				7FC5F90C915F2B6987376264 /* libPods-boklock.a */,
+				3F750B137F9B770CBFC3070B /* libPods-boklockTest.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -257,6 +265,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				CBF2066F2F75280000944A76 /* main.jsbundle */,
 				CBD618302F6557F100BC703F /* boklockTests */,
 				CBD6180F2F65570A00BC703F /* CashierPushServices */,
 				13B07FAE1A68108700A75B9A /* boklock */,
@@ -286,6 +295,8 @@
 			children = (
 				686A7DDF204A99BAB4654250 /* Pods-boklock.debug.xcconfig */,
 				2E3F2C5444B9BC14F10786E3 /* Pods-boklock.release.xcconfig */,
+				163968801AD85EBE781A8DEA /* Pods-boklockTest.debug.xcconfig */,
+				1319F1C46FA368DEC3836407 /* Pods-boklockTest.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -416,6 +427,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CBD617C82F6452FE00BC703F /* Build configuration list for PBXNativeTarget "boklockTest" */;
 			buildPhases = (
+				85B29F11BB55FED7DD219257 /* [CP] Check Pods Manifest.lock */,
 				CBD617BE2F6452FE00BC703F /* Sources */,
 				CBD617BF2F6452FE00BC703F /* Frameworks */,
 				CBD617C02F6452FE00BC703F /* Resources */,
@@ -476,6 +488,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBF206712F75727E00944A76 /* main.jsbundle in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				F09BFA090CD720F34698B524 /* PrivacyInfo.xcprivacy in Resources */,
 				90CF046A02224B73B1CA8399 /* antfill.ttf in Resources */,
@@ -539,7 +552,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+			shellScript = "set -e\n\nexport SKIP_BUNDLING=1\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+		};
+		85B29F11BB55FED7DD219257 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-boklockTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -782,6 +817,12 @@
 					"-ld_classic",
 					"-Wl",
 					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
 					"-Wl -ld_classic ",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
@@ -859,6 +900,12 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
 					"-Wl",
 					"-ld_classic",
 					"-Wl",
@@ -979,6 +1026,7 @@
 		};
 		CBD617C92F6452FE00BC703F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 163968801AD85EBE781A8DEA /* Pods-boklockTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -988,10 +1036,13 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 22UTUU6RT8;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 22UTUU6RT8;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1004,8 +1055,11 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.boklock.real.m.boklockTest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boklock.dev.m;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = boklock_dev;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1020,6 +1074,7 @@
 		};
 		CBD617CA2F6452FE00BC703F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1319F1C46FA368DEC3836407 /* Pods-boklockTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1029,11 +1084,12 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 22UTUU6RT8;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 22UTUU6RT8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1041,8 +1097,10 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.boklock.real.m.boklockTest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boklock.real.m;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = boklock_real;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;

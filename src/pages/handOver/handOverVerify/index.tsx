@@ -73,6 +73,7 @@ export default function HandOverVerify() {
         lockIds: String(deviceId).split(','),
         currentAdminCode: code,
       });
+      console.log(res, '===res');
       hideLoading();
       stop();
 

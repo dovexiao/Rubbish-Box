@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#999999',
-  },
+    color: '#666666',
+    },
   qrCodeContent: {
     marginHorizontal: 40,
     marginVertical: 24,

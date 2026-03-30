@@ -513,6 +513,9 @@ npm run gradlew:clean:win
 cd ios
 rm -rf Pods Podfile.lock
 bundle exec pod install
+
+#ios Archive 清理
+pnpm run ios:env:clear
 ```
 
 ## ✨ 主要功能

@@ -1,5 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Platform,
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer } from '@/components';
@@ -139,7 +146,7 @@ export default function Maintain() {
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
-      scrollable={false}
+      scrollable={Platform.OS === 'ios'}
       pageNavProps={{
         text: '在线报修',
         showBack: true,

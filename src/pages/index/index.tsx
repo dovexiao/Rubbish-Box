@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, Image, Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
+import FastImage from 'react-native-fast-image';
 import PageContainer from '@/components/PageContainer';
 import Header from '@/components/Header';
 import NoDevices from '@/components/NoDevices';
@@ -29,6 +30,7 @@ import { styles } from './style';
 import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { getSystemConnectedDevices, getBluetoothState } from '@/utils/api';
 
 /**
  * 首页（单个设备）：
@@ -96,10 +98,6 @@ const Index = () => {
         // 清除路由栈中的跳转参数
         (navigation as any)?.setParams?.({ lockId: undefined });
         if (lockRes.success && lockRes.code === 200 && lockRes.data) {
-          if (lockRes.data?.isGroup) {
-            reLaunch('Multiple', { lockId: lockRes.data.id });
-            return;
-          }
           setDetail(lockRes.data);
           setHasDevice(true);
           setError(null);
@@ -129,6 +127,11 @@ const Index = () => {
                 return 'rise';
             }
           });
+        } else if (lockRes.code === 520 || lockRes.code === 522) {
+          // 520 或 522 视作账号下没有绑定任何地锁或者该地锁不存在
+          setDetail(undefined);
+          setHasDevice(false);
+          setError(null);
         } else {
           setDetail(undefined);
           setHasDevice(false);
@@ -391,13 +394,73 @@ const Index = () => {
   const bgImage =
     bgImageUri && bgImageUri !== 'null' ? { uri: bgImageUri } : undefined;
 
+  useEffect(() => {
+    const imageMap = detail?.imageMap;
+    if (!imageMap) return;
+
+    const urls = Object.values(imageMap)
+      .filter((uri): uri is string => typeof uri === 'string')
+      .filter(uri => !!uri && uri !== 'null');
+    const uniqUrls = Array.from(new Set(urls));
+    if (uniqUrls.length === 0) return;
+
+    // 统一预热首屏可能会显示的静态图与动图，避免首次蓝牙操作动图偶现空白。
+    uniqUrls.forEach(uri => {
+      Image.prefetch(uri).catch(() => {});
+    });
+
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      FastImage.preload(
+        uniqUrls.map(uri => ({
+          uri,
+          priority: FastImage.priority.normal,
+        })),
+      );
+    }
+  }, [detail?.imageMap]);
+
   const hasBluetoothAutoOpen = async () => {
+    //蓝牙没开直接 设false，避免后续流程
+    const state = await getBluetoothState();
+    if (state !== 'PoweredOn') {
+      await setIsAutoOpenBluetooth(false);
+      return;
+    }
+
     const result = await getBluetoothDeviceInfo().catch(() => ({}));
     const bleNo = String(detail?.bleNo || '');
+    const bleName = String(detail?.bleName || '');
     // @ts-ignore
     const savedDeviceInfo = result?.[bleNo];
     const deviceId = savedDeviceInfo?.deviceId;
-    const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo);
+    const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo, bleName);
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+      let sysConnected = false;
+      let connectedDevices: any = await getSystemConnectedDevices().catch(
+        () => null,
+      );
+
+      if (connectedDevices) {
+        connectedDevices = JSON.parse(JSON.stringify(connectedDevices.data));
+        const connectedDevice = connectedDevices?.find((v: any) => {
+          return v.deviceId == deviceId;
+        });
+        if (!connectedDevice) {
+          // console.log(!!savedDeviceInfo, savedDeviceInfo, '===');
+          if (!!savedDeviceInfo) {
+            removeStorage({ key: 'bluetoothDeviceInfo' });
+          }
+          setIsAutoOpenBluetooth(false);
+          return;
+        }
+
+        if (connectedDevice?.isConnected) {
+          sysConnected = true;
+        }
+        setIsAutoOpenBluetooth(sysConnected);
+        return;
+      }
+    }
 
     if (!deviceId || res.isIgnored || !savedDeviceInfo?.isPaired) {
       const deviceMap =
@@ -406,7 +469,8 @@ const Index = () => {
         const { [bleNo]: _, ...rest } = deviceMap;
         setStorage({ key: 'bluetoothDeviceInfoList', data: rest });
       }
-      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+
+      if (!!savedDeviceInfo) {
         removeStorage({ key: 'bluetoothDeviceInfo' });
       }
       setIsAutoOpenBluetooth(false);
@@ -415,15 +479,32 @@ const Index = () => {
     }
   };
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
-    timer = setInterval(hasBluetoothAutoOpen, 1000);
-    return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
-    };
-  }, [hasBluetoothAutoOpen]);
+  // if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+  useFocusEffect(
+    useCallback(() => {
+      let stopLoop: (() => void) | null = null;
+      const { start, stop } = loopFunc(async () => {
+        await hasBluetoothAutoOpen();
+        return true;
+      }, 1000);
+      stopLoop = stop;
+      start();
+      return () => {
+        if (stopLoop) stopLoop();
+      };
+    }, [hasBluetoothAutoOpen]),
+  );
+  // }
+
+  // useEffect(() => {
+  //   let timer: NodeJS.Timeout | null = null;
+  //   timer = setInterval(hasBluetoothAutoOpen, 1000);
+  //   return () => {
+  //     if (timer) {
+  //       clearInterval(timer);
+  //     }
+  //   };
+  // }, [hasBluetoothAutoOpen]);
 
   return (
     <PageContainer
@@ -436,6 +517,7 @@ const Index = () => {
         void load();
       }}
       backgroundImage={bgImage}
+      safeAreaEdges={['top']}
     >
       {showGuestWelcome ? (
         <View style={styles.guestContainer}>

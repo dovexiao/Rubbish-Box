@@ -30,7 +30,8 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 0.5,
     borderStyle: 'solid',
-    borderColor: 'rgba(51, 51, 51, 0.1)',
+    borderColor: 'rgba(179, 189, 199, 0.2)',
+    // borderColor: '#e2e2e2',
   },
 
   infoText: {
@@ -149,6 +150,9 @@ export const styles = StyleSheet.create({
   fixBtn: {
     width: '100%',
     flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   color333: {

@@ -46,10 +46,11 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
       try {
         const result = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
         const bleNo = String(item?.bleNo || '');
+        const bleName = String(item?.bleName || '');
         // @ts-ignore
         const savedDeviceInfo = result?.[bleNo];
         const deviceId = savedDeviceInfo?.deviceId;
-        const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo);
+        const res = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo, bleName);
 
         if (!deviceId || res.isIgnored || !savedDeviceInfo?.isPaired) {
           const deviceMap: any =
@@ -61,7 +62,12 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
               data: { data: rest },
             });
           }
-          await removeStorage({ key: 'bluetoothDeviceInfo' });
+          // 只有当 bluetoothDeviceInfoList 中存在该 bleNo 映射时，
+          // 才删除 bluetoothDeviceInfo，避免在“配对流程中临时写入 bluetoothDeviceInfo”
+          // 时被误删。
+          if (!!savedDeviceInfo) {
+            await removeStorage({ key: 'bluetoothDeviceInfo' });
+          }
           return false;
         }
         return true;

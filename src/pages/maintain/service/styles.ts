@@ -52,7 +52,7 @@ export default StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#999999',
+    color: '#666666',
     marginTop: 16,
   },
 });

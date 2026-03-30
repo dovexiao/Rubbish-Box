@@ -12,14 +12,15 @@ import StaticConfig from './env.static.json';
 const Config: any = _Config && _Config.ENV ? _Config : StaticConfig || {};
 
 // 环境类型
-export type EnvType = 'development' | 'production';
+export type EnvType = 'development' | 'production' | 'dev' | 'real';
 
 // 1) 先用 .env 里的 ENV
 export const ENV: EnvType = (Config.ENV as EnvType) || 'development';
 
 // 2) 部署环境优先用 .env 里的 DEPLOY_ENV，其次根据 ENV 推导
 export const DEPLOY_ENV =
-  Config.DEPLOY_ENV || (ENV === 'production' ? 'real' : 'dev');
+  Config.DEPLOY_ENV ||
+  (ENV === 'production' || ENV === 'real' ? 'real' : 'dev');
 // 获取灰度标识
 export const GRAY = Config.GRAY === 'true';
 
@@ -43,7 +44,7 @@ export const ANDROID_PACKAGE_NAME =
   Config.ANDROID_PACKAGE_NAME || 'com.boklock.m.test';
 
 // 获取 iOS Bundle ID
-export const IOS_BUNDLE_ID = Config.IOS_BUNDLE_ID || 'com.boklock.m.test';
+export const IOS_BUNDLE_ID = Config.IOS_BUNDLE_ID || 'com.boklock.dev.m';
 
 // 获取应用名称
 export const APP_NAME = Config.APP_NAME || 'boklock';
@@ -68,21 +69,3 @@ export const config = {
   mapKeyIos: MAP_KEY_IOS,
   mapKeyHarmony: MAP_KEY_HARMONY,
 };
-
-// 打印当前环境（开发时方便调试）
-if (__DEV__) {
-  console.log('=== 环境配置 ===');
-  console.log(`当前环境: ${ENV}`);
-  console.log(`部署环境: ${DEPLOY_ENV}`);
-  console.log(`灰度标识: ${GRAY}`);
-  console.log(`部署版本: ${DEPLOY_VERSION}`);
-  console.log(`API 地址: ${BASE_URL}`);
-  console.log(`API 版本: ${API_VERSION}`);
-  console.log(`Android 包名: ${ANDROID_PACKAGE_NAME}`);
-  console.log(`iOS Bundle ID: ${IOS_BUNDLE_ID}`);
-  console.log(`应用名称: ${APP_NAME}`);
-  console.log(`高德地图 Android Key: ${MAP_KEY_ANDROID ? '已配置' : '未配置'}`);
-  console.log(`高德地图 iOS Key: ${MAP_KEY_IOS ? '已配置' : '未配置'}`);
-  console.log(`高德地图 Harmony Key: ${MAP_KEY_HARMONY ? '已配置' : '未配置'}`);
-  console.log('===============');
-}

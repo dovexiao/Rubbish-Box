@@ -27,6 +27,12 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 6,
   },
+  powerModeRow: {
+    position: 'relative',
+  },
+  powerModeRowActive: {
+    zIndex: 10,
+  },
   cardRowsTouch: {
     flex: 1,
     display: 'flex',
@@ -160,6 +166,7 @@ export const styles = StyleSheet.create({
     marginRight: 4,
   },
   editFooter: {
+    paddingBottom: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -198,7 +205,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12,
-    zIndex: 10,
+    zIndex: 1000,
   },
   powerModeTooltipText: {
     fontSize: 12,
@@ -291,5 +298,19 @@ export const styles = StyleSheet.create({
     color: '#333333',
     lineHeight: 20,
     marginTop: 12,
+  },
+  btnContainer: {
+    borderRadius: 12,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btnContainerConfirm: {
+    marginLeft: 15,
+  },
+  btnContainerConfirmText: {
+    flex: 1,
+    color: '#ffffff',
+    textAlign: 'center',
   },
 });

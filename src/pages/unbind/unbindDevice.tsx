@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Keyboard, Text, TouchableOpacity, View } from 'react-native';
+import { Keyboard, Text, TouchableOpacity, View, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import PageContainer from '@/components/PageContainer';
 import InputCode, { type InputCodeRef } from '@/components/InputCode';
@@ -90,7 +90,6 @@ export default function UnbindDevice() {
 
     showLoading({ title: '加载中...' });
     try {
-      console.log('lockId', lockId, 'code', code);
       let cmdRes: any = null;
       let deviceId: string | null = null;
       const checkRes: any = await unbindSmsCheck({ id: lockId, code: pure });
@@ -163,7 +162,21 @@ export default function UnbindDevice() {
 
       if (res?.code === 200 && res?.success) {
         stop();
-        await removeBluetoothDeviceInfo(bleNo).catch(() => {});
+        const targetRemoveId =
+          Platform.OS === 'ios' || Platform.OS === 'android'
+            ? String(bleNo)
+            : deviceId || String(bleNo);
+        await removeBluetoothDeviceInfo(targetRemoveId).catch(() => {});
+        if (
+          Platform.OS !== 'ios' &&
+          Platform.OS !== 'android' &&
+          targetRemoveId
+        ) {
+          try {
+            const { disconnectBluetoothDevice } = require('@/utils/api');
+            await disconnectBluetoothDevice(targetRemoveId);
+          } catch (e) {}
+        }
         hideLoading();
         showToast({ title: '解绑成功', icon: 'success' });
         setTimeout(() => {

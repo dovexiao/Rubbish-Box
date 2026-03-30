@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Platform, Text, TouchableOpacity, View } from 'react-native';
 import dayjs from 'dayjs';
 import Flex from '@/components/Flex';
 import AppIcon from '@/components/AppIcon';
@@ -73,7 +73,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
       details,
       shareDetail,
       styles,
-      maxHeight = 507,
+      maxHeight = 550,
       onEdit,
       onInvalidate,
       onShare,
@@ -283,31 +283,36 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
             </Text>
           </Flex>
         </View>
-
-        <View style={styles.popup}>
-          <Flex
-            style={{ width: '100%', marginTop: 31, marginBottom: 16 }}
-            direction="row"
-            justify="center"
-            align="center"
-          >
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.cancalBtn}
-              onPress={close}
+        {details?.status === 1 && (
+          <View style={styles.popup}>
+            <Flex
+              style={{ width: '100%', marginTop: 31, marginBottom: 16 }}
+              direction="row"
+              justify="center"
+              align="center"
             >
-              <Text>取消</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={[styles.confirmBtn, styles.bgColor333]}
-              onPress={() => onShare?.()}
-              disabled={!shareDetail}
-            >
-              <Text style={{ color: '#ffffff' }}>发送给贵宾</Text>
-            </TouchableOpacity>
-          </Flex>
-        </View>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.cancalBtn}
+                onPress={close}
+              >
+                <Text>取消</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={[styles.confirmBtn, styles.bgColor333]}
+                onPress={() => {
+                  // 统一先关闭弹层，避免跳转到微信后返回时弹层遮罩残留导致页面卡住
+                  close();
+                  onShare?.();
+                }}
+                disabled={!shareDetail}
+              >
+                <Text style={{ color: '#ffffff' }}>发送给贵宾</Text>
+              </TouchableOpacity>
+            </Flex>
+          </View>
+        )}
       </AnimationPop>
     );
   },

@@ -12,6 +12,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { PageContainer, PopConfirm, Flex } from '@/components';
+import type { DetailsProp } from './type';
 import AppIcon from '@/components/AppIcon';
 import { cancelInvite, getDetails, getRecordList } from '@/services/user';
 import { generateShareImage, onShareAppMessage } from '@/utils/shareImage';
@@ -19,7 +20,6 @@ import { tencentUpload } from '@/utils/request';
 import { checkInstalledWeChat } from '@/utils/wechat';
 import { showLoading, hideLoading, showToast } from '@/utils';
 import { styles } from './recordStyle';
-import { DetailsProp } from './type';
 import { WeChatCoverImage } from './com/weChatCoverImage';
 import InviteCodePop, { type InviteCodePopRef } from './com/InviteCodePop';
 
@@ -149,9 +149,9 @@ export default function VipRecordPage() {
       await cancelInvite({ id: currentRow.id } as any);
       await loadList(true);
       setCurrentRow(undefined);
+      hideLoading();
     } catch (e) {
       showToast({ title: '作废失败，请重试', icon: 'error' });
-    } finally {
       hideLoading();
     }
   }, [currentRow?.id, loadList]);
@@ -197,11 +197,10 @@ export default function VipRecordPage() {
           return;
         }
         await onShareAppMessage(sharePayload);
+        hideLoading();
       } catch (error) {
         console.error('分享失败:', error);
         showToast({ title: '分享封面图生成失败，请重试', icon: 'error' });
-      } finally {
-        hideLoading();
       }
     },
     [handleUploadImages],
@@ -260,6 +259,13 @@ export default function VipRecordPage() {
     </View>
   );
 
+  useEffect(() => {
+    return () => {
+      onShareAppMessage;
+      animationPopRef.current?.close();
+    };
+  }, []);
+
   return (
     <PageContainer
       backgroundColor="#F6F7FA"
@@ -303,7 +309,7 @@ export default function VipRecordPage() {
 
       <InviteCodePop
         ref={animationPopRef}
-        maxHeight={507}
+        // maxHeight={507}
         styles={styles}
         details={details}
         shareDetail={shareDetail}
@@ -316,7 +322,10 @@ export default function VipRecordPage() {
             } as never,
           );
         }}
-        onInvalidate={() => deleteRef.current?.open?.()}
+        onInvalidate={() => {
+          setTimeout(() => animationPopRef.current?.close?.(), 600);
+          setTimeout(() => deleteRef.current?.open?.(), 600);
+        }}
         onShare={() => handleShare(shareDetail)}
       />
 

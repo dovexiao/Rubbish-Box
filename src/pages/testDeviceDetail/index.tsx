@@ -1,7 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+} from 'react-native';
 import type { StyleProp, TextStyle } from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/core';
 import { Button } from '@ant-design/react-native';
 import { GradientButton, PageContainer, Popup, Tag } from '@/components';
 import Flex from '@/components/Flex';
@@ -17,8 +25,12 @@ import {
   testDeviceOperation,
 } from '@/services/deviceTest';
 import { hideLoading, loopFunc, showLoading, showToast } from '@/utils';
-import { getSystemConnectedDevices, isSameMac } from '@/utils';
-import { sendModeCommandByBluetooth } from '@/utils/api';
+import {
+  getSystemConnectedDevices,
+  isSameMac,
+  getBluetoothDeviceInfo,
+} from '@/utils';
+import { sendModeCommandByBluetooth, getBluetoothState } from '@/utils/api';
 import styles from './styles';
 import AppIcon from '@/components/AppIcon';
 import PopCenter from '@/components/PopCenter';
@@ -154,15 +166,28 @@ export default function TestDeviceDetailScreen() {
       return;
     }
     try {
+      const state = await getBluetoothState();
+      if (state !== 'PoweredOn') {
+        setIsLink(false);
+        setLinkDevice(null);
+        return;
+      }
       const info = await getSystemConnectedDevices();
       const data = (info as any).data || [];
-      const connected = data.some((item: any) =>
-        isSameMac(item.deviceId, (detail as any).bleNo || detail.lockId),
-      );
-      const found = data.find((item: any) =>
-        isSameMac(item.deviceId, (detail as any).bleNo || detail.lockId),
-      );
-      setIsLink(!!connected);
+      let connected = false;
+      let found = null;
+      const bleNo = String((detail as any).bleNo || detail.lockId);
+      if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+        const result = await getBluetoothDeviceInfo().catch(() => ({}));
+        const savedDeviceInfo = (result as any)?.[bleNo];
+        const deviceId = savedDeviceInfo?.deviceId;
+        found = data.find((item: any) => item.deviceId == deviceId);
+        connected = !!(found && found.isConnected);
+      } else {
+        found = data.find((item: any) => isSameMac(item.deviceId, bleNo));
+        connected = !!found;
+      }
+      setIsLink(connected);
       setLinkDevice(found || null);
     } catch (e) {
       console.error('检查蓝牙连接状态失败:', e);
@@ -239,11 +264,22 @@ export default function TestDeviceDetailScreen() {
     void fetchReasons();
   }, [fetchDetail, fetchReasons]);
 
-  useEffect(() => {
-    if (detail) {
-      void checkConnection();
-    }
-  }, [detail, checkConnection]);
+  useFocusEffect(
+    useCallback(() => {
+      let stopLoop: (() => void) | null = null;
+      if (detail) {
+        const { start, stop } = loopFunc(async () => {
+          await checkConnection();
+          return true; // 返回 true 继续轮询，loopFunc 会自动 await 避免请求堆叠
+        }, 1000);
+        stopLoop = stop;
+        start();
+      }
+      return () => {
+        if (stopLoop) stopLoop();
+      };
+    }, [detail, checkConnection]),
+  );
 
   useEffect(() => {
     if (detail?.deviceNo) {
@@ -259,6 +295,7 @@ export default function TestDeviceDetailScreen() {
   }, []);
 
   const updateTestResult = async (params: Partial<TestDeviceDetail>) => {
+    console.log('params====', params);
     if (!deviceNo) return;
     showLoading({ title: '操作中...' });
     try {
@@ -600,7 +637,7 @@ export default function TestDeviceDetailScreen() {
             {/* 蓝牙相关隐藏 */}
             {/*4G升降 */}
             <Flex style={styles.deviceInfoWrapper} direction={'column'}>
-              <Flex style={styles.deviceInfoHeader}>
+              <Flex style={styles.deviceInfoHeader} align="center">
                 <Text style={styles.title}>4G升降测试</Text>
                 <Tag
                   style={{
@@ -618,7 +655,9 @@ export default function TestDeviceDetailScreen() {
                   type={'primary'}
                   size={'small'}
                   onPress={() => {
+                    console.log(111111);
                     if (detail?.['model'] === 2) {
+                      console.log(2222);
                       setConfirmPopup({
                         visible: true,
                         title: '需要切换到性能优先模式才能操作',
@@ -632,7 +671,7 @@ export default function TestDeviceDetailScreen() {
                       });
                       return;
                     }
-                    const isDown = detail.fourGLiftStatus === 2;
+                    const isDown = testDeviceReslt.fourGLiftStatus === 2;
                     setConfirmPopup({
                       visible: true,
                       title: `确认${isDown ? '升起' : '降下'}地锁吗？`,
@@ -661,6 +700,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.fourGLiftTestStatus === 0 && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           fourGLiftTestStatus: 1,
@@ -691,6 +731,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           fourGLiftTestStatus: 2,
@@ -735,7 +776,10 @@ export default function TestDeviceDetailScreen() {
             </Flex>
             {/* 蓝牙近身升降测试 */}
             <Flex style={styles.deviceInfoWrapper} direction={'column'}>
-              <Flex style={(styles.deviceInfoHeader, { marginBottom: 0 })}>
+              <Flex
+                style={(styles.deviceInfoHeader, { marginBottom: 8 })}
+                align="center"
+              >
                 <Text style={styles.title}>蓝牙近身升降测试</Text>
               </Flex>
               <Flex direction={'column'}>
@@ -788,6 +832,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.bluetoothProximityStatus === 0 && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           bluetoothProximityStatus: 1,
@@ -818,6 +863,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           bluetoothProximityStatus: 2,
@@ -863,7 +909,7 @@ export default function TestDeviceDetailScreen() {
             </Flex>
             {/* 蜂鸣测试 */}
             <Flex style={styles.deviceInfoWrapper} direction={'column'}>
-              <Flex style={styles.deviceInfoHeader}>
+              <Flex style={styles.deviceInfoHeader} align="center">
                 <Text style={styles.title}>蜂鸣测试</Text>
                 <Button
                   style={{
@@ -910,6 +956,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.buzzerTestStatus === BUZZER_STATUS.CLOSE && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           buzzerTestStatus: 1,
@@ -940,6 +987,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           buzzerTestStatus: 2,
@@ -988,7 +1036,7 @@ export default function TestDeviceDetailScreen() {
             {/* 机盖解锁测试 */}
             {detail.canOpenCover && (
               <Flex style={styles.deviceInfoWrapper} direction={'column'}>
-                <Flex style={styles.deviceInfoHeader}>
+                <Flex style={styles.deviceInfoHeader} align="center">
                   <Text style={styles.title}>机盖解锁测试</Text>
                   <Button
                     style={{
@@ -1042,6 +1090,7 @@ export default function TestDeviceDetailScreen() {
                   {detail.coverTestStatus === COVER_STATUS.CLOSE && (
                     <Flex>
                       <Flex
+                        isTouchView
                         onPress={async () => {
                           await updateTestResult({
                             coverTestStatus: 1,
@@ -1072,6 +1121,7 @@ export default function TestDeviceDetailScreen() {
                         style={{
                           marginLeft: 48,
                         }}
+                        isTouchView
                         onPress={async () => {
                           await updateTestResult({
                             coverTestStatus: 2,
@@ -1145,6 +1195,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.fireTestStatus === 0 && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           fireTestStatus: 1,
@@ -1175,6 +1226,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           fireTestStatus: 2,
@@ -1248,6 +1300,7 @@ export default function TestDeviceDetailScreen() {
                 {detail.tempTestStatus === 0 && (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           tempTestStatus: 1,
@@ -1278,6 +1331,7 @@ export default function TestDeviceDetailScreen() {
                       style={{
                         marginLeft: 48,
                       }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           tempTestStatus: 2,
@@ -1400,6 +1454,7 @@ export default function TestDeviceDetailScreen() {
                 ) : detail.aboveMixtureTestStatus === 0 ? (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           aboveMixtureTestStatus: 1,
@@ -1421,6 +1476,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{ marginLeft: 48 }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           aboveMixtureTestStatus: 2,
@@ -1535,6 +1591,7 @@ export default function TestDeviceDetailScreen() {
                 ) : detail.aboveGeoTestStatus === 0 ? (
                   <Flex>
                     <Flex
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           aboveGeoTestStatus: 1,
@@ -1556,6 +1613,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{ marginLeft: 48 }}
+                      isTouchView
                       onPress={async () => {
                         await updateTestResult({
                           aboveGeoTestStatus: 2,

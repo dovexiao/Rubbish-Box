@@ -62,6 +62,9 @@ export default function DeviceList() {
   const [currentLock, setCurrentLock] = useState<ListItem | null>(null);
 
   const coverConfirmRef = useRef<PopConfirmRef>(null);
+  const closeConfirmRef = useRef<PopConfirmRef>(null);
+  const openConfirmRef = useRef<PopConfirmRef>(null);
+  const shouldOpenConfirmRef = useRef(false);
 
   const loadList = useCallback(
     async (refresh: boolean) => {
@@ -160,11 +163,13 @@ export default function DeviceList() {
                 title: result?.message || result?.msg || '操作失败',
                 icon: 'none',
               });
+              poller.stop();
               return false;
             }
 
             if (result?.data) {
               const nextInfo: any = await getLockInfo({ id: item?.id });
+
               if (nextInfo?.code === 200 && nextInfo?.success) {
                 setList(prev =>
                   prev.map(it => (it.id === item.id ? nextInfo.data : it)),
@@ -172,6 +177,7 @@ export default function DeviceList() {
               } else {
                 void loadList(true);
               }
+              poller.stop();
               return false;
             }
             return true;
@@ -194,52 +200,66 @@ export default function DeviceList() {
     coverConfirmRef.current?.open();
   }, []);
 
-  const operateCover = useCallback(async () => {
-    if (!currentLock) return;
-    try {
-      showLoading({
-        title: `${
-          currentLock.coverStatus === COVER_STATUS.OPEN ? '关闭' : '打开'
-        }锁盖中...`,
-      });
-      const res: any = await operateLockCover({ id: currentLock.id });
-      if (!(res?.code === 200 && res?.success)) {
-        showToast({
-          title: res?.message || res?.msg || '操作失败',
-          icon: 'none',
+  const operateCover = useCallback(
+    async (val?: boolean) => {
+      if (!currentLock) return;
+      shouldOpenConfirmRef.current = !!val;
+      try {
+        showLoading({
+          title: `${
+            currentLock.coverStatus === COVER_STATUS.OPEN ? '关闭' : '打开'
+          }锁盖中...`,
         });
-        return;
-      }
-
-      const poller = loopFunc(
-        async () => {
-          const result: any = await getOperateResult({
-            deviceNo: currentLock.deviceNo,
-            ot: 13,
+        const res: any = await operateLockCover({ id: currentLock.id });
+        if (!(res?.code === 200 && res?.success)) {
+          showToast({
+            title: res?.message || res?.msg || '操作失败',
+            icon: 'none',
           });
-          if (!(result?.code === 200 && result?.success)) {
-            showToast({
-              title: result?.message || result?.msg || '操作失败',
-              icon: 'none',
+          return;
+        }
+
+        const poller = loopFunc(
+          async () => {
+            const result: any = await getOperateResult({
+              deviceNo: currentLock.deviceNo,
+              ot: 13,
             });
-            return false;
-          }
-          if (result?.data) {
-            void loadList(true);
-            return false;
-          }
-          return true;
-        },
-        1000,
-        12,
-      );
-      poller.start();
-    } catch {
-      showToast({ title: '操作失败', icon: 'none' });
-    } finally {
-      hideLoading();
-    }
-  }, [currentLock, loadList]);
+            if (!(result?.code === 200 && result?.success)) {
+              showToast({
+                title: result?.message || result?.msg || '操作失败',
+                icon: 'none',
+              });
+              poller.stop();
+              return false;
+            }
+
+            if (result?.data) {
+              if (shouldOpenConfirmRef.current) {
+                coverConfirmRef.current?.close();
+                setTimeout(() => {
+                  openConfirmRef.current?.open();
+                }, 600);
+                shouldOpenConfirmRef.current = false;
+              }
+              void loadList(true);
+              poller.stop();
+              return false;
+            }
+            return true;
+          },
+          1000,
+          12,
+        );
+        poller.start();
+      } catch {
+        showToast({ title: '操作失败', icon: 'none' });
+      } finally {
+        hideLoading();
+      }
+    },
+    [currentLock, loadList],
+  );
 
   const footer = (
     <View style={styles.bottomBtnContent}>
@@ -350,17 +370,20 @@ export default function DeviceList() {
                   });
                   return;
                 }
-                navigation.navigate('FindDevice', {
-                  bleNo: String(item.bleNo ?? ''),
-                  lockName: item.lockName,
-                  lockId: item.id,
-                  imageMap: (item as any).imageMap ?? {},
-                  pin: String((item as any).blePin ?? ''),
-                  mode: item.mode,
-                  role: String(item.role),
-                  deviceNo: String(item.deviceNo ?? ''),
-                  bleName: (item as any).bleName,
-                  needPin: (item as any).needPin,
+                navigation.navigate('BluetoothControl', {
+                  lockId: item?.id,
+                  bluetoothStatus: !!item?.bluetoothStatus,
+                  lockName: item?.lockName,
+                  bleNo: item?.bleNo,
+                  imageMap: item?.imageMap,
+                  bluetoothHasOpen: item?.bluetoothStatus,
+                  deviceNo: item?.deviceNo,
+                  mode: item?.mode,
+                  role: item?.role,
+                  blePin: item?.blePin,
+                  bleName: item?.bleName,
+                  needPin: item?.needPin,
+                  version: item?.compVer,
                 } as any);
               }}
             >
@@ -454,7 +477,111 @@ export default function DeviceList() {
           currentLock?.coverStatus === COVER_STATUS.OPEN ? '关闭' : '打开'
         }锁盖吗？`}
         onConfirm={async () => {
-          await operateCover();
+          if (currentLock?.coverStatus === COVER_STATUS.OPEN) {
+            closeConfirmRef.current?.open();
+          } else {
+            return await operateCover(true);
+          }
+          // coverConfirmRef.current?.close();
+          // await operateCover();
+        }}
+      />
+
+      <PopConfirm
+        title={
+          <Flex
+            align="center"
+            justify="center"
+            direction="column"
+            style={{ width: '100%' }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: '#000',
+              }}
+            >
+              温馨提示
+            </Text>
+            <View
+              style={{
+                marginVertical: 8,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#333',
+                  fontWeight: 'normal',
+                }}
+              >
+                请先合上锁盖,再关闭锁盖
+              </Text>
+            </View>
+            <Image
+              source={{ uri: currentLock?.imageMap?.closeCoverGif || '' }}
+              style={{
+                width: '100%',
+                height: 210,
+              }}
+            />
+          </Flex>
+        }
+        ref={closeConfirmRef}
+        cancelText="取消"
+        confirmText="关闭锁盖"
+        onConfirm={async () => {
+          return await operateCover();
+        }}
+      />
+
+      <PopConfirm
+        title={
+          <Flex
+            align="center"
+            justify="center"
+            direction="column"
+            style={{ width: '100%' }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: '#000',
+              }}
+            >
+              温馨提示
+            </Text>
+            <View
+              style={{
+                marginVertical: 8,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#333',
+                  fontWeight: 'normal',
+                }}
+              >
+                锁盖已打开,请手动搬起锁盖
+              </Text>
+            </View>
+            <Image
+              source={{ uri: currentLock?.imageMap?.openCoverGif || '' }}
+              style={{
+                width: '100%',
+                height: 210,
+              }}
+            />
+          </Flex>
+        }
+        ref={openConfirmRef}
+        confirmText="确定"
+        showClose={false}
+        onConfirm={async () => {
+          openConfirmRef.current?.close();
         }}
       />
     </PageContainer>

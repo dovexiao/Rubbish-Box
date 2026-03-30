@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -36,6 +36,9 @@ interface TestDeviceItem {
 
 const PAGE_SIZE = 10;
 
+const itemDedupeKey = (item: TestDeviceItem) =>
+  `${item.deviceNo ?? ''}__${item.lockId ?? ''}`;
+
 export default function TestDevice() {
   const navigation = useNavigation<any>();
   const [deviceList, setDeviceList] = useState<TestDeviceItem[]>([]);
@@ -44,52 +47,88 @@ export default function TestDevice() {
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [searchValue, setSearchValue] = useState('');
+  const searchRef = useRef('');
+  const offsetRef = useRef(0);
+  const loadingRef = useRef(false);
 
-  const loadList = useCallback(
-    async (reload: boolean, deviceNo?: string) => {
-      if (loading) return;
+  const loadList = useCallback(async (reload: boolean, deviceNo?: string) => {
+    if (loadingRef.current) return;
+    loadingRef.current = true;
 
-      if (reload) {
-        setRefreshing(true);
-        setInitialLoading(true);
+    if (reload) {
+      setRefreshing(true);
+      setInitialLoading(true);
+    } else {
+      setLoading(true);
+    }
+
+    try {
+      const offset = reload ? 0 : offsetRef.current;
+      const lockId =
+        deviceNo !== undefined
+          ? deviceNo || undefined
+          : searchRef.current.trim() || undefined;
+      const res: any = await getTestDeviceList({
+        offset,
+        pageSize: PAGE_SIZE,
+        lockId,
+      });
+      const list: TestDeviceItem[] = Array.isArray(res?.list)
+        ? res.list
+        : Array.isArray(res?.data?.list)
+        ? res.data.list
+        : [];
+      const total =
+        typeof res?.total === 'number' && Number.isFinite(res.total)
+          ? res.total
+          : typeof res?.data?.total === 'number' &&
+            Number.isFinite(res.data.total)
+          ? res.data.total
+          : undefined;
+
+      setDeviceList(prev => {
+        if (reload) return list;
+        const seen = new Set(prev.map(itemDedupeKey));
+        const next = [...prev];
+        for (const item of list) {
+          const k = itemDedupeKey(item);
+          if (!seen.has(k)) {
+            seen.add(k);
+            next.push(item);
+          }
+        }
+        return next;
+      });
+      offsetRef.current = reload
+        ? list.length
+        : offsetRef.current + list.length;
+      if (typeof total === 'number') {
+        setHasMore(offset + list.length < total);
       } else {
-        setLoading(true);
-      }
-
-      try {
-        const offset = reload ? 0 : deviceList.length;
-        const res: any = await getTestDeviceList({
-          offset,
-          pageSize: PAGE_SIZE,
-          lockId: deviceNo ?? (searchValue || undefined),
-        });
-        const list: TestDeviceItem[] = Array.isArray(res?.list)
-          ? res.list
-          : Array.isArray(res?.data?.list)
-          ? res.data.list
-          : [];
-
-        setDeviceList(prev => (reload ? list : [...prev, ...list]));
         setHasMore(list.length >= PAGE_SIZE);
-      } catch (error) {
-        console.error('getTestDeviceList error:', error);
-        showToast('获取测试设备列表失败');
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-        setInitialLoading(false);
       }
-    },
-    [deviceList.length, loading, searchValue],
-  );
+    } catch (error) {
+      console.error('getTestDeviceList error:', error);
+      showToast('获取测试设备列表失败');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+      setInitialLoading(false);
+      loadingRef.current = false;
+    }
+  }, []);
 
   useEffect(() => {
+    offsetRef.current = 0;
     void loadList(true);
   }, [loadList]);
 
   const onSearch = (value: string) => {
-    setSearchValue(value.trim());
-    void loadList(true, value.trim());
+    const trimmed = value.trim();
+    setSearchValue(trimmed);
+    searchRef.current = trimmed;
+    offsetRef.current = 0;
+    void loadList(true, trimmed);
   };
 
   const renderItem: ListRenderItem<TestDeviceItem> = ({ item, index }) => {
@@ -115,15 +154,17 @@ export default function TestDevice() {
         }}
       >
         <Flex justify="between" align="center" style={{ paddingRight: 12 }}>
-          <Flex align="center">
+          <Flex align="center" style={{ flex: 1 }}>
             <Image
               source={{ uri: 'https://g.18qjz.cn/jijimaClient/occupy.png' }}
               style={{ width: 60, height: 60 }}
               resizeMode="contain"
             />
-            <Text style={styles.snText}>设备SN码：{item.lockId ?? '暂无'}</Text>
+            <Text style={styles.snText} numberOfLines={1}>
+              设备SN码：{item.lockId ?? '暂无'}
+            </Text>
           </Flex>
-          <Flex align="start" style={{ height: '100%' }}>
+          <Flex align="start" style={{ height: '100%', flexShrink: 0 }}>
             <Text style={statusStyle}>{statusText}</Text>
           </Flex>
         </Flex>
@@ -132,21 +173,7 @@ export default function TestDevice() {
   };
 
   const keyExtractor = (item: TestDeviceItem, index: number) =>
-    `${item.deviceNo || 'device'}-${index}`;
-
-  const renderHeader = () => (
-    <View style={styles.searchWrapper}>
-      <SearchBar
-        placeholder="请输入设备SN码查询"
-        value={searchValue}
-        onChange={v => setSearchValue(v)}
-        onSubmit={v => onSearch(v)}
-        onBlur={() => onSearch(searchValue)}
-        returnKeyType="search"
-        style={styles.searchBar}
-      />
-    </View>
-  );
+    itemDedupeKey(item) || `row-${index}`;
 
   const renderEmpty = () =>
     !initialLoading ? (
@@ -169,17 +196,30 @@ export default function TestDevice() {
       loading={initialLoading}
     >
       <View style={styles.container}>
+        <View style={styles.searchWrapper}>
+          <SearchBar
+            placeholder="请输入设备SN码查询"
+            value={searchValue}
+            onChange={v => {
+              setSearchValue(v);
+              searchRef.current = v;
+            }}
+            onSubmit={v => onSearch(v)}
+            returnKeyType="search"
+            style={styles.searchBar}
+          />
+        </View>
         <FlatList
           data={deviceList}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
-          ListHeaderComponent={renderHeader}
           contentContainerStyle={styles.listWrapper}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           onEndReachedThreshold={0.3}
           onEndReached={() => {
-            if (!loading && hasMore) {
-              void loadList(false);
-            }
+            if (loadingRef.current || !hasMore) return;
+            void loadList(false);
           }}
           refreshing={refreshing}
           onRefresh={() => void loadList(true)}

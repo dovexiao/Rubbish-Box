@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    color: '#999',
+    color: '#666666',
     fontSize: 14,
   },
   editContainer: {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { View, Text, ScrollView, Image, Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
 import PageContainer from '@/components/PageContainer';
 import Header from '@/components/Header';
@@ -9,14 +9,23 @@ import { getLockInfo } from '@/services/device';
 import { unreadCount as fetchUnreadCount } from '@/services/user';
 import Flex from '@/components/Flex';
 import PopConfirm from '@/components/popConfirm';
-import { reLaunch, cacheGetSync, eventCenter, loopFunc } from '@/utils';
+import {
+  reLaunch,
+  cacheGetSync,
+  eventCenter,
+  loopFunc,
+  getBluetoothDeviceInfo,
+  setStorage,
+  removeStorage,
+} from '@/utils';
 import LockVisual, {
   DeviceStatusFlags,
   LockVisualStatus,
 } from '@/components/LockVisual';
-import { LockInfoDTO } from '@/pages/index/typing';
+import type { LockInfoDTO } from '@/pages/index/typing';
 import { FALL_STATUS } from '@/constants';
 import { styles } from '@/pages/index/style';
+import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 
 const Index = () => {
   const [loading, setLoading] = useState(false);
@@ -40,6 +49,8 @@ const Index = () => {
   const [gifNonce, setGifNonce] = useState<number>(0);
   const [optioning, setOptioning] = useState<boolean>(false);
   const optioningRef = useRef<boolean>(false);
+  const [isAutoOpenBluetooth, setIsAutoOpenBluetooth] =
+    useState<boolean>(false);
   const [error, setError] = useState<{
     code?: number | string;
     message?: string;
@@ -91,6 +102,10 @@ const Index = () => {
                 return 'rise';
             }
           });
+        } else if (lockRes.code === 520 || lockRes.code === 522) {
+          setDetail(undefined);
+          setHasDevice(false);
+          setError(null);
         } else {
           setDetail(undefined);
           setHasDevice(false);
@@ -302,12 +317,82 @@ const Index = () => {
   const bgImage =
     bgImageUri && bgImageUri !== 'null' ? { uri: bgImageUri } : undefined;
 
+  const hasBluetoothAutoOpen = async () => {
+    const deviceMap = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
+    const rawList = (detail as any)?.bleNoList;
+    const bleNoList = Array.isArray(rawList)
+      ? rawList
+          .map((item: any) => String(item || '').trim())
+          .filter((item: string) => !!item)
+      : [];
+    const fallbackBleNo = String((detail as any)?.bleNo || '').trim();
+    const targets = Array.from(
+      new Set(
+        bleNoList.length > 0 ? bleNoList : fallbackBleNo ? [fallbackBleNo] : [],
+      ),
+    );
+
+    if (targets.length === 0) {
+      setIsAutoOpenBluetooth(false);
+      return;
+    }
+
+    let hasInvalid = false;
+    let nextDeviceMap: Record<string, any> = { ...(deviceMap as any) };
+
+    for (const bleNo of targets) {
+      const savedDeviceInfo = (deviceMap as any)?.[bleNo];
+      const deviceId = savedDeviceInfo?.deviceId;
+      const bleName = String(
+        savedDeviceInfo?.name || savedDeviceInfo?.localName || '',
+      );
+
+      const res = await checkIfDeviceIgnoredOnIOS(
+        deviceId,
+        bleNo,
+        bleName,
+      ).catch(() => ({ isIgnored: true }));
+      const invalid =
+        !deviceId || !!res?.isIgnored || !savedDeviceInfo?.isPaired;
+
+      if (invalid) {
+        hasInvalid = true;
+        if (nextDeviceMap[bleNo]) {
+          const { [bleNo]: _, ...rest } = nextDeviceMap;
+          nextDeviceMap = rest;
+        }
+      }
+    }
+    if (hasInvalid) {
+      await setStorage({ key: 'bluetoothDeviceInfoList', data: nextDeviceMap });
+      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+        await removeStorage({ key: 'bluetoothDeviceInfo' });
+      }
+      setIsAutoOpenBluetooth(false);
+      return;
+    }
+
+    setIsAutoOpenBluetooth(true);
+  };
+
+  useEffect(() => {
+    const { start, stop } = loopFunc(async () => {
+      await hasBluetoothAutoOpen();
+      return true;
+    }, 1000);
+    start();
+    return () => {
+      stop();
+    };
+  }, [hasBluetoothAutoOpen]);
+
   return (
     <PageContainer
       backgroundColor={bgImage ? 'transparent' : '#f6f7fa'}
       style={styles.pageContainer}
       loading={loading}
       error={error}
+      safeAreaEdges={['top']}
       fullScreenError={!showGuestWelcome && !hasDevice && !loading}
       onRetry={() => {
         void load();
@@ -377,6 +462,7 @@ const Index = () => {
                 }}
                 optioning={optioning}
                 isMultiple={true}
+                isAutoOpenBluetooth={isAutoOpenBluetooth}
                 currentDeviceStatus={currentDeviceStatus}
               >
                 <LockVisual

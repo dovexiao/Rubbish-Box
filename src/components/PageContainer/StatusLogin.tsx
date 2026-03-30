@@ -12,18 +12,13 @@ const StatusLogin: React.FC = () => {
 
   return (
     <View style={styles.statusLoginContainer}>
-      <Text
-        style={[styles.statusLoginTitle, { color: theme.colors.text.primary }]}
-      >
+      <Text style={[styles.statusLoginTitle, { color: '#333333' }]}>
         欢迎使用 泊刻地锁
       </Text>
       <Flex
         align="center"
         justify="center"
-        style={[
-          styles.statusLoginAddBtn,
-          { backgroundColor: themeType === 'dark' ? '#2C2C2C' : '#F5F7FA' },
-        ]}
+        style={[styles.statusLoginAddBtn, { backgroundColor: '#F5F7FA' }]}
         isTouchView
         onPress={() => {
           popupRef.current?.open?.();

@@ -31,6 +31,17 @@ const isSameMac = (mac1?: string, mac2?: string): boolean => {
   return normalize(mac1) === normalize(mac2);
 };
 
+export const formatMacForHarmony = (id: string): string => {
+  const isHarmony = Platform.OS != 'android' && Platform.OS != 'ios';
+  if (isHarmony && id && id.length === 12 && !id.includes(':')) {
+    return id
+      .replace(/(.{2})/g, '$1:')
+      .slice(0, -1)
+      .toUpperCase();
+  }
+  return id || '';
+};
+
 const parseMacFromBase64 = (base64Str: string): string | null => {
   if (!base64Str) return null;
   try {
@@ -152,19 +163,18 @@ export const openBluetooth = (): Promise<{ success: boolean }> => {
         cleanup();
         resolve({ success: false });
       }, 8000);
-      if (Platform.OS === 'android') {
-        try {
-          console.log('尝试启用蓝牙模块');
-
-          const enabler = (bleInstance as any)?.enable;
-          if (typeof enabler === 'function') {
-            Promise.resolve(enabler.call(bleInstance)).catch(e => {
-              console.warn('[openBluetooth] enable() failed:', e);
-            });
-          }
-        } catch (e) {
-          console.warn('[openBluetooth] enable() failed:', e);
+      // iOS 也需要主动触发 enable 才可能弹出系统开启蓝牙弹窗
+      //（bleInstance.enable 仅在部分环境/版本存在，因此做函数存在性判断）
+      try {
+        console.log('尝试启用蓝牙模块');
+        const enabler = (bleInstance as any)?.enable;
+        if (typeof enabler === 'function') {
+          Promise.resolve(enabler.call(bleInstance)).catch(e => {
+            console.warn('[openBluetooth] enable() failed:', e);
+          });
         }
+      } catch (e) {
+        console.warn('[openBluetooth] enable() failed:', e);
       }
     } catch {
       cleanup();
@@ -253,6 +263,21 @@ export const getSystemConnectedDevices = (): Promise<{
         }
       } else if (Platform.OS === 'ios') {
         try {
+          // iOS：蓝牙状态可能为 unknown，直接调用 connectedDevices 会抛错
+          // 这里先确保蓝牙处于 PoweredOn（或等待其变为 PoweredOn）
+          const btState = await bleInstance.state();
+          if (btState !== 'PoweredOn') {
+            const openRes = await openBluetooth();
+            if (!openRes?.success) {
+              resolve({
+                success: false,
+                data: [],
+                message: '蓝牙未开启或状态未知',
+              });
+              return;
+            }
+          }
+
           const res = await bleInstance.connectedDevices([
             '0000fff0-0000-1000-8000-00805f9b34fb',
           ]);
@@ -335,10 +360,214 @@ export const connectBluetoothDevice = (
   return new Promise(async resolve => {
     try {
       await ensureBleManagerAlive();
-      let connectedDevice = await bleInstance.connectToDevice(deviceId);
-      if (!connectedDevice) return resolve({ success: false });
+
+      // 在鸿蒙底层，调用 connectToDevice 时，如果该 Mac 从未被该 session 的 ble-plx 实例化扫描过，
+      // 可能会直接抛出 "Device xx:xx not found" 的错误。在这里通过 pre-fetch 缓存尽量避免
+      if (isHarmony) {
+        try {
+          await bleInstance.connectedDevices([
+            '0000fff0-0000-1000-8000-00805f9b34fb',
+          ]);
+        } catch (e) {}
+      }
+
+      let connectedDevice = await bleInstance
+        .connectToDevice(deviceId)
+        .catch(async (e: any) => {
+          const errMsg = String(e?.message || '').toLowerCase();
+
+          // 如果抛出的是设备已经连接，说明物理已连，直接返回一个仅包裹 discover 用的外壳
+          if (
+            errMsg.includes('already connected') ||
+            errMsg.includes('connected')
+          ) {
+            try {
+              return await bleInstance.discoverAllServicesAndCharacteristicsForDevice(
+                deviceId,
+              );
+            } catch (innerErr) {
+              const devs = await bleInstance
+                .connectedDevices(['0000fff0-0000-1000-8000-00805f9b34fb'])
+                .catch(() => []);
+              const target = devs.find(
+                d => d.id === deviceId || isSameMac(d.id, deviceId),
+              );
+              if (target) return target;
+
+              const cached = await bleInstance
+                .devices([deviceId])
+                .catch(() => []);
+              if (cached && cached.length > 0) return cached[0];
+            }
+          }
+
+          // 兜底补丁：如果在鸿蒙下抛出 not found 或 connection failed，可能是底层对象未完成实例化或处于离线失效状态，进行一次静默扫描再尝试连接
+          if (
+            isHarmony &&
+            (errMsg.includes('not found') ||
+              errMsg.includes('connection failed') ||
+              errMsg.includes('disconnected'))
+          ) {
+            return new Promise<any>(async (res, rej) => {
+              console.log(
+                '[Harmony BLE] Cleaning up zombie connection before fallback scan...',
+              );
+              await bleInstance
+                .cancelDeviceConnection(deviceId)
+                .catch(() => {});
+              await sleep(1500); // 留给底层断开释放并让设备重新开始广播的时间
+
+              try {
+                await bleInstance.stopDeviceScan();
+              } catch (stopErr) {}
+              await sleep(300);
+
+              let isHandled = false;
+              let scanTimer: ReturnType<typeof setTimeout> | null = null;
+              const handleFinish = (
+                hasFound: boolean,
+                targetIdToConnect?: string,
+                errInfo?: any,
+              ) => {
+                if (isHandled) return;
+                isHandled = true;
+                if (scanTimer) clearTimeout(scanTimer);
+                bleInstance.stopDeviceScan();
+                if (hasFound && targetIdToConnect) {
+                  console.log(
+                    `[Harmony BLE] fallback scan found device ${targetIdToConnect}, attempting connectToDevice again...`,
+                  );
+                  bleInstance
+                    .connectToDevice(targetIdToConnect)
+                    .then(res)
+                    .catch(rej);
+                } else {
+                  console.log(
+                    '[Harmony BLE] fallback scan failed to find device.',
+                  );
+                  rej(errInfo || e);
+                }
+              };
+
+              let targetBleNo = '';
+              try {
+                const deviceInfoList = await storageUtil
+                  .getItem<any>('bluetoothDeviceInfoList')
+                  .catch(() => null);
+                const deviceMap =
+                  deviceInfoList && typeof deviceInfoList === 'object'
+                    ? 'data' in deviceInfoList
+                      ? (deviceInfoList as any).data || {}
+                      : (deviceInfoList as any)
+                    : {};
+                for (const [bleNo, info] of Object.entries(deviceMap)) {
+                  if ((info as any)?.deviceId === deviceId) {
+                    targetBleNo = bleNo;
+                    break;
+                  }
+                }
+              } catch (err) {}
+
+              if (targetBleNo) {
+                console.log(
+                  '[Harmony BLE] fallback scan reverse lookup targetBleNo:',
+                  targetBleNo,
+                );
+              }
+
+              let seen: Record<string, boolean> = {};
+              bleInstance.startDeviceScan(
+                null,
+                { allowDuplicates: false },
+                (errScan, device) => {
+                  if (errScan) {
+                    console.log(
+                      '[Harmony BLE] fallback scan error:',
+                      errScan.message,
+                    );
+                    return;
+                  }
+                  if (device) {
+                    if (!seen[device.id]) {
+                      seen[device.id] = true;
+                      console.log(
+                        `[Harmony BLE] fallback scan saw: ${device.id} name: ${
+                          device.name
+                        } localName: ${
+                          device.localName
+                        } serviceData: ${JSON.stringify(
+                          device.serviceData,
+                        )} manufacturerData: ${device.manufacturerData}`,
+                      );
+                    }
+                    if (
+                      device.id === deviceId ||
+                      isSameMac(device.id, deviceId)
+                    ) {
+                      handleFinish(true, device.id);
+                    } else if (
+                      targetBleNo &&
+                      isSameMac(device.id, targetBleNo)
+                    ) {
+                      console.log(
+                        '[Harmony BLE] fallback scan matched original bleNo MAC!',
+                      );
+                      handleFinish(true, device.id);
+                    } else if (
+                      targetBleNo &&
+                      device.name &&
+                      device.name.includes(
+                        targetBleNo.substring(
+                          Math.max(0, targetBleNo.length - 6),
+                        ),
+                      )
+                    ) {
+                      console.log(
+                        '[Harmony BLE] fallback scan matched device name containing bleNo!',
+                      );
+                      handleFinish(true, device.id);
+                    }
+                  }
+                },
+              );
+              // 给至少5秒扫描容错时间
+              scanTimer = setTimeout(() => {
+                console.log('[Harmony BLE] fallback scan timeout!');
+                handleFinish(false, e);
+              }, 10000);
+            });
+          }
+          throw e;
+        });
+
+      if (!connectedDevice) {
+        console.log('[Harmony BLE] connectToDevice returned null');
+        return resolve({
+          success: false,
+          error: new Error('connectToDevice returned null'),
+        });
+      }
       connectedDevice =
         await connectedDevice.discoverAllServicesAndCharacteristics();
+
+      if (isHarmony) {
+        // 打印系统服务树，排查 UUID 大小写或短格式问题
+        try {
+          const services = await connectedDevice.services();
+          for (const s of services) {
+            const chars = await s.characteristics();
+            console.log(
+              chars.map((c: any) => c.uuid),
+              `[Harmony BLE] Service: ${s.uuid}, Characteristics:`,
+            );
+          }
+        } catch (err) {
+          console.log('[Harmony BLE] Query services error', err);
+        }
+
+        // 鸿蒙系统下，discover后立刻拿去监听通知可能会因为底层服务树还没映射完毕导致报错，这里多给一点点初始化时间
+        await sleep(1500);
+      }
       resolve({
         success: true,
         data: {
@@ -347,8 +576,9 @@ export const connectBluetoothDevice = (
           device: connectedDevice,
         },
       });
-    } catch {
-      resolve({ success: false });
+    } catch (error) {
+      console.log('[Harmony BLE] Outer connectBluetoothDevice catch', error);
+      resolve({ success: false, error });
     }
   });
 };
@@ -383,8 +613,24 @@ export const searchBluetoothDevices = async (
       try {
         // 跳转到系统设置
         if (Platform.OS === 'ios') {
-          // iOS: 跳转到系统蓝牙设置
-          await Linking.openURL('App-Prefs:root=Bluetooth');
+          const candidates = [
+            'App-Prefs:root=Bluetooth',
+            'App-Prefs:root=General',
+            'app-settings:',
+          ];
+          let opened = false;
+          for (const url of candidates) {
+            try {
+              const canOpen = await Linking.canOpenURL(url);
+              if (!canOpen) continue;
+              await Linking.openURL(url);
+              opened = true;
+              break;
+            } catch {}
+          }
+          if (!opened) {
+            await Linking.openSettings();
+          }
         } else if (isHarmony) {
           let hModule;
           try {
@@ -483,9 +729,10 @@ export const stopSearchBluetoothDevices = (
 export const checkIfDeviceIgnoredOnIOS = (
   deviceId: string,
   bleNo?: string,
+  bleName?: string,
 ): Promise<{ isIgnored: boolean; reason?: string }> => {
   return new Promise(async resolve => {
-    if (Platform.OS === 'ios' || isHarmony) {
+    if (Platform.OS === 'ios') {
       if (!deviceId) {
         resolve({ isIgnored: false, reason: '设备ID为空' });
         return;
@@ -575,10 +822,11 @@ export const checkIfDeviceIgnoredOnIOS = (
     }
     BluetoothManager.getBondedDevices((result: any) => {
       if (result?.success && Array.isArray(result.devices)) {
-        const isBonded = result.devices.some(
-          (d: any) =>
-            isSameMac(d.mac, deviceId) || isSameMac(d.mac, bleNo ?? ''),
-        );
+        const isBonded =
+          result.devices.some(
+            (d: any) =>
+              isSameMac(d.mac, deviceId) || isSameMac(d.mac, bleNo ?? ''),
+          ) || result.devices.some((d: any) => d.name === bleName);
         resolve({
           isIgnored: !isBonded,
           reason: isBonded ? '设备未被忽略' : '设备已被忽略',
@@ -599,8 +847,79 @@ export const isDeviceConnected = (
   deviceIdentifier: string,
 ): Promise<{ success: boolean }> => {
   return new Promise(resolve => {
-    const timeout = setTimeout(() => resolve({ success: false }), 3000);
+    // 鸿蒙系统下底层 API 返回较慢，调长超时时间；其他系统保持原有 3000ms
+    const timeoutMs = isHarmony ? 8000 : 3000;
+    const timeout = setTimeout(() => resolve({ success: false }), timeoutMs);
     (async () => {
+      // 鸿蒙专属校验逻辑（与安卓 iOS 彻底隔离）
+      if (isHarmony) {
+        try {
+          const getTurboModuleSafely = (name: string): any => {
+            try {
+              return TurboModuleRegistry.get(name);
+            } catch (error) {
+              return null;
+            }
+          };
+          const hModule: any =
+            NativeModules?.HarmonyAppInfo ||
+            getTurboModuleSafely('HarmonyAppInfo');
+          let connectedMacs: string[] = [];
+
+          if (
+            hModule &&
+            typeof hModule?.getConnectedBLEDevices === 'function'
+          ) {
+            connectedMacs = (await hModule.getConnectedBLEDevices()) || [];
+          } else {
+            // Fallback: 如果原生方法还没重新编译，只能走旧配对列表
+            const sysDevices = await getSystemConnectedDevices();
+            connectedMacs = sysDevices.data?.map((d: any) => d.deviceId) || [];
+          }
+
+          const sysConnected = connectedMacs.some(
+            (mac: string) =>
+              mac === deviceIdentifier || isSameMac(mac, deviceIdentifier),
+          );
+
+          // 如果底层压根没连上，直接返回 false 让外面去触发连接
+          if (!sysConnected) {
+            clearTimeout(timeout);
+            resolve({ success: false });
+            return;
+          }
+
+          // 如果系统物理底层连着此设备，还要确认识 react-native-ble-plx 并在本上下文中缓存/发现了服务
+          // 否则会引发后续通知写入时的 Device xx:xx not found
+          await ensureBleManagerAlive();
+          const pDevices = await bleInstance
+            .devices([deviceIdentifier])
+            .catch(() => []);
+          if (pDevices && pDevices.length > 0) {
+            const isBlePlxConnected = await pDevices[0]
+              .isConnected()
+              .catch(() => false);
+            if (isBlePlxConnected) {
+              // 【解决 Characteristic not found 的必杀技】即使系统和对象都表示已连，鸿蒙端下也必须补一刀 discover，不然缓存服务为空
+              await pDevices[0]
+                .discoverAllServicesAndCharacteristics()
+                .catch(() => {});
+              await sleep(200); // 鸿蒙系统下，discover后稍微等一下让服务树映射完毕
+              clearTimeout(timeout);
+              resolve({ success: true });
+              return;
+            }
+          }
+
+          // 系统连了但 ble-plx 不处于连接有效状态，返回 false 逼迫业务去走 connectBluetoothDevice 发现服务
+          clearTimeout(timeout);
+          resolve({ success: false });
+          return;
+        } catch (error) {
+          console.log('[isDeviceConnected] 鸿蒙系统设备检查异常:', error);
+        }
+      }
+
       try {
         await ensureBleManagerAlive();
         const device = await bleInstance.devices([deviceIdentifier]);
@@ -624,6 +943,38 @@ export const isDeviceConnected = (
       }
     })();
   });
+};
+
+// 鸿蒙蓝牙 UUID 大小写兼容探针：从设备真实缓存特征树里找到和我们需要 UUID 字母顺序一致的那条原型 UUID 串
+export const getRealUUIDsForHarmony = async (
+  deviceId: string,
+  serviceUuidTarget: string,
+  characteristicUuidTarget: string,
+) => {
+  if (!isHarmony)
+    return { sUuid: serviceUuidTarget, cUuid: characteristicUuidTarget };
+  try {
+    const services = await bleInstance.servicesForDevice(deviceId);
+    const srv = services.find(
+      s => s.uuid.toLowerCase() === serviceUuidTarget.toLowerCase(),
+    );
+    if (srv) {
+      const chars = await bleInstance.characteristicsForDevice(
+        deviceId,
+        srv.uuid,
+      );
+      const ch = chars.find(
+        c => c.uuid.toLowerCase() === characteristicUuidTarget.toLowerCase(),
+      );
+      if (ch) {
+        return { sUuid: srv.uuid, cUuid: ch.uuid };
+      }
+      return { sUuid: srv.uuid, cUuid: characteristicUuidTarget };
+    }
+  } catch (e) {
+    console.log('[Harmony BLE] getRealUUIDsForHarmony Query Fail:', e);
+  }
+  return { sUuid: serviceUuidTarget, cUuid: characteristicUuidTarget };
 };
 
 // ---------- Notify / 写数据 / 解码 ----------
@@ -652,6 +1003,17 @@ export const notifyBLECharacteristicValueChange = (options: {
             return;
           }
           const base64 = characteristic?.value || '';
+          console.log(
+            '[Harmony BLE] Raw Characteristic in Monitor:',
+            characteristic?.uuid,
+            'Value:',
+            characteristic?.value,
+          );
+
+          if (isHarmony && !base64) {
+            return;
+          }
+
           options.onData?.({
             base64,
             characteristic: characteristic ?? undefined,
@@ -670,7 +1032,19 @@ const decodeBase64ToText = (base64: string): string => {
   try {
     const BufferRef = (globalThis as any).Buffer;
     if (BufferRef) {
-      return BufferRef.from(base64, 'base64').toString();
+      return BufferRef.from(base64, 'base64').toString('utf8');
+    }
+    const atobRef = (globalThis as any).atob;
+    if (typeof atobRef === 'function') {
+      const binary = atobRef(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      if (typeof TextDecoder !== 'undefined') {
+        return new TextDecoder('utf-8').decode(bytes);
+      }
+      return binary;
     }
     return '';
   } catch {
@@ -680,20 +1054,34 @@ const decodeBase64ToText = (base64: string): string => {
 
 const uint8ArrayToBase64 = (arr: Uint8Array): string => {
   try {
-    const BufferRef = (globalThis as any).Buffer;
-    if (BufferRef) {
-      return BufferRef.from(
-        arr.buffer,
-        arr.byteOffset,
-        arr.byteLength,
-      ).toString('base64');
-    }
     let binary = '';
-    for (let i = 0; i < arr.length; i++) {
+    const len = arr.byteLength;
+    for (let i = 0; i < len; i++) {
       binary += String.fromCharCode(arr[i]);
     }
-    return (globalThis as any).btoa?.(binary) ?? '';
-  } catch {
+    const btoaRef = (globalThis as any).btoa;
+    if (typeof btoaRef === 'function') {
+      return btoaRef(binary);
+    }
+
+    // 如果没有 btoa，我们手写一个 base64 算法以防万一
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    let base64 = '';
+    for (let i = 0; i < len; i += 3) {
+      const c1 = arr[i];
+      const c2 = i + 1 < len ? arr[i + 1] : 0;
+      const c3 = i + 2 < len ? arr[i + 2] : 0;
+
+      base64 += chars[c1 >> 2];
+      base64 += chars[((c1 & 3) << 4) | (c2 >> 4)];
+      base64 += i + 1 < len ? chars[((c2 & 15) << 2) | (c3 >> 6)] : '=';
+      base64 += i + 2 < len ? chars[c3 & 63] : '=';
+    }
+
+    return base64;
+  } catch (e) {
+    console.log('[Harmony BLE] base64 encode error:', e);
     return '';
   }
 };
@@ -710,17 +1098,23 @@ export const sendDataToDevice = (options: {
   const byteLength = options.value.byteLength;
   const speed = 20;
   if (byteLength > 0) {
-    bleInstance
-      .writeCharacteristicWithResponseForDevice(
-        options.deviceId,
-        options.writeServiceUuid,
-        options.writeCharacteristicUuid,
-        arrayBufferToBase64(
-          options.once
-            ? options.value
-            : options.value.slice(0, byteLength > speed ? speed : byteLength),
-        ),
-      )
+    const rawData = uint8ArrayToBase64(
+      options.once
+        ? options.value
+        : options.value.slice(0, byteLength > speed ? speed : byteLength),
+    );
+
+    // 恢复双端重试机制：将写命令的发送首选恢复为带响应的写入
+    // 这点对于部分严格的地锁硬件固件非常重要，如果无脑WithoutResponse可能直接死等
+    const writeMethod =
+      bleInstance.writeCharacteristicWithResponseForDevice.bind(bleInstance);
+
+    writeMethod(
+      options.deviceId,
+      options.writeServiceUuid,
+      options.writeCharacteristicUuid,
+      rawData,
+    )
       .then(res => {
         if (byteLength > speed && !options.once) {
           sendDataToDevice({
@@ -731,8 +1125,34 @@ export const sendDataToDevice = (options: {
           options.lasterSuccess && options.lasterSuccess();
         }
       })
-      .catch(res => {
-        options.onError && options.onError(res);
+      .catch(err => {
+        console.log(
+          '[Harmony BLE] Write Failed!',
+          err,
+          typeof err === 'object' ? err.reason : '',
+        );
+        // 对所有系统（包括鸿蒙）开启 Fallback 支持：如果不被支持抛错，再自动进入 catch 包退回 WithoutResponse
+        bleInstance
+          .writeCharacteristicWithoutResponseForDevice(
+            options.deviceId,
+            options.writeServiceUuid,
+            options.writeCharacteristicUuid,
+            rawData,
+          )
+          .then(() => {
+            if (byteLength > speed && !options.once) {
+              sendDataToDevice({
+                ...options,
+                value: options.value.slice(speed, byteLength),
+              });
+            } else {
+              options.lasterSuccess && options.lasterSuccess();
+            }
+          })
+          .catch(err2 => {
+            console.log('[Harmony BLE] Write Fallback Failed', err2);
+            options.onError && options.onError(err2);
+          });
       });
   }
 };
@@ -742,7 +1162,8 @@ export const sendDataToDevice = (options: {
 type BleCommandType = 'mode' | 'pin' | 'operation' | 'near';
 
 const calcChecksum = (bytes: number[]): number => {
-  return bytes.reduce((acc, cur) => acc + (cur & 0xff), 0) & 0xff;
+  const sum = bytes.reduce((acc, cur) => acc + (cur & 0xff), 0);
+  return sum & 0xff;
 };
 
 const buildPacket = (bytes: number[]): Uint8Array => {
@@ -797,16 +1218,18 @@ const sendBleCommandWithAck = async (options: {
     pin,
     mac,
     status,
-    timeoutMs = 4000,
+    timeoutMs = 6000,
     successMsg,
     failMsg,
   } = options;
   if (!deviceId) return { success: false, msg: '缺少设备ID' };
 
   const alreadyConnected = await isDeviceConnected(deviceId);
-  console.log(alreadyConnected, '===alreadyConnected');
   if (!alreadyConnected.success) {
-    await connectBluetoothDevice(deviceId);
+    const res = await connectBluetoothDevice(deviceId);
+    if (!res.success) {
+      return { success: false, msg: res.error?.message || '连接设备失败' };
+    }
   }
 
   let body: number[];
@@ -826,6 +1249,28 @@ const sendBleCommandWithAck = async (options: {
   }
   const packet = buildPacket([...body, calcChecksum(body)]);
 
+  let targetNotifySUrl = '0000fff0-0000-1000-8000-00805f9b34fb';
+  let targetNotifyCUrl = '0783b03e-8535-b5a0-7140-a304d2495cb8';
+  let targetWriteSUrl = '0000fff0-0000-1000-8000-00805f9b34fb';
+  let targetWriteCUrl = '0783b03e-8535-b5a0-7140-a304d2495cba';
+
+  if (isHarmony) {
+    const notifyUUIDs = await getRealUUIDsForHarmony(
+      deviceId,
+      targetNotifySUrl,
+      targetNotifyCUrl,
+    );
+    targetNotifySUrl = notifyUUIDs.sUuid;
+    targetNotifyCUrl = notifyUUIDs.cUuid;
+    const writeUUIDs = await getRealUUIDsForHarmony(
+      deviceId,
+      targetWriteSUrl,
+      targetWriteCUrl,
+    );
+    targetWriteSUrl = writeUUIDs.sUuid;
+    targetWriteCUrl = writeUUIDs.cUuid;
+  }
+
   return new Promise(resolve => {
     let settled = false;
     const finish = (result: {
@@ -844,10 +1289,9 @@ const sendBleCommandWithAck = async (options: {
 
     notifyBLECharacteristicValueChange({
       deviceId,
-      notifyCharacteristicUuid: '0783b03e-8535-b5a0-7140-a304d2495cb8',
-      notifyServiceUuid: '0000fff0-0000-1000-8000-00805f9b34fb',
+      notifyCharacteristicUuid: targetNotifyCUrl,
+      notifyServiceUuid: targetNotifySUrl,
       onData: ({ base64 }) => {
-        console.log(base64, '===base64');
         const text = decodeBase64ToText(base64);
         const match = text.match(/(200|206)/);
         if (match) {
@@ -864,24 +1308,39 @@ const sendBleCommandWithAck = async (options: {
         clearTimeout(timer);
         finish({ success: false, msg: err?.message || '发送失败' });
       },
-    }).then(res => {
+    }).then(async res => {
       if (!res?.success) {
         clearTimeout(timer);
         finish({ success: false, msg: res?.msg || '发送失败' });
+        return;
       }
-    });
 
-    sendDataToDevice({
-      deviceId,
-      writeCharacteristicUuid: '0783b03e-8535-b5a0-7140-a304d2495cba',
-      writeServiceUuid: '0000fff0-0000-1000-8000-00805f9b34fb',
-      value: packet,
-      once: true,
-      lasterSuccess: () => {},
-      onError: err => {
-        clearTimeout(timer);
-        finish({ success: false, msg: err?.message || '发送失败' });
-      },
+      if (isHarmony) {
+        const sleep = (ms: number) =>
+          new Promise(resolve => setTimeout(resolve, ms));
+        await sleep(1500); // Wait for the OS to finalize notification listener before writing
+      }
+
+      sendDataToDevice({
+        deviceId,
+        writeCharacteristicUuid: targetWriteCUrl,
+        writeServiceUuid: targetWriteSUrl,
+        value: packet,
+        once: true,
+        lasterSuccess: () => {
+          if (isHarmony && type === 'pin') {
+            // 鸿蒙专属：修改 PIN 的指令一旦下发成功，锁端会立即更新 MAC 地址并单方面断开连接
+            // 底层往往来不及吐出带 200 的 ACK 且没有触发断开异常，导致上层产生“超时未收到设备响应”
+            // 直接认定为成功
+            clearTimeout(timer);
+            finish({ success: true, code: 200, msg: successMsg });
+          }
+        },
+        onError: err => {
+          clearTimeout(timer);
+          finish({ success: false, msg: err?.message || '发送失败' });
+        },
+      });
     });
   });
 };
@@ -897,7 +1356,7 @@ export const OperationCommandByBluetooth = async (options: {
   deviceNo?: string;
   msg?: string;
 }> => {
-  const { deviceId, operation, deviceNo, timeoutMs = 4000 } = options;
+  const { deviceId, operation, deviceNo, timeoutMs = 6000 } = options;
   const result = await sendBleCommandWithAck({
     deviceId,
     type: 'operation',
@@ -944,7 +1403,7 @@ export const sendModeCommandByBluetooth = async (options: {
   code?: number;
   msg?: string;
 }> => {
-  const { deviceId, mode, deviceNo, timeoutMs = 4000 } = options;
+  const { deviceId, mode, deviceNo, timeoutMs = 6000 } = options;
   const result = await sendBleCommandWithAck({
     deviceId,
     type: 'mode',
@@ -969,7 +1428,7 @@ export const sendChangePinByBluetooth = async (options: {
   msg?: string;
   newMac?: string;
 }> => {
-  const { deviceId, pin, deviceNo, timeoutMs = 4000 } = options;
+  const { deviceId, pin, deviceNo, timeoutMs = 6000 } = options;
 
   // 先获取旧的MAC地址，计算新的MAC地址
   let oldBleNo: string | null = null;
@@ -1085,7 +1544,7 @@ export const setNearbyPermission = async (options: {
   deviceNo?: string;
   msg?: string;
 }> => {
-  const { deviceId, status, deviceNo, timeoutMs = 4000 } = options;
+  const { deviceId, status, deviceNo, timeoutMs = 6000 } = options;
   const result = await sendBleCommandWithAck({
     deviceId,
     type: 'near',
@@ -1095,7 +1554,7 @@ export const setNearbyPermission = async (options: {
     successMsg: '操作成功',
     failMsg: '操作失败',
   });
-  console.log(result, '===result');
+
   // 上报前端日志
   try {
     await saveFrontLog({
@@ -1124,9 +1583,25 @@ export const openBluetoothSettings = (): Promise<boolean> => {
   return new Promise(async (resolve, reject) => {
     try {
       if (Platform.OS === 'ios') {
-        Linking.openURL('App-Prefs:root=General')
-          .then(() => resolve(true))
-          .catch(reject);
+        const candidates = [
+          'App-Prefs:root=Bluetooth',
+          'App-Prefs:root=General',
+          'app-settings:',
+        ];
+        let opened = false;
+        for (const url of candidates) {
+          try {
+            const canOpen = await Linking.canOpenURL(url);
+            if (!canOpen) continue;
+            await Linking.openURL(url);
+            opened = true;
+            break;
+          } catch {}
+        }
+        if (!opened) {
+          await Linking.openSettings();
+        }
+        resolve(true);
       } else if (isHarmony) {
         try {
           let hModule;

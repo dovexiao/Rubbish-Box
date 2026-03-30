@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     color: '#999',
   },
   deviceCountText: {
-    fontSize: 24,
+    fontSize: 16,
     color: '#333',
     fontWeight: 'bold',
   },

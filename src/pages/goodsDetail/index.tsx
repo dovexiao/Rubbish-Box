@@ -80,11 +80,12 @@ export default function GoodsDetail() {
       console.log(tokenRes, '====');
 
       // 构建跳转参数
-      const params: Record<string, string | number> = {
+      const params: any = {
         productId: goodsDetail.id,
+        orderAmount: goodsDetail.currentPrice,
+        addressId: -1,
         productNum,
-        currentPrice: goodsDetail.currentPrice,
-        productName: goodsDetail.productName,
+        productDetail: goodsDetail,
         token: tokenRes.data.token,
       };
 
@@ -251,7 +252,7 @@ export default function GoodsDetail() {
                 <Image
                   source={{ uri: goodsDetail.detailImage[0] }}
                   style={styles.popupImage}
-                  resizeMode="cover"
+                  resizeMode="contain"
                 />
               ) : null}
 

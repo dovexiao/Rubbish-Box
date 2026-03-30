@@ -225,7 +225,10 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
       }).start();
       if (direction === 'top') {
         StatusBar.setBarStyle('dark-content');
-        StatusBar.setBackgroundColor('#ffffff');
+        // iOS 上该 API 不可用
+        if (Platform.OS === 'android') {
+          StatusBar.setBackgroundColor('#ffffff');
+        }
       }
     } else {
       Animated.timing(slideAnim, {
@@ -242,7 +245,10 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
         StatusBar.setBarStyle(
           themeType === 'dark' ? 'light-content' : 'dark-content',
         );
-        StatusBar.setBackgroundColor('transparent');
+        // iOS 上该 API 不可用
+        if (Platform.OS === 'android') {
+          StatusBar.setBackgroundColor('transparent');
+        }
       }
     }
   };
@@ -270,7 +276,12 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
         return [{ translateY: translate }];
       case 'bottom':
         return [
-          { translateY: Animated.add(translate as any, keyboardOffsetAnim) },
+          {
+            translateY: Animated.add(
+              translate as any,
+              Animated.add(keyboardOffsetAnim, insets.bottom),
+            ),
+          },
         ];
       case 'left':
       case 'right':

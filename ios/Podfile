@@ -93,6 +93,36 @@ target 'boklock' do
       end
     end
 
+    # 允许 QCloudTrack 使用私有头文件
+    installer.pods_project.targets.each do |target|
+      if target.name == 'QCloudTrack'
+        target.build_configurations.each do |build_config|
+          # 对 QCloudTrack 的私有头文件警告进行降级处理
+          other_cflags = build_config.build_settings['OTHER_CFLAGS'] || ''
+          if other_cflags.is_a?(String)
+            build_config.build_settings['OTHER_CFLAGS'] = other_cflags + ' -Wno-error=private-header -Wno-private-header'
+          elsif other_cflags.is_a?(Array)
+            build_config.build_settings['OTHER_CFLAGS'] = other_cflags + ['-Wno-error=private-header', '-Wno-private-header']
+          end
+        end
+      end
+    end
+
+    # 允许 QCloudCore 使用私有头文件
+    installer.pods_project.targets.each do |target|
+      if target.name == 'QCloudCore'
+        target.build_configurations.each do |build_config|
+          # 对 QCloudCore 的私有头文件警告进行降级处理
+          other_cflags = build_config.build_settings['OTHER_CFLAGS'] || ''
+          if other_cflags.is_a?(String)
+            build_config.build_settings['OTHER_CFLAGS'] = other_cflags + ' -Wno-error=private-header -Wno-private-header'
+          elsif other_cflags.is_a?(Array)
+            build_config.build_settings['OTHER_CFLAGS'] = other_cflags + ['-Wno-error=private-header', '-Wno-private-header']
+          end
+        end
+      end
+    end
+
     # 补丁：RCT-Folly Time.h 在 Apple 上不重定义 clockid_t，避免与系统 enum clockid_t 冲突
     time_h_path = File.join(installer.config.installation_root, 'Pods', 'Headers', 'Private', 'RCT-Folly', 'folly', 'portability', 'Time.h')
     if File.exist?(time_h_path)
@@ -109,4 +139,9 @@ target 'boklock' do
 
     installer.pods_project.save
   end
+end
+
+target 'boklockTest' do
+  # Ensure the test target can find React/Pods headers (e.g. React/RCTLog.h).
+  inherit! :complete
 end

@@ -5,7 +5,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { AppState, Image, Text, TouchableOpacity, View } from 'react-native';
+import {
+  AppState,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  Platform,
+} from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Flex, GradientButton, PageContainer } from '@/components';
 import { LOCK_BTN_COLORS, LOCK_STATUS } from '@/constants';
@@ -25,14 +32,16 @@ import {
   getBluetoothState,
   sendChangePinByBluetooth,
   setNearbyPermission,
+  getSystemConnectedDevices,
 } from '@/utils/api';
-import { getBluetoothDeviceInfo } from '@/utils';
+import { getBluetoothDeviceInfo, isSameMac } from '@/utils';
 import BluetoothStatus, {
   type BluetoothStatusRef,
 } from '@/components/bluetoothStatus';
 import SettingPin, { type SettingPinRef } from '../component/SettingPin';
 import {
   getBluetoothPin,
+  getBluetoothStatus,
   openBluetoothProximity,
   settingBluetoothPin,
 } from '@/services';
@@ -54,6 +63,7 @@ type RouteParams = {
   blePin?: string;
   bleName?: string;
   needPin?: number;
+  version?: string;
 };
 
 export default function BluetoothControl() {
@@ -75,8 +85,10 @@ export default function BluetoothControl() {
   const bindSuccessStatus =
     String(params.bindSuccessStatus) === 'true' ||
     params.bindSuccessStatus === true;
+  const version = Number(params.version);
 
   const [isPaired, setIsPaired] = useState(false);
+  const [showPage, setShowPage] = useState(false);
   const [isIgnored, setIsIgnored] = useState(false);
   const [isBluetoothOpen, setIsBluetoothOpen] = useState(false);
   const [gifUrl, setGifUrl] = useState<string | undefined>(undefined);
@@ -91,15 +103,49 @@ export default function BluetoothControl() {
   const settingPinRef = useRef<SettingPinRef>(null);
 
   const refreshPairStatus = useCallback(async () => {
+    showLoading({ title: '蓝牙状态校验中...' });
     const saved = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
     // @ts-ignore
     const entry = saved?.[bleNo];
     const deviceId = entry?.deviceId;
-    const ignoredRes = await checkIfDeviceIgnoredOnIOS(deviceId, bleNo);
-    setIsIgnored(!!ignoredRes.isIgnored);
-    setIsPaired(
-      !!(entry?.deviceId && entry?.isPaired && !ignoredRes.isIgnored),
+    const bleName = String(entry?.bleName || '');
+    const ignoredRes = await checkIfDeviceIgnoredOnIOS(
+      deviceId,
+      bleNo,
+      bleName,
     );
+    setIsIgnored(!!ignoredRes.isIgnored);
+    if (['android', 'ios'].includes(Platform.OS)) {
+      hideLoading();
+      setIsPaired(
+        !!(entry?.deviceId && entry?.isPaired && !ignoredRes.isIgnored),
+      );
+    } else {
+      let currentIsPaired = !!(
+        entry?.deviceId &&
+        entry?.isPaired &&
+        !ignoredRes.isIgnored
+      );
+
+      // 优化1：如果本地判断没配对，就不需要去走鸿蒙原生 API 了，省下那干等的 5 秒钟
+      if (currentIsPaired) {
+        try {
+          const info = await getSystemConnectedDevices();
+          const sysPaired =
+            info.data?.some(
+              (item: any) =>
+                isSameMac(item.deviceId, bleNo) ||
+                (deviceId && isSameMac(item.deviceId, deviceId)),
+            ) || false;
+          currentIsPaired = currentIsPaired && sysPaired;
+        } catch (error) {
+          console.error('获取系统配对设备失败', error);
+        }
+      }
+      hideLoading();
+      setIsPaired(currentIsPaired);
+      setShowPage(true);
+    }
 
     const img = entry?.imageMap;
     if (img) {
@@ -176,23 +222,21 @@ export default function BluetoothControl() {
         pin: value,
         bleNo: cmdRes.newMac,
       });
-      if (apiRes.code === '200') {
+      if (apiRes.code === 200) {
         setBluetoothPin(value);
         // 修改 PIN 码后，将设备配对状态设为 false
         await updateDevicePairedStatus(bleNos);
         hideLoading();
         showToast({ title: '修改 PIN 成功', icon: 'success' });
         closePopup();
-        // setTimeout(() => {
-        //   navigateTo({
-        //     url: `/pages/status/index?${stringify({
-        //       title: '修改PIN码成功',
-        //       deviceId: deviceId,
-        //       bleName: bleName,
-        //       bleNo: bleNo,
-        //     })}`,
-        //   });
-        // }, 500);
+        setTimeout(() => {
+          navigation.navigate('UnBindSuccess', {
+            title: '修改PIN码成功',
+            deviceId: deviceId,
+            bleName: bleName,
+            bleNo: bleNo,
+          });
+        }, 500);
       } else {
         hideLoading();
         showToast({
@@ -264,6 +308,68 @@ export default function BluetoothControl() {
   const handleToggleProximity = useCallback(async () => {
     showLoading({ title: `${proximityEnabled ? '关闭' : '开启'}中...` });
     try {
+      const needPinNum = Number(needPin ?? 0);
+      const targetServerStatus = proximityEnabled ? 0 : 1;
+
+      // needPin != 1：不需要 BLE 交互，直接调用后端并轮询确认
+      if (needPinNum !== 1) {
+        const apiRes: any = await openBluetoothProximity({
+          id: lockId,
+          bluetoothStatus: targetServerStatus,
+        });
+
+        if (
+          !(apiRes?.code === 200 || apiRes?.code === '200' || apiRes?.success)
+        ) {
+          hideLoading();
+          showToast({
+            title: apiRes?.message || '服务端同步失败',
+            icon: 'none',
+          });
+          return;
+        }
+
+        const pollOk = async (): Promise<boolean> => {
+          const start = Date.now();
+          const timeoutMs = 10000;
+          const intervalMs = 1000;
+
+          while (Date.now() - start < timeoutMs) {
+            try {
+              const res: any = await getBluetoothStatus({
+                id: lockId,
+                bluetoothStatus: targetServerStatus,
+              });
+              if (res?.data) return true;
+            } catch {
+              // 轮询继续
+            }
+
+            await new Promise(resolve => setTimeout(resolve, intervalMs));
+          }
+
+          return false;
+        };
+
+        const ok = await pollOk();
+        if (!ok) {
+          showToast({
+            title: `${
+              proximityEnabled ? '关闭' : '开启'
+            }近身功能失败，请稍后重试`,
+            icon: 'none',
+          });
+          return;
+        }
+
+        setProximityEnabled(v => !v);
+        setTimeout(
+          () => showToast({ title: '操作成功', icon: 'success' }),
+          600,
+        );
+        return;
+      }
+
       const saved = (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
       // @ts-ignore
       const deviceId = saved?.[bleNo]?.deviceId;
@@ -276,7 +382,6 @@ export default function BluetoothControl() {
         deviceNo,
         status: proximityEnabled ? 2 : 1,
       });
-      console.log(cmdRes, '===cmdRes');
       if (!cmdRes.success) {
         showToast({
           title:
@@ -300,6 +405,7 @@ export default function BluetoothControl() {
       setProximityEnabled(v => !v);
       showToast({ title: '操作成功', icon: 'success' });
     } catch (error) {
+      hideLoading();
       console.error('handleToggleProximity error', error);
     }
   }, [bleNo, deviceNo, lockId, proximityEnabled]);
@@ -316,6 +422,7 @@ export default function BluetoothControl() {
         bleName,
         needPin,
         pin: bluetoothPin || blePin || '',
+        version,
         pageName: 'BluetoothControl',
       });
     } else {
@@ -365,7 +472,8 @@ export default function BluetoothControl() {
       }
     >
       <View style={styles.container}>
-        {hasPaired ? (
+        {hasPaired ||
+        (!showPage && Platform.OS !== 'ios' && Platform.OS !== 'android') ? (
           <View style={styles.pairedBox}>
             {gifUrl ? (
               <Image
@@ -404,7 +512,7 @@ export default function BluetoothControl() {
                     </Text>
                   </Flex>
                 </Flex>
-                {role === 1 ? (
+                {role === 1 && version > 12 ? (
                   <TouchableOpacity
                     onPress={() => {
                       bluetoothStatusRef.current?.open();
@@ -527,7 +635,7 @@ export default function BluetoothControl() {
         type="pass"
         onSuccess={async () => {
           if (optionTypeRef?.current === 1) {
-            settingPinRef.current?.open();
+            setTimeout(() => settingPinRef.current?.open?.(), 600);
           } else if (optionTypeRef?.current === 2) {
             await handleToggleProximity();
           }

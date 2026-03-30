@@ -22,7 +22,7 @@ import {
 } from '@/services/device';
 import { OPT_TYPE, OT_STATUS } from '@/constants';
 import { DeviceSwitch } from '../Device/switch';
-import { LockInfoDTO } from '@/pages/index/typing';
+import type { LockInfoDTO } from '@/pages/index/typing';
 import { styles } from './style';
 import { groupSubList } from '@/services';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
@@ -49,6 +49,7 @@ import { OperationCommandByBluetooth } from '@/utils/api';
 import { useAtom, useSetAtom } from 'jotai';
 import { bluetoothOperationLockFallStatusStore } from '@/store/store';
 import { PopConfirmRef } from '../popConfirm';
+import PopCenter from '../PopCenter';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -85,6 +86,9 @@ const Content: React.FC<ContentProps> = ({
   const manageMultipleRef = useRef<AnimationPopRef>(null);
   const bluetoothConnectStatusRef = useRef<BluetoothStatusRef>(null);
   const bluetoothControlRef = useRef<'RISE' | 'DOWN'>('RISE');
+  const groupToastPop = useRef<AutoOperatePopRef>(null);
+  const deviceNum = useRef<number>(0);
+  const optionRef = useRef<string>('');
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -103,10 +107,27 @@ const Content: React.FC<ContentProps> = ({
   const sleep = (time: number) =>
     new Promise(resolve => setTimeout(resolve, time));
 
+  const getBluetoothAnimationType = (
+    direction: 'RISE' | 'DOWN',
+    currentStatus: LockVisualStatus,
+  ) => {
+    if (direction === 'DOWN') {
+      return currentStatus === 'rise30'
+        ? 'falling30'
+        : currentStatus === 'rise120'
+        ? 'falling120'
+        : 'falling';
+    }
+    return currentStatus === 'rise30'
+      ? 'rising30'
+      : currentStatus === 'rise120'
+      ? 'rising120'
+      : 'rising';
+  };
+
   // 地锁操作
   const handleOperate = useCallback(
     async (direction: 'RISE' | 'DOWN') => {
-      console.log('handleOperate', detail);
       if (!detail?.id || optioning) return;
 
       eventCenter.trigger('onOptioned', true);
@@ -139,17 +160,22 @@ const Content: React.FC<ContentProps> = ({
         } as any);
 
         if (res?.code !== 200) {
-          // showToast(direction === 'DOWN' ? '已发送降锁指令' : '已发送升锁指令');
+          hideLoading();
           eventCenter.trigger('onOptioned', false);
-          showToast(res?.msg || res.message);
+          setTimeout(() => {
+            showToast({ title: res?.msg || res.message, icon: 'error' });
+          }, 600);
+
           if (onFresh) {
             await onFresh(detail.id);
           } else if (reload) {
             await reload(detail.id);
           }
-          hideLoading();
           return;
         }
+
+        deviceNum.current = res.data;
+        optionRef.current = direction;
 
         loopLockStatus(
           currentDeviceStatus,
@@ -216,6 +242,15 @@ const Content: React.FC<ContentProps> = ({
                     : 'rising',
                 value: true,
               });
+            }
+
+            if (
+              deviceType === 'group' &&
+              deviceNum.current !== detail?.groupCount
+            ) {
+              setTimeout(() => {
+                groupToastPop.current?.open();
+              }, 600);
             }
             return false;
           }
@@ -285,23 +320,26 @@ const Content: React.FC<ContentProps> = ({
   // 蓝牙操作地锁
   const handleOperateByBluetooth = async (direction: 'RISE' | 'DOWN') => {
     try {
+      eventCenter.trigger('onOptioned', true);
       const bleNo = detail?.bleNo;
       const deviceMap =
         (await getBluetoothDeviceInfo().catch(() => null)) || {};
       const deviceId = bleNo
         ? deviceMap?.[bleNo as string]?.deviceId
         : undefined;
+
       if (!deviceId || !bluetoothControlRef.current) {
         bluetoothConnectStatusRef.current?.open();
         return;
       }
 
-      if (lockFallStatus === direction) {
-        showToast({
-          title: `地锁已经处于${direction === 'RISE' ? '升起' : '降下'}状态`,
-        });
-        return;
-      }
+      // 前端不再拦截蓝牙发送，允许同一状态重复发送以处理被卡住或状态不同步的情况
+      // if (lockFallStatus === direction) {
+      //   showToast({
+      //     title: `地锁已经处于${direction === 'RISE' ? '升起' : '降下'}状态`,
+      //   });
+      //   return;
+      // }
 
       showLoading({
         title: `${direction === 'RISE' ? '升起中...' : '降下中...'}`,
@@ -314,22 +352,24 @@ const Content: React.FC<ContentProps> = ({
         deviceNo: detail?.deviceNo,
       });
 
+      console.log(r, '===r');
       if (r.success) {
-        await sleep(4000);
+        eventCenter.trigger('onAnimation', {
+          type: getBluetoothAnimationType(direction, currentDeviceStatus),
+          value: true,
+        });
+        await sleep(1200);
         hideLoading();
         setLockStatus(preV => direction);
       } else {
         await sleep(4000);
-        hideLoading();
+        eventCenter.trigger('onOptioned', false);
         showToast({ title: r.msg || '操作失败', icon: 'none' });
       }
     } catch (error) {
       await sleep(4000);
       hideLoading();
-      console.error(
-        direction === 'RISE' ? '手动升锁失败:' : '手动降锁失败:',
-        error,
-      );
+      eventCenter.trigger('onOptioned', false);
       bluetoothConnectStatusRef.current?.open();
     }
   };
@@ -423,6 +463,7 @@ const Content: React.FC<ContentProps> = ({
       fromHomePage: true,
       bleName: detail?.bleName,
       needPin: detail?.needPin,
+      version: detail?.compVer,
     });
   };
 
@@ -472,11 +513,14 @@ const Content: React.FC<ContentProps> = ({
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => {
-              if (detail?.powerType === 1) {
+              if (detail?.powerType === 1 || detail?.isGroup) {
                 handleOperate('RISE');
               } else {
-                // handleOperateByBluetooth('RISE');
-                bluetoothConnectStatusRef.current?.open();
+                bluetoothControlRef.current = 'RISE';
+                setTimeout(
+                  () => bluetoothConnectStatusRef.current?.open?.(),
+                  600,
+                );
               }
             }}
           >
@@ -492,11 +536,14 @@ const Content: React.FC<ContentProps> = ({
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => {
-              if (detail?.powerType === 1) {
+              if (detail?.powerType === 1 || detail?.isGroup) {
                 handleOperate('DOWN');
               } else {
-                // handleOperateByBluetooth('DOWN');
-                bluetoothConnectStatusRef.current?.open();
+                bluetoothControlRef.current = 'DOWN';
+                setTimeout(
+                  () => bluetoothConnectStatusRef.current?.open?.(),
+                  600,
+                );
               }
             }}
           >
@@ -705,7 +752,7 @@ const Content: React.FC<ContentProps> = ({
         title={'管理组合设备'}
       >
         <Flex
-          style={{ marginTop: 24, marginBottom: 8 }}
+          style={{ marginTop: 24, marginBottom: 36 }}
           direction="column"
           justify="center"
           align="center"
@@ -728,18 +775,17 @@ const Content: React.FC<ContentProps> = ({
           >
             <Text style={styles.manageBtnText}>编辑</Text>
           </Flex>
-          <Flex
-            isTouchView
-            justify="center"
-            align="center"
+          {/* iOS：先关闭组合管理弹窗，再延迟打开确认框，避免 Modal 层级未完成导致 PopConfirm 不显示 */}
+          <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => {
               manageMultipleRef.current?.close();
-              setDeleteMultipleRef(true);
+              setTimeout(() => setDeleteMultipleRef(true), 600);
             }}
             style={{ ...styles.manageBtn, ...styles.manageDeteleBtn }}
           >
             <Text style={styles.manageDeteleBtnText}>删除</Text>
-          </Flex>
+          </TouchableOpacity>
         </Flex>
       </AnimationPop>
 
@@ -791,10 +837,46 @@ const Content: React.FC<ContentProps> = ({
           if (detail?.powerType === 1) {
             await operateCover();
           } else {
-            bluetoothConnectStatusRef.current?.open();
+            setTimeout(() => bluetoothConnectStatusRef.current?.open?.(), 600);
           }
         }}
       />
+
+      <PopCenter height={240} ref={groupToastPop}>
+        <Flex
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          direction="column"
+          justify={'between'}
+          align="center"
+        >
+          <Text style={styles.toastTitle}>温馨提示</Text>
+          <Flex style={{ width: '100%' }} direction="column" align="center">
+            <Text style={styles.toastContentText}>
+              {deviceNum.current}台地锁
+              {optionRef.current === 'RISE' ? '升起' : '降下'}
+              成功
+            </Text>
+            <Text style={styles.toastContentText}>
+              （其他地锁可能存在上方有车、锁盖解锁、设备离线的情况）
+            </Text>
+          </Flex>
+          <Text
+            style={styles.dumpText}
+            onPress={() => {
+              groupToastPop.current?.close();
+              navigation.navigate('DeviceList', {
+                id: detail?.id,
+                role: detail?.role,
+              });
+            }}
+          >
+            前往设备列表查看
+          </Text>
+        </Flex>
+      </PopCenter>
     </View>
   );
 };

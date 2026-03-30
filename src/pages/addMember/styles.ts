@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333333',
     fontWeight: 'bold',
-    lineHeight: 20
+    lineHeight: 20,
   },
   fieldInput: {
     flex: 1,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   submitButton: {
-    boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)',
+    // boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)',
   },
   submitButtonText: {
     color: '#FFFFFF',
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    color: '#999999',
+    color: '#666666',
     fontSize: 14,
   },
   emptyContainer: {
@@ -108,7 +108,12 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
   },
+  footerText: {
+    fontSize: 12,
+    color: '#999999',
+    marginTop: 8,
+    textAlign: 'center',
+  },
 });
 
 export default styles;
-

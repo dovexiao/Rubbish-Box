@@ -1,4 +1,5 @@
-import { Toast } from '@ant-design/react-native';
+﻿import { Toast } from '@ant-design/react-native';
+import eventCenter from './eventCenter';
 
 export type ToastIcon = 'success' | 'error' | 'loading' | 'none';
 
@@ -23,21 +24,24 @@ export function showToast(options: ShowToastOptions | string): void {
   const { title, icon = 'none', duration = 1500 } = opts;
   const seconds = duration / 1000;
 
-  switch (icon) {
-    case 'success':
-      Toast.success(title, seconds);
-      break;
-    case 'error':
-      Toast.fail(title, seconds);
-      break;
-    case 'loading':
-      // 建议使用 showLoading，兼容 icon = 'loading' 的写法
-      showLoading({ title });
-      break;
-    case 'none':
-    default:
-      Toast.info(title, seconds);
-      break;
+  if (icon === 'loading') {
+    showLoading({ title });
+    return;
+  }
+
+  // 如果是没有 icon 的情况，走我们封装的无遮挡全局 Modal Toast
+  if (icon === 'none') {
+    eventCenter.trigger('global_show_toast', { title, icon, duration });
+    return;
+  }
+
+  // 如果有 icon，退回到 @ant-design/react-native 旧逻辑
+  if (icon === 'success') {
+    Toast.success({ content: title, duration: seconds });
+  } else if (icon === 'error') {
+    Toast.fail({ content: title, duration: seconds });
+  } else {
+    Toast.info({ content: title, duration: seconds });
   }
 }
 
@@ -54,13 +58,14 @@ export interface ShowLoadingOptions {
 export function showLoading(options?: ShowLoadingOptions): void {
   const title = options?.title ?? '加载中...';
 
-  // 先移除之前的 loading，避免叠加
+  // 移出基于 Toast 的老逻辑
   if (globalLoadingKey) {
     Toast.remove(globalLoadingKey);
     globalLoadingKey = null;
   }
 
-  globalLoadingKey = Toast.loading(title, 0);
+  // 触发全局高层级 Modal loading
+  eventCenter.trigger('global_show_loading', { title });
 }
 
 /**
@@ -69,13 +74,16 @@ export function showLoading(options?: ShowLoadingOptions): void {
 export function hideLoading(): void {
   if (globalLoadingKey) {
     Toast.remove(globalLoadingKey);
+    Toast.removeAll();
     globalLoadingKey = null;
-  } else {
-    // 兜底：移除所有 Toast，防止遗留
-    try {
-      Toast.removeAll();
-    } catch (e) {
-      // ignore
-    }
+  }
+  // 隐藏全局高层级 Modal loading
+  eventCenter.trigger('global_hide_loading');
+
+  // 兜底：移除所有 Toast，防止遗留
+  try {
+    Toast.removeAll();
+  } catch (e) {
+    // ignore
   }
 }

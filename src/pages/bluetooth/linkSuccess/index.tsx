@@ -20,17 +20,20 @@ export default function BluetoothLinkSuccess() {
   const [backNum, setBackNum] = useState(3);
 
   useEffect(() => {
+    if (backNum <= 0) return;
     const timer = setTimeout(() => {
-      setBackNum(prev => {
-        const next = prev - 1;
-        if (next <= 0) {
-          navigation.navigate('Index' as any);
-        }
-        return next;
-      });
+      setBackNum(prev => Math.max(0, prev - 1));
     }, 1000);
     return () => clearTimeout(timer);
-  }, [backNum, navigation]);
+  }, [backNum]);
+
+  useEffect(() => {
+    if (backNum > 0) return;
+    reLaunch(
+      'Index',
+      params.pages ? { pages: 'addDevice', id: params?.id } : undefined,
+    );
+  }, [backNum, params?.id, params.pages]);
 
   const isAddPage = !!params.pages;
 

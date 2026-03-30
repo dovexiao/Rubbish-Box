@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     paddingRight: 12,
   },
   footer: {
-    marginBottom: 34,
+    marginBottom: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    color: '#999999',
+    color: '#666666',
     fontSize: 14,
   },
   emptyContainer: {

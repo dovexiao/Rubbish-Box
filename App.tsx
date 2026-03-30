@@ -1,5 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { AppState, AppStateStatus, BackHandler, Platform } from 'react-native';
+import {
+  AppState,
+  AppStateStatus,
+  BackHandler,
+  LogBox,
+  Platform,
+} from 'react-native';
 import { SafeAreaProvider } from '@/libs/safeAreaContext';
 import {
   NavigationContainer,
@@ -11,11 +17,12 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import AntdProvider from '@ant-design/react-native/lib/provider';
 import { AppNavigator } from '@/navigation/AppNavigator';
 import { queryClient } from '@/config/queryClient';
+import { BASE_URL, DEPLOY_ENV } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { setNavigationRef } from '@/utils/navigation';
 import PopConfirm from '@/components/popConfirm';
 import Flex from '@/components/Flex';
-import { Text, Button } from '@ant-design/react-native';
+import { Text, Button, View } from '@ant-design/react-native';
 import {
   cacheGet,
   cacheGetSync,
@@ -36,17 +43,28 @@ import {
   jumpToPage,
   initAMapSdk,
   initAMapGeolocation,
+  hideLoading,
+  showToast,
 } from '@/utils';
 import appPush from '@/utils/push';
 import { WeChatInit } from '@/utils/wechat';
 import appUpdate from '@/utils/appUpdate';
 import { bind } from '@/services/bindDevice';
-import { openBluetoothProximity } from '@/services/bluetooth';
+import {
+  getBluetoothStatus,
+  openBluetoothProximity,
+} from '@/services/bluetooth';
 import { Toast } from '@ant-design/react-native';
 import GradientButton from '@/components/GradientButton';
 import { AppUpdateDialogHost } from '@/components/AppUpdateDialog';
+import { GlobalLoading, GlobalToast } from '@/components';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { StoreProvider } from '@/store/provider';
+
+// Harmony debug mode: silence in-app LogBox overlays.
+if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+  LogBox.ignoreAllLogs(true);
+}
 
 function App() {
   const navigationRef = useNavigationContainerRef<any>();
@@ -114,6 +132,8 @@ function App() {
   useEffect(() => {
     getAppPackageName().then(pkg => {
       console.log('[App] 当前包名:', pkg);
+      console.log('[App] 部署环境:', DEPLOY_ENV);
+      console.log('[App] API 地址:', BASE_URL);
     });
   }, []);
 
@@ -200,7 +220,7 @@ function App() {
         const by = byRes?.data;
         // 仅当来源非 login（或未设置）时由 App 层重弹
         if (!agreed && needReopen && by !== 'login') {
-          agreePopRef.current?.open?.();
+          setTimeout(() => agreePopRef.current?.open?.(), 600);
         }
         // 无论是否打开，均重置标记
         try {
@@ -219,7 +239,7 @@ function App() {
   useEffect(() => {
     const handler = (config: any) => {
       setGlobalPopConfirmConfig(config);
-      globalPopConfirmRef.current?.open();
+      setTimeout(() => globalPopConfirmRef.current?.open?.(), 600);
     };
     eventCenter.on('global:popConfirm:show', handler);
     return () => {
@@ -343,8 +363,6 @@ function App() {
               (p || '').replace(/^\//, '').replace(/^pages\//, '');
             const currentRoute = normalize(route as string);
             const targetRoute = normalize(data.path);
-            console.log('[rn][restore] currentRoute', currentRoute);
-            console.log('[rn][restore] targetRoute', targetRoute);
 
             // 如果当前页面就是目标页面，说明app未被杀掉，由页面自己的onShow处理
             if (currentRoute === targetRoute) {
@@ -387,25 +405,26 @@ function App() {
             }
 
             const info = await getSystemConnectedDevices();
-            console.log(info, path, '===info');
             if (path === 'FindDevice') {
               const isPaired =
                 info.data?.some((item: any) =>
                   isSameMac(item.deviceId || item.mac, params?.bleNo),
-                ) || false;
-              const deviceInfo = info.data?.find((item: any) =>
-                isSameMac(item.deviceId || item.mac, params?.bleNo),
-              );
-              console.log(isPaired, deviceInfo, '===isPaired, deviceInfo');
+                ) ||
+                info.data?.some((item: any) => item.name === params?.bleName) ||
+                false;
+              const deviceInfo =
+                info.data?.find((item: any) =>
+                  isSameMac(item.deviceId || item.mac, params?.bleNo),
+                ) ||
+                info.data?.find((item: any) => item.name === params?.bleName);
               if (isPaired) {
                 const bluetoothDeviceInfoList =
                   (await getBluetoothDeviceInfo().catch(() => null)) || {};
-                const { bleNo, imageMap, lockId, mode, pageName } =
+                const { bleNo, imageMap, lockId, mode, pageName, needPin } =
                   params || {};
                 let res: any;
                 let bindRes: any;
 
-                console.log(pageName, '===pageName');
                 if (pageName?.includes('BindDevice')) {
                   Toast.loading('绑定中...', 0);
                   bindRes = await bind({
@@ -442,12 +461,57 @@ function App() {
                           data: newMap,
                         });
                       }
+
                       eventCenter.trigger('rnBindSuccess', bindRes.data);
                       reLaunch('Index', { lockId: bindRes.data?.id });
                     }
                   }
-                  console.log(pageName, mode, '===pageName');
+
                   if (pageName?.includes('BluetoothControl') && !mode) {
+                    if (!!!needPin) {
+                      const pollOk = async (): Promise<boolean> => {
+                        const start = Date.now();
+                        const timeoutMs = 10000;
+                        const intervalMs = 1000;
+
+                        while (Date.now() - start < timeoutMs) {
+                          try {
+                            const res: any = await getBluetoothStatus({
+                              id: lockId,
+                              bluetoothStatus: 1,
+                            });
+                            const codeOk =
+                              res?.success === true || res?.code === 200;
+
+                            if (res?.data) return true;
+                          } catch {
+                            // 轮询继续
+                          }
+
+                          await new Promise(resolve =>
+                            setTimeout(resolve, intervalMs),
+                          );
+                        }
+
+                        return false;
+                      };
+
+                      const ok = await pollOk();
+                      if (!ok) {
+                        setTimeout(() => {
+                          showToast({
+                            title: '自动动升降开启失败，请重试',
+                            icon: 'none',
+                          });
+                        }, 600);
+                        return;
+                      }
+
+                      setTimeout(() => {
+                        Toast.success('自动升降开启成功');
+                      }, 600);
+                      return;
+                    }
                     Toast.success('自动升降开启成功');
                   }
                   if (pageName?.includes('BluetoothControl') && mode) {
@@ -478,7 +542,7 @@ function App() {
               }
             } else {
               // 其他路径直接跳转
-              reLaunch(data.path);
+              reLaunch(data.path, params);
             }
           } catch (e) {
             // URLSearchParams 失败则只跳路径
@@ -635,7 +699,7 @@ function App() {
                     cancelText="不同意"
                     onCancel={() => {
                       agreePopRef.current?.close?.();
-                      retainPopRef.current?.open?.();
+                      setTimeout(() => retainPopRef.current?.open?.(), 600);
                     }}
                     submitBtn={
                       <GradientButton
@@ -701,7 +765,24 @@ function App() {
                   {globalPopConfirmConfig && (
                     <PopConfirm
                       ref={globalPopConfirmRef}
-                      title={globalPopConfirmConfig.title}
+                      title={
+                        <Flex
+                          direction="column"
+                          align="center"
+                          justify="center"
+                        >
+                          <View
+                            style={{
+                              paddingTop: 24,
+                              fontSize: 16,
+                              fontWeight: '500',
+                              textAlign: 'center',
+                            }}
+                          >
+                            {globalPopConfirmConfig.title}
+                          </View>
+                        </Flex>
+                      }
                       confirmText={globalPopConfirmConfig.confirmText || '确定'}
                       cancelText={globalPopConfirmConfig.cancelText || '取消'}
                       showClose={globalPopConfirmConfig.showClose !== false}
@@ -729,6 +810,8 @@ function App() {
             </ThemeProvider>
           </StoreProvider>
           <AppUpdateDialogHost />
+          <GlobalLoading />
+          <GlobalToast />
         </AntdProvider>
       </QueryClientProvider>
     </ErrorBoundary>

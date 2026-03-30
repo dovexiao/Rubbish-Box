@@ -28,3 +28,5 @@ export { showAppUpdateDialog, AppUpdateDialogHost } from './AppUpdateDialog';
 export { default as AutoOperatePop } from './autoOperatePop';
 export { default as CheckBluetooth } from './checkBluetooth';
 export { default as BluetoothStatus } from './bluetoothStatus';
+export { GlobalLoading } from './GlobalLoading';
+export { GlobalToast } from './GlobalToast';

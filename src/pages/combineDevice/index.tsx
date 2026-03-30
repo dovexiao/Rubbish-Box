@@ -436,8 +436,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#999999',
-    opacity: 0.5,
+    color: '#666666',
     marginTop: 16,
   },
 });

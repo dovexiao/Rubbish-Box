@@ -22,7 +22,7 @@ import {
   MediaType,
 } from 'react-native-image-picker';
 import { baseInfo, updateInfo } from '@/services/user';
-import { checkAndRequestPhotoPermission } from '@/utils/permissions';
+import { checkPhotoPermission } from '@/utils/permissions';
 import styles from './styles';
 import { openSettings } from 'react-native-permissions';
 import { hideLoading, showLoading, showToast, tencentUpload } from '@/utils';
@@ -119,8 +119,38 @@ export default function UserInfo() {
 
     try {
       // 检查相册权限（Android 需要，iOS 也需要）
-      const hasPermission = await checkAndRequestPhotoPermission();
-      if (!hasPermission) {
+      const photoPermission = await checkPhotoPermission();
+      if (!photoPermission.granted) {
+        if (photoPermission.canOpenSettings) {
+          await new Promise<void>(resolve => {
+            Alert.alert(
+              '需要相册权限',
+              photoPermission.message || '相册权限已被永久拒绝，请前往设置开启',
+              [
+                {
+                  text: '取消',
+                  style: 'cancel',
+                  onPress: () => resolve(),
+                },
+                {
+                  text: '去设置',
+                  onPress: () => {
+                    openSettings()
+                      .catch(() => {
+                        Alert.alert(
+                          '无法打开设置',
+                          '请手动前往系统设置开启权限',
+                        );
+                      })
+                      .finally(() => resolve());
+                  },
+                },
+              ],
+            );
+          });
+        } else {
+          showToast(photoPermission.message || '相册权限被拒绝');
+        }
         pickerBusyRef.current = false;
         return;
       }

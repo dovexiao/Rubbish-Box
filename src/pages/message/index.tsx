@@ -142,7 +142,7 @@ export default function MessageScreen() {
   }, []);
 
   const handleEnterDevice = useCallback(
-    async (id: number, msgId: number) => {
+    async (id: number, msgId: number, groupId?: number) => {
       try {
         const existRes = await getUserLockExist({ id });
         if (existRes.code === 200) {
@@ -152,7 +152,11 @@ export default function MessageScreen() {
           }
           const readRes = await readMsg({ id: msgId });
           if (readRes.code === 200 && readRes.data) {
-            reLaunch('Index', { lockId: id });
+            if (groupId) {
+              reLaunch('Multiple', { lockId: groupId });
+            } else {
+              reLaunch('Index', { lockId: id });
+            }
           } else {
             showToast(readRes.msg || readRes.message);
           }
@@ -209,7 +213,12 @@ export default function MessageScreen() {
               void handleMessageDetail(item.id);
               return;
             }
-            void handleEnterDevice(Number(item.lockId), item.id);
+            console.log(item, '====');
+            void handleEnterDevice(
+              Number(item.lockId),
+              item.id,
+              Number(item.groupId),
+            );
           }}
           style={styles.itemContent}
         >

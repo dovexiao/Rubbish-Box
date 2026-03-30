@@ -202,11 +202,10 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#999999',
+    color: '#666666',
     marginTop: 16,
     textAlign: 'center',
-    opacity: 0.5,
-  },
+    },
   tipsBox: {
     marginTop: 10,
   },

@@ -34,7 +34,9 @@ export const MainTabNavigator: React.FC = () => {
           packageUrl: info.packageUrl,
           forceUpdate: info.forceUpdate,
           isLast: info.isLast,
-          onConfirm: () => manager.applyAppVerUpdate(info),
+          onConfirm: () => {
+            setTimeout(() => manager.applyAppVerUpdate(info), 600);
+          },
         });
       }
     } catch (e) {
@@ -50,8 +52,8 @@ export const MainTabNavigator: React.FC = () => {
       paddingHorizontal: 16,
       borderTopWidth: 1,
       borderTopColor: 'rgba(0,0,0,0.05)',
-      height: 60 + insets.bottom,
-      paddingBottom: insets.bottom + 8,
+      height: 80 + insets.bottom,
+      paddingBottom: insets.bottom + 20,
     };
   }, [insets]);
 

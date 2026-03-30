@@ -244,11 +244,11 @@ export default function PickupCodeRecordDetail() {
 
   return (
     <PageContainer
-      backgroundColor="transparent"
       statusBarStyle="light-content"
       statusBarBackgroundColor="transparent"
       safeAreaEdges={['top', 'bottom']}
       scrollable={true}
+      backgroundColor="#F6F7FA"
       pageNavProps={{
         text: '领取详情',
         showBack: true,

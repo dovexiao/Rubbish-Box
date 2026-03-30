@@ -95,6 +95,7 @@ export const styles = StyleSheet.create({
   },
   input: {
     textAlign: 'right',
+    minWidth: 120,
   },
   titleBox: {
     width: '100%',

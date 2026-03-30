@@ -9,6 +9,9 @@ overrides:
   '@react-native-oh/react-native-harmony>@react-native-oh/react-native-harmony-cli': 0.77.50
 
 patchedDependencies:
+  '@react-native-ohos/react-native-ble-plx@3.2.1-rc.2':
+    hash: a81d7ff30ce54fae0a3ee5328193c9baa33c07d0ee53bbb886a879777956dc36
+    path: patches/@react-native-ohos+react-native-ble-plx@3.2.1-rc.2.patch
   '@react-native-ohos/react-native-vision-camera@4.0.3':
     hash: badcac378003f20204a4f31fd1195a71eca4c2ae87fc3d7e40809118291aafba
     path: patches/@react-native-ohos+react-native-vision-camera@4.0.3.patch
@@ -62,12 +65,15 @@ importers:
       '@react-native-oh-tpl/react-native-view-shot':
         specifier: 3.8.0-0.3.2
         version: 3.8.0-0.3.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+      '@react-native-oh-tpl/react-native-webview':
+        specifier: 13.10.4
+        version: 13.10.4(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       '@react-native-ohos/clipboard':
         specifier: 1.16.3-rc.1
         version: 1.16.3-rc.1(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       '@react-native-ohos/react-native-ble-plx':
         specifier: 3.2.1-rc.2
-        version: 3.2.1-rc.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+        version: 3.2.1-rc.2(patch_hash=a81d7ff30ce54fae0a3ee5328193c9baa33c07d0ee53bbb886a879777956dc36)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       '@react-native-ohos/react-native-image-picker':
         specifier: 7.0.4-rc.2
         version: 7.0.4-rc.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -1717,6 +1723,12 @@ packages:
 
   '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2':
     resolution: {integrity: sha512-SovSCe4fPz+A7KXJ8NisTCcPwvRmAjtXIWSxKVyGWrkishZ6Ru3ApdoJySf4y18dugW3qrV4MuQElicGkujGQQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  '@react-native-oh-tpl/react-native-webview@13.10.4':
+    resolution: {integrity: sha512-V8nbgwHgMYtFEAXPhTDfp3JmpLNu8thoPhVh3Llo1YNmB5EBTCJgZ/2vNPY7Y/0JmGlh6Ul3LeItNQOWPc5efQ==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -4932,6 +4944,12 @@ packages:
       react: '*'
       react-native: '*'
 
+  react-native-webview@13.10.2:
+    resolution: {integrity: sha512-rjrTuPBtpHbI3owoyvSR+bRJqHfsdo5V3nVfU+G65CotkSLewEcGfA9cq7Qv3nzm5t0KEDIt0G/n7hQFjsXihQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
   react-native-wechat-lib@3.0.4:
     resolution: {integrity: sha512-tJYSsT8kk0uEdtskIwPUfUdmiBw+kPRNJBXR8fc5SaHZNJCE1ewrzD7sge9KK+RaldvWNmiTb4tbw0l2V+Jv1w==}
     engines: {node: '>= 16.0.0'}
@@ -7805,6 +7823,14 @@ snapshots:
       react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
       react-native-view-shot: 3.8.0(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
 
+  '@react-native-oh-tpl/react-native-webview@13.10.4(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      escape-string-regexp: 2.0.0
+      invariant: 2.2.4
+      react: 18.2.0
+      react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+      react-native-webview: 13.10.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+
   '@react-native-oh/react-native-harmony-cli@0.77.50(@babel/preset-env@7.29.0(@babel/core@7.29.0))(@types/node@25.3.5)(metro@0.76.9)':
     dependencies:
       '@react-native-community/cli-tools': 13.6.9
@@ -7871,7 +7897,7 @@ snapshots:
       react: 18.2.0
       react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
-  '@react-native-ohos/react-native-ble-plx@3.2.1-rc.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+  '@react-native-ohos/react-native-ble-plx@3.2.1-rc.2(patch_hash=a81d7ff30ce54fae0a3ee5328193c9baa33c07d0ee53bbb886a879777956dc36)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@expo/config-plugins': 8.0.11
       react: 18.2.0
@@ -12217,6 +12243,13 @@ snapshots:
       react-native-reanimated: 3.10.1(@babel/core@7.29.0)(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
 
   react-native-webview@11.26.1(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      escape-string-regexp: 2.0.0
+      invariant: 2.2.4
+      react: 18.2.0
+      react-native: 0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+
+  react-native-webview@13.10.2(react-native@0.72.5(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
     dependencies:
       escape-string-regexp: 2.0.0
       invariant: 2.2.4

@@ -30,10 +30,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
     marginBottom: 8,
   },
   manualText: {
@@ -180,6 +176,9 @@ export const styles = StyleSheet.create({
     width: 327,
     height: 48,
     borderRadius: 12,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   manageBtnText: {
@@ -197,5 +196,28 @@ export const styles = StyleSheet.create({
   },
   manageDeteleBtnText: {
     color: '#666',
+  },
+  toastTitle: {
+    height: 22,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    lineHeight: 22,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  toastContentText: {
+    fontSize: 14,
+    color: '#333333',
+    lineHeight: 20,
+    textAlign: 'center',
+    width: '100%',
+  },
+  dumpText: {
+    fontWeight: '500',
+    fontSize: 16,
+    color: '#2828ff',
+    lineHeight: 22,
+    marginBottom: 16,
   },
 });

@@ -5,8 +5,8 @@ const passwordStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: 81,
-    paddingHorizontal: 24
+    marginTop: 55,
+    paddingHorizontal: 24,
   },
   content: {
     marginTop: 16,
@@ -23,7 +23,6 @@ const passwordStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-
   },
   errorBorder: {
     borderRadius: 12,
@@ -70,7 +69,7 @@ const passwordStyles = StyleSheet.create({
     marginTop: 16,
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   changeTypeDesc: {
     fontWeight: 'bold',

@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Platform,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer, Flex } from '@/components';
@@ -140,6 +147,7 @@ export default function Feedback() {
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
+      scrollable={Platform.OS === 'ios'}
       pageNavProps={{
         text: '意见反馈',
         showBack: true,

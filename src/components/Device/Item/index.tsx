@@ -73,7 +73,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
                 <AppIcon
                   name="multiplication"
                   color="#333333"
-                  size={14}
+                  size={6}
                   style={{ marginHorizontal: 2 }}
                 />
                 <Text style={styles.deviceCountText}>{data.groupCount}</Text>

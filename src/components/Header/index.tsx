@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({
     </TouchableOpacity>
   );
 
-  const isGroupOrNonMains = lockInfo?.isGroup || lockInfo?.powerType !== 1;
+  const isGroupOrNonMains = lockInfo?.isGroup || noDevices;
   const isHarmony = !['ios', 'android'].includes(Platform.OS);
   const deviceStatus = lockInfo?.deviceStatus;
 
@@ -212,7 +212,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
 
               {/* 小绿点 / 状态点 */}
-              <View style={statusDotStyle} />
+              {!noDevices && <View style={statusDotStyle} />}
 
               {/* 故障文案 */}
               {lockInfo?.fallStatus === LOCK_STATUS.FAULT && (

@@ -5,9 +5,10 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
-import { LockInfoDTO } from '@/pages/index/typing';
+import type { LockInfoDTO } from '@/pages/index/typing';
 import { getLockDeviceList } from '@/services/device';
 import { updateName } from '@/services/deviceInfo';
 import { cacheGet } from '@/utils/cache';
@@ -44,12 +45,17 @@ export const DeviceSwitch: React.FC<Props> = ({
 
   const devicePopRef = useRef<AnimationPopRef>(null);
   const editNamePopRef = useRef<AnimationPopRef>(null);
+  const openEditNameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const insets = useSafeAreaInsets();
 
   const isDeep = backgroundType === 'deep';
   const themeColor = isDeep ? '#fff' : '#333';
 
   const handleOpenDeviceList = () => {
+    // 避免两个弹层 Modal 遮罩叠加，导致点击无反应
+    editNamePopRef.current?.close();
     devicePopRef.current?.open();
     loadDeviceList();
   };
@@ -97,9 +103,14 @@ export const DeviceSwitch: React.FC<Props> = ({
     setLockName(item.lockName || '');
     devicePopRef.current?.close();
     // Wait for the first popup to close before opening the second one
-    setTimeout(() => {
+    // iOS 上计时器精度/JS 卡顿可能导致 300ms 内 close 动画未完成
+    if (openEditNameTimerRef.current) {
+      clearTimeout(openEditNameTimerRef.current);
+      openEditNameTimerRef.current = null;
+    }
+    openEditNameTimerRef.current = setTimeout(() => {
       editNamePopRef.current?.open();
-    }, 300);
+    }, 380);
   };
 
   const handleNameConfirm = async () => {
@@ -163,7 +174,8 @@ export const DeviceSwitch: React.FC<Props> = ({
         </Flex>
       </TouchableOpacity>
 
-      <AnimationPop ref={devicePopRef} direction={'top'} coverSafeArea={false}>
+      {/* iOS 顶部留白问题：top 弹层用样式覆盖 marginTop/paddingTop */}
+      <AnimationPop ref={devicePopRef} direction={'top'} coverSafeArea>
         <View
           style={{
             paddingTop: 4,

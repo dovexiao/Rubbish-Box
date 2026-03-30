@@ -10,7 +10,8 @@ import { hideLoading, showLoading } from '@/utils';
 
 const { AppModule } = NativeModules;
 const WECHAT_APP_ID: string | undefined = AppModule?.wechatAppId;
-const WECHAT_APP_ID_FALLBACK = 'wxd9c0f6b6c3c8d8df';
+// Fallback 必须与 iOS Info.plist 中的 wx URL scheme 对应，否则 registerApp / isWXAppInstalled 可能异常
+const WECHAT_APP_ID_FALLBACK = 'wx5c90e0d5806a55c4';
 const WECHAT_UNIVERSAL_LINK = 'https://g.18qjz.cn/wechat/';
 
 let wechatRegisterPromise: Promise<boolean> | null = null;
@@ -107,7 +108,20 @@ const ensureWeChatRegistered = () => {
         WECHAT_UNIVERSAL_LINK,
       );
       wechatRegisterPromise = Promise.resolve(registerResult)
-        .then((res: boolean) => !!res)
+        .then(async (res: boolean) => {
+          // iOS 如果未正确配置 Associated Domains / Universal Link，新版微信 SDK 可能直接返回 false。
+          // 为了不阻塞登录流程，这里做一次兜底：失败则再尝试只传 appId 的注册方式。
+          if (!res && Platform.OS === 'ios') {
+            try {
+              const fallback = WeChat.registerApp(resolvedAppId);
+              const ok = await Promise.resolve(fallback);
+              return !!ok;
+            } catch (e) {
+              return false;
+            }
+          }
+          return !!res;
+        })
         .catch((err: any) => {
           console.error('WeChat registerApp error', err);
           wechatRegisterPromise = null;
