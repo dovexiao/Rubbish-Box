@@ -48,7 +48,8 @@ def load_env_file(env_type)
   end
 
   # 确保 react-native-config 读取到正确 .env
-  sh("cp '#{abs_env_file}' '#{target_env_android}'")
+  require 'fileutils'
+  FileUtils.cp(abs_env_file, target_env_android)
 
   File.readlines(abs_env_file).each do |line|
       line.strip!

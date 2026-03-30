@@ -138040,14 +138040,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 },579,[1,548,580],"src\\config\\index.ts");
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
-  "ENV": "development",
-  "API_BASE_URL": "https://boke-api-dev.18qjz.cn",
+  "ENV": "production",
+  "API_BASE_URL": "https://boke-api.18qjz.cn",
   "API_VERSION": "v1",
-  "ANDROID_PACKAGE_NAME": "com.boklock.m.test",
-  "IOS_BUNDLE_ID": "com.boklock.dev.m",
-  "APP_NAME": "泊刻地锁测试",
-  "MAP_KEY_ANDROID": "4b3048de96b6aad0964ccaa7bf73ca93",
-  "MAP_KEY_IOS": "d5d21e20980f689673e0923b1888c287"
+  "ANDROID_PACKAGE_NAME": "com.boklock.m",
+  "IOS_BUNDLE_ID": "com.boklock.real.m",
+  "APP_NAME": "泊刻地锁",
+  "MAP_KEY_ANDROID": "65e063bf30af1d5cb5d2bf648243bff1",
+  "MAP_KEY_IOS": "4d3d8b30420bb15896f580757451268d"
 };
 },580,[],"src\\config\\env.static.json");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
@@ -239684,12 +239684,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       };
     }();
     (0, _react.useEffect)(function () {
-      var timer = null;
-      timer = setInterval(hasBluetoothAutoOpen, 1000);
+      var _loopFunc = (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+          yield hasBluetoothAutoOpen();
+          return true;
+        }), 1000),
+        start = _loopFunc.start,
+        stop = _loopFunc.stop;
+      start();
       return function () {
-        if (timer) {
-          clearInterval(timer);
-        }
+        stop();
       };
     }, [hasBluetoothAutoOpen]);
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_PageContainer.default, {
@@ -254644,7 +254647,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState22 = (0, _slicedToArray2.default)(_useState21, 2),
       error = _useState22[0],
       setError = _useState22[1];
-    var bleInstance = new (_$$_REQUIRE(_dependencyMap[18], "react-native-ble-plx").BleManager)();
     (0, _react.useEffect)(function () {
       optioningRef.current = optioning;
     }, [optioning]);
@@ -254663,10 +254665,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         try {
           // 获取首页锁信息
-          var lockRes = id ? yield (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/services/device").getLockInfo)({
+          var lockRes = id ? yield (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/services/device").getLockInfo)({
             type: 1,
             id: id
-          }) : yield (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/services/device").getLockInfo)({
+          }) : yield (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/services/device").getLockInfo)({
             type: 1
           });
           // 清除路由栈中的跳转参数
@@ -254692,13 +254694,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }
               // 根据 fallStatus 判定
               switch (fallStatus) {
-                case _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE:
+                case _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE:
                   return 'rise';
-                case _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.FALL_SUCCESS:
+                case _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.FALL_SUCCESS:
                   return 'fall';
-                case _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE_30:
+                case _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE_30:
                   return 'rise30';
-                case _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE_120:
+                case _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE_120:
                   return 'rise120';
                 default:
                   return 'rise';
@@ -254719,7 +254721,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
 
           // 获取未读消息数
-          var unreadRes = yield (0, _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/services/user").unreadCount)({});
+          var unreadRes = yield (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/services/user").unreadCount)({});
           if (unreadRes.success && unreadRes.code === 200) {
             setUnreadCount(Number(unreadRes.data || 0));
           } else {
@@ -254748,11 +254750,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
      * - 读取 token/guestMode 决定是否展示游客引导
      * - 登录态下 silent=true（除首次）刷新锁详情，保证首页数据是最新的
      */
-    (0, _$$_REQUIRE(_dependencyMap[22], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+    (0, _$$_REQUIRE(_dependencyMap[21], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
       console.log('轮询');
       var stopped = false;
       var first = true;
-      var poller = (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var poller = (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
         // loopFunc 约定：return true 表示继续下一轮；return false 表示停止轮询
         if (stopped) return false;
 
@@ -254765,7 +254767,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         try {
           var _data;
           // 绑定成功后恢复：优先使用存储的 res.data，加载对应设备后清除
-          var bindSuccess = yield (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").getStorage)({
+          var bindSuccess = yield (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").getStorage)({
             key: 'rnBindSuccessData'
           }).catch(function () {
             return null;
@@ -254778,7 +254780,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               yield load(id, {
                 silent: silent
               });
-              yield (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").removeStorage)({
+              yield (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").removeStorage)({
                 key: 'rnBindSuccessData'
               });
               return true;
@@ -254786,7 +254788,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
 
           // 同时读取登录态与游客模式开关，用于决定首页应展示的 UI
-          var _yield$Promise$all = yield Promise.all([(0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('token'), (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('guestMode')]),
+          var _yield$Promise$all = yield Promise.all([(0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('token'), (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('guestMode')]),
             _yield$Promise$all2 = (0, _slicedToArray2.default)(_yield$Promise$all, 2),
             token = _yield$Promise$all2[0],
             guest = _yield$Promise$all2[1];
@@ -254947,11 +254949,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       setOptioning(option);
     }, [setOptioning]);
     (0, _react.useEffect)(function () {
-      _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('onAnimation', onAnimation);
-      _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('onOptioned', onOptioned);
+      _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('onAnimation', onAnimation);
+      _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('onOptioned', onOptioned);
       return function () {
-        _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('onAnimation', onAnimation);
-        _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('onOptioned', onOptioned);
+        _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('onAnimation', onAnimation);
+        _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('onOptioned', onOptioned);
         if (animationTimer.current) {
           clearTimeout(animationTimer.current);
           animationTimer.current = null;
@@ -254994,12 +254996,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var hasBluetoothAutoOpen = /*#__PURE__*/function () {
       var _ref5 = (0, _asyncToGenerator2.default)(function* () {
         //蓝牙没开直接 设false，避免后续流程
-        var state = yield bleInstance.state();
-        if (state == 'PoweredOff') {
+        var state = yield (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils/api").getBluetoothState)();
+        if (state !== 'PoweredOn') {
           yield setIsAutoOpenBluetooth(false);
           return;
         }
-        var result = yield (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
+        var result = yield (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
           return {};
         });
         var bleNo = String((detail == null ? void 0 : detail.bleNo) || '');
@@ -255007,10 +255009,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         // @ts-ignore
         var savedDeviceInfo = result == null ? void 0 : result[bleNo];
         var deviceId = savedDeviceInfo == null ? void 0 : savedDeviceInfo.deviceId;
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[24], "D:\\xqkj\\bokeapp\\src/utils/api").checkIfDeviceIgnoredOnIOS)(deviceId, bleNo, bleName);
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils/api").checkIfDeviceIgnoredOnIOS)(deviceId, bleNo, bleName);
         if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
           var sysConnected = false;
-          var connectedDevices = yield (0, _$$_REQUIRE(_dependencyMap[24], "D:\\xqkj\\bokeapp\\src/utils/api").getSystemConnectedDevices)().catch(function () {
+          var connectedDevices = yield (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils/api").getSystemConnectedDevices)().catch(function () {
             return null;
           });
           if (connectedDevices) {
@@ -255022,7 +255024,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             if (!connectedDevice) {
               // console.log(!!savedDeviceInfo, savedDeviceInfo, '===');
               if (!!savedDeviceInfo) {
-                (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").removeStorage)({
+                (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").removeStorage)({
                   key: 'bluetoothDeviceInfo'
                 });
               }
@@ -255037,19 +255039,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
         }
         if (!deviceId || res.isIgnored || !(savedDeviceInfo != null && savedDeviceInfo.isPaired)) {
-          var deviceMap = (yield (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
+          var deviceMap = (yield (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
             return null;
           })) || {};
           if (deviceMap[bleNo]) {
             var _ = deviceMap[bleNo],
               rest = (0, _objectWithoutProperties2.default)(deviceMap, [bleNo].map(_toPropertyKey));
-            (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
+            (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
               key: 'bluetoothDeviceInfoList',
               data: rest
             });
           }
           if (!!savedDeviceInfo) {
-            (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").removeStorage)({
+            (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").removeStorage)({
               key: 'bluetoothDeviceInfo'
             });
           }
@@ -255064,11 +255066,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }();
 
     // if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
-    (0, _$$_REQUIRE(_dependencyMap[22], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
-      var timer = null;
-      timer = setInterval(hasBluetoothAutoOpen, 1000);
+    (0, _$$_REQUIRE(_dependencyMap[21], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+      var stopLoop = null;
+      var _loopFunc = (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+          yield hasBluetoothAutoOpen();
+          return true;
+        }), 1000),
+        start = _loopFunc.start,
+        stop = _loopFunc.stop;
+      stopLoop = stop;
+      start();
       return function () {
-        if (timer) clearInterval(timer);
+        if (stopLoop) stopLoop();
       };
     }, [hasBluetoothAutoOpen]));
     // }
@@ -255085,7 +255094,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_PageContainer.default, {
       backgroundColor: bgImage ? 'transparent' : '#f6f7fa',
-      style: _$$_REQUIRE(_dependencyMap[25], "./style").styles.pageContainer
+      style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.pageContainer
       // loading={loading}
       ,
       error: error,
@@ -255096,14 +255105,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundImage: bgImage,
       safeAreaEdges: ['top'],
       children: showGuestWelcome ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-        style: _$$_REQUIRE(_dependencyMap[25], "./style").styles.guestContainer,
+        style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestContainer,
         children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _$$_REQUIRE(_dependencyMap[25], "./style").styles.guestTitle,
+          style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestTitle,
           children: "\u6B22\u8FCE\u4F7F\u7528 \u6CCA\u523B\u5730\u9501"
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
           align: "center",
           justify: "center",
-          style: _$$_REQUIRE(_dependencyMap[25], "./style").styles.guestAddBtn,
+          style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestAddBtn,
           isTouchView: true,
           onPress: function onPress() {
             var _guestPopupRef$curren;
@@ -255113,22 +255122,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             source: {
               uri: 'https://g.18qjz.cn/img/boklock/device_add.png'
             },
-            style: _$$_REQUIRE(_dependencyMap[25], "./style").styles.guestAddImage,
+            style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestAddImage,
             resizeMode: "contain"
           })
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _$$_REQUIRE(_dependencyMap[25], "./style").styles.guestToast,
+          style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestToast,
           children: "\u6765\u6DFB\u52A0\u4F60\u7684\u7B2C\u4E00\u53F0\u5730\u9501\u5427\uFF01"
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
           isTouchView: true,
           justify: "center",
           align: "center",
-          style: _$$_REQUIRE(_dependencyMap[25], "./style").styles.guestLoginBtn,
+          style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestLoginBtn,
           onPress: function onPress() {
-            (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Login');
+            (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Login');
           },
           children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[25], "./style").styles.guestLoginText,
+            style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestLoginText,
             children: "\u767B\u5F55"
           })
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_popConfirm.default, {
@@ -255139,7 +255148,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           onConfirm: function onConfirm() {
             var _guestPopupRef$curren2;
             (_guestPopupRef$curren2 = guestPopupRef.current) == null || _guestPopupRef$curren2.close == null || _guestPopupRef$curren2.close();
-            (0, _$$_REQUIRE(_dependencyMap[23], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Login');
+            (0, _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Login');
           }
         })]
       }) :
@@ -255147,7 +255156,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       //  主体内容
       (0, _jsxRuntime.jsxs)(_reactNative.ScrollView, {
         showsVerticalScrollIndicator: false,
-        contentContainerStyle: [_$$_REQUIRE(_dependencyMap[25], "./style").styles.content],
+        contentContainerStyle: [_$$_REQUIRE(_dependencyMap[24], "./style").styles.content],
         children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_Header.default, {
           unreadCount: unreadCount,
           lockInfo: detail,
@@ -255155,11 +255164,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }), hasDevice && detail != null && detail.id ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_Content.default, {
           detail: detail,
           reload: (/*#__PURE__*/function () {
-            var _ref6 = (0, _asyncToGenerator2.default)(function* (id) {
+            var _ref7 = (0, _asyncToGenerator2.default)(function* (id) {
               yield load(id);
             });
             return function (_x3) {
-              return _ref6.apply(this, arguments);
+              return _ref7.apply(this, arguments);
             };
           }()),
           optioning: optioning,
@@ -255179,7 +255188,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Index;
-},1559,[1,150,202,2,25,42,3,1525,1314,1495,1498,1499,534,533,1524,88,660,1496,773,786,758,785,665,763,770,1558],"src\\pages\\index\\index.tsx");
+},1559,[1,150,202,2,25,42,3,1525,1314,1495,1498,1499,534,533,1524,88,660,1496,786,758,785,665,763,770,1558],"src\\pages\\index\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -288782,15 +288791,34 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return;
       }
       try {
+        var state = yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils/api").getBluetoothState)();
+        if (state !== 'PoweredOn') {
+          setIsLink(false);
+          setLinkDevice(null);
+          return;
+        }
         var info = yield (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").getSystemConnectedDevices)();
         var data = info.data || [];
-        var connected = data.some(function (item) {
-          return (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").isSameMac)(item.deviceId, detail.bleNo || detail.lockId);
-        });
-        var found = data.find(function (item) {
-          return (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").isSameMac)(item.deviceId, detail.bleNo || detail.lockId);
-        });
-        setIsLink(!!connected);
+        var connected = false;
+        var found = null;
+        var bleNo = String(detail.bleNo || detail.lockId);
+        if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
+          var result = yield (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
+            return {};
+          });
+          var savedDeviceInfo = result == null ? void 0 : result[bleNo];
+          var deviceId = savedDeviceInfo == null ? void 0 : savedDeviceInfo.deviceId;
+          found = data.find(function (item) {
+            return item.deviceId == deviceId;
+          });
+          connected = !!(found && found.isConnected);
+        } else {
+          found = data.find(function (item) {
+            return (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").isSameMac)(item.deviceId, bleNo);
+          });
+          connected = !!found;
+        }
+        setIsLink(connected);
         setLinkDevice(found || null);
       } catch (e) {
         console.error('检查蓝牙连接状态失败:', e);
@@ -288852,11 +288880,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       void fetchDetail();
       void fetchReasons();
     }, [fetchDetail, fetchReasons]);
-    (0, _react.useEffect)(function () {
+    (0, _$$_REQUIRE(_dependencyMap[16], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+      var stopLoop = null;
       if (detail) {
-        void checkConnection();
+        var _loopFunc2 = (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+            yield checkConnection();
+            return true; // 返回 true 继续轮询，loopFunc 会自动 await 避免请求堆叠
+          }), 1000),
+          start = _loopFunc2.start,
+          stop = _loopFunc2.stop;
+        stopLoop = stop;
+        start();
       }
-    }, [detail, checkConnection]);
+      return function () {
+        if (stopLoop) stopLoop();
+      };
+    }, [detail, checkConnection]));
     (0, _react.useEffect)(function () {
       if (detail != null && detail.deviceNo) {
         handleTestDeviceReslt();
@@ -288870,7 +288909,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       };
     }, []);
     var updateTestResult = /*#__PURE__*/function () {
-      var _ref7 = (0, _asyncToGenerator2.default)(function* (params) {
+      var _ref8 = (0, _asyncToGenerator2.default)(function* (params) {
         console.log('params====', params);
         if (!deviceNo) return;
         (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
@@ -288893,15 +288932,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function updateTestResult(_x) {
-        return _ref7.apply(this, arguments);
+        return _ref8.apply(this, arguments);
       };
     }();
     var getResult = /*#__PURE__*/function () {
-      var _ref8 = (0, _asyncToGenerator2.default)(function* (ot) {
+      var _ref9 = (0, _asyncToGenerator2.default)(function* (ot) {
         if (!detail) return;
         var count = 0;
         var maxCount = 10;
-        var _loopFunc2 = (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+        var _loopFunc3 = (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
             try {
               var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/services/deviceTest").getTestOperateResult)({
                 id: detail.id,
@@ -288925,16 +288964,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }
             return true;
           }), 1000),
-          start = _loopFunc2.start,
-          stop = _loopFunc2.stop;
+          start = _loopFunc3.start,
+          stop = _loopFunc3.stop;
         start();
       });
       return function getResult(_x2) {
-        return _ref8.apply(this, arguments);
+        return _ref9.apply(this, arguments);
       };
     }();
     var operateDevice = /*#__PURE__*/function () {
-      var _ref0 = (0, _asyncToGenerator2.default)(function* (data) {
+      var _ref1 = (0, _asyncToGenerator2.default)(function* (data) {
         if (!deviceNo) return;
         (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
           title: '操作中...'
@@ -288956,11 +288995,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function operateDevice(_x3) {
-        return _ref0.apply(this, arguments);
+        return _ref1.apply(this, arguments);
       };
     }();
     var handleReset = /*#__PURE__*/function () {
-      var _ref1 = (0, _asyncToGenerator2.default)(function* () {
+      var _ref10 = (0, _asyncToGenerator2.default)(function* () {
         if (!deviceNo) return;
         (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
           title: '重测中...'
@@ -288982,11 +289021,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function handleReset() {
-        return _ref1.apply(this, arguments);
+        return _ref10.apply(this, arguments);
       };
     }();
     var handleChange = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref10 = (0, _asyncToGenerator2.default)(function* (val) {
+      var _ref11 = (0, _asyncToGenerator2.default)(function* (val) {
         if (!detail || !deviceNo) return;
         (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
           title: '切换模式中...'
@@ -289019,7 +289058,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function (_x4) {
-        return _ref10.apply(this, arguments);
+        return _ref11.apply(this, arguments);
       };
     }(), [detail, deviceNo, isLink, linkDevice == null ? void 0 : linkDevice.deviceId]);
     var renderFooterButtons = function renderFooterButtons() {
@@ -289035,7 +289074,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           },
           direction: (detail == null ? void 0 : detail.testResult) === 2 ? 'column' : 'row',
           children: (detail == null ? void 0 : detail.testResult) === 0 ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
-            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").GradientButton, {
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").GradientButton, {
               height: 48,
               colors: ['transparent', 'transparent'],
               onPress: function onPress() {
@@ -289047,7 +289086,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 style: _styles.default.btnContainerCloseText,
                 children: "\u6D4B\u8BD5\u4E0D\u5408\u683C"
               })
-            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").GradientButton, {
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").GradientButton, {
               height: 48,
               colors: ['#2F77FF', '#2F77FF'],
               onPress: function onPress() {
@@ -289082,7 +289121,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 setUnqualifiedPopupVisible(true);
               },
               children: "\u6D4B\u8BD5\u4E0D\u5408\u683C\uFF0C\u67E5\u770B\u539F\u56E0"
-            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").GradientButton, {
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").GradientButton, {
               colors: ['#2F77FF', '#2F77FF'],
               onPress: function onPress() {
                 handleReset();
@@ -289104,7 +289143,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })]
       });
     };
-    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
       backgroundColor: "#FFFFFF",
       statusBarStyle: "dark-content",
       statusBarBackgroundColor: "#FFFFFF",
@@ -289174,7 +289213,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               },
               children: ["\u3010", (detail == null ? void 0 : detail['model']) === 1 ? '性能优先' : '续航优先', "\u3011"]
             })]
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Button, {
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "@ant-design/react-native").Button, {
             size: 'small',
             style: {
               height: 29
@@ -289208,10 +289247,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             direction: 'column',
             children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
               style: _styles.default.deviceInfoHeader,
+              align: "center",
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                 style: _styles.default.title,
                 children: "4G\u5347\u964D\u6D4B\u8BD5"
-              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").Tag, {
+              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").Tag, {
                 style: {
                   backgroundColor: '#70B601',
                   marginLeft: 18,
@@ -289221,7 +289261,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   color: '#ffffff'
                 },
                 children: testDeviceReslt.fourGLiftStatus === 2 ? '已降下' : '已升起'
-              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Button, {
+              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "@ant-design/react-native").Button, {
                 style: {
                   width: 105,
                   height: 28
@@ -289230,7 +289270,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 size: 'small',
                 onPress: function onPress() {
                   var _confirmPopupRef$curr;
+                  console.log(111111);
                   if ((detail == null ? void 0 : detail['model']) === 2) {
+                    console.log(2222);
                     setConfirmPopup({
                       visible: true,
                       title: '需要切换到性能优先模式才能操作',
@@ -289342,8 +289384,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             direction: 'column',
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
               style: (_styles.default.deviceInfoHeader, {
-                marginBottom: 0
+                marginBottom: 8
               }),
+              align: "center",
               children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                 style: _styles.default.title,
                 children: "\u84DD\u7259\u8FD1\u8EAB\u5347\u964D\u6D4B\u8BD5"
@@ -289461,10 +289504,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             direction: 'column',
             children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
               style: _styles.default.deviceInfoHeader,
+              align: "center",
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                 style: _styles.default.title,
                 children: "\u8702\u9E23\u6D4B\u8BD5"
-              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Button, {
+              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "@ant-design/react-native").Button, {
                 style: {
                   width: 105,
                   height: 28,
@@ -289585,10 +289629,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             direction: 'column',
             children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
               style: _styles.default.deviceInfoHeader,
+              align: "center",
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                 style: _styles.default.title,
                 children: "\u673A\u76D6\u89E3\u9501\u6D4B\u8BD5"
-              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").Button, {
+              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "@ant-design/react-native").Button, {
                 style: {
                   width: 105,
                   height: 28,
@@ -290149,7 +290194,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             })]
           })]
         })]
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").Popup, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").Popup, {
         visible: reasonPopupVisible,
         onClose: function onClose() {
           return setReasonPopupVisible(false);
@@ -290181,7 +290226,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_UnqualifiedPop.default, {
         ref: unqualifiedPopupRef,
         onConfirm: (/*#__PURE__*/function () {
-          var _ref29 = (0, _asyncToGenerator2.default)(function* (reason) {
+          var _ref30 = (0, _asyncToGenerator2.default)(function* (reason) {
             if (!(reason != null && reason.trim())) {
               (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)('请输入不合格原因');
               return false;
@@ -290193,10 +290238,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             return true;
           });
           return function (_x5) {
-            return _ref29.apply(this, arguments);
+            return _ref30.apply(this, arguments);
           };
         }())
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").Popup, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").Popup, {
         visible: unqualifiedPopupVisible,
         onClose: function onClose() {
           return setUnqualifiedPopupVisible(false);
@@ -290224,7 +290269,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           (_confirmPopupRef$curr4 = confirmPopupRef.current) == null || _confirmPopupRef$curr4.close();
           confirmPopup.onConfirm == null || confirmPopup.onConfirm();
         }
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").Popup, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").Popup, {
         visible: howToConnectVisible,
         onClose: function onClose() {
           return setHowToConnectVisible(false);
@@ -290259,7 +290304,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1684,[1,2,25,42,3,534,1599,1685,1315,1510,1686,88,660,793,763,770,1514,796],"src\\pages\\testDeviceDetail\\index.tsx");
+},1684,[1,2,25,42,3,534,1599,1685,1315,1510,1686,88,660,793,763,770,665,1514,796],"src\\pages\\testDeviceDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
