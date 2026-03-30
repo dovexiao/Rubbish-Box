@@ -47,6 +47,7 @@ import {
   showToast,
 } from '@/utils';
 import appPush from '@/utils/push';
+import { WeChatInit } from '@/utils/wechat';
 import appUpdate from '@/utils/appUpdate';
 import { bind } from '@/services/bindDevice';
 import {
