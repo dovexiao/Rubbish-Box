@@ -295,7 +295,6 @@ export default function TestDeviceDetailScreen() {
   }, []);
 
   const updateTestResult = async (params: Partial<TestDeviceDetail>) => {
-    console.log('params====', params);
     if (!deviceNo) return;
     showLoading({ title: '操作中...' });
     try {

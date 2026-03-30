@@ -417,6 +417,7 @@ function App() {
                   isSameMac(item.deviceId || item.mac, params?.bleNo),
                 ) ||
                 info.data?.find((item: any) => item.name === params?.bleName);
+              console.log('deviceInfo====', deviceInfo, isPaired);
               if (isPaired) {
                 const bluetoothDeviceInfoList =
                   (await getBluetoothDeviceInfo().catch(() => null)) || {};
@@ -480,8 +481,6 @@ function App() {
                               id: lockId,
                               bluetoothStatus: 1,
                             });
-                            const codeOk =
-                              res?.success === true || res?.code === 200;
 
                             if (res?.data) return true;
                           } catch {
