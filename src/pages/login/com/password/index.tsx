@@ -69,6 +69,7 @@ const Password: React.FC<PasswordProps> = ({
         password,
         ...device,
       });
+      console.log('res', res);
       if (res.code === 200) {
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
@@ -92,7 +93,9 @@ const Password: React.FC<PasswordProps> = ({
         setShowError(true);
         setErrorMessage(res.msg || '手机号码或密码错误');
       } else {
-        showToast(res.msg || '登录失败');
+        setTimeout(() => {
+          showToast(res.msg || '登录失败');
+        }, 600);
       }
     } catch (error) {
       console.error('密码登录异常:', error);
@@ -159,7 +162,6 @@ const Password: React.FC<PasswordProps> = ({
             }}
             secureTextEntry={true}
             returnKeyType="done"
-            onSubmitEditing={onSubmit}
           />
         </Flex>
 
