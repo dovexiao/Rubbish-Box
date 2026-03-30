@@ -279,7 +279,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
           <Flex direction="row" justify="center" align="center">
             <Text style={styles.dateText}>使用次数：</Text>
             <Text style={styles.dateText}>
-              {details?.noLimit ? '不限' : details?.limitTime}
+              {details?.noLimit ? '不限' : details?.leftTime}
             </Text>
           </Flex>
         </View>
