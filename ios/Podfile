@@ -137,6 +137,42 @@ target 'boklock' do
       end
     end
 
+    # iPhoneOS26.4 SDK: 直接 include netinet6/in6.h 会触发 #error
+    # 修复策略：确保有 netinet/in.h，同时删除源码里的 netinet6/in6.h include/import。
+    qcloud_netinet_patch = lambda do |relative_path|
+      qcloud_path = File.join(installer.config.installation_root, 'Pods', relative_path)
+      next unless File.exist?(qcloud_path)
+
+      content = File.read(qcloud_path)
+      has_in6 = content.include?('netinet6/in6.h')
+      next unless has_in6
+
+      has_in = content.include?('#import <netinet/in.h>') || content.include?('#include <netinet/in.h>')
+
+      unless has_in
+        # 在首次 in6 include/import 之前插入 netinet/in.h
+        content.sub!(/(#\s*(?:import|include)\s*<netinet6\/in6\.h>\s*\n)/,
+          "#import <netinet/in.h>\n\\1"
+        )
+      end
+
+      # 删除 netinet6/in6.h 的 include/import 行
+      content.gsub!(/^\s*#\s*(?:import|include)\s*<netinet6\/in6\.h>\s*\n/m, '')
+
+      # 部分环境下 Pods 源文件可能是只读（例如 r--r--r--），确保能写回
+      begin
+        File.chmod(0o644, qcloud_path)
+      rescue StandardError
+        # ignore
+      end
+
+      File.write(qcloud_path, content)
+      Pod::UI.puts "[Podfile] Patched netinet include: #{relative_path}".green
+    end
+
+    qcloud_netinet_patch.call('QCloudTrack/QCloudTrack/Classes/Default/Utils/QCloudTrackNetworkUtils.m')
+    qcloud_netinet_patch.call('QCloudCore/QCloudCore/Classes/Base/QCLOUDRestNet/reachability/QCloudReachability.m')
+
     installer.pods_project.save
   end
 end

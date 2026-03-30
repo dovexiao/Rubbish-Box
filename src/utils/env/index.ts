@@ -78,6 +78,9 @@ const ensureWeChatRegistered = () => {
   if (!WeChat) {
     return Promise.reject(new Error('微信 SDK 模块未正确加载'));
   }
+  if (typeof WeChat?.registerApp !== 'function') {
+    return Promise.reject(new Error('微信 SDK registerApp 方法不可用'));
+  }
 
   if (!wechatRegisterPromise) {
     try {

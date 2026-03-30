@@ -172,10 +172,11 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
                       width={showClose ? 124 : 160}
                       height={42}
                       onPress={async () => {
-                        const result = await onConfirm?.();
-                        if (result !== false) {
-                          setVisible(false);
-                        }
+                        setVisible(false);
+                        await new Promise<void>(resolve =>
+                          requestAnimationFrame(() => resolve()),
+                        );
+                        await onConfirm?.();
                       }}
                       style={[popupStyle.btnContainer]}
                     >

@@ -47,7 +47,6 @@ import {
   showToast,
 } from '@/utils';
 import appPush from '@/utils/push';
-import { WeChatInit } from '@/utils/wechat';
 import appUpdate from '@/utils/appUpdate';
 import { bind } from '@/services/bindDevice';
 import {
@@ -122,11 +121,6 @@ function App() {
       setNavigationRef(null);
     };
   }, [navigationRef]);
-
-  // 微信 SDK 初始化
-  useEffect(() => {
-    WeChatInit();
-  }, []);
 
   // 输出当前包名（便于排查环境/安装包）
   useEffect(() => {

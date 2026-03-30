@@ -51,6 +51,22 @@ baseConfig.resolver = {
   unstable_enableSymlinks: true,
   // 针对特定平台/模块做定制解析
   resolveRequest(context, moduleName, platform) {
+    // iOS 打包时，避免 Metro/Babel codegen 解析 OHOS 版本 vision-camera 的原始源码
+    // （@react-native-ohos/react-native-vision-camera 当前代码在 iOS bundle 阶段会触发 codegenNativeCommands 报错）
+    if (
+      platform === 'ios' &&
+      moduleName === '@react-native-ohos/react-native-vision-camera'
+    ) {
+      return resolve(
+        {
+          ...context,
+          resolveRequest: null,
+        },
+        path.resolve(__dirname, 'src/harmony/vision-camera-ohos-null-shim.tsx'),
+        platform,
+      );
+    }
+
     // Harmony 平台下，用 JS shim 替代部分依赖原生模块的库，避免 NativeModule 为空时报错
     if (isHarmonyPlatform(platform)) {
       if (moduleName === 'react-native-svg') {

@@ -76,7 +76,8 @@ const resolveWeChatModule = () => {
   return null;
 };
 
-let WeChat: any = resolveWeChatModule();
+// 延迟解析微信模块，避免 App 启动/退出阶段触发不必要的原生调用。
+let WeChat: any = null;
 
 type ShareMiniProgramOptions = {
   title?: string;
@@ -98,7 +99,12 @@ const ensureWeChatRegistered = () => {
   }
   if (!WeChat) {
     WeChat = resolveWeChatModule(); // try again just in case
-    if (!WeChat) return Promise.reject(new Error('微信 SDK 模块未正确加载'));
+    if (!WeChat) {
+      return Promise.reject(new Error('微信 SDK 模块未正确加载'));
+    }
+  }
+  if (typeof WeChat?.registerApp !== 'function') {
+    return Promise.reject(new Error('微信 SDK registerApp 方法不可用'));
   }
 
   if (!wechatRegisterPromise) {
