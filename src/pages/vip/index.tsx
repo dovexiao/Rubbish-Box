@@ -909,7 +909,7 @@ const VipPage = () => {
             <Flex direction="row" justify="center" align="center">
               <Text style={styles.dateTextPop}>使用次数：</Text>
               <Text style={styles.dateTextPop}>
-                {shareDetail?.noLimit ? '不限' : shareDetail?.limitTime ?? 0}
+                {shareDetail?.noLimit ? '不限' : shareDetail?.leftTime ?? 0}
               </Text>
             </Flex>
           </View>
