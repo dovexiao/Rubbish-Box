@@ -54,27 +54,19 @@ const Sms: React.FC<SmsProps> = ({
       showLoading({ title: '发送中...' });
       const res = await getSmsCode({ mobile, purpose: SMS_PURPOSE.LOGIN });
       if (res.code === 200) {
-        setTimeout(() => {
-          hideLoading();
-        }, 600);
+        hideLoading();
         navigation.navigate('LoginSms', { mobile, type: SMS_PURPOSE.LOGIN });
       } else if (res.code === 521) {
-        setTimeout(() => {
-          hideLoading();
-        }, 600);
+        hideLoading();
         setShowError(true);
       } else {
-        setTimeout(() => {
-          hideLoading();
-        }, 600);
+        hideLoading();
         showToast(res.message || '发送失败');
       }
     } catch {
       showToast('发送失败，请重试');
     } finally {
-      setTimeout(() => {
-        hideLoading();
-      }, 600);
+      hideLoading();
     }
   };
 

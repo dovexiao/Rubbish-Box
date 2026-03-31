@@ -134,9 +134,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
       if (!checkResult.success) {
         const type = (checkResult.errorType || 'unknown') as ModalType;
         setBluetoothErrorType(type);
-        setTimeout(() => {
-          bluetoothPopupRef.current?.open();
-        }, 600);
+        bluetoothPopupRef.current?.open();
         return;
       }
 
@@ -461,7 +459,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
             setBluetoothErrorType(errorType as ModalType);
             setCurrentConnectDevice(item);
             setGroupListVisible(false);
-            setTimeout(() => bluetoothPopupRef.current?.open(), 50);
+            bluetoothPopupRef.current?.open();
             return;
           }
           setGroupListVisible(false);
@@ -481,7 +479,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
           setBluetoothErrorType('unknown');
           setCurrentConnectDevice(item);
           setGroupListVisible(false);
-          setTimeout(() => bluetoothPopupRef.current?.open(), 50);
+          bluetoothPopupRef.current?.open();
         }
       },
       [hideLoading, navigation, showLoading],

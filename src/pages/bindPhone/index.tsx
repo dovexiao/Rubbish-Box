@@ -45,9 +45,7 @@ const BindPhone = () => {
       });
 
       if (res.code === 200) {
-        setTimeout(() => {
-          hideLoading();
-        }, 600);
+        hideLoading();
         navigation.navigate('LoginSms', {
           mobile,
           type: SMS_PURPOSE.BIND_PHONE,

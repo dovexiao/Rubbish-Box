@@ -174,7 +174,7 @@ const Login = () => {
               mobile: thirdLoginRes.data.mobile,
             });
           } else {
-            setTimeout(() => showToast('登录成功'), 600);
+            showToast('登录成功');
             reLaunch('Index');
           }
         } else {
@@ -458,10 +458,8 @@ const Login = () => {
                 await setStorage({ key: 'pushEnabled', data: true });
                 DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
                 myNextTick(() => {
-                  setTimeout(() => {
-                    agreePopRef.current?.close();
-                    hideLoading();
-                  }, 600);
+                  agreePopRef.current?.close();
+                  hideLoading();
                   eventCenter.trigger('onNext');
                 });
               }
@@ -517,9 +515,7 @@ const Login = () => {
         showClose={false}
         confirmText="我知道了"
         onConfirm={async () => {
-          setTimeout(() => {
-            retainPopRef.current?.close();
-          }, 600);
+          retainPopRef.current?.close();
           return;
           try {
             await cacheSetSync('guestMode', true);

@@ -1,21 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  Modal,
-} from 'react-native';
-import { Toast } from '@ant-design/react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { Modal, Toast } from '@ant-design/react-native';
 import { eventCenter, setStorage } from '@/utils';
 import Flex from '@/components/Flex';
 import GradientButton from '@/components/GradientButton';
 import AppIcon from '@/components/AppIcon';
 import styles from './styles';
-import LinearGradient, {
-  LinearGradientProps,
-} from 'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient';
+
 export interface AppUpdateInfo {
   id: number;
   version: string;
@@ -23,9 +15,7 @@ export interface AppUpdateInfo {
   packageUrl?: string;
   forceUpdate?: number | boolean;
   isLast?: boolean;
-  /** 确认更新时回调，由外部决定具体更新逻辑 */
   onConfirm?: () => Promise<void> | void;
-  /** 暂不更新时回调（可选） */
   onSkip?: () => Promise<void> | void;
 }
 
@@ -52,6 +42,7 @@ export function AppUpdateDialogHost() {
       setInfo(payload);
       setVisible(true);
     };
+
     eventCenter.on('global:appUpdateDialog:show', handler);
     return () => {
       eventCenter.off('global:appUpdateDialog:show', handler);
@@ -67,34 +58,43 @@ export function AppUpdateDialogHost() {
       .split(/\r?\n/)
       .map(s => s.trim())
       .filter(Boolean);
+
     return lines.length ? lines : ['优化已知问题'];
   }, [content]);
 
-  const handleClose = () => {
-    if (forceUpdate) {
-      // 强制更新时不允许直接关闭
-      return;
-    }
+  const resetDialog = () => {
     currentDialogVersion = undefined;
     setVisible(false);
     setInfo(null);
+  };
+
+  const handleClose = () => {
+    if (forceUpdate) {
+      return;
+    }
+    resetDialog();
   };
 
   const handleConfirm = async () => {
     try {
       setVisible(false);
       await info?.onConfirm?.();
+      setInfo(null);
     } catch (err: any) {
+      setVisible(true);
       const msg = err?.message || '更新失败，请检查网络后再次更新';
       Toast.fail(msg);
     } finally {
       currentDialogVersion = undefined;
-      setInfo(null);
+      if (!forceUpdate) {
+        setInfo(null);
+      }
     }
   };
 
   const handleSkip = async () => {
     if (!info?.version) return;
+
     try {
       await setStorage({
         key: APP_UPDATE_SKIP_KEY,
@@ -108,9 +108,8 @@ export function AppUpdateDialogHost() {
     } catch {
       // ignore
     }
-    currentDialogVersion = undefined;
-    setVisible(false);
-    setInfo(null);
+
+    resetDialog();
   };
 
   if (!info) return null;
@@ -118,20 +117,25 @@ export function AppUpdateDialogHost() {
   return (
     <Modal
       visible={visible}
-      transparent={true}
+      transparent
       animationType="fade"
-      onRequestClose={handleClose}
+      maskClosable={!forceUpdate}
+      onClose={handleClose}
+      footer={[]}
+      style={{
+        backgroundColor: 'transparent',
+        padding: 0,
+        margin: 0,
+      }}
     >
       <View
         style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.6)',
           justifyContent: 'center',
           alignItems: 'center',
           padding: 32,
         }}
       >
-        <View style={[styles.wrap]}>
+        <View style={styles.wrap}>
           <View style={styles.header}>
             <View style={styles.headerBgContent}>
               <Image
@@ -142,6 +146,7 @@ export function AppUpdateDialogHost() {
                 resizeMode="contain"
               />
             </View>
+
             <View style={styles.headerContent}>
               <View style={styles.versionBadge}>
                 <LinearGradient

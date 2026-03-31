@@ -323,8 +323,8 @@ export default function VipRecordPage() {
           );
         }}
         onInvalidate={() => {
-          setTimeout(() => animationPopRef.current?.close?.(), 600);
-          setTimeout(() => deleteRef.current?.open?.(), 600);
+          animationPopRef.current?.close?.();
+          deleteRef.current?.open?.();
         }}
         onShare={() => handleShare(shareDetail)}
       />

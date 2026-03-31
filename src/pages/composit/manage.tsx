@@ -16,7 +16,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Flex from '@/components/Flex';
 import AppIcon from '@/components/AppIcon';
-import { PageContainer, PopConfirm, TextInput } from '@/components';
+import { PageContainer, PopConfirm, Popup, TextInput } from '@/components';
 import { groupSubList, saveGroup, groupChooseList } from '@/services/combine';
 import { ListItem, AddListItem } from './typing';
 import { styles } from './manageStyle';
@@ -46,7 +46,7 @@ const ManageComposite = () => {
   const addIdsRef = useRef<Set<number>>(new Set());
   const removeIdsRef = useRef<Set<number>>(new Set());
   const hasInitLockNameRef = useRef(false);
-  const addDeviceRef = useRef<AnimationPopRef>(null);
+  const [addDeviceVisible, setAddDeviceVisible] = useState(false);
   const deleteConfirmRef = useRef<PopConfirmRef>(null);
 
   const canLoadMore = useMemo(
@@ -92,7 +92,7 @@ const ManageComposite = () => {
         setLoading(false);
       }
     },
-    [lockId, list.length, loading],
+    [lockId],
   );
 
   useEffect(() => {
@@ -119,7 +119,7 @@ const ManageComposite = () => {
   }, [currentRow, list.length]);
 
   const openAddPopup = useCallback(async () => {
-    addDeviceRef.current?.open();
+    setAddDeviceVisible(true);
     if (chooseList.length > 0 || chooseLoading) return;
 
     try {
@@ -167,7 +167,7 @@ const ManageComposite = () => {
   const handleAddConfirm = useCallback(() => {
     const selected = chooseList.filter(item => item.checked);
     if (selected.length === 0) {
-      addDeviceRef.current?.close();
+      setAddDeviceVisible(false);
       return;
     }
 
@@ -187,7 +187,7 @@ const ManageComposite = () => {
     if (newItems.length > 0) {
       setList(prev => [...newItems, ...prev]);
     }
-    addDeviceRef.current?.close();
+    setAddDeviceVisible(false);
   }, [chooseList, list]);
 
   const handleSubmit = useCallback(async () => {
@@ -366,7 +366,11 @@ const ManageComposite = () => {
       />
 
       {/* 新增设备弹窗 */}
-      <AnimationPop ref={addDeviceRef} direction="bottom" maxHeight={527}>
+      <Popup
+        visible={addDeviceVisible}
+        showClose={false}
+        onClose={() => setAddDeviceVisible(false)}
+      >
         <View style={{ paddingTop: 16 }}>
           <Flex
             direction="row"
@@ -377,7 +381,7 @@ const ManageComposite = () => {
             <Text style={{ width: 24, height: 24 }}></Text>
             <Text style={styles.popTitle}>新增【市电款】设备</Text>
             <AppIcon
-              onPress={() => addDeviceRef.current?.close()}
+              onPress={() => setAddDeviceVisible(false)}
               name={'close'}
               size={24}
               color={'#333333'}
@@ -450,7 +454,7 @@ const ManageComposite = () => {
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styles.btnContainer, styles.btnContainerClose]}
-              onPress={() => addDeviceRef.current?.close()}
+              onPress={() => setAddDeviceVisible(false)}
             >
               <Text style={styles.btnContainerCloseText}>取消</Text>
             </TouchableOpacity>
@@ -469,7 +473,7 @@ const ManageComposite = () => {
             </TouchableOpacity>
           </Flex>
         </View>
-      </AnimationPop>
+      </Popup>
     </PageContainer>
   );
 };

@@ -20,6 +20,7 @@ import AppIcon from '@/components/AppIcon';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { hideLoading, showLoading, showToast } from '@/utils';
+import Popup from '@/components/Popup';
 
 interface Props {
   lockInfo?: LockInfoDTO;
@@ -44,18 +45,15 @@ export const DeviceSwitch: React.FC<Props> = ({
   );
 
   const devicePopRef = useRef<AnimationPopRef>(null);
-  const editNamePopRef = useRef<AnimationPopRef>(null);
-  const openEditNameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const [editNamePopVisible, setEditNamePopVisible] = useState(false);
+
   const insets = useSafeAreaInsets();
 
   const isDeep = backgroundType === 'deep';
   const themeColor = isDeep ? '#fff' : '#333';
 
   const handleOpenDeviceList = () => {
-    // 避免两个弹层 Modal 遮罩叠加，导致点击无反应
-    editNamePopRef.current?.close();
+    setEditNamePopVisible(false);
     devicePopRef.current?.open();
     loadDeviceList();
   };
@@ -102,15 +100,7 @@ export const DeviceSwitch: React.FC<Props> = ({
     setCurrentDevice(item);
     setLockName(item.lockName || '');
     devicePopRef.current?.close();
-    // Wait for the first popup to close before opening the second one
-    // iOS 上计时器精度/JS 卡顿可能导致 300ms 内 close 动画未完成
-    if (openEditNameTimerRef.current) {
-      clearTimeout(openEditNameTimerRef.current);
-      openEditNameTimerRef.current = null;
-    }
-    openEditNameTimerRef.current = setTimeout(() => {
-      editNamePopRef.current?.open();
-    }, 380);
+    setEditNamePopVisible(true);
   };
 
   const handleNameConfirm = async () => {
@@ -130,7 +120,7 @@ export const DeviceSwitch: React.FC<Props> = ({
       hideLoading();
       if (res?.success) {
         showToast('修改成功');
-        editNamePopRef.current?.close();
+        setEditNamePopVisible(false);
         if (reload) await reload();
         loadDeviceList(); // Refresh list
       } else {
@@ -222,7 +212,11 @@ export const DeviceSwitch: React.FC<Props> = ({
       </AnimationPop>
 
       {/* Edit Name Popup */}
-      <AnimationPop ref={editNamePopRef} direction="bottom" coverSafeArea>
+      <Popup
+        visible={editNamePopVisible}
+        showClose={false}
+        onClose={() => setEditNamePopVisible(false)}
+      >
         <View
           style={[styles.editContainer, { paddingBottom: insets.bottom + 8 }]}
         >
@@ -249,7 +243,7 @@ export const DeviceSwitch: React.FC<Props> = ({
           <View style={styles.editFooter}>
             <TouchableOpacity
               style={[styles.editBtn, styles.cancelBtn]}
-              onPress={() => editNamePopRef.current?.close()}
+              onPress={() => setEditNamePopVisible(false)}
             >
               <Text style={styles.cancelText}>取消</Text>
             </TouchableOpacity>
@@ -262,12 +256,12 @@ export const DeviceSwitch: React.FC<Props> = ({
           </View>
 
           <View style={styles.closeIcon}>
-            <TouchableOpacity onPress={() => editNamePopRef.current?.close()}>
+            <TouchableOpacity onPress={() => setEditNamePopVisible(false)}>
               <AppIcon name={'close'} color="#333" size={24} />
             </TouchableOpacity>
           </View>
         </View>
-      </AnimationPop>
+      </Popup>
     </>
   );
 };

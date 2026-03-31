@@ -2,19 +2,19 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    padding: 0,
   },
   mask: {
-    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.45)',
   },
   maskPressable: {
     flex: 1,
   },
   centerWrapper: {
-    ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
   },

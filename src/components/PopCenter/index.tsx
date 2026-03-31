@@ -7,15 +7,8 @@ import React, {
   useState,
 } from 'react';
 import type { ViewStyle } from 'react-native';
-import {
-  Animated,
-  Modal,
-  Pressable,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Animated, Text, TouchableOpacity, View } from 'react-native';
+import { Modal } from '@ant-design/react-native';
 import styles from './styles';
 
 export interface PopCenterRef {
@@ -23,35 +16,14 @@ export interface PopCenterRef {
   close: () => void;
 }
 
-/**
- * 居中弹窗
- * 用于展示居中的弹窗，包含标题、内容、底部按钮等
- *
- * @param showHeader 是否显示标题栏
- * @param title 弹窗标题
- * @param children 弹窗内容
- * @param footer 弹窗底部按钮
- * @param maskClosable 是否点击遮罩关闭弹窗
- * @param onConfirm 确认回调
- * @param onCancel 取消回调
- * @param showCancel 是否显示取消按钮
- * @param confirmText 确认按钮文本
- * @param cancelText 取消按钮文本
- * @param contentStyle 弹窗内容样式
- * @param bodyStyle 弹窗主体样式
- * @param width 弹窗宽度
- * @param height 弹窗高度
- * @param btnWidth 底部按钮宽度
- */
-
 export type PopCenterProps = {
   showHeader?: boolean;
   title?: React.ReactNode;
   children?: React.ReactNode;
   footer?: React.ReactNode | boolean;
   maskClosable?: boolean;
-  onConfirm?: () => void;
-  onCancel?: () => void;
+  onConfirm?: () => void | Promise<void>;
+  onCancel?: () => void | Promise<void>;
   showCancel?: boolean;
   confirmText?: string;
   cancelText?: string;
@@ -60,7 +32,8 @@ export type PopCenterProps = {
   width?: number;
   height?: number;
   btnWidth?: number;
-  coverSafeArea?: boolean;
+  visible?: boolean;
+  onVisibleChange?: (visible: boolean) => void;
 };
 
 const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
@@ -81,16 +54,27 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
       width = 311,
       height = 268,
       btnWidth = 124,
-      coverSafeArea = true,
+      visible,
+      onVisibleChange,
     },
     ref,
   ) => {
-    const [visible, setVisible] = useState(false);
-    const [mounted, setMounted] = useState(false);
-    // 关闭过程中禁用交互，但不要在 visible 切回 false 之前 stop/触发 cleanup
-    // 否则会导致 opacity 关闭动画被 cancel，进而表现为“点击关闭没反应”
+    const [innerVisible, setInnerVisible] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
     const opacity = useRef(new Animated.Value(0)).current;
+
+    const isControlled = typeof visible === 'boolean';
+    const mergedVisible = isControlled ? visible : innerVisible;
+
+    const setVisible = useCallback(
+      (next: boolean) => {
+        if (!isControlled) {
+          setInnerVisible(next);
+        }
+        onVisibleChange?.(next);
+      },
+      [isControlled, onVisibleChange],
+    );
 
     const animateIn = useCallback(() => {
       setIsClosing(false);
@@ -105,7 +89,6 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
 
     const close = useCallback(() => {
       opacity.stopAnimation();
-      // 关闭过程中禁用点击，但保持 visible=true，避免下面 visible cleanup stopAnimation()
       setIsClosing(true);
       Animated.timing(opacity, {
         toValue: 0,
@@ -113,26 +96,20 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
         useNativeDriver: true,
       }).start(({ finished }) => {
         if (!finished) return;
-        // iOS 关闭后必须卸载 Modal，否则可能导致底层页面交互卡住
-        setMounted(false);
         setVisible(false);
         setIsClosing(false);
       });
-    }, [opacity]);
+    }, [opacity, setVisible]);
 
     useEffect(() => {
-      if (visible) {
-        setMounted(true);
+      if (mergedVisible) {
         animateIn();
-      }
-    }, [animateIn, visible]);
-
-    useEffect(() => {
-      if (!visible) return;
-      return () => {
+      } else {
         opacity.stopAnimation();
-      };
-    }, [opacity, visible]);
+        opacity.setValue(0);
+        setIsClosing(false);
+      }
+    }, [animateIn, mergedVisible, opacity]);
 
     useImperativeHandle(ref, () => ({
       open: () => {
@@ -142,112 +119,98 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
       close,
     }));
 
+    const handleCancel = async () => {
+      close();
+      await onCancel?.();
+    };
+
+    const handleConfirm = async () => {
+      close();
+      await onConfirm?.();
+    };
+
     return (
       <Modal
+        visible={mergedVisible}
         transparent
-        visible={mounted}
-        onRequestClose={close}
-        statusBarTranslucent={coverSafeArea}
-        presentationStyle={coverSafeArea ? 'overFullScreen' : undefined}
+        maskClosable={maskClosable && !isClosing}
+        onClose={close}
+        animationType="fade"
+        footer={[]}
+        style={[styles.container, { width }]}
       >
-        {coverSafeArea && mounted ? (
-          <StatusBar
-            translucent
-            backgroundColor="rgba(0,0,0,0)"
-            barStyle="light-content"
-          />
-        ) : null}
         <Animated.View
-          style={[styles.mask, { opacity }]}
-          pointerEvents={
-            maskClosable && visible && !isClosing ? 'auto' : 'none'
-          }
+          style={[
+            styles.panel,
+            {
+              width,
+              height,
+              opacity,
+              transform: [
+                {
+                  scale: opacity.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.98, 1],
+                  }),
+                },
+              ],
+            },
+            contentStyle,
+          ]}
+          pointerEvents={mergedVisible && !isClosing ? 'auto' : 'none'}
         >
-          <Pressable
-            style={styles.maskPressable}
-            pointerEvents={
-              maskClosable && visible && !isClosing ? 'auto' : 'none'
-            }
-            onPress={() => {
-              if (!maskClosable) return;
-              close();
-            }}
-          />
-        </Animated.View>
-
-        <View style={styles.centerWrapper} pointerEvents="box-none">
-          <Animated.View
-            style={[
-              styles.panel,
-              {
-                width,
-                height,
-                opacity,
-                transform: [
-                  {
-                    scale: opacity.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.98, 1],
-                    }),
-                  },
-                ],
-              },
-              contentStyle,
-            ]}
-            pointerEvents={visible && !isClosing ? 'auto' : 'none'}
-          >
-            {showHeader ? (
-              <View style={styles.header}>
-                {typeof title === 'string' ? (
-                  <Text style={styles.title} numberOfLines={1}>
-                    {title}
-                  </Text>
-                ) : (
-                  title ?? null
-                )}
-              </View>
-            ) : null}
-
-            <View style={[bodyStyle, { flex: 1, display: 'flex' }]}>
-              {children}
+          {showHeader ? (
+            <View style={styles.header}>
+              {typeof title === 'string' ? (
+                <Text style={styles.title} numberOfLines={1}>
+                  {title}
+                </Text>
+              ) : (
+                title ?? null
+              )}
             </View>
+          ) : null}
 
-            {footer === false ? null : typeof footer === 'boolean' ? (
-              <View style={styles.footer}>
-                {showCancel ? (
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    style={[
-                      styles.footerBtn,
-                      styles.cancalBtn,
-                      { width: btnWidth },
-                    ]}
-                    onPress={onCancel ? onCancel : close}
-                  >
-                    <Text style={[styles.footerBtnText, styles.cancalBtnText]}>
-                      {cancelText}
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
+          <View style={[bodyStyle, { flex: 1, display: 'flex' }]}>
+            {children}
+          </View>
+
+          {footer === false ? null : typeof footer === 'boolean' ? (
+            <View style={styles.footer}>
+              {showCancel ? (
                 <TouchableOpacity
                   activeOpacity={0.8}
                   style={[
                     styles.footerBtn,
-                    styles.confirmBtn,
+                    styles.cancalBtn,
                     { width: btnWidth },
                   ]}
-                  onPress={onConfirm ? onConfirm : close}
+                  onPress={handleCancel}
                 >
-                  <Text style={[styles.footerBtnText, styles.confirmBtnText]}>
-                    {confirmText}
+                  <Text style={[styles.footerBtnText, styles.cancalBtnText]}>
+                    {cancelText}
                   </Text>
                 </TouchableOpacity>
-              </View>
-            ) : footer ? (
-              <View style={styles.footer}>{footer}</View>
-            ) : null}
-          </Animated.View>
-        </View>
+              ) : null}
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={[
+                  styles.footerBtn,
+                  styles.confirmBtn,
+                  { width: btnWidth },
+                ]}
+                onPress={handleConfirm}
+              >
+                <Text style={[styles.footerBtnText, styles.confirmBtnText]}>
+                  {confirmText}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : footer ? (
+            <View style={styles.footer}>{footer}</View>
+          ) : null}
+        </Animated.View>
       </Modal>
     );
   },

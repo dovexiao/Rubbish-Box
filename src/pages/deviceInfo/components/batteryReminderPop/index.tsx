@@ -11,6 +11,7 @@ import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import Video from 'react-native-video';
 import { styles } from './style';
 import { showToast } from '@/utils';
+import { Popup } from '@/components';
 
 export type BatteryReminderPopRef = {
   open: () => void;
@@ -35,7 +36,7 @@ export const BatteryReminderPop = forwardRef<
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [videoKey, setVideoKey] = useState(0);
 
-  const popRef = useRef<AnimationPopRef>(null);
+  const [visible, setVisible] = useState(false);
   const videoRef = useRef<any>(null);
 
   const resetVideo = useCallback(() => {
@@ -46,7 +47,7 @@ export const BatteryReminderPop = forwardRef<
   }, []);
 
   const handleClose = useCallback(() => {
-    popRef.current?.close();
+    setVisible(false);
   }, []);
 
   useImperativeHandle(
@@ -54,19 +55,19 @@ export const BatteryReminderPop = forwardRef<
     () => ({
       open: () => {
         resetVideo();
-        popRef.current?.open();
+        setVisible(true);
       },
       close: () => {
-        popRef.current?.close();
+        setVisible(false);
       },
     }),
     [resetVideo],
   );
 
   return (
-    <AnimationPop
-      ref={popRef}
-      direction="bottom"
+    <Popup
+      visible={visible}
+      showClose={false}
       onClose={() => {
         resetVideo();
       }}
@@ -128,6 +129,6 @@ export const BatteryReminderPop = forwardRef<
           ) : null}
         </View>
       </View>
-    </AnimationPop>
+    </Popup>
   );
 });

@@ -217,7 +217,7 @@ function App() {
         const by = byRes?.data;
         // 仅当来源非 login（或未设置）时由 App 层重弹
         if (!agreed && needReopen && by !== 'login') {
-          setTimeout(() => agreePopRef.current?.open?.(), 600);
+          agreePopRef.current?.open?.();
         }
         // 无论是否打开，均重置标记
         try {
@@ -236,7 +236,7 @@ function App() {
   useEffect(() => {
     const handler = (config: any) => {
       setGlobalPopConfirmConfig(config);
-      setTimeout(() => globalPopConfirmRef.current?.open?.(), 600);
+      globalPopConfirmRef.current?.open?.();
     };
     eventCenter.on('global:popConfirm:show', handler);
     return () => {
@@ -494,18 +494,14 @@ function App() {
 
                       const ok = await pollOk();
                       if (!ok) {
-                        setTimeout(() => {
-                          showToast({
-                            title: '自动动升降开启失败，请重试',
-                            icon: 'none',
-                          });
-                        }, 600);
+                        showToast({
+                          title: '自动动升降开启失败，请重试',
+                          icon: 'none',
+                        });
                         return;
                       }
 
-                      setTimeout(() => {
-                        Toast.success('自动升降开启成功');
-                      }, 600);
+                      Toast.success('自动升降开启成功');
                       return;
                     }
                     Toast.success('自动升降开启成功');
@@ -696,7 +692,7 @@ function App() {
                     cancelText="不同意"
                     onCancel={() => {
                       agreePopRef.current?.close?.();
-                      setTimeout(() => retainPopRef.current?.open?.(), 600);
+                      retainPopRef.current?.open?.();
                     }}
                     submitBtn={
                       <GradientButton

@@ -34,9 +34,7 @@ export const MainTabNavigator: React.FC = () => {
           packageUrl: info.packageUrl,
           forceUpdate: info.forceUpdate,
           isLast: info.isLast,
-          onConfirm: () => {
-            setTimeout(() => manager.applyAppVerUpdate(info), 600);
-          },
+          onConfirm: () => manager.applyAppVerUpdate(info),
         });
       }
     } catch (e) {

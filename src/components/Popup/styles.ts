@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     overflow: 'hidden',
+    width: 'auto',
   },
 
   header: {
@@ -24,9 +25,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333333',
     textAlign: 'center',
-    width: '100%'
+    width: '100%',
   },
-
 
   closeBtn: {
     width: 24,
@@ -38,13 +38,9 @@ const styles = StyleSheet.create({
     top: 0,
   },
 
-  body: {
+  body: {},
 
-  },
-
-  footer: {
-
-  },
+  footer: {},
 
   footerRow: {
     flexDirection: 'row',
@@ -62,4 +58,3 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
-

@@ -12,6 +12,7 @@ import Flex from '@/components/Flex';
 import GradientButton from '@/components/GradientButton';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import { showToast } from '@/utils';
+import { Popup } from '@/components';
 
 export type LeaveRiseLockPopRef = {
   open: () => void;
@@ -28,8 +29,8 @@ export const LeaveRiseLockPop = forwardRef<
   LeaveRiseLockPopProps
 >(function LeaveRiseLockPopInner({ time, onConfirm }, ref) {
   const resetStateRef = useRef(true);
-  const popupRef = useRef<AnimationPopRef>(null);
   const [leaveUpTime, setLeaveUpTime] = useState('');
+  const [visible, setVisible] = useState(false);
 
   const resetState = useCallback(() => {
     setLeaveUpTime(String(time ?? ''));
@@ -42,22 +43,22 @@ export const LeaveRiseLockPop = forwardRef<
   useImperativeHandle(
     ref,
     () => ({
-      open: () => popupRef.current?.open(),
-      close: () => popupRef.current?.close(),
+      open: () => setVisible(true),
+      close: () => setVisible(false),
     }),
     [],
   );
 
   return (
-    <AnimationPop
-      ref={popupRef}
-      direction="bottom"
+    <Popup
+      visible={visible}
+      showClose={false}
+      contentStyle={styles.popupRoot}
       onClose={() => {
         const shouldReset = resetStateRef.current;
         resetStateRef.current = true;
         if (shouldReset) resetState();
       }}
-      style={styles.popupRoot}
     >
       <View style={styles.popupContainer}>
         <Text style={styles.title}>离车升锁时间</Text>
@@ -86,7 +87,7 @@ export const LeaveRiseLockPop = forwardRef<
               hasBorder
               onPress={() => {
                 resetStateRef.current = true;
-                popupRef.current?.close();
+                setVisible(false);
               }}
               text="取消"
               textColor="#999999"
@@ -111,7 +112,7 @@ export const LeaveRiseLockPop = forwardRef<
                 const res = await onConfirm(n);
                 if (res) {
                   resetStateRef.current = false;
-                  popupRef.current?.close();
+                  setVisible(false);
                 }
               }}
               text="确定"
@@ -120,7 +121,7 @@ export const LeaveRiseLockPop = forwardRef<
           </View>
         </Flex>
       </View>
-    </AnimationPop>
+    </Popup>
   );
 });
 

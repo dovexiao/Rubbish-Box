@@ -5,6 +5,7 @@ import {
   GradientButton,
   PageContainer,
   PopConfirm,
+  Popup,
 } from '@/components';
 import {
   Image,
@@ -69,7 +70,8 @@ const DeviceInfo = () => {
   const [optionType, setOptionType] = useState<string>('1');
   const [confirmContent, setConfirmContent] = useState<any>({});
 
-  const editNamePopRef = useRef<AnimationPopRef>(null);
+  const [editNamePopVisible, setEditNamePopVisible] = useState(false);
+  const [adminPopVisible, setAdminPopVisible] = useState(false);
   const pageContainerRef = useRef<PageContainerRef>(null);
   const qrCodePopRef = useRef<PopCenterRef>(null);
   const batteryReminderRef = useRef<AnimationPopRef>(null);
@@ -77,7 +79,6 @@ const DeviceInfo = () => {
   const leaveRiseLockRef = useRef<AnimationPopRef>(null);
   const changeQrCodePopRef = useRef<PopConfirmRef>(null);
   const scanBindQrCameraRef = useRef<CameraRef>(null);
-  const adminRef = useRef<AnimationPopRef>(null);
   const bluetoothStatusUnbindRef = useRef<BluetoothStatusRef>(null);
   const confirmRef = useRef<PopConfirmRef>(null);
 
@@ -164,7 +165,7 @@ const DeviceInfo = () => {
       hideLoading();
       if (res?.success) {
         showToast('修改成功');
-        editNamePopRef.current?.close();
+        setEditNamePopVisible(false);
         // 刷新数据
         pageContainerRef.current?.refresh();
       } else {
@@ -230,7 +231,7 @@ const DeviceInfo = () => {
           scanBindQrCameraRef.current?.close();
         }
 
-        setTimeout(() => confirmRef.current?.open?.(), 600);
+        confirmRef.current?.open?.();
       } catch (error: any) {
         console.log(error, '===error');
       }
@@ -355,7 +356,7 @@ const DeviceInfo = () => {
             style={styles.cardRows}
             onPress={() => {
               if (!params.isAdmin) return;
-              editNamePopRef.current?.open();
+              setEditNamePopVisible(true);
             }}
           >
             <Text style={styles.cardLable}>设备名称</Text>
@@ -464,7 +465,7 @@ const DeviceInfo = () => {
               <Text style={styles.cardLable}>管理员信息</Text>
               <TouchableOpacity
                 style={styles.cardRowsTouch}
-                onPress={() => adminRef?.current?.open()}
+                onPress={() => setAdminPopVisible(true)}
               >
                 <Text style={styles.cardValue}>{'查看'}</Text>
                 <AppIcon name={'a-headfor-20'} color="#333" size={20} />
@@ -576,7 +577,11 @@ const DeviceInfo = () => {
       </TouchableOpacity>
 
       {/* 编辑地锁名称弹窗 */}
-      <AnimationPop ref={editNamePopRef} direction="bottom" coverSafeArea>
+      <Popup
+        visible={editNamePopVisible}
+        showClose={false}
+        onClose={() => setEditNamePopVisible(false)}
+      >
         <View style={[styles.editContainer, { paddingBottom: 8 }]}>
           <View style={styles.header}>
             <Text style={styles.headerTitle}>编辑地锁名称</Text>
@@ -599,7 +604,7 @@ const DeviceInfo = () => {
           <View style={styles.editFooter}>
             <TouchableOpacity
               style={[styles.editBtn, styles.cancelPopBtn]}
-              onPress={() => editNamePopRef.current?.close()}
+              onPress={() => setEditNamePopVisible(false)}
             >
               <Text style={styles.cancelText}>取消</Text>
             </TouchableOpacity>
@@ -612,12 +617,12 @@ const DeviceInfo = () => {
           </View>
 
           <View style={styles.closeIcon}>
-            <TouchableOpacity onPress={() => editNamePopRef.current?.close()}>
+            <TouchableOpacity onPress={() => setEditNamePopVisible(false)}>
               <AppIcon name={'close'} color="#333" size={24} />
             </TouchableOpacity>
           </View>
         </View>
-      </AnimationPop>
+      </Popup>
 
       {/* 查看二维码弹框 */}
       <PopCenter
@@ -702,11 +707,10 @@ const DeviceInfo = () => {
         }}
       />
 
-      <AnimationPop
-        ref={adminRef}
-        maxHeight={148}
-        direction="bottom"
-        maskClosable={false}
+      <Popup
+        visible={adminPopVisible}
+        showClose={false}
+        onClose={() => setAdminPopVisible(false)}
       >
         <View
           style={{
@@ -718,7 +722,7 @@ const DeviceInfo = () => {
         >
           <View style={{ width: 24, height: 24 }}></View>
           <Text style={styles.adminInfoTitle}>管理员信息</Text>
-          <TouchableOpacity onPress={() => adminRef.current?.close()}>
+          <TouchableOpacity onPress={() => setAdminPopVisible(false)}>
             <AppIcon name={'close'} color="#333" size={24} />
           </TouchableOpacity>
         </View>
@@ -730,7 +734,7 @@ const DeviceInfo = () => {
             联系方式：{lockInfo?.adminMobile}
           </Text>
         </View>
-      </AnimationPop>
+      </Popup>
 
       <BluetoothStatus
         ref={bluetoothStatusUnbindRef}

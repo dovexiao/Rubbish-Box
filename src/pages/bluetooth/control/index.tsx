@@ -363,10 +363,7 @@ export default function BluetoothControl() {
         }
 
         setProximityEnabled(v => !v);
-        setTimeout(
-          () => showToast({ title: '操作成功', icon: 'success' }),
-          600,
-        );
+        showToast({ title: '操作成功', icon: 'success' });
         return;
       }
 
@@ -635,7 +632,7 @@ export default function BluetoothControl() {
         type="pass"
         onSuccess={async () => {
           if (optionTypeRef?.current === 1) {
-            setTimeout(() => settingPinRef.current?.open?.(), 600);
+            settingPinRef.current?.open?.();
           } else if (optionTypeRef?.current === 2) {
             await handleToggleProximity();
           }

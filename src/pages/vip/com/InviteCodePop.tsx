@@ -12,6 +12,7 @@ import AppIcon from '@/components/AppIcon';
 import { DAY_OF_WEEK, INVITE_STATUS } from '@/constants';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import type { DetailsProp } from '../type';
+import { Popup } from '@/components';
 
 /**
  * @description 贵宾码弹层（底部弹出）。
@@ -80,12 +81,11 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
     },
     ref,
   ) => {
-    const innerRef = useRef<AnimationPopRef>(null);
     /**
      * @description “更多”菜单是否展开（编辑/作废）。
      */
     const [isOption, setIsOption] = useState(false);
-
+    const [visible, setVisible] = useState(false);
     const canShowMore = useMemo(() => {
       /**
        * @description 是否展示“更多”操作入口。
@@ -107,7 +107,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
        * @remarks 关闭时一并收起更多菜单，避免下次打开残留。
        */
       setIsOption(false);
-      innerRef.current?.close();
+      setVisible(false);
     };
 
     useImperativeHandle(ref, () => ({
@@ -117,20 +117,29 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
          * @remarks 打开前确保更多菜单处于收起状态。
          */
         setIsOption(false);
-        innerRef.current?.open();
+        setVisible(true);
       },
       close,
     }));
 
     return (
-      <AnimationPop
-        ref={innerRef}
+      <Popup
+        visible={visible}
         /**
          * @description 用户手势关闭弹层时，同步重置更多菜单状态。
          */
-        onClose={() => setIsOption(false)}
-        maxHeight={maxHeight}
-        direction="bottom"
+        onClose={() => {
+          setIsOption(false);
+          setVisible(false);
+        }}
+        showClose={false}
+        bodyStyle={{
+          height: maxHeight,
+          flex: 1,
+          justifyContent: 'flex-start',
+          paddingVertical: 0,
+          ...styles,
+        }}
       >
         <Flex
           style={styles.num}
@@ -313,7 +322,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
             </Flex>
           </View>
         )}
-      </AnimationPop>
+      </Popup>
     );
   },
 );

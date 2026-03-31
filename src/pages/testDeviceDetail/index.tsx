@@ -458,9 +458,24 @@ export default function TestDeviceDetailScreen() {
                       visible: true,
                       title: `确定本次测试结果合格吗？`,
                       onConfirm: async () => {
-                        await updateTestResult({
-                          testResult: 1,
-                        });
+                        const res: any = await switchTestDevice(
+                          {
+                            deviceNo: detail.deviceNo,
+                            aboveCheckMethod: 1,
+                          } as any,
+                          'info' as any,
+                        );
+                        if (res && (res.code === 200 || res.success)) {
+                          handleTestDeviceReslt('aboveCheckMethod', 1);
+                          if (testDeviceReslt?.aboveCheckMethod === 1) {
+                            await updateTestResult({
+                              testResult: 1,
+                            });
+                          }
+                        } else {
+                          hideLoading();
+                          showToast(res?.message || res?.msg || '提交失败');
+                        }
                       },
                     });
                   }}
@@ -1411,12 +1426,12 @@ export default function TestDeviceDetailScreen() {
                             if (res && (res.code === 200 || res.success)) {
                               handleTestDeviceReslt('aboveCheckMethod', 1);
                             } else {
-                              showToast(res?.message || res?.msg || '切换失败');
                               hideLoading();
+                              showToast(res?.message || res?.msg || '切换失败');
                             }
                           } catch (e) {
-                            showToast('切换失败');
                             hideLoading();
+                            showToast('切换失败');
                           }
                         }}
                       >
@@ -1446,11 +1461,7 @@ export default function TestDeviceDetailScreen() {
                 </Text>
               </Flex>
               <Flex style={{ flex: 1, marginTop: 16 }} justify={'center'}>
-                {testDeviceReslt?.aboveCheckMethod === 0 ? (
-                  <Text style={{ color: '#999' }}>
-                    已选择地磁检测，此项不可选
-                  </Text>
-                ) : detail.aboveMixtureTestStatus === 0 ? (
+                {detail.aboveMixtureTestStatus === 0 ? (
                   <Flex>
                     <Flex
                       isTouchView
@@ -1583,11 +1594,7 @@ export default function TestDeviceDetailScreen() {
                 </Text>
               </Flex>
               <Flex style={{ flex: 1, marginTop: 16 }} justify={'center'}>
-                {testDeviceReslt?.aboveCheckMethod === 1 ? (
-                  <Text style={{ color: '#999' }}>
-                    已选择地磁+超声波，此项不可选
-                  </Text>
-                ) : detail.aboveGeoTestStatus === 0 ? (
+                {detail.aboveGeoTestStatus === 0 ? (
                   <Flex>
                     <Flex
                       isTouchView

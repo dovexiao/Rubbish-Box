@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import {
   Image,
+  Keyboard,
   Platform,
   StyleSheet,
   Text,
@@ -20,6 +21,7 @@ import PopConfirm, { type PopConfirmRef } from '@/components/popConfirm';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import { operateBuzzing } from '@/services';
 import { showToast } from '@/utils';
+import { Popup } from '@/components';
 
 export type BeeBuzzingCollisionPopRef = {
   open: () => void;
@@ -44,10 +46,11 @@ export const BeeBuzzingCollisionPop = forwardRef<
   ref,
 ) {
   const shouldResetStateRef = useRef(true);
-  const popupRef = useRef<AnimationPopRef>(null);
+  const timeInputRef = useRef<TextInput>(null);
   const testConfirmRef = useRef<PopConfirmRef>(null);
   const [beeBuzzingCollision, setBeeBuzzingCollision] = useState(false);
   const [buzzerTime, setBuzzerTime] = useState('');
+  const [visible, setVisible] = useState(false);
 
   const refreshState = useCallback(() => {
     setBeeBuzzingCollision(isOpen);
@@ -55,13 +58,7 @@ export const BeeBuzzingCollisionPop = forwardRef<
   }, [isOpen, time]);
 
   const openTestConfirm = useCallback(() => {
-    // iOS 下两个 Modal 叠加显示偶发失败，先收起底部弹层再展示确认弹窗更稳定。
-    if (Platform.OS === 'ios') {
-      popupRef.current?.close();
-      setTimeout(() => testConfirmRef.current?.open?.(), 360);
-      return;
-    }
-    setTimeout(() => testConfirmRef.current?.open?.(), 120);
+    testConfirmRef.current?.open?.();
   }, []);
 
   useEffect(() => {
@@ -72,10 +69,10 @@ export const BeeBuzzingCollisionPop = forwardRef<
     ref,
     () => ({
       open: () => {
-        popupRef.current?.open();
+        setVisible(true);
       },
       close: () => {
-        popupRef.current?.close();
+        setVisible(false);
       },
     }),
     [],
@@ -83,15 +80,15 @@ export const BeeBuzzingCollisionPop = forwardRef<
 
   return (
     <>
-      <AnimationPop
-        ref={popupRef}
-        direction="bottom"
+      <Popup
+        visible={visible}
+        showClose={false}
         onClose={() => {
           const shouldRefresh = shouldResetStateRef.current;
           shouldResetStateRef.current = true;
           if (shouldRefresh) refreshState();
         }}
-        style={styles.popupRoot}
+        contentStyle={styles.popupRoot}
       >
         <View style={styles.popupContainer}>
           <Text style={styles.title}>碰撞蜂鸣</Text>
@@ -150,6 +147,7 @@ export const BeeBuzzingCollisionPop = forwardRef<
                   <Flex align="center" style={styles.rowInner}>
                     <Text style={styles.rowText}>触发碰撞蜂鸣后</Text>
                     <TextInput
+                      ref={timeInputRef}
                       value={buzzerTime}
                       keyboardType="number-pad"
                       maxLength={2}
@@ -172,8 +170,11 @@ export const BeeBuzzingCollisionPop = forwardRef<
                 btnBorderRadius={12}
                 hasBorder
                 onPress={() => {
+                  timeInputRef.current?.blur();
+                  Keyboard.dismiss();
+
                   shouldResetStateRef.current = true;
-                  popupRef.current?.close();
+                  setVisible(false);
                 }}
                 text="取消"
                 textColor="#999999"
@@ -190,24 +191,18 @@ export const BeeBuzzingCollisionPop = forwardRef<
                 round={false}
                 btnBorderRadius={12}
                 onPress={async () => {
+                  timeInputRef.current?.blur();
+                  Keyboard.dismiss();
                   const payload = {
                     buzzerTime: Number(buzzerTime),
                     buzzerStatus: beeBuzzingCollision ? 1 : 0,
                   };
 
-                  // iOS: 当前底部弹层是 Modal，再弹全局 loading/toast 容易被盖住或不显示。
-                  // 先收起当前弹层，再执行提交逻辑。
-                  if (Platform.OS === 'ios') {
-                    shouldResetStateRef.current = true;
-                    popupRef.current?.close();
-                    await new Promise(resolve => setTimeout(resolve, 360));
-                  }
-
                   const res = await onConfirm(payload);
                   if (res) {
                     // 可能会操作失败,所以也需要重置
                     shouldResetStateRef.current = true;
-                    popupRef.current?.close();
+                    setVisible(false);
                   }
                 }}
                 text="确定"
@@ -216,7 +211,7 @@ export const BeeBuzzingCollisionPop = forwardRef<
             </View>
           </Flex>
         </View>
-      </AnimationPop>
+      </Popup>
 
       <PopConfirm
         ref={testConfirmRef}

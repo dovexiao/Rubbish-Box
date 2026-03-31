@@ -162,9 +162,7 @@ const Content: React.FC<ContentProps> = ({
         if (res?.code !== 200) {
           hideLoading();
           eventCenter.trigger('onOptioned', false);
-          setTimeout(() => {
-            showToast({ title: res?.msg || res.message, icon: 'error' });
-          }, 600);
+          showToast({ title: res?.msg || res.message, icon: 'error' });
 
           if (onFresh) {
             await onFresh(detail.id);
@@ -248,9 +246,7 @@ const Content: React.FC<ContentProps> = ({
               deviceType === 'group' &&
               deviceNum.current !== detail?.groupCount
             ) {
-              setTimeout(() => {
-                groupToastPop.current?.open();
-              }, 600);
+              groupToastPop.current?.open();
             }
             return false;
           }
@@ -517,10 +513,7 @@ const Content: React.FC<ContentProps> = ({
                 handleOperate('RISE');
               } else {
                 bluetoothControlRef.current = 'RISE';
-                setTimeout(
-                  () => bluetoothConnectStatusRef.current?.open?.(),
-                  600,
-                );
+                bluetoothConnectStatusRef.current?.open?.();
               }
             }}
           >
@@ -540,10 +533,7 @@ const Content: React.FC<ContentProps> = ({
                 handleOperate('DOWN');
               } else {
                 bluetoothControlRef.current = 'DOWN';
-                setTimeout(
-                  () => bluetoothConnectStatusRef.current?.open?.(),
-                  600,
-                );
+                bluetoothConnectStatusRef.current?.open?.();
               }
             }}
           >
@@ -780,7 +770,7 @@ const Content: React.FC<ContentProps> = ({
             activeOpacity={0.8}
             onPress={() => {
               manageMultipleRef.current?.close();
-              setTimeout(() => setDeleteMultipleRef(true), 600);
+              setDeleteMultipleRef(true);
             }}
             style={{ ...styles.manageBtn, ...styles.manageDeteleBtn }}
           >
@@ -837,7 +827,7 @@ const Content: React.FC<ContentProps> = ({
           if (detail?.powerType === 1) {
             await operateCover();
           } else {
-            setTimeout(() => bluetoothConnectStatusRef.current?.open?.(), 600);
+            bluetoothConnectStatusRef.current?.open?.();
           }
         }}
       />

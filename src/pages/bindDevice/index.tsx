@@ -88,10 +88,8 @@ const BinDevice: React.FC = () => {
         } else {
           setErrorMsg(res?.message || '识别失败，请重试');
           setIsActive(false);
-          setTimeout(() => {
-            popVisibleRef.current = true;
-            popRef.current?.open();
-          }, 600);
+          popVisibleRef.current = true;
+          popRef.current?.open();
           hasScannedRef.current = false;
         }
       } catch (error) {
@@ -289,10 +287,8 @@ const BinDevice: React.FC = () => {
           onConfirm={() => {
             popVisibleRef.current = false;
             popRef.current?.close();
-            setTimeout(() => {
-              hasScannedRef.current = false;
-              setIsActive(true);
-            }, 200);
+            hasScannedRef.current = false;
+            setIsActive(true);
           }}
         />
       </View>

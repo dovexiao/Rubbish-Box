@@ -101,10 +101,7 @@ const LoginSms = () => {
           try {
             await getMobPushDeviceInfo();
           } catch {}
-          setTimeout(
-            () => showToast({ title: '登录成功', icon: 'success' }),
-            600,
-          );
+          showToast({ title: '登录成功', icon: 'success' });
           reLaunch('Index');
         }
       } else if (res.code === 515) {

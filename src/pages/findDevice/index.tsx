@@ -585,10 +585,7 @@ export default function FindDevice(props: any) {
               return;
             }
             await clearProcessingFlag();
-            setTimeout(
-              () => showToast({ title: '自动升降开启成功', icon: 'success' }),
-              600,
-            );
+            showToast({ title: '自动升降开启成功', icon: 'success' });
             navigation?.navigate?.('BluetoothControl', {
               lockName,
               bluetoothHasOpen: true,

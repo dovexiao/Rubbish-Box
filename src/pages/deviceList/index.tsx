@@ -237,9 +237,7 @@ export default function DeviceList() {
             if (result?.data) {
               if (shouldOpenConfirmRef.current) {
                 coverConfirmRef.current?.close();
-                setTimeout(() => {
-                  openConfirmRef.current?.open();
-                }, 600);
+                openConfirmRef.current?.open();
                 shouldOpenConfirmRef.current = false;
               }
               void loadList(true);

@@ -7,6 +7,7 @@ import {
   TextInput,
   Flex,
   GradientButton,
+  Popup,
 } from '@/components/index';
 import AppIcon from '@/components/AppIcon';
 import { cacheGet } from '@/utils/cache';
@@ -21,7 +22,7 @@ export default function MyDevice() {
   const [lockName, setLockName] = useState('');
   const [deviceList, setDeviceList] = useState<any[]>([]);
   const [currentDevice, setCurrentDevice] = useState<any>(undefined);
-  const editNamePop = useRef<AnimationPopRef>(null);
+  const [editNamePopVisible, setEditNamePopVisible] = useState(false);
 
   useEffect(() => {
     getList();
@@ -39,7 +40,7 @@ export default function MyDevice() {
   };
 
   const handleNameConfirm = async () => {
-    editNamePop.current?.close();
+    setEditNamePopVisible(false);
     const userId = await cacheGet({ key: 'userId' });
     try {
       const res = await updateName({
@@ -114,7 +115,7 @@ export default function MyDevice() {
                 onChangeName={() => {
                   setCurrentDevice(item);
                   setLockName(item.lockName);
-                  editNamePop.current?.open();
+                  setEditNamePopVisible(true);
                 }}
               />
             ))}
@@ -128,13 +129,13 @@ export default function MyDevice() {
           </Flex>
         )}
       </ScrollView>
-      <AnimationPop
-        direction="bottom"
-        coverSafeArea
+      <Popup
+        showClose={false}
+        onClose={() => setEditNamePopVisible(false)}
         title={`编辑${
           currentDevice?.groupCount === 1 ? '地锁' : '组合设备'
         }名称`}
-        ref={editNamePop}
+        visible={editNamePopVisible}
       >
         <View style={styles.popup}>
           <Flex
@@ -160,7 +161,7 @@ export default function MyDevice() {
             <TouchableOpacity
               style={styles.cancalBtn}
               onPress={() => {
-                editNamePop.current?.close();
+                setEditNamePopVisible(false);
               }}
             >
               <Text style={styles.btnTextCancel}>取消</Text>
@@ -175,7 +176,7 @@ export default function MyDevice() {
             </TouchableOpacity>
           </View>
         </View>
-      </AnimationPop>
+      </Popup>
     </PageContainer>
   );
 }

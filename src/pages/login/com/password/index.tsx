@@ -93,9 +93,7 @@ const Password: React.FC<PasswordProps> = ({
         setShowError(true);
         setErrorMessage(res.msg || '手机号码或密码错误');
       } else {
-        setTimeout(() => {
-          showToast(res.msg || '登录失败');
-        }, 600);
+        showToast(res.msg || '登录失败');
       }
     } catch (error) {
       console.error('密码登录异常:', error);
