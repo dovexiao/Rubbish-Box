@@ -46,6 +46,7 @@ const Index = () => {
     openCovering: false,
     closeCovering: false,
   });
+  const [inconsistentStatus, setInconsistentStatus] = useState(false);
   const [gifNonce, setGifNonce] = useState<number>(0);
   const [optioning, setOptioning] = useState<boolean>(false);
   const optioningRef = useRef<boolean>(false);
@@ -77,15 +78,19 @@ const Index = () => {
           setHasDevice(lockRes.data?.hasDevice);
           setError(null);
           setCurrentDeviceStatus(() => {
-            const powerType = lockRes.data?.powerType;
+            // const powerType = lockRes.data?.powerType;
             const coverStatus = lockRes.data?.coverStatus;
             const fallStatus = lockRes.data?.fallStatus;
-            // 非市电版本：只展示静态升起图
-            if (powerType !== 1) {
-              return 'rise';
-            }
-            // 市电版本 & 盖子已打开
-            if (coverStatus === 1 && powerType === 1) {
+            // // 非市电版本：只展示静态升起图
+            // if (powerType !== 1) {
+            //   return 'rise';
+            // }
+            // // 市电版本 & 盖子已打开
+            // if (coverStatus === 1 && powerType === 1) {
+            //   return 'openCover';
+            // }
+            // 20260331: 现版本组合设备只能为市电版本，组合设备详情接口中后端已去除powerType字段
+            if (coverStatus === 1) {
               return 'openCover';
             }
             // 根据 fallStatus 判定
@@ -102,6 +107,10 @@ const Index = () => {
                 return 'rise';
             }
           });
+
+          setInconsistentStatus(
+            lockRes.data?.deviceStatus === null && lockRes.data?.isGroup,
+          );
         } else if (lockRes.code === 520 || lockRes.code === 522) {
           setDetail(undefined);
           setHasDevice(false);
@@ -469,7 +478,7 @@ const Index = () => {
                   detail={detail}
                   currentDeviceStatus={currentDeviceStatus}
                   deviceStatus={deviceStatus}
-                  inconsistentStatus={false}
+                  inconsistentStatus={inconsistentStatus}
                   gifNonce={gifNonce}
                 />
               </Content>
