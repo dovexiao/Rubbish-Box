@@ -190,10 +190,20 @@ export const BeeBuzzingCollisionPop = forwardRef<
                 round={false}
                 btnBorderRadius={12}
                 onPress={async () => {
-                  const res = await onConfirm({
+                  const payload = {
                     buzzerTime: Number(buzzerTime),
                     buzzerStatus: beeBuzzingCollision ? 1 : 0,
-                  });
+                  };
+
+                  // iOS: 当前底部弹层是 Modal，再弹全局 loading/toast 容易被盖住或不显示。
+                  // 先收起当前弹层，再执行提交逻辑。
+                  if (Platform.OS === 'ios') {
+                    shouldResetStateRef.current = true;
+                    popupRef.current?.close();
+                    await new Promise(resolve => setTimeout(resolve, 360));
+                  }
+
+                  const res = await onConfirm(payload);
                   if (res) {
                     // 可能会操作失败,所以也需要重置
                     shouldResetStateRef.current = true;

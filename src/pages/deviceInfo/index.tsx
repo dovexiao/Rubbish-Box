@@ -265,7 +265,7 @@ const DeviceInfo = () => {
       await loopOperateStatus(11, true);
     } else {
       hideLoading();
-      showToast(res.message || '修改失败');
+      setTimeout(() => showToast(res.message || '修改失败'), 600);
     }
     return res.success;
   };
