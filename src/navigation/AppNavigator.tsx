@@ -1,5 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 import { routes } from '@/routes';
 import { MainTabNavigator } from '@/navigation/MainTabNavigator';
 import { useAuth } from '@/hooks/useAuth';
@@ -7,7 +11,10 @@ import { Linking, View, Animated, Platform } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
 import { HOME_STACK_ROUTE } from '@/constants';
 
-const Stack = createNativeStackNavigator();
+const isHarmony = Platform.OS !== 'ios' && Platform.OS !== 'android';
+const Stack: any = isHarmony
+  ? createStackNavigator()
+  : createNativeStackNavigator();
 
 // const Splash = ({ onReady }: { onReady: () => void }) => {
 //   const [isVideoReady, setIsVideoReady] = useState(false);
@@ -78,9 +85,24 @@ export const AppNavigator: React.FC = () => {
       initialRouteName={initialRouteName}
       screenOptions={{
         headerShown: false,
-        animation: 'slide_from_right',
-        animationDuration:
-          Platform.OS !== 'ios' && Platform.OS !== 'android' ? 250 : 0,
+        ...(isHarmony
+          ? {
+              cardStyleInterpolator:
+                CardStyleInterpolators.forFadeFromBottomAndroid,
+              transitionSpec: {
+                open: {
+                  animation: 'timing',
+                  config: { duration: 350 },
+                },
+                close: {
+                  animation: 'timing',
+                  config: { duration: 300 },
+                },
+              },
+            }
+          : {
+              animation: 'slide_from_right',
+            }),
       }}
     >
       {/* 登录页面 */}

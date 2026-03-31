@@ -29,7 +29,7 @@ export default StyleSheet.create({
   },
   tabText: {
     fontSize: 14,
-    color: '#CCCCCC',
+    color: '#666666',
   },
   tabTextActive: {
     fontSize: 14,

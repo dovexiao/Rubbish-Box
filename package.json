@@ -47,7 +47,8 @@
     "build:real:ios:prep": "pnpm run ios:env:real && pnpm run build:real:ios",
     "build:staging:apk": "./build.sh staging:apk",
     "build:staging:ios": "./build.sh staging:ios",
-    "generate:harmony-icons": "node scripts/generate-harmony-icons.js"
+    "generate:harmony-icons": "node scripts/generate-harmony-icons.js",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@ant-design/icons-react-native": "^2.3.2",
@@ -69,6 +70,7 @@
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
+    "@react-navigation/stack": "^6.3.16",
     "@tanstack/react-query": "^4.29.19",
     "@types/crypto-js": "^4.2.2",
     "axios": "^1.1.3",

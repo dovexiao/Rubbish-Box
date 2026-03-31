@@ -1,0 +1,26 @@
+diff --git a/node_modules/react-native-device-info/android/src/main/java/com/learnium/RNDeviceInfo/RNDeviceModule.java b/node_modules/react-native-device-info/android/src/main/java/com/learnium/RNDeviceInfo/RNDeviceModule.java
+index 284e544..73c8cb8 100644
+--- a/node_modules/react-native-device-info/android/src/main/java/com/learnium/RNDeviceInfo/RNDeviceModule.java
++++ b/node_modules/react-native-device-info/android/src/main/java/com/learnium/RNDeviceInfo/RNDeviceModule.java
+@@ -189,7 +189,7 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
+ 
+     final Map<String, Object> constants = new HashMap<>();
+ 
+-    constants.put("uniqueId", getUniqueIdSync());
++    constants.put("uniqueId", "unknown");
+     constants.put("deviceId", Build.BOARD);
+     constants.put("bundleId", getReactApplicationContext().getPackageName());
+     constants.put("systemName", "Android");
+diff --git a/node_modules/react-native-device-info/src/index.ts b/node_modules/react-native-device-info/src/index.ts
+index a485044..ea91859 100644
+--- a/node_modules/react-native-device-info/src/index.ts
++++ b/node_modules/react-native-device-info/src/index.ts
+@@ -21,7 +21,7 @@ export const getUniqueId = () =>
+     defaultValue: 'unknown',
+     memoKey: 'uniqueId',
+     supportedPlatforms: ['android', 'ios', 'windows'],
+-    getter: () => RNDeviceInfo.uniqueId,
++    getter: () => Platform.OS === 'android' ? RNDeviceInfo.getUniqueIdSync() : RNDeviceInfo.uniqueId,
+   });
+ 
+ let uniqueId: string;
