@@ -68,7 +68,7 @@ export default function MyDevice() {
   return (
     <PageContainer
       safeAreaEdges={['top', 'bottom']}
-      statusBarStyle="light-content"
+      statusBarStyle="dark-content"
       statusBarBackgroundColor="#ffffff"
       pageNavProps={{
         text: '添加设备',
