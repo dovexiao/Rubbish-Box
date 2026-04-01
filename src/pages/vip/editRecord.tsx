@@ -160,27 +160,27 @@ export default function VipEditRecordPage() {
 
   const handleInvite = useCallback(async () => {
     if (!startTime) {
-      showToast({ title: '请选择开始时间', icon: 'none' });
+      showToast({ title: '请选择开始时间', icon: 'info' });
       return;
     }
     if (!endTime) {
-      showToast({ title: '请选择结束时间', icon: 'none' });
+      showToast({ title: '请选择结束时间', icon: 'info' });
       return;
     }
     if (startTime > endTime) {
-      showToast({ title: '开始时间不能大于结束时间', icon: 'none' });
+      showToast({ title: '开始时间不能大于结束时间', icon: 'info' });
       return;
     }
     if (!noLimit && !customUsageCount) {
-      showToast({ title: '请选择使用次数', icon: 'none' });
+      showToast({ title: '请选择使用次数', icon: 'info' });
       return;
     }
     if (!selectedDeviceList || selectedDeviceList.length <= 0) {
-      showToast({ title: '请选择分享地锁', icon: 'none' });
+      showToast({ title: '请选择分享地锁', icon: 'info' });
       return;
     }
     if (!adminUserId) {
-      showToast({ title: '请选择有效的管理员身份', icon: 'none' });
+      showToast({ title: '请选择有效的管理员身份', icon: 'info' });
       return;
     }
 
@@ -609,7 +609,7 @@ export default function VipEditRecordPage() {
               isTouchView
               onPress={async () => {
                 if (!userItem || !userItem.adminUserId) {
-                  showToast({ title: '请选择管理员' });
+                  showToast({ title: '请选择管理员', icon: 'info' });
                   return;
                 }
                 setAdminUserId(userItem.adminUserId);

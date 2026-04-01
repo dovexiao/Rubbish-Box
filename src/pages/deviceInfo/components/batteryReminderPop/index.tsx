@@ -101,7 +101,7 @@ export const BatteryReminderPop = forwardRef<
               resetVideo();
             }}
             onError={() => {
-              showToast('视频加载失败');
+              showToast({ title: '视频加载失败', icon: 'info' });
               resetVideo();
             }}
             onFullscreenPlayerDidPresent={() => {

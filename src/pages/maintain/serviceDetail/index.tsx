@@ -38,7 +38,7 @@ export default function MaintainServiceDetail() {
 
   const loadDetail = useCallback(async () => {
     if (id == null) {
-      showToast('参数错误');
+      showToast({ title: '参数错误', icon: 'info' });
       return;
     }
     setLoading(true);
@@ -51,10 +51,10 @@ export default function MaintainServiceDetail() {
           : [];
         setDetail({ ...data, progressList });
       } else {
-        showToast(res.message);
+        showToast({ title: res.message, icon: 'info' });
       }
     } catch (e) {
-      showToast((e as any).message);
+      showToast({ title: (e as any).message, icon: 'info' });
     } finally {
       setLoading(false);
     }

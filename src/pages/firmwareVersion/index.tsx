@@ -39,11 +39,14 @@ export default function FirmwareVersion() {
       if (res?.code === 200 && res?.success) {
         setLatestInfo(res.data || null);
       } else {
-        showToast(res?.message || res?.msg || '获取最新版本失败');
+        showToast({
+          title: res?.message || res?.msg || '获取最新版本失败',
+          icon: 'info',
+        });
         setLatestInfo(null);
       }
     } catch (e) {
-      showToast('获取最新版本失败');
+      showToast({ title: '获取最新版本失败', icon: 'info' });
       setLatestInfo(null);
     } finally {
       setInitialLoading(false);

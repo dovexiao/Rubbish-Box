@@ -69,8 +69,8 @@ const Password: React.FC<PasswordProps> = ({
         password,
         ...device,
       });
-      console.log('res', res);
       if (res.code === 200) {
+        hideLoading();
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
         try {
@@ -89,17 +89,16 @@ const Password: React.FC<PasswordProps> = ({
             reLaunch('Index');
           }
         }, 300);
-      } else if (res.code === 520 || res.code === 522) {
+      } else if (res.code === 520 || res.code === 522 || res.code === 525) {
+        hideLoading();
         setShowError(true);
         setErrorMessage(res.msg || '手机号码或密码错误');
       } else {
-        showToast(res.msg || '登录失败');
+        hideLoading();
+        showToast({ title: res.msg || '登录失败', icon: 'info' });
       }
     } catch (error) {
-      console.error('密码登录异常:', error);
-      showToast('登录失败，请稍后重试');
-    } finally {
-      hideLoading();
+      showToast({ title: '登录失败，请稍后重试', icon: 'info' });
     }
   };
 

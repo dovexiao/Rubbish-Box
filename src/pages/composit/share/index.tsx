@@ -25,7 +25,7 @@ export default function ShareSuccessPage() {
     if (isSharing) return;
 
     if (!hasWeChatShareCapability()) {
-      showToast({ title: '微信分享能力不可用', icon: 'none' });
+      showToast({ title: '微信分享能力不可用', icon: 'info' });
       return;
     }
 
@@ -78,9 +78,9 @@ export default function ShareSuccessPage() {
       if (result?.errCode === 0) {
         showToast({ title: '分享成功', icon: 'success' });
       } else if (result?.errCode === -998) {
-        showToast({ title: '用户返回应用，未完成分享', icon: 'none' });
+        showToast({ title: '用户返回应用，未完成分享', icon: 'info' });
       } else if (result?.errCode === -999) {
-        showToast({ title: '分享超时', icon: 'none' });
+        showToast({ title: '分享超时', icon: 'info' });
       } else {
         showToast({ title: '分享失败', icon: 'error' });
       }

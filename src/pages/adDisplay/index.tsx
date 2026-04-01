@@ -183,7 +183,7 @@ export default function AdDisplay() {
       setTextLength((text || '').length);
       setDetail(data);
     } catch (e) {
-      showToast('获取广告信息失败');
+      showToast({ title: '获取广告详情失败', icon: 'info' });
     }
   }, []);
 
@@ -244,7 +244,7 @@ export default function AdDisplay() {
   const handleChooseImage = useCallback(async () => {
     const remain = MAX_FILES - bannerImageUrls.length;
     if (remain <= 0) {
-      showToast('最多上传10个文件');
+      showToast({ title: '最多上传10个文件', icon: 'info' });
       return;
     }
     launchImageLibrary(
@@ -256,7 +256,7 @@ export default function AdDisplay() {
       async res => {
         if (res.didCancel) return;
         if (res.errorCode || res.errorMessage) {
-          showToast(res.errorMessage || '选择失败');
+          showToast({ title: res.errorMessage || '选择失败', icon: 'error' });
           return;
         }
         const assets = res.assets || [];
@@ -269,7 +269,7 @@ export default function AdDisplay() {
           setBannerImageUrls(prev => [...prev, ...list].slice(0, MAX_FILES));
         } catch (e) {
           hideLoading();
-          showToast('上传失败，请重试');
+          showToast({ title: '上传失败，请重试', icon: 'error' });
         }
       },
     );
@@ -278,7 +278,7 @@ export default function AdDisplay() {
   const handleChooseVideo = useCallback(async () => {
     const remain = MAX_FILES - bannerImageUrls.length;
     if (remain <= 0) {
-      showToast('最多上传10个文件');
+      showToast({ title: '最多上传10个文件', icon: 'info' });
       return;
     }
     launchImageLibrary(
@@ -289,7 +289,7 @@ export default function AdDisplay() {
       async res => {
         if (res.didCancel) return;
         if (res.errorCode || res.errorMessage) {
-          showToast(res.errorMessage || '选择失败');
+          showToast({ title: res.errorMessage || '选择失败', icon: 'error' });
           return;
         }
         console.log('res', res);
@@ -301,11 +301,10 @@ export default function AdDisplay() {
           showLoading({ title: '上传中...' });
           const list = await handleUploadFiles([uri], true);
           hideLoading();
-          console.log('list', list);
           setBannerImageUrls(prev => [...prev, ...list].slice(0, MAX_FILES));
         } catch (e) {
           hideLoading();
-          showToast('上传失败，请重试');
+          showToast({ title: '上传失败，请重试', icon: 'error' });
         }
       },
     );
@@ -317,7 +316,7 @@ export default function AdDisplay() {
 
   const handleCreate = useCallback(async () => {
     if (!bannerText?.trim() && bannerImageUrls.length === 0) {
-      showToast('请上传广告图片或文案信息');
+      showToast({ title: '请上传广告图片或文案信息', icon: 'info' });
       return;
     }
     if (submitting) return;
@@ -328,13 +327,16 @@ export default function AdDisplay() {
         bannerText: bannerText?.trim() || '',
       });
       if (Number(res?.code) === 200) {
-        showToast('更新广告成功');
+        showToast({ title: '更新广告成功', icon: 'success' });
         navigation.goBack();
       } else {
-        showToast((res as any)?.message || (res as any)?.msg || '更新失败');
+        showToast({
+          title: (res as any)?.message || (res as any)?.msg || '更新失败',
+          icon: 'error',
+        });
       }
     } catch (e) {
-      showToast('更新失败');
+      showToast({ title: '更新失败', icon: 'error' });
     } finally {
       setSubmitting(false);
     }

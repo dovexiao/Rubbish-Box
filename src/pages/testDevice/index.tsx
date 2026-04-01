@@ -109,7 +109,7 @@ export default function TestDevice() {
       }
     } catch (error) {
       console.error('getTestDeviceList error:', error);
-      showToast('获取测试设备列表失败');
+      showToast({ title: '获取测试设备列表失败', icon: 'info' });
     } finally {
       setLoading(false);
       setRefreshing(false);

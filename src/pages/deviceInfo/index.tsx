@@ -53,7 +53,6 @@ import LeaveRiseLockPop from './components/leaveRiseLockPop';
 import BluetoothStatus, {
   BluetoothStatusRef,
 } from '@/components/bluetoothStatus';
-import { Modal } from '@ant-design/react-native';
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
@@ -152,7 +151,7 @@ const DeviceInfo = () => {
 
   const handleNameConfirm = async () => {
     if (!lockName?.trim()) {
-      showToast('请输入名称');
+      showToast({ title: '请输入名称', icon: 'info' });
       return;
     }
     showLoading({ title: '修改中...' });
@@ -162,18 +161,20 @@ const DeviceInfo = () => {
         id: params?.lockId,
         lockName: lockName,
       });
-      hideLoading();
+
       if (res?.success) {
-        showToast('修改成功');
+        hideLoading();
+        showToast({ title: '修改成功', icon: 'success' });
         setEditNamePopVisible(false);
         // 刷新数据
         pageContainerRef.current?.refresh();
       } else {
-        showToast(res?.message || '修改失败');
+        hideLoading();
+        showToast({ title: res?.message || '修改失败', icon: 'info' });
       }
     } catch (error) {
       hideLoading();
-      showToast('修改异常');
+      showToast({ title: '修改异常', icon: 'info' });
     }
   };
 
@@ -244,11 +245,12 @@ const DeviceInfo = () => {
     const res = await operateBuzzing({
       id: params?.lockId,
     });
-    console.log(res, '===res');
     if (res?.code === 200 && res?.success) {
-      showToast('蜂鸣测试成功');
+      hideLoading();
+      showToast({ title: '蜂鸣测试成功', icon: 'success' });
     } else {
-      showToast(res?.message || '蜂鸣测试失败');
+      hideLoading();
+      showToast({ title: res?.message || '蜂鸣测试失败', icon: 'info' });
     }
   };
 
@@ -266,7 +268,7 @@ const DeviceInfo = () => {
       await loopOperateStatus(11, true);
     } else {
       hideLoading();
-      setTimeout(() => showToast(res.message || '修改失败'), 600);
+      showToast({ title: res.message || '修改失败', icon: 'info' });
     }
     return res.success;
   };
@@ -274,11 +276,14 @@ const DeviceInfo = () => {
   const deviceModifyLockLeaveTime = async (leaveUpTime: number) => {
     showLoading({ title: '修改中...' });
     const res = await modifyLockLeaveTime({ leaveUpTime, id: deviceInfo?.id });
-    hideLoading();
+
     if (res.success) {
+      hideLoading();
+      showToast({ title: '操作成功', icon: 'success' });
       fetchLockInfo();
     } else {
-      showToast(res.message || '修改失败');
+      hideLoading();
+      showToast({ title: res.message || '修改失败', icon: 'info' });
     }
     return res.success;
   };
@@ -306,6 +311,7 @@ const DeviceInfo = () => {
           timer = null;
         }
         hideLoading();
+        showToast({ title: '操作成功', icon: 'success' });
         return false;
       }
       return true;
@@ -315,8 +321,7 @@ const DeviceInfo = () => {
         eventCenter.trigger('onOptioned', false);
       }
       stop();
-      hideLoading();
-      showToast('操作失败');
+      showToast({ title: '操作失败', icon: 'info' });
     }, 10000);
     start();
   };

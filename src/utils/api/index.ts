@@ -1283,7 +1283,8 @@ const sendBleCommandWithAck = async (options: {
       resolve(result);
     };
     const timer = setTimeout(
-      () => finish({ success: false, code: -1, msg: '超时未收到设备响应' }),
+      () =>
+        finish({ success: false, code: -1, msg: '设备响应超时,请稍后重试' }),
       timeoutMs,
     );
 

@@ -36,11 +36,11 @@ export default function WechatUnbind() {
   const handleGetCode = async () => {
     const value = mobile.trim();
     if (!value) {
-      showToast('请输入手机号');
+      showToast({ title: '请输入手机号', icon: 'info' });
       return;
     }
     if (!mobileExp(value)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (sending) return;
@@ -57,9 +57,12 @@ export default function WechatUnbind() {
       if (res.code === 200) {
         setSmsRequested(true);
         setCountdown(60);
-        showToast('验证码已发送');
+        showToast({ title: '验证码已发送', icon: 'info' });
       } else {
-        showToast(res.msg || res.message || '发送失败');
+        showToast({
+          title: res.msg || res.message || '发送失败',
+          icon: 'info',
+        });
       }
     } finally {
       setSending(false);
@@ -69,15 +72,15 @@ export default function WechatUnbind() {
   const handleSubmit = async () => {
     const value = mobile.trim();
     if (!value) {
-      showToast('请输入手机号');
+      showToast({ title: '请输入手机号', icon: 'info' });
       return;
     }
     if (!mobileExp(value)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (!code.trim()) {
-      showToast('请输入验证码');
+      showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
     if (submitting) return;
@@ -93,15 +96,18 @@ export default function WechatUnbind() {
       const res = await wechatUnBind(params);
       if (res.code === 200) {
         setSmsError(false);
-        showToast('解绑成功');
+        showToast({ title: '解绑成功', icon: 'info' });
         setTimeout(() => {
           navigation.goBack();
         }, 1000);
       } else if (res.code === 515) {
         setSmsError(true);
-        showToast('验证码错误');
+        showToast({ title: '验证码错误', icon: 'info' });
       } else {
-        showToast(res.msg || res.message || '解绑失败');
+        showToast({
+          title: res.msg || res.message || '解绑失败',
+          icon: 'info',
+        });
       }
     } finally {
       setSubmitting(false);

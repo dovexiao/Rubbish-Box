@@ -52,7 +52,7 @@ export default function MaintainLockChoose() {
         setLockList(prev => (refresh ? list : [...prev, ...list]));
         setComplete(list.length < PAGE_SIZE);
       } catch (e) {
-        showToast('获取设备列表失败');
+        showToast({ title: '加载设备列表失败', icon: 'info' });
       } finally {
         setLoading(false);
         setRefreshing(false);

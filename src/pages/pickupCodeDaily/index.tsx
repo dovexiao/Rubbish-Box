@@ -75,7 +75,7 @@ export default function PickupCodeDaily() {
   const handleGetCodeDetail = useCallback(async () => {
     const code = pickupCode.trim();
     if (!code) {
-      showToast('请输入卡密');
+      showToast({ title: '请输入卡密', icon: 'info' });
       return false;
     }
 
@@ -86,10 +86,13 @@ export default function PickupCodeDaily() {
         setChannelQrUrl(res.data?.channelQrUrl || '');
         return true;
       }
-      showToast(res.msg || res.message || '卡密无效，请检查后重试');
+      showToast({
+        title: res.msg || res.message || '卡密无效，请检查后重试',
+        icon: 'info',
+      });
       return false;
     } catch {
-      showToast('网络异常，请稍后重试');
+      showToast({ title: '网络异常，请稍后重试', icon: 'info' });
       return false;
     }
   }, [pickupCode]);
@@ -98,7 +101,7 @@ export default function PickupCodeDaily() {
   const handleConfirmPickup = useCallback(async () => {
     const code = pickupCode.trim();
     if (!code) {
-      showToast('请输入卡密');
+      showToast({ title: '请输入卡密', icon: 'info' });
       return false;
     }
 
@@ -107,10 +110,13 @@ export default function PickupCodeDaily() {
       if (res.code === 200 && res.success) {
         return true;
       }
-      showToast(res.msg || res.message || '领取失败，请稍后重试');
+      showToast({
+        title: res.msg || res.message || '领取失败，请稍后重试',
+        icon: 'info',
+      });
       return false;
     } catch {
-      showToast('领取失败，请稍后重试');
+      showToast({ title: '领取失败，请稍后重试', icon: 'info' });
       return false;
     }
   }, [pickupCode]);
@@ -178,7 +184,7 @@ export default function PickupCodeDaily() {
     } finally {
       hideLoading();
       if (toastMsg) {
-        showToast(toastMsg);
+        showToast({ title: toastMsg, icon: 'info' });
       }
     }
   }, []);
@@ -214,7 +220,7 @@ export default function PickupCodeDaily() {
         if (index === 0) {
           const ok = await ensureCameraPermission();
           if (!ok) {
-            showToast('未获得相机权限');
+            showToast({ title: '未获得相机权限', icon: 'info' });
             return;
           }
           launchCamera(
@@ -222,12 +228,15 @@ export default function PickupCodeDaily() {
             res => {
               if (res.didCancel) return;
               if (res.errorCode || res.errorMessage) {
-                showToast(res.errorMessage || '拍照失败');
+                showToast({
+                  title: res.errorMessage || '拍照失败',
+                  icon: 'info',
+                });
                 return;
               }
               const uri = res.assets?.[0]?.uri;
               if (uri) void processImageUri(uri);
-              else showToast('未获取到图片');
+              else showToast({ title: '未获取到图片', icon: 'info' });
             },
           );
           return;
@@ -242,12 +251,15 @@ export default function PickupCodeDaily() {
             res => {
               if (res.didCancel) return;
               if (res.errorCode || res.errorMessage) {
-                showToast(res.errorMessage || '选择失败');
+                showToast({
+                  title: res.errorMessage || '选择失败',
+                  icon: 'info',
+                });
                 return;
               }
               const uri = res.assets?.[0]?.uri;
               if (uri) void processImageUri(uri);
-              else showToast('未获取到图片');
+              else showToast({ title: '未获取到图片', icon: 'info' });
             },
           );
         }

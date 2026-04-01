@@ -64,15 +64,18 @@ export default function HandOver() {
       if (res?.code === 200 && res?.success) {
         const adminMobile = res?.data?.adminMobile;
         if (!adminMobile) {
-          showToast('未获取到管理员手机号');
+          showToast({ title: '未获取到管理员手机号', icon: 'info' });
           return;
         }
         handleNext(String(adminMobile), res?.data?.bleName);
       } else {
-        showToast(res?.message || res?.msg || '获取管理员信息失败');
+        showToast({
+          title: res?.message || res?.msg || '获取管理员信息失败',
+          icon: 'info',
+        });
       }
     } catch {
-      showToast('获取管理员信息失败');
+      showToast({ title: '获取管理员信息失败', icon: 'info' });
     }
   }, [handleNext, lockId, showPopConfirm]);
 
@@ -95,10 +98,13 @@ export default function HandOver() {
           await getAdminMobile();
         }
       } else {
-        showToast(res?.message || res?.msg || '校验失败');
+        showToast({
+          title: res?.message || res?.msg || '校验失败',
+          icon: 'info',
+        });
       }
     } catch {
-      showToast('校验失败');
+      showToast({ title: '校验失败', icon: 'info' });
     }
   }, [getAdminMobile, lockId, showPopConfirm]);
 

@@ -115,10 +115,13 @@ export default function Shopping() {
           setGoodsList(next);
           setComplete(list.length < PAGE_SIZE);
         } else {
-          showToast(res.msg || res.message || '获取商品列表失败');
+          showToast({
+            title: res.msg || res.message || '获取商品列表失败',
+            icon: 'info',
+          });
         }
       } catch (e) {
-        showToast('获取商品列表失败');
+        showToast({ title: '获取商品列表失败', icon: 'info' });
       } finally {
         setLoading(false);
       }

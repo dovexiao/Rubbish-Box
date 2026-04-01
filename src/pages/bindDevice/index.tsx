@@ -67,12 +67,10 @@ const BinDevice: React.FC = () => {
           userId: null,
         });
 
-        hideLoading();
-
         if (res?.code === 200) {
-          showToast('识别成功');
+          hideLoading();
+          showToast({ title: '识别成功', icon: 'success' });
           const data = res.data || {};
-
           navigation.navigate(
             'FindDevice' as never,
             {
@@ -86,6 +84,7 @@ const BinDevice: React.FC = () => {
             } as never,
           );
         } else {
+          hideLoading();
           setErrorMsg(res?.message || '识别失败，请重试');
           setIsActive(false);
           popVisibleRef.current = true;
@@ -93,7 +92,6 @@ const BinDevice: React.FC = () => {
           hasScannedRef.current = false;
         }
       } catch (error) {
-        console.error('bindScan error:', error);
         hideLoading();
         setErrorMsg('识别失败，请稍后重试');
         popVisibleRef.current = true;

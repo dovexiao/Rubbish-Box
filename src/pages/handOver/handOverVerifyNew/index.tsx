@@ -66,7 +66,7 @@ export default function HandOverVerifyNew() {
   const getHandOverSendSmsNew = useCallback(async () => {
     if (!lockIds || !currentAdminCode) return;
     if (!isCnMobile(params.mobile)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     const res: any = await handOverSendSmsNew({
@@ -79,21 +79,21 @@ export default function HandOverVerifyNew() {
       setSmsError(false);
       setStep(1);
       start();
-      showToast('验证码已发送');
+      showToast({ title: '验证码已发送', icon: 'info' });
       return;
     }
-    showToast(res?.message || res?.msg || '发送失败');
+    showToast({ title: res?.message || res?.msg || '发送失败', icon: 'info' });
   }, [currentAdminCode, isFirst, lockIds, params.mobile, start]);
 
   const onHandOverAdmin = useCallback(async () => {
     if (!lockIds || !currentAdminCode) return;
 
     if (!isCnMobile(params.mobile)) {
-      showToast('请输入手机号');
+      showToast({ title: '请输入手机号', icon: 'info' });
       return;
     }
     if (!params.code) {
-      showToast('请输入验证码');
+      showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
 
@@ -104,7 +104,7 @@ export default function HandOverVerifyNew() {
     const deviceId = deviceInfo[String(bleNo ?? '')]?.deviceId;
 
     if (!deviceId && !!needPin) {
-      showToast('未找到蓝牙设备信息，请重新配对');
+      showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'info' });
       return;
     }
 
@@ -119,7 +119,10 @@ export default function HandOverVerifyNew() {
 
       if (!(checkAdminRes?.code === 200 && checkAdminRes?.success)) {
         hideLoading();
-        showToast(checkAdminRes?.message || checkAdminRes?.msg || '校验失败');
+        showToast({
+          title: checkAdminRes?.message || checkAdminRes?.msg || '校验失败',
+          icon: 'info',
+        });
         setSmsError(checkAdminRes?.code === 515);
         setStep(0);
         return;
@@ -129,14 +132,17 @@ export default function HandOverVerifyNew() {
         const resetRes: any = await resetBluetoothPin({ id: lockIds });
         if (!(resetRes?.code === 200 && resetRes?.success)) {
           hideLoading();
-          showToast(resetRes?.message || resetRes?.msg || '移交失败');
+          showToast({
+            title: resetRes?.message || resetRes?.msg || '移交失败',
+            icon: 'info',
+          });
           return;
         }
 
         const newPin = resetRes?.data;
         if (!newPin) {
           hideLoading();
-          showToast('移交失败');
+          showToast({ title: '移交失败', icon: 'info' });
           return;
         }
 
@@ -147,7 +153,7 @@ export default function HandOverVerifyNew() {
 
         if (!cmdRes?.success) {
           hideLoading();
-          showToast('移交失败');
+          showToast({ title: '移交失败', icon: 'info' });
           return;
         }
 
@@ -159,7 +165,10 @@ export default function HandOverVerifyNew() {
 
         if (!(apiRes?.code === 200 && apiRes?.success)) {
           hideLoading();
-          showToast(apiRes?.message || apiRes?.msg || '移交失败');
+          showToast({
+            title: apiRes?.message || apiRes?.msg || '移交失败',
+            icon: 'info',
+          });
           return;
         }
       }
@@ -171,11 +180,10 @@ export default function HandOverVerifyNew() {
         newAdminCode: params.code,
       });
 
-      hideLoading();
       if (res?.code === 200 && res?.success) {
         stop();
         hideLoading();
-        showToast({ title: '移交成功' });
+        showToast({ title: '移交成功', icon: 'success' });
         setTimeout(() => {
           navigation.navigate('UnBindSuccess', {
             pages: 'handOverSuccess',
@@ -186,13 +194,16 @@ export default function HandOverVerifyNew() {
         }, 800);
       } else {
         hideLoading();
-        showToast(res?.message || res?.msg || '移交失败');
+        showToast({
+          title: res?.message || res?.msg || '移交失败',
+          icon: 'info',
+        });
         setSmsError(res?.code === 515);
         setStep(0);
       }
     } catch {
       hideLoading();
-      showToast('移交失败');
+      showToast({ title: '移交失败', icon: 'info' });
     }
   }, [bleNo, currentAdminCode, lockIds, params.code, params.mobile, stop]);
 

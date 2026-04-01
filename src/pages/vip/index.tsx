@@ -222,27 +222,27 @@ const VipPage = () => {
     const finalMobile = (mobileRef.current || mobile || '').trim();
 
     if (!startTime) {
-      showToast({ title: '请选择开始时间' });
+      showToast({ title: '请选择开始时间', icon: 'info' });
       return;
     }
     if (!endTime) {
-      showToast({ title: '请选择结束时间' });
+      showToast({ title: '请选择结束时间', icon: 'info' });
       return;
     }
     if (startTime > endTime) {
-      showToast({ title: '开始时间不能大于结束时间' });
+      showToast({ title: '开始时间不能大于结束时间', icon: 'info' });
       return;
     }
     if (!noLimit && !customUsageCount) {
-      showToast({ title: '请选择使用次数' });
+      showToast({ title: '请选择使用次数', icon: 'info' });
       return;
     }
     if (selectedDeviceList && selectedDeviceList?.length <= 0) {
-      showToast({ title: '请选择分享地锁' });
+      showToast({ title: '请选择分享地锁', icon: 'info' });
       return;
     }
     if (!adminUserId) {
-      showToast({ title: '请选择有效的管理员身份' });
+      showToast({ title: '请选择有效的管理员身份', icon: 'info' });
       return;
     }
     const res: any = await saveInvite({
@@ -350,7 +350,7 @@ const VipPage = () => {
       setSharePopupVisible(false);
     } catch (error) {
       console.error('分享失败:', error);
-      showToast({ title: '分享失败，请重试', icon: 'none' });
+      showToast({ title: '分享失败，请重试', icon: 'info' });
     } finally {
       setIsSharing(false);
       hideLoading();
@@ -361,7 +361,7 @@ const VipPage = () => {
   // 在按钮等交互里直接调用即可。
   const shareConfig = useCallback(() => {
     if (!shareDetail?.id || !shareImagePath) {
-      showToast({ title: '请先生成分享图片' });
+      showToast({ title: '请先生成分享图片', icon: 'info' });
       return;
     }
 
@@ -739,7 +739,7 @@ const VipPage = () => {
           style={{ height: 380 }}
           onChange={(value: number) => {
             if (startTime > value) {
-              showToast({ title: '开始时间不能大于结束时间' });
+              showToast({ title: '开始时间不能大于结束时间', icon: 'info' });
               return;
             }
             setEndTime(value);
@@ -829,7 +829,7 @@ const VipPage = () => {
                 isTouchView
                 onPress={async () => {
                   if (!userItem || !userItem.adminUserId) {
-                    showToast({ title: '请选择管理员' });
+                    showToast({ title: '请选择管理员', icon: 'info' });
                     return;
                   }
                   setAdminUserId(userItem.adminUserId);

@@ -218,11 +218,12 @@ export const BeeBuzzingCollisionPop = forwardRef<
         title="蜂鸣测试"
         onConfirm={async () => {
           const res: any = await operateBuzzing({ id: deviceId });
+          console.log('[BeeBuzzingCollisionPop] operateBuzzing res:', res);
           if (res?.code === 200 && res?.success) {
-            showToast('蜂鸣测试成功');
+            showToast({ title: '蜂鸣测试成功', icon: 'success' });
             return true;
           }
-          showToast(res?.message || '蜂鸣测试失败');
+          showToast({ title: res?.message || '蜂鸣测试失败', icon: 'info' });
           return false;
         }}
       />

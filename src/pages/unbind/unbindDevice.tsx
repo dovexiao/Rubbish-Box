@@ -56,7 +56,7 @@ export default function UnbindDevice() {
 
   const requireCode = useCallback(async () => {
     if (!lockId) {
-      showToast({ title: '未找到设备信息' });
+      showToast({ title: '未找到设备信息', icon: 'info' });
       return;
     }
 
@@ -68,23 +68,23 @@ export default function UnbindDevice() {
 
     const res: any = await unbindSms({ id: lockId });
     if (res?.code === 200 && res?.success) {
-      showToast({ title: '已发送，待查收验证码' });
+      showToast({ title: '已发送，待查收验证码', icon: 'info' });
       start();
       setStep(1);
       return;
     }
-    showToast({ title: res?.message || res?.msg || '发送失败' });
+    showToast({ title: res?.message || res?.msg || '发送失败', icon: 'info' });
   }, [lockId, showError, start]);
 
   const onSubmit = useCallback(async () => {
     Keyboard.dismiss();
     const pure = (code || '').replace(/\D/g, '').slice(0, 6);
     if (pure.length !== 6) {
-      showToast({ title: '请输入验证码' });
+      showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
     if (!lockId || !bleNo) {
-      showToast({ title: '缺少必要参数' });
+      showToast({ title: '缺少必要参数', icon: 'info' });
       return;
     }
 
@@ -96,6 +96,7 @@ export default function UnbindDevice() {
       if (!(checkRes?.code === 200 && checkRes?.success && checkRes?.data)) {
         showToast({
           title: checkRes?.message || checkRes?.msg || '验证码错误',
+          icon: 'info',
         });
         setShowError(checkRes?.code === 515);
         stop();
@@ -107,7 +108,7 @@ export default function UnbindDevice() {
       if (!!needPin) {
         if (!deviceId) {
           hideLoading();
-          showToast({ title: '未找到蓝牙设备信息，请重新配对' });
+          showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'info' });
           return;
         }
 
@@ -116,13 +117,14 @@ export default function UnbindDevice() {
           hideLoading();
           showToast({
             title: resetRes?.message || resetRes?.msg || '解绑失败',
+            icon: 'info',
           });
           return;
         }
         const newPin = resetRes?.data;
         if (!newPin) {
           hideLoading();
-          showToast({ title: '解绑失败' });
+          showToast({ title: '解绑失败', icon: 'info' });
           return;
         }
 
@@ -132,7 +134,7 @@ export default function UnbindDevice() {
         });
         if (!cmdRes?.success || !cmdRes?.newMac) {
           hideLoading();
-          showToast({ title: cmdRes?.msg || '解绑失败' });
+          showToast({ title: cmdRes?.msg || '解绑失败', icon: 'info' });
           return;
         }
 
@@ -145,6 +147,7 @@ export default function UnbindDevice() {
           hideLoading();
           showToast({
             title: apiRes?.message || apiRes?.msg || '解绑失败',
+            icon: 'info',
           });
           return;
         }
@@ -190,6 +193,7 @@ export default function UnbindDevice() {
         hideLoading();
         showToast({
           title: res?.message || res?.msg || '解绑失败',
+          icon: 'info',
         });
         setShowError(res?.code === 515);
         setCode('');
@@ -198,7 +202,7 @@ export default function UnbindDevice() {
       }
     } catch {
       hideLoading();
-      showToast({ title: '解绑失败' });
+      showToast({ title: '解绑失败', icon: 'info' });
     }
   }, [bleNo, code, lockId, navigation, stop]);
 

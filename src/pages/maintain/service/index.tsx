@@ -53,10 +53,13 @@ export default function MaintainService() {
           setList(prev => (reload ? rows : [...prev, ...rows]));
           setComplete(rows.length < PAGE_SIZE);
         } else {
-          showToast((res as any)?.message || (res as any)?.msg || '获取失败');
+          showToast({
+            title: (res as any)?.message || (res as any)?.msg || '获取失败',
+            icon: 'info',
+          });
         }
       } catch (e) {
-        showToast('获取服务记录失败');
+        showToast({ title: '获取服务记录失败', icon: 'info' });
       } finally {
         setLoading(false);
         setRefreshing(false);

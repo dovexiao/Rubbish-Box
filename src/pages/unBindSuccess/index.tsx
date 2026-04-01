@@ -128,7 +128,7 @@ export default function UnBindSuccess() {
 
   const handleGoSettings = useCallback(async () => {
     if (!bleNo || !deviceId) {
-      showToast({ title: '缺少必要参数' });
+      showToast({ title: '缺少必要参数', icon: 'info' });
       return;
     }
     // 记录本次跳转意图：用于 App 被系统杀掉后恢复，以及用于本页区分“首次进入/从设置返回”

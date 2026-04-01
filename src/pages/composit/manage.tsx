@@ -84,10 +84,13 @@ const ManageComposite = () => {
             hasInitLockNameRef.current = true;
           }
         } else {
-          showToast(res.msg || res.message || '加载组合设备失败');
+          showToast({
+            title: res.msg || res.message || '加载组合设备失败',
+            icon: 'info',
+          });
         }
       } catch (e) {
-        showToast('加载组合设备失败');
+        showToast({ title: '加载组合设备失败', icon: 'info' });
       } finally {
         setLoading(false);
       }
@@ -102,7 +105,7 @@ const ManageComposite = () => {
   const handleDelete = useCallback(() => {
     if (!currentRow) return;
     if (list.length <= 2) {
-      showToast('移除失败，组合设备至少保留两个设备');
+      showToast({ title: '移除失败，组合设备至少保留两个设备', icon: 'info' });
       return;
     }
 
@@ -115,7 +118,7 @@ const ManageComposite = () => {
     setList(prev => prev.filter(item => item.id !== currentRow.id));
     setCurrentRow(null);
     deleteConfirmRef.current?.close();
-    showToast('删除成功');
+    showToast({ title: '删除成功', icon: 'success' });
   }, [currentRow, list.length]);
 
   const openAddPopup = useCallback(async () => {
@@ -142,10 +145,13 @@ const ManageComposite = () => {
           })),
         );
       } else {
-        showToast(res.msg || res.message || '加载可选设备失败');
+        showToast({
+          title: res.msg || res.message || '加载可选设备失败',
+          icon: 'info',
+        });
       }
     } catch (e) {
-      showToast('加载可选设备失败');
+      showToast({ title: '加载可选设备失败', icon: 'info' });
     } finally {
       setChooseLoading(false);
     }
@@ -192,11 +198,11 @@ const ManageComposite = () => {
 
   const handleSubmit = useCallback(async () => {
     if (!lockId) {
-      showToast('缺少组合设备编号');
+      showToast({ title: '缺少组合设备编号', icon: 'info' });
       return;
     }
     if (!lockName?.trim()) {
-      showToast('请输入组合名称');
+      showToast({ title: '请输入组合名称', icon: 'info' });
       return;
     }
 
@@ -213,15 +219,19 @@ const ManageComposite = () => {
       } as any);
       hideLoading();
       if (res.code === 200 && res.success) {
-        showToast('保存成功');
+        hideLoading();
+        showToast({ title: '保存成功', icon: 'success' });
         navigation.goBack();
       } else {
-        showToast(res.msg || res.message || '保存失败');
+        hideLoading();
+        showToast({
+          title: res.msg || res.message || '保存失败',
+          icon: 'info',
+        });
       }
     } catch (e) {
-      showToast('保存失败');
-    } finally {
       hideLoading();
+      showToast({ title: '保存失败', icon: 'info' });
     }
   }, [lockId, lockName, navigation]);
 

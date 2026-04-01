@@ -58,7 +58,7 @@ export default function PickupCode() {
   const handleGetCodeDetail = useCallback(async () => {
     const code = pickupCode.trim();
     if (!code) {
-      showToast('请输入提货码');
+      showToast({ title: '请输入提货码', icon: 'info' });
       return false;
     }
 
@@ -68,10 +68,13 @@ export default function PickupCode() {
         setDeviceImg(res.data?.imageUrl || '');
         return true;
       }
-      showToast(res.msg || res.message || '提货码无效，请检查后重试');
+      showToast({
+        title: res.msg || res.message || '提货码无效，请检查后重试',
+        icon: 'info',
+      });
       return false;
     } catch (e: any) {
-      showToast('网络异常，请稍后重试');
+      showToast({ title: '网络异常，请稍后重试', icon: 'info' });
       return false;
     }
   }, [pickupCode]);
@@ -80,7 +83,7 @@ export default function PickupCode() {
   const handleConfirmPickup = useCallback(async () => {
     const code = pickupCode.trim();
     if (!code) {
-      showToast('请输入提货码');
+      showToast({ title: '请输入提货码', icon: 'info' });
       return false;
     }
 
@@ -89,10 +92,13 @@ export default function PickupCode() {
       if (res.code === 200 && res.success) {
         return true;
       }
-      showToast(res.msg || res.message || '提货失败，请稍后重试');
+      showToast({
+        title: res.msg || res.message || '提货失败，请稍后重试',
+        icon: 'info',
+      });
       return false;
     } catch (e: any) {
-      showToast('提货失败，请稍后重试');
+      showToast({ title: '提货失败，请稍后重试', icon: 'info' });
       return false;
     }
   }, [pickupCode]);

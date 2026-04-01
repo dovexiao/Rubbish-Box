@@ -493,13 +493,13 @@ PODS:
     - React-RCTImage
   - RNSVG (13.10.0):
     - React-Core
-  - RNZipArchive (6.1.2):
+  - RNZipArchive (6.0.0):
     - React-Core
-    - RNZipArchive/Core (= 6.1.2)
-    - SSZipArchive (~> 2.2)
-  - RNZipArchive/Core (6.1.2):
+    - RNZipArchive/Core (= 6.0.0)
+    - SSZipArchive (= 2.2.3)
+  - RNZipArchive/Core (6.0.0):
     - React-Core
-    - SSZipArchive (~> 2.2)
+    - SSZipArchive (= 2.2.3)
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
@@ -828,7 +828,7 @@ SPEC CHECKSUMS:
   RNReanimated: f6f47ab6afca5c924255917beda5edc7e9dafe41
   RNScreens: 10cefd0dd5c6ccd8651c6ca8b276790ea10a7f20
   RNSVG: 51fc2eb4e3fc8056fa19c34101461fc26a4326f9
-  RNZipArchive: 29236989a51e92d44e0a5d4c02555426e4e4726c
+  RNZipArchive: 1a5eade3dee129cf3658a3c764fe0115739a57d5
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17

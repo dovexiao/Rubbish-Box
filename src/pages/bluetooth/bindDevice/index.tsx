@@ -148,7 +148,7 @@ export default function BluetoothBindDevice() {
   const handleOpenSettings = useCallback(async () => {
     showToast({
       title: `进入设置首页 > 蓝牙 > 找到 ${bleName}，输入 ${blePin} 配对`,
-      icon: 'none',
+      icon: 'info',
     });
     await openBluetoothSettings();
   }, [bleName, blePin]);
@@ -160,7 +160,7 @@ export default function BluetoothBindDevice() {
       const deviceInfo = (saved as any)?.data || {};
       const deviceId = deviceInfo.deviceId;
       if (!deviceId) {
-        showToast({ title: '未找到设备信息，请先扫描', icon: 'none' });
+        showToast({ title: '未找到设备信息，请先扫描', icon: 'info' });
         return;
       }
 
@@ -168,13 +168,13 @@ export default function BluetoothBindDevice() {
       if (
         !(apiRes?.code === 200 || apiRes?.code === '200' || apiRes?.success)
       ) {
-        showToast({ title: apiRes?.message || '绑定失败', icon: 'none' });
+        showToast({ title: apiRes?.message || '绑定失败', icon: 'info' });
         return;
       }
 
       const bleRes = await connectBluetoothDevice(deviceId);
       if (!bleRes.success) {
-        showToast({ title: '连接设备失败', icon: 'none' });
+        showToast({ title: '连接设备失败', icon: 'info' });
         return;
       }
 

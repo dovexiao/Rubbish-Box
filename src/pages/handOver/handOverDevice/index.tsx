@@ -52,10 +52,13 @@ export default function HandOverDevice() {
           setComplete(list.length < PAGE_SIZE);
           setDeviceList(prev => (refresh ? list : [...prev, ...list]));
         } else {
-          showToast(res?.message || res?.msg || '加载设备列表失败');
+          showToast({
+            title: res?.message || res?.msg || '加载设备列表失败',
+            icon: 'info',
+          });
         }
       } catch {
-        showToast('加载设备列表失败');
+        showToast({ title: '加载设备列表失败', icon: 'info' });
       } finally {
         setInitialLoading(false);
         setRefreshing(false);

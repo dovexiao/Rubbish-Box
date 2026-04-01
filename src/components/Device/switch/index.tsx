@@ -70,7 +70,7 @@ export const DeviceSwitch: React.FC<Props> = ({
       } as any);
 
       if (!res?.success) {
-        showToast(res?.message || '获取设备列表失败');
+        showToast({ title: res?.message || '获取设备列表失败', icon: 'info' });
         return;
       }
 
@@ -89,10 +89,10 @@ export const DeviceSwitch: React.FC<Props> = ({
       if (reload) {
         await reload(item.id);
       }
-      hideLoading();
     } catch (error) {
+      showToast({ title: '切换失败', icon: 'error' });
+    } finally {
       hideLoading();
-      showToast('切换失败');
     }
   };
 
@@ -105,7 +105,7 @@ export const DeviceSwitch: React.FC<Props> = ({
 
   const handleNameConfirm = async () => {
     if (!lockName.trim()) {
-      showToast('请输入名称');
+      showToast({ title: '请输入名称', icon: 'info' });
       return;
     }
     const userId = await cacheGet({ key: 'userId' });
@@ -117,18 +117,18 @@ export const DeviceSwitch: React.FC<Props> = ({
         lockName: lockName,
         userId,
       });
-      hideLoading();
       if (res?.success) {
-        showToast('修改成功');
+        showToast({ title: '修改成功', icon: 'success' });
         setEditNamePopVisible(false);
         if (reload) await reload();
         loadDeviceList(); // Refresh list
       } else {
-        showToast(res?.message || '修改失败');
+        showToast({ title: res?.message || '修改失败', icon: 'error' });
       }
     } catch (error) {
+      showToast({ title: '修改异常', icon: 'info' });
+    } finally {
       hideLoading();
-      showToast('修改异常');
     }
   };
 

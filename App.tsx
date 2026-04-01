@@ -45,6 +45,7 @@ import {
   jumpToPage,
   hideLoading,
   showToast,
+  showLoading,
 } from '@/utils';
 import appPush from '@/utils/push';
 import { WeChatInit } from '@/utils/wechat';
@@ -414,7 +415,6 @@ function App() {
                   isSameMac(item.deviceId || item.mac, params?.bleNo),
                 ) ||
                 info.data?.find((item: any) => item.name === params?.bleName);
-              console.log('deviceInfo====', deviceInfo, isPaired);
               if (isPaired) {
                 const bluetoothDeviceInfoList =
                   (await getBluetoothDeviceInfo().catch(() => null)) || {};
@@ -424,21 +424,21 @@ function App() {
                 let bindRes: any;
 
                 if (pageName?.includes('BindDevice')) {
-                  Toast.loading('绑定中...', 0);
+                  showLoading({ title: '绑定中...' });
                   bindRes = await bind({
                     deviceNo: params?.deviceNo,
                     userId: null,
                   });
                   res = bindRes;
                 } else {
-                  Toast.loading('连接中...', 0);
+                  showLoading({ title: '连接中...' });
                   res = await openBluetoothProximity({ id: lockId });
                 }
 
-                Toast.removeAll();
                 if (res?.code === 200 || res?.code === '200') {
                   if (pageName?.includes('BindDevice')) {
-                    Toast.success('绑定成功');
+                    hideLoading();
+                    showToast({ title: '绑定成功', icon: 'success' });
                     if (bindRes?.data) {
                       await setStorage({
                         key: 'rnBindSuccessData',
@@ -494,20 +494,23 @@ function App() {
 
                       const ok = await pollOk();
                       if (!ok) {
+                        hideLoading();
                         showToast({
                           title: '自动动升降开启失败，请重试',
-                          icon: 'none',
+                          icon: 'error',
                         });
                         return;
                       }
-
-                      Toast.success('自动升降开启成功');
+                      hideLoading();
+                      showToast({ title: '自动升降开启成功', icon: 'success' });
                       return;
                     }
-                    Toast.success('自动升降开启成功');
+                    hideLoading();
+                    showToast({ title: '自动升降开启成功', icon: 'success' });
                   }
                   if (pageName?.includes('BluetoothControl') && mode) {
-                    Toast.success('连接成功');
+                    hideLoading();
+                    showToast({ title: '连接成功', icon: 'success' });
                   }
 
                   try {
@@ -529,7 +532,8 @@ function App() {
                     console.error('更新 bluetoothDeviceInfoList 映射失败:', e);
                   }
                 } else {
-                  Toast.fail(res?.message || '操作失败');
+                  hideLoading();
+                  showToast({ title: '操作失败，请稍后重试', icon: 'error' });
                 }
               }
             } else {

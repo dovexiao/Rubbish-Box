@@ -26,17 +26,20 @@ const ForgetPassword = () => {
       mobile,
       purpose: SMS_PURPOSE.RESET_PASSWORD,
     });
-    hideLoading();
+
     if (res.code === 200) {
+      hideLoading();
       navigation.navigate('LoginSms', {
         mobile,
         type: SMS_PURPOSE.RESET_PASSWORD,
       });
     } else if (res.code === 522) {
+      hideLoading();
       setShowError(true);
       setErrorMessage('此手机号码未注册');
     } else {
-      showToast(res.msg || '发送失败');
+      hideLoading();
+      showToast({ title: res.msg || '发送失败', icon: 'info' });
     }
   };
 

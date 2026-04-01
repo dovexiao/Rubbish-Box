@@ -160,8 +160,8 @@ const Content: React.FC<ContentProps> = ({
         } as any);
 
         if (res?.code !== 200) {
-          hideLoading();
           eventCenter.trigger('onOptioned', false);
+          hideLoading();
           showToast({ title: res?.msg || res.message, icon: 'error' });
 
           if (onFresh) {
@@ -181,9 +181,9 @@ const Content: React.FC<ContentProps> = ({
           isMultiple ? 'group' : 'single',
         );
       } catch (e) {
-        showToast('操作失败，请稍后重试');
-        eventCenter.trigger('onOptioned', false);
         hideLoading();
+        showToast({ title: '操作失败，请稍后重试', icon: 'error' });
+        eventCenter.trigger('onOptioned', false);
       }
     },
     [detail, onFresh, reload],
@@ -204,11 +204,9 @@ const Content: React.FC<ContentProps> = ({
           const result = detail?.isGroup
             ? await getGroupOperateResult({ id: detail?.id, ot })
             : await getOperateResult({ deviceNo: detail?.deviceNo, ot });
-          // console.log(result, 'result地锁开关轮询')
           if (result.code !== 200) {
-            showToast({ title: result.message, icon: 'none' });
+            showToast({ title: result.message, icon: 'info' });
             eventCenter.trigger('onOptioned', false);
-            hideLoading();
             eventCenter.trigger('onOptioned', false);
             stop();
             return false;
@@ -252,16 +250,16 @@ const Content: React.FC<ContentProps> = ({
           }
 
           if (flag >= count) {
-            showToast({ title: '轮询超时' });
             hideLoading();
+            showToast({ title: '设备响应超时，请稍后重试', icon: 'error' });
             eventCenter.trigger('onOptioned', false);
             stop();
             return false;
           }
           return true;
         } catch (error) {
-          showToast({ title: '操作失败' });
           hideLoading();
+          showToast({ title: '操作失败，请稍后重试', icon: 'error' });
           eventCenter.trigger('onOptioned', false);
           stop();
           return false;
@@ -281,6 +279,7 @@ const Content: React.FC<ContentProps> = ({
         deviceNo: detail?.deviceNo,
         ot,
       });
+      console.log(res, '===res');
       if (res.data) {
         if (onFresh) {
           await onFresh(detail?.id);
@@ -304,10 +303,9 @@ const Content: React.FC<ContentProps> = ({
     timer = setTimeout(() => {
       eventCenter.trigger('onOptioned', false);
       stop();
-      hideLoading();
       showToast({
         title: '操作失败',
-        icon: 'none',
+        icon: 'error',
       });
     }, 10000);
     start();
@@ -348,7 +346,6 @@ const Content: React.FC<ContentProps> = ({
         deviceNo: detail?.deviceNo,
       });
 
-      console.log(r, '===r');
       if (r.success) {
         eventCenter.trigger('onAnimation', {
           type: getBluetoothAnimationType(direction, currentDeviceStatus),
@@ -360,7 +357,8 @@ const Content: React.FC<ContentProps> = ({
       } else {
         await sleep(4000);
         eventCenter.trigger('onOptioned', false);
-        showToast({ title: r.msg || '操作失败', icon: 'none' });
+        hideLoading();
+        showToast({ title: r.msg || '操作失败', icon: 'error' });
       }
     } catch (error) {
       await sleep(4000);
@@ -404,7 +402,7 @@ const Content: React.FC<ContentProps> = ({
       hideLoading();
       showToast({
         title: res.message,
-        icon: 'none',
+        icon: 'info',
       });
     }
     return res.data;
@@ -431,7 +429,8 @@ const Content: React.FC<ContentProps> = ({
     manageMultipleRef.current?.close();
     await deviceDelete({ id: detail?.id });
     hideLoading();
-    showToast({ title: '删除成功' });
+    showToast({ title: '删除成功', icon: 'success' });
+
     (navigation as any).reset({
       index: 0,
       routes: [{ name: 'MainTabs', params: { screen: 'Index' } }],
@@ -442,7 +441,7 @@ const Content: React.FC<ContentProps> = ({
     if (detail?.role === 2 && !detail?.bluetoothStatus) {
       showToast({
         title: '管理员已关闭此功能，请联系管理员打开',
-        icon: 'none',
+        icon: 'info',
       });
       return;
     }
@@ -724,7 +723,7 @@ const Content: React.FC<ContentProps> = ({
           style={styles.entryItem}
           onPress={() => {
             if (detail?.customerServicePhone) setEleInstallRef(true);
-            else showToast({ title: '敬请期待', icon: 'none' });
+            else showToast({ title: '敬请期待', icon: 'info' });
           }}
         >
           <Flex justify="between" align="center">

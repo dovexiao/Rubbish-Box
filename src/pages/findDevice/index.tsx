@@ -476,30 +476,31 @@ export default function FindDevice(props: any) {
 
           const ok = String(res?.code) === '200';
           if (!ok) {
+            hideLoading();
             showToast({
               title: res?.message || '绑定失败',
-              icon: 'none',
+              icon: 'info',
             });
-            hideLoading();
+
             return;
           }
 
           if (!deviceInfo?.deviceId) {
+            hideLoading();
             showToast({
               title: '未获取到蓝牙设备信息，请返回重试',
-              icon: 'none',
+              icon: 'info',
             });
-            hideLoading();
             return;
           }
 
           const connectRes = await connectBluetoothDevice(deviceInfo.deviceId);
           if (!connectRes.success) {
+            hideLoading();
             showToast({
               title: connectRes.error?.message || '连接设备失败',
-              icon: 'none',
+              icon: 'info',
             });
-            hideLoading();
             return;
           }
 
@@ -526,7 +527,7 @@ export default function FindDevice(props: any) {
           hideLoading();
           showToast({
             title: '绑定失败',
-            icon: 'none',
+            icon: 'info',
           });
           return;
         }
@@ -547,8 +548,8 @@ export default function FindDevice(props: any) {
             if (!(apiRes?.code === 200 || apiRes?.success)) {
               hideLoading();
               showToast({
-                title: apiRes?.message || '服务端同步失败',
-                icon: 'none',
+                title: apiRes?.message || '同步失败',
+                icon: 'info',
               });
               return;
             }
@@ -580,7 +581,7 @@ export default function FindDevice(props: any) {
               hideLoading();
               showToast({
                 title: '自动升降开启失败，请稍后重试',
-                icon: 'none',
+                icon: 'info',
               });
               return;
             }
@@ -610,7 +611,7 @@ export default function FindDevice(props: any) {
           if (!cmdRes.success) {
             showToast({
               title: cmdRes.msg || '开启近身功能失败',
-              icon: 'none',
+              icon: 'info',
             });
             return;
           }
@@ -621,7 +622,7 @@ export default function FindDevice(props: any) {
           if (!apiRes || apiRes.code !== 200) {
             showToast({
               title: apiRes?.message || '开启近身功能失败',
-              icon: 'none',
+              icon: 'info',
             });
             return;
           }
@@ -630,9 +631,11 @@ export default function FindDevice(props: any) {
         await clearProcessingFlag();
 
         if (mode) {
+          hideLoading();
           showToast({ title: '连接成功', icon: 'success' });
           navigation?.navigate?.('BluetoothLinkSuccess');
         } else {
+          hideLoading();
           showToast({ title: '自动升降开启成功', icon: 'success' });
           navigation?.navigate?.('BluetoothControl', {
             lockName,
@@ -649,6 +652,7 @@ export default function FindDevice(props: any) {
         }
       }
     } catch (error) {
+      hideLoading();
       console.error('连接失败:', error);
       await clearProcessingFlag();
     }

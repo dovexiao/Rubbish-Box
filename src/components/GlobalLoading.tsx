@@ -31,6 +31,7 @@ export const GlobalLoading = () => {
       visible={visible}
       animationType="fade"
       onRequestClose={() => {}}
+      presentationStyle="overFullScreen"
       statusBarTranslucent
     >
       <View style={styles.overlay}>

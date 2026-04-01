@@ -142,7 +142,7 @@ export default function TestDeviceDetailScreen() {
       setDetail(d);
       setTestResult(d.testReason ? (d.testResult as any) : undefined);
     } catch (e) {
-      showToast('获取设备详情失败');
+      showToast({ title: '获取设备详情失败', icon: 'info' });
     } finally {
       setLoading(false);
     }
@@ -227,7 +227,7 @@ export default function TestDeviceDetailScreen() {
             ) {
               hasShownSwitchSuccess = true;
               hideLoading();
-              showToast('切换成功');
+              showToast({ title: '切换成功', icon: 'info' });
             }
             // 若后端返回了最终测试结果，则刷新详情并停止轮询
             const tr = (res?.data ?? res)?.testResult;
@@ -306,10 +306,13 @@ export default function TestDeviceDetailScreen() {
       if (res === true || Number(res?.code) === 200) {
         await fetchDetail();
       } else {
-        showToast(res?.message || res?.msg || '操作失败');
+        showToast({
+          title: res?.message || res?.msg || '操作失败',
+          icon: 'info',
+        });
       }
     } catch (e) {
-      showToast('操作失败');
+      showToast({ title: '操作失败', icon: 'info' });
     } finally {
       hideLoading();
     }
@@ -341,7 +344,7 @@ export default function TestDeviceDetailScreen() {
       if (count >= maxCount) {
         stop();
         hideLoading();
-        showToast('操作超时');
+        showToast({ title: '操作超时', icon: 'info' });
         return false;
       }
       return true;
@@ -370,7 +373,7 @@ export default function TestDeviceDetailScreen() {
       }
     } catch (e) {
       hideLoading();
-      showToast('操作失败');
+      showToast({ title: '操作失败', icon: 'info' });
     }
   };
 
@@ -380,15 +383,19 @@ export default function TestDeviceDetailScreen() {
     try {
       const res: any = await resetTestDevice({ deviceNo });
       if (res === true || Number(res?.code) === 200) {
+        hideLoading();
         await fetchDetail();
-        showToast('重测已发起');
+        showToast({ title: '重测已发起', icon: 'info' });
       } else {
-        showLoading(res?.message || res?.msg || '重测失败');
+        hideLoading();
+        showToast({
+          title: res?.message || res?.msg || '重测失败',
+          icon: 'info',
+        });
       }
     } catch (e) {
-      showToast('重测失败');
-    } finally {
       hideLoading();
+      showToast({ title: '重测失败', icon: 'info' });
     }
   };
 
@@ -405,7 +412,7 @@ export default function TestDeviceDetailScreen() {
             deviceNo: detail.deviceNo,
           });
           if (!cmdRes?.success) {
-            showToast(cmdRes?.msg || '蓝牙模式切换失败，请重试');
+            showToast({ title: cmdRes?.msg || '蓝牙模式切换失败，请重试', icon: 'info' });
             return;
           }
           // 给设备一点时间落库/上报
@@ -474,7 +481,7 @@ export default function TestDeviceDetailScreen() {
                           }
                         } else {
                           hideLoading();
-                          showToast(res?.message || res?.msg || '提交失败');
+                          showToast({ title: res?.message || res?.msg || '提交失败', icon: 'info' });
                         }
                       },
                     });
@@ -677,7 +684,7 @@ export default function TestDeviceDetailScreen() {
                         title: '需要切换到性能优先模式才能操作',
                         onConfirm: async () => {
                           if (!isLink) {
-                            showToast('请先连接蓝牙');
+                            showToast({ title: '请先连接蓝牙', icon: 'info' });
                             return;
                           }
                           await handleChange(1);
@@ -940,7 +947,7 @@ export default function TestDeviceDetailScreen() {
                         title: '需要切换到性能优先模式才能操作',
                         onConfirm: async () => {
                           if (!isLink) {
-                            showToast('请先连接蓝牙');
+                            showToast({ title: '请先连接蓝牙', icon: 'info' });
                             return;
                           }
                           await handleChange(1);
@@ -1067,7 +1074,7 @@ export default function TestDeviceDetailScreen() {
                           title: '需要切换到性能优先模式才能操作',
                           onConfirm: async () => {
                             if (!isLink) {
-                              showToast('请先连接蓝牙');
+                              showToast({ title: '请先连接蓝牙', icon: 'info' });
                               return;
                             }
                             await handleChange(1);
@@ -1427,11 +1434,11 @@ export default function TestDeviceDetailScreen() {
                               handleTestDeviceReslt('aboveCheckMethod', 1);
                             } else {
                               hideLoading();
-                              showToast(res?.message || res?.msg || '切换失败');
+                              showToast({ title: res?.message || res?.msg || '切换失败', icon: 'info' });
                             }
                           } catch (e) {
                             hideLoading();
-                            showToast('切换失败');
+                            showToast({ title: '切换失败', icon: 'info' });
                           }
                         }}
                       >
@@ -1559,12 +1566,12 @@ export default function TestDeviceDetailScreen() {
                             if (res && (res.code === 200 || res.success)) {
                               handleTestDeviceReslt('aboveCheckMethod', 0);
                             } else {
-                              showToast(res?.message || res?.msg || '切换失败');
+                              showToast({ title: res?.message || res?.msg || '切换失败', icon: 'info' });
                             }
                           } catch (e) {
                             hideLoading();
                             hideLoading();
-                            showToast('切换失败');
+                            showToast({ title: '切换失败', icon: 'info' });
                           }
                         }}
                       >
@@ -1694,7 +1701,7 @@ export default function TestDeviceDetailScreen() {
         ref={unqualifiedPopupRef}
         onConfirm={async reason => {
           if (!reason?.trim()) {
-            showToast('请输入不合格原因');
+            showToast({ title: '请输入不合格原因', icon: 'info' });
             return false;
           }
           await updateTestResult({

@@ -40,7 +40,7 @@ export default function Maintain() {
   const handleChooseImage = useCallback(() => {
     const remain = MAX_IMAGES - (imageList.length + localUris.length);
     if (remain <= 0) {
-      showToast(`最多上传${MAX_IMAGES}张图片`);
+      showToast({ title: `最多上传${MAX_IMAGES}张图片`, icon: 'info' });
       return;
     }
     launchImageLibrary(
@@ -52,7 +52,10 @@ export default function Maintain() {
       res => {
         if (res.didCancel) return;
         if (res.errorCode || res.errorMessage) {
-          showToast(res.errorMessage || '选择图片失败');
+          showToast({
+            title: res.errorMessage || '选择图片失败',
+            icon: 'info',
+          });
           return;
         }
         const assets = res.assets || [];
@@ -82,7 +85,7 @@ export default function Maintain() {
             results.push(`https://${res.data.Location}`);
           }
         } catch (e) {
-          showToast('图片上传失败');
+          showToast({ title: '图片上传失败', icon: 'info' });
           throw e;
         }
       }
@@ -94,11 +97,11 @@ export default function Maintain() {
   const handleCreate = useCallback(async () => {
     if (!canSubmit || submitting) return;
     if (!selectedLock?.id) {
-      showToast('请选择报修设备');
+      showToast({ title: '请选择报修设备', icon: 'info' });
       return;
     }
     if (!description.trim()) {
-      showToast('请描述问题');
+      showToast({ title: '请描述问题', icon: 'info' });
       return;
     }
 
@@ -115,17 +118,20 @@ export default function Maintain() {
         picList,
       });
       if (Number(res?.code) === 200) {
-        showToast('提交报修成功');
+        showToast({ title: '提交报修成功', icon: 'info' });
         setDescription('');
         setTextLength(0);
         setImageList([]);
         setLocalUris([]);
         navigation.navigate('MaintainService');
       } else {
-        showToast(res?.message || res?.msg || '提交失败');
+        showToast({
+          title: res?.message || res?.msg || '提交失败',
+          icon: 'info',
+        });
       }
     } catch (e) {
-      showToast('提交失败');
+      showToast({ title: '提交失败', icon: 'info' });
     } finally {
       setSubmitting(false);
     }

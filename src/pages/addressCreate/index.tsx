@@ -69,7 +69,7 @@ export default function AddressCreate() {
       setDetailAddress(d.detailAddress || '');
       // 若有 code，可尝试推回 pickerValue（可选）
     } catch (e) {
-      showToast('获取地址详情失败');
+      showToast({ title: '获取地址详情失败', icon: 'info' });
     } finally {
       setLoading(false);
     }
@@ -87,12 +87,12 @@ export default function AddressCreate() {
 
   const confirmRegion = () => {
     if (!pickerValue || pickerValue.length < 3) {
-      showToast('请选择省市区');
+      showToast({ title: '请选择省市区', icon: 'info' });
       return;
     }
     const data = getPickerResultByValues(regionData, pickerValue);
     if (data.length < 3) {
-      showToast('请选择省市区');
+      showToast({ title: '请选择省市区', icon: 'info' });
       return;
     }
     const p = data[0];
@@ -113,19 +113,19 @@ export default function AddressCreate() {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      showToast('请输入姓名');
+      showToast({ title: '请输入姓名', icon: 'info' });
       return;
     }
     if (!phone.trim() || !/(1[3-9]\d{9})/.test(phone.trim())) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (!province || !city || !county) {
-      showToast('请选择地区');
+      showToast({ title: '请选择地区', icon: 'info' });
       return;
     }
     if (!detailAddress.trim()) {
-      showToast('请输入详细地址');
+      showToast({ title: '请输入详细地址', icon: 'info' });
       return;
     }
 
@@ -150,17 +150,19 @@ export default function AddressCreate() {
         fullAddress,
       };
       const res: any = await saveOrUpdate(payload);
-      hideLoading();
+
       if (res === true || Number(res?.code) === 200) {
-        showToast(`${title}成功`);
+        hideLoading();
+        showToast({ title: `${title}成功`, icon: 'success' });
         navigation.goBack();
       } else {
+        hideLoading();
         const msg = (res && (res.message || res.msg)) || `${title}失败`;
-        showToast(msg);
+        showToast({ title: msg, icon: 'error' });
       }
     } catch (e) {
       hideLoading();
-      showToast('提交失败，请重试');
+      showToast({ title: '提交失败，请重试', icon: 'info' });
     } finally {
       setSaving(false);
     }

@@ -70,10 +70,13 @@ export default function MemberList() {
           setList(prev => (refresh ? rows : [...prev, ...rows]));
           setComplete(rows.length < PAGE_SIZE);
         } else {
-          showToast(res.msg || res.message || '获取成员列表失败');
+          showToast({
+            title: res.msg || res.message || '获取成员列表失败',
+            icon: 'info',
+          });
         }
       } catch (e) {
-        showToast('获取成员列表失败');
+        showToast({ title: '获取成员列表失败', icon: 'info' });
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -105,15 +108,15 @@ export default function MemberList() {
     try {
       const res = await deleteStaff({ id: currentRow.id });
       if (res.code === 200 && res.success) {
-        showToast('删除成功');
+        showToast({ title: '删除成功', icon: 'info' });
         setList(prev => prev.filter(item => item.id !== currentRow.id));
         setCurrentRow(null);
         return true;
       }
-      showToast(res.msg || res.message || '删除失败');
+      showToast({ title: res.msg || res.message || '删除失败', icon: 'info' });
       return false;
     } catch (e) {
-      showToast('删除失败');
+      showToast({ title: '删除失败', icon: 'info' });
       return false;
     }
   }, [currentRow]);

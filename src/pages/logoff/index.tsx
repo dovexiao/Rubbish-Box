@@ -53,7 +53,7 @@ export default function Logoff() {
 
   const handleConfirmStep1 = () => {
     if (!agree) {
-      showToast('请先勾选同意');
+      showToast({ title: '请先勾选同意', icon: 'info' });
       return;
     }
     setStep(2);
@@ -69,11 +69,11 @@ export default function Logoff() {
   const handleGetCode = async () => {
     const value = mobile.trim();
     if (!value) {
-      showToast('请输入手机号');
+      showToast({ title: '请输入手机号', icon: 'info' });
       return;
     }
     if (!mobileExp(value)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (sending) return;
@@ -89,9 +89,12 @@ export default function Logoff() {
       if (Number((res as any).code) === 200) {
         setSmsRequested(true);
         setCountdown(60);
-        showToast('验证码已发送');
+        showToast({ title: '验证码已发送', icon: 'info' });
       } else {
-        showToast((res as any).msg || (res as any).message || '发送失败');
+        showToast({
+          title: (res as any).msg || (res as any).message || '发送失败',
+          icon: 'info',
+        });
       }
     } finally {
       setSending(false);
@@ -101,11 +104,11 @@ export default function Logoff() {
   const handleLogoffSubmit = async () => {
     const value = mobile.trim();
     if (!value || !mobileExp(value)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (!code.trim()) {
-      showToast('请输入验证码');
+      showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
     if (submitting) return;
@@ -114,9 +117,10 @@ export default function Logoff() {
     showLoading({ title: '提交中...' });
     try {
       const res = await logout({ mobile: value, code: code.trim() });
-      hideLoading();
+
       if (Number((res as any).code) === 200) {
-        showToast('已注销');
+        hideLoading();
+        showToast({ title: '已注销', icon: 'info' });
         try {
           await cacheRemove({ key: 'token' });
         } catch {}
@@ -128,18 +132,20 @@ export default function Logoff() {
         } catch {}
         reLaunch('Login');
       } else if (Number((res as any).code) === 515) {
+        hideLoading();
         setSmsError(true);
-        showToast('验证码错误');
+        showToast({ title: '验证码错误', icon: 'info' });
       } else {
         const msg = (res as any).msg || (res as any).message || '注销失败';
-        showToast(msg);
+        hideLoading();
+        showToast({ title: msg, icon: 'info' });
         if (msg.includes('订单') || msg.includes('无法注销')) {
           setPopVisible(true);
         }
       }
     } catch (e) {
       hideLoading();
-      showToast('注销失败，请重试');
+      showToast({ title: '注销失败，请重试', icon: 'info' });
     } finally {
       setSubmitting(false);
     }

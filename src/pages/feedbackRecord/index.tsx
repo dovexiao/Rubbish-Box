@@ -51,7 +51,7 @@ export default function FeedbackRecord() {
         setRecords(prev => (reload ? list : [...prev, ...list]));
         setHasMore(list.length === 10);
       } catch (e) {
-        showToast('获取反馈记录失败');
+        showToast({ title: '获取反馈记录失败', icon: 'info' });
       } finally {
         setLoading(false);
       }

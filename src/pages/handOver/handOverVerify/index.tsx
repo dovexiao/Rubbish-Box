@@ -52,18 +52,18 @@ export default function HandOverVerify() {
       lockIds: String(deviceId).split(','),
     });
     if (res?.code === 200 && res?.success) {
-      showToast('已发送，待查收验证码');
+      showToast({ title: '已发送，待查收验证码', icon: 'info' });
       start();
       setStep(1);
       return;
     }
-    showToast(res?.message || res?.msg || '发送失败');
+    showToast({ title: res?.message || res?.msg || '发送失败', icon: 'info' });
   }, [deviceId, showError, start]);
 
   const onSubmit = useCallback(async () => {
     if (!deviceId) return;
     if (!code || code.length !== 6) {
-      showToast('请输入验证码');
+      showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
 
@@ -73,12 +73,12 @@ export default function HandOverVerify() {
         lockIds: String(deviceId).split(','),
         currentAdminCode: code,
       });
-      console.log(res, '===res');
-      hideLoading();
+
       stop();
 
       if (res?.code === 200 && res?.success) {
-        showToast('验证成功');
+        hideLoading();
+        showToast({ title: '验证成功', icon: 'info' });
         navigation.navigate('HandOverVerifyNew' as any, {
           lockIds: String(deviceId),
           currentAdminCode: code,
@@ -87,13 +87,17 @@ export default function HandOverVerify() {
           needPin,
         });
       } else {
-        showToast(res?.message || res?.msg || '验证失败');
+        hideLoading();
+        showToast({
+          title: res?.message || res?.msg || '验证失败',
+          icon: 'info',
+        });
         setShowError(true);
       }
     } catch {
       hideLoading();
       stop();
-      showToast('移交失败');
+      showToast({ title: '移交失败', icon: 'info' });
     }
   }, [bleName, bleNo, code, deviceId, navigation, stop]);
 

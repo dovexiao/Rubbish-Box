@@ -60,7 +60,10 @@ export default function Mine() {
       if (infoRes.code === 200 && infoRes.success) {
         setInfo((infoRes.data || {}) as MineInfo);
       } else {
-        showToast(infoRes.msg || infoRes.message || '获取用户信息失败');
+        showToast({
+          title: infoRes.msg || infoRes.message || '获取用户信息失败',
+          icon: 'info',
+        });
       }
     } finally {
       setLoading(false);

@@ -23,7 +23,7 @@ export default function SkinPeeler() {
       const list: ThemeItem[] = (res as any)?.data ?? res ?? [];
       setThemeList(list);
     } catch (e) {
-      showToast('获取皮肤列表失败');
+      showToast({ title: '获取皮肤列表失败', icon: 'info' });
     }
   }, []);
 
@@ -54,12 +54,15 @@ export default function SkinPeeler() {
             setTheme('light');
           }
 
-          showToast('切换成功');
+          showToast({ title: '切换成功', icon: 'info' });
         } else {
-          showToast((res as any)?.message || '切换失败');
+          showToast({
+            title: (res as any)?.message || '切换失败',
+            icon: 'info',
+          });
         }
       } catch (e) {
-        showToast('切换失败');
+        showToast({ title: '切换失败', icon: 'info' });
       } finally {
         setLoading(false);
       }

@@ -60,10 +60,13 @@ export default function MessageDetailScreen() {
         setDetail(res?.data ?? res);
         return;
       }
-      showToast(res?.message || res?.msg || '获取详情失败');
+      showToast({
+        title: res?.message || res?.msg || '获取详情失败',
+        icon: 'info',
+      });
       setDetail(null);
     } catch {
-      showToast('获取详情失败');
+      showToast({ title: '获取详情失败', icon: 'info' });
       setDetail(null);
     } finally {
       setLoading(false);
@@ -80,18 +83,19 @@ export default function MessageDetailScreen() {
     try {
       const res: any = await installConfirm({ id: msgId } as any);
       if (res?.code === 200 && res?.success !== false) {
+        hideLoading();
         showToast({ title: '安装确认成功', icon: 'success' });
         navigation.goBack();
         return;
       }
+      hideLoading();
       showToast({
         title: res?.message || res?.msg || '安装确认失败',
         icon: 'error',
       });
     } catch {
-      showToast({ title: '安装确认失败', icon: 'error' });
-    } finally {
       hideLoading();
+      showToast({ title: '安装确认失败', icon: 'error' });
     }
   }, [msgId, navigation]);
 

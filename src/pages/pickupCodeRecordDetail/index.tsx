@@ -84,11 +84,14 @@ export default function PickupCodeRecordDetail() {
         ) as RecordDetail;
         setDetail(data || null);
       } else {
-        showToast(res?.message || res?.msg || '获取详情失败');
+        showToast({
+          title: res?.message || res?.msg || '获取详情失败',
+          icon: 'info',
+        });
         navigation.goBack();
       }
     } catch (e) {
-      showToast('获取详情失败');
+      showToast({ title: '获取详情失败', icon: 'info' });
       navigation.goBack();
     } finally {
       setLoading(false);
@@ -107,22 +110,22 @@ export default function PickupCodeRecordDetail() {
         message: expressNo,
         title: '快递单号',
       });
-      showToast('已分享快递单号');
+      showToast({ title: '已分享快递单号', icon: 'info' });
     } catch (e: any) {
       if (e?.message !== 'User did not share') {
-        showToast('复制失败，请手动复制');
+        showToast({ title: '复制失败，请手动复制', icon: 'info' });
       }
     }
   }, [detail?.expressNo]);
 
   const confirmRegion = useCallback(() => {
     if (!pickerValue || pickerValue.length < 3) {
-      showToast('请选择省市区');
+      showToast({ title: '请选择省市区', icon: 'info' });
       return;
     }
     const data = getPickerResultByValues(regionData, pickerValue);
     if (data.length < 3) {
-      showToast('请选择省市区');
+      showToast({ title: '请选择省市区', icon: 'info' });
       return;
     }
     const province = data[0]?.label || '';
@@ -144,24 +147,24 @@ export default function PickupCodeRecordDetail() {
 
   const submitAddress = async () => {
     if (!recvName) {
-      showToast('请输入姓名');
+      showToast({ title: '请输入姓名', icon: 'info' });
       return;
     }
     if (!recvPhone || !/(1[3-9]\d{9})/.test(recvPhone)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (!addressText) {
-      showToast('请选择地址');
+      showToast({ title: '请选择地址', icon: 'info' });
       return;
     }
     if (!detailAddress) {
-      showToast('请输入详细地址');
+      showToast({ title: '请输入详细地址', icon: 'info' });
       return;
     }
     const code = (detail?.pickupCode || '').trim();
     if (!code) {
-      showToast('提货码为空，请稍后重试');
+      showToast({ title: '提货码为空，请稍后重试', icon: 'info' });
       return;
     }
     showLoading({ title: '提交中...' });
@@ -174,19 +177,21 @@ export default function PickupCodeRecordDetail() {
         userPhone: recvPhone,
         address,
       });
-      hideLoading();
+
       if (res?.code === '200' || res?.code === 200) {
-        showToast('提交成功');
+        hideLoading();
+        showToast({ title: '提交成功', icon: 'info' });
         fromList = true;
         await loadDetail();
         return;
       } else {
+        hideLoading();
         const errorMsg = (res && (res.message || res.msg)) || '提交失败';
-        showToast(errorMsg);
+        showToast({ title: errorMsg, icon: 'info' });
       }
     } catch (e: any) {
       hideLoading();
-      showToast('提交失败');
+      showToast({ title: '提交失败', icon: 'info' });
     }
   };
 

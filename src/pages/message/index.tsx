@@ -105,7 +105,10 @@ export default function MessageScreen() {
         });
 
         if (res?.code !== 200 || res?.success === false) {
-          showToast(res?.message || res?.msg || '获取消息失败');
+          showToast({
+            title: res?.message || res?.msg || '获取消息失败',
+            icon: 'info',
+          });
           return;
         }
 
@@ -126,7 +129,7 @@ export default function MessageScreen() {
           setIsEmpty(false);
         }
       } catch (e) {
-        showToast('获取消息失败');
+        showToast({ title: '获取消息失败', icon: 'info' });
       } finally {
         inFlightRef.current = false;
         setRefreshing(false);
@@ -147,7 +150,10 @@ export default function MessageScreen() {
         const existRes = await getUserLockExist({ id });
         if (existRes.code === 200) {
           if (!existRes.data) {
-            showToast(existRes.message || existRes.msg || '设备不存在');
+            showToast({
+              title: existRes.message || existRes.msg || '设备不存在',
+              icon: 'info',
+            });
             return;
           }
           const readRes = await readMsg({ id: msgId });
@@ -158,13 +164,13 @@ export default function MessageScreen() {
               reLaunch('Index', { lockId: id });
             }
           } else {
-            showToast(readRes.msg || readRes.message);
+            showToast({ title: readRes.msg || readRes.message, icon: 'info' });
           }
         } else {
-          showToast('无权限查看此设备');
+          showToast({ title: '无权限查看此设备', icon: 'info' });
         }
       } catch (e) {
-        showToast('跳转失败');
+        showToast({ title: '跳转失败', icon: 'info' });
       }
     },
     [navigation],
@@ -176,10 +182,10 @@ export default function MessageScreen() {
       if (readRes.code === 200 && readRes.data) {
         navigation.navigate('MessageDetail', { msgId });
       } else {
-        showToast(readRes.msg || readRes.message);
+        showToast({ title: readRes.msg || readRes.message, icon: 'info' });
       }
     } catch {
-      showToast('操作失败');
+      showToast({ title: '操作失败', icon: 'info' });
     }
   }, []);
 

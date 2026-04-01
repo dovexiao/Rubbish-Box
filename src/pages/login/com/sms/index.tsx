@@ -61,12 +61,10 @@ const Sms: React.FC<SmsProps> = ({
         setShowError(true);
       } else {
         hideLoading();
-        showToast(res.message || '发送失败');
+        showToast({ title: res.message || '发送失败', icon: 'info' });
       }
     } catch {
-      showToast('发送失败，请重试');
-    } finally {
-      hideLoading();
+      showToast({ title: '发送失败，请重试', icon: 'info' });
     }
   };
 

@@ -47,7 +47,7 @@ const LoginSms = () => {
     setShowError(false);
 
     if (!code || code.length !== 6) {
-      showToast('请输入验证码');
+      showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
 
@@ -85,11 +85,11 @@ const LoginSms = () => {
 
       if (res.code === 200) {
         // 仅在校验成功时停止倒计时
+        hideLoading();
         stop();
         Keyboard.dismiss();
 
         if (type === SMS_PURPOSE.RESET_PASSWORD) {
-          hideLoading();
           navigation.navigate('ForgetPasswordReset', {
             tempToken: res.data,
           });
@@ -108,15 +108,18 @@ const LoginSms = () => {
         setShowError(true);
         hideLoading();
       } else {
-        showToast(res.msg || res.message || '验证失败');
+        hideLoading();
+        showToast({
+          title: res.msg || res.message || '验证失败',
+          icon: 'info',
+        });
         setCode('');
         setShowError(false);
         inputCodeRef.current?.clearCode();
-        hideLoading();
       }
     } catch (error) {
       hideLoading();
-      showToast('验证失败，请重试');
+      showToast({ title: '验证失败，请重试', icon: 'info' });
     }
   };
 
@@ -140,7 +143,7 @@ const LoginSms = () => {
       start();
     } catch (error) {
       hideLoading();
-      showToast('获取验证码失败');
+      showToast({ title: '获取验证码失败', icon: 'info' });
     }
   };
 

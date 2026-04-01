@@ -56,10 +56,10 @@ export default function CombineDeviece() {
           const name = (res as any)?.data ?? '';
           setGroupName(String(name));
         } else {
-          showToast(res.msg || res.message);
+          showToast({ title: res.msg || res.message, icon: 'info' });
         }
       } catch {
-        showToast('获取默认名称失败');
+        showToast({ title: '获取默认名称失败', icon: 'info' });
       }
     })();
   }, []);
@@ -112,10 +112,10 @@ export default function CombineDeviece() {
             return prev;
           });
         } else {
-          showToast(res?.msg || res?.message);
+          showToast({ title: res?.msg || res?.message, icon: 'info' });
         }
       } catch {
-        showToast('加载设备列表失败');
+        showToast({ title: '加载设备列表失败', icon: 'info' });
       } finally {
         setInitialLoading(false);
         setRefreshing(false);
@@ -152,11 +152,11 @@ export default function CombineDeviece() {
 
   const handleCreateGroup = useCallback(async () => {
     if (!groupName?.trim()) {
-      showToast('请填写设备名称');
+      showToast({ title: '请填写设备名称', icon: 'info' });
       return;
     }
     if (selectedDevices.length < 2) {
-      showToast('至少选择两个设备');
+      showToast({ title: '至少选择两个设备', icon: 'info' });
       return;
     }
 
@@ -166,18 +166,20 @@ export default function CombineDeviece() {
         ids: selectedDevices,
         lockName: groupName.trim(),
       } as any);
-      hideLoading();
+
       if (res?.code === 200 && res?.success) {
         const groupId = (res as any)?.data ?? res;
         await setStorage({ key: 'createdGroupId', data: groupId });
-        showToast('创建成功');
+        hideLoading();
+        showToast({ title: '创建成功', icon: 'success' });
         navigation.navigate('MainTabs' as any, { screen: 'Multiple' } as any);
       } else {
-        showToast(res?.msg || res?.message);
+        hideLoading();
+        showToast({ title: res?.msg || res?.message, icon: 'info' });
       }
     } catch {
       hideLoading();
-      showToast('创建失败');
+      showToast({ title: '创建失败', icon: 'info' });
     }
   }, [groupName, navigation, selectedDevices]);
 

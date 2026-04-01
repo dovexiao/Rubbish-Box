@@ -66,7 +66,7 @@ export default function Address() {
         });
         setHasMore(dataList.length >= PAGE_SIZE);
       } catch (e) {
-        showToast('获取地址列表失败');
+        showToast({ title: '获取地址列表失败', icon: 'info' });
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -88,12 +88,15 @@ export default function Address() {
     try {
       const res: any = await deleteAddress({ id: currentId });
       const ok = Number(res?.code) === 200 || res === true;
-      showToast(ok ? '删除地址成功' : res?.msg || res?.message || '删除失败');
+      showToast({
+        title: ok ? '删除地址成功' : res?.msg || res?.message || '删除失败',
+        icon: 'info',
+      });
       if (ok) {
         void loadList(true);
       }
     } catch (e) {
-      showToast('删除失败');
+      showToast({ title: '删除失败', icon: 'info' });
     }
   };
 

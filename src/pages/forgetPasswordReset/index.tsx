@@ -33,12 +33,12 @@ const ForgetPasswordReset = () => {
 
   const onSubmit = async () => {
     if (!password) {
-      showToast('请输入密码');
+      showToast({ title: '请输入密码', icon: 'info' });
       return;
     }
 
     if (!confirmPassword) {
-      showToast('请再次输入密码');
+      showToast({ title: '请再次输入密码', icon: 'info' });
       return;
     }
 
@@ -85,10 +85,9 @@ const ForgetPasswordReset = () => {
         ...device,
       });
 
-      hideLoading();
-
       if (res.code === 200) {
-        showToast('密码修改成功');
+        hideLoading();
+        showToast({ title: '密码修改成功', icon: 'success' });
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
         try {
@@ -96,17 +95,19 @@ const ForgetPasswordReset = () => {
         } catch (e) {
           console.error('获取设备信息失败:', e);
         }
-        console.log('res======>');
         reLaunch('Index');
       } else if (res.code === 515) {
         hideLoading();
       } else {
         hideLoading();
-        showToast(res.msg || res.message || '密码修改失败');
+        showToast({
+          title: res.msg || res.message || '密码修改失败',
+          icon: 'info',
+        });
       }
     } catch (error) {
       hideLoading();
-      showToast('密码修改失败，请重试');
+      showToast({ title: '密码修改失败，请重试', icon: 'info' });
       console.error('密码重置异常:', error);
     }
   };

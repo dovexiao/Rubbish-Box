@@ -35,7 +35,7 @@ export default function GoodsDetail() {
 
   const loadDetail = useCallback(async () => {
     if (!productId) {
-      showToast('商品ID不存在');
+      showToast({ title: '商品ID不存在', icon: 'info' });
       navigation.goBack();
       return;
     }
@@ -46,11 +46,14 @@ export default function GoodsDetail() {
       if (res.code === 200 && res.success) {
         setGoodsDetail(res.data as GoodsDetailDTO);
       } else {
-        showToast(res.msg || res.message || '获取商品详情失败');
+        showToast({
+          title: res.msg || res.message || '获取商品详情失败',
+          icon: 'info',
+        });
         navigation.goBack();
       }
     } catch (e) {
-      showToast('获取商品详情失败');
+      showToast({ title: '获取商品详情失败', icon: 'info' });
       navigation.goBack();
     } finally {
       setLoading(false);
@@ -74,10 +77,9 @@ export default function GoodsDetail() {
       // 获取小程序 token
       const tokenRes = await getMiniToken({});
       if (!tokenRes.success || !tokenRes.data?.token) {
-        showToast('获取小程序token失败');
+        showToast({ title: '获取小程序token失败', icon: 'info' });
         return;
       }
-      console.log(tokenRes, '====');
 
       // 构建跳转参数
       const params: any = {
@@ -101,10 +103,10 @@ export default function GoodsDetail() {
       if (result.result) {
         setPopupVisible(false);
       } else {
-        showToast(result.message || '打开小程序失败');
+        showToast({ title: result.message || '打开小程序失败', icon: 'info' });
       }
     } catch (error: any) {
-      showToast(error?.message || '购买失败，请重试');
+      showToast({ title: error?.message || '购买失败，请重试', icon: 'info' });
     }
   }, [goodsDetail, productNum]);
 

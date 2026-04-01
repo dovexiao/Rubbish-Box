@@ -1,7 +1,8 @@
-﻿import { Toast } from '@ant-design/react-native';
+import { Toast } from '@ant-design/react-native';
+import { InteractionManager, Platform } from 'react-native';
 import eventCenter from './eventCenter';
 
-export type ToastIcon = 'success' | 'error' | 'loading' | 'none';
+export type ToastIcon = 'success' | 'error' | 'loading' | 'none' | 'info';
 
 export interface ShowToastOptions {
   title: string;
@@ -10,6 +11,35 @@ export interface ShowToastOptions {
 }
 
 let globalLoadingKey: any | null = null;
+let isGlobalLoadingVisible = false;
+let lastHideLoadingAt = 0;
+let pendingToastTimer: ReturnType<typeof setTimeout> | null = null;
+
+function scheduleToast(task: () => void): void {
+  const shouldWaitLoadingDismiss =
+    Platform.OS === 'ios' &&
+    !isGlobalLoadingVisible &&
+    Date.now() - lastHideLoadingAt < 250;
+
+  if (pendingToastTimer) {
+    clearTimeout(pendingToastTimer);
+    pendingToastTimer = null;
+  }
+
+  const runTask = () => {
+    InteractionManager.runAfterInteractions(task);
+  };
+
+  if (shouldWaitLoadingDismiss) {
+    pendingToastTimer = setTimeout(() => {
+      pendingToastTimer = null;
+      runTask();
+    }, 180);
+    return;
+  }
+
+  runTask();
+}
 /**
  * 类 Taro.showToast
  *
@@ -31,18 +61,22 @@ export function showToast(options: ShowToastOptions | string): void {
 
   // 如果是没有 icon 的情况，走我们封装的无遮挡全局 Modal Toast
   if (icon === 'none') {
-    eventCenter.trigger('global_show_toast', { title, icon, duration });
+    scheduleToast(() => {
+      eventCenter.trigger('global_show_toast', { title, icon, duration });
+    });
     return;
   }
 
   // 如果有 icon，退回到 @ant-design/react-native 旧逻辑
-  if (icon === 'success') {
-    Toast.success({ content: title, duration: seconds });
-  } else if (icon === 'error') {
-    Toast.fail({ content: title, duration: seconds });
-  } else {
-    Toast.info({ content: title, duration: seconds });
-  }
+  scheduleToast(() => {
+    if (icon === 'success') {
+      Toast.success({ content: title, duration: seconds });
+    } else if (icon === 'error') {
+      Toast.fail({ content: title, duration: seconds });
+    } else {
+      Toast.info({ content: title, duration: seconds });
+    }
+  });
 }
 
 export interface ShowLoadingOptions {
@@ -64,6 +98,8 @@ export function showLoading(options?: ShowLoadingOptions): void {
     globalLoadingKey = null;
   }
 
+  isGlobalLoadingVisible = true;
+
   // 触发全局高层级 Modal loading
   eventCenter.trigger('global_show_loading', { title });
 }
@@ -74,16 +110,12 @@ export function showLoading(options?: ShowLoadingOptions): void {
 export function hideLoading(): void {
   if (globalLoadingKey) {
     Toast.remove(globalLoadingKey);
-    Toast.removeAll();
     globalLoadingKey = null;
   }
+
+  isGlobalLoadingVisible = false;
+  lastHideLoadingAt = Date.now();
+
   // 隐藏全局高层级 Modal loading
   eventCenter.trigger('global_hide_loading');
-
-  // 兜底：移除所有 Toast，防止遗留
-  try {
-    Toast.removeAll();
-  } catch (e) {
-    // ignore
-  }
 }

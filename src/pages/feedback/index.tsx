@@ -53,7 +53,7 @@ export default function Feedback() {
   const handleChooseImage = useCallback(() => {
     const remain = MAX_IMAGES - imageList.length;
     if (remain <= 0) {
-      showToast('最多上传4张图片');
+      showToast({ title: '最多上传4张图片', icon: 'info' });
       return;
     }
     launchImageLibrary(
@@ -65,7 +65,7 @@ export default function Feedback() {
       async res => {
         if (res.didCancel) return;
         if (res.errorCode || res.errorMessage) {
-          showToast(res.errorMessage || '选择失败');
+          showToast({ title: res.errorMessage || '选择失败', icon: 'info' });
           return;
         }
         const assets = res.assets || [];
@@ -91,7 +91,7 @@ export default function Feedback() {
             results.push(`https://${res.data.Location}`);
           }
         } catch {
-          showToast('图片上传失败，请重试');
+          showToast({ title: '图片上传失败，请重试', icon: 'info' });
           return [];
         }
       }
@@ -102,11 +102,11 @@ export default function Feedback() {
 
   const handleSubmit = useCallback(async () => {
     if (!description.trim()) {
-      showToast('请填写反馈内容');
+      showToast({ title: '请填写反馈内容', icon: 'info' });
       return;
     }
     if (!isMobile(userMobile)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (submitting) return;
@@ -123,12 +123,12 @@ export default function Feedback() {
         userName,
         userMobile,
       });
-      showToast('提交成功');
+      showToast({ title: '提交成功', icon: 'success' });
       setDescription('');
       setImageList([]);
       setUserName('');
     } catch {
-      showToast('提交失败，请重试');
+      showToast({ title: '提交失败，请重试', icon: 'info' });
     } finally {
       setSubmitting(false);
     }

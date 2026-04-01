@@ -88,11 +88,11 @@ export default function DeviceList() {
         } else {
           showToast({
             title: res?.message || res?.msg || '加载设备列表失败',
-            icon: 'none',
+            icon: 'info',
           });
         }
       } catch {
-        showToast({ title: '加载设备列表失败', icon: 'none' });
+        showToast({ title: '加载设备列表失败', icon: 'info' });
       } finally {
         setRefreshing(false);
         setLoadingMore(false);
@@ -140,9 +140,10 @@ export default function DeviceList() {
         });
 
         if (!(res?.code === 200 && res?.success)) {
+          hideLoading();
           showToast({
             title: res?.message || res?.msg || '操作失败',
-            icon: 'none',
+            icon: 'info',
           });
           return;
         }
@@ -159,17 +160,18 @@ export default function DeviceList() {
               ot,
             });
             if (!(result?.code === 200 && result?.success)) {
+              hideLoading();
               showToast({
                 title: result?.message || result?.msg || '操作失败',
-                icon: 'none',
+                icon: 'info',
               });
               poller.stop();
               return false;
             }
 
             if (result?.data) {
+              hideLoading();
               const nextInfo: any = await getLockInfo({ id: item?.id });
-
               if (nextInfo?.code === 200 && nextInfo?.success) {
                 setList(prev =>
                   prev.map(it => (it.id === item.id ? nextInfo.data : it)),
@@ -187,9 +189,8 @@ export default function DeviceList() {
         );
         poller.start();
       } catch {
-        showToast({ title: '操作失败', icon: 'none' });
-      } finally {
         hideLoading();
+        showToast({ title: '操作失败', icon: 'info' });
       }
     },
     [loadList],
@@ -212,9 +213,10 @@ export default function DeviceList() {
         });
         const res: any = await operateLockCover({ id: currentLock.id });
         if (!(res?.code === 200 && res?.success)) {
+          hideLoading();
           showToast({
             title: res?.message || res?.msg || '操作失败',
-            icon: 'none',
+            icon: 'info',
           });
           return;
         }
@@ -226,15 +228,17 @@ export default function DeviceList() {
               ot: 13,
             });
             if (!(result?.code === 200 && result?.success)) {
+              hideLoading();
               showToast({
                 title: result?.message || result?.msg || '操作失败',
-                icon: 'none',
+                icon: 'info',
               });
               poller.stop();
               return false;
             }
 
             if (result?.data) {
+              hideLoading();
               if (shouldOpenConfirmRef.current) {
                 coverConfirmRef.current?.close();
                 openConfirmRef.current?.open();
@@ -251,9 +255,8 @@ export default function DeviceList() {
         );
         poller.start();
       } catch {
-        showToast({ title: '操作失败', icon: 'none' });
-      } finally {
         hideLoading();
+        showToast({ title: '操作失败', icon: 'info' });
       }
     },
     [currentLock, loadList],
@@ -364,7 +367,7 @@ export default function DeviceList() {
                 if (item.role === 2 && !item.bluetoothStatus) {
                   showToast({
                     title: '管理员已关闭此功能，请联系管理员打开',
-                    icon: 'none',
+                    icon: 'info',
                   });
                   return;
                 }

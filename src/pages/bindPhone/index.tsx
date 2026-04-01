@@ -52,6 +52,7 @@ const BindPhone = () => {
           tempToken: token,
         });
       } else if (res.code === 522) {
+        hideLoading();
         setShowError(true);
         setErrorMessage(
           res.data == '临时token已失效'
@@ -59,11 +60,15 @@ const BindPhone = () => {
             : '此手机号码未注册',
         );
       } else {
-        showToast(res.msg || res.message || '发送失败');
+        hideLoading();
+        showToast({
+          title: res.msg || res.message || '发送失败',
+          icon: 'info',
+        });
       }
     } catch (error) {
       hideLoading();
-      showToast('发送失败，请重试');
+      showToast({ title: '发送失败，请重试', icon: 'info' });
       console.error('获取验证码异常:', error);
     }
   };

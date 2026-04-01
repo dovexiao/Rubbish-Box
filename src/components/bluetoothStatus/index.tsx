@@ -126,11 +126,6 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
       const checkResult: BluetoothCheckResult =
         await bluetoothModeManager.checkBeforeOperation(props.details?.bleNo);
 
-      console.log('[BluetoothStatus] checkResult:', checkResult, {
-        bleNo: props.details?.bleNo,
-        type: props.type,
-      });
-
       if (!checkResult.success) {
         const type = (checkResult.errorType || 'unknown') as ModalType;
         setBluetoothErrorType(type);
@@ -159,7 +154,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
           hideLoading();
           showToast({
             title: cmdRes?.msg || '蓝牙模式切换失败，请重试',
-            icon: 'none',
+            icon: 'error',
           });
           return;
         }
@@ -175,25 +170,24 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
           hideLoading();
           showToast({
             title: apiRes?.message || apiRes?.msg || '模式切换失败，请稍后重试',
-            icon: 'none',
+            icon: 'error',
           });
           return;
         }
 
+        hideLoading();
         showToast({
           title: '模式切换成功',
-          icon: 'none',
+          icon: 'success',
         });
 
         props.onSuccess?.();
       } catch (error) {
-        console.error('runSingleBluetoothCheck error', error);
+        hideLoading();
         showToast({
           title: '模式切换异常，请稍后重试',
-          icon: 'none',
+          icon: 'error',
         });
-      } finally {
-        hideLoading();
       }
     }, [hideLoading, props.details, props.onSuccess, props.type, sleep]);
 
@@ -341,29 +335,30 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
               r => r.status === 'fulfilled',
             ).length;
 
-            hideLoading();
             if (failedCount === 0) {
+              hideLoading();
               showToast({ title: '模式切换成功', icon: 'success' });
               props.onSuccess?.();
             } else if (successCount > 0) {
+              hideLoading();
               showToast({
                 title: `${successCount}/${results.length} 个设备切换成功`,
-                icon: 'none',
+                icon: 'error',
               });
             } else {
-              showToast({ title: '模式切换失败，请稍后重试', icon: 'none' });
+              hideLoading();
+              showToast({ title: '模式切换失败，请稍后重试', icon: 'error' });
             }
           } catch (e) {
-            console.error('runGroupBluetoothCheck switch mode error', e);
             hideLoading();
-            showToast({ title: '模式切换异常，请稍后重试', icon: 'none' });
+            showToast({ title: '模式切换异常，请稍后重试', icon: 'error' });
           }
         } else {
           setGroupListVisible(true);
         }
       } catch (error) {
         hideLoading();
-        showToast({ title: '获取组合信息失败', icon: 'none' });
+        showToast({ title: '获取组合信息失败', icon: 'error' });
         console.error(error);
       }
     }, [

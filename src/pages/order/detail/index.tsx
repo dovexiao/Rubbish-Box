@@ -24,7 +24,7 @@ export default function OrderDetail() {
 
   const loadDetail = useCallback(async () => {
     if (!orderNo) {
-      showToast('订单号不存在');
+      showToast({ title: '订单号不存在', icon: 'info' });
       navigation.goBack();
       return;
     }
@@ -36,11 +36,14 @@ export default function OrderDetail() {
         const data = (res.data || res) as OrderDetailDTO;
         setDetail(data || null);
       } else {
-        showToast(res?.message || res?.msg || '获取订单详情失败');
+        showToast({
+          title: res?.message || res?.msg || '获取订单详情失败',
+          icon: 'info',
+        });
         navigation.goBack();
       }
     } catch (e) {
-      showToast('获取订单详情失败');
+      showToast({ title: '获取订单详情失败', icon: 'info' });
       navigation.goBack();
     } finally {
       setLoading(false);

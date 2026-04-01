@@ -159,9 +159,10 @@ const Login = () => {
         } else {
           obj = { ...obj, ...device.current };
         }
-        console.log('obj', obj);
+
         const thirdLoginRes = await thirdLogin({ ...obj });
         if (thirdLoginRes.code === 200) {
+          hideLoading();
           await cacheSetSync('token', thirdLoginRes.data.token);
           await cacheSetSync('guestMode', false);
           try {
@@ -174,21 +175,23 @@ const Login = () => {
               mobile: thirdLoginRes.data.mobile,
             });
           } else {
-            showToast('登录成功');
+            showToast({ title: '登录成功', icon: 'success' });
             reLaunch('Index');
           }
         } else {
-          showToast(thirdLoginRes.message);
+          hideLoading();
+          showToast({ title: thirdLoginRes.message, icon: 'info' });
         }
       } else {
+        hideLoading();
         if (r.errCode === -998) console.log('用户手动返回');
         else if (r.errCode === -996) console.log('取消或未响应权限弹框(鸿蒙)');
         else if (r.errCode === -997) {
-          if (r.message) showToast(r.message);
-        } else if (r.message) showToast(r.message);
+          if (r.message) showToast({ title: r.message, icon: 'info' });
+        } else if (r.message) showToast({ title: r.message, icon: 'info' });
       }
     } catch (e) {
-      console.log('一键登录异常:', e);
+      showToast({ title: '一键登录异常:' + e, icon: 'info' });
     } finally {
       hideLoading();
       tempData.current.appStateSub?.remove?.();

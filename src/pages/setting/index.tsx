@@ -159,7 +159,7 @@ export default function Setting() {
     try {
       const agree = await cacheGetSync('agreePrivacy');
       if (enabled && !agree) {
-        showToast('请先同意隐私条款后再开启通知服务');
+        showToast({ title: '请先同意隐私条款后再开启通知服务', icon: 'info' });
         return false;
       }
       await setStorage({ key: 'pushEnabled', data: enabled });
@@ -178,7 +178,7 @@ export default function Setting() {
       }
       return true;
     } catch {
-      showToast('更新通知服务状态失败');
+      showToast({ title: '更新通知服务状态失败', icon: 'info' });
       return false;
     }
   }, []);
@@ -210,7 +210,7 @@ export default function Setting() {
       const info = await manager.checkAppVersion({ checkStorage: false });
 
       if (!info) {
-        showToast('当前已是最新版本');
+        showToast({ title: '当前已是最新版本', icon: 'info' });
         return;
       }
 
@@ -225,7 +225,7 @@ export default function Setting() {
         onConfirm: () => manager.applyAppVerUpdate(info),
       });
     } catch (e) {
-      showToast('检查更新失败，请稍后重试');
+      showToast({ title: '检查更新失败，请稍后重试', icon: 'info' });
     }
   }, []);
   console.log(currentVersion);

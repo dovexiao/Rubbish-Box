@@ -41,7 +41,7 @@ const MiniBind = () => {
   // 提交验证码
   const onSubmit = async () => {
     if (!code || code.length !== 6) {
-      showToast('请输入验证码');
+      showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
 
@@ -58,12 +58,12 @@ const MiniBind = () => {
       Keyboard.dismiss();
 
       if (res.code === 200) {
+        hideLoading();
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
         try {
           await getMobPushDeviceInfo();
         } catch {}
-        hideLoading();
 
         // 延迟执行导航，确保状态已更新
         setTimeout(() => {
@@ -79,14 +79,17 @@ const MiniBind = () => {
         setShowError(true);
       } else {
         hideLoading();
-        showToast(res.msg || res.message || '登录失败');
+        showToast({
+          title: res.msg || res.message || '登录失败',
+          icon: 'info',
+        });
         setCode('');
         setShowError(false);
         inputCodeRef.current?.clearCode();
       }
     } catch (error) {
       hideLoading();
-      showToast('登录失败，请重试');
+      showToast({ title: '登录失败，请重试', icon: 'info' });
       console.error('登录异常:', error);
     }
   };
@@ -110,7 +113,7 @@ const MiniBind = () => {
       start();
     } catch (error) {
       hideLoading();
-      showToast('获取验证码失败');
+      showToast({ title: '获取验证码失败', icon: 'info' });
     }
   };
 

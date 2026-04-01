@@ -80,7 +80,7 @@ const CheckBluetooth = forwardRef<CheckBluetoothRef, Props>(
 
           // 断开时：提示 + 标记已断开 + 直接完成第二步
           if (wasConnected && !connected) {
-            showToast({ title: '蓝牙连接已断开', icon: 'none' });
+            showToast({ title: '蓝牙连接已断开', icon: 'error' });
             hasDisconnectedRef.current = true;
             setSteps(prev => {
               const next = prev.map((s, i) =>

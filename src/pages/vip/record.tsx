@@ -115,7 +115,7 @@ export default function VipRecordPage() {
       });
       setComplete(rows.length < PAGE_SIZE);
     } catch (e) {
-      showToast('获取贵宾邀请记录失败');
+      showToast({ title: '获取贵宾邀请记录失败', icon: 'info' });
     } finally {
       loadingRef.current = false;
       setLoading(false);

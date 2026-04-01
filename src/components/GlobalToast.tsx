@@ -10,6 +10,7 @@ export const GlobalToast = () => {
   );
   const opacity = useRef(new Animated.Value(0)).current;
   const timerRef = useRef<any>(null);
+  const toastIdRef = useRef(0);
 
   useEffect(() => {
     const show = (options: {
@@ -17,7 +18,12 @@ export const GlobalToast = () => {
       icon?: 'success' | 'error' | 'loading' | 'none';
       duration?: number;
     }) => {
+      toastIdRef.current += 1;
+      const currentToastId = toastIdRef.current;
+
       if (timerRef.current) clearTimeout(timerRef.current);
+      opacity.stopAnimation();
+      opacity.setValue(0);
       setTitle(options.title);
       setIcon(options.icon || 'none');
       setVisible(true);
@@ -29,12 +35,15 @@ export const GlobalToast = () => {
       }).start();
 
       timerRef.current = setTimeout(() => {
+        opacity.stopAnimation();
         Animated.timing(opacity, {
           toValue: 0,
           duration: 300,
           useNativeDriver: true,
         }).start(() => {
-          setVisible(false);
+          if (toastIdRef.current === currentToastId) {
+            setVisible(false);
+          }
         });
       }, options.duration || 1500);
     };
@@ -57,6 +66,7 @@ export const GlobalToast = () => {
       visible={visible}
       animationType="none"
       onRequestClose={() => {}}
+      presentationStyle="overFullScreen"
       statusBarTranslucent
     >
       <View style={styles.overlay} pointerEvents="none">

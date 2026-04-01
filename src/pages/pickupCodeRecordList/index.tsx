@@ -77,10 +77,13 @@ export default function PickupCodeRecordList() {
           setList(prev => (refresh ? rows : [...prev, ...rows]));
           setComplete(rows.length < PAGE_SIZE);
         } else {
-          showToast(res.msg || res.message || '获取领取记录失败');
+          showToast({
+            title: res.msg || res.message || '获取领取记录失败',
+            icon: 'info',
+          });
         }
       } catch (e) {
-        showToast('获取领取记录失败');
+        showToast({ title: '获取领取记录失败', icon: 'info' });
       } finally {
         setLoading(false);
         setRefreshing(false);

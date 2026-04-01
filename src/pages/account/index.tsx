@@ -30,7 +30,7 @@ export default function Account() {
       const data = (res as any)?.data ?? res ?? {};
       setDetail(data);
     } catch (e) {
-      showToast('获取账号信息失败');
+      showToast({ title: '获取账号信息失败', icon: 'info' });
     }
   }, []);
 
@@ -54,7 +54,10 @@ export default function Account() {
   const goBindWechat = useCallback(async () => {
     const isInstalledWeChat: any = await checkInstalledWeChat();
     if (!isInstalledWeChat.result) {
-      showToast(isInstalledWeChat.message || '请先安装微信');
+      showToast({
+        title: isInstalledWeChat.message || '请先安装微信',
+        icon: 'info',
+      });
       return;
     }
     showLoading({ title: '授权中...' });
@@ -87,21 +90,29 @@ export default function Account() {
           const accountRes = await getAccountInfo({});
           const data = (accountRes as any)?.data ?? accountRes ?? {};
           setDetail(data);
-          showToast('绑定成功');
+          hideLoading();
+          showToast({ title: '绑定成功', icon: 'success' });
         } else {
-          showToast(
-            (bindRes as any).msg || (bindRes as any).message || '绑定失败',
-          );
+          hideLoading();
+          showToast({
+            title:
+              (bindRes as any).msg || (bindRes as any).message || '绑定失败',
+            icon: 'error',
+          });
         }
       } else {
         if (r?.errCode !== -998) {
-          showToast(r?.message || '授权失败');
+          hideLoading();
+          showToast({
+            title: r?.message || '授权失败',
+            icon: 'error',
+          });
         }
       }
     } catch (e) {
-      showToast('授权异常，请重试');
-    } finally {
       hideLoading();
+      showToast({ title: '授权异常，请重试', icon: 'info' });
+    } finally {
       appStateSubRef.current?.remove?.();
       appStateSubRef.current = undefined;
     }

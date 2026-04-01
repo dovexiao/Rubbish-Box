@@ -53,17 +53,17 @@ export default function ScanPickupCode() {
         const pk = match[1];
         try {
           await setStorage({ key: 'PICKUP_CODE_FROM_SCAN', data: pk });
-          showToast('识别成功');
+          showToast({ title: '识别成功', icon: 'info' });
           setTimeout(() => {
             navigation.goBack();
           }, 500);
         } catch (error) {
-          showToast('保存提货码失败');
+          showToast({ title: '保存提货码失败', icon: 'info' });
           hasScannedRef.current = false;
         }
       } else {
         // 如果不是正确的提货码链接，显示错误并重置
-        showToast('请扫描正确的提货码');
+        showToast({ title: '请扫描正确的提货码', icon: 'info' });
         setTimeout(() => {
           hasScannedRef.current = false;
         }, 2000);

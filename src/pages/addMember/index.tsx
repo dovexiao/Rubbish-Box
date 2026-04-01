@@ -96,7 +96,10 @@ export default function AddMember() {
       setInfo(res.data as ListItem);
       setCurrentLockList(res.data.lockList as LockListItem[]);
     } else {
-      showToast(res.msg || res.message || '获取成员详情失败');
+      showToast({
+        title: res.message || res.msg || '获取成员详情失败',
+        icon: 'info',
+      });
     }
   }, [memberId]);
 
@@ -138,10 +141,13 @@ export default function AddMember() {
             setComplete(rows.length < PAGE_SIZE);
           }
         } else {
-          showToast(res.msg || res.message || '获取地锁列表失败');
+          showToast({
+            title: res.message || res.msg || '获取地锁列表失败',
+            icon: 'info',
+          });
         }
       } catch (e) {
-        showToast('获取地锁列表失败');
+        showToast({ title: '获取地锁列表失败', icon: 'info' });
       } finally {
         setLoading(false);
         setInitialLoading(false);
@@ -179,31 +185,31 @@ export default function AddMember() {
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    showLoading({ title: '提交中...' });
     if (!info) return;
 
     if (!info.username) {
-      showToast('请输入成员昵称');
+      showToast({ title: '请输入成员昵称', icon: 'info' });
       return;
     }
 
     if (!info.mobile) {
-      showToast('请输入手机号');
+      showToast({ title: '请输入手机号', icon: 'info' });
       return;
     }
 
     if (!mobileExp(info.mobile)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
 
     const selectedLocks = currentLockList.filter(item => item.isBind);
     if (selectedLocks.length === 0) {
-      showToast('至少选择一个地锁');
+      showToast({ title: '至少选择一个地锁', icon: 'info' });
       return;
     }
 
     try {
+      showLoading({ title: '提交中...' });
       const res = await modifyStaff({
         ...info,
         lockList: selectedLocks,
@@ -230,11 +236,14 @@ export default function AddMember() {
         }
       } else {
         hideLoading();
-        showToast(res.msg || res.message || '操作失败');
+        showToast({
+          title: res.message || res.msg || '操作失败',
+          icon: 'info',
+        });
       }
     } catch (e) {
       hideLoading();
-      showToast('操作失败');
+      showToast({ title: '操作失败', icon: 'info' });
     }
   }, [info, locks, navigation]);
 

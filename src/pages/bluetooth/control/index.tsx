@@ -202,7 +202,7 @@ export default function BluetoothControl() {
 
       if (!deviceId) {
         hideLoading();
-        showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'none' });
+        showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'info' });
         return;
       }
 
@@ -213,7 +213,7 @@ export default function BluetoothControl() {
       });
       if (!cmdRes.success) {
         hideLoading();
-        showToast({ title: cmdRes.msg || '设备修改 PIN 失败', icon: 'none' });
+        showToast({ title: cmdRes.msg || '设备修改 PIN 失败', icon: 'info' });
         return;
       }
 
@@ -240,14 +240,14 @@ export default function BluetoothControl() {
       } else {
         hideLoading();
         showToast({
-          title: apiRes.message || '服务端保存 PIN 失败',
-          icon: 'none',
+          title: apiRes.message || '修改失败，稍后重试',
+          icon: 'info',
         });
       }
     } catch (error) {
       hideLoading();
       console.error('修改 PIN 异常', error);
-      showToast({ title: '修改 PIN 失败，请稍后重试', icon: 'none' });
+      showToast({ title: '修改 PIN 失败，请稍后重试', icon: 'info' });
     }
   };
 
@@ -323,8 +323,8 @@ export default function BluetoothControl() {
         ) {
           hideLoading();
           showToast({
-            title: apiRes?.message || '服务端同步失败',
-            icon: 'none',
+            title: apiRes?.message || '同步失败，稍后重试',
+            icon: 'info',
           });
           return;
         }
@@ -357,7 +357,7 @@ export default function BluetoothControl() {
             title: `${
               proximityEnabled ? '关闭' : '开启'
             }近身功能失败，请稍后重试`,
-            icon: 'none',
+            icon: 'info',
           });
           return;
         }
@@ -371,7 +371,7 @@ export default function BluetoothControl() {
       // @ts-ignore
       const deviceId = saved?.[bleNo]?.deviceId;
       if (!deviceId) {
-        showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'none' });
+        showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'info' });
         return;
       }
       const cmdRes = await setNearbyPermission({
@@ -383,7 +383,7 @@ export default function BluetoothControl() {
         showToast({
           title:
             cmdRes.msg || `${proximityEnabled ? '关闭' : '开启'}近身功能失败`,
-          icon: 'none',
+          icon: 'info',
         });
         return;
       }
@@ -395,7 +395,7 @@ export default function BluetoothControl() {
       if (
         !(apiRes?.code === 200 || apiRes?.code === '200' || apiRes?.success)
       ) {
-        showToast({ title: apiRes?.message || '服务端同步失败', icon: 'none' });
+        showToast({ title: apiRes?.message || '同步失败，稍后重试', icon: 'info' });
         return;
       }
 

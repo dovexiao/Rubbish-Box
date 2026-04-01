@@ -59,7 +59,10 @@ export default function UserInfo() {
       const res = await baseInfo({});
       if (res.code !== 200 || !res.success) {
         hideLoading();
-        showToast(res.msg || res.message || '获取用户信息失败');
+        showToast({
+          title: res.msg || res.message || '获取用户信息失败',
+          icon: 'info',
+        });
         return;
       }
 
@@ -71,7 +74,7 @@ export default function UserInfo() {
       hideLoading();
     } catch (e) {
       hideLoading();
-      showToast('获取用户信息失败');
+      showToast({ title: '获取用户信息失败', icon: 'info' });
     } finally {
       setLoading(false);
     }
@@ -85,7 +88,7 @@ export default function UserInfo() {
   const saveNickName = useCallback(async () => {
     const newName = inputName.trim();
     if (!newName) {
-      showToast('昵称不能为空');
+      showToast({ title: '昵称不能为空', icon: 'info' });
       return false;
     }
     if (!detail) return false;
@@ -100,15 +103,15 @@ export default function UserInfo() {
       const res = await updateInfo(payload);
       hideLoading();
       if (res.code === 200 && res.success) {
-        showToast('修改成功');
+        showToast({ title: '修改成功', icon: 'info' });
         await load();
         return true;
       }
-      showToast(res.msg || res.message || '修改失败');
+      showToast({ title: res.msg || res.message || '修改失败', icon: 'info' });
       return false;
     } catch {
       hideLoading();
-      showToast('修改失败');
+      showToast({ title: '修改失败', icon: 'info' });
       return false;
     }
   }, [detail, inputName, load]);
@@ -149,7 +152,10 @@ export default function UserInfo() {
             );
           });
         } else {
-          showToast(photoPermission.message || '相册权限被拒绝');
+          showToast({
+            title: photoPermission.message || '相册权限被拒绝',
+            icon: 'info',
+          });
         }
         pickerBusyRef.current = false;
         return;
@@ -228,10 +234,13 @@ export default function UserInfo() {
                 userId: detail?.userId ?? detail?.id,
               });
               if (r.code === 200 && r.success) {
-                showToast('修改成功');
+                showToast({ title: '修改成功', icon: 'info' });
                 await load();
               } else {
-                showToast(r.msg || r.message || '修改失败');
+                showToast({
+                  title: r.msg || r.message || '修改失败',
+                  icon: 'info',
+                });
               }
             }
           });
@@ -242,7 +251,7 @@ export default function UserInfo() {
       });
     } catch (error) {
       console.error('选择头像失败:', error);
-      showToast('选择头像失败');
+      showToast({ title: '选择头像失败', icon: 'info' });
     } finally {
       pickerBusyRef.current = false;
     }

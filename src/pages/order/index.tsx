@@ -62,7 +62,7 @@ export default function Order() {
         setOrderList(prev => (refresh ? list : [...prev, ...list]));
         setHasMore(list.length >= PAGE_SIZE);
       } catch (e) {
-        showToast('获取订单列表失败');
+        showToast({ title: '获取订单列表失败', icon: 'info' });
       } finally {
         setLoading(false);
         setRefreshing(false);

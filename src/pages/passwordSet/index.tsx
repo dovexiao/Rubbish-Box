@@ -69,11 +69,11 @@ export default function PasswordSet() {
   const handleGetCode = async () => {
     const value = mobile.trim();
     if (!value) {
-      showToast('请输入手机号');
+      showToast({ title: '请输入手机号', icon: 'info' });
       return;
     }
     if (!mobileExp(value)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (sending) return;
@@ -89,9 +89,12 @@ export default function PasswordSet() {
       if (res.code === 200) {
         setSmsRequested(true);
         setCountdown(60);
-        showToast('验证码已发送');
+        showToast({ title: '验证码已发送', icon: 'info' });
       } else {
-        showToast((res as any).msg || (res as any).message || '发送失败');
+        showToast({
+          title: (res as any).msg || (res as any).message || '发送失败',
+          icon: 'info',
+        });
       }
     } finally {
       setSending(false);
@@ -101,11 +104,11 @@ export default function PasswordSet() {
   const handleVerifySubmit = async () => {
     const value = mobile.trim();
     if (!value || !mobileExp(value)) {
-      showToast('请输入正确的手机号');
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
     if (!code.trim()) {
-      showToast('请输入验证码');
+      showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
     if (verifySubmitting) return;
@@ -118,9 +121,12 @@ export default function PasswordSet() {
         setStep(2);
       } else if (res.code === 515) {
         setSmsError(true);
-        showToast('验证码错误');
+        showToast({ title: '验证码错误', icon: 'info' });
       } else {
-        showToast((res as any).msg || (res as any).message || '验证失败');
+        showToast({
+          title: (res as any).msg || (res as any).message || '验证失败',
+          icon: 'info',
+        });
       }
     } finally {
       setVerifySubmitting(false);
@@ -146,16 +152,24 @@ export default function PasswordSet() {
         confirmPassword,
         tempToken: tempToken ?? undefined,
       });
-      hideLoading();
+
       if (res.code === 200) {
-        showToast(type === 'add' ? '密码设置成功' : '密码修改成功');
+        hideLoading();
+        showToast({
+          title: type === 'add' ? '密码设置成功' : '密码修改成功',
+          icon: 'info',
+        });
         setTimeout(() => navigation.goBack(), 1000);
       } else {
-        showToast((res as any).msg || (res as any).message || '操作失败');
+        hideLoading();
+        showToast({
+          title: (res as any).msg || (res as any).message || '操作失败',
+          icon: 'info',
+        });
       }
     } catch (e) {
       hideLoading();
-      showToast('操作失败，请重试');
+      showToast({ title: '操作失败，请重试', icon: 'info' });
     } finally {
       setPwdSubmitting(false);
     }

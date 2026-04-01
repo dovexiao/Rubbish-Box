@@ -74,31 +74,33 @@ export default function MemberPage() {
         id: currentRow?.id,
       });
       await getList(true);
+      hideLoading();
       showToast({ title: '删除成功', icon: 'success' });
       setDeleteRef(false);
       return true;
-    } finally {
+    } catch {
       hideLoading();
+      showToast({ title: '删除失败', icon: 'info' });
     }
   };
 
   const onEdit = async () => {
     if (!currentRow?.username) {
-      showToast({ title: '请输入成员昵称' });
+      showToast({ title: '请输入成员昵称', icon: 'info' });
       return;
     }
     if (!currentRow?.mobile) {
-      showToast({ title: '请输入手机号' });
+      showToast({ title: '请输入手机号', icon: 'info' });
       return;
     }
 
     if (!mobileExp(currentRow?.mobile)) {
-      showToast({ title: '请输入正确的手机号' });
+      showToast({ title: '请输入正确的手机号', icon: 'info' });
       return;
     }
 
     if (!currentRow?.isForever && !currentRow?.endTime) {
-      showToast({ title: '请设置有效期' });
+      showToast({ title: '请设置有效期', icon: 'info' });
       return;
     }
     showLoading({ title: '提交中...' });
