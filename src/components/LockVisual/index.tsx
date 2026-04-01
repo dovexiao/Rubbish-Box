@@ -51,6 +51,7 @@ const LockVisual: React.FC<LockVisualProps> = props => {
 
   const [lockStatus, setLockStatus] =
     useState<LockVisualStatus>(currentDeviceStatus);
+  const [gifLoaded, setGifLoaded] = useState(false);
 
   useEffect(() => {
     if (inconsistentStatus) {
@@ -59,6 +60,10 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     }
     setLockStatus(currentDeviceStatus);
   }, [currentDeviceStatus, inconsistentStatus]);
+
+  useEffect(() => {
+    setGifLoaded(false);
+  }, [deviceStatus, gifNonce]);
 
   const showRising30Gif = !inconsistentStatus && !!deviceStatus?.rising30;
   const showFalling30Gif = !inconsistentStatus && !!deviceStatus?.falling30;
@@ -132,8 +137,12 @@ const LockVisual: React.FC<LockVisualProps> = props => {
         <Image
           key={key}
           source={{ uri: finalUri }}
-          style={styles.gifImage}
+          style={[
+            styles.gifImage,
+            !gifLoaded && { position: 'absolute', opacity: 0 },
+          ]}
           resizeMode="contain"
+          onLoad={() => setGifLoaded(true)}
         />
       );
     }
@@ -142,8 +151,12 @@ const LockVisual: React.FC<LockVisualProps> = props => {
       <FastImage
         key={key}
         source={{ uri: finalUri, priority: FastImage.priority.normal }}
-        style={styles.gifImage}
+        style={[
+          styles.gifImage,
+          !gifLoaded && { position: 'absolute', opacity: 0 },
+        ]}
         resizeMode={FastImage.resizeMode.contain}
+        onLoad={() => setGifLoaded(true)}
       />
     );
   };
@@ -211,19 +224,19 @@ const LockVisual: React.FC<LockVisualProps> = props => {
         </Flex>
       ) : null}
 
-      {lockStatus === 'rise' && !anyGifShowing
+      {lockStatus === 'rise' && (!anyGifShowing || !gifLoaded)
         ? renderStaticImage(detail?.imageMap?.upLockPng)
         : null}
-      {lockStatus === 'rise30' && !anyGifShowing
+      {lockStatus === 'rise30' && (!anyGifShowing || !gifLoaded)
         ? renderStaticImage(detail?.imageMap?.up30LockPng)
         : null}
-      {lockStatus === 'rise120' && !anyGifShowing
+      {lockStatus === 'rise120' && (!anyGifShowing || !gifLoaded)
         ? renderStaticImage(detail?.imageMap?.up120LockPng)
         : null}
-      {lockStatus === 'fall' && !anyGifShowing
+      {lockStatus === 'fall' && (!anyGifShowing || !gifLoaded)
         ? renderStaticImage(detail?.imageMap?.fallLockPng)
         : null}
-      {lockStatus === 'openCover' && !anyGifShowing
+      {lockStatus === 'openCover' && (!anyGifShowing || !gifLoaded)
         ? renderStaticImage(detail?.imageMap?.openLockPng)
         : null}
 

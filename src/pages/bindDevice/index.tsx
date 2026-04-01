@@ -1,6 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, ActivityIndicator, Image } from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  Image,
+  InteractionManager,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/core';
 import { PageContainer, Flex, PopConfirm } from '@/components';
 import { IS_HARMONY } from '@/constants';
 import {
@@ -20,7 +27,8 @@ const BinDevice: React.FC = () => {
   const { hasPermission, requestPermission } = useCameraPermission();
   const device = useCameraDevice('back');
 
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(false);
+  const [isFocusedMount, setIsFocusedMount] = useState(false);
   const [harmonyScanFallback, setHarmonyScanFallback] = useState(false);
   const hasScannedRef = useRef(false);
   const popVisibleRef = useRef(false);
@@ -36,24 +44,31 @@ const BinDevice: React.FC = () => {
     void init();
   }, [requestPermission]);
 
-  // 页面挂载/卸载时控制相机激活状态
-  useEffect(() => {
-    setIsActive(true);
-    hasScannedRef.current = false;
-    return () => {
-      setIsActive(false);
-    };
-  }, []);
-
-  // 从 FindDevice 等子页面返回时，重置识别状态，允许再次扫码
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+  // 页面聚焦时挂载并激活相机，失焦时卸载销毁
+  useFocusEffect(
+    useCallback(() => {
+      // 延迟加载较重的相机组件，使页面 push 过渡动画更丝滑
+      const task = InteractionManager.runAfterInteractions(() => {
+        setIsFocusedMount(true);
+        setIsActive(true);
+      });
       hasScannedRef.current = false;
       popVisibleRef.current = false;
-      setIsActive(true);
-    });
-    return unsubscribe;
-  }, [navigation]);
+      fallbackRunningRef.current = false;
+
+      return () => {
+        task.cancel();
+        // 立即关闭相机流
+        setIsActive(false);
+        hasScannedRef.current = false;
+        fallbackRunningRef.current = false;
+        // 稍微延后卸载 DOM 节点，避免与退出页面的 pop 动画打架造成丢帧
+        setTimeout(() => {
+          setIsFocusedMount(false);
+        }, 300);
+      };
+    }, []),
+  );
 
   const handleScanResult = useCallback(
     async (code: string) => {
@@ -216,28 +231,32 @@ const BinDevice: React.FC = () => {
       }}
     >
       <View style={styles.container}>
-        <Camera
-          style={styles.camera}
-          device={device}
-          isActive={isActive}
-          codeScanner={
-            IS_HARMONY && harmonyScanFallback ? undefined : (codeScanner as any)
-          }
-          onError={(err: any) => {
-            const msg =
-              typeof err?.error === 'string'
-                ? err.error
-                : typeof err?.message === 'string'
-                ? err.message
-                : '';
-            if (
-              IS_HARMONY &&
-              /output\/stream configurations are invalid/i.test(msg)
-            ) {
-              setHarmonyScanFallback(true);
+        {isFocusedMount ? (
+          <Camera
+            style={styles.camera}
+            device={device}
+            isActive={isActive}
+            codeScanner={
+              IS_HARMONY && harmonyScanFallback
+                ? undefined
+                : (codeScanner as any)
             }
-          }}
-        />
+            onError={(err: any) => {
+              const msg =
+                typeof err?.error === 'string'
+                  ? err.error
+                  : typeof err?.message === 'string'
+                  ? err.message
+                  : '';
+              if (
+                IS_HARMONY &&
+                /output\/stream configurations are invalid/i.test(msg)
+              ) {
+                setHarmonyScanFallback(true);
+              }
+            }}
+          />
+        ) : null}
 
         <View style={styles.cameraMask}>
           <Image
@@ -282,13 +301,19 @@ const BinDevice: React.FC = () => {
           onCancel={() => {
             popVisibleRef.current = false;
             popRef.current?.close();
-            reLaunch('Index');
+            setTimeout(() => {
+              reLaunch('Index');
+            }, 300);
           }}
           onConfirm={() => {
             popVisibleRef.current = false;
             popRef.current?.close();
-            hasScannedRef.current = false;
-            setIsActive(true);
+            // 添加小延迟确保弹窗关闭逻辑不再卡主相机恢复
+            setTimeout(() => {
+              hasScannedRef.current = false;
+              setIsActive(true);
+              fallbackRunningRef.current = false;
+            }, 300);
           }}
         />
       </View>
