@@ -281,21 +281,22 @@ const Content: React.FC<ContentProps> = ({
       });
       console.log(res, '===res');
       if (res.data) {
-        if (onFresh) {
-          await onFresh(detail?.id);
-        } else if (reload) {
-          await reload(detail?.id);
-        }
         stop();
-        eventCenter.trigger('onAnimation', {
-          type: detail?.coverStatus === 1 ? 'closeCovering' : 'openCovering',
-          value: true,
-        });
         if (timer) {
           clearTimeout(timer);
           timer = null;
         }
+        eventCenter.trigger('onAnimation', {
+          type: detail?.coverStatus === 1 ? 'closeCovering' : 'openCovering',
+          value: true,
+        });
         hideLoading();
+
+        if (onFresh) {
+          onFresh(detail?.id);
+        } else if (reload) {
+          reload(detail?.id);
+        }
         return false;
       }
       return true;

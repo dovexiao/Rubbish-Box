@@ -53,18 +53,6 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     useState<LockVisualStatus>(currentDeviceStatus);
   const [gifLoaded, setGifLoaded] = useState(false);
 
-  useEffect(() => {
-    if (inconsistentStatus) {
-      setLockStatus('rise');
-      return;
-    }
-    setLockStatus(currentDeviceStatus);
-  }, [currentDeviceStatus, inconsistentStatus]);
-
-  useEffect(() => {
-    setGifLoaded(false);
-  }, [deviceStatus, gifNonce]);
-
   const showRising30Gif = !inconsistentStatus && !!deviceStatus?.rising30;
   const showFalling30Gif = !inconsistentStatus && !!deviceStatus?.falling30;
   const showRising120Gif = !inconsistentStatus && !!deviceStatus?.rising120;
@@ -85,6 +73,23 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     showFalling30Gif ||
     showRising120Gif ||
     showFalling120Gif;
+
+  useEffect(() => {
+    if (inconsistentStatus) {
+      setLockStatus('rise');
+      return;
+    }
+
+    if (anyGifShowing) {
+      return;
+    }
+
+    setLockStatus(currentDeviceStatus);
+  }, [currentDeviceStatus, inconsistentStatus, anyGifShowing]);
+
+  useEffect(() => {
+    setGifLoaded(false);
+  }, [deviceStatus, gifNonce]);
 
   // const showActionButton = detail?.role === LOCK_ROLE.ADMIN;
   const showActionButton = true;
@@ -108,12 +113,15 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     }
   };
 
-  const renderStaticImage = (uri?: string | null) => {
+  const renderStaticImage = (uri?: string | null, active?: boolean) => {
     if (!uri || uri === 'null') return null;
     return (
       <Image
         source={{ uri }}
-        style={styles.staticImage}
+        style={[
+          styles.staticImage,
+          !active && { position: 'absolute', opacity: 0 },
+        ]}
         resizeMode="contain"
         fadeDuration={0}
       />
@@ -131,31 +139,16 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     if (!uri || uri === 'null') return null;
     const finalUri = withNonce(uri, gifNonce);
 
-    const isHarmonyOs = Platform.OS !== 'ios' && Platform.OS !== 'android';
-    if (isHarmonyOs) {
-      return (
-        <Image
-          key={key}
-          source={{ uri: finalUri }}
-          style={[
-            styles.gifImage,
-            !gifLoaded && { position: 'absolute', opacity: 0 },
-          ]}
-          resizeMode="contain"
-          onLoad={() => setGifLoaded(true)}
-        />
-      );
-    }
-
+    // 所有的系统全部使用原生 Image 渲染 gif，因为 react-native-fast-image 在底层的 SDWebImage/Glide 默认策略下常常忽略 GIF 的循环次数。
     return (
-      <FastImage
+      <Image
         key={key}
-        source={{ uri: finalUri, priority: FastImage.priority.normal }}
+        source={{ uri: finalUri }}
         style={[
           styles.gifImage,
           !gifLoaded && { position: 'absolute', opacity: 0 },
         ]}
-        resizeMode={FastImage.resizeMode.contain}
+        resizeMode="contain"
         onLoad={() => setGifLoaded(true)}
       />
     );
@@ -224,21 +217,26 @@ const LockVisual: React.FC<LockVisualProps> = props => {
         </Flex>
       ) : null}
 
-      {lockStatus === 'rise' && (!anyGifShowing || !gifLoaded)
-        ? renderStaticImage(detail?.imageMap?.upLockPng)
-        : null}
-      {lockStatus === 'rise30' && (!anyGifShowing || !gifLoaded)
-        ? renderStaticImage(detail?.imageMap?.up30LockPng)
-        : null}
-      {lockStatus === 'rise120' && (!anyGifShowing || !gifLoaded)
-        ? renderStaticImage(detail?.imageMap?.up120LockPng)
-        : null}
-      {lockStatus === 'fall' && (!anyGifShowing || !gifLoaded)
-        ? renderStaticImage(detail?.imageMap?.fallLockPng)
-        : null}
-      {lockStatus === 'openCover' && (!anyGifShowing || !gifLoaded)
-        ? renderStaticImage(detail?.imageMap?.openLockPng)
-        : null}
+      {renderStaticImage(
+        detail?.imageMap?.upLockPng,
+        lockStatus === 'rise' && (!anyGifShowing || !gifLoaded),
+      )}
+      {renderStaticImage(
+        detail?.imageMap?.up30LockPng,
+        lockStatus === 'rise30' && (!anyGifShowing || !gifLoaded),
+      )}
+      {renderStaticImage(
+        detail?.imageMap?.up120LockPng,
+        lockStatus === 'rise120' && (!anyGifShowing || !gifLoaded),
+      )}
+      {renderStaticImage(
+        detail?.imageMap?.fallLockPng,
+        lockStatus === 'fall' && (!anyGifShowing || !gifLoaded),
+      )}
+      {renderStaticImage(
+        detail?.imageMap?.openLockPng,
+        lockStatus === 'openCover' && (!anyGifShowing || !gifLoaded),
+      )}
 
       {showRisingGif
         ? renderGif(detail?.imageMap?.upLockGif, `upLockGif_${gifNonce ?? 0}`)
