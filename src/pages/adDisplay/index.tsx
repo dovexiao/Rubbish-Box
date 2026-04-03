@@ -25,6 +25,7 @@ import { getBannerDetails, updateBannerDetails } from '@/services/user';
 import { hideLoading, showLoading, showToast, tencentUpload } from '@/utils';
 import styles from './styles';
 import PopConfirm from '@/components/popConfirm';
+import { px } from '@/utils/ui';
 
 let RNFS: any = null;
 if (Platform.OS === 'ios' || Platform.OS === 'android') {
@@ -422,8 +423,8 @@ export default function AdDisplay() {
                             />
                           ) : (
                             <View style={styles.videoPlaceholder}>
-                              <AppIcon name="play" size={40} color="#fff" />
-                              <Text style={{ color: '#fff', marginTop: 8 }}>
+                              <AppIcon name="play" size={px(40)} color="#fff" />
+                              <Text style={{ color: '#fff', marginTop: px(8) }}>
                                 视频
                               </Text>
                             </View>
@@ -469,7 +470,10 @@ export default function AdDisplay() {
               </>
             )}
 
-            <Flex style={[styles.titleRow, { marginTop: 16 }]} align="center">
+            <Flex
+              style={[styles.titleRow, { marginTop: px(16) }]}
+              align="center"
+            >
               <View style={styles.titleLine} />
               <Text style={styles.titleText}>请上传广告图片</Text>
             </Flex>
@@ -486,7 +490,7 @@ export default function AdDisplay() {
             onPress={showChooseType}
             activeOpacity={0.8}
           >
-            <AppIcon name="camera" size={24} color="#CCCCCC" />
+            <AppIcon name="camera" size={px(24)} color="#CCCCCC" />
             <Text style={styles.uploadText}>相册上传</Text>
             <Text style={styles.uploadText}>({bannerImageUrls.length}/10)</Text>
           </TouchableOpacity>
@@ -507,7 +511,7 @@ export default function AdDisplay() {
                     },
                   ]}
                 >
-                  <AppIcon name="play" size={20} color="#fff" />
+                  <AppIcon name="play" size={px(20)} color="#fff" />
                 </View>
               ) : (
                 <Image
@@ -524,7 +528,7 @@ export default function AdDisplay() {
                   source={{
                     uri: 'https://g.18qjz.cn/img/boklock/delete_image.png',
                   }}
-                  style={{ width: 20, height: 20 }}
+                  style={{ width: px(20), height: px(20) }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -532,12 +536,12 @@ export default function AdDisplay() {
           ))}
         </View>
 
-        <Flex style={[styles.titleRow, { marginTop: 16 }]} align="center">
+        <Flex style={[styles.titleRow, { marginTop: px(16) }]} align="center">
           <View style={styles.titleLine} />
           <Text style={styles.titleText}>请上传广告文案</Text>
         </Flex>
 
-        <View style={[styles.problemView, { marginTop: 12 }]}>
+        <View style={[styles.problemView, { marginTop: px(12) }]}>
           <TextInput
             style={styles.textArea}
             value={bannerText}
@@ -553,7 +557,7 @@ export default function AdDisplay() {
           />
           <Text style={styles.lengthToast}>{`${textLength}/${MAX_TEXT}`}</Text>
         </View>
-        <View style={{ height: 50 }} />
+        <View style={{ height: px(50) }} />
       </View>
 
       {/* 视频类型 */}

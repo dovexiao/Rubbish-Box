@@ -1,39 +1,40 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   header: {
-    padding: 16,
+    padding: px(16),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerSide: {
-    width: 24,
-    height: 24,
+    width: px(24),
+    height: px(24),
   },
   headerTitle: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '500',
     color: '#333333',
   },
   closeBtn: {
-    width: 24,
-    height: 24,
+    width: px(24),
+    height: px(24),
     alignItems: 'center',
     justifyContent: 'center',
   },
   popupContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingHorizontal: px(16),
+    paddingBottom: px(16),
   },
   videoWrap: {
     position: 'relative',
     width: '100%',
-    height: 186,
+    height: px(186),
     overflow: 'hidden',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 12,
+    borderRadius: px(12),
   },
   video: {
     width: '100%',
@@ -49,9 +50,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   playCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: px(120),
+    height: px(120),
+    borderRadius: px(60),
     alignItems: 'center',
     justifyContent: 'center',
   },

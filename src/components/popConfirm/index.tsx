@@ -10,6 +10,7 @@ import { Modal } from '@ant-design/react-native';
 import Flex from '../Flex';
 import popupStyle from './styles';
 import GradientButton from '../GradientButton';
+import { px } from '@/utils/ui';
 
 interface PopConfirmProps {
   title?: string | ReactNode;
@@ -51,7 +52,7 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
       textWeight = 'normal',
       btnWrapStyle = {},
       confirmBtnStyle,
-      width = 311,
+      width = px(311),
       submitBtn,
       visible,
       onVisibleChange,
@@ -119,8 +120,8 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
             {showClose && (
               <GradientButton
                 colors={['transparent', 'transparent']}
-                width={124}
-                height={42}
+                width={px(124)}
+                height={px(42)}
                 onPress={handleCancel}
                 style={[popupStyle.btnContainer, popupStyle.btnContainerClose]}
               >
@@ -135,8 +136,8 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
             ) : (
               <GradientButton
                 colors={confirmColors}
-                width={showClose ? 124 : 160}
-                height={42}
+                width={showClose ? px(124) : px(160)}
+                height={px(42)}
                 onPress={handleConfirm}
                 style={popupStyle.btnContainer}
               >
@@ -163,11 +164,11 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
 
 const styles = StyleSheet.create({
   modalWrap: {
-    borderRadius: 16,
+    borderRadius: px(16),
     backgroundColor: '#FFFFFF',
-    paddingTop: 24,
-    paddingHorizontal: 12,
-    paddingBottom: 12,
+    paddingTop: px(24),
+    paddingHorizontal: px(12),
+    paddingBottom: px(12),
   },
 });
 

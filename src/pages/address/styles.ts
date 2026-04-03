@@ -1,43 +1,44 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F6F7FA',
-    paddingHorizontal: 16,
+    paddingHorizontal: px(16),
   },
   listWrapper: {
-    paddingBottom: 120,
+    paddingBottom: px(120),
   },
   addressItem: {
     width: '100%',
-    marginTop: 12,
-    padding: 16,
-    borderRadius: 12,
+    marginTop: px(12),
+    padding: px(16),
+    borderRadius: px(12),
     backgroundColor: '#FFFFFF',
   },
   rowTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: px(8),
   },
   itemName: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   itemPhone: {
     flex: 1,
-    marginLeft: 8,
-    fontSize: 14,
+    marginLeft: px(8),
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   itemEdit: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
     fontWeight: 'bold',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   rowBottom: {
     flexDirection: 'row',
@@ -45,34 +46,34 @@ const styles = StyleSheet.create({
   },
   itemAddress: {
     flex: 1,
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   itemDel: {
     // marginLeft: 20,
-    marginRight: 12,
+    marginRight: px(12),
   },
   itemDelText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#CCCCCC',
   },
   footerBtnWrap: {
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 32,
+    bottom: px(32),
     alignItems: 'center',
   },
   addBtn: {
-    width: 196,
-    height: 48,
-    borderRadius: 16,
+    width: px(196),
+    height: px(48),
+    borderRadius: px(16),
     alignItems: 'center',
     justifyContent: 'center',
   },
   addBtnText: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#FFFFFF',
     fontWeight: '600',
   },
@@ -80,13 +81,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 80,
+    paddingTop: px(80),
   },
   emptyText: {
-    marginTop: 8,
-    fontSize: 14,
+    marginTop: px(8),
+    fontSize: fontSize(14),
     color: '#666666',
-    },
+  },
 });
 
 export default styles;

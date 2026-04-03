@@ -9,6 +9,7 @@ import styles from './styles';
 import PopConfirm from '@/components/popConfirm';
 import { hideLoading, showLoading, showToast } from '@/utils';
 import { useFocusEffect } from '@react-navigation/core';
+import { px } from '@/utils/ui';
 
 interface AccountInfo {
   mobile?: string;
@@ -165,7 +166,7 @@ export default function Account() {
           <Text style={styles.label}>手机号</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text style={styles.value}>{detail?.mobile ?? ''}</Text>
-            <AppIcon name="a-headfor-20" size={16} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
           </View>
         </TouchableOpacity>
 
@@ -188,7 +189,7 @@ export default function Account() {
                   }`
                 : '未绑定'}
             </Text>
-            <AppIcon name="a-headfor-20" size={16} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
           </View>
         </TouchableOpacity>
 
@@ -203,7 +204,7 @@ export default function Account() {
             <Text style={[styles.value, !detail?.setPwd && styles.valueGray]}>
               {detail?.setPwd ? '已设置' : '未设置'}
             </Text>
-            <AppIcon name="a-headfor-20" size={16} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
           </View>
         </TouchableOpacity>
       </View>

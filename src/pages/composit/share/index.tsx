@@ -13,6 +13,7 @@ import {
 } from '@/utils/wechat';
 import { stringify } from '@/utils/stringify';
 import { DEPLOY_ENV } from '@/config';
+import { px } from '@/utils/ui';
 
 export default function ShareSuccessPage() {
   const navigation = useNavigation();
@@ -118,10 +119,10 @@ export default function ShareSuccessPage() {
           locations={[0, 1]}
           colors={['#383D44', '#7F8895']}
           style={{
-            width: 48,
-            height: 48,
-            borderRadius: 24,
-            borderWidth: 3,
+            width: px(48),
+            height: px(48),
+            borderRadius: px(24),
+            borderWidth: px(3),
             borderStyle: 'solid',
             borderColor: '#d8d9dd',
             justifyContent: 'center',
@@ -129,7 +130,7 @@ export default function ShareSuccessPage() {
           }}
         >
           <Flex style={styles.iconBox}>
-            <AppIcon name="tick-white" color="#fff" size={40} />
+            <AppIcon name="tick-white" color="#fff" size={px(40)} />
           </Flex>
         </LinearGradient>
         <Text style={styles.title}>添加成功</Text>
@@ -138,7 +139,7 @@ export default function ShareSuccessPage() {
         direction="row"
         justify="center"
         align="center"
-        style={{ marginTop: 24 }}
+        style={{ marginTop: px(24) }}
       >
         <Text style={styles.text}>通知成员可以使用地锁了</Text>
       </Flex>
@@ -146,7 +147,7 @@ export default function ShareSuccessPage() {
         direction="row"
         justify="center"
         align="center"
-        style={{ marginTop: 60 }}
+        style={{ marginTop: px(60) }}
       >
         <GradientButton
           onPress={shareToWeChat}
@@ -163,7 +164,7 @@ export default function ShareSuccessPage() {
         direction="row"
         justify="center"
         align="center"
-        style={{ marginTop: 16 }}
+        style={{ marginTop: px(16) }}
       >
         <Flex
           isTouchView

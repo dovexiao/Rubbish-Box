@@ -1,3 +1,4 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet, Dimensions } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
@@ -25,28 +26,28 @@ const styles = StyleSheet.create({
   },
 
   scanFrame: {
-    width: 300,
-    height: 300,
-    marginTop: 20,
+    width: px(300),
+    height: px(300),
+    marginTop: px(20),
   },
   tipText: {
-    marginTop: 24,
-    fontSize: 14,
+    marginTop: px(24),
+    fontSize: fontSize(14),
     color: '#FFFFFF',
     textAlign: 'center',
   },
   viewTitle: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
     fontWeight: 'bold',
-    lineHeight: 22,
+    lineHeight: px(22),
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: px(8),
   },
   viewContent: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999999',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'center',
   },
   maskBottom: {
@@ -64,31 +65,30 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 313,
-    height: 88,
-    marginBottom: 16,
+    width: px(313),
+    height: px(88),
+    marginBottom: px(16),
     backgroundColor: 'rgba(0,0,0,0.8)',
-    borderRadius: 12,
+    borderRadius: px(12),
   },
   toastTitle: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#FFFFFF',
     fontWeight: 'bold',
-    lineHeight: 22,
+    lineHeight: px(22),
     textAlign: 'center',
   },
   toastContent: {
-    width: 283,
-    height: 40,
-    fontSize: 14,
+    width: px(283),
+    height: px(40),
+    fontSize: fontSize(14),
     color: '#FFFFFF',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'center',
   },
   toastImage: {
-    width: 313,
-    height: 166,
-    // marginTop: 16,
+    width: px(313),
+    aspectRatio: px(313) / px(166),
   },
 });
 

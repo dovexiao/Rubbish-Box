@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -7,23 +8,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    marginTop: 103,
-    paddingHorizontal: 24,
-
+    marginTop: px(103),
+    paddingHorizontal: px(24),
   },
   title: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
     color: '#333333',
-    lineHeight: 22
+    lineHeight: px(22),
   },
   content: {
-    marginTop: 16,
+    marginTop: px(16),
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    paddingHorizontal: 10,
+    borderRadius: px(12),
+    paddingHorizontal: px(10),
     width: '100%',
-    height: 56,
+    height: px(56),
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -33,23 +33,22 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
-
   },
 
   error: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#ff2b24',
-    marginTop: 8,
+    marginTop: px(8),
     textAlign: 'center',
   },
   btn: {
-    marginTop: 36,
+    marginTop: px(36),
     backgroundColor: '#999999',
-    borderRadius: 16,
+    borderRadius: px(16),
     width: '100%',
-    height: 48,
+    height: px(48),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -58,7 +57,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
   },
 });

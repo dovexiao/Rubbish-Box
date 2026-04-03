@@ -1,3 +1,4 @@
+import { fontSize, px } from '@/utils/ui';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
@@ -34,17 +35,18 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     height: '100%',
-    marginTop: 184,
-    paddingBottom: 184,
+    marginTop: px(184),
+    paddingBottom: px(184),
   },
   emptyImage: {
-    width: 120,
-    height: 120,
+    width: px(120),
+    height: px(120),
+    aspectRatio: 1,
   },
 
   emptyText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#666666',
-    marginTop: 16,
+    marginTop: px(16),
   },
 });

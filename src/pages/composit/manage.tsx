@@ -23,6 +23,7 @@ import { styles } from './manageStyle';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
 import { PopConfirmRef } from '@/components/popConfirm';
 import { hideLoading, showLoading, showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type RouteParams = {
   lockId?: number | string;
@@ -296,10 +297,10 @@ const ManageComposite = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={{
-              width: 188,
+              width: px(188),
               backgroundColor: '#333333',
-              borderRadius: 16,
-              height: 48,
+              borderRadius: px(16),
+              height: px(48),
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -317,14 +318,17 @@ const ManageComposite = () => {
           <Flex justify="between" align="center" style={styles.itemContent}>
             <Text style={styles.label}>组合名称：</Text>
             <TextInput
-              style={[styles.input, { flex: 1, marginLeft: 8, marginRight: 2 }]}
+              style={[
+                styles.input,
+                { flex: 1, marginLeft: px(8), marginRight: px(2) },
+              ]}
               placeholder="请输入组合名称"
               placeholderTextColor="#CCCCCC"
               value={lockName}
               onChangeText={setLockName}
               showClear
             />
-            <AppIcon name="pen24" size={24} color="#333333" />
+            <AppIcon name="pen24" size={px(24)} color="#333333" />
           </Flex>
           <Flex justify="between" align="center" style={styles.itemContent}>
             <Text style={styles.label}>选择设备组合：</Text>
@@ -339,7 +343,7 @@ const ManageComposite = () => {
               }}
             >
               <Text style={styles.addBtnText}>新增【市电款】设备</Text>
-              <AppIcon name="add" size={12} color="#333333" />
+              <AppIcon name="add" size={px(12)} color="#333333" />
             </Flex>
           </Flex>
         </View>
@@ -388,19 +392,19 @@ const ManageComposite = () => {
             align="start"
             style={styles.paddingH16}
           >
-            <Text style={{ width: 24, height: 24 }}></Text>
+            <Text style={{ width: px(24), height: px(24) }}></Text>
             <Text style={styles.popTitle}>新增【市电款】设备</Text>
             <AppIcon
               onPress={() => setAddDeviceVisible(false)}
               name={'close'}
-              size={24}
+              size={px(24)}
               color={'#333333'}
             />
           </Flex>
           <Text style={styles.popSubTip}>仅可选择未被使用的地锁</Text>
           <View style={{ flex: 1 }}>
             {chooseLoading ? (
-              <Text style={{ textAlign: 'center', marginTop: 16 }}>
+              <Text style={{ textAlign: 'center', marginTop: px(16) }}>
                 加载中...
               </Text>
             ) : (
@@ -420,11 +424,11 @@ const ManageComposite = () => {
                       source={{
                         uri: item.imageUrl,
                       }}
-                      style={{ width: 36, height: 36 } as ImageStyle}
+                      style={{ width: px(36), height: px(36) } as ImageStyle}
                     />
                     <Text
                       numberOfLines={1}
-                      style={[styles.username, { flex: 1, marginLeft: 12 }]}
+                      style={[styles.username, { flex: 1, marginLeft: px(12) }]}
                     >
                       {item.lockName}
                     </Text>
@@ -434,7 +438,7 @@ const ManageComposite = () => {
                           ? 'https://g.18qjz.cn/img/boklock/radio_checked.png'
                           : 'https://g.18qjz.cn/img/boklock/radio_default.png',
                       }}
-                      style={{ width: 20, height: 20 } as ImageStyle}
+                      style={{ width: px(20), height: px(20) } as ImageStyle}
                     />
                   </Flex>
                 )}
@@ -442,13 +446,13 @@ const ManageComposite = () => {
                   <Flex
                     justify="center"
                     align="center"
-                    style={{ marginTop: 32 }}
+                    style={{ marginTop: px(32) }}
                   >
                     <Image
                       source={{
                         uri: 'https://g.18qjz.cn/img/boklock/empty.png',
                       }}
-                      style={{ width: 80, height: 80 } as ImageStyle}
+                      style={{ width: px(80), height: px(80) } as ImageStyle}
                     />
                   </Flex>
                 }

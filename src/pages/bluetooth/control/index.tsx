@@ -48,6 +48,7 @@ import {
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import AppIcon from '@/components/AppIcon';
+import { px } from '@/utils/ui';
 
 type RouteParams = {
   lockId?: number | string;
@@ -395,7 +396,10 @@ export default function BluetoothControl() {
       if (
         !(apiRes?.code === 200 || apiRes?.code === '200' || apiRes?.success)
       ) {
-        showToast({ title: apiRes?.message || '同步失败，稍后重试', icon: 'info' });
+        showToast({
+          title: apiRes?.message || '同步失败，稍后重试',
+          icon: 'info',
+        });
         return;
       }
 
@@ -522,7 +526,7 @@ export default function BluetoothControl() {
                           proximityEnabled ? 'checked' : 'default'
                         }.png`,
                       }}
-                      style={{ width: 32, height: 20 }}
+                      style={{ width: px(32), aspectRatio: px(32) / px(20) }}
                       resizeMode="contain"
                     />
                   </TouchableOpacity>
@@ -532,14 +536,18 @@ export default function BluetoothControl() {
 
             {bindSuccessStatus ? (
               <View
-                style={{ width: '100%', marginTop: 24, alignItems: 'center' }}
+                style={{
+                  width: '100%',
+                  marginTop: px(24),
+                  alignItems: 'center',
+                }}
               >
                 <GradientButton
                   colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                  width={220}
-                  height={44}
+                  width={px(220)}
+                  height={px(44)}
                   round={false}
-                  btnBorderRadius={16}
+                  btnBorderRadius={px(16)}
                   onPress={() => {
                     reLaunch('Index');
                   }}
@@ -553,8 +561,8 @@ export default function BluetoothControl() {
           <Flex
             direction={'column'}
             style={{
-              marginTop: 160,
-              paddingHorizontal: 12,
+              marginTop: px(160),
+              paddingHorizontal: px(12),
             }}
           >
             <Flex direction={'column'} style={styles.card}>
@@ -585,7 +593,7 @@ export default function BluetoothControl() {
               align={'center'}
               style={{
                 width: '100%',
-                marginTop: 44,
+                marginTop: px(44),
               }}
             >
               {!isBluetoothOpen && (
@@ -598,7 +606,7 @@ export default function BluetoothControl() {
               {!isBluetoothOpen && (
                 <GradientButton
                   colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                  width={160}
+                  width={px(160)}
                   onPress={() => handleOpenBluetooth()}
                   style={styles.btn}
                 >
@@ -610,7 +618,7 @@ export default function BluetoothControl() {
               {isBluetoothOpen && !isPaired && (
                 <GradientButton
                   colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                  width={160}
+                  width={px(160)}
                   onPress={() => handleOpenBluetooth()}
                   style={styles.btn}
                 >

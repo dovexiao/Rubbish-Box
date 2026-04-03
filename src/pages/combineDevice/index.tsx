@@ -15,6 +15,7 @@ import { useRoute } from '@react-navigation/native';
 import { defaultName, groupChooseList, saveGroup } from '@/services';
 import { hideLoading, setStorage, showLoading, showToast } from '@/utils';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { fontSize, px } from '@/utils/ui';
 
 type DeviceItem = {
   id: number;
@@ -241,7 +242,7 @@ export default function CombineDeviece() {
   );
 
   const listFooter = loadingMore ? (
-    <View style={{ paddingVertical: 12 }}>
+    <View style={{ paddingVertical: px(12) }}>
       <ActivityIndicator color="#333333" />
     </View>
   ) : null;
@@ -274,8 +275,8 @@ export default function CombineDeviece() {
             style={styles.input}
             onChangeText={setGroupName}
           />
-          <View style={{ marginLeft: 8 }}>
-            <AppIcon name="redact" color="#333333" size={24} />
+          <View style={{ marginLeft: px(8) }}>
+            <AppIcon name="redact" color="#333333" size={px(24)} />
           </View>
         </View>
 
@@ -318,26 +319,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingLeft: 24,
-    paddingRight: 24,
+    paddingLeft: px(24),
+    paddingRight: px(24),
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    marginTop: 12,
+    marginTop: px(12),
   },
   label: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     fontWeight: '700',
     color: '#333333',
     flexDirection: 'column',
     justifyContent: 'center',
-    width: 88,
+    width: px(88),
   },
   input: {
     flex: 1,
-    fontSize: 14,
+    fontSize: fontSize(14),
     textAlign: 'right',
   },
   deviceSectionBox: {
@@ -348,19 +349,19 @@ const styles = StyleSheet.create({
   },
   deviceSection: {
     fontWeight: '700',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
-    marginTop: 16,
-    marginBottom: 12,
+    marginTop: px(16),
+    marginBottom: px(12),
   },
   bindDeviceToast: {
-    height: 17,
+    height: px(17),
     fontWeight: '400',
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#ff873d',
-    lineHeight: 17,
+    lineHeight: px(17),
     textAlign: 'left',
   },
   deviceContent: {
@@ -369,57 +370,57 @@ const styles = StyleSheet.create({
   },
   deviceItem: {
     width: '100%',
-    height: 60,
+    height: px(60),
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: px(12),
+    padding: px(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: px(12),
   },
   deviceImg: {
-    width: 36,
-    height: 36,
+    width: px(36),
+    height: px(36),
   },
   itemName: {
     fontWeight: '700',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
     flex: 1,
-    paddingLeft: 12,
+    paddingLeft: px(12),
   },
   radioImg: {
-    width: 20,
-    height: 20,
+    width: px(20),
+    height: px(20),
   },
   pageFooter: {
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: px(8),
   },
   createToast: {
-    marginBottom: 12,
+    marginBottom: px(12),
     fontWeight: '400',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999999',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'center',
   },
   sureCreateBtn: {
-    width: 196,
-    height: 48,
+    width: px(196),
+    height: px(48),
     backgroundColor: '#333333',
-    borderRadius: 16,
+    borderRadius: px(16),
     justifyContent: 'center',
     alignItems: 'center',
   },
   sureCreateBtnText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '500',
   },
   disabledBtn: {
@@ -430,15 +431,15 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
-    marginTop: 50,
+    marginTop: px(50),
   },
   emptyImage: {
-    width: 120,
-    height: 120,
+    width: px(120),
+    height: px(120),
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#666666',
-    marginTop: 16,
+    marginTop: px(16),
   },
 });

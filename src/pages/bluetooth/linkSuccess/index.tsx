@@ -6,6 +6,7 @@ import { LOCK_BTN_COLORS, LOCK_STATUS } from '@/constants';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { styles } from './style';
 import { reLaunch } from '@/utils';
+import { px } from '@/utils/ui';
 
 type RouteParams = {
   id?: string | number;
@@ -54,7 +55,7 @@ export default function BluetoothLinkSuccess() {
           <Flex align="center" style={styles.iconWrapper}>
             <Image
               source={{ uri: 'https://g.18qjz.cn/img/boklock/success.png' }}
-              style={{ width: 48, height: 48 }}
+              style={{ width: px(48), height: px(48) }}
               resizeMode="contain"
             />
             <Text style={styles.iconText}>
@@ -66,10 +67,10 @@ export default function BluetoothLinkSuccess() {
             <Text style={styles.tips}>{backNum}s 秒后返回至首页</Text>
             <GradientButton
               colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-              width={160}
-              height={44}
+              width={px(160)}
+              height={px(44)}
               round={false}
-              btnBorderRadius={16}
+              btnBorderRadius={px(16)}
               onPress={() => {
                 reLaunch(
                   'Index' as any,

@@ -10,6 +10,7 @@ import type { ViewStyle } from 'react-native';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import { Modal } from '@ant-design/react-native';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 export interface PopCenterRef {
   open: () => void;
@@ -51,9 +52,9 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
       showCancel = true,
       contentStyle,
       bodyStyle,
-      width = 311,
-      height = 268,
-      btnWidth = 124,
+      width = px(311),
+      height = px(268),
+      btnWidth = px(124),
       visible,
       onVisibleChange,
     },

@@ -8,6 +8,7 @@ import styles from './styles';
 import type { LockInfoDTO } from '@/pages/index/typing';
 import { useTheme } from '@/context/ThemeContext';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { px } from '@/utils/ui';
 
 export type LockVisualStatus =
   | 'rise'
@@ -199,9 +200,9 @@ const LockVisual: React.FC<LockVisualProps> = props => {
               style={styles.groupCount}
             >
               <AppIcon
-                style={{ marginRight: 4, marginTop: 4 }}
+                style={{ marginRight: px(4), marginTop: px(4) }}
                 name={'multiplication'}
-                size={14}
+                size={px(14)}
                 color={themeType === 'dark' ? '#ffffff' : '#333333'}
               />
               <Text

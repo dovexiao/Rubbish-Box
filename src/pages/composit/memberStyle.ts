@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -7,25 +8,25 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f6f7fa',
   },
   card: {
-    marginLeft: 16,
-    marginRight: 16,
-    marginTop: 12,
+    marginLeft: px(16),
+    marginRight: px(16),
+    marginTop: px(12),
     backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: px(12),
+    padding: px(16),
   },
 
   username: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 
   mobile: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999999',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 
   remove: {
@@ -33,56 +34,56 @@ export const styles = StyleSheet.create({
   },
 
   mt20: {
-    marginTop: 10,
+    marginTop: px(10),
   },
 
   buttonTitle: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
-    lineHeight: 22,
+    lineHeight: px(22),
   },
 
   pr28: {
-    paddingRight: 18,
+    paddingRight: px(18),
   },
 
   buttonWrap: {
     position: 'absolute',
-    bottom: 24,
-    marginBottom: 40,
+    bottom: px(24),
+    marginBottom: px(40),
   },
 
   popSubTip: {
-    paddingTop: 14,
-    fontSize: 12,
+    paddingTop: px(14),
+    fontSize: fontSize(12),
     color: '#999999',
-    lineHeight: 17,
+    lineHeight: px(17),
     textAlign: 'center',
   },
 
   itemContent: {
-    marginTop: 24,
-    paddingLeft: 16,
-    paddingRight: 16,
+    marginTop: px(24),
+    paddingLeft: px(16),
+    paddingRight: px(16),
   },
 
   itemContentValid: {
-    marginTop: 34,
+    marginTop: px(34),
   },
 
   itemContentRight: {
-    height: 40,
+    height: px(40),
   },
 
   label: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
   },
 
   limitLabel: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
   },
 
@@ -93,46 +94,46 @@ export const styles = StyleSheet.create({
   },
 
   ml12: {
-    marginLeft: 6,
+    marginLeft: px(6),
   },
 
   ml32: {
-    marginLeft: 16,
+    marginLeft: px(16),
   },
 
   ml16: {
-    marginLeft: 8,
+    marginLeft: px(8),
   },
 
   ml8: {
-    marginLeft: 4,
+    marginLeft: px(4),
   },
 
   endtimeBox: {
-    marginTop: 12,
+    marginTop: px(12),
   },
 
   endTime: {
     borderWidth: 1,
-    borderRadius: 8,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 8,
-    paddingRight: 8,
-    fontSize: 14,
+    borderRadius: px(8),
+    paddingTop: px(5),
+    paddingBottom: px(5),
+    paddingLeft: px(8),
+    paddingRight: px(8),
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
-    marginLeft: 8,
+    lineHeight: px(20),
+    marginLeft: px(8),
     borderColor: '#333333',
   },
 
   btnContainerWrapper: {
-    marginTop: 29,
-    marginBottom: 8,
+    marginTop: px(29),
+    marginBottom: px(8),
   },
 
   btnContainer: {
-    borderRadius: 12,
+    borderRadius: px(12),
   },
 
   btnContainerClose: {
@@ -143,41 +144,41 @@ export const styles = StyleSheet.create({
 
   btnContainerCloseText: {
     color: '#999999',
-    fontSize: 16,
+    fontSize: fontSize(16),
   },
 
   btnContainerConfirm: {
-    marginLeft: 15,
-    fontSize: 16,
+    marginLeft: px(15),
+    fontSize: fontSize(16),
   },
 
   btnContainerConfirmText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
   },
 
   mt24: {
-    marginTop: 12,
+    marginTop: px(12),
   },
 
   title: {
-    height: 20,
+    height: px(20),
     fontWeight: 'normal',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
     fontStyle: 'normal',
     textTransform: 'none',
   },
 
   addBox: {
-    marginLeft: 16,
-    marginRight: 16,
-    height: 48,
+    marginLeft: px(16),
+    marginRight: px(16),
+    height: px(48),
     backgroundColor: '#f6f7fa',
-    borderRadius: 12,
+    borderRadius: px(12),
     borderWidth: 1,
     borderColor: '#333333',
     flexDirection: 'row',
@@ -186,12 +187,12 @@ export const styles = StyleSheet.create({
   },
 
   addBtnText: {
-    marginLeft: 8,
-    height: 20,
+    marginLeft: px(8),
+    height: px(20),
     fontWeight: 'bold',
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'center',
     fontStyle: 'normal',
     textTransform: 'none',

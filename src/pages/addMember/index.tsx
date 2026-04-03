@@ -26,6 +26,7 @@ import {
 } from '@/utils';
 import GradientButton from '@/components/GradientButton';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 type ListItem = {
   id: number | null;
@@ -267,7 +268,7 @@ export default function AddMember() {
         <Image
           source={{ uri: 'https://g.18qjz.cn/img/boklock/empty.png' }}
           resizeMode="contain"
-          style={{ width: 80, height: 80 }}
+          style={{ width: px(80), height: px(80) }}
         />
         <Text style={styles.emptyText}>暂无成员</Text>
       </View>

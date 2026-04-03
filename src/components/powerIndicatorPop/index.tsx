@@ -8,6 +8,7 @@ import { Image, Text, View } from 'react-native';
 import PopCenter, { type PopCenterRef } from '@/components/PopCenter';
 import Flex from '@/components/Flex';
 import Popup from '../Popup';
+import { px, fontSize } from '@/utils/ui';
 
 export type PowerIndicatorPopRef = PopCenterRef;
 
@@ -37,26 +38,26 @@ const PowerIndicatorPop = forwardRef<PowerIndicatorPopRef>(
         maskClosable
         showClose
       >
-        <View style={{ marginTop: 10, paddingHorizontal: 24 }}>
+        <View style={{ marginTop: px(10), paddingHorizontal: px(24) }}>
           <Flex direction="column">
             <Text
               style={{
-                fontSize: 12,
+                fontSize: fontSize(12),
                 fontWeight: 'bold',
                 color: '#333333',
-                lineHeight: 20,
+                lineHeight: px(20),
               }}
             >
               操作方法
             </Text>
-            <View style={{ marginBottom: 16 }}>
+            <View style={{ marginBottom: px(16) }}>
               {titleList.map((item, index) => (
                 <Text
                   key={index}
                   style={{
-                    fontSize: 12,
+                    fontSize: fontSize(12),
                     color: '#333333',
-                    lineHeight: 17,
+                    lineHeight: px(17),
                   }}
                 >
                   {index + 1}. {item}
@@ -67,13 +68,16 @@ const PowerIndicatorPop = forwardRef<PowerIndicatorPopRef>(
               direction="column"
               justify="center"
               align="center"
-              style={{ marginTop: 16 }}
+              style={{ marginTop: px(16) }}
             >
               <Image
                 source={{
                   uri: 'https://g.18qjz.cn/img/boklock/power_Indicator.png',
                 }}
-                style={{ width: 327, height: 132 }}
+                style={{
+                  width: px(327),
+                  aspectRatio: px(327) / px(132),
+                }}
                 resizeMode="contain"
               />
             </Flex>

@@ -52,6 +52,7 @@ import {
 import PowerIndicatorPop from '@/components/powerIndicatorPop';
 import type { PopCenterRef } from '@/components/PopCenter';
 import styles from './styles';
+import { fontSize, px } from '@/utils/ui';
 
 function useCountDown(options: { targetDate?: number; onEnd?: () => void }) {
   const { targetDate, onEnd } = options;
@@ -743,10 +744,10 @@ export default function FindDevice(props: any) {
             <Flex style={styles.footer} justify="center">
               <GradientButton
                 colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                width={160}
-                height={44}
+                width={px(160)}
+                height={px(44)}
                 round={false}
-                btnBorderRadius={16}
+                btnBorderRadius={px(16)}
                 onPress={() => resetSearch(searchRef)}
               >
                 <Flex style={styles.btnText} justify="center" align="center">
@@ -761,10 +762,10 @@ export default function FindDevice(props: any) {
               </Text>
               <GradientButton
                 colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                width={160}
-                height={44}
+                width={px(160)}
+                height={px(44)}
                 round={false}
-                btnBorderRadius={16}
+                btnBorderRadius={px(16)}
                 onPress={() => handlePairing()}
               >
                 <Flex style={styles.btnText} justify="center" align="center">
@@ -786,7 +787,7 @@ export default function FindDevice(props: any) {
                   searchBluetoothStatus
                 ] as string,
               }}
-              style={{ width: 160, height: 160 }}
+              style={{ width: px(160), height: px(160) }}
               resizeMode="contain"
             />
             <Flex style={styles.countdownContainer}>
@@ -837,7 +838,7 @@ export default function FindDevice(props: any) {
         ) : !!!needPin ? (
           <>
             <View style={styles.iconWrapper2}>
-              <AppIcon name="bluetooth-1" size={35} color="#333333" />
+              <AppIcon name="bluetooth-1" size={px(35)} color="#333333" />
             </View>
             <Text style={styles.tipsLabel}>请确保地锁通电</Text>
             <View style={styles.btnPositionImageContent}>
@@ -863,10 +864,10 @@ export default function FindDevice(props: any) {
             <Flex style={(styles.footer, { marginTop: 8 })} justify="center">
               <GradientButton
                 colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                width={160}
-                height={44}
+                width={px(160)}
+                height={px(44)}
                 round={false}
-                btnBorderRadius={16}
+                btnBorderRadius={px(16)}
                 onPress={() => handlePairing()}
               >
                 <Flex style={styles.btnText} justify="center" align="center">
@@ -878,7 +879,7 @@ export default function FindDevice(props: any) {
         ) : (
           <>
             <View style={styles.iconWrapper}>
-              <AppIcon name="bluetooth-1" size={32} color="#333333" />
+              <AppIcon name="bluetooth-1" size={px(32)} color="#333333" />
             </View>
             <View style={styles.titleWrapper}>
               <Text style={styles.title}>请确保地锁通电</Text>
@@ -886,7 +887,7 @@ export default function FindDevice(props: any) {
                 style={styles.titleIcon}
                 onPress={() => powerIndicatorPopRef?.current?.open()}
               >
-                <AppIcon name="explain" size={18} color="#333333" />
+                <AppIcon name="explain" size={px(18)} color="#333333" />
                 <Text style={styles.titleIconText}>通电指南</Text>
               </TouchableOpacity>
             </View>
@@ -913,21 +914,24 @@ export default function FindDevice(props: any) {
                     await showToast({ title: '复制成功', icon: 'success' });
                   }}
                 >
-                  <AppIcon name="copy1" size={20} color="#6b7280" />
-                  <Text style={{ fontSize: 12, color: '#6b7280' }}>
+                  <AppIcon name="copy1" size={px(20)} color="#6b7280" />
+                  <Text style={{ fontSize: fontSize(12), color: '#6b7280' }}>
                     点击复制
                   </Text>
                 </TouchableOpacity>
               </Flex>
             </Flex>
 
-            <Flex style={(styles.footer, { marginTop: 8 })} justify="center">
+            <Flex
+              style={(styles.footer, { marginTop: px(8) })}
+              justify="center"
+            >
               <GradientButton
                 colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
-                width={160}
-                height={44}
+                width={px(160)}
+                height={px(44)}
                 round={false}
-                btnBorderRadius={16}
+                btnBorderRadius={px(16)}
                 onPress={() => handlePairing()}
               >
                 <Flex style={styles.btnText} justify="center" align="center">
@@ -947,7 +951,7 @@ export default function FindDevice(props: any) {
                 source={{
                   uri: 'https://g.18qjz.cn/img/boklock/bluetooth_link.gif',
                 }}
-                style={{ width: '65%', height: 350 }}
+                style={{ width: '65%', height: px(350) }}
                 resizeMode="contain"
               />
             </View>

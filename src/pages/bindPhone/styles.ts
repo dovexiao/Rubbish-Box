@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -5,23 +6,23 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 152,
+    paddingHorizontal: px(24),
+    paddingTop: px(152),
   },
   passwordTitle: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
-    lineHeight: 22,
-    marginLeft: 20
+    lineHeight: px(22),
+    marginLeft: px(20),
   },
   content: {
-    marginTop: 16,
+    marginTop: px(16),
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    width: 327,
-    height: 56,
+    borderRadius: px(12),
+    paddingHorizontal: px(10),
+    width: px(327),
+    height: px(56),
     position: 'relative',
   },
   error: {
@@ -38,24 +39,24 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     fontWeight: 'normal',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#ff2b24',
-    lineHeight: 20,
+    lineHeight: px(20),
     position: 'absolute',
-    bottom: -28,
+    bottom: px(-28),
     left: '50%',
-    marginLeft: -35,
+    marginLeft: px(-35),
   },
   btn: {
     backgroundColor: '#999999',
-    borderRadius: 16,
-    width: 327,
-    height: 48,
+    borderRadius: px(16),
+    width: px(327),
+    height: px(48),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 100,
+    marginTop: px(100),
   },
   btnActive: {
     backgroundColor: '#333333',
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   btnText: {
     color: '#ffffff',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
   },
 });
 

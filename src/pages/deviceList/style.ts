@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -6,17 +7,17 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f6f7fa',
   },
   listContent: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 16,
+    paddingHorizontal: px(16),
+    paddingTop: px(12),
+    paddingBottom: px(16),
   },
   card: {
     width: '100%',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    paddingBottom: 24,
-    marginBottom: 12,
+    borderRadius: px(16),
+    padding: px(16),
+    paddingBottom: px(24),
+    marginBottom: px(12),
   },
   optContent: {
     display: 'flex',
@@ -24,44 +25,44 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   name: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     fontWeight: '400',
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   btn: {
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 41,
+    paddingHorizontal: px(16),
+    paddingVertical: px(6),
+    borderRadius: px(41),
     backgroundColor: '#333333',
   },
   btnDisabled: {
     backgroundColor: '#CCCCCC',
   },
   btnText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#FFFFFF',
     fontWeight: '400',
   },
 
   metaRow: {
-    marginTop: 3,
+    marginTop: px(3),
   },
   metaText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#666666',
-    marginLeft: 4,
-    marginRight: 8,
+    marginLeft: px(4),
+    marginRight: px(8),
   },
   verticalLine: {
     width: 1,
-    height: 12,
+    height: px(12),
     backgroundColor: '#cccccc',
-    marginHorizontal: 10,
+    marginHorizontal: px(10),
   },
 
   actionsRow: {
-    paddingHorizontal: 8,
+    paddingHorizontal: px(8),
   },
   operationWrap: {
     flex: 1,
@@ -71,11 +72,11 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   iconBox: {
-    marginTop: 20,
-    marginBottom: 6,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    marginTop: px(20),
+    marginBottom: px(6),
+    width: px(50),
+    height: px(50),
+    borderRadius: px(25),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -84,13 +85,13 @@ export const styles = StyleSheet.create({
   },
   warningIcon: {
     position: 'absolute',
-    top: -4,
-    right: -4,
-    width: 20,
-    height: 20,
+    top: px(-4),
+    right: px(-4),
+    width: px(20),
+    height: px(20),
   },
   operationText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#333333',
     fontWeight: '400',
     textAlign: 'center',
@@ -102,13 +103,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bottomBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 12,
+    paddingHorizontal: px(10),
+    paddingVertical: px(8),
+    borderRadius: px(12),
     shadowColor: '#000000',
     shadowOffset: {
-      width: 0,
-      height: 2,
+      width: px(0),
+      height: px(2),
     },
     shadowOpacity: 0.12,
     shadowRadius: 5,
@@ -118,19 +119,19 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bottomBtnText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
     fontWeight: '500',
-    marginLeft: 2,
+    marginLeft: px(2),
   },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 80,
+    paddingTop: px(80),
   },
   emptyText: {
     color: '#666666',
-    fontSize: 14,
+    fontSize: fontSize(14),
   },
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { fontSize, px } from '@/utils/ui';
 interface NoDevicesProps {
   unreadCount?: number;
   hasDevice?: boolean;
@@ -52,35 +53,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 20,
+    fontSize: fontSize(20),
     fontWeight: '500',
-    marginTop: 102,
+    marginTop: px(102),
   },
   contentBox: {
     alignItems: 'center',
   },
   addImage: {
-    width: 120,
-    height: 120,
-    marginTop: 24,
-    marginBottom: 12,
+    width: px(120),
+    height: px(120),
+    marginTop: px(24),
+    marginBottom: px(12),
+    aspectRatio: 1,
   },
   combineBtn: {
-    paddingVertical: 13,
-    paddingHorizontal: 46,
+    paddingVertical: px(13),
+    paddingHorizontal: px(46),
     backgroundColor: '#333',
-    borderRadius: 12,
-    marginTop: 60,
-    marginBottom: 48,
+    borderRadius: px(12),
+    marginTop: px(60),
+    marginBottom: px(48),
   },
   combineBtnText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '400',
   },
   tips: {
     color: '#999',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '400',
     textAlign: 'center',
   },

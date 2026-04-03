@@ -14,6 +14,7 @@ import AppIcon from '@/components/AppIcon';
 import { getAccountInfo, submitOpinion } from '@/services/user';
 import { showToast, tencentUpload } from '@/utils';
 import styles from './styles';
+import { fontSize, px } from '@/utils/ui';
 
 const MAX_IMAGES = 4;
 
@@ -159,12 +160,16 @@ export default function Feedback() {
             onPress={() => navigation.navigate('FeedbackRecord')}
           >
             <Text
-              style={{ fontSize: 12, color: '#333333', fontWeight: 'bold' }}
+              style={{
+                fontSize: fontSize(12),
+                color: '#333333',
+                fontWeight: 'bold',
+              }}
             >
               意见反馈记录
             </Text>
             <View>
-              <AppIcon name="a-headfor-12" color="#333333" size={16} />
+              <AppIcon name="a-headfor-12" color="#333333" size={px(16)} />
             </View>
           </TouchableOpacity>
         ),
@@ -237,7 +242,7 @@ export default function Feedback() {
                     source={{
                       uri: 'https://g.18qjz.cn/img/boklock/delete_image.png',
                     }}
-                    style={{ width: 20, height: 20 }}
+                    style={{ width: px(20), height: px(20) }}
                     resizeMode="contain"
                   />
                 </TouchableOpacity>

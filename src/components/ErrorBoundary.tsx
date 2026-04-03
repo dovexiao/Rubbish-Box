@@ -12,6 +12,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from '@/libs/safeAreaContext';
+import { fontSize, px } from '@/utils/ui';
 
 interface Props {
   children: ReactNode;
@@ -190,65 +191,65 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: px(20),
   },
   content: {
     alignItems: 'center',
   },
   iconContainer: {
-    marginBottom: 24,
+    marginBottom: px(24),
   },
   icon: {
-    fontSize: 64,
+    fontSize: px(64),
   },
   title: {
-    fontSize: 24,
+    fontSize: fontSize(24),
     fontWeight: '600',
     color: '#333333',
-    marginBottom: 8,
+    marginBottom: px(8),
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#666666',
     textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 22,
+    marginBottom: px(32),
+    lineHeight: px(22),
   },
   errorDetails: {
     width: '100%',
     backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 24,
+    borderRadius: px(8),
+    padding: px(16),
+    marginBottom: px(24),
     maxHeight: 300,
   },
   errorTitle: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     fontWeight: '600',
     color: '#333333',
-    marginTop: 12,
-    marginBottom: 4,
+    marginTop: px(12),
+    marginBottom: px(4),
   },
   errorMessage: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#FF4444',
     fontFamily: 'monospace',
-    marginBottom: 8,
+    marginBottom: px(8),
   },
   errorStack: {
-    fontSize: 11,
+    fontSize: fontSize(11),
     color: '#666666',
     fontFamily: 'monospace',
   },
   buttonContainer: {
     width: '100%',
-    gap: 12,
+    gap: px(12),
   },
   button: {
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    paddingVertical: px(14),
+    paddingHorizontal: px(24),
+    borderRadius: px(8),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -257,7 +258,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '600',
   },
   secondaryButton: {
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: '#333333',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '500',
   },
 });
