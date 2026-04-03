@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(255,255,255,0.6)',
     borderRadius: 12,
+    zIndex: 2222,
   },
   btnContainerWrapper: {
     width: '100%',

@@ -412,7 +412,10 @@ export default function TestDeviceDetailScreen() {
             deviceNo: detail.deviceNo,
           });
           if (!cmdRes?.success) {
-            showToast({ title: cmdRes?.msg || '蓝牙模式切换失败，请重试', icon: 'info' });
+            showToast({
+              title: cmdRes?.msg || '蓝牙模式切换失败，请重试',
+              icon: 'info',
+            });
             return;
           }
           // 给设备一点时间落库/上报
@@ -481,7 +484,10 @@ export default function TestDeviceDetailScreen() {
                           }
                         } else {
                           hideLoading();
-                          showToast({ title: res?.message || res?.msg || '提交失败', icon: 'info' });
+                          showToast({
+                            title: res?.message || res?.msg || '提交失败',
+                            icon: 'info',
+                          });
                         }
                       },
                     });
@@ -528,6 +534,7 @@ export default function TestDeviceDetailScreen() {
     );
   };
 
+  console.log(detail, 'detail?.model');
   return (
     <PageContainer
       backgroundColor="#FFFFFF"
@@ -1074,7 +1081,10 @@ export default function TestDeviceDetailScreen() {
                           title: '需要切换到性能优先模式才能操作',
                           onConfirm: async () => {
                             if (!isLink) {
-                              showToast({ title: '请先连接蓝牙', icon: 'info' });
+                              showToast({
+                                title: '请先连接蓝牙',
+                                icon: 'info',
+                              });
                               return;
                             }
                             await handleChange(1);
@@ -1434,7 +1444,10 @@ export default function TestDeviceDetailScreen() {
                               handleTestDeviceReslt('aboveCheckMethod', 1);
                             } else {
                               hideLoading();
-                              showToast({ title: res?.message || res?.msg || '切换失败', icon: 'info' });
+                              showToast({
+                                title: res?.message || res?.msg || '切换失败',
+                                icon: 'info',
+                              });
                             }
                           } catch (e) {
                             hideLoading();
@@ -1530,7 +1543,6 @@ export default function TestDeviceDetailScreen() {
                   </Text>
                 )}
               </Flex>
-              {detail?.['model'] === 2 && <View style={styles.maskWrapper} />}
             </Flex>
 
             <Flex style={styles.deviceInfoWrapper} direction={'column'}>
@@ -1566,7 +1578,10 @@ export default function TestDeviceDetailScreen() {
                             if (res && (res.code === 200 || res.success)) {
                               handleTestDeviceReslt('aboveCheckMethod', 0);
                             } else {
-                              showToast({ title: res?.message || res?.msg || '切换失败', icon: 'info' });
+                              showToast({
+                                title: res?.message || res?.msg || '切换失败',
+                                icon: 'info',
+                              });
                             }
                           } catch (e) {
                             hideLoading();
@@ -1663,8 +1678,9 @@ export default function TestDeviceDetailScreen() {
                   </Text>
                 )}
               </Flex>
-              {detail?.['model'] === 2 && <View style={styles.maskWrapper} />}
             </Flex>
+
+            {detail?.['model'] === 2 && <View style={styles.maskWrapper} />}
           </View>
         </Flex>
       )}
