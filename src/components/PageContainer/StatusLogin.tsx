@@ -3,11 +3,12 @@ import { View, Text, Image } from 'react-native';
 import { styles } from './styles';
 import Flex from '@/components/Flex';
 import PopConfirm from '@/components/popConfirm';
-import { reLaunch } from '@/utils';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@/context/ThemeContext';
 
 const StatusLogin: React.FC = () => {
   const popupRef = useRef<any>(null);
+  const navigation = useNavigation<any>();
   const { theme, themeType } = useTheme();
 
   return (
@@ -30,12 +31,7 @@ const StatusLogin: React.FC = () => {
           resizeMode="contain"
         />
       </Flex>
-      <Text
-        style={[
-          styles.statusLoginToast,
-          { color: theme.colors.text.secondary },
-        ]}
-      >
+      <Text style={[styles.statusLoginToast, { color: '#666666' }]}>
         来添加你的第一台地锁吧！
       </Text>
       <Flex
@@ -44,7 +40,7 @@ const StatusLogin: React.FC = () => {
         align="center"
         style={styles.statusLoginLoginBtn}
         onPress={() => {
-          reLaunch('Login');
+          navigation.navigate('Login');
         }}
       >
         <Text style={styles.statusLoginLoginText}>登录</Text>
@@ -56,7 +52,7 @@ const StatusLogin: React.FC = () => {
         confirmText="登录"
         onConfirm={() => {
           popupRef.current?.close?.();
-          reLaunch('Login');
+          navigation.navigate('Login');
         }}
       />
     </View>

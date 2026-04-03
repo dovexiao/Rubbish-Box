@@ -7,6 +7,7 @@ import {
   AppState,
   Platform,
   DeviceEventEmitter,
+  InteractionManager,
 } from 'react-native';
 import { Flex, PageContainer } from '@/components';
 import { getThirdState, thirdLogin } from '@/services';
@@ -40,6 +41,8 @@ type LoginType = 'sms' | 'password' | 'mini';
 const Login = () => {
   const navigation = useAppNavigation();
   const [agree, setAgree] = useState<boolean>(false);
+  const [allowShowLoginContent, setAllowShowLoginContent] =
+    useState<boolean>(false);
   const [loginType, setLoginType] = useState<LoginType>('sms');
   const [prevLoginType, setPrevLoginType] = useState<'sms' | 'password'>('sms');
   const [mobile, setMobile] = useState('');
@@ -57,6 +60,26 @@ const Login = () => {
   });
 
   const device = useRef<any>({});
+
+  const syncAppPrivacyGateFromStorage = async () => {
+    try {
+      const agreed = await cacheGetSync('agreePrivacy');
+      setAllowShowLoginContent(!!agreed);
+    } catch {
+      setAllowShowLoginContent(false);
+    }
+  };
+
+  const syncLoginAgreeFromStorage = async () => {
+    try {
+      const checkedRes: any = await getStorage({
+        key: 'loginAgreeChecked',
+      }).catch(() => ({ data: false } as any));
+      setAgree(checkedRes?.data === true);
+    } catch {
+      setAgree(false);
+    }
+  };
 
   const handleAgreementLinkPress = (
     type: 'userAgreement' | 'privacyPolicy',
@@ -211,10 +234,9 @@ const Login = () => {
   const radioClick = async () => {
     const newState = !agree;
     setAgree(newState);
-    await cacheSet({ key: 'agreePrivacy', data: newState });
+    await setStorage({ key: 'loginAgreeChecked', data: newState });
     if (newState) {
       await setStorage({ key: 'pushEnabled', data: true });
-      DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
     }
   };
 
@@ -232,7 +254,25 @@ const Login = () => {
       }
     };
 
-    loadDeviceInfo();
+    InteractionManager.runAfterInteractions(() => {
+      syncAppPrivacyGateFromStorage();
+      syncLoginAgreeFromStorage();
+      loadDeviceInfo();
+    });
+
+    const privacyAgreeListener = DeviceEventEmitter.addListener(
+      'ON_PRIVACY_AGREED',
+      () => {
+        setAllowShowLoginContent(true);
+      },
+    );
+
+    const appStateSub = AppState.addEventListener('change', nextState => {
+      if (nextState === 'active') {
+        syncAppPrivacyGateFromStorage();
+        syncLoginAgreeFromStorage();
+      }
+    });
 
     // 清理函数（页面卸载时执行）
     return () => {
@@ -243,6 +283,8 @@ const Login = () => {
         tempData.current.appStateSub.remove?.();
         tempData.current.appStateSub = undefined;
       }
+      privacyAgreeListener.remove();
+      appStateSub.remove();
     };
   }, []);
 
@@ -301,246 +343,254 @@ const Login = () => {
 
   return (
     <PageContainer
+      key={allowShowLoginContent ? 'content' : 'blank'}
       backgroundColor="#FFFFFF"
       statusBarStyle="dark-content"
       safeAreaEdges={['top', 'bottom']}
     >
-      <View style={styles.container}>
-        <Flex
-          style={{ flex: 1 }}
-          direction="column"
-          align="center"
-          // justify="center"
-        >
-          <Image
-            source={{ uri: 'https://g.18qjz.cn/img/boklock/logo.png' }}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <Text style={styles.logoTitle}>欢迎来到泊刻地锁</Text>
-          {loginType === 'sms' ? (
-            <Sms
-              agree={agree}
-              onChange={mobile => setMobile(mobile)}
-              popRef={agreePopRef}
-              initialMobile={mobile}
-            />
-          ) : (
-            <Password
-              agree={agree}
-              onChange={mobile => setMobile(mobile)}
-              popRef={agreePopRef}
-              mobile={mobile}
-            />
-          )}
-          <Flex
-            align="center"
-            isTouchView
-            onPress={radioClick}
-            style={{ marginTop: 16 }}
-          >
-            <AppIcon
-              size={17}
-              name={agree ? 'selected' : 'unselected'}
-              color={agree ? '#333333' : '#E1E1E1'}
-              style={{ marginRight: 8 }}
-            />
-            <Flex align="center">
-              <Text style={styles.agree}>我已阅读并同意</Text>
-              <Pressable
-                onPress={() => {
-                  handleAgreementLinkPress('userAgreement');
-                }}
+      {!allowShowLoginContent ? (
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }} />
+      ) : (
+        <>
+          <View style={styles.container}>
+            <Flex
+              style={{ flex: 1 }}
+              direction="column"
+              align="center"
+              // justify="center"
+            >
+              <Image
+                source={{ uri: 'https://g.18qjz.cn/img/boklock/logo.png' }}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={styles.logoTitle}>欢迎来到泊刻地锁</Text>
+              {loginType === 'sms' ? (
+                <Sms
+                  agree={agree}
+                  onChange={mobile => setMobile(mobile)}
+                  popRef={agreePopRef}
+                  initialMobile={mobile}
+                />
+              ) : (
+                <Password
+                  agree={agree}
+                  onChange={mobile => setMobile(mobile)}
+                  popRef={agreePopRef}
+                  mobile={mobile}
+                />
+              )}
+              <Flex
+                align="center"
+                isTouchView
+                onPress={radioClick}
+                style={{ marginTop: 16 }}
               >
-                <Text style={styles.agreeLink}>《泊刻地锁用户协议》</Text>
-              </Pressable>
+                <AppIcon
+                  size={17}
+                  name={agree ? 'selected' : 'unselected'}
+                  color={agree ? '#333333' : '#E1E1E1'}
+                  style={{ marginRight: 8 }}
+                />
+                <Flex align="center">
+                  <Text style={styles.agree}>我已阅读并同意</Text>
+                  <Pressable
+                    onPress={() => {
+                      handleAgreementLinkPress('userAgreement');
+                    }}
+                  >
+                    <Text style={styles.agreeLink}>《泊刻地锁用户协议》</Text>
+                  </Pressable>
 
-              <Text style={styles.agree}>和</Text>
-              <Pressable
+                  <Text style={styles.agree}>和</Text>
+                  <Pressable
+                    onPress={() => {
+                      handleAgreementLinkPress('privacyPolicy');
+                    }}
+                  >
+                    <Text style={styles.agreeLink}>《隐私政策》</Text>
+                  </Pressable>
+                </Flex>
+              </Flex>
+              <Text
+                style={{ marginTop: 24, fontSize: 16, color: '#333333' }}
                 onPress={() => {
-                  handleAgreementLinkPress('privacyPolicy');
+                  // 控制点击后立刻有视觉响应，不再阻塞主线程导致的“卡住”感
+                  requestAnimationFrame(async () => {
+                    try {
+                      await cacheRemoveSync('token');
+                      await cacheSetSync('guestMode', true);
+                    } catch {}
+                    try {
+                      await tokenStorage.remove();
+                    } catch {}
+                    reLaunch('Index');
+                  });
                 }}
               >
-                <Text style={styles.agreeLink}>《隐私政策》</Text>
-              </Pressable>
+                暂不登录
+              </Text>
             </Flex>
-          </Flex>
-          <Text
-            style={{ marginTop: 24, fontSize: 16, color: '#333333' }}
-            onPress={async () => {
-              // 暂不登录：清理 token，开启 guestMode，进入首页
+            <Flex style={{ height: 123 }} direction="column" align="center">
+              <Flex align="center" style={styles.logTip}>
+                <View style={styles.line} />
+                <Text style={styles.fastDesc}>更多登录方式</Text>
+                <View style={styles.line} />
+              </Flex>
+              <Flex direction="row" justify="center" align="center">
+                <Flex
+                  direction="column"
+                  align="center"
+                  isTouchView
+                  onPress={handleWxLogin}
+                >
+                  <Image
+                    source={{
+                      uri: 'https://g.18qjz.cn/img/boklock/icon_wechat.png',
+                    }}
+                    style={styles.wxlogo}
+                  />
+                </Flex>
+                <Flex
+                  direction="column"
+                  justify="center"
+                  align="center"
+                  style={{ marginLeft: 65 }}
+                  isTouchView
+                  onPress={() => {
+                    const type =
+                      (loginType === 'mini' ? prevLoginType : loginType) ===
+                      'sms'
+                        ? 'password'
+                        : 'sms';
+                    setLoginType(type);
+                    setPrevLoginType(type);
+                  }}
+                >
+                  <Image
+                    source={{
+                      uri: `https://g.18qjz.cn/img/boklock/loginIcon/icon_login_${
+                        (loginType === 'mini' ? prevLoginType : loginType) ===
+                        'sms'
+                          ? 'password'
+                          : 'mobile'
+                      }.png`,
+                    }}
+                    style={styles.loginIcon}
+                    resizeMode="contain"
+                  />
+                </Flex>
+              </Flex>
+            </Flex>
+          </View>
+          <PopConfirm
+            ref={agreePopRef}
+            maskClosable={false}
+            title={'用户协议及隐私保护'}
+            cancelText="不同意"
+            onCancel={() => {
+              agreePopRef.current?.close();
+              retainPopRef.current?.open();
+            }}
+            confirmColors={['#282828', '#4A4A4A']}
+            onConfirm={
+              loginType === 'mini'
+                ? async () => {
+                    await agreePopRef.current?.close();
+                    setAgree(true);
+                    await setStorage({ key: 'loginAgreeChecked', data: true });
+                    await setStorage({ key: 'pushEnabled', data: true });
+                    setTimeout(() => {
+                      wxLogin();
+                    }, 300);
+                  }
+                : async () => {
+                    setAgree(true);
+                    await setStorage({ key: 'loginAgreeChecked', data: true });
+                    await setStorage({ key: 'pushEnabled', data: true });
+                    myNextTick(() => {
+                      agreePopRef.current?.close();
+                      hideLoading();
+                      eventCenter.trigger('onNext');
+                    });
+                  }
+            }
+            confirmText="同意并继续"
+          >
+            <Text style={styles.popDesc}>
+              我已阅读并同意
+              <Text
+                style={styles.popDescLink}
+                onPress={async e => {
+                  e?.stopPropagation?.();
+                  try {
+                    await cacheSetSync('reopenPrivacyAfterWeb', true);
+                    await setStorage({ key: 'privacyOpenBy', data: 'login' });
+                  } catch {}
+                  agreePopRef.current?.close();
+                  navigation.navigate('WebView', {
+                    url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
+                    title: '泊刻地锁用户协议',
+                  });
+                }}
+              >
+                《泊刻地锁用户协议》
+              </Text>
+              和
+              <Text
+                style={styles.popDescLink}
+                onPress={async e => {
+                  e?.stopPropagation?.();
+                  try {
+                    await cacheSetSync('reopenPrivacyAfterWeb', true);
+                    await setStorage({ key: 'privacyOpenBy', data: 'login' });
+                  } catch {}
+                  agreePopRef.current?.close();
+                  navigation.navigate('WebView', {
+                    url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
+                    title: '泊刻地锁隐私政策',
+                  });
+                }}
+              >
+                《隐私政策》
+              </Text>
+            </Text>
+            <Text style={styles.popNotice}>
+              为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
+            </Text>
+          </PopConfirm>
+
+          {/* 拒绝后的挽留说明弹窗（仅确认按钮） */}
+          <PopConfirm
+            ref={retainPopRef}
+            showClose={false}
+            confirmText="我知道了"
+            onConfirm={async () => {
+              retainPopRef.current?.close();
+              return;
               try {
-                await cacheRemoveSync('token');
-                await cacheSet({ key: 'agreePrivacy', data: agree });
                 await cacheSetSync('guestMode', true);
               } catch {}
               try {
+                // 确保访客模式下没有残留登录 token
                 await tokenStorage.remove();
               } catch {}
               reLaunch('Index');
             }}
-          >
-            暂不登录
-          </Text>
-        </Flex>
-        <Flex style={{ height: 123 }} direction="column" align="center">
-          <Flex align="center" style={styles.logTip}>
-            <View style={styles.line} />
-            <Text style={styles.fastDesc}>更多登录方式</Text>
-            <View style={styles.line} />
-          </Flex>
-          <Flex direction="row" justify="center" align="center">
-            <Flex
-              direction="column"
-              align="center"
-              isTouchView
-              onPress={handleWxLogin}
-            >
-              <Image
-                source={{
-                  uri: 'https://g.18qjz.cn/img/boklock/icon_wechat.png',
-                }}
-                style={styles.wxlogo}
-              />
-            </Flex>
-            <Flex
-              direction="column"
-              justify="center"
-              align="center"
-              style={{ marginLeft: 65 }}
-              isTouchView
-              onPress={() => {
-                const type =
-                  (loginType === 'mini' ? prevLoginType : loginType) === 'sms'
-                    ? 'password'
-                    : 'sms';
-                setLoginType(type);
-                setPrevLoginType(type);
-              }}
-            >
-              <Image
-                source={{
-                  uri: `https://g.18qjz.cn/img/boklock/loginIcon/icon_login_${
-                    (loginType === 'mini' ? prevLoginType : loginType) === 'sms'
-                      ? 'password'
-                      : 'mobile'
-                  }.png`,
-                }}
-                style={styles.loginIcon}
-                resizeMode="contain"
-              />
-            </Flex>
-          </Flex>
-        </Flex>
-      </View>
-      <PopConfirm
-        ref={agreePopRef}
-        maskClosable={false}
-        title={'用户协议及隐私保护'}
-        cancelText="不同意"
-        onCancel={() => {
-          agreePopRef.current?.close();
-          retainPopRef.current?.open();
-        }}
-        confirmColors={['#282828', '#4A4A4A']}
-        onConfirm={
-          loginType === 'mini'
-            ? async () => {
-                await agreePopRef.current?.close();
-                setAgree(true);
-                await cacheSet({ key: 'agreePrivacy', data: true });
-                await setStorage({ key: 'pushEnabled', data: true });
-                DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
-                setTimeout(() => {
-                  wxLogin();
-                }, 300);
-              }
-            : async () => {
-                setAgree(true);
-                await cacheSet({ key: 'agreePrivacy', data: true });
-                await setStorage({ key: 'pushEnabled', data: true });
-                DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
-                myNextTick(() => {
-                  agreePopRef.current?.close();
-                  hideLoading();
-                  eventCenter.trigger('onNext');
-                });
-              }
-        }
-        confirmText="同意并继续"
-      >
-        <Text style={styles.popDesc}>
-          我已阅读并同意
-          <Text
-            style={styles.popDescLink}
-            onPress={async e => {
-              e?.stopPropagation?.();
-              try {
-                await cacheSetSync('reopenPrivacyAfterWeb', true);
-                await setStorage({ key: 'privacyOpenBy', data: 'login' });
-              } catch {}
-              agreePopRef.current?.close();
-              navigation.navigate('WebView', {
-                url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
-                title: '泊刻地锁用户协议',
-              });
-            }}
-          >
-            《泊刻地锁用户协议》
-          </Text>
-          和
-          <Text
-            style={styles.popDescLink}
-            onPress={async e => {
-              e?.stopPropagation?.();
-              try {
-                await cacheSetSync('reopenPrivacyAfterWeb', true);
-                await setStorage({ key: 'privacyOpenBy', data: 'login' });
-              } catch {}
-              agreePopRef.current?.close();
-              navigation.navigate('WebView', {
-                url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
-                title: '泊刻地锁隐私政策',
-              });
-            }}
-          >
-            《隐私政策》
-          </Text>
-        </Text>
-        <Text style={styles.popNotice}>
-          为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
-        </Text>
-      </PopConfirm>
-
-      {/* 拒绝后的挽留说明弹窗（仅确认按钮） */}
-      <PopConfirm
-        ref={retainPopRef}
-        showClose={false}
-        confirmText="我知道了"
-        onConfirm={async () => {
-          retainPopRef.current?.close();
-          return;
-          try {
-            await cacheSetSync('guestMode', true);
-          } catch {}
-          try {
-            // 确保访客模式下没有残留登录 token
-            await tokenStorage.remove();
-          } catch {}
-          reLaunch('Index');
-        }}
-        title={
-          <Flex direction="column" align="center" justify="center">
-            <Text style={styles.popTitle}>温馨提示</Text>
-            <Text style={styles.popDesc}>
-              为保障您顺利绑定设备和正常使用定位、蓝牙、通知等功能，以及设备状态提醒的正常收取，建议您同意
-              <Text style={styles.popDescLink}>《泊刻地锁用户协议》</Text>和
-              <Text style={styles.popDescLink}>《隐私政策》</Text>
-              。您也可以选择暂不登录继续浏览。
-            </Text>
-          </Flex>
-        }
-      ></PopConfirm>
+            title={
+              <Flex direction="column" align="center" justify="center">
+                <Text style={styles.popTitle}>温馨提示</Text>
+                <Text style={styles.popDesc}>
+                  为保障您顺利绑定设备和正常使用定位、蓝牙、通知等功能，以及设备状态提醒的正常收取，建议您同意
+                  <Text style={styles.popDescLink}>《泊刻地锁用户协议》</Text>和
+                  <Text style={styles.popDescLink}>《隐私政策》</Text>
+                  。您也可以选择暂不登录继续浏览。
+                </Text>
+              </Flex>
+            }
+          ></PopConfirm>
+        </>
+      )}
     </PageContainer>
   );
 };

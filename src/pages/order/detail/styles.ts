@@ -12,6 +12,10 @@ export default StyleSheet.create({
     marginBottom: 12,
     gap: 12,
   },
+  detailItem2: {
+    paddingVertical: 6,
+    marginBottom: 12,
+  },
   title: {
     fontSize: 14,
     color: '#333333',

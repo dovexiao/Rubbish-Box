@@ -113,6 +113,26 @@ export const AppNavigator: React.FC = () => {
           component={route.component}
           options={{
             orientation: 'portrait',
+            ...(route.name === 'WebView'
+              ? isHarmony
+                ? {
+                    cardStyleInterpolator:
+                      CardStyleInterpolators.forNoAnimation,
+                    transitionSpec: {
+                      open: {
+                        animation: 'timing',
+                        config: { duration: 0 },
+                      },
+                      close: {
+                        animation: 'timing',
+                        config: { duration: 0 },
+                      },
+                    },
+                  }
+                : {
+                    animation: 'none',
+                  }
+              : {}),
           }}
         />
       ))}

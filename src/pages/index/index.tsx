@@ -93,10 +93,15 @@ const Index = () => {
   }, []);
 
   const initBluetooth = async () => {
+    const token = await cacheGetSync('token').catch(() => undefined);
+    if (!token) {
+      setPermissionsReady(false);
+      return;
+    }
+
     const bluetoothResult = await requestBluetoothPermissions();
     if (bluetoothResult.granted) {
       setPermissionsReady(true);
-      console.log('蓝牙权限已授予');
     } else {
       setPermissionsReady(false);
     }
@@ -308,20 +313,8 @@ const Index = () => {
       falling120: false,
     }));
     setOptioning(false);
-    if (prefetchTimer.current) {
-      clearTimeout(prefetchTimer.current);
-      prefetchTimer.current = null;
-    }
-    // 如果动画期间已经触发过预取 load()，这里不强制重复请求；
-    // load() 内部会自行更新 detail/currentDeviceStatus。
-    const p = prefetchPromise.current;
-    prefetchPromise.current = null;
-    if (p) {
-      p.catch(() => {});
-    } else {
-      load(detailIdRef.current, { silent: true }).catch(() => {});
-    }
   };
+
   const onAnimation = useCallback(
     ({
       type,
@@ -353,33 +346,46 @@ const Index = () => {
       }));
       setGifNonce(prev => prev + 1);
 
-      // 为本次动画生成序列号，用于丢弃过期的预取定时器
+      // 为本次动画生成序列号
       animationSeq.current += 1;
       const seq = animationSeq.current;
+
+      const minAnimTime = 2800; // 动画至少播放 2800ms
+      const delayBeforeFetch = 1400; // 延迟1400ms请求，确保设备状态同步到服务器
+      const startTime = Date.now();
+
       if (prefetchTimer.current) {
         clearTimeout(prefetchTimer.current);
         prefetchTimer.current = null;
       }
-      prefetchPromise.current = null;
 
-      // 动画接近尾声时预取一次详情：让静态图更可能在动图结束瞬间就展示到最终状态
+      // 等待1400ms后再去查详情
       prefetchTimer.current = setTimeout(() => {
         if (animationSeq.current !== seq) return;
-        const p = load(detailIdRef.current, { silent: true });
-        prefetchPromise.current = p;
-        p.catch(() => {});
-      }, 1400);
 
-      // 动画结束时刻：重置动图标记 + 触发最终详情刷新/消费预取
-      if (animationTimer.current) {
-        clearTimeout(animationTimer.current);
-        animationTimer.current = null;
-      }
-      animationTimer.current = setTimeout(() => {
-        onAnimationEnd();
-      }, 3000);
+        // 开始拉取最新状态记录
+        const p = load(detailIdRef.current, { silent: true });
+
+        // 等待接口返回且首尾满足最小动画时间后，再结束动图转为静态图
+        p.finally(() => {
+          if (animationSeq.current !== seq) return;
+          const elapsed = Date.now() - startTime;
+          // 如果过了1400的等待+接口返回的时间依然不到2800ms，就补充剩下的时间。超了就立刻结束。
+          const remaining = Math.max(0, minAnimTime - elapsed);
+
+          if (animationTimer.current) {
+            clearTimeout(animationTimer.current);
+            animationTimer.current = null;
+          }
+
+          animationTimer.current = setTimeout(() => {
+            if (animationSeq.current !== seq) return;
+            onAnimationEnd();
+          }, remaining);
+        });
+      }, delayBeforeFetch);
     },
-    [],
+    [load],
   );
 
   /**
@@ -579,7 +585,7 @@ const Index = () => {
             align="center"
             style={styles.guestLoginBtn}
             onPress={() => {
-              reLaunch('Login');
+              navigation.navigate('Login');
             }}
           >
             <Text style={styles.guestLoginText}>登录</Text>
@@ -591,7 +597,7 @@ const Index = () => {
             confirmText="登录"
             onConfirm={() => {
               guestPopupRef.current?.close?.();
-              reLaunch('Login');
+              navigation.navigate('Login');
             }}
           />
         </View>

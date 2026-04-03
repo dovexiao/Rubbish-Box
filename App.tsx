@@ -7,6 +7,7 @@ import {
   Platform,
   NativeModules,
   DeviceEventEmitter,
+  View as RNView,
 } from 'react-native';
 import { SafeAreaProvider } from '@/libs/safeAreaContext';
 import {
@@ -19,7 +20,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import AntdProvider from '@ant-design/react-native/lib/provider';
 import { AppNavigator } from '@/navigation/AppNavigator';
 import { queryClient } from '@/config/queryClient';
-import { BASE_URL, DEPLOY_ENV } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { setNavigationRef } from '@/utils/navigation';
 import PopConfirm from '@/components/popConfirm';
@@ -30,14 +30,12 @@ import {
   cacheGetSync,
   cacheSet,
   eventCenter,
-  getAppPackageName,
   getBluetoothDeviceInfo,
   getCurrentPages,
   getStorage,
   getSystemConnectedDevices,
   isSameMac,
   removeStorage,
-  requestBluetoothPermissions,
   reLaunch,
   setStorage,
   initAppPush,
@@ -69,12 +67,15 @@ LogBox.ignoreAllLogs(true);
 
 function App() {
   const navigationRef = useNavigationContainerRef<any>();
-  const agreePopRef = useRef<any>(null);
-  const retainPopRef = useRef<any>(null);
   const globalPopConfirmRef = useRef<any>(null);
   const [jumpListener, setJumpListener] = useState<{
     remove?: () => void;
   } | null>(null);
+  const [showPrivacyPop, setShowPrivacyPop] = useState(false);
+  const [needPrivacyPrompt, setNeedPrivacyPrompt] = useState(false);
+  const [privacyWebTransitioning, setPrivacyWebTransitioning] = useState(false);
+  const [currentRouteName, setCurrentRouteName] = useState('');
+  const [showRetainPop, setShowRetainPop] = useState(false);
   const [globalPopConfirmConfig, setGlobalPopConfirmConfig] = useState<{
     title: string | React.ReactNode;
     confirmText?: string;
@@ -124,18 +125,58 @@ function App() {
     };
   }, [navigationRef]);
 
-  // 输出当前包名（便于排查环境/安装包）
+  const [privacyReady, setPrivacyReady] = useState<boolean>(false);
+
+  // App 根层改为稳定的 in-tree 遮罩弹层，不再依赖 Modal/Portal 的时机。
   useEffect(() => {
-    getAppPackageName().then(pkg => {
-      console.log('[App] 当前包名:', pkg);
-      console.log('[App] 部署环境:', DEPLOY_ENV);
-      console.log('[App] API 地址:', BASE_URL);
-    });
-  }, []);
+    const show =
+      needPrivacyPrompt &&
+      !privacyReady &&
+      !showRetainPop &&
+      !privacyWebTransitioning &&
+      currentRouteName !== 'WebView';
+    setShowPrivacyPop(show);
+  }, [
+    needPrivacyPrompt,
+    privacyReady,
+    showRetainPop,
+    privacyWebTransitioning,
+    currentRouteName,
+  ]);
+
+  const openPrivacyWeb = async (url: string, title: string) => {
+    setShowPrivacyPop(false);
+    setNeedPrivacyPrompt(true);
+    setPrivacyWebTransitioning(true);
+
+    try {
+      await setStorage({
+        key: 'reopenPrivacyAfterWeb',
+        data: true,
+      });
+      await setStorage({
+        key: 'privacyOpenBy',
+        data: 'app',
+      });
+    } catch {}
+
+    if (navigationRef?.isReady()) {
+      navigationRef.navigate('WebView', {
+        url,
+        title,
+      });
+    }
+
+    // 若导航切换异常，兜底退出过渡态，避免一直遮罩。
+    setTimeout(() => {
+      setPrivacyWebTransitioning(false);
+    }, 1500);
+  };
 
   // 处理隐私协议同意后的初始化
   const handlePrivacyAgreed = async () => {
     try {
+      setPrivacyReady(true);
       if (Platform.OS === 'android') {
         NativeModules.AppModule?.setPrivacyAgreed?.(true);
       }
@@ -177,10 +218,17 @@ function App() {
   useEffect(() => {
     const checkPrivacyAgreement = async () => {
       try {
-        const agreed = await cacheGetSync('agreePrivacy');
+        const agreed = await cacheGet({ key: 'agreePrivacy' }).catch(
+          () => false,
+        );
         if (!agreed) {
-          agreePopRef.current?.open?.();
+          setPrivacyReady(false);
+          setNeedPrivacyPrompt(true);
+          setShowPrivacyPop(true);
         } else {
+          setPrivacyReady(true);
+          setNeedPrivacyPrompt(false);
+          setShowPrivacyPop(false);
           // 已同意，初始化推送和蓝牙权限
           await handlePrivacyAgreed();
         }
@@ -218,7 +266,11 @@ function App() {
         const by = byRes?.data;
         // 仅当来源非 login（或未设置）时由 App 层重弹
         if (!agreed && needReopen && by !== 'login') {
-          agreePopRef.current?.open?.();
+          setPrivacyWebTransitioning(false);
+          setShowRetainPop(false);
+          setPrivacyReady(false);
+          setNeedPrivacyPrompt(true);
+          setShowPrivacyPop(true);
         }
         // 无论是否打开，均重置标记
         try {
@@ -231,6 +283,40 @@ function App() {
     return () => {
       eventCenter.off('privacy:open', handler);
     };
+  }, []);
+
+  // 从系统返回前台时兜底检查协议页返回场景，避免 event 未触发导致不重弹。
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', async nextAppState => {
+      if (nextAppState !== 'active') return;
+
+      try {
+        const agreed = await cacheGetSync('agreePrivacy');
+        const flagRes: any = await getStorage({
+          key: 'reopenPrivacyAfterWeb',
+        }).catch(() => ({ data: undefined } as any));
+        const byRes: any = await getStorage({ key: 'privacyOpenBy' }).catch(
+          () => ({ data: undefined } as any),
+        );
+
+        const needReopen = flagRes?.data === true;
+        const by = byRes?.data;
+
+        if (!agreed && needReopen && by === 'app') {
+          setPrivacyWebTransitioning(false);
+          setShowRetainPop(false);
+          setPrivacyReady(false);
+          setNeedPrivacyPrompt(true);
+          setShowPrivacyPop(true);
+          try {
+            await setStorage({ key: 'reopenPrivacyAfterWeb', data: false });
+            await setStorage({ key: 'privacyOpenBy', data: '' });
+          } catch {}
+        }
+      } catch {}
+    });
+
+    return () => sub.remove();
   }, []);
 
   // 监听全局 PopConfirm 显示事件
@@ -248,6 +334,7 @@ function App() {
   // 应用更新管理
   useEffect(() => {
     if (__DEV__) return; // 开发环境不检查更新
+    if (!privacyReady) return; // 未同意隐私协议前不检查更新，避免非合规网络请求
 
     // 鸿蒙等非 Android/iOS 平台暂不启用内置更新逻辑，避免依赖原生 FS 等模块
     if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
@@ -267,7 +354,7 @@ function App() {
         }, 2000);
       }
     });
-  }, []);
+  }, [privacyReady]);
 
   // 深链接/推送跳转监听
   useEffect(() => {
@@ -284,7 +371,7 @@ function App() {
         const enabled = pushRes?.data === true;
         const loggedIn = !!token;
 
-        if (agree && enabled && loggedIn) {
+        if (agree && enabled && loggedIn && privacyReady) {
           const listener = await jumpToPage();
           setJumpListener(listener);
         }
@@ -293,14 +380,16 @@ function App() {
       }
     };
 
-    setupJumpListener();
+    if (privacyReady) {
+      setupJumpListener();
+    }
 
     return () => {
       if (jumpListener?.remove) {
         jumpListener.remove();
       }
     };
-  }, [jumpListener]);
+  }, [privacyReady, jumpListener]);
 
   // 应用状态变化处理（对应 useDidShow）
   useEffect(() => {
@@ -609,50 +698,91 @@ function App() {
             <ThemeProvider>
               <GestureHandlerRootView style={{ flex: 1 }}>
                 <SafeAreaProvider accessibilityIgnoresInvertColors={true}>
-                  <NavigationContainer ref={navigationRef}>
-                    <AppNavigator />
-                  </NavigationContainer>
+                  {/* 未同意隐私政策前，隐藏底层 UI 但保持挂载 */}
+                  <RNView
+                    style={{
+                      flex: 1,
+                      opacity:
+                        showPrivacyPop || privacyWebTransitioning ? 0 : 1,
+                    }}
+                    pointerEvents={
+                      showPrivacyPop || showRetainPop || privacyWebTransitioning
+                        ? 'none'
+                        : 'auto'
+                    }
+                  >
+                    <NavigationContainer
+                      ref={navigationRef}
+                      onReady={() => {
+                        const routeName =
+                          navigationRef.getCurrentRoute()?.name || '';
+                        setCurrentRouteName(routeName);
+                      }}
+                      onStateChange={() => {
+                        const routeName =
+                          navigationRef.getCurrentRoute()?.name || '';
+                        setCurrentRouteName(routeName);
+                        if (routeName === 'WebView') {
+                          setPrivacyWebTransitioning(false);
+                        }
+                      }}
+                    >
+                      <AppNavigator />
+                    </NavigationContainer>
+                  </RNView>
 
-                  {/* 全局隐私政策弹窗（首次进入App弹出） */}
-                  <PopConfirm
-                    ref={agreePopRef}
-                    maskClosable={false}
-                    title={
-                      <Flex direction="column" align="center" justify="center">
+                  {showPrivacyPop && (
+                    <RNView
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: '#ffffff',
+                        zIndex: 9998,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingHorizontal: 24,
+                      }}
+                    >
+                      <RNView
+                        style={{
+                          width: '100%',
+                          maxWidth: 332,
+                          backgroundColor: '#FFFFFF',
+                          borderRadius: 16,
+                          paddingTop: 20,
+                          paddingHorizontal: 20,
+                          paddingBottom: 16,
+                          shadowColor: '#000',
+                          shadowOpacity: 0.12,
+                          shadowRadius: 10,
+                          shadowOffset: { width: 0, height: 4 },
+                          elevation: 4,
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: 16,
                             fontWeight: '600',
                             marginBottom: 12,
+                            textAlign: 'center',
                           }}
                         >
                           用户协议及隐私保护
                         </Text>
+
                         <Text style={{ fontSize: 14, lineHeight: 20 }}>
                           我已阅读并同意
                           <Text
                             style={{ color: '#1E80FF' }}
                             onPress={async e => {
                               e?.stopPropagation?.();
-                              // 跳转前先关闭弹窗，避免覆盖目标页面
-                              agreePopRef.current?.close?.();
-                              // 标记返回后需要重开隐私弹窗
-                              try {
-                                await setStorage({
-                                  key: 'reopenPrivacyAfterWeb',
-                                  data: true,
-                                });
-                                await setStorage({
-                                  key: 'privacyOpenBy',
-                                  data: 'app',
-                                });
-                              } catch {}
-                              if (navigationRef?.isReady()) {
-                                navigationRef.navigate('WebView', {
-                                  url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
-                                  title: '泊刻地锁用户协议',
-                                });
-                              }
+                              await openPrivacyWeb(
+                                'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
+                                '泊刻地锁用户协议',
+                              );
                             }}
                           >
                             《泊刻地锁用户协议》
@@ -662,84 +792,121 @@ function App() {
                             style={{ color: '#1E80FF' }}
                             onPress={async e => {
                               e?.stopPropagation?.();
-                              // 跳转前先关闭弹窗，避免覆盖目标页面
-                              agreePopRef.current?.close?.();
-                              // 标记返回后需要重开隐私弹窗
-                              try {
-                                await setStorage({
-                                  key: 'reopenPrivacyAfterWeb',
-                                  data: true,
-                                });
-                                await setStorage({
-                                  key: 'privacyOpenBy',
-                                  data: 'app',
-                                });
-                              } catch {}
-                              if (navigationRef?.isReady()) {
-                                navigationRef.navigate('WebView', {
-                                  url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
-                                  title: '泊刻地锁隐私政策',
-                                });
-                              }
+                              await openPrivacyWeb(
+                                'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
+                                '泊刻地锁隐私政策',
+                              );
                             }}
                           >
                             《隐私政策》
                           </Text>
                         </Text>
+
                         <Text
                           style={{ fontSize: 12, color: '#999', marginTop: 8 }}
                         >
                           为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
                         </Text>
-                      </Flex>
-                    }
-                    cancelText="不同意"
-                    onCancel={() => {
-                      agreePopRef.current?.close?.();
-                      retainPopRef.current?.open?.();
-                    }}
-                    submitBtn={
-                      <GradientButton
-                        width={124}
-                        colors={['#282828', '#4A4A4A']}
+
+                        <RNView
+                          style={{
+                            marginTop: 16,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <GradientButton
+                            colors={['transparent', 'transparent']}
+                            width={124}
+                            height={42}
+                            onPress={() => {
+                              setShowPrivacyPop(false);
+                              setNeedPrivacyPrompt(false);
+                              setTimeout(() => {
+                                setShowRetainPop(true);
+                              }, 200);
+                            }}
+                            style={{
+                              borderWidth: 1,
+                              borderColor: '#E6E6E6',
+                              borderRadius: 12,
+                            }}
+                          >
+                            <Text style={{ color: '#666' }}>不同意</Text>
+                          </GradientButton>
+
+                          <GradientButton
+                            width={124}
+                            colors={['#282828', '#4A4A4A']}
+                            style={{
+                              backgroundColor: '#333',
+                              marginLeft: 15,
+                              borderRadius: 12,
+                              height: 42,
+                            }}
+                            onPress={async () => {
+                              try {
+                                setShowPrivacyPop(false);
+                                setNeedPrivacyPrompt(false);
+                                await cacheSet({
+                                  key: 'agreePrivacy',
+                                  data: true,
+                                });
+                                DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
+                                await handlePrivacyAgreed();
+                              } catch (error) {
+                                console.error(
+                                  '保存隐私协议同意状态失败:',
+                                  error,
+                                );
+                              }
+                            }}
+                          >
+                            <Text style={{ color: '#fff' }}>同意并继续</Text>
+                          </GradientButton>
+                        </RNView>
+                      </RNView>
+                    </RNView>
+                  )}
+
+                  {showRetainPop && (
+                    <RNView
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.35)',
+                        zIndex: 9999,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingHorizontal: 24,
+                      }}
+                    >
+                      <RNView
                         style={{
-                          backgroundColor: '#333',
-                          marginLeft: 15,
-                          borderRadius: 12,
-                          height: 42,
-                        }}
-                        onPress={async () => {
-                          try {
-                            await cacheSet({ key: 'agreePrivacy', data: true });
-                            await handlePrivacyAgreed();
-                            agreePopRef.current?.close?.();
-                          } catch (error) {
-                            console.error('保存隐私协议同意状态失败:', error);
-                          }
+                          width: '100%',
+                          maxWidth: 332,
+                          backgroundColor: '#FFFFFF',
+                          borderRadius: 16,
+                          paddingTop: 20,
+                          paddingHorizontal: 20,
+                          paddingBottom: 16,
                         }}
                       >
-                        <Text style={{ color: '#fff' }}>同意并继续</Text>
-                      </GradientButton>
-                    }
-                  />
-
-                  {/* 拒绝后的挽留说明弹窗 */}
-                  <PopConfirm
-                    ref={retainPopRef}
-                    showClose={false}
-                    maskClosable={false}
-                    confirmText="我知道了"
-                    title={
-                      <Flex direction="column" align="center" justify="center">
                         <Text
                           style={{
                             fontSize: 16,
                             fontWeight: '600',
                             marginBottom: 12,
+                            textAlign: 'center',
                           }}
                         >
                           温馨提示
                         </Text>
+
                         <Text
                           style={{
                             fontSize: 14,
@@ -748,16 +915,113 @@ function App() {
                           }}
                         >
                           为保障您顺利绑定设备和正常使用定位、蓝牙、通知等功能，以及设备状态提醒的正常收取，建议您同意
-                          <Text style={{ color: '#1E80FF' }}>
+                          <Text
+                            style={{ color: '#1E80FF' }}
+                            onPress={async () => {
+                              setShowRetainPop(false);
+                              await openPrivacyWeb(
+                                'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
+                                '泊刻地锁用户协议',
+                              );
+                            }}
+                          >
                             《泊刻地锁用户协议》
                           </Text>
                           和
-                          <Text style={{ color: '#1E80FF' }}>《隐私政策》</Text>
-                          。您也可以选择暂不登录继续浏览。
+                          <Text
+                            style={{ color: '#1E80FF' }}
+                            onPress={async () => {
+                              setShowRetainPop(false);
+                              await openPrivacyWeb(
+                                'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
+                                '泊刻地锁隐私政策',
+                              );
+                            }}
+                          >
+                            《隐私政策》
+                          </Text>
+                          。
                         </Text>
-                      </Flex>
-                    }
-                  />
+
+                        <RNView
+                          style={{
+                            marginTop: 16,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <GradientButton
+                            colors={['transparent', 'transparent']}
+                            width={124}
+                            height={42}
+                            onPress={() => {
+                              if (Platform.OS === 'android') {
+                                BackHandler.exitApp();
+                              } else if (Platform.OS === 'ios') {
+                                try {
+                                  const CustomNativeDevice =
+                                    NativeModules.RNExitApp ||
+                                    NativeModules.AppModule;
+                                  if (
+                                    CustomNativeDevice &&
+                                    CustomNativeDevice.exitApp
+                                  ) {
+                                    CustomNativeDevice.exitApp();
+                                  } else {
+                                    BackHandler.exitApp();
+                                  }
+                                } catch (e) {
+                                  BackHandler.exitApp();
+                                }
+                              } else {
+                                try {
+                                  BackHandler.exitApp();
+                                } catch (e) {}
+                              }
+                            }}
+                            style={{
+                              borderWidth: 1,
+                              borderColor: '#E6E6E6',
+                              borderRadius: 12,
+                            }}
+                          >
+                            <Text style={{ color: '#666' }}>退出应用</Text>
+                          </GradientButton>
+
+                          <GradientButton
+                            width={124}
+                            colors={['#282828', '#4A4A4A']}
+                            style={{
+                              backgroundColor: '#333',
+                              marginLeft: 15,
+                              borderRadius: 12,
+                              height: 42,
+                            }}
+                            onPress={async () => {
+                              try {
+                                setShowRetainPop(false);
+                                setNeedPrivacyPrompt(false);
+                                await cacheSet({
+                                  key: 'agreePrivacy',
+                                  data: true,
+                                });
+                                DeviceEventEmitter.emit('ON_PRIVACY_AGREED');
+                                await handlePrivacyAgreed();
+                              } catch (error) {
+                                console.error(
+                                  '保存隐私协议同意状态失败:',
+                                  error,
+                                );
+                              }
+                            }}
+                          >
+                            <Text style={{ color: '#fff' }}>同意并使用</Text>
+                          </GradientButton>
+                        </RNView>
+                      </RNView>
+                    </RNView>
+                  )}
 
                   {/* 全局 PopConfirm 弹窗（用于工具函数调用） */}
                   {globalPopConfirmConfig && (

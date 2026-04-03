@@ -165,9 +165,9 @@ const styles = StyleSheet.create({
   modalWrap: {
     borderRadius: 16,
     backgroundColor: '#FFFFFF',
-    paddingTop: 12,
-    paddingHorizontal: 24,
-    // paddingBottom: 24,
+    paddingTop: 24,
+    paddingHorizontal: 12,
+    paddingBottom: 12,
   },
 });
 

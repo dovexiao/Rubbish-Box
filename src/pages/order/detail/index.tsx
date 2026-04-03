@@ -162,9 +162,13 @@ export default function OrderDetail() {
           <Text style={styles.defaultText}>{detail.orderNo}</Text>
         </Flex>
 
-        <Flex style={styles.detailItem} justify="between">
+        <Flex style={styles.detailItem2}>
           <Text style={styles.title}>备注说明</Text>
-          <Text style={styles.defaultText}>{detail.remark || '-'}</Text>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <Text style={styles.defaultText}>
+              {detail.remark ? detail.remark.split('').join('\u200B') : '-'}
+            </Text>
+          </View>
         </Flex>
       </ScrollView>
     </PageContainer>

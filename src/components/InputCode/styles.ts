@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f7f7fb',
     borderRadius: 12,
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
   },
   codeItemText: {
     fontWeight: 'bold',
@@ -37,9 +37,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   errorMessageText: {
-    fontSize: 7,
+    fontSize: 12,
     color: '#ff2b24',
-    lineHeight: 10,
+    lineHeight: 14,
     textAlign: 'center',
   },
   hideInput: {

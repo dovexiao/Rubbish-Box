@@ -231,17 +231,6 @@ const Index = () => {
       falling120: false,
     }));
     setOptioning(false);
-    if (prefetchTimer.current) {
-      clearTimeout(prefetchTimer.current);
-      prefetchTimer.current = null;
-    }
-    const p = prefetchPromise.current;
-    prefetchPromise.current = null;
-    if (p) {
-      p.catch(() => {});
-    } else {
-      load(detailIdRef.current, { silent: true }).catch(() => {});
-    }
   };
   const onAnimation = useCallback(
     ({
@@ -274,26 +263,43 @@ const Index = () => {
       setGifNonce(prev => prev + 1);
       animationSeq.current += 1;
       const seq = animationSeq.current;
+
+      const minAnimTime = 2800; // 动画至少播放 2800ms
+      const delayBeforeFetch = 1400; // 延迟1400ms请求，确保设备状态同步到服务器
+      const startTime = Date.now();
+
       if (prefetchTimer.current) {
         clearTimeout(prefetchTimer.current);
         prefetchTimer.current = null;
       }
-      prefetchPromise.current = null;
+
+      // 等待1400ms后再去查详情
       prefetchTimer.current = setTimeout(() => {
         if (animationSeq.current !== seq) return;
+
+        // 开始拉取最新状态记录
         const p = load(detailIdRef.current, { silent: true });
-        prefetchPromise.current = p;
-        p.catch(() => {});
-      }, 1400);
-      if (animationTimer.current) {
-        clearTimeout(animationTimer.current);
-        animationTimer.current = null;
-      }
-      animationTimer.current = setTimeout(() => {
-        onAnimationEnd();
-      }, 3000);
+
+        // 等待接口返回且首尾满足最小动画时间后，再结束动图转为静态图
+        p.finally(() => {
+          if (animationSeq.current !== seq) return;
+          const elapsed = Date.now() - startTime;
+          // 如果过了1400的等待+接口返回的时间依然不到2800ms，就补充剩下的时间。超了就立刻结束。
+          const remaining = Math.max(0, minAnimTime - elapsed);
+
+          if (animationTimer.current) {
+            clearTimeout(animationTimer.current);
+            animationTimer.current = null;
+          }
+
+          animationTimer.current = setTimeout(() => {
+            if (animationSeq.current !== seq) return;
+            onAnimationEnd();
+          }, remaining);
+        });
+      }, delayBeforeFetch);
     },
-    [],
+    [load],
   );
 
   const onOptioned = useCallback(
