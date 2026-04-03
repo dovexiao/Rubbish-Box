@@ -21,6 +21,7 @@ import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { hideLoading, showLoading, showToast } from '@/utils';
 import Popup from '@/components/Popup';
+import { px } from '@/utils/ui';
 
 interface Props {
   lockInfo?: LockInfoDTO;
@@ -160,7 +161,7 @@ export const DeviceSwitch: React.FC<Props> = ({
           </Text>
           <Text style={styles.switchLine} />
           <Text style={styles.roleNameText}>{lockInfo?.roleName ?? ''}</Text>
-          <AppIcon name="pull-down" size={12} color={themeColor} />
+          <AppIcon name="pull-down" size={px(12)} color={themeColor} />
         </Flex>
       </TouchableOpacity>
 
@@ -168,13 +169,13 @@ export const DeviceSwitch: React.FC<Props> = ({
       <AnimationPop ref={devicePopRef} direction={'top'} coverSafeArea>
         <View
           style={{
-            paddingTop: 4,
+            paddingTop: px(4),
           }}
         >
           <ScrollView
             style={{
-              maxHeight: 466,
-              paddingHorizontal: 24,
+              maxHeight: px(466),
+              paddingHorizontal: px(24),
             }}
             showsVerticalScrollIndicator={false}
           >
@@ -218,7 +219,10 @@ export const DeviceSwitch: React.FC<Props> = ({
         onClose={() => setEditNamePopVisible(false)}
       >
         <View
-          style={[styles.editContainer, { paddingBottom: insets.bottom + 8 }]}
+          style={[
+            styles.editContainer,
+            { paddingBottom: insets.bottom + px(8) },
+          ]}
         >
           <View style={styles.header}>
             <Text style={styles.headerTitle}>修改名称</Text>
@@ -237,7 +241,7 @@ export const DeviceSwitch: React.FC<Props> = ({
                 placeholderTextColor="#999"
                 maxLength={20}
               />
-              <AppIcon name={'redact'} color="#999" size={20} />
+              <AppIcon name={'redact'} color="#999" size={px(20)} />
             </View>
           </View>
           <View style={styles.editFooter}>
@@ -257,7 +261,7 @@ export const DeviceSwitch: React.FC<Props> = ({
 
           <View style={styles.closeIcon}>
             <TouchableOpacity onPress={() => setEditNamePopVisible(false)}>
-              <AppIcon name={'close'} color="#333" size={24} />
+              <AppIcon name={'close'} color="#333" size={px(24)} />
             </TouchableOpacity>
           </View>
         </View>

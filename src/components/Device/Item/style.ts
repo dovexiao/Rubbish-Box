@@ -1,8 +1,9 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   deviceItem: {
-    padding: 12,
-    borderRadius: 8,
+    padding: px(12),
+    borderRadius: px(8),
     width: '100%',
   },
   defaultBgColor: {
@@ -14,36 +15,36 @@ export const styles = StyleSheet.create({
     borderColor: '#333',
   },
   mt24: {
-    marginTop: 12,
+    marginTop: px(12),
   },
   deviceNameText: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333',
     fontWeight: 'bold',
-    maxWidth: 260,
+    maxWidth: px(260),
   },
   tagContainer: {
-    marginLeft: 6,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
+    marginLeft: px(6),
+    paddingHorizontal: px(4),
+    paddingVertical: px(2),
     backgroundColor: '#E6E8EB',
-    borderRadius: 4,
+    borderRadius: px(4),
   },
   tag: {
-    fontSize: 10,
+    fontSize: fontSize(10),
     color: '#666',
   },
   editText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#999',
-    marginRight: 4,
+    marginRight: px(4),
   },
   deviceTypeText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#999',
   },
   deviceCountText: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333',
     fontWeight: 'bold',
   },

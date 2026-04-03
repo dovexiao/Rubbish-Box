@@ -35,6 +35,7 @@ import {
 import appPush from '@/utils/push';
 import PopConfirm from '@/components/popConfirm';
 import { checkInstalledWeChat, wechatLogin } from '@/utils/wechat';
+import { fontSize, px } from '@/utils/ui';
 
 type LoginType = 'sms' | 'password' | 'mini';
 
@@ -384,13 +385,13 @@ const Login = () => {
                 align="center"
                 isTouchView
                 onPress={radioClick}
-                style={{ marginTop: 16 }}
+                style={{ marginTop: px(16) }}
               >
                 <AppIcon
-                  size={17}
+                  size={px(17)}
                   name={agree ? 'selected' : 'unselected'}
                   color={agree ? '#333333' : '#E1E1E1'}
-                  style={{ marginRight: 8 }}
+                  style={{ marginRight: px(8) }}
                 />
                 <Flex align="center">
                   <Text style={styles.agree}>我已阅读并同意</Text>
@@ -413,7 +414,11 @@ const Login = () => {
                 </Flex>
               </Flex>
               <Text
-                style={{ marginTop: 24, fontSize: 16, color: '#333333' }}
+                style={{
+                  marginTop: px(24),
+                  fontSize: fontSize(16),
+                  color: '#333333',
+                }}
                 onPress={() => {
                   // 控制点击后立刻有视觉响应，不再阻塞主线程导致的“卡住”感
                   requestAnimationFrame(async () => {
@@ -431,7 +436,7 @@ const Login = () => {
                 暂不登录
               </Text>
             </Flex>
-            <Flex style={{ height: 123 }} direction="column" align="center">
+            <Flex style={{ height: px(123) }} direction="column" align="center">
               <Flex align="center" style={styles.logTip}>
                 <View style={styles.line} />
                 <Text style={styles.fastDesc}>更多登录方式</Text>
@@ -455,7 +460,7 @@ const Login = () => {
                   direction="column"
                   justify="center"
                   align="center"
-                  style={{ marginLeft: 65 }}
+                  style={{ marginLeft: px(65) }}
                   isTouchView
                   onPress={() => {
                     const type =

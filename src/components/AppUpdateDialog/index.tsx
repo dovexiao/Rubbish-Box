@@ -7,6 +7,7 @@ import GradientButton from '@/components/GradientButton';
 import AppIcon from '@/components/AppIcon';
 import styles from './styles';
 import LinearGradient from 'react-native-linear-gradient';
+import { fontSize, px } from '@/utils/ui';
 
 export interface AppUpdateInfo {
   id: number;
@@ -132,7 +133,7 @@ export function AppUpdateDialogHost() {
         style={{
           justifyContent: 'center',
           alignItems: 'center',
-          padding: 32,
+          padding: px(32),
         }}
       >
         <View style={styles.wrap}>
@@ -151,7 +152,7 @@ export function AppUpdateDialogHost() {
               <View style={styles.versionBadge}>
                 <LinearGradient
                   colors={['#5374B2', '#202F4F']}
-                  style={{ height: 38 }}
+                  style={{ height: px(38) }}
                   start={{ x: 0, y: 1 }}
                   end={{ x: 0, y: 0 }}
                 >
@@ -159,7 +160,7 @@ export function AppUpdateDialogHost() {
                     direction="row"
                     align="center"
                     justify="center"
-                    style={{ height: 34 }}
+                    style={{ height: px(34) }}
                   >
                     <Text style={styles.badgeText}>发现新版本</Text>
                     <Text style={styles.badgeVer}>V{serverVersion}</Text>
@@ -186,13 +187,17 @@ export function AppUpdateDialogHost() {
             <GradientButton
               colors={['#333333', '#333333']}
               width="100%"
-              height={48}
+              height={px(48)}
               round={false}
-              btnBorderRadius={24}
+              btnBorderRadius={px(24)}
               onPress={handleConfirm}
             >
               <Text
-                style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}
+                style={{
+                  color: '#FFFFFF',
+                  fontSize: fontSize(16),
+                  fontWeight: '600',
+                }}
               >
                 立即更新
               </Text>
@@ -208,7 +213,7 @@ export function AppUpdateDialogHost() {
               <Flex align="center" justify="center">
                 <AppIcon
                   name="a-pop-upwindowsclose"
-                  size={24}
+                  size={px(24)}
                   color="#999999"
                 />
                 <Text style={styles.skipText}>暂不更新，明天提醒我</Text>

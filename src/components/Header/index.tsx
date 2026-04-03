@@ -20,6 +20,7 @@ import PopConfirm from '@/components/popConfirm';
 import { useTheme } from '@/context/ThemeContext';
 import { getSignalStatus } from '@/utils/biz';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { fontSize, px } from '@/utils/ui';
 
 interface HeaderProps {
   /** 未读消息数 */
@@ -102,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({
           unreadCount > 99 ? styles.messgeWrapperMax : styles.messageWrapper,
         ]}
       >
-        <AppIcon name="message" size={24} color={textColor} />
+        <AppIcon name="message" size={px(24)} color={textColor} />
         {unreadCount > 0 && (
           <View
             style={[
@@ -207,7 +208,7 @@ const Header: React.FC<HeaderProps> = ({
               {/* 小车图标 */}
               {lockInfo?.aboveStatus === 1 && (
                 <View style={styles.colSpace16}>
-                  <AppIcon name="park1" size={20} color={textColor} />
+                  <AppIcon name="park1" size={px(20)} color={textColor} />
                 </View>
               )}
 
@@ -259,15 +260,15 @@ const Header: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    height: 54,
+    height: px(54),
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'transparent',
   },
   headerHarmony: {
-    height: 70,
-    paddingHorizontal: 16,
+    height: px(70),
+    paddingHorizontal: px(16),
     flexDirection: 'row',
     alignItems: 'flex-end',
     backgroundColor: 'transparent',
@@ -281,23 +282,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   colSpace16: {
-    marginLeft: 8,
+    marginLeft: px(8),
   },
   batteryIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 4,
+    width: px(20),
+    height: px(20),
+    marginRight: px(4),
   },
   batteryText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
   },
   signalIcon: {
-    width: 20,
-    height: 20,
+    width: px(20),
+    height: px(20),
   },
   line: {
-    width: 1,
-    height: 12,
+    width: px(1),
+    height: px(12),
   },
   deepLineColor: {
     backgroundColor: 'rgba(255,255,255,0.3)',
@@ -306,9 +307,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.1)',
   },
   greenDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: px(8),
+    height: px(8),
+    borderRadius: px(4),
   },
   signalDot: {
     backgroundColor: '#0ED46A',
@@ -317,53 +318,53 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF2B24',
   },
   faultText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#FF2B24',
   },
   messageWrapper: {
     position: 'relative',
-    paddingRight: 14,
+    paddingRight: px(14),
   },
   messgeWrapperMax: {
     position: 'relative',
-    paddingRight: 22,
+    paddingRight: px(22),
   },
   messageBadge: {
     position: 'absolute',
-    top: -8,
-    left: 14,
-    height: 18,
-    paddingHorizontal: 4,
-    borderRadius: 9,
+    top: px(-8),
+    left: px(14),
+    height: px(18),
+    paddingHorizontal: px(4),
+    borderRadius: px(9),
     backgroundColor: '#FF2B24',
     alignItems: 'center',
     justifyContent: 'center',
   },
   messageBadgeTextLength: {
-    minWidth: 24,
+    minWidth: px(24),
   },
   messageBadgeTextLengthMore: {
-    minWidth: 32,
+    minWidth: px(32),
   },
   messageBadgeText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#FFFFFF',
   },
   flexSpacer: {
     flex: 1,
   },
   deviceList: {
-    maxHeight: 320,
+    maxHeight: px(320),
   },
   deviceListContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingHorizontal: px(16),
+    paddingBottom: px(8),
   },
   deviceItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: px(12),
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#eee',
   },
@@ -372,118 +373,118 @@ const styles = StyleSheet.create({
   },
   deviceInfoLeft: {
     flex: 1,
-    paddingRight: 12,
+    paddingRight: px(12),
   },
   deviceInfoRight: {
     alignItems: 'center',
   },
   deviceName: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333',
-    marginBottom: 4,
+    marginBottom: px(4),
   },
   deviceRole: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#999',
   },
   deviceEdit: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: px(4),
   },
   deviceEditText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#2878FF',
-    marginRight: 4,
+    marginRight: px(4),
   },
   deviceImage: {
-    width: 48,
-    height: 28,
+    width: px(48),
+    height: px(28),
   },
   deviceGroupWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: px(4),
   },
   deviceGroupCount: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#333',
-    marginLeft: 2,
+    marginLeft: px(2),
   },
   deviceFooter: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: px(16),
+    paddingVertical: px(12),
   },
   footerButton: {
-    height: 44,
-    borderRadius: 22,
+    height: px(44),
+    borderRadius: px(22),
     backgroundColor: '#333333',
     alignItems: 'center',
     justifyContent: 'center',
   },
   footerButtonText: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#FFFFFF',
   },
   editRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    marginTop: 16,
+    paddingHorizontal: px(16),
+    marginTop: px(16),
   },
   editLabel: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    marginRight: 12,
+    marginRight: px(12),
   },
   editInput: {
     flex: 1,
-    height: 40,
-    borderRadius: 8,
+    height: px(40),
+    borderRadius: px(8),
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#E5E5E5',
-    paddingHorizontal: 12,
-    fontSize: 14,
+    paddingHorizontal: px(12),
+    fontSize: fontSize(14),
     color: '#333333',
     textAlign: 'right',
   },
   editFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginTop: 24,
+    paddingHorizontal: px(16),
+    marginTop: px(24),
   },
   editButton: {
     flex: 1,
-    height: 40,
-    borderRadius: 20,
+    height: px(40),
+    borderRadius: px(20),
     alignItems: 'center',
     justifyContent: 'center',
   },
   editCancel: {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#E5E5E5',
-    marginRight: 12,
+    marginRight: px(12),
   },
   editConfirm: {
     backgroundColor: '#2878FF',
   },
   editCancelText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
   },
   editConfirmText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#FFFFFF',
   },
   popTitle: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
     textAlign: 'center',
   },
   popText: {
-    marginTop: 8,
-    fontSize: 14,
+    marginTop: px(8),
+    fontSize: fontSize(14),
     color: '#666666',
   },
 });

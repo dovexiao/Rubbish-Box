@@ -12,6 +12,7 @@ import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 import Flex from '@/components/Flex';
 import Popup from '@/components/Popup';
 import AppIcon from '@/components/AppIcon';
+import { fontSize, px } from '@/utils/ui';
 
 export type AutoOperatePopRef = {
   open: () => void;
@@ -108,7 +109,9 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
     );
 
     const popupHeight =
-      lockList.length * 152 > 824 ? 500 : (176 + lockList.length * 152) / 2;
+      lockList.length * px(152) > px(824)
+        ? px(500)
+        : (px(176) + lockList.length * px(152)) / 2;
 
     return (
       <Popup
@@ -150,7 +153,11 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
                         source={{
                           uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png',
                         }}
-                        style={{ width: 16, height: 16 }}
+                        style={{
+                          width: px(16),
+                          height: px(16),
+                          aspectRatio: 1,
+                        }}
                         resizeMode="contain"
                       />
                     </View>
@@ -167,49 +174,49 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
 
 const styles = {
   popupContainer: {
-    paddingTop: 24,
-    paddingLeft: 24,
-    paddingRight: 24,
-    paddingBottom: 16,
+    paddingTop: px(24),
+    paddingLeft: px(24),
+    paddingRight: px(24),
+    paddingBottom: px(16),
     flex: 1,
-    marginBottom: 34,
+    marginBottom: px(34),
   } as const,
   card: {
     width: '100%',
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
+    borderRadius: px(12),
+    paddingLeft: px(16),
+    paddingRight: px(16),
+    paddingTop: px(12),
+    paddingBottom: px(12),
     flexDirection: 'row' as const,
     justifyContent: 'space-between' as const,
     alignItems: 'center' as const,
-    marginBottom: 12,
+    marginBottom: px(12),
     position: 'relative' as const,
   },
   mb0: {
     marginBottom: 0,
   },
   lockName: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     flexShrink: 1,
-    marginRight: 12,
+    marginRight: px(12),
   },
   text: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#333333',
-    lineHeight: 16,
-    marginTop: 4,
+    lineHeight: px(16),
+    marginTop: px(4),
   },
   warningIcon: {
     position: 'absolute' as const,
-    top: 6,
-    right: 10,
-    width: 32,
-    height: 32,
+    top: px(6),
+    right: px(10),
+    width: px(32),
+    height: px(32),
   },
 };
 

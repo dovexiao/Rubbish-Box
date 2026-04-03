@@ -1,3 +1,4 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const passwordStyles = StyleSheet.create({
@@ -5,16 +6,16 @@ const passwordStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: 55,
-    paddingHorizontal: 24,
+    marginTop: px(55),
+    paddingHorizontal: px(24),
   },
   content: {
-    marginTop: 16,
+    marginTop: px(16),
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    width: 326,
-    height: 56,
-    paddingHorizontal: 10,
+    borderRadius: px(12),
+    width: px(326),
+    height: px(56),
+    paddingHorizontal: px(10),
   },
   input: {
     width: '100%',
@@ -25,31 +26,31 @@ const passwordStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   errorBorder: {
-    borderRadius: 12,
+    borderRadius: px(12),
     borderWidth: 1,
     borderColor: '#ff2b24',
   },
   error: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#ff2b24',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   errorBox: {
     width: '100%',
-    marginTop: 8,
+    marginTop: px(8),
   },
   forget: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
-    marginLeft: 42,
+    lineHeight: px(20),
+    marginLeft: px(42),
   },
   btn: {
-    borderRadius: 16,
-    marginTop: 32,
-    width: 327,
-    height: 48,
+    borderRadius: px(16),
+    marginTop: px(32),
+    width: px(327),
+    height: px(48),
     backgroundColor: '#999999',
     display: 'flex',
     flexDirection: 'row',
@@ -58,24 +59,24 @@ const passwordStyles = StyleSheet.create({
   },
   btnText: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
-    lineHeight: 22,
+    lineHeight: px(22),
   },
   btnActive: {
     backgroundColor: '#333333',
   },
   changeType: {
-    marginTop: 16,
+    marginTop: px(16),
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
   },
   changeTypeDesc: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 });
 

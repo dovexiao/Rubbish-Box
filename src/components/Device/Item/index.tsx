@@ -4,6 +4,7 @@ import Flex from '@/components/Flex';
 import { DeviceItemProps } from './typing';
 import { styles } from './style';
 import AppIcon from '@/components/AppIcon';
+import { px } from '@/utils/ui';
 
 export const DeviceItem: React.FC<DeviceItemProps> = ({
   data,
@@ -35,14 +36,14 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
           {data.role === 1 && (
             <TouchableOpacity
               style={{
-                marginTop: 10,
+                marginTop: px(10),
                 flexDirection: 'row',
                 alignItems: 'center',
               }}
               onPress={() => onChangeName?.()}
             >
               <Text style={styles.editText}>编辑</Text>
-              <AppIcon name="pen16" color="#999999" size={16} />
+              <AppIcon name="pen16" color="#999999" size={px(16)} />
             </TouchableOpacity>
           )}
         </Flex>
@@ -51,19 +52,19 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
           <Text style={styles.deviceTypeText}>
             {data.groupCount === 1 ? '单个设备' : '组合设备'}
           </Text>
-          <Flex style={{ marginTop: 14 }} align="center">
+          <Flex style={{ marginTop: px(14) }} align="center">
             {data.imageUrl && data.imageUrl !== 'null' ? (
               <Image
                 source={{ uri: data.imageUrl }}
-                style={{ width: 48, height: 28 }}
+                style={{ width: px(48), height: px(28) }}
                 resizeMode="contain"
               />
             ) : (
               <View
                 style={{
-                  width: 48,
-                  height: 28,
-                  borderRadius: 4,
+                  width: px(48),
+                  height: px(28),
+                  borderRadius: px(4),
                   backgroundColor: '#E6E8EB',
                 }}
               />
@@ -73,8 +74,8 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
                 <AppIcon
                   name="multiplication"
                   color="#333333"
-                  size={6}
-                  style={{ marginHorizontal: 2 }}
+                  size={px(6)}
+                  style={{ marginHorizontal: px(2) }}
                 />
                 <Text style={styles.deviceCountText}>{data.groupCount}</Text>
               </>
