@@ -13,6 +13,7 @@ import AppIcon from '@/components/AppIcon';
 import { getBluetoothDeviceInfo, loopFunc, showToast } from '@/utils';
 import { isDeviceConnected } from '@/utils/api';
 import { styles } from './styles';
+import { px } from '@/utils/ui';
 
 export type CheckBluetoothRef = {
   open: () => void;
@@ -171,7 +172,7 @@ const CheckBluetooth = forwardRef<CheckBluetoothRef, Props>(
                 </View>
                 <View>
                   {item.checked ? (
-                    <AppIcon name="selected" size={20} color="#333333" />
+                    <AppIcon name="selected" size={px(20)} color="#333333" />
                   ) : null}
                 </View>
               </View>

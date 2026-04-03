@@ -20,6 +20,7 @@ import { Calendar, LocaleConfig, DateData } from 'react-native-calendars';
 import DatePicker from 'react-native-date-picker';
 import Flex from '@/components/Flex';
 import AppIcon from '@/components/AppIcon';
+import { fontSize, px } from '@/utils/ui';
 
 export interface DateTimePickerPopupProps {
   title?: React.ReactNode;
@@ -218,14 +219,14 @@ const DateTimePickerPopup = forwardRef<
                       <View style={{ transform: [{ rotate: '180deg' }] }}>
                         <AppIcon
                           name={'a-headfor-201'}
-                          size={30}
+                          size={px(30)}
                           color="#333333"
                         />
                       </View>
                     ) : (
                       <AppIcon
                         name={'a-headfor-201'}
-                        size={30}
+                        size={px(30)}
                         color="#333333"
                       />
                     )}
@@ -317,35 +318,35 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: '#ffffff',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: px(32),
+    borderTopRightRadius: px(32),
   },
   topBar: {
     width: '100%',
-    paddingLeft: 12,
-    paddingRight: 12,
-    paddingTop: 8,
+    paddingLeft: px(12),
+    paddingRight: px(12),
+    paddingTop: px(8),
   },
   tabWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f5f6f7',
-    borderRadius: 8,
-    padding: 3,
-    marginRight: 8,
+    borderRadius: px(8),
+    padding: px(3),
+    marginRight: px(8),
   },
   tab: {
-    width: 150,
-    paddingHorizontal: 9,
-    paddingVertical: 5,
-    borderRadius: 6,
+    width: px(150),
+    paddingHorizontal: px(9),
+    paddingVertical: px(5),
+    borderRadius: px(6),
     backgroundColor: 'transparent',
   },
   tabActive: {
     backgroundColor: '#ffffff',
   },
   tabText: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#999999',
     fontWeight: '400',
     textAlign: 'center',
@@ -355,16 +356,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerConfirm: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
     fontWeight: 'bold',
   },
   bodyArea: {
-    height: 340,
+    height: px(340),
   },
   timeWrap: {
     width: '100%',
-    height: 340,
+    height: px(340),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ffffff',

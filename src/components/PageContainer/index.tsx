@@ -25,6 +25,7 @@ import StatusError from './StatusError';
 import StatusLogin from './StatusLogin';
 import { LOGIN } from '@/constants';
 import { useTheme } from '@/context/ThemeContext';
+import { px } from '@/utils/ui';
 
 /**
  * 页面导航栏配置类型
@@ -245,7 +246,12 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                   onPress={() => {
                     onBackPress ? onBackPress() : navigation.goBack();
                   }}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  hitSlop={{
+                    top: px(10),
+                    bottom: px(10),
+                    left: px(10),
+                    right: px(10),
+                  }}
                 >
                   <Text style={[styles.backButtonText, { color: titleColor }]}>
                     <AppIcon name="back" size={24} color={titleColor} />
@@ -500,7 +506,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                         styles.footerContainer,
                         // Android 底部额外 padding 适配
                         Platform.OS !== 'ios' && {
-                          paddingBottom: insets.bottom + 20,
+                          paddingBottom: insets.bottom + px(20),
                         },
                       ]}
                     >
@@ -543,7 +549,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                       style={[
                         styles.footerContainer,
                         Platform.OS !== 'ios' && {
-                          paddingBottom: insets.bottom + 20,
+                          paddingBottom: insets.bottom + px(20),
                         },
                       ]}
                     >

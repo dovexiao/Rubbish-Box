@@ -1,3 +1,4 @@
+import { fontSize, px } from '@/utils/ui';
 import React, { ReactNode } from 'react';
 import {
   TouchableOpacity,
@@ -41,7 +42,7 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   className,
   onPress,
   round = true,
-  btnBorderRadius = 12,
+  btnBorderRadius = px(12),
   hasBorder = false,
   style,
   contentStyle,
@@ -117,10 +118,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    columnGap: 8,
+    columnGap: px(8),
   },
   text: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '600',
   },
 });

@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { fontSize, px } from '@/utils/ui';
 
 const loginStyles = StyleSheet.create({
   container: {
@@ -6,15 +7,15 @@ const loginStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: 55,
+    marginTop: px(55),
   },
   content: {
-    marginTop: 16,
+    marginTop: px(16),
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    width: 326,
-    height: 56,
+    borderRadius: px(12),
+    paddingHorizontal: px(10),
+    width: px(326),
+    height: px(56),
   },
   input: {
     width: '100%',
@@ -25,24 +26,24 @@ const loginStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   errorBorder: {
-    borderRadius: 12,
+    borderRadius: px(12),
     borderWidth: 1,
     borderColor: '#ff2b24',
   },
   tip: {
-    marginTop: 16,
-    width: 654 / 2,
+    marginTop: px(16),
+    width: px(654) / 2,
   },
   tipText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#666666',
-    lineHeight: 17,
+    lineHeight: px(17),
   },
   btn: {
-    borderRadius: 16,
-    marginTop: 32,
-    width: 327,
-    height: 48,
+    borderRadius: px(16),
+    marginTop: px(32),
+    width: px(327),
+    height: px(48),
     position: 'relative',
     backgroundColor: '#999999',
     display: 'flex',
@@ -52,34 +53,34 @@ const loginStyles = StyleSheet.create({
   },
   btnText: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
-    lineHeight: 22,
+    lineHeight: px(22),
   },
   btnActive: {
     backgroundColor: '#333333',
   },
   changeType: {
-    marginTop: 16,
+    marginTop: px(16),
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
   },
   changeTypeDesc: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   error: {
     fontWeight: 'normal',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#ff2b24',
-    lineHeight: 20,
+    lineHeight: px(20),
     position: 'absolute',
-    top: -26,
+    top: px(-26),
     left: '50%',
-    marginLeft: -42,
+    marginLeft: px(-42),
   },
 });
 

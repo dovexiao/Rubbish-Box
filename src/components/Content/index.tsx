@@ -50,6 +50,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { bluetoothOperationLockFallStatusStore } from '@/store/store';
 import { PopConfirmRef } from '../popConfirm';
 import PopCenter from '../PopCenter';
+import { px } from '@/utils/ui';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -494,12 +495,12 @@ const Content: React.FC<ContentProps> = ({
                 source={{
                   uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png',
                 }}
-                style={{ width: 20, height: 20 }}
+                style={{ width: px(20), height: px(20) }}
               ></Image>
             </View>
           )}
           <View style={styles.manualIconCircle}>
-            <AppIcon name="bluetooth-1" size={24} color="#333333" />
+            <AppIcon name="bluetooth-1" size={px(24)} color="#333333" />
           </View>
           <Text style={styles.manualText}>自动升降</Text>
         </TouchableOpacity>
@@ -518,7 +519,7 @@ const Content: React.FC<ContentProps> = ({
             }}
           >
             <View style={styles.manualIconCircle}>
-              <AppIcon name="rise" size={24} color="#333333" />
+              <AppIcon name="rise" size={px(24)} color="#333333" />
             </View>
             <Text style={styles.manualText}>手动升锁</Text>
           </TouchableOpacity>
@@ -538,7 +539,7 @@ const Content: React.FC<ContentProps> = ({
             }}
           >
             <View style={styles.manualIconCircle}>
-              <AppIcon name="down" size={24} color="#333333" />
+              <AppIcon name="down" size={px(24)} color="#333333" />
             </View>
             <Text style={styles.manualText}>手动降锁</Text>
           </TouchableOpacity>
@@ -554,7 +555,7 @@ const Content: React.FC<ContentProps> = ({
               <View style={styles.manualIconCircle}>
                 <AppIcon
                   name="a-combinationmanagement"
-                  size={24}
+                  size={px(24)}
                   color="#333333"
                 />
               </View>
@@ -573,7 +574,7 @@ const Content: React.FC<ContentProps> = ({
                 name={
                   detail?.coverStatus === COVER_STATUS.OPEN ? 'unlock' : 'lock'
                 }
-                size={24}
+                size={px(24)}
                 color="#333333"
               />
             </View>
@@ -620,13 +621,13 @@ const Content: React.FC<ContentProps> = ({
               name={
                 detail?.isGroup ? 'a-Equipmentlist' : 'a-equipmentinformation'
               }
-              size={20}
+              size={px(20)}
               color={'#333'}
             />
             <Text style={styles.cardTitle}>
               {detail?.isGroup ? '设备列表' : '设备信息'}
             </Text>
-            <AppIcon name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
           </Flex>
           {detail?.isGroup ? (
             <Flex
@@ -657,17 +658,17 @@ const Content: React.FC<ContentProps> = ({
           ) : (
             <View style={styles.infoList}>
               <View style={styles.infoRow}>
-                <AppIcon name={'a-Upgradelock'} size={16} color="#ccc" />
+                <AppIcon name={'a-Upgradelock'} size={px(16)} color="#ccc" />
                 <Text style={styles.infoLabel}>离车升锁</Text>
                 <Text style={styles.infoValue}>
                   {detail?.leaveUpTime ? `${detail?.leaveUpTime}s` : '20s'}
                 </Text>
               </View>
               <View style={styles.infoRow}>
-                <AppIcon name={'bell'} size={16} color="#ccc" />
+                <AppIcon name={'bell'} size={px(16)} color="#ccc" />
                 <Text style={styles.infoLabel}>蜂鸣碰撞</Text>
                 <Image
-                  style={{ width: 16, height: 16 }}
+                  style={{ width: px(16), height: px(16) }}
                   source={{
                     uri: `https://g.18qjz.cn/img/boklock/icon/${
                       detail?.buzzerStatus === 1
@@ -695,9 +696,9 @@ const Content: React.FC<ContentProps> = ({
             }}
           >
             <Flex justify="between" align="center">
-              <AppIcon name="member" size={16} color="#333333" />
+              <AppIcon name="member" size={px(16)} color="#333333" />
               <Text style={styles.entryText}>成员共享</Text>
-              <AppIcon name="a-headfor-20" size={20} color="#333333" />
+              <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
             </Flex>
           </TouchableOpacity>
         )}
@@ -714,9 +715,9 @@ const Content: React.FC<ContentProps> = ({
             }}
           >
             <Flex justify="between" align="center">
-              <AppIcon name="a-VIPInvitation" size={16} color="#333333" />
+              <AppIcon name="a-VIPInvitation" size={px(16)} color="#333333" />
               <Text style={styles.entryText}>贵宾邀请</Text>
-              <AppIcon name="a-headfor-20" size={20} color="#333333" />
+              <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
             </Flex>
           </TouchableOpacity>
         )}
@@ -728,7 +729,7 @@ const Content: React.FC<ContentProps> = ({
           }}
         >
           <Flex justify="between" align="center">
-            <AppIcon name="a-powersupply" size={16} color="#333333" />
+            <AppIcon name="a-powersupply" size={px(16)} color="#333333" />
             <Text style={styles.entryText}>市电安装</Text>
             <AppIcon name="a-headfor-20" size={20} color="#333333" />
           </Flex>
@@ -742,7 +743,7 @@ const Content: React.FC<ContentProps> = ({
         title={'管理组合设备'}
       >
         <Flex
-          style={{ marginTop: 24, marginBottom: 36 }}
+          style={{ marginTop: px(24), marginBottom: px(36) }}
           direction="column"
           justify="center"
           align="center"

@@ -32,6 +32,7 @@ import {
 import Popup from '../Popup';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import AppIcon from '@/components/AppIcon';
+import { fontSize, px } from '@/utils/ui';
 
 /**
  * 扫码结果的统一约定：
@@ -539,25 +540,25 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   defaultHeader: {
-    height: 44,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    height: px(44),
+    paddingHorizontal: px(16),
+    paddingVertical: px(10),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   defaultHeaderBtn: {
-    width: 24,
-    height: 24,
+    width: px(24),
+    height: px(24),
     alignItems: 'center',
     justifyContent: 'center',
   },
   defaultHeaderRightPlaceholder: {
-    width: 24,
-    height: 24,
+    width: px(24),
+    height: px(24),
   },
   defaultHeaderTitle: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '500',
     color: '#FFFFFF',
   },
@@ -575,33 +576,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tipText: {
-    marginTop: 12,
-    fontSize: 14,
+    marginTop: px(12),
+    fontSize: fontSize(14),
     color: '#FFFFFF',
   },
   popupBody: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 16,
+    paddingHorizontal: px(16),
+    paddingTop: px(12),
+    paddingBottom: px(16),
   },
   popupText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   popupFooter: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
+    paddingHorizontal: px(16),
+    paddingBottom: px(12),
   },
   popupBtn: {
-    height: 44,
-    borderRadius: 12,
+    height: px(44),
+    borderRadius: px(12),
     backgroundColor: '#333333',
     alignItems: 'center',
     justifyContent: 'center',
   },
   popupBtnText: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#FFFFFF',
     fontWeight: '600',
   },

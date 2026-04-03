@@ -24,6 +24,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import AppIcon from '@/components/AppIcon';
+import { fontSize, px } from '@/utils/ui';
 
 export interface AnimationPopRef {
   open: () => void;
@@ -307,14 +308,14 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
       } else {
         baseStyle.marginTop = insets.top;
       }
-      baseStyle.borderBottomLeftRadius = 12;
-      baseStyle.borderBottomRightRadius = 12;
+      baseStyle.borderBottomLeftRadius = px(12);
+      baseStyle.borderBottomRightRadius = px(12);
     } else if (direction === 'bottom') {
       baseStyle.width = '100%';
       baseStyle.paddingBottom =
         keyboardHeight > 0 ? 0 : coverSafeArea ? insets.bottom : 0;
-      baseStyle.borderTopLeftRadius = 12;
-      baseStyle.borderTopRightRadius = 12;
+      baseStyle.borderTopLeftRadius = px(12);
+      baseStyle.borderTopRightRadius = px(12);
       baseStyle.position = 'absolute';
       baseStyle.bottom = baseBottom;
     }
@@ -378,10 +379,10 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
           <View style={{ flex: isVertical ? 0 : 1, overflow: 'hidden' }}>
             {title && typeof title === 'string' ? (
               <View style={styles.titleContainer}>
-                <View style={{ width: 24, height: 24 }}></View>
+                <View style={{ width: px(24), height: px(24) }}></View>
                 <Text style={styles.title}>{title}</Text>
                 <TouchableOpacity onPress={() => setOpen(false)}>
-                  <AppIcon name="close" size={24} color="#333333" />
+                  <AppIcon name="close" size={px(24)} color="#333333" />
                 </TouchableOpacity>
               </View>
             ) : (
@@ -408,15 +409,15 @@ const styles = StyleSheet.create({
     // top: insets.top,
   },
   titleContainer: {
-    marginTop: 16,
-    marginHorizontal: 16,
+    marginTop: px(16),
+    marginHorizontal: px(16),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   title: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '500',
     color: '#333333',
   },
@@ -427,7 +428,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   btnContainer: {
-    paddingVertical: 10,
+    paddingVertical: px(10),
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#eee',
   },
