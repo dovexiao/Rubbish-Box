@@ -291,7 +291,7 @@ const Index = () => {
       }
       animationTimer.current = setTimeout(() => {
         onAnimationEnd();
-      }, 2800);
+      }, 3000);
     },
     [],
   );

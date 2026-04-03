@@ -63,9 +63,9 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { StoreProvider } from '@/store/provider';
 
 // Harmony debug mode: silence in-app LogBox overlays.
-if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
-  LogBox.ignoreAllLogs(true);
-}
+// if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+LogBox.ignoreAllLogs(true);
+// }
 
 function App() {
   const navigationRef = useNavigationContainerRef<any>();
