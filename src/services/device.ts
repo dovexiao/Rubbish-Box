@@ -76,3 +76,17 @@ export const getRiceInfoList = createFetch<any, any>(
   'POST',
 );
 
+// 申请记录详情
+export const lockApplyDetail = createFetch<any, any>(
+  '/boke/apply/detail',
+  'GET',
+);
+
+// 申请记录列表
+export const lockApplyList = createFetch<any, any>('/boke/apply/list', 'POST');
+
+// 审核申请
+export const lockApplyAudit = createFetch<any, any>(
+  '/boke/apply/audit',
+  'POST',
+);

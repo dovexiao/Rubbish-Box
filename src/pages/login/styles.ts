@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   popNotice: {
     fontSize: fontSize(13),
     color: '#666666',
-    lineHeight: 1.6,
+    lineHeight: px(16),
     marginTop: px(8),
   },
   popSubmit: {

@@ -10,6 +10,7 @@ import { Modal } from '@ant-design/react-native';
 import Flex from '../Flex';
 import popupStyle from './styles';
 import GradientButton from '../GradientButton';
+import { px } from '@/utils/ui';
 
 interface PopConfirmProps {
   title?: string | ReactNode;
@@ -51,7 +52,7 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
       textWeight = 'normal',
       btnWrapStyle = {},
       confirmBtnStyle,
-      width = 311,
+      width = px(311),
       submitBtn,
       visible,
       onVisibleChange,

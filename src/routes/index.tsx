@@ -359,5 +359,20 @@ export const routes = {
       component: require('@/pages/myDevice').default,
       label: '添加设备',
     },
+    {
+      name: 'ApplyRecordList',
+      component: require('@/pages/apply/applyRecord/index').default,
+      label: '地锁使用申请记录',
+    },
+    {
+      name: 'ApplyRecordDetail',
+      component: require('@/pages/apply/applyRecord/detail/index').default,
+      label: '地锁使用申请详情',
+    },
+    {
+      name: 'UserScan',
+      component: require('@/pages/apply/userScan/index').default,
+      label: '用户操作地锁',
+    },
   ],
 } as const;

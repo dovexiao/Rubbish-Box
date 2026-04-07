@@ -104,6 +104,11 @@ export default function Mine() {
   const listItems = useMemo(
     () => [
       {
+        icon: 'time' as const,
+        label: '地锁申请使用记录',
+        onPress: () => navigation.navigate('ApplyRecordList'),
+      },
+      {
         icon: 'a-addequipments' as const,
         label: '添加设备',
         onPress: () => navigation.navigate('MyDevice'),

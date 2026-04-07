@@ -87,10 +87,9 @@ export default function GoodsDetail() {
         orderAmount: goodsDetail.currentPrice,
         addressId: -1,
         productNum,
-        productDetail: goodsDetail,
+        productDetail: JSON.stringify(goodsDetail), // 必须转为 JSON 字符串传递
         token: tokenRes.data.token,
       };
-
       // 打开小程序购买页面
       const queryString = Object.keys(params)
         .map(key => `${key}=${encodeURIComponent(String(params[key]))}`)
