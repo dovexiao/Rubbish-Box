@@ -90,3 +90,8 @@ export const lockApplyAudit = createFetch<any, any>(
   '/boke/apply/audit',
   'POST',
 );
+
+export const lockApplyOpt = createFetch<any, any>(
+  '/boke/apply/lockOpt',
+  'POST',
+);

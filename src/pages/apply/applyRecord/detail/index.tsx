@@ -186,7 +186,8 @@ export default function ApplyRecordDetail() {
                       <Text style={styles.btnText}>通过</Text>
                     </GradientButton>
                     <GradientButton
-                      style={{ ...styles.button, backgroundColor: '#ff2b24' }}
+                      style={{ ...styles.button }}
+                      colors={['#ff2b24', '#ff2b24']}
                       onPress={() => {
                         refusePopRef.current?.open();
                       }}
@@ -222,13 +223,7 @@ export default function ApplyRecordDetail() {
                           });
                           return;
                         }
-                        navigation.navigate({
-                          url: `/pages/apply/notManagerScan/index?${JSON.stringify(
-                            {
-                              code: detail.code,
-                            },
-                          )}`,
-                        });
+                        navigation.navigate('UserScan', { code: detail.code });
                       }}
                       style={{
                         ...styles.button,
