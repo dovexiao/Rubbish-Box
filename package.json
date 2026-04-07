@@ -96,6 +96,7 @@
     "react-native-fast-image": "^8.6.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "2.9.0",
+    "react-native-gif-player": "^1.0.2",
     "react-native-iconfont-cli": "^2.2.4",
     "react-native-image-picker": "^4.10.0",
     "react-native-intent-launcher": "^0.2.1",

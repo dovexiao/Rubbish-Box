@@ -9,6 +9,15 @@ import type { LockInfoDTO } from '@/pages/index/typing';
 import { useTheme } from '@/context/ThemeContext';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 
+let GifPlayerView: any = null;
+if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  try {
+    GifPlayerView = require('react-native-gif-player').GifPlayerView;
+  } catch (err) {
+    // Fallback
+  }
+}
+
 export type LockVisualStatus =
   | 'rise'
   | 'fall'
@@ -74,18 +83,16 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     showRising120Gif ||
     showFalling120Gif;
 
-  useEffect(() => {
-    if (inconsistentStatus) {
+  // 直接在渲染阶段同步状态，避免 useEffect 带来的一帧延迟（解决闪现旧静图的问题）
+  if (inconsistentStatus) {
+    if (lockStatus !== 'rise') {
       setLockStatus('rise');
-      return;
     }
-
-    if (anyGifShowing) {
-      return;
+  } else if (!anyGifShowing) {
+    if (lockStatus !== currentDeviceStatus) {
+      setLockStatus(currentDeviceStatus);
     }
-
-    setLockStatus(currentDeviceStatus);
-  }, [currentDeviceStatus, inconsistentStatus, anyGifShowing]);
+  }
 
   useEffect(() => {
     setGifLoaded(false);
@@ -139,7 +146,24 @@ const LockVisual: React.FC<LockVisualProps> = props => {
     if (!uri || uri === 'null') return null;
     const finalUri = withNonce(uri, gifNonce);
 
-    // 所有的系统全部使用原生 Image 渲染 gif，因为 react-native-fast-image 在底层的 SDWebImage/Glide 默认策略下常常忽略 GIF 的循环次数。
+    // iOS 和 Android 使用专门的 react-native-gif-player 控制播放次数避免死循环
+    if (GifPlayerView) {
+      return (
+        <GifPlayerView
+          key={key}
+          style={[
+            styles.gifImage,
+            !gifLoaded && { position: 'absolute', opacity: 0 },
+          ]}
+          source={{ uri: finalUri }}
+          loopCount={1} // 限制仅播放1遍并在原图悬停
+          paused={false} // 确保非暂停状态，立刻播放
+          onLoad={() => setGifLoaded(true)}
+        />
+      );
+    }
+
+    // 鸿蒙由于当前库不兼容，全部使用原生 Image 渲染 gif 走兜底策略（业务层通过外部控制展示时间）
     return (
       <Image
         key={key}
