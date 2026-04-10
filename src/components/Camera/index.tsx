@@ -231,8 +231,23 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
     setLastValue('');
   }, []);
 
-  const open = useCallback(() => {
+  const ensurePermission = useCallback(async () => {
+    if (hasPermission) return true;
+    try {
+      const granted = await requestPermission();
+      return !!granted;
+    } catch {
+      return false;
+    }
+  }, [hasPermission, requestPermission]);
+
+  const open = useCallback(async () => {
     if (!isModal) return;
+    const granted = await ensurePermission();
+    if (!granted) {
+      onClose?.();
+      return;
+    }
     // 打开弹层时默认重置扫码状态，避免带着上一次的锁进入
     rescan();
     setModalVisible(true);
@@ -242,7 +257,7 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
-  }, [isModal, rescan, slideAnim]);
+  }, [ensurePermission, isModal, onClose, rescan, slideAnim]);
 
   const close = useCallback(() => {
     if (!isModal) return;
@@ -271,11 +286,6 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
     }),
     [close, open, rescan],
   );
-
-  useEffect(() => {
-    // 组件挂载后主动触发一次权限请求（避免页面首次打开无提示）
-    void requestPermission();
-  }, [requestPermission]);
 
   const handleScanned = useCallback(
     async (value: string) => {

@@ -125,7 +125,7 @@ const Password: React.FC<PasswordProps> = ({
             placeholder="请输入手机号"
             style={passwordStyles.input}
             placeholderTextColor="#CCCCCC"
-            value={mobile}
+            defaultValue={mobile}
             onChangeText={v => {
               setMobile(v);
               onChange(v); // 同步更新父组件的 mobile 状态
@@ -150,7 +150,7 @@ const Password: React.FC<PasswordProps> = ({
             placeholder="请输入密码"
             style={passwordStyles.input}
             placeholderTextColor="#CCCCCC"
-            value={password}
+            defaultValue={password}
             onChangeText={v => {
               setPassword(v);
               if (v) {

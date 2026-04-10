@@ -53,6 +53,10 @@ import LeaveRiseLockPop from './components/leaveRiseLockPop';
 import BluetoothStatus, {
   BluetoothStatusRef,
 } from '@/components/bluetoothStatus';
+import {
+  runInPermissionQueue,
+  showPermissionPromptIfNeeded,
+} from '@/utils/permissions';
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
@@ -655,12 +659,16 @@ const DeviceInfo = () => {
         ref={changeQrCodePopRef}
         title="确认更换二维码吗？"
         confirmText="扫码绑定"
-        onConfirm={() => {
-          changeQrCodePopRef.current?.close();
-          setSafeAreaColor('light-content');
-          setTimeout(() => {
-            scanBindQrCameraRef.current?.open();
-          }, 350);
+        onConfirm={async () => {
+          await changeQrCodePopRef.current?.close();
+          await runInPermissionQueue(async () => {
+            const hasPrompted = await showPermissionPromptIfNeeded('camera');
+            if (!hasPrompted) return;
+            setSafeAreaColor('light-content');
+            setTimeout(() => {
+              scanBindQrCameraRef.current?.open();
+            }, 350);
+          });
         }}
       />
 

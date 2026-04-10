@@ -21,6 +21,10 @@ import type { PopConfirmRef } from '@/components/popConfirm';
 import { bindScan } from '@/services/bindDevice';
 import styles from './styles';
 import { hideLoading, reLaunch, showLoading, showToast } from '@/utils';
+import {
+  runInPermissionQueue,
+  showPermissionPromptIfNeeded,
+} from '@/utils/permissions';
 
 const BinDevice: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -36,10 +40,14 @@ const BinDevice: React.FC = () => {
   const popRef = useRef<PopConfirmRef>(null);
   const fallbackRunningRef = useRef(false);
 
-  // 请求相机权限
+  // 进入“添加设备”扫码页时，先做用途告知，再请求系统相机权限。
   useEffect(() => {
     const init = async () => {
-      await requestPermission();
+      await runInPermissionQueue(async () => {
+        const hasPrompted = await showPermissionPromptIfNeeded('camera');
+        if (!hasPrompted) return;
+        await requestPermission();
+      });
     };
     void init();
   }, [requestPermission]);
