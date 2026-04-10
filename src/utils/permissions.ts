@@ -28,6 +28,12 @@ export const PERMISSION_PROMPT_MESSAGES: Record<string, string> = {
     '我们将向您申请位置权限，用于设备定位、地图展示方便您查看与地锁距离快捷导航等功能，您可以拒绝授权，后续如有需要可在系统设置中开启。',
 };
 
+const permissionPromptMemoryCache: Record<string, true | undefined> = {};
+
+function markPermissionPromptAcknowledged(type: string): void {
+  permissionPromptMemoryCache[type] = true;
+}
+
 function isPromptAcknowledged(value: any): boolean {
   if (value === true) return true;
   if (value === 1) return true;
@@ -100,11 +106,20 @@ export async function showPermissionPromptIfNeeded(
     const message = PERMISSION_PROMPT_MESSAGES[type];
     if (!message) return true;
     if (Platform.OS !== 'android' && Platform.OS !== 'ios') return true;
+
+    // 优先命中内存缓存，避免每次都读 storage。
+    if (permissionPromptMemoryCache[type]) {
+      return true;
+    }
+
     const cacheKey = `system_permission_prompt_${type}`;
 
     try {
       const hasPrompted = await getStorage({ key: cacheKey });
-      if (isPromptAcknowledged(hasPrompted)) return true;
+      if (isPromptAcknowledged(hasPrompted)) {
+        markPermissionPromptAcknowledged(type);
+        return true;
+      }
     } catch (e) {}
 
     const confirmed = await new Promise<boolean>(resolve => {
@@ -127,9 +142,10 @@ export async function showPermissionPromptIfNeeded(
         maskClosable: false,
         confirmText: '我知道了',
         onConfirm: () => {
-          try {
-            setStorage({ key: cacheKey, data: { data: true } });
-          } catch (e) {}
+          markPermissionPromptAcknowledged(type);
+          void setStorage({ key: cacheKey, data: { data: true } }).catch(
+            () => {},
+          );
           // 先立即结束当前确认回调，让弹窗先关闭。
           resolve(true);
         },

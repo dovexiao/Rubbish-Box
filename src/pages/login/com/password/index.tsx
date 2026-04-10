@@ -70,7 +70,6 @@ const Password: React.FC<PasswordProps> = ({
         ...device,
       });
       if (res.code === 200) {
-        hideLoading();
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
         try {
@@ -78,17 +77,19 @@ const Password: React.FC<PasswordProps> = ({
           await getMobPushDeviceInfo();
         } catch (e) {
           console.error('获取推送设备信息失败:', e);
+        } finally {
+          hideLoading();
+          showToast({ title: '登录成功', icon: 'success' });
+          // 延迟执行导航，确保状态已更新和导航引用已准备好
+          setTimeout(() => {
+            const pages = getCurrentPages();
+            if (pages.length > 1) {
+              navigateBack();
+            } else {
+              reLaunch('Index');
+            }
+          }, 300);
         }
-        showToast({ title: '登录成功', icon: 'success' });
-        // 延迟执行导航，确保状态已更新和导航引用已准备好
-        setTimeout(() => {
-          const pages = getCurrentPages();
-          if (pages.length > 1) {
-            navigateBack();
-          } else {
-            reLaunch('Index');
-          }
-        }, 300);
       } else if (res.code === 520 || res.code === 522 || res.code === 525) {
         hideLoading();
         setShowError(true);

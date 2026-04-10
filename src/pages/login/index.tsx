@@ -17,7 +17,6 @@ import Sms from './com/sms';
 import Password from './com/password';
 import styles from './styles';
 import AppIcon from '@/components/AppIcon';
-import { cacheSet } from '@/utils/cache';
 import {
   cacheGetSync,
   cacheSetSync,
