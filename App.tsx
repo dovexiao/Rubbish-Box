@@ -573,7 +573,7 @@ function App() {
                             // 轮询继续
                           }
 
-                          await new Promise(resolve =>
+                          await new Promise((resolve: any) =>
                             setTimeout(resolve, intervalMs),
                           );
                         }

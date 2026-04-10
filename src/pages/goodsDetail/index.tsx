@@ -123,36 +123,6 @@ export default function GoodsDetail() {
     </View>
   );
 
-  // 计算详情长图的宽高比，保证在当前屏幕宽度下等比显示
-  useEffect(() => {
-    if (!goodsDetail?.detailImage || goodsDetail.detailImage.length === 0) {
-      setDetailRatios([]);
-      return;
-    }
-
-    const urls = goodsDetail.detailImage;
-    const tasks = urls.map(
-      url =>
-        new Promise<number>(resolve => {
-          Image.getSize(
-            url,
-            (w, h) => {
-              if (w > 0 && h > 0) {
-                resolve(w / h);
-              } else {
-                resolve(0.75); // 默认比例，防止为 0
-              }
-            },
-            () => resolve(0.75),
-          );
-        }),
-    );
-
-    void Promise.all(tasks).then(ratios => {
-      setDetailRatios(ratios);
-    });
-  }, [goodsDetail?.detailImage]);
-
   return (
     <PageContainer
       backgroundColor="#F6F7FA"
@@ -230,9 +200,20 @@ export default function GoodsDetail() {
                     source={{ uri: detailImage }}
                     style={{
                       width: '100%',
-                      aspectRatio: detailRatios[index] || 0.75,
+                      // 给个初始占位比例1，等图片 onLoad 返回真实宽高比时重新撑开高度
+                      aspectRatio: detailRatios[index] || 1,
                     }}
-                    resizeMode="cover"
+                    resizeMode="contain"
+                    onLoad={e => {
+                      const { width, height } = e.nativeEvent.source;
+                      if (width > 0 && height > 0) {
+                        setDetailRatios(prev => {
+                          const newRatios = [...prev];
+                          newRatios[index] = width / height;
+                          return newRatios;
+                        });
+                      }
+                    }}
                   />
                 ))
               : null}

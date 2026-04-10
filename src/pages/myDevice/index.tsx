@@ -159,7 +159,7 @@ export default function MyDevice() {
           </Flex>
           <View style={styles.popupFooter}>
             <TouchableOpacity
-              style={styles.cancalBtn}
+              style={styles.cancelBtn}
               onPress={() => {
                 setEditNamePopVisible(false);
               }}
