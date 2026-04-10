@@ -117620,8 +117620,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   // }
 
   function App() {
+    var _globalPopConfirmConf;
     var navigationRef = (0, _$$_REQUIRE(_dependencyMap[12], "@react-navigation/native").useNavigationContainerRef)();
     var globalPopConfirmRef = (0, _react.useRef)(null);
+    var globalPopConfirmClearTimerRef = (0, _react.useRef)(null);
     var _useState = (0, _react.useState)(null),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       jumpListener = _useState2[0],
@@ -117650,6 +117652,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState12 = (0, _slicedToArray2.default)(_useState11, 2),
       globalPopConfirmConfig = _useState12[0],
       setGlobalPopConfirmConfig = _useState12[1];
+    var _useState13 = (0, _react.useState)(false),
+      _useState14 = (0, _slicedToArray2.default)(_useState13, 2),
+      globalPopConfirmVisible = _useState14[0],
+      setGlobalPopConfirmVisible = _useState14[1];
+    var closeGlobalPopConfirm = function closeGlobalPopConfirm() {
+      setGlobalPopConfirmVisible(false);
+      if (globalPopConfirmClearTimerRef.current) {
+        clearTimeout(globalPopConfirmClearTimerRef.current);
+      }
+      globalPopConfirmClearTimerRef.current = setTimeout(function () {
+        setGlobalPopConfirmConfig(null);
+        globalPopConfirmClearTimerRef.current = null;
+      }, 260);
+    };
 
     // Harmony: 拦截系统返回（按键/手势），优先让 React Navigation 处理
     (0, _react.useEffect)(function () {
@@ -117680,10 +117696,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/navigation").setNavigationRef)(null);
       };
     }, [navigationRef]);
-    var _useState13 = (0, _react.useState)(false),
-      _useState14 = (0, _slicedToArray2.default)(_useState13, 2),
-      privacyReady = _useState14[0],
-      setPrivacyReady = _useState14[1];
+    var _useState15 = (0, _react.useState)(false),
+      _useState16 = (0, _slicedToArray2.default)(_useState15, 2),
+      privacyReady = _useState16[0],
+      setPrivacyReady = _useState16[1];
 
     // App 根层改为稳定的 in-tree 遮罩弹层，不再依赖 Modal/Portal 的时机。
     (0, _react.useEffect)(function () {
@@ -117922,13 +117938,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // 监听全局 PopConfirm 显示事件
     (0, _react.useEffect)(function () {
       var handler = function handler(config) {
-        var _globalPopConfirmRef$;
+        if (!config || typeof config !== 'object') {
+          return;
+        }
+        var hasTitle = config.title !== undefined && config.title !== null && config.title !== '';
+        var hasChildren = config.children !== undefined && config.children !== null;
+
+        // 忽略无标题且无内容的空配置，避免出现空白确认框闪现。
+        if (!hasTitle && !hasChildren) {
+          return;
+        }
+        if (globalPopConfirmClearTimerRef.current) {
+          clearTimeout(globalPopConfirmClearTimerRef.current);
+          globalPopConfirmClearTimerRef.current = null;
+        }
         setGlobalPopConfirmConfig(config);
-        (_globalPopConfirmRef$ = globalPopConfirmRef.current) == null || _globalPopConfirmRef$.open == null || _globalPopConfirmRef$.open();
+        setGlobalPopConfirmVisible(true);
       };
       _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('global:popConfirm:show', handler);
       return function () {
         _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('global:popConfirm:show', handler);
+        if (globalPopConfirmClearTimerRef.current) {
+          clearTimeout(globalPopConfirmClearTimerRef.current);
+          globalPopConfirmClearTimerRef.current = null;
+        }
       };
     }, []);
 
@@ -118645,42 +118678,41 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                         })]
                       })]
                     })
-                  }), globalPopConfirmConfig && /*#__PURE__*/(0, _jsxRuntime.jsx)(_popConfirm.default, {
+                  }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_popConfirm.default, {
                     ref: globalPopConfirmRef,
-                    title: /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
+                    visible: globalPopConfirmVisible,
+                    title: (globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.title) !== undefined && (globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.title) !== null && (globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.title) !== '' ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
                       direction: "column",
                       align: "center",
                       justify: "center",
-                      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").View, {
+                      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "@ant-design/react-native").Text, {
                         style: {
-                          paddingTop: 24,
                           fontSize: 16,
+                          paddingBottom: 12,
                           fontWeight: '500',
+                          color: '#333333',
                           textAlign: 'center'
                         },
-                        children: globalPopConfirmConfig.title
+                        children: globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.title
                       })
-                    }),
-                    confirmText: globalPopConfirmConfig.confirmText || '确定',
-                    cancelText: globalPopConfirmConfig.cancelText || '取消',
-                    showClose: globalPopConfirmConfig.showClose !== false,
-                    confirmColors: globalPopConfirmConfig.confirmColors,
-                    confirmTextColor: globalPopConfirmConfig.confirmTextColor,
+                    }) : undefined,
+                    confirmText: (globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.confirmText) || '确定',
+                    cancelText: (globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.cancelText) || '取消',
+                    showClose: (globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.showClose) !== false,
+                    maskClosable: (_globalPopConfirmConf = globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.maskClosable) != null ? _globalPopConfirmConf : true,
+                    confirmColors: globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.confirmColors,
+                    confirmTextColor: globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.confirmTextColor,
                     onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-                      var result = yield globalPopConfirmConfig.onConfirm == null ? void 0 : globalPopConfirmConfig.onConfirm();
+                      var result = yield globalPopConfirmConfig == null || globalPopConfirmConfig.onConfirm == null ? void 0 : globalPopConfirmConfig.onConfirm();
                       if (result !== false) {
-                        var _globalPopConfirmRef$2;
-                        (_globalPopConfirmRef$2 = globalPopConfirmRef.current) == null || _globalPopConfirmRef$2.close();
-                        setGlobalPopConfirmConfig(null);
+                        closeGlobalPopConfirm();
                       }
                     }),
                     onCancel: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-                      var _globalPopConfirmRef$3;
-                      yield globalPopConfirmConfig.onCancel == null ? void 0 : globalPopConfirmConfig.onCancel();
-                      (_globalPopConfirmRef$3 = globalPopConfirmRef.current) == null || _globalPopConfirmRef$3.close();
-                      setGlobalPopConfirmConfig(null);
+                      yield globalPopConfirmConfig == null || globalPopConfirmConfig.onCancel == null ? void 0 : globalPopConfirmConfig.onCancel();
+                      closeGlobalPopConfirm();
                     }),
-                    children: globalPopConfirmConfig.children || undefined
+                    children: (globalPopConfirmConfig == null ? void 0 : globalPopConfirmConfig.children) || undefined
                   })]
                 })
               })
@@ -118691,7 +118723,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   var _default = exports.default = App;
-},537,[1,2,25,42,3,538,552,553,961,962,556,88,1080,1079,1182,1240,559,1213,1206,1242,1245,1290,1291,1296,1298,1243,1299,1573,1572],"App.tsx");
+},537,[1,2,25,42,3,538,552,553,961,962,556,88,1080,1079,1182,1240,559,1221,1214,1242,1245,1290,1291,1296,1298,1243,1299,1573,1572],"App.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
   "use client";
@@ -174948,14 +174980,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 },1000,[1,970,1001],"src\\config\\index.ts");
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
-  "ENV": "production",
-  "API_BASE_URL": "https://boke-api.18qjz.cn",
+  "ENV": "development",
+  "API_BASE_URL": "https://boke-api-dev.18qjz.cn",
   "API_VERSION": "v1",
-  "ANDROID_PACKAGE_NAME": "com.boklock.m",
-  "IOS_BUNDLE_ID": "com.boklock.real.m",
-  "APP_NAME": "泊刻地锁",
-  "MAP_KEY_ANDROID": "65e063bf30af1d5cb5d2bf648243bff1",
-  "MAP_KEY_IOS": "4d3d8b30420bb15896f580757451268d"
+  "ANDROID_PACKAGE_NAME": "com.boklock.m.test",
+  "IOS_BUNDLE_ID": "com.boklock.dev.m",
+  "APP_NAME": "泊刻地锁测试",
+  "MAP_KEY_ANDROID": "4b3048de96b6aad0964ccaa7bf73ca93",
+  "MAP_KEY_IOS": "d5d21e20980f689673e0923b1888c287"
 };
 },1001,[],"src\\config\\env.static.json");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
@@ -216765,7 +216797,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return _ref11.apply(this, arguments);
     };
   }();
-},1182,[1,1045,1183,1184,1079,1189,1214,1215,25,2,3,963,970,961,1007,976,1222,1228,1230,1190,1231,1192,1239,1045,1046,974,1008],"src\\utils\\index.ts");
+},1182,[1,1045,1183,1184,1079,1197,1196,1189,25,2,3,963,970,961,1007,976,1222,1228,1230,1198,1231,1200,1239,1045,1046,974,1008],"src\\utils\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -217175,87 +217207,93 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   }
   function _getLocation() {
     _getLocation = (0, _asyncToGenerator2.default)(function* () {
-      var _options$type, _ref4, _options$timeout, _options$isHighAccura;
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var targetType = (_options$type = options.type) != null ? _options$type : 'wgs84';
-      var timeoutMs = (_ref4 = (_options$timeout = options.timeout) != null ? _options$timeout : options.highAccuracyExpireTime) != null ? _ref4 : 10000;
-      var enableHighAccuracy = (_options$isHighAccura = options.isHighAccuracy) != null ? _options$isHighAccura : true;
-      if (isHarmonyPlatform) {
-        var granted = yield requestHarmonyLocationPermission();
-        if (!granted) {
+      return (0, _$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/utils/permissions").runInPermissionQueue)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+        var _options$type, _ref5, _options$timeout, _options$isHighAccura;
+        var hasLocationPermission = yield (0, _$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/utils/permissions").showPermissionPromptIfNeeded)('location');
+        if (!hasLocationPermission) {
           throw new Error('LOCATION_PERMISSION_DENIED');
         }
-        yield initAMapGeolocation();
-        var harmonyLocation = resolveHarmonyLocationModule();
-        var result = yield harmonyLocation == null || harmonyLocation.getCurrentLocation == null ? void 0 : harmonyLocation.getCurrentLocation({
-          enableHighAccuracy: enableHighAccuracy,
-          timeoutMs: timeoutMs
-        });
-        if (!result) {
-          throw new Error('LOCATION_UNAVAILABLE');
-        }
-        var _normalized = normalizeCoordinate({
-          latitude: result.latitude,
-          longitude: result.longitude
-        }, 'wgs84', targetType);
-        return {
-          latitude: _normalized.latitude,
-          longitude: _normalized.longitude,
-          accuracy: result.accuracy,
-          altitude: options.altitude ? result.altitude : undefined,
-          speed: result.speed,
-          horizontalAccuracy: result.accuracy,
-          verticalAccuracy: undefined
-        };
-      }
-      if (_reactNative.Platform.OS === 'android') {
-        try {
-          yield _reactNative.PermissionsAndroid.requestMultiple([_reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, _reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]);
-        } catch (error) {
-          console.warn('定位权限请求失败:', error);
-        }
-      }
-      yield initAMapGeolocation();
-      if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
-        throw new Error('LOCATION_MODULE_UNAVAILABLE');
-      }
-      var raw = yield new Promise(function (resolve, reject) {
-        var _options$highAccuracy;
-        Geolocation.getCurrentPosition(function (position) {
-          var _position$coords;
-          var coords = (_position$coords = position == null ? void 0 : position.coords) != null ? _position$coords : {};
-          resolve({
-            latitude: Number(coords.latitude),
-            longitude: Number(coords.longitude),
-            speed: typeof coords.speed === 'number' ? coords.speed : position == null ? void 0 : position.speed,
-            accuracy: typeof coords.accuracy === 'number' ? coords.accuracy : position == null ? void 0 : position.accuracy,
-            altitude: options.altitude && typeof coords.altitude === 'number' ? coords.altitude : undefined,
-            verticalAccuracy: typeof coords.verticalAccuracy === 'number' ? coords.verticalAccuracy : undefined,
-            horizontalAccuracy: typeof coords.horizontalAccuracy === 'number' ? coords.horizontalAccuracy : typeof coords.accuracy === 'number' ? coords.accuracy : undefined
+        var targetType = (_options$type = options.type) != null ? _options$type : 'wgs84';
+        var timeoutMs = (_ref5 = (_options$timeout = options.timeout) != null ? _options$timeout : options.highAccuracyExpireTime) != null ? _ref5 : 10000;
+        var enableHighAccuracy = (_options$isHighAccura = options.isHighAccuracy) != null ? _options$isHighAccura : true;
+        if (isHarmonyPlatform) {
+          var granted = yield requestHarmonyLocationPermission();
+          if (!granted) {
+            throw new Error('LOCATION_PERMISSION_DENIED');
+          }
+          yield initAMapGeolocation();
+          var harmonyLocation = resolveHarmonyLocationModule();
+          var result = yield harmonyLocation == null || harmonyLocation.getCurrentLocation == null ? void 0 : harmonyLocation.getCurrentLocation({
+            enableHighAccuracy: enableHighAccuracy,
+            timeoutMs: timeoutMs
           });
-        }, function (error) {
-          reject(error);
-        }, {
-          enableHighAccuracy: enableHighAccuracy,
-          timeout: timeoutMs,
-          maximumAge: (_options$highAccuracy = options.highAccuracyExpireTime) != null ? _options$highAccuracy : 0
+          if (!result) {
+            throw new Error('LOCATION_UNAVAILABLE');
+          }
+          var _normalized = normalizeCoordinate({
+            latitude: result.latitude,
+            longitude: result.longitude
+          }, 'wgs84', targetType);
+          return {
+            latitude: _normalized.latitude,
+            longitude: _normalized.longitude,
+            accuracy: result.accuracy,
+            altitude: options.altitude ? result.altitude : undefined,
+            speed: result.speed,
+            horizontalAccuracy: result.accuracy,
+            verticalAccuracy: undefined
+          };
+        }
+        if (_reactNative.Platform.OS === 'android') {
+          try {
+            yield _reactNative.PermissionsAndroid.requestMultiple([_reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, _reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]);
+          } catch (error) {
+            console.warn('定位权限请求失败:', error);
+          }
+        }
+        yield initAMapGeolocation();
+        if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
+          throw new Error('LOCATION_MODULE_UNAVAILABLE');
+        }
+        var raw = yield new Promise(function (resolve, reject) {
+          var _options$highAccuracy;
+          Geolocation.getCurrentPosition(function (position) {
+            var _position$coords;
+            var coords = (_position$coords = position == null ? void 0 : position.coords) != null ? _position$coords : {};
+            resolve({
+              latitude: Number(coords.latitude),
+              longitude: Number(coords.longitude),
+              speed: typeof coords.speed === 'number' ? coords.speed : position == null ? void 0 : position.speed,
+              accuracy: typeof coords.accuracy === 'number' ? coords.accuracy : position == null ? void 0 : position.accuracy,
+              altitude: options.altitude && typeof coords.altitude === 'number' ? coords.altitude : undefined,
+              verticalAccuracy: typeof coords.verticalAccuracy === 'number' ? coords.verticalAccuracy : undefined,
+              horizontalAccuracy: typeof coords.horizontalAccuracy === 'number' ? coords.horizontalAccuracy : typeof coords.accuracy === 'number' ? coords.accuracy : undefined
+            });
+          }, function (error) {
+            reject(error);
+          }, {
+            enableHighAccuracy: enableHighAccuracy,
+            timeout: timeoutMs,
+            maximumAge: (_options$highAccuracy = options.highAccuracyExpireTime) != null ? _options$highAccuracy : 0
+          });
         });
-      });
-      if (!Number.isFinite(raw.latitude) || !Number.isFinite(raw.longitude)) {
-        throw new Error('LOCATION_INVALID');
-      }
-      var normalized = normalizeCoordinate({
-        latitude: raw.latitude,
-        longitude: raw.longitude
-      }, 'gcj02', targetType);
-      return Object.assign({}, raw, {
-        latitude: normalized.latitude,
-        longitude: normalized.longitude
-      });
+        if (!Number.isFinite(raw.latitude) || !Number.isFinite(raw.longitude)) {
+          throw new Error('LOCATION_INVALID');
+        }
+        var normalized = normalizeCoordinate({
+          latitude: raw.latitude,
+          longitude: raw.longitude
+        }, 'gcj02', targetType);
+        return Object.assign({}, raw, {
+          latitude: normalized.latitude,
+          longitude: normalized.longitude
+        });
+      }));
     });
     return _getLocation.apply(this, arguments);
   }
-},1184,[1,2,3,970,1185],"src\\utils\\location.ts");
+},1184,[1,2,3,970,1185,1189],"src\\utils\\location.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -217980,6 +218018,966 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   }
   exports.setLocatingWithReGeocode = setLocatingWithReGeocode;
 },1188,[3],"node_modules\\react-native-amap-geolocation\\lib\\js\\amap-geolocation.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.PERMISSION_PROMPT_MESSAGES = void 0;
+  exports.checkAndRequestBluetoothPermission = checkAndRequestBluetoothPermission;
+  exports.checkAndRequestCameraPermission = checkAndRequestCameraPermission;
+  exports.checkAndRequestPhotoPermission = checkAndRequestPhotoPermission;
+  exports.checkBluetoothPermission = checkBluetoothPermission;
+  exports.checkCameraPermission = checkCameraPermission;
+  exports.checkPhotoPermission = checkPhotoPermission;
+  exports.openSystemSettings = openSystemSettings;
+  exports.permissionMutex = void 0;
+  exports.runInPermissionQueue = runInPermissionQueue;
+  exports.showPermissionPromptIfNeeded = showPermissionPromptIfNeeded;
+  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _classCallCheck2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/classCallCheck"));
+  var _createClass2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/createClass"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
+  var _react = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "react"));
+  var _eventCenter = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./eventCenter"));
+  /**
+   * 检查相册权限
+   * @returns Promise<{ granted: boolean; message?: string; canOpenSettings?: boolean }>
+   */
+
+  var PERMISSION_PROMPT_MESSAGES = exports.PERMISSION_PROMPT_MESSAGES = {
+    photo: '我们将向您申请相册/存储权限，用于从相册选择照片以上传头像、提交反馈截图等功能，您可以拒绝授权，后续如有需要可在系统设置中开启。',
+    camera: '我们将向您申请相机权限，用于扫一扫绑定地锁设备、更换地锁二维码等功能，您可以拒绝授权，后续如有需要可在系统设置中开启。',
+    bluetooth: '我们将向您申请蓝牙权限，用于与您的专属地锁设备进行近场连接控制等交互功能，您可以拒绝授权，后续如有需要可在系统设置中开启。',
+    location: '我们将向您申请位置权限，用于设备定位、地图展示方便您查看与地锁距离快捷导航等功能，您可以拒绝授权，后续如有需要可在系统设置中开启。'
+  };
+  var permissionPromptMemoryCache = {};
+  function markPermissionPromptAcknowledged(type) {
+    permissionPromptMemoryCache[type] = true;
+  }
+  function isPromptAcknowledged(value) {
+    if (value === true) return true;
+    if (value === 1) return true;
+    if (value === 'true' || value === '1') return true;
+    if (value && typeof value === 'object') {
+      if (value.data === true || value.value === true) return true;
+      if (value.data === 1 || value.value === 1) return true;
+      if (value.data === 'true' || value.value === 'true') return true;
+      if (value.data === '1' || value.value === '1') return true;
+    }
+    return false;
+  }
+  var PermissionMutex = /*#__PURE__*/function () {
+    function PermissionMutex() {
+      (0, _classCallCheck2.default)(this, PermissionMutex);
+      this.queue = Promise.resolve();
+      this.isLocked = false;
+    }
+    return (0, _createClass2.default)(PermissionMutex, [{
+      key: "lock",
+      value: function () {
+        var _lock = (0, _asyncToGenerator2.default)(function* (task) {
+          var _this = this;
+          return new Promise(function (resolve, reject) {
+            _this.queue = _this.queue.then(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+              _this.isLocked = true;
+              try {
+                // 这里强制加一个小延迟，确保前一个弹窗完全销毁后再呼出新的
+                yield new Promise(function (r) {
+                  return setTimeout(r, 600);
+                });
+                var result = yield task();
+                resolve(result);
+              } catch (e) {
+                reject(e);
+              } finally {
+                _this.isLocked = false;
+                // 增加延迟，防止连续弹窗时与系统权限弹窗冲突，导致弹窗被吞
+                yield new Promise(function (r) {
+                  return setTimeout(r, 800);
+                });
+              }
+            }));
+          });
+        });
+        function lock(_x) {
+          return _lock.apply(this, arguments);
+        }
+        return lock;
+      }()
+    }]);
+  }();
+  var permissionMutex = exports.permissionMutex = new PermissionMutex();
+  var PromptMutex = /*#__PURE__*/function () {
+    function PromptMutex() {
+      (0, _classCallCheck2.default)(this, PromptMutex);
+      this.queue = Promise.resolve();
+    }
+    return (0, _createClass2.default)(PromptMutex, [{
+      key: "lock",
+      value: function () {
+        var _lock2 = (0, _asyncToGenerator2.default)(function* (task) {
+          var _this2 = this;
+          return new Promise(function (resolve, reject) {
+            _this2.queue = _this2.queue.then(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+              try {
+                resolve(yield task());
+              } catch (e) {
+                reject(e);
+              } finally {
+                // 让弹窗关闭动画和系统窗口切换有缓冲，避免内容为空或被系统弹窗吞掉
+                yield new Promise(function (r) {
+                  return setTimeout(r, 500);
+                });
+              }
+            }));
+          });
+        });
+        function lock(_x2) {
+          return _lock2.apply(this, arguments);
+        }
+        return lock;
+      }()
+    }]);
+  }();
+  var permissionPromptMutex = new PromptMutex();
+  function runInPermissionQueue(_x3) {
+    return _runInPermissionQueue.apply(this, arguments);
+  }
+  function _runInPermissionQueue() {
+    _runInPermissionQueue = (0, _asyncToGenerator2.default)(function* (task) {
+      return permissionMutex.lock(task);
+    });
+    return _runInPermissionQueue.apply(this, arguments);
+  }
+  function showPermissionPromptIfNeeded(_x4) {
+    return _showPermissionPromptIfNeeded.apply(this, arguments);
+  }
+  function _showPermissionPromptIfNeeded() {
+    _showPermissionPromptIfNeeded = (0, _asyncToGenerator2.default)(function* (type) {
+      return permissionPromptMutex.lock(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+        var message = PERMISSION_PROMPT_MESSAGES[type];
+        if (!message) return true;
+        if (_reactNative.Platform.OS !== 'android') return true;
+
+        // 优先命中内存缓存，避免每次都读 storage。
+        if (permissionPromptMemoryCache[type]) {
+          return true;
+        }
+        var cacheKey = `system_permission_prompt_${type}`;
+        try {
+          var hasPrompted = yield (0, _$$_REQUIRE(_dependencyMap[7], "./index").getStorage)({
+            key: cacheKey
+          });
+          if (isPromptAcknowledged(hasPrompted)) {
+            markPermissionPromptAcknowledged(type);
+            return true;
+          }
+        } catch (e) {}
+        var confirmed = yield new Promise(function (resolve) {
+          _eventCenter.default.trigger('global:popConfirm:show', {
+            title: '权限使用告知',
+            children: _react.default.createElement(_reactNative.Text, {
+              style: {
+                fontSize: 14,
+                color: '#333333',
+                marginTop: 10,
+                textAlign: 'center',
+                lineHeight: 20
+              }
+            }, message),
+            showClose: false,
+            maskClosable: false,
+            confirmText: '我知道了',
+            onConfirm: function onConfirm() {
+              markPermissionPromptAcknowledged(type);
+              void (0, _$$_REQUIRE(_dependencyMap[7], "./index").setStorage)({
+                key: cacheKey,
+                data: {
+                  data: true
+                }
+              }).catch(function () {});
+              // 先立即结束当前确认回调，让弹窗先关闭。
+              resolve(true);
+            }
+          });
+        });
+
+        // 确认后再给一点时间，确保告知框收起完成后再继续系统权限流程。
+        if (confirmed) {
+          yield new Promise(function (r) {
+            return setTimeout(r, 500);
+          });
+        }
+        return confirmed;
+      }));
+    });
+    return _showPermissionPromptIfNeeded.apply(this, arguments);
+  }
+  function checkPhotoPermission() {
+    return _checkPhotoPermission.apply(this, arguments);
+  }
+  /**
+   * 检查相机权限
+   * @returns Promise<{ granted: boolean; message?: string; canOpenSettings?: boolean }>
+   */
+  function _checkPhotoPermission() {
+    _checkPhotoPermission = (0, _asyncToGenerator2.default)(function* () {
+      return permissionMutex.lock(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+        try {
+          if (_reactNative.Platform.OS === 'android') {
+            // Android 13+ (API 33+) 需要 READ_MEDIA_IMAGES
+            // Android < 13 需要 READ_EXTERNAL_STORAGE
+            var androidVersion = _reactNative.Platform.Version;
+            if (androidVersion >= 33) {
+              // Android 13+
+              var permission = _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+              var checkResult = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").check)(permission);
+              if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                return {
+                  granted: true
+                };
+              }
+              if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.DENIED) {
+                yield showPermissionPromptIfNeeded('photo');
+                var requestResult = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").request)(permission);
+                if (requestResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                  return {
+                    granted: true
+                  };
+                } else {
+                  return {
+                    granted: false,
+                    message: '相册权限被拒绝'
+                  };
+                }
+              }
+              if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.BLOCKED) {
+                return {
+                  granted: false,
+                  message: '相册权限已被永久拒绝，请在设置中开启',
+                  canOpenSettings: true
+                };
+              }
+              return {
+                granted: false,
+                message: '相册权限状态未知'
+              };
+            } else {
+              // Android < 13
+              var permissionType = 'photo';
+              var _permission = _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
+              var _checkResult = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").check)(_permission);
+              if (_checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                return {
+                  granted: true
+                };
+              }
+              if (_checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.DENIED) {
+                yield showPermissionPromptIfNeeded(permissionType);
+                var _requestResult = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").request)(_permission);
+                if (_requestResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                  return {
+                    granted: true
+                  };
+                } else {
+                  return {
+                    granted: false,
+                    message: '相册权限被拒绝'
+                  };
+                }
+              }
+              if (_checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.BLOCKED) {
+                return {
+                  granted: false,
+                  message: '相册权限已被永久拒绝，请在设置中开启',
+                  canOpenSettings: true
+                };
+              }
+              return {
+                granted: false,
+                message: '相册权限状态未知'
+              };
+            }
+          } else if (_reactNative.Platform.OS === 'ios') {
+            // iOS
+            var _permissionType = 'photo';
+            var _permission2 = _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").PERMISSIONS.IOS.PHOTO_LIBRARY;
+            var _checkResult2 = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").check)(_permission2);
+            if (_checkResult2 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+              return {
+                granted: true
+              };
+            }
+            if (_checkResult2 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.DENIED) {
+              yield showPermissionPromptIfNeeded(_permissionType);
+              var _requestResult2 = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").request)(_permission2);
+              if (_requestResult2 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                return {
+                  granted: true
+                };
+              } else {
+                return {
+                  granted: false,
+                  message: '相册权限被拒绝'
+                };
+              }
+            }
+            if (_checkResult2 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.BLOCKED) {
+              return {
+                granted: false,
+                message: '相册权限已被永久拒绝，请在设置中开启',
+                canOpenSettings: true
+              };
+            }
+            return {
+              granted: false,
+              message: '相册权限状态未知'
+            };
+          } else {
+            // 其他平台（如鸿蒙）暂不支持权限库，统一视为已授权，由系统API或原生侧内部处理权限拦截
+            return {
+              granted: true
+            };
+          }
+        } catch (error) {
+          console.error('检查相册权限失败:', error);
+          return {
+            granted: false,
+            message: (error == null ? void 0 : error.message) || '检查相册权限失败'
+          };
+        }
+      }));
+    });
+    return _checkPhotoPermission.apply(this, arguments);
+  }
+  function checkCameraPermission() {
+    return _checkCameraPermission.apply(this, arguments);
+  }
+  /**
+   * 打开系统设置页面
+   */
+  function _checkCameraPermission() {
+    _checkCameraPermission = (0, _asyncToGenerator2.default)(function* () {
+      return permissionMutex.lock(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+        try {
+          if (_reactNative.Platform.OS === 'android') {
+            var permissionType = 'camera';
+            var permission = _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").PERMISSIONS.ANDROID.CAMERA;
+            var checkResult = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").check)(permission);
+            if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+              return {
+                granted: true
+              };
+            }
+            if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.DENIED) {
+              yield showPermissionPromptIfNeeded(permissionType);
+              var requestResult = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").request)(permission);
+              if (requestResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                return {
+                  granted: true
+                };
+              } else {
+                return {
+                  granted: false,
+                  message: '相机权限被拒绝'
+                };
+              }
+            }
+            if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.BLOCKED) {
+              return {
+                granted: false,
+                message: '相机权限已被永久拒绝，请在设置中开启',
+                canOpenSettings: true
+              };
+            }
+            return {
+              granted: false,
+              message: '相机权限状态未知'
+            };
+          } else if (_reactNative.Platform.OS === 'ios') {
+            // iOS
+            var _permissionType2 = 'camera';
+            var _permission3 = _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").PERMISSIONS.IOS.CAMERA;
+            var _checkResult3 = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").check)(_permission3);
+            if (_checkResult3 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+              return {
+                granted: true
+              };
+            }
+            if (_checkResult3 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.DENIED) {
+              yield showPermissionPromptIfNeeded(_permissionType2);
+              var _requestResult3 = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").request)(_permission3);
+              if (_requestResult3 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                return {
+                  granted: true
+                };
+              } else {
+                return {
+                  granted: false,
+                  message: '相机权限被拒绝'
+                };
+              }
+            }
+            if (_checkResult3 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.BLOCKED) {
+              return {
+                granted: false,
+                message: '相机权限已被永久拒绝，请在设置中开启',
+                canOpenSettings: true
+              };
+            }
+            return {
+              granted: false,
+              message: '相机权限状态未知'
+            };
+          } else {
+            // 其他平台（如鸿蒙）
+            return {
+              granted: true
+            };
+          }
+        } catch (error) {
+          console.error('检查相机权限失败:', error);
+          return {
+            granted: false,
+            message: (error == null ? void 0 : error.message) || '检查相机权限失败'
+          };
+        }
+      }));
+    });
+    return _checkCameraPermission.apply(this, arguments);
+  }
+  function openSystemSettings() {
+    return _openSystemSettings.apply(this, arguments);
+  }
+  /**
+   * 检查并请求相册权限（带 Toast 提示）
+   * @returns Promise<boolean> 是否有权限
+   */
+  function _openSystemSettings() {
+    _openSystemSettings = (0, _asyncToGenerator2.default)(function* () {
+      try {
+        if (_reactNative.Platform.OS === 'ios') {
+          yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").openSettings)();
+        } else {
+          // Android
+          yield _reactNative.Linking.openSettings();
+        }
+      } catch (error) {
+        console.error('打开设置页面失败:', error);
+        (0, _$$_REQUIRE(_dependencyMap[9], "./toast").showToast)('无法打开设置页面');
+      }
+    });
+    return _openSystemSettings.apply(this, arguments);
+  }
+  function checkAndRequestPhotoPermission() {
+    return _checkAndRequestPhotoPermission.apply(this, arguments);
+  }
+  /**
+   * 检查并请求相机权限（带 Toast 提示）
+   * @returns Promise<boolean> 是否有权限
+   */
+  function _checkAndRequestPhotoPermission() {
+    _checkAndRequestPhotoPermission = (0, _asyncToGenerator2.default)(function* () {
+      var result = yield checkPhotoPermission();
+      if (result.granted) {
+        return true;
+      }
+      if (result.canOpenSettings) {
+        (0, _$$_REQUIRE(_dependencyMap[9], "./toast").showToast)(result.message || '相册权限被拒绝');
+        // 可以在这里添加打开设置的逻辑
+        // await openSystemSettings();
+      } else {
+        (0, _$$_REQUIRE(_dependencyMap[9], "./toast").showToast)(result.message || '相册权限被拒绝');
+      }
+      return false;
+    });
+    return _checkAndRequestPhotoPermission.apply(this, arguments);
+  }
+  function checkAndRequestCameraPermission() {
+    return _checkAndRequestCameraPermission.apply(this, arguments);
+  }
+  /**
+   * 检查蓝牙权限
+   * @returns Promise<{ granted: boolean; message?: string; canOpenSettings?: boolean }>
+   */
+  function _checkAndRequestCameraPermission() {
+    _checkAndRequestCameraPermission = (0, _asyncToGenerator2.default)(function* () {
+      var result = yield checkCameraPermission();
+      if (result.granted) {
+        return true;
+      }
+      if (result.canOpenSettings) {
+        (0, _$$_REQUIRE(_dependencyMap[9], "./toast").showToast)(result.message || '相机权限被拒绝');
+        // 可以在这里添加打开设置的逻辑
+        // await openSystemSettings();
+      } else {
+        (0, _$$_REQUIRE(_dependencyMap[9], "./toast").showToast)(result.message || '相机权限被拒绝');
+      }
+      return false;
+    });
+    return _checkAndRequestCameraPermission.apply(this, arguments);
+  }
+  function checkBluetoothPermission() {
+    return _checkBluetoothPermission.apply(this, arguments);
+  }
+  /**
+   * 检查并请求蓝牙权限（带 Toast 提示）
+   * @returns Promise<boolean> 是否有权限
+   */
+  function _checkBluetoothPermission() {
+    _checkBluetoothPermission = (0, _asyncToGenerator2.default)(function* () {
+      return permissionMutex.lock(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+        try {
+          if (_reactNative.Platform.OS === 'android') {
+            // Android 12+ (API 31+) 需要 BLUETOOTH_CONNECT 权限
+            // Android < 12 需要 BLUETOOTH 和 BLUETOOTH_ADMIN 权限
+            var androidVersion = _reactNative.Platform.Version;
+            if (androidVersion >= 31) {
+              // Android 12+
+              var permissionType = 'bluetooth';
+              var permission = _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").PERMISSIONS.ANDROID.BLUETOOTH_CONNECT;
+              var checkResult = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").check)(permission);
+              if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                return {
+                  granted: true
+                };
+              }
+              if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.DENIED) {
+                yield showPermissionPromptIfNeeded(permissionType);
+                var requestResult = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").request)(permission);
+                if (requestResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                  return {
+                    granted: true
+                  };
+                } else {
+                  return {
+                    granted: false,
+                    message: '蓝牙连接权限被拒绝'
+                  };
+                }
+              }
+              if (checkResult === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.BLOCKED) {
+                return {
+                  granted: false,
+                  message: '蓝牙连接权限已被永久拒绝，请在设置中开启',
+                  canOpenSettings: true
+                };
+              }
+              return {
+                granted: false,
+                message: '蓝牙连接权限状态未知'
+              };
+            } else {
+              // Android < 12
+              // 旧版本 Android 蓝牙权限在安装时自动授予
+              return {
+                granted: true
+              };
+            }
+          } else if (_reactNative.Platform.OS === 'ios') {
+            // iOS
+            // iOS 13+ 使用 BLUETOOTH
+            // iOS 13 之前蓝牙权限在 Info.plist 中配置，系统会自动处理
+            try {
+              var _permissionType3 = 'bluetooth';
+              var _permission4 = _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL;
+              var _checkResult4 = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").check)(_permission4);
+              if (_checkResult4 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                return {
+                  granted: true
+                };
+              }
+              if (_checkResult4 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.DENIED) {
+                yield showPermissionPromptIfNeeded(_permissionType3);
+                var _requestResult4 = yield (0, _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").request)(_permission4);
+                if (_requestResult4 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.GRANTED) {
+                  return {
+                    granted: true
+                  };
+                } else {
+                  return {
+                    granted: false,
+                    message: '蓝牙权限被拒绝'
+                  };
+                }
+              }
+              if (_checkResult4 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.BLOCKED) {
+                return {
+                  granted: false,
+                  message: '蓝牙权限已被永久拒绝，请在设置中开启',
+                  canOpenSettings: true
+                };
+              }
+              if (_checkResult4 === _$$_REQUIRE(_dependencyMap[8], "react-native-permissions").RESULTS.UNAVAILABLE) {
+                // iOS 13 之前的设备，权限在 Info.plist 中配置，系统会自动处理
+                return {
+                  granted: true
+                };
+              }
+              return {
+                granted: false,
+                message: '蓝牙权限状态未知'
+              };
+            } catch (error) {
+              // 如果权限检查失败（可能是 iOS 版本不支持），返回已授权
+              // 因为旧版本 iOS 蓝牙权限在 Info.plist 中配置
+              console.warn('iOS 蓝牙权限检查失败，使用默认授权:', error);
+              return {
+                granted: true
+              };
+            }
+          } else {
+            // 其他平台（如鸿蒙）暂不支持当前权限库的蓝牙能力
+            return {
+              granted: true
+            };
+          }
+        } catch (error) {
+          console.error('检查蓝牙权限失败:', error);
+          return {
+            granted: false,
+            message: (error == null ? void 0 : error.message) || '检查蓝牙权限失败'
+          };
+        }
+      }));
+    });
+    return _checkBluetoothPermission.apply(this, arguments);
+  }
+  function checkAndRequestBluetoothPermission() {
+    return _checkAndRequestBluetoothPermission.apply(this, arguments);
+  }
+  function _checkAndRequestBluetoothPermission() {
+    _checkAndRequestBluetoothPermission = (0, _asyncToGenerator2.default)(function* () {
+      var result = yield checkBluetoothPermission();
+      if (result.granted) {
+        return true;
+      }
+      if (result.canOpenSettings) {
+        (0, _$$_REQUIRE(_dependencyMap[9], "./toast").showToast)(result.message || '蓝牙权限被拒绝');
+        // 可以在这里添加打开设置的逻辑
+        // await openSystemSettings();
+      } else {
+        (0, _$$_REQUIRE(_dependencyMap[9], "./toast").showToast)(result.message || '蓝牙权限被拒绝');
+      }
+      return false;
+    });
+    return _checkAndRequestBluetoothPermission.apply(this, arguments);
+  }
+},1189,[1,2,13,14,3,42,1007,1182,1190,1196],"src\\utils\\permissions.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var _exportNames = {
+    check: true,
+    checkLocationAccuracy: true,
+    checkMultiple: true,
+    checkNotifications: true,
+    openLimitedPhotoLibraryPicker: true,
+    openSettings: true,
+    request: true,
+    requestLocationAccuracy: true,
+    requestMultiple: true,
+    requestNotifications: true,
+    PERMISSIONS: true,
+    RESULTS: true
+  };
+  Object.defineProperty(exports, "PERMISSIONS", {
+    enumerable: true,
+    get: function get() {
+      return _$$_REQUIRE(_dependencyMap[0], "./permissions").PERMISSIONS;
+    }
+  });
+  Object.defineProperty(exports, "RESULTS", {
+    enumerable: true,
+    get: function get() {
+      return _$$_REQUIRE(_dependencyMap[1], "./results").RESULTS;
+    }
+  });
+  exports.requestNotifications = exports.requestMultiple = exports.requestLocationAccuracy = exports.request = exports.openSettings = exports.openLimitedPhotoLibraryPicker = exports.default = exports.checkNotifications = exports.checkMultiple = exports.checkLocationAccuracy = exports.check = void 0;
+  Object.keys(_$$_REQUIRE(_dependencyMap[2], "./types")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[2], "./types")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[2], "./types")[key];
+      }
+    });
+  });
+  var check = exports.check = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.check;
+  var checkLocationAccuracy = exports.checkLocationAccuracy = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.checkLocationAccuracy;
+  var checkMultiple = exports.checkMultiple = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.checkMultiple;
+  var checkNotifications = exports.checkNotifications = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.checkNotifications;
+  var openLimitedPhotoLibraryPicker = exports.openLimitedPhotoLibraryPicker = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.openLimitedPhotoLibraryPicker;
+  var openSettings = exports.openSettings = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.openSettings;
+  var request = exports.request = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.request;
+  var requestLocationAccuracy = exports.requestLocationAccuracy = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.requestLocationAccuracy;
+  var requestMultiple = exports.requestMultiple = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.requestMultiple;
+  var requestNotifications = exports.requestNotifications = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.requestNotifications;
+  var _default = exports.default = {
+    PERMISSIONS: _$$_REQUIRE(_dependencyMap[0], "./permissions").PERMISSIONS,
+    RESULTS: _$$_REQUIRE(_dependencyMap[1], "./results").RESULTS,
+    check: check,
+    checkLocationAccuracy: checkLocationAccuracy,
+    checkMultiple: checkMultiple,
+    checkNotifications: checkNotifications,
+    openLimitedPhotoLibraryPicker: openLimitedPhotoLibraryPicker,
+    openSettings: openSettings,
+    request: request,
+    requestLocationAccuracy: requestLocationAccuracy,
+    requestMultiple: requestMultiple,
+    requestNotifications: requestNotifications
+  };
+},1190,[1191,1192,1193,1194],"node_modules\\react-native-permissions\\src\\index.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.PERMISSIONS = void 0;
+  var PERMISSIONS = exports.PERMISSIONS = Object.freeze({
+    ANDROID: {},
+    IOS: {},
+    WINDOWS: {}
+  });
+},1191,[],"node_modules\\react-native-permissions\\src\\permissions.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.RESULTS = void 0;
+  var RESULTS = exports.RESULTS = Object.freeze({
+    UNAVAILABLE: 'unavailable',
+    BLOCKED: 'blocked',
+    DENIED: 'denied',
+    GRANTED: 'granted',
+    LIMITED: 'limited'
+  });
+},1192,[],"node_modules\\react-native-permissions\\src\\results.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1193,[],"node_modules\\react-native-permissions\\src\\types.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.methods = void 0;
+  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  function check() {
+    return _check.apply(this, arguments);
+  }
+  function _check() {
+    _check = (0, _asyncToGenerator2.default)(function* () {
+      return _$$_REQUIRE(_dependencyMap[2], "./results").RESULTS.UNAVAILABLE;
+    });
+    return _check.apply(this, arguments);
+  }
+  function checkNotifications() {
+    return _checkNotifications.apply(this, arguments);
+  }
+  function _checkNotifications() {
+    _checkNotifications = (0, _asyncToGenerator2.default)(function* () {
+      return {
+        status: _$$_REQUIRE(_dependencyMap[2], "./results").RESULTS.UNAVAILABLE,
+        settings: {}
+      };
+    });
+    return _checkNotifications.apply(this, arguments);
+  }
+  function checkMultiple(_x) {
+    return _checkMultiple.apply(this, arguments);
+  }
+  function _checkMultiple() {
+    _checkMultiple = (0, _asyncToGenerator2.default)(function* (permissions) {
+      return permissions.reduce(function (acc, permission) {
+        acc[permission] = _$$_REQUIRE(_dependencyMap[2], "./results").RESULTS.UNAVAILABLE;
+        return acc;
+      }, {});
+    });
+    return _checkMultiple.apply(this, arguments);
+  }
+  var methods = exports.methods = {
+    check: check,
+    checkLocationAccuracy: _$$_REQUIRE(_dependencyMap[3], "./unsupportedPlatformMethods").checkLocationAccuracy,
+    checkMultiple: checkMultiple,
+    checkNotifications: checkNotifications,
+    openLimitedPhotoLibraryPicker: _$$_REQUIRE(_dependencyMap[3], "./unsupportedPlatformMethods").openLimitedPhotoLibraryPicker,
+    openSettings: Promise.reject,
+    request: check,
+    requestLocationAccuracy: _$$_REQUIRE(_dependencyMap[3], "./unsupportedPlatformMethods").requestLocationAccuracy,
+    requestMultiple: checkMultiple,
+    requestNotifications: checkNotifications
+  };
+},1194,[1,2,1192,1195],"node_modules\\react-native-permissions\\src\\methods.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.checkLocationAccuracy = checkLocationAccuracy;
+  exports.openLimitedPhotoLibraryPicker = openLimitedPhotoLibraryPicker;
+  exports.requestLocationAccuracy = requestLocationAccuracy;
+  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var IOS_14 = 'Only supported by iOS 14 and above';
+  function checkLocationAccuracy() {
+    return _checkLocationAccuracy.apply(this, arguments);
+  }
+  function _checkLocationAccuracy() {
+    _checkLocationAccuracy = (0, _asyncToGenerator2.default)(function* () {
+      throw new Error(IOS_14);
+    });
+    return _checkLocationAccuracy.apply(this, arguments);
+  }
+  function requestLocationAccuracy(_x) {
+    return _requestLocationAccuracy.apply(this, arguments);
+  }
+  function _requestLocationAccuracy() {
+    _requestLocationAccuracy = (0, _asyncToGenerator2.default)(function* (_options) {
+      throw new Error(IOS_14);
+    });
+    return _requestLocationAccuracy.apply(this, arguments);
+  }
+  function openLimitedPhotoLibraryPicker() {
+    return _openLimitedPhotoLibraryPicker.apply(this, arguments);
+  }
+  function _openLimitedPhotoLibraryPicker() {
+    _openLimitedPhotoLibraryPicker = (0, _asyncToGenerator2.default)(function* () {
+      throw new Error(IOS_14);
+    });
+    return _openLimitedPhotoLibraryPicker.apply(this, arguments);
+  }
+},1195,[1,2],"node_modules\\react-native-permissions\\src\\unsupportedPlatformMethods.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.hideLoading = hideLoading;
+  exports.showLoading = showLoading;
+  exports.showToast = showToast;
+  var _reactNative2 = _$$_REQUIRE(_dependencyMap[1], "react-native");
+  var _eventCenter = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "./eventCenter"));
+  var globalLoadingKey = null;
+  var isGlobalLoadingVisible = false;
+  var lastHideLoadingAt = 0;
+  var pendingToastTimer = null;
+  function scheduleToast(task) {
+    var shouldWaitLoadingDismiss = _reactNative2.Platform.OS === 'ios' && !isGlobalLoadingVisible && Date.now() - lastHideLoadingAt < 250;
+    if (pendingToastTimer) {
+      clearTimeout(pendingToastTimer);
+      pendingToastTimer = null;
+    }
+    var runTask = function runTask() {
+      _reactNative2.InteractionManager.runAfterInteractions(task);
+    };
+    if (shouldWaitLoadingDismiss) {
+      pendingToastTimer = setTimeout(function () {
+        pendingToastTimer = null;
+        runTask();
+      }, 180);
+      return;
+    }
+    runTask();
+  }
+  /**
+   * 类 Taro.showToast
+   *
+   * 示例：
+   *  showToast({ title: '保存成功', icon: 'success' })
+   *  showToast({ title: '出错了', icon: 'error', duration: 2000 })
+   */
+  function showToast(options) {
+    var opts = typeof options === 'string' ? {
+      title: options
+    } : options;
+    var title = opts.title,
+      _opts$icon = opts.icon,
+      icon = _opts$icon === void 0 ? 'none' : _opts$icon,
+      _opts$duration = opts.duration,
+      duration = _opts$duration === void 0 ? 1500 : _opts$duration;
+    var seconds = duration / 1000;
+    if (icon === 'loading') {
+      showLoading({
+        title: title
+      });
+      return;
+    }
+
+    // 如果是没有 icon 的情况，走我们封装的无遮挡全局 Modal Toast
+    if (icon === 'none') {
+      scheduleToast(function () {
+        _eventCenter.default.trigger('global_show_toast', {
+          title: title,
+          icon: icon,
+          duration: duration
+        });
+      });
+      return;
+    }
+
+    // 如果有 icon，退回到 @ant-design/react-native 旧逻辑
+    scheduleToast(function () {
+      if (icon === 'success') {
+        _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.success({
+          content: title,
+          duration: seconds
+        });
+      } else if (icon === 'error') {
+        _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.fail({
+          content: title,
+          duration: seconds
+        });
+      } else {
+        _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.info({
+          content: title,
+          duration: seconds
+        });
+      }
+    });
+  }
+  /**
+   * 类 Taro.showLoading
+   *
+   * 示例：
+   *  showLoading({ title: '加载中...' })
+   */
+  function showLoading(options) {
+    var _options$title;
+    var title = (_options$title = options == null ? void 0 : options.title) != null ? _options$title : '加载中...';
+
+    // 移出基于 Toast 的老逻辑
+    if (globalLoadingKey) {
+      _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.remove(globalLoadingKey);
+      globalLoadingKey = null;
+    }
+    isGlobalLoadingVisible = true;
+
+    // 触发全局高层级 Modal loading
+    _eventCenter.default.trigger('global_show_loading', {
+      title: title
+    });
+  }
+
+  /**
+   * 类 Taro.hideLoading
+   */
+  function hideLoading() {
+    if (globalLoadingKey) {
+      _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.remove(globalLoadingKey);
+      globalLoadingKey = null;
+    }
+    isGlobalLoadingVisible = false;
+    lastHideLoadingAt = Date.now();
+
+    // 隐藏全局高层级 Modal loading
+    _eventCenter.default.trigger('global_hide_loading');
+  }
+},1196,[1,3,1007,559],"src\\utils\\toast.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -219515,7 +220513,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       };
     }());
   };
-},1189,[1,7,25,2,3,1008,1190,1192,1182,1046,1203,1214],"src\\utils\\api\\index.ts");
+},1197,[1,7,25,2,3,1008,1198,1200,1182,1046,1211,1196],"src\\utils\\api\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -219532,7 +220530,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _react = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "react"));
   var _IntentConstant = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "./IntentConstant"));
   var _default = exports.default = _reactNative.NativeModules.IntentLauncher;
-},1190,[1,3,42,1191],"node_modules\\react-native-intent-launcher\\index.js");
+},1198,[1,3,42,1199],"node_modules\\react-native-intent-launcher\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -226320,7 +227318,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   Intent.ACTION_DEFAULT = Intent.ACTION_VIEW;
   Intent.FLAG_ACTIVITY_NEW_DOCUMENT = Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET;
   Intent.IMMUTABLE_FLAGS = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION;
-},1191,[1,14,13],"node_modules\\react-native-intent-launcher\\IntentConstant.js");
+},1199,[1,14,13],"node_modules\\react-native-intent-launcher\\IntentConstant.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -226433,7 +227431,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return _$$_REQUIRE(_dependencyMap[7], "./Utils").fullUUID;
     }
   });
-},1192,[1193,1195,1200,1202,1201,1198,1199,1194],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\index.js");
+},1200,[1201,1203,1208,1210,1209,1206,1207,1202],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -226586,7 +227584,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     NotEncrypted: 0x8e,
     Congested: 0x8f
   };
-},1193,[1,202,14,13,50,52,53,70,1194],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\BleError.js");
+},1201,[1,202,14,13,50,52,53,70,1202],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\BleError.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -226609,7 +227607,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return object[arg] || '?';
     });
   }
-},1194,[],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Utils.js");
+},1202,[],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Utils.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -227359,7 +228357,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }()
     }]);
   }();
-},1195,[1,25,2,13,14,1196,3,1197,1198,1193,1199,1200,1201],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\BleManager.js");
+},1203,[1,25,2,13,14,1204,3,1205,1206,1201,1207,1208,1209],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\BleManager.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -227390,7 +228388,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    * SOFTWARE.
    */
   var _default = exports.default = _reactNative.TurboModuleRegistry.getEnforcing('BlePlx');
-},1196,[3],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\NativeBlePlx.ts");
+},1204,[3],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\NativeBlePlx.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -227401,7 +228399,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
   var BleModule = exports.BleModule = _reactNative.NativeModules.BlePlx;
   var EventEmitter = exports.EventEmitter = _reactNative.NativeEventEmitter;
-},1197,[3],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\BleModule.js");
+},1205,[3],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\BleModule.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -227519,7 +228517,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }()
     }]);
   }();
-},1198,[1,2,13,14],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Device.js");
+},1206,[1,2,13,14],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Device.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -227592,7 +228590,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }()
     }]);
   }();
-},1199,[1,2,13,14],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Service.js");
+},1207,[1,2,13,14],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Service.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -227660,7 +228658,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }()
     }]);
   }();
-},1200,[1,2,13,14],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Characteristic.js");
+},1208,[1,2,13,14],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Characteristic.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -227703,7 +228701,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }()
     }]);
   }();
-},1201,[1,2,13,14],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Descriptor.js");
+},1209,[1,2,13,14],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\Descriptor.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -227751,7 +228749,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     High: 1,
     LowPower: 2
   };
-},1202,[],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\TypeDefinition.js");
+},1210,[],"node_modules\\@react-native-ohos\\react-native-ble-plx\\src\\TypeDefinition.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -227866,7 +228864,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     });
   });
-},1203,[974,1204,1205,1206,1207,1208,1209,1210,1211,1212,1213],"src\\services\\index.ts");
+},1211,[974,1212,1213,1214,1215,1216,1217,1218,1219,1220,1221],"src\\services\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228087,7 +229085,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 获取贵宾码未使用数量
   var getUnUseCount = exports.getUnUseCount = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/userLockInvite/unUseCount', 'GET');
-},1204,[975],"src\\services\\user.ts");
+},1212,[975],"src\\services\\user.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228142,7 +229140,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   // 审核申请
   var lockApplyAudit = exports.lockApplyAudit = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/apply/audit', 'POST');
   var lockApplyOpt = exports.lockApplyOpt = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/apply/lockOpt', 'POST');
-},1205,[975],"src\\services\\device.ts");
+},1213,[975],"src\\services\\device.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228181,7 +229179,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 提示用户操作
   var tipsUserOperation = exports.tipsUserOperation = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/message/sendCustomMsg', 'POST');
-},1206,[975],"src\\services\\bluetooth.ts");
+},1214,[975],"src\\services\\bluetooth.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228205,7 +229203,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 获取支付结果
   var getPayResult = exports.getPayResult = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/custom/trade/query', 'POST');
-},1207,[975],"src\\services\\order.ts");
+},1215,[975],"src\\services\\order.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228226,7 +229224,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 文本解析
   var getTextParsing = exports.getTextParsing = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/user/address/textParsing', 'POST');
-},1208,[975],"src\\services\\setting.ts");
+},1216,[975],"src\\services\\setting.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228259,7 +229257,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 提货码图片识别
   var ocrPickupCode = exports.ocrPickupCode = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/pickupCode/ocr', 'GET');
-},1209,[975],"src\\services\\mall.ts");
+},1217,[975],"src\\services\\mall.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228292,7 +229290,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 获取默认组合名称
   var defaultName = exports.defaultName = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/userLock/group/defaultName', 'GET');
-},1210,[975],"src\\services\\combine.ts");
+},1218,[975],"src\\services\\combine.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228331,7 +229329,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 最新版本
   var lastVersion = exports.lastVersion = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/userLock/lastVersion', 'GET');
-},1211,[975],"src\\services\\deviceInfo.ts");
+},1219,[975],"src\\services\\deviceInfo.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228367,7 +229365,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 切换车辆存在检测方式（地磁 / 地磁+超声波）
   var switchTestDevice = exports.switchTestDevice = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/deviceTest/switchCarCheckMethod', 'POST');
-},1212,[975],"src\\services\\deviceTest.ts");
+},1220,[975],"src\\services\\deviceTest.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -228382,770 +229380,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 绑定设备
   var bind = exports.bind = (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/userLock/bind', 'POST');
-},1213,[975],"src\\services\\bindDevice.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.hideLoading = hideLoading;
-  exports.showLoading = showLoading;
-  exports.showToast = showToast;
-  var _reactNative2 = _$$_REQUIRE(_dependencyMap[1], "react-native");
-  var _eventCenter = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "./eventCenter"));
-  var globalLoadingKey = null;
-  var isGlobalLoadingVisible = false;
-  var lastHideLoadingAt = 0;
-  var pendingToastTimer = null;
-  function scheduleToast(task) {
-    var shouldWaitLoadingDismiss = _reactNative2.Platform.OS === 'ios' && !isGlobalLoadingVisible && Date.now() - lastHideLoadingAt < 250;
-    if (pendingToastTimer) {
-      clearTimeout(pendingToastTimer);
-      pendingToastTimer = null;
-    }
-    var runTask = function runTask() {
-      _reactNative2.InteractionManager.runAfterInteractions(task);
-    };
-    if (shouldWaitLoadingDismiss) {
-      pendingToastTimer = setTimeout(function () {
-        pendingToastTimer = null;
-        runTask();
-      }, 180);
-      return;
-    }
-    runTask();
-  }
-  /**
-   * 类 Taro.showToast
-   *
-   * 示例：
-   *  showToast({ title: '保存成功', icon: 'success' })
-   *  showToast({ title: '出错了', icon: 'error', duration: 2000 })
-   */
-  function showToast(options) {
-    var opts = typeof options === 'string' ? {
-      title: options
-    } : options;
-    var title = opts.title,
-      _opts$icon = opts.icon,
-      icon = _opts$icon === void 0 ? 'none' : _opts$icon,
-      _opts$duration = opts.duration,
-      duration = _opts$duration === void 0 ? 1500 : _opts$duration;
-    var seconds = duration / 1000;
-    if (icon === 'loading') {
-      showLoading({
-        title: title
-      });
-      return;
-    }
-
-    // 如果是没有 icon 的情况，走我们封装的无遮挡全局 Modal Toast
-    if (icon === 'none') {
-      scheduleToast(function () {
-        _eventCenter.default.trigger('global_show_toast', {
-          title: title,
-          icon: icon,
-          duration: duration
-        });
-      });
-      return;
-    }
-
-    // 如果有 icon，退回到 @ant-design/react-native 旧逻辑
-    scheduleToast(function () {
-      if (icon === 'success') {
-        _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.success({
-          content: title,
-          duration: seconds
-        });
-      } else if (icon === 'error') {
-        _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.fail({
-          content: title,
-          duration: seconds
-        });
-      } else {
-        _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.info({
-          content: title,
-          duration: seconds
-        });
-      }
-    });
-  }
-  /**
-   * 类 Taro.showLoading
-   *
-   * 示例：
-   *  showLoading({ title: '加载中...' })
-   */
-  function showLoading(options) {
-    var _options$title;
-    var title = (_options$title = options == null ? void 0 : options.title) != null ? _options$title : '加载中...';
-
-    // 移出基于 Toast 的老逻辑
-    if (globalLoadingKey) {
-      _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.remove(globalLoadingKey);
-      globalLoadingKey = null;
-    }
-    isGlobalLoadingVisible = true;
-
-    // 触发全局高层级 Modal loading
-    _eventCenter.default.trigger('global_show_loading', {
-      title: title
-    });
-  }
-
-  /**
-   * 类 Taro.hideLoading
-   */
-  function hideLoading() {
-    if (globalLoadingKey) {
-      _$$_REQUIRE(_dependencyMap[3], "@ant-design/react-native").Toast.remove(globalLoadingKey);
-      globalLoadingKey = null;
-    }
-    isGlobalLoadingVisible = false;
-    lastHideLoadingAt = Date.now();
-
-    // 隐藏全局高层级 Modal loading
-    _eventCenter.default.trigger('global_hide_loading');
-  }
-},1214,[1,3,1007,559],"src\\utils\\toast.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.checkAndRequestBluetoothPermission = checkAndRequestBluetoothPermission;
-  exports.checkAndRequestCameraPermission = checkAndRequestCameraPermission;
-  exports.checkAndRequestPhotoPermission = checkAndRequestPhotoPermission;
-  exports.checkBluetoothPermission = checkBluetoothPermission;
-  exports.checkCameraPermission = checkCameraPermission;
-  exports.checkPhotoPermission = checkPhotoPermission;
-  exports.openSystemSettings = openSystemSettings;
-  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
-  /**
-   * 检查相册权限
-   * @returns Promise<{ granted: boolean; message?: string; canOpenSettings?: boolean }>
-   */
-  function checkPhotoPermission() {
-    return _checkPhotoPermission.apply(this, arguments);
-  }
-  /**
-   * 检查相机权限
-   * @returns Promise<{ granted: boolean; message?: string; canOpenSettings?: boolean }>
-   */
-  function _checkPhotoPermission() {
-    _checkPhotoPermission = (0, _asyncToGenerator2.default)(function* () {
-      try {
-        if (_reactNative.Platform.OS === 'android') {
-          // Android 13+ (API 33+) 需要 READ_MEDIA_IMAGES
-          // Android < 13 需要 READ_EXTERNAL_STORAGE
-          var androidVersion = _reactNative.Platform.Version;
-          if (androidVersion >= 33) {
-            // Android 13+
-            var permission = _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
-            var checkResult = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").check)(permission);
-            if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-              return {
-                granted: true
-              };
-            }
-            if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.DENIED) {
-              var requestResult = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").request)(permission);
-              if (requestResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-                return {
-                  granted: true
-                };
-              } else {
-                return {
-                  granted: false,
-                  message: '相册权限被拒绝'
-                };
-              }
-            }
-            if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.BLOCKED) {
-              return {
-                granted: false,
-                message: '相册权限已被永久拒绝，请在设置中开启',
-                canOpenSettings: true
-              };
-            }
-            return {
-              granted: false,
-              message: '相册权限状态未知'
-            };
-          } else {
-            // Android < 13
-            var _permission = _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
-            var _checkResult = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").check)(_permission);
-            if (_checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-              return {
-                granted: true
-              };
-            }
-            if (_checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.DENIED) {
-              var _requestResult = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").request)(_permission);
-              if (_requestResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-                return {
-                  granted: true
-                };
-              } else {
-                return {
-                  granted: false,
-                  message: '相册权限被拒绝'
-                };
-              }
-            }
-            if (_checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.BLOCKED) {
-              return {
-                granted: false,
-                message: '相册权限已被永久拒绝，请在设置中开启',
-                canOpenSettings: true
-              };
-            }
-            return {
-              granted: false,
-              message: '相册权限状态未知'
-            };
-          }
-        } else if (_reactNative.Platform.OS === 'ios') {
-          // iOS
-          var _permission2 = _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").PERMISSIONS.IOS.PHOTO_LIBRARY;
-          var _checkResult2 = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").check)(_permission2);
-          if (_checkResult2 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-            return {
-              granted: true
-            };
-          }
-          if (_checkResult2 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.DENIED) {
-            var _requestResult2 = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").request)(_permission2);
-            if (_requestResult2 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-              return {
-                granted: true
-              };
-            } else {
-              return {
-                granted: false,
-                message: '相册权限被拒绝'
-              };
-            }
-          }
-          if (_checkResult2 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.BLOCKED) {
-            return {
-              granted: false,
-              message: '相册权限已被永久拒绝，请在设置中开启',
-              canOpenSettings: true
-            };
-          }
-          return {
-            granted: false,
-            message: '相册权限状态未知'
-          };
-        } else {
-          // 其他平台（如鸿蒙）暂不支持权限库，统一视为已授权，由系统API或原生侧内部处理权限拦截
-          return {
-            granted: true
-          };
-        }
-      } catch (error) {
-        console.error('检查相册权限失败:', error);
-        return {
-          granted: false,
-          message: (error == null ? void 0 : error.message) || '检查相册权限失败'
-        };
-      }
-    });
-    return _checkPhotoPermission.apply(this, arguments);
-  }
-  function checkCameraPermission() {
-    return _checkCameraPermission.apply(this, arguments);
-  }
-  /**
-   * 打开系统设置页面
-   */
-  function _checkCameraPermission() {
-    _checkCameraPermission = (0, _asyncToGenerator2.default)(function* () {
-      try {
-        if (_reactNative.Platform.OS === 'android') {
-          var permission = _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").PERMISSIONS.ANDROID.CAMERA;
-          var checkResult = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").check)(permission);
-          if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-            return {
-              granted: true
-            };
-          }
-          if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.DENIED) {
-            var requestResult = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").request)(permission);
-            if (requestResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-              return {
-                granted: true
-              };
-            } else {
-              return {
-                granted: false,
-                message: '相机权限被拒绝'
-              };
-            }
-          }
-          if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.BLOCKED) {
-            return {
-              granted: false,
-              message: '相机权限已被永久拒绝，请在设置中开启',
-              canOpenSettings: true
-            };
-          }
-          return {
-            granted: false,
-            message: '相机权限状态未知'
-          };
-        } else if (_reactNative.Platform.OS === 'ios') {
-          // iOS
-          var _permission3 = _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").PERMISSIONS.IOS.CAMERA;
-          var _checkResult3 = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").check)(_permission3);
-          if (_checkResult3 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-            return {
-              granted: true
-            };
-          }
-          if (_checkResult3 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.DENIED) {
-            var _requestResult3 = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").request)(_permission3);
-            if (_requestResult3 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-              return {
-                granted: true
-              };
-            } else {
-              return {
-                granted: false,
-                message: '相机权限被拒绝'
-              };
-            }
-          }
-          if (_checkResult3 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.BLOCKED) {
-            return {
-              granted: false,
-              message: '相机权限已被永久拒绝，请在设置中开启',
-              canOpenSettings: true
-            };
-          }
-          return {
-            granted: false,
-            message: '相机权限状态未知'
-          };
-        } else {
-          // 其他平台（如鸿蒙）
-          return {
-            granted: true
-          };
-        }
-      } catch (error) {
-        console.error('检查相机权限失败:', error);
-        return {
-          granted: false,
-          message: (error == null ? void 0 : error.message) || '检查相机权限失败'
-        };
-      }
-    });
-    return _checkCameraPermission.apply(this, arguments);
-  }
-  function openSystemSettings() {
-    return _openSystemSettings.apply(this, arguments);
-  }
-  /**
-   * 检查并请求相册权限（带 Toast 提示）
-   * @returns Promise<boolean> 是否有权限
-   */
-  function _openSystemSettings() {
-    _openSystemSettings = (0, _asyncToGenerator2.default)(function* () {
-      try {
-        if (_reactNative.Platform.OS === 'ios') {
-          yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").openSettings)();
-        } else {
-          // Android
-          yield _reactNative.Linking.openSettings();
-        }
-      } catch (error) {
-        console.error('打开设置页面失败:', error);
-        (0, _$$_REQUIRE(_dependencyMap[4], "./toast").showToast)('无法打开设置页面');
-      }
-    });
-    return _openSystemSettings.apply(this, arguments);
-  }
-  function checkAndRequestPhotoPermission() {
-    return _checkAndRequestPhotoPermission.apply(this, arguments);
-  }
-  /**
-   * 检查并请求相机权限（带 Toast 提示）
-   * @returns Promise<boolean> 是否有权限
-   */
-  function _checkAndRequestPhotoPermission() {
-    _checkAndRequestPhotoPermission = (0, _asyncToGenerator2.default)(function* () {
-      var result = yield checkPhotoPermission();
-      if (result.granted) {
-        return true;
-      }
-      if (result.canOpenSettings) {
-        (0, _$$_REQUIRE(_dependencyMap[4], "./toast").showToast)(result.message || '相册权限被拒绝');
-        // 可以在这里添加打开设置的逻辑
-        // await openSystemSettings();
-      } else {
-        (0, _$$_REQUIRE(_dependencyMap[4], "./toast").showToast)(result.message || '相册权限被拒绝');
-      }
-      return false;
-    });
-    return _checkAndRequestPhotoPermission.apply(this, arguments);
-  }
-  function checkAndRequestCameraPermission() {
-    return _checkAndRequestCameraPermission.apply(this, arguments);
-  }
-  /**
-   * 检查蓝牙权限
-   * @returns Promise<{ granted: boolean; message?: string; canOpenSettings?: boolean }>
-   */
-  function _checkAndRequestCameraPermission() {
-    _checkAndRequestCameraPermission = (0, _asyncToGenerator2.default)(function* () {
-      var result = yield checkCameraPermission();
-      if (result.granted) {
-        return true;
-      }
-      if (result.canOpenSettings) {
-        (0, _$$_REQUIRE(_dependencyMap[4], "./toast").showToast)(result.message || '相机权限被拒绝');
-        // 可以在这里添加打开设置的逻辑
-        // await openSystemSettings();
-      } else {
-        (0, _$$_REQUIRE(_dependencyMap[4], "./toast").showToast)(result.message || '相机权限被拒绝');
-      }
-      return false;
-    });
-    return _checkAndRequestCameraPermission.apply(this, arguments);
-  }
-  function checkBluetoothPermission() {
-    return _checkBluetoothPermission.apply(this, arguments);
-  }
-  /**
-   * 检查并请求蓝牙权限（带 Toast 提示）
-   * @returns Promise<boolean> 是否有权限
-   */
-  function _checkBluetoothPermission() {
-    _checkBluetoothPermission = (0, _asyncToGenerator2.default)(function* () {
-      try {
-        if (_reactNative.Platform.OS === 'android') {
-          // Android 12+ (API 31+) 需要 BLUETOOTH_CONNECT 权限
-          // Android < 12 需要 BLUETOOTH 和 BLUETOOTH_ADMIN 权限
-          var androidVersion = _reactNative.Platform.Version;
-          if (androidVersion >= 31) {
-            // Android 12+
-            var permission = _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").PERMISSIONS.ANDROID.BLUETOOTH_CONNECT;
-            var checkResult = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").check)(permission);
-            if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-              return {
-                granted: true
-              };
-            }
-            if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.DENIED) {
-              var requestResult = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").request)(permission);
-              if (requestResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-                return {
-                  granted: true
-                };
-              } else {
-                return {
-                  granted: false,
-                  message: '蓝牙连接权限被拒绝'
-                };
-              }
-            }
-            if (checkResult === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.BLOCKED) {
-              return {
-                granted: false,
-                message: '蓝牙连接权限已被永久拒绝，请在设置中开启',
-                canOpenSettings: true
-              };
-            }
-            return {
-              granted: false,
-              message: '蓝牙连接权限状态未知'
-            };
-          } else {
-            // Android < 12
-            // 旧版本 Android 蓝牙权限在安装时自动授予
-            return {
-              granted: true
-            };
-          }
-        } else if (_reactNative.Platform.OS === 'ios') {
-          // iOS
-          // iOS 13+ 使用 BLUETOOTH
-          // iOS 13 之前蓝牙权限在 Info.plist 中配置，系统会自动处理
-          try {
-            var _permission4 = _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").PERMISSIONS.IOS.BLUETOOTH;
-            var _checkResult4 = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").check)(_permission4);
-            if (_checkResult4 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-              return {
-                granted: true
-              };
-            }
-            if (_checkResult4 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.DENIED) {
-              var _requestResult4 = yield (0, _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").request)(_permission4);
-              if (_requestResult4 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.GRANTED) {
-                return {
-                  granted: true
-                };
-              } else {
-                return {
-                  granted: false,
-                  message: '蓝牙权限被拒绝'
-                };
-              }
-            }
-            if (_checkResult4 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.BLOCKED) {
-              return {
-                granted: false,
-                message: '蓝牙权限已被永久拒绝，请在设置中开启',
-                canOpenSettings: true
-              };
-            }
-            if (_checkResult4 === _$$_REQUIRE(_dependencyMap[3], "react-native-permissions").RESULTS.UNAVAILABLE) {
-              // iOS 13 之前的设备，权限在 Info.plist 中配置，系统会自动处理
-              return {
-                granted: true
-              };
-            }
-            return {
-              granted: false,
-              message: '蓝牙权限状态未知'
-            };
-          } catch (error) {
-            // 如果权限检查失败（可能是 iOS 版本不支持），返回已授权
-            // 因为旧版本 iOS 蓝牙权限在 Info.plist 中配置
-            console.warn('iOS 蓝牙权限检查失败，使用默认授权:', error);
-            return {
-              granted: true
-            };
-          }
-        } else {
-          // 其他平台（如鸿蒙）暂不支持当前权限库的蓝牙能力
-          return {
-            granted: true
-          };
-        }
-      } catch (error) {
-        console.error('检查蓝牙权限失败:', error);
-        return {
-          granted: false,
-          message: (error == null ? void 0 : error.message) || '检查蓝牙权限失败'
-        };
-      }
-    });
-    return _checkBluetoothPermission.apply(this, arguments);
-  }
-  function checkAndRequestBluetoothPermission() {
-    return _checkAndRequestBluetoothPermission.apply(this, arguments);
-  }
-  function _checkAndRequestBluetoothPermission() {
-    _checkAndRequestBluetoothPermission = (0, _asyncToGenerator2.default)(function* () {
-      var result = yield checkBluetoothPermission();
-      if (result.granted) {
-        return true;
-      }
-      if (result.canOpenSettings) {
-        (0, _$$_REQUIRE(_dependencyMap[4], "./toast").showToast)(result.message || '蓝牙权限被拒绝');
-        // 可以在这里添加打开设置的逻辑
-        // await openSystemSettings();
-      } else {
-        (0, _$$_REQUIRE(_dependencyMap[4], "./toast").showToast)(result.message || '蓝牙权限被拒绝');
-      }
-      return false;
-    });
-    return _checkAndRequestBluetoothPermission.apply(this, arguments);
-  }
-},1215,[1,2,3,1216,1214],"src\\utils\\permissions.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  var _exportNames = {
-    check: true,
-    checkLocationAccuracy: true,
-    checkMultiple: true,
-    checkNotifications: true,
-    openLimitedPhotoLibraryPicker: true,
-    openSettings: true,
-    request: true,
-    requestLocationAccuracy: true,
-    requestMultiple: true,
-    requestNotifications: true,
-    PERMISSIONS: true,
-    RESULTS: true
-  };
-  Object.defineProperty(exports, "PERMISSIONS", {
-    enumerable: true,
-    get: function get() {
-      return _$$_REQUIRE(_dependencyMap[0], "./permissions").PERMISSIONS;
-    }
-  });
-  Object.defineProperty(exports, "RESULTS", {
-    enumerable: true,
-    get: function get() {
-      return _$$_REQUIRE(_dependencyMap[1], "./results").RESULTS;
-    }
-  });
-  exports.requestNotifications = exports.requestMultiple = exports.requestLocationAccuracy = exports.request = exports.openSettings = exports.openLimitedPhotoLibraryPicker = exports.default = exports.checkNotifications = exports.checkMultiple = exports.checkLocationAccuracy = exports.check = void 0;
-  Object.keys(_$$_REQUIRE(_dependencyMap[2], "./types")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[2], "./types")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[2], "./types")[key];
-      }
-    });
-  });
-  var check = exports.check = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.check;
-  var checkLocationAccuracy = exports.checkLocationAccuracy = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.checkLocationAccuracy;
-  var checkMultiple = exports.checkMultiple = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.checkMultiple;
-  var checkNotifications = exports.checkNotifications = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.checkNotifications;
-  var openLimitedPhotoLibraryPicker = exports.openLimitedPhotoLibraryPicker = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.openLimitedPhotoLibraryPicker;
-  var openSettings = exports.openSettings = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.openSettings;
-  var request = exports.request = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.request;
-  var requestLocationAccuracy = exports.requestLocationAccuracy = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.requestLocationAccuracy;
-  var requestMultiple = exports.requestMultiple = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.requestMultiple;
-  var requestNotifications = exports.requestNotifications = _$$_REQUIRE(_dependencyMap[3], "./methods").methods.requestNotifications;
-  var _default = exports.default = {
-    PERMISSIONS: _$$_REQUIRE(_dependencyMap[0], "./permissions").PERMISSIONS,
-    RESULTS: _$$_REQUIRE(_dependencyMap[1], "./results").RESULTS,
-    check: check,
-    checkLocationAccuracy: checkLocationAccuracy,
-    checkMultiple: checkMultiple,
-    checkNotifications: checkNotifications,
-    openLimitedPhotoLibraryPicker: openLimitedPhotoLibraryPicker,
-    openSettings: openSettings,
-    request: request,
-    requestLocationAccuracy: requestLocationAccuracy,
-    requestMultiple: requestMultiple,
-    requestNotifications: requestNotifications
-  };
-},1216,[1217,1218,1219,1220],"node_modules\\react-native-permissions\\src\\index.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.PERMISSIONS = void 0;
-  var PERMISSIONS = exports.PERMISSIONS = Object.freeze({
-    ANDROID: {},
-    IOS: {},
-    WINDOWS: {}
-  });
-},1217,[],"node_modules\\react-native-permissions\\src\\permissions.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.RESULTS = void 0;
-  var RESULTS = exports.RESULTS = Object.freeze({
-    UNAVAILABLE: 'unavailable',
-    BLOCKED: 'blocked',
-    DENIED: 'denied',
-    GRANTED: 'granted',
-    LIMITED: 'limited'
-  });
-},1218,[],"node_modules\\react-native-permissions\\src\\results.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-},1219,[],"node_modules\\react-native-permissions\\src\\types.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.methods = void 0;
-  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
-  function check() {
-    return _check.apply(this, arguments);
-  }
-  function _check() {
-    _check = (0, _asyncToGenerator2.default)(function* () {
-      return _$$_REQUIRE(_dependencyMap[2], "./results").RESULTS.UNAVAILABLE;
-    });
-    return _check.apply(this, arguments);
-  }
-  function checkNotifications() {
-    return _checkNotifications.apply(this, arguments);
-  }
-  function _checkNotifications() {
-    _checkNotifications = (0, _asyncToGenerator2.default)(function* () {
-      return {
-        status: _$$_REQUIRE(_dependencyMap[2], "./results").RESULTS.UNAVAILABLE,
-        settings: {}
-      };
-    });
-    return _checkNotifications.apply(this, arguments);
-  }
-  function checkMultiple(_x) {
-    return _checkMultiple.apply(this, arguments);
-  }
-  function _checkMultiple() {
-    _checkMultiple = (0, _asyncToGenerator2.default)(function* (permissions) {
-      return permissions.reduce(function (acc, permission) {
-        acc[permission] = _$$_REQUIRE(_dependencyMap[2], "./results").RESULTS.UNAVAILABLE;
-        return acc;
-      }, {});
-    });
-    return _checkMultiple.apply(this, arguments);
-  }
-  var methods = exports.methods = {
-    check: check,
-    checkLocationAccuracy: _$$_REQUIRE(_dependencyMap[3], "./unsupportedPlatformMethods").checkLocationAccuracy,
-    checkMultiple: checkMultiple,
-    checkNotifications: checkNotifications,
-    openLimitedPhotoLibraryPicker: _$$_REQUIRE(_dependencyMap[3], "./unsupportedPlatformMethods").openLimitedPhotoLibraryPicker,
-    openSettings: Promise.reject,
-    request: check,
-    requestLocationAccuracy: _$$_REQUIRE(_dependencyMap[3], "./unsupportedPlatformMethods").requestLocationAccuracy,
-    requestMultiple: checkMultiple,
-    requestNotifications: checkNotifications
-  };
-},1220,[1,2,1218,1221],"node_modules\\react-native-permissions\\src\\methods.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.checkLocationAccuracy = checkLocationAccuracy;
-  exports.openLimitedPhotoLibraryPicker = openLimitedPhotoLibraryPicker;
-  exports.requestLocationAccuracy = requestLocationAccuracy;
-  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
-  var IOS_14 = 'Only supported by iOS 14 and above';
-  function checkLocationAccuracy() {
-    return _checkLocationAccuracy.apply(this, arguments);
-  }
-  function _checkLocationAccuracy() {
-    _checkLocationAccuracy = (0, _asyncToGenerator2.default)(function* () {
-      throw new Error(IOS_14);
-    });
-    return _checkLocationAccuracy.apply(this, arguments);
-  }
-  function requestLocationAccuracy(_x) {
-    return _requestLocationAccuracy.apply(this, arguments);
-  }
-  function _requestLocationAccuracy() {
-    _requestLocationAccuracy = (0, _asyncToGenerator2.default)(function* (_options) {
-      throw new Error(IOS_14);
-    });
-    return _requestLocationAccuracy.apply(this, arguments);
-  }
-  function openLimitedPhotoLibraryPicker() {
-    return _openLimitedPhotoLibraryPicker.apply(this, arguments);
-  }
-  function _openLimitedPhotoLibraryPicker() {
-    _openLimitedPhotoLibraryPicker = (0, _asyncToGenerator2.default)(function* () {
-      throw new Error(IOS_14);
-    });
-    return _openLimitedPhotoLibraryPicker.apply(this, arguments);
-  }
-},1221,[1,2],"node_modules\\react-native-permissions\\src\\unsupportedPlatformMethods.ts");
+},1221,[975],"src\\services\\bindDevice.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -246383,7 +246618,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Index;
-},1367,[1,150,202,2,25,42,3,1368,1553,1556,1557,553,552,1582,88,1205,1179,1204,1085,1182,1189,1627],"src\\pages\\multiple\\index.tsx");
+},1367,[1,150,202,2,25,42,3,1368,1553,1556,1557,553,552,1582,88,1213,1179,1212,1085,1182,1197,1627],"src\\pages\\multiple\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -254181,7 +254416,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Content;
-},1557,[1,2,25,42,3,1369,1558,1561,1564,1565,1568,88,1554,1292,1570,1203,1182,1205,1179,1189,1210,1571,1572,1623,558],"src\\components\\Content\\index.tsx");
+},1557,[1,2,25,42,3,1369,1558,1561,1564,1565,1568,88,1554,1292,1570,1211,1182,1213,1179,1197,1218,1571,1572,1623,558],"src\\components\\Content\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -254295,39 +254530,46 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     var initLocation = /*#__PURE__*/function () {
       var _ref = (0, _asyncToGenerator2.default)(function* () {
-        if (isHarmonyMapUnavailable) {
-          setLocationReady(true);
-          return;
-        }
-        if (_$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
-          var granted = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").requestHarmonyLocationPermission)();
-          if (!granted) {
-            console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+        yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/permissions").runInPermissionQueue)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+          if (isHarmonyMapUnavailable) {
             setLocationReady(true);
             return;
           }
-        }
-        if (_reactNative.Platform.OS === 'android') {
+          var hasLocationPermission = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/permissions").showPermissionPromptIfNeeded)('location');
+          if (!hasLocationPermission) {
+            setLocationReady(true);
+            return;
+          }
+          if (_$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
+            var granted = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").requestHarmonyLocationPermission)();
+            if (!granted) {
+              console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+              setLocationReady(true);
+              return;
+            }
+          }
+          if (_reactNative.Platform.OS === 'android') {
+            try {
+              yield _reactNative.PermissionsAndroid.requestMultiple([_reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, _reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]);
+            } catch (e) {
+              console.warn('定位权限请求失败:', e);
+            }
+          }
           try {
-            yield _reactNative.PermissionsAndroid.requestMultiple([_reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, _reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]);
-          } catch (e) {
-            console.warn('定位权限请求失败:', e);
+            yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").initAMapGeolocation)();
+            var position = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").getCurrentLocation)();
+            if (position) {
+              userLocationInfo.current = {
+                latitude: position.latitude,
+                longitude: position.longitude
+              };
+            }
+          } catch (error) {
+            // console.error('地图初始化/定位失败:', error);
+          } finally {
+            setLocationReady(true);
           }
-        }
-        try {
-          yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").initAMapGeolocation)();
-          var position = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").getCurrentLocation)();
-          if (position) {
-            userLocationInfo.current = {
-              latitude: position.latitude,
-              longitude: position.longitude
-            };
-          }
-        } catch (error) {
-          // console.error('地图初始化/定位失败:', error);
-        } finally {
-          setLocationReady(true);
-        }
+        }));
       });
       return function initLocation() {
         return _ref.apply(this, arguments);
@@ -254472,7 +254714,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }));
     return renderCard(mapSection);
   }
-},1558,[1,2,25,42,3,1369,1559,88,1179,1182,1560],"src\\components\\Map\\index.tsx");
+},1558,[1,2,25,42,3,1369,1559,88,1179,1182,1560,1189],"src\\components\\Map\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -254842,7 +255084,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   };
   var _default = exports.default = AutoOperatePop;
-},1561,[1,150,2,25,42,3,553,1562,1369,88,1182,1189,558],"src\\components\\autoOperatePop\\index.tsx");
+},1561,[1,150,2,25,42,3,553,1562,1369,88,1182,1197,558],"src\\components\\autoOperatePop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -255866,22 +256108,26 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return {
         open: function () {
           var _open = (0, _asyncToGenerator2.default)(function* () {
-            if (props.type === 'mode') {
-              var _switchModeConfirmRef2;
-              (_switchModeConfirmRef2 = switchModeConfirmRef.current) == null || _switchModeConfirmRef2.open();
-            } else if (props.type === 'pass') {
-              (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
-                title: '检查蓝牙状态'
-              });
-              try {
-                yield runSingleBluetoothCheck();
-              } finally {
-                (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils/permissions").runInPermissionQueue)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+              var hasBluetooth = yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils/permissions").showPermissionPromptIfNeeded)('bluetooth');
+              if (!hasBluetooth) return;
+              if (props.type === 'mode') {
+                var _switchModeConfirmRef2;
+                (_switchModeConfirmRef2 = switchModeConfirmRef.current) == null || _switchModeConfirmRef2.open();
+              } else if (props.type === 'pass') {
+                (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+                  title: '检查蓝牙状态'
+                });
+                try {
+                  yield runSingleBluetoothCheck();
+                } finally {
+                  (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+                }
+              } else {
+                var _operationConfirmRef$2;
+                (_operationConfirmRef$2 = operationConfirmRef.current) == null || _operationConfirmRef$2.open();
               }
-            } else {
-              var _operationConfirmRef$2;
-              (_operationConfirmRef$2 = operationConfirmRef.current) == null || _operationConfirmRef$2.open();
-            }
+            }));
           });
           function open() {
             return _open.apply(this, arguments);
@@ -255907,25 +256153,25 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         width: '100%'
       },
       children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-        style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.groupListContent,
+        style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.groupListContent,
         children: groupList.map(function (item) {
           return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-            style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.groupListItem,
+            style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.groupListItem,
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.groupListItemText,
+              style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.groupListItemText,
               numberOfLines: 1,
               children: item.lockName
             }), item.bleStatus === BLE_STATUS.CONNECTED ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.groupListItemTextConnected,
+              style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.groupListItemTextConnected,
               children: "\u5DF2\u8FDE\u63A5"
             }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
               activeOpacity: 0.85,
-              style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.groupListItemButton,
+              style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.groupListItemButton,
               onPress: function onPress() {
                 return void handleGroupItemConnect(item);
               },
               children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.groupListItemButtonText,
+                style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.groupListItemButtonText,
                 children: "\u524D\u5F80\u8FDE\u63A5"
               })
             })]
@@ -255941,7 +256187,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           align: "center",
           justify: "center",
           children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.popTitle,
+            style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.popTitle,
             children: ["\u786E\u5B9A\u8981\u5207\u6362\u81F3\u3010", targetModeName, "\u3011\u6A21\u5F0F"]
           })
         }),
@@ -255959,7 +256205,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           align: "center",
           justify: "center",
           children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.popTitle,
+            style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.popTitle,
             children: `${props.type === 'os' ? '远程开启，' : (_props$details10 = props.details) != null && _props$details10.isGroup ? '组合设备' : ''}需要切换至【性能优先】模式才可操作确定要切换吗？`
           })
         }),
@@ -255970,12 +256216,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         },
         submitBtn: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
           activeOpacity: 0.85,
-          style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.operationConfirmButton,
+          style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.operationConfirmButton,
           onPress: function onPress() {
             return void handleOperationConfirm();
           },
           children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.operationConfirmButtonText,
+            style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.operationConfirmButtonText,
             children: "\u5207\u6362\u81F3\u3010\u6027\u80FD\u4F18\u5148\u3011"
           })
         })
@@ -255985,10 +256231,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           direction: "column",
           align: "center",
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.popTitle,
+            style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.popTitle,
             children: currentConfig.title
           }), currentConfig.subtitle ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.popText,
+            style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.popText,
             children: currentConfig.subtitle
           }) : null]
         }),
@@ -256013,14 +256259,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           return (_adminOnlyRef$current3 = adminOnlyRef.current) == null ? void 0 : _adminOnlyRef$current3.close();
         },
         title: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _$$_REQUIRE(_dependencyMap[16], "./style").styles.popTitle,
+          style: _$$_REQUIRE(_dependencyMap[17], "./style").styles.popTitle,
           children: "\u4EC5\u7BA1\u7406\u5458\u53EF\u5207\u6362\u6A21\u5F0F"
         })
       })]
     });
   });
   var _default = exports.default = BluetoothStatus;
-},1565,[1,7,2,25,42,3,553,552,1562,88,1554,1182,1566,1189,1203,1179,1567],"src\\components\\bluetoothStatus\\index.tsx");
+},1565,[1,7,2,25,42,3,553,552,1562,88,1554,1182,1566,1197,1211,1179,1189,1567],"src\\components\\bluetoothStatus\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -256186,7 +256432,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }]);
   }();
   var bluetoothModeManager = exports.bluetoothModeManager = new BluetoothModeManager();
-},1566,[1,25,2,13,14,1189,1183],"src\\utils\\bluetoothModeManager.ts");
+},1566,[1,25,2,13,14,1197,1183],"src\\utils\\bluetoothModeManager.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -257007,7 +257253,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         currentDialogVersion = payload == null ? void 0 : payload.version;
         setInfo(payload);
-        setVisible(true);
+
+        // 延迟弹窗：解决安卓下切换 Tab 时的动画互相阻塞，导致 Modal 卡死、瞬间吞噬所有点击的 Bug
+        _reactNative.InteractionManager.runAfterInteractions(function () {
+          setTimeout(function () {
+            setVisible(true);
+          }, 300);
+        });
       };
       _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('global:appUpdateDialog:show', handler);
       return function () {
@@ -257026,7 +257278,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var resetDialog = function resetDialog() {
       currentDialogVersion = undefined;
       setVisible(false);
-      setInfo(null);
+      // 重要说明：不再直接 setInfo(null)，为了给安卓 Modal 关闭动画留出时间，否则在渐隐过程瞬间卸载极易引发幽灵墙(点击失灵)
     };
     var handleClose = function handleClose() {
       if (forceUpdate) {
@@ -257039,16 +257291,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         try {
           setVisible(false);
           yield info == null || info.onConfirm == null ? void 0 : info.onConfirm();
-          setInfo(null);
         } catch (err) {
           setVisible(true);
           var msg = (err == null ? void 0 : err.message) || '更新失败，请检查网络后再次更新';
           _$$_REQUIRE(_dependencyMap[12], "@ant-design/react-native").Toast.fail(msg);
         } finally {
           currentDialogVersion = undefined;
-          if (!forceUpdate) {
-            setInfo(null);
-          }
         }
       });
       return function handleConfirm() {
@@ -257088,13 +257336,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       style: {
         backgroundColor: 'transparent',
         padding: 0,
-        margin: 0
+        margin: 0,
+        width: (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(350),
+        minHeight: (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(400)
       },
       children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
         style: {
           justifyContent: 'center',
           alignItems: 'center',
-          padding: (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(32)
+          padding: (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(32),
+          paddingTop: (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(58)
         },
         children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
           style: _styles.default.wrap,
@@ -258736,8 +258987,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       setLastResult(undefined);
       setLastValue('');
     }, []);
-    var open = (0, _react.useCallback)(function () {
+    var ensurePermission = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (hasPermission) return true;
+      try {
+        var granted = yield requestPermission();
+        return !!granted;
+      } catch (_unused) {
+        return false;
+      }
+    }), [hasPermission, requestPermission]);
+    var open = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       if (!isModal) return;
+      var granted = yield ensurePermission();
+      if (!granted) {
+        onClose == null || onClose();
+        return;
+      }
       // 打开弹层时默认重置扫码状态，避免带着上一次的锁进入
       rescan();
       setModalVisible(true);
@@ -258747,7 +259012,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         easing: _reactNative.Easing.out(_reactNative.Easing.ease),
         useNativeDriver: true
       }).start();
-    }, [isModal, rescan, slideAnim]);
+    }), [ensurePermission, isModal, onClose, rescan, slideAnim]);
     var close = (0, _react.useCallback)(function () {
       if (!isModal) return;
       _reactNative.Animated.timing(slideAnim, {
@@ -258755,8 +259020,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         duration: 280,
         easing: _reactNative.Easing.in(_reactNative.Easing.ease),
         useNativeDriver: true
-      }).start(function (_ref2) {
-        var finished = _ref2.finished;
+      }).start(function (_ref4) {
+        var finished = _ref4.finished;
         if (!finished) return;
         setModalVisible(false);
         // close 完成后触发 onClose，交给页面恢复状态栏等副作用
@@ -258778,12 +259043,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         close: close
       };
     }, [close, open, rescan]);
-    (0, _react.useEffect)(function () {
-      // 组件挂载后主动触发一次权限请求（避免页面首次打开无提示）
-      void requestPermission();
-    }, [requestPermission]);
     var handleScanned = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2.default)(function* (value) {
+      var _ref5 = (0, _asyncToGenerator2.default)(function* (value) {
         // pauseScan/resumeScan：仅控制回调，不影响相机预览
         if (!scanEnabled) return;
         // 单次触发锁：同一个二维码在短时间内可能会触发多次，这里做兜底
@@ -258816,7 +259077,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function (_x) {
-        return _ref3.apply(this, arguments);
+        return _ref5.apply(this, arguments);
       };
     }(), [onScan, scanEnabled]);
     var onCodeScanned = (0, _react.useCallback)(function (codes) {
@@ -260531,7 +260792,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = CheckBluetooth;
-},1611,[1,2,25,42,3,553,1562,1369,88,1182,1189,1612,558],"src\\components\\checkBluetooth\\index.tsx");
+},1611,[1,2,25,42,3,553,1562,1369,88,1182,1197,1612,558],"src\\components\\checkBluetooth\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -261984,7 +262245,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   };
-},1623,[1,7,2,25,42,3,553,1564,1369,1562,88,1554,1243,1205,1182,1045,1211,1624,558,1625],"src\\components\\Device\\switch\\index.tsx");
+},1623,[1,7,2,25,42,3,553,1564,1369,1562,88,1554,1243,1213,1182,1045,1219,1624,558,1625],"src\\components\\Device\\switch\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -262998,7 +263259,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           align: "center",
           style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestLoginBtn,
           onPress: function onPress() {
-            navigation.navigate('Login');
+            navigation.reset({
+              index: 0,
+              routes: [{
+                name: 'Login'
+              }]
+            });
           },
           children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
             style: _$$_REQUIRE(_dependencyMap[24], "./style").styles.guestLoginText,
@@ -263052,7 +263318,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Index;
-},1628,[1,150,202,2,25,42,3,1629,1368,1553,1556,1557,553,552,1582,88,1080,1554,1182,1205,1179,1204,1085,1189,1627],"src\\pages\\index\\index.tsx");
+},1628,[1,150,202,2,25,42,3,1629,1368,1553,1556,1557,553,552,1582,88,1080,1554,1182,1213,1179,1212,1085,1197,1627],"src\\pages\\index\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -263492,7 +263758,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1630,[1,2,25,42,3,1368,552,1369,1631,88,1080,1296,1045,1204,1182,1085,1046],"src\\pages\\mine\\index.tsx");
+},1630,[1,2,25,42,3,1368,552,1369,1631,88,1080,1296,1045,1212,1182,1085,1046],"src\\pages\\mine\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -264285,7 +264551,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, allowShowLoginContent ? 'content' : 'blank');
   };
   var _default = exports.default = Login;
-},1632,[1,2,25,42,3,1633,1635,1637,1369,961,552,88,1554,1182,1240,1203,1572,558,1046],"src\\pages\\login\\index.tsx");
+},1632,[1,2,25,42,3,1633,1635,1637,1369,961,552,88,1554,1182,1240,1211,1572,558,1046],"src\\pages\\login\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -264436,7 +264702,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Sms;
-},1633,[1,2,25,42,3,1634,88,1080,1182,1203,1179,1572],"src\\pages\\login\\com\\sms\\index.tsx");
+},1633,[1,2,25,42,3,1634,88,1080,1182,1211,1179,1572],"src\\pages\\login\\com\\sms\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -264595,7 +264861,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             password: password
           }, device));
           if (res.code === 200) {
-            (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
             yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils/cache").cacheSetSync)('token', res.data.token);
             yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils/cache").cacheSetSync)('guestMode', false);
             try {
@@ -264603,20 +264868,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/push").getMobPushDeviceInfo)();
             } catch (e) {
               console.error('获取推送设备信息失败:', e);
+            } finally {
+              (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+              (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                title: '登录成功',
+                icon: 'success'
+              });
+              // 延迟执行导航，确保状态已更新和导航引用已准备好
+              setTimeout(function () {
+                var pages = (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").getCurrentPages)();
+                if (pages.length > 1) {
+                  (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").navigateBack)();
+                } else {
+                  (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index');
+                }
+              }, 300);
             }
-            (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-              title: '登录成功',
-              icon: 'success'
-            });
-            // 延迟执行导航，确保状态已更新和导航引用已准备好
-            setTimeout(function () {
-              var pages = (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").getCurrentPages)();
-              if (pages.length > 1) {
-                (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").navigateBack)();
-              } else {
-                (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index');
-              }
-            }, 300);
           } else if (res.code === 520 || res.code === 522 || res.code === 525) {
             (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
             setShowError(true);
@@ -264660,7 +264927,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             placeholder: "\u8BF7\u8F93\u5165\u624B\u673A\u53F7",
             style: _styles.default.input,
             placeholderTextColor: "#CCCCCC",
-            value: mobile,
+            defaultValue: mobile,
             onChangeText: function onChangeText(v) {
               setMobile(v);
               onChange(v); // 同步更新父组件的 mobile 状态
@@ -264679,7 +264946,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             placeholder: "\u8BF7\u8F93\u5165\u5BC6\u7801",
             style: _styles.default.input,
             placeholderTextColor: "#CCCCCC",
-            value: password,
+            defaultValue: password,
             onChangeText: function onChangeText(v) {
               setPassword(v);
               if (v) {
@@ -265031,7 +265298,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ForgetPassword;
-},1638,[1,7,2,25,42,3,1639,88,1080,1182,1203,1179,1572],"src\\pages\\forgetPassword\\index.tsx");
+},1638,[1,7,2,25,42,3,1639,88,1080,1182,1211,1179,1572],"src\\pages\\forgetPassword\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -266293,7 +266560,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = LoginSms;
-},1648,[1,2,25,42,3,1579,1369,553,1649,88,1080,1650,1179,1182,1204,974,1046,1079,1572],"src\\pages\\loginSms\\index.tsx");
+},1648,[1,2,25,42,3,1579,1369,553,1649,88,1080,1650,1179,1182,1212,974,1046,1079,1572],"src\\pages\\loginSms\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -266681,7 +266948,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ForgetPasswordReset;
-},1651,[1,2,25,42,3,1369,961,1652,88,1080,1182,1045,1204,1079,1572],"src\\pages\\forgetPasswordReset\\index.tsx");
+},1651,[1,2,25,42,3,1369,961,1652,88,1080,1182,1045,1212,1079,1572],"src\\pages\\forgetPasswordReset\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -267608,7 +267875,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1657,[1,2,25,42,3,1369,1658,88,1182,1204,1215,1216,1659,1572],"src\\pages\\userInfo\\index.tsx");
+},1657,[1,2,25,42,3,1369,1658,88,1182,1212,1189,1190,1659,1572],"src\\pages\\userInfo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -268708,15 +268975,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         ref: changeQrCodePopRef,
         title: "\u786E\u8BA4\u66F4\u6362\u4E8C\u7EF4\u7801\u5417\uFF1F",
         confirmText: "\u626B\u7801\u7ED1\u5B9A",
-        onConfirm: function onConfirm() {
+        onConfirm: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
           var _changeQrCodePopRef$c2;
-          (_changeQrCodePopRef$c2 = changeQrCodePopRef.current) == null || _changeQrCodePopRef$c2.close();
-          setSafeAreaColor('light-content');
-          setTimeout(function () {
-            var _scanBindQrCameraRef$3;
-            (_scanBindQrCameraRef$3 = scanBindQrCameraRef.current) == null || _scanBindQrCameraRef$3.open();
-          }, 350);
-        }
+          yield (_changeQrCodePopRef$c2 = changeQrCodePopRef.current) == null ? void 0 : _changeQrCodePopRef$c2.close();
+          yield (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/utils/permissions").runInPermissionQueue)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+            var hasPrompted = yield (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/utils/permissions").showPermissionPromptIfNeeded)('camera');
+            if (!hasPrompted) return;
+            setSafeAreaColor('light-content');
+            setTimeout(function () {
+              var _scanBindQrCameraRef$3;
+              (_scanBindQrCameraRef$3 = scanBindQrCameraRef.current) == null || _scanBindQrCameraRef$3.open();
+            }, 350);
+          }));
+        })
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").Camera, {
         ref: scanBindQrCameraRef,
         present: "modal",
@@ -268738,7 +269009,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             resizeMode: "contain"
           })
         })
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "./components/batteryReminderPop").BatteryReminderPop, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "./components/batteryReminderPop").BatteryReminderPop, {
         ref: batteryReminderRef,
         defaultDetails: lockInfo,
         refresh: fetchLockInfo
@@ -268748,24 +269019,24 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         isOpen: (deviceInfo == null ? void 0 : deviceInfo.buzzerStatus) === 1,
         time: (_deviceInfo$buzzerTim2 = deviceInfo == null ? void 0 : deviceInfo.buzzerTime) != null ? _deviceInfo$buzzerTim2 : 10,
         onConfirm: (/*#__PURE__*/function () {
-          var _ref13 = (0, _asyncToGenerator2.default)(function* (_ref12) {
-            var buzzerTime = _ref12.buzzerTime,
-              buzzerStatus = _ref12.buzzerStatus;
+          var _ref15 = (0, _asyncToGenerator2.default)(function* (_ref14) {
+            var buzzerTime = _ref14.buzzerTime,
+              buzzerStatus = _ref14.buzzerStatus;
             return yield deviceModifyLockCrashBuzzer(buzzerTime, buzzerStatus);
           });
           return function (_x7) {
-            return _ref13.apply(this, arguments);
+            return _ref15.apply(this, arguments);
           };
         }())
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_leaveRiseLockPop.default, {
         ref: leaveRiseLockRef,
         time: (_deviceInfo$leaveUpTi = deviceInfo == null ? void 0 : deviceInfo.leaveUpTime) != null ? _deviceInfo$leaveUpTi : 0,
         onConfirm: (/*#__PURE__*/function () {
-          var _ref14 = (0, _asyncToGenerator2.default)(function* (leaveUpTime) {
+          var _ref16 = (0, _asyncToGenerator2.default)(function* (leaveUpTime) {
             return yield deviceModifyLockLeaveTime(leaveUpTime);
           });
           return function (_x8) {
-            return _ref14.apply(this, arguments);
+            return _ref16.apply(this, arguments);
           };
         }())
       }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").Popup, {
@@ -268881,7 +269152,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = DeviceInfo;
-},1664,[1,2,25,3,1369,42,1568,1665,1666,1565,88,1080,1554,1667,1182,1203,1572,1668],"src\\pages\\deviceInfo\\index.tsx");
+},1664,[1,2,25,3,1369,42,1568,1665,1666,1565,88,1080,1554,1667,1182,1211,1572,1189,1668],"src\\pages\\deviceInfo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -269179,7 +269450,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = BeeBuzzingCollisionPop;
-},1665,[1,2,25,42,3,553,556,552,88,1572,1203,1182],"src\\pages\\deviceInfo\\components\\beeBuzzingCollisionPop\\index.tsx");
+},1665,[1,2,25,42,3,553,556,552,88,1572,1211,1182],"src\\pages\\deviceInfo\\components\\beeBuzzingCollisionPop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -270458,7 +270729,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1670,[1,7,2,25,202,42,3,1368,553,1369,552,1671,88,1179,1080,1554,1203,1182,1673,1555],"src\\pages\\deviceList\\index.tsx");
+},1670,[1,7,2,25,202,42,3,1368,553,1369,552,1671,88,1179,1080,1554,1211,1182,1673,1555],"src\\pages\\deviceList\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -270781,7 +271052,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1674,[1,2,25,42,3,1369,88,1554,1080,1211,1182,1572,1675],"src\\pages\\firmwareVersion\\index.tsx");
+},1674,[1,2,25,42,3,1369,88,1554,1080,1219,1182,1572,1675],"src\\pages\\firmwareVersion\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -271060,7 +271331,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1676,[1,2,25,7,42,3,1369,1677,88,1080,1045,1211,1182,1678,1572],"src\\pages\\versionHistory\\index.tsx");
+},1676,[1,2,25,7,42,3,1369,1677,88,1080,1045,1219,1182,1678,1572],"src\\pages\\versionHistory\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -271328,7 +271599,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = DeviceLog;
-},1679,[1,2,7,25,42,3,88,1080,1205,1572,1680],"src\\pages\\deviceLog\\index.tsx");
+},1679,[1,2,7,25,42,3,88,1080,1213,1572,1680],"src\\pages\\deviceLog\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -271642,7 +271913,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1681,[1,7,2,25,42,3,552,1369,1682,556,88,1080,1204,1182,1572],"src\\pages\\memberList\\index.tsx");
+},1681,[1,7,2,25,42,3,552,1369,1682,556,88,1080,1212,1182,1572],"src\\pages\\memberList\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -272117,7 +272388,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1683,[1,7,2,25,42,3,1684,556,1686,88,1080,1182,1204,1572],"src\\pages\\addMember\\index.tsx");
+},1683,[1,7,2,25,42,3,1684,556,1686,88,1080,1182,1212,1572],"src\\pages\\addMember\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -272765,7 +273036,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1687,[1,7,2,25,42,3,1369,1688,88,1572,1080,1209,1182],"src\\pages\\shopping\\index.tsx");
+},1687,[1,7,2,25,42,3,1369,1688,88,1572,1080,1217,1182],"src\\pages\\shopping\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -272819,20 +273090,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     value: true
   });
   exports.default = GoodsDetail;
-  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
-  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
-  var _GradientButton = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/components/GradientButton"));
-  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./styles"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime");
+  var _toConsumableArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/asyncToGenerator"));
+  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[5], "react-native");
+  var _GradientButton = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "D:\\xqkj\\bokeapp\\src/components/GradientButton"));
+  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "./styles"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\goodsDetail\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   function GoodsDetail() {
     var _route$params,
       _this = this;
-    var navigation = (0, _$$_REQUIRE(_dependencyMap[8], "@react-navigation/native").useNavigation)();
-    var route = (0, _$$_REQUIRE(_dependencyMap[8], "@react-navigation/native").useRoute)();
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useNavigation)();
+    var route = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useRoute)();
     var productId = (_route$params = route.params) != null && _route$params.id ? String(route.params.id) : '';
     var _useState = (0, _react.useState)(null),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
@@ -272857,7 +273129,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       setDetailRatios = _useState0[1];
     var loadDetail = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       if (!productId) {
-        (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '商品ID不存在',
           icon: 'info'
         });
@@ -272866,20 +273138,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
       setLoading(true);
       try {
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/mall").getGoodsDetail)({
+        var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/mall").getGoodsDetail)({
           productId: productId
         });
         if (res.code === 200 && res.success) {
           setGoodsDetail(res.data);
         } else {
-          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: res.msg || res.message || '获取商品详情失败',
             icon: 'info'
           });
           navigation.goBack();
         }
       } catch (e) {
-        (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '获取商品详情失败',
           icon: 'info'
         });
@@ -272901,9 +273173,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       try {
         var _tokenRes$data;
         // 获取小程序 token
-        var tokenRes = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/common").getMiniToken)({});
+        var tokenRes = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/services/common").getMiniToken)({});
         if (!tokenRes.success || !((_tokenRes$data = tokenRes.data) != null && _tokenRes$data.token)) {
-          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '获取小程序token失败',
             icon: 'info'
           });
@@ -272924,17 +273196,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var queryString = Object.keys(params).map(function (key) {
           return `${key}=${encodeURIComponent(String(params[key]))}`;
         }).join('&');
-        var result = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils/wechat").wechatOpenMiniProgram)(`pages/mall/buyResult/index?${queryString}`);
+        var result = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/wechat").wechatOpenMiniProgram)(`pages/mall/buyResult/index?${queryString}`);
         if (result.result) {
           setPopupVisible(false);
         } else {
-          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: result.message || '打开小程序失败',
             icon: 'info'
           });
         }
       } catch (error) {
-        (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: (error == null ? void 0 : error.message) || '购买失败，请重试',
           icon: 'info'
         });
@@ -272954,32 +273226,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })
       })
     });
-
-    // 计算详情长图的宽高比，保证在当前屏幕宽度下等比显示
-    (0, _react.useEffect)(function () {
-      if (!(goodsDetail != null && goodsDetail.detailImage) || goodsDetail.detailImage.length === 0) {
-        setDetailRatios([]);
-        return;
-      }
-      var urls = goodsDetail.detailImage;
-      var tasks = urls.map(function (url) {
-        return new Promise(function (resolve) {
-          _reactNative.Image.getSize(url, function (w, h) {
-            if (w > 0 && h > 0) {
-              resolve(w / h);
-            } else {
-              resolve(0.75); // 默认比例，防止为 0
-            }
-          }, function () {
-            return resolve(0.75);
-          });
-        });
-      });
-      void Promise.all(tasks).then(function (ratios) {
-        setDetailRatios(ratios);
-      });
-    }, [goodsDetail == null ? void 0 : goodsDetail.detailImage]);
-    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
       backgroundColor: "#F6F7FA",
       statusBarStyle: "dark-content",
       statusBarBackgroundColor: "#FFFFFF",
@@ -272993,9 +273240,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       loading: loading,
       footer: footer,
       children: [goodsDetail && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
-        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
           direction: 'column',
-          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "@ant-design/react-native").Carousel, {
+          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[15], "@ant-design/react-native").Carousel, {
             autoplay: true,
             autoplayInterval: 3000,
             dots: true,
@@ -273019,13 +273266,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }, mainImage);
             }) : null
           })
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
           style: _styles.default.detailInfo,
           direction: 'column',
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             justify: 'between',
             align: 'end',
-            children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
               align: 'center',
               children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
                 style: _styles.default.detailPrice,
@@ -273045,7 +273292,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             style: _styles.default.detailStock,
             children: ["\u5E93\u5B58\uFF1A", goodsDetail.stock]
           })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
           style: _styles.default.detailTitle,
           align: 'center',
           justify: 'center',
@@ -273057,7 +273304,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
             style: _styles.default.line
           })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
           direction: "column",
           justify: "center",
           align: "center",
@@ -273069,13 +273316,26 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               },
               style: {
                 width: '100%',
-                aspectRatio: detailRatios[index] || 0.75
+                // 给个初始占位比例1，等图片 onLoad 返回真实宽高比时重新撑开高度
+                aspectRatio: detailRatios[index] || 1
               },
-              resizeMode: "cover"
+              resizeMode: "contain",
+              onLoad: function onLoad(e) {
+                var _e$nativeEvent$source = e.nativeEvent.source,
+                  width = _e$nativeEvent$source.width,
+                  height = _e$nativeEvent$source.height;
+                if (width > 0 && height > 0) {
+                  setDetailRatios(function (prev) {
+                    var newRatios = (0, _toConsumableArray2.default)(prev);
+                    newRatios[index] = width / height;
+                    return newRatios;
+                  });
+                }
+              }
             }, index);
           }) : null
         })]
-      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Popup, {
+      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Popup, {
         visible: popupVisible,
         onClose: function onClose() {
           return setPopupVisible(false);
@@ -273083,7 +273343,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         title: "",
         children: goodsDetail && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
           style: _styles.default.popupContent,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             style: _styles.default.popupBody,
             children: [goodsDetail.detailImage && goodsDetail.detailImage[0] ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
               source: {
@@ -273091,7 +273351,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               },
               style: _styles.default.popupImage,
               resizeMode: "contain"
-            }) : null, /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+            }) : null, /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
               direction: "column",
               style: _styles.default.popupInfo,
               justify: "between",
@@ -273102,9 +273362,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
                 style: _styles.default.popupPrice,
                 children: ["\xA5", goodsDetail.currentPrice]
-              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
                 align: "center",
-                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Stepper, {
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Stepper, {
                   initValue: productNum,
                   min: 1,
                   size: 12,
@@ -273118,7 +273378,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 })]
               })]
             })]
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             justify: "center",
             style: _styles.default.popupFooter,
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_GradientButton.default, {
@@ -273137,7 +273397,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1689,[1,2,25,42,3,556,1690,88,1080,1182,1209,974,1240,1572,559],"src\\pages\\goodsDetail\\index.tsx");
+},1689,[1,7,2,25,42,3,556,1690,88,1080,1182,1217,974,1240,1572,559],"src\\pages\\goodsDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -273655,7 +273915,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1691,[1,2,25,42,3,552,556,1369,1692,88,1080,1182,1209,1572],"src\\pages\\pickupCode\\index.tsx");
+},1691,[1,2,25,42,3,552,556,1369,1692,88,1080,1182,1217,1572],"src\\pages\\pickupCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -274325,7 +274585,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1695,[1,7,2,25,42,3,1696,88,1080,1209,1182,1572],"src\\pages\\pickupCodeRecordList\\index.tsx");
+},1695,[1,7,2,25,42,3,1696,88,1080,1217,1182,1572],"src\\pages\\pickupCodeRecordList\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -275000,7 +275260,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1697,[1,2,25,42,3,1369,1698,556,88,1080,1209,1182,1699,1572,559],"src\\pages\\pickupCodeRecordDetail\\index.tsx");
+},1697,[1,2,25,42,3,1369,1698,556,88,1080,1217,1182,1699,1572,559],"src\\pages\\pickupCodeRecordDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -288448,7 +288708,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1701,[1,2,25,42,3,552,556,1369,1702,88,1080,1182,1209,559,1659,1572],"src\\pages\\pickupCodeDaily\\index.tsx");
+},1701,[1,2,25,42,3,552,556,1369,1702,88,1080,1182,1217,559,1659,1572],"src\\pages\\pickupCodeDaily\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -289171,7 +289431,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ManageComposite;
-},1703,[1,7,2,25,42,3,553,1369,88,1080,1210,1182,1704,1572],"src\\pages\\composit\\manage.tsx");
+},1703,[1,7,2,25,42,3,553,1369,88,1080,1218,1182,1704,1572],"src\\pages\\composit\\manage.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -289800,7 +290060,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1705,[1,7,2,25,3,42,1369,620,88,1554,1080,1210,1182,1706,1572,1707,559],"src\\pages\\composit\\member.tsx");
+},1705,[1,7,2,25,3,42,1369,620,88,1554,1080,1218,1182,1706,1572,1707,559],"src\\pages\\composit\\member.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -290464,7 +290724,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1710,[1,7,2,25,42,3,1711,88,1080,1207,1182,1712,1572],"src\\pages\\order\\index.tsx");
+},1710,[1,7,2,25,42,3,1711,88,1080,1215,1182,1712,1572],"src\\pages\\order\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -290963,7 +291223,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1714,[1,2,25,42,3,1715,88,1080,1182,1207,1572,1179],"src\\pages\\order\\detail\\index.tsx");
+},1714,[1,2,25,42,3,1715,88,1080,1182,1215,1572,1179],"src\\pages\\order\\detail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -291365,7 +291625,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1716,[1,2,7,25,42,3,1369,1717,88,1080,1182,1659,1204,1572],"src\\pages\\maintain\\index.tsx");
+},1716,[1,2,7,25,42,3,1369,1717,88,1080,1182,1659,1212,1572],"src\\pages\\maintain\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -291670,7 +291930,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1718,[1,7,2,25,42,3,1719,88,1080,1205,1182,1572],"src\\pages\\maintain\\lockChoose\\index.tsx");
+},1718,[1,7,2,25,42,3,1719,88,1080,1213,1182,1572],"src\\pages\\maintain\\lockChoose\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -291899,7 +292159,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1720,[1,7,2,25,42,3,1369,1721,88,1080,1204,1182,1085,1572],"src\\pages\\maintain\\service\\index.tsx");
+},1720,[1,7,2,25,42,3,1369,1721,88,1080,1212,1182,1085,1572],"src\\pages\\maintain\\service\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -292198,7 +292458,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1722,[1,7,2,25,42,3,1723,620,88,1080,1182,1204,1572],"src\\pages\\maintain\\serviceDetail\\index.tsx");
+},1722,[1,7,2,25,42,3,1723,620,88,1080,1182,1212,1572],"src\\pages\\maintain\\serviceDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -292551,7 +292811,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1724,[1,2,25,42,3,1369,1725,552,88,1080,1204,1182,1085,1240,1572],"src\\pages\\account\\index.tsx");
+},1724,[1,2,25,42,3,1369,1725,552,88,1080,1212,1182,1085,1240,1572],"src\\pages\\account\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -293140,7 +293400,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1726,[1,2,25,42,3,1727,88,1080,1182,1204,1572],"src\\pages\\changeMobile\\index.tsx");
+},1726,[1,2,25,42,3,1727,88,1080,1182,1212,1572],"src\\pages\\changeMobile\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -293479,7 +293739,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1728,[1,2,25,42,3,1729,88,1080,1182,1179,1204,1572],"src\\pages\\wechatUnbind\\index.tsx");
+},1728,[1,2,25,42,3,1729,88,1080,1182,1179,1212,1572],"src\\pages\\wechatUnbind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -293967,7 +294227,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1730,[1,2,25,42,3,1369,1731,88,1080,1182,1179,1204,1572],"src\\pages\\passwordSet\\index.tsx");
+},1730,[1,2,25,42,3,1369,1731,88,1080,1182,1179,1212,1572],"src\\pages\\passwordSet\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -294461,7 +294721,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1732,[1,2,25,42,3,1369,1733,88,1080,1182,1179,1204,1045,1046,1079,1572],"src\\pages\\logoff\\index.tsx");
+},1732,[1,2,25,42,3,1369,1733,88,1080,1182,1179,1212,1045,1046,1079,1572],"src\\pages\\logoff\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -295128,7 +295388,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1736,[1,2,25,42,3,1369,1737,556,88,1080,1208,1182,1699,1572,559],"src\\pages\\addressCreate\\index.tsx");
+},1736,[1,2,25,42,3,1369,1737,556,88,1080,1216,1182,1699,1572,559],"src\\pages\\addressCreate\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -295462,7 +295722,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1738,[1,7,2,25,42,3,1369,552,1739,556,88,1080,1204,1182,1208,1572],"src\\pages\\address\\index.tsx");
+},1738,[1,7,2,25,42,3,1369,552,1739,556,88,1080,1212,1182,1216,1572],"src\\pages\\address\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -295888,7 +296148,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1740,[1,7,2,25,42,3,1369,1741,88,1080,1204,1182,1659,1572],"src\\pages\\feedback\\index.tsx");
+},1740,[1,7,2,25,42,3,1369,1741,88,1080,1212,1182,1659,1572],"src\\pages\\feedback\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -296220,7 +296480,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1742,[1,7,2,25,42,3,620,1369,1743,88,1080,1204,1182,1572],"src\\pages\\feedbackRecord\\index.tsx");
+},1742,[1,7,2,25,42,3,620,1369,1743,88,1080,1212,1182,1572],"src\\pages\\feedbackRecord\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -296573,7 +296833,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1744,[1,7,2,25,202,42,3,553,1745,88,1080,1212,1182,1572,559],"src\\pages\\testDevice\\index.tsx");
+},1744,[1,7,2,25,202,42,3,553,1745,88,1080,1220,1182,1572,559],"src\\pages\\testDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -298339,7 +298599,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1746,[1,2,25,42,3,553,1614,1747,1369,1568,1748,88,1080,1212,1182,1189,1085,1572,559],"src\\pages\\testDeviceDetail\\index.tsx");
+},1746,[1,2,25,42,3,553,1614,1747,1369,1568,1748,88,1080,1220,1182,1197,1085,1572,559],"src\\pages\\testDeviceDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -299011,7 +299271,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1749,[1,2,25,42,3,620,1750,88,1080,1204,1182,1572],"src\\pages\\feedbackDetail\\index.tsx");
+},1749,[1,2,25,42,3,620,1750,88,1080,1212,1182,1572],"src\\pages\\feedbackDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -299358,7 +299618,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1751,[1,2,25,42,3,1752,88,1296,1204,1182,1572],"src\\pages\\skinPeeler\\index.tsx");
+},1751,[1,2,25,42,3,1752,88,1296,1212,1182,1572],"src\\pages\\skinPeeler\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -300926,7 +301186,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1757,[1,2,7,25,42,3,1369,1758,552,88,971,1080,1204,1182,1659,1572],"src\\pages\\adDisplay\\index.tsx");
+},1757,[1,2,7,25,42,3,1369,1758,552,88,971,1080,1212,1182,1659,1572],"src\\pages\\adDisplay\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -301197,42 +301457,49 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, [rawAddressInfo]);
     var initLocation = /*#__PURE__*/function () {
       var _ref = (0, _asyncToGenerator2.default)(function* () {
-        if (!isMountedRef.current) return;
-        if (isHarmonyMapUnavailable) {
-          setLocationReady(true);
-          return;
-        }
-        if (_$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
-          var granted = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").requestHarmonyLocationPermission)();
-          if (!granted) {
-            console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+        yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils/permissions").runInPermissionQueue)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+          if (!isMountedRef.current) return;
+          var hasLocationPermission = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils/permissions").showPermissionPromptIfNeeded)('location');
+          if (!hasLocationPermission) {
             setLocationReady(true);
             return;
           }
-        }
-        if (_reactNative.Platform.OS === 'android') {
-          try {
-            yield _reactNative.PermissionsAndroid.requestMultiple([_reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, _reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]);
-          } catch (e) {
-            console.warn('定位权限请求失败:', e);
-          }
-        }
-        try {
-          yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").initAMapGeolocation)();
-          var position = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").getCurrentLocation)();
-          if (position && isMountedRef.current) {
-            userLocationInfo.current = {
-              latitude: position.latitude,
-              longitude: position.longitude
-            };
-          }
-        } catch (error) {
-          console.error('定位失败:', error);
-        } finally {
-          if (isMountedRef.current) {
+          if (isHarmonyMapUnavailable) {
             setLocationReady(true);
+            return;
           }
-        }
+          if (_$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
+            var granted = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").requestHarmonyLocationPermission)();
+            if (!granted) {
+              console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+              setLocationReady(true);
+              return;
+            }
+          }
+          if (_reactNative.Platform.OS === 'android') {
+            try {
+              yield _reactNative.PermissionsAndroid.requestMultiple([_reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, _reactNative.PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]);
+            } catch (e) {
+              console.warn('定位权限请求失败:', e);
+            }
+          }
+          try {
+            yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").initAMapGeolocation)();
+            var position = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").getCurrentLocation)();
+            if (position && isMountedRef.current) {
+              userLocationInfo.current = {
+                latitude: position.latitude,
+                longitude: position.longitude
+              };
+            }
+          } catch (error) {
+            console.error('定位失败:', error);
+          } finally {
+            if (isMountedRef.current) {
+              setLocationReady(true);
+            }
+          }
+        }));
       });
       return function initLocation() {
         return _ref.apply(this, arguments);
@@ -301324,7 +301591,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       if (isHarmonyMapUnavailable) {
         setLocationReady(true);
       } else {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").initAMapSdk)();
+        (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").initAMapSdk)();
         initLocation();
       }
       return function () {
@@ -301342,7 +301609,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         mapRef.current = null;
       };
     }, []);
-    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
       backgroundColor: "#FFFFFF",
       statusBarStyle: "dark-content",
       statusBarBackgroundColor: "#FFFFFF",
@@ -301505,7 +301772,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1759,[1,7,2,25,42,3,1369,1760,88,1080,1560,1179,1182,1572],"src\\pages\\deviceAddress\\index.tsx");
+},1759,[1,7,2,25,42,3,1369,1760,88,1080,1560,1179,1189,1182,1572],"src\\pages\\deviceAddress\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -302839,7 +303106,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = VipPage;
-},1761,[1,7,2,25,42,3,553,1369,1562,1762,1997,620,88,1204,1080,1182,975,1240,1999,1706,1572,2003,1179,2004,2006],"src\\pages\\vip\\index.tsx");
+},1761,[1,7,2,25,42,3,553,1369,1562,1762,1997,620,88,1212,1080,1182,975,1240,1999,1706,1572,2003,1179,2004,2006],"src\\pages\\vip\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -326474,7 +326741,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2008,[1,7,2,25,42,3,1369,88,1204,1572,2009],"src\\pages\\vip\\info.tsx");
+},2008,[1,7,2,25,42,3,1369,88,1212,1572,2009],"src\\pages\\vip\\info.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -327119,7 +327386,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2010,[1,7,2,25,42,3,620,1369,2011,88,1080,975,1182,1204,1999,1240,2007,1572,2006],"src\\pages\\vip\\record.tsx");
+},2010,[1,7,2,25,42,3,620,1369,2011,88,1080,975,1182,1212,1999,1240,2007,1572,2006],"src\\pages\\vip\\record.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -328105,7 +328372,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2012,[1,2,7,25,1369,42,3,620,1762,1997,88,1080,1204,1182,1572,2003,1179,2004],"src\\pages\\vip\\editRecord.tsx");
+},2012,[1,2,7,25,1369,42,3,620,1762,1997,88,1080,1212,1182,1572,2003,1179,2004],"src\\pages\\vip\\editRecord.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -328148,11 +328415,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var popRef = (0, _react.useRef)(null);
     var fallbackRunningRef = (0, _react.useRef)(false);
 
-    // 请求相机权限
+    // 进入“添加设备”扫码页时，先做用途告知，再请求系统相机权限。
     (0, _react.useEffect)(function () {
       var init = /*#__PURE__*/function () {
         var _ref = (0, _asyncToGenerator2.default)(function* () {
-          yield requestPermission();
+          yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/permissions").runInPermissionQueue)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+            var hasPrompted = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/permissions").showPermissionPromptIfNeeded)('camera');
+            if (!hasPrompted) return;
+            yield requestPermission();
+          }));
         });
         return function init() {
           return _ref.apply(this, arguments);
@@ -328162,7 +328433,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, [requestPermission]);
 
     // 页面聚焦时挂载并激活相机，失焦时卸载销毁
-    (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+    (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
       // 延迟加载较重的相机组件，使页面 push 过渡动画更丝滑
       var task = _reactNative.InteractionManager.runAfterInteractions(function () {
         setIsFocusedMount(true);
@@ -328184,20 +328455,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       };
     }, []));
     var handleScanResult = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2.default)(function* (code) {
+      var _ref3 = (0, _asyncToGenerator2.default)(function* (code) {
         if (hasScannedRef.current || popVisibleRef.current) return;
         hasScannedRef.current = true;
-        (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+        (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
           title: '识别中...'
         });
         try {
-          var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/bindDevice").bindScan)({
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/services/bindDevice").bindScan)({
             code: code,
             userId: null
           });
           if ((res == null ? void 0 : res.code) === 200) {
-            (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-            (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: '识别成功',
               icon: 'success'
             });
@@ -328213,7 +328484,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             });
           } else {
             var _popRef$current;
-            (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
             setErrorMsg((res == null ? void 0 : res.message) || '识别失败，请重试');
             setIsActive(false);
             popVisibleRef.current = true;
@@ -328222,7 +328493,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
         } catch (error) {
           var _popRef$current2;
-          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+          (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
           setErrorMsg('识别失败，请稍后重试');
           popVisibleRef.current = true;
           setIsActive(false);
@@ -328231,7 +328502,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function (_x) {
-        return _ref2.apply(this, arguments);
+        return _ref3.apply(this, arguments);
       };
     }(), [navigation]);
     var codeScanner = _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/harmony/vision-camera-shim").useCodeScanner ? (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/harmony/vision-camera-shim").useCodeScanner)({
@@ -328244,10 +328515,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }) : null;
     (0, _react.useEffect)(function () {
-      if (!_$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY || !harmonyScanFallback || !isActive) return;
+      if (!_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY || !harmonyScanFallback || !isActive) return;
       if (fallbackRunningRef.current) return;
       fallbackRunningRef.current = true;
-      (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/harmony/harmony-scan").startHarmonyScan)().then(function (code) {
+      (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/harmony/harmony-scan").startHarmonyScan)().then(function (code) {
         if (code) {
           void handleScanResult(code);
         }
@@ -328258,7 +328529,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     }, [harmonyScanFallback, isActive, handleScanResult]);
     if (!hasPermission) {
-      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
         backgroundColor: "#000000",
         statusBarStyle: "light-content",
         statusBarBackgroundColor: "#000000",
@@ -328275,7 +328546,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         },
         children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
           style: _styles.default.container,
-          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             direction: "column",
             align: "center",
             justify: "center",
@@ -328294,7 +328565,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     }
     if (!device || !_$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/harmony/vision-camera-shim").Camera || !codeScanner) {
-      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
         backgroundColor: "#000000",
         statusBarStyle: "light-content",
         statusBarBackgroundColor: "#000000",
@@ -328311,7 +328582,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         },
         children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
           style: _styles.default.container,
-          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             direction: "column",
             align: "center",
             justify: "center",
@@ -328326,7 +328597,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         })
       });
     }
-    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
       backgroundColor: "#000000",
       statusBarStyle: "light-content",
       statusBarBackgroundColor: "#000000",
@@ -328347,10 +328618,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           style: _styles.default.camera,
           device: device,
           isActive: isActive,
-          codeScanner: _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY && harmonyScanFallback ? undefined : codeScanner,
+          codeScanner: _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY && harmonyScanFallback ? undefined : codeScanner,
           onError: function onError(err) {
             var msg = typeof (err == null ? void 0 : err.error) === 'string' ? err.error : typeof (err == null ? void 0 : err.message) === 'string' ? err.message : '';
-            if (_$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY && /output\/stream configurations are invalid/i.test(msg)) {
+            if (_$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY && /output\/stream configurations are invalid/i.test(msg)) {
               setHarmonyScanFallback(true);
             }
           }
@@ -328382,10 +328653,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             },
             style: _styles.default.toastImage
           })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
           ref: popRef,
           textWeight: "bold",
-          title: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+          title: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/components").Flex, {
             direction: "column",
             justify: "center",
             align: "center",
@@ -328407,7 +328678,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             popVisibleRef.current = false;
             (_popRef$current3 = popRef.current) == null || _popRef$current3.close();
             setTimeout(function () {
-              (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index');
+              (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index');
             }, 300);
           },
           onConfirm: function onConfirm() {
@@ -328426,7 +328697,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = BinDevice;
-},2013,[1,2,25,42,3,2014,88,1080,1590,1085,1182,1213,1179,2015,1572],"src\\pages\\bindDevice\\index.tsx");
+},2013,[1,2,25,42,3,2014,88,1080,1590,1189,1085,1182,1221,1179,2015,1572],"src\\pages\\bindDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -329872,7 +330143,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }));
   }
-},2016,[1,2,25,42,3,620,1369,2017,2018,1179,1182,1189,1203,1572],"src\\pages\\findDevice\\index.tsx");
+},2016,[1,2,25,42,3,620,1369,2017,2018,1179,1182,1197,1211,1572],"src\\pages\\findDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -330730,7 +331001,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: 16
     }
   });
-},2019,[1,7,2,25,42,3,1369,88,1554,1080,1203,1182,1572],"src\\pages\\combineDevice\\index.tsx");
+},2019,[1,7,2,25,42,3,1369,88,1554,1080,1211,1182,1572],"src\\pages\\combineDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -330927,7 +331198,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2020,[1,2,25,42,3,88,1080,1554,1203,1182,1572,2021],"src\\pages\\handOver\\index.tsx");
+},2020,[1,2,25,42,3,88,1080,1554,1211,1182,1572,2021],"src\\pages\\handOver\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -331224,7 +331495,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2022,[1,7,2,25,42,3,88,1080,1554,1203,1182,2023,1572],"src\\pages\\handOver\\handOverDevice\\index.tsx");
+},2022,[1,7,2,25,42,3,88,1080,1554,1211,1182,2023,1572],"src\\pages\\handOver\\handOverDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -331505,7 +331776,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2024,[1,2,25,42,3,2025,88,1080,1554,1650,1203,1182,1572,2027],"src\\pages\\handOver\\handOverVerify\\index.tsx");
+},2024,[1,2,25,42,3,2025,88,1080,1554,1650,1211,1182,1572,2027],"src\\pages\\handOver\\handOverVerify\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332053,7 +332324,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2028,[1,2,25,42,3,2029,88,1080,1554,1650,1182,1203,1189,1572,2031],"src\\pages\\handOver\\handOverVerifyNew\\index.tsx");
+},2028,[1,2,25,42,3,2029,88,1080,1554,1650,1182,1211,1197,1572,2031],"src\\pages\\handOver\\handOverVerifyNew\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332596,7 +332867,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2034,[1,2,25,42,3,1368,552,88,1080,1554,1182,1203,2035],"src\\pages\\unbind\\index.tsx");
+},2034,[1,2,25,42,3,1368,552,88,1080,1554,1182,1211,2035],"src\\pages\\unbind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -332954,7 +333225,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2036,[1,2,25,42,3,1368,1579,88,1080,1554,1650,1182,1211,1203,1189,1189,2037],"src\\pages\\unbind\\unbindDevice.tsx");
+},2036,[1,2,25,42,3,1368,1579,88,1080,1554,1650,1182,1219,1211,1197,1197,2037],"src\\pages\\unbind\\unbindDevice.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -333242,7 +333513,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2038,[1,2,25,42,3,2039,88,1080,1189,1182,1572],"src\\pages\\unBindSuccess\\index.tsx");
+},2038,[1,2,25,42,3,2039,88,1080,1197,1182,1572],"src\\pages\\unBindSuccess\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -333979,7 +334250,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2040,[1,150,2,25,42,3,1565,2041,1369,88,1080,1554,1182,1189,1203,1572,2043,1179],"src\\pages\\bluetooth\\control\\index.tsx");
+},2040,[1,150,2,25,42,3,1565,2041,1369,88,1080,1554,1182,1197,1211,1572,2043,1179],"src\\pages\\bluetooth\\control\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -334740,7 +335011,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2044,[1,2,25,7,42,3,1369,1677,88,1554,1182,1204,1179,2045,1572],"src\\pages\\message\\index.tsx");
+},2044,[1,2,25,7,42,3,1369,1677,88,1554,1182,1212,1179,2045,1572],"src\\pages\\message\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -335069,7 +335340,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2046,[1,2,25,42,3,556,88,1080,1204,1182,1572,2047],"src\\pages\\messageDetail\\index.tsx");
+},2046,[1,2,25,42,3,556,88,1080,1212,1182,1572,2047],"src\\pages\\messageDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -335342,7 +335613,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
             style: _styles.default.popupFooter,
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-              style: _styles.default.cancalBtn,
+              style: _styles.default.cancelBtn,
               onPress: function onPress() {
                 setEditNamePopVisible(false);
               },
@@ -335365,7 +335636,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2048,[1,2,25,3,42,1369,2049,88,1080,1182,1205,1045,1211,1572,1625],"src\\pages\\myDevice\\index.tsx");
+},2048,[1,2,25,3,42,1369,2049,88,1080,1182,1213,1045,1219,1572,1625],"src\\pages\\myDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -335448,8 +335719,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       flexDirection: 'row',
       justifyContent: 'space-between'
     },
-    cancalBtn: {
-      width: 156,
+    cancelBtn: {
+      width: '48%',
       height: 48,
       borderRadius: 12,
       borderWidth: 1,
@@ -335469,7 +335740,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textTransform: 'none'
     },
     confirmBtn: {
-      width: 156,
+      width: '48%',
       height: 48,
       backgroundColor: '#333333',
       borderRadius: 12,
@@ -335787,7 +336058,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2050,[1,7,2,25,3,42,1677,2051,88,1080,1205,1182,1085,1572],"src\\pages\\apply\\applyRecord\\index.tsx");
+},2050,[1,7,2,25,3,42,1677,2051,88,1080,1213,1182,1085,1572],"src\\pages\\apply\\applyRecord\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -336204,7 +336475,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2052,[1,2,25,3,42,2053,620,88,1080,1085,1205,1182,1572],"src\\pages\\apply\\applyRecord\\detail\\index.tsx");
+},2052,[1,2,25,3,42,2053,620,88,1080,1085,1213,1182,1572],"src\\pages\\apply\\applyRecord\\detail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -336603,7 +336874,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2054,[1,2,25,3,42,1369,2055,88,1080,1085,1204,1182,1205,1572],"src\\pages\\apply\\userScan\\index.tsx");
+},2054,[1,2,25,3,42,1369,2055,88,1080,1085,1212,1182,1213,1572],"src\\pages\\apply\\userScan\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true

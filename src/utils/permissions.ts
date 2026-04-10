@@ -105,7 +105,7 @@ export async function showPermissionPromptIfNeeded(
   return permissionPromptMutex.lock(async () => {
     const message = PERMISSION_PROMPT_MESSAGES[type];
     if (!message) return true;
-    if (Platform.OS !== 'android' && Platform.OS !== 'ios') return true;
+    if (Platform.OS !== 'android') return true;
 
     // 优先命中内存缓存，避免每次都读 storage。
     if (permissionPromptMemoryCache[type]) {
