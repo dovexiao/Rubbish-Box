@@ -330,6 +330,9 @@ PODS:
     - React-Core
   - react-native-date-picker (5.0.13):
     - React-Core
+  - react-native-gif-player (1.0.2):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - react-native-image-picker (4.10.3):
     - React-Core
   - react-native-netinfo (9.5.0):
@@ -546,6 +549,7 @@ DEPENDENCIES:
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-cos-sdk (from `../node_modules/react-native-cos-sdk`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
+  - react-native-gif-player (from `../node_modules/react-native-gif-player`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
@@ -664,6 +668,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-cos-sdk"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
+  react-native-gif-player:
+    :path: "../node_modules/react-native-gif-player"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
@@ -788,6 +794,7 @@ SPEC CHECKSUMS:
   react-native-config: 136f9755ccc991cc6438053a44363259ad4c7813
   react-native-cos-sdk: a29ad87f60e2edb2adc46da634aa5b6e7cd14e35
   react-native-date-picker: 2eca217a8fb09c517f5bb6b23978718c6cec59ec
+  react-native-gif-player: 083df0008a64b9f417c38ab91fe27f4a4145dad1
   react-native-image-picker: 1f5318beec2ebed6695454ffb9bea8c4152f1598
   react-native-netinfo: 26560022f28c06d8ef00a9ff1e03beefbbb60c2d
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
