@@ -22,6 +22,10 @@ import {
   requestHarmonyLocationPermission,
 } from '@/utils';
 import { IS_HARMONY } from '@/constants';
+import {
+  runInPermissionQueue,
+  showPermissionPromptIfNeeded,
+} from '@/utils/permissions';
 import type { HarmonyMarker } from '@/harmony/harmony-amap';
 import styles from './styles';
 
@@ -142,45 +146,55 @@ export default function MapComponent(props: MapComponentProps) {
   };
 
   const initLocation = async () => {
-    if (isHarmonyMapUnavailable) {
-      setLocationReady(true);
-      return;
-    }
-
-    if (IS_HARMONY) {
-      const granted = await requestHarmonyLocationPermission();
-      if (!granted) {
-        console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+    await runInPermissionQueue(async () => {
+      if (isHarmonyMapUnavailable) {
         setLocationReady(true);
         return;
       }
-    }
 
-    if (Platform.OS === 'android') {
+      const hasLocationPermission = await showPermissionPromptIfNeeded(
+        'location',
+      );
+      if (!hasLocationPermission) {
+        setLocationReady(true);
+        return;
+      }
+
+      if (IS_HARMONY) {
+        const granted = await requestHarmonyLocationPermission();
+        if (!granted) {
+          console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+          setLocationReady(true);
+          return;
+        }
+      }
+
+      if (Platform.OS === 'android') {
+        try {
+          await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          ]);
+        } catch (e) {
+          console.warn('定位权限请求失败:', e);
+        }
+      }
+
       try {
-        await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ]);
-      } catch (e) {
-        console.warn('定位权限请求失败:', e);
+        await initAMapGeolocation();
+        const position = await getCurrentLocation();
+        if (position) {
+          userLocationInfo.current = {
+            latitude: position.latitude,
+            longitude: position.longitude,
+          };
+        }
+      } catch (error) {
+        // console.error('地图初始化/定位失败:', error);
+      } finally {
+        setLocationReady(true);
       }
-    }
-
-    try {
-      await initAMapGeolocation();
-      const position = await getCurrentLocation();
-      if (position) {
-        userLocationInfo.current = {
-          latitude: position.latitude,
-          longitude: position.longitude,
-        };
-      }
-    } catch (error) {
-      // console.error('地图初始化/定位失败:', error);
-    } finally {
-      setLocationReady(true);
-    }
+    });
   };
 
   useEffect(() => {

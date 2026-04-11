@@ -5,6 +5,10 @@ import {
   TurboModuleRegistry,
 } from 'react-native';
 import Config from 'react-native-config';
+import {
+  runInPermissionQueue,
+  showPermissionPromptIfNeeded,
+} from '@/utils/permissions';
 
 /**
  * 跨端定位能力封装（Android / iOS / Harmony）。
@@ -441,109 +445,119 @@ export const startLocationUpdates = (
 export async function getLocation(
   options: GetLocationOptions = {},
 ): Promise<GetLocationResult> {
-  const targetType: LocationCoordinateType = options.type ?? 'wgs84';
-  const timeoutMs = options.timeout ?? options.highAccuracyExpireTime ?? 10000;
-  const enableHighAccuracy = options.isHighAccuracy ?? true;
-
-  if (isHarmonyPlatform) {
-    const granted = await requestHarmonyLocationPermission();
-    if (!granted) {
+  return runInPermissionQueue(async () => {
+    const hasLocationPermission = await showPermissionPromptIfNeeded(
+      'location',
+    );
+    if (!hasLocationPermission) {
       throw new Error('LOCATION_PERMISSION_DENIED');
     }
-    await initAMapGeolocation();
-    const harmonyLocation = resolveHarmonyLocationModule();
-    const result = await harmonyLocation?.getCurrentLocation?.({
-      enableHighAccuracy,
-      timeoutMs,
-    });
-    if (!result) {
-      throw new Error('LOCATION_UNAVAILABLE');
+
+    const targetType: LocationCoordinateType = options.type ?? 'wgs84';
+    const timeoutMs =
+      options.timeout ?? options.highAccuracyExpireTime ?? 10000;
+    const enableHighAccuracy = options.isHighAccuracy ?? true;
+
+    if (isHarmonyPlatform) {
+      const granted = await requestHarmonyLocationPermission();
+      if (!granted) {
+        throw new Error('LOCATION_PERMISSION_DENIED');
+      }
+      await initAMapGeolocation();
+      const harmonyLocation = resolveHarmonyLocationModule();
+      const result = await harmonyLocation?.getCurrentLocation?.({
+        enableHighAccuracy,
+        timeoutMs,
+      });
+      if (!result) {
+        throw new Error('LOCATION_UNAVAILABLE');
+      }
+      const normalized = normalizeCoordinate(
+        { latitude: result.latitude, longitude: result.longitude },
+        'wgs84',
+        targetType,
+      );
+      return {
+        latitude: normalized.latitude,
+        longitude: normalized.longitude,
+        accuracy: result.accuracy,
+        altitude: options.altitude ? result.altitude : undefined,
+        speed: result.speed,
+        horizontalAccuracy: result.accuracy,
+        verticalAccuracy: undefined,
+      };
     }
+
+    if (Platform.OS === 'android') {
+      try {
+        await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        ]);
+      } catch (error) {
+        console.warn('定位权限请求失败:', error);
+      }
+    }
+
+    await initAMapGeolocation();
+    if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
+      throw new Error('LOCATION_MODULE_UNAVAILABLE');
+    }
+
+    const raw = await new Promise<GetLocationResult>((resolve, reject) => {
+      Geolocation.getCurrentPosition(
+        (position: any) => {
+          const coords = position?.coords ?? {};
+          resolve({
+            latitude: Number(coords.latitude),
+            longitude: Number(coords.longitude),
+            speed:
+              typeof coords.speed === 'number' ? coords.speed : position?.speed,
+            accuracy:
+              typeof coords.accuracy === 'number'
+                ? coords.accuracy
+                : position?.accuracy,
+            altitude:
+              options.altitude && typeof coords.altitude === 'number'
+                ? coords.altitude
+                : undefined,
+            verticalAccuracy:
+              typeof coords.verticalAccuracy === 'number'
+                ? coords.verticalAccuracy
+                : undefined,
+            horizontalAccuracy:
+              typeof coords.horizontalAccuracy === 'number'
+                ? coords.horizontalAccuracy
+                : typeof coords.accuracy === 'number'
+                ? coords.accuracy
+                : undefined,
+          });
+        },
+        (error: any) => {
+          reject(error);
+        },
+        {
+          enableHighAccuracy,
+          timeout: timeoutMs,
+          maximumAge: options.highAccuracyExpireTime ?? 0,
+        },
+      );
+    });
+
+    if (!Number.isFinite(raw.latitude) || !Number.isFinite(raw.longitude)) {
+      throw new Error('LOCATION_INVALID');
+    }
+
     const normalized = normalizeCoordinate(
-      { latitude: result.latitude, longitude: result.longitude },
-      'wgs84',
+      { latitude: raw.latitude, longitude: raw.longitude },
+      'gcj02',
       targetType,
     );
+
     return {
+      ...raw,
       latitude: normalized.latitude,
       longitude: normalized.longitude,
-      accuracy: result.accuracy,
-      altitude: options.altitude ? result.altitude : undefined,
-      speed: result.speed,
-      horizontalAccuracy: result.accuracy,
-      verticalAccuracy: undefined,
     };
-  }
-
-  if (Platform.OS === 'android') {
-    try {
-      await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-      ]);
-    } catch (error) {
-      console.warn('定位权限请求失败:', error);
-    }
-  }
-
-  await initAMapGeolocation();
-  if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
-    throw new Error('LOCATION_MODULE_UNAVAILABLE');
-  }
-
-  const raw = await new Promise<GetLocationResult>((resolve, reject) => {
-    Geolocation.getCurrentPosition(
-      (position: any) => {
-        const coords = position?.coords ?? {};
-        resolve({
-          latitude: Number(coords.latitude),
-          longitude: Number(coords.longitude),
-          speed:
-            typeof coords.speed === 'number' ? coords.speed : position?.speed,
-          accuracy:
-            typeof coords.accuracy === 'number'
-              ? coords.accuracy
-              : position?.accuracy,
-          altitude:
-            options.altitude && typeof coords.altitude === 'number'
-              ? coords.altitude
-              : undefined,
-          verticalAccuracy:
-            typeof coords.verticalAccuracy === 'number'
-              ? coords.verticalAccuracy
-              : undefined,
-          horizontalAccuracy:
-            typeof coords.horizontalAccuracy === 'number'
-              ? coords.horizontalAccuracy
-              : typeof coords.accuracy === 'number'
-              ? coords.accuracy
-              : undefined,
-        });
-      },
-      (error: any) => {
-        reject(error);
-      },
-      {
-        enableHighAccuracy,
-        timeout: timeoutMs,
-        maximumAge: options.highAccuracyExpireTime ?? 0,
-      },
-    );
   });
-
-  if (!Number.isFinite(raw.latitude) || !Number.isFinite(raw.longitude)) {
-    throw new Error('LOCATION_INVALID');
-  }
-
-  const normalized = normalizeCoordinate(
-    { latitude: raw.latitude, longitude: raw.longitude },
-    'gcj02',
-    targetType,
-  );
-
-  return {
-    ...raw,
-    latitude: normalized.latitude,
-    longitude: normalized.longitude,
-  };
 }

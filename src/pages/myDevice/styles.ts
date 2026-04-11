@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  cancalBtn: {
-    width: 156,
+  cancelBtn: {
+    width: '48%',
     height: 48,
     borderRadius: 12,
     borderWidth: 1,
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
 
   confirmBtn: {
-    width: 156,
+    width: '48%',
     height: 48,
     backgroundColor: '#333333',
     borderRadius: 12,

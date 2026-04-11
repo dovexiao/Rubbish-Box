@@ -50,8 +50,8 @@ export const MainTabNavigator: React.FC = () => {
       paddingHorizontal: 16,
       borderTopWidth: 1,
       borderTopColor: 'rgba(0,0,0,0.05)',
-      height: 80 + insets.bottom,
-      paddingBottom: insets.bottom + 20,
+      height: 60 + Math.max(insets.bottom, 20),
+      paddingBottom: Math.max(insets.bottom, 20),
     };
   }, [insets]);
 
@@ -101,7 +101,7 @@ export const MainTabNavigator: React.FC = () => {
             size: number;
           }) => getTabBarIcon(route, focused, color, size),
           tabBarActiveTintColor: '#333333',
-          tabBarInactiveTintColor: '#CCCCCC',
+          tabBarInactiveTintColor: '#666666',
           tabBarStyle,
           tabBarLabelStyle: {
             fontSize: 11,

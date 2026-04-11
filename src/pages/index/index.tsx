@@ -585,7 +585,10 @@ const Index = () => {
             align="center"
             style={styles.guestLoginBtn}
             onPress={() => {
-              navigation.navigate('Login');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+              });
             }}
           >
             <Text style={styles.guestLoginText}>登录</Text>

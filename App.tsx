@@ -68,6 +68,9 @@ LogBox.ignoreAllLogs(true);
 function App() {
   const navigationRef = useNavigationContainerRef<any>();
   const globalPopConfirmRef = useRef<any>(null);
+  const globalPopConfirmClearTimerRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const [jumpListener, setJumpListener] = useState<{
     remove?: () => void;
   } | null>(null);
@@ -83,10 +86,23 @@ function App() {
     onConfirm?: () => any;
     onCancel?: () => any;
     showClose?: boolean;
+    maskClosable?: boolean;
     confirmColors?: [string, string];
     confirmTextColor?: string;
     children?: React.ReactElement;
   } | null>(null);
+  const [globalPopConfirmVisible, setGlobalPopConfirmVisible] = useState(false);
+
+  const closeGlobalPopConfirm = () => {
+    setGlobalPopConfirmVisible(false);
+    if (globalPopConfirmClearTimerRef.current) {
+      clearTimeout(globalPopConfirmClearTimerRef.current);
+    }
+    globalPopConfirmClearTimerRef.current = setTimeout(() => {
+      setGlobalPopConfirmConfig(null);
+      globalPopConfirmClearTimerRef.current = null;
+    }, 260);
+  };
 
   // Harmony: 拦截系统返回（按键/手势），优先让 React Navigation 处理
   useEffect(() => {
@@ -322,12 +338,36 @@ function App() {
   // 监听全局 PopConfirm 显示事件
   useEffect(() => {
     const handler = (config: any) => {
+      if (!config || typeof config !== 'object') {
+        return;
+      }
+
+      const hasTitle =
+        config.title !== undefined &&
+        config.title !== null &&
+        config.title !== '';
+      const hasChildren =
+        config.children !== undefined && config.children !== null;
+
+      // 忽略无标题且无内容的空配置，避免出现空白确认框闪现。
+      if (!hasTitle && !hasChildren) {
+        return;
+      }
+
+      if (globalPopConfirmClearTimerRef.current) {
+        clearTimeout(globalPopConfirmClearTimerRef.current);
+        globalPopConfirmClearTimerRef.current = null;
+      }
       setGlobalPopConfirmConfig(config);
-      globalPopConfirmRef.current?.open?.();
+      setGlobalPopConfirmVisible(true);
     };
     eventCenter.on('global:popConfirm:show', handler);
     return () => {
       eventCenter.off('global:popConfirm:show', handler);
+      if (globalPopConfirmClearTimerRef.current) {
+        clearTimeout(globalPopConfirmClearTimerRef.current);
+        globalPopConfirmClearTimerRef.current = null;
+      }
     };
   }, []);
 
@@ -573,7 +613,7 @@ function App() {
                             // 轮询继续
                           }
 
-                          await new Promise(resolve =>
+                          await new Promise((resolve: any) =>
                             setTimeout(resolve, intervalMs),
                           );
                         }
@@ -1024,49 +1064,52 @@ function App() {
                   )}
 
                   {/* 全局 PopConfirm 弹窗（用于工具函数调用） */}
-                  {globalPopConfirmConfig && (
-                    <PopConfirm
-                      ref={globalPopConfirmRef}
-                      title={
+                  <PopConfirm
+                    ref={globalPopConfirmRef}
+                    visible={globalPopConfirmVisible}
+                    title={
+                      globalPopConfirmConfig?.title !== undefined &&
+                      globalPopConfirmConfig?.title !== null &&
+                      globalPopConfirmConfig?.title !== '' ? (
                         <Flex
                           direction="column"
                           align="center"
                           justify="center"
                         >
-                          <View
+                          <Text
                             style={{
-                              paddingTop: 24,
                               fontSize: 16,
+                              paddingBottom: 12,
                               fontWeight: '500',
+                              color: '#333333',
                               textAlign: 'center',
                             }}
                           >
-                            {globalPopConfirmConfig.title}
-                          </View>
+                            {globalPopConfirmConfig?.title}
+                          </Text>
                         </Flex>
+                      ) : undefined
+                    }
+                    confirmText={globalPopConfirmConfig?.confirmText || '确定'}
+                    cancelText={globalPopConfirmConfig?.cancelText || '取消'}
+                    showClose={globalPopConfirmConfig?.showClose !== false}
+                    maskClosable={globalPopConfirmConfig?.maskClosable ?? true}
+                    confirmColors={globalPopConfirmConfig?.confirmColors}
+                    confirmTextColor={globalPopConfirmConfig?.confirmTextColor}
+                    onConfirm={async () => {
+                      const result =
+                        await globalPopConfirmConfig?.onConfirm?.();
+                      if (result !== false) {
+                        closeGlobalPopConfirm();
                       }
-                      confirmText={globalPopConfirmConfig.confirmText || '确定'}
-                      cancelText={globalPopConfirmConfig.cancelText || '取消'}
-                      showClose={globalPopConfirmConfig.showClose !== false}
-                      confirmColors={globalPopConfirmConfig.confirmColors}
-                      confirmTextColor={globalPopConfirmConfig.confirmTextColor}
-                      onConfirm={async () => {
-                        const result =
-                          await globalPopConfirmConfig.onConfirm?.();
-                        if (result !== false) {
-                          globalPopConfirmRef.current?.close();
-                          setGlobalPopConfirmConfig(null);
-                        }
-                      }}
-                      onCancel={async () => {
-                        await globalPopConfirmConfig.onCancel?.();
-                        globalPopConfirmRef.current?.close();
-                        setGlobalPopConfirmConfig(null);
-                      }}
-                    >
-                      {globalPopConfirmConfig.children || undefined}
-                    </PopConfirm>
-                  )}
+                    }}
+                    onCancel={async () => {
+                      await globalPopConfirmConfig?.onCancel?.();
+                      closeGlobalPopConfirm();
+                    }}
+                  >
+                    {globalPopConfirmConfig?.children || undefined}
+                  </PopConfirm>
                 </SafeAreaProvider>
               </GestureHandlerRootView>
             </ThemeProvider>

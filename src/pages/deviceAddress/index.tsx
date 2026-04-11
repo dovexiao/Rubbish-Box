@@ -30,6 +30,10 @@ import {
   requestHarmonyLocationPermission,
 } from '@/utils';
 import { IS_HARMONY } from '@/constants';
+import {
+  showPermissionPromptIfNeeded,
+  runInPermissionQueue,
+} from '@/utils/permissions';
 import type { HarmonyMarker } from '@/harmony/harmony-amap';
 import styles from './styles';
 
@@ -132,50 +136,60 @@ export default function DeviceAddressScreen() {
   }, [rawAddressInfo]);
 
   const initLocation = async () => {
-    if (!isMountedRef.current) return;
+    await runInPermissionQueue(async () => {
+      if (!isMountedRef.current) return;
 
-    if (isHarmonyMapUnavailable) {
-      setLocationReady(true);
-      return;
-    }
-
-    if (IS_HARMONY) {
-      const granted = await requestHarmonyLocationPermission();
-      if (!granted) {
-        console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+      const hasLocationPermission = await showPermissionPromptIfNeeded(
+        'location',
+      );
+      if (!hasLocationPermission) {
         setLocationReady(true);
         return;
       }
-    }
 
-    if (Platform.OS === 'android') {
-      try {
-        await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ]);
-      } catch (e) {
-        console.warn('定位权限请求失败:', e);
-      }
-    }
-
-    try {
-      await initAMapGeolocation();
-
-      const position = await getCurrentLocation();
-      if (position && isMountedRef.current) {
-        userLocationInfo.current = {
-          latitude: position.latitude,
-          longitude: position.longitude,
-        };
-      }
-    } catch (error) {
-      console.error('定位失败:', error);
-    } finally {
-      if (isMountedRef.current) {
+      if (isHarmonyMapUnavailable) {
         setLocationReady(true);
+        return;
       }
-    }
+
+      if (IS_HARMONY) {
+        const granted = await requestHarmonyLocationPermission();
+        if (!granted) {
+          console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+          setLocationReady(true);
+          return;
+        }
+      }
+
+      if (Platform.OS === 'android') {
+        try {
+          await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          ]);
+        } catch (e) {
+          console.warn('定位权限请求失败:', e);
+        }
+      }
+
+      try {
+        await initAMapGeolocation();
+
+        const position = await getCurrentLocation();
+        if (position && isMountedRef.current) {
+          userLocationInfo.current = {
+            latitude: position.latitude,
+            longitude: position.longitude,
+          };
+        }
+      } catch (error) {
+        console.error('定位失败:', error);
+      } finally {
+        if (isMountedRef.current) {
+          setLocationReady(true);
+        }
+      }
+    });
   };
 
   const markers = useMemo(() => {

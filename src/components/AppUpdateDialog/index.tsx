@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  InteractionManager,
+} from 'react-native';
 import { Modal, Toast } from '@ant-design/react-native';
 import { eventCenter, setStorage } from '@/utils';
 import Flex from '@/components/Flex';
@@ -41,7 +48,13 @@ export function AppUpdateDialogHost() {
       }
       currentDialogVersion = payload?.version;
       setInfo(payload);
-      setVisible(true);
+
+      // 延迟弹窗：解决安卓下切换 Tab 时的动画互相阻塞，导致 Modal 卡死、瞬间吞噬所有点击的 Bug
+      InteractionManager.runAfterInteractions(() => {
+        setTimeout(() => {
+          setVisible(true);
+        }, 300);
+      });
     };
 
     eventCenter.on('global:appUpdateDialog:show', handler);
@@ -66,7 +79,7 @@ export function AppUpdateDialogHost() {
   const resetDialog = () => {
     currentDialogVersion = undefined;
     setVisible(false);
-    setInfo(null);
+    // 重要说明：不再直接 setInfo(null)，为了给安卓 Modal 关闭动画留出时间，否则在渐隐过程瞬间卸载极易引发幽灵墙(点击失灵)
   };
 
   const handleClose = () => {
@@ -80,16 +93,12 @@ export function AppUpdateDialogHost() {
     try {
       setVisible(false);
       await info?.onConfirm?.();
-      setInfo(null);
     } catch (err: any) {
       setVisible(true);
       const msg = err?.message || '更新失败，请检查网络后再次更新';
       Toast.fail(msg);
     } finally {
       currentDialogVersion = undefined;
-      if (!forceUpdate) {
-        setInfo(null);
-      }
     }
   };
 
@@ -127,6 +136,8 @@ export function AppUpdateDialogHost() {
         backgroundColor: 'transparent',
         padding: 0,
         margin: 0,
+        width: px(350),
+        minHeight: px(400),
       }}
     >
       <View
@@ -134,6 +145,7 @@ export function AppUpdateDialogHost() {
           justifyContent: 'center',
           alignItems: 'center',
           padding: px(32),
+          paddingTop: px(58),
         }}
       >
         <View style={styles.wrap}>

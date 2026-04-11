@@ -25,6 +25,10 @@ import {
   BluetoothCheckResult,
 } from '@/utils/bluetoothModeManager';
 import { groupSubList, switchBluetoothMode } from '@/services';
+import {
+  showPermissionPromptIfNeeded,
+  runInPermissionQueue,
+} from '@/utils/permissions';
 import Flex from '../Flex';
 import PopConfirm, { type PopConfirmRef } from '../popConfirm';
 import Popup from '../Popup';
@@ -494,18 +498,25 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
       ref,
       () => ({
         open: async () => {
-          if (props.type === 'mode') {
-            switchModeConfirmRef.current?.open();
-          } else if (props.type === 'pass') {
-            showLoading({ title: '检查蓝牙状态' });
-            try {
-              await runSingleBluetoothCheck();
-            } finally {
-              hideLoading();
+          await runInPermissionQueue(async () => {
+            const hasBluetooth = await showPermissionPromptIfNeeded(
+              'bluetooth',
+            );
+            if (!hasBluetooth) return;
+
+            if (props.type === 'mode') {
+              switchModeConfirmRef.current?.open();
+            } else if (props.type === 'pass') {
+              showLoading({ title: '检查蓝牙状态' });
+              try {
+                await runSingleBluetoothCheck();
+              } finally {
+                hideLoading();
+              }
+            } else {
+              operationConfirmRef.current?.open();
             }
-          } else {
-            operationConfirmRef.current?.open();
-          }
+          });
         },
         close: () => {
           bluetoothPopupRef.current?.close();
