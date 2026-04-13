@@ -570,7 +570,9 @@ export default function FindDevice(props: any) {
                   // 轮询继续
                 }
 
-                await new Promise(resolve => setTimeout(resolve, intervalMs));
+                await new Promise((resolve: any) =>
+                  setTimeout(resolve, intervalMs),
+                );
               }
 
               return false;

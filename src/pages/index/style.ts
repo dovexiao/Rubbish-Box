@@ -21,12 +21,13 @@ export const styles = StyleSheet.create({
   guestContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 32,
+    // justifyContent: 'center',
   },
   guestTitle: {
     fontSize: 20,
     color: '#333',
+    marginTop: '40%',
     marginBottom: 32,
   },
   guestAddBtn: {

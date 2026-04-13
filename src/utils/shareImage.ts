@@ -54,9 +54,12 @@ export const onShareAppMessage = async ({
     return;
   }
 
-  const currentState = AppState.currentState;
+  let previousState = AppState.currentState;
   const appStateListener = AppState.addEventListener('change', state => {
-    if (currentState === 'background' && state === 'active') {
+    if (
+      (previousState === 'background' || previousState === 'inactive') &&
+      state === 'active'
+    ) {
       // 用户从微信返回时，尽快恢复 UI，避免长时间 loading
       hideLoading();
       showToast({
@@ -64,6 +67,8 @@ export const onShareAppMessage = async ({
         icon: 'none',
       });
     }
+
+    previousState = state;
   });
 
   showLoading({ title: '拉起微信中...' });

@@ -153,6 +153,11 @@ const LoginSms = () => {
       statusBarStyle="dark-content"
       safeAreaEdges={['top', 'bottom']}
       style={loginSmsStyles.container}
+      pageNavProps={{
+        text: ' ',
+        showBack: true,
+        background: '#ffffff',
+      }}
     >
       <View style={loginSmsStyles.passwordTitle}>
         <Text style={loginSmsStyles.passwordTitleText}>请输入短信验证码</Text>
