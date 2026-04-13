@@ -1,20 +1,42 @@
-diff --git a/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js b/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js
-index 8e45f94..fc40b12 100644
---- a/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js
-+++ b/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js
-@@ -1,13 +1,11 @@
- // @flow
--import { NativeModules } from 'react-native';
-+import { NativeModules, Platform } from 'react-native';
- 
--// @ts-ignore
--const isTurboModuleEnabled = global.__turboModuleProxy != null;
-+const isTurboModuleEnabled = global.__turboModuleProxy != null || (Platform.OS !== 'android' && Platform.OS !== 'ios');
- 
- const RNViewShot = isTurboModuleEnabled
--  ? // eslint-disable-next-line @typescript-eslint/no-var-requires
--    require('./NativeViewShot').default
-+  ? require('./NativeViewShot').default
-   : NativeModules.RNViewShot;
- 
- export default RNViewShot;
+diff --git a/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js.orig b/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js.orig
+new file mode 100644
+index 0000000..e241c88
+--- /dev/null
++++ b/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js.orig
+@@ -0,0 +1,12 @@
++// @flow
++import { NativeModules } from 'react-native';
++
++// @ts-ignore
++const isTurboModuleEnabled = global.__turboModuleProxy != null;
++
++const RNViewShot = isTurboModuleEnabled
++  ? // eslint-disable-next-line @typescript-eslint/no-var-requires
++    require('./NativeViewShot').default
++  : NativeModules.RNViewShot;
++
++export default RNViewShot;
+\ No newline at end of file
+diff --git a/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js.rej b/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js.rej
+new file mode 100644
+index 0000000..1771389
+--- /dev/null
++++ b/node_modules/@react-native-oh-tpl/react-native-view-shot/src/NativeModule.js.rej
+@@ -0,0 +1,17 @@
++@@ -1,13 +1,11 @@
++ // @flow
++-import { NativeModules } from 'react-native';
+++import { NativeModules, Platform } from 'react-native';
++ 
++-// @ts-ignore
++-const isTurboModuleEnabled = global.__turboModuleProxy != null;
+++const isTurboModuleEnabled = global.__turboModuleProxy != null || (Platform.OS !== 'android' && Platform.OS !== 'ios');
++ 
++ const RNViewShot = isTurboModuleEnabled
++-  ? // eslint-disable-next-line @typescript-eslint/no-var-requires
++-    require('./NativeViewShot').default
+++  ? require('./NativeViewShot').default
++   : NativeModules.RNViewShot;
++ 
++ export default RNViewShot;
++ 

@@ -184,7 +184,11 @@ export default function TestDeviceDetailScreen() {
         found = data.find((item: any) => item.deviceId == deviceId);
         connected = !!(found && found.isConnected);
       } else {
-        found = data.find((item: any) => isSameMac(item.deviceId, bleNo));
+        found = data.find(
+          (item: any) =>
+            isSameMac(item.deviceId, bleNo) ||
+            detail?.['bleName'] === item.name,
+        );
         connected = !!found;
       }
       setIsLink(connected);
