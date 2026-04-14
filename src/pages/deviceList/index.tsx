@@ -385,6 +385,7 @@ export default function DeviceList() {
                   bleName: item?.bleName,
                   needPin: item?.needPin,
                   version: item?.compVer,
+                  isFromGroup: true,
                 } as any);
               }}
             >

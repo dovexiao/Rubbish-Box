@@ -106,7 +106,7 @@ const Content: React.FC<ContentProps> = ({
   }, [detail]);
 
   const sleep = (time: number) =>
-    new Promise(resolve => setTimeout(resolve, time));
+    new Promise((resolve: any) => setTimeout(resolve, time));
 
   const getBluetoothAnimationType = (
     direction: 'RISE' | 'DOWN',
@@ -461,6 +461,7 @@ const Content: React.FC<ContentProps> = ({
       bleName: detail?.bleName,
       needPin: detail?.needPin,
       version: detail?.compVer,
+      isFromGroup: detail?.isGroup ? true : false,
     });
   };
 

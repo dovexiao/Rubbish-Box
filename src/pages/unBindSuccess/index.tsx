@@ -21,9 +21,11 @@ import styles from '@/pages/unBindSuccess/styles';
 
 type RouteParams = {
   pages?: string; // handOver 场景
+  changePin?: boolean; // 是否是修改 PIN 场景
   bleName?: string;
   bleNo?: string;
   deviceId?: string;
+  isFromGroup?: boolean; // 是否是从组合设备来的
 };
 
 const UNBIND_GIF = 'https://g.18qjz.cn/img/boklock/unbind.gif';
@@ -37,13 +39,15 @@ export default function UnBindSuccess() {
   const bleNo = params.bleNo || '';
   const deviceId = params.deviceId || '';
   const pages = params.pages || '';
+  const isFromGroup = params.isFromGroup ?? false;
+  const changePin = params.changePin ?? false;
 
   const [linkCheckDone, setLinkCheckDone] = useState(false);
   const [hasLink, setHasLink] = useState(false);
   const justReturnedFromSettingsRef = useRef(false);
 
   const navTitle = useMemo(
-    () => (pages ? '移交成功' : '解除绑定成功'),
+    () => (changePin ? '修改PIN码成功' : pages ? '移交成功' : '解除绑定成功'),
     [pages],
   );
 
@@ -69,11 +73,14 @@ export default function UnBindSuccess() {
       await setStorage({ key: 'pageType', data: 'reload' }).catch(() => {});
       reLaunch('Index', { pages: 'handOverSuccess' });
     } else {
-      showToast({ title: '解除绑定成功', icon: 'success' });
+      showToast({
+        title: changePin ? '修改PIN码成功' : '解除绑定成功',
+        icon: 'success',
+      });
       await setStorage({ key: 'type', data: 'reload' }).catch(() => {});
-      reLaunch('Index');
+      reLaunch(isFromGroup ? 'Multiple' : 'Index');
     }
-  }, [pages]);
+  }, [pages, changePin, isFromGroup]);
 
   const checkReturnFromSettings = useCallback(async () => {
     try {

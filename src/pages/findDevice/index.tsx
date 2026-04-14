@@ -103,6 +103,7 @@ type RouteParams = {
   needPin?: number;
   pageName?: string;
   version?: number;
+  isFromGroup?: boolean; // 是否是从组合设备来的
 };
 
 export default function FindDevice(props: any) {
@@ -133,6 +134,7 @@ export default function FindDevice(props: any) {
       SEARCH_BLUETOOTH_STATUS?.SEARCHING as keyof typeof SEARCH_BLUETOOTH_STATUS,
     needScan: Platform.OS === 'ios' || isHarmonyOs,
   });
+  const isFromGroup = params.isFromGroup ?? false;
 
   const setState = useCallback((patch: Partial<typeof state>) => {
     setStateInner(prev => ({ ...prev, ...patch }));
@@ -520,6 +522,7 @@ export default function FindDevice(props: any) {
           setTimeout(() => {
             navigation?.navigate?.('BluetoothLinkSuccess', {
               pages: 'bindDevice',
+              isFromGroup,
               id: res.data,
             } as never);
           }, 1000);
@@ -594,6 +597,7 @@ export default function FindDevice(props: any) {
               bluetoothHasOpen: true,
               role,
               bleNo,
+              isFromGroup,
               imageMap,
               pin,
               lockId,
@@ -635,7 +639,9 @@ export default function FindDevice(props: any) {
         if (mode) {
           hideLoading();
           showToast({ title: '连接成功', icon: 'success' });
-          navigation?.navigate?.('BluetoothLinkSuccess');
+          navigation?.navigate?.('BluetoothLinkSuccess', {
+            isFromGroup,
+          });
         } else {
           hideLoading();
           showToast({ title: '自动升降开启成功', icon: 'success' });
@@ -644,6 +650,7 @@ export default function FindDevice(props: any) {
             bluetoothHasOpen: true,
             role,
             bleNo,
+            isFromGroup,
             imageMap,
             pin,
             lockId,

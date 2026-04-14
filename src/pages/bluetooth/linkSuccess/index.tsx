@@ -10,6 +10,7 @@ import { reLaunch } from '@/utils';
 type RouteParams = {
   id?: string | number;
   pages?: string;
+  isFromGroup?: boolean; // 是否是从组合设备来的
 };
 
 export default function BluetoothLinkSuccess() {
@@ -29,10 +30,19 @@ export default function BluetoothLinkSuccess() {
 
   useEffect(() => {
     if (backNum > 0) return;
-    reLaunch(
-      'Index',
-      params.pages ? { pages: 'addDevice', id: params?.id } : undefined,
-    );
+    if (!!params?.isFromGroup) {
+      reLaunch('Multiple');
+    } else {
+      reLaunch(
+        'Index',
+        params.pages
+          ? {
+              pages: 'addDevice',
+              id: params?.id,
+            }
+          : undefined,
+      );
+    }
   }, [backNum, params?.id, params.pages]);
 
   const isAddPage = !!params.pages;
@@ -71,12 +81,16 @@ export default function BluetoothLinkSuccess() {
               round={false}
               btnBorderRadius={16}
               onPress={() => {
-                reLaunch(
-                  'Index' as any,
-                  !!isAddPage
-                    ? { pages: 'addDevice', id: params?.id }
-                    : undefined,
-                );
+                if (!!params?.isFromGroup) {
+                  reLaunch('Multiple');
+                } else {
+                  reLaunch(
+                    'Index' as any,
+                    !!isAddPage
+                      ? { pages: 'addDevice', id: params?.id }
+                      : undefined,
+                  );
+                }
               }}
             >
               <Text style={styles.btnText}>完成</Text>

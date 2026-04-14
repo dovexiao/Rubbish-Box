@@ -64,6 +64,7 @@ type RouteParams = {
   bleName?: string;
   needPin?: number;
   version?: string;
+  isFromGroup?: boolean; // 是否是从组合设备来的
 };
 
 export default function BluetoothControl() {
@@ -82,6 +83,7 @@ export default function BluetoothControl() {
   const blePin = params.blePin || '';
   const needPin = params.needPin;
   const mode = params.mode;
+  const isFromGroup = params.isFromGroup ?? false;
   const bindSuccessStatus =
     String(params.bindSuccessStatus) === 'true' ||
     params.bindSuccessStatus === true;
@@ -231,8 +233,9 @@ export default function BluetoothControl() {
         closePopup();
         setTimeout(() => {
           navigation.navigate('UnBindSuccess', {
-            title: '修改PIN码成功',
+            changePin: '修改PIN码成功',
             deviceId: deviceId,
+            isFromGroup,
             bleName: bleName,
             bleNo: bleNo,
           });
@@ -345,7 +348,9 @@ export default function BluetoothControl() {
               // 轮询继续
             }
 
-            await new Promise(resolve => setTimeout(resolve, intervalMs));
+            await new Promise((resolve: any) =>
+              setTimeout(resolve, intervalMs),
+            );
           }
 
           return false;
@@ -395,7 +400,10 @@ export default function BluetoothControl() {
       if (
         !(apiRes?.code === 200 || apiRes?.code === '200' || apiRes?.success)
       ) {
-        showToast({ title: apiRes?.message || '同步失败，稍后重试', icon: 'info' });
+        showToast({
+          title: apiRes?.message || '同步失败，稍后重试',
+          icon: 'info',
+        });
         return;
       }
 
@@ -415,6 +423,7 @@ export default function BluetoothControl() {
         bleNo,
         deviceNo,
         role,
+        isFromGroup,
         imageMap,
         bleName,
         needPin,
@@ -541,7 +550,7 @@ export default function BluetoothControl() {
                   round={false}
                   btnBorderRadius={16}
                   onPress={() => {
-                    reLaunch('Index');
+                    reLaunch(isFromGroup ? 'Multiple' : 'Index');
                   }}
                 >
                   <Text style={styles.btnText}>完成</Text>
