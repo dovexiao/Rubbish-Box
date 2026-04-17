@@ -13,6 +13,27 @@ export function setNavigationRef(ref: NavigationContainerRef<any> | null) {
 }
 
 /**
+ * 全局 navigate 方法
+ */
+export function navigate(routeName: string, params?: any) {
+  const tryNavigate = (retries = 5) => {
+    if (navigationRef?.isReady()) {
+      try {
+        navigationRef.navigate(routeName, params);
+      } catch (error) {
+        console.error('Failed to navigate:', error);
+      }
+    } else if (retries > 0) {
+      setTimeout(() => tryNavigate(retries - 1), 100);
+    } else {
+      console.warn('Navigation ref is not ready after retries');
+    }
+  };
+
+  tryNavigate();
+}
+
+/**
  * 导航到登录页面
  */
 export function navigateToLogin() {

@@ -13,9 +13,13 @@ import { useCountDown } from '@/hooks/useCountDown';
 import { getSmsCode, login } from '@/services/common';
 import { SMS_PURPOSE } from '@/constants';
 import { cacheSetSync } from '@/utils/cache';
-import { getMobPushDeviceInfo } from '@/utils/push';
 import { getCurrentPages, navigateBack, reLaunch } from '@/utils/navigation';
-import { hideLoading, showLoading, showToast } from '@/utils';
+import {
+  getMobPushDeviceInfo,
+  hideLoading,
+  showLoading,
+  showToast,
+} from '@/utils';
 import styles from './styles';
 
 const MiniBind = () => {
@@ -61,9 +65,8 @@ const MiniBind = () => {
         hideLoading();
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
-        try {
-          await getMobPushDeviceInfo();
-        } catch {}
+        // 登录流程不再阻塞等待 registrationId，改为首页后后台静默执行
+        void getMobPushDeviceInfo().catch(() => undefined);
 
         // 延迟执行导航，确保状态已更新
         setTimeout(() => {

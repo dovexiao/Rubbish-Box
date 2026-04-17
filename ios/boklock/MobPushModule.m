@@ -87,6 +87,9 @@ RCT_EXPORT_METHOD(getRegistrationID:(RCTResponseSenderBlock)callback) {
         NSString *rgID = registrationID;
         if ([MobPushModule is_empty_str:rgID]) rgID = @"";
         [MobPushModule main_async_callback:^{
+            if (![MobPushModule is_empty_str:rgID]) {
+                [self sendEventWithName:@"registrationId" body:rgID];
+            }
             NSDictionary *ret = @{
                                     @"success": @(error ? NO:YES),
                                     @"res": rgID,
@@ -569,6 +572,7 @@ RCT_EXPORT_METHOD(getSDKVersion:(RCTResponseSenderBlock)callback) {
 
 - (NSArray<NSString *> *)supportedEvents {
     return @[
+        @"registrationId",
         @"onCustomMessageReceive",
         @"onNotifyMessageReceive",
         @"onLocalMessageReceive",

@@ -12,7 +12,8 @@ import { PageContainer, Flex, TextInput } from '@/components';
 import AppIcon from '@/components/AppIcon';
 import { restPassword } from '@/services/user';
 import { cacheSetSync, cacheGetSync } from '@/utils/cache';
-import push, { getMobPushDeviceInfo } from '@/utils/push';
+import push from '@/utils/push';
+import { getMobPushDeviceInfo } from '@/utils';
 import { reLaunch } from '@/utils/navigation';
 import styles from './styles';
 import { hideLoading, showLoading, showToast } from '@/utils';
@@ -90,11 +91,10 @@ const ForgetPasswordReset = () => {
         showToast({ title: '密码修改成功', icon: 'success' });
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
-        try {
-          await getMobPushDeviceInfo();
-        } catch (e) {
+        // 登录流程不再阻塞等待 registrationId，改为首页后后台静默执行
+        void getMobPushDeviceInfo().catch(e => {
           console.error('获取设备信息失败:', e);
-        }
+        });
         reLaunch('Index');
       } else if (res.code === 515) {
         hideLoading();

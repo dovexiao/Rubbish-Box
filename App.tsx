@@ -25,6 +25,7 @@ import { setNavigationRef } from '@/utils/navigation';
 import PopConfirm from '@/components/popConfirm';
 import Flex from '@/components/Flex';
 import { Text, Button, View } from '@ant-design/react-native';
+import { usePushSync } from '@/hooks/usePushSync';
 import {
   cacheGet,
   cacheGetSync,
@@ -39,8 +40,6 @@ import {
   reLaunch,
   setStorage,
   initAppPush,
-  getMobPushDeviceInfo,
-  jumpToPage,
   hideLoading,
   showToast,
   showLoading,
@@ -71,14 +70,14 @@ function App() {
   const globalPopConfirmClearTimerRef = useRef<ReturnType<
     typeof setTimeout
   > | null>(null);
-  const [jumpListener, setJumpListener] = useState<{
-    remove?: () => void;
-  } | null>(null);
   const [showPrivacyPop, setShowPrivacyPop] = useState(false);
   const [needPrivacyPrompt, setNeedPrivacyPrompt] = useState(false);
   const [privacyWebTransitioning, setPrivacyWebTransitioning] = useState(false);
   const [currentRouteName, setCurrentRouteName] = useState('');
   const [showRetainPop, setShowRetainPop] = useState(false);
+  const runOnActiveRunningRef = useRef(false);
+  const runOnActiveLastAtRef = useRef(0);
+
   const [globalPopConfirmConfig, setGlobalPopConfirmConfig] = useState<{
     title: string | React.ReactNode;
     confirmText?: string;
@@ -142,6 +141,9 @@ function App() {
   }, [navigationRef]);
 
   const [privacyReady, setPrivacyReady] = useState<boolean>(false);
+
+  // 初始化集中推送同步拦截器 Hook（负责切 Tab、冷启动、前后台恢复、通知跳页等所有推送业务）
+  usePushSync({ privacyReady, currentRouteName });
 
   // App 根层改为稳定的 in-tree 遮罩弹层，不再依赖 Modal/Portal 的时机。
   useEffect(() => {
@@ -208,7 +210,8 @@ function App() {
         ),
       ]);
 
-      const enabled = pushRes?.data === true;
+      const enabled =
+        (typeof pushRes === 'boolean' ? pushRes : pushRes?.data) === true;
       const loggedIn = !!token;
 
       if (enabled && loggedIn) {
@@ -216,9 +219,6 @@ function App() {
         await initAppPush();
         appPush.toggleNotifeeCore?.(true);
         appPush.toggleMobPushOEM?.(true);
-
-        // 获取推送设备信息
-        await getMobPushDeviceInfo();
       } else {
         appPush.submitPolicyGrantResult?.(false);
         appPush.stopPush?.();
@@ -396,44 +396,25 @@ function App() {
     });
   }, [privacyReady]);
 
-  // 深链接/推送跳转监听
-  useEffect(() => {
-    const setupJumpListener = async () => {
-      try {
-        const [agree, token, pushRes] = await Promise.all([
-          cacheGet({ key: 'agreePrivacy' }).catch(() => false),
-          cacheGet({ key: 'token' }).catch(() => undefined),
-          getStorage({ key: 'pushEnabled' }).catch(
-            () => ({ data: undefined } as any),
-          ),
-        ]);
-
-        const enabled = pushRes?.data === true;
-        const loggedIn = !!token;
-
-        if (agree && enabled && loggedIn && privacyReady) {
-          const listener = await jumpToPage();
-          setJumpListener(listener);
-        }
-      } catch (error) {
-        console.error('设置跳转监听失败:', error);
-      }
-    };
-
-    if (privacyReady) {
-      setupJumpListener();
-    }
-
-    return () => {
-      if (jumpListener?.remove) {
-        jumpListener.remove();
-      }
-    };
-  }, [privacyReady, jumpListener]);
-
   // 应用状态变化处理（对应 useDidShow）
   useEffect(() => {
     const runOnActiveLogic = async () => {
+      const now = Date.now();
+      if (runOnActiveRunningRef.current) {
+        if (__DEV__) {
+          console.log('[rn][restore] runOnActiveLogic 跳过：执行中');
+        }
+        return;
+      }
+      if (now - runOnActiveLastAtRef.current < 1500) {
+        if (__DEV__) {
+          console.log('[rn][restore] runOnActiveLogic 跳过：触发过于频繁');
+        }
+        return;
+      }
+      runOnActiveRunningRef.current = true;
+      runOnActiveLastAtRef.current = now;
+
       if (__DEV__) {
         console.log('[rn][restore] runOnActiveLogic 执行');
       }
@@ -442,24 +423,7 @@ function App() {
         Toast.removeAll();
       } catch {}
 
-      // 应用激活时，检查并初始化推送
       try {
-        const [agree, token, pushRes] = await Promise.all([
-          cacheGet({ key: 'agreePrivacy' }).catch(() => false),
-          cacheGet({ key: 'token' }).catch(() => undefined),
-          getStorage({ key: 'pushEnabled' }).catch(
-            () => ({ data: undefined } as any),
-          ),
-        ]);
-
-        const enabled = pushRes?.data === true;
-        const loggedIn = !!token;
-
-        if (agree && enabled && loggedIn) {
-          // 主动拉取一次推送设备信息
-          await getMobPushDeviceInfo();
-        }
-
         // 处理从系统设置返回的逻辑（rnReLaunchPath）
         try {
           const rnReLaunchRes = await getStorage<{
@@ -678,6 +642,8 @@ function App() {
         }
       } catch (error) {
         console.error('应用激活处理失败:', error);
+      } finally {
+        runOnActiveRunningRef.current = false;
       }
     };
 

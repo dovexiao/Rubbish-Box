@@ -668,8 +668,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 686A7DDF204A99BAB4654250 /* Pods-boklock.debug.xcconfig */;
 			buildSettings = {
+				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = boklock/boklock.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = "";
@@ -703,8 +705,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2E3F2C5444B9BC14F10786E3 /* Pods-boklock.release.xcconfig */;
 			buildSettings = {
+				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = boklock/boklock.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = "";

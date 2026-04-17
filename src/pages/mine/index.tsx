@@ -12,6 +12,8 @@ import PageContainer from '@/components/PageContainer';
 import PopConfirm from '@/components/popConfirm';
 import AppIcon from '@/components/AppIcon';
 import { baseInfo, logout } from '@/services/user';
+import { updateRegId } from '@/services/common';
+import { getStorage, setStorage } from '@/utils';
 import { cacheGetSync, cacheRemove, cacheSetSync } from '@/utils/cache';
 import { tokenStorage } from '@/utils/storage';
 import styles from './styles';
@@ -81,6 +83,27 @@ export default function Mine() {
   }, [navigation]);
 
   const onLogout = useCallback(async () => {
+    let currentDeviceInfo: any = {};
+    try {
+      const deviceInfoRes: any = await getStorage({ key: 'deviceInfo' });
+      currentDeviceInfo = deviceInfoRes?.data || {};
+    } catch {
+      currentDeviceInfo = {};
+    }
+
+    try {
+      if (currentDeviceInfo?.registrationId) {
+        await updateRegId({ ...currentDeviceInfo, registrationId: '' });
+      }
+    } catch {}
+
+    try {
+      await setStorage({
+        key: 'deviceInfo',
+        data: { ...currentDeviceInfo, registrationId: '' },
+      });
+    } catch {}
+
     try {
       // 服务端退出（失败也不影响本地清理）
       await logout({});

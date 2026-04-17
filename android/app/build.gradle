@@ -294,7 +294,7 @@ MobSDK {
                 }
                 //华为推送配置信息
                 HUAWEI{
-                    appId "116065177" // 华为平台注册的appid
+                    appId "117351559" // 华为平台注册的appid
                     // version "x.x.x.xxx"  // 可选，可自行指定华为推送SDK版本，默认为6.7.0.300
                     // onlyCore true //可选，添加此配置可有效减少华为厂商包体大小
                 }

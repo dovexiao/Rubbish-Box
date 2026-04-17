@@ -188,9 +188,7 @@ const Login = () => {
           hideLoading();
           await cacheSetSync('token', thirdLoginRes.data.token);
           await cacheSetSync('guestMode', false);
-          try {
-            await getMobPushDeviceInfo();
-          } catch {}
+          void getMobPushDeviceInfo().catch(() => undefined);
           if (thirdLoginRes.data.needBind) {
             navigation.navigate('BindPhone' as any);
           } else if (thirdLoginRes.data.needMobileVerify) {
@@ -294,7 +292,8 @@ const Login = () => {
       try {
         const res = await getStorage({ key: 'pushEnabled' });
         // 合规：默认关闭推送，只有用户明确开启后才生效
-        const enabled = res?.data === true;
+        const enabled =
+          (typeof res === 'boolean' ? res : (res as any)?.data) === true;
         if (agree && enabled) {
           appPush.submitPolicyGrantResult?.(true);
           appPush.restartPush?.();

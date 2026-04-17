@@ -17,7 +17,13 @@ import { PageContainer, showAppUpdateDialog } from '@/components';
 import AppIcon from '@/components/AppIcon';
 import appPush from '@/utils/push';
 import { cacheGetSync } from '@/utils/cache';
-import { getStorage, setStorage, showToast } from '@/utils';
+import {
+  getMobPushDeviceInfo,
+  getStorage,
+  initAppPush,
+  setStorage,
+  showToast,
+} from '@/utils';
 import appManager from '@/utils/env/rn/appManager';
 import styles from './styles';
 
@@ -124,12 +130,16 @@ export default function Setting() {
       try {
         const res: any = await getStorage({ key: 'pushEnabled' });
         const agree = await cacheGetSync('agreePrivacy');
-        await setStorage({ key: 'pushEnabled', data: true });
-        if (agree) {
-          setPushEnabled(true);
-        } else {
-          setPushEnabled(res?.data === true);
+        const raw = typeof res === 'boolean' ? res : res?.data;
+
+        // 未初始化时默认开启（与登录页行为保持一致）
+        if (raw === undefined || raw === null) {
+          await setStorage({ key: 'pushEnabled', data: true });
+          setPushEnabled(agree ? true : false);
+          return;
         }
+
+        setPushEnabled(raw === true);
       } catch {
         setPushEnabled(false);
       }
@@ -166,10 +176,10 @@ export default function Setting() {
       setPushEnabled(enabled);
 
       if (agree && enabled) {
-        appPush.submitPolicyGrantResult?.(true);
-        appPush.restartPush?.();
+        await initAppPush();
         appPush.toggleNotifeeCore?.(true);
         appPush.toggleMobPushOEM?.(true);
+        await getMobPushDeviceInfo().catch(() => undefined);
       } else {
         appPush.submitPolicyGrantResult?.(false);
         appPush.stopPush?.();

@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import {
   eventCenter,
+  getMobPushDeviceInfo,
   getCurrentPages,
   getStorage,
   hideLoading,
@@ -17,7 +18,6 @@ import {
   showToast,
 } from '@/utils';
 import { cacheSetSync } from '@/utils/cache';
-import { getMobPushDeviceInfo } from '@/utils/push';
 import { Flex, TextInput } from '@/components';
 import AppIcon from '@/components/AppIcon';
 import { login } from '@/services/common';
@@ -72,24 +72,21 @@ const Password: React.FC<PasswordProps> = ({
       if (res.code === 200) {
         await cacheSetSync('token', res.data.token);
         await cacheSetSync('guestMode', false);
-        try {
-          // 这个函数出不来
-          await getMobPushDeviceInfo();
-        } catch (e) {
+        // 登录流程不再阻塞等待 registrationId，改为首页后后台静默执行
+        void getMobPushDeviceInfo().catch(e => {
           console.error('获取推送设备信息失败:', e);
-        } finally {
-          hideLoading();
-          showToast({ title: '登录成功', icon: 'success' });
-          // 延迟执行导航，确保状态已更新和导航引用已准备好
-          setTimeout(() => {
-            const pages = getCurrentPages();
-            if (pages.length > 1) {
-              navigateBack();
-            } else {
-              reLaunch('Index');
-            }
-          }, 300);
-        }
+        });
+        hideLoading();
+        showToast({ title: '登录成功', icon: 'success' });
+        // 延迟执行导航，确保状态已更新和导航引用已准备好
+        setTimeout(() => {
+          const pages = getCurrentPages();
+          if (pages.length > 1) {
+            navigateBack();
+          } else {
+            reLaunch('Index');
+          }
+        }, 300);
       } else if (res.code === 520 || res.code === 522 || res.code === 525) {
         hideLoading();
         setShowError(true);

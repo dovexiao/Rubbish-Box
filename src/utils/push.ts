@@ -132,7 +132,19 @@ export async function getMobPushDeviceInfo(): Promise<{
 
 export default {
   submitPolicyGrantResult: (agree: boolean) => {
-    // 通过 AppModule 调用，因为 MobPushModule 已被删除
+    // 优先走 MobPushModule：Android 原生实现内会做 MobSDK.initIfNeeded，
+    // 对 registrationId 产出时序更关键。
+    if (Platform.OS !== 'ios' && MobPushModule?.submitPolicyGrantResult) {
+      try {
+        MobPushModule.submitPolicyGrantResult(agree);
+      } catch (error) {
+        console.warn(
+          'MobPushModule.submitPolicyGrantResult call failed:',
+          error,
+        );
+      }
+    }
+    // 保留 AppModule 兼容调用（历史代码路径）
     if (Platform.OS !== 'ios' && AppModule?.submitPolicyGrantResult) {
       try {
         AppModule.submitPolicyGrantResult(agree);

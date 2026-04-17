@@ -2,9 +2,9 @@
  * 导航工具函数（兼容 Taro 风格）
  */
 export { getCurrentPages, navigateBack, reLaunch } from './navigation';
-import { getCurrentPages } from './navigation';
+import { getCurrentPages, navigate } from './navigation';
 import { Buffer } from 'buffer';
-global.Buffer = global.Buffer || Buffer;
+(globalThis as any).Buffer = (globalThis as any).Buffer || Buffer;
 /**
  * 缓存工具函数
  */
@@ -51,6 +51,15 @@ import { cacheGet } from './cache';
 import { storageUtil } from './storage';
 import appPush from './push';
 import { updateRegId } from '@/services/common';
+
+const REGISTRATION_ID_EVENT = 'registrationId';
+let registrationIdListenerBound = false;
+let registrationIdPolling = false;
+let getMobPushSyncRunning = false;
+let lastMobPushSyncAt = 0;
+let initAppPushRunning = false;
+let lastInitAppPushAt = 0;
+const recentUploadedRid = new Map<string, number>();
 
 // 按平台懒加载仅在 Android / iOS 存在的原生库，避免在 Harmony 等平台导入时报 NativeModule 为 null
 const isNativeMobile = Platform.OS === 'android' || Platform.OS === 'ios';
@@ -284,116 +293,340 @@ export async function getSystemInfo(): Promise<{
   }
 }
 
+let cachedRegistrationId = '';
+
 export const getMobPushDeviceInfo = async () => {
-  // 兜底校验：仅在同意隐私 + 已登录 + 用户开启通知服务时才真正拉取 deviceToken / registrationId
-  try {
-    const [agree, token, pushRes]: any[] = await Promise.all([
-      cacheGet({ key: 'agreePrivacy' }).catch(() => false),
-      cacheGet({ key: 'token' }).catch(() => undefined),
-      getStorage({ key: 'pushEnabled' }).catch(
-        () => ({ data: undefined } as any),
-      ),
-    ]);
-    const enabled = pushRes?.data === true;
-    const loggedIn = !!token;
-    if (!agree || !enabled || !loggedIn) {
-      return;
-    }
-  } catch {
-    // 发生异常时不继续，避免在未授权或未登录场景下触发 MobPush
+  // 单飞保护：避免 runOnActive / 首页静默 / 登录成功并发触发导致重复请求与重复上报
+  if (getMobPushSyncRunning) {
     return;
   }
-  const sys = await getSystemInfo();
-  const isIOS = sys.platform === 'ios';
+  const now = Date.now();
 
-  const info: any = {
-    platform: isIOS ? 'ios' : 'android',
-    brand: sys.brand?.toLowerCase() || '',
-  };
-
-  // 1. 获取 deviceToken
-  try {
-    const token = await appPush.getDeviceToken();
-    if (token) info.deviceToken = token;
-  } catch (e) {
-    console.warn('getDeviceToken error:', e);
-  }
-
-  // 2. 获取 registrationId（MOBPush 最重要）,两秒没拿到就默认赋值为空
-  const timeoutPromise = new Promise<boolean>(resolve =>
-    setTimeout(() => resolve(false), 2000),
-  );
+  getMobPushSyncRunning = true;
+  lastMobPushSyncAt = now;
 
   try {
-    const rid = await Promise.race([
-      appPush.getRegistrationID(),
-      timeoutPromise,
-    ]);
-    info.registrationId = rid || '';
-  } catch (e) {
-    console.warn('getRegistrationID error:', e);
-  }
+    // 兜底校验：仅在同意隐私 + 已登录 + 用户开启通知服务时才真正拉取 deviceToken / registrationId
+    const shouldProcessPush = async () => {
+      try {
+        const [agree, token, pushRes]: any[] = await Promise.all([
+          cacheGet({ key: 'agreePrivacy' }).catch(() => false),
+          cacheGet({ key: 'token' }).catch(() => undefined),
+          getStorage({ key: 'pushEnabled' }).catch(
+            () => ({ data: undefined } as any),
+          ),
+        ]);
+        const rawPushEnabled =
+          typeof pushRes === 'boolean' ? pushRes : pushRes?.data;
+        let enabled = rawPushEnabled === true;
+        const loggedIn = !!token;
 
-  setStorage({
-    key: 'deviceInfo',
-    data: info,
-  });
+        // 兼容旧数据：若已同意隐私且 pushEnabled 未初始化，则默认开启推送
+        if (
+          agree &&
+          (rawPushEnabled === undefined || rawPushEnabled === null)
+        ) {
+          try {
+            await setStorage({ key: 'pushEnabled', data: true });
+            enabled = true;
+          } catch (e) {
+            console.log('pushEnabled-auto-init-failed', e);
+          }
+        }
 
-  // 如果此时已经拿到有效的 registrationId，直接上报一次，避免仅依赖异步回调
-  if (info.registrationId) {
-    console.log('进来', info.registrationId, '这是MOB平台回调');
-    try {
-      await updateRegId({ ...info });
-    } catch (e) {
-      console.warn('updateRegId in getMobPushDeviceInfo error:', e);
-    }
-  }
+        return !!agree && enabled && loggedIn;
+      } catch {
+        console.log('gate-check-failed');
+        return false;
+      }
+    };
 
-  // 4️⃣ 补充：监听异步更新
-  DeviceEventEmitter.addListener('registrationId', async rid => {
-    console.log(rid, '这是MOB平台回调');
-    if (!rid) return;
-
-    // 再次兜底校验：仅在同意隐私 + 已登录 + 用户开启通知服务时处理 registrationId
-    try {
-      const [agree, token, pushRes]: any[] = await Promise.all([
-        cacheGet({ key: 'agreePrivacy' }).catch(() => false),
-        cacheGet({ key: 'token' }).catch(() => undefined),
-        getStorage({ key: 'pushEnabled' }).catch(
-          () => ({ data: undefined } as any),
-        ),
-      ]);
-      const enabled = pushRes?.data === true;
-      const loggedIn = !!token;
-      if (!agree || !enabled || !loggedIn) {
+    const uploadRegistrationId = async (ridInput: any) => {
+      const rid =
+        typeof ridInput === 'string'
+          ? ridInput
+          : ridInput?.res || ridInput?.registrationId || '';
+      if (!rid) {
+        console.log('skip-upload-empty-rid');
         return;
       }
-    } catch {
-      // 发生异常时不继续上报，避免在未授权场景处理 registrationId
+      cachedRegistrationId = rid;
+
+      const canProcess = await shouldProcessPush();
+      if (!canProcess) {
+        return;
+      }
+
+      // 10 秒内同一 rid 去重，避免并发触发/事件回调造成重复绑定
+      const ts = Date.now();
+      const uploadedAt = recentUploadedRid.get(rid) || 0;
+      if (ts - uploadedAt < 10000) {
+        return;
+      }
+      recentUploadedRid.set(rid, ts);
+
+      // 清理过期缓存，防止 map 无限制增长
+      for (const [k, v] of recentUploadedRid.entries()) {
+        if (ts - v > 120000) {
+          recentUploadedRid.delete(k);
+        }
+      }
+
+      let currentToken = '';
+      try {
+        currentToken = ((await cacheGet({ key: 'token' })) as any) || '';
+      } catch (e) {}
+
+      try {
+        const lastUploadRes = await getStorage({
+          key: 'lastUploadedPushBinding',
+        });
+        const lastUpload = lastUploadRes?.data;
+        // 如果本地记录的已上报 rid 和当前用户的 token 与本次完全一致，则跳过调用，减少无效网络请求
+        if (
+          lastUpload &&
+          lastUpload.rid === rid &&
+          lastUpload.token === currentToken
+        ) {
+          console.log(
+            '[push-flow] 当前 Registration ID 已与当前账号绑定过，跳过重复上报',
+          );
+          return;
+        }
+      } catch (e) {}
+
+      let stored: any = {};
+      try {
+        const res = await getStorage({ key: 'deviceInfo' });
+        stored = res?.data || {};
+      } catch {
+        stored = {};
+      }
+
+      // 兜底补齐基础字段，避免后端收到 brand/platform 为空
+      if (!stored?.platform || !stored?.brand) {
+        try {
+          const sys = await getSystemInfo();
+          stored = {
+            platform:
+              stored?.platform || (sys.platform === 'ios' ? 'ios' : 'android'),
+            brand: stored?.brand || sys.brand?.toLowerCase() || '',
+            ...stored,
+          };
+        } catch {
+          stored = {
+            platform:
+              stored?.platform || (Platform.OS === 'ios' ? 'ios' : 'android'),
+            brand: stored?.brand || '',
+            ...stored,
+          };
+        }
+      }
+
+      stored.registrationId = rid;
+      try {
+        let deviceId = '';
+        try {
+          // 尽力获取 deviceId
+          deviceId = await DeviceInfo.getUniqueId();
+        } catch (e) {}
+
+        const payload = {
+          ...stored,
+          registrationId: rid,
+          deviceId: deviceId || stored?.deviceId || '',
+        };
+        console.log(payload, '==--==');
+
+        // 补齐逻辑：给服务端发送 bindReqId
+        const res = await updateRegId(payload);
+        if (res?.code === 200 || res?.success) {
+          console.log(
+            `[push-flow] bindReqId 成功! 成功上报 Registration ID: ${rid} 到服务端`,
+          );
+          try {
+            await setStorage({
+              key: 'lastUploadedPushBinding',
+              data: { rid, token: currentToken },
+            });
+          } catch (e) {}
+        } else {
+          console.warn(`[push-flow] bindReqId 后端返回异常:`, res);
+        }
+      } catch (e) {
+        console.warn(`[push-flow] bindReqId 请求抛出异常:`, e);
+      }
+
+      try {
+        await setStorage({ key: 'deviceInfo', data: stored });
+      } catch {}
+    };
+
+    const ensureRegistrationIdListener = () => {
+      if (registrationIdListenerBound) return;
+      registrationIdListenerBound = true;
+      DeviceEventEmitter.addListener(
+        REGISTRATION_ID_EVENT,
+        uploadRegistrationId,
+      );
+    };
+
+    const fetchRegistrationIdWithRetry = async (maxAttempts = 3) => {
+      for (let i = 0; i < maxAttempts; i += 1) {
+        if (cachedRegistrationId) {
+          return cachedRegistrationId;
+        }
+
+        try {
+          const rid = await Promise.race([
+            appPush.getRegistrationID(),
+            new Promise<string>(resolve => setTimeout(() => resolve(''), 2000)),
+          ]);
+          if (rid) {
+            cachedRegistrationId = rid;
+            return rid;
+          }
+        } catch (e) {
+          console.warn('getRegistrationID error:', e);
+        }
+        if (i < maxAttempts - 1) {
+          if (cachedRegistrationId) {
+            return cachedRegistrationId;
+          }
+          await new Promise(resolve =>
+            setTimeout(() => resolve(undefined), 1000),
+          );
+        }
+      }
+      return cachedRegistrationId || '';
+    };
+
+    const diagnosePushState = async () => {
+      try {
+        await new Promise<void>(resolve => {
+          let done = false;
+          const finish = () => {
+            if (done) return;
+            done = true;
+            resolve();
+          };
+          setTimeout(finish, 1200);
+          appPush.checkTcpStatus?.((result: any) => {
+            finish();
+          });
+        });
+      } catch (e) {
+        console.log('tcp-status-error', e);
+      }
+
+      try {
+        await new Promise<void>(resolve => {
+          let done = false;
+          const finish = () => {
+            if (done) return;
+            done = true;
+            resolve();
+          };
+          setTimeout(finish, 1200);
+          appPush.isPushStopped?.((stopped: boolean) => {
+            finish();
+          });
+        });
+      } catch (e) {
+        console.log('is-push-stopped-error', e);
+      }
+    };
+
+    const startRegistrationIdBackgroundPolling = async () => {
+      if (registrationIdPolling) {
+        return;
+      }
+      registrationIdPolling = true;
+
+      try {
+        await diagnosePushState();
+
+        // 最多轮询 12 次，每次间隔 5 秒，总计约 60 秒
+        for (let round = 1; round <= 12; round += 1) {
+          if (cachedRegistrationId) {
+            break;
+          }
+
+          const canProcess = await shouldProcessPush();
+          if (!canProcess) {
+            break;
+          }
+
+          const rid = await fetchRegistrationIdWithRetry(1);
+          if (rid || cachedRegistrationId) {
+            await uploadRegistrationId(rid || cachedRegistrationId);
+            break;
+          }
+
+          if (round < 12) {
+            await new Promise(resolve =>
+              setTimeout(() => resolve(undefined), 5000),
+            );
+          }
+        }
+      } finally {
+        registrationIdPolling = false;
+      }
+    };
+
+    const canProcess = await shouldProcessPush();
+    if (!canProcess) {
       return;
     }
 
-    let stored: any = {};
-    try {
-      const res = await getStorage({ key: 'deviceInfo' });
-      stored = res?.data || {};
-    } catch {
-      stored = {};
-    }
-    stored.registrationId = rid;
-    try {
-      await setStorage({ key: 'deviceInfo', data: stored });
-    } catch {}
+    // [热修复] 在获取推送前，必须确保推送 SDK 处于最新初始化且启动状态
+    // 如果 SDK 处于未同意隐私/未启动的冷寂状态，直接 getRegistrationID 会永久失败并返回空
+    await initAppPush();
 
-    // 可以在这里调用接口上传 rid
+    // 如果是刚刚执行的热启动（冷启动），SDK 连接到服务器拿 rid 可能需要几毫秒
+    // 这里我们先稍微等一个小段，给底层广播通道一个预热期
+    await new Promise((resolve: any) => setTimeout(resolve, 800));
+
+    ensureRegistrationIdListener();
+
+    const sys = await getSystemInfo();
+    const isIOS = sys.platform === 'ios';
+
+    const info: any = {
+      platform: isIOS ? 'ios' : 'android',
+      brand: sys.brand?.toLowerCase() || '',
+    };
+
+    // 1. 获取 deviceToken
     try {
-      await updateRegId({ ...stored, registrationId: rid });
+      const token = await appPush.getDeviceToken();
+      if (token) info.deviceToken = token;
     } catch (e) {
-      console.warn('updateRegId error:', e);
+      console.log('getDeviceToken error:', e);
     }
-  });
 
-  return info;
+    // 2. 获取 registrationId（MOBPush 最重要）
+    info.registrationId = await fetchRegistrationIdWithRetry();
+
+    setStorage({
+      key: 'deviceInfo',
+      data: info,
+    });
+
+    // 如果此时已经拿到有效的 registrationId，直接上报一次，避免仅依赖异步回调
+    if (info.registrationId) {
+      await uploadRegistrationId(info.registrationId);
+    } else {
+      // 首轮拿不到 rid 时，后台继续补拿并上报，避免要求用户二次登录
+      startRegistrationIdBackgroundPolling().catch(e => {
+        console.log('background-polling-error', e);
+      });
+    }
+
+    return info;
+  } finally {
+    getMobPushSyncRunning = false;
+  }
 };
 
 /**
@@ -433,9 +666,34 @@ export { checkBluetoothPermission as requestBluetoothPermissions } from './permi
  * 初始化推送服务
  */
 export const initAppPush = async () => {
+  const now = Date.now();
+  if (initAppPushRunning) {
+    return;
+  }
+  if (now - lastInitAppPushAt < 3000) {
+    return;
+  }
+  initAppPushRunning = true;
+  lastInitAppPushAt = now;
+
   try {
     // 提交隐私协议同意结果
     appPush.submitPolicyGrantResult?.(true);
+
+    // iOS 通知初始化（与 MobPush 官方流程保持一致）
+    if (Platform.OS === 'ios') {
+      appPush.setAPNsForProduction?.(__DEV__ ? 0 : 1);
+      appPush.setupNotification?.(
+        appPush.MPushAuthorizationOptionsBadge |
+          appPush.MPushAuthorizationOptionsSound |
+          appPush.MPushAuthorizationOptionsAlert,
+      );
+      appPush.setAPNsShowForegroundType?.(
+        appPush.MPushAuthorizationOptionsBadge |
+          appPush.MPushAuthorizationOptionsSound |
+          appPush.MPushAuthorizationOptionsAlert,
+      );
+    }
 
     // 启动推送服务
     appPush.restartPush?.();
@@ -444,7 +702,9 @@ export const initAppPush = async () => {
       console.log('推送服务初始化完成');
     }
   } catch (error) {
-    console.error('推送服务初始化失败:', error);
+    console.log('推送服务初始化失败:', error);
+  } finally {
+    initAppPushRunning = false;
   }
 };
 
@@ -457,7 +717,27 @@ export const jumpToPage = async (): Promise<{ remove?: () => void }> => {
     const handleNotificationOpened = (result: any) => {
       console.log('推送消息被点击:', result);
       // 这里可以根据推送内容跳转到相应页面
-      // 例如：navigation.navigate('DeviceDetail', { deviceId: result.deviceId });
+      // 解析可能被字符串化的 res 里的数据
+      let detail: any = {};
+      try {
+        detail =
+          typeof result?.res === 'string'
+            ? JSON.parse(result.res)
+            : result?.res || result;
+      } catch (error) {
+        detail = result;
+      }
+
+      const pushDataStr = detail?.extrasMap?.pushData;
+      let pushData: any = {};
+      try {
+        if (pushDataStr) {
+          pushData = JSON.parse(pushDataStr);
+        }
+      } catch (error) {}
+
+      // 无论消息携带何种内容，全部跳转到消息中心 Message 页面（业务需求）
+      navigate('Message' as any);
     };
 
     // 监听推送消息打开事件

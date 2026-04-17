@@ -285,20 +285,23 @@ public class MobPushModule extends ReactContextBaseJavaModule {
     public void getRegistrationID(final Callback callback) {
         MobPushLogger.getInstance().d("call getRegistrationID");
         MobPush.getRegistrationId(new MobPushCallback<String>() {
+            private boolean callbackInvoked = false;
             @Override
             public void onCallback(final String s) {
                 final WritableMap map = Arguments.createMap();
                 map.putBoolean("success", true);
                 map.putString("res", s);
                 map.putString("error", null);
-                if (!TextUtils.isEmpty(s) && ObjectUtils.nonNull(callback)) {
-                    UIHandler.sendEmptyMessage(MSG_UI, new Handler.Callback() {
-                        @Override
-                        public boolean handleMessage(Message msg) {
+                if (!TextUtils.isEmpty(s)) {
+                    sendEvent(reactContext, "registrationId", map);
+                }
+                if (ObjectUtils.nonNull(callback)) {
+                    synchronized (this) {
+                        if (!callbackInvoked) {
+                            callbackInvoked = true;
                             callback.invoke(map);
-                            return false;
                         }
-                    });
+                    }
                 }
             }
         });
@@ -313,20 +316,20 @@ public class MobPushModule extends ReactContextBaseJavaModule {
   public void getDeviceToken(final Callback callback) {
     MobPushLogger.getInstance().d("call getDeviceToken");
     MobPush.getDeviceToken(new MobPushCallback<String>() {
+      private boolean callbackInvoked = false;
       @Override
       public void onCallback(final String s) {
         final WritableMap map = Arguments.createMap();
         map.putBoolean("success", true);
         map.putString("res", s);
         map.putString("error", null);
-        if (!TextUtils.isEmpty(s) && ObjectUtils.nonNull(callback)) {
-          UIHandler.sendEmptyMessage(MSG_UI, new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
+        if (ObjectUtils.nonNull(callback)) {
+          synchronized (this) {
+            if (!callbackInvoked) {
+              callbackInvoked = true;
               callback.invoke(map);
-              return false;
             }
-          });
+          }
         }
       }
     });
@@ -341,6 +344,7 @@ public class MobPushModule extends ReactContextBaseJavaModule {
   public void checkTcpStatus(final Callback callback) {
     MobPushLogger.getInstance().d("call checkTcpStatus");
     MobPush.checkTcpStatus(new MobPushCallback<Boolean>() {
+      private boolean callbackInvoked = false;
       @Override
       public void onCallback(final Boolean s) {
         final WritableMap map = Arguments.createMap();
@@ -348,7 +352,12 @@ public class MobPushModule extends ReactContextBaseJavaModule {
         map.putBoolean("res", s);
         map.putString("error", null);
         if (ObjectUtils.nonNull(callback)) {
-          callback.invoke(map);
+          synchronized (this) {
+            if (!callbackInvoked) {
+              callbackInvoked = true;
+              callback.invoke(map);
+            }
+          }
         }
       }
     });
@@ -363,6 +372,7 @@ public class MobPushModule extends ReactContextBaseJavaModule {
   public void isPushStopped(final Callback callback) {
     MobPushLogger.getInstance().d("isPushStopped");
     MobPush.isPushStopped(new MobPushCallback<Boolean>() {
+      private boolean callbackInvoked = false;
       @Override
       public void onCallback(Boolean aBoolean) {
         final WritableMap map = Arguments.createMap();
@@ -370,7 +380,12 @@ public class MobPushModule extends ReactContextBaseJavaModule {
         map.putBoolean("res", aBoolean);
         map.putString("error", null);
         if (ObjectUtils.nonNull(callback)) {
-          callback.invoke(map);
+          synchronized (this) {
+            if (!callbackInvoked) {
+              callbackInvoked = true;
+              callback.invoke(map);
+            }
+          }
         }
       }
     });
@@ -532,6 +547,7 @@ public class MobPushModule extends ReactContextBaseJavaModule {
       }
 
       MobPush.addLocalNotification(localNotification, new MobPushCallback<Boolean>() {
+        private boolean callbackInvoked = false;
         @Override
         public void onCallback(Boolean aBoolean) {
           final WritableMap map = Arguments.createMap();
@@ -539,7 +555,12 @@ public class MobPushModule extends ReactContextBaseJavaModule {
           map.putBoolean("res", aBoolean);
           map.putString("error", null);
           if (ObjectUtils.nonNull(callback)) {
-            callback.invoke(map);
+            synchronized (this) {
+              if (!callbackInvoked) {
+                callbackInvoked = true;
+                callback.invoke(map);
+              }
+            }
           }
         }
       });
@@ -550,6 +571,7 @@ public class MobPushModule extends ReactContextBaseJavaModule {
       MobPushLogger.getInstance().d("removeLocalNotification");
 
       MobPush.removeLocalNotification(notificationId, new MobPushCallback<Boolean>() {
+        private boolean callbackInvoked = false;
         @Override
         public void onCallback(Boolean aBoolean) {
           final WritableMap map = Arguments.createMap();
@@ -557,7 +579,12 @@ public class MobPushModule extends ReactContextBaseJavaModule {
           map.putBoolean("res", aBoolean);
           map.putString("error", null);
           if (ObjectUtils.nonNull(callback)) {
-            callback.invoke(map);
+            synchronized (this) {
+              if (!callbackInvoked) {
+                callbackInvoked = true;
+                callback.invoke(map);
+              }
+            }
           }
         }
       });
@@ -567,6 +594,7 @@ public class MobPushModule extends ReactContextBaseJavaModule {
     public void clearLocalNotifications(final Callback callback) {
       MobPushLogger.getInstance().d("clearLocalNotifications");
       MobPush.clearLocalNotifications(new MobPushCallback<Boolean>() {
+        private boolean callbackInvoked = false;
         @Override
         public void onCallback(Boolean aBoolean) {
           final WritableMap map = Arguments.createMap();
@@ -574,7 +602,12 @@ public class MobPushModule extends ReactContextBaseJavaModule {
           map.putBoolean("res", aBoolean);
           map.putString("error", null);
           if (ObjectUtils.nonNull(callback)) {
-            callback.invoke(map);
+            synchronized (this) {
+              if (!callbackInvoked) {
+                callbackInvoked = true;
+                callback.invoke(map);
+              }
+            }
           }
         }
       });
@@ -599,6 +632,7 @@ public class MobPushModule extends ReactContextBaseJavaModule {
     public void getShowBadge(final Callback callback) {
       MobPushLogger.getInstance().d("getShowBadge");
       MobPush.getShowBadge(new MobPushCallback<Boolean>() {
+        private boolean callbackInvoked = false;
         @Override
         public void onCallback(Boolean aBoolean) {
           final WritableMap map = Arguments.createMap();
@@ -606,7 +640,12 @@ public class MobPushModule extends ReactContextBaseJavaModule {
           map.putBoolean("res", aBoolean);
           map.putString("error", null);
           if (ObjectUtils.nonNull(callback)) {
-            callback.invoke(map);
+            synchronized (this) {
+              if (!callbackInvoked) {
+                callbackInvoked = true;
+                callback.invoke(map);
+              }
+            }
           }
         }
       });
@@ -623,6 +662,7 @@ public class MobPushModule extends ReactContextBaseJavaModule {
   public void getNotificationMaxCount(final Callback callback) {
     MobPushLogger.getInstance().d("getNotificationMaxCount");
     MobPush.getNotificationMaxCount(new MobPushCallback<Integer>() {
+      private boolean callbackInvoked = false;
       @Override
       public void onCallback(Integer s) {
         final WritableMap map = Arguments.createMap();
@@ -630,7 +670,12 @@ public class MobPushModule extends ReactContextBaseJavaModule {
         map.putInt("res", s);
         map.putString("error", null);
         if (ObjectUtils.nonNull(callback)) {
-          callback.invoke(map);
+          synchronized (this) {
+            if (!callbackInvoked) {
+              callbackInvoked = true;
+              callback.invoke(map);
+            }
+          }
         }
       }
     });
@@ -647,6 +692,7 @@ public class MobPushModule extends ReactContextBaseJavaModule {
   public void isNotificationsEnabled(final Callback callback) {
     MobPushLogger.getInstance().d("isNotificationsEnabled");
     MobPush.isNotificationsEnabled(new MobPushCallback<Boolean>() {
+      private boolean callbackInvoked = false;
       @Override
       public void onCallback(Boolean aBoolean) {
         final WritableMap map = Arguments.createMap();
@@ -654,7 +700,12 @@ public class MobPushModule extends ReactContextBaseJavaModule {
         map.putBoolean("res", aBoolean);
         map.putString("error", null);
         if (ObjectUtils.nonNull(callback)) {
-          callback.invoke(map);
+          synchronized (this) {
+            if (!callbackInvoked) {
+              callbackInvoked = true;
+              callback.invoke(map);
+            }
+          }
         }
       }
     });

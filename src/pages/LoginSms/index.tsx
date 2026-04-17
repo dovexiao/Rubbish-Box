@@ -98,9 +98,8 @@ const LoginSms = () => {
           // 同步写入 AsyncStorage 的 tokenStorage，供 useAuth 等逻辑使用
           await tokenStorage.set(String(res.data.token));
           await cacheSetSync('guestMode', false);
-          try {
-            await getMobPushDeviceInfo();
-          } catch {}
+          // 登录流程不再阻塞等待 registrationId，改为首页后后台静默执行
+          void getMobPushDeviceInfo().catch(() => undefined);
           showToast({ title: '登录成功', icon: 'success' });
           reLaunch('Index');
         }
