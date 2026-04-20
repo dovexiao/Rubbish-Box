@@ -15,6 +15,7 @@ import AppIcon from '@/components/AppIcon';
 import { getRepairList } from '@/services/user';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type RepairItem = {
   id: number;
@@ -86,10 +87,10 @@ export default function MaintainService() {
       >
         <View style={styles.itemTopBottom}>
           <Text style={styles.itemTopText}>服务号 {item.repairNo}</Text>
-          <Text style={[styles.text, { marginRight: 2 }]}>
+          <Text style={[styles.text, { marginRight: px(2) }]}>
             {item.repairProgressName}
           </Text>
-          <AppIcon name="a-headfor-20" color="#333333" size={20} />
+          <AppIcon name="a-headfor-20" color="#333333" size={px(20)} />
         </View>
         <View style={styles.diviler} />
         <View style={styles.itemTopBottom}>
@@ -133,7 +134,7 @@ export default function MaintainService() {
         keyExtractor={item => String(item.id)}
         renderItem={renderItem}
         contentContainerStyle={
-          list.length === 0 ? { flexGrow: 1 } : { paddingHorizontal: 16 }
+          list.length === 0 ? { flexGrow: 1 } : { paddingHorizontal: px(16) }
         }
         ListEmptyComponent={!initialLoading ? empty : null}
         onEndReached={() => {

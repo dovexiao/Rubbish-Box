@@ -7,6 +7,7 @@ import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/constants';
 import type { OrderDetailDTO } from '../typing';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 const formatTime = (time?: string) => {
   if (!time) return '';
@@ -164,7 +165,7 @@ export default function OrderDetail() {
 
         <Flex style={styles.detailItem2}>
           <Text style={styles.title}>备注说明</Text>
-          <View style={{ flex: 1, marginLeft: 12 }}>
+          <View style={{ flex: 1, marginLeft: px(12) }}>
             <Text style={styles.defaultText}>
               {detail.remark ? detail.remark.split('').join('\u200B') : '-'}
             </Text>

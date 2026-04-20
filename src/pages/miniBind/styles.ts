@@ -1,58 +1,59 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    paddingHorizontal: 24,
-    paddingTop: 100,
+    paddingHorizontal: px(24),
+    paddingTop: px(100),
   },
   passwordTitle: {
-    fontSize: 24,
+    fontSize: fontSize(24),
     fontWeight: 'bold',
     color: '#333333',
-    lineHeight: 34,
+    lineHeight: px(34),
     textAlign: 'center',
   },
   codeBox: {
-    marginTop: 52,
-    marginBottom: 16,
+    marginTop: px(52),
+    marginBottom: px(16),
   },
   codeTitle: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
-    lineHeight: 22,
-    fontWeight: 'bold'
+    lineHeight: px(22),
+    fontWeight: 'bold',
   },
   getAgain: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: px(8),
+    paddingHorizontal: px(12),
   },
   getAgainText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999',
   },
   getAgainTextActive: {
     color: '#333333',
   },
   btnBox: {
-    marginTop: 90,
+    marginTop: px(90),
   },
   submitBtn: {
-    marginTop: 16,
+    marginTop: px(16),
     backgroundColor: '#999999',
-    borderRadius: 16,
+    borderRadius: px(16),
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 15,
+    paddingVertical: px(15),
   },
   btnActive: {
     backgroundColor: '#333333',
   },
   submitBtnText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
   },
 });

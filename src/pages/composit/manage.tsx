@@ -292,7 +292,7 @@ const ManageComposite = () => {
       footer={
         <Flex
           justify="center"
-          style={[styles.btnContainerWrapper, { paddingHorizontal: 16 }]}
+          style={[styles.btnContainerWrapper, { paddingHorizontal: px(16) }]}
         >
           <TouchableOpacity
             activeOpacity={0.8}
@@ -385,7 +385,7 @@ const ManageComposite = () => {
         showClose={false}
         onClose={() => setAddDeviceVisible(false)}
       >
-        <View style={{ paddingTop: 16 }}>
+        <View style={{ paddingTop: px(16) }}>
           <Flex
             direction="row"
             justify="between"

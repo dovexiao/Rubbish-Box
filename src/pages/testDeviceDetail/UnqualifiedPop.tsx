@@ -7,6 +7,7 @@ import React, {
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Flex, GradientButton, Popup } from '@/components';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 export interface UnqualifiedPopRef {
   open: () => void;
@@ -56,7 +57,7 @@ const UnqualifiedPop = forwardRef<UnqualifiedPopRef, UnqualifiedPopProps>(
         footer={
           <Flex style={styles.btnContainerWrapper}>
             <GradientButton
-              height={48}
+              height={px(48)}
               colors={['transparent', 'transparent']}
               onPress={() => {
                 handleClose();
@@ -66,7 +67,7 @@ const UnqualifiedPop = forwardRef<UnqualifiedPopRef, UnqualifiedPopProps>(
               <Text style={[styles.btnContainerText]}>取消</Text>
             </GradientButton>
             <GradientButton
-              height={48}
+              height={px(48)}
               colors={['#282828', '#4A4A4A']}
               onPress={async () => {
                 handleConfirm();
@@ -86,7 +87,7 @@ const UnqualifiedPop = forwardRef<UnqualifiedPopRef, UnqualifiedPopProps>(
         }
       >
         <View style={styles.popupBody}>
-          <Text style={[styles.reasonLabel, { marginBottom: 8 }]}>
+          <Text style={[styles.reasonLabel, { marginBottom: px(8) }]}>
             不合格原因
           </Text>
           <TextInput
@@ -95,12 +96,12 @@ const UnqualifiedPop = forwardRef<UnqualifiedPopRef, UnqualifiedPopProps>(
             placeholder="请输入不合格原因"
             placeholderTextColor="#CCCCCC"
             style={{
-              minHeight: 88,
-              borderRadius: 8,
-              borderWidth: 1,
+              minHeight: px(88),
+              borderRadius: px(8),
+              borderWidth: px(1),
               borderColor: '#EAEAEA',
-              paddingHorizontal: 12,
-              paddingVertical: 8,
+              paddingHorizontal: px(12),
+              paddingVertical: px(8),
               color: '#333333',
               textAlignVertical: 'top',
             }}

@@ -26,11 +26,11 @@ const styles = StyleSheet.create({
     lineHeight: px(34),
   },
   active: {
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: '#333333',
   },
   error: {
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: '#ff2b24',
   },
   errorMessage: {

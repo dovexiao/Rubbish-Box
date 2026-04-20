@@ -353,7 +353,7 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
         visible={errorPopupVisible}
         onClose={() => setErrorPopupVisible(false)}
         title="提示"
-        minHeight={150}
+        minHeight={px(150)}
         footer={
           <View style={styles.popupFooter}>
             <TouchableOpacity
@@ -388,7 +388,7 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
             else onClose?.();
           }}
         >
-          <AppIcon name="back" color="#FFFFFF" size={24} />
+          <AppIcon name="back" color="#FFFFFF" size={px(24)} />
         </TouchableOpacity>
         <Text style={styles.defaultHeaderTitle}>{title}</Text>
         <View style={styles.defaultHeaderRightPlaceholder} />
@@ -439,7 +439,10 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
         <View style={[styles.overlay, overlayStyle]} pointerEvents="box-none">
           {headerNode ? (
             <View
-              style={[styles.header, safeAreaTop && { paddingTop: insets.top }]}
+              style={[
+                styles.header,
+                safeAreaTop && { paddingTop: px(insets.top) },
+              ]}
               pointerEvents="box-none"
             >
               {headerNode}
@@ -459,7 +462,7 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
             <View
               style={[
                 styles.footer,
-                safeAreaBottom && { paddingBottom: insets.bottom },
+                safeAreaBottom && { paddingBottom: px(insets.bottom) },
               ]}
               pointerEvents="box-none"
             >

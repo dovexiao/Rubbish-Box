@@ -1,3 +1,4 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -6,8 +7,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingLeft: 24,
-    paddingRight: 24,
+    paddingLeft: px(24),
+    paddingRight: px(24),
   },
   deviceContent: {
     width: '100%',
@@ -16,59 +17,59 @@ export const styles = StyleSheet.create({
   deviceItem: {
     width: '100%',
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: px(12),
+    padding: px(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: px(12),
   },
   h220: {
-    height: 110,
+    height: px(110),
   },
   h160: {
-    height: 80,
+    height: px(80),
   },
   deviceImg: {
-    width: 36,
-    height: 36,
+    width: px(36),
+    height: px(36),
   },
   radioImg: {
-    width: 20,
-    height: 20,
+    width: px(20),
+    height: px(20),
   },
   flexBox: {
     flex: 1,
-    marginLeft: 12,
-    marginRight: 15,
+    marginLeft: px(12),
+    marginRight: px(15),
   },
   itemName: {
     fontWeight: '700',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
     flex: 1,
   },
   groupToast: {
     fontWeight: '400',
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#ff5a5a',
-    lineHeight: 17,
+    lineHeight: px(17),
     textAlign: 'left',
   },
   pageFooter: {
-    height: 80,
+    height: px(80),
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: px(32),
   },
   sureCreateBtn: {
-    width: 196,
-    height: 48,
+    width: px(196),
+    height: px(48),
     backgroundColor: '#333333',
-    borderRadius: 16,
+    borderRadius: px(16),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -77,23 +78,22 @@ export const styles = StyleSheet.create({
   },
   sureCreateBtnText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '700',
   },
   emptyContainer: {
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
-    marginTop: 50,
+    marginTop: px(50),
   },
   emptyImage: {
-    width: 120,
-    height: 120,
+    width: px(120),
+    height: px(120),
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#666666',
-    marginTop: 16,
+    marginTop: px(16),
   },
 });
-

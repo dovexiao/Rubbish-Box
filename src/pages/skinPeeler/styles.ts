@@ -1,11 +1,12 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: px(16),
+    paddingVertical: px(8),
   },
   content: {
     width: '100%',
@@ -18,14 +19,14 @@ const styles = StyleSheet.create({
   },
   themeItem: {
     width: '50%',
-    marginBottom: 24,
-    paddingHorizontal: 8,
+    marginBottom: px(24),
+    paddingHorizontal: px(8),
     alignItems: 'center',
   },
   themeCard: {
     width: '100%',
-    height: 165,
-    borderRadius: 12,
+    height: px(165),
+    borderRadius: px(12),
     overflow: 'hidden',
     backgroundColor: '#F6F7FA',
   },
@@ -35,29 +36,29 @@ const styles = StyleSheet.create({
   },
   themeInfo: {
     width: '100%',
-    marginTop: 12,
+    marginTop: px(12),
     alignItems: 'center',
   },
   currentButton: {
-    width: 56,
-    height: 30,
-    borderRadius: 12,
+    width: px(56),
+    height: px(30),
+    borderRadius: px(12),
     backgroundColor: '#CCCCCC',
     justifyContent: 'center',
     alignItems: 'center',
   },
   switchButton: {
-    width: 56,
-    height: 30,
-    borderRadius: 12,
+    width: px(56),
+    height: px(30),
+    borderRadius: px(12),
     backgroundColor: '#333333',
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 12,
-    lineHeight: 17,
+    fontSize: fontSize(12),
+    lineHeight: px(17),
   },
 });
 

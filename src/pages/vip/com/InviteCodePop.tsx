@@ -13,6 +13,7 @@ import { DAY_OF_WEEK, INVITE_STATUS } from '@/constants';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import type { DetailsProp } from '../type';
 import { Popup } from '@/components';
+import { px } from '@/utils/ui';
 
 /**
  * @description 贵宾码弹层（底部弹出）。
@@ -74,7 +75,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
       details,
       shareDetail,
       styles,
-      maxHeight = 550,
+      maxHeight = px(550),
       onEdit,
       onInvalidate,
       onShare,
@@ -154,16 +155,16 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
                 setIsOption(v => !v);
               }}
             >
-              <AppIcon name="more" size={24} color="#333333" />
+              <AppIcon name="more" size={px(24)} color="#333333" />
             </TouchableOpacity>
           ) : (
-            <View style={{ width: 24 }} />
+            <View style={{ width: px(24) }} />
           )}
           <View>
             <Text style={styles.popTitleText}>贵宾码</Text>
           </View>
           <TouchableOpacity activeOpacity={0.8} onPress={close}>
-            <AppIcon name="close" size={24} color="#333333" />
+            <AppIcon name="close" size={px(24)} color="#333333" />
           </TouchableOpacity>
         </Flex>
 
@@ -207,7 +208,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
           <Flex
             direction="row"
             justify="between"
-            style={{ width: '100%', paddingLeft: 16, paddingRight: 16 }}
+            style={{ width: '100%', paddingLeft: px(16), paddingRight: px(16) }}
           >
             <Text style={styles.rowText1}>尊敬的贵宾</Text>
             <Text
@@ -234,7 +235,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
             <Flex
               direction="column"
               justify="between"
-              style={{ marginLeft: 10 }}
+              style={{ marginLeft: px(10) }}
             >
               <Flex direction="row" align="center">
                 <Text style={[styles.dateText, styles.mr12, styles.mb8]}>
@@ -258,11 +259,11 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
                 ).format('mm')}`}
               </Text>
             </Flex>
-            <AppIcon name="arrows1" size={20} color="#333333" />
+            <AppIcon name="arrows1" size={px(20)} color="#333333" />
             <Flex
               direction="column"
               justify="between"
-              style={{ marginLeft: 10 }}
+              style={{ marginLeft: px(10) }}
             >
               <Flex direction="row" align="center">
                 <Text style={[styles.dateText, styles.mr12, styles.mb8]}>
@@ -295,7 +296,7 @@ const InviteCodePop = forwardRef<InviteCodePopRef, InviteCodePopProps>(
         {details?.status === 1 && (
           <View style={styles.popup}>
             <Flex
-              style={{ width: '100%', marginTop: 31, marginBottom: 16 }}
+              style={{ width: '100%', marginTop: px(31), marginBottom: px(16) }}
               direction="row"
               justify="center"
               align="center"

@@ -183,7 +183,7 @@ const LockVisual: React.FC<LockVisualProps> = props => {
           <View style={styles.actionIcon}>
             <AppIcon
               name={detail?.isGroup ? 'a-combinationunit' : 'a-add12'}
-              size={16}
+              size={px(16)}
               color={
                 themeType === 'dark'
                   ? 'rgba(255,255,255,0.8)'

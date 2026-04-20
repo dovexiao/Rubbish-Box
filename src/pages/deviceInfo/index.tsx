@@ -592,7 +592,7 @@ const DeviceInfo = () => {
         showClose={false}
         onClose={() => setEditNamePopVisible(false)}
       >
-        <View style={[styles.editContainer, { paddingBottom: 8 }]}>
+        <View style={[styles.editContainer, { paddingBottom: px(8) }]}>
           <View style={styles.header}>
             <Text style={styles.headerTitle}>编辑地锁名称</Text>
           </View>
@@ -636,7 +636,7 @@ const DeviceInfo = () => {
 
       {/* 查看二维码弹框 */}
       <PopCenter
-        height={226}
+        height={px(226)}
         ref={qrCodePopRef}
         showHeader={false}
         showCancel={false}

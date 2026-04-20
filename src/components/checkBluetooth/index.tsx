@@ -153,7 +153,7 @@ const CheckBluetooth = forwardRef<CheckBluetoothRef, Props>(
           setVisible(false);
         }}
         title="提示"
-        minHeight={318}
+        minHeight={px(318)}
       >
         <Flex direction="column" style={styles.popupContainer}>
           <View>

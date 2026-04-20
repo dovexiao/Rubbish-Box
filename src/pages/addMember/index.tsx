@@ -291,9 +291,9 @@ export default function AddMember() {
       footer={
         <View style={styles.footer}>
           <GradientButton
-            btnBorderRadius={16}
-            width={196}
-            height={48}
+            btnBorderRadius={px(16)}
+            width={px(196)}
+            height={px(48)}
             colors={disabled ? ['#999999', '#999999'] : ['#333333', '#333333']}
             style={styles.submitButton}
             onPress={() => {

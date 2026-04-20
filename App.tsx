@@ -59,6 +59,7 @@ import { AppUpdateDialogHost } from '@/components/AppUpdateDialog';
 import { GlobalLoading, GlobalToast } from '@/components';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { StoreProvider } from '@/store/provider';
+import { fontSize, px } from '@/utils/ui';
 
 // Harmony debug mode: silence in-app LogBox overlays.
 // if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
@@ -743,30 +744,30 @@ function App() {
                         zIndex: 9998,
                         justifyContent: 'center',
                         alignItems: 'center',
-                        paddingHorizontal: 24,
+                        paddingHorizontal: px(24),
                       }}
                     >
                       <RNView
                         style={{
                           width: '100%',
-                          maxWidth: 332,
+                          maxWidth: px(332),
                           backgroundColor: '#FFFFFF',
-                          borderRadius: 16,
-                          paddingTop: 20,
-                          paddingHorizontal: 20,
-                          paddingBottom: 16,
+                          borderRadius: px(16),
+                          paddingTop: px(20),
+                          paddingHorizontal: px(20),
+                          paddingBottom: px(16),
                           shadowColor: '#000',
                           shadowOpacity: 0.12,
-                          shadowRadius: 10,
-                          shadowOffset: { width: 0, height: 4 },
-                          elevation: 4,
+                          shadowRadius: px(10),
+                          shadowOffset: { width: 0, height: px(4) },
+                          elevation: px(4),
                         }}
                       >
                         <Text
                           style={{
-                            fontSize: 16,
+                            fontSize: fontSize(16),
                             fontWeight: '600',
-                            marginBottom: 12,
+                            marginBottom: px(12),
                             textAlign: 'center',
                           }}
                         >
@@ -803,14 +804,18 @@ function App() {
                         </Text>
 
                         <Text
-                          style={{ fontSize: 12, color: '#999', marginTop: 8 }}
+                          style={{
+                            fontSize: fontSize(12),
+                            color: '#999',
+                            marginTop: px(8),
+                          }}
                         >
                           为保障设备状态提醒的可靠送达，在您同意隐私条款后，应用在退出后可能继续维持通知服务（包含自启动/关联启动的后台行为）。您可在设置中随时关闭通知服务。
                         </Text>
 
                         <RNView
                           style={{
-                            marginTop: 16,
+                            marginTop: px(16),
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
@@ -818,8 +823,8 @@ function App() {
                         >
                           <GradientButton
                             colors={['transparent', 'transparent']}
-                            width={124}
-                            height={42}
+                            width={px(124)}
+                            height={px(42)}
                             onPress={() => {
                               setShowPrivacyPop(false);
                               setNeedPrivacyPrompt(false);
@@ -828,22 +833,22 @@ function App() {
                               }, 200);
                             }}
                             style={{
-                              borderWidth: 1,
+                              borderWidth: px(1),
                               borderColor: '#E6E6E6',
-                              borderRadius: 12,
+                              borderRadius: px(12),
                             }}
                           >
                             <Text style={{ color: '#666' }}>不同意</Text>
                           </GradientButton>
 
                           <GradientButton
-                            width={124}
+                            width={px(124)}
                             colors={['#282828', '#4A4A4A']}
                             style={{
                               backgroundColor: '#333',
-                              marginLeft: 15,
-                              borderRadius: 12,
-                              height: 42,
+                              marginLeft: px(15),
+                              borderRadius: px(12),
+                              height: px(42),
                             }}
                             onPress={async () => {
                               try {
@@ -882,25 +887,25 @@ function App() {
                         zIndex: 9999,
                         justifyContent: 'center',
                         alignItems: 'center',
-                        paddingHorizontal: 24,
+                        paddingHorizontal: px(24),
                       }}
                     >
                       <RNView
                         style={{
                           width: '100%',
-                          maxWidth: 332,
+                          maxWidth: px(332),
                           backgroundColor: '#FFFFFF',
-                          borderRadius: 16,
-                          paddingTop: 20,
-                          paddingHorizontal: 20,
-                          paddingBottom: 16,
+                          borderRadius: px(16),
+                          paddingTop: px(20),
+                          paddingHorizontal: px(20),
+                          paddingBottom: px(16),
                         }}
                       >
                         <Text
                           style={{
-                            fontSize: 16,
+                            fontSize: fontSize(16),
                             fontWeight: '600',
-                            marginBottom: 12,
+                            marginBottom: px(12),
                             textAlign: 'center',
                           }}
                         >
@@ -909,8 +914,8 @@ function App() {
 
                         <Text
                           style={{
-                            fontSize: 14,
-                            lineHeight: 20,
+                            fontSize: fontSize(14),
+                            lineHeight: px(20),
                             textAlign: 'center',
                           }}
                         >
@@ -945,7 +950,7 @@ function App() {
 
                         <RNView
                           style={{
-                            marginTop: 16,
+                            marginTop: px(16),
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
@@ -953,8 +958,8 @@ function App() {
                         >
                           <GradientButton
                             colors={['transparent', 'transparent']}
-                            width={124}
-                            height={42}
+                            width={px(124)}
+                            height={px(42)}
                             onPress={() => {
                               if (Platform.OS === 'android') {
                                 BackHandler.exitApp();
@@ -981,22 +986,22 @@ function App() {
                               }
                             }}
                             style={{
-                              borderWidth: 1,
+                              borderWidth: px(1),
                               borderColor: '#E6E6E6',
-                              borderRadius: 12,
+                              borderRadius: px(12),
                             }}
                           >
                             <Text style={{ color: '#666' }}>退出应用</Text>
                           </GradientButton>
 
                           <GradientButton
-                            width={124}
+                            width={px(124)}
                             colors={['#282828', '#4A4A4A']}
                             style={{
                               backgroundColor: '#333',
-                              marginLeft: 15,
-                              borderRadius: 12,
-                              height: 42,
+                              marginLeft: px(15),
+                              borderRadius: px(12),
+                              height: px(42),
                             }}
                             onPress={async () => {
                               try {
@@ -1035,8 +1040,8 @@ function App() {
                         >
                           <View
                             style={{
-                              paddingTop: 24,
-                              fontSize: 16,
+                              paddingTop: px(24),
+                              fontSize: fontSize(16),
                               fontWeight: '500',
                               textAlign: 'center',
                             }}

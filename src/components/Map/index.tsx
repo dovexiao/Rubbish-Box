@@ -24,6 +24,7 @@ import {
 import { IS_HARMONY } from '@/constants';
 import type { HarmonyMarker } from '@/harmony/harmony-amap';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 const INITIAL_HARMONY_MAP_KEY = IS_HARMONY ? initAMapSdk() : undefined;
 
@@ -93,7 +94,7 @@ export default function MapComponent(props: MapComponentProps) {
     <>
       <View style={styles.mapContent}>{mapSection}</View>
       <View style={styles.addressContainer}>
-        <AppIcon name="location" size={12} color="#ccc" />
+        <AppIcon name="location" size={px(12)} color="#ccc" />
         <Text style={styles.addressText} numberOfLines={1}>
           {address ?? '暂无'}
         </Text>
@@ -261,7 +262,7 @@ export default function MapComponent(props: MapComponentProps) {
   if (isHarmonyMapUnavailable) {
     const fallback = renderCard(
       <View style={styles.mapFallback}>
-        <AppIcon name="location" size={24} color="#999999" />
+        <AppIcon name="location" size={px(24)} color="#999999" />
         <Text style={styles.mapFallbackText}>
           当前版本暂未启用 Harmony 原生地图
         </Text>

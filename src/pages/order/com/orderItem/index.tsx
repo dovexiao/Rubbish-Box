@@ -6,6 +6,7 @@ import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/constants';
 import type { OrderItemDTO } from '../../typing';
 import styles from './styles';
 import dayjs from 'dayjs';
+import { px } from '@/utils/ui';
 
 const formatTime = (time?: string) => {
   if (!time) return '';
@@ -32,7 +33,7 @@ export function OrderItem({ data, onPress }: Props) {
         <Text style={styles.orderNoText}>订单号：{data.orderNo}</Text>
         <Flex align="center">
           <Text style={styles.statusText}>{statusName}</Text>
-          <AppIcon name="a-headfor-12" size={20} color="#333333" />
+          <AppIcon name="a-headfor-12" size={px(20)} color="#333333" />
         </Flex>
       </Flex>
       <View style={styles.line} />

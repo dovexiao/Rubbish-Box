@@ -20,6 +20,7 @@ import { regionData, getPickerResultByValues } from '@/utils/regionData';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
 import { hideLoading, showLoading, showToast } from '@/utils';
+import { fontSize, px } from '@/utils/ui';
 
 // 状态：1 未填写地址，2 待发货，3 已发货
 const formatPickupTime = (time?: string) => {
@@ -261,7 +262,7 @@ export default function PickupCodeRecordDetail() {
         titleColor: '#fff',
       }}
       backgroundImage={{ uri: RCV_BG }}
-      backgroundImageHeight={310}
+      backgroundImageHeight={px(310)}
     >
       <View style={styles.content}>
         <View style={styles.stepImageContent}>
@@ -282,9 +283,9 @@ export default function PickupCodeRecordDetail() {
             <View style={styles.cardInfo}>
               <Flex direction="column" justify="center">
                 <Flex align="center">
-                  <AppIcon name="star" color="#283E77" size={10} />
+                  <AppIcon name="star" color="#283E77" size={px(10)} />
                   <Text style={styles.cardInfoText}>领取一台地锁</Text>
-                  <AppIcon name="star" color="#283E77" size={10} />
+                  <AppIcon name="star" color="#283E77" size={px(10)} />
                 </Flex>
                 <Text style={styles.cardTimeText}>{pickupTime}</Text>
               </Flex>
@@ -331,7 +332,7 @@ export default function PickupCodeRecordDetail() {
                         onPress={handleCopyExpressNo}
                         activeOpacity={0.8}
                       >
-                        <AppIcon name="copy1" color="#999999" size={18} />
+                        <AppIcon name="copy1" color="#999999" size={px(18)} />
                       </TouchableOpacity>
                     </View>
                   ) : null}
@@ -366,17 +367,17 @@ export default function PickupCodeRecordDetail() {
               <Flex
                 align="center"
                 style={{
-                  marginVertical: 12,
+                  marginVertical: px(12),
                 }}
               >
                 <View style={styles.dividingLine}></View>
                 <Flex
                   justify="center"
                   style={{
-                    marginHorizontal: 32,
+                    marginHorizontal: px(32),
                   }}
                 >
-                  <Text style={{ fontSize: 14, color: '#333333' }}>
+                  <Text style={{ fontSize: fontSize(14), color: '#333333' }}>
                     请填写收货地址
                   </Text>
                 </Flex>
@@ -422,7 +423,11 @@ export default function PickupCodeRecordDetail() {
                     {addressText || '请选择'}
                   </Text>
                   {!addressText && (
-                    <AppIcon name="a-headfor-20" size={16} color="#333333" />
+                    <AppIcon
+                      name="a-headfor-20"
+                      size={px(16)}
+                      color="#333333"
+                    />
                   )}
                 </Flex>
               </Flex>
@@ -449,15 +454,15 @@ export default function PickupCodeRecordDetail() {
                   2、收到地锁后请联系您的专属客服人员，预约上门安装。
                 </Text>
               </Flex>
-              <Flex justify="between" style={{ marginTop: 17 }}>
+              <Flex justify="between" style={{ marginTop: px(17) }}>
                 <GradientButton
                   colors={
                     canSubmitAddress
                       ? ['#333333', '#333333']
                       : ['#EEEEEE', '#EEEEEE']
                   }
-                  width={196}
-                  height={48}
+                  width={px(196)}
+                  height={px(48)}
                   onPress={() => {
                     if (!canSubmitAddress) return;
                     submitAddress();
@@ -483,22 +488,22 @@ export default function PickupCodeRecordDetail() {
         visible={regionPopupVisible}
         onClose={() => setRegionPopupVisible(false)}
         title="请选择省市区"
-        minHeight={320}
+        minHeight={px(320)}
         footer={
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={confirmRegion}
             style={{
-              height: 48,
-              borderRadius: 24,
+              height: px(48),
+              borderRadius: px(24),
               backgroundColor: '#333333',
               alignItems: 'center',
               justifyContent: 'center',
-              marginHorizontal: 24,
-              marginBottom: 8,
+              marginHorizontal: px(24),
+              marginBottom: px(8),
             }}
           >
-            <Text style={{ fontSize: 16, color: '#fff' }}>确定</Text>
+            <Text style={{ fontSize: fontSize(16), color: '#fff' }}>确定</Text>
           </TouchableOpacity>
         }
       >
@@ -507,8 +512,8 @@ export default function PickupCodeRecordDetail() {
           cascade
           value={pickerValue}
           onChange={v => setPickerValue(v || [])}
-          style={{ height: 280 }}
-          itemHeight={50}
+          style={{ height: px(280) }}
+          itemHeight={px(50)}
           itemStyle={{ padding: 0 }}
         />
       </Popup>

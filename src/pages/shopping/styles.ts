@@ -1,11 +1,12 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 12,
-    paddingHorizontal: 16,
+    paddingTop: px(12),
+    paddingHorizontal: px(16),
     backgroundColor: '#F6F7FA',
-    paddingBottom: 12,
+    paddingBottom: px(12),
   },
   goodsList: {
     flexDirection: 'row',
@@ -18,15 +19,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F7FB',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: px(10),
+    paddingBottom: px(10),
   },
   bottomBtn: {
-    width: 108,
-    height: 36,
-    borderRadius: 12,
+    width: px(108),
+    height: px(36),
+    borderRadius: px(12),
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: 'rgba(0,0,0,0.05)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -34,9 +35,9 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 12px 0 rgba(0, 0, 0, 0.25)',
   },
   bottomBtnText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    paddingLeft: 8,
+    paddingLeft: px(8),
     fontWeight: 'bold',
   },
 });

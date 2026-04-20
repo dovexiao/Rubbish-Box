@@ -14,6 +14,7 @@ import Flex from '@/components/Flex';
 import { getTestDeviceList } from '@/services/deviceTest';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { fontSize, px } from '@/utils/ui';
 
 const TEST_STATUS = {
   NORMAL: 0,
@@ -153,11 +154,11 @@ export default function TestDevice() {
           );
         }}
       >
-        <Flex justify="between" align="center" style={{ paddingRight: 12 }}>
+        <Flex justify="between" align="center" style={{ paddingRight: px(12) }}>
           <Flex align="center" style={{ flex: 1 }}>
             <Image
               source={{ uri: 'https://g.18qjz.cn/jijimaClient/occupy.png' }}
-              style={{ width: 60, height: 60 }}
+              style={{ width: px(60), height: px(60) }}
               resizeMode="contain"
             />
             <Text style={styles.snText} numberOfLines={1}>
@@ -177,8 +178,10 @@ export default function TestDevice() {
 
   const renderEmpty = () =>
     !initialLoading ? (
-      <View style={{ alignItems: 'center', marginTop: 40 }}>
-        <Text style={{ fontSize: 14, color: '#999999' }}>暂无测试设备</Text>
+      <View style={{ alignItems: 'center', marginTop: px(40) }}>
+        <Text style={{ fontSize: fontSize(14), color: '#999999' }}>
+          暂无测试设备
+        </Text>
       </View>
     ) : null;
 

@@ -261,7 +261,7 @@ const Header: React.FC<HeaderProps> = ({
 const styles = StyleSheet.create({
   header: {
     height: px(54),
-    paddingHorizontal: 16,
+    paddingHorizontal: px(16),
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'transparent',

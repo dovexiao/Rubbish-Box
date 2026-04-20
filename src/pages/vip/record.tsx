@@ -22,6 +22,7 @@ import { showLoading, hideLoading, showToast } from '@/utils';
 import { styles } from './recordStyle';
 import { WeChatCoverImage } from './com/weChatCoverImage';
 import InviteCodePop, { type InviteCodePopRef } from './com/InviteCodePop';
+import { px } from '@/utils/ui';
 
 const PAGE_SIZE = 20;
 
@@ -228,7 +229,7 @@ export default function VipRecordPage() {
             <Text style={styles.infoText}>{item.mobile}</Text>
           </Flex>
           <View>
-            <AppIcon name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
           </View>
         </Flex>
         <View style={styles.itemLine} />
@@ -247,7 +248,7 @@ export default function VipRecordPage() {
   );
 
   const footer = (
-    <View style={{ paddingVertical: 12 }}>
+    <View style={{ paddingVertical: px(12) }}>
       {loading && list.length > 0 && (
         <ActivityIndicator size="small" color="#666666" />
       )}
@@ -276,7 +277,7 @@ export default function VipRecordPage() {
       loading={initialLoading && list.length === 0}
     >
       <FlatList
-        style={{ flex: 1, paddingHorizontal: 16, paddingTop: 12 }}
+        style={{ flex: 1, paddingHorizontal: px(16), paddingTop: px(12) }}
         data={list}
         keyExtractor={item => String(item.id)}
         renderItem={renderItem}

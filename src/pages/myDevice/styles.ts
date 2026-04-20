@@ -1,21 +1,22 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    padding: 12,
+    padding: px(12),
     position: 'relative',
     backgroundColor: '#ffffff',
   },
 
   btnContainer: {
-    borderRadius: 12,
+    borderRadius: px(12),
     flex: 1,
   },
 
   btnContainerClose: {
     borderStyle: 'solid',
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
 
@@ -25,54 +26,54 @@ const styles = StyleSheet.create({
   },
 
   btnContainerText: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
-    marginLeft: 3,
+    marginLeft: px(3),
     fontWeight: 'bold',
   },
 
   btnAddText: {
-    fontSize: 26,
+    fontSize: fontSize(26),
     color: '#ffffff',
     fontWeight: 'bold',
   },
 
   title: {
-    marginTop: 16,
-    marginBottom: 16,
+    marginTop: px(16),
+    marginBottom: px(16),
   },
 
   titleBorder: {
-    width: 2,
-    height: 12,
+    width: px(2),
+    height: px(12),
     backgroundColor: '#000000',
-    marginRight: 6,
-    borderRadius: 2,
+    marginRight: px(6),
+    borderRadius: px(2),
   },
 
   titleText: {
     color: '#333333',
-    fontSize: 14,
+    fontSize: fontSize(14),
     fontWeight: 'bold',
   },
 
   popup: {
     width: '100%',
-    paddingTop: 24,
-    paddingLeft: 24,
-    paddingRight: 24,
-    paddingBottom: 42,
+    paddingTop: px(24),
+    paddingLeft: px(24),
+    paddingRight: px(24),
+    paddingBottom: px(42),
     display: 'flex',
     flexDirection: 'column',
   },
 
   label: {
-    height: 20,
-    width: 100,
+    height: px(20),
+    width: px(100),
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
     fontStyle: 'normal',
     textTransform: 'none',
@@ -80,18 +81,18 @@ const styles = StyleSheet.create({
 
   popupFooter: {
     width: '100%',
-    height: 48,
-    marginTop: 36,
+    height: px(48),
+    marginTop: px(36),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
 
   cancalBtn: {
-    width: 156,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
+    width: px(156),
+    height: px(48),
+    borderRadius: px(12),
+    borderWidth: px(1),
     borderStyle: 'solid',
     borderColor: 'rgba(0, 0, 0, 0.1)',
     display: 'flex',
@@ -101,20 +102,20 @@ const styles = StyleSheet.create({
 
   btnTextCancel: {
     fontWeight: 'normal',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#999999',
-    lineHeight: 48,
+    lineHeight: px(48),
     textAlign: 'center',
     fontStyle: 'normal',
     textTransform: 'none',
   },
 
   confirmBtn: {
-    width: 156,
-    height: 48,
+    width: px(156),
+    height: px(48),
     backgroundColor: '#333333',
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: px(12),
+    borderWidth: px(1),
     borderStyle: 'solid',
     borderColor: 'rgba(0, 0, 0, 0.1)',
     display: 'flex',
@@ -124,9 +125,9 @@ const styles = StyleSheet.create({
 
   btnTextConfirm: {
     fontWeight: 'normal',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
-    lineHeight: 48,
+    lineHeight: px(48),
     textAlign: 'center',
     fontStyle: 'normal',
     textTransform: 'none',

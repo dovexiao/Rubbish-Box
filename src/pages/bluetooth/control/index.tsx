@@ -465,7 +465,7 @@ export default function BluetoothControl() {
                 <Text style={styles.footerText}>
                   {bluetoothPin || blePin || '暂无'}
                 </Text>
-                <AppIcon name="a-headfor-121" size={20} color="#ff873d" />
+                <AppIcon name="a-headfor-121" size={px(20)} color="#ff873d" />
               </TouchableOpacity>
             </Flex>
           </Flex>

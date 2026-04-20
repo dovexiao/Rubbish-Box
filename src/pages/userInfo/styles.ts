@@ -1,24 +1,24 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: px(24),
   },
 
   row: {
     width: '100%',
-    minHeight: 32,
-    marginTop: 16,
+    minHeight: px(32),
+    marginTop: px(16),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
 
-
   label: {
-    fontSize: 16,
-    lineHeight: 20,
+    fontSize: fontSize(16),
+    lineHeight: px(20),
     color: '#333333',
     fontWeight: 'bold',
   },
@@ -30,23 +30,23 @@ const styles = StyleSheet.create({
   },
 
   valueText: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: fontSize(14),
+    lineHeight: px(20),
     color: '#666666',
     maxWidth: '100%',
   },
 
   avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 32,
+    width: px(32),
+    height: px(32),
+    borderRadius: px(32),
     backgroundColor: '#F2F2F2',
   },
 
   popupBody: {
     width: '100%',
-    paddingHorizontal: 24,
-    paddingTop: 24
+    paddingHorizontal: px(24),
+    paddingTop: px(24),
   },
 
   inputRow: {
@@ -56,9 +56,9 @@ const styles = StyleSheet.create({
   },
 
   inputLabel: {
-    width: 56,
-    fontSize: 14,
-    lineHeight: 20,
+    width: px(56),
+    fontSize: fontSize(14),
+    lineHeight: px(20),
     color: '#333333',
     fontWeight: 'bold',
   },
@@ -66,27 +66,25 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     textAlign: 'right',
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    fontSize: 14,
+    paddingVertical: px(0),
+    paddingHorizontal: px(0),
+    fontSize: fontSize(14),
     color: '#333333',
   },
-
-
 
   popupFooterRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 36,
-    paddingHorizontal: 24,
+    marginTop: px(36),
+    paddingHorizontal: px(24),
   },
 
   popupBtnGhost: {
     flex: 1,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
+    height: px(48),
+    borderRadius: px(12),
+    borderWidth: px(1),
     borderColor: 'rgba(0,0,0,0.1)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -95,24 +93,22 @@ const styles = StyleSheet.create({
 
   popupBtnGhostText: {
     color: '#999999',
-    fontSize: 16,
+    fontSize: fontSize(16),
   },
 
   popupBtnPrimary: {
     flex: 1,
-    height: 42,
-    borderRadius: 12,
+    height: px(42),
+    borderRadius: px(12),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#333333',
   },
 
-
   popupBtnPrimaryText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: fontSize(16),
   },
 });
 
 export default styles;
-

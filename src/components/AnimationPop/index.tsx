@@ -304,20 +304,20 @@ const AnimationPop = forwardRef<AnimationPopRef, Props>((props, ref) => {
     if (direction === 'top') {
       baseStyle.width = '100%';
       if (coverSafeArea) {
-        baseStyle.paddingTop = insets.top;
+        baseStyle.paddingTop = px(insets.top);
       } else {
-        baseStyle.marginTop = insets.top;
+        baseStyle.marginTop = px(insets.top);
       }
       baseStyle.borderBottomLeftRadius = px(12);
       baseStyle.borderBottomRightRadius = px(12);
     } else if (direction === 'bottom') {
       baseStyle.width = '100%';
       baseStyle.paddingBottom =
-        keyboardHeight > 0 ? 0 : coverSafeArea ? insets.bottom : 0;
+        keyboardHeight > 0 ? 0 : coverSafeArea ? px(insets.bottom) : 0;
       baseStyle.borderTopLeftRadius = px(12);
       baseStyle.borderTopRightRadius = px(12);
       baseStyle.position = 'absolute';
-      baseStyle.bottom = baseBottom;
+      baseStyle.bottom = px(baseBottom);
     }
 
     return [baseStyle, style];

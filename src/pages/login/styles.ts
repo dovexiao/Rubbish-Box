@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   line: {
     width: px(24),
-    height: 1,
+    height: px(1),
     backgroundColor: '#999999',
   },
   fastDesc: {

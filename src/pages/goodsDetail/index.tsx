@@ -9,6 +9,7 @@ import { getMiniToken } from '@/services/common';
 import { wechatOpenMiniProgram } from '@/utils/wechat';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type GoodsDetailDTO = {
   id: number;
@@ -114,8 +115,8 @@ export default function GoodsDetail() {
     <View style={styles.footer}>
       <GradientButton
         style={styles.buyButton}
-        width={191}
-        height={48}
+        width={px(191)}
+        height={px(48)}
         colors={['#020101ff', '#282828']}
         onPress={handleBuy}
       >
@@ -274,7 +275,7 @@ export default function GoodsDetail() {
                   <Stepper
                     initValue={productNum}
                     min={1}
-                    size={12}
+                    size={px(12)}
                     max={goodsDetail.stock}
                     onChange={value => {
                       setProductNum(Number(value));
@@ -290,8 +291,8 @@ export default function GoodsDetail() {
             <Flex justify="center" style={styles.popupFooter}>
               <GradientButton
                 style={styles.goodsPopupBuyBtn}
-                width={156}
-                height={48}
+                width={px(156)}
+                height={px(48)}
                 colors={['#333333', '#333333']}
                 onPress={handleConfirmBuy}
               >

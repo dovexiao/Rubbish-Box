@@ -6,6 +6,7 @@ import Flex from '@/components/Flex';
 import { DAY_OF_WEEK, INVITE_STATUS } from '@/constants';
 import { styles } from '../recordStyle';
 import { DetailsProp } from '../type';
+import { px } from '@/utils/ui';
 
 export const WeChatCoverImage = ({
   shareContentRef,
@@ -21,8 +22,8 @@ export const WeChatCoverImage = ({
       ref={shareContentRef}
       collapsable={false}
       style={{
-        width: 425,
-        height: 339,
+        width: px(425),
+        height: px(339),
         backgroundColor: '#f7f7fb',
         justifyContent: 'center',
         alignItems: 'center',
@@ -58,7 +59,11 @@ export const WeChatCoverImage = ({
           align="center"
           style={styles.timeBox}
         >
-          <Flex direction="column" justify="between" style={{ marginLeft: 10 }}>
+          <Flex
+            direction="column"
+            justify="between"
+            style={{ marginLeft: px(10) }}
+          >
             <Flex direction="row" align="center">
               <Text style={[styles.dateText, styles.mr12, styles.mb8]}>
                 {`${dayjs(details?.startTime).format('MM')}月${dayjs(
@@ -77,8 +82,12 @@ export const WeChatCoverImage = ({
               'HH',
             )}：${dayjs(details?.startTime).format('mm')}`}</Text>
           </Flex>
-          <AppIcon name={'arrows1'} size={40} color="#333333"></AppIcon>
-          <Flex direction="column" justify="between" style={{ marginLeft: 10 }}>
+          <AppIcon name={'arrows1'} size={px(40)} color="#333333"></AppIcon>
+          <Flex
+            direction="column"
+            justify="between"
+            style={{ marginLeft: px(10) }}
+          >
             <Flex direction="row" align="center">
               <Text style={[styles.dateText, styles.mr12, styles.mb8]}>
                 {`${dayjs(details?.endTime).format('MM')}月${dayjs(

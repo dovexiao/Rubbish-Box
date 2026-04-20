@@ -15,6 +15,7 @@ import { hideLoading, mobileExp, showLoading } from '@/utils';
 import { PURPOSE, POST_SOURCE } from '@/constants';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type Step = 1 | 2;
 
@@ -287,7 +288,7 @@ export default function PasswordSet() {
                 >
                   <AppIcon
                     name={passwordCanSee ? 'visible' : 'invisible'}
-                    size={24}
+                    size={px(24)}
                     color="#999999"
                   />
                 </TouchableOpacity>
@@ -313,7 +314,7 @@ export default function PasswordSet() {
                 >
                   <AppIcon
                     name={confirmPasswordCanSee ? 'visible' : 'invisible'}
-                    size={24}
+                    size={px(24)}
                     color="#999999"
                   />
                 </TouchableOpacity>

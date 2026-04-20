@@ -4,6 +4,7 @@ import { Text, ScrollView, RefreshControl, Image } from 'react-native';
 import { styles } from './style';
 import { getRiceInfoList } from '@/services/device';
 import { useRoute } from '@react-navigation/native';
+import { px } from '@/utils/ui';
 
 interface RiceDataRecord {
   id: string;
@@ -94,7 +95,7 @@ const DeviceLog: React.FC = () => {
   const handleScroll = ({ nativeEvent }: any) => {
     if (initialLoading || refreshing || loadingMore) return;
     const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-    const paddingToBottom = 50;
+    const paddingToBottom = px(50);
     if (
       layoutMeasurement.height + contentOffset.y >=
       contentSize.height - paddingToBottom

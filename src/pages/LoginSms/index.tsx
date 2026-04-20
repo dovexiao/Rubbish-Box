@@ -20,6 +20,7 @@ import { reLaunch } from '@/utils/navigation';
 import AppIcon from '@/components/AppIcon';
 import Flex from '@/components/Flex';
 import loginSmsStyles from './styles';
+import { px } from '@/utils/ui';
 
 const LoginSms = () => {
   const route = useRoute<any>();
@@ -198,7 +199,7 @@ const LoginSms = () => {
             ) : (
               <AppIcon
                 name="refresh"
-                size={20}
+                size={px(20)}
                 color={isCounting ? '#999' : '#333333'}
               />
             )}

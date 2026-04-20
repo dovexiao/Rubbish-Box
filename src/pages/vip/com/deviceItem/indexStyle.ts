@@ -1,106 +1,107 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   deviceItem: {
     width: '100%',
-    borderRadius: 12,
+    borderRadius: px(12),
     backgroundColor: '#ffffff',
   },
 
   mt6: {
-    marginTop: 3,
+    marginTop: px(3),
   },
 
   deviceItemBox: {
     width: '100%',
-    height: 84,
-    paddingTop: 18,
-    paddingBottom: 18,
-    paddingRight: 16,
-    paddingLeft: 16,
+    height: px(84),
+    paddingTop: px(18),
+    paddingBottom: px(18),
+    paddingRight: px(16),
+    paddingLeft: px(16),
   },
 
   deviceItemLine: {
-    width: 295,
+    width: px(295),
     height: 0,
     borderStyle: 'solid',
-    borderWidth: 0.5,
+    borderWidth: px(0.5),
     // borderColor: 'rgba(0, 0, 0, 0.1)',
     borderColor: 'rgba(179, 189, 199, 0.2)',
   },
 
   deviceNameText: {
-    height: 20,
+    height: px(20),
     fontWeight: '400',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
   },
 
   deviceType: {
-    marginRight: 16,
-    width: 40,
+    marginRight: px(16),
+    width: px(40),
     height: '100%',
   },
 
   deviceTypeText: {
-    height: 14,
+    height: px(14),
     fontWeight: '700',
-    fontSize: 10,
+    fontSize: fontSize(10),
     color: '#333333',
-    lineHeight: 14,
+    lineHeight: px(14),
     textAlign: 'left',
   },
 
   deviceUnitText: {
-    height: 14,
+    height: px(14),
     fontWeight: '700',
-    fontSize: 10,
+    fontSize: fontSize(10),
     color: '#333333',
-    lineHeight: 14,
+    lineHeight: px(14),
     textAlign: 'left',
   },
 
   deviceCountText: {
-    height: 14,
+    height: px(14),
     fontWeight: '700',
-    fontSize: 10,
+    fontSize: fontSize(10),
     color: '#333333',
-    lineHeight: 14,
+    lineHeight: px(14),
     textAlign: 'left',
   },
 
   tag: {
-    height: 21,
+    height: px(21),
     backgroundColor: 'rgba(255, 135, 61, 0.1)',
-    borderRadius: 7,
-    paddingLeft: 6,
-    paddingRight: 6,
-    paddingTop: 2,
-    paddingBottom: 2,
-    marginLeft: 8,
+    borderRadius: px(7),
+    paddingLeft: px(6),
+    paddingRight: px(6),
+    paddingTop: px(2),
+    paddingBottom: px(2),
+    marginLeft: px(8),
   },
 
   tagText: {
-    height: 17,
+    height: px(17),
     fontWeight: '400',
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#ff873d',
-    lineHeight: 17,
+    lineHeight: px(17),
     textAlign: 'left',
   },
 
   addressText: {
-    marginLeft: 2,
+    marginLeft: px(2),
     fontWeight: '400',
-    fontSize: 10,
+    fontSize: fontSize(10),
     color: '#cccccc',
-    lineHeight: 14,
+    lineHeight: px(14),
     textAlign: 'left',
   },
 
   mt18: {
-    marginTop: 9,
+    marginTop: px(9),
   },
 });

@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     marginBottom: px(24),
   },
   icon: {
-    fontSize: px(64),
+    fontSize: fontSize(64),
   },
   title: {
     fontSize: fontSize(24),

@@ -6,6 +6,7 @@ import GradientButton from '@/components/GradientButton';
 import { hideLoading, showLoading, showToast } from '@/utils';
 import { getInstallTaskDetail, installConfirm } from '@/services/user';
 import { styles } from './style';
+import { px } from '@/utils/ui';
 
 const OPERATION_ITEM = [
   {
@@ -116,8 +117,8 @@ export default function MessageDetailScreen() {
           <View style={styles.footerContainer}>
             <GradientButton
               colors={['#4A4A4A', '#282828']}
-              height={48}
-              btnBorderRadius={16}
+              height={px(48)}
+              btnBorderRadius={px(16)}
               onPress={handleInstallConfirm}
             >
               <Text style={styles.footerBtnText}>确认完成</Text>

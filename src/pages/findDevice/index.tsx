@@ -861,7 +861,10 @@ export default function FindDevice(props: any) {
               </Flex>
             </Flex>
 
-            <Flex style={(styles.footer, { marginTop: 8 })} justify="center">
+            <Flex
+              style={(styles.footer, { marginTop: px(8) })}
+              justify="center"
+            >
               <GradientButton
                 colors={LOCK_BTN_COLORS[LOCK_STATUS.FALL_SUCCESS]}
                 width={px(160)}

@@ -1,27 +1,28 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   listContent: {
-    paddingBottom: 32,
+    paddingBottom: px(32),
   },
   group: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: px(16),
+    paddingTop: px(12),
   },
   dateLabel: {
-    marginLeft: 8,
-    marginTop: 6,
+    marginLeft: px(8),
+    marginTop: px(6),
     marginBottom: 4,
-    fontSize: 14,
+    fontSize: fontSize(14),
     fontWeight: '500',
     color: '#333333',
   },
   itemContent: {
     width: '100%',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 16,
+    borderRadius: px(12),
+    paddingHorizontal: px(12),
+    paddingVertical: px(16),
     backgroundColor: '#F7F7FB',
-    marginTop: 12,
+    marginTop: px(12),
   },
   itemTop: {
     width: '100%',
@@ -31,24 +32,24 @@ export const styles = StyleSheet.create({
   },
   itemName: {
     flex: 1,
-    marginHorizontal: 4,
-    fontSize: 14,
+    marginHorizontal: px(4),
+    fontSize: fontSize(14),
     fontWeight: '500',
     color: '#333333',
   },
   itemTime: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#999999',
     fontWeight: '400',
   },
   bottomContent: {
     fontWeight: '400',
-    marginTop: 12,
-    fontSize: 14,
-    color: '#333',
+    marginTop: px(12),
+    fontSize: fontSize(14),
+    color: '#333333',
   },
   footer: {
-    height: 32,
+    height: px(32),
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -254,7 +254,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                   }}
                 >
                   <Text style={[styles.backButtonText, { color: titleColor }]}>
-                    <AppIcon name="back" size={24} color={titleColor} />
+                    <AppIcon name="back" size={px(24)} color={titleColor} />
                   </Text>
                 </TouchableOpacity>
               )}

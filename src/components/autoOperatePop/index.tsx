@@ -144,7 +144,7 @@ export const AutoOperatePop = forwardRef<AutoOperatePopRef, Props>(
                     {lock?.lockName ?? ''}
                   </Text>
                   <Flex direction="column" justify="between" align="center">
-                    <AppIcon name="bluetooth-1" size={20} color="#333333" />
+                    <AppIcon name="bluetooth-1" size={px(20)} color="#333333" />
                     <Text style={styles.text}>自动升降</Text>
                   </Flex>
                   {!isAutoOpen && (

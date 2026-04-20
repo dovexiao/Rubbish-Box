@@ -44,6 +44,7 @@ import { generateShareImage, onShareAppMessage } from '@/utils/shareImage';
 import { stringify } from '@/utils/stringify';
 import { DAY_OF_WEEK, INVITE_STATUS } from '@/constants';
 import { checkInstalledWeChat } from '@/utils/wechat';
+import { px } from '@/utils/ui';
 
 interface UserList {
   adminUserId?: number;
@@ -328,8 +329,8 @@ const VipPage = () => {
 
       let imagePath = await generateShareImage({
         details: detail,
-        width: 750,
-        height: 600,
+        width: px(750),
+        height: px(600),
         ref: shareContentRef,
       });
       //替换为网络路径
@@ -413,7 +414,11 @@ const VipPage = () => {
             }}
           >
             <Text style={styles.vipRecord}>贵宾邀请记录</Text>
-            <AppIcon name={'a-headfor-20'} size={16} color="#333333"></AppIcon>
+            <AppIcon
+              name={'a-headfor-20'}
+              size={px(16)}
+              color="#333333"
+            ></AppIcon>
 
             {(unUseCount ?? 0) > 0 && (
               <View style={styles.messageBadge}>
@@ -428,9 +433,9 @@ const VipPage = () => {
     >
       <View
         style={{
-          paddingHorizontal: 16,
-          paddingTop: 12,
-          paddingBottom: 120,
+          paddingHorizontal: px(16),
+          paddingTop: px(12),
+          paddingBottom: px(120),
           backgroundColor: '#f6f7fa',
         }}
       >
@@ -455,7 +460,7 @@ const VipPage = () => {
             <Text style={styles.titleRightText}>贵宾管理</Text>
             <AppIcon
               name={'a-headfor-16-grey'}
-              size={16}
+              size={px(16)}
               color="#999999"
             ></AppIcon>
           </Flex>
@@ -518,7 +523,7 @@ const VipPage = () => {
           justify={'between'}
         >
           <Flex
-            style={{ height: 66 }}
+            style={{ height: px(66) }}
             direction={'row'}
             justify={'between'}
             align={'center'}
@@ -533,7 +538,7 @@ const VipPage = () => {
               }}
             >
               <Flex direction="row">
-                <Text style={[styles.dateText, { marginRight: 5 }]}>
+                <Text style={[styles.dateText, { marginRight: px(5) }]}>
                   {`${dayjs(startTime).month() + 1}月${dayjs(startTime).format(
                     'DD',
                   )}日`}
@@ -552,7 +557,7 @@ const VipPage = () => {
                 )}：${dayjs(startTime).format('mm')}`}</Text>
               </Flex>
             </Flex>
-            <AppIcon name={'arrows1'} size={20} color="#333333"></AppIcon>
+            <AppIcon name={'arrows1'} size={px(20)} color="#333333"></AppIcon>
             <Flex
               style={styles.timeBox}
               direction={'column'}
@@ -561,7 +566,7 @@ const VipPage = () => {
               onPress={() => endTimePopRef.current?.open?.()}
             >
               <Flex direction="row">
-                <Text style={{ marginRight: 5, ...styles.dateText }}>
+                <Text style={{ marginRight: px(5), ...styles.dateText }}>
                   {`${dayjs(endTime).format('MM')}月${dayjs(endTime).format(
                     'DD',
                   )}日`}
@@ -586,7 +591,7 @@ const VipPage = () => {
             justify={'between'}
             align={'center'}
             isTouchView
-            style={{ height: 20, ...styles.mt40 }}
+            style={{ height: px(20), ...styles.mt40 }}
             onPress={() => {
               usageCountPopRef.current?.open?.();
             }}
@@ -599,7 +604,11 @@ const VipPage = () => {
                 ? `${customUsageCount}次`
                 : '不限'}
             </Text>
-            <AppIcon name={'a-headfor-20'} size={20} color="#333333"></AppIcon>
+            <AppIcon
+              name={'a-headfor-20'}
+              size={px(20)}
+              color="#333333"
+            ></AppIcon>
           </Flex>
         </Flex>
 
@@ -615,7 +624,7 @@ const VipPage = () => {
             <Flex
               direction={'row'}
               align={'center'}
-              style={{ marginLeft: 4, height: 20 }}
+              style={{ marginLeft: px(4), height: px(20) }}
               isTouchView
               onPress={() => {
                 let newUserItem: any = {
@@ -630,14 +639,18 @@ const VipPage = () => {
               <Text
                 numberOfLines={1}
                 style={{
-                  maxWidth: 70,
-                  lineHeight: 18,
+                  maxWidth: px(70),
+                  lineHeight: px(18),
                   overflow: 'hidden',
                 }}
               >
                 {adminUsername}
               </Text>
-              <AppIcon name={'pull-down'} size={12} color="#333333"></AppIcon>
+              <AppIcon
+                name={'pull-down'}
+                size={px(12)}
+                color="#333333"
+              ></AppIcon>
               <Text style={styles.chooseNum}>
                 （已选择
                 {(selectedDeviceList && selectedDeviceList?.length) ?? 0}
@@ -666,9 +679,9 @@ const VipPage = () => {
             <Text>全选</Text>
             <Image
               style={{
-                width: 16,
-                height: 16,
-                marginLeft: 8,
+                width: px(16),
+                height: px(16),
+                marginLeft: px(8),
               }}
               source={{
                 uri: `https://g.18qjz.cn/img/boklock/${
@@ -704,20 +717,22 @@ const VipPage = () => {
               onPress={() => {
                 void getDeviceList(adminUserId, false);
               }}
-              style={{ paddingVertical: 12, alignItems: 'center' }}
+              style={{ paddingVertical: px(12), alignItems: 'center' }}
             >
-              <Text style={{ color: '#999999', fontSize: 12 }}>加载更多</Text>
+              <Text style={{ color: '#999999', fontSize: px(12) }}>
+                加载更多
+              </Text>
             </TouchableOpacity>
           ) : null}
         </Flex>
 
         {/* 开始时间 */}
         <DateTimePickerPopup
-          minHeight={208}
-          height={380}
+          minHeight={px(208)}
+          height={px(380)}
           ref={startTimePopRef}
           timestamp={startTime}
-          style={{ height: 380 }}
+          style={{ height: px(380) }}
           onChange={(value: number) => {
             const now = Date.now();
             if (now > value) {
@@ -732,11 +747,11 @@ const VipPage = () => {
 
         {/* 结束时间 */}
         <DateTimePickerPopup
-          minHeight={208}
-          height={380}
+          minHeight={px(208)}
+          height={px(380)}
           ref={endTimePopRef}
           timestamp={endTime}
-          style={{ height: 380 }}
+          style={{ height: px(380) }}
           onChange={(value: number) => {
             if (startTime > value) {
               showToast({ title: '开始时间不能大于结束时间', icon: 'info' });
@@ -762,18 +777,18 @@ const VipPage = () => {
         <Popup
           visible={adminUserPopupVisible}
           onClose={() => setAdminUserPopupVisible(false)}
-          minHeight={343}
+          minHeight={px(343)}
           title={'切换列表'}
         >
           <View
             style={{
-              paddingLeft: 24,
-              paddingRight: 24,
+              paddingLeft: px(24),
+              paddingRight: px(24),
             }}
           >
             <ScrollView
               style={{
-                height: 216,
+                height: px(216),
               }}
             >
               {userList && userList?.length
@@ -804,8 +819,8 @@ const VipPage = () => {
             <Flex
               style={{
                 width: '100%',
-                marginBottom: 8,
-                marginTop: 8,
+                marginBottom: px(8),
+                marginTop: px(8),
               }}
               direction="row"
               justify="center"
@@ -848,7 +863,7 @@ const VipPage = () => {
         <Popup
           visible={sharePopupVisible}
           onClose={() => setSharePopupVisible(false)}
-          minHeight={510}
+          minHeight={px(510)}
           showClose={false}
         >
           <Flex
@@ -860,7 +875,7 @@ const VipPage = () => {
             <View></View>
             <Text style={styles.titleTextPop}>贵宾码</Text>
             <Flex isTouchView onPress={() => setSharePopupVisible(false)}>
-              <AppIcon name={'close'} size={24} color="#333333"></AppIcon>
+              <AppIcon name={'close'} size={px(24)} color="#333333"></AppIcon>
             </Flex>
           </Flex>
           <View style={styles.contentBox}>
@@ -883,7 +898,7 @@ const VipPage = () => {
               <Flex
                 direction="column"
                 justify="between"
-                style={{ marginLeft: 10 }}
+                style={{ marginLeft: px(10) }}
               >
                 <Flex direction="row" align="center">
                   <Text style={[styles.dateTextPop, styles.mr12, styles.mb8]}>
@@ -907,11 +922,11 @@ const VipPage = () => {
                   'mm',
                 )}`}</Text>
               </Flex>
-              <AppIcon name={'arrows1'} size={20} color="#333333"></AppIcon>
+              <AppIcon name={'arrows1'} size={px(20)} color="#333333"></AppIcon>
               <Flex
                 direction="column"
                 justify="between"
-                style={{ marginLeft: 10 }}
+                style={{ marginLeft: px(10) }}
               >
                 <Flex direction="row" align="center">
                   <Text style={[styles.dateTextPop, styles.mr12, styles.mb8]}>
@@ -947,8 +962,8 @@ const VipPage = () => {
             <Flex
               style={{
                 width: '100%',
-                marginTop: 31,
-                marginBottom: 8,
+                marginTop: px(31),
+                marginBottom: px(8),
               }}
               direction="row"
               justify="center"

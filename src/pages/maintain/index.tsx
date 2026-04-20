@@ -14,6 +14,7 @@ import AppIcon from '@/components/AppIcon';
 import { repairAdd } from '@/services/user';
 import { showToast, tencentUpload } from '@/utils';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 const MAX_LENGTH = 140;
 const MAX_IMAGES = 10;
@@ -164,7 +165,7 @@ export default function Maintain() {
             activeOpacity={0.8}
           >
             <Text style={styles.titleText}>服务记录</Text>
-            <AppIcon name="a-headfor-12" color="#333333" size={16} />
+            <AppIcon name="a-headfor-12" color="#333333" size={px(16)} />
           </TouchableOpacity>
         ),
       }}
@@ -195,7 +196,7 @@ export default function Maintain() {
           ) : (
             <Text style={styles.chooseText}>请选择</Text>
           )}
-          <AppIcon name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
         </TouchableOpacity>
         <View style={styles.problemView}>
           <Text style={styles.toastTitle}>请描述您的问题</Text>
@@ -216,7 +217,10 @@ export default function Maintain() {
           >{`${textLength}/${MAX_LENGTH}`}</Text>
 
           <Text
-            style={[styles.toastTitle, { marginTop: 16, marginBottom: 12 }]}
+            style={[
+              styles.toastTitle,
+              { marginTop: px(16), marginBottom: px(12) },
+            ]}
           >
             上传图片
           </Text>
@@ -226,7 +230,7 @@ export default function Maintain() {
               onPress={handleChooseImage}
               activeOpacity={0.8}
             >
-              <AppIcon name="camera" size={24} color="#CCCCCC" />
+              <AppIcon name="camera" size={px(24)} color="#CCCCCC" />
               <Text style={styles.uploadText}>相册上传</Text>
             </TouchableOpacity>
             {imageList.map(uri => (
@@ -249,7 +253,7 @@ export default function Maintain() {
                     source={{
                       uri: 'https://g.18qjz.cn/img/boklock/delete_image.png',
                     }}
-                    style={{ width: 20, height: 20 }}
+                    style={{ width: px(20), height: px(20) }}
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
@@ -273,7 +277,7 @@ export default function Maintain() {
                     source={{
                       uri: 'https://g.18qjz.cn/img/boklock/delete_image.png',
                     }}
-                    style={{ width: 20, height: 20 }}
+                    style={{ width: px(20), height: px(20) }}
                     resizeMode="contain"
                   />
                 </TouchableOpacity>

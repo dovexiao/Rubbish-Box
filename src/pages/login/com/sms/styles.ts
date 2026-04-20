@@ -27,7 +27,7 @@ const loginStyles = StyleSheet.create({
   },
   errorBorder: {
     borderRadius: px(12),
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: '#ff2b24',
   },
   tip: {

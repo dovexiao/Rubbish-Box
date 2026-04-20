@@ -1,19 +1,20 @@
 import { StyleSheet } from 'react-native';
+import { px, fontSize } from '@/utils/ui';
 
 export const styles = StyleSheet.create({
   passwordCode: {
     width: '100%',
-    marginTop: 16,
+    marginTop: px(16),
     position: 'relative',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   codeItem: {
-    width: 50,
-    height: 50,
+    width: px(50),
+    height: px(50),
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
+    borderRadius: px(12),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -23,9 +24,9 @@ export const styles = StyleSheet.create({
   },
   codeNumText: {
     fontWeight: '700',
-    fontSize: 24,
+    fontSize: fontSize(24),
     color: '#333333',
-    lineHeight: 34,
+    lineHeight: px(34),
     textAlign: 'center',
   },
   hiddenInput: {
