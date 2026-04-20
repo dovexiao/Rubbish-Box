@@ -29,6 +29,7 @@ import {
   tencentUpload,
 } from '@/utils';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 export default function PickupCodeDaily() {
   const navigation = useNavigation<any>();
@@ -290,7 +291,7 @@ export default function PickupCodeDaily() {
         background: 'transparent',
         titleColor: '#FFFFFF',
       }}
-      backgroundImageHeight={400}
+      backgroundImageHeight={px(400)}
       backgroundImage={{
         uri: 'https://g.18qjz.cn/img/boklock/pickupCode/rcvBg2.png',
       }}
@@ -320,7 +321,7 @@ export default function PickupCodeDaily() {
             <View style={styles.rowLabel}>
               <Text style={styles.rowLabelText}>卡密</Text>
               <TouchableOpacity activeOpacity={0.8} onPress={handleScan}>
-                <AppIcon name="a-scanQRcodes1" color="#333333" size={20} />
+                <AppIcon name="a-scanQRcodes1" color="#333333" size={px(20)} />
               </TouchableOpacity>
             </View>
 
@@ -340,8 +341,8 @@ export default function PickupCodeDaily() {
               colors={
                 canSubmit ? ['#333333', '#333333'] : ['#EEEEEE', '#EEEEEE']
               }
-              width={196}
-              height={48}
+              width={px(196)}
+              height={px(48)}
               style={styles.submitBtn}
               onPress={handleSubmit}
               disabled={!canSubmit}
@@ -362,7 +363,7 @@ export default function PickupCodeDaily() {
               onPress={handleRecord}
             >
               <Text style={styles.recordBtnText}>绑定记录</Text>
-              <AppIcon name="a-nextpage" color="#333333" size={16} />
+              <AppIcon name="a-nextpage" color="#333333" size={px(16)} />
             </TouchableOpacity>
           </View>
 
@@ -421,9 +422,9 @@ export default function PickupCodeDaily() {
         visible={successVisible}
         onClose={() => setSuccessVisible(false)}
         title="恭喜您领取成功"
-        minHeight={420}
+        minHeight={px(420)}
       >
-        <View style={{ paddingHorizontal: 24, paddingBottom: 24 }}>
+        <View style={{ paddingHorizontal: px(24), paddingBottom: px(24) }}>
           <Flex
             direction="column"
             align="center"

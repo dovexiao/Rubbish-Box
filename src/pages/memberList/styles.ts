@@ -1,22 +1,23 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 16,
+    paddingHorizontal: px(16),
+    paddingTop: px(12),
+    paddingBottom: px(16),
     backgroundColor: '#F6F7FA',
   },
   listContent: {
-    paddingBottom: 80,
+    paddingBottom: px(80),
     flexGrow: 1,
   },
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 12,
+    borderRadius: px(12),
+    padding: px(16),
+    marginTop: px(12),
   },
   row: {
     flexDirection: 'row',
@@ -24,44 +25,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   username: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
     fontWeight: 'bold',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   mobile: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999999',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   editRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   removeText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999999',
-    paddingRight: 12,
+    paddingRight: px(12),
   },
   footer: {
-    marginBottom: 12,
+    marginBottom: px(12),
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonWrap: {
     boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)',
-    borderRadius: 16,
+    borderRadius: px(16),
   },
   addButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
-    lineHeight: 22,
+    lineHeight: px(22),
   },
   emptyText: {
     textAlign: 'center',
     color: '#666666',
-    fontSize: 14,
+    fontSize: fontSize(14),
   },
   emptyContainer: {
     display: 'flex',
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 100,
+    paddingBottom: px(100),
   },
 });
 

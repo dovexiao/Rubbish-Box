@@ -25,6 +25,7 @@ import {
   runInPermissionQueue,
   showPermissionPromptIfNeeded,
 } from '@/utils/permissions';
+import { px } from '@/utils/ui';
 
 const BinDevice: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -273,7 +274,7 @@ const BinDevice: React.FC = () => {
             resizeMode="contain"
           />
         </View>
-        <View style={[styles.maskBottom, { bottom: 50 }]}>
+        <View style={[styles.maskBottom, { bottom: px(50) }]}>
           <View style={styles.toastContainer}>
             <Text style={styles.toastTitle}>扫描二维码</Text>
             <Text style={styles.toastContent}>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Modal, View, Text, StyleSheet, Animated } from 'react-native';
 import { eventCenter } from '@/utils';
+import { fontSize, px } from '@/utils/ui';
 
 export const GlobalToast = () => {
   const [visible, setVisible] = useState(false);
@@ -95,25 +96,25 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    padding: 20,
-    borderRadius: 8,
+    padding: px(20),
+    borderRadius: px(8),
     alignItems: 'center',
-    minWidth: 120,
+    minWidth: px(120),
     maxWidth: '80%',
   },
   containerTextOnly: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: px(12),
+    paddingHorizontal: px(20),
     minWidth: 0,
   },
   icon: {
-    marginBottom: 8,
+    marginBottom: px(8),
   },
   text: {
     color: '#ffffff',
-    fontSize: 14,
+    fontSize: fontSize(14),
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   textOnly: {
     marginTop: 0,

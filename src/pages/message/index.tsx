@@ -22,6 +22,7 @@ import { getMsgList, getUserLockExist, readMsg } from '@/services/user';
 import type { msgListProps, messagesProps } from './type';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { px } from '@/utils/ui';
 
 type SectionItem = {
   title: string;
@@ -232,14 +233,14 @@ export default function MessageScreen() {
             <Text style={styles.itemName} numberOfLines={1}>
               {headerTitle}
             </Text>
-            <AppIcon name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
           </View>
 
           <View style={styles.divider} />
 
           <View style={styles.messageBody}>
             <View style={styles.messageMetaRow}>
-              <AppIcon name="explain" size={20} color="#333333" />
+              <AppIcon name="explain" size={px(20)} color="#333333" />
               <Text style={styles.messageType} numberOfLines={1}>
                 {typeText}
               </Text>

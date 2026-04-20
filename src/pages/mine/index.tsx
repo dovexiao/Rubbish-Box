@@ -19,6 +19,7 @@ import { tokenStorage } from '@/utils/storage';
 import styles from './styles';
 import { useTheme } from '@/context/ThemeContext';
 import { reLaunch, showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type MineInfo = {
   id?: string | number;
@@ -233,7 +234,7 @@ export default function Mine() {
           }}
         >
           <View style={styles.memberRow}>
-            <AppIcon name="member-20" size={20} color="#333333" />
+            <AppIcon name="member-20" size={px(20)} color="#333333" />
             <View style={styles.memberTextBox}>
               <Text style={styles.memberTitle}>成员</Text>
               <Text style={styles.memberDesc}>添加成员，授权使用地锁</Text>
@@ -253,9 +254,9 @@ export default function Mine() {
                     it.onPress();
                   }}
                 >
-                  <AppIcon name={it.icon} size={22} color="#333333" />
+                  <AppIcon name={it.icon} size={px(22)} color="#333333" />
                   <Text style={styles.listLabel}>{it.label}</Text>
-                  <AppIcon name="a-headfor-20" size={16} color="#333333" />
+                  <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
                 </TouchableOpacity>
               </View>
             );
@@ -272,9 +273,9 @@ export default function Mine() {
                 logoutRef.current?.open();
               }}
             >
-              <AppIcon name="exit" size={22} color="#333333" />
+              <AppIcon name="exit" size={px(22)} color="#333333" />
               <Text style={styles.listLabel}>退出登录</Text>
-              <AppIcon name="a-headfor-20" size={16} color="#333333" />
+              <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
             </TouchableOpacity>
           </View>
         )}

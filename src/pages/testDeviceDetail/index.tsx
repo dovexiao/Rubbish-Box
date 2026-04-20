@@ -35,6 +35,7 @@ import styles from './styles';
 import AppIcon from '@/components/AppIcon';
 import PopCenter from '@/components/PopCenter';
 import UnqualifiedPop, { UnqualifiedPopRef } from './UnqualifiedPop';
+import { px } from '@/utils/ui';
 
 const TEST_RESULT = {
   NORMAL: 0,
@@ -456,7 +457,7 @@ export default function TestDeviceDetailScreen() {
             {detail?.testResult === 0 ? (
               <>
                 <GradientButton
-                  height={48}
+                  height={px(48)}
                   colors={['transparent', 'transparent']}
                   onPress={() => unqualifiedPopupRef.current?.open()}
                   style={[styles.btnContainer, styles.btnContainerClose]}
@@ -464,7 +465,7 @@ export default function TestDeviceDetailScreen() {
                   <Text style={styles.btnContainerCloseText}>测试不合格</Text>
                 </GradientButton>
                 <GradientButton
-                  height={48}
+                  height={px(48)}
                   colors={['#2F77FF', '#2F77FF']}
                   onPress={() => {
                     confirmPopupRef.current.open();
@@ -517,7 +518,7 @@ export default function TestDeviceDetailScreen() {
                   onPress={() => {
                     handleReset();
                   }}
-                  width={174}
+                  width={px(174)}
                   style={styles.resetBtn}
                 >
                   <Text style={styles.btnContainerConfirmText}>再次测试</Text>
@@ -559,7 +560,7 @@ export default function TestDeviceDetailScreen() {
         <Flex direction={'column'} align={'center'}>
           <Flex style={styles.lockContentWrapper} justify={'center'}>
             <Image
-              style={{ width: 120, height: 120 }}
+              style={{ width: px(120), height: px(120) }}
               source={{ uri: 'https://g.18qjz.cn/jijimaClient/occupy.png' }}
             />
 
@@ -618,9 +619,9 @@ export default function TestDeviceDetailScreen() {
           <Flex
             justify="between"
             style={{
-              marginBottom: 10,
+              marginBottom: px(10),
               width: '100%',
-              paddingBottom: 10,
+              paddingBottom: px(10),
             }}
           >
             <Flex style={{ alignItems: 'center' }}>
@@ -637,7 +638,7 @@ export default function TestDeviceDetailScreen() {
 
             <Button
               size={'small'}
-              style={{ height: 29 }}
+              style={{ height: px(29) }}
               type={'primary'}
               onPress={() => handleChange(detail?.['model'] === 1 ? 2 : 1)}
             >
@@ -647,8 +648,8 @@ export default function TestDeviceDetailScreen() {
 
           <View
             style={{
-              marginBottom: 20,
-              marginTop: 20,
+              marginBottom: px(20),
+              marginTop: px(20),
               width: '100%',
             }}
           >
@@ -674,8 +675,8 @@ export default function TestDeviceDetailScreen() {
                 <Tag
                   style={{
                     backgroundColor: '#70B601',
-                    marginLeft: 18,
-                    marginRight: 34,
+                    marginLeft: px(18),
+                    marginRight: px(34),
                   }}
                   textStyle={{ color: '#ffffff' }}
                 >
@@ -683,13 +684,11 @@ export default function TestDeviceDetailScreen() {
                 </Tag>
 
                 <Button
-                  style={{ width: 105, height: 28 }}
+                  style={{ width: px(105), height: px(28) }}
                   type={'primary'}
                   size={'small'}
                   onPress={() => {
-                    console.log(111111);
                     if (detail?.['model'] === 2) {
-                      console.log(2222);
                       setConfirmPopup({
                         visible: true,
                         title: '需要切换到性能优先模式才能操作',
@@ -742,8 +741,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -752,7 +751,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#70B601',
                         }}
                       >
@@ -761,7 +760,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{
-                        marginLeft: 48,
+                        marginLeft: px(48),
                       }}
                       isTouchView
                       onPress={async () => {
@@ -773,8 +772,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -783,7 +782,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#E86B6E',
                         }}
                       >
@@ -809,7 +808,7 @@ export default function TestDeviceDetailScreen() {
             {/* 蓝牙近身升降测试 */}
             <Flex style={styles.deviceInfoWrapper} direction={'column'}>
               <Flex
-                style={(styles.deviceInfoHeader, { marginBottom: 8 })}
+                style={(styles.deviceInfoHeader, { marginBottom: px(8) })}
                 align="center"
               >
                 <Text style={styles.title}>蓝牙近身升降测试</Text>
@@ -847,7 +846,7 @@ export default function TestDeviceDetailScreen() {
                     onPress={() => setHowToConnectVisible(true)}
                   >
                     <Text>如何连接蓝牙</Text>
-                    <AppIcon name="explain" size={18} color="#333333" />
+                    <AppIcon name="explain" size={px(18)} color="#333333" />
                   </TouchableOpacity>
                 </Flex>
               </Flex>
@@ -874,8 +873,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -884,7 +883,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#70B601',
                         }}
                       >
@@ -893,7 +892,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{
-                        marginLeft: 48,
+                        marginLeft: px(48),
                       }}
                       isTouchView
                       onPress={async () => {
@@ -905,8 +904,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -915,7 +914,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#E86B6E',
                         }}
                       >
@@ -945,9 +944,9 @@ export default function TestDeviceDetailScreen() {
                 <Text style={styles.title}>蜂鸣测试</Text>
                 <Button
                   style={{
-                    width: 105,
-                    height: 28,
-                    marginLeft: 24,
+                    width: px(105),
+                    height: px(28),
+                    marginLeft: px(24),
                   }}
                   size="small"
                   type={'primary'}
@@ -998,8 +997,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -1008,7 +1007,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#70B601',
                         }}
                       >
@@ -1017,7 +1016,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{
-                        marginLeft: 48,
+                        marginLeft: px(48),
                       }}
                       isTouchView
                       onPress={async () => {
@@ -1029,8 +1028,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -1039,7 +1038,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#E86B6E',
                         }}
                       >
@@ -1072,9 +1071,9 @@ export default function TestDeviceDetailScreen() {
                   <Text style={styles.title}>机盖解锁测试</Text>
                   <Button
                     style={{
-                      width: 105,
-                      height: 28,
-                      marginLeft: 24,
+                      width: px(105),
+                      height: px(28),
+                      marginLeft: px(24),
                     }}
                     size="small"
                     type={'primary'}
@@ -1135,8 +1134,8 @@ export default function TestDeviceDetailScreen() {
                         <View style={styles.radioWrapper}>
                           <Image
                             style={{
-                              width: 20,
-                              height: 20,
+                              width: px(20),
+                              height: px(20),
                             }}
                             source={{
                               uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -1145,7 +1144,7 @@ export default function TestDeviceDetailScreen() {
                         </View>
                         <Text
                           style={{
-                            marginLeft: 8,
+                            marginLeft: px(8),
                             color: '#70B601',
                           }}
                         >
@@ -1154,7 +1153,7 @@ export default function TestDeviceDetailScreen() {
                       </Flex>
                       <Flex
                         style={{
-                          marginLeft: 48,
+                          marginLeft: px(48),
                         }}
                         isTouchView
                         onPress={async () => {
@@ -1166,8 +1165,8 @@ export default function TestDeviceDetailScreen() {
                         <View style={styles.radioWrapper}>
                           <Image
                             style={{
-                              width: 20,
-                              height: 20,
+                              width: px(20),
+                              height: px(20),
                             }}
                             source={{
                               uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -1176,7 +1175,7 @@ export default function TestDeviceDetailScreen() {
                         </View>
                         <Text
                           style={{
-                            marginLeft: 8,
+                            marginLeft: px(8),
                             color: '#E86B6E',
                           }}
                         >
@@ -1240,8 +1239,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -1250,7 +1249,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#70B601',
                         }}
                       >
@@ -1259,7 +1258,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{
-                        marginLeft: 48,
+                        marginLeft: px(48),
                       }}
                       isTouchView
                       onPress={async () => {
@@ -1271,8 +1270,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -1281,7 +1280,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#E86B6E',
                         }}
                       >
@@ -1345,8 +1344,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -1355,7 +1354,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#70B601',
                         }}
                       >
@@ -1364,7 +1363,7 @@ export default function TestDeviceDetailScreen() {
                     </Flex>
                     <Flex
                       style={{
-                        marginLeft: 48,
+                        marginLeft: px(48),
                       }}
                       isTouchView
                       onPress={async () => {
@@ -1376,8 +1375,8 @@ export default function TestDeviceDetailScreen() {
                       <View style={styles.radioWrapper}>
                         <Image
                           style={{
-                            width: 20,
-                            height: 20,
+                            width: px(20),
+                            height: px(20),
                           }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
@@ -1386,7 +1385,7 @@ export default function TestDeviceDetailScreen() {
                       </View>
                       <Text
                         style={{
-                          marginLeft: 8,
+                          marginLeft: px(8),
                           color: '#E86B6E',
                         }}
                       >
@@ -1426,13 +1425,13 @@ export default function TestDeviceDetailScreen() {
                       <TouchableOpacity
                         activeOpacity={0.8}
                         style={{
-                          width: 20,
-                          height: 20,
+                          width: px(20),
+                          height: px(20),
                           backgroundColor: '#F5F5F5',
-                          borderRadius: 10,
+                          borderRadius: px(10),
                           alignItems: 'center',
                           justifyContent: 'center',
-                          marginRight: 8,
+                          marginRight: px(8),
                         }}
                         onPress={async () => {
                           showLoading({ title: '切换中...' });
@@ -1467,7 +1466,7 @@ export default function TestDeviceDetailScreen() {
                                 : 'radio_default'
                             }.png`,
                           }}
-                          style={{ width: 16, height: 16 }}
+                          style={{ width: px(16), height: px(16) }}
                         />
                       </TouchableOpacity>
                     )}
@@ -1484,7 +1483,7 @@ export default function TestDeviceDetailScreen() {
                   {testDeviceReslt?.aboveStatus === 1 ? '有车辆' : '无车辆'}
                 </Text>
               </Flex>
-              <Flex style={{ flex: 1, marginTop: 16 }} justify={'center'}>
+              <Flex style={{ flex: 1, marginTop: px(16) }} justify={'center'}>
                 {detail.aboveMixtureTestStatus === 0 ? (
                   <Flex>
                     <Flex
@@ -1498,18 +1497,18 @@ export default function TestDeviceDetailScreen() {
                     >
                       <View style={styles.radioWrapper}>
                         <Image
-                          style={{ width: 20, height: 20 }}
+                          style={{ width: px(20), height: px(20) }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
                           }}
                         />
                       </View>
-                      <Text style={{ marginLeft: 8, color: '#70B601' }}>
+                      <Text style={{ marginLeft: px(8), color: '#70B601' }}>
                         正常
                       </Text>
                     </Flex>
                     <Flex
-                      style={{ marginLeft: 48 }}
+                      style={{ marginLeft: px(48) }}
                       isTouchView
                       onPress={async () => {
                         await updateTestResult({
@@ -1520,13 +1519,13 @@ export default function TestDeviceDetailScreen() {
                     >
                       <View style={styles.radioWrapper}>
                         <Image
-                          style={{ width: 20, height: 20 }}
+                          style={{ width: px(20), height: px(20) }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
                           }}
                         />
                       </View>
-                      <Text style={{ marginLeft: 8, color: '#E86B6E' }}>
+                      <Text style={{ marginLeft: px(8), color: '#E86B6E' }}>
                         故障
                       </Text>
                     </Flex>
@@ -1561,13 +1560,13 @@ export default function TestDeviceDetailScreen() {
                       <TouchableOpacity
                         activeOpacity={0.8}
                         style={{
-                          width: 20,
-                          height: 20,
+                          width: px(20),
+                          height: px(20),
                           backgroundColor: '#F5F5F5',
-                          borderRadius: 10,
+                          borderRadius: px(10),
                           alignItems: 'center',
                           justifyContent: 'center',
-                          marginRight: 8,
+                          marginRight: px(8),
                         }}
                         onPress={async () => {
                           showLoading({ title: '切换中...' });
@@ -1602,7 +1601,7 @@ export default function TestDeviceDetailScreen() {
                                 : 'radio_default'
                             }.png`,
                           }}
-                          style={{ width: 16, height: 16 }}
+                          style={{ width: px(16), height: px(16) }}
                         />
                       </TouchableOpacity>
                     )}
@@ -1619,7 +1618,7 @@ export default function TestDeviceDetailScreen() {
                   {testDeviceReslt?.aboveStatus === 1 ? '有车辆' : '无车辆'}
                 </Text>
               </Flex>
-              <Flex style={{ flex: 1, marginTop: 16 }} justify={'center'}>
+              <Flex style={{ flex: 1, marginTop: px(16) }} justify={'center'}>
                 {detail.aboveGeoTestStatus === 0 ? (
                   <Flex>
                     <Flex
@@ -1633,18 +1632,18 @@ export default function TestDeviceDetailScreen() {
                     >
                       <View style={styles.radioWrapper}>
                         <Image
-                          style={{ width: 20, height: 20 }}
+                          style={{ width: px(20), height: px(20) }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
                           }}
                         />
                       </View>
-                      <Text style={{ marginLeft: 8, color: '#70B601' }}>
+                      <Text style={{ marginLeft: px(8), color: '#70B601' }}>
                         正常
                       </Text>
                     </Flex>
                     <Flex
-                      style={{ marginLeft: 48 }}
+                      style={{ marginLeft: px(48) }}
                       isTouchView
                       onPress={async () => {
                         await updateTestResult({
@@ -1655,13 +1654,13 @@ export default function TestDeviceDetailScreen() {
                     >
                       <View style={styles.radioWrapper}>
                         <Image
-                          style={{ width: 20, height: 20 }}
+                          style={{ width: px(20), height: px(20) }}
                           source={{
                             uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
                           }}
                         />
                       </View>
-                      <Text style={{ marginLeft: 8, color: '#E86B6E' }}>
+                      <Text style={{ marginLeft: px(8), color: '#E86B6E' }}>
                         故障
                       </Text>
                     </Flex>
@@ -1750,7 +1749,7 @@ export default function TestDeviceDetailScreen() {
       <PopCenter
         ref={confirmPopupRef}
         title={confirmPopup.title}
-        height={130}
+        height={px(130)}
         onConfirm={() => {
           confirmPopupRef.current?.close();
           confirmPopup.onConfirm?.();
@@ -1762,14 +1761,14 @@ export default function TestDeviceDetailScreen() {
         visible={howToConnectVisible}
         onClose={() => setHowToConnectVisible(false)}
         title="如何连接蓝牙"
-        minHeight={260}
+        minHeight={px(260)}
       >
         <View style={styles.popupBody}>
           <View
             style={{
               width: '100%',
-              height: 200,
-              borderRadius: 12,
+              height: px(200),
+              borderRadius: px(12),
               overflow: 'hidden',
               backgroundColor: '#000',
             }}

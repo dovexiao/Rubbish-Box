@@ -36,6 +36,7 @@ import {
 } from '@/utils/permissions';
 import type { HarmonyMarker } from '@/harmony/harmony-amap';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 const EARTH_RADIUS = 6378137;
 const toRad = (deg: number) => (deg * Math.PI) / 180;
@@ -202,8 +203,8 @@ export default function DeviceAddressScreen() {
           },
           icon: {
             uri: 'https://g.18qjz.cn/img/boklock/device_icon.png',
-            width: 36,
-            height: 36,
+            width: px(36),
+            height: px(36),
           },
         }))
       : [];
@@ -226,8 +227,8 @@ export default function DeviceAddressScreen() {
         longitude: userLocationInfo.current.longitude,
         icon: {
           uri: 'https://g.18qjz.cn/img/boklock/local_icon.png',
-          width: 24,
-          height: 37,
+          width: px(24),
+          height: px(37),
         },
       });
     }
@@ -325,7 +326,7 @@ export default function DeviceAddressScreen() {
         <View style={styles.mapContent}>
           {isHarmonyMapUnavailable ? (
             <View style={styles.mapFallback}>
-              <AppIcon name="location" color="#999999" size={32} />
+              <AppIcon name="location" color="#999999" size={px(32)} />
               <Text style={styles.mapFallbackText}>
                 Harmony 版本暂不支持地图展示
               </Text>
@@ -399,8 +400,8 @@ export default function DeviceAddressScreen() {
                     }}
                     icon={{
                       uri: 'https://g.18qjz.cn/img/boklock/local_icon.png',
-                      width: 24,
-                      height: 37,
+                      width: px(24),
+                      height: px(37),
                     }}
                   />
                 )}
@@ -410,7 +411,7 @@ export default function DeviceAddressScreen() {
                 onPress={handleLocate}
                 activeOpacity={0.7}
               >
-                <AppIcon name="location1" color="#000000" size={24} />
+                <AppIcon name="location1" color="#000000" size={px(24)} />
               </TouchableOpacity>
             </>
           )}

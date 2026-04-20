@@ -16,6 +16,7 @@ import {
 import Flex from '@/components/Flex';
 import PopCenter, { type PopCenterRef } from '@/components/PopCenter';
 import { styles } from './style';
+import { px } from '@/utils/ui';
 
 export type SettingPinRef = {
   open: () => void;
@@ -64,7 +65,7 @@ const SettingPin = forwardRef<SettingPinRef, Props>(function SettingPin(
   return (
     <PopCenter
       ref={popRef}
-      width={311}
+      width={px(311)}
       // height={268}
       showHeader={false}
       showCancel={false}

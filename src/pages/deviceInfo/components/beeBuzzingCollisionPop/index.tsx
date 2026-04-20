@@ -22,6 +22,7 @@ import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import { operateBuzzing } from '@/services';
 import { showToast } from '@/utils';
 import { Popup } from '@/components';
+import { fontSize, px } from '@/utils/ui';
 
 export type BeeBuzzingCollisionPopRef = {
   open: () => void;
@@ -132,10 +133,10 @@ export const BeeBuzzingCollisionPop = forwardRef<
                     <Text style={styles.rowText}>蜂鸣测试</Text>
                     <GradientButton
                       colors={['#333333', '#333333']}
-                      width={64}
-                      height={24}
+                      width={px(64)}
+                      height={px(24)}
                       round={false}
-                      btnBorderRadius={6}
+                      btnBorderRadius={px(6)}
                       onPress={openTestConfirm}
                       text="测试"
                       textStyle={styles.testBtnText}
@@ -165,9 +166,9 @@ export const BeeBuzzingCollisionPop = forwardRef<
             <View style={styles.btnFlex}>
               <GradientButton
                 colors={['transparent', 'transparent']}
-                height={48}
+                height={px(48)}
                 round={false}
-                btnBorderRadius={12}
+                btnBorderRadius={px(12)}
                 hasBorder
                 onPress={() => {
                   timeInputRef.current?.blur();
@@ -187,9 +188,9 @@ export const BeeBuzzingCollisionPop = forwardRef<
             <View style={styles.btnFlex}>
               <GradientButton
                 colors={['#333333', '#333333']}
-                height={48}
+                height={px(48)}
                 round={false}
-                btnBorderRadius={12}
+                btnBorderRadius={px(12)}
                 onPress={async () => {
                   timeInputRef.current?.blur();
                   Keyboard.dismiss();
@@ -233,30 +234,30 @@ export const BeeBuzzingCollisionPop = forwardRef<
 
 const styles = StyleSheet.create({
   popupRoot: {
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    borderTopLeftRadius: px(12),
+    borderTopRightRadius: px(12),
   },
   popupContainer: {
-    paddingTop: 12,
-    paddingLeft: 24,
-    paddingRight: 24,
-    paddingBottom: 16,
+    paddingTop: px(12),
+    paddingLeft: px(24),
+    paddingRight: px(24),
+    paddingBottom: px(16),
   },
   title: {
-    paddingTop: 16,
+    paddingTop: px(16),
     color: '#333333',
     fontWeight: '700',
-    fontSize: 16,
-    marginBottom: 16,
+    fontSize: fontSize(16),
+    marginBottom: px(16),
   },
   beeBuzzingCollision: {
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
+    borderRadius: px(12),
     overflow: 'hidden',
   },
   row: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: px(16),
+    paddingVertical: px(14),
   },
   rowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -269,42 +270,42 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   rowText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
   },
   switchImg: {
-    width: 32,
-    height: 20,
+    width: px(32),
+    height: px(20),
   },
   timeInput: {
-    width: 50,
-    height: 30,
+    width: px(50),
+    height: px(30),
     borderStyle: 'solid',
     borderWidth: 1,
     borderColor: '#333333',
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginHorizontal: 8,
+    borderRadius: px(6),
+    paddingHorizontal: px(8),
+    paddingVertical: px(4),
+    marginHorizontal: px(8),
     backgroundColor: '#ffffff',
     textAlign: 'center',
     color: '#333333',
   },
   btnContainerWrapper: {
-    marginTop: 36,
+    marginTop: px(36),
   },
   btnFlex: {
     flex: 1,
   },
   btnGap: {
-    width: 15,
+    width: px(15),
   },
   font32: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '500',
   },
   testBtnText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     fontWeight: '400',
   },
 });

@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -6,9 +7,9 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   row: {
-    marginTop: 130,
+    marginTop: px(130),
     width: '100%',
-    height: 48,
+    height: px(48),
   },
   iconBox: {
     width: '100%',
@@ -19,28 +20,28 @@ export const styles = StyleSheet.create({
   },
   title: {
     color: '#333333',
-    fontSize: 20,
+    fontSize: fontSize(20),
     fontWeight: 'bold',
-    marginLeft: 9,
+    marginLeft: px(9),
   },
   text: {
     color: '#999999',
-    fontSize: 16,
+    fontSize: fontSize(16),
   },
   btnContainer: {
-    width: 196,
-    height: 48,
-    borderRadius: 12,
+    width: px(196),
+    height: px(48),
+    borderRadius: px(12),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
   btnContainerConfirmText: {
     color: '#999999',
-    fontSize: 16,
+    fontSize: fontSize(16),
   },
   btnContainerShareText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: fontSize(16),
   },
 });

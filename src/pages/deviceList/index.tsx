@@ -38,6 +38,7 @@ import type { ListItem } from './typing';
 import Status from './status';
 import { styles } from './style';
 import { getBatteryStatus, getSignalStatus } from '@/utils/biz';
+import { fontSize, px } from '@/utils/ui';
 
 const PAGE_SIZE = 20;
 
@@ -274,7 +275,7 @@ export default function DeviceList() {
       >
         <Flex align="center">
           <Text style={styles.bottomBtnText}>设备日志</Text>
-          <AppIcon name="a-headfor-20" size={18} color="#333333" />
+          <AppIcon name="a-headfor-20" size={px(18)} color="#333333" />
         </Flex>
       </TouchableOpacity>
     </View>
@@ -319,14 +320,14 @@ export default function DeviceList() {
                           ? getBatteryStatus(item.battery, 'light')
                           : 'https://g.18qjz.cn/img/boklock/batteryIcon/deep_charging.png',
                     }}
-                    style={{ width: 20, height: 20 }}
+                    style={{ width: px(20), height: px(20) }}
                   />
                   <Text style={styles.metaText}>{item.battery}%</Text>
                 </>
               ) : null}
 
               <Image
-                style={{ width: 20, height: 20 }}
+                style={{ width: px(20), height: px(20) }}
                 source={{
                   uri: getSignalStatus(item.atCsq, item.deviceStatus, 'light'),
                 }}
@@ -350,7 +351,7 @@ export default function DeviceList() {
                     name={
                       item.coverStatus === COVER_STATUS.OPEN ? 'unlock' : 'lock'
                     }
-                    size={28}
+                    size={px(28)}
                     color="#333333"
                   />
                 </View>
@@ -390,7 +391,7 @@ export default function DeviceList() {
               }}
             >
               <View style={styles.iconBox}>
-                <AppIcon name="bluetooth-1" size={28} color="#333333" />
+                <AppIcon name="bluetooth-1" size={px(28)} color="#333333" />
                 {!hasAutoOpen ? (
                   <Image
                     source={{
@@ -417,7 +418,7 @@ export default function DeviceList() {
               <View style={styles.iconBox}>
                 <AppIcon
                   name="a-equipmentinformation"
-                  size={28}
+                  size={px(28)}
                   color="#333333"
                 />
               </View>
@@ -499,7 +500,7 @@ export default function DeviceList() {
           >
             <Text
               style={{
-                fontSize: 16,
+                fontSize: fontSize(16),
                 fontWeight: 'bold',
                 color: '#000',
               }}
@@ -508,12 +509,12 @@ export default function DeviceList() {
             </Text>
             <View
               style={{
-                marginVertical: 8,
+                marginVertical: px(8),
               }}
             >
               <Text
                 style={{
-                  fontSize: 14,
+                  fontSize: fontSize(14),
                   color: '#333',
                   fontWeight: 'normal',
                 }}
@@ -525,7 +526,7 @@ export default function DeviceList() {
               source={{ uri: currentLock?.imageMap?.closeCoverGif || '' }}
               style={{
                 width: '100%',
-                height: 210,
+                height: px(210),
               }}
             />
           </Flex>
@@ -548,7 +549,7 @@ export default function DeviceList() {
           >
             <Text
               style={{
-                fontSize: 16,
+                fontSize: fontSize(16),
                 fontWeight: 'bold',
                 color: '#000',
               }}
@@ -557,12 +558,12 @@ export default function DeviceList() {
             </Text>
             <View
               style={{
-                marginVertical: 8,
+                marginVertical: px(8),
               }}
             >
               <Text
                 style={{
-                  fontSize: 14,
+                  fontSize: fontSize(14),
                   color: '#333',
                   fontWeight: 'normal',
                 }}
@@ -574,7 +575,7 @@ export default function DeviceList() {
               source={{ uri: currentLock?.imageMap?.openCoverGif || '' }}
               style={{
                 width: '100%',
-                height: 210,
+                height: px(210),
               }}
             />
           </Flex>

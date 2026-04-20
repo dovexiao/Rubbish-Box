@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
 import PageContainer from '@/components/PageContainer';
+import { fontSize, px } from '@/utils/ui';
 
 // 定义路由参数类型
 const WebViewScreen: React.FC = () => {
@@ -99,7 +100,7 @@ const WebViewScreen: React.FC = () => {
             }}
           >
             <ActivityIndicator size="large" color="#1B9666" />
-            <Text style={{ marginTop: 10, color: '#666' }}>加载中...</Text>
+            <Text style={{ marginTop: px(10), color: '#666' }}>加载中...</Text>
           </View>
         )}
 
@@ -109,16 +110,18 @@ const WebViewScreen: React.FC = () => {
               flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
-              padding: 20,
+              padding: px(20),
             }}
           >
-            <Text style={{ fontSize: 48, marginBottom: 20 }}>⚠️</Text>
+            <Text style={{ fontSize: fontSize(48), marginBottom: px(20) }}>
+              ⚠️
+            </Text>
             <Text
               style={{
-                fontSize: 16,
+                fontSize: fontSize(16),
                 color: '#666',
                 textAlign: 'center',
-                marginBottom: 20,
+                marginBottom: px(20),
               }}
             >
               {error}
@@ -126,7 +129,7 @@ const WebViewScreen: React.FC = () => {
             <Text
               style={{
                 color: '#333',
-                fontSize: 16,
+                fontSize: fontSize(16),
                 textDecorationLine: 'underline',
               }}
               onPress={() => {

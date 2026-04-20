@@ -14,6 +14,7 @@ import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { getHandOverList } from '@/services';
 import { styles } from './style';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type Device = {
   id: number;
@@ -207,7 +208,7 @@ export default function HandOverDevice() {
             ListEmptyComponent={empty}
             ListFooterComponent={
               loadingMore ? (
-                <View style={{ paddingVertical: 12 }}>
+                <View style={{ paddingVertical: px(12) }}>
                   <ActivityIndicator color="#333333" />
                 </View>
               ) : null

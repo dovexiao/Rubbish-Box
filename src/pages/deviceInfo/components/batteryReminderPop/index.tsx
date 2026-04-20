@@ -12,6 +12,7 @@ import Video from 'react-native-video';
 import { styles } from './style';
 import { showToast } from '@/utils';
 import { Popup } from '@/components';
+import { px } from '@/utils/ui';
 
 export type BatteryReminderPopRef = {
   open: () => void;
@@ -80,7 +81,7 @@ export const BatteryReminderPop = forwardRef<
           activeOpacity={0.8}
           onPress={handleClose}
         >
-          <AppIcon name="close" size={24} color="#999999" />
+          <AppIcon name="close" size={px(24)} color="#999999" />
         </TouchableOpacity>
       </View>
 
@@ -123,7 +124,7 @@ export const BatteryReminderPop = forwardRef<
               }}
             >
               <View style={styles.playCircle}>
-                <AppIcon name="play" size={48} color="#FFFFFF" />
+                <AppIcon name="play" size={px(48)} color="#FFFFFF" />
               </View>
             </TouchableOpacity>
           ) : null}

@@ -12,6 +12,7 @@ import AppIcon from '@/components/AppIcon';
 import { getVipList, saveVip, deleteVip } from '@/services/user';
 import { PopConfirmRef } from '@/components/popConfirm';
 import { styles } from './infoStyle';
+import { px } from '@/utils/ui';
 
 const PAGE_SIZE = 20;
 
@@ -135,8 +136,8 @@ export default function VipInfoPage() {
       footer={
         <Flex justify="center" align="center" style={styles.footerWrap}>
           <GradientButton
-            width={196}
-            height={48}
+            width={px(196)}
+            height={px(48)}
             colors={['#4A4A4A', '#282828']}
             style={styles.buttonWrap}
             onPress={() => handleOpenAdd(undefined, false)}
@@ -148,9 +149,9 @@ export default function VipInfoPage() {
     >
       <View style={styles.searchBoxWrap}>
         <View style={styles.searchBox}>
-          <AppIcon name="search" size={16} color="#999999" />
+          <AppIcon name="search" size={px(16)} color="#999999" />
           <TextInput
-            style={{ marginLeft: 8, flex: 1, padding: 0 }}
+            style={{ marginLeft: px(8), flex: 1, padding: 0 }}
             placeholder="输入宾客名称进行搜索"
             placeholderTextColor="rgba(153,153,153,0.5)"
             onChangeText={handleSearchChange}
@@ -175,7 +176,7 @@ export default function VipInfoPage() {
               >
                 <Flex align="center">
                   <Text style={styles.username}>编辑</Text>
-                  <AppIcon name="a-headfor-20" size={12} color="#333333" />
+                  <AppIcon name="a-headfor-20" size={px(12)} color="#333333" />
                 </Flex>
               </TouchableOpacity>
             </Flex>
@@ -196,7 +197,7 @@ export default function VipInfoPage() {
         ))}
 
         {complete && (
-          <Text style={{ textAlign: 'center', marginTop: 12 }}>
+          <Text style={{ textAlign: 'center', marginTop: px(12) }}>
             共 {list.length} 条记录
           </Text>
         )}
@@ -209,7 +210,7 @@ export default function VipInfoPage() {
                 void fetchList(false);
               }
             }}
-            style={{ marginTop: 12, alignItems: 'center' }}
+            style={{ marginTop: px(12), alignItems: 'center' }}
           >
             <Text style={{ color: '#999999' }}>
               {loading ? '加载中...' : '加载更多'}
@@ -230,7 +231,7 @@ export default function VipInfoPage() {
       <Popup
         visible={addVisible}
         onClose={() => setAddVisible(false)}
-        minHeight={208}
+        minHeight={px(208)}
         title={popTitle}
       >
         <View style={styles.popup}>
@@ -238,7 +239,7 @@ export default function VipInfoPage() {
             direction="row"
             justify="between"
             align="center"
-            style={{ marginBottom: 24 }}
+            style={{ marginBottom: px(24) }}
           >
             <Text style={styles.popText}>贵宾姓名</Text>
             <TextInput
@@ -250,7 +251,7 @@ export default function VipInfoPage() {
               onChangeText={v => setAddUsername(v.trim())}
             />
             {type === 'edit' && (
-              <AppIcon name="redact" color="#cccccc" size={20} />
+              <AppIcon name="redact" color="#cccccc" size={px(20)} />
             )}
           </Flex>
           <Flex direction="row" justify="between" align="center">
@@ -266,14 +267,14 @@ export default function VipInfoPage() {
               onChangeText={v => setAddMobile(v.trim())}
             />
             {type === 'edit' && (
-              <AppIcon name="redact" color="#cccccc" size={20} />
+              <AppIcon name="redact" color="#cccccc" size={px(20)} />
             )}
           </Flex>
           <Flex
             style={{
               width: '100%',
-              marginTop: 31,
-              marginBottom: 8,
+              marginTop: px(31),
+              marginBottom: px(8),
             }}
             direction="row"
             justify="center"

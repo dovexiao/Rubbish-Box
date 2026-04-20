@@ -6,6 +6,7 @@ import { routes } from '@/routes';
 import appManager from '@/utils/env/rn/appManager';
 import { showAppUpdateDialog } from '@/components';
 import { pad } from 'crypto-js';
+import { fontSize, px } from '@/utils/ui';
 
 const Tab = createBottomTabNavigator();
 
@@ -46,12 +47,12 @@ export const MainTabNavigator: React.FC = () => {
     return {
       backgroundColor: '#ffffff',
       // 对齐 Taro 样式：上内边距 10，底部使用安全区
-      paddingTop: 5,
-      paddingHorizontal: 16,
+      paddingTop: px(5),
+      paddingHorizontal: px(16),
       borderTopWidth: 1,
       borderTopColor: 'rgba(0,0,0,0.05)',
-      height: 60 + Math.max(insets.bottom, 20),
-      paddingBottom: Math.max(insets.bottom, 20),
+      height: px(60 + Math.max(insets.bottom, 20)),
+      paddingBottom: px(Math.max(insets.bottom, 20)),
     };
   }, [insets]);
 
@@ -66,8 +67,8 @@ export const MainTabNavigator: React.FC = () => {
     const iconUri = focused ? routeConfig.chooseIcon : routeConfig.icon;
 
     const isCenter = route.name === 'Index';
-    const iconSize = isCenter ? 50 : 30;
-    const marginBottom = isCenter ? 0 : 3;
+    const iconSize = isCenter ? px(50) : px(30);
+    const marginBottom = isCenter ? 0 : px(3);
 
     return (
       <Image
@@ -104,13 +105,13 @@ export const MainTabNavigator: React.FC = () => {
           tabBarInactiveTintColor: '#666666',
           tabBarStyle,
           tabBarLabelStyle: {
-            fontSize: 11,
+            fontSize: fontSize(11),
             fontWeight: '400',
           },
           // 每个 Tab 外层加红色边框，Index 固定宽度 50，其它平均铺满
           tabBarItemStyle: isCenter
             ? {
-                width: 50,
+                width: px(50),
                 flexShrink: 0,
                 flexGrow: 1,
                 alignItems: 'center',
@@ -135,7 +136,7 @@ export const MainTabNavigator: React.FC = () => {
               // 中间的 Index 完全不渲染 label，避免占位高度
               tabBarLabel: isCenter ? () => null : route.label,
               tabBarIconStyle: isCenter
-                ? { marginBottom: 0, marginTop: 4 }
+                ? { marginBottom: 0, marginTop: px(4) }
                 : { marginBottom: 0 },
               freezeOnBlur: true,
             }}

@@ -16,6 +16,7 @@ import { getLockDeviceList } from '@/services/device';
 import { DeviceItem } from '@/components/Device/Item/index';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
 import styles from './styles';
+import { fontSize, px } from '@/utils/ui';
 
 export default function MyDevice() {
   const navigation = useNavigation<any>();
@@ -87,7 +88,7 @@ export default function MyDevice() {
           style={[
             styles.btnContainer,
             styles.btnContainerClose,
-            { height: 48 },
+            { height: px(48) },
           ]}
         >
           <Flex
@@ -124,7 +125,7 @@ export default function MyDevice() {
           <Flex justify="center" align="center">
             <Image
               source={{ uri: 'https://g.18qjz.cn/img/boklock/empty.png' }}
-              style={{ width: 130, height: 130 }}
+              style={{ width: px(130), height: px(130) }}
             />
           </Flex>
         )}
@@ -142,7 +143,7 @@ export default function MyDevice() {
             align="center"
             style={{
               width: '100%',
-              height: 20,
+              height: px(20),
             }}
           >
             <Text style={styles.label}>
@@ -152,10 +153,15 @@ export default function MyDevice() {
               value={lockName}
               // closeable={true}
               placeholder="请输入"
-              style={{ flex: 1, padding: 0, textAlign: 'right' }}
+              style={{
+                flex: 1,
+                padding: 0,
+                textAlign: 'right',
+                fontSize: fontSize(14),
+              }}
               onChangeText={e => setLockName(e)}
             />
-            <AppIcon name="redact" color="#999999" size={20} />
+            <AppIcon name="redact" color="#999999" size={px(20)} />
           </Flex>
           <View style={styles.popupFooter}>
             <TouchableOpacity

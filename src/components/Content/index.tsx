@@ -732,7 +732,7 @@ const Content: React.FC<ContentProps> = ({
           <Flex justify="between" align="center">
             <AppIcon name="a-powersupply" size={px(16)} color="#333333" />
             <Text style={styles.entryText}>市电安装</Text>
-            <AppIcon name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
           </Flex>
         </TouchableOpacity>
       </View>
@@ -834,7 +834,7 @@ const Content: React.FC<ContentProps> = ({
         }}
       />
 
-      <PopCenter height={240} ref={groupToastPop}>
+      <PopCenter height={px(240)} ref={groupToastPop}>
         <Flex
           style={{
             width: '100%',

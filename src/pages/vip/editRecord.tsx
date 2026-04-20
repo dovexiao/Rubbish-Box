@@ -16,6 +16,7 @@ import { showToast } from '@/utils';
 import { styles } from './style';
 import { DeviceItem } from './com/deviceItem';
 import UseCountPop from './com/useCountPop';
+import { px } from '@/utils/ui';
 
 /**
  * Page state interface
@@ -220,7 +221,7 @@ export default function VipEditRecordPage() {
       backgroundColor="#F6F7FA"
       statusBarStyle="dark-content"
       safeAreaEdges={['top', 'bottom']}
-      contentContainerStyle={{ paddingHorizontal: 16 }}
+      contentContainerStyle={{ paddingHorizontal: px(16) }}
       scrollable
       footer={
         <Flex
@@ -292,7 +293,7 @@ export default function VipEditRecordPage() {
         justify={'between'}
       >
         <Flex
-          style={{ height: 69 }}
+          style={{ height: px(69) }}
           direction={'row'}
           justify={'between'}
           align={'center'}
@@ -307,7 +308,7 @@ export default function VipEditRecordPage() {
             }}
           >
             <Flex direction="row">
-              <Text style={[styles.dateText, { marginRight: 5 }]}>
+              <Text style={[styles.dateText, { marginRight: px(5) }]}>
                 {`${dayjs(startTime).format('MM')}月${dayjs(startTime).format(
                   'DD',
                 )}日`}
@@ -326,7 +327,7 @@ export default function VipEditRecordPage() {
               )}：${dayjs(startTime).format('mm')}`}</Text>
             </Flex>
           </Flex>
-          <AppIcon name={'arrows1'} size={20} color="#333333"></AppIcon>
+          <AppIcon name={'arrows1'} size={px(20)} color="#333333"></AppIcon>
           <Flex
             style={styles.timeBox}
             direction={'column'}
@@ -335,7 +336,7 @@ export default function VipEditRecordPage() {
             onPress={() => endTimePopRef.current?.open?.()}
           >
             <Flex direction="row">
-              <Text style={[styles.dateText, { marginRight: 5 }]}>
+              <Text style={[styles.dateText, { marginRight: px(5) }]}>
                 {`${dayjs(endTime).format('MM')}月${dayjs(endTime).format(
                   'DD',
                 )}日`}
@@ -355,7 +356,7 @@ export default function VipEditRecordPage() {
           direction={'row'}
           justify={'between'}
           align={'center'}
-          style={[{ height: 20 }, styles.mt40]}
+          style={[{ height: px(20) }, styles.mt40]}
           isTouchView
           onPress={() => usageCountPopRef.current?.open?.()}
         >
@@ -368,7 +369,11 @@ export default function VipEditRecordPage() {
               ? `${customUsageCount}次`
               : '不限'}
           </Text>
-          <AppIcon name={'a-headfor-20'} size={20} color="#333333"></AppIcon>
+          <AppIcon
+            name={'a-headfor-20'}
+            size={px(20)}
+            color="#333333"
+          ></AppIcon>
         </Flex>
       </Flex>
 
@@ -384,7 +389,7 @@ export default function VipEditRecordPage() {
           <Flex
             direction={'row'}
             align={'center'}
-            style={{ marginLeft: 4 }}
+            style={{ marginLeft: px(4) }}
             isTouchView
             onPress={() => {
               setUserItem(prev => ({
@@ -395,10 +400,10 @@ export default function VipEditRecordPage() {
               setAdminUserPopupVisible(true);
             }}
           >
-            <Text numberOfLines={1} style={{ maxWidth: 70 }}>
+            <Text numberOfLines={1} style={{ maxWidth: px(70) }}>
               {adminUsername}
             </Text>
-            <AppIcon name={'pull-down'} size={24} color="#333333"></AppIcon>
+            <AppIcon name={'pull-down'} size={px(24)} color="#333333"></AppIcon>
             <Text style={styles.chooseNum}>
               （已选择
               {(selectedDeviceList && selectedDeviceList?.length) ?? 0}个）
@@ -424,9 +429,9 @@ export default function VipEditRecordPage() {
           <Text>全选</Text>
           <Image
             style={{
-              width: 16,
-              height: 16,
-              marginLeft: 8,
+              width: px(16),
+              height: px(16),
+              marginLeft: px(8),
             }}
             source={{
               uri: `https://g.18qjz.cn/img/boklock/${
@@ -447,7 +452,7 @@ export default function VipEditRecordPage() {
           onScrollEndDrag={event => {
             const { contentOffset, contentSize, layoutMeasurement } =
               event.nativeEvent;
-            const paddingToBottom = 20;
+            const paddingToBottom = px(20);
             if (
               contentOffset.y + layoutMeasurement.height + paddingToBottom >=
               contentSize.height
@@ -478,11 +483,11 @@ export default function VipEditRecordPage() {
 
       {/* 开始时间 */}
       <DateTimePickerPopup
-        minHeight={208}
-        height={380}
+        minHeight={px(208)}
+        height={px(380)}
         ref={startTimePopRef}
         timestamp={startTime}
-        style={{ height: 380 }}
+        style={{ height: px(380) }}
         onChange={(value: number) => {
           // if (startTime > value) {
           //   showToast({title: '您选择的时间已过期，请重新选择一个当前或将来的时间'})
@@ -494,11 +499,11 @@ export default function VipEditRecordPage() {
 
       {/* 结束时间 */}
       <DateTimePickerPopup
-        minHeight={208}
-        height={380}
+        minHeight={px(208)}
+        height={px(380)}
         ref={endTimePopRef}
         timestamp={endTime}
-        style={{ height: 380 }}
+        style={{ height: px(380) }}
         onChange={(value: number) => {
           // if (endTime > value) {
           //   showToast({title: '您选择的时间已过期，请重新选择一个当前或将来的时间'})
@@ -524,7 +529,7 @@ export default function VipEditRecordPage() {
       <Popup
         visible={adminUserPopupVisible}
         onClose={() => setAdminUserPopupVisible(false)}
-        minHeight={343}
+        minHeight={px(343)}
         title={
           <Flex
             style={styles.num}
@@ -532,28 +537,28 @@ export default function VipEditRecordPage() {
             justify={'between'}
             align={'center'}
           >
-            <View style={{ width: 24, height: 24 }}></View>
+            <View style={{ width: px(24), height: px(24) }}></View>
             <View>
               <Text style={styles.popTitleText}>切换列表</Text>
             </View>
             <View
-              style={{ marginRight: 16 }}
+              style={{ marginRight: px(16) }}
               onTouchEnd={() => setAdminUserPopupVisible(false)}
             >
-              <AppIcon name={'close'} size={24} color="#333333"></AppIcon>
+              <AppIcon name={'close'} size={px(24)} color="#333333"></AppIcon>
             </View>
           </Flex>
         }
       >
         <View
           style={{
-            paddingLeft: 24,
-            paddingRight: 24,
+            paddingLeft: px(24),
+            paddingRight: px(24),
           }}
         >
           <ScrollView
             style={{
-              height: 216,
+              height: px(216),
             }}
           >
             {userList && userList.length ? (
@@ -584,8 +589,8 @@ export default function VipEditRecordPage() {
           <Flex
             style={{
               width: '100%',
-              marginBottom: 8,
-              marginTop: 8,
+              marginBottom: px(8),
+              marginTop: px(8),
             }}
             direction="row"
             justify="center"

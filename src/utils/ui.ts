@@ -28,7 +28,7 @@ export const verticalScale = (size: number) => {
 };
 
 // 温和缩放
-export const moderateScale = (size: number, factor = 0.5) => {
+export const moderateScale = (size: number, factor = 0.7) => {
   return size + (scale(size) - size) * factor;
 };
 

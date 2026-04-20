@@ -1,9 +1,10 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   passwordCode: {
     width: '100%',
-    marginTop: 16,
+    marginTop: px(16),
     position: 'relative',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -14,40 +15,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    width: 48,
-    height: 48,
+    borderRadius: px(12),
+    width: px(48),
+    height: px(48),
   },
   codeItemText: {
     fontWeight: 'bold',
-    fontSize: 24,
+    fontSize: fontSize(24),
     color: '#333333',
-    lineHeight: 34,
+    lineHeight: px(34),
   },
   active: {
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: '#333333',
   },
   error: {
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: '#ff2b24',
   },
   errorMessage: {
     width: '100%',
-    marginTop: 8,
+    marginTop: px(8),
   },
   errorMessageText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#ff2b24',
-    lineHeight: 14,
+    lineHeight: px(14),
     textAlign: 'center',
   },
   hideInput: {
     position: 'absolute',
     left: -1000,
     top: 0,
-    height: 50,
-    width: 100,
+    height: px(50),
+    width: px(100),
     opacity: 0,
     zIndex: -1,
     color: 'transparent',

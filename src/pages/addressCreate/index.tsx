@@ -16,6 +16,7 @@ import { regionData, getPickerResultByValues } from '@/utils/regionData';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
 import { hideLoading, showLoading, showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 interface AddressDetail {
   id?: number | string;
@@ -236,7 +237,7 @@ export default function AddressCreate() {
                   {regionText}
                 </Text>
                 <View style={styles.arrowIconWrap}>
-                  <AppIcon name="a-headfor-20" size={16} color="#333333" />
+                  <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
                 </View>
               </View>
             </TouchableOpacity>
@@ -259,8 +260,8 @@ export default function AddressCreate() {
           <View style={styles.footerBtnWrap}>
             <GradientButton
               colors={['#4A4A4A', '#282828']}
-              width={196}
-              height={48}
+              width={px(196)}
+              height={px(48)}
               style={styles.saveBtn}
               onPress={handleSave}
               disabled={saving}
@@ -273,7 +274,7 @@ export default function AddressCreate() {
             visible={regionPopupVisible}
             onClose={() => setRegionPopupVisible(false)}
             title="请选择省市区"
-            minHeight={320}
+            minHeight={px(320)}
             footer={
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -289,8 +290,8 @@ export default function AddressCreate() {
               cascade
               value={pickerValue}
               onChange={v => setPickerValue(v || [])}
-              style={{ height: 280 }}
-              itemHeight={50}
+              style={{ height: px(280) }}
+              itemHeight={px(50)}
               itemStyle={{ padding: 0 }}
             />
           </Popup>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { eventCenter } from '@/utils';
+import { fontSize, px } from '@/utils/ui';
 
 export const GlobalLoading = () => {
   const [visible, setVisible] = useState(false);
@@ -53,14 +54,15 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    padding: 20,
-    borderRadius: 8,
+    padding: px(20),
+    borderRadius: px(8),
     alignItems: 'center',
-    minWidth: 100,
+    minWidth: px(100),
+    maxWidth: '80%',
   },
   text: {
     color: '#ffffff',
-    marginTop: 10,
-    fontSize: 14,
+    marginTop: px(10),
+    fontSize: fontSize(14),
   },
 });

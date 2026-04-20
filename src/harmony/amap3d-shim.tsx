@@ -1,3 +1,4 @@
+import { fontSize, px } from '@/utils/ui';
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { View, ViewProps, StyleSheet, Text } from 'react-native';
 
@@ -110,22 +111,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#f7f7f7',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
+    padding: px(16),
   },
   messageWrapper: {
     maxWidth: '90%',
   },
   title: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: px(8),
     textAlign: 'center',
     color: '#333333',
   },
   message: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#666666',
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 });

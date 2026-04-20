@@ -15,6 +15,7 @@ import AppIcon from '@/components/AppIcon';
 import { getPickupCodeDetail, confirmPickupCode } from '@/services/mall';
 import { getStorage, removeStorage, showToast } from '@/utils';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 export default function PickupCode() {
   const navigation = useNavigation<any>();
@@ -146,7 +147,7 @@ export default function PickupCode() {
         background: 'transparent',
         titleColor: '#FFFFFF',
       }}
-      backgroundImageHeight={400}
+      backgroundImageHeight={px(400)}
       backgroundImage={{
         uri: 'https://g.18qjz.cn/img/boklock/pickupCode/rcvBg2.png',
       }}
@@ -179,14 +180,14 @@ export default function PickupCode() {
             style={styles.scanBox}
             onPress={handleScan}
           >
-            <AppIcon name="a-scanQRcodes1" color="#333333" size={16} />
+            <AppIcon name="a-scanQRcodes1" color="#333333" size={px(16)} />
             <Text style={styles.scanBoxText}>扫码填入</Text>
           </TouchableOpacity>
 
           <GradientButton
             colors={canSubmit ? ['#333333', '#333333'] : ['#EEEEEE', '#EEEEEE']}
-            width={196}
-            height={48}
+            width={px(196)}
+            height={px(48)}
             style={styles.submitBtn}
             onPress={handleSubmit}
             disabled={!canSubmit}
@@ -204,7 +205,7 @@ export default function PickupCode() {
             onPress={handleRecord}
           >
             <Text style={styles.bottomBtnText}>领取记录</Text>
-            <AppIcon name="a-nextpage" color="#333333" size={16} />
+            <AppIcon name="a-nextpage" color="#333333" size={px(16)} />
           </TouchableOpacity>
         </Flex>
 
@@ -253,7 +254,7 @@ export default function PickupCode() {
         visible={successVisible}
         onClose={() => setSuccessVisible(false)}
         title="恭喜您领取成功"
-        minHeight={420}
+        minHeight={px(420)}
       >
         <View style={styles.successContent}>
           <Flex

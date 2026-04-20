@@ -1,7 +1,15 @@
 import React, { memo, useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import AppIcon from '@/components/AppIcon';
 import { Toast } from '@ant-design/react-native';
+import { px } from '@/utils/ui';
 
 export interface StepperProps {
   style?: ViewStyle;
@@ -76,8 +84,12 @@ const Stepper: React.FC<StepperProps> = ({
 
   return (
     <View style={[styles.box, style]}>
-      <TouchableOpacity activeOpacity={0.8} style={styles.calculator} onPress={handleReduce}>
-        <AppIcon name="minus" color="#CCCCCC" size={size || 24} />
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.calculator}
+        onPress={handleReduce}
+      >
+        <AppIcon name="minus" color="#CCCCCC" size={size || px(24)} />
       </TouchableOpacity>
 
       <TextInput
@@ -87,7 +99,11 @@ const Stepper: React.FC<StepperProps> = ({
         style={styles.input}
       />
 
-      <TouchableOpacity activeOpacity={0.8} style={styles.calculator} onPress={handleAdd}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.calculator}
+        onPress={handleAdd}
+      >
         <AppIcon name="add" color="#333333" size={size || 12} />
       </TouchableOpacity>
     </View>
@@ -101,18 +117,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F2F2F2',
-    borderRadius: 8,
-    paddingVertical: 5,
-    width: 91
+    borderRadius: px(8),
+    paddingVertical: px(5),
+    width: px(91),
   },
   input: {
     flex: 1,
     margin: 0,
     borderRadius: 0,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
+    borderLeftWidth: px(1),
+    borderRightWidth: px(1),
     borderColor: 'rgba(0, 0, 0, 0.1)',
-    height: 22,
+    height: px(22),
     padding: 0,
     textAlign: 'center',
   },
@@ -120,8 +136,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 5,
-    flex: 1
+    paddingHorizontal: px(5),
+    flex: 1,
   },
 });
-

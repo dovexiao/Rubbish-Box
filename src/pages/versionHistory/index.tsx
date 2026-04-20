@@ -14,6 +14,7 @@ import { getVersionRecords } from '@/services/deviceInfo';
 import { cacheGetSync } from '@/utils/cache';
 import { styles } from './style';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 interface HistoryItem {
   /*日期标签（今天、昨天、7月1日等） */
@@ -183,7 +184,7 @@ export default function VersionHistory() {
           return (
             <View key={String(record.id)} style={styles.itemContent}>
               <Flex style={styles.itemTop} align="center">
-                <AppIcon name="explain" color="#333333" size={20} />
+                <AppIcon name="explain" color="#333333" size={px(20)} />
                 <Text style={styles.itemName} numberOfLines={1}>
                   {`升级固件版本至${record?.version ?? ''}`}
                 </Text>

@@ -26,6 +26,7 @@ import { checkPhotoPermission } from '@/utils/permissions';
 import styles from './styles';
 import { openSettings } from 'react-native-permissions';
 import { hideLoading, showLoading, showToast, tencentUpload } from '@/utils';
+import { px } from '@/utils/ui';
 
 type BaseInfoData = {
   id?: number;
@@ -285,7 +286,7 @@ export default function UserInfo() {
               <View style={styles.avatar} />
             )}
           </View>
-          <AppIcon name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
         </TouchableOpacity>
 
         {/* 昵称 */}
@@ -303,7 +304,7 @@ export default function UserInfo() {
               {nickName || ''}
             </Text>
           </View>
-          <AppIcon name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
         </TouchableOpacity>
       </View>
 
@@ -353,7 +354,7 @@ export default function UserInfo() {
               onChangeText={v => setInputName(v)}
               returnKeyType="done"
             />
-            <AppIcon name="redact" size={20} color="#999999" />
+            <AppIcon name="redact" size={px(20)} color="#999999" />
           </View>
         </View>
       </Popup>

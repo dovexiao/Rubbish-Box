@@ -13,6 +13,7 @@ import { Flex, PageContainer } from '@/components';
 import { getOpinionDetail, submitOpinionEvaluate } from '@/services/user';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 interface DetailInfo {
   id: number;
@@ -194,7 +195,12 @@ export default function FeedbackDetail() {
 
         {/* 处理进度 */}
         <View style={styles.section}>
-          <Text style={[styles.toastText, { marginBottom: 12, marginTop: 24 }]}>
+          <Text
+            style={[
+              styles.toastText,
+              { marginBottom: px(12), marginTop: px(24) },
+            ]}
+          >
             处理进度
           </Text>
 
@@ -284,7 +290,9 @@ export default function FeedbackDetail() {
                     );
                   })}
                   {item.count > 0 && (
-                    <Text style={styles.starText}>{STAR_TEXT[item.count - 1]}</Text>
+                    <Text style={styles.starText}>
+                      {STAR_TEXT[item.count - 1]}
+                    </Text>
                   )}
                 </View>
               ))}

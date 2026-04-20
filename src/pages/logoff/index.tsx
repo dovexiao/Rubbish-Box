@@ -17,6 +17,7 @@ import { reLaunch } from '@/utils/navigation';
 import { cacheRemove, cacheSetSync } from '@/utils/cache';
 import { tokenStorage } from '@/utils/storage';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 const LOGOFF_PROTOCOL_URL = 'https://g.18qjz.cn/protocol/boklock/logOff.html';
 const WARN_IMAGE_URI = 'https://g.18qjz.cn/img/boklock/logoff_waring.png';
@@ -198,11 +199,11 @@ export default function Logoff() {
                 <TouchableOpacity
                   onPress={() => setAgree(!agree)}
                   activeOpacity={0.8}
-                  hitSlop={{ top: 8, bottom: 8, left: 0, right: 8 }}
+                  hitSlop={{ top: px(8), bottom: px(8), left: 0, right: px(8) }}
                 >
                   <AppIcon
                     name={agree ? 'selected' : 'unselected'}
-                    size={17}
+                    size={px(17)}
                     color={agree ? '#333333' : '#999999'}
                   />
                 </TouchableOpacity>

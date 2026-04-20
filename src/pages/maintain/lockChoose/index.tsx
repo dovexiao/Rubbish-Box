@@ -13,6 +13,7 @@ import { PageContainer } from '@/components';
 import { getLockList } from '@/services/device';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type LockItem = {
   id: number;
@@ -88,7 +89,7 @@ export default function MaintainLockChoose() {
       >
         <Image
           source={{ uri: item.imageUrl || '' }}
-          style={{ width: 36, height: 36 }}
+          style={{ width: px(36), height: px(36) }}
           resizeMode="cover"
         />
         <Text style={styles.lockName}>{item.lockName || `设备${item.id}`}</Text>
@@ -127,7 +128,9 @@ export default function MaintainLockChoose() {
         keyExtractor={item => String(item.id)}
         renderItem={renderItem}
         contentContainerStyle={
-          lockList.length === 0 ? { flexGrow: 1 } : { paddingHorizontal: 24 }
+          lockList.length === 0
+            ? { flexGrow: 1 }
+            : { paddingHorizontal: px(24) }
         }
         ListEmptyComponent={!initialLoading ? empty : null}
         onEndReached={() => {

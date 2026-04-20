@@ -1,24 +1,25 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 24,
-    marginTop: 12,
+    marginHorizontal: px(24),
+    marginTop: px(12),
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: px(12),
+    padding: px(12),
   },
 
   username: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 
   mobile: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999999',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 
   remove: {
@@ -26,67 +27,67 @@ export const styles = StyleSheet.create({
   },
 
   mt20: {
-    marginTop: 10,
+    marginTop: px(10),
   },
 
   buttonTitle: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
-    lineHeight: 22,
+    lineHeight: px(22),
   },
 
   pr28: {
-    paddingRight: 18,
+    paddingRight: px(18),
   },
 
   buttonWrap: {
     position: 'absolute',
-    bottom: 24,
-    marginBottom: 40,
+    bottom: px(24),
+    marginBottom: px(40),
   },
 
   paddingH16: {
-    paddingHorizontal: 16,
+    paddingHorizontal: px(16),
   },
 
   popTitle: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: '500',
     color: '#333333',
-    lineHeight: 22,
+    lineHeight: px(22),
   },
   popSubTip: {
-    paddingTop: 16,
-    paddingBottom: 4,
-    fontSize: 12,
+    paddingTop: px(16),
+    paddingBottom: px(4),
+    fontSize: fontSize(12),
     color: '#666',
-    lineHeight: 17,
+    lineHeight: px(17),
     textAlign: 'center',
   },
 
   itemContent: {
-    marginHorizontal: 24,
-    marginTop: 12,
-    paddingVertical: 6,
+    marginHorizontal: px(24),
+    marginTop: px(12),
+    paddingVertical: px(6),
   },
 
   itemContentValid: {
-    marginTop: 34,
+    marginTop: px(34),
   },
 
   itemContentRight: {
-    height: 40,
+    height: px(40),
   },
 
   label: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
   },
 
   limitLabel: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
   },
 
@@ -95,49 +96,49 @@ export const styles = StyleSheet.create({
   },
 
   ml12: {
-    marginLeft: 6,
+    marginLeft: px(6),
   },
 
   ml32: {
-    marginLeft: 16,
+    marginLeft: px(16),
   },
 
   ml16: {
-    marginLeft: 8,
+    marginLeft: px(8),
   },
 
   ml8: {
-    marginLeft: 4,
+    marginLeft: px(4),
   },
 
   endtimeBox: {
-    marginTop: 12,
+    marginTop: px(12),
   },
 
   endTime: {
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: '#333333',
-    borderRadius: 8,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 8,
-    paddingRight: 8,
-    fontSize: 14,
+    borderRadius: px(8),
+    paddingTop: px(5),
+    paddingBottom: px(5),
+    paddingLeft: px(8),
+    paddingRight: px(8),
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
-    marginLeft: 8,
+    lineHeight: px(20),
+    marginLeft: px(8),
   },
 
   btnContainerWrapper: {
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingTop: px(16),
+    paddingBottom: px(8),
   },
 
   btnContainer: {
-    width: 156,
-    paddingVertical: 13,
-    borderRadius: 12,
+    width: px(156),
+    paddingVertical: px(13),
+    borderRadius: px(12),
     display: 'flex',
     justifyContent: 'center',
     alignContent: 'center',
@@ -151,49 +152,49 @@ export const styles = StyleSheet.create({
 
   btnContainerCloseText: {
     color: '#999999',
-    fontSize: 16,
+    fontSize: fontSize(16),
     textAlign: 'center',
   },
 
   btnContainerConfirm: {
-    marginLeft: 15,
-    fontSize: 16,
+    marginLeft: px(15),
+    fontSize: fontSize(16),
   },
 
   btnContainerConfirmText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
     textAlign: 'center',
   },
 
   mt24: {
-    marginTop: 12,
+    marginTop: px(12),
   },
 
   title: {
-    height: 20,
+    height: px(20),
     fontWeight: 'normal',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
     fontStyle: 'normal',
     textTransform: 'none',
   },
 
   addBox: {
-    paddingVertical: 5,
-    paddingHorizontal: 8,
+    paddingVertical: px(5),
+    paddingHorizontal: px(8),
     backgroundColor: '#f7f7fb',
-    borderRadius: 12,
+    borderRadius: px(12),
   },
 
   addBtnText: {
-    marginHorizontal: 2,
+    marginHorizontal: px(2),
     fontWeight: '500',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 });

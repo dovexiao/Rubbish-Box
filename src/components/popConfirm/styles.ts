@@ -1,3 +1,4 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const popupStyle = StyleSheet.create({
@@ -8,17 +9,17 @@ const popupStyle = StyleSheet.create({
   },
   popupTitle: {
     fontWeight: '500',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
     textAlign: 'center',
   },
   btnContainerWrapper: {
     width: '100%',
-    marginTop: 36,
-    gap: 15,
+    marginTop: px(36),
+    gap: px(15),
   },
   btnContainer: {
-    borderRadius: 12,
+    borderRadius: px(12),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',

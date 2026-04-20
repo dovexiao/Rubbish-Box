@@ -22,6 +22,7 @@ import { deleteStaff, getStaffList } from '@/services/user';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type StaffItem = {
   id: number;
@@ -143,11 +144,11 @@ export default function MemberList() {
             }}
           >
             <Text style={styles.username}>编辑</Text>
-            <AppIcon name="a-headfor-20" size={12} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(12)} color="#333333" />
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.row, { marginTop: 10 }]}>
+        <View style={[styles.row, { marginTop: px(10) }]}>
           <Text style={styles.mobile}>{item.mobile}</Text>
           <TouchableOpacity
             activeOpacity={0.8}
@@ -175,7 +176,7 @@ export default function MemberList() {
         <Image
           source={{ uri: 'https://g.18qjz.cn/img/boklock/empty.png' }}
           resizeMode="contain"
-          style={{ width: 80, height: 80 }}
+          style={{ width: px(80), height: px(80) }}
         />
         <Text style={styles.emptyText}>暂无成员</Text>
       </View>
@@ -198,9 +199,9 @@ export default function MemberList() {
       footer={
         <View style={styles.footer}>
           <GradientButton
-            btnBorderRadius={16}
-            width={196}
-            height={48}
+            btnBorderRadius={px(16)}
+            width={px(196)}
+            height={px(48)}
             colors={['#4A4A4A', '#282828']}
             style={styles.buttonWrap}
             onPress={() => {

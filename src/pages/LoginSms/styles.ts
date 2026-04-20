@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const loginSmsStyles = StyleSheet.create({
@@ -5,48 +6,48 @@ const loginSmsStyles = StyleSheet.create({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    paddingHorizontal: 24,
+    paddingHorizontal: px(24),
   },
   passwordTitle: {
-    marginTop: 152,
-    marginLeft: 20
+    marginTop: px(152),
+    marginLeft: px(20),
   },
   passwordTitleText: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
-    lineHeight: 22,
+    lineHeight: px(22),
   },
   btnBox: {
-    marginTop: 78,
+    marginTop: px(78),
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   getAgain: {
-    borderRadius: 12,
+    borderRadius: px(12),
   },
   getAgainActive: {
     color: '#333333',
   },
   getAgainText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999',
-    marginRight: 4,
+    marginRight: px(4),
   },
   getAgainTextActive: {
     color: '#333333',
   },
   submitBtn: {
-    borderRadius: 12,
-    marginTop: 16,
+    borderRadius: px(12),
+    marginTop: px(16),
     backgroundColor: '#999999',
-    paddingVertical: 15,
-    width: '100%'
+    paddingVertical: px(15),
+    width: '100%',
   },
   submitBtnText: {
     color: '#ffffff',
-    lineHeight: 22,
-    fontSize: 16,
+    lineHeight: px(22),
+    fontSize: fontSize(16),
     textAlign: 'center',
     fontWeight: 'normal',
   },
@@ -59,4 +60,3 @@ const loginSmsStyles = StyleSheet.create({
 });
 
 export default loginSmsStyles;
-

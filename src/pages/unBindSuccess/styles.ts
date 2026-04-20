@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -5,7 +6,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: px(24),
   },
   gifWrap: {
     width: '100%',
@@ -18,36 +19,36 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     width: '100%',
-    marginTop: 24,
+    marginTop: px(24),
   },
   card: {
     width: '100%',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
+    paddingVertical: px(16),
+    paddingHorizontal: px(12),
     backgroundColor: '#F7F7FB',
-    borderRadius: 12,
+    borderRadius: px(12),
   },
   textTitle: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
     color: '#333333',
-    lineHeight: 22,
-    marginBottom: 12,
+    lineHeight: px(22),
+    marginBottom: px(12),
   },
   text: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
-    marginBottom: 8,
+    lineHeight: px(20),
+    marginBottom: px(8),
   },
   btn: {
-    marginTop: 24,
-    borderRadius: 16,
+    marginTop: px(24),
+    borderRadius: px(16),
     justifyContent: 'center',
     alignItems: 'center',
   },
   btnText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     fontWeight: 'bold',
     color: '#FFFFFF',
   },

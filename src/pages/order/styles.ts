@@ -1,9 +1,10 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   orderContainer: {
     flex: 1,
-    paddingTop: 12,
+    paddingTop: px(12),
     backgroundColor: '#F6F7FA',
   },
   tabsWrap: {
@@ -13,53 +14,53 @@ export default StyleSheet.create({
   },
   /** 固定宽度，Tabs 通过 onLayout 取到该宽度后 tab 栏才会变窄 */
   tabsBox: {
-    width: 220,
+    width: px(220),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   tab: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: px(10),
+    paddingVertical: px(6),
   },
   tabActive: {
-    borderBottomWidth: 2,
+    borderBottomWidth: px(2),
     borderBottomColor: '#333333',
   },
   tabText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#666666',
   },
   tabTextActive: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
     fontWeight: 'bold',
   },
   tabLine: {
     position: 'absolute',
     bottom: 0,
-    height: 2,
+    height: px(2),
     backgroundColor: '#333333',
-    borderRadius: 1,
+    borderRadius: px(1),
   },
   listWrapper: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingHorizontal: px(16),
+    paddingBottom: px(24),
   },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 60,
+    paddingVertical: px(60),
   },
   emptyImage: {
-    width: 120,
-    height: 120,
+    width: px(120),
+    height: px(120),
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#666666',
-    marginTop: 16,
+    marginTop: px(16),
   },
 });

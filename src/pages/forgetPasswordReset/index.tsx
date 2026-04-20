@@ -17,6 +17,7 @@ import { getMobPushDeviceInfo } from '@/utils';
 import { reLaunch } from '@/utils/navigation';
 import styles from './styles';
 import { hideLoading, showLoading, showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 const ForgetPasswordReset = () => {
   const route = useRoute<any>();
@@ -176,7 +177,7 @@ const ForgetPasswordReset = () => {
               >
                 <AppIcon
                   name={passwordCanSee ? 'visible' : 'invisible'}
-                  size={20}
+                  size={px(20)}
                   color="#999999"
                 />
               </TouchableOpacity>
@@ -207,7 +208,7 @@ const ForgetPasswordReset = () => {
               >
                 <AppIcon
                   name={confirmPasswordCanSee ? 'visible' : 'invisible'}
-                  size={20}
+                  size={px(20)}
                   color="#999999"
                 />
               </TouchableOpacity>

@@ -4,6 +4,7 @@ import { View, Text, Image } from 'react-native';
 import Flex from '@/components/Flex';
 import { INVITE_USE_STATUS } from '@/constants';
 import { styles } from './indexStyle';
+import { px } from '@/utils/ui';
 
 interface DeviceItemProps {
   data: any;
@@ -53,7 +54,11 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
           <Flex style={[{ width: '100%' }, styles.mt18]}>
             {data?.address ? (
               <Flex direction="row" style={{ flex: 1 }} align={'center'}>
-                <AppIcon name={'location'} size={24} color="#cccccc"></AppIcon>
+                <AppIcon
+                  name={'location'}
+                  size={px(24)}
+                  color="#cccccc"
+                ></AppIcon>
                 <Text
                   style={[styles.addressText, { flexShrink: 1 }]}
                   numberOfLines={1}
@@ -76,7 +81,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
           <Flex align={'end'}>
             <Image
               source={{ uri: data?.imageUrl ?? '' }}
-              style={{ width: 24, height: 24 }}
+              style={{ width: px(24), height: px(24) }}
             />
             {data?.groupCount !== 1 && (
               <Flex align={'center'}>
@@ -89,7 +94,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
           </Flex>
         </Flex>
         <Image
-          style={{ width: 16, height: 16, marginLeft: 8 }}
+          style={{ width: px(16), height: px(16), marginLeft: px(8) }}
           source={{
             uri: `https://g.18qjz.cn/img/boklock/${
               active ? 'radio_checked' : 'radio_default'

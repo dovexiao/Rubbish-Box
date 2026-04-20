@@ -1,16 +1,17 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    paddingVertical: 4,
-    paddingHorizontal: 4,
-    borderRadius: 7,
+    paddingVertical: px(4),
+    paddingHorizontal: px(4),
+    borderRadius: px(7),
   },
   text: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     fontWeight: '400',
   },
   ml10: {
-    marginLeft: 10,
+    marginLeft: px(10),
   },
 });

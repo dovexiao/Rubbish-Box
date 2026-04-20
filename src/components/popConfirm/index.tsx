@@ -120,8 +120,8 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
             {showClose && (
               <GradientButton
                 colors={['transparent', 'transparent']}
-                width={124}
-                height={42}
+                width={px(124)}
+                height={px(42)}
                 onPress={handleCancel}
                 style={[popupStyle.btnContainer, popupStyle.btnContainerClose]}
               >
@@ -136,8 +136,8 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
             ) : (
               <GradientButton
                 colors={confirmColors}
-                width={showClose ? 124 : 160}
-                height={42}
+                width={showClose ? px(124) : px(160)}
+                height={px(42)}
                 onPress={handleConfirm}
                 style={popupStyle.btnContainer}
               >
@@ -164,11 +164,11 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
 
 const styles = StyleSheet.create({
   modalWrap: {
-    borderRadius: 16,
+    borderRadius: px(16),
     backgroundColor: '#FFFFFF',
-    paddingTop: 24,
-    paddingHorizontal: 12,
-    paddingBottom: 12,
+    paddingTop: px(24),
+    paddingHorizontal: px(12),
+    paddingBottom: px(12),
   },
 });
 

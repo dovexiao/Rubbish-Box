@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet, Dimensions } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
@@ -10,9 +11,9 @@ const styles = StyleSheet.create({
   },
   customTitle: {
     width: '100%',
-    height: 50,
+    height: px(50),
     zIndex: 10,
-    marginTop: 20,
+    marginTop: px(20),
   },
   camera: {
     flex: 1,
@@ -45,8 +46,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   tipText: {
-    marginTop: 24,
-    fontSize: 14,
+    marginTop: px(24),
+    fontSize: fontSize(14),
     color: '#FFFFFF',
     textAlign: 'center',
   },

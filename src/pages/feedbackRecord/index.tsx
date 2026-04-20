@@ -7,6 +7,7 @@ import AppIcon from '@/components/AppIcon';
 import { getOpinionList } from '@/services/user';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 interface OpinionItem {
   id: number;
@@ -86,7 +87,7 @@ export default function FeedbackRecord() {
               >
                 {statusText}
               </Text>
-              <AppIcon name="a-headfor-20" size={20} color="#333333" />
+              <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
             </Flex>
           </Flex>
           <View style={styles.line} />
@@ -160,7 +161,7 @@ export default function FeedbackRecord() {
           ListEmptyComponent={
             !loading ? (
               <View style={styles.emptyBox}>
-                <AppIcon name="order" size={40} color="#CCCCCC" />
+                <AppIcon name="order" size={px(40)} color="#CCCCCC" />
                 <Text style={styles.emptyText}>暂无反馈记录</Text>
               </View>
             ) : null

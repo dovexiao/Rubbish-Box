@@ -1,3 +1,4 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -6,12 +7,12 @@ export const styles = StyleSheet.create({
   },
 
   card: {
-    marginLeft: 16,
-    marginRight: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    padding: 16,
-    height: 82,
+    marginLeft: px(16),
+    marginRight: px(16),
+    marginBottom: px(12),
+    borderRadius: px(12),
+    padding: px(16),
+    height: px(82),
     backgroundColor: '#ffffff',
     display: 'flex',
     flexDirection: 'column',
@@ -20,70 +21,70 @@ export const styles = StyleSheet.create({
 
   username: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 
   mobile: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999999',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
 
   mt20: {
-    marginTop: 10,
+    marginTop: px(10),
   },
 
   buttonTitle: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
-    lineHeight: 22,
+    lineHeight: px(22),
   },
 
   pr28: {
-    paddingRight: 12,
+    paddingRight: px(12),
   },
 
   buttonWrap: {
     shadowColor: 'rgba(0,0,0,0.25)',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: px(2) },
+    shadowRadius: px(8),
     shadowOpacity: 1,
-    elevation: 4,
-    borderRadius: 12,
+    elevation: px(4),
+    borderRadius: px(12),
   },
 
   footerWrap: {
     width: '100%',
-    paddingTop: 16,
-    paddingHorizontal: 16,
+    paddingTop: px(16),
+    paddingHorizontal: px(16),
     backgroundColor: '#f6f7fa',
   },
 
   popSubTip: {
-    paddingTop: 14,
-    fontSize: 12,
+    paddingTop: px(14),
+    fontSize: fontSize(12),
     color: '#999999',
-    lineHeight: 17,
+    lineHeight: px(17),
     textAlign: 'center',
   },
 
   itemContent: {
-    marginTop: 24,
-    paddingLeft: 16,
-    paddingRight: 16,
+    marginTop: px(24),
+    paddingLeft: px(16),
+    paddingRight: px(16),
   },
 
   label: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
   },
 
   contentLabel: {
-    width: 120,
+    width: px(120),
   },
 
   input: {
@@ -91,50 +92,50 @@ export const styles = StyleSheet.create({
   },
 
   ml12: {
-    marginLeft: 6,
+    marginLeft: px(6),
   },
 
   ml32: {
-    marginLeft: 16,
+    marginLeft: px(16),
   },
 
   ml16: {
-    marginLeft: 8,
+    marginLeft: px(8),
   },
 
   ml8: {
-    marginLeft: 4,
+    marginLeft: px(4),
   },
 
   endtimeBox: {
-    marginTop: 12,
+    marginTop: px(12),
   },
 
   endTime: {
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: '#333333',
-    borderRadius: 8,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 8,
-    paddingRight: 8,
-    fontSize: 14,
+    borderRadius: px(8),
+    paddingTop: px(5),
+    paddingBottom: px(5),
+    paddingLeft: px(8),
+    paddingRight: px(8),
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
-    marginLeft: 8,
+    lineHeight: px(20),
+    marginLeft: px(8),
   },
 
   btnContainerWrapper: {
-    marginTop: 36,
+    marginTop: px(36),
   },
 
   btnContainer: {
-    borderRadius: 12,
+    borderRadius: px(12),
   },
 
   btnContainerClose: {
     borderStyle: 'solid',
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
 
@@ -143,7 +144,7 @@ export const styles = StyleSheet.create({
   },
 
   btnContainerConfirm: {
-    marginLeft: 15,
+    marginLeft: px(15),
   },
 
   btnContainerConfirmText: {
@@ -151,43 +152,43 @@ export const styles = StyleSheet.create({
   },
 
   rows: {
-    height: 20,
+    height: px(20),
     flex: 1,
   },
 
   delText: {
-    height: 20,
+    height: px(20),
     fontWeight: 'normal',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#999999',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
   },
 
   editText: {
-    height: 20,
+    height: px(20),
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
   },
 
   searchBoxWrap: {
     width: '100%',
     backgroundColor: '#f6f7fa',
-    paddingBottom: 12,
+    paddingBottom: px(12),
     alignItems: 'center',
   },
 
   searchBox: {
-    width: 343,
-    height: 40,
-    marginTop: 12,
-    paddingLeft: 12,
-    paddingRight: 12,
+    width: px(343),
+    height: px(40),
+    marginTop: px(12),
+    paddingLeft: px(12),
+    paddingRight: px(12),
     backgroundColor: '#ffffff',
-    borderRadius: 25,
+    borderRadius: px(25),
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -195,51 +196,51 @@ export const styles = StyleSheet.create({
   },
 
   listBottomSpace: {
-    height: 20,
+    height: px(20),
   },
 
   popup: {
-    paddingLeft: 24,
-    paddingRight: 24,
+    paddingLeft: px(24),
+    paddingRight: px(24),
   },
 
   num: {
     width: '100%',
-    height: 22,
+    height: px(22),
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
-    lineHeight: 22,
+    lineHeight: px(22),
     textAlign: 'center',
   },
 
   popTitleText: {
-    height: 22,
+    height: px(22),
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
-    lineHeight: 22,
+    lineHeight: px(22),
     textAlign: 'center',
   },
 
   popText: {
-    height: 20,
+    height: px(20),
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
   },
 
   cancalBtn: {
-    width: 156,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
+    width: px(156),
+    height: px(48),
+    borderRadius: px(12),
+    borderWidth: px(1),
     borderStyle: 'solid',
     borderColor: 'rgba(0, 0, 0, 0.1)',
     fontWeight: 'normal',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#999999',
     textAlign: 'center',
     display: 'flex',
@@ -248,10 +249,10 @@ export const styles = StyleSheet.create({
   },
 
   confirmBtn: {
-    width: 156,
-    height: 48,
-    marginLeft: 15,
-    borderRadius: 12,
+    width: px(156),
+    height: px(48),
+    marginLeft: px(15),
+    borderRadius: px(12),
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -259,7 +260,7 @@ export const styles = StyleSheet.create({
 
   confirmBtnText: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
     textAlign: 'center',
   },

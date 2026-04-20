@@ -6,6 +6,7 @@ import { getRepairDetail } from '@/services/user';
 import styles from './styles';
 import { showToast } from '@/utils';
 import dayjs from 'dayjs';
+import { px } from '@/utils/ui';
 
 type ProgressItem = {
   progress: number;
@@ -159,7 +160,7 @@ export default function MaintainServiceDetail() {
             key={index}
             direction="row"
             justify="between"
-            style={{ marginBottom: 32, minHeight: 40 }}
+            style={{ marginBottom: px(32), minHeight: px(40) }}
           >
             <View style={{ alignItems: 'center' }}>
               <View

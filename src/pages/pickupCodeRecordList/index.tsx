@@ -13,6 +13,7 @@ import { PageContainer, Popup } from '@/components';
 import { getPickupCodeRecordList } from '@/services/mall';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { fontSize, px } from '@/utils/ui';
 
 // 状态：1 未填写地址，2 待发货，3 已发货
 const statusMap: Record<number, { text: string; color: string }> = {
@@ -151,12 +152,12 @@ export default function PickupCodeRecordList() {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[styles.statusText, { marginRight: 4 }]}
+            style={[styles.statusText, { marginRight: px(4) }]}
             onPress={() => handlePressStatus(item)}
           >
             <Text
               style={{
-                fontSize: 12,
+                fontSize: fontSize(12),
                 color: statusInfo?.color ?? '#333333',
                 textAlign: 'right',
               }}
@@ -220,7 +221,7 @@ export default function PickupCodeRecordList() {
         visible={qrPopupVisible}
         onClose={() => setQrPopupVisible(false)}
         title=" "
-        minHeight={150}
+        minHeight={px(150)}
       >
         <View style={styles.qrCodeContent}>
           <Image

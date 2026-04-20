@@ -57,6 +57,7 @@ import {
   runInPermissionQueue,
   showPermissionPromptIfNeeded,
 } from '@/utils/permissions';
+import { fontSize, px } from '@/utils/ui';
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
@@ -371,7 +372,7 @@ const DeviceInfo = () => {
             <Text style={styles.cardLable}>设备名称</Text>
             <Text style={styles.cardValue}>{lockInfo?.lockName ?? ''}</Text>
             {params.isAdmin && (
-              <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+              <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
             )}
           </Flex>
           <Flex style={styles.cardRows}>
@@ -400,7 +401,11 @@ const DeviceInfo = () => {
                   setShowPowerModeTips(!showPowerModeTips);
                 }}
               >
-                <AppIcon name={'a-styledescription'} color="#333" size={20} />
+                <AppIcon
+                  name={'a-styledescription'}
+                  color="#333"
+                  size={px(20)}
+                />
               </TouchableOpacity>
             )}
             {showPowerModeTips && (
@@ -426,7 +431,7 @@ const DeviceInfo = () => {
                 onPress={() => qrCodePopRef.current?.open()}
               >
                 <Text style={styles.qrCodeBtnText}>查看</Text>
-                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
               </TouchableOpacity>
               {deviceInfo?.role === 1 && (
                 <TouchableOpacity
@@ -434,7 +439,7 @@ const DeviceInfo = () => {
                   onPress={() => changeQrCodePopRef.current?.open()}
                 >
                   <Text style={styles.qrCodeBtnText}>更换二维码</Text>
-                  <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+                  <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
                 </TouchableOpacity>
               )}
             </Flex>
@@ -454,7 +459,7 @@ const DeviceInfo = () => {
             <Text style={styles.cardValue}>
               当前版本{lockInfo?.version ?? ''}
             </Text>
-            <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+            <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
           </Flex>
           <Flex
             isTouchView
@@ -466,7 +471,7 @@ const DeviceInfo = () => {
           >
             <Text style={styles.cardLable}>设备日志</Text>
             <Text style={styles.cardValue}>{'查看'}</Text>
-            <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+            <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
           </Flex>
 
           {!params.isAdmin && (
@@ -477,7 +482,7 @@ const DeviceInfo = () => {
                 onPress={() => setAdminPopVisible(true)}
               >
                 <Text style={styles.cardValue}>{'查看'}</Text>
-                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
               </TouchableOpacity>
             </Flex>
           )}
@@ -507,7 +512,7 @@ const DeviceInfo = () => {
             >
               <Text style={styles.cardLable}>充电指导</Text>
               <Text style={styles.cardValue}>{'查看'}</Text>
-              <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+              <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
             </Flex>
           )}
 
@@ -531,7 +536,7 @@ const DeviceInfo = () => {
                     <Text style={styles.cardValue}>
                       {deviceInfo?.buzzerStatus === 1 ? '已开启' : '未开启'}
                     </Text>
-                    <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+                    <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
                   </TouchableOpacity>
                 </>
               ) : (
@@ -578,7 +583,7 @@ const DeviceInfo = () => {
                 style={styles.cardValue}
               >{`车辆离开${lockInfo?.leaveUpTime}秒后升起`}</Text>
               {lockInfo?.powerType === 1 && (
-                <AppIcon name={'a-headfor-20'} color="#333" size={20} />
+                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
               )}
             </TouchableOpacity>
           </Flex>
@@ -591,7 +596,7 @@ const DeviceInfo = () => {
         showClose={false}
         onClose={() => setEditNamePopVisible(false)}
       >
-        <View style={[styles.editContainer, { paddingBottom: 8 }]}>
+        <View style={[styles.editContainer, { paddingBottom: px(8) }]}>
           <View style={styles.header}>
             <Text style={styles.headerTitle}>编辑地锁名称</Text>
           </View>
@@ -607,7 +612,7 @@ const DeviceInfo = () => {
                 placeholderTextColor="#999"
                 maxLength={20}
               />
-              <AppIcon name={'redact'} color="#999" size={20} />
+              <AppIcon name={'redact'} color="#999" size={px(20)} />
             </View>
           </View>
           <View style={styles.editFooter}>
@@ -627,7 +632,7 @@ const DeviceInfo = () => {
 
           <View style={styles.closeIcon}>
             <TouchableOpacity onPress={() => setEditNamePopVisible(false)}>
-              <AppIcon name={'close'} color="#333" size={24} />
+              <AppIcon name={'close'} color="#333" size={px(24)} />
             </TouchableOpacity>
           </View>
         </View>
@@ -635,7 +640,7 @@ const DeviceInfo = () => {
 
       {/* 查看二维码弹框 */}
       <PopCenter
-        height={226}
+        height={px(226)}
         ref={qrCodePopRef}
         showHeader={false}
         showCancel={false}
@@ -645,7 +650,7 @@ const DeviceInfo = () => {
           {lockInfo?.qrCode ? (
             <Image
               source={{ uri: lockInfo.qrCode }}
-              style={{ width: 160, height: 160 }}
+              style={{ width: px(160), height: px(160) }}
               resizeMode="contain"
             />
           ) : (
@@ -730,13 +735,13 @@ const DeviceInfo = () => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            paddingHorizontal: 16,
+            paddingHorizontal: px(16),
           }}
         >
-          <View style={{ width: 24, height: 24 }}></View>
+          <View style={{ width: px(24), height: px(24) }}></View>
           <Text style={styles.adminInfoTitle}>管理员信息</Text>
           <TouchableOpacity onPress={() => setAdminPopVisible(false)}>
-            <AppIcon name={'close'} color="#333" size={24} />
+            <AppIcon name={'close'} color="#333" size={px(24)} />
           </TouchableOpacity>
         </View>
         <View style={styles.adminInfo}>
@@ -776,13 +781,13 @@ const DeviceInfo = () => {
         ref={confirmRef}
         title={
           <Flex direction="column" justify="center" align="center">
-            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+            <Text style={{ fontSize: fontSize(16), fontWeight: 'bold' }}>
               {confirmContent?.content?.title}
             </Text>
             {confirmContent?.content?.img ? (
               <Image
                 source={{ uri: confirmContent?.content?.img }}
-                style={{ width: 120, height: 120 }}
+                style={{ width: px(120), height: px(120) }}
                 resizeMode="contain"
               />
             ) : (
@@ -795,8 +800,8 @@ const DeviceInfo = () => {
         submitBtn={
           <GradientButton
             colors={['#282828', '#4A4A4A']}
-            width={124}
-            height={40}
+            width={px(124)}
+            height={px(40)}
             onPress={async () => {
               confirmContent?.content?.img
                 ? handleChangeQRcode()

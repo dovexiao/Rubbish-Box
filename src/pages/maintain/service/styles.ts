@@ -1,40 +1,41 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F6F7FA',
-    paddingHorizontal: 16,
+    paddingHorizontal: px(16),
   },
   serviceItem: {
     width: '100%',
-    marginTop: 12,
-    padding: 16,
+    marginTop: px(12),
+    padding: px(16),
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: px(12),
   },
   itemTopBottom: {
     flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 20,
+    minHeight: px(20),
   },
   itemTopText: {
     flex: 1,
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#999999',
-    lineHeight: 17,
+    lineHeight: px(17),
   },
   diviler: {
     width: '100%',
-    height: 1,
-    marginVertical: 12,
+    height: px(1),
+    marginVertical: px(12),
     backgroundColor: 'rgba(51,51,51,0.1)',
   },
   text: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     fontWeight: 'bold',
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   rightText: {
     flex: 1,
@@ -44,15 +45,15 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 60,
+    paddingVertical: px(60),
   },
   emptyImage: {
-    width: 120,
-    height: 120,
+    width: px(120),
+    height: px(120),
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#666666',
-    marginTop: 16,
+    marginTop: px(16),
   },
 });

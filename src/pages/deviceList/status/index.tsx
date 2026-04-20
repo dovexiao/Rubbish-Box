@@ -4,6 +4,7 @@ import Flex from '@/components/Flex';
 import AppIcon from '@/components/AppIcon';
 import { LOCK_STATUS, LOCK_STATUS_NAME } from '@/constants';
 import { styles } from './style';
+import { px } from '@/utils/ui';
 
 const statusColor: Record<number, string> = {
   [LOCK_STATUS.FALL_SUCCESS]: '#FF873D',
@@ -35,7 +36,7 @@ function Status(props: { deviceStatus: number; overlay?: boolean }) {
       </Text>
       {overlay ? (
         <View style={styles.ml10}>
-          <AppIcon name="pull-down" size={20} color={color} />
+          <AppIcon name="pull-down" size={px(20)} color={color} />
         </View>
       ) : null}
     </Flex>

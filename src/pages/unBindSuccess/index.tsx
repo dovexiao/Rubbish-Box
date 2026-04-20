@@ -18,6 +18,7 @@ import {
 } from '@/utils';
 import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 import styles from '@/pages/unBindSuccess/styles';
+import { px } from '@/utils/ui';
 
 type RouteParams = {
   pages?: string; // handOver 场景
@@ -181,8 +182,8 @@ export default function UnBindSuccess() {
         <GradientButton
           colors={['#4A4A4A', '#282828']}
           style={styles.btn}
-          width={160}
-          height={44}
+          width={px(160)}
+          height={px(44)}
           onPress={() => void handleGoSettings()}
         >
           <Text style={styles.btnText}>前往设置</Text>

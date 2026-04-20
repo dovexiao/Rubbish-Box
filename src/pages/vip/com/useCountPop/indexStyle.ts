@@ -1,34 +1,35 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   num: {
     width: '100%',
-    height: 22,
+    height: px(22),
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
-    lineHeight: 22,
+    lineHeight: px(22),
     textAlign: 'center',
   },
 
   numRN: {
     width: '100%',
-    height: 22,
+    height: px(22),
     fontWeight: 'bold',
-    marginTop: 16,
-    marginBottom: 16,
-    fontSize: 16,
+    marginTop: px(16),
+    marginBottom: px(16),
+    fontSize: fontSize(16),
     color: '#333333',
-    lineHeight: 22,
+    lineHeight: px(22),
     textAlign: 'center',
   },
 
   popTitleText: {
-    height: 22,
+    height: px(22),
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
-    lineHeight: 22,
+    lineHeight: px(22),
     textAlign: 'center',
   },
 
@@ -37,41 +38,41 @@ export const styles = StyleSheet.create({
   },
 
   text: {
-    height: 20,
+    height: px(20),
     fontWeight: '400',
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
     textAlign: 'left',
   },
 
   chooseItem: {
-    height: 22,
+    height: px(22),
     justifyContent: 'center',
     alignItems: 'center',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#333333',
   },
 
   cancalBtn: {
-    width: 156,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
+    width: px(156),
+    height: px(48),
+    borderRadius: px(12),
+    borderWidth: px(1),
     borderStyle: 'solid',
     borderColor: 'rgba(0, 0, 0, 0.1)',
     fontWeight: '400',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#999999',
     textAlign: 'center',
   },
 
   confirmBtn: {
-    width: 156,
-    height: 48,
-    marginLeft: 15,
-    borderRadius: 12,
+    width: px(156),
+    height: px(48),
+    marginLeft: px(15),
+    borderRadius: px(12),
   },
 
   bgColor333: {
@@ -84,19 +85,19 @@ export const styles = StyleSheet.create({
 
   confirmBtnText: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#ffffff',
     textAlign: 'center',
   },
 
   usageCountInput: {
-    width: 327,
-    height: 44,
-    marginTop: 60,
-    paddingRight: 12,
-    borderRadius: 8,
+    width: px(327),
+    height: px(44),
+    marginTop: px(60),
+    paddingRight: px(12),
+    borderRadius: px(8),
     borderColor: 'rgba(0, 0, 0, 0.05)',
-    borderWidth: 1,
+    borderWidth: px(1),
     borderStyle: 'solid',
   },
 });

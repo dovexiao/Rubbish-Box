@@ -1,46 +1,47 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F6F7FA',
-    paddingHorizontal: 24,
+    paddingHorizontal: px(24),
   },
   item: {
     width: '100%',
-    minHeight: 60,
-    padding: 12,
-    marginTop: 12,
+    minHeight: px(60),
+    padding: px(12),
+    marginTop: px(12),
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: px(12),
     flexDirection: 'row',
     alignItems: 'center',
   },
   borderActive: {
-    borderWidth: 1,
+    borderWidth: px(1),
     borderColor: '#333333',
   },
   lockName: {
     flex: 1,
-    marginLeft: 12,
-    fontSize: 14,
+    marginLeft: px(12),
+    fontSize: fontSize(14),
     fontWeight: 'bold',
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 60,
+    paddingVertical: px(60),
   },
   emptyImage: {
-    width: 120,
-    height: 120,
+    width: px(120),
+    height: px(120),
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#666666',
-    marginTop: 16,
+    marginTop: px(16),
   },
 });

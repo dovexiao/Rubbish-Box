@@ -1,3 +1,4 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -7,60 +8,60 @@ const styles = StyleSheet.create({
     backgroundColor: '#F6F7FA',
   },
   tabsWrapper: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
+    paddingHorizontal: px(16),
+    marginBottom: px(12),
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#ffffff',
   },
   tabsBox: {
-    width: 220,
+    width: px(220),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   tab: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: px(10),
+    paddingVertical: px(6),
   },
   tabActive: {
-    borderBottomWidth: 2,
+    borderBottomWidth: px(2),
     borderBottomColor: '#333333',
   },
   tabText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#CCCCCC',
   },
   tabTextActive: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
     fontWeight: 'bold',
   },
   listContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: px(16),
   },
   recordItem: {
-    borderRadius: 12,
+    borderRadius: px(12),
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    marginBottom: 12,
+    paddingHorizontal: px(16),
+    paddingVertical: px(16),
+    marginBottom: px(12),
   },
   rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 12,
+    gap: px(12),
   },
   orderNoText: {
-    fontSize: 12,
+    fontSize: fontSize(12),
     color: '#999999',
-    lineHeight: 17,
+    lineHeight: px(17),
   },
   statusText: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
-    lineHeight: 20,
+    lineHeight: px(20),
   },
   statusProcessing: {
     color: '#ff873d',
@@ -71,32 +72,32 @@ const styles = StyleSheet.create({
   line: {
     height: 1,
     backgroundColor: 'rgba(234, 234, 234, 0.9)',
-    marginVertical: 12,
+    marginVertical: px(12),
   },
   label: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
     fontWeight: 'bold',
-    minWidth: 58,
+    minWidth: px(58),
   },
   value: {
-    fontSize: 14,
+    fontSize: fontSize(14),
     color: '#333333',
     flex: 1,
     textAlign: 'right',
   },
   descRow: {
-    marginTop: 4,
+    marginTop: px(4),
   },
   emptyBox: {
-    paddingTop: 80,
+    paddingTop: px(80),
     alignItems: 'center',
   },
   emptyText: {
-    marginTop: 8,
-    fontSize: 14,
+    marginTop: px(8),
+    fontSize: fontSize(14),
     color: '#666666',
-    },
+  },
 });
 
 export default styles;

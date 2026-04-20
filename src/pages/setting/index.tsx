@@ -26,6 +26,7 @@ import {
 } from '@/utils';
 import appManager from '@/utils/env/rn/appManager';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 export default function Setting() {
   const navigation = useNavigation<any>();
@@ -259,7 +260,7 @@ export default function Setting() {
           onPress={() => navigation.navigate('Account')}
         >
           <Text style={styles.itemText}>账号与安全</Text>
-          <AppIcon name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -268,7 +269,7 @@ export default function Setting() {
           onPress={() => navigation.navigate('Address' as never)}
         >
           <Text style={styles.itemText}>收货地址</Text>
-          <AppIcon name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
         </TouchableOpacity>
 
         <View style={styles.item}>
@@ -280,7 +281,7 @@ export default function Setting() {
                   ? 'https://g.18qjz.cn/img/boklock/setting/notice_switch_on.png'
                   : 'https://g.18qjz.cn/img/boklock/setting/notice_switch_off.png',
               }}
-              style={{ width: 40, height: 24 }}
+              style={{ width: px(40), height: px(24) }}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -298,7 +299,7 @@ export default function Setting() {
               onPress={handleCheckUpdate}
             >
               <Text style={styles.updateBtnText}>更新检测</Text>
-              <AppIcon name="a-headfor-20" size={16} color="#333333" />
+              <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
             </TouchableOpacity>
           </View>
         </View>
@@ -309,7 +310,7 @@ export default function Setting() {
           onPress={() => navigation.navigate('About' as never)}
         >
           <Text style={styles.itemText}>关于泊刻地锁</Text>
-          <AppIcon name="a-headfor-20" size={20} color="#333333" />
+          <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
         </TouchableOpacity>
 
         {isTest && (
@@ -319,7 +320,7 @@ export default function Setting() {
             onPress={() => navigation.navigate('TestDevice' as never)}
           >
             <Text style={styles.itemText}>泊刻地锁工厂测试</Text>
-            <AppIcon name="a-headfor-20" size={20} color="#333333" />
+            <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
           </TouchableOpacity>
         )}
       </View>

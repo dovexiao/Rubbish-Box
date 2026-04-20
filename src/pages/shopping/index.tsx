@@ -14,6 +14,7 @@ import AppIcon from '@/components/AppIcon';
 import { getGoodsList } from '@/services/mall';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { fontSize, px } from '@/utils/ui';
 
 type GoodsItemDTO = {
   id: number;
@@ -38,25 +39,25 @@ const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
       activeOpacity={0.9}
       style={{
         backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        marginBottom: 12,
+        borderRadius: px(12),
+        marginBottom: px(12),
         overflow: 'hidden',
-        width: CARD_WIDTH,
+        width: px(CARD_WIDTH),
       }}
       onPress={() => onPress(data.id)}
     >
       <Image
         source={{ uri: data.mainImage }}
-        style={{ width: '100%', height: CARD_HEIGHT, borderRadius: 12 }}
+        style={{ width: '100%', height: px(CARD_HEIGHT), borderRadius: px(12) }}
         resizeMode="cover"
       />
-      <View style={{ paddingLeft: 13, paddingBottom: 12 }}>
+      <View style={{ paddingLeft: px(13), paddingBottom: px(12) }}>
         <Text
           style={{
-            fontSize: 14,
+            fontSize: fontSize(14),
             color: '#333333',
             fontWeight: 'bold',
-            marginVertical: 8,
+            marginVertical: px(8),
           }}
           numberOfLines={2}
         >
@@ -66,7 +67,7 @@ const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
           <Text
             style={{
               color: '#FF0000',
-              fontSize: 14,
+              fontSize: fontSize(14),
               fontWeight: 'bold',
             }}
           >
@@ -74,8 +75,8 @@ const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
           </Text>
           <Text
             style={{
-              fontSize: 12,
-              marginLeft: 4,
+              fontSize: fontSize(12),
+              marginLeft: px(4),
               color: '#CCCCCC',
               textDecorationLine: 'line-through',
             }}
@@ -150,7 +151,7 @@ export default function Shopping() {
         }}
       >
         <Text style={styles.bottomBtnText}>绑定礼品卡</Text>
-        <AppIcon name="a-nextpage" color="#333333" size={20} />
+        <AppIcon name="a-nextpage" color="#333333" size={px(20)} />
       </TouchableOpacity>
     </View>
   );

@@ -26,6 +26,7 @@ import AppIcon from '@/components/AppIcon';
 import dayjs from 'dayjs';
 import { stringify } from '@/utils/stringify';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { px } from '@/utils/ui';
 
 const PAGE_SIZE = 999;
 
@@ -143,8 +144,8 @@ export default function MemberPage() {
         <Flex style={styles.mt24}>
           <Text
             style={{
-              marginLeft: 24,
-              marginRight: 4,
+              marginLeft: px(24),
+              marginRight: px(4),
               ...styles.title,
             }}
           >
@@ -161,15 +162,17 @@ export default function MemberPage() {
             });
           }}
         >
-          <AppIcon name="add" color="#333333" size={14} />
+          <AppIcon name="add" color="#333333" size={px(14)} />
           <Text style={styles.addBtnText}>添加成员，授权使用地锁</Text>
         </TouchableOpacity>
         <FlatList
           data={list}
-          style={{ marginTop: 12, marginBottom: 24 }}
+          style={{ marginTop: px(12), marginBottom: px(24) }}
           keyExtractor={item => String(item.id)}
           renderItem={({ item, index }) => (
-            <View style={[styles.card, { marginTop: index === 0 ? 0 : 12 }]}>
+            <View
+              style={[styles.card, { marginTop: index === 0 ? 0 : px(12) }]}
+            >
               <Flex align="center" justify="between">
                 <Text style={styles.username}>{item.username}</Text>
                 <TouchableOpacity
@@ -180,7 +183,11 @@ export default function MemberPage() {
                 >
                   <Flex align="center">
                     <Text style={styles.username}>编辑</Text>
-                    <AppIcon name="a-headfor-20" size={18} color="#333333" />
+                    <AppIcon
+                      name="a-headfor-20"
+                      size={px(18)}
+                      color="#333333"
+                    />
                   </Flex>
                 </TouchableOpacity>
               </Flex>
@@ -271,7 +278,7 @@ export default function MemberPage() {
                 >
                   <AppIcon
                     name={currentRow?.isForever ? 'selected' : 'unselected'}
-                    size={20}
+                    size={px(20)}
                     color={currentRow?.isForever ? '#333333' : '#E1E1E1'}
                   />
                   <Text style={[styles.limitLabel, styles.ml12]}>永久</Text>
@@ -291,7 +298,7 @@ export default function MemberPage() {
                 >
                   <AppIcon
                     name={currentRow?.isForever ? 'unselected' : 'selected'}
-                    size={20}
+                    size={px(20)}
                     color={currentRow?.isForever ? '#E1E1E1' : '#333333'}
                   />
                   <Text style={[styles.limitLabel, styles.ml12]}>自定义</Text>
@@ -320,7 +327,7 @@ export default function MemberPage() {
                     <View style={styles.ml8}>
                       <AppIcon
                         name={'a-headfor-20'}
-                        size={24}
+                        size={px(24)}
                         color="#333333"
                       />
                     </View>
@@ -335,8 +342,8 @@ export default function MemberPage() {
           <Flex style={styles.btnContainerWrapper} justify={'center'}>
             <GradientButton
               colors={['transparent', 'transparent']}
-              width={156}
-              height={48}
+              width={px(156)}
+              height={px(48)}
               onPress={() => {
                 setPopRef(false);
               }}
@@ -348,8 +355,8 @@ export default function MemberPage() {
               colors={
                 isChecked ? ['#333333', '#333333'] : ['#999999', '#999999']
               }
-              width={156}
-              height={48}
+              width={px(156)}
+              height={px(48)}
               onPress={() => {
                 if (isChecked) {
                   onEdit();

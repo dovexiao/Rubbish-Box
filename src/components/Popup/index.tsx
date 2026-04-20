@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import AppIcon from '@/components/AppIcon';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 export type PopupProps = {
   visible: boolean;
@@ -53,7 +54,7 @@ export default function Popup({
   bodyStyle,
   modalType = 'portal',
 }: PopupProps) {
-  const basePaddingBottom = 20;
+  const basePaddingBottom = px(20);
   const [paddingBottomValue, setPaddingBottomValue] =
     useState(basePaddingBottom);
   // 每次 visible 变化时重新创建 Animated.Value，避免 native driver 冲突
@@ -101,7 +102,7 @@ export default function Popup({
       const height = e.endCoordinates?.height || 0;
       const keyboardOffset =
         Platform.OS === 'android'
-          ? Math.max(0, Math.min(220, height - 120))
+          ? Math.max(0, Math.min(px(220), height - px(120)))
           : height;
       // 先停止之前的动画
       currentPaddingBottom.stopAnimation();
@@ -144,8 +145,8 @@ export default function Popup({
       modalType={modalType}
       closable={false}
       style={{
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
+        borderTopLeftRadius: px(24),
+        borderTopRightRadius: px(24),
         paddingBottom: paddingBottomValue,
         overflow: 'hidden',
       }}
@@ -178,7 +179,7 @@ export default function Popup({
                 onPress={onClose}
                 activeOpacity={0.8}
               >
-                <AppIcon name="close" size={20} color="#999999" />
+                <AppIcon name="close" size={px(20)} color="#999999" />
               </TouchableOpacity>
             )}
           </View>

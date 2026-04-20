@@ -15,6 +15,7 @@ import PopConfirm from '@/components/popConfirm';
 import styles from './styles';
 import GradientButton from '@/components/GradientButton';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 interface AddressItem {
   id: number | string;
@@ -124,7 +125,7 @@ export default function Address() {
           >
             <Text style={styles.itemEdit}>编辑</Text>
           </TouchableOpacity>
-          <AppIcon name="a-headfor-20" size={12} color="#333333" />
+          <AppIcon name="a-headfor-20" size={px(12)} color="#333333" />
         </View>
         <View style={styles.rowBottom}>
           <Text style={styles.itemAddress}>{`${item.province || ''}${
@@ -185,9 +186,9 @@ export default function Address() {
 
         <View style={styles.footerBtnWrap}>
           <GradientButton
-            btnBorderRadius={16}
-            width={196}
-            height={48}
+            btnBorderRadius={px(16)}
+            width={px(196)}
+            height={px(48)}
             colors={['#4A4A4A', '#282828']}
             style={styles.addBtn}
             onPress={() => {

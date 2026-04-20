@@ -1,19 +1,20 @@
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    height: 241,
-    paddingTop: 40,
+    height: px(241),
+    paddingTop: px(40),
     width: '100%',
   },
   actionButton: {
     position: 'absolute',
-    top: 2,
-    right: 16,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 12,
+    top: px(2),
+    right: px(16),
+    paddingVertical: px(6),
+    paddingHorizontal: px(10),
+    borderRadius: px(12),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -21,13 +22,13 @@ const styles = StyleSheet.create({
   },
   groupCount: {
     position: 'absolute',
-    top: 60,
+    top: px(60),
     left: 0,
   },
   groupCountText: {
-    fontSize: 32,
+    fontSize: fontSize(32),
     fontWeight: '500',
-    lineHeight: 45,
+    lineHeight: px(45),
   },
   actionButtonDeep: {
     backgroundColor: 'rgba(0,0,0,0.2)',
@@ -36,8 +37,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.05)',
   },
   actionText: {
-    fontSize: 12,
-    lineHeight: 17,
+    fontSize: fontSize(12),
+    lineHeight: px(17),
     fontWeight: '400',
   },
   actionTextDeep: {
@@ -47,15 +48,15 @@ const styles = StyleSheet.create({
     color: 'rgba(51,51,51,0.8)',
   },
   actionIcon: {
-    marginLeft: 2,
+    marginLeft: px(2),
   },
   staticImage: {
     width: '100%',
-    height: 210,
+    height: px(210),
   },
   gifImage: {
     width: '100%',
-    height: 210,
+    height: px(210),
   },
 });
 

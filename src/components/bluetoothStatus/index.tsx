@@ -33,6 +33,7 @@ import Flex from '../Flex';
 import PopConfirm, { type PopConfirmRef } from '../popConfirm';
 import Popup from '../Popup';
 import { styles } from './style';
+import { px } from '@/utils/ui';
 
 // 弹窗类型定义
 type ModalType = 'bluetooth_off' | 'not_connected' | 'not_paired' | 'unknown';
@@ -626,7 +627,7 @@ export const BluetoothStatus = forwardRef<BluetoothStatusRef, Props>(
           visible={groupListVisible}
           onClose={() => setGroupListVisible(false)}
           title="组合设备需连接上蓝牙进行切换"
-          minHeight={300}
+          minHeight={px(300)}
         >
           {groupListBody}
         </Popup>

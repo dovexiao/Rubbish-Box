@@ -23,6 +23,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Flex from '@/components/Flex';
 import { styles as styleSheet } from './indexStyle';
 import { TextInput } from '@/components';
+import { px } from '@/utils/ui';
 
 const selector = [
   { label: '不限', value: 0 },
@@ -168,12 +169,12 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
               bottom:
                 mode || !keyboardVisible
                   ? 0
-                  : Math.max(keyboardHeight - insets.bottom, 0),
+                  : px(Math.max(keyboardHeight - insets.bottom, 0)),
               paddingBottom: insets.bottom,
               backgroundColor: '#fff',
               transform: [{ translateY }],
-              borderTopLeftRadius: 16,
-              borderTopRightRadius: 16,
+              borderTopLeftRadius: px(16),
+              borderTopRightRadius: px(16),
             }}
           >
             <Flex
@@ -182,18 +183,18 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
               justify="between"
               align="center"
             >
-              <View style={{ width: 24, height: 24 }} />
+              <View style={{ width: px(24), height: px(24) }} />
               <Text style={styleSheet.popTitleText}>使用次数</Text>
               <Flex
                 isTouchView
                 onPress={() => setIsOpen(false)}
-                style={{ marginRight: 16 }}
+                style={{ marginRight: px(16) }}
               >
-                <AppIcon name={'close'} size={24} color="#333333" />
+                <AppIcon name={'close'} size={px(24)} color="#333333" />
               </Flex>
             </Flex>
 
-            <View style={{ paddingHorizontal: 24 }}>
+            <View style={{ paddingHorizontal: px(24) }}>
               <Flex
                 style={styleSheet.useageCountTitle}
                 direction="row"
@@ -204,12 +205,12 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
                   isTouchView
                   align="center"
                   onPress={() => setMode(true)}
-                  style={{ marginRight: 24 }}
+                  style={{ marginRight: px(24) }}
                 >
                   <AppIcon
                     name={mode ? 'selected' : 'unselected'}
                     color={mode ? '#333333' : '#e1e1e1'}
-                    size={24}
+                    size={px(24)}
                   />
                   <Text style={[styleSheet.text, { marginLeft: 4 }]}>
                     选择次数
@@ -219,16 +220,16 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
                   <AppIcon
                     name={mode ? 'unselected' : 'selected'}
                     color={mode ? '#e1e1e1' : '#333333'}
-                    size={24}
+                    size={px(24)}
                   />
-                  <Text style={[styleSheet.text, { marginLeft: 4 }]}>
+                  <Text style={[styleSheet.text, { marginLeft: px(4) }]}>
                     自定义次数
                   </Text>
                 </Flex>
               </Flex>
 
               {mode ? (
-                <View style={{ width: '100%', marginVertical: 16 }}>
+                <View style={{ width: '100%', marginVertical: px(16) }}>
                   <PickerView
                     data={selector as any}
                     value={[Number(pickerValue ?? 0)]}
@@ -236,8 +237,8 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
                       const value0 = Array.isArray(v) ? v[0] : 0;
                       setPickerValue(String(value0 ?? 0));
                     }}
-                    style={{ height: 190 }}
-                    itemHeight={44}
+                    style={{ height: px(190) }}
+                    itemHeight={px(44)}
                     itemStyle={{ padding: 0 }}
                   />
                 </View>
@@ -278,8 +279,8 @@ const UseCountPop = forwardRef<UseCountPopRef, UseCountPopProps>(
               <Flex
                 style={{
                   width: '100%',
-                  marginTop: 16,
-                  marginBottom: 8,
+                  marginTop: px(16),
+                  marginBottom: px(8),
                 }}
                 direction="row"
                 justify="center"

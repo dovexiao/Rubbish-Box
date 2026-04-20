@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import AppIcon from '@/components/AppIcon';
+import { fontSize, px } from '@/utils/ui';
 
 export interface TextInputProps extends RNTextInputProps {
   // 是否显示一键清除按钮（×），默认不显示
@@ -62,7 +63,7 @@ export const TextInput = React.forwardRef<
     type,
     defaultValue,
     onChangeText,
-    clearIconStyle = { width: 16, color: '#cccccc' },
+    clearIconStyle = { width: px(16), color: '#cccccc' },
     ...restProps
   } = props;
 
@@ -194,17 +195,17 @@ export const TextInput = React.forwardRef<
           activeOpacity={0.8}
           onPress={handleClear}
           style={{
-            width: clearIconStyle.width || 16,
-            height: clearIconStyle.width || 16,
+            width: clearIconStyle.width || px(16),
+            height: clearIconStyle.width || px(16),
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: clearIconStyle.color || '#bcbcbc',
-            borderRadius: (clearIconStyle.width || 8) / 2,
-            marginLeft: 4,
+            borderRadius: (clearIconStyle.width || px(8)) / 2,
+            marginLeft: px(4),
           }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          hitSlop={{ top: px(10), bottom: px(10), left: px(10), right: px(10) }}
         >
-          <AppIcon name="close" size={14} color={'#fff'} />
+          <AppIcon name="close" size={px(14)} color={'#fff'} />
         </TouchableOpacity>
       ) : null}
     </View>
@@ -214,10 +215,10 @@ export const TextInput = React.forwardRef<
 const styles = StyleSheet.create({
   defaultInput: {
     padding: 0,
-    paddingLeft: 8,
-    fontSize: 14,
-    lineHeight: 20,
-    height: 20,
+    paddingLeft: px(8),
+    fontSize: fontSize(14),
+    lineHeight: px(20),
+    height: px(20),
     color: '#333333',
   },
   clearContainer: {
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
   clearInput: {
     flex: 1,
     paddingRight: 0,
-    paddingLeft: 8,
+    paddingLeft: px(8),
   },
 });
 

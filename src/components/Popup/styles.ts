@@ -1,18 +1,19 @@
+import { px, fontSize } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   sheet: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: px(24),
+    borderTopRightRadius: px(24),
     overflow: 'hidden',
     width: 'auto',
   },
 
   header: {
-    height: 40,
-    paddingHorizontal: 12,
-    top: 8,
+    height: px(40),
+    paddingHorizontal: px(12),
+    top: px(8),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
 
   title: {
     flex: 1,
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontWeight: 'bold',
     color: '#333333',
     textAlign: 'center',
@@ -29,12 +30,12 @@ const styles = StyleSheet.create({
   },
 
   closeBtn: {
-    width: 24,
-    height: 24,
+    width: px(24),
+    height: px(24),
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    right: 12,
+    right: px(12),
     top: 0,
   },
 
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   },
 
   footerGap: {
-    width: 12,
+    width: px(12),
   },
 });
 

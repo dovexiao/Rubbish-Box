@@ -7,6 +7,7 @@ import { lastVersion } from '@/services/deviceInfo';
 import { styles } from './style';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { showToast } from '@/utils';
+import { px } from '@/utils/ui';
 
 type LastVersionInfo = {
   version?: string;
@@ -81,7 +82,7 @@ export default function FirmwareVersion() {
             activeOpacity={0.8}
           >
             <Text style={styles.titleText}>历史记录</Text>
-            <AppIcon name="a-headfor-12" color="#333333" size={16} />
+            <AppIcon name="a-headfor-12" color="#333333" size={px(16)} />
           </TouchableOpacity>
         ),
       }}
