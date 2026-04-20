@@ -9,6 +9,7 @@ import { View, Text, Image, ScrollView, Dimensions } from 'react-native';
 import Video from 'react-native-video';
 import AppIcon from '@/components/AppIcon';
 import styles from './styles';
+import { px } from '@/utils/ui';
 
 const DEFAULT_BG = 'https://g.18qjz.cn/img/boklock/default_ad_bg.png';
 
@@ -187,8 +188,10 @@ export default function MediaCarousel({ itemList }: MediaCarouselProps) {
                   />
                 ) : (
                   <View style={styles.videoPlaceholder}>
-                    <AppIcon name="play" size={40} color="#fff" />
-                    <Text style={{ color: '#fff', marginTop: 8 }}>视频</Text>
+                    <AppIcon name="play" size={px(40)} color="#fff" />
+                    <Text style={{ color: '#fff', marginTop: px(8) }}>
+                      视频
+                    </Text>
                   </View>
                 )
               ) : /\.(png|jpe?g|webp|gif)$/i.test(item) ? (
