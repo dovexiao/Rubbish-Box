@@ -31,7 +31,7 @@ type GoodsCardProps = {
 };
 
 const CARD_HEIGHT = 164;
-const CARD_WIDTH = (Dimensions.get('window').width - 32 - 13) / 2;
+const CARD_WIDTH = (Dimensions.get('window').width - px(32) - px(13)) / 2;
 
 const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
   return (
@@ -42,13 +42,13 @@ const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
         borderRadius: px(12),
         marginBottom: px(12),
         overflow: 'hidden',
-        width: px(CARD_WIDTH),
+        width: CARD_WIDTH,
       }}
       onPress={() => onPress(data.id)}
     >
       <Image
         source={{ uri: data.mainImage }}
-        style={{ width: '100%', height: px(CARD_HEIGHT), borderRadius: px(12) }}
+        style={{ width: '100%', aspectRatio: 1, borderRadius: px(12) }}
         resizeMode="cover"
       />
       <View style={{ paddingLeft: px(13), paddingBottom: px(12) }}>

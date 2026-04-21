@@ -271,7 +271,7 @@ export default function VipRecordPage() {
     <PageContainer
       backgroundColor="#F6F7FA"
       statusBarStyle="dark-content"
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       scrollable={false}
       pageNavProps={{ text: '贵宾邀请记录', showBack: true }}
       loading={initialLoading && list.length === 0}

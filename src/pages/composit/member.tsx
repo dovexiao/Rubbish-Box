@@ -131,11 +131,12 @@ export default function MemberPage() {
         text: `${
           route.params?.['type'] == 'single' ? '单个' : '组合'
         }【${lockName}】设备`,
+        background: '#FFFFFF',
       }}
-      backgroundColor="#FFFFFF"
+      backgroundColor="#f6f7fa"
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       onRefresh={() => {
         getList(true);
       }}

@@ -188,9 +188,8 @@ export const styles = StyleSheet.create({
 
   addBtnText: {
     marginLeft: px(8),
-    height: px(20),
-    fontWeight: 'bold',
-    fontSize: fontSize(12),
+    fontWeight: '500',
+    fontSize: fontSize(14),
     color: '#333333',
     lineHeight: px(20),
     textAlign: 'center',

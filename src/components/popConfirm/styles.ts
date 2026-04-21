@@ -31,9 +31,15 @@ const popupStyle = StyleSheet.create({
   },
   btnContainerCloseText: {
     color: '#999999',
+    fontWeight: '400',
+    fontSize: fontSize(14),
+    lineHeight: px(20),
   },
   btnContainerConfirmText: {
     color: '#ffffff',
+    fontWeight: '500',
+    fontSize: fontSize(14),
+    lineHeight: px(20),
   },
 });
 

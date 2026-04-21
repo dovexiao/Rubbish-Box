@@ -188,7 +188,7 @@ export default function MemberList() {
       backgroundColor="#F6F7FA"
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       scrollable={false}
       pageNavProps={{
         text: '成员管理',

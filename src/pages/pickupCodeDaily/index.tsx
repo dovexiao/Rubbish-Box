@@ -339,7 +339,7 @@ export default function PickupCodeDaily() {
 
             <GradientButton
               colors={
-                canSubmit ? ['#333333', '#333333'] : ['#EEEEEE', '#EEEEEE']
+                canSubmit ? ['#333333', '#333333'] : ['#999999', '#999999']
               }
               width={px(196)}
               height={px(48)}
@@ -350,7 +350,7 @@ export default function PickupCodeDaily() {
               <Text
                 style={[
                   styles.submitBtnText,
-                  !canSubmit && { color: '#666666' },
+                  !canSubmit && { color: '#FFFFFF' },
                 ]}
               >
                 绑定领取

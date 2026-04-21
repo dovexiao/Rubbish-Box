@@ -120,7 +120,7 @@ export default function Order() {
       backgroundColor="#F6F7FA"
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       scrollable={false}
       pageNavProps={{
         text: '我的订单',

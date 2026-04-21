@@ -977,7 +977,7 @@ const VipPage = () => {
                 isTouchView
                 onPress={() => setSharePopupVisible(false)}
               >
-                <Text>取消</Text>
+                <Text style={styles.cancalBtnText}>取消</Text>
               </Flex>
               <Flex
                 direction={'column'}
@@ -998,7 +998,7 @@ const VipPage = () => {
                   void onShare(shareDetail);
                 }}
               >
-                <Text style={{ color: '#ffffff' }}>发送给贵宾</Text>
+                <Text style={styles.confirmBtnTextPop}>发送给贵宾</Text>
               </Flex>
             </Flex>
           </View>

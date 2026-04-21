@@ -69,8 +69,9 @@ const styles = StyleSheet.create({
   },
   submitBtnText: {
     fontSize: fontSize(16),
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: '#FFFFFF',
+    lineHeight: px(22),
   },
   recordBtn: {
     flexDirection: 'row',

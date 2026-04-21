@@ -156,10 +156,10 @@ export default function Address() {
 
   return (
     <PageContainer
-      backgroundColor="#FFFFFF"
+      backgroundColor="#f6f7fa"
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       pageNavProps={{
         text: '我的地址',
         showBack: true,

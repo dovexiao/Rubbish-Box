@@ -15,6 +15,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { getOperateResult, lockApplyOpt } from '@/services/device';
 import { userScanDevice } from '@/services/user';
 import { loopFunc } from '@/utils';
+import { px } from '@/utils/ui';
 
 interface ImageMapProps {
   closeCoverGif: string;
@@ -319,13 +320,13 @@ export default function ApplyRecordDetail() {
             }}
           >
             <Text style={styles.botText}>前往商城购买同款地锁 &nbsp;</Text>
-            <AppIcon name={'arrows1'} size={16} color="#333333"></AppIcon>
+            <AppIcon name={'arrows1'} size={px(16)} color="#333333"></AppIcon>
           </Flex>
           <PopConfirm
             title={
               <Flex direction={'column'} align={'center'}>
                 <Text style={styles.popTitle}>温馨提示</Text>
-                <Text style={[styles.popText, { marginBottom: 4 }]}>
+                <Text style={[styles.popText, { marginBottom: px(4) }]}>
                   {successCount}台地锁{optName}成功
                 </Text>
                 <Text style={styles.popText}>

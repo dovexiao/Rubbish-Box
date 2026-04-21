@@ -68,7 +68,7 @@ export default function MyDevice() {
   };
   return (
     <PageContainer
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#ffffff"
       pageNavProps={{

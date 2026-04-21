@@ -214,7 +214,7 @@ const styles = {
   warningIcon: {
     position: 'absolute' as const,
     top: px(6),
-    right: px(10),
+    right: 0,
     width: px(32),
     height: px(32),
   },

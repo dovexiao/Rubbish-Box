@@ -117,7 +117,7 @@ export default function FeedbackRecord() {
       backgroundColor="#F6F7FA"
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       pageNavProps={{
         text: '意见反馈记录',
         showBack: true,

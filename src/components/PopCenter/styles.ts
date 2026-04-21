@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   },
   footerBtnText: {
     fontSize: fontSize(14),
+    lineHeight: px(22),
     fontWeight: '400',
     color: '#999',
     textAlign: 'center',
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
   },
   confirmBtn: {
     backgroundColor: '#333333',
+    fontWeight: '500',
   },
   cancalBtnText: {
     color: '#999999',

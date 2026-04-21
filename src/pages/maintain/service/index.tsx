@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   ListRenderItem,
@@ -35,40 +35,53 @@ export default function MaintainService() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const listRef = useRef<RepairItem[]>([]);
+  const loadingRef = useRef(false);
 
-  const loadList = useCallback(
-    async (reload: boolean) => {
-      if (loading) return;
-      if (reload) {
-        setRefreshing(true);
-        setInitialLoading(true);
+  useEffect(() => {
+    listRef.current = list;
+  }, [list]);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  const loadList = useCallback(async (reload: boolean) => {
+    if (loadingRef.current) return;
+    if (reload) {
+      setRefreshing(true);
+      setInitialLoading(true);
+    } else {
+      loadingRef.current = true;
+      setLoading(true);
+    }
+    try {
+      const offset = reload ? 0 : listRef.current.length;
+      const res = await getRepairList({ offset, pageSize: PAGE_SIZE });
+      if (Number(res?.code) === 200) {
+        const data = (res as any).data || res;
+        const rows: RepairItem[] = Array.isArray(data?.list) ? data.list : [];
+        setList(prev => {
+          const next = reload ? rows : [...prev, ...rows];
+          listRef.current = next;
+          return next;
+        });
+        setComplete(rows.length < PAGE_SIZE);
       } else {
-        setLoading(true);
+        showToast({
+          title: (res as any)?.message || (res as any)?.msg || '获取失败',
+          icon: 'info',
+        });
       }
-      try {
-        const offset = reload ? 0 : list.length;
-        const res = await getRepairList({ offset, pageSize: PAGE_SIZE });
-        if (Number(res?.code) === 200) {
-          const data = (res as any).data || res;
-          const rows: RepairItem[] = Array.isArray(data?.list) ? data.list : [];
-          setList(prev => (reload ? rows : [...prev, ...rows]));
-          setComplete(rows.length < PAGE_SIZE);
-        } else {
-          showToast({
-            title: (res as any)?.message || (res as any)?.msg || '获取失败',
-            icon: 'info',
-          });
-        }
-      } catch (e) {
-        showToast({ title: '获取服务记录失败', icon: 'info' });
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-        setInitialLoading(false);
-      }
-    },
-    [list.length, loading],
-  );
+    } catch (e) {
+      showToast({ title: '获取服务记录失败', icon: 'info' });
+    } finally {
+      loadingRef.current = false;
+      setLoading(false);
+      setRefreshing(false);
+      setInitialLoading(false);
+    }
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -120,7 +133,7 @@ export default function MaintainService() {
       backgroundColor="#F6F7FA"
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       scrollable={false}
       pageNavProps={{
         text: '服务记录',

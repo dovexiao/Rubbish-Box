@@ -31,7 +31,7 @@ export type PopCenterProps = {
   contentStyle?: ViewStyle;
   bodyStyle?: ViewStyle;
   width?: number;
-  height?: number;
+  height?: number | 'auto';
   btnWidth?: number;
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
@@ -139,6 +139,12 @@ const PopCenter = forwardRef<PopCenterRef, PopCenterProps>(
         animationType="fade"
         footer={[]}
         style={[styles.container, { width }]}
+        styles={{
+          innerContainer: {
+            paddingTop: 0,
+            backgroundColor: 'transparent',
+          },
+        }}
       >
         <Animated.View
           style={[
