@@ -388,7 +388,7 @@ const VipPage = () => {
       backgroundColor="#FFFFFF"
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
-      safeAreaEdges={['top', 'bottom']}
+      safeAreaEdges={['top']}
       scrollable
       footer={
         <Flex
