@@ -64,7 +64,12 @@ const ForgetPasswordReset = () => {
       try {
         const sysInfo = await cacheGetSync('sysInfo');
         if (sysInfo?.platform) {
-          device.platform = sysInfo.platform === 'ios' ? 'ios' : 'android';
+          device.platform =
+            sysInfo.platform === 'ios'
+              ? 'ios'
+              : sysInfo.platform === 'android'
+              ? 'android'
+              : 'harmony';
           device.brand = sysInfo.brand?.toLowerCase();
           device.deviceId =
             device.platform !== 'ios' ? await push.getDeviceToken() : '';

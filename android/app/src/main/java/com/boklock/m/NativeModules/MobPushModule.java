@@ -24,6 +24,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -801,5 +802,24 @@ public class MobPushModule extends ReactContextBaseJavaModule {
       }
     }
     reactContext.startActivity(localIntent);
+  }
+
+  @ReactMethod
+  public void getInitialNotification(Promise promise) {
+    android.app.Activity currentActivity = getCurrentActivity();
+    if (currentActivity != null) {
+      android.content.Intent intent = currentActivity.getIntent();
+      if (intent != null && intent.hasExtra("pushData")) {
+        String pushData = intent.getStringExtra("pushData");
+        WritableMap map = Arguments.createMap();
+        map.putBoolean("success", true);
+        map.putString("res", pushData);
+        map.putString("error", null);
+        promise.resolve(map);
+        intent.removeExtra("pushData");
+        return;
+      }
+    }
+    promise.resolve(null);
   }
 }

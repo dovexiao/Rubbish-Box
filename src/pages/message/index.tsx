@@ -10,6 +10,7 @@ import {
   SectionList,
   Text,
   TouchableOpacity,
+  Image,
   View,
 } from 'react-native';
 import { PageContainer } from '@/components';
@@ -28,6 +29,16 @@ type SectionItem = {
   title: string;
   date: string;
   data: messagesProps[];
+};
+
+const MessageTypeIconMap: Record<number, string> = {
+  1: 'battery_low', // 电量低
+  2: 'collision', // 碰撞
+  3: 'install_done', // 安装完成
+  4: 'high_temp', // 高温
+  5: 'offline', // 设备离线
+  6: 'fire', // 火焰
+  7: 'occupyed', // 占位
 };
 
 function countMessages(list: msgListProps[] | null | undefined) {
@@ -240,7 +251,18 @@ export default function MessageScreen() {
 
           <View style={styles.messageBody}>
             <View style={styles.messageMetaRow}>
-              <AppIcon name="explain" size={px(20)} color="#333333" />
+              {item.messageType == 3 ? (
+                <AppIcon name="explain" size={20} color="#333333" />
+              ) : (
+                <Image
+                  style={styles.iconImg}
+                  source={{
+                    uri: `https://g.18qjz.cn/img/boklock/message/${
+                      MessageTypeIconMap[item.messageType]
+                    }.png`,
+                  }}
+                />
+              )}
               <Text style={styles.messageType} numberOfLines={1}>
                 {typeText}
               </Text>

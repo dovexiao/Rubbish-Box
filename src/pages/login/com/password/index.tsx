@@ -101,9 +101,16 @@ const Password: React.FC<PasswordProps> = ({
   };
 
   useEffect(() => {
-    eventCenter.on('onNext', () => {
+    const handler = () => {
       onSubmit();
-    });
+    };
+    eventCenter.on('onNext', handler);
+    return () => {
+      eventCenter.off('onNext', handler);
+    };
+  }, [mobile, password, agree, initialMobile]);
+
+  useEffect(() => {
     if (initialMobile) {
       setMobile(initialMobile);
     }

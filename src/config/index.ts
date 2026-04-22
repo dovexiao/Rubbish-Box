@@ -36,6 +36,8 @@ const BASE_URL_MAP: Record<string, string> = {
 export const BASE_URL =
   Config.API_BASE_URL || BASE_URL_MAP[DEPLOY_ENV] || 'https://api.example.com';
 
+// export const BASE_URL = 'https://boke-api.18qjz.cn';
+
 // 获取 API 版本
 export const API_VERSION = Config.API_VERSION || 'v1';
 

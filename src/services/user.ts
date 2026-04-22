@@ -389,3 +389,9 @@ export const getUnUseCount = createFetch<any, any>(
   '/boke/userLockInvite/unUseCount',
   'GET',
 );
+
+// 获取站内推送消息
+export const getMessagePush = createFetch<any, any>(
+  '/boke/userApi/messagePush',
+  'POST',
+);

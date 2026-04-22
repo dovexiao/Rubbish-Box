@@ -92,4 +92,8 @@ export const styles = StyleSheet.create({
   footerSpace: {
     height: px(16),
   },
+  iconImg:{
+    width:px(20),
+    height:px(20)
+  }
 });

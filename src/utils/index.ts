@@ -409,14 +409,24 @@ export const getMobPushDeviceInfo = async () => {
           const sys = await getSystemInfo();
           stored = {
             platform:
-              stored?.platform || (sys.platform === 'ios' ? 'ios' : 'android'),
+              stored?.platform ||
+              (sys.platform === 'ios'
+                ? 'ios'
+                : sys.platform === 'android'
+                ? 'android'
+                : 'harmony'),
             brand: stored?.brand || sys.brand?.toLowerCase() || '',
             ...stored,
           };
         } catch {
           stored = {
             platform:
-              stored?.platform || (Platform.OS === 'ios' ? 'ios' : 'android'),
+              stored?.platform ||
+              (Platform.OS === 'ios'
+                ? 'ios'
+                : Platform.OS === 'android'
+                ? 'android'
+                : 'harmony'),
             brand: stored?.brand || '',
             ...stored,
           };
@@ -590,10 +600,14 @@ export const getMobPushDeviceInfo = async () => {
     ensureRegistrationIdListener();
 
     const sys = await getSystemInfo();
-    const isIOS = sys.platform === 'ios';
 
     const info: any = {
-      platform: isIOS ? 'ios' : 'android',
+      platform:
+        sys.platform === 'ios'
+          ? 'ios'
+          : sys.platform === 'android'
+          ? 'android'
+          : 'harmony',
       brand: sys.brand?.toLowerCase() || '',
     };
 
@@ -737,11 +751,28 @@ export const jumpToPage = async (): Promise<{ remove?: () => void }> => {
       } catch (error) {}
 
       // 无论消息携带何种内容，全部跳转到消息中心 Message 页面（业务需求）
-      navigate('Message' as any);
+      setTimeout(() => {
+        navigate('Message' as any);
+      }, 500);
     };
 
     // 监听推送消息打开事件
     appPush.onNotifyMessageOpenedReceive?.(handleNotificationOpened);
+
+    // 检查冷启动时是否携带了推送的Intent
+    if (
+      Platform.OS === 'android' &&
+      typeof (appPush as any).getInitialNotification === 'function'
+    ) {
+      (appPush as any)
+        .getInitialNotification()
+        .then((res: any) => {
+          if (res) {
+            handleNotificationOpened({ res });
+          }
+        })
+        .catch(() => {});
+    }
 
     // 返回移除监听器的函数
     return {

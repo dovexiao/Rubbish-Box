@@ -109,7 +109,12 @@ function initAppUpdateInfo() {
  * 检查 Bundle 热更新
  */
 async function onHotUpdateReady(callback: (bundleZipFile?: string) => void) {
-  const client = Platform.OS === 'ios' ? 'ios' : 'android';
+  const client =
+    Platform.OS === 'ios'
+      ? 'ios'
+      : Platform.OS === 'android'
+      ? 'android'
+      : 'harmony';
   const deployEnv = Config.ENV || (__DEV__ ? 'development' : 'production');
 
   try {

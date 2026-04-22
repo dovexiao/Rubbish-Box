@@ -59,6 +59,7 @@ import { GlobalLoading, GlobalToast } from '@/components';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { StoreProvider } from '@/store/provider';
 import { fontSize, px } from '@/utils/ui';
+import { MessageNoticeDialogHost } from '@/components/MessageNoticeDialog';
 
 // Harmony debug mode: silence in-app LogBox overlays.
 // if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
@@ -1081,6 +1082,7 @@ function App() {
                   >
                     {globalPopConfirmConfig?.children || undefined}
                   </PopConfirm>
+                  <MessageNoticeDialogHost />
                 </SafeAreaProvider>
               </GestureHandlerRootView>
             </ThemeProvider>

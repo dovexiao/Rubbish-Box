@@ -27,6 +27,8 @@ type MineInfo = {
   avatar?: string;
   bgUrl?: string;
   isTest?: boolean;
+  inPushFlag?: number; //站内推送开关：0-关闭 1-开启
+  mobPushFlag?: number; //设备端推送开关：0-关闭 1-开启，无设备注册时为null
 };
 
 export default function Mine() {
@@ -175,7 +177,12 @@ export default function Mine() {
       {
         icon: 'setting' as const,
         label: '设置',
-        onPress: () => navigation.navigate('Setting', { isTest: info?.isTest }),
+        onPress: () =>
+          navigation.navigate('Setting', {
+            isTest: info?.isTest,
+            inPushFlag: info?.inPushFlag, //站内推送开关：0-关闭 1-开启
+            mobPushFlag: info?.mobPushFlag, //设备端推送开关：0-关闭 1-开启，无设备注册时为null
+          }),
       },
     ],
     [navigation, info],

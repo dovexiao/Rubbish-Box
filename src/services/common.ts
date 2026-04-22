@@ -52,6 +52,12 @@ export const getMiniVersion = createFetch<any, any>(
   'GET',
 );
 
+// 切换站内推送或设备端推送开关
+export const changePushFlag = createFetch<any, any>(
+  '/boke/user/pushFlag',
+  'POST',
+);
+
 // 安卓微信支付
 export const appTradePay = createFetch<any, any>(
   '/boke/custom/trade/pay/app',

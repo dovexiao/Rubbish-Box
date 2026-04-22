@@ -34,6 +34,7 @@ import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 import { useRoute } from '@react-navigation/native';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { getSystemConnectedDevices, getBluetoothState } from '@/utils/api';
+import { showMessageNoticeDialog } from '@/components/MessageNoticeDialog';
 
 /**
  * 首页（单个设备）：
@@ -78,6 +79,10 @@ const Index = () => {
     message?: string;
   } | null>(null);
 
+  // 保存最新的站内未读消息 ID，供下次轮询接口直接传给后端
+  const lastMessageIdRef = useRef<number | undefined>(undefined);
+  const hasCheckedStorageRef = useRef<boolean>(false);
+
   useEffect(() => {
     optioningRef.current = optioning;
   }, [optioning]);
@@ -120,16 +125,58 @@ const Index = () => {
         setLoading(true);
       }
       try {
+        const queryParams: any = { type: 1 };
+        if (id) {
+          queryParams.id = id;
+        }
+        const ttt = await getStorage({
+          key: 'lastMessageId',
+        }).catch(() => null);
+        if (
+          !hasCheckedStorageRef.current &&
+          lastMessageIdRef.current === undefined
+        ) {
+          hasCheckedStorageRef.current = true;
+          const cachedStorage = await getStorage({
+            key: 'lastMessageId',
+          }).catch(() => null);
+          const cachedId = (cachedStorage as any)?.data ?? cachedStorage;
+          if (cachedId !== undefined && cachedId !== null && cachedId !== '') {
+            lastMessageIdRef.current = Number(cachedId);
+          }
+        }
+
+        if (lastMessageIdRef.current !== undefined) {
+          queryParams.lastMessageId = lastMessageIdRef.current;
+        }
+
         // 获取首页锁信息
-        const lockRes = id
-          ? await getLockInfo({ type: 1, id } as any)
-          : await getLockInfo({ type: 1 } as any);
+        const lockRes = await getLockInfo(queryParams);
         // 清除路由栈中的跳转参数
         (navigation as any)?.setParams?.({ lockId: undefined });
         if (lockRes.success && lockRes.code === 200 && lockRes.data) {
           setDetail(lockRes.data);
           setHasDevice(true);
           setError(null);
+          // 更新记录最新的未读站内消息 ID
+          const latestUnreadMessage = lockRes.data?.latestUnreadMessage;
+          if (latestUnreadMessage && latestUnreadMessage.id) {
+            // 确保是不一样的最新消息才触发弹窗提示
+            if (lastMessageIdRef.current !== latestUnreadMessage.id) {
+              lastMessageIdRef.current = latestUnreadMessage.id;
+              setStorage({
+                key: 'lastMessageId',
+                data: latestUnreadMessage.id,
+              });
+
+              // 触发弹窗组件
+              showMessageNoticeDialog({
+                ...latestUnreadMessage,
+                unreadCount: lockRes.data.unreadMessageCount,
+              });
+            }
+          }
+
           setCurrentDeviceStatus(() => {
             const powerType = lockRes.data?.powerType;
             const coverStatus = lockRes.data?.coverStatus;

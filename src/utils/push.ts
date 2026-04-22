@@ -1,6 +1,21 @@
-import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
+import {
+  DeviceEventEmitter,
+  NativeModules,
+  Platform,
+  TurboModuleRegistry,
+} from 'react-native';
 
-const { MobPushModule, AppModule } = NativeModules;
+let mobPushTurboModule: any;
+try {
+  mobPushTurboModule = TurboModuleRegistry?.get?.('MobPushModule');
+} catch (error) {
+  if (__DEV__) {
+    console.warn('[Push][RN] Turbo module MobPushModule not found:', error);
+  }
+}
+
+const MobPushModule = NativeModules?.MobPushModule || mobPushTurboModule;
+const AppModule = NativeModules?.AppModule;
 
 // 检查 MobPushModule 是否存在
 if (!MobPushModule) {
@@ -51,6 +66,18 @@ const safeGet = (property: string, defaultValue: any = undefined): any => {
   return MobPushModule[property] ?? defaultValue;
 };
 
+const extractPushResult = (payload: any): string | undefined => {
+  if (!payload) return undefined;
+  if (typeof payload === 'string') return payload;
+  return (
+    payload?.res ??
+    payload?.registrationID ??
+    payload?.registrationId ??
+    payload?.token ??
+    payload?.result?.res
+  );
+};
+
 /**
  * 获取推送设备信息
  * 返回 registrationID 和 deviceToken
@@ -66,10 +93,17 @@ export async function getMobPushDeviceInfo(): Promise<{
     if (MobPushModule && MobPushModule.getRegistrationID) {
       const registrationID = await Promise.race([
         new Promise<string | undefined>(resolve => {
-          const timer = setTimeout(() => resolve(undefined), 2000);
+          const timer = setTimeout(() => resolve(undefined), 8000);
           try {
-            MobPushModule.getRegistrationID(({ res }: { res: string }) => {
+            MobPushModule.getRegistrationID((nativeResult: any) => {
               clearTimeout(timer);
+              const res = extractPushResult(nativeResult);
+              if (__DEV__) {
+                console.log(
+                  '[Push][RN] getRegistrationID callback:',
+                  nativeResult,
+                );
+              }
               resolve(res);
             });
           } catch (error) {
@@ -79,7 +113,7 @@ export async function getMobPushDeviceInfo(): Promise<{
           }
         }),
         new Promise<string | undefined>(resolve =>
-          setTimeout(() => resolve(undefined), 2500),
+          setTimeout(() => resolve(undefined), 10000),
         ),
       ]);
       if (registrationID) {
@@ -101,8 +135,15 @@ export async function getMobPushDeviceInfo(): Promise<{
         new Promise<string | undefined>(resolve => {
           const timer = setTimeout(() => resolve(undefined), 1000);
           try {
-            MobPushModule.getDeviceToken(({ res }: { res: string }) => {
+            MobPushModule.getDeviceToken((nativeResult: any) => {
               clearTimeout(timer);
+              const res = extractPushResult(nativeResult);
+              if (__DEV__) {
+                console.log(
+                  '[Push][RN] getDeviceToken callback:',
+                  nativeResult,
+                );
+              }
               resolve(res);
             });
           } catch (error) {
@@ -271,7 +312,14 @@ export default {
         return;
       }
       try {
-        MobPushModule.getRegistrationID(({ res }: { res: string }) => {
+        MobPushModule.getRegistrationID((nativeResult: any) => {
+          const res = extractPushResult(nativeResult);
+          if (__DEV__) {
+            console.log(
+              '[Push][RN] appPush.getRegistrationID callback:',
+              nativeResult,
+            );
+          }
           callback?.(res);
           resolve(res);
         });
@@ -295,8 +343,15 @@ export default {
           resolve(undefined);
         }, 1000);
         try {
-          MobPushModule.getDeviceToken(({ res }: { res: string }) => {
+          MobPushModule.getDeviceToken((nativeResult: any) => {
             clearTimeout(timer);
+            const res = extractPushResult(nativeResult);
+            if (__DEV__) {
+              console.log(
+                '[Push][RN] appPush.getDeviceToken callback:',
+                nativeResult,
+              );
+            }
             callback?.(res);
             resolve(res);
           });
@@ -306,6 +361,21 @@ export default {
           callback?.(undefined);
           resolve(undefined);
         }
+      } else {
+        resolve(undefined);
+      }
+    });
+  },
+  getInitialNotification: (): Promise<any> => {
+    return new Promise(resolve => {
+      if (
+        Platform.OS === 'android' &&
+        MobPushModule &&
+        MobPushModule.getInitialNotification
+      ) {
+        MobPushModule.getInitialNotification()
+          .then((res: any) => resolve(res))
+          .catch(() => resolve(undefined));
       } else {
         resolve(undefined);
       }

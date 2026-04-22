@@ -27,13 +27,16 @@ import {
 import appManager from '@/utils/env/rn/appManager';
 import styles from './styles';
 import { px } from '@/utils/ui';
+import { changePushFlag } from '@/services/common';
 
 export default function Setting() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const isTest = route.params?.isTest ?? false;
-
-  const [pushEnabled, setPushEnabled] = useState(false);
+  const inPushFlag = route.params?.inPushFlag ?? 0; //站内推送开关：0-关闭 1-开启
+  const mobPushFlag = route.params?.mobPushFlag ?? 0; //设备端推送开关：0-关闭 1-开启，无设备注册时为null
+  const [inPushEnabled, setInPushEnabled] = useState(inPushFlag);
+  const [pushEnabled, setPushEnabled] = useState(mobPushFlag);
   const [currentVersion, setCurrentVersion] = useState('');
 
   const normalizeVersion = (value: unknown): string => {
@@ -137,12 +140,24 @@ export default function Setting() {
         if (raw === undefined || raw === null) {
           await setStorage({ key: 'pushEnabled', data: true });
           setPushEnabled(agree ? true : false);
-          return;
+        } else {
+          setPushEnabled(raw === true);
         }
 
-        setPushEnabled(raw === true);
+        const inPushRes: any = await getStorage({ key: 'inPushEnabled' }).catch(
+          () => ({ data: true }),
+        );
+        const inPushRaw =
+          typeof inPushRes === 'boolean' ? inPushRes : inPushRes?.data;
+        if (inPushRaw === undefined || inPushRaw === null) {
+          await setStorage({ key: 'inPushEnabled', data: true });
+          setInPushEnabled(1);
+        } else {
+          setInPushEnabled(inPushRaw === true ? 1 : 0);
+        }
       } catch {
         setPushEnabled(false);
+        setInPushEnabled(0);
       }
     })();
   }, []);
@@ -173,6 +188,17 @@ export default function Setting() {
         showToast({ title: '请先同意隐私条款后再开启通知服务', icon: 'info' });
         return false;
       }
+
+      const res = await changePushFlag({
+        flagType: 'MOB_PUSH',
+        flag: enabled ? 1 : 0,
+      });
+
+      if (res?.code !== 200 && res?.code !== 0) {
+        showToast({ title: res?.msg || '操作失败', icon: 'info' });
+        return false;
+      }
+
       await setStorage({ key: 'pushEnabled', data: enabled });
       setPushEnabled(enabled);
 
@@ -214,6 +240,32 @@ export default function Setting() {
       applyPushState(true);
     }
   }, [pushEnabled, applyPushState]);
+
+  const applyInPushState = useCallback(async (enabled: boolean) => {
+    try {
+      const res = await changePushFlag({
+        flagType: 'IN_PUSH',
+        flag: enabled ? 1 : 0,
+      });
+
+      if (res?.code !== 200 && res?.code !== 0) {
+        showToast({ title: res?.msg || '操作失败', icon: 'info' });
+        return false;
+      }
+
+      await setStorage({ key: 'inPushEnabled', data: enabled });
+      setInPushEnabled(enabled ? 1 : 0);
+      return true;
+    } catch {
+      showToast({ title: '更新站内推送状态失败', icon: 'info' });
+      return false;
+    }
+  }, []);
+
+  const handleToggleInPush = useCallback(() => {
+    const next = !inPushEnabled;
+    applyInPushState(next);
+  }, [inPushEnabled, applyInPushState]);
 
   const handleCheckUpdate = useCallback(async () => {
     try {
@@ -281,7 +333,21 @@ export default function Setting() {
                   ? 'https://g.18qjz.cn/img/boklock/setting/notice_switch_on.png'
                   : 'https://g.18qjz.cn/img/boklock/setting/notice_switch_off.png',
               }}
-              style={{ width: px(40), height: px(24) }}
+              style={{ width: 40, height: 24 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.item}>
+          <Text style={styles.itemText}>站内推送</Text>
+          <TouchableOpacity activeOpacity={0.8} onPress={handleToggleInPush}>
+            <Image
+              source={{
+                uri: inPushEnabled
+                  ? 'https://g.18qjz.cn/img/boklock/setting/notice_switch_on.png'
+                  : 'https://g.18qjz.cn/img/boklock/setting/notice_switch_off.png',
+              }}
+              style={{ width: 40, height: 24 }}
               resizeMode="contain"
             />
           </TouchableOpacity>
