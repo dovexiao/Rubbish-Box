@@ -137,7 +137,7 @@ export function MessageNoticeDialogHost() {
         {info.messageType == 3 ? (
           <AppIcon
             name="explain"
-            size={32}
+            size={px(32)}
             color="#333333"
             style={{ marginRight: px(8) }}
           />
@@ -159,7 +159,7 @@ export function MessageNoticeDialogHost() {
             {info.messageContent || '您收到了一条新消息'}
           </Text>
         </View>
-        {info.unreadCount && (
+        {info.unreadCount && info.unreadCount > 1 && (
           <View style={styles.unreadBadge}>
             <Text style={styles.unreadBadgeText}>
               未读{info.unreadCount > 99 ? '99+' : info.unreadCount}
@@ -170,7 +170,10 @@ export function MessageNoticeDialogHost() {
           name="a-headfor-20"
           size={px(16)}
           color="#333333"
-          style={{ alignSelf: 'flex-end' }}
+          style={{
+            alignSelf:
+              info.unreadCount && info.unreadCount > 1 ? 'flex-end' : 'center',
+          }}
         />
       </TouchableOpacity>
     </Animated.View>

@@ -596,14 +596,10 @@ const Content: React.FC<ContentProps> = ({
           direction="column"
           justify="between"
           align="center"
-          style={[
-            styles.contentLeftBox,
-            // detail?.isGroup ? styles.multipleHeight : styles.singleHeight,
-          ]}
+          style={styles.contentLeftBox}
         >
           <MapComponent
             style={{ flex: 1 }}
-            key={detail?.locationList?.[0]?.lockId}
             address={detail?.locationList?.[0]?.formattedAddress}
             longitude={detail?.locationList?.[0]?.longitude as number}
             latitude={detail?.locationList?.[0]?.latitude as number}

@@ -252,7 +252,7 @@ export default function MessageScreen() {
           <View style={styles.messageBody}>
             <View style={styles.messageMetaRow}>
               {item.messageType == 3 ? (
-                <AppIcon name="explain" size={20} color="#333333" />
+                <AppIcon name="explain" size={px(20)} color="#333333" />
               ) : (
                 <Image
                   style={styles.iconImg}
