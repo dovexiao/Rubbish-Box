@@ -12,12 +12,15 @@ const styles = StyleSheet.create({
   },
   noticeBox: {
     width: '92%',
-    backgroundColor: '#ffffff',
-    borderRadius: px(12),
+    borderRadius: px(16),
     padding: px(16),
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
+    borderStyle: 'solid',
+    borderWidth: px(1),
+    borderColor: '#fff',
+    overflow: 'hidden',
   },
   contentWrap: {
     flex: 1,

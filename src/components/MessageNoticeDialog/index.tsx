@@ -15,6 +15,8 @@ import styles from './styles';
 import AppIcon from '@/components/AppIcon';
 import { navigate } from '@/utils/navigation';
 
+import LinearGradient from 'react-native-linear-gradient';
+
 export interface MessageInfo {
   id?: number;
   messageType?: number;
@@ -100,7 +102,7 @@ export function MessageNoticeDialogHost() {
         // 默认 3 秒后自动回缩隐藏
         hideTimerRef.current = setTimeout(() => {
           handleClose();
-        }, 3000);
+        }, 5000);
       });
     };
 
@@ -132,49 +134,60 @@ export function MessageNoticeDialogHost() {
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={handlePress}
-        style={styles.noticeBox}
+        style={{ width: '100%', alignItems: 'center' }}
       >
-        {info.messageType == 3 ? (
-          <AppIcon
-            name="explain"
-            size={px(32)}
-            color="#333333"
-            style={{ marginRight: px(8) }}
-          />
-        ) : (
-          <Image
-            style={styles.iconImg}
-            source={{
-              uri: `https://g.18qjz.cn/img/boklock/message/${
-                MessageTypeIconMap[info.messageType || 0].imgUri
-              }.png`,
-            }}
-          />
-        )}
-        <View style={styles.contentWrap}>
-          <Text style={styles.title}>
-            {MessageTypeIconMap[info.messageType || 0].title}
-          </Text>
-          <Text style={styles.content} numberOfLines={2}>
-            {info.messageContent || '您收到了一条新消息'}
-          </Text>
+        <View style={{ backgroundColor: '#fff', borderRadius: px(16) }}>
+          <LinearGradient
+            colors={['#F2F2F2', '#FDFDFD']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.noticeBox}
+          >
+            {info.messageType == 3 ? (
+              <AppIcon
+                name="explain"
+                size={px(32)}
+                color="#333333"
+                style={{ marginRight: px(8) }}
+              />
+            ) : (
+              <Image
+                style={styles.iconImg}
+                source={{
+                  uri: `https://g.18qjz.cn/img/boklock/message/${
+                    MessageTypeIconMap[info.messageType || 0].imgUri
+                  }.png`,
+                }}
+              />
+            )}
+            <View style={styles.contentWrap}>
+              <Text style={styles.title}>
+                {MessageTypeIconMap[info.messageType || 0].title}
+              </Text>
+              <Text style={styles.content} numberOfLines={2}>
+                {info.messageContent || '您收到了一条新消息'}
+              </Text>
+            </View>
+            {info.unreadCount && info.unreadCount > 1 && (
+              <View style={styles.unreadBadge}>
+                <Text style={styles.unreadBadgeText}>
+                  未读{info.unreadCount > 99 ? '99+' : info.unreadCount}
+                </Text>
+              </View>
+            )}
+            <AppIcon
+              name="a-headfor-20"
+              size={px(20)}
+              color="#333333"
+              style={{
+                alignSelf:
+                  info.unreadCount && info.unreadCount > 1
+                    ? 'flex-end'
+                    : 'center',
+              }}
+            />
+          </LinearGradient>
         </View>
-        {info.unreadCount && info.unreadCount > 1 && (
-          <View style={styles.unreadBadge}>
-            <Text style={styles.unreadBadgeText}>
-              未读{info.unreadCount > 99 ? '99+' : info.unreadCount}
-            </Text>
-          </View>
-        )}
-        <AppIcon
-          name="a-headfor-20"
-          size={px(16)}
-          color="#333333"
-          style={{
-            alignSelf:
-              info.unreadCount && info.unreadCount > 1 ? 'flex-end' : 'center',
-          }}
-        />
       </TouchableOpacity>
     </Animated.View>
   );
