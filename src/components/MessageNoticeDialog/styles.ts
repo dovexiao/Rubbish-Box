@@ -10,8 +10,18 @@ const styles = StyleSheet.create({
     zIndex: 99999,
     alignItems: 'center',
   },
-  noticeBox: {
+  shadowWrap: {
     width: '92%',
+    borderRadius: px(16),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 8,
+    backgroundColor: '#fff',
+  },
+  noticeBox: {
+    width: '100%',
     borderRadius: px(16),
     padding: px(16),
     flexDirection: 'row',

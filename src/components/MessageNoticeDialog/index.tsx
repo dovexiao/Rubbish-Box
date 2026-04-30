@@ -136,9 +136,9 @@ export function MessageNoticeDialogHost() {
         onPress={handlePress}
         style={{ width: '100%', alignItems: 'center' }}
       >
-        <View style={{ backgroundColor: '#fff', borderRadius: px(16) }}>
+        <View style={styles.shadowWrap}>
           <LinearGradient
-            colors={['#F2F2F2', '#FDFDFD']}
+            colors={['#F1F1F1', '#FFFFFF']}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.noticeBox}
