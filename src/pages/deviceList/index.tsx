@@ -361,49 +361,52 @@ export default function DeviceList() {
               </TouchableOpacity>
             ) : null}
 
-            <TouchableOpacity
-              activeOpacity={0.85}
-              style={styles.operationWrap}
-              onPress={() => {
-                if (item.role === 2 && !item.bluetoothStatus) {
-                  showToast({
-                    title: '管理员已关闭此功能，请联系管理员打开',
-                    icon: 'info',
-                  });
-                  return;
-                }
-                navigation.navigate('BluetoothControl', {
-                  lockId: item?.id,
-                  bluetoothStatus: !!item?.bluetoothStatus,
-                  lockName: item?.lockName,
-                  bleNo: item?.bleNo,
-                  imageMap: item?.imageMap,
-                  bluetoothHasOpen: item?.bluetoothStatus,
-                  deviceNo: item?.deviceNo,
-                  mode: item?.mode,
-                  role: item?.role,
-                  blePin: item?.blePin,
-                  bleName: item?.bleName,
-                  needPin: item?.needPin,
-                  version: item?.compVer,
-                  isFromGroup: true,
-                } as any);
-              }}
-            >
-              <View style={styles.iconBox}>
-                <AppIcon name="bluetooth-1" size={px(28)} color="#333333" />
-                {!hasAutoOpen ? (
-                  <Image
-                    source={{
-                      uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png',
-                    }}
-                    style={styles.warningIcon}
-                  ></Image>
-                ) : // <View style={styles.warningDot} />
-                null}
-              </View>
-              <Text style={styles.operationText}>自动升降</Text>
-            </TouchableOpacity>
+            {/* 市电暂时不需要显示自动升降 */}
+            {item.powerType !== 1 && (
+              <TouchableOpacity
+                activeOpacity={0.85}
+                style={styles.operationWrap}
+                onPress={() => {
+                  if (item.role === 2 && !item.bluetoothStatus) {
+                    showToast({
+                      title: '管理员已关闭此功能，请联系管理员打开',
+                      icon: 'info',
+                    });
+                    return;
+                  }
+                  navigation.navigate('BluetoothControl', {
+                    lockId: item?.id,
+                    bluetoothStatus: !!item?.bluetoothStatus,
+                    lockName: item?.lockName,
+                    bleNo: item?.bleNo,
+                    imageMap: item?.imageMap,
+                    bluetoothHasOpen: item?.bluetoothStatus,
+                    deviceNo: item?.deviceNo,
+                    mode: item?.mode,
+                    role: item?.role,
+                    blePin: item?.blePin,
+                    bleName: item?.bleName,
+                    needPin: item?.needPin,
+                    version: item?.compVer,
+                    isFromGroup: true,
+                  } as any);
+                }}
+              >
+                <View style={styles.iconBox}>
+                  <AppIcon name="bluetooth-1" size={px(28)} color="#333333" />
+                  {!hasAutoOpen ? (
+                    <Image
+                      source={{
+                        uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png',
+                      }}
+                      style={styles.warningIcon}
+                    ></Image>
+                  ) : // <View style={styles.warningDot} />
+                  null}
+                </View>
+                <Text style={styles.operationText}>自动升降</Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               activeOpacity={0.85}

@@ -50,12 +50,15 @@ export default function UnbindNotice() {
       const id = res?.data?.id;
       const bleName = res?.data?.bleName;
       const needPin = res?.data?.needPin;
+      const powerType = res?.data?.powerType;
+
       navigation.navigate('UnbindDevice' as any, {
         phoneNumber: adminMobile,
         bleNo,
         id,
         bleName,
         needPin,
+        powerType,
       });
       return;
     }

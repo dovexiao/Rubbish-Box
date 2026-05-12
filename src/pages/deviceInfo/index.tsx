@@ -92,7 +92,7 @@ const DeviceInfo = () => {
         <TouchableOpacity
           style={[styles.footerBtn, styles.cancelBtn]}
           onPress={async () => {
-            if (!!deviceInfo?.needPin) {
+            if (deviceInfo?.powerType !== 1) {
               await setOptionType('1');
               bluetoothStatusUnbindRef.current?.open();
             } else {
@@ -100,6 +100,7 @@ const DeviceInfo = () => {
                 id: deviceInfo?.id,
                 bleNo: deviceInfo?.bleNo,
                 needPin: deviceInfo?.needPin,
+                powerType: deviceInfo?.powerType,
               });
             }
           }}
@@ -111,13 +112,14 @@ const DeviceInfo = () => {
         <TouchableOpacity
           style={[styles.footerBtn, styles.confirmBtn]}
           onPress={async () => {
-            if (!!deviceInfo?.needPin) {
+            if (deviceInfo?.powerType !== 1) {
               await setOptionType('2');
               bluetoothStatusUnbindRef.current?.open();
             } else {
               await cacheSetSync('deviceInfo', lockInfo);
               navigation.navigate('Unbind', {
                 id: deviceInfo?.id,
+                powerType: deviceInfo?.powerType,
               });
             }
           }}

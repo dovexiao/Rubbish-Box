@@ -30,6 +30,7 @@ export default function HandOverDevice() {
   const route = useRoute<any>();
   const navigation = useAppNavigation();
   const adminMobile = route.params?.adminMobile as string | undefined;
+  const powerType = route.params?.powerType as number | undefined;
 
   const [lockIds, setLockIds] = useState<number[]>([]);
   const [deviceList, setDeviceList] = useState<Device[]>([]);
@@ -92,6 +93,7 @@ export default function HandOverDevice() {
           navigation.navigate('HandOverVerify' as any, {
             adminMobile,
             id: lockIds.join(','),
+            powerType,
           });
         }}
       >

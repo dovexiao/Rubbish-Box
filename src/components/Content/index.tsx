@@ -478,33 +478,37 @@ const Content: React.FC<ContentProps> = ({
       </Flex>
 
       <Flex justify="between" style={styles.manualRow}>
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.manualBtn}
-          disabled={optioning}
-          onPress={() => {
-            if (detail?.isGroup) {
-              popRef.current?.open();
-            } else {
-              handleSetAutoOperate(detail);
-            }
-          }}
-        >
-          {!isAutoOpenBluetooth && (
-            <View style={styles.warningIcon}>
-              <Image
-                source={{
-                  uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png',
-                }}
-                style={{ width: px(20), height: px(20) }}
-              ></Image>
+        {/* 市电暂时不需要显示自动升降 */}
+        {detail?.powerType !== 1 && !detail?.isGroup && (
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.manualBtn}
+            disabled={optioning}
+            onPress={() => {
+              if (detail?.isGroup) {
+                popRef.current?.open();
+              } else {
+                handleSetAutoOperate(detail);
+              }
+            }}
+          >
+            {!isAutoOpenBluetooth && (
+              <View style={styles.warningIcon}>
+                <Image
+                  source={{
+                    uri: 'https://g.18qjz.cn/img/boklock/icon/bluetooth_close.png',
+                  }}
+                  style={{ width: px(20), height: px(20) }}
+                ></Image>
+              </View>
+            )}
+            <View style={styles.manualIconCircle}>
+              <AppIcon name="bluetooth-1" size={px(24)} color="#333333" />
             </View>
-          )}
-          <View style={styles.manualIconCircle}>
-            <AppIcon name="bluetooth-1" size={px(24)} color="#333333" />
-          </View>
-          <Text style={styles.manualText}>自动升降</Text>
-        </TouchableOpacity>
+            <Text style={styles.manualText}>自动升降</Text>
+          </TouchableOpacity>
+        )}
+
         {detail?.noBleOpt == true ? null : (
           <TouchableOpacity
             activeOpacity={1}

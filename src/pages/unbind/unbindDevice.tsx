@@ -17,6 +17,8 @@ import {
   hideLoading,
   showLoading,
   showToast,
+  setStorage,
+  reLaunch,
 } from '@/utils';
 import { resetBluetoothPin, settingBluetoothPin } from '@/services';
 import { unbind, unbindSms, unbindSmsCheck } from '@/services/deviceInfo';
@@ -29,6 +31,7 @@ type RouteParams = {
   id?: string | number;
   bleName?: string;
   needPin?: number;
+  powerType?: number;
 };
 
 export default function UnbindDevice() {
@@ -40,6 +43,7 @@ export default function UnbindDevice() {
   const bleNo = params.bleNo;
   const bleName = params.bleName;
   const needPin = params.needPin;
+  const powerType = params.powerType;
 
   const [step, setStep] = useState<0 | 1>(0);
   const [showError, setShowError] = useState(false);
@@ -105,7 +109,7 @@ export default function UnbindDevice() {
       const deviceInfo: Record<string, any> =
         (await getBluetoothDeviceInfo().catch(() => ({}))) || {};
       deviceId = deviceInfo[String(bleNo)]?.deviceId;
-      if (!!needPin) {
+      if (powerType !== 1) {
         if (!deviceId) {
           hideLoading();
           showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'info' });
@@ -165,28 +169,36 @@ export default function UnbindDevice() {
 
       if (res?.code === 200 && res?.success) {
         stop();
-        const targetRemoveId =
-          Platform.OS === 'ios' || Platform.OS === 'android'
-            ? String(bleNo)
-            : deviceId || String(bleNo);
-        await removeBluetoothDeviceInfo(targetRemoveId).catch(() => {});
-        if (
-          Platform.OS !== 'ios' &&
-          Platform.OS !== 'android' &&
-          targetRemoveId
-        ) {
-          try {
-            const { disconnectBluetoothDevice } = require('@/utils/api');
-            await disconnectBluetoothDevice(targetRemoveId);
-          } catch (e) {}
+        if (powerType !== 1) {
+          const targetRemoveId =
+            Platform.OS === 'ios' || Platform.OS === 'android'
+              ? String(bleNo)
+              : deviceId || String(bleNo);
+          await removeBluetoothDeviceInfo(targetRemoveId).catch(() => {});
+          if (
+            Platform.OS !== 'ios' &&
+            Platform.OS !== 'android' &&
+            targetRemoveId
+          ) {
+            try {
+              const { disconnectBluetoothDevice } = require('@/utils/api');
+              await disconnectBluetoothDevice(targetRemoveId);
+            } catch (e) {}
+          }
         }
         hideLoading();
         showToast({ title: '解绑成功', icon: 'success' });
+        if (powerType === 1) {
+          await setStorage({ key: 'type', data: 'reload' }).catch(() => {});
+          reLaunch('Index');
+          return;
+        }
         setTimeout(() => {
           navigation.navigate('UnBindSuccess', {
             bleName,
             bleNo,
             deviceId,
+            powerType,
           });
         }, 800);
       } else {

@@ -18,7 +18,7 @@ import {
 } from '@/harmony/vision-camera-shim';
 import { startHarmonyScan } from '@/harmony/harmony-scan';
 import type { PopConfirmRef } from '@/components/popConfirm';
-import { bindScan } from '@/services/bindDevice';
+import { bind, bindScan } from '@/services/bindDevice';
 import styles from './styles';
 import { hideLoading, reLaunch, showLoading, showToast } from '@/utils';
 import {
@@ -31,7 +31,7 @@ const BinDevice: React.FC = () => {
   const navigation = useNavigation<any>();
   const { hasPermission, requestPermission } = useCameraPermission();
   const device = useCameraDevice('back');
-
+  const [deviceNo, setDeviceNo] = useState<string | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [isFocusedMount, setIsFocusedMount] = useState(false);
   const [harmonyScanFallback, setHarmonyScanFallback] = useState(false);
@@ -40,6 +40,7 @@ const BinDevice: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const popRef = useRef<PopConfirmRef>(null);
   const fallbackRunningRef = useRef(false);
+  const confirmBindDeviceRef = useRef<PopConfirmRef>(null);
 
   // 进入“添加设备”扫码页时，先做用途告知，再请求系统相机权限。
   useEffect(() => {
@@ -93,20 +94,22 @@ const BinDevice: React.FC = () => {
 
         if (res?.code === 200) {
           hideLoading();
-          showToast({ title: '识别成功', icon: 'success' });
+          // showToast({ title: '识别成功', icon: 'success' });
           const data = res.data || {};
-          navigation.navigate(
-            'FindDevice' as never,
-            {
-              bleNo: data.bleNo,
-              pin: data.blePin,
-              imageMap: data.imageMap,
-              deviceNo: data.deviceNo,
-              bleName: data.bleName,
-              pageName: 'BindDevice',
-              needPin: data.needPin,
-            } as never,
-          );
+          setDeviceNo(data.deviceNo);
+          confirmBindDeviceRef.current?.open();
+          // navigation.navigate(
+          //   'FindDevice' as never,
+          //   {
+          //     bleNo: data.bleNo,
+          //     pin: data.blePin,
+          //     imageMap: data.imageMap,
+          //     deviceNo: data.deviceNo,
+          //     bleName: data.bleName,
+          //     pageName: 'BindDevice',
+          //     needPin: data.needPin,
+          //   } as never,
+          // );
         } else {
           hideLoading();
           setErrorMsg(res?.message || '识别失败，请重试');
@@ -126,6 +129,34 @@ const BinDevice: React.FC = () => {
     },
     [navigation],
   );
+
+  const handleConfirmBindDevice = useCallback(async (deviceNo: string) => {
+    if (!deviceNo) return;
+    confirmBindDeviceRef.current?.close();
+    showLoading({ title: '绑定中...' });
+    try {
+      const res = await bind({
+        deviceNo,
+        userId: null,
+      });
+      if (res?.code === 200) {
+        hideLoading();
+        showToast({ title: '绑定成功', icon: 'success' });
+        setTimeout(() => {
+          navigation?.navigate?.('BluetoothLinkSuccess', {
+            pages: 'bindDevice',
+            isFromGroup: false,
+            id: res.data,
+          } as never);
+        }, 1000);
+      } else {
+        hideLoading();
+        showToast({ title: res?.message || '绑定失败', icon: 'info' });
+      }
+    } catch (error) {
+      hideLoading();
+    }
+  }, []);
 
   const codeScanner = useCodeScanner
     ? useCodeScanner({
@@ -322,6 +353,14 @@ const BinDevice: React.FC = () => {
               fallbackRunningRef.current = false;
             }, 300);
           }}
+        />
+
+        {/* 是否绑定设备确认弹窗 */}
+        <PopConfirm
+          ref={confirmBindDeviceRef}
+          title="是否绑定设备？"
+          confirmText="确认"
+          onConfirm={() => handleConfirmBindDevice(deviceNo || '')}
         />
       </View>
     </PageContainer>

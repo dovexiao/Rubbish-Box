@@ -17,6 +17,7 @@ export default function HandOver() {
   const adminUserId = route.params?.adminUserId as string | undefined;
   const bleNo = route.params?.bleNo as string | undefined;
   const needPin = route.params?.needPin as number | undefined;
+  const powerType = route.params?.powerType as number | undefined;
   const showPopConfirm = pages !== 'setting';
 
   const popConfirmRef = useRef<PopConfirmRef>(null);
@@ -37,11 +38,13 @@ export default function HandOver() {
           bleNo,
           bleName,
           needPin,
+          powerType,
         });
       } else {
         navigation.navigate('HandOverDevice' as any, {
           adminMobile,
           adminUserId,
+          powerType,
         });
       }
     },

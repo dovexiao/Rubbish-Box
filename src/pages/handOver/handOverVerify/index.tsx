@@ -24,6 +24,7 @@ export default function HandOverVerify() {
   const bleNo = route.params?.bleNo as string | undefined;
   const bleName = route.params?.bleName as string | undefined;
   const needPin = route.params?.needPin as number | undefined;
+  const powerType = route.params?.powerType as number | undefined;
 
   const [step, setStep] = useState(0);
   const [code, setCode] = useState('');
@@ -85,6 +86,7 @@ export default function HandOverVerify() {
           bleNo,
           bleName,
           needPin,
+          powerType,
         });
       } else {
         hideLoading();

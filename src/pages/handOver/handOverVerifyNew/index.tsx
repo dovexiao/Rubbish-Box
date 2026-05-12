@@ -12,6 +12,8 @@ import {
 import {
   getBluetoothDeviceInfo,
   hideLoading,
+  reLaunch,
+  setStorage,
   showLoading,
   showToast,
 } from '@/utils';
@@ -45,6 +47,7 @@ export default function HandOverVerifyNew() {
   const bleNo = route.params?.bleNo as string | undefined;
   const bleName = route.params?.bleName as string | undefined;
   const needPin = route.params?.needPin as number | undefined;
+  const powerType = route.params?.powerType as number | undefined;
 
   const [step, setStep] = useState(0);
   const [smsError, setSmsError] = useState(false);
@@ -103,7 +106,7 @@ export default function HandOverVerifyNew() {
       )) || {};
     const deviceId = deviceInfo[String(bleNo ?? '')]?.deviceId;
 
-    if (!deviceId && !!needPin) {
+    if (!deviceId && powerType !== 1) {
       showToast({ title: '未找到蓝牙设备信息，请重新配对', icon: 'info' });
       return;
     }
@@ -128,7 +131,7 @@ export default function HandOverVerifyNew() {
         return;
       }
 
-      if (!!needPin) {
+      if (powerType !== 1) {
         const resetRes: any = await resetBluetoothPin({ id: lockIds });
         if (!(resetRes?.code === 200 && resetRes?.success)) {
           hideLoading();
@@ -184,6 +187,13 @@ export default function HandOverVerifyNew() {
         stop();
         hideLoading();
         showToast({ title: '移交成功', icon: 'success' });
+
+        if (powerType === 1) {
+          await setStorage({ key: 'pageType', data: 'reload' }).catch(() => {});
+          reLaunch('Index', { pages: 'handOverSuccess' });
+          return;
+        }
+
         setTimeout(() => {
           navigation.navigate('UnBindSuccess', {
             pages: 'handOverSuccess',
