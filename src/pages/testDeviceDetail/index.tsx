@@ -93,6 +93,8 @@ interface TestDeviceDetail {
   pin?: string;
   aboveGeoTestStatus?: number;
   aboveMixtureTestStatus?: number;
+  /** 车辆存在检测方式：1 地磁+超声波，0 地磁 */
+  aboveCheckMethod?: number;
   /* 火焰检测 */
   fireTestStatus: number;
   /* 温度检测 */
@@ -481,12 +483,12 @@ export default function TestDeviceDetailScreen() {
                           'info' as any,
                         );
                         if (res && (res.code === 200 || res.success)) {
+                          // 提交合格时默认采用地磁+超声波，并同步到测试记录
                           handleTestDeviceReslt('aboveCheckMethod', 1);
-                          if (testDeviceReslt?.aboveCheckMethod === 1) {
-                            await updateTestResult({
-                              testResult: 1,
-                            });
-                          }
+                          await updateTestResult({
+                            testResult: TEST_RESULT.QUALIFIED,
+                            aboveCheckMethod: 1,
+                          } as Partial<TestDeviceDetail>);
                         } else {
                           hideLoading();
                           showToast({
@@ -1412,7 +1414,7 @@ export default function TestDeviceDetailScreen() {
               </Flex>
             </Flex>
 
-            {/* 车辆存在检查（二选一：地磁+超声波 / 地磁） */}
+            {/* 车辆存在检查：地磁+超声波 / 地磁 可分别检测与记录；检测方式可切换 */}
             <Flex style={styles.deviceInfoWrapper} direction={'column'}>
               <Flex
                 style={[styles.deviceInfoHeader, { marginBottom: 0 }]}
@@ -1420,56 +1422,53 @@ export default function TestDeviceDetailScreen() {
                 justify="between"
               >
                 <Flex align="center">
-                  {detail.aboveGeoTestStatus === 0 &&
-                    detail.aboveMixtureTestStatus === 0 && (
-                      <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={{
-                          width: px(20),
-                          height: px(20),
-                          backgroundColor: '#F5F5F5',
-                          borderRadius: px(10),
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginRight: px(8),
-                        }}
-                        onPress={async () => {
-                          showLoading({ title: '切换中...' });
-                          try {
-                            const res: any = await switchTestDevice(
-                              {
-                                deviceNo: detail.deviceNo,
-                                aboveCheckMethod: 1,
-                              } as any,
-                              'info' as any,
-                            );
-                            if (res && (res.code === 200 || res.success)) {
-                              handleTestDeviceReslt('aboveCheckMethod', 1);
-                            } else {
-                              hideLoading();
-                              showToast({
-                                title: res?.message || res?.msg || '切换失败',
-                                icon: 'info',
-                              });
-                            }
-                          } catch (e) {
-                            hideLoading();
-                            showToast({ title: '切换失败', icon: 'info' });
-                          }
-                        }}
-                      >
-                        <Image
-                          source={{
-                            uri: `https://g.18qjz.cn/img/boklock/${
-                              testDeviceReslt?.aboveCheckMethod === 1
-                                ? 'radio_checked'
-                                : 'radio_default'
-                            }.png`,
-                          }}
-                          style={{ width: px(16), height: px(16) }}
-                        />
-                      </TouchableOpacity>
-                    )}
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={{
+                      width: px(20),
+                      height: px(20),
+                      backgroundColor: '#F5F5F5',
+                      borderRadius: px(10),
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: px(8),
+                    }}
+                    onPress={async () => {
+                      showLoading({ title: '切换中...' });
+                      try {
+                        const res: any = await switchTestDevice(
+                          {
+                            deviceNo: detail.deviceNo,
+                            aboveCheckMethod: 1,
+                          } as any,
+                          'info' as any,
+                        );
+                        if (res && (res.code === 200 || res.success)) {
+                          handleTestDeviceReslt('aboveCheckMethod', 1);
+                        } else {
+                          hideLoading();
+                          showToast({
+                            title: res?.message || res?.msg || '切换失败',
+                            icon: 'info',
+                          });
+                        }
+                      } catch (e) {
+                        hideLoading();
+                        showToast({ title: '切换失败', icon: 'info' });
+                      }
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: `https://g.18qjz.cn/img/boklock/${
+                          testDeviceReslt?.aboveCheckMethod === 1
+                            ? 'radio_checked'
+                            : 'radio_default'
+                        }.png`,
+                      }}
+                      style={{ width: px(16), height: px(16) }}
+                    />
+                  </TouchableOpacity>
                   <Text style={styles.title}>车辆存在检查-地磁+超声波</Text>
                 </Flex>
                 <Text
@@ -1491,7 +1490,6 @@ export default function TestDeviceDetailScreen() {
                       onPress={async () => {
                         await updateTestResult({
                           aboveMixtureTestStatus: 1,
-                          aboveGeoTestStatus: 0,
                         } as any);
                       }}
                     >
@@ -1513,7 +1511,6 @@ export default function TestDeviceDetailScreen() {
                       onPress={async () => {
                         await updateTestResult({
                           aboveMixtureTestStatus: 2,
-                          aboveGeoTestStatus: 0,
                         } as any);
                       }}
                     >
@@ -1555,56 +1552,53 @@ export default function TestDeviceDetailScreen() {
                 justify="between"
               >
                 <Flex align="center">
-                  {detail.aboveGeoTestStatus === 0 &&
-                    detail.aboveMixtureTestStatus === 0 && (
-                      <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={{
-                          width: px(20),
-                          height: px(20),
-                          backgroundColor: '#F5F5F5',
-                          borderRadius: px(10),
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginRight: px(8),
-                        }}
-                        onPress={async () => {
-                          showLoading({ title: '切换中...' });
-                          try {
-                            const res: any = await switchTestDevice(
-                              {
-                                deviceNo: detail.deviceNo,
-                                aboveCheckMethod: 0,
-                              } as any,
-                              'info' as any,
-                            );
-                            if (res && (res.code === 200 || res.success)) {
-                              handleTestDeviceReslt('aboveCheckMethod', 0);
-                            } else {
-                              showToast({
-                                title: res?.message || res?.msg || '切换失败',
-                                icon: 'info',
-                              });
-                            }
-                          } catch (e) {
-                            hideLoading();
-                            hideLoading();
-                            showToast({ title: '切换失败', icon: 'info' });
-                          }
-                        }}
-                      >
-                        <Image
-                          source={{
-                            uri: `https://g.18qjz.cn/img/boklock/${
-                              testDeviceReslt?.aboveCheckMethod === 0
-                                ? 'radio_checked'
-                                : 'radio_default'
-                            }.png`,
-                          }}
-                          style={{ width: px(16), height: px(16) }}
-                        />
-                      </TouchableOpacity>
-                    )}
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={{
+                      width: px(20),
+                      height: px(20),
+                      backgroundColor: '#F5F5F5',
+                      borderRadius: px(10),
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: px(8),
+                    }}
+                    onPress={async () => {
+                      showLoading({ title: '切换中...' });
+                      try {
+                        const res: any = await switchTestDevice(
+                          {
+                            deviceNo: detail.deviceNo,
+                            aboveCheckMethod: 0,
+                          } as any,
+                          'info' as any,
+                        );
+                        if (res && (res.code === 200 || res.success)) {
+                          handleTestDeviceReslt('aboveCheckMethod', 0);
+                        } else {
+                          hideLoading();
+                          showToast({
+                            title: res?.message || res?.msg || '切换失败',
+                            icon: 'info',
+                          });
+                        }
+                      } catch (e) {
+                        hideLoading();
+                        showToast({ title: '切换失败', icon: 'info' });
+                      }
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: `https://g.18qjz.cn/img/boklock/${
+                          testDeviceReslt?.aboveCheckMethod === 0
+                            ? 'radio_checked'
+                            : 'radio_default'
+                        }.png`,
+                      }}
+                      style={{ width: px(16), height: px(16) }}
+                    />
+                  </TouchableOpacity>
                   <Text style={styles.title}>车辆存在检测-地磁</Text>
                 </Flex>
                 <Text
@@ -1626,7 +1620,6 @@ export default function TestDeviceDetailScreen() {
                       onPress={async () => {
                         await updateTestResult({
                           aboveGeoTestStatus: 1,
-                          aboveMixtureTestStatus: 0,
                         } as any);
                       }}
                     >
@@ -1648,7 +1641,6 @@ export default function TestDeviceDetailScreen() {
                       onPress={async () => {
                         await updateTestResult({
                           aboveGeoTestStatus: 2,
-                          aboveMixtureTestStatus: 0,
                         } as any);
                       }}
                     >
