@@ -254450,7 +254450,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
         justify: "between",
         style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualRow,
-        children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+        children: [(detail == null ? void 0 : detail.powerType) !== 1 && !(detail != null && detail.isGroup) && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
           activeOpacity: 1,
           style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualBtn,
           disabled: optioning,
@@ -264023,7 +264023,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
   var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./styles"));
   var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/components/AppIcon"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime");
+  var _reactNativeLinearGradient = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "react-native-linear-gradient"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\MessageNoticeDialog\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var MessageTypeIconMap = {
@@ -264057,22 +264058,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   };
   function showMessageNoticeDialog(info) {
-    _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('global:messageNoticeDialog:show', info);
+    _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('global:messageNoticeDialog:show', info);
   }
   function MessageNoticeDialogHost() {
     var _useState = (0, _react.useState)(null),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       info = _useState2[0],
       setInfo = _useState2[1];
-    var slideAnim = (0, _react.useRef)(new _reactNative.Animated.Value(-(0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(200))).current;
-    var insets = (0, _$$_REQUIRE(_dependencyMap[9], "react-native-safe-area-context").useSafeAreaInsets)();
+    var slideAnim = (0, _react.useRef)(new _reactNative.Animated.Value(-(0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(200))).current;
+    var insets = (0, _$$_REQUIRE(_dependencyMap[10], "react-native-safe-area-context").useSafeAreaInsets)();
     var hideTimerRef = (0, _react.useRef)(null);
     var handleClose = function handleClose() {
       if (hideTimerRef.current) {
         clearTimeout(hideTimerRef.current);
       }
       _reactNative.Animated.timing(slideAnim, {
-        toValue: -(0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(200),
+        toValue: -(0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(200),
         duration: 250,
         useNativeDriver: true
       }).start(function () {
@@ -264087,7 +264088,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         _reactNative.InteractionManager.runAfterInteractions(function () {
           // 计算顶部安全距离 + 一定间距
-          var topOffset = _reactNative.Platform.OS === 'android' ? (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(42) : Math.max(insets.top, (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(42));
+          var topOffset = _reactNative.Platform.OS === 'android' ? (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(42) : Math.max(insets.top, (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(42));
           _reactNative.Animated.spring(slideAnim, {
             toValue: topOffset,
             useNativeDriver: true,
@@ -264098,19 +264099,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           // 默认 3 秒后自动回缩隐藏
           hideTimerRef.current = setTimeout(function () {
             handleClose();
-          }, 3000);
+          }, 5000);
         });
       };
-      _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('global:messageNoticeDialog:show', handler);
+      _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('global:messageNoticeDialog:show', handler);
       return function () {
-        _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('global:messageNoticeDialog:show', handler);
+        _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('global:messageNoticeDialog:show', handler);
         if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
       };
     }, [insets.top, slideAnim]);
     var handlePress = function handlePress() {
       // 点击卡片后的跳转逻辑
       handleClose();
-      (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils/navigation").navigate)('Message');
+      (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/navigation").navigate)('Message');
     };
     if (!info) return null;
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Animated.View, {
@@ -264120,50 +264121,68 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }]
       }],
       pointerEvents: "box-none",
-      children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
         activeOpacity: 0.9,
         onPress: handlePress,
-        style: _styles.default.noticeBox,
-        children: [info.messageType == 3 ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-          name: "explain",
-          size: (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(32),
-          color: "#333333",
-          style: {
-            marginRight: (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
-          }
-        }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
-          style: _styles.default.iconImg,
-          source: {
-            uri: `https://g.18qjz.cn/img/boklock/message/${MessageTypeIconMap[info.messageType || 0].imgUri}.png`
-          }
-        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-          style: _styles.default.contentWrap,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _styles.default.title,
-            children: MessageTypeIconMap[info.messageType || 0].title
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _styles.default.content,
-            numberOfLines: 2,
-            children: info.messageContent || '您收到了一条新消息'
-          })]
-        }), info.unreadCount && info.unreadCount > 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-          style: _styles.default.unreadBadge,
-          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
-            style: _styles.default.unreadBadgeText,
-            children: ["\u672A\u8BFB", info.unreadCount > 99 ? '99+' : info.unreadCount]
+        style: {
+          width: '100%',
+          alignItems: 'center'
+        },
+        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+          style: _styles.default.shadowWrap,
+          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNativeLinearGradient.default, {
+            colors: ['#F1F1F1', '#FFFFFF'],
+            start: {
+              x: 0,
+              y: 0
+            },
+            end: {
+              x: 0,
+              y: 1
+            },
+            style: _styles.default.noticeBox,
+            children: [info.messageType == 3 ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+              name: "explain",
+              size: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(32),
+              color: "#333333",
+              style: {
+                marginRight: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+              }
+            }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
+              style: _styles.default.iconImg,
+              source: {
+                uri: `https://g.18qjz.cn/img/boklock/message/${MessageTypeIconMap[info.messageType || 0].imgUri}.png`
+              }
+            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+              style: _styles.default.contentWrap,
+              children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _styles.default.title,
+                children: MessageTypeIconMap[info.messageType || 0].title
+              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _styles.default.content,
+                numberOfLines: 2,
+                children: info.messageContent || '您收到了一条新消息'
+              })]
+            }), info.unreadCount && info.unreadCount > 1 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+              style: _styles.default.unreadBadge,
+              children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
+                style: _styles.default.unreadBadgeText,
+                children: ["\u672A\u8BFB", info.unreadCount > 99 ? '99+' : info.unreadCount]
+              })
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
+              name: "a-headfor-20",
+              size: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
+              color: "#333333",
+              style: {
+                alignSelf: info.unreadCount && info.unreadCount > 1 ? 'flex-end' : 'center'
+              }
+            })]
           })
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
-          name: "a-headfor-20",
-          size: (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
-          color: "#333333",
-          style: {
-            alignSelf: info.unreadCount && info.unreadCount > 1 ? 'flex-end' : 'center'
-          }
-        })]
+        })
       })
     });
   }
-},1631,[1,25,42,3,1632,1370,88,1183,556,1245,1079],"src\\components\\MessageNoticeDialog\\index.tsx");
+},1631,[1,25,42,3,1632,1370,558,88,1183,556,1245,1079],"src\\components\\MessageNoticeDialog\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -264179,14 +264198,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       zIndex: 99999,
       alignItems: 'center'
     },
-    noticeBox: {
+    shadowWrap: {
       width: '92%',
-      backgroundColor: '#ffffff',
-      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12),
+      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 4
+      },
+      shadowOpacity: 0.12,
+      shadowRadius: 8,
+      elevation: 8,
+      backgroundColor: '#fff'
+    },
+    noticeBox: {
+      width: '100%',
+      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
       padding: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
       flexDirection: 'row',
       alignItems: 'center',
-      position: 'relative'
+      position: 'relative',
+      borderStyle: 'solid',
+      borderWidth: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(1),
+      borderColor: '#fff',
+      overflow: 'hidden'
     },
     contentWrap: {
       flex: 1,
@@ -269063,7 +269098,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
           style: [_$$_REQUIRE(_dependencyMap[13], "./style").styles.footerBtn, _$$_REQUIRE(_dependencyMap[13], "./style").styles.cancelBtn],
           onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-            if (!!(deviceInfo != null && deviceInfo.needPin)) {
+            if ((deviceInfo == null ? void 0 : deviceInfo.powerType) !== 1) {
               var _bluetoothStatusUnbin;
               yield setOptionType('1');
               (_bluetoothStatusUnbin = bluetoothStatusUnbindRef.current) == null || _bluetoothStatusUnbin.open();
@@ -269071,7 +269106,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               navigation.navigate('HandOver', {
                 id: deviceInfo == null ? void 0 : deviceInfo.id,
                 bleNo: deviceInfo == null ? void 0 : deviceInfo.bleNo,
-                needPin: deviceInfo == null ? void 0 : deviceInfo.needPin
+                needPin: deviceInfo == null ? void 0 : deviceInfo.needPin,
+                powerType: deviceInfo == null ? void 0 : deviceInfo.powerType
               });
             }
           }),
@@ -269082,14 +269118,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
           style: [_$$_REQUIRE(_dependencyMap[13], "./style").styles.footerBtn, _$$_REQUIRE(_dependencyMap[13], "./style").styles.confirmBtn],
           onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-            if (!!(deviceInfo != null && deviceInfo.needPin)) {
+            if ((deviceInfo == null ? void 0 : deviceInfo.powerType) !== 1) {
               var _bluetoothStatusUnbin2;
               yield setOptionType('2');
               (_bluetoothStatusUnbin2 = bluetoothStatusUnbindRef.current) == null || _bluetoothStatusUnbin2.open();
             } else {
               yield (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").cacheSetSync)('deviceInfo', lockInfo);
               navigation.navigate('Unbind', {
-                id: deviceInfo == null ? void 0 : deviceInfo.id
+                id: deviceInfo == null ? void 0 : deviceInfo.id,
+                powerType: deviceInfo == null ? void 0 : deviceInfo.powerType
               });
             }
           }),
@@ -271319,7 +271356,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _$$_REQUIRE(_dependencyMap[18], "./style").styles.operationText,
               children: [item.coverStatus === _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/constants").COVER_STATUS.OPEN ? '关闭' : '打开', "\u9501\u76D6"]
             })]
-          }) : null, /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+          }) : null, item.powerType !== 1 && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
             activeOpacity: 0.85,
             style: _$$_REQUIRE(_dependencyMap[18], "./style").styles.operationWrap,
             onPress: function onPress() {
@@ -298186,12 +298223,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                         aboveCheckMethod: 1
                       }, 'info');
                       if (res && (res.code === 200 || res.success)) {
+                        // 提交合格时默认采用地磁+超声波，并同步到测试记录
                         handleTestDeviceReslt('aboveCheckMethod', 1);
-                        if ((testDeviceReslt == null ? void 0 : testDeviceReslt.aboveCheckMethod) === 1) {
-                          yield updateTestResult({
-                            testResult: 1
-                          });
-                        }
+                        yield updateTestResult({
+                          testResult: TEST_RESULT.QUALIFIED,
+                          aboveCheckMethod: 1
+                        });
                       } else {
                         (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
                         (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
@@ -299035,7 +299072,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               justify: "between",
               children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 align: "center",
-                children: [detail.aboveGeoTestStatus === 0 && detail.aboveMixtureTestStatus === 0 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
                   activeOpacity: 0.8,
                   style: {
                     width: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
@@ -299102,8 +299139,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
-                      aboveMixtureTestStatus: 1,
-                      aboveGeoTestStatus: 0
+                      aboveMixtureTestStatus: 1
                     });
                   }),
                   children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -299131,8 +299167,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
-                      aboveMixtureTestStatus: 2,
-                      aboveGeoTestStatus: 0
+                      aboveMixtureTestStatus: 2
                     });
                   }),
                   children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -299172,7 +299207,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               justify: "between",
               children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
                 align: "center",
-                children: [detail.aboveGeoTestStatus === 0 && detail.aboveMixtureTestStatus === 0 && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
                   activeOpacity: 0.8,
                   style: {
                     width: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
@@ -299195,13 +299230,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                       if (res && (res.code === 200 || res.success)) {
                         handleTestDeviceReslt('aboveCheckMethod', 0);
                       } else {
+                        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
                         (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                           title: (res == null ? void 0 : res.message) || (res == null ? void 0 : res.msg) || '切换失败',
                           icon: 'info'
                         });
                       }
                     } catch (e) {
-                      (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
                       (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
                       (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                         title: '切换失败',
@@ -299239,8 +299274,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
-                      aboveGeoTestStatus: 1,
-                      aboveMixtureTestStatus: 0
+                      aboveGeoTestStatus: 1
                     });
                   }),
                   children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -299268,8 +299302,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   isTouchView: true,
                   onPress: /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
                     yield updateTestResult({
-                      aboveGeoTestStatus: 2,
-                      aboveMixtureTestStatus: 0
+                      aboveGeoTestStatus: 2
                     });
                   }),
                   children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -300942,7 +300975,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
   "name": "boklock",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -329307,26 +329340,31 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       hasPermission = _useCameraPermission.hasPermission,
       requestPermission = _useCameraPermission.requestPermission;
     var device = (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/harmony/vision-camera-shim").useCameraDevice)('back');
-    var _useState = (0, _react.useState)(false),
+    var _useState = (0, _react.useState)(null),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      isActive = _useState2[0],
-      setIsActive = _useState2[1];
+      deviceNo = _useState2[0],
+      setDeviceNo = _useState2[1];
     var _useState3 = (0, _react.useState)(false),
       _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
-      isFocusedMount = _useState4[0],
-      setIsFocusedMount = _useState4[1];
+      isActive = _useState4[0],
+      setIsActive = _useState4[1];
     var _useState5 = (0, _react.useState)(false),
       _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
-      harmonyScanFallback = _useState6[0],
-      setHarmonyScanFallback = _useState6[1];
+      isFocusedMount = _useState6[0],
+      setIsFocusedMount = _useState6[1];
+    var _useState7 = (0, _react.useState)(false),
+      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
+      harmonyScanFallback = _useState8[0],
+      setHarmonyScanFallback = _useState8[1];
     var hasScannedRef = (0, _react.useRef)(false);
     var popVisibleRef = (0, _react.useRef)(false);
-    var _useState7 = (0, _react.useState)(null),
-      _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
-      errorMsg = _useState8[0],
-      setErrorMsg = _useState8[1];
+    var _useState9 = (0, _react.useState)(null),
+      _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
+      errorMsg = _useState0[0],
+      setErrorMsg = _useState0[1];
     var popRef = (0, _react.useRef)(null);
     var fallbackRunningRef = (0, _react.useRef)(false);
+    var confirmBindDeviceRef = (0, _react.useRef)(null);
 
     // 进入“添加设备”扫码页时，先做用途告知，再请求系统相机权限。
     (0, _react.useEffect)(function () {
@@ -329380,21 +329418,24 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             userId: null
           });
           if ((res == null ? void 0 : res.code) === 200) {
+            var _confirmBindDeviceRef;
             (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-              title: '识别成功',
-              icon: 'success'
-            });
+            // showToast({ title: '识别成功', icon: 'success' });
             var data = res.data || {};
-            navigation.navigate('FindDevice', {
-              bleNo: data.bleNo,
-              pin: data.blePin,
-              imageMap: data.imageMap,
-              deviceNo: data.deviceNo,
-              bleName: data.bleName,
-              pageName: 'BindDevice',
-              needPin: data.needPin
-            });
+            setDeviceNo(data.deviceNo);
+            (_confirmBindDeviceRef = confirmBindDeviceRef.current) == null || _confirmBindDeviceRef.open();
+            // navigation.navigate(
+            //   'FindDevice' as never,
+            //   {
+            //     bleNo: data.bleNo,
+            //     pin: data.blePin,
+            //     imageMap: data.imageMap,
+            //     deviceNo: data.deviceNo,
+            //     bleName: data.bleName,
+            //     pageName: 'BindDevice',
+            //     needPin: data.needPin,
+            //   } as never,
+            // );
           } else {
             var _popRef$current;
             (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
@@ -329418,6 +329459,47 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return _ref3.apply(this, arguments);
       };
     }(), [navigation]);
+    var handleConfirmBindDevice = (0, _react.useCallback)(/*#__PURE__*/function () {
+      var _ref4 = (0, _asyncToGenerator2.default)(function* (deviceNo) {
+        var _confirmBindDeviceRef2;
+        if (!deviceNo) return;
+        (_confirmBindDeviceRef2 = confirmBindDeviceRef.current) == null || _confirmBindDeviceRef2.close();
+        (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+          title: '绑定中...'
+        });
+        try {
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/services/bindDevice").bind)({
+            deviceNo: deviceNo,
+            userId: null
+          });
+          if ((res == null ? void 0 : res.code) === 200) {
+            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: '绑定成功',
+              icon: 'success'
+            });
+            setTimeout(function () {
+              navigation == null || navigation.navigate == null || navigation.navigate('BluetoothLinkSuccess', {
+                pages: 'bindDevice',
+                isFromGroup: false,
+                id: res.data
+              });
+            }, 1000);
+          } else {
+            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: (res == null ? void 0 : res.message) || '绑定失败',
+              icon: 'info'
+            });
+          }
+        } catch (error) {
+          (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+        }
+      });
+      return function (_x2) {
+        return _ref4.apply(this, arguments);
+      };
+    }(), []);
     var codeScanner = _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/harmony/vision-camera-shim").useCodeScanner ? (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/harmony/vision-camera-shim").useCodeScanner)({
       codeTypes: ['qr'],
       onCodeScanned: function onCodeScanned(codes) {
@@ -329604,6 +329686,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               setIsActive(true);
               fallbackRunningRef.current = false;
             }, 300);
+          }
+        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/components").PopConfirm, {
+          ref: confirmBindDeviceRef,
+          title: "\u662F\u5426\u7ED1\u5B9A\u8BBE\u5907\uFF1F",
+          confirmText: "\u786E\u8BA4",
+          onConfirm: function onConfirm() {
+            return handleConfirmBindDevice(deviceNo || '');
           }
         })]
       })
@@ -331939,6 +332028,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _route$params3,
       _route$params4,
       _route$params5,
+      _route$params6,
       _this = this;
     var route = (0, _$$_REQUIRE(_dependencyMap[6], "@react-navigation/native").useRoute)();
     var navigation = (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/hooks/useAppNavigation").useAppNavigation)();
@@ -331947,6 +332037,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var adminUserId = (_route$params3 = route.params) == null ? void 0 : _route$params3.adminUserId;
     var bleNo = (_route$params4 = route.params) == null ? void 0 : _route$params4.bleNo;
     var needPin = (_route$params5 = route.params) == null ? void 0 : _route$params5.needPin;
+    var powerType = (_route$params6 = route.params) == null ? void 0 : _route$params6.powerType;
     var showPopConfirm = pages !== 'setting';
     var popConfirmRef = (0, _react.useRef)(null);
     var _useState = (0, _react.useState)({
@@ -331963,12 +332054,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           id: lockId,
           bleNo: bleNo,
           bleName: bleName,
-          needPin: needPin
+          needPin: needPin,
+          powerType: powerType
         });
       } else {
         navigation.navigate('HandOverDevice', {
           adminMobile: adminMobile,
-          adminUserId: adminUserId
+          adminUserId: adminUserId,
+          powerType: powerType
         });
       }
     }, [adminUserId, bleNo, lockId, navigation, showPopConfirm]);
@@ -332203,10 +332296,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var PAGE_SIZE = 20;
   function HandOverDevice() {
     var _route$params,
+      _route$params2,
       _this = this;
     var route = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useRoute)();
     var navigation = (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/hooks/useAppNavigation").useAppNavigation)();
     var adminMobile = (_route$params = route.params) == null ? void 0 : _route$params.adminMobile;
+    var powerType = (_route$params2 = route.params) == null ? void 0 : _route$params2.powerType;
     var _useState = (0, _react.useState)([]),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       lockIds = _useState2[0],
@@ -332290,7 +332385,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           if (!canNext) return;
           navigation.navigate('HandOverVerify', {
             adminMobile: adminMobile,
-            id: lockIds.join(',')
+            id: lockIds.join(','),
+            powerType: powerType
           });
         },
         children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
@@ -332532,7 +332628,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\handOver\\handOverVerify\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   function HandOverVerify() {
-    var _route$params, _route$params2, _route$params3, _route$params4, _route$params5;
+    var _route$params, _route$params2, _route$params3, _route$params4, _route$params5, _route$params6;
     var route = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useRoute)();
     var navigation = (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/hooks/useAppNavigation").useAppNavigation)();
     var adminMobile = (_route$params = route.params) == null ? void 0 : _route$params.adminMobile;
@@ -332540,6 +332636,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var bleNo = (_route$params3 = route.params) == null ? void 0 : _route$params3.bleNo;
     var bleName = (_route$params4 = route.params) == null ? void 0 : _route$params4.bleName;
     var needPin = (_route$params5 = route.params) == null ? void 0 : _route$params5.needPin;
+    var powerType = (_route$params6 = route.params) == null ? void 0 : _route$params6.powerType;
     var _useState = (0, _react.useState)(0),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       step = _useState2[0],
@@ -332618,7 +332715,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             currentAdminCode: code,
             bleNo: bleNo,
             bleName: bleName,
-            needPin: needPin
+            needPin: needPin,
+            powerType: powerType
           });
         } else {
           (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
@@ -332945,7 +333043,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return /^1\d{10}$/.test(s);
   }
   function HandOverVerifyNew() {
-    var _route$params, _route$params2, _route$params3, _route$params4, _route$params5;
+    var _route$params, _route$params2, _route$params3, _route$params4, _route$params5, _route$params6;
     var route = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useRoute)();
     var navigation = (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/hooks/useAppNavigation").useAppNavigation)();
     var lockIds = (_route$params = route.params) == null ? void 0 : _route$params.lockIds;
@@ -332953,6 +333051,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var bleNo = (_route$params3 = route.params) == null ? void 0 : _route$params3.bleNo;
     var bleName = (_route$params4 = route.params) == null ? void 0 : _route$params4.bleName;
     var needPin = (_route$params5 = route.params) == null ? void 0 : _route$params5.needPin;
+    var powerType = (_route$params6 = route.params) == null ? void 0 : _route$params6.powerType;
     var _useState = (0, _react.useState)(0),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       step = _useState2[0],
@@ -333035,7 +333134,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return {};
       })) || {};
       var deviceId = (_deviceInfo$String = deviceInfo[String(bleNo != null ? bleNo : '')]) == null ? void 0 : _deviceInfo$String.deviceId;
-      if (!deviceId && !!needPin) {
+      if (!deviceId && powerType !== 1) {
         (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '未找到蓝牙设备信息，请重新配对',
           icon: 'info'
@@ -333062,7 +333161,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           setStep(0);
           return;
         }
-        if (!!needPin) {
+        if (powerType !== 1) {
           var resetRes = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services").resetBluetoothPin)({
             id: lockIds
           });
@@ -333122,6 +333221,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             title: '移交成功',
             icon: 'success'
           });
+          if (powerType === 1) {
+            yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
+              key: 'pageType',
+              data: 'reload'
+            }).catch(function () {});
+            (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index', {
+              pages: 'handOverSuccess'
+            });
+            return;
+          }
           setTimeout(function () {
             navigation.navigate('UnBindSuccess', {
               pages: 'handOverSuccess',
@@ -333673,18 +333782,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         id: lockId
       });
       if ((res == null ? void 0 : res.code) === 200 && res != null && res.success) {
-        var _res$data, _res$data2, _res$data3, _res$data4, _res$data5;
+        var _res$data, _res$data2, _res$data3, _res$data4, _res$data5, _res$data6;
         var adminMobile = res == null || (_res$data = res.data) == null ? void 0 : _res$data.adminMobile;
         var bleNo = res == null || (_res$data2 = res.data) == null ? void 0 : _res$data2.bleNo;
         var id = res == null || (_res$data3 = res.data) == null ? void 0 : _res$data3.id;
         var bleName = res == null || (_res$data4 = res.data) == null ? void 0 : _res$data4.bleName;
         var needPin = res == null || (_res$data5 = res.data) == null ? void 0 : _res$data5.needPin;
+        var powerType = res == null || (_res$data6 = res.data) == null ? void 0 : _res$data6.powerType;
         navigation.navigate('UnbindDevice', {
           phoneNumber: adminMobile,
           bleNo: bleNo,
           id: id,
           bleName: bleName,
-          needPin: needPin
+          needPin: needPin,
+          powerType: powerType
         });
         return;
       }
@@ -333706,10 +333817,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           id: lockId
         });
         if ((res == null ? void 0 : res.code) === 200 && res != null && res.success) {
-          var _res$data6, _res$data7;
+          var _res$data7, _res$data8;
           var nextCheck = {
-            isComp: !!(res != null && (_res$data6 = res.data) != null && _res$data6.isComb),
-            isShare: !!(res != null && (_res$data7 = res.data) != null && _res$data7.isShare)
+            isComp: !!(res != null && (_res$data7 = res.data) != null && _res$data7.isComb),
+            isShare: !!(res != null && (_res$data8 = res.data) != null && _res$data8.isShare)
           };
           setCheckReturn(nextCheck);
           if (nextCheck.isShare) {
@@ -333892,6 +334003,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var bleNo = params.bleNo;
     var bleName = params.bleName;
     var needPin = params.needPin;
+    var powerType = params.powerType;
     var _useState = (0, _react.useState)(0),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       step = _useState2[0],
@@ -333987,7 +334099,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           return {};
         })) || {};
         deviceId = (_deviceInfo$String = deviceInfo[String(bleNo)]) == null ? void 0 : _deviceInfo$String.deviceId;
-        if (!!needPin) {
+        if (powerType !== 1) {
           var _cmdRes, _cmdRes2;
           if (!deviceId) {
             (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
@@ -334054,25 +334166,36 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var res = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/services/deviceInfo").unbind)(_params);
         if ((res == null ? void 0 : res.code) === 200 && res != null && res.success) {
           stop();
-          var targetRemoveId = _reactNative.Platform.OS === 'ios' || _reactNative.Platform.OS === 'android' ? String(bleNo) : deviceId || String(bleNo);
-          yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").removeBluetoothDeviceInfo)(targetRemoveId).catch(function () {});
-          if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android' && targetRemoveId) {
-            try {
-              var _require = _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils/api"),
-                disconnectBluetoothDevice = _require.disconnectBluetoothDevice;
-              yield disconnectBluetoothDevice(targetRemoveId);
-            } catch (e) {}
+          if (powerType !== 1) {
+            var targetRemoveId = _reactNative.Platform.OS === 'ios' || _reactNative.Platform.OS === 'android' ? String(bleNo) : deviceId || String(bleNo);
+            yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").removeBluetoothDeviceInfo)(targetRemoveId).catch(function () {});
+            if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android' && targetRemoveId) {
+              try {
+                var _require = _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils/api"),
+                  disconnectBluetoothDevice = _require.disconnectBluetoothDevice;
+                yield disconnectBluetoothDevice(targetRemoveId);
+              } catch (e) {}
+            }
           }
           (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
           (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '解绑成功',
             icon: 'success'
           });
+          if (powerType === 1) {
+            yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
+              key: 'type',
+              data: 'reload'
+            }).catch(function () {});
+            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index');
+            return;
+          }
           setTimeout(function () {
             navigation.navigate('UnBindSuccess', {
               bleName: bleName,
               bleNo: bleNo,
-              deviceId: deviceId
+              deviceId: deviceId,
+              powerType: powerType
             });
           }, 800);
         } else {
