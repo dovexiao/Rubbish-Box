@@ -26,35 +26,73 @@ const styles = StyleSheet.create({
   },
 
   btnContainerText: {
-    fontSize: fontSize(16),
+    fontSize: fontSize(14),
     color: '#ffffff',
     marginLeft: px(3),
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 
   btnAddText: {
-    fontSize: fontSize(26),
+    fontSize: fontSize(14),
+    lineHeight: px(20),
     color: '#ffffff',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 
   title: {
-    marginTop: px(16),
-    marginBottom: px(16),
+    marginTop: px(24),
+    marginBottom: px(12),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: px(16),
   },
 
   titleBorder: {
-    width: px(2),
-    height: px(12),
-    backgroundColor: '#000000',
-    marginRight: px(6),
-    borderRadius: px(2),
+    flex: 1,
+    height: px(1),
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
 
   titleText: {
     color: '#333333',
     fontSize: fontSize(14),
-    fontWeight: 'bold',
+    fontWeight: '500',
+    lineHeight: px(20),
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // paddingVertical: px(16),
+    backgroundColor: '#FFFFFF',
+  },
+  tabItemList: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: px(4),
+    borderRadius: px(162),
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    overflow: 'hidden',
+  },
+  tabItem: {
+    width: px(106),
+    height: px(32),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: px(171),
+  },
+  tabItemActive: {
+    backgroundColor: '#333333',
+  },
+  tabItemText: {
+    fontSize: fontSize(14),
+    lineHeight: px(20),
+    color: '#333333',
+  },
+  tabItemTextActive: {
+    color: '#FFFFFF',
   },
 
   popup: {
@@ -131,6 +169,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'normal',
     textTransform: 'none',
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: px(8),
+    paddingHorizontal: px(16),
+    gap: px(15),
+  },
+  footerBtn: {
+    height: px(48),
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: px(12),
+  },
+  footerBtnText: {
+    fontSize: fontSize(16),
+    lineHeight: px(22),
+  },
+  footerBtnClose: {
+    borderColor: 'rgba(0,0,0,0.1)',
+    borderWidth: px(1),
+    borderStyle: 'solid',
+  },
+  footerBtnAdd: {
+    backgroundColor: '#333333',
+  },
+  footerBtnCloseText: {
+    color: '#999999',
+  },
+  footerBtnAddText: {
+    color: '#ffffff',
+    fontWeight: '500',
   },
 });
 

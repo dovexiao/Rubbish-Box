@@ -130,34 +130,9 @@ export default function Mine() {
   const listItems = useMemo(
     () => [
       {
-        icon: 'time' as const,
-        label: '地锁申请使用记录',
-        onPress: () => navigation.navigate('ApplyRecordList'),
-      },
-      {
-        icon: 'a-addequipments' as const,
-        label: '添加设备',
-        onPress: () => navigation.navigate('MyDevice'),
-      },
-      {
-        icon: 'shopping' as const,
-        label: '商城',
-        onPress: () => navigation.navigate('Shopping'),
-      },
-      {
-        icon: 'order' as const,
-        label: '我的订单',
-        onPress: () => navigation.navigate('Order'),
-      },
-      {
         icon: 'maintain' as const,
         label: '在线报修',
         onPress: () => navigation.navigate('OnlineRepair'),
-      },
-      {
-        icon: 'a-advertisingdisplay' as const,
-        label: '广告位展示',
-        onPress: () => navigation.navigate('AdvertisingDisplay'),
       },
       {
         icon: 'feedback' as const,
@@ -188,6 +163,54 @@ export default function Mine() {
     [navigation, info],
   );
 
+  // 设备管理
+  const deviceManageList = [
+    {
+      title: '商城',
+      icon: 'https://g.18qjz.cn/img/boklock/img_shop.png',
+      onPress: () => navigation.navigate('Shopping'),
+    },
+    {
+      title: '添加设备',
+      icon: 'https://g.18qjz.cn/img/boklock/img_add_device.png',
+      onPress: () => navigation.navigate('MyDevice'),
+    },
+    {
+      title: '成员',
+      icon: 'https://g.18qjz.cn/img/boklock/img_member.png',
+      onPress: () => navigation.navigate('MemberList'),
+    },
+    {
+      title: '使用申请记录',
+      icon: 'https://g.18qjz.cn/img/boklock/img_apply_record.png',
+      onPress: () => navigation.navigate('ApplyRecordList'),
+    },
+  ];
+
+  // 经营中心
+  const businessCenterList = [
+    {
+      title: '收款设置',
+      icon: 'https://g.18qjz.cn/img/boklock/img_payment_setting.png',
+      onPress: () => navigation.navigate('Shopping'),
+    },
+    {
+      title: '我的订单',
+      icon: 'https://g.18qjz.cn/img/boklock/img_my_order.png',
+      onPress: () => navigation.navigate('Order'),
+    },
+    {
+      title: '余额钱包',
+      icon: 'https://g.18qjz.cn/img/boklock/img_wallet.png',
+      onPress: () => navigation.navigate('Wallet'),
+    },
+    {
+      title: '广告展示',
+      icon: 'https://g.18qjz.cn/img/boklock/img_ad.png',
+      onPress: () => navigation.navigate('AdvertisingDisplay'),
+    },
+  ];
+
   return (
     <PageContainer
       backgroundColor="#FCFBFE"
@@ -205,34 +228,120 @@ export default function Mine() {
             if (!hasToken) return requireLogin();
             navigation.navigate('UserInfo');
           }}
+          style={styles.avatarTouchable}
         >
-          {info?.avatar &&
-          typeof info.avatar === 'string' &&
-          info.avatar.startsWith('http') ? (
-            <Image source={{ uri: info.avatar }} style={styles.avatar} />
-          ) : (
-            <Image
-              source={{
-                uri: 'https://g.18qjz.cn/img/boklock/logo.png',
+          <View style={styles.avatarLeft}>
+            {info?.avatar &&
+            typeof info.avatar === 'string' &&
+            info.avatar.startsWith('http') ? (
+              <Image source={{ uri: info.avatar }} style={styles.avatar} />
+            ) : (
+              <Image
+                source={{
+                  uri: 'https://g.18qjz.cn/img/boklock/logo.png',
+                }}
+                resizeMode="contain"
+                style={styles.avatar}
+              />
+            )}
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={e => {
+                e.stopPropagation();
+                if (!hasToken) return requireLogin();
               }}
-              resizeMode="contain"
-              style={styles.avatar}
-            />
-          )}
+            >
+              <Text style={[styles.name, styles.lightName]}>
+                {hasToken ? info?.nickName ?? '' : '去登录'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <AppIcon name="a-headfor-20" size={px(20)} color="#CCCCCC" />
+          </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            if (!hasToken) return requireLogin();
-          }}
-        >
-          <Text style={[styles.name, styles.lightName]}>
-            {hasToken ? info?.nickName ?? '' : '去登录'}
-          </Text>
+        <TouchableOpacity activeOpacity={1} style={styles.deviceManageCard}>
+          <View style={styles.deviceManageCardTitle}>
+            <Text style={styles.deviceManageCardTitleText}>设备管理</Text>
+          </View>
+          <View style={styles.deviceManageList}>
+            {deviceManageList.map((item, idx) => {
+              const isLast = idx === deviceManageList.length - 1;
+              return (
+                <TouchableOpacity
+                  activeOpacity={1}
+                  style={[
+                    styles.deviceManageListItem,
+                    isLast && styles.deviceManageListItemLast,
+                  ]}
+                  key={idx}
+                  onPress={() => item.onPress()}
+                >
+                  <Image
+                    source={{ uri: item.icon }}
+                    style={styles.deviceManageListItemIcon}
+                  />
+                  <Text style={styles.deviceManageListItemText}>
+                    {item.title}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        <TouchableOpacity activeOpacity={1} style={styles.businessCenterCard}>
+          <View style={styles.businessCenterCardTitle}>
+            <Text style={styles.businessCenterCardTitleText}>经营中心</Text>
+          </View>
+          <View style={styles.businessCenterBody}>
+            <View style={styles.businessCenterBodyItem}>
+              <Text style={styles.businessCenterBodyItemText}>830129.2</Text>
+              <Text style={styles.businessCenterBodyItemValue}>余额(元)</Text>
+            </View>
+
+            <View style={styles.businessCenterBodyItemLine} />
+            <View style={styles.businessCenterBodyItem}>
+              <Text
+                style={[
+                  styles.businessCenterBodyItemText,
+                  styles.businessCenterBodyItemTextBold,
+                ]}
+              >
+                1082
+              </Text>
+              <Text style={styles.businessCenterBodyItemValue}>今日订单量</Text>
+            </View>
+          </View>
+          <View style={styles.businessCenterList}>
+            {businessCenterList.map((item, idx) => {
+              const isLast = idx === deviceManageList.length - 1;
+              return (
+                <TouchableOpacity
+                  activeOpacity={1}
+                  style={[
+                    styles.deviceManageListItem,
+                    isLast && styles.deviceManageListItemLast,
+                  ]}
+                  key={idx}
+                  onPress={() => item.onPress()}
+                >
+                  <Image
+                    source={{ uri: item.icon }}
+                    style={styles.deviceManageListItemIcon}
+                  />
+                  <Text style={styles.deviceManageListItemText}>
+                    {item.title}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </TouchableOpacity>
+
+        {/* <TouchableOpacity
           activeOpacity={0.8}
           style={styles.card}
           onPress={() => {
@@ -247,7 +356,7 @@ export default function Mine() {
               <Text style={styles.memberDesc}>添加成员，授权使用地锁</Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.listBox}>
           {listItems.map(it => {
@@ -271,20 +380,17 @@ export default function Mine() {
         </View>
 
         {hasToken && (
-          <View style={styles.logoutBox}>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.listItem}
-              onPress={() => {
-                if (!hasToken) return requireLogin();
-                logoutRef.current?.open();
-              }}
-            >
-              <AppIcon name="exit" size={px(22)} color="#333333" />
-              <Text style={styles.listLabel}>退出登录</Text>
-              <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.logoutBox}
+            onPress={() => {
+              if (!hasToken) return requireLogin();
+              logoutRef.current?.open();
+            }}
+          >
+            <AppIcon name="exit" size={px(20)} color="#CCCCCC" />
+            <Text style={styles.logoutText}>退出登录</Text>
+          </TouchableOpacity>
         )}
 
         {/* 退出登录弹窗 */}

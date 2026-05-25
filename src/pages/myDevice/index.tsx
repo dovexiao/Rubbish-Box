@@ -1,7 +1,7 @@
 import { showToast, eventCenter } from '@/utils';
 import { useNavigation } from '@react-navigation/native';
 import { Image, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import {
   PageContainer,
   TextInput,
@@ -24,7 +24,7 @@ export default function MyDevice() {
   const [deviceList, setDeviceList] = useState<any[]>([]);
   const [currentDevice, setCurrentDevice] = useState<any>(undefined);
   const [editNamePopVisible, setEditNamePopVisible] = useState(false);
-
+  const [currentTab, setCurrentTab] = useState(0);
   useEffect(() => {
     getList();
     return () => {
@@ -66,9 +66,37 @@ export default function MyDevice() {
       });
     }
   };
+
+  const footerRender = useMemo(() => {
+    return (
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={[styles.footerBtn, styles.footerBtnClose]}
+          onPress={() => {}}
+        >
+          <Text style={[styles.footerBtnText, styles.footerBtnCloseText]}>
+            移除收费设备
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.footerBtn, styles.footerBtnAdd]}
+          onPress={() => {}}
+        >
+          <Text style={[styles.footerBtnText, styles.footerBtnAddText]}>
+            添加收费设备
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }, [currentTab]);
+
+  const contentRender = useCallback(() => {
+    return currentTab === 1 ? ['top', 'bottom'] : ['top'];
+  }, [currentTab]);
+
   return (
     <PageContainer
-      safeAreaEdges={['top']}
+      safeAreaEdges={contentRender()}
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#ffffff"
       pageNavProps={{
@@ -78,6 +106,7 @@ export default function MyDevice() {
       }}
       navBorder
       backgroundColor="#ffffff"
+      footer={currentTab === 1 ? footerRender : undefined}
     >
       <ScrollView style={styles.container}>
         <GradientButton
@@ -101,9 +130,42 @@ export default function MyDevice() {
           </Flex>
         </GradientButton>
         <Flex align="center" style={styles.title}>
-          <Text style={styles.titleBorder}></Text>
+          <Text style={styles.titleBorder} />
           <Text style={styles.titleText}>设备列表</Text>
+          <Text style={styles.titleBorder} />
         </Flex>
+        <View style={styles.tabContainer}>
+          <View style={styles.tabItemList}>
+            <TouchableOpacity
+              style={[styles.tabItem, currentTab === 0 && styles.tabItemActive]}
+              onPress={() => setCurrentTab(0)}
+              activeOpacity={1}
+            >
+              <Text
+                style={[
+                  styles.tabItemText,
+                  currentTab === 0 && styles.tabItemTextActive,
+                ]}
+              >
+                不收费订单
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tabItem, currentTab === 1 && styles.tabItemActive]}
+              onPress={() => setCurrentTab(1)}
+              activeOpacity={1}
+            >
+              <Text
+                style={[
+                  styles.tabItemText,
+                  currentTab === 1 && styles.tabItemTextActive,
+                ]}
+              >
+                收费订单
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         {deviceList && deviceList?.length > 0 ? (
           <Flex direction={'column'}>
             {deviceList.map((item: any, index: number) => (
