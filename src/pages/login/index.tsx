@@ -8,6 +8,8 @@ import {
   Platform,
   DeviceEventEmitter,
   InteractionManager,
+  NativeModules,
+  TurboModuleRegistry,
 } from 'react-native';
 import { Flex, PageContainer } from '@/components';
 import { getThirdState, thirdLogin } from '@/services';
@@ -60,6 +62,7 @@ const Login = () => {
   });
 
   const device = useRef<any>({});
+  const thirdLoginPlatform = useRef<'wechat' | 'huawei'>('wechat');
 
   const syncAppPrivacyGateFromStorage = async () => {
     try {
@@ -221,12 +224,94 @@ const Login = () => {
   };
 
   const handleWxLogin = async () => {
+    thirdLoginPlatform.current = 'wechat';
     if (!agree) {
       setLoginType('mini');
       agreePopRef.current?.open();
       return;
     }
     await wxLogin();
+  };
+
+  const hwLogin = async () => {
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      showToast({ title: '仅鸿蒙系统支持', icon: 'info' });
+      return;
+    }
+    try {
+      let HarmonyAccountModule = NativeModules.HarmonyAccountModule;
+      if (!HarmonyAccountModule) {
+        const turboGet = (TurboModuleRegistry as any)?.get;
+        if (typeof turboGet === 'function') {
+          try {
+            HarmonyAccountModule = turboGet('HarmonyAccountModule');
+          } catch (e) {}
+        }
+      }
+
+      if (HarmonyAccountModule && HarmonyAccountModule.loginWithHuawei) {
+        showLoading({ title: '拉起华为授权...' });
+        const authCode = await HarmonyAccountModule.loginWithHuawei();
+        console.log('华为 AuthCode', authCode);
+
+        showLoading({ title: '登录中...' });
+        const thirdState = await getThirdState({});
+        let obj: any = { source: 3, code: authCode, state: thirdState.data };
+        let deviceInfoStorage: any = {};
+        try {
+          deviceInfoStorage = await getStorage({ key: 'deviceInfo' });
+        } catch (e) {}
+        if (deviceInfoStorage?.data) {
+          obj = { ...obj, ...deviceInfoStorage?.data };
+        } else {
+          obj = { ...obj, ...device.current };
+        }
+
+        const thirdLoginRes = await thirdLogin({ ...obj });
+        console.log('thirdLoginRes', thirdLoginRes);
+        if (thirdLoginRes.code === 200) {
+          hideLoading();
+          await cacheSetSync('token', thirdLoginRes.data.token);
+          await cacheSetSync('guestMode', false);
+          void getMobPushDeviceInfo().catch(() => undefined);
+          if (thirdLoginRes.data.needBind) {
+            navigation.navigate('BindPhone' as any);
+          } else if (thirdLoginRes.data.needMobileVerify) {
+            navigation.navigate('MiniBind' as any, {
+              mobile: thirdLoginRes.data.mobile,
+            });
+          } else {
+            showToast({ title: '登录成功', icon: 'success' });
+            reLaunch('Index');
+          }
+        } else {
+          hideLoading();
+          showToast({ title: thirdLoginRes.message, icon: 'info' });
+        }
+      } else {
+        showToast({ title: '华为登录模块未加载', icon: 'info' });
+      }
+    } catch (err: any) {
+      console.log('====== 获取华为 AuthCode 失败 ======', err);
+      showToast({
+        title:
+          err.message == 'The user canceled the authorization.'
+            ? '用户取消了授权'
+            : '未获取到授权信息',
+        icon: 'error',
+      });
+      hideLoading();
+    }
+  };
+
+  const handleHwLogin = async () => {
+    thirdLoginPlatform.current = 'huawei';
+    if (!agree) {
+      setLoginType('mini');
+      agreePopRef.current?.open();
+      return;
+    }
+    await hwLogin();
   };
 
   const radioClick = async () => {
@@ -454,11 +539,25 @@ const Login = () => {
                     style={styles.wxlogo}
                   />
                 </Flex>
+                {Platform.OS !== 'ios' && Platform.OS !== 'android' && (
+                  <Flex
+                    direction="column"
+                    align="center"
+                    isTouchView
+                    onPress={handleHwLogin}
+                  >
+                    <Image
+                      source={{
+                        uri: 'https://g.18qjz.cn/img/boklock/icon_hw.png',
+                      }}
+                      style={styles.hwlogo}
+                    />
+                  </Flex>
+                )}
                 <Flex
                   direction="column"
                   justify="center"
                   align="center"
-                  style={{ marginLeft: px(65) }}
                   isTouchView
                   onPress={() => {
                     const type =
@@ -504,7 +603,11 @@ const Login = () => {
                     await setStorage({ key: 'loginAgreeChecked', data: true });
                     await setStorage({ key: 'pushEnabled', data: true });
                     setTimeout(() => {
-                      wxLogin();
+                      if (thirdLoginPlatform.current === 'huawei') {
+                        hwLogin();
+                      } else {
+                        wxLogin();
+                      }
                     }, 300);
                   }
                 : async () => {

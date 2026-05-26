@@ -56,8 +56,8 @@ const BindPhone = () => {
         setShowError(true);
         setErrorMessage(
           res.data == '临时token已失效'
-            ? '微信授权失效，请返回重新授权'
-            : '此手机号码未注册',
+            ? '授权失效，请返回重新授权'
+            : res.message || '此手机号码未注册',
         );
       } else {
         hideLoading();

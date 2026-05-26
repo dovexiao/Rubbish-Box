@@ -254437,6 +254437,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         isFromGroup: detail != null && detail.isGroup ? true : false
       });
     };
+    var hasAutoOperate = (detail == null ? void 0 : detail.powerType) !== 1 && !(detail != null && detail.isGroup);
+    var hasOpenCoverOperate = (detail == null ? void 0 : detail.powerType) === 1 && detail.canOpenCover;
+    console.log(detail == null ? void 0 : detail.isGroup, hasAutoOperate, hasOpenCoverOperate);
     return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
       style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.contentBox,
       children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
@@ -254448,7 +254451,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           type: detail != null && detail.isGroup ? 2 : 1
         })]
       }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
-        justify: "between",
+        justify: detail != null && detail.isGroup || hasAutoOperate || hasOpenCoverOperate ? 'between' : 'evenly',
         style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualRow,
         children: [(detail == null ? void 0 : detail.powerType) !== 1 && !(detail != null && detail.isGroup) && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
           activeOpacity: 1,
@@ -257307,6 +257310,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#333333'
     },
     manualRow: {
+      width: '100%',
       paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(28),
       marginVertical: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20)
     },
@@ -257342,7 +257346,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#FFFFFF',
       borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12),
       padding: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4),
-      marginHorizontal: 4,
+      marginHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4),
       shadowColor: '#000',
       shadowOpacity: 0.05,
       shadowRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4),
@@ -264737,6 +264741,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       appStateSub: undefined
     });
     var device = (0, _react.useRef)({});
+    var thirdLoginPlatform = (0, _react.useRef)('wechat');
     var syncAppPrivacyGateFromStorage = /*#__PURE__*/function () {
       var _ref = (0, _asyncToGenerator2.default)(function* () {
         try {
@@ -264932,6 +264937,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }();
     var handleWxLogin = /*#__PURE__*/function () {
       var _ref4 = (0, _asyncToGenerator2.default)(function* () {
+        thirdLoginPlatform.current = 'wechat';
         if (!agree) {
           var _agreePopRef$current;
           setLoginType('mini');
@@ -264944,8 +264950,118 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return _ref4.apply(this, arguments);
       };
     }();
-    var radioClick = /*#__PURE__*/function () {
+    var hwLogin = /*#__PURE__*/function () {
       var _ref5 = (0, _asyncToGenerator2.default)(function* () {
+        if (_reactNative.Platform.OS === 'ios' || _reactNative.Platform.OS === 'android') {
+          (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: '仅鸿蒙系统支持',
+            icon: 'info'
+          });
+          return;
+        }
+        try {
+          var HarmonyAccountModule = _reactNative.NativeModules.HarmonyAccountModule;
+          if (!HarmonyAccountModule) {
+            var turboGet = _reactNative.TurboModuleRegistry == null ? void 0 : _reactNative.TurboModuleRegistry.get;
+            if (typeof turboGet === 'function') {
+              try {
+                HarmonyAccountModule = turboGet('HarmonyAccountModule');
+              } catch (e) {}
+            }
+          }
+          if (HarmonyAccountModule && HarmonyAccountModule.loginWithHuawei) {
+            var _deviceInfoStorage3;
+            (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+              title: '拉起华为授权...'
+            });
+            var authCode = yield HarmonyAccountModule.loginWithHuawei();
+            console.log('华为 AuthCode', authCode);
+            (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+              title: '登录中...'
+            });
+            var thirdState = yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/services").getThirdState)({});
+            var obj = {
+              source: 3,
+              code: authCode,
+              state: thirdState.data
+            };
+            var deviceInfoStorage = {};
+            try {
+              deviceInfoStorage = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").getStorage)({
+                key: 'deviceInfo'
+              });
+            } catch (e) {}
+            if ((_deviceInfoStorage3 = deviceInfoStorage) != null && _deviceInfoStorage3.data) {
+              var _deviceInfoStorage4;
+              obj = Object.assign({}, obj, (_deviceInfoStorage4 = deviceInfoStorage) == null ? void 0 : _deviceInfoStorage4.data);
+            } else {
+              obj = Object.assign({}, obj, device.current);
+            }
+            var thirdLoginRes = yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/services").thirdLogin)(Object.assign({}, obj));
+            console.log('thirdLoginRes', thirdLoginRes);
+            if (thirdLoginRes.code === 200) {
+              (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+              yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").cacheSetSync)('token', thirdLoginRes.data.token);
+              yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").cacheSetSync)('guestMode', false);
+              void (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").getMobPushDeviceInfo)().catch(function () {
+                return undefined;
+              });
+              if (thirdLoginRes.data.needBind) {
+                navigation.navigate('BindPhone');
+              } else if (thirdLoginRes.data.needMobileVerify) {
+                navigation.navigate('MiniBind', {
+                  mobile: thirdLoginRes.data.mobile
+                });
+              } else {
+                (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                  title: '登录成功',
+                  icon: 'success'
+                });
+                (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Index');
+              }
+            } else {
+              (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+              (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                title: thirdLoginRes.message,
+                icon: 'info'
+              });
+            }
+          } else {
+            (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: '华为登录模块未加载',
+              icon: 'info'
+            });
+          }
+        } catch (err) {
+          console.log('====== 获取华为 AuthCode 失败 ======', err);
+          (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: err.message == 'The user canceled the authorization.' ? '用户取消了授权' : '未获取到授权信息',
+            icon: 'error'
+          });
+          (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+        }
+      });
+      return function hwLogin() {
+        return _ref5.apply(this, arguments);
+      };
+    }();
+    var handleHwLogin = /*#__PURE__*/function () {
+      var _ref6 = (0, _asyncToGenerator2.default)(function* () {
+        thirdLoginPlatform.current = 'huawei';
+        if (!agree) {
+          var _agreePopRef$current2;
+          setLoginType('mini');
+          (_agreePopRef$current2 = agreePopRef.current) == null || _agreePopRef$current2.open();
+          return;
+        }
+        yield hwLogin();
+      });
+      return function handleHwLogin() {
+        return _ref6.apply(this, arguments);
+      };
+    }();
+    var radioClick = /*#__PURE__*/function () {
+      var _ref7 = (0, _asyncToGenerator2.default)(function* () {
         var newState = !agree;
         setAgree(newState);
         yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
@@ -264960,14 +265076,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function radioClick() {
-        return _ref5.apply(this, arguments);
+        return _ref7.apply(this, arguments);
       };
     }();
 
     // 页面加载时获取设备信息
     (0, _react.useEffect)(function () {
       var loadDeviceInfo = /*#__PURE__*/function () {
-        var _ref6 = (0, _asyncToGenerator2.default)(function* () {
+        var _ref8 = (0, _asyncToGenerator2.default)(function* () {
           var storageDevice = {};
           try {
             var _storageDevice;
@@ -264982,7 +265098,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
         });
         return function loadDeviceInfo() {
-          return _ref6.apply(this, arguments);
+          return _ref8.apply(this, arguments);
         };
       }();
       _reactNative.InteractionManager.runAfterInteractions(function () {
@@ -265048,7 +265164,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // 监听从协议/隐私 Web 返回后是否需要重开隐私弹窗
     (0, _react.useEffect)(function () {
       var handler = /*#__PURE__*/function () {
-        var _ref8 = (0, _asyncToGenerator2.default)(function* () {
+        var _ref0 = (0, _asyncToGenerator2.default)(function* () {
           try {
             var reopen = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('reopenPrivacyAfterWeb');
             var agreed = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('agreePrivacy');
@@ -265061,7 +265177,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             });
             var by = byRes == null ? void 0 : byRes.data;
             if (reopen && !agreed && by === 'login') {
-              var _agreePopRef$current2;
+              var _agreePopRef$current3;
               try {
                 yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").cacheSetSync)('reopenPrivacyAfterWeb', false);
                 yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
@@ -265069,12 +265185,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   data: ''
                 });
               } catch (_unused3) {}
-              (_agreePopRef$current2 = agreePopRef.current) == null || _agreePopRef$current2.open == null || _agreePopRef$current2.open();
+              (_agreePopRef$current3 = agreePopRef.current) == null || _agreePopRef$current3.open == null || _agreePopRef$current3.open();
             }
           } catch (_unused4) {}
         });
         return function handler() {
-          return _ref8.apply(this, arguments);
+          return _ref0.apply(this, arguments);
         };
       }();
       _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('privacy:open', handler);
@@ -265218,13 +265334,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   },
                   style: _styles.default.wxlogo
                 })
+              }), _reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android' && /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+                direction: "column",
+                align: "center",
+                isTouchView: true,
+                onPress: handleHwLogin,
+                children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
+                  source: {
+                    uri: 'https://g.18qjz.cn/img/boklock/icon_hw.png'
+                  },
+                  style: _styles.default.hwlogo
+                })
               }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/components").Flex, {
                 direction: "column",
                 justify: "center",
                 align: "center",
-                style: {
-                  marginLeft: (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(65)
-                },
                 isTouchView: true,
                 onPress: function onPress() {
                   var type = (loginType === 'mini' ? prevLoginType : loginType) === 'sms' ? 'password' : 'sms';
@@ -265247,14 +265371,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           title: '用户协议及隐私保护',
           cancelText: "\u4E0D\u540C\u610F",
           onCancel: function onCancel() {
-            var _agreePopRef$current3, _retainPopRef$current;
-            (_agreePopRef$current3 = agreePopRef.current) == null || _agreePopRef$current3.close();
+            var _agreePopRef$current4, _retainPopRef$current;
+            (_agreePopRef$current4 = agreePopRef.current) == null || _agreePopRef$current4.close();
             (_retainPopRef$current = retainPopRef.current) == null || _retainPopRef$current.open();
           },
           confirmColors: ['#282828', '#4A4A4A'],
           onConfirm: loginType === 'mini' ? /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-            var _agreePopRef$current4;
-            yield (_agreePopRef$current4 = agreePopRef.current) == null ? void 0 : _agreePopRef$current4.close();
+            var _agreePopRef$current5;
+            yield (_agreePopRef$current5 = agreePopRef.current) == null ? void 0 : _agreePopRef$current5.close();
             setAgree(true);
             yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
               key: 'loginAgreeChecked',
@@ -265265,7 +265389,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               data: true
             });
             setTimeout(function () {
-              wxLogin();
+              if (thirdLoginPlatform.current === 'huawei') {
+                hwLogin();
+              } else {
+                wxLogin();
+              }
             }, 300);
           }) : /*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
             setAgree(true);
@@ -265278,8 +265406,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               data: true
             });
             (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").myNextTick)(function () {
-              var _agreePopRef$current5;
-              (_agreePopRef$current5 = agreePopRef.current) == null || _agreePopRef$current5.close();
+              var _agreePopRef$current6;
+              (_agreePopRef$current6 = agreePopRef.current) == null || _agreePopRef$current6.close();
               (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
               _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.trigger('onNext');
             });
@@ -265290,31 +265418,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             children: ["\u6211\u5DF2\u9605\u8BFB\u5E76\u540C\u610F", /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
               style: _styles.default.popDescLink,
               onPress: (/*#__PURE__*/function () {
-                var _ref10 = (0, _asyncToGenerator2.default)(function* (e) {
-                  var _agreePopRef$current6;
-                  e == null || e.stopPropagation == null || e.stopPropagation();
-                  try {
-                    yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").cacheSetSync)('reopenPrivacyAfterWeb', true);
-                    yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
-                      key: 'privacyOpenBy',
-                      data: 'login'
-                    });
-                  } catch (_unused7) {}
-                  (_agreePopRef$current6 = agreePopRef.current) == null || _agreePopRef$current6.close();
-                  navigation.navigate('WebView', {
-                    url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
-                    title: '泊刻地锁用户协议'
-                  });
-                });
-                return function (_x) {
-                  return _ref10.apply(this, arguments);
-                };
-              }()),
-              children: "\u300A\u6CCA\u523B\u5730\u9501\u7528\u6237\u534F\u8BAE\u300B"
-            }), "\u548C", /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _styles.default.popDescLink,
-              onPress: (/*#__PURE__*/function () {
-                var _ref11 = (0, _asyncToGenerator2.default)(function* (e) {
+                var _ref12 = (0, _asyncToGenerator2.default)(function* (e) {
                   var _agreePopRef$current7;
                   e == null || e.stopPropagation == null || e.stopPropagation();
                   try {
@@ -265323,15 +265427,39 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                       key: 'privacyOpenBy',
                       data: 'login'
                     });
-                  } catch (_unused8) {}
+                  } catch (_unused7) {}
                   (_agreePopRef$current7 = agreePopRef.current) == null || _agreePopRef$current7.close();
+                  navigation.navigate('WebView', {
+                    url: 'https://g.18qjz.cn/protocol/boklock/userAgreement.html',
+                    title: '泊刻地锁用户协议'
+                  });
+                });
+                return function (_x) {
+                  return _ref12.apply(this, arguments);
+                };
+              }()),
+              children: "\u300A\u6CCA\u523B\u5730\u9501\u7528\u6237\u534F\u8BAE\u300B"
+            }), "\u548C", /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+              style: _styles.default.popDescLink,
+              onPress: (/*#__PURE__*/function () {
+                var _ref13 = (0, _asyncToGenerator2.default)(function* (e) {
+                  var _agreePopRef$current8;
+                  e == null || e.stopPropagation == null || e.stopPropagation();
+                  try {
+                    yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").cacheSetSync)('reopenPrivacyAfterWeb', true);
+                    yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
+                      key: 'privacyOpenBy',
+                      data: 'login'
+                    });
+                  } catch (_unused8) {}
+                  (_agreePopRef$current8 = agreePopRef.current) == null || _agreePopRef$current8.close();
                   navigation.navigate('WebView', {
                     url: 'https://g.18qjz.cn/protocol/boklock/privacyPolicy.html',
                     title: '泊刻地锁隐私政策'
                   });
                 });
                 return function (_x2) {
-                  return _ref11.apply(this, arguments);
+                  return _ref13.apply(this, arguments);
                 };
               }()),
               children: "\u300A\u9690\u79C1\u653F\u7B56\u300B"
@@ -265962,6 +266090,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     wxlogo: {
       width: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(50),
       height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(50)
+    },
+    hwlogo: {
+      width: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(50),
+      height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(50),
+      marginHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(40)
     },
     loginIcon: {
       width: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(50),
@@ -268183,7 +268316,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           } else if (res.code === 522) {
             (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
             setShowError(true);
-            setErrorMessage(res.data == '临时token已失效' ? '微信授权失效，请返回重新授权' : '此手机号码未注册');
+            setErrorMessage(res.data == '临时token已失效' ? '授权失效，请返回重新授权' : res.message || '此手机号码未注册');
           } else {
             (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
             (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
@@ -268307,7 +268440,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
       position: 'absolute',
       bottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(-28),
-      left: '50%',
+      right: '0%',
       marginLeft: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(-35)
     },
     btn: {
