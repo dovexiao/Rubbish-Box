@@ -464,6 +464,9 @@ const Content: React.FC<ContentProps> = ({
       isFromGroup: detail?.isGroup ? true : false,
     });
   };
+  const hasAutoOperate = detail?.powerType !== 1 && !detail?.isGroup;
+  const hasOpenCoverOperate = detail?.powerType === 1 && detail.canOpenCover;
+  console.log(detail?.isGroup, hasAutoOperate, hasOpenCoverOperate);
 
   return (
     <View style={styles.contentBox}>
@@ -477,7 +480,14 @@ const Content: React.FC<ContentProps> = ({
         />
       </Flex>
 
-      <Flex justify="between" style={styles.manualRow}>
+      <Flex
+        justify={
+          detail?.isGroup || hasAutoOperate || hasOpenCoverOperate
+            ? 'between'
+            : 'evenly'
+        }
+        style={styles.manualRow}
+      >
         {/* 市电暂时不需要显示自动升降 */}
         {detail?.powerType !== 1 && !detail?.isGroup && (
           <TouchableOpacity

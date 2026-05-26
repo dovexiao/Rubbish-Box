@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
     color: '#333333',
   },
   manualRow: {
+    width: '100%',
     paddingHorizontal: px(28),
     marginVertical: px(20),
   },
@@ -46,7 +47,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: px(12),
     padding: px(4),
-    marginHorizontal: 4,
+    marginHorizontal: px(4),
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: px(4),
