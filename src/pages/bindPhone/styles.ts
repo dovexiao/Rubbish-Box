@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     lineHeight: px(20),
     position: 'absolute',
     bottom: px(-28),
-    left: '50%',
+    right: '0%',
     marginLeft: px(-35),
   },
   btn: {

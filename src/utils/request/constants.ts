@@ -1,15 +1,16 @@
-export type TProxy = 'warning' | 'info'
-export type IPrefix = keyof typeof domain.real
+export type TProxy = 'warning' | 'info';
+export type IPrefix = keyof typeof domain.real;
 
-export type IPathName<T extends string, K extends string> = T extends `/${K}${infer R}`
-  ? `/${K}${R}`
-  : never
+export type IPathName<
+  T extends string,
+  K extends string,
+> = T extends `/${K}${infer R}` ? `/${K}${R}` : never;
 
 export type IHref<T extends string> = T extends `https://${infer R}`
   ? `https://${R}`
   : T extends `http://${infer R}`
-    ? `http://${R}`
-    : never
+  ? `http://${R}`
+  : never;
 
 /************************************************** */
 /** 上半部分类型，下半部分逻辑 */
@@ -27,10 +28,10 @@ const domain = {
   },
   dev: {
     // boke: 'https://boke-api.18qjz.cn',
-    // boke: 'http://192.168.99.28:8080',
+    // boke: 'http://192.168.99.35:8082
     boke: 'https://boke-api-dev.18qjz.cn',
     // boke: 'https://boke-api.18qjz.cn',
   },
-}
+};
 
-export default domain
+export default domain;

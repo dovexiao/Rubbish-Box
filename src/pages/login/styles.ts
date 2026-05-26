@@ -53,6 +53,11 @@ const styles = StyleSheet.create({
     width: px(50),
     height: px(50),
   },
+  hwlogo: {
+    width: px(50),
+    height: px(50),
+    marginHorizontal: px(40),
+  },
   loginIcon: {
     width: px(50),
     height: px(50),
