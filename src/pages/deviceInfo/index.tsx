@@ -58,6 +58,17 @@ import {
   showPermissionPromptIfNeeded,
 } from '@/utils/permissions';
 import { fontSize, px } from '@/utils/ui';
+import { PickerView } from '@ant-design/react-native';
+
+const basicColumns = [
+  [
+    { label: '周一', value: 'Mon' },
+    { label: '周二', value: 'Tues' },
+    { label: '周三', value: 'Wed' },
+    { label: '周四', value: 'Thur' },
+    { label: '周五', value: 'Fri' },
+  ],
+];
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
@@ -73,7 +84,7 @@ const DeviceInfo = () => {
     useState<StatusBarStyle>('dark-content');
   const [optionType, setOptionType] = useState<string>('1');
   const [confirmContent, setConfirmContent] = useState<any>({});
-
+  const [remoteKeyPopVisible, setRemoteKeyPopVisible] = useState(false);
   const [editNamePopVisible, setEditNamePopVisible] = useState(false);
   const [adminPopVisible, setAdminPopVisible] = useState(false);
   const pageContainerRef = useRef<PageContainerRef>(null);
@@ -589,6 +600,52 @@ const DeviceInfo = () => {
               )}
             </TouchableOpacity>
           </Flex>
+          <Flex style={styles.cardRows}>
+            <Flex direction="row" align="center" style={{ gap: px(4) }}>
+              <Text style={styles.cardLable}>遥控钥匙</Text>
+              <Flex
+                isTouchView
+                align="center"
+                style={{ gap: px(4) }}
+                onPress={e => {
+                  e && e.stopPropagation?.();
+                  navigation.navigate('RemoteKeyPairingVideo', {
+                    lockId: params.lockId,
+                  });
+                }}
+              >
+                <Text style={styles.cardValueLinkText}>(如何绑定)</Text>
+                <AppIcon
+                  name={'a-styledescription'}
+                  color="#FD8E62"
+                  size={px(20)}
+                />
+              </Flex>
+            </Flex>
+
+            <TouchableOpacity
+              style={styles.cardRowsTouch}
+              onPress={() => setRemoteKeyPopVisible(true)}
+            >
+              <Text style={styles.cardValue}>已绑定</Text>
+              <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
+            </TouchableOpacity>
+          </Flex>
+
+          <Flex style={styles.cardRows}>
+            <Text style={styles.cardLable}>复位升锁</Text>
+            <TouchableOpacity
+              style={styles.cardRowsTouch}
+              onPress={() => leaveRiseLockRef.current?.open()}
+            >
+              <Text
+                style={styles.cardValue}
+              >{`地锁降下${lockInfo?.leaveUpTime}秒，无车自动复位升起`}</Text>
+              {lockInfo?.powerType === 1 && (
+                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
+              )}
+            </TouchableOpacity>
+          </Flex>
         </Flex>
       </TouchableOpacity>
 
@@ -826,6 +883,77 @@ const DeviceInfo = () => {
           setConfirmContent({});
         }}
       />
+
+      {/* 遥控钥匙 */}
+      <Popup
+        visible={remoteKeyPopVisible}
+        showClose={false}
+        onClose={() => setRemoteKeyPopVisible(false)}
+      >
+        <View style={[styles.editContainer, { paddingBottom: px(8) }]}>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>遥控钥匙</Text>
+          </View>
+          <Flex
+            isTouchView
+            align="center"
+            justify="center"
+            style={{ gap: px(4), marginTop: px(12) }}
+            onPress={e => {
+              e && e.stopPropagation?.();
+              setRemoteKeyPopVisible(false);
+              navigation.navigate('RemoteKeyPairingVideo', {
+                lockId: params.lockId,
+              });
+            }}
+          >
+            <Text style={styles.cardValueLinkText}>(如何绑定)</Text>
+            <AppIcon
+              name={'a-styledescription'}
+              color="#FD8E62"
+              size={px(20)}
+            />
+          </Flex>
+
+          <View style={styles.pickerContent}>
+            <PickerView
+              data={basicColumns}
+              cascade={false}
+              style={{ height: px(174) }}
+              itemHeight={px(44)}
+              itemStyle={{
+                padding: 0,
+              }}
+              defaultValue={['Wed']}
+            />
+          </View>
+          <View style={styles.editFooter}>
+            <TouchableOpacity
+              style={[styles.editBtn, styles.cancelPopBtn]}
+              onPress={() => setRemoteKeyPopVisible(false)}
+            >
+              <Text style={styles.cancelText}>取消</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.editBtn, styles.confirmPopBtn]}
+              onPress={() => {
+                setRemoteKeyPopVisible(false);
+                navigation.navigate('RemoteKeyUnbind', {
+                  lockId: params.lockId,
+                });
+              }}
+            >
+              <Text style={styles.confirmText}>解绑</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.closeIcon}>
+            <TouchableOpacity onPress={() => setRemoteKeyPopVisible(false)}>
+              <AppIcon name={'close'} color="#333" size={px(24)} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Popup>
     </PageContainer>
   );
 };

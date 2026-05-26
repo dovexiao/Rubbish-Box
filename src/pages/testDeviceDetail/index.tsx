@@ -940,6 +940,202 @@ export default function TestDeviceDetailScreen() {
                 )}
               </Flex>
             </Flex>
+            {/* 433-手动 */}
+            <Flex style={styles.deviceInfoWrapper} direction={'column'}>
+              <Flex style={styles.deviceInfoHeader} align="center">
+                <Text style={styles.title}>433钥匙测试-手动升降</Text>
+                <Tag
+                  style={{
+                    backgroundColor: '#70B601',
+                    marginLeft: px(18),
+                    marginRight: px(34),
+                  }}
+                  textStyle={{ color: '#ffffff' }}
+                >
+                  {testDeviceReslt.fourGLiftStatus === 2 ? '已降下' : '已升起'}
+                </Tag>
+              </Flex>
+              <Flex
+                style={{
+                  flex: 1,
+                }}
+                justify={'center'}
+              >
+                {detail.fourGLiftTestStatus === 0 && (
+                  <Flex>
+                    <Flex
+                      isTouchView
+                      onPress={async () => {
+                        await updateTestResult({
+                          fourGLiftTestStatus: 1,
+                        });
+                      }}
+                    >
+                      <View style={styles.radioWrapper}>
+                        <Image
+                          style={{
+                            width: px(20),
+                            height: px(20),
+                          }}
+                          source={{
+                            uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                          }}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          marginLeft: px(8),
+                          color: '#70B601',
+                        }}
+                      >
+                        正常
+                      </Text>
+                    </Flex>
+                    <Flex
+                      style={{
+                        marginLeft: px(48),
+                      }}
+                      isTouchView
+                      onPress={async () => {
+                        await updateTestResult({
+                          fourGLiftTestStatus: 2,
+                        });
+                      }}
+                    >
+                      <View style={styles.radioWrapper}>
+                        <Image
+                          style={{
+                            width: px(20),
+                            height: px(20),
+                          }}
+                          source={{
+                            uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                          }}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          marginLeft: px(8),
+                          color: '#E86B6E',
+                        }}
+                      >
+                        故障
+                      </Text>
+                    </Flex>
+                  </Flex>
+                )}
+                {detail.fourGLiftTestStatus !== 0 && (
+                  <Text
+                    style={{
+                      color:
+                        detail.fourGLiftTestStatus === 1
+                          ? '#70B601'
+                          : '#E86B6E',
+                    }}
+                  >
+                    测试{detail.fourGLiftTestStatus === 1 ? '正常' : '故障'}
+                  </Text>
+                )}
+              </Flex>
+            </Flex>
+            {/* 433钥匙测试-自动升降 */}
+            <Flex style={styles.deviceInfoWrapper} direction={'column'}>
+              <Flex style={styles.deviceInfoHeader} align="center">
+                <Text style={styles.title}>433钥匙测试-自动升降</Text>
+                <Tag
+                  style={{
+                    backgroundColor: '#70B601',
+                    marginLeft: px(18),
+                    marginRight: px(34),
+                  }}
+                  textStyle={{ color: '#ffffff' }}
+                >
+                  {testDeviceReslt.fourGLiftStatus === 2 ? '已降下' : '已升起'}
+                </Tag>
+              </Flex>
+              <Flex
+                style={{
+                  flex: 1,
+                }}
+                justify={'center'}
+              >
+                {detail.fourGLiftTestStatus === 0 && (
+                  <Flex>
+                    <Flex
+                      isTouchView
+                      onPress={async () => {
+                        await updateTestResult({
+                          fourGLiftTestStatus: 1,
+                        });
+                      }}
+                    >
+                      <View style={styles.radioWrapper}>
+                        <Image
+                          style={{
+                            width: px(20),
+                            height: px(20),
+                          }}
+                          source={{
+                            uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                          }}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          marginLeft: px(8),
+                          color: '#70B601',
+                        }}
+                      >
+                        正常
+                      </Text>
+                    </Flex>
+                    <Flex
+                      style={{
+                        marginLeft: px(48),
+                      }}
+                      isTouchView
+                      onPress={async () => {
+                        await updateTestResult({
+                          fourGLiftTestStatus: 2,
+                        });
+                      }}
+                    >
+                      <View style={styles.radioWrapper}>
+                        <Image
+                          style={{
+                            width: px(20),
+                            height: px(20),
+                          }}
+                          source={{
+                            uri: 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                          }}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          marginLeft: px(8),
+                          color: '#E86B6E',
+                        }}
+                      >
+                        故障
+                      </Text>
+                    </Flex>
+                  </Flex>
+                )}
+                {detail.fourGLiftTestStatus !== 0 && (
+                  <Text
+                    style={{
+                      color:
+                        detail.fourGLiftTestStatus === 1
+                          ? '#70B601'
+                          : '#E86B6E',
+                    }}
+                  >
+                    测试{detail.fourGLiftTestStatus === 1 ? '正常' : '故障'}
+                  </Text>
+                )}
+              </Flex>
+            </Flex>
             {/* 蜂鸣测试 */}
             <Flex style={styles.deviceInfoWrapper} direction={'column'}>
               <Flex style={styles.deviceInfoHeader} align="center">

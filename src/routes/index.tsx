@@ -374,5 +374,15 @@ export const routes = {
       component: require('@/pages/apply/userScan/index').default,
       label: '用户操作地锁',
     },
+    {
+      name: 'RemoteKeyUnbind',
+      component: require('@/pages/remoteKeyUnbind').default,
+      label: '遥控钥匙解绑',
+    },
+    {
+      name: 'RemoteKeyPairingVideo',
+      component: require('@/pages/remoteKeyPairingVideo').default,
+      label: '遥控钥匙配对视频',
+    },
   ],
 } as const;
