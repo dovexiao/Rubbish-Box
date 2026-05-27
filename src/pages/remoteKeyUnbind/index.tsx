@@ -1,13 +1,16 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/core';
 import { useRoute } from '@react-navigation/native';
 import Video from 'react-native-video';
 import PageContainer from '@/components/PageContainer';
 import AppIcon from '@/components/AppIcon';
 import PopConfirm, { type PopConfirmRef } from '@/components/popConfirm';
-import { showToast } from '@/utils';
+import { loopFunc, showToast } from '@/utils';
 import { px } from '@/utils/ui';
 import { styles } from './style';
+import { getDeviceKeyResponse, getLockInfo } from '@/services';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 const DEFAULT_POSTER_URL =
   'https://g.18qjz.cn/img/boklock/deviceChargingPoster.png';
@@ -16,18 +19,20 @@ const DEFAULT_VIDEO_URL =
 
 export default function RemoteKeyUnbind() {
   const { params } = useRoute<any>() as {
-    params?: { lockId?: number; videoUrl?: string; posterUrl?: string };
+    params?: { deviceNo?: string; key?: string; id?: number };
   };
-
+  const navigation = useAppNavigation();
   const popConfirmRef = useRef<PopConfirmRef>(null);
   const videoRef = useRef<any>(null);
 
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const [paused, setPaused] = useState(true);
   const [videoKey, setVideoKey] = useState(0);
+  const [canUnbind, setCanUnbind] = useState(false);
+  const [keys, setKeys] = useState<string>('');
 
-  const videoUrl = params?.videoUrl || DEFAULT_VIDEO_URL;
-  const posterUrl = params?.posterUrl || DEFAULT_POSTER_URL;
+  const videoUrl = DEFAULT_VIDEO_URL;
+  const posterUrl = DEFAULT_POSTER_URL;
 
   const resetVideo = useCallback(() => {
     setShowPlayBtn(true);
@@ -35,14 +40,51 @@ export default function RemoteKeyUnbind() {
     setVideoKey(k => k + 1);
   }, []);
 
-  const handleUnbind = useCallback(() => {
-    // TODO: 接入遥控钥匙解绑 API
-    showToast({ title: '解绑成功', icon: 'success' });
-  }, []);
+  const handleUnbind = async () => {
+    const res: any = await getLockInfo({ id: params?.id });
+    if (res?.code === 200 && res?.success) {
+      const phoneNumber = res?.data?.adminMobile;
 
-  const disableUnbind = useMemo(() => {
-    return true;
-  }, []);
+      navigation.navigate('UnbindDevice', {
+        deviceNo: params?.deviceNo,
+        key: params?.key,
+        phoneNumber,
+        type: 'remoteKey',
+      });
+    }
+  };
+
+  const disableUnbind = useMemo(() => !canUnbind, [canUnbind]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const deviceNo = params?.deviceNo;
+      const key = params?.key;
+      if (!deviceNo || !key) return;
+
+      setCanUnbind(false);
+
+      const { start, stop } = loopFunc(async () => {
+        try {
+          const res = await getDeviceKeyResponse({
+            deviceNo,
+            key,
+          });
+          if (res.code === 200 && res.success && res.data) {
+            setCanUnbind(true);
+            setKeys(res.data);
+            return false;
+          }
+        } catch (e) {
+          console.error('getDeviceKeyResponse error:', e);
+        }
+        return true;
+      }, 1000);
+
+      start();
+      return () => stop();
+    }, [params?.deviceNo, params?.key]),
+  );
 
   return (
     <PageContainer
@@ -111,7 +153,9 @@ export default function RemoteKeyUnbind() {
             ]}
             onPress={handleUnbind}
           >
-            <Text style={styles.unbindBtnText}>解绑</Text>
+            <Text style={styles.unbindBtnText}>
+              {disableUnbind ? '解绑' : `解绑${keys}`}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

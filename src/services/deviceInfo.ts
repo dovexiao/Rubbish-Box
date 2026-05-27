@@ -60,3 +60,45 @@ export const lastVersion = createFetch<any, any>(
   '/boke/userLock/lastVersion',
   'GET',
 );
+
+// 复位升锁
+export const resetRiseLock = createFetch<any, any>(
+  '/boke/userLock/setting/resetTime',
+  'POST',
+);
+
+// 复位升锁结果
+export const resetRiseLockResult = createFetch<any, any>(
+  '/boke/userLock/setting/resetTimeRes',
+  'GET',
+);
+
+// 获取设备钥匙列表
+export const getDeviceKeyList = createFetch<any, any>(
+  '/boke/userLock/key/list',
+  'GET',
+);
+
+// 获取设备钥匙响应
+export const getDeviceKeyResponse = createFetch<any, any>(
+  '/boke/userLock/key/lastResponse',
+  'GET',
+);
+
+// 解绑钥匙短信
+export const unbindKeySms = createFetch<any, any>(
+  '/boke/userLock/key/unbindSms',
+  'GET',
+);
+
+// 解绑钥匙
+export const unbindKey = createFetch<any, any>(
+  '/boke/userLock/key/unbind',
+  'POST',
+);
+
+//解绑钥匙结果
+export const unbindKeyResult = createFetch<any, any>(
+  '/boke/userLock/key/unbindRes',
+  'POST',
+);

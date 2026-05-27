@@ -23,12 +23,13 @@ export type LeaveRiseLockPopRef = {
 export interface LeaveRiseLockPopProps {
   time: number;
   onConfirm: (leaveUpTime: number) => Promise<any> | any;
+  lecaveType: string;
 }
 
 export const LeaveRiseLockPop = forwardRef<
   LeaveRiseLockPopRef,
   LeaveRiseLockPopProps
->(function LeaveRiseLockPopInner({ time, onConfirm }, ref) {
+>(function LeaveRiseLockPopInner({ time, onConfirm, lecaveType }, ref) {
   const resetStateRef = useRef(true);
   const [leaveUpTime, setLeaveUpTime] = useState('');
   const [visible, setVisible] = useState(false);
@@ -62,11 +63,15 @@ export const LeaveRiseLockPop = forwardRef<
       }}
     >
       <View style={styles.popupContainer}>
-        <Text style={styles.title}>离车升锁时间</Text>
+        <Text style={styles.title}>
+          {lecaveType === '1' ? '离车升锁时间' : '复位升锁时间'}
+        </Text>
 
         <View style={styles.contentCard}>
           <Flex align="center" style={styles.rowInner}>
-            <Text style={styles.rowText}>车辆离开</Text>
+            <Text style={styles.rowText}>
+              {lecaveType === '1' ? '车辆离开' : '地锁降下'}
+            </Text>
             <TextInput
               value={leaveUpTime}
               keyboardType="number-pad"
@@ -74,7 +79,9 @@ export const LeaveRiseLockPop = forwardRef<
               style={styles.timeInput}
               onChangeText={setLeaveUpTime}
             />
-            <Text style={styles.rowText}>秒后升起</Text>
+            <Text style={styles.rowText}>
+              {lecaveType === '1' ? '秒后升起' : '无车自动复位升起'}
+            </Text>
           </Flex>
         </View>
 

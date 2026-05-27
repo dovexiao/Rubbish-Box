@@ -19,9 +19,17 @@ import {
   showToast,
   setStorage,
   reLaunch,
+  loopFunc,
 } from '@/utils';
 import { resetBluetoothPin, settingBluetoothPin } from '@/services';
-import { unbind, unbindSms, unbindSmsCheck } from '@/services/deviceInfo';
+import {
+  unbind,
+  unbindKey,
+  unbindKeyResult,
+  unbindKeySms,
+  unbindSms,
+  unbindSmsCheck,
+} from '@/services/deviceInfo';
 import { sendChangePinByBluetooth } from '@/utils/api';
 import { styles } from './unbindDeviceStyle';
 
@@ -32,6 +40,9 @@ type RouteParams = {
   bleName?: string;
   needPin?: number;
   powerType?: number;
+  type?: string;
+  key?: string;
+  deviceNo?: string;
 };
 
 export default function UnbindDevice() {
@@ -44,6 +55,9 @@ export default function UnbindDevice() {
   const bleName = params.bleName;
   const needPin = params.needPin;
   const powerType = params.powerType;
+  const type = params.type;
+  const deviceNo = params.deviceNo;
+  const key = params.key;
 
   const [step, setStep] = useState<0 | 1>(0);
   const [showError, setShowError] = useState(false);
@@ -51,6 +65,14 @@ export default function UnbindDevice() {
 
   const { start, stop, count, isCounting } = useCountDown(60);
   const inputCodeRef = useRef<InputCodeRef>(null);
+  const pollStopRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      pollStopRef.current?.();
+      pollStopRef.current = null;
+    };
+  }, []);
 
   const maskedPhone = useMemo(() => {
     const p = String(params.phoneNumber || '');
@@ -59,7 +81,12 @@ export default function UnbindDevice() {
   }, [params.phoneNumber]);
 
   const requireCode = useCallback(async () => {
-    if (!lockId) {
+    if (type === 'remoteKey') {
+      if (!deviceNo) {
+        showToast({ title: '未找到设备信息', icon: 'info' });
+        return;
+      }
+    } else if (!lockId) {
       showToast({ title: '未找到设备信息', icon: 'info' });
       return;
     }
@@ -70,7 +97,10 @@ export default function UnbindDevice() {
       inputCodeRef.current?.clearCode?.();
     }
 
-    const res: any = await unbindSms({ id: lockId });
+    const res: any =
+      type === 'remoteKey'
+        ? await unbindKeySms({ deviceNo })
+        : await unbindSms({ id: lockId });
     if (res?.code === 200 && res?.success) {
       showToast({ title: '已发送，待查收验证码', icon: 'info' });
       start();
@@ -78,7 +108,7 @@ export default function UnbindDevice() {
       return;
     }
     showToast({ title: res?.message || res?.msg || '发送失败', icon: 'info' });
-  }, [lockId, showError, start]);
+  }, [deviceNo, lockId, showError, start, type]);
 
   const onSubmit = useCallback(async () => {
     Keyboard.dismiss();
@@ -87,13 +117,80 @@ export default function UnbindDevice() {
       showToast({ title: '请输入验证码', icon: 'info' });
       return;
     }
-    if (!lockId || !bleNo) {
+    if (type === 'remoteKey') {
+      if (!deviceNo || !key) {
+        showToast({ title: '缺少必要参数', icon: 'info' });
+        return;
+      }
+    } else if (!lockId || !bleNo) {
       showToast({ title: '缺少必要参数', icon: 'info' });
       return;
     }
 
     showLoading({ title: '加载中...' });
     try {
+      if (type === 'remoteKey') {
+        const res: any = await unbindKey({
+          deviceNo,
+          keyNo: key,
+          code: pure,
+        });
+        if (!(res?.code === 200 && res?.success)) {
+          hideLoading();
+          showToast({
+            title: res?.message || res?.msg || '解绑失败',
+            icon: 'info',
+          });
+          setShowError(res?.code === 515);
+          if (res?.code === 515) {
+            setCode('');
+            inputCodeRef.current?.clearCode?.();
+          }
+          stop();
+          return;
+        }
+
+        const pollSuccess = await new Promise<boolean>(resolve => {
+          let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
+          const { start: startPoll, stop: stopPoll } = loopFunc(async () => {
+            const result: any = await unbindKeyResult({
+              deviceNo,
+              keyNo: key,
+              code: pure,
+            });
+            if (result?.data) {
+              stopPoll();
+              if (timeoutTimer) {
+                clearTimeout(timeoutTimer);
+                timeoutTimer = null;
+              }
+              pollStopRef.current = null;
+              resolve(true);
+              return false;
+            }
+            return true;
+          }, 1000);
+
+          pollStopRef.current = stopPoll;
+          timeoutTimer = setTimeout(() => {
+            stopPoll();
+            pollStopRef.current = null;
+            resolve(false);
+          }, 10000);
+          startPoll();
+        });
+
+        hideLoading();
+        if (pollSuccess) {
+          stop();
+          showToast({ title: '解绑成功', icon: 'success' });
+          setTimeout(() => navigation.pop(2), 800);
+        } else {
+          showToast({ title: '解绑失败', icon: 'info' });
+        }
+        return;
+      }
+
       let cmdRes: any = null;
       let deviceId: string | null = null;
       const checkRes: any = await unbindSmsCheck({ id: lockId, code: pure });
@@ -216,7 +313,7 @@ export default function UnbindDevice() {
       hideLoading();
       showToast({ title: '解绑失败', icon: 'info' });
     }
-  }, [bleNo, code, lockId, navigation, stop]);
+  }, [bleNo, code, deviceNo, key, lockId, navigation, powerType, stop, type]);
 
   useEffect(() => {
     if ((code || '').length === 6) {
@@ -237,7 +334,11 @@ export default function UnbindDevice() {
       padding={0}
     >
       <View style={styles.outContainer}>
-        <Text style={styles.innerTitle}>您正在进行设备解绑操作</Text>
+        <Text style={styles.innerTitle}>
+          {params.type === 'remoteKey'
+            ? '您正在进行解除绑定遥控钥匙操作'
+            : '您正在进行设备解绑操作'}
+        </Text>
         <Text style={styles.innerToast}>
           {step === 1 ? '请输入验证码' : '即将发送验证码至您的手机'}
         </Text>

@@ -30,6 +30,9 @@ import {
   operateBuzzing,
   updateName,
   changeQrCode,
+  resetRiseLock,
+  resetRiseLockResult,
+  getDeviceKeyList,
 } from '@/services';
 import { lockInfoProps } from './typing';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
@@ -60,16 +63,6 @@ import {
 import { fontSize, px } from '@/utils/ui';
 import { PickerView } from '@ant-design/react-native';
 
-const basicColumns = [
-  [
-    { label: '周一', value: 'Mon' },
-    { label: '周二', value: 'Tues' },
-    { label: '周三', value: 'Wed' },
-    { label: '周四', value: 'Thur' },
-    { label: '周五', value: 'Fri' },
-  ],
-];
-
 const DeviceInfo = () => {
   const { params } = useRoute() as {
     params: { lockId: number; isAdmin: boolean };
@@ -80,6 +73,9 @@ const DeviceInfo = () => {
   const [deviceInfo, setDeviceInfo] = useState<LockInfoDTO>();
   const [lockName, setLockName] = useState<string>();
   const [showPowerModeTips, setShowPowerModeTips] = useState(false);
+  const [lecaveType, setLecaveType] = useState<string>('1');
+  const [deviceKeys, setDeviceKeys] = useState<any[]>([]);
+  const [selectedDeviceKey, setSelectedDeviceKey] = useState<string>('');
   const [safeAreaColor, setSafeAreaColor] =
     useState<StatusBarStyle>('dark-content');
   const [optionType, setOptionType] = useState<string>('1');
@@ -306,6 +302,20 @@ const DeviceInfo = () => {
     return res.success;
   };
 
+  const deviceResetRiseLock = async (resetTime: number) => {
+    showLoading({ title: '修改中...' });
+    const res = await resetRiseLock({
+      t: resetTime,
+      deviceNo: deviceInfo?.deviceNo,
+    });
+    if (res.success) {
+      return await loopResetRiseLock(resetTime);
+    }
+    hideLoading();
+    showToast({ title: res.message || '修改失败', icon: 'info' });
+    return false;
+  };
+
   const loopOperateStatus = async (ot: number, hasAnimation?: boolean) => {
     let timer: any = null;
     const { start, stop } = loopFunc(async () => {
@@ -343,6 +353,56 @@ const DeviceInfo = () => {
     }, 10000);
     start();
   };
+
+  const loopResetRiseLock = (t: number): Promise<boolean> => {
+    return new Promise(resolve => {
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      const { start, stop } = loopFunc(async () => {
+        const res = await resetRiseLockResult({
+          deviceNo: deviceInfo?.deviceNo,
+          t,
+        });
+        if (res.data) {
+          fetchLockInfo();
+          stop();
+          if (timer) {
+            clearTimeout(timer);
+            timer = null;
+          }
+          hideLoading();
+          showToast({ title: '操作成功', icon: 'success' });
+          resolve(true);
+          return false;
+        }
+        return true;
+      }, 1000);
+      timer = setTimeout(() => {
+        stop();
+        hideLoading();
+        showToast({ title: '操作失败', icon: 'info' });
+        resolve(false);
+      }, 10000);
+      start();
+    });
+  };
+
+  const getDeviceKeys = async () => {
+    const res = await getDeviceKeyList({ deviceNo: deviceInfo?.deviceNo });
+    if (res.code === 200 && res.success) {
+      const keys = res.data.map((item: any) => {
+        return {
+          label: item,
+          value: item,
+        };
+      });
+      setDeviceKeys([keys]);
+    }
+  };
+
+  useEffect(() => {
+    getDeviceKeys();
+  }, [deviceInfo?.deviceNo]);
+
   return (
     <PageContainer
       ref={pageContainerRef}
@@ -590,7 +650,13 @@ const DeviceInfo = () => {
             <Text style={styles.cardLable}>离车升锁</Text>
             <TouchableOpacity
               style={styles.cardRowsTouch}
-              onPress={() => leaveRiseLockRef.current?.open()}
+              onPress={() => {
+                if (lockInfo?.powerType !== 1) {
+                  return;
+                }
+                leaveRiseLockRef.current?.open();
+                setLecaveType('1');
+              }}
             >
               <Text
                 style={styles.cardValue}
@@ -600,47 +666,57 @@ const DeviceInfo = () => {
               )}
             </TouchableOpacity>
           </Flex>
-          <Flex style={styles.cardRows}>
-            <Flex direction="row" align="center" style={{ gap: px(4) }}>
-              <Text style={styles.cardLable}>遥控钥匙</Text>
-              <Flex
-                isTouchView
-                align="center"
-                style={{ gap: px(4) }}
-                onPress={e => {
-                  e && e.stopPropagation?.();
-                  navigation.navigate('RemoteKeyPairingVideo', {
-                    lockId: params.lockId,
-                  });
-                }}
-              >
-                <Text style={styles.cardValueLinkText}>(如何绑定)</Text>
-                <AppIcon
-                  name={'a-styledescription'}
-                  color="#FD8E62"
-                  size={px(20)}
-                />
+          {lockInfo?.has433Key && (
+            <Flex style={styles.cardRows}>
+              <Flex direction="row" align="center" style={{ gap: px(4) }}>
+                <Text style={styles.cardLable}>遥控钥匙</Text>
+                <Flex
+                  isTouchView
+                  align="center"
+                  style={{ gap: px(4) }}
+                  onPress={e => {
+                    e && e.stopPropagation?.();
+                    navigation.navigate('RemoteKeyPairingVideo', {
+                      lockId: params.lockId,
+                    });
+                  }}
+                >
+                  <Text style={styles.cardValueLinkText}>(如何绑定)</Text>
+                  <AppIcon
+                    name={'a-styledescription'}
+                    color="#FD8E62"
+                    size={px(20)}
+                  />
+                </Flex>
               </Flex>
-            </Flex>
 
-            <TouchableOpacity
-              style={styles.cardRowsTouch}
-              onPress={() => setRemoteKeyPopVisible(true)}
-            >
-              <Text style={styles.cardValue}>已绑定</Text>
-              <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
-            </TouchableOpacity>
-          </Flex>
+              <TouchableOpacity
+                style={styles.cardRowsTouch}
+                onPress={() => setRemoteKeyPopVisible(true)}
+              >
+                <Text style={styles.cardValue}>
+                  {lockInfo?.keyCount === 0 ? '未绑定' : '已绑定'}
+                </Text>
+                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
+              </TouchableOpacity>
+            </Flex>
+          )}
 
           <Flex style={styles.cardRows}>
             <Text style={styles.cardLable}>复位升锁</Text>
             <TouchableOpacity
               style={styles.cardRowsTouch}
-              onPress={() => leaveRiseLockRef.current?.open()}
+              onPress={() => {
+                if (lockInfo?.powerType !== 1) {
+                  return;
+                }
+                leaveRiseLockRef.current?.open();
+                setLecaveType('2');
+              }}
             >
-              <Text
-                style={styles.cardValue}
-              >{`地锁降下${lockInfo?.leaveUpTime}秒，无车自动复位升起`}</Text>
+              <Text style={styles.cardValue}>{`地锁降下${
+                lockInfo?.resetTime || 0
+              }秒，无车自动复位升起`}</Text>
               {lockInfo?.powerType === 1 && (
                 <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
               )}
@@ -778,9 +854,18 @@ const DeviceInfo = () => {
 
       <LeaveRiseLockPop
         ref={leaveRiseLockRef}
-        time={deviceInfo?.leaveUpTime ?? 0}
+        lecaveType={lecaveType}
+        time={
+          lecaveType === '1'
+            ? Number(deviceInfo?.leaveUpTime)
+            : Number(deviceInfo?.resetTime)
+        }
         onConfirm={async leaveUpTime => {
-          return await deviceModifyLockLeaveTime(leaveUpTime);
+          if (lecaveType === '1') {
+            return await deviceModifyLockLeaveTime(leaveUpTime);
+          } else {
+            return await deviceResetRiseLock(leaveUpTime);
+          }
         }}
       />
 
@@ -894,37 +979,20 @@ const DeviceInfo = () => {
           <View style={styles.header}>
             <Text style={styles.headerTitle}>遥控钥匙</Text>
           </View>
-          <Flex
-            isTouchView
-            align="center"
-            justify="center"
-            style={{ gap: px(4), marginTop: px(12) }}
-            onPress={e => {
-              e && e.stopPropagation?.();
-              setRemoteKeyPopVisible(false);
-              navigation.navigate('RemoteKeyPairingVideo', {
-                lockId: params.lockId,
-              });
-            }}
-          >
-            <Text style={styles.cardValueLinkText}>(如何绑定)</Text>
-            <AppIcon
-              name={'a-styledescription'}
-              color="#FD8E62"
-              size={px(20)}
-            />
-          </Flex>
 
           <View style={styles.pickerContent}>
             <PickerView
-              data={basicColumns}
+              data={deviceKeys}
               cascade={false}
               style={{ height: px(174) }}
               itemHeight={px(44)}
               itemStyle={{
                 padding: 0,
               }}
-              defaultValue={['Wed']}
+              defaultValue={[deviceKeys[0]?.value]}
+              onChange={value => {
+                setSelectedDeviceKey((value[0] as string) || '');
+              }}
             />
           </View>
           <View style={styles.editFooter}>
@@ -939,7 +1007,9 @@ const DeviceInfo = () => {
               onPress={() => {
                 setRemoteKeyPopVisible(false);
                 navigation.navigate('RemoteKeyUnbind', {
-                  lockId: params.lockId,
+                  deviceNo: deviceInfo?.deviceNo,
+                  key: selectedDeviceKey,
+                  id: deviceInfo?.id,
                 });
               }}
             >
@@ -948,9 +1018,26 @@ const DeviceInfo = () => {
           </View>
 
           <View style={styles.closeIcon}>
-            <TouchableOpacity onPress={() => setRemoteKeyPopVisible(false)}>
-              <AppIcon name={'close'} color="#333" size={px(24)} />
-            </TouchableOpacity>
+            <Flex
+              isTouchView
+              align="center"
+              justify="center"
+              style={{ gap: px(4) }}
+              onPress={e => {
+                e && e.stopPropagation?.();
+                setRemoteKeyPopVisible(false);
+                navigation.navigate('RemoteKeyPairingVideo', {
+                  lockId: params.lockId,
+                });
+              }}
+            >
+              <Text style={styles.cardValueLinkText}>(如何绑定)</Text>
+              <AppIcon
+                name={'a-styledescription'}
+                color="#FD8E62"
+                size={px(20)}
+              />
+            </Flex>
           </View>
         </View>
       </Popup>
