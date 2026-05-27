@@ -531,6 +531,11 @@ const Login = () => {
                   align="center"
                   isTouchView
                   onPress={handleWxLogin}
+                  style={{
+                    marginRight: px(
+                      Platform.OS == 'ios' || Platform.OS == 'android' ? 65 : 0,
+                    ),
+                  }}
                 >
                   <Image
                     source={{
