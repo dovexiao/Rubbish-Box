@@ -80,7 +80,7 @@ export const LeaveRiseLockPop = forwardRef<
               onChangeText={setLeaveUpTime}
             />
             <Text style={styles.rowText}>
-              {lecaveType === '1' ? '秒后升起' : '无车自动复位升起'}
+              {lecaveType === '1' ? '秒后升起' : '秒后，无车自动复位升起'}
             </Text>
           </Flex>
         </View>

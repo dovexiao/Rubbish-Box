@@ -1,4 +1,4 @@
-import { px } from '@/utils/ui';
+import { fontSize, px } from '@/utils/ui';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -6,6 +6,13 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: px(24),
     paddingTop: px(24),
+  },
+  sectionTitle: {
+    fontSize: fontSize(14),
+    fontWeight: '500',
+    color: '#333333',
+    lineHeight: px(20),
+    marginBottom: px(8),
   },
   videoWrap: {
     position: 'relative',
@@ -34,5 +41,60 @@ export const styles = StyleSheet.create({
     borderRadius: px(24),
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  countdownSection: {
+    marginTop: px(24),
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: px(16),
+  },
+  countdownLabel: {
+    fontSize: fontSize(18),
+    fontWeight: '400',
+    color: '#333333',
+    lineHeight: px(20),
+    marginBottom: px(8),
+  },
+  countdownNumber: {
+    fontSize: fontSize(20),
+    fontWeight: '500',
+    color: '#333333',
+    lineHeight: px(28),
+  },
+  noticeSection: {
+    marginTop: px(20),
+  },
+  noticeBox: {
+    paddingHorizontal: px(16),
+    paddingVertical: px(16),
+    backgroundColor: '#F7F7FB',
+    borderRadius: px(12),
+  },
+  noticeText: {
+    fontSize: fontSize(14),
+    fontWeight: '400',
+    color: '#333333',
+    lineHeight: px(20),
+  },
+  footerWrap: {
+    alignItems: 'center',
+    paddingVertical: px(16),
+    marginTop: px(80),
+  },
+  actionBtn: {
+    width: px(196),
+    height: px(48),
+    backgroundColor: '#333333',
+    borderRadius: px(16),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionBtnText: {
+    fontSize: fontSize(16),
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  actionBtnDisabled: {
+    backgroundColor: '#999999',
   },
 });

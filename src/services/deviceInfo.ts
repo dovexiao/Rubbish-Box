@@ -102,3 +102,53 @@ export const unbindKeyResult = createFetch<any, any>(
   '/boke/userLock/key/unbindRes',
   'POST',
 );
+
+// 开始配对
+export const startPairing = createFetch<any, any>(
+  '/boke/userLock/key/startPair',
+  'POST',
+);
+
+// 开始配对结果
+export const startPairingResult = createFetch<any, any>(
+  '/boke/userLock/key/startPairRes',
+  'POST',
+);
+
+// 绑定钥匙
+export const bindKey = createFetch<any, any>('/boke/userLock/key/bind', 'POST');
+
+//绑定钥匙结果
+export const bindKeyResult = createFetch<any, any>(
+  '/boke/userLock/key/bindRes',
+  'POST',
+);
+
+// 开始配对
+export const testStartPairing = createFetch<any, any>(
+  '/boke/deviceTest/key/startPair',
+  'POST',
+);
+
+// 开始配对结果
+export const testStartPairingResult = createFetch<any, any>(
+  '/boke/deviceTest/key/startPairRes',
+  'POST',
+);
+
+// 绑定钥匙
+export const testBindKey = createFetch<any, any>(
+  '/boke/deviceTest/key/bind',
+  'GET',
+);
+
+//绑定钥匙结果
+export const testBindKeyResult = createFetch<any, any>(
+  '/boke/deviceTest/key/bindRes',
+  'GET',
+);
+
+export const getDeviceTestKeyResponse = createFetch<any, any>(
+  '/boke/deviceTest/key/lastResponse',
+  'GET',
+);

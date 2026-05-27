@@ -670,32 +670,22 @@ const DeviceInfo = () => {
             <Flex style={styles.cardRows}>
               <Flex direction="row" align="center" style={{ gap: px(4) }}>
                 <Text style={styles.cardLable}>遥控钥匙</Text>
-                <Flex
-                  isTouchView
-                  align="center"
-                  style={{ gap: px(4) }}
-                  onPress={e => {
-                    e && e.stopPropagation?.();
-                    navigation.navigate('RemoteKeyPairingVideo', {
-                      lockId: params.lockId,
-                    });
-                  }}
-                >
-                  <Text style={styles.cardValueLinkText}>(如何绑定)</Text>
-                  <AppIcon
-                    name={'a-styledescription'}
-                    color="#FD8E62"
-                    size={px(20)}
-                  />
-                </Flex>
               </Flex>
 
               <TouchableOpacity
                 style={styles.cardRowsTouch}
-                onPress={() => setRemoteKeyPopVisible(true)}
+                onPress={() => {
+                  if (lockInfo?.keyCount === 0) {
+                    navigation.navigate('RemoteKeyPairingVideo', {
+                      lockId: deviceInfo?.deviceNo,
+                    });
+                  } else {
+                    setRemoteKeyPopVisible(true);
+                  }
+                }}
               >
                 <Text style={styles.cardValue}>
-                  {lockInfo?.keyCount === 0 ? '未绑定' : '已绑定'}
+                  {lockInfo?.keyCount === 0 ? '未绑定,新增钥匙' : '已绑定'}
                 </Text>
                 <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
               </TouchableOpacity>
@@ -998,9 +988,14 @@ const DeviceInfo = () => {
           <View style={styles.editFooter}>
             <TouchableOpacity
               style={[styles.editBtn, styles.cancelPopBtn]}
-              onPress={() => setRemoteKeyPopVisible(false)}
+              onPress={() => {
+                setRemoteKeyPopVisible(false);
+                navigation.navigate('RemoteKeyPairingVideo', {
+                  lockId: deviceInfo?.deviceNo,
+                });
+              }}
             >
-              <Text style={styles.cancelText}>取消</Text>
+              <Text style={styles.cancelText}>新增钥匙</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.editBtn, styles.confirmPopBtn]}
@@ -1026,9 +1021,7 @@ const DeviceInfo = () => {
               onPress={e => {
                 e && e.stopPropagation?.();
                 setRemoteKeyPopVisible(false);
-                navigation.navigate('RemoteKeyPairingVideo', {
-                  lockId: params.lockId,
-                });
+                navigation.navigate('RemoteKeyPairingVideo');
               }}
             >
               <Text style={styles.cardValueLinkText}>(如何绑定)</Text>

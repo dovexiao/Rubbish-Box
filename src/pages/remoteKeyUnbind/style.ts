@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: px(24),
-    paddingTop: px(72),
+    paddingTop: px(24),
   },
   sectionTitle: {
     fontSize: fontSize(14),
@@ -13,6 +13,25 @@ export const styles = StyleSheet.create({
     color: '#333333',
     lineHeight: px(20),
     marginBottom: px(8),
+  },
+  countdownSection: {
+    marginTop: px(24),
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: px(16),
+  },
+  countdownLabel: {
+    fontSize: fontSize(18),
+    fontWeight: '400',
+    color: '#333333',
+    lineHeight: px(20),
+    marginBottom: px(8),
+  },
+  countdownNumber: {
+    fontSize: fontSize(20),
+    fontWeight: '500',
+    color: '#333333',
+    lineHeight: px(28),
   },
   videoWrap: {
     position: 'relative',
