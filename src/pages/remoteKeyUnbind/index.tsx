@@ -35,7 +35,12 @@ type UnbindPhase = 'idle' | 'pairing' | 'waitingUnbind' | 'readyUnbind';
 
 export default function RemoteKeyUnbind() {
   const { params } = useRoute<any>() as {
-    params?: { deviceNo?: string; key?: string; id?: number };
+    params?: {
+      deviceNo?: string;
+      key?: string;
+      id?: number;
+      hasButtonKeyFlag?: boolean;
+    };
   };
   const navigation = useAppNavigation();
   const pollStopRef = useRef<(() => void) | null>(null);
@@ -324,19 +329,21 @@ export default function RemoteKeyUnbind() {
           </View>
         </View>
 
-        <View style={styles.footerWrap}>
-          <TouchableOpacity
-            activeOpacity={disableUnbind ? 1 : 0.85}
-            disabled={disableUnbind}
-            style={[
-              styles.unbindBtn,
-              disableUnbind ? styles.unbindBtnDisabled : {},
-            ]}
-            onPress={handleActionPress}
-          >
-            <Text style={styles.unbindBtnText}>{actionBtnText}</Text>
-          </TouchableOpacity>
-        </View>
+        {!params?.hasButtonKeyFlag && (
+          <View style={styles.footerWrap}>
+            <TouchableOpacity
+              activeOpacity={disableUnbind ? 1 : 0.85}
+              disabled={disableUnbind}
+              style={[
+                styles.unbindBtn,
+                disableUnbind ? styles.unbindBtnDisabled : {},
+              ]}
+              onPress={handleActionPress}
+            >
+              <Text style={styles.unbindBtnText}>{actionBtnText}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </PageContainer>
   );

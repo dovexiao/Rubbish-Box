@@ -109,6 +109,8 @@ interface TestDeviceDetail {
 
   keyManualTestStatus: number;
   keyAutoTestStatus: number;
+  /* 是否有按钮钥匙 */
+  buttonKeyFlag: boolean;
 }
 
 type RouteParams = {
@@ -949,7 +951,7 @@ export default function TestDeviceDetailScreen() {
                 )}
               </Flex>
             </Flex>
-            {!detail.has433Key && (
+            {detail.has433Key && (
               <>
                 {/* 433-手动 */}
                 <Flex style={styles.deviceInfoWrapper} direction={'column'}>
@@ -978,10 +980,14 @@ export default function TestDeviceDetailScreen() {
                       isTouchView
                       onPress={() => {
                         if (!detail.keyCount) {
-                          navigation.navigate('RemoteKeyPairingVideo', {
-                            lockId: deviceNo,
-                            pageType: 'test',
-                          });
+                          if (detail.buttonKeyFlag) {
+                            navigation.navigate('RemoteKeyPairingVideo');
+                          } else {
+                            navigation.navigate('RemoteKeyPairingVideo', {
+                              lockId: deviceNo,
+                              pageType: 'test',
+                            });
+                          }
                         }
                       }}
                     >

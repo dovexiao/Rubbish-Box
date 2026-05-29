@@ -33,6 +33,8 @@ import {
   resetRiseLock,
   resetRiseLockResult,
   getDeviceKeyList,
+  allDeleteKey,
+  allDeleteKeyResult,
 } from '@/services';
 import { lockInfoProps } from './typing';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
@@ -92,7 +94,7 @@ const DeviceInfo = () => {
   const scanBindQrCameraRef = useRef<CameraRef>(null);
   const bluetoothStatusUnbindRef = useRef<BluetoothStatusRef>(null);
   const confirmRef = useRef<PopConfirmRef>(null);
-
+  const allDeletePopRef = useRef<PopConfirmRef>(null);
   const footerBtn = () => {
     return (
       <View style={styles.footerBtnContainer}>
@@ -399,6 +401,50 @@ const DeviceInfo = () => {
     }
   };
 
+  // 解绑所有钥匙
+  const handleallDeleteKey = async () => {
+    showLoading({ title: '解绑中...' });
+    const res = await allDeleteKey({ deviceNo: deviceInfo?.deviceNo });
+    if (res.code === 200 && res.success) {
+      return await loopallDeleteKey();
+    }
+    hideLoading();
+    showToast({ title: res.message || '修改失败', icon: 'info' });
+    return false;
+  };
+
+  // 解绑所有钥匙结果
+  const loopallDeleteKey = (): Promise<boolean> => {
+    return new Promise(resolve => {
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      const { start, stop } = loopFunc(async () => {
+        const res = await allDeleteKeyResult({
+          deviceNo: deviceInfo?.deviceNo,
+        });
+        if (res.data) {
+          fetchLockInfo();
+          stop();
+          if (timer) {
+            clearTimeout(timer);
+            timer = null;
+          }
+          hideLoading();
+          showToast({ title: '操作成功', icon: 'success' });
+          resolve(true);
+          return false;
+        }
+        return true;
+      }, 1000);
+      timer = setTimeout(() => {
+        stop();
+        hideLoading();
+        showToast({ title: '操作失败', icon: 'info' });
+        resolve(false);
+      }, 10000);
+      start();
+    });
+  };
+
   useEffect(() => {
     getDeviceKeys();
   }, [deviceInfo?.deviceNo]);
@@ -676,9 +722,13 @@ const DeviceInfo = () => {
                 style={styles.cardRowsTouch}
                 onPress={() => {
                   if (lockInfo?.keyCount === 0) {
-                    navigation.navigate('RemoteKeyPairingVideo', {
-                      lockId: deviceInfo?.deviceNo,
-                    });
+                    if (lockInfo?.buttonKeyFlag) {
+                      navigation.navigate('RemoteKeyPairingVideo');
+                    } else {
+                      navigation.navigate('RemoteKeyPairingVideo', {
+                        lockId: deviceInfo?.deviceNo,
+                      });
+                    }
                   } else {
                     setRemoteKeyPopVisible(true);
                   }
@@ -705,7 +755,7 @@ const DeviceInfo = () => {
               }}
             >
               <Text style={styles.cardValue}>{`地锁降下${
-                lockInfo?.resetTime || 0
+                lockInfo?.resetTime || 20
               }秒，无车自动复位升起`}</Text>
               {lockInfo?.powerType === 1 && (
                 <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
@@ -990,9 +1040,13 @@ const DeviceInfo = () => {
               style={[styles.editBtn, styles.cancelPopBtn]}
               onPress={() => {
                 setRemoteKeyPopVisible(false);
-                navigation.navigate('RemoteKeyPairingVideo', {
-                  lockId: deviceInfo?.deviceNo,
-                });
+                if (lockInfo?.buttonKeyFlag) {
+                  navigation.navigate('RemoteKeyPairingVideo');
+                } else {
+                  navigation.navigate('RemoteKeyPairingVideo', {
+                    lockId: deviceInfo?.deviceNo,
+                  });
+                }
               }}
             >
               <Text style={styles.cancelText}>新增钥匙</Text>
@@ -1005,6 +1059,7 @@ const DeviceInfo = () => {
                   deviceNo: deviceInfo?.deviceNo,
                   key: selectedDeviceKey,
                   id: deviceInfo?.id,
+                  hasButtonKeyFlag: lockInfo?.buttonKeyFlag,
                 });
               }}
             >
@@ -1012,28 +1067,32 @@ const DeviceInfo = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.closeIcon}>
-            <Flex
-              isTouchView
-              align="center"
-              justify="center"
-              style={{ gap: px(4) }}
-              onPress={e => {
-                e && e.stopPropagation?.();
-                setRemoteKeyPopVisible(false);
-                navigation.navigate('RemoteKeyPairingVideo');
-              }}
-            >
-              <Text style={styles.cardValueLinkText}>(如何绑定)</Text>
-              <AppIcon
-                name={'a-styledescription'}
-                color="#FD8E62"
-                size={px(20)}
-              />
-            </Flex>
-          </View>
+          {lockInfo?.buttonKeyFlag && (
+            <View style={styles.closeIcon}>
+              <Flex
+                isTouchView
+                align="center"
+                justify="center"
+                style={{ gap: px(4) }}
+                onPress={e => {
+                  e && e.stopPropagation?.();
+                  allDeletePopRef.current?.open();
+                }}
+              >
+                <Text style={styles.cardValueLinkText}>全部删除</Text>
+              </Flex>
+            </View>
+          )}
         </View>
       </Popup>
+
+      {/* 全部删除弹窗 */}
+      <PopConfirm
+        ref={allDeletePopRef}
+        title="确认解绑所有钥匙吗？"
+        confirmText="确定"
+        onConfirm={async () => await handleallDeleteKey()}
+      />
     </PageContainer>
   );
 };

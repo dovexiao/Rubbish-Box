@@ -315,7 +315,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   cardValueLinkText: {
-    color: '#FD8E62',
+    color: '#333333',
     fontSize: fontSize(14),
     lineHeight: px(20),
   },

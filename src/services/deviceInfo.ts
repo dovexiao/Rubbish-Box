@@ -152,3 +152,15 @@ export const getDeviceTestKeyResponse = createFetch<any, any>(
   '/boke/deviceTest/key/lastResponse',
   'GET',
 );
+
+// 全部删除钥匙
+export const allDeleteKey = createFetch<any, any>(
+  '/boke/userLock/key/unbindAll',
+  'POST',
+);
+
+// 全部删除钥匙结果
+export const allDeleteKeyResult = createFetch<any, any>(
+  '/boke/userLock/key/unbindAllRes',
+  'POST',
+);

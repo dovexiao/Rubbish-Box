@@ -51,4 +51,6 @@ export interface lockInfoProps {
 
   keyCount: number;
   resetTime: string;
+
+  buttonKeyFlag: boolean;
 }
