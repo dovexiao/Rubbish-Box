@@ -39,6 +39,15 @@ export type PopupProps = {
 
   /** 原生弹窗模式(用于盖住全屏的某些情况) */
   modalType?: 'modal' | 'portal';
+
+  /** 是否启用键盘避让 */
+  keyboardAvoidingEnabled?: boolean;
+
+  /** Android 键盘高度抵扣值（默认 120） */
+  androidKeyboardOffset?: number;
+
+  /** Android 键盘最大避让值（默认 220） */
+  androidKeyboardMaxOffset?: number;
 };
 
 export default function Popup({
@@ -53,6 +62,9 @@ export default function Popup({
   contentStyle,
   bodyStyle,
   modalType = 'portal',
+  keyboardAvoidingEnabled = true,
+  androidKeyboardOffset = px(120),
+  androidKeyboardMaxOffset = px(220),
 }: PopupProps) {
   const basePaddingBottom = px(20);
   const [paddingBottomValue, setPaddingBottomValue] =
@@ -78,6 +90,15 @@ export default function Popup({
   }, [paddingBottom]);
 
   useEffect(() => {
+    if (!keyboardAvoidingEnabled) {
+      if (paddingBottomRef.current) {
+        paddingBottomRef.current.stopAnimation();
+        paddingBottomRef.current.setValue(basePaddingBottom);
+      }
+      setPaddingBottomValue(basePaddingBottom);
+      return;
+    }
+
     if (!visible) {
       // 关闭时重置 paddingBottom（先停止所有动画，再设置值）
       if (paddingBottomRef.current) {
@@ -102,7 +123,13 @@ export default function Popup({
       const height = e.endCoordinates?.height || 0;
       const keyboardOffset =
         Platform.OS === 'android'
-          ? Math.max(0, Math.min(px(220), height - px(120)))
+          ? Math.max(
+              0,
+              Math.min(
+                androidKeyboardMaxOffset,
+                height - androidKeyboardOffset,
+              ),
+            )
           : height;
       // 先停止之前的动画
       currentPaddingBottom.stopAnimation();
@@ -133,7 +160,12 @@ export default function Popup({
         currentPaddingBottom.stopAnimation();
       }
     };
-  }, [visible]);
+  }, [
+    androidKeyboardMaxOffset,
+    androidKeyboardOffset,
+    keyboardAvoidingEnabled,
+    visible,
+  ]);
 
   return (
     <Modal

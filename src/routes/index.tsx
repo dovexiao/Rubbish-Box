@@ -374,5 +374,55 @@ export const routes = {
       component: require('@/pages/apply/userScan/index').default,
       label: '用户操作地锁',
     },
+    {
+      name: 'RcvPayment',
+      component: require('@/pages/rcvPayment/index').default,
+      label: '收款设置',
+    },
+    {
+      name: 'RcvPaymentRule',
+      component: require('@/pages/rcvPayment/rcvPaymentRule/index').default,
+      label: '设备收费规则',
+    },
+    {
+      name: 'RcvPaymentRuleEdit',
+      component: require('@/pages/rcvPayment/rcvPaymentRule/edit').default,
+      label: '新增收费规则',
+    },
+    {
+      name: 'RcvPaymentChangeBank',
+      component: require('@/pages/rcvPayment/changeBank/index').default,
+      label: '换绑银行卡',
+    },
+    {
+      name: 'BalanceWallet',
+      component: require('@/pages/balanceWallet/index').default,
+      label: '余额钱包',
+    },
+    {
+      name: 'BalanceWalletWithdrawDetail',
+      component: require('@/pages/balanceWallet/detail/index').default,
+      label: '提现明细',
+    },
+    {
+      name: 'BalanceWalletExtract',
+      component: require('@/pages/balanceWallet/extract/index').default,
+      label: '提现明细',
+    },
+    {
+      name: 'MyOrder',
+      component: require('@/pages/myOrder/index').default,
+      label: '我的订单',
+    },
+    {
+      name: 'MyOrderDetail',
+      component: require('@/pages/myOrder/detail/index').default,
+      label: '订单详情',
+    },
+    {
+      name: 'MyOrderRefundDetail',
+      component: require('@/pages/myOrder/refundDetail/index').default,
+      label: '退款详情',
+    },
   ],
 } as const;

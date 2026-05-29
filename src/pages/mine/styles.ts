@@ -69,15 +69,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: px(8),
   },
   deviceManageListItem: {
-    // flex: 1,
     alignItems: 'center',
     gap: px(4),
-  },
-  deviceManageListItemLast: {
-    // flexShrink: 0,
   },
   deviceManageListItemIcon: {
     width: px(26),

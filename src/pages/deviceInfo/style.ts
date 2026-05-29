@@ -314,4 +314,138 @@ export const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
   },
+  chargeStateText: {
+    color: '#999999',
+  },
+  lockChargePopupWrap: {
+    paddingHorizontal: px(16),
+    paddingBottom: px(8),
+  },
+  lockChargeCard: {
+    backgroundColor: '#F7F7FB',
+    borderRadius: px(12),
+    overflow: 'hidden',
+  },
+  lockChargeTopRow: {
+    paddingHorizontal: px(16),
+    paddingVertical: px(14),
+  },
+  lockChargeTopText: {
+    color: '#333333',
+    fontSize: fontSize(16),
+    fontWeight: '500',
+  },
+  lockChargeSwitchImg: {
+    width: px(32),
+    height: px(20),
+  },
+  lockChargeDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: 'rgba(0,0,0,0.08)',
+    marginHorizontal: px(16),
+  },
+  lockChargeRuleRow: {
+    paddingHorizontal: px(16),
+    paddingVertical: px(12),
+  },
+  lockChargeRuleLabel: {
+    color: '#333333',
+    fontSize: fontSize(14),
+    fontWeight: '500',
+  },
+  lockChargeRuleSelect: {
+    maxWidth: '65%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: px(8),
+    paddingHorizontal: px(10),
+    paddingVertical: px(7),
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  lockChargeRuleSelectText: {
+    color: '#666666',
+    fontSize: fontSize(14),
+    maxWidth: px(140),
+  },
+  lockChargeRuleArrow: {
+    transform: [{ rotate: '90deg' }],
+    marginLeft: px(2),
+  },
+  lockChargeFooter: {
+    marginTop: px(28),
+    marginBottom: px(10),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  lockChargeBtn: {
+    flex: 1,
+    height: px(48),
+    borderRadius: px(12),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  lockChargeCancelBtn: {
+    marginRight: px(8),
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: '#FFFFFF',
+  },
+  lockChargeConfirmBtn: {
+    marginLeft: px(8),
+    backgroundColor: '#333333',
+  },
+  lockChargeCancelText: {
+    color: '#999999',
+    fontSize: fontSize(18),
+    fontWeight: '500',
+  },
+  lockChargeConfirmText: {
+    color: '#FFFFFF',
+    fontSize: fontSize(18),
+    fontWeight: '500',
+  },
+  chargeRulePickerPanel: {
+    paddingHorizontal: px(8),
+    paddingBottom: px(4),
+  },
+  chargeRulePickerFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: px(16),
+    paddingBottom: px(10),
+  },
+  chargeRulePickerBtn: {
+    flex: 1,
+    height: px(44),
+    borderRadius: px(12),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chargeRulePickerCancelBtn: {
+    marginRight: px(8),
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: '#FFFFFF',
+  },
+  chargeRulePickerConfirmBtn: {
+    marginLeft: px(8),
+    backgroundColor: '#333333',
+  },
+  chargeRulePickerCancelText: {
+    color: '#999999',
+    fontSize: fontSize(16),
+  },
+  chargeRulePickerConfirmText: {
+    color: '#FFFFFF',
+    fontSize: fontSize(16),
+  },
+  chargeRulePickerIndicator: {
+    backgroundColor: '#F7F7FB',
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+  },
+  chargeRulePickerItemText: {
+    color: '#333333',
+    fontSize: fontSize(18),
+  },
 });

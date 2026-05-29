@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   orderContainer: {
     flex: 1,
-    paddingTop: px(12),
     // backgroundColor: '#F6F7FA',
   },
   tabsWrap: {
@@ -16,6 +15,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: px(12),
+    paddingBottom: px(12),
   },
   tab: {
     width: px(76),

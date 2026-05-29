@@ -5,9 +5,10 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 export type MyEmptyProps = {
   emptyText?: string;
   emptyIcon?: string;
+  marginTop?: number;
 };
 
-const DEFAULT_EMPTY_ICON = 'https://img.yzcdn.cn/vant/empty-image-search.png';
+const DEFAULT_EMPTY_ICON = 'https://g.18qjz.cn/img/boklock/order_empty.png';
 
 export default function MyEmpty(props: MyEmptyProps) {
   const uri = useMemo(
@@ -17,7 +18,9 @@ export default function MyEmpty(props: MyEmptyProps) {
   const text = props.emptyText || '空空如也';
 
   return (
-    <View style={styles.noDataSearch}>
+    <View
+      style={[styles.noDataSearch, { marginTop: props.marginTop ?? px(184) }]}
+    >
       <Image
         source={{ uri }}
         style={[styles.emptyImage]}

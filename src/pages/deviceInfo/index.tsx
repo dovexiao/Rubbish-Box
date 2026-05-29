@@ -7,6 +7,7 @@ import {
   PopConfirm,
   Popup,
 } from '@/components';
+import { PickerView } from '@ant-design/react-native';
 import {
   Image,
   Platform,
@@ -61,7 +62,11 @@ import { fontSize, px } from '@/utils/ui';
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
-    params: { lockId: number; isAdmin: boolean };
+    params: {
+      lockId: number;
+      isAdmin: boolean;
+      chargeRuleList?: Array<{ id: string | number; ruleName: string }>;
+    };
   };
   const navigation = useAppNavigation();
 
@@ -76,6 +81,15 @@ const DeviceInfo = () => {
 
   const [editNamePopVisible, setEditNamePopVisible] = useState(false);
   const [adminPopVisible, setAdminPopVisible] = useState(false);
+  const [lockChargePopVisible, setLockChargePopVisible] = useState(false);
+  const [chargeRulePickerVisible, setChargeRulePickerVisible] = useState(false);
+  const [lockChargeEnabled, setLockChargeEnabled] = useState(false);
+  const [selectedChargeRuleId, setSelectedChargeRuleId] = useState<
+    string | number | null
+  >(null);
+  const [pendingChargeRuleId, setPendingChargeRuleId] = useState<
+    string | number | null
+  >(null);
   const pageContainerRef = useRef<PageContainerRef>(null);
   const qrCodePopRef = useRef<PopCenterRef>(null);
   const batteryReminderRef = useRef<AnimationPopRef>(null);
@@ -85,6 +99,33 @@ const DeviceInfo = () => {
   const scanBindQrCameraRef = useRef<CameraRef>(null);
   const bluetoothStatusUnbindRef = useRef<BluetoothStatusRef>(null);
   const confirmRef = useRef<PopConfirmRef>(null);
+
+  const chargeRuleList =
+    Array.isArray(params?.chargeRuleList) && params.chargeRuleList.length
+      ? params.chargeRuleList
+      : [
+          { id: 'r1', ruleName: '地上收费规则' },
+          { id: 'r2', ruleName: '泊车标准收费规则' },
+          { id: 'r3', ruleName: '夜间停车收费规则' },
+        ];
+
+  const selectedChargeRuleName =
+    chargeRuleList.find(
+      item => String(item.id) === String(selectedChargeRuleId),
+    )?.ruleName || '';
+
+  const openChargeRulePicker = () => {
+    setPendingChargeRuleId(
+      selectedChargeRuleId ?? chargeRuleList[0]?.id ?? null,
+    );
+    setLockChargePopVisible(false);
+    setChargeRulePickerVisible(true);
+  };
+
+  const closeChargeRulePickerAndReopen = () => {
+    setChargeRulePickerVisible(false);
+    setLockChargePopVisible(true);
+  };
 
   const footerBtn = () => {
     return (
@@ -204,6 +245,13 @@ const DeviceInfo = () => {
   useEffect(() => {
     fetchLockInfo();
   }, [fetchLockInfo]);
+
+  useEffect(() => {
+    if ([null, undefined].includes(selectedChargeRuleId as any)) {
+      setSelectedChargeRuleId(chargeRuleList[0]?.id ?? null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleBindQrCodeScan = useCallback(
     async (value: string) => {
@@ -361,7 +409,7 @@ const DeviceInfo = () => {
         <Flex style={styles.container} direction="column">
           <Flex direction="row" align="center">
             <View style={styles.cardTitleLine} />
-            <Text style={styles.cardTitle}>基础信息</Text>
+            <Text style={styles.cardTitle}>设备信息</Text>
           </Flex>
           <Flex
             isTouchView
@@ -492,8 +540,31 @@ const DeviceInfo = () => {
           <Flex style={styles.cardLine} />
           <Flex direction="row" align="center">
             <View style={styles.cardTitleLine} />
-            <Text style={styles.cardTitle}>功能设置</Text>
+            <Text style={styles.cardTitle}>设备功能</Text>
           </Flex>
+
+          <Flex
+            isTouchView={deviceInfo?.role === 1}
+            style={styles.cardRows}
+            onPress={() => {
+              if (deviceInfo?.role !== 1) return;
+              setLockChargePopVisible(true);
+            }}
+          >
+            <Text style={styles.cardLable}>地锁收费</Text>
+            <Text
+              style={[
+                styles.cardValue,
+                !lockChargeEnabled && styles.chargeStateText,
+              ]}
+            >
+              {lockChargeEnabled ? '已开启' : '未开启'}
+            </Text>
+            {deviceInfo?.role === 1 ? (
+              <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
+            ) : null}
+          </Flex>
+
           {lockInfo?.powerType == 0 && (
             <Flex
               // isTouchView
@@ -535,7 +606,13 @@ const DeviceInfo = () => {
                       beeBuzzingCollisionRef.current?.open();
                     }}
                   >
-                    <Text style={styles.cardValue}>
+                    <Text
+                      style={[
+                        styles.cardValue,
+                        !(deviceInfo?.buzzerStatus === 1) &&
+                          styles.chargeStateText,
+                      ]}
+                    >
                       {deviceInfo?.buzzerStatus === 1 ? '已开启' : '未开启'}
                     </Text>
                     <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
@@ -753,6 +830,148 @@ const DeviceInfo = () => {
           <Text style={styles.adminInfoText}>
             联系方式：{lockInfo?.adminMobile}
           </Text>
+        </View>
+      </Popup>
+
+      <Popup
+        visible={lockChargePopVisible}
+        onClose={() => setLockChargePopVisible(false)}
+        title="地锁收费"
+        showClose
+      >
+        <View style={styles.lockChargePopupWrap}>
+          <View style={styles.lockChargeCard}>
+            <Flex
+              justify="between"
+              align="center"
+              style={styles.lockChargeTopRow}
+            >
+              <Text style={styles.lockChargeTopText}>
+                收费功能已{lockChargeEnabled ? '开' : '关'}
+              </Text>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => setLockChargeEnabled(prev => !prev)}
+              >
+                <Image
+                  source={{
+                    uri: `https://g.18qjz.cn/img/boklock/switch_${
+                      lockChargeEnabled ? 'checked' : 'default'
+                    }.png`,
+                  }}
+                  style={styles.lockChargeSwitchImg}
+                />
+              </TouchableOpacity>
+            </Flex>
+
+            {lockChargeEnabled ? (
+              <>
+                <View style={styles.lockChargeDivider} />
+                <Flex
+                  justify="between"
+                  align="center"
+                  style={styles.lockChargeRuleRow}
+                >
+                  <Text style={styles.lockChargeRuleLabel}>收费规则</Text>
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={styles.lockChargeRuleSelect}
+                    onPress={openChargeRulePicker}
+                  >
+                    <Text
+                      style={styles.lockChargeRuleSelectText}
+                      numberOfLines={1}
+                    >
+                      {selectedChargeRuleName || '请选择'}
+                    </Text>
+                    <AppIcon
+                      name={'a-headfor-20'}
+                      color="#666"
+                      size={px(16)}
+                      style={styles.lockChargeRuleArrow}
+                    />
+                  </TouchableOpacity>
+                </Flex>
+              </>
+            ) : null}
+          </View>
+
+          <View style={styles.lockChargeFooter}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              style={[styles.lockChargeBtn, styles.lockChargeCancelBtn]}
+              onPress={() => setLockChargePopVisible(false)}
+            >
+              <Text style={styles.lockChargeCancelText}>取消</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              style={[styles.lockChargeBtn, styles.lockChargeConfirmBtn]}
+              onPress={() => setLockChargePopVisible(false)}
+            >
+              <Text style={styles.lockChargeConfirmText}>确定</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Popup>
+
+      <Popup
+        visible={chargeRulePickerVisible}
+        onClose={closeChargeRulePickerAndReopen}
+        title="选择收费规则"
+        showClose
+        footer={
+          <View style={styles.chargeRulePickerFooter}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              style={[
+                styles.chargeRulePickerBtn,
+                styles.chargeRulePickerCancelBtn,
+              ]}
+              onPress={closeChargeRulePickerAndReopen}
+            >
+              <Text style={styles.chargeRulePickerCancelText}>取消</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              style={[
+                styles.chargeRulePickerBtn,
+                styles.chargeRulePickerConfirmBtn,
+              ]}
+              onPress={() => {
+                setSelectedChargeRuleId(
+                  pendingChargeRuleId ?? chargeRuleList[0]?.id ?? null,
+                );
+                closeChargeRulePickerAndReopen();
+              }}
+            >
+              <Text style={styles.chargeRulePickerConfirmText}>确认</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      >
+        <View style={styles.chargeRulePickerPanel}>
+          <PickerView
+            data={chargeRuleList.map(option => ({
+              label: option.ruleName,
+              value: option.id,
+            }))}
+            value={[
+              pendingChargeRuleId ??
+                selectedChargeRuleId ??
+                chargeRuleList[0]?.id,
+            ]}
+            cols={1}
+            cascade={false}
+            itemHeight={px(54)}
+            numberOfLines={1}
+            style={{ height: px(180) }}
+            indicatorStyle={styles.chargeRulePickerIndicator}
+            itemStyle={styles.chargeRulePickerItemText}
+            onChange={(values: Array<string | number>) => {
+              setPendingChargeRuleId(values?.[0] ?? pendingChargeRuleId);
+            }}
+          />
         </View>
       </Popup>
 

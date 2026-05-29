@@ -38,6 +38,17 @@ const InputCode = forwardRef<InputCodeRef, InputCodeProps>(function InputCode(
     return Array.from({ length: 6 }, (_, idx) => pure[idx] || '');
   }, [code]);
 
+  const focusInput = () => {
+    const input = inputRef.current;
+    if (!input) return;
+
+    // Android 上键盘手动收起后，input 可能仍保持 focus；先 blur 再 focus 可稳定拉起键盘。
+    input.blur();
+    setTimeout(() => {
+      input.focus();
+    }, 0);
+  };
+
   useImperativeHandle(
     ref,
     () => ({
@@ -63,9 +74,7 @@ const InputCode = forwardRef<InputCodeRef, InputCodeProps>(function InputCode(
           key={String(idx)}
           activeOpacity={0.85}
           style={[styles.codeItem, showError ? styles.codeItemError : null]}
-          onPress={() => {
-            inputRef.current?.focus();
-          }}
+          onPress={focusInput}
         >
           <Text style={styles.codeNumText}>{d}</Text>
         </TouchableOpacity>
@@ -82,6 +91,9 @@ const InputCode = forwardRef<InputCodeRef, InputCodeProps>(function InputCode(
         keyboardType="number-pad"
         maxLength={6}
         style={styles.hiddenInput}
+        onFocus={() => {
+          // no-op: 保留焦点事件，便于后续扩展与调试。
+        }}
       />
     </View>
   );

@@ -192,17 +192,17 @@ export default function Mine() {
     {
       title: '收款设置',
       icon: 'https://g.18qjz.cn/img/boklock/img_payment_setting.png',
-      onPress: () => navigation.navigate('Shopping'),
+      onPress: () => navigation.navigate('RcvPayment'),
     },
     {
       title: '我的订单',
       icon: 'https://g.18qjz.cn/img/boklock/img_my_order.png',
-      onPress: () => navigation.navigate('Order'),
+      onPress: () => navigation.navigate('MyOrder'),
     },
     {
       title: '余额钱包',
       icon: 'https://g.18qjz.cn/img/boklock/img_wallet.png',
-      onPress: () => navigation.navigate('Wallet'),
+      onPress: () => navigation.navigate('BalanceWallet'),
     },
     {
       title: '广告展示',
@@ -214,8 +214,9 @@ export default function Mine() {
   return (
     <PageContainer
       backgroundColor="#FCFBFE"
-      backgroundImage={{ uri: info?.bgUrl }}
-      statusBarBackgroundColor={info?.bgUrl ? 'transparent' : 'transparent'}
+      backgroundImage={{ uri: 'https://g.18qjz.cn/img/boklock/img_minebg.png' }}
+      backgroundImageHeight={px(380)}
+      statusBarBackgroundColor={'transparent'}
       scrollable
       loading={loading && hasToken && !info}
       // iOS TabBar 已处理底部安全区，Mine 再叠加会导致底部内容离 TabBar 留白
@@ -274,7 +275,7 @@ export default function Mine() {
                   activeOpacity={1}
                   style={[
                     styles.deviceManageListItem,
-                    isLast && styles.deviceManageListItemLast,
+                    isLast ? { width: px(74) } : { flex: 1 },
                   ]}
                   key={idx}
                   onPress={() => item.onPress()}
@@ -310,7 +311,7 @@ export default function Mine() {
                   styles.businessCenterBodyItemTextBold,
                 ]}
               >
-                1082
+                暂无订单
               </Text>
               <Text style={styles.businessCenterBodyItemValue}>今日订单量</Text>
             </View>
@@ -321,10 +322,7 @@ export default function Mine() {
               return (
                 <TouchableOpacity
                   activeOpacity={1}
-                  style={[
-                    styles.deviceManageListItem,
-                    isLast && styles.deviceManageListItemLast,
-                  ]}
+                  style={[styles.deviceManageListItem]}
                   key={idx}
                   onPress={() => item.onPress()}
                 >

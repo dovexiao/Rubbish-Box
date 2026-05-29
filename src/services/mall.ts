@@ -46,5 +46,11 @@ export const getPickupCodeRecordDetail = createFetch(
   'POST',
 );
 
+// 设备收费规则删除
+export const removeRcvPaymentRule = createFetch(
+  '/boke/userLock/chargeRule/delete',
+  'POST',
+);
+
 // 提货码图片识别
 export const ocrPickupCode = createFetch('/boke/pickupCode/ocr', 'GET');

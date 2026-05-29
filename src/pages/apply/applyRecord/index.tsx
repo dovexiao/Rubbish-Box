@@ -121,7 +121,11 @@ export default function ApplyRecord() {
           </Text>
           <Flex align="end" style={styles.imgBox}>
             <Image
-              source={{ uri: item.imageUrl || '' }}
+              source={{
+                uri:
+                  item.imageUrl ||
+                  'https://g.18qjz.cn/img/boklock/order_empty.png',
+              }}
               style={styles.imgBox_img}
             />
             {item.lockCount > 1 && (
