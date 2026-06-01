@@ -403,13 +403,13 @@ const DeviceInfo = () => {
 
   // 解绑所有钥匙
   const handleallDeleteKey = async () => {
-    showLoading({ title: '解绑中...' });
+    showLoading({ title: '删除中...' });
     const res = await allDeleteKey({ deviceNo: deviceInfo?.deviceNo });
     if (res.code === 200 && res.success) {
       return await loopallDeleteKey();
     }
     hideLoading();
-    showToast({ title: res.message || '修改失败', icon: 'info' });
+    showToast({ title: res.message || '删除失败', icon: 'info' });
     return false;
   };
 
