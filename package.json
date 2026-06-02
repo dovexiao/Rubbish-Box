@@ -9,7 +9,7 @@
     "clean:web": "rm -rf node_modules/.cache",
     "rewatch": "watchman watch-del . &&  watchman watch-project .",
     "start": "ENVFILE=.env.supbet react-native start --reset-cache",
-    "start:win": "SET ENVFILE=.env.dev && react-native start --reset-cache",
+    "start:dev": "ENVFILE=.env.dev && react-native start --reset-cache",
     "start:test": "ENVFILE=.env.test react-native start --reset-cache",
     "start:test:win": "SET ENVFILE=.env.test react-native start --reset-cache",
     "start:uat": "ENVFILE=.env.uat react-native start --reset-cache",
