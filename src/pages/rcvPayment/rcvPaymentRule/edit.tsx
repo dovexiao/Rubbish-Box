@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, Keyboard } from 'react-native';
 import { Input, PickerView } from '@ant-design/react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { PageContainer, Popup, Flex } from '@/components';
@@ -209,6 +209,7 @@ export default function RcvPaymentRuleEdit() {
   );
 
   const closeAllTips = () => {
+    Keyboard.dismiss();
     if (showCycleTips) setShowCycleTips(false);
     if (showCycleTips2) setShowCycleTips2(false);
     if (showChargeTips) setShowChargeTips(false);
@@ -338,8 +339,14 @@ export default function RcvPaymentRuleEdit() {
         return;
       }
 
-      showToast({ title: isEdit ? '保存成功' : '创建成功', icon: 'success' });
-      navigation.goBack();
+      showToast({
+        title: isEdit ? '保存成功' : '创建成功',
+        icon: 'success',
+        duration: 1000,
+      });
+      setTimeout(() => {
+        navigation.goBack();
+      }, 1000);
     } catch (err: any) {
       showToast({
         title: err?.msg ?? err?.message ?? '保存失败',

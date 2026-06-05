@@ -113,7 +113,11 @@ export default function ApplyRecordDetail() {
           <View style={styles.container}>
             <View style={styles.imgBox}>
               <Image
-                source={{ uri: detail?.imageMap?.upLockPng || '' }}
+                source={{
+                  uri:
+                    detail?.imageMap?.upLockPng ||
+                    'https://g.18qjz.cn/img/boklock/order_empty.png',
+                }}
                 style={styles.imgBox_img}
               />
             </View>

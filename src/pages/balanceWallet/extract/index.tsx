@@ -311,6 +311,7 @@ export default function BalanceWalletExtract() {
     <PageContainer
       backgroundColor="#F5F6FA"
       safeAreaEdges={['top']}
+      scrollable={Platform.OS === 'ios'}
       pageNavProps={{
         text: '提现',
         showBack: true,
