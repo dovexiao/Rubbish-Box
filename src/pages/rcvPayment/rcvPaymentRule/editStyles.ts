@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     position: 'relative',
+    zIndex: 10,
   },
   'row2-top': {
     marginBottom: px(8),
@@ -56,6 +57,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
+    zIndex: 10,
   },
 
   rowWithDividerLast: {
@@ -126,6 +128,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     gap: px(8),
+    zIndex: 10,
   },
   inlineFeeRowSimple: {
     flexDirection: 'row',
@@ -134,6 +137,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     gap: px(8),
+    zIndex: 10,
   },
   inlineText: {
     color: '#333333',
@@ -147,6 +151,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: px(8),
+    zIndex: 10,
+    position: 'relative',
   },
 
   inlineInput2: {
@@ -157,6 +163,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: px(8),
+    zIndex: 10,
+    position: 'relative',
   },
 
   inlineInputText: {
@@ -209,15 +217,6 @@ const styles = StyleSheet.create({
     fontSize: fontSize(16),
   },
   tooltip: {
-    selectorDisabled: {
-      backgroundColor: '#F5F5F5',
-    },
-    selectorTextDisabled: {
-      color: '#B7B7B7',
-    },
-    disabledRow: {
-      opacity: 0.55,
-    },
     position: 'absolute',
     left: px(40),
     top: px(50),
@@ -226,6 +225,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: px(10),
     paddingVertical: px(8),
     zIndex: 99999,
+  },
+  selectorDisabled: {
+    backgroundColor: '#F5F5F5',
+  },
+  selectorTextDisabled: {
+    color: '#B7B7B7',
+  },
+  disabledRow: {
+    opacity: 0.55,
   },
   tooltip2: {
     position: 'absolute',
@@ -335,6 +343,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderTopWidth: 1,
     borderTopColor: 'rgba(0, 0, 0, .05)',
+    zIndex: 10,
+    position: 'relative',
   },
 });
 

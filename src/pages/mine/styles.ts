@@ -5,9 +5,9 @@ const styles = StyleSheet.create({
   contentBox: {
     flexGrow: 1,
     width: '100%',
-    paddingTop: px(48),
+    paddingTop: px(24),
     paddingHorizontal: px(24),
-    paddingBottom: px(80),
+    paddingBottom: px(24),
     alignItems: 'center',
   },
   avatarTouchable: {
@@ -28,9 +28,9 @@ const styles = StyleSheet.create({
     width: px(40),
     height: px(40),
     borderRadius: px(10),
-    borderWidth: px(2),
-    borderColor: '#FFFFFF',
-    backgroundColor: '#F2F2F2',
+    // borderWidth: px(2),
+    // borderColor: '#FFFFFF',
+    // backgroundColor: '#F2F2F2',
   },
 
   name: {

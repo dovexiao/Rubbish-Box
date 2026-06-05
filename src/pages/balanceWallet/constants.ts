@@ -1,8 +1,16 @@
 export const BANK_INFO: Record<string, string> = {
   工商银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-gongshang.png',
+  中国工商银行:
+    'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-gongshang.png',
   建设银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-jianshe.png',
+  中国建设银行:
+    'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-jianshe.png',
   交通银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-jiaotong.png',
+  中国交通银行:
+    'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-jiaotong.png',
   民生银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-minsheng.png',
+  中国民生银行:
+    'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-minsheng.png',
   农业银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-nongye.png',
   中国农业银行:
     'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-nongye.png',
@@ -10,8 +18,14 @@ export const BANK_INFO: Record<string, string> = {
     'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-pufa.png',
   通用银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-tongyong.png',
   兴业银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-xingye.png',
+  中国兴业银行:
+    'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-xingye.png',
   邮政银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-youzheng.png',
+  中国邮政银行:
+    'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-youzheng.png',
   招商银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-zhaoshang.png',
+  中国招商银行:
+    'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-zhaoshang.png',
   中国银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-zhongguo.png',
   中信银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-zhongxin.png',
 };
