@@ -329,6 +329,7 @@ const styles = StyleSheet.create({
   },
   row3: {
     width: '100%',
+    paddingTop: px(8),
     paddingBottom: px(10),
     flexDirection: 'row',
     alignItems: 'center',
