@@ -363,7 +363,7 @@ export default function RcvPaymentRuleEdit() {
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
-      scrollable={false}
+      scrollable
       pageNavProps={{
         text: navTitle,
         showBack: true,
@@ -557,7 +557,9 @@ export default function RcvPaymentRuleEdit() {
                     ) : null}
                   </View>
 
-                  <View style={styles.row2}>
+                  <View
+                    style={[styles.row2, { zIndex: showChargeTips ? 10 : 1 }]}
+                  >
                     <View style={styles['row2-top']}>
                       <View style={styles.labelBox}>
                         <Text style={styles.required}>*</Text>
@@ -723,6 +725,13 @@ export default function RcvPaymentRuleEdit() {
                       styles.row,
                       { paddingTop: px(20), borderBottomWidth: 0 },
                       !form.enableCycleForTimes ? { opacity: 0.55 } : null,
+                      showCycleTips && form.enableCycleForTimes
+                        ? {
+                            position: 'relative',
+                            zIndex: 20,
+                            // paddingBottom: px(48),
+                          }
+                        : null,
                     ]}
                   >
                     <View style={styles.leftWithIcon}>
@@ -792,7 +801,16 @@ export default function RcvPaymentRuleEdit() {
                   </View>
                 </>
               )}
-              <View style={styles.row3}>
+              <View
+                style={[
+                  styles.row3,
+                  showCycleTips &&
+                  form.chargeType === 'times' &&
+                  form.enableCycleForTimes
+                    ? { zIndex: 1 }
+                    : null,
+                ]}
+              >
                 <View style={styles.labelBox}>
                   <Text style={styles.label}>免费时长</Text>
                 </View>
