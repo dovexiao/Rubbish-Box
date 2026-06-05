@@ -18,6 +18,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  codeItemActive: {
+    borderWidth: 1,
+    borderColor: '#2552F5',
+  },
   codeItemError: {
     borderWidth: 1,
     borderColor: '#ff2b24',

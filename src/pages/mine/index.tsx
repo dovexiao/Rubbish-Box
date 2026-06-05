@@ -11,7 +11,7 @@ import { useFocusEffect } from '@react-navigation/core';
 import PageContainer from '@/components/PageContainer';
 import PopConfirm from '@/components/popConfirm';
 import AppIcon from '@/components/AppIcon';
-import { baseInfo, logout } from '@/services/user';
+import { baseInfo, logout, getOrderStat } from '@/services/user';
 import { updateRegId } from '@/services/common';
 import { getStorage, setStorage } from '@/utils';
 import { cacheGetSync, cacheRemove, cacheSetSync } from '@/utils/cache';
@@ -31,12 +31,20 @@ type MineInfo = {
   mobPushFlag?: number; //设备端推送开关：0-关闭 1-开启，无设备注册时为null
 };
 
+type OrderStat = {
+  todayOrderCount: number;
+  balance: number;
+  isOpen: boolean;
+  totalAmount: number;
+};
+
 export default function Mine() {
   const navigation = useNavigation<any>();
   const { theme, themeType } = useTheme();
 
   const [hasToken, setHasToken] = useState(false);
   const [info, setInfo] = useState<MineInfo | undefined>(undefined);
+  const [orderStat, setOrderStat] = useState<OrderStat | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
   const logoutRef = useRef<any>(null);
@@ -60,7 +68,20 @@ export default function Mine() {
         await cacheSetSync('guestMode', false);
       }
 
-      const [infoRes] = await Promise.all([baseInfo({})]);
+      const [infoRes, orderStatRes] = await Promise.all([
+        baseInfo({}),
+        getOrderStat({}),
+      ]);
+      if (orderStatRes.code === 200 && orderStatRes.success) {
+        console.log('orderStatRes.data', orderStatRes.data);
+        setOrderStat((orderStatRes.data || {}) as OrderStat);
+      } else {
+        showToast({
+          title:
+            orderStatRes.msg || orderStatRes.message || '获取经营中心数据失败',
+          icon: 'info',
+        });
+      }
 
       if (infoRes.code === 200 && infoRes.success) {
         setInfo((infoRes.data || {}) as MineInfo);
@@ -173,7 +194,10 @@ export default function Mine() {
     {
       title: '添加设备',
       icon: 'https://g.18qjz.cn/img/boklock/img_add_device.png',
-      onPress: () => navigation.navigate('MyDevice'),
+      onPress: () =>
+        navigation.navigate('MyDevice', {
+          isOpen: orderStat?.isOpen,
+        }),
     },
     {
       title: '成员',
@@ -192,17 +216,37 @@ export default function Mine() {
     {
       title: '收款设置',
       icon: 'https://g.18qjz.cn/img/boklock/img_payment_setting.png',
-      onPress: () => navigation.navigate('RcvPayment'),
+      onPress: () => {
+        if (orderStat?.isOpen) {
+          navigation.navigate('RcvPayment');
+        } else {
+          showToast({
+            title: '收款功能未开通,请联系客服人员',
+            icon: 'info',
+          });
+        }
+      },
     },
     {
       title: '我的订单',
       icon: 'https://g.18qjz.cn/img/boklock/img_my_order.png',
-      onPress: () => navigation.navigate('MyOrder'),
+      onPress: () => {
+        navigation.navigate('MyOrder');
+      },
     },
     {
       title: '余额钱包',
       icon: 'https://g.18qjz.cn/img/boklock/img_wallet.png',
-      onPress: () => navigation.navigate('BalanceWallet'),
+      onPress: () => {
+        if (orderStat?.isOpen) {
+          navigation.navigate('BalanceWallet');
+        } else {
+          showToast({
+            title: '收款功能未开通,请联系客服人员',
+            icon: 'info',
+          });
+        }
+      },
     },
     {
       title: '广告展示',
@@ -298,27 +342,53 @@ export default function Mine() {
             <Text style={styles.businessCenterCardTitleText}>经营中心</Text>
           </View>
           <View style={styles.businessCenterBody}>
-            <View style={styles.businessCenterBodyItem}>
-              <Text style={styles.businessCenterBodyItemText}>830129.2</Text>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                if (orderStat?.isOpen) {
+                  navigation.navigate('BalanceWallet');
+                } else {
+                  showToast({
+                    title: '收款功能未开通,请联系客服人员',
+                    icon: 'info',
+                  });
+                }
+              }}
+              style={styles.businessCenterBodyItem}
+            >
+              <Text style={styles.businessCenterBodyItemText}>
+                {orderStat?.totalAmount ?? 0}
+              </Text>
               <Text style={styles.businessCenterBodyItemValue}>余额(元)</Text>
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.businessCenterBodyItemLine} />
-            <View style={styles.businessCenterBodyItem}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={styles.businessCenterBodyItem}
+              onPress={() => {
+                navigation.navigate('MyOrder');
+              }}
+            >
               <Text
                 style={[
                   styles.businessCenterBodyItemText,
-                  styles.businessCenterBodyItemTextBold,
+                  [null, undefined, 0].includes(
+                    orderStat?.todayOrderCount as any,
+                  ) && styles.businessCenterBodyItemTextBold,
                 ]}
               >
-                暂无订单
+                {[null, undefined, 0].includes(
+                  orderStat?.todayOrderCount as any,
+                )
+                  ? '暂无订单'
+                  : orderStat?.todayOrderCount}
               </Text>
               <Text style={styles.businessCenterBodyItemValue}>今日订单量</Text>
-            </View>
+            </TouchableOpacity>
           </View>
           <View style={styles.businessCenterList}>
             {businessCenterList.map((item, idx) => {
-              const isLast = idx === deviceManageList.length - 1;
               return (
                 <TouchableOpacity
                   activeOpacity={1}

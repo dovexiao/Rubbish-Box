@@ -1,8 +1,10 @@
+import type { GestureResponderEvent } from 'react-native';
+
 export interface DeviceItemProps {
   data: DeviceItemDTO;
   active?: boolean;
   onSelect: () => void;
-  onChangeName?: () => void;
+  onChangeName?: (event?: GestureResponderEvent) => void;
 }
 
 export interface DeviceItemDTO {
@@ -15,7 +17,7 @@ export interface DeviceItemDTO {
   /*角色名称 */
   roleName: string;
   /*设备数 */
-  groupCount: number;
+  count: number;
   /*设备图片 */
   imageUrl: string;
 }

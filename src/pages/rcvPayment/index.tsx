@@ -5,6 +5,8 @@ import { PageContainer, Flex } from '@/components/index';
 import styles from './styles';
 import { fontSize, px } from '@/utils/ui';
 import AppIcon from '@/components/AppIcon';
+import { getOrderStat } from '@/services/user';
+import { useFocusEffect } from '@react-navigation/core';
 
 export default function RcvPayment() {
   const navigation = useNavigation<any>();
@@ -22,26 +24,40 @@ export default function RcvPayment() {
     {
       title: '设备列表',
       text: '去查看',
-      onPress: () => navigation.navigate('MyDevice', { fromRcvPayment: true }),
+      onPress: () =>
+        navigation.navigate('MyDevice', {
+          fromRcvPayment: true,
+          isOpen: true,
+        }),
     },
     {
       title: '换绑银行卡',
       text: '去更换',
-      onPress: () => navigation.navigate('RcvPaymentChangeBank'),
+      onPress: () =>
+        navigation.navigate('RcvPaymentChangeBank', {
+          cardType: detail?.cardType,
+          regName: detail?.regName,
+          changeBankStatus: detail?.changeBankStatus,
+          failReason: detail?.failReason,
+        }),
     },
   ];
 
-  const loadData = () => {
-    setDetail({
-      balance: 830129.5,
-      todayOrderAmount: 608.18,
-      orderCount: 24,
-    });
-  };
-
-  useEffect(() => {
-    void loadData();
+  const loadData = useCallback(async () => {
+    const orderStatRes = await getOrderStat({});
+    if (orderStatRes.code === 200 && orderStatRes.success) {
+      setDetail(orderStatRes.data);
+      console.log('orderStatRes.data', orderStatRes.data);
+    }
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData]),
+  );
+
+  useEffect(() => {}, []);
 
   return (
     <PageContainer
@@ -50,6 +66,7 @@ export default function RcvPayment() {
       statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
       scrollable={false}
+      loadingType="content"
       pageNavProps={{
         text: '收款设置',
         showBack: true,
@@ -59,16 +76,18 @@ export default function RcvPayment() {
     >
       {detail ? (
         <View style={styles.container}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.row}
             onPress={() => navigation.navigate('BalanceWallet')}
           >
             <View style={styles['row-left']}>
               <Text style={styles['row-left_text']}>余额钱包(元):</Text>
-              <Text style={styles['row-left_text2']}>{detail?.balance}</Text>
+              <Text style={styles['row-left_text2']}>
+                {detail?.totalAmount}
+              </Text>
             </View>
             <AppIcon name="a-headfor-20" size={px(16)} color="#333333" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* <View style={styles.row2}>
             <Text style={styles['row2_text']}>收款设置</Text>
@@ -83,7 +102,7 @@ export default function RcvPayment() {
             </View>
           </View> */}
 
-          <View style={styles.row2}>
+          {/* <View style={styles.row2}>
             <Text style={styles['row2_text']}>今日订单</Text>
             <View style={styles['row2-bottom2']}>
               <View style={styles['row2-bottom2-item']}>
@@ -102,9 +121,9 @@ export default function RcvPayment() {
                 <Text style={styles['row2-bottom2-item_text2']}>订单量</Text>
               </View>
             </View>
-          </View>
+          </View> */}
 
-          <View style={styles.row2}>
+          {/* <View style={styles.row2}>
             <Text style={styles['row2_text']}>收款设置</Text>
             <View style={styles['row2-bottom2']}>
               <View
@@ -140,7 +159,7 @@ export default function RcvPayment() {
                 </Text>
               </View>
             </View>
-          </View>
+          </View> */}
 
           <View style={styles.row3}>
             {menuList.map((item, index) => (

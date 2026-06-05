@@ -25,6 +25,7 @@ import StatusError from './StatusError';
 import StatusLogin from './StatusLogin';
 import { LOGIN } from '@/constants';
 import { useTheme } from '@/context/ThemeContext';
+import { SimpleLoading } from '@/components';
 import { px } from '@/utils/ui';
 
 /**
@@ -104,6 +105,8 @@ interface PageContainerProps {
   // --- 状态展示 ---
   /** 是否处于加载中 */
   loading?: boolean;
+  /** 加载展示类型：遮罩层或内容区 */
+  loadingType?: 'overlay' | 'content';
   /** 加载中遮罩样式 */
   loadingStyle?: ViewStyle;
   /** 加载指示器颜色 */
@@ -170,6 +173,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       pageNavProps,
       // 状态展示
       loading = false,
+      loadingType = 'overlay',
       loadingStyle,
       loadingIndicatorColor = '#333333',
       // loadingBackgroundColor = 'rgba(0,0,0,0.3)',
@@ -194,6 +198,8 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
     }));
 
     const [refreshing, setRefreshing] = useState(false);
+    const isOverlayLoading = loading && loadingType === 'overlay';
+    const isContentLoading = loading && loadingType === 'content';
 
     // 解析主题默认值
     const defaultBackgroundColor =
@@ -301,6 +307,10 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
     );
 
     const renderContent = useMemo(() => {
+      if (isContentLoading) {
+        return <SimpleLoading />;
+      }
+
       // A. 全屏错误展示
       if (error && fullScreenError) {
         const codeStr =
@@ -375,6 +385,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       reloadSeed,
       refreshing,
       onRefresh,
+      isContentLoading,
     ]);
 
     // 3. 安全区与背景图适配 (Safe Area & Background)
@@ -412,7 +423,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
 
     // 4. Loading 遮罩
     const renderLoading = () => {
-      if (!loading) return null;
+      if (!isOverlayLoading) return null;
       return (
         <View
           style={[
@@ -438,7 +449,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
           showStatusBar &&
           !!defaultStatusBarBackgroundColor &&
           defaultStatusBarBackgroundColor !== 'transparent' &&
-          !loading && (
+          !isOverlayLoading && (
             <View
               pointerEvents="none"
               style={{
@@ -458,7 +469,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
           <StatusBar
             barStyle={defaultStatusBarStyle}
             backgroundColor={
-              loading ? 'transparent' : defaultStatusBarBackgroundColor
+              isOverlayLoading ? 'transparent' : defaultStatusBarBackgroundColor
             }
             showHideTransition={'none'}
             // iOS 必须 translucent=true，才能让页面的兜底 View 覆盖状态栏区域

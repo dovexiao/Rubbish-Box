@@ -86,6 +86,12 @@ const styles = StyleSheet.create({
     fontSize: fontSize(14),
   },
 
+  cardInput2: {
+    flex: 1,
+    height: px(30),
+    fontSize: fontSize(14),
+  },
+
   cardInputText: {
     textAlign: 'right',
     fontSize: fontSize(14),
@@ -134,6 +140,16 @@ const styles = StyleSheet.create({
     fontSize: fontSize(14),
   },
   inlineInput: {
+    width: px(70),
+    height: px(36),
+    borderRadius: px(8),
+    backgroundColor: '#F3F3F3',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: px(8),
+  },
+
+  inlineInput2: {
     width: px(60),
     height: px(36),
     borderRadius: px(8),
@@ -310,6 +326,15 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: fontSize(16),
     fontWeight: '500',
+  },
+  row3: {
+    width: '100%',
+    paddingBottom: px(10),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 0, 0, .05)',
   },
 });
 

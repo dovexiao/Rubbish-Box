@@ -54,7 +54,7 @@ export default StyleSheet.create({
   },
   footerBtns: {
     paddingTop: px(10),
-    paddingBottom: px(12),
+    // paddingBottom: px(12),
     flexDirection: 'row',
     justifyContent: 'center',
     gap: px(6),
@@ -120,7 +120,8 @@ export default StyleSheet.create({
   popReasonRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: px(24),
+    marginBottom: px(16),
+    height: px(32),
   },
   required: {
     color: '#FF2B24',
@@ -131,7 +132,7 @@ export default StyleSheet.create({
     textAlign: 'right',
     fontSize: fontSize(14),
     color: '#333333',
-    paddingVertical: px(6),
+    padding: px(0),
   },
   reasonErrorText: {
     color: '#FD8E62',

@@ -9,7 +9,7 @@ export default StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: '#f6f7fa',
-    padding: px(16),
+    paddingBottom: px(16),
     paddingTop: 0,
     marginTop: px(16),
     borderTopRightRadius: px(16),
@@ -17,6 +17,7 @@ export default StyleSheet.create({
   },
   orderContainer: {
     flex: 1,
+    marginTop: px(6),
   },
   orderTypeWrap: {
     alignSelf: 'center',
@@ -49,7 +50,7 @@ export default StyleSheet.create({
     fontWeight: '500',
   },
   statusTabsWrap: {
-    height: px(64),
+    height: px(52),
   },
   tabItemBox: {
     position: 'relative',
@@ -81,8 +82,8 @@ export default StyleSheet.create({
   },
   statusBadge: {
     position: 'absolute',
-    top: -px(6),
-    right: -px(6),
+    top: px(8),
+    right: px(0),
     minWidth: px(18),
     height: px(18),
     borderRadius: px(9),
@@ -103,9 +104,11 @@ export default StyleSheet.create({
     borderRadius: px(12),
     paddingHorizontal: px(14),
     paddingVertical: px(12),
-    marginBottom: px(12),
+    marginTop: px(12),
+    marginHorizontal: px(16),
   },
   orderCardHead: {
+    position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -151,7 +154,6 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: px(60),
   },
   emptyImage: {
     width: px(120),
@@ -161,5 +163,15 @@ export default StyleSheet.create({
     fontSize: fontSize(14),
     color: '#333',
     marginTop: px(8),
+  },
+  redDot: {
+    position: 'absolute',
+    top: -px(16),
+    right: -px(16),
+    width: px(10),
+    height: px(10),
+    borderRadius: px(5),
+    backgroundColor: '#FF2B24',
+    zIndex: 9999,
   },
 });

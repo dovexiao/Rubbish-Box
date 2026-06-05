@@ -1,53 +1,43 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import {
   Linking,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { PageContainer, Flex, Popup } from '@/components';
-import { showToast } from '@/utils';
+import { hideLoading, showLoading, showToast } from '@/utils';
 import { px } from '@/utils/ui';
+import {
+  getLockOrderDetail,
+  postMerchantDealRefund,
+  postUserAfsRefund,
+} from '@/services/order';
+import dayjs from 'dayjs';
+import { TextInput } from '@/components/index';
+import { getMiniToken } from '@/services/common';
+import { wechatOpenMiniProgram } from '@/utils/wechat';
+import MyEmpty from '@/components/MyEmpty';
 
 const styles = require('./styles').default;
 
-type BizOrderType = 'income' | 'expense';
-type BizOrderStatus = 'all' | 'todo' | 'unpaid' | 'done' | 'aftersale';
-
-type RouteOrderItem = {
-  orderNo: string;
-  orderType: BizOrderType;
-  orderStatus: Exclude<BizOrderStatus, 'all'>;
-  deviceName: string;
-  createdAt: string;
-  parkingDuration: string;
-  amount: number;
+const STATUS_MAP: Record<number, string> = {
+  1: '待完成',
+  2: '待付款',
+  3: '已完成',
+  4: '售后',
 };
 
-type DetailData = {
-  orderTypeText: string;
-  orderStatusText: string;
-  deviceName: string;
-  createdAt: string;
-  orderNo: string;
-  parkingDuration: string;
-  pricingRule: string;
-  maxFee: string;
-  currentFee?: string;
-  orderAmount?: string;
-  discountAmount?: string;
-  actualPay?: string;
-  paidAmount?: string;
-  unpaidAmount?: string;
-  refundAmount?: string;
-  endTime?: string;
-  payTime?: string;
-  aftersaleStartTime?: string;
-  aftersaleReason?: string;
-  refundedAmount?: string;
+const formatSeconds = (seconds: number) => {
+  if (!seconds) return '00:00:00';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s
+    .toString()
+    .padStart(2, '0')}`;
 };
 
 function parseAmount(text?: string): number {
@@ -57,280 +47,330 @@ function parseAmount(text?: string): number {
   return Number.isFinite(amount) ? amount : 0;
 }
 
-function normalizeAmountInput(text: string): string {
-  const cleaned = text.replace(/[^\d.]/g, '');
-  const parts = cleaned.split('.');
-  if (parts.length <= 1) return cleaned;
-  return `${parts[0]}.${parts.slice(1).join('')}`;
-}
-
-function buildExpenseDetail(
-  item: RouteOrderItem,
-  status: Exclude<BizOrderStatus, 'all'>,
-): DetailData {
-  const base = {
-    orderTypeText: '消费订单',
-    deviceName: item.deviceName || '地锁x号',
-    createdAt: item.createdAt || '2026-05-05 12:00',
-    orderNo: item.orderNo || 'BKXF2026051300000001',
-    parkingDuration: item.parkingDuration || '02:42:23',
-    pricingRule: '按时长收费  每60分钟5元',
-    maxFee: '30元',
-  };
-
-  if (status === 'todo') {
-    return {
-      ...base,
-      orderStatusText: '待完成',
-      currentFee: `${item.amount ?? 6}元`,
-      paidAmount: '6元',
-    };
-  }
-
-  if (status === 'unpaid') {
-    return {
-      ...base,
-      orderStatusText: '待付款',
-      orderAmount: '12元',
-      paidAmount: '6元',
-      unpaidAmount: '6元',
-      refundAmount: '6元',
-      endTime: '2026-05-05 14:00:00',
-      payTime: '2026-05-05 14:00:00',
-    };
-  }
-
-  if (status === 'aftersale') {
-    return {
-      ...base,
-      orderStatusText: '售后',
-      orderAmount: '12元',
-      discountAmount: '0元',
-      actualPay: '12元',
-      refundAmount: '',
-      endTime: '2026-05-05 14:00:00',
-      payTime: '2026-05-05 14:00:00',
-      aftersaleStartTime: '2026-05-05 14:00:00',
-      aftersaleReason: '扣得太多了',
-      refundedAmount: '2元',
-    };
-  }
-
-  return {
-    ...base,
-    orderStatusText: '已完成',
-    orderAmount: '12元',
-    discountAmount: '0元',
-    actualPay: '12元',
-    refundAmount: '',
-    endTime: '2026-05-05 14:00:00',
-    payTime: '2026-05-05 14:00:00',
-  };
-}
-
-function buildIncomeDetail(
-  item: RouteOrderItem,
-  status: Exclude<BizOrderStatus, 'all'>,
-): DetailData {
-  const base = {
-    orderTypeText: '收入订单',
-    deviceName: item.deviceName || '地锁x号',
-    createdAt: item.createdAt || '2026-05-05 12:00',
-    orderNo: item.orderNo || 'BKSR2026051300000001',
-    parkingDuration: item.parkingDuration || '02:42:23',
-    pricingRule: '按时长收费  每60分钟5元',
-    maxFee: '30元',
-  };
-
-  if (status === 'todo') {
-    return {
-      ...base,
-      orderStatusText: '待完成',
-      orderAmount: '12元',
-      paidAmount: '6元',
-      unpaidAmount: '6元',
-      refundAmount: '',
-      endTime: '2026-05-05 14:00:00',
-      payTime: '2026-05-05 14:00:00',
-    };
-  }
-
-  if (status === 'aftersale') {
-    return {
-      ...base,
-      orderStatusText: '售后',
-      orderAmount: '12元',
-      discountAmount: '0元',
-      actualPay: '12元',
-      refundAmount: '',
-      endTime: '2026-05-05 14:00:00',
-      payTime: '2026-05-05 14:00:00',
-      aftersaleStartTime: '2026-05-05 14:00:00',
-      aftersaleReason: '扣得太多了',
-      refundedAmount: '2元',
-    };
-  }
-
-  return {
-    ...base,
-    orderStatusText: '已完成',
-    orderAmount: '12元',
-    discountAmount: '0元',
-    actualPay: '12元',
-    refundAmount: '',
-    endTime: '2026-05-05 14:00:00',
-    payTime: '2026-05-05 14:00:00',
-  };
-}
-
 export default function MyOrderDetail() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const [loading, setLoading] = useState(true);
 
-  const routeItem = (route.params?.item || {}) as Partial<RouteOrderItem>;
+  const [detailData, setDetailData] = useState<any>(null);
+
+  const routeItem = (route.params?.item || {}) as Partial<any>;
   const orderType = (route.params?.orderType ||
     routeItem.orderType ||
-    'expense') as BizOrderType;
-  const orderStatus = (route.params?.orderStatus ||
-    routeItem.orderStatus ||
-    'done') as Exclude<BizOrderStatus, 'all'>;
+    'expense') as 'income' | 'expense';
+
+  const orderNo = String(route.params?.orderNo || routeItem.orderNo || '');
 
   const detail = useMemo(() => {
-    const fallbackItem: RouteOrderItem = {
-      orderNo: String(route.params?.orderNo || routeItem.orderNo || ''),
-      orderType,
-      orderStatus,
-      deviceName: routeItem.deviceName || '地锁x号',
-      createdAt: routeItem.createdAt || '2026-05-05 12:00',
-      parkingDuration: routeItem.parkingDuration || '02:42:23',
-      amount: Number(routeItem.amount || 6),
-    };
+    if (!detailData) return null;
+    console.log(detailData, '===detailData===');
 
-    if (orderType === 'income') {
-      return buildIncomeDetail(fallbackItem, orderStatus);
+    const orderStatusText = STATUS_MAP[detailData.tabStatus] || '';
+    const { feeTemplateDto } = detailData;
+
+    let pricingRule = '';
+    if (feeTemplateDto) {
+      if (feeTemplateDto.chargingType === 1) {
+        pricingRule = `按次收费 ${feeTemplateDto.unitFee}元/次`;
+      } else {
+        pricingRule = `按时收费 每${feeTemplateDto.duration}分钟${feeTemplateDto.unitFee}元`;
+      }
     }
-    return buildExpenseDetail(fallbackItem, orderStatus);
-  }, [orderStatus, orderType, route.params?.orderNo, routeItem]);
 
-  const showPayBtn = orderType === 'expense' && orderStatus === 'unpaid';
-  const showContactBtn =
-    orderType === 'expense' &&
-    (orderStatus === 'done' || orderStatus === 'aftersale');
-  const showRefundBtn = orderType === 'expense' && orderStatus === 'done';
-  const showIncomeHandleRefundBtn =
-    orderType === 'income' && orderStatus === 'aftersale';
-  const showAftersaleDetail = orderStatus === 'aftersale';
+    return {
+      orderTypeText: orderType === 'income' ? '收入订单' : '消费订单',
+      orderStatusText,
+      deviceName: detailData.deviceName || detailData.deviceNo || '',
+      createdAt: detailData.useStartTime
+        ? dayjs(detailData.useStartTime).format('YYYY-MM-DD HH:mm:ss')
+        : '',
+      orderNo: detailData.orderNo || '',
+      parkingDuration: formatSeconds(detailData.parkingDurationSeconds),
+      pricingRule,
+      maxFee: feeTemplateDto ? `${feeTemplateDto.maxFee || 0}元` : '',
+      currentFee: detailData.currentFee
+        ? `${detailData.currentFee?.toFixed(2) ?? 0}元`
+        : undefined,
+      orderAmount: detailData.orderAmount
+        ? `${detailData.orderAmount?.toFixed(2) ?? 0}元`
+        : undefined,
+      discountAmount:
+        detailData.reduceAmount !== undefined
+          ? `${detailData.reduceAmount?.toFixed(2) ?? 0}元`
+          : undefined,
+      actualPay:
+        detailData.payAmount !== undefined
+          ? `${detailData.payAmount?.toFixed(2) ?? 0}元`
+          : undefined,
+      paidAmount:
+        detailData.payAmount !== undefined
+          ? `${detailData.payAmount?.toFixed(2) ?? 0}元`
+          : undefined, // same as actualPay
+      unpaidAmount:
+        orderStatusText === '待付款'
+          ? `${(detailData.orderAmount - (detailData.payAmount || 0)).toFixed(
+              2,
+            )}元`
+          : undefined,
+      refundAmount:
+        detailData.refundAmount !== undefined
+          ? `${detailData.refundAmount?.toFixed(2) ?? 0}元`
+          : undefined,
+      endTime: detailData.realEndTime
+        ? dayjs(detailData.realEndTime).format('YYYY-MM-DD HH:mm:ss')
+        : undefined,
+      payTime: detailData.payTime
+        ? dayjs(detailData.payTime).format('YYYY-MM-DD HH:mm:ss')
+        : undefined,
+      aftersaleStartTime: detailData.afsApplyTime
+        ? dayjs(detailData.afsApplyTime).format('YYYY-MM-DD HH:mm:ss')
+        : undefined,
+      aftersaleReason: detailData.afsReason || undefined,
+      afsApplyAmount:
+        detailData.afsApplyAmount !== undefined
+          ? `${detailData.afsApplyAmount?.toFixed(2) ?? 0}元`
+          : undefined,
+      refundedAmount:
+        detailData.refundAmount !== undefined
+          ? `${detailData.refundAmount?.toFixed(2) ?? 0}元`
+          : undefined,
+    };
+  }, [detailData, orderType]);
+
+  const showPayBtn = detailData?.canPay;
+  const showContactBtn = detailData?.canContactMerchant;
+  const showRefundBtn = detailData?.canUserRefund;
+  const showIncomeHandleRefundBtn = detailData?.canMerchantDealRefund;
+  const showAftersaleDetail =
+    detail?.orderStatusText === '售后' || detailData?.afsFlag === 1;
 
   const [refundPopupVisible, setRefundPopupVisible] = useState(false);
   const [contactPopupVisible, setContactPopupVisible] = useState(false);
   const [refundReason, setRefundReason] = useState('');
   const [refundReasonError, setRefundReasonError] = useState('');
+  const [submittingRefund, setSubmittingRefund] = useState(false);
+
+  const fetchDetail = useCallback(async () => {
+    if (!orderNo) return;
+    const res: any = await getLockOrderDetail({ orderNo });
+    setLoading(false);
+    if (res?.success) {
+      setDetailData(res.data);
+    } else {
+      showToast({ title: res?.message || '加载订单详情失败', icon: 'info' });
+    }
+  }, [orderNo]);
+
+  useEffect(() => {
+    void fetchDetail();
+  }, [fetchDetail]);
+
+  const submitUserRefund = useCallback(async () => {
+    if (submittingRefund) return;
+
+    const reason = refundReason.trim();
+    if (!reason) {
+      setRefundReasonError('请输入售后原因');
+      return;
+    }
+
+    const applyRefundAmount = Number(detailData?.canRefundAmount ?? 0);
+    if (!applyRefundAmount || applyRefundAmount <= 0) {
+      showToast({ title: '暂无可退款金额', icon: 'info' });
+      return;
+    }
+
+    setSubmittingRefund(true);
+    showLoading({ title: '提交中...' });
+    try {
+      const res: any = await postUserAfsRefund({
+        orderNo,
+        applyRefundAmount,
+        refundReason: reason,
+      });
+      hideLoading();
+
+      if (res?.success && res?.data) {
+        setRefundPopupVisible(false);
+        setRefundReason('');
+        setRefundReasonError('');
+        showToast({ title: '提交成功', icon: 'success' });
+        await fetchDetail();
+        return;
+      }
+
+      showToast({
+        title: res?.msg || res?.message || '提交失败',
+        icon: 'info',
+      });
+    } catch {
+      showToast({ title: '提交失败', icon: 'info' });
+    } finally {
+      setSubmittingRefund(false);
+    }
+  }, [detailData, fetchDetail, orderNo, refundReason, submittingRefund]);
   const [handleRefundPopupVisible, setHandleRefundPopupVisible] =
     useState(false);
   const [handleRefundAmount, setHandleRefundAmount] = useState('');
   const [handleRefundReason, setHandleRefundReason] = useState('');
   const [handleRefundAmountError, setHandleRefundAmountError] = useState('');
   const [handleRefundReasonError, setHandleRefundReasonError] = useState('');
+  const [submittingHandleRefund, setSubmittingHandleRefund] = useState(false);
 
-  const merchantPhone = '17800928432';
+  const merchantPhone = detailData?.merchantMobile || '17800928432';
 
-  const refundRecords = [
-    {
-      id: 'r1',
-      time: '2019-09-20 18:06:25',
-      applyAmount: 20,
-      reason: 'XXXXX',
-      resultText: '20元退款中',
-      resultColor: '#FF8C62',
-    },
-    {
-      id: 'r2',
-      time: '2019-09-20 18:06:25',
-      applyAmount: 10,
-      reason: 'XXXXX',
-      resultText: '10元退款成功',
-      resultColor: '#2ACB52',
-    },
-    {
-      id: 'r3',
-      time: '2019-09-20 18:06:25',
-      applyAmount: 10,
-      reason: 'XXXXX',
-      resultText: '10元退款失败',
-      resultColor: '#FF2B24',
-    },
-    {
-      id: 'r4',
-      time: '2019-09-20 18:06:25',
-      applyAmount: 120,
-      reason: 'XXXXX',
-      resultText: '60元退款成功  60元退款失败',
-      resultColor: '#2ACB52',
-      secondColor: '#FF2B24',
-    },
-    {
-      id: 'r5',
-      time: '2019-09-20 18:06:25',
-      applyAmount: 120,
-      reason: 'XXXXX',
-      resultText: '60元退款中  60元退款失败',
-      resultColor: '#FF8C62',
-      secondColor: '#FF2B24',
-    },
-  ];
+  const parkingFee = detail?.orderAmount || detail?.currentFee || `0元`;
+  const availableRefundAmount = detailData?.canRefundAmount ?? 0;
 
-  const parkingFee =
-    detail.orderAmount || detail.currentFee || `${routeItem.amount || 0}元`;
-  const actualPayAmount = parseAmount(detail.actualPay);
-  const refundedAmountNumber = parseAmount(detail.refundedAmount);
-  const availableRefundAmount = Math.max(
-    0,
-    actualPayAmount - refundedAmountNumber,
-  );
+  const submitMerchantHandleRefund = useCallback(async () => {
+    const amount = parseAmount(handleRefundAmount);
+    const reason = handleRefundReason.trim();
+    let hasError = false;
 
-  const rows: Array<{ label: string; value?: string }> = [
-    { label: '订单类型', value: detail.orderTypeText },
-    { label: '订单状态', value: detail.orderStatusText },
-    { label: '设备名称', value: detail.deviceName },
-    { label: '订单创建时间', value: detail.createdAt },
-    { label: '订单编号', value: detail.orderNo },
-    { label: '停车时长', value: detail.parkingDuration },
-    ...(detail.currentFee
-      ? [{ label: '当前计费', value: detail.currentFee }]
-      : []),
-    ...(detail.orderAmount
-      ? [{ label: '订单金额', value: detail.orderAmount }]
-      : []),
-    { label: '收费方式', value: detail.pricingRule },
-    { label: '最高收费', value: detail.maxFee },
-    ...(detail.discountAmount
-      ? [{ label: '优惠金额', value: detail.discountAmount }]
-      : []),
-    ...(detail.actualPay
-      ? [{ label: '实际支付', value: detail.actualPay }]
-      : []),
-    ...(detail.paidAmount
-      ? [{ label: '已付金额', value: detail.paidAmount }]
-      : []),
-    ...(detail.unpaidAmount
-      ? [{ label: '待付金额', value: detail.unpaidAmount }]
-      : []),
-    ...(detail.refundAmount !== undefined
-      ? [{ label: '退款金额', value: detail.refundAmount }]
-      : []),
-    ...(detail.endTime
-      ? [{ label: '订单结束时间', value: detail.endTime }]
-      : []),
-    ...(detail.payTime
-      ? [{ label: '订单支付时间', value: detail.payTime }]
-      : []),
-    ...(detail.aftersaleStartTime
-      ? [{ label: '售后发起时间', value: detail.aftersaleStartTime }]
-      : []),
-    ...(detail.aftersaleReason
-      ? [{ label: '售后原因', value: detail.aftersaleReason }]
-      : []),
-  ];
+    if (!handleRefundAmount.trim() || !amount || amount <= 0) {
+      setHandleRefundAmountError('请输入退款金额');
+      showToast({ title: '请输入退款金额', icon: 'info' });
+      hasError = true;
+    } else if (amount > availableRefundAmount) {
+      setHandleRefundAmountError('退款金额不可大于可退款金额');
+      showToast({ title: '退款金额不可大于可退款金额', icon: 'info' });
+      hasError = true;
+    } else {
+      setHandleRefundAmountError('');
+    }
+
+    if (!reason) {
+      setHandleRefundReasonError('请输入退款原因');
+      showToast({ title: '请输入退款原因', icon: 'info' });
+      hasError = true;
+    } else {
+      setHandleRefundReasonError('');
+    }
+    if (submittingHandleRefund) return;
+
+    if (hasError) return;
+
+    setSubmittingHandleRefund(true);
+    showLoading({ title: '提交中...' });
+    try {
+      const res: any = await postMerchantDealRefund({
+        orderNo,
+        totalRefundAmount: amount,
+        replyContent: reason,
+      });
+      hideLoading();
+
+      if (res?.success && res?.data) {
+        setHandleRefundPopupVisible(false);
+        setHandleRefundAmount('');
+        setHandleRefundReason('');
+        setHandleRefundAmountError('');
+        setHandleRefundReasonError('');
+        showToast({ title: '处理成功', icon: 'success' });
+        await fetchDetail();
+        return;
+      }
+
+      showToast({
+        title: res?.msg || res?.message || '处理失败',
+        icon: 'info',
+      });
+    } catch {
+      showToast({ title: '处理失败', icon: 'info' });
+    } finally {
+      setSubmittingHandleRefund(false);
+    }
+  }, [
+    availableRefundAmount,
+    fetchDetail,
+    handleRefundAmount,
+    handleRefundReason,
+    orderNo,
+    submittingHandleRefund,
+  ]);
+
+  const rows: Array<{ label: string; value?: string }> = detail
+    ? [
+        { label: '订单类型', value: detail.orderTypeText },
+        { label: '订单状态', value: detail.orderStatusText },
+        { label: '设备名称', value: detail.deviceName },
+        { label: '订单创建时间', value: detail.createdAt },
+        { label: '订单编号', value: detail.orderNo },
+        { label: '停车时长', value: detail.parkingDuration },
+        ...(detail.currentFee
+          ? [{ label: '当前计费', value: detail.currentFee }]
+          : []),
+        ...(detail.orderAmount
+          ? [{ label: '订单金额', value: detail.orderAmount }]
+          : []),
+        ...(detail.pricingRule
+          ? [{ label: '收费方式', value: detail.pricingRule }]
+          : []),
+        ...(detail.maxFee ? [{ label: '最高收费', value: detail.maxFee }] : []),
+        ...(detail.discountAmount
+          ? [{ label: '优惠金额', value: detail.discountAmount }]
+          : []),
+        ...(detail.actualPay
+          ? [{ label: '实际支付', value: detail.actualPay }]
+          : []),
+        ...(detail.paidAmount
+          ? [{ label: '已付金额', value: detail.paidAmount }]
+          : []),
+        ...(detail.unpaidAmount
+          ? [{ label: '待付金额', value: detail.unpaidAmount }]
+          : []),
+        ...(detail.refundAmount !== undefined
+          ? [{ label: '退款金额', value: detail.refundAmount }]
+          : []),
+        ...(detail.endTime
+          ? [{ label: '订单结束时间', value: detail.endTime }]
+          : []),
+        ...(detail.payTime
+          ? [{ label: '订单支付时间', value: detail.payTime }]
+          : []),
+        ...(detail.aftersaleStartTime
+          ? [{ label: '售后发起时间', value: detail.aftersaleStartTime }]
+          : []),
+        ...(detail.aftersaleReason
+          ? [{ label: '售后原因', value: detail.aftersaleReason }]
+          : []),
+      ]
+    : [];
+
+  const toPay = async () => {
+    try {
+      const tokenRes = await getMiniToken({});
+      if (!tokenRes.success || !tokenRes.data?.token) {
+        showToast({ title: '获取小程序token失败', icon: 'info' });
+        return;
+      }
+
+      // 构建跳转参数
+      const params: any = {
+        orderNo,
+        token: tokenRes.data.token,
+      };
+      // 打开小程序购买页面
+      const queryString = Object.keys(params)
+        .map(key => `${key}=${encodeURIComponent(String(params[key]))}`)
+        .join('&');
+      const result = await wechatOpenMiniProgram(
+        `pages/order/detail/index?${queryString}`,
+      );
+
+      if (!result.result) {
+        showToast({
+          title: result.message || '打开小程序发起支付失败',
+          icon: 'info',
+        });
+      }
+    } catch (error: any) {
+      showToast({
+        title: error?.message || '发起支付失败，请重试',
+        icon: 'info',
+      });
+    }
+  };
 
   return (
     <PageContainer
@@ -339,6 +379,8 @@ export default function MyOrderDetail() {
       statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
       scrollable={false}
+      loading={loading}
+      loadingType="content"
       pageNavProps={{
         text: '订单详情',
         showBack: true,
@@ -353,14 +395,7 @@ export default function MyOrderDetail() {
             {showContactBtn ? (
               <TouchableOpacity
                 activeOpacity={0.85}
-                style={[
-                  styles[
-                    detail.orderStatusText == '售后'
-                      ? 'footerBtn2'
-                      : 'footerBtn'
-                  ],
-                  styles.footerBtnGhost,
-                ]}
+                style={[styles['footerBtn'], styles.footerBtnGhost]}
                 onPress={() => setContactPopupVisible(true)}
               >
                 <Text style={styles.footerBtnGhostText}>联系商家</Text>
@@ -375,9 +410,7 @@ export default function MyOrderDetail() {
                   styles.footerBtnPrimary,
                   styles.footerBtnSingle,
                 ]}
-                onPress={() =>
-                  showToast({ title: '支付功能开发中', icon: 'info' })
-                }
+                onPress={() => toPay()}
               >
                 <Text style={styles.footerBtnPrimaryText}>支付</Text>
               </TouchableOpacity>
@@ -410,25 +443,39 @@ export default function MyOrderDetail() {
         ) : undefined
       }
     >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.orderDetailContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {rows.map((row, index) => {
-          if (row.label === '售后发起时间' && showAftersaleDetail) {
-            return (
-              <View key={`${row.label}-${index}`}>
-                <View style={styles.aftersaleDivider} />
-                <Flex justify="between" align="center" style={styles.row}>
+      {detailData ? (
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.orderDetailContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          {rows.map((row, index) => {
+            if (row.label === '售后发起时间' && showAftersaleDetail) {
+              return (
+                <View key={`${row.label}-${index}`}>
+                  <View style={styles.aftersaleDivider} />
+                  <Flex justify="between" align="center" style={styles.row}>
+                    <Text style={styles.label}>{row.label}</Text>
+                    <Text style={styles.value}>{row.value || ''}</Text>
+                  </Flex>
+                </View>
+              );
+            }
+
+            if (row.label === '退款金额' && showAftersaleDetail) {
+              return (
+                <Flex
+                  justify="between"
+                  align="center"
+                  style={styles.row}
+                  key={`${row.label}-${index}`}
+                >
                   <Text style={styles.label}>{row.label}</Text>
                   <Text style={styles.value}>{row.value || ''}</Text>
                 </Flex>
-              </View>
-            );
-          }
+              );
+            }
 
-          if (row.label === '退款金额' && showAftersaleDetail) {
             return (
               <Flex
                 justify="between"
@@ -440,41 +487,31 @@ export default function MyOrderDetail() {
                 <Text style={styles.value}>{row.value || ''}</Text>
               </Flex>
             );
-          }
+          })}
 
-          return (
-            <Flex
-              justify="between"
-              align="center"
-              style={styles.row}
-              key={`${row.label}-${index}`}
-            >
-              <Text style={styles.label}>{row.label}</Text>
-              <Text style={styles.value}>{row.value || ''}</Text>
+          {showAftersaleDetail ? (
+            <Flex justify="between" align="center" style={styles.row}>
+              <Text style={styles.label}>已退金额</Text>
+              <View style={styles.refundDetailWrap}>
+                <Text style={styles.value}>{detail?.afsApplyAmount || ''}</Text>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  style={styles.refundDetailBtn}
+                  onPress={() => {
+                    navigation.navigate('MyOrderRefundDetail', {
+                      orderNo,
+                    });
+                  }}
+                >
+                  <Text style={styles.refundDetailBtnText}>查看详情</Text>
+                </TouchableOpacity>
+              </View>
             </Flex>
-          );
-        })}
-
-        {showAftersaleDetail ? (
-          <Flex justify="between" align="center" style={styles.row}>
-            <Text style={styles.label}>已退金额</Text>
-            <View style={styles.refundDetailWrap}>
-              <Text style={styles.value}>{detail.refundedAmount || ''}</Text>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                style={styles.refundDetailBtn}
-                onPress={() => {
-                  navigation.navigate('MyOrderRefundDetail', {
-                    records: refundRecords,
-                  });
-                }}
-              >
-                <Text style={styles.refundDetailBtnText}>查看详情</Text>
-              </TouchableOpacity>
-            </View>
-          </Flex>
-        ) : null}
-      </ScrollView>
+          ) : null}
+        </ScrollView>
+      ) : (
+        <MyEmpty emptyText="查询订单详情失败" />
+      )}
 
       <Popup
         visible={refundPopupVisible}
@@ -531,15 +568,12 @@ export default function MyOrderDetail() {
               style={[
                 styles.popBtn,
                 styles.popConfirmBtn,
-                !refundReason.trim() ? styles.popConfirmBtnDisabled : null,
+                !refundReason.trim() || submittingRefund
+                  ? styles.popConfirmBtnDisabled
+                  : null,
               ]}
               onPress={() => {
-                if (!refundReason.trim()) {
-                  setRefundReasonError('请输入售后原因');
-                  return;
-                }
-                setRefundPopupVisible(false);
-                showToast({ title: '提交成功', icon: 'success' });
+                void submitUserRefund();
               }}
             >
               <Text style={styles.popConfirmText}>提交</Text>
@@ -587,26 +621,25 @@ export default function MyOrderDetail() {
           setHandleRefundReasonError('');
         }}
         title="处理退款"
-        androidKeyboardMaxOffset={px(120)}
         showClose
       >
         <View style={styles.popWrap}>
           <Flex justify="between" align="center" style={styles.popRow}>
             <Text style={styles.popLabel}>订单金额</Text>
-            <Text style={styles.popValue}>{detail.orderAmount || '0元'}</Text>
+            <Text style={styles.popValue}>{detail?.orderAmount || '0元'}</Text>
           </Flex>
           <Flex justify="between" align="center" style={styles.popRow}>
             <Text style={styles.popLabel}>实际支付</Text>
-            <Text style={styles.popValue}>{detail.actualPay || '0元'}</Text>
+            <Text style={styles.popValue}>{detail?.actualPay || '0元'}</Text>
           </Flex>
           <Flex justify="between" align="center" style={styles.popRow}>
             <Text style={styles.popLabel}>已退款</Text>
             <Text style={styles.popValue}>
-              {detail.refundedAmount || '0元'}
+              {detail?.refundedAmount || '0元'}
             </Text>
           </Flex>
 
-          <View style={[styles.popReasonRow, { marginBottom: 0 }]}>
+          <View style={[styles.popReasonRow, { marginBottom: px(16) }]}>
             <Text style={styles.popLabel}>
               <Text style={styles.required}>*</Text>退款金额
             </Text>
@@ -614,10 +647,8 @@ export default function MyOrderDetail() {
               style={styles.reasonInput}
               value={handleRefundAmount}
               onChangeText={text => {
-                const next = normalizeAmountInput(text);
-                setHandleRefundAmount(next);
-                const amount = parseAmount(next);
-                console.log(amount, availableRefundAmount, '=====');
+                setHandleRefundAmount(text);
+                const amount = parseAmount(text);
                 if (amount > availableRefundAmount) {
                   setHandleRefundAmountError('退款金额不可大于可退款金额');
                 } else {
@@ -627,6 +658,7 @@ export default function MyOrderDetail() {
               placeholder="请输入退款金额"
               placeholderTextColor="#CCC"
               keyboardType="decimal-pad"
+              decimalScale={2}
             />
           </View>
           {!!handleRefundAmountError ? (
@@ -674,32 +706,13 @@ export default function MyOrderDetail() {
 
             <TouchableOpacity
               activeOpacity={0.85}
-              style={[styles.popBtn, styles.popConfirmBtn]}
+              style={[
+                styles.popBtn,
+                styles.popConfirmBtn,
+                submittingHandleRefund ? styles.popConfirmBtnDisabled : null,
+              ]}
               onPress={() => {
-                const amount = parseAmount(handleRefundAmount);
-                let hasError = false;
-
-                if (!handleRefundAmount.trim() || !amount || amount <= 0) {
-                  setHandleRefundAmountError('请输入退款金额');
-                  hasError = true;
-                } else if (amount > availableRefundAmount) {
-                  setHandleRefundAmountError('退款金额不可大于可退款金额');
-                  hasError = true;
-                } else {
-                  setHandleRefundAmountError('');
-                }
-
-                if (!handleRefundReason.trim()) {
-                  setHandleRefundReasonError('请输入退款原因');
-                  hasError = true;
-                } else {
-                  setHandleRefundReasonError('');
-                }
-
-                if (hasError) return;
-
-                setHandleRefundPopupVisible(false);
-                showToast({ title: '处理成功', icon: 'success' });
+                void submitMerchantHandleRefund();
               }}
             >
               <Text style={styles.popConfirmText}>确定</Text>

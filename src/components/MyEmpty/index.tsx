@@ -6,6 +6,7 @@ export type MyEmptyProps = {
   emptyText?: string;
   emptyIcon?: string;
   marginTop?: number;
+  paddingBottom?: number;
 };
 
 const DEFAULT_EMPTY_ICON = 'https://g.18qjz.cn/img/boklock/order_empty.png';
@@ -19,7 +20,13 @@ export default function MyEmpty(props: MyEmptyProps) {
 
   return (
     <View
-      style={[styles.noDataSearch, { marginTop: props.marginTop ?? px(184) }]}
+      style={[
+        styles.noDataSearch,
+        {
+          marginTop: props.marginTop ?? px(184),
+          paddingBottom: props.paddingBottom ?? px(184),
+        },
+      ]}
     >
       <Image
         source={{ uri }}

@@ -13,19 +13,48 @@ import {
 import AppIcon from '@/components/AppIcon';
 import { cacheGet } from '@/utils/cache';
 import { updateName } from '@/services/deviceInfo';
-import { getLockDeviceList } from '@/services/device';
+import {
+  checkUserLockFeeAddOrRemove,
+  addUserLockFee,
+  getUserLockFeeAddableList,
+  getUserLockFeeList,
+  getUserLockFeeRemovableList,
+  removeUserLockFee,
+} from '@/services/device';
+import { getFeeTemplateList } from '@/services/mall';
 import { DeviceItem } from '@/components/Device/Item/index';
-import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
 import styles from './styles';
+import { showLoading, hideLoading } from '@/utils/index';
 import { fontSize, px } from '@/utils/ui';
 import MyEmpty from '@/components/MyEmpty/index';
+
+type FeeDeviceItem = {
+  id: string | number;
+  lockId: string | number;
+  deviceId?: number;
+  deviceNo?: string;
+  lockName?: string;
+  role?: number;
+  roleName?: string;
+  count?: number;
+  imageUrl?: string;
+  [key: string]: any;
+};
 
 export default function MyDevice() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const fromRcvPayment = route.params?.fromRcvPayment ? true : false;
+  const isOpen = route.params?.isOpen;
   const [lockName, setLockName] = useState('');
-  const [deviceList, setDeviceList] = useState<any[]>([]);
+  const [freeDeviceList, setFreeDeviceList] = useState<FeeDeviceItem[]>([]);
+  const [feeDeviceList, setFeeDeviceList] = useState<FeeDeviceItem[]>([]);
+  const [addableFeeDeviceList, setAddableFeeDeviceList] = useState<
+    FeeDeviceItem[]
+  >([]);
+  const [removableFeeDeviceList, setRemovableFeeDeviceList] = useState<
+    FeeDeviceItem[]
+  >([]);
   const [currentDevice, setCurrentDevice] = useState<any>(undefined);
   const [editNamePopVisible, setEditNamePopVisible] = useState(false);
   const [currentTab, setCurrentTab] = useState(0);
@@ -41,28 +70,30 @@ export default function MyDevice() {
   const [selectedRuleId, setSelectedRuleId] = useState<string | number | null>(
     null,
   );
+  const [chargeRuleList, setChargeRuleList] = useState<any[]>([]);
   const [msgPopupVisible, setMsgPopupVisible] = useState(false);
   const [msgPopupText, setMsgPopupText] = useState('');
   const shouldReopenChooseRuleRef = useRef(false);
-
-  const chargeRuleList = useMemo(() => {
-    const list = route.params?.chargeRuleList;
-    if (Array.isArray(list) && list.length > 0) {
-      return list;
-    }
-    return [
-      { id: 'r1', ruleName: '地上收费规则' },
-      { id: 'r2', ruleName: '创景路车场收费规则' },
-      { id: 'r3', ruleName: 'Boke车位收费' },
-      { id: 'r4', ruleName: '未来星辰地下机动车收费规则' },
-    ];
-  }, [route.params?.chargeRuleList]);
+  const goingToRuleEditRef = useRef(false);
   useEffect(() => {
-    getList();
+    void getList(currentTab === 1 ? 1 : 0);
     const unsubscribeFocus = navigation.addListener('focus', () => {
+      void getList(currentTab === 1 ? 1 : 0);
       if (shouldReopenChooseRuleRef.current) {
-        setChooseRulePopVisible(true);
-        shouldReopenChooseRuleRef.current = false;
+        void (async () => {
+          const list = await getChargeRuleList();
+          setSelectedRuleId(prev => {
+            if ([null, undefined].includes(prev as any)) {
+              const firstRuleId = list?.[0]?.id;
+              return [null, undefined].includes(firstRuleId as any)
+                ? null
+                : firstRuleId;
+            }
+            return prev;
+          });
+          setChooseRulePopVisible(true);
+          shouldReopenChooseRuleRef.current = false;
+        })();
       }
     });
 
@@ -70,14 +101,46 @@ export default function MyDevice() {
       eventCenter.off('refreshDeviceInfo');
       unsubscribeFocus();
     };
-  }, [navigation]);
+  }, [navigation, currentTab]);
 
-  const getList = async () => {
-    const res: any = await getLockDeviceList({
-      offset: 0,
-      pageSize: 999,
-    });
-    setDeviceList(res.data.list);
+  const normalizeFeeDeviceList = (list: any[]): FeeDeviceItem[] => {
+    return list.map(item => ({
+      ...item,
+      id: item?.lockId,
+    }));
+  };
+
+  const getList = async (hasFee: 0 | 1) => {
+    const userIdRaw = await cacheGet({ key: 'userId' });
+    const userId = Number(userIdRaw);
+    showLoading();
+
+    try {
+      const res: any = await getUserLockFeeList({
+        offset: 0,
+        pageSize: 999,
+        hasFee,
+        userId: Number.isNaN(userId) ? undefined : userId,
+      });
+      hideLoading();
+      if (!res?.success) {
+        showToast({
+          title: res?.msg || res?.message || '加载设备失败',
+          icon: 'info',
+        });
+        return;
+      }
+
+      const list = Array.isArray(res?.data?.list) ? res.data.list : [];
+      const normalized = normalizeFeeDeviceList(list);
+      if (hasFee === 1) {
+        setFeeDeviceList(normalized);
+      } else {
+        setFreeDeviceList(normalized);
+      }
+    } catch {
+      showToast({ title: '加载设备失败', icon: 'info' });
+    }
   };
 
   const handleNameConfirm = async () => {
@@ -95,7 +158,7 @@ export default function MyDevice() {
           icon: 'success',
           duration: 2000,
         });
-        getList();
+        void getList(currentTab === 1 ? 1 : 0);
       }
     } catch (error) {
       console.error(error);
@@ -108,12 +171,16 @@ export default function MyDevice() {
   };
 
   const footerRender = useMemo(() => {
+    if (!isOpen) {
+      return null;
+    }
     return (
       <View style={styles.footer}>
         <TouchableOpacity
           style={[styles.footerBtn, styles.footerBtnClose]}
-          onPress={() => {
+          onPress={async () => {
             setSelectedRemoveIds([]);
+            await getRemovableList();
             setRemoveChargePopVisible(true);
           }}
         >
@@ -123,8 +190,9 @@ export default function MyDevice() {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.footerBtn, styles.footerBtnAdd]}
-          onPress={() => {
+          onPress={async () => {
             setSelectedAddIds([]);
+            await getAddableList();
             setAddChargePopVisible(true);
           }}
         >
@@ -151,52 +219,177 @@ export default function MyDevice() {
   };
 
   const removeList = useMemo(() => {
-    return deviceList || [];
-  }, [deviceList]);
+    return removableFeeDeviceList;
+  }, [removableFeeDeviceList]);
+
+  const addList = useMemo(() => {
+    return addableFeeDeviceList;
+  }, [addableFeeDeviceList]);
+
+  const displayList = useMemo(() => {
+    return currentTab === 1 ? feeDeviceList : freeDeviceList;
+  }, [currentTab, feeDeviceList, freeDeviceList]);
 
   const closeAddPopupAndClear = () => {
     setAddChargePopVisible(false);
     setSelectedAddIds([]);
   };
 
-  const getSelectedDeviceNames = (ids: Array<string | number>) => {
-    const nameList = removeList
-      .filter((it: any) => ids.includes(it.id))
-      .map((it: any) => it?.lockName)
-      .filter(Boolean);
-    return nameList;
+  const getAddableList = async () => {
+    const userIdRaw = await cacheGet({ key: 'userId' });
+    const userId = Number(userIdRaw);
+    showLoading({ title: '加载可添加设备...' });
+
+    try {
+      const res: any = await getUserLockFeeAddableList({
+        offset: 0,
+        pageSize: 999,
+        userId: Number.isNaN(userId) ? undefined : userId,
+      });
+
+      if (!res?.success) {
+        showToast({
+          title: res?.msg || res?.message || '加载可添加设备失败',
+          icon: 'info',
+        });
+        return [];
+      }
+
+      const list = Array.isArray(res?.data?.list) ? res.data.list : [];
+      const normalized = normalizeFeeDeviceList(list);
+      setAddableFeeDeviceList(normalized);
+      return normalized;
+    } catch {
+      showToast({ title: '加载可添加设备失败', icon: 'info' });
+      return [];
+    } finally {
+      hideLoading();
+    }
   };
 
-  const mockSubmitChargeDevices = async (
-    type: 'add' | 'remove',
-    ids: Array<string | number>,
-  ) => {
-    return new Promise<{ ok: boolean; message: string }>(resolve => {
-      setTimeout(() => {
-        const names = getSelectedDeviceNames(ids);
-        const displayNames = names.slice(0, 2).join('、');
+  const getChargeRuleList = async () => {
+    const userIdRaw = await cacheGet({ key: 'userId' });
+    const userId = Number(userIdRaw);
 
-        const inUseMessage =
-          type === 'add'
-            ? `${displayNames || '地锁'}正在被使用，使用完成后才会转入收费设备`
-            : `${displayNames || '地锁'}正在被使用，使用完成后才会移除收费设备`;
+    try {
+      const res: any = await getFeeTemplateList({
+        offset: 0,
+        pageSize: 999,
+        userId: Number.isNaN(userId) ? undefined : userId,
+      });
 
-        if (ids.length % 2 === 0) {
-          resolve({ ok: true, message: inUseMessage });
-          return;
-        }
-
-        resolve({
-          ok: true,
-          message: type === 'add' ? '添加收费设备成功' : '移除收费设备成功',
+      if (!res?.success) {
+        showToast({
+          title: res?.msg || res?.message || '加载收费规则失败',
+          icon: 'info',
         });
-      }, 450);
-    });
+        return [];
+      }
+
+      const list = Array.isArray(res?.data?.list) ? res.data.list : [];
+      setChargeRuleList(list);
+      return list;
+    } catch {
+      showToast({ title: '加载收费规则失败', icon: 'info' });
+      return [];
+    }
+  };
+
+  const getRemovableList = async () => {
+    const userIdRaw = await cacheGet({ key: 'userId' });
+    const userId = Number(userIdRaw);
+    showLoading({ title: '加载可移除设备...' });
+
+    try {
+      const res: any = await getUserLockFeeRemovableList({
+        offset: 0,
+        pageSize: 999,
+        userId: Number.isNaN(userId) ? undefined : userId,
+      });
+      console.log('getUserLockFeeRemovableList res', res);
+
+      if (!res?.success) {
+        showToast({
+          title: res?.msg || res?.message || '加载可移除设备失败',
+          icon: 'info',
+        });
+        return;
+      }
+
+      const list = Array.isArray(res?.data?.list) ? res.data.list : [];
+      setRemovableFeeDeviceList(normalizeFeeDeviceList(list));
+    } catch {
+      showToast({ title: '加载可移除设备失败', icon: 'info' });
+    } finally {
+      hideLoading();
+    }
+  };
+
+  const checkAfterFeeOperation = async (
+    type: 'add' | 'remove',
+    list: FeeDeviceItem[],
+    lockIds: Array<string | number>,
+  ) => {
+    const selectedItems = list.filter(item => lockIds.includes(item.id));
+    const deviceNos = selectedItems
+      .map(item => item.deviceNo)
+      .filter(Boolean) as string[];
+
+    if (deviceNos.length === 0) {
+      showToast({
+        title: type === 'add' ? '添加收费设备成功' : '移除收费设备成功',
+        icon: 'success',
+      });
+      return;
+    }
+
+    try {
+      const res: any = await checkUserLockFeeAddOrRemove({ deviceNos });
+      if (!res?.success) {
+        showToast({
+          title: type === 'add' ? '添加收费设备成功' : '移除收费设备成功',
+          icon: 'success',
+        });
+        return;
+      }
+
+      const usingNos = Array.isArray(res?.data) ? res.data : [];
+      if (usingNos.length === 0) {
+        showToast({
+          title: type === 'add' ? '添加收费设备成功' : '移除收费设备成功',
+          icon: 'success',
+        });
+        return;
+      }
+
+      const usingNameList = selectedItems
+        .filter(item => usingNos.includes(String(item.deviceNo || '')))
+        .map(item => item.lockName)
+        .filter(Boolean);
+
+      const usingNames = usingNameList.slice(0, 2).join('、');
+      const displaySuffix =
+        usingNameList.length > 2 ? `等${usingNameList.length}台地锁` : '';
+
+      const displayName = `${usingNames}${displaySuffix}`;
+      setMsgPopupText(
+        type === 'add'
+          ? `${displayName}正在被使用，使用完成后才会转入收费设备`
+          : `${displayName}正在被使用，使用完成后才会移除收费设备`,
+      );
+      setMsgPopupVisible(true);
+    } catch {
+      showToast({
+        title: type === 'add' ? '添加收费设备成功' : '移除收费设备成功',
+        icon: 'success',
+      });
+    }
   };
 
   const goRuleEdit = (rule?: any) => {
-    setChooseRulePopVisible(false);
     shouldReopenChooseRuleRef.current = true;
+    goingToRuleEditRef.current = true;
+    setChooseRulePopVisible(false);
 
     if (rule?.id) {
       navigation.navigate('RcvPaymentRuleEdit', {
@@ -209,6 +402,7 @@ export default function MyDevice() {
   };
 
   const renderChargeDeviceRows = (
+    list: any[],
     selectedIds: Array<string | number>,
     onToggle: (id: string | number) => void,
   ) => {
@@ -218,40 +412,48 @@ export default function MyDevice() {
         contentContainerStyle={styles.removeListContent}
         showsVerticalScrollIndicator={false}
       >
-        {removeList.map((item: any) => {
-          const active = selectedIds.includes(item.id);
+        {list && list.length ? (
+          list.map((item: any) => {
+            const active = selectedIds.includes(item.id);
 
-          return (
-            <TouchableOpacity
-              key={String(item.id)}
-              activeOpacity={0.85}
-              style={styles.removeRow}
-              onPress={() => onToggle(item.id)}
-            >
-              <View style={styles.removeLeft}>
-                <Image
-                  source={{ uri: item.imageUrl }}
-                  style={{ width: px(48), height: px(28) }}
-                  resizeMode="contain"
-                />
-                <Text style={styles.removeName} numberOfLines={1}>
-                  {`${item.lockName}`}
-                </Text>
-              </View>
-
-              <View
-                style={[
-                  styles.removeCheck,
-                  active ? styles.removeCheckActive : null,
-                ]}
+            return (
+              <TouchableOpacity
+                key={String(item.id)}
+                activeOpacity={0.85}
+                style={styles.removeRow}
+                onPress={() => onToggle(item.id)}
               >
-                {active ? (
-                  <AppIcon name="tick-white" color="#FFFFFF" size={px(24)} />
-                ) : null}
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+                <View style={styles.removeLeft}>
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={{ width: px(48), height: px(28) }}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.removeName} numberOfLines={1}>
+                    {`${item.lockName}`}
+                  </Text>
+                </View>
+
+                <View
+                  style={[
+                    styles.removeCheck,
+                    active ? styles.removeCheckActive : null,
+                  ]}
+                >
+                  {active ? (
+                    <AppIcon name="tick-white" color="#FFFFFF" size={px(24)} />
+                  ) : null}
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        ) : (
+          <MyEmpty
+            emptyText="暂无可选设备"
+            marginTop={px(0)}
+            paddingBottom={px(20)}
+          />
+        )}
       </ScrollView>
     );
   };
@@ -259,6 +461,7 @@ export default function MyDevice() {
   const renderChargePopup = ({
     visible,
     title,
+    list,
     selectedIds,
     onToggle,
     onClose,
@@ -269,6 +472,7 @@ export default function MyDevice() {
   }: {
     visible: boolean;
     title: string;
+    list: any[];
     selectedIds: Array<string | number>;
     onToggle: (id: string | number) => void;
     onClose: () => void;
@@ -280,7 +484,7 @@ export default function MyDevice() {
     return (
       <Popup visible={visible} onClose={onClose} title={title} showClose>
         <View style={styles.removePopupWrap}>
-          {renderChargeDeviceRows(selectedIds, onToggle)}
+          {renderChargeDeviceRows(list, selectedIds, onToggle)}
 
           <View style={styles.removeFooter}>
             <TouchableOpacity
@@ -375,7 +579,7 @@ export default function MyDevice() {
                   currentTab === 0 && styles.tabItemTextActive,
                 ]}
               >
-                不收费订单
+                不收费设备
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -389,22 +593,29 @@ export default function MyDevice() {
                   currentTab === 1 && styles.tabItemTextActive,
                 ]}
               >
-                收费订单
+                收费设备
               </Text>
             </TouchableOpacity>
           </View>
         </View>
         <ScrollView>
-          {deviceList && deviceList?.length > 0 ? (
+          {displayList && displayList.length > 0 ? (
             <Flex direction={'column'}>
-              {deviceList.map((item: any) => (
+              {displayList.map((item: any) => (
                 <DeviceItem
                   data={item}
                   active={false}
                   key={item.id}
-                  onSelect={async () => {}}
-                  onChangeName={() => {
+                  onSelect={async () => {
+                    navigation.navigate('DeviceInfo', {
+                      lockId: item.id,
+                      isAdmin: item.role === 1,
+                    });
+                  }}
+                  onChangeName={event => {
+                    event?.stopPropagation?.();
                     setCurrentDevice(item);
+                    console.log('item', item);
                     setLockName(item.lockName);
                     setEditNamePopVisible(true);
                   }}
@@ -412,12 +623,7 @@ export default function MyDevice() {
               ))}
             </Flex>
           ) : (
-            <Flex justify="center" align="center">
-              <Image
-                source={{ uri: 'https://g.18qjz.cn/img/boklock/empty.png' }}
-                style={{ width: px(130), height: px(130) }}
-              />
-            </Flex>
+            <MyEmpty emptyText="暂无设备" marginTop={px(40)} />
           )}
         </ScrollView>
       </View>
@@ -425,9 +631,7 @@ export default function MyDevice() {
       <Popup
         showClose={false}
         onClose={() => setEditNamePopVisible(false)}
-        title={`编辑${
-          currentDevice?.groupCount === 1 ? '地锁' : '组合设备'
-        }名称`}
+        title={`编辑${currentDevice?.count === 1 ? '地锁' : '组合设备'}名称`}
         visible={editNamePopVisible}
       >
         <View style={styles.popup}>
@@ -439,7 +643,7 @@ export default function MyDevice() {
             }}
           >
             <Text style={styles.label}>
-              {currentDevice?.groupCount === 1 ? '地锁名称' : '组合设备名称'}
+              {currentDevice?.count === 1 ? '地锁名称' : '组合设备名称'}
             </Text>
             <TextInput
               value={lockName}
@@ -478,6 +682,7 @@ export default function MyDevice() {
       {renderChargePopup({
         visible: removeChargePopVisible,
         title: '移除收费设备',
+        list: removeList,
         selectedIds: selectedRemoveIds,
         onToggle: toggleRemoveDevice,
         onClose: () => setRemoveChargePopVisible(false),
@@ -491,14 +696,35 @@ export default function MyDevice() {
           }
 
           void (async () => {
-            const res = await mockSubmitChargeDevices(
+            const userIdRaw = await cacheGet({ key: 'userId' });
+            const userId = Number(userIdRaw);
+            setRemoveChargePopVisible(false);
+            showLoading({ title: '移除收费设备中' });
+            const res: any = await removeUserLockFee({
+              lockIds: selectedRemoveIds,
+              userId: Number.isNaN(userId) ? undefined : userId,
+            });
+
+            const ok =
+              res?.success === true &&
+              (Number(res?.code) === 0 || Number(res?.code) === 200) &&
+              res?.data === true;
+            hideLoading();
+
+            if (!ok) {
+              showToast({
+                title: res?.msg || res?.message || '移除收费设备失败',
+                icon: 'info',
+              });
+              return;
+            }
+            setSelectedRemoveIds([]);
+            await checkAfterFeeOperation(
               'remove',
+              removeList,
               selectedRemoveIds,
             );
-            setRemoveChargePopVisible(false);
-            setSelectedRemoveIds([]);
-            setMsgPopupText(res.message);
-            setMsgPopupVisible(true);
+            await Promise.all([getList(1), getList(0)]);
           })();
         },
       })}
@@ -506,6 +732,7 @@ export default function MyDevice() {
       {renderChargePopup({
         visible: addChargePopVisible,
         title: '添加收费设备',
+        list: addList,
         selectedIds: selectedAddIds,
         onToggle: toggleAddDevice,
         onClose: closeAddPopupAndClear,
@@ -517,17 +744,27 @@ export default function MyDevice() {
             showToast({ title: '请选择设备', icon: 'info' });
             return;
           }
-          setAddChargePopVisible(false);
-          setChooseRulePopVisible(true);
-          if ([null, undefined].includes(selectedRuleId as any)) {
-            setSelectedRuleId(chargeRuleList[0]?.id ?? null);
-          }
+          void (async () => {
+            const list = await getChargeRuleList();
+            setAddChargePopVisible(false);
+            setChooseRulePopVisible(true);
+            const firstRuleId = list?.[0]?.id;
+            setSelectedRuleId(
+              [null, undefined].includes(firstRuleId as any)
+                ? null
+                : firstRuleId,
+            );
+          })();
         },
       })}
 
       <Popup
         visible={chooseRulePopVisible}
         onClose={() => {
+          if (goingToRuleEditRef.current) {
+            goingToRuleEditRef.current = false;
+            return;
+          }
           shouldReopenChooseRuleRef.current = false;
           setChooseRulePopVisible(false);
         }}
@@ -560,7 +797,7 @@ export default function MyDevice() {
                     onPress={() => setSelectedRuleId(rule.id)}
                   >
                     <Text style={styles.ruleName} numberOfLines={1}>
-                      {rule?.ruleName}
+                      {rule?.templateName}
                     </Text>
 
                     <View style={styles.ruleRight}>
@@ -625,14 +862,33 @@ export default function MyDevice() {
                 shouldReopenChooseRuleRef.current = false;
 
                 void (async () => {
-                  const res = await mockSubmitChargeDevices(
-                    'add',
-                    selectedAddIds,
-                  );
                   setChooseRulePopVisible(false);
+                  const userIdRaw = await cacheGet({ key: 'userId' });
+                  const userId = Number(userIdRaw);
+                  showLoading({ title: '添加收费设备中' });
+                  const res: any = await addUserLockFee({
+                    lockIds: selectedAddIds,
+                    templateId: selectedRuleId,
+                    userId: Number.isNaN(userId) ? undefined : userId,
+                  });
+
+                  const ok =
+                    res?.success === true &&
+                    (Number(res?.code) === 0 || Number(res?.code) === 200) &&
+                    res?.data === true;
+                  hideLoading();
+                  if (!ok) {
+                    showToast({
+                      title: res?.msg || res?.message || '添加收费设备失败',
+                      icon: 'info',
+                    });
+                    return;
+                  }
+
                   setSelectedAddIds([]);
-                  setMsgPopupText(res.message);
-                  setMsgPopupVisible(true);
+                  setSelectedRuleId(null);
+                  await checkAfterFeeOperation('add', addList, selectedAddIds);
+                  await Promise.all([getList(1), getList(0)]);
                 })();
               }}
             >
@@ -645,7 +901,7 @@ export default function MyDevice() {
       <PopConfirm
         visible={msgPopupVisible}
         onVisibleChange={setMsgPopupVisible}
-        title={<Text style={styles.msgPopupText}>{msgPopupText}</Text>}
+        title={<Text style={styles.removeName}>{msgPopupText}</Text>}
         showClose={false}
         confirmText="确定"
         onConfirm={() => {

@@ -46,6 +46,15 @@ export const getPickupCodeRecordDetail = createFetch(
   'POST',
 );
 
+// 计费模板列表
+export const getFeeTemplateList = createFetch('/boke/fee/list', 'POST');
+
+// 新增/编辑计费模板
+export const saveFeeTemplate = createFetch('/boke/fee/save', 'POST');
+
+// 删除计费模板
+export const deleteFeeTemplate = createFetch('/boke/fee/del', 'POST');
+
 // 设备收费规则删除
 export const removeRcvPaymentRule = createFetch(
   '/boke/userLock/chargeRule/delete',

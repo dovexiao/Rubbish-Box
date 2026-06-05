@@ -2,21 +2,29 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PageContainer, PopConfirm } from '@/components';
-import { getPickupCodeRecordList, removeRcvPaymentRule } from '@/services/mall';
+import { deleteFeeTemplate, getFeeTemplateList } from '@/services/mall';
 import styles from './styles';
 import { hideLoading, showLoading, showToast } from '@/utils';
 import { px } from '@/utils/ui';
 import AppIcon from '@/components/AppIcon';
 import GradientButton from '@/components/GradientButton';
 import MyEmpty from '@/components/MyEmpty/index';
+import { SimpleLoading } from '@/components';
 
 const PAGE_SIZE = 20;
 
 type RuleItem = {
   id: number | string;
+  templateName?: string;
   ruleName?: string;
-  name?: string;
-  title?: string;
+  chargingType?: number;
+  unitFee?: number;
+  duration?: number;
+  maxFee?: number;
+  billingType?: number;
+  billingCycle?: number;
+  isRoll?: number;
+  feeUnitRoundUp?: number;
   [key: string]: any;
 };
 
@@ -34,25 +42,7 @@ export default function RcvPaymentRule() {
     title: string;
     desc?: string;
   }>({ title: '' });
-
-  const buildInUseText = (data: any) => {
-    const lockSource =
-      data?.usedLockNos ??
-      data?.lockNos ??
-      data?.lockNoList ??
-      data?.usedLockList ??
-      [];
-
-    const lockText = Array.isArray(lockSource)
-      ? lockSource.filter(Boolean).join('、')
-      : String(lockSource || '');
-
-    if (lockText) {
-      return `当前收费规则已在：${lockText}使用，无法删除`;
-    }
-
-    return '当前收费规则已被地锁使用，无法删除';
-  };
+  const removingRuleName = removingRule?.templateName;
 
   const handleRemove = async () => {
     const targetId = removingRule?.id;
@@ -62,25 +52,11 @@ export default function RcvPaymentRule() {
     showLoading({ title: '删除中...' });
 
     try {
-      const res: any = await removeRcvPaymentRule({ id: targetId });
-      const ok = Number(res?.code) === 200 || res?.success === true;
-      const data = res?.data || {};
-      const msg = String(res?.msg || res?.message || '');
-
-      const inUse =
-        data?.inUse === true ||
-        data?.used === true ||
-        data?.canDelete === false ||
-        /已在|使用|无法删除|in use/i.test(msg);
-
-      if (inUse) {
-        setRemoveResult({
-          title: '当前收费规则已在：',
-          desc: buildInUseText(data).replace('当前收费规则已在：', ''),
-        });
-        setRemoveResultVisible(true);
-        return;
-      }
+      const res: any = await deleteFeeTemplate({ id: targetId });
+      const ok =
+        res?.success === true &&
+        (Number(res?.code) === 0 || Number(res?.code) === 200) &&
+        res?.data === true;
 
       if (ok) {
         setRemoveResult({ title: '删除成功' });
@@ -109,19 +85,14 @@ export default function RcvPaymentRule() {
 
       try {
         const offset = refresh ? 0 : ruleList.length;
-        const res: any = await getPickupCodeRecordList({
+        const res: any = await getFeeTemplateList({
           offset,
           pageSize: PAGE_SIZE,
         });
-
-        if (res?.code === 200 && res?.success) {
-          const data = res?.data || {};
-          const nextList: RuleItem[] = Array.isArray(data.list)
-            ? data.list
-            : Array.isArray(data.rows)
-            ? data.rows
-            : Array.isArray(res?.list)
-            ? res.list
+        console.log('getRuleList res', res.data?.list?.[1]);
+        if (res?.success) {
+          const nextList: RuleItem[] = Array.isArray(res?.data?.list)
+            ? res.data.list
             : [];
 
           setRuleList(prev => (refresh ? nextList : [...prev, ...nextList]));
@@ -153,7 +124,7 @@ export default function RcvPaymentRule() {
   }, [getRuleList, navigation]);
 
   const renderItem = useCallback(({ item }: { item: RuleItem }) => {
-    const title = item.ruleName || item.name || item.title || '未命名收费规则';
+    const title = item.templateName;
 
     return (
       <View style={styles.card}>
@@ -202,7 +173,7 @@ export default function RcvPaymentRule() {
         showBack: true,
         background: '#FFFFFF',
       }}
-      loading={initialLoading}
+      // loading={initialLoading}
       footer={
         <View style={styles.footer}>
           <GradientButton
@@ -218,7 +189,9 @@ export default function RcvPaymentRule() {
       }
     >
       <View style={styles.container}>
-        {ruleList.length > 0 ? (
+        {initialLoading ? (
+          <SimpleLoading />
+        ) : ruleList.length > 0 ? (
           <FlatList
             data={ruleList}
             keyExtractor={item => String(item.id)}
@@ -249,7 +222,9 @@ export default function RcvPaymentRule() {
             setRemoveConfirmVisible(false);
           }}
         >
-          <Text style={styles.removePopupSubTitle}>确定删除地上收费规则？</Text>
+          <Text style={styles.removePopupSubTitle}>
+            {`确定删除${removingRuleName}？`}
+          </Text>
           <Text style={styles.removePopupSubTitle}>删除后无法恢复</Text>
         </PopConfirm>
 

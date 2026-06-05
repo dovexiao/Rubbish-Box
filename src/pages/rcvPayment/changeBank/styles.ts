@@ -47,8 +47,7 @@ export default StyleSheet.create({
   radioRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: px(26),
+    justifyContent: 'space-between',
     paddingVertical: px(6),
   },
   radioItem: {
@@ -71,7 +70,7 @@ export default StyleSheet.create({
     backgroundColor: '#333333',
   },
   radioText: {
-    color: '#333333',
+    color: 'rgba(33,33,33,0.8)',
     fontSize: fontSize(15),
   },
   innerDivider: {
@@ -112,8 +111,8 @@ export default StyleSheet.create({
     position: 'relative',
   },
   bankCardImage: {
-    width: px(76),
-    height: px(50),
+    width: px(64),
+    height: px(64),
     borderRadius: px(8),
   },
   imageClose: {
@@ -163,6 +162,7 @@ export default StyleSheet.create({
   formValue: {
     color: '#333333',
     fontSize: fontSize(14),
+    maxWidth: '90%',
   },
   placeholderText: {
     color: '#CCCCCC',
@@ -221,9 +221,13 @@ export default StyleSheet.create({
     fontWeight: '500',
   },
   popupWrap: {
+    position: 'relative',
     paddingHorizontal: px(16),
     paddingBottom: px(14),
     minHeight: px(220),
+  },
+  popupListWrap: {
+    position: 'relative',
   },
   searchWrap: {
     height: px(40),
@@ -244,6 +248,23 @@ export default StyleSheet.create({
   popupList: {
     maxHeight: px(340),
   },
+
+  popupLoadingMask: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.88)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+    elevation: 10,
+  },
+  popupLoading: {
+    minHeight: px(160),
+  },
+
   popupItem: {
     height: px(39),
     flexDirection: 'row',
@@ -285,6 +306,48 @@ export default StyleSheet.create({
     color: '#333333',
     fontSize: fontSize(15),
   },
+  addressPickerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: px(18),
+    position: 'absolute',
+    top: px(-30),
+    left: 0,
+    width: '100%',
+    zIndex: 10,
+  },
+  addressPickerCancelText: {
+    color: '#7E8BA6',
+    fontSize: fontSize(16),
+  },
+  addressPickerTitle: {
+    color: '#333333',
+    fontSize: fontSize(16),
+    fontWeight: '600',
+  },
+  addressPickerConfirmText: {
+    color: '#2F7BFF',
+    fontSize: fontSize(16),
+    fontWeight: '500',
+    textAlign: 'right',
+  },
+  addressPickerBody: {
+    backgroundColor: '#FFFFFF',
+    paddingBottom: px(8),
+  },
+  addressPickerBodyWrap: {
+    position: 'relative',
+  },
+  addressPickerIndicator: {
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#ECECEC',
+  },
+  addressPickerItemText: {
+    color: '#333333',
+    fontSize: fontSize(17),
+  },
   radioIconWrap: {
     width: px(18),
     height: px(18),
@@ -296,7 +359,48 @@ export default StyleSheet.create({
     marginRight: px(6),
   },
   radioIconWrapActive: {
-    borderColor: '#333333',
+    borderColor: 'rgba(33,33,33,0.8)',
+    backgroundColor: 'rgba(33,33,33,0.8)',
+  },
+  statusWrap: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    paddingTop: px(120),
+    paddingHorizontal: px(24),
+  },
+  statusHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusIcon: {
+    width: px(48),
+    height: px(48),
+    marginRight: px(10),
+  },
+  statusTitle: {
+    color: '#333333',
+    fontSize: fontSize(26),
+    fontWeight: '500',
+  },
+  statusReasonText: {
+    marginTop: px(22),
+    color: '#999999',
+    fontSize: fontSize(15),
+    lineHeight: px(22),
+  },
+  statusActionBtn: {
+    marginTop: px(120),
+    width: px(210),
+    height: px(48),
+    borderRadius: px(16),
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#333333',
+  },
+  statusActionBtnText: {
+    color: '#FFFFFF',
+    fontSize: fontSize(16),
+    fontWeight: '500',
   },
 });

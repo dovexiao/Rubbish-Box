@@ -1,14 +1,17 @@
 import React, { useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { Input, PickerView } from '@ant-design/react-native';
-import { useRoute } from '@react-navigation/native';
-import { PageContainer, Popup } from '@/components';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { PageContainer, Popup, Flex } from '@/components';
 import AppIcon from '@/components/AppIcon';
 import GradientButton from '@/components/GradientButton';
+import { saveFeeTemplate } from '@/services/mall';
+import { cacheGet, hideLoading, showLoading, showToast } from '@/utils';
 import { px } from '@/utils/ui';
 import styles from './editStyles';
 
-type ChargeType = 'duration' | 'times';
+type ChargeTypeOption = 'duration' | 'times';
+type ChargeType = ChargeTypeOption | '';
 type BillingCycle = '24h' | '48h' | 'naturalDay';
 
 type RuleForm = {
@@ -21,10 +24,11 @@ type RuleForm = {
   enableCycleForTimes: boolean;
   billingCycle: BillingCycle | null | undefined;
   rollingBilling: boolean;
+  freeTime: string;
   chargeIfLessThanUnit: boolean;
 };
 
-const CHARGE_TYPE_OPTIONS: Array<{ value: ChargeType; label: string }> = [
+const CHARGE_TYPE_OPTIONS: Array<{ value: ChargeTypeOption; label: string }> = [
   { value: 'duration', label: '按时长计费' },
   { value: 'times', label: '按次数计费' },
 ];
@@ -36,7 +40,7 @@ const CYCLE_OPTIONS: Array<{ value: BillingCycle; label: string }> = [
 ];
 
 const getCycleLabel = (value: BillingCycle) =>
-  CYCLE_OPTIONS.find(it => it.value === value)?.label || '24小时';
+  CYCLE_OPTIONS.find(it => it.value === value)?.label ?? '';
 
 const getPickerValue = <T extends string>(
   values: Array<string | number>,
@@ -44,6 +48,78 @@ const getPickerValue = <T extends string>(
 ) => {
   const next = values?.[0];
   return (next ?? fallback) as T;
+};
+
+const normalizeIntegerInput = (value: string) =>
+  String(value ?? '').replace(/\D/g, '');
+
+const normalizeMinuteInput = (value: string) => {
+  const digits = normalizeIntegerInput(value);
+  if (!digits) return '';
+  // 去掉前导零，保证分钟字段始终是整数文本
+  return String(Number(digits));
+};
+
+const MONEY_MIN = 0.01;
+const MONEY_MAX = 9999.99;
+
+const normalizeMoneyInput = (value: string) => {
+  const clean = String(value ?? '').replace(/[^\d.]/g, '');
+  if (!clean) return '';
+  const dotIndex = clean.indexOf('.');
+  if (dotIndex < 0) return clean;
+
+  const intPart = clean.slice(0, dotIndex);
+  const decimalPart = clean
+    .slice(dotIndex + 1)
+    .replace(/\./g, '')
+    .slice(0, 2);
+  return decimalPart ? `${intPart}.${decimalPart}` : `${intPart}.`;
+};
+
+const toMoneyText = (value: unknown) => {
+  if ([null, undefined, ''].includes(value as any)) return '';
+  return String(value);
+};
+
+const parseMoneyYuan = (value: string) => {
+  const text = String(value ?? '').trim();
+  if (!text) return NaN;
+  const num = Number(text);
+  if (Number.isNaN(num)) return NaN;
+  return num;
+};
+
+const resolveBillingType = (cycle: BillingCycle) => {
+  return cycle === 'naturalDay' ? 2 : 1;
+};
+
+const resolveBillingCycleMinute = (
+  cycle: BillingCycle,
+  billingType: number,
+) => {
+  if (billingType === 2) return 0;
+  return cycle === '48h' ? 2880 : 1440;
+};
+
+const resolveChargeType = (rule: any): ChargeType => {
+  if (Number(rule?.chargingType) === 1) return 'times';
+  if (Number(rule?.chargingType) === 2) return 'duration';
+  return '';
+};
+
+const resolveBillingCycle = (rule: any): BillingCycle | undefined => {
+  const billingType = Number(rule?.billingType);
+  const billingCycle = Number(rule?.billingCycle);
+
+  if (billingType === 2) return 'naturalDay';
+  if (billingType === 1) {
+    if (billingCycle === 2880) return '48h';
+    if (billingCycle === 1440) return '24h';
+    return undefined;
+  }
+
+  return undefined;
 };
 
 const Radio = ({
@@ -77,25 +153,40 @@ const Radio = ({
 };
 
 export default function RcvPaymentRuleEdit() {
+  const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const incomingRule = route.params?.rule ?? {};
 
   const ruleId = route.params?.ruleId;
   const isEdit = !!ruleId;
+  const initChargeType = resolveChargeType(incomingRule);
 
   const [form, setForm] = useState<RuleForm>({
-    ruleName:
-      route.params?.rule?.ruleName ||
-      route.params?.rule?.name ||
-      '地上收费规则',
-    chargeType: route.params?.rule?.chargeType || 'duration',
-    durationMinute: String(route.params?.rule?.durationMinute ?? '60'),
-    durationFee: String(route.params?.rule?.durationFee ?? '5'),
-    maxFee: String(route.params?.rule?.maxFee ?? '100'),
-    timesFee: String(route.params?.rule?.timesFee ?? '5'),
-    enableCycleForTimes: route.params?.rule?.enableCycleForTimes ?? true,
-    billingCycle: route.params?.rule?.billingCycle || '24h',
-    rollingBilling: route.params?.rule?.rollingBilling ?? true,
-    chargeIfLessThanUnit: route.params?.rule?.chargeIfLessThanUnit ?? true,
+    ruleName: String(incomingRule?.templateName ?? ''),
+    chargeType: initChargeType,
+    durationMinute:
+      incomingRule?.duration === null || incomingRule?.duration === undefined
+        ? ''
+        : String(incomingRule.duration),
+    durationFee:
+      incomingRule?.unitFee === null || incomingRule?.unitFee === undefined
+        ? ''
+        : toMoneyText(incomingRule.unitFee),
+    maxFee:
+      incomingRule?.maxFee === null || incomingRule?.maxFee === undefined
+        ? ''
+        : toMoneyText(incomingRule.maxFee),
+    timesFee:
+      incomingRule?.unitFee === null || incomingRule?.unitFee === undefined
+        ? ''
+        : toMoneyText(incomingRule.unitFee),
+    enableCycleForTimes: Number(incomingRule?.isRoll ?? 0) === 1,
+    billingCycle: resolveBillingCycle(incomingRule),
+    rollingBilling: Number(incomingRule?.isRoll ?? 0) === 1,
+    chargeIfLessThanUnit: Number(incomingRule?.feeUnitRoundUp ?? 0) === 1,
+    freeTime: [null, undefined].includes(incomingRule?.freeTime)
+      ? ''
+      : String(incomingRule.freeTime),
   });
 
   const [showCycleTips, setShowCycleTips] = useState(false);
@@ -106,10 +197,10 @@ export default function RcvPaymentRuleEdit() {
   const [showCyclePopup, setShowCyclePopup] = useState(false);
 
   const [pendingChargeType, setPendingChargeType] = useState<ChargeType>(
-    form.chargeType,
+    form.chargeType || 'duration',
   );
   const [pendingBillingCycle, setPendingBillingCycle] = useState<BillingCycle>(
-    form.billingCycle as BillingCycle,
+    (form.billingCycle ?? '24h') as BillingCycle,
   );
 
   const navTitle = useMemo(
@@ -125,14 +216,138 @@ export default function RcvPaymentRuleEdit() {
 
   const openChargeTypePopup = () => {
     closeAllTips();
-    setPendingChargeType(form.chargeType);
+    setPendingChargeType(form.chargeType || 'duration');
     setShowChargeTypePopup(true);
   };
 
   const openCyclePopup = () => {
     closeAllTips();
-    setPendingBillingCycle(form.billingCycle as BillingCycle);
+    setPendingBillingCycle((form.billingCycle ?? '24h') as BillingCycle);
     setShowCyclePopup(true);
+  };
+
+  const handleSave = async () => {
+    const ruleName = String(form.ruleName ?? '').trim();
+    if (!ruleName) {
+      showToast({ title: '请输入规则名称', icon: 'info' });
+      return;
+    }
+
+    if (!form.chargeType) {
+      showToast({ title: '请选择收费方式', icon: 'info' });
+      return;
+    }
+
+    const unitFeeText =
+      form.chargeType === 'duration' ? form.durationFee : form.timesFee;
+    const unitFee = parseMoneyYuan(unitFeeText);
+    if (Number.isNaN(unitFee)) {
+      showToast({ title: '请输入费用单价', icon: 'info' });
+      return;
+    }
+    if (unitFee < MONEY_MIN || unitFee > MONEY_MAX) {
+      showToast({
+        title: `费用单价需大于0元且小于10000元`,
+        icon: 'info',
+      });
+      return;
+    }
+
+    const maxFee = parseMoneyYuan(form.maxFee);
+    if (form.chargeType === 'duration') {
+      if (Number.isNaN(maxFee)) {
+        showToast({ title: '请输入最高收费', icon: 'info' });
+        return;
+      }
+      if (maxFee < MONEY_MIN || maxFee > MONEY_MAX) {
+        showToast({
+          title: `最高收费需在${MONEY_MIN}~${MONEY_MAX}元之间`,
+          icon: 'info',
+        });
+        return;
+      }
+      if (maxFee < unitFee) {
+        showToast({ title: '最高收费需大于等于单价', icon: 'info' });
+        return;
+      }
+    }
+
+    let duration = 0;
+    if (form.chargeType === 'duration') {
+      duration = Number(form.durationMinute ?? '0');
+      if (!Number.isInteger(duration) || duration <= 0) {
+        showToast({ title: '单位时长需为正整数分钟', icon: 'info' });
+        return;
+      }
+    }
+
+    if (!form.billingCycle && form.enableCycleForTimes) {
+      showToast({ title: '请选择计费周期', icon: 'info' });
+      return;
+    }
+
+    const cycle = (form.billingCycle ?? '24h') as BillingCycle;
+    const billingType = resolveBillingType(cycle);
+    const billingCycle = resolveBillingCycleMinute(cycle, billingType);
+
+    const userIdRaw = await cacheGet({ key: 'userId' });
+    const userId = Number(userIdRaw);
+
+    const payload: any = {
+      templateName: ruleName,
+      chargingType: form.chargeType === 'times' ? 1 : 2,
+      unitFee,
+      duration: form.chargeType === 'duration' ? duration : 0,
+      maxFee,
+      billingType,
+      billingCycle,
+      isRoll:
+        form.chargeType === 'duration'
+          ? form.rollingBilling
+            ? 1
+            : 0
+          : form.enableCycleForTimes
+          ? 1
+          : 0,
+      feeUnitRoundUp: form.chargeIfLessThanUnit ? 1 : 0,
+      freeTime: form.freeTime ? Number(form.freeTime) : 0,
+    };
+
+    console.log('payload', payload);
+
+    if (![null, undefined, ''].includes(ruleId as any)) {
+      payload.id = Number(ruleId);
+    }
+    if (!Number.isNaN(userId) && userId > 0) {
+      payload.userId = userId;
+    }
+
+    showLoading({ title: isEdit ? '保存中...' : '创建中...' });
+    try {
+      const res: any = await saveFeeTemplate(payload);
+      const ok =
+        res?.success === true ||
+        Number(res?.code) === 200 ||
+        Number(res?.code) === 0;
+
+      if (!ok) {
+        showToast({
+          title: res?.msg ?? res?.message ?? '保存失败',
+          icon: 'info',
+        });
+        return;
+      }
+
+      showToast({ title: isEdit ? '保存成功' : '创建成功', icon: 'success' });
+      navigation.goBack();
+    } catch (err: any) {
+      showToast({
+        title: err?.msg ?? err?.message ?? '保存失败',
+        icon: 'info',
+      });
+    } finally {
+      hideLoading();
+    }
   };
 
   return (
@@ -152,7 +367,7 @@ export default function RcvPaymentRuleEdit() {
           <GradientButton
             colors={['#333', '#333']}
             style={styles.saveBtn}
-            onPress={async () => {}}
+            onPress={handleSave}
           >
             <Text style={styles.saveBtnText}>保存</Text>
           </GradientButton>
@@ -179,7 +394,12 @@ export default function RcvPaymentRuleEdit() {
                   maxLength={20}
                   placeholderTextColor="#CCCCCC"
                   value={form.ruleName}
-                  // onChangeText={setRecvName}
+                  onChangeText={value =>
+                    setForm(prev => ({
+                      ...prev,
+                      ruleName: String(value ?? ''),
+                    }))
+                  }
                 />
               </View>
             </View>
@@ -214,7 +434,7 @@ export default function RcvPaymentRuleEdit() {
                 <>
                   <View style={styles.inlineFeeRow}>
                     <Text style={styles.inlineText}>每</Text>
-                    <View style={styles.inlineInput}>
+                    <View style={styles.inlineInput2}>
                       <Input
                         style={styles.cardInput}
                         inputStyle={styles.cardInputText2}
@@ -223,7 +443,14 @@ export default function RcvPaymentRuleEdit() {
                         type="number"
                         placeholderTextColor="#CCCCCC"
                         value={form.durationMinute}
-                        // onChangeText={setRecvName}
+                        onChangeText={value =>
+                          setForm(prev => ({
+                            ...prev,
+                            durationMinute: normalizeMinuteInput(
+                              String(value ?? ''),
+                            ),
+                          }))
+                        }
                       />
                     </View>
                     <Text style={styles.inlineText}>分钟</Text>
@@ -232,11 +459,17 @@ export default function RcvPaymentRuleEdit() {
                         style={styles.cardInput}
                         inputStyle={styles.cardInputText2}
                         placeholder=""
-                        maxLength={3}
                         type="number"
                         placeholderTextColor="#CCCCCC"
                         value={form.durationFee}
-                        // onChangeText={setRecvName}
+                        onChangeText={value =>
+                          setForm(prev => ({
+                            ...prev,
+                            durationFee: normalizeMoneyInput(
+                              String(value ?? ''),
+                            ),
+                          }))
+                        }
                       />
                     </View>
                     <Text style={styles.inlineText}>元</Text>
@@ -253,11 +486,15 @@ export default function RcvPaymentRuleEdit() {
                           style={styles.cardInput}
                           inputStyle={styles.cardInputText2}
                           placeholder=""
-                          maxLength={3}
                           type="number"
                           placeholderTextColor="#CCCCCC"
                           value={form.maxFee}
-                          // onChangeText={setRecvName}
+                          onChangeText={value =>
+                            setForm(prev => ({
+                              ...prev,
+                              maxFee: normalizeMoneyInput(String(value ?? '')),
+                            }))
+                          }
                         />
                       </View>
                       <Text style={styles.inlineText}>元</Text>
@@ -404,9 +641,20 @@ export default function RcvPaymentRuleEdit() {
                   <View style={styles.inlineFeeRow}>
                     <Text style={styles.inlineText}>每次</Text>
                     <View style={styles.inlineInput}>
-                      <Text style={styles.inlineInputText}>
-                        {form.timesFee}
-                      </Text>
+                      <Input
+                        style={styles.cardInput}
+                        inputStyle={styles.cardInputText2}
+                        placeholder=""
+                        type="number"
+                        placeholderTextColor="#CCCCCC"
+                        value={form.timesFee}
+                        onChangeText={value =>
+                          setForm(prev => ({
+                            ...prev,
+                            timesFee: normalizeMoneyInput(String(value ?? '')),
+                          }))
+                        }
+                      />
                     </View>
                     <Text style={styles.inlineText}>元</Text>
                   </View>
@@ -537,6 +785,30 @@ export default function RcvPaymentRuleEdit() {
                   </View>
                 </>
               )}
+              <View style={styles.row3}>
+                <View style={styles.labelBox}>
+                  <Text style={styles.label}>免费时长</Text>
+                </View>
+                <View style={[styles.inlineFeeRow, { borderBottomWidth: 0 }]}>
+                  <View style={styles.inlineInput}>
+                    <Input
+                      style={styles.cardInput}
+                      inputStyle={styles.cardInputText2}
+                      placeholder=""
+                      type="number"
+                      placeholderTextColor="#CCCCCC"
+                      value={form.freeTime}
+                      onChangeText={value =>
+                        setForm(prev => ({
+                          ...prev,
+                          freeTime: normalizeMinuteInput(String(value ?? '')),
+                        }))
+                      }
+                    />
+                  </View>
+                  <Text style={styles.inlineText}>分钟</Text>
+                </View>
+              </View>
             </View>
           </View>
         </View>
@@ -574,7 +846,7 @@ export default function RcvPaymentRuleEdit() {
               label: option.label,
               value: option.value,
             }))}
-            value={[pendingChargeType]}
+            value={[pendingChargeType || 'duration']}
             cols={1}
             style={{ height: px(126) }}
             cascade={false}
@@ -586,7 +858,7 @@ export default function RcvPaymentRuleEdit() {
               setPendingChargeType(
                 getPickerValue(
                   values as Array<string | number>,
-                  pendingChargeType,
+                  pendingChargeType || 'duration',
                 ),
               );
             }}

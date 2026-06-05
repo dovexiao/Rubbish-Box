@@ -32,6 +32,8 @@ import {
   updateName,
   changeQrCode,
 } from '@/services';
+import { addUserLockFee, removeUserLockFee } from '@/services/device';
+import { getFeeTemplateList } from '@/services/mall';
 import { lockInfoProps } from './typing';
 import AnimationPop, { AnimationPopRef } from '@/components/AnimationPop';
 import { PageContainerRef } from '@/components/PageContainer';
@@ -50,6 +52,7 @@ import {
   hideLoading,
   showToast,
 } from '@/utils';
+import { cacheGet } from '@/utils/cache';
 import LeaveRiseLockPop from './components/leaveRiseLockPop';
 import BluetoothStatus, {
   BluetoothStatusRef,
@@ -65,7 +68,6 @@ const DeviceInfo = () => {
     params: {
       lockId: number;
       isAdmin: boolean;
-      chargeRuleList?: Array<{ id: string | number; ruleName: string }>;
     };
   };
   const navigation = useAppNavigation();
@@ -90,6 +92,7 @@ const DeviceInfo = () => {
   const [pendingChargeRuleId, setPendingChargeRuleId] = useState<
     string | number | null
   >(null);
+  const [chargeRuleList, setChargeRuleList] = useState<any[]>([]);
   const pageContainerRef = useRef<PageContainerRef>(null);
   const qrCodePopRef = useRef<PopCenterRef>(null);
   const batteryReminderRef = useRef<AnimationPopRef>(null);
@@ -100,19 +103,37 @@ const DeviceInfo = () => {
   const bluetoothStatusUnbindRef = useRef<BluetoothStatusRef>(null);
   const confirmRef = useRef<PopConfirmRef>(null);
 
-  const chargeRuleList =
-    Array.isArray(params?.chargeRuleList) && params.chargeRuleList.length
-      ? params.chargeRuleList
-      : [
-          { id: 'r1', ruleName: '地上收费规则' },
-          { id: 'r2', ruleName: '泊车标准收费规则' },
-          { id: 'r3', ruleName: '夜间停车收费规则' },
-        ];
-
   const selectedChargeRuleName =
     chargeRuleList.find(
       item => String(item.id) === String(selectedChargeRuleId),
-    )?.ruleName || '';
+    )?.templateName || '';
+
+  const fetchChargeRuleList = useCallback(async () => {
+    const userIdRaw = await cacheGet({ key: 'userId' });
+    const userId = Number(userIdRaw);
+
+    try {
+      const res: any = await getFeeTemplateList({
+        offset: 0,
+        pageSize: 999,
+        userId: Number.isNaN(userId) ? undefined : userId,
+      });
+      if (!res?.success) {
+        showToast({
+          title: res?.msg || res?.message || '加载收费规则失败',
+          icon: 'info',
+        });
+        return [];
+      }
+
+      const list = Array.isArray(res?.data?.list) ? res.data.list : [];
+      setChargeRuleList(list);
+      return list;
+    } catch {
+      showToast({ title: '加载收费规则失败', icon: 'info' });
+      return [];
+    }
+  }, []);
 
   const openChargeRulePicker = () => {
     setPendingChargeRuleId(
@@ -182,6 +203,10 @@ const DeviceInfo = () => {
       if (res.code === 200 && res.success) {
         setLockInfo(res.data);
         setLockName(res.data.lockName);
+        const templateId = res?.data?.feeTemplateId;
+        const hasFeeTemplate = ![null, undefined, ''].includes(templateId);
+        setLockChargeEnabled(hasFeeTemplate);
+        setSelectedChargeRuleId(hasFeeTemplate ? templateId : null);
       }
 
       const result = await getLockInfo({
@@ -196,6 +221,71 @@ const DeviceInfo = () => {
       console.log('fetchLockInfo finishes');
     }
   }, [params]);
+
+  const handleLockChargeConfirm = async () => {
+    if (!params?.lockId) {
+      setLockChargePopVisible(false);
+      return;
+    }
+
+    if (
+      lockChargeEnabled &&
+      [null, undefined].includes(selectedChargeRuleId as any)
+    ) {
+      showToast({ title: '请选择收费规则', icon: 'info' });
+      return;
+    }
+
+    const userIdRaw = await cacheGet({ key: 'userId' });
+    const userId = Number(userIdRaw);
+
+    showLoading({
+      title: lockChargeEnabled ? '设置收费中...' : '关闭收费中...',
+    });
+    try {
+      const res: any = lockChargeEnabled
+        ? await addUserLockFee({
+            lockIds: [params.lockId],
+            templateId: selectedChargeRuleId,
+            userId: Number.isNaN(userId) ? undefined : userId,
+          })
+        : await removeUserLockFee({
+            lockIds: [params.lockId],
+            userId: Number.isNaN(userId) ? undefined : userId,
+          });
+
+      const ok =
+        res?.success === true &&
+        (Number(res?.code) === 0 || Number(res?.code) === 200) &&
+        res?.data === true;
+      hideLoading();
+
+      if (!ok) {
+        showToast({
+          title:
+            res?.msg ||
+            res?.message ||
+            (lockChargeEnabled ? '设置收费失败' : '关闭收费失败'),
+          icon: 'info',
+        });
+        return;
+      }
+
+      showToast({
+        title: lockChargeEnabled ? '设置收费成功' : '关闭收费成功',
+        icon: 'success',
+      });
+      setLockChargePopVisible(false);
+      setChargeRulePickerVisible(false);
+      await fetchLockInfo();
+      await fetchChargeRuleList();
+    } catch {
+      showToast({
+        title: lockChargeEnabled ? '设置收费失败' : '关闭收费失败',
+        icon: 'info',
+      });
+    }
+  };
 
   const handleNameConfirm = async () => {
     if (!lockName?.trim()) {
@@ -247,11 +337,8 @@ const DeviceInfo = () => {
   }, [fetchLockInfo]);
 
   useEffect(() => {
-    if ([null, undefined].includes(selectedChargeRuleId as any)) {
-      setSelectedChargeRuleId(chargeRuleList[0]?.id ?? null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    void fetchChargeRuleList();
+  }, [fetchChargeRuleList]);
 
   const handleBindQrCodeScan = useCallback(
     async (value: string) => {
@@ -380,6 +467,7 @@ const DeviceInfo = () => {
     }, 10000);
     start();
   };
+
   return (
     <PageContainer
       ref={pageContainerRef}
@@ -543,27 +631,30 @@ const DeviceInfo = () => {
             <Text style={styles.cardTitle}>设备功能</Text>
           </Flex>
 
-          <Flex
-            isTouchView={deviceInfo?.role === 1}
-            style={styles.cardRows}
-            onPress={() => {
-              if (deviceInfo?.role !== 1) return;
-              setLockChargePopVisible(true);
-            }}
-          >
-            <Text style={styles.cardLable}>地锁收费</Text>
-            <Text
-              style={[
-                styles.cardValue,
-                !lockChargeEnabled && styles.chargeStateText,
-              ]}
+          {lockInfo?.canFee && (
+            <Flex
+              isTouchView={deviceInfo?.role === 1}
+              style={styles.cardRows}
+              onPress={() => {
+                if (deviceInfo?.role !== 1) return;
+                void fetchChargeRuleList();
+                setLockChargePopVisible(true);
+              }}
             >
-              {lockChargeEnabled ? '已开启' : '未开启'}
-            </Text>
-            {deviceInfo?.role === 1 ? (
-              <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
-            ) : null}
-          </Flex>
+              <Text style={styles.cardLable}>地锁收费</Text>
+              <Text
+                style={[
+                  styles.cardValue,
+                  !lockChargeEnabled && styles.chargeStateText,
+                ]}
+              >
+                {lockChargeEnabled ? '已开启' : '未开启'}
+              </Text>
+              {deviceInfo?.role === 1 ? (
+                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
+              ) : null}
+            </Flex>
+          )}
 
           {lockInfo?.powerType == 0 && (
             <Flex
@@ -907,7 +998,7 @@ const DeviceInfo = () => {
             <TouchableOpacity
               activeOpacity={0.85}
               style={[styles.lockChargeBtn, styles.lockChargeConfirmBtn]}
-              onPress={() => setLockChargePopVisible(false)}
+              onPress={handleLockChargeConfirm}
             >
               <Text style={styles.lockChargeConfirmText}>确定</Text>
             </TouchableOpacity>
@@ -953,7 +1044,7 @@ const DeviceInfo = () => {
         <View style={styles.chargeRulePickerPanel}>
           <PickerView
             data={chargeRuleList.map(option => ({
-              label: option.ruleName,
+              label: option.templateName,
               value: option.id,
             }))}
             value={[

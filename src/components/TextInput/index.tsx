@@ -23,6 +23,8 @@ export interface TextInputProps extends RNTextInputProps {
   showClear?: boolean;
   // 类似 Taro 的 type，简化键盘类型配置
   type?: 'text' | 'number' | 'password' | 'phone';
+  // 小数位数控制，传入后会自动截断并规范输入
+  decimalScale?: number;
 }
 
 /**
@@ -61,6 +63,7 @@ export const TextInput = React.forwardRef<
     style,
     value,
     type,
+    decimalScale,
     defaultValue,
     onChangeText,
     clearIconStyle = { width: px(16), color: '#cccccc' },
@@ -93,8 +96,37 @@ export const TextInput = React.forwardRef<
   };
 
   const handleChangeText = (text: string) => {
-    setHasValue(text.length > 0);
-    onChangeText?.(text);
+    let nextText = String(text ?? '');
+
+    if (typeof decimalScale === 'number') {
+      const cleanText = nextText.replace(/[^\d.]/g, '');
+      if (decimalScale <= 0) {
+        nextText = cleanText.replace(/\./g, '');
+      } else {
+        const normalizedText = cleanText.startsWith('.')
+          ? `0${cleanText}`
+          : cleanText;
+        const [intPartRaw = '', ...decimalParts] = normalizedText.split('.');
+        const intPart = intPartRaw.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+        const normalizedIntPart =
+          intPart || (cleanText.includes('.') ? '0' : '');
+        const decimalPart = decimalParts
+          .join('')
+          .replace(/\./g, '')
+          .slice(0, decimalScale);
+
+        if (!normalizedIntPart && !cleanText.includes('.')) {
+          nextText = '';
+        } else if (cleanText.includes('.')) {
+          nextText = `${normalizedIntPart || '0'}.${decimalPart}`;
+        } else {
+          nextText = normalizedIntPart || '';
+        }
+      }
+    }
+
+    setHasValue(nextText.length > 0);
+    onChangeText?.(nextText);
   };
 
   useEffect(() => {
@@ -106,7 +138,9 @@ export const TextInput = React.forwardRef<
       // Android 上点击“收起键盘”时，输入框可能仍保持 focus，导致再次点击不弹键盘
       // 在组件内部统一 blur，一次性修复所有页面
       if (focusedRef.current) {
-        innerRef.current?.blur();
+        setTimeout(() => {
+          innerRef.current?.blur();
+        }, 100);
       }
     });
 

@@ -46,6 +46,42 @@ export const getLockList = createFetch<any, any>(
   'POST',
 );
 
+// 收费/非收费设备列表
+export const getUserLockFeeList = createFetch<any, any>(
+  '/boke/userLock/fee/list',
+  'POST',
+);
+
+// 可移除收费设备列表
+export const getUserLockFeeRemovableList = createFetch<any, any>(
+  '/boke/userLock/fee/removable',
+  'POST',
+);
+
+// 可添加为收费设备列表
+export const getUserLockFeeAddableList = createFetch<any, any>(
+  '/boke/userLock/fee/addable',
+  'POST',
+);
+
+// 移除收费设备
+export const removeUserLockFee = createFetch<any, any>(
+  '/boke/userLock/fee/remove',
+  'POST',
+);
+
+// 添加为收费设备
+export const addUserLockFee = createFetch<any, any>(
+  '/boke/userLock/fee/add',
+  'POST',
+);
+
+// 添加/移除收费设备校验
+export const checkUserLockFeeAddOrRemove = createFetch<any, any>(
+  '/boke/userLock/fee/addOrRemoveCheck',
+  'POST',
+);
+
 // 操作锁盖
 export const operateLockCover = createFetch<any, any>(
   '/boke/userLock/setting/openCover',
