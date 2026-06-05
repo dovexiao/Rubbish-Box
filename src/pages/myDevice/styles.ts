@@ -4,7 +4,8 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    padding: px(12),
+    paddingVertical: px(12),
+    paddingHorizontal: px(16),
     paddingBottom: px(18),
     position: 'relative',
     backgroundColor: '#ffffff',

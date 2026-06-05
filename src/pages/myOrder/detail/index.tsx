@@ -134,6 +134,9 @@ export default function MyOrderDetail() {
         detailData.refundAmount !== undefined
           ? `${detailData.refundAmount?.toFixed(2) ?? 0}元`
           : undefined,
+      afsCompleteTime: detailData.afsCompleteTime
+        ? dayjs(detailData.afsCompleteTime).format('YYYY-MM-DD HH:mm:ss')
+        : undefined,
     };
   }, [detailData, orderType]);
 
@@ -227,7 +230,7 @@ export default function MyOrderDetail() {
     const reason = handleRefundReason.trim();
     let hasError = false;
 
-    if (!handleRefundAmount.trim() || !amount || amount <= 0) {
+    if (!handleRefundAmount.trim() || amount < 0) {
       setHandleRefundAmountError('请输入退款金额');
       showToast({ title: '请输入退款金额', icon: 'info' });
       hasError = true;
@@ -493,7 +496,9 @@ export default function MyOrderDetail() {
             <Flex justify="between" align="center" style={styles.row}>
               <Text style={styles.label}>已退金额</Text>
               <View style={styles.refundDetailWrap}>
-                <Text style={styles.value}>{detail?.afsApplyAmount || ''}</Text>
+                <Text style={styles.value}>
+                  {detail?.afsCompleteTime ? detail?.afsApplyAmount || '' : ''}
+                </Text>
                 <TouchableOpacity
                   activeOpacity={0.85}
                   style={styles.refundDetailBtn}

@@ -96,7 +96,7 @@ export const styles = StyleSheet.create({
     paddingVertical: px(8),
     paddingHorizontal: px(16),
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
   },
   footerBtn: {
     paddingVertical: px(13),

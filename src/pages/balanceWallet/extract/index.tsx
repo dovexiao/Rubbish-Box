@@ -141,7 +141,10 @@ export default function BalanceWalletExtract() {
   const bankCard =
     bankCardList?.find((item: any) => item?.id === selectedBankCardId) ||
     bankCardList?.[0];
-  const bankImage = bankCard?.bankName ? BANK_INFO[bankCard?.bankName] : '';
+  const bankImage =
+    bankCard?.bankName && BANK_INFO[bankCard?.bankName]
+      ? BANK_INFO[bankCard?.bankName]
+      : BANK_INFO['通用银行'];
 
   const formatAmountInput = (text: string) => {
     const sanitized = (text || '').replace(/[^\d.]/g, '');
@@ -348,7 +351,7 @@ export default function BalanceWalletExtract() {
                   ref={amountInputRef}
                   value={amount}
                   onChangeText={handleChangeAmount}
-                  placeholder="请输入"
+                  placeholder="请输入提现金额"
                   placeholderTextColor="#B9B9B9"
                   keyboardType="decimal-pad"
                   onPressIn={handleAmountInputPressIn}
