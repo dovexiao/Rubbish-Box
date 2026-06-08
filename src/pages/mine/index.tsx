@@ -188,12 +188,12 @@ export default function Mine() {
   const deviceManageList = [
     {
       title: '商城',
-      icon: 'https://g.18qjz.cn/img/boklock/img_shop.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/shop.png',
       onPress: () => navigation.navigate('Shopping'),
     },
     {
       title: '添加设备',
-      icon: 'https://g.18qjz.cn/img/boklock/img_add_device.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/adddevice.png',
       onPress: () =>
         navigation.navigate('MyDevice', {
           isOpen: orderStat?.isOpen,
@@ -201,12 +201,12 @@ export default function Mine() {
     },
     {
       title: '成员',
-      icon: 'https://g.18qjz.cn/img/boklock/img_member.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/member.png',
       onPress: () => navigation.navigate('MemberList'),
     },
     {
       title: '使用申请记录',
-      icon: 'https://g.18qjz.cn/img/boklock/img_apply_record.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/applyrecord.png',
       onPress: () => navigation.navigate('ApplyRecordList'),
     },
   ];
@@ -215,7 +215,7 @@ export default function Mine() {
   const businessCenterList = [
     {
       title: '收款设置',
-      icon: 'https://g.18qjz.cn/img/boklock/img_payment_setting.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/paymentsetting.png',
       onPress: () => {
         if (orderStat?.isOpen) {
           navigation.navigate('RcvPayment');
@@ -229,14 +229,14 @@ export default function Mine() {
     },
     {
       title: '我的订单',
-      icon: 'https://g.18qjz.cn/img/boklock/img_my_order.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/myorder.png',
       onPress: () => {
         navigation.navigate('MyOrder');
       },
     },
     {
       title: '余额钱包',
-      icon: 'https://g.18qjz.cn/img/boklock/img_wallet.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/wallet.png',
       onPress: () => {
         if (orderStat?.isOpen) {
           navigation.navigate('BalanceWallet');
@@ -250,7 +250,7 @@ export default function Mine() {
     },
     {
       title: '广告展示',
-      icon: 'https://g.18qjz.cn/img/boklock/img_ad.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/ad.png',
       onPress: () => navigation.navigate('AdvertisingDisplay'),
     },
   ];
@@ -283,7 +283,7 @@ export default function Mine() {
             ) : (
               <Image
                 source={{
-                  uri: 'https://g.18qjz.cn/img/boklock/logo.png',
+                  uri: 'https://g.18qjz.cn/img/boklock/avatar_empty.png',
                 }}
                 resizeMode="contain"
                 style={styles.avatar}

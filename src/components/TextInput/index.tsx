@@ -72,13 +72,37 @@ export const TextInput = React.forwardRef<
 
   const innerRef = useRef<RNTextInput | null>(null);
   const focusedRef = useRef(false);
+  const lastEmittedValueRef = useRef<string | null>(null);
   const getCurrentText = (): string => {
     if (typeof value === 'string') return value;
     if (typeof defaultValue === 'string') return defaultValue;
     return '';
   };
 
+  const platformOS = Platform.OS as string;
+  const isHarmony = platformOS === 'harmony' || platformOS === 'ohos';
+  const isControlled = typeof value === 'string';
+  const useHarmonyBufferedValue = isHarmony && isControlled;
+
+  const [bufferedValue, setBufferedValue] = useState(getCurrentText());
+
   const [hasValue, setHasValue] = useState(getCurrentText().length > 0);
+
+  useEffect(() => {
+    const nextText = getCurrentText();
+
+    if (useHarmonyBufferedValue && focusedRef.current) {
+      // 外部值回传与最近一次输入一致时，保持本地显示，避免鸿蒙下旧值回弹闪烁
+      if (
+        lastEmittedValueRef.current !== null &&
+        nextText === lastEmittedValueRef.current
+      ) {
+        return;
+      }
+    }
+
+    setBufferedValue(nextText);
+  }, [defaultValue, useHarmonyBufferedValue, value]);
 
   // 当外部 value 或 defaultValue 变化时，同步 hasValue 状态
   useEffect(() => {
@@ -125,6 +149,11 @@ export const TextInput = React.forwardRef<
       }
     }
 
+    if (useHarmonyBufferedValue) {
+      setBufferedValue(nextText);
+    }
+
+    lastEmittedValueRef.current = nextText;
     setHasValue(nextText.length > 0);
     onChangeText?.(nextText);
   };
@@ -151,15 +180,31 @@ export const TextInput = React.forwardRef<
 
   const handleFocus: RNTextInputProps['onFocus'] = event => {
     focusedRef.current = true;
+
+    if (useHarmonyBufferedValue) {
+      setBufferedValue(getCurrentText());
+    }
+
     props.onFocus?.(event);
   };
 
   const handleBlur: RNTextInputProps['onBlur'] = event => {
     focusedRef.current = false;
+
+    if (useHarmonyBufferedValue) {
+      setBufferedValue(getCurrentText());
+    }
+
+    lastEmittedValueRef.current = null;
     props.onBlur?.(event);
   };
 
   const handleClear = () => {
+    if (useHarmonyBufferedValue) {
+      setBufferedValue('');
+    }
+
+    lastEmittedValueRef.current = '';
     // 优先通过回调让外部把 value 置空（受控场景）
     onChangeText?.('');
     setHasValue(false);
@@ -185,6 +230,7 @@ export const TextInput = React.forwardRef<
     restProps.secureTextEntry !== undefined
       ? restProps.secureTextEntry
       : type === 'password';
+  const resolvedInputValue = useHarmonyBufferedValue ? bufferedValue : value;
 
   // 不需要清除按钮时，保持原有行为，但仍通过 handleChangeText 透传 onChangeText
   if (!showClear) {
@@ -192,7 +238,7 @@ export const TextInput = React.forwardRef<
       <RNTextInput
         {...restProps}
         ref={setRefs}
-        value={value}
+        value={resolvedInputValue}
         defaultValue={defaultValue}
         style={[styles.defaultInput, style]}
         cursorColor={cursorColor}
@@ -212,7 +258,7 @@ export const TextInput = React.forwardRef<
       <RNTextInput
         {...restProps}
         ref={setRefs}
-        value={value}
+        value={resolvedInputValue}
         defaultValue={defaultValue}
         style={[styles.defaultInput, styles.clearInput, style]}
         cursorColor={cursorColor}

@@ -844,7 +844,7 @@ export default function RcvPaymentChangeBank() {
       statusBarStyle="dark-content"
       statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
-      scrollable={false}
+      scrollable
       pageNavProps={{
         text: isReviewing
           ? '审核中'

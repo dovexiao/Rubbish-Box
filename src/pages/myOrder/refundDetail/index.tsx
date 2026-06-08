@@ -63,6 +63,7 @@ export default function MyOrderRefundDetail() {
   const records = useMemo<RefundRecord[]>(() => {
     if (Array.isArray(apiRecords) && apiRecords.length > 0) {
       return apiRecords.map((item: any, index: number) => {
+        console.log('item', item);
         const statusList = Array.isArray(item?.statusList)
           ? item.statusList
           : [];
@@ -77,6 +78,7 @@ export default function MyOrderRefundDetail() {
         const secondText = secondStatus
           ? `${secondAmount}元${secondStatus?.statusDesc || ''}`
           : '';
+        const refuseRefund = item?.completeTime && item.totalRefundAmount == 0;
 
         return {
           id: String(item?.id || item?.applyNo || index),
@@ -85,9 +87,23 @@ export default function MyOrderRefundDetail() {
             : '',
           applyAmount: Number(item?.applyRefundAmount || 0),
           reason: String(item?.refundReason || '--'),
-          resultText: secondText ? `${firstText}  ${secondText}` : firstText,
-          resultColor: getStatusColor(firstStatus?.status),
-          secondColor: getStatusColor(secondStatus?.status),
+          resultText: refuseRefund
+            ? '商家拒绝退款'
+            : item?.completeTime
+            ? secondText
+              ? `${firstText}  ${secondText}`
+              : firstText
+            : `商家处理中`,
+          resultColor: refuseRefund
+            ? '#FF2B24'
+            : item?.completeTime
+            ? getStatusColor(firstStatus?.status)
+            : '#FF8C62',
+          secondColor: refuseRefund
+            ? '#FF2B24'
+            : item?.completeTime
+            ? getStatusColor(secondStatus?.status)
+            : '#FF8C62',
         };
       });
     }

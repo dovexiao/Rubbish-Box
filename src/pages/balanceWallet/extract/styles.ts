@@ -55,16 +55,16 @@ const styles = StyleSheet.create({
     marginBottom: px(14),
   },
   currency: {
-    color: '#1F1F1F',
+    color: '#333',
     fontSize: fontSize(20),
     fontWeight: '800',
     marginRight: px(8),
   },
   amountInput: {
     flex: 1,
-    color: '#1F1F1F',
+    color: '#333',
     fontSize: fontSize(20),
-    fontWeight: '600',
+    // fontWeight: '500',
     paddingVertical: 0,
   },
   fillAllText: {
