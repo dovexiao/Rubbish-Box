@@ -33,10 +33,10 @@ const BASE_URL_MAP: Record<string, string> = {
   real: 'https://boke-api.18qjz.cn',
   dev: 'https://boke-api-dev.18qjz.cn',
 };
-export const BASE_URL =
-  Config.API_BASE_URL || BASE_URL_MAP[DEPLOY_ENV] || 'https://api.example.com';
+// export const BASE_URL =
+//   Config.API_BASE_URL || BASE_URL_MAP[DEPLOY_ENV] || 'https://api.example.com';
 
-// export const BASE_URL = 'http://192.168.99.175:8082';
+export const BASE_URL = 'https://boke-api.18qjz.cn';
 // export const BASE_URL = 'http://192.168.99.22:8082';
 
 // 获取 API 版本

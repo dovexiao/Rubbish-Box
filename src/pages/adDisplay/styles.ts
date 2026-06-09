@@ -79,8 +79,8 @@ export default StyleSheet.create({
     paddingBottom: px(5),
   },
   imageItem: {
-    width: px(62),
-    height: px(62),
+    width: px(68),
+    height: px(68),
     borderRadius: px(8),
   },
   positionContainer: {

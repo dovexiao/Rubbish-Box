@@ -174982,14 +174982,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 },1000,[1,970,1001],"src\\config\\index.ts");
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
-  "ENV": "development",
-  "API_BASE_URL": "https://boke-api-dev.18qjz.cn",
+  "ENV": "production",
+  "API_BASE_URL": "https://boke-api.18qjz.cn",
   "API_VERSION": "v1",
-  "ANDROID_PACKAGE_NAME": "com.boklock.m.test",
-  "IOS_BUNDLE_ID": "com.boklock.dev.m",
-  "APP_NAME": "泊刻地锁测试",
-  "MAP_KEY_ANDROID": "4b3048de96b6aad0964ccaa7bf73ca93",
-  "MAP_KEY_IOS": "d5d21e20980f689673e0923b1888c287"
+  "ANDROID_PACKAGE_NAME": "com.boklock.m",
+  "IOS_BUNDLE_ID": "com.boklock.real.m",
+  "APP_NAME": "泊刻地锁",
+  "MAP_KEY_ANDROID": "65e063bf30af1d5cb5d2bf648243bff1",
+  "MAP_KEY_IOS": "4d3d8b30420bb15896f580757451268d"
 };
 },1001,[],"src\\config\\env.static.json");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
@@ -247269,6 +247269,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       scrollable = _ref$scrollable === void 0 ? false : _ref$scrollable,
       _ref$keyboardShouldPe = _ref.keyboardShouldPersistTaps,
       keyboardShouldPersistTaps = _ref$keyboardShouldPe === void 0 ? 'handled' : _ref$keyboardShouldPe,
+      _ref$keyboardAvoiding = _ref.keyboardAvoidingView,
+      keyboardAvoidingView = _ref$keyboardAvoiding === void 0 ? true : _ref$keyboardAvoiding,
+      _ref$keyboardVertical = _ref.keyboardVerticalOffset,
+      keyboardVerticalOffset = _ref$keyboardVertical === void 0 ? 0 : _ref$keyboardVertical,
       statusBarStyle = _ref.statusBarStyle,
       statusBarBackgroundColor = _ref.statusBarBackgroundColor,
       _ref$showStatusBar = _ref.showStatusBar,
@@ -247482,6 +247486,29 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
       return style;
     }, [backgroundImage, safeAreaEdges, insets]);
+    var renderMainStructure = (0, _react.useMemo)(function () {
+      var mainContent = /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+        style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.pageContainer, manualPaddingStyle],
+        children: [(header || pageNavProps) && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+          style: _$$_REQUIRE(_dependencyMap[12], "./styles").styles.headerContainer,
+          children: renderNavHeader
+        }), renderContent, footer && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+          style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.footerContainer, _reactNative.Platform.OS !== 'ios' && {
+            paddingBottom: insets.bottom + (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20)
+          }],
+          children: footer
+        })]
+      });
+      if (!keyboardAvoidingView) return mainContent;
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.KeyboardAvoidingView, {
+        style: {
+          flex: 1
+        },
+        behavior: _reactNative.Platform.OS === 'ios' ? 'padding' : undefined,
+        keyboardVerticalOffset: keyboardVerticalOffset,
+        children: mainContent
+      });
+    }, [footer, header, insets.bottom, keyboardAvoidingView, keyboardVerticalOffset, manualPaddingStyle, pageNavProps, renderContent, renderNavHeader]);
 
     // 4. Loading 遮罩
     var renderLoading = function renderLoading() {
@@ -247537,20 +247564,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               backgroundColor: 'transparent'
             }],
             edges: finalEdges,
-            children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-              style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.pageContainer, manualPaddingStyle],
-              children: [(header || pageNavProps) && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-                style: _$$_REQUIRE(_dependencyMap[12], "./styles").styles.headerContainer,
-                children: renderNavHeader
-              }), renderContent, footer && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-                style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.footerContainer,
-                // Android 底部额外 padding 适配
-                _reactNative.Platform.OS !== 'ios' && {
-                  paddingBottom: insets.bottom + (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20)
-                }],
-                children: footer
-              })]
-            })
+            children: renderMainStructure
           }), renderLoading()]
         })
       }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -247562,18 +247576,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               backgroundColor: defaultBackgroundColor
             }],
             edges: finalEdges,
-            children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-              style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.pageContainer, manualPaddingStyle],
-              children: [(header || pageNavProps) && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-                style: _$$_REQUIRE(_dependencyMap[12], "./styles").styles.headerContainer,
-                children: renderNavHeader
-              }), renderContent, footer && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-                style: [_$$_REQUIRE(_dependencyMap[12], "./styles").styles.footerContainer, _reactNative.Platform.OS !== 'ios' && {
-                  paddingBottom: insets.bottom + (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20)
-                }],
-                children: footer
-              })]
-            })
+            children: renderMainStructure
           }), renderLoading()]
         })
       })]
@@ -253897,15 +253900,34 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       restProps = (0, _objectWithoutProperties2.default)(props, _excluded);
     var innerRef = (0, _react.useRef)(null);
     var focusedRef = (0, _react.useRef)(false);
+    var lastEmittedValueRef = (0, _react.useRef)(null);
     var getCurrentText = function getCurrentText() {
       if (typeof value === 'string') return value;
       if (typeof defaultValue === 'string') return defaultValue;
       return '';
     };
-    var _useState = (0, _react.useState)(getCurrentText().length > 0),
+    var platformOS = _reactNative.Platform.OS;
+    var isHarmony = platformOS === 'harmony' || platformOS === 'ohos';
+    var isControlled = typeof value === 'string';
+    var useHarmonyBufferedValue = isHarmony && isControlled;
+    var _useState = (0, _react.useState)(getCurrentText()),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      hasValue = _useState2[0],
-      setHasValue = _useState2[1];
+      bufferedValue = _useState2[0],
+      setBufferedValue = _useState2[1];
+    var _useState3 = (0, _react.useState)(getCurrentText().length > 0),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      hasValue = _useState4[0],
+      setHasValue = _useState4[1];
+    (0, _react.useEffect)(function () {
+      var nextText = getCurrentText();
+      if (useHarmonyBufferedValue && focusedRef.current) {
+        // 外部值回传与最近一次输入一致时，保持本地显示，避免鸿蒙下旧值回弹闪烁
+        if (lastEmittedValueRef.current !== null && nextText === lastEmittedValueRef.current) {
+          return;
+        }
+      }
+      setBufferedValue(nextText);
+    }, [defaultValue, useHarmonyBufferedValue, value]);
 
     // 当外部 value 或 defaultValue 变化时，同步 hasValue 状态
     (0, _react.useEffect)(function () {
@@ -253945,6 +253967,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
         }
       }
+      if (useHarmonyBufferedValue) {
+        setBufferedValue(nextText);
+      }
+      lastEmittedValueRef.current = nextText;
       setHasValue(nextText.length > 0);
       onChangeText == null || onChangeText(nextText);
     };
@@ -253968,14 +253994,25 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     var handleFocus = function handleFocus(event) {
       focusedRef.current = true;
+      if (useHarmonyBufferedValue) {
+        setBufferedValue(getCurrentText());
+      }
       props.onFocus == null || props.onFocus(event);
     };
     var handleBlur = function handleBlur(event) {
       focusedRef.current = false;
+      if (useHarmonyBufferedValue) {
+        setBufferedValue(getCurrentText());
+      }
+      lastEmittedValueRef.current = null;
       props.onBlur == null || props.onBlur(event);
     };
     var handleClear = function handleClear() {
       var _innerRef$current2;
+      if (useHarmonyBufferedValue) {
+        setBufferedValue('');
+      }
+      lastEmittedValueRef.current = '';
       // 优先通过回调让外部把 value 置空（受控场景）
       onChangeText == null || onChangeText('');
       setHasValue(false);
@@ -253997,12 +254034,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     var resolvedKeyboardType = resolveKeyboardType();
     var resolvedSecureTextEntry = restProps.secureTextEntry !== undefined ? restProps.secureTextEntry : type === 'password';
+    var resolvedInputValue = useHarmonyBufferedValue ? bufferedValue : value;
 
     // 不需要清除按钮时，保持原有行为，但仍通过 handleChangeText 透传 onChangeText
     if (!showClear) {
       return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TextInput, Object.assign({}, restProps, {
         ref: setRefs,
-        value: value,
+        value: resolvedInputValue,
         defaultValue: defaultValue,
         style: [styles.defaultInput, style],
         cursorColor: cursorColor,
@@ -254019,7 +254057,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       style: [styles.clearContainer, style],
       children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TextInput, Object.assign({}, restProps, {
         ref: setRefs,
-        value: value,
+        value: resolvedInputValue,
         defaultValue: defaultValue,
         style: [styles.defaultInput, styles.clearInput, style],
         cursorColor: cursorColor,
@@ -255735,7 +255773,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     var hasAutoOperate = (detail == null ? void 0 : detail.powerType) !== 1 && !(detail != null && detail.isGroup);
     var hasOpenCoverOperate = (detail == null ? void 0 : detail.powerType) === 1 && detail.canOpenCover;
-    console.log(detail == null ? void 0 : detail.isGroup, hasAutoOperate, hasOpenCoverOperate);
     return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
       style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.contentBox,
       children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/components").Flex, {
@@ -259204,11 +259241,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var styles = exports.styles = _reactNative.StyleSheet.create({
     deviceItem: {
       padding: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12),
-      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
+      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12),
       width: '100%'
     },
     defaultBgColor: {
-      backgroundColor: '#F5F7FA'
+      backgroundColor: '#f7f7fb'
     },
     deviceItemActive: {
       // backgroundColor: '#fff',
@@ -264744,13 +264781,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // 设备管理
     var deviceManageList = [{
       title: '商城',
-      icon: 'https://g.18qjz.cn/img/boklock/img_shop.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/shop.png',
       onPress: function onPress() {
         return navigation.navigate('Shopping');
       }
     }, {
       title: '添加设备',
-      icon: 'https://g.18qjz.cn/img/boklock/img_add_device.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/adddevice.png',
       onPress: function onPress() {
         return navigation.navigate('MyDevice', {
           isOpen: orderStat == null ? void 0 : orderStat.isOpen
@@ -264758,13 +264795,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, {
       title: '成员',
-      icon: 'https://g.18qjz.cn/img/boklock/img_member.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/member.png',
       onPress: function onPress() {
         return navigation.navigate('MemberList');
       }
     }, {
       title: '使用申请记录',
-      icon: 'https://g.18qjz.cn/img/boklock/img_apply_record.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/applyrecord.png',
       onPress: function onPress() {
         return navigation.navigate('ApplyRecordList');
       }
@@ -264773,7 +264810,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // 经营中心
     var businessCenterList = [{
       title: '收款设置',
-      icon: 'https://g.18qjz.cn/img/boklock/img_payment_setting.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/paymentsetting.png',
       onPress: function onPress() {
         if (orderStat != null && orderStat.isOpen) {
           navigation.navigate('RcvPayment');
@@ -264786,22 +264823,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, {
       title: '我的订单',
-      icon: 'https://g.18qjz.cn/img/boklock/img_my_order.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/myorder.png',
       onPress: function onPress() {
         navigation.navigate('MyOrder');
-        return;
-        if (orderStat != null && orderStat.isOpen) {
-          navigation.navigate('MyOrder');
-        } else {
-          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-            title: '收款功能未开通,请联系客服人员',
-            icon: 'info'
-          });
-        }
       }
     }, {
       title: '余额钱包',
-      icon: 'https://g.18qjz.cn/img/boklock/img_wallet.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/wallet.png',
       onPress: function onPress() {
         if (orderStat != null && orderStat.isOpen) {
           navigation.navigate('BalanceWallet');
@@ -264814,7 +264842,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, {
       title: '广告展示',
-      icon: 'https://g.18qjz.cn/img/boklock/img_ad.png',
+      icon: 'https://g.18qjz.cn/img/boklock/mine/ad.png',
       onPress: function onPress() {
         return navigation.navigate('AdvertisingDisplay');
       }
@@ -264849,7 +264877,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _styles.default.avatar
             }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
               source: {
-                uri: 'https://g.18qjz.cn/img/boklock/logo.png'
+                uri: 'https://g.18qjz.cn/img/boklock/avatar_empty.png'
               },
               resizeMode: "contain",
               style: _styles.default.avatar
@@ -264917,7 +264945,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             })
           }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
             style: _styles.default.businessCenterBody,
-            children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+              activeOpacity: 1,
+              onPress: function onPress() {
+                if (orderStat != null && orderStat.isOpen) {
+                  navigation.navigate('BalanceWallet');
+                } else {
+                  (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                    title: '收款功能未开通,请联系客服人员',
+                    icon: 'info'
+                  });
+                }
+              },
               style: _styles.default.businessCenterBodyItem,
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                 style: _styles.default.businessCenterBodyItemText,
@@ -264928,8 +264967,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               })]
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
               style: _styles.default.businessCenterBodyItemLine
-            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+              activeOpacity: 1,
               style: _styles.default.businessCenterBodyItem,
+              onPress: function onPress() {
+                navigation.navigate('MyOrder');
+              },
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                 style: [_styles.default.businessCenterBodyItemText, [null, undefined, 0].includes(orderStat == null ? void 0 : orderStat.todayOrderCount) && _styles.default.businessCenterBodyItemTextBold],
                 children: [null, undefined, 0].includes(orderStat == null ? void 0 : orderStat.todayOrderCount) ? '暂无订单' : orderStat == null ? void 0 : orderStat.todayOrderCount
@@ -265032,9 +265075,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     contentBox: {
       flexGrow: 1,
       width: '100%',
-      paddingTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(48),
+      paddingTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24),
       paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24),
-      paddingBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(80),
+      paddingBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24),
       alignItems: 'center'
     },
     avatarTouchable: {
@@ -265054,10 +265097,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     avatar: {
       width: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(40),
       height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(40),
-      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
-      borderWidth: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(2),
-      borderColor: '#FFFFFF',
-      backgroundColor: '#F2F2F2'
+      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10)
+      // borderWidth: px(2),
+      // borderColor: '#FFFFFF',
+      // backgroundColor: '#F2F2F2',
     },
     name: {
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(16),
@@ -271554,7 +271597,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       paddingVertical: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
       paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
       flexDirection: 'row',
-      justifyContent: 'space-between'
+      justifyContent: 'space-evenly'
     },
     footerBtn: {
       paddingVertical: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(13),
@@ -338389,18 +338432,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 }
               }, item.id);
             })
-          }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/components/index").Flex, {
-            justify: "center",
-            align: "center",
-            children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
-              source: {
-                uri: 'https://g.18qjz.cn/img/boklock/empty.png'
-              },
-              style: {
-                width: (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(130),
-                height: (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(130)
-              }
-            })
+          }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_index4.default, {
+            emptyText: "\u6682\u65E0\u8BBE\u5907",
+            marginTop: (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(40)
           })
         })]
       }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/components/index").Popup, {
@@ -338693,7 +338727,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     container: {
       width: '100%',
       height: '100%',
-      padding: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12),
+      paddingVertical: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12),
+      paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
       paddingBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
       position: 'relative',
       backgroundColor: '#ffffff'
@@ -339544,7 +339579,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             style: _styles.default.imgBox,
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
               source: {
-                uri: (detail == null || (_detail$imageMap = detail.imageMap) == null ? void 0 : _detail$imageMap.upLockPng) || ''
+                uri: (detail == null || (_detail$imageMap = detail.imageMap) == null ? void 0 : _detail$imageMap.upLockPng) || 'https://g.18qjz.cn/img/boklock/order_empty.png'
               },
               style: _styles.default.imgBox_img
             })
@@ -341052,7 +341087,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         enableCycleForTimes: Number((_incomingRule$isRoll = incomingRule == null ? void 0 : incomingRule.isRoll) != null ? _incomingRule$isRoll : 0) === 1,
         billingCycle: resolveBillingCycle(incomingRule),
         rollingBilling: Number((_incomingRule$isRoll2 = incomingRule == null ? void 0 : incomingRule.isRoll) != null ? _incomingRule$isRoll2 : 0) === 1,
-        chargeIfLessThanUnit: Number((_incomingRule$feeUnit = incomingRule == null ? void 0 : incomingRule.feeUnitRoundUp) != null ? _incomingRule$feeUnit : 0) === 1
+        chargeIfLessThanUnit: Number((_incomingRule$feeUnit = incomingRule == null ? void 0 : incomingRule.feeUnitRoundUp) != null ? _incomingRule$feeUnit : 0) === 1,
+        freeTime: [null, undefined].includes(incomingRule == null ? void 0 : incomingRule.freeTime) ? '' : String(incomingRule.freeTime)
       }),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       form = _useState2[0],
@@ -341089,6 +341125,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return isEdit ? '编辑收费规则' : '新增收费规则';
     }, [isEdit]);
     var closeAllTips = function closeAllTips() {
+      _reactNative.Keyboard.dismiss();
       if (showCycleTips) setShowCycleTips(false);
       if (showCycleTips2) setShowCycleTips2(false);
       if (showChargeTips) setShowChargeTips(false);
@@ -341133,7 +341170,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         if (unitFee < MONEY_MIN || unitFee > MONEY_MAX) {
           (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-            title: `费用单价需在${MONEY_MIN}~${MONEY_MAX}元之间`,
+            title: `费用单价需大于0元且小于10000元`,
             icon: 'info'
           });
           return;
@@ -341197,7 +341234,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           billingType: billingType,
           billingCycle: billingCycle,
           isRoll: form.chargeType === 'duration' ? form.rollingBilling ? 1 : 0 : form.enableCycleForTimes ? 1 : 0,
-          feeUnitRoundUp: form.chargeIfLessThanUnit ? 1 : 0
+          feeUnitRoundUp: form.chargeIfLessThanUnit ? 1 : 0,
+          freeTime: form.freeTime ? Number(form.freeTime) : 0
         };
         console.log('payload', payload);
         if (![null, undefined, ''].includes(ruleId)) {
@@ -341222,9 +341260,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
           (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: isEdit ? '保存成功' : '创建成功',
-            icon: 'success'
+            icon: 'success',
+            duration: 1000
           });
-          navigation.goBack();
+          setTimeout(function () {
+            navigation.goBack();
+          }, 1000);
         } catch (err) {
           var _ref4, _err$msg;
           (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
@@ -341244,7 +341285,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       statusBarStyle: "dark-content",
       statusBarBackgroundColor: "#FFFFFF",
       safeAreaEdges: ['top', 'bottom'],
-      scrollable: false,
+      scrollable: true,
       pageNavProps: {
         text: navTitle,
         showBack: true,
@@ -341464,7 +341505,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                     })
                   }) : null]
                 }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-                  style: _editStyles.default.row2,
+                  style: [_editStyles.default.row2, {
+                    zIndex: showChargeTips ? 10 : 1
+                  }],
                   children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
                     style: _editStyles.default['row2-top'],
                     children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
@@ -341655,6 +341698,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                     borderBottomWidth: 0
                   }, !form.enableCycleForTimes ? {
                     opacity: 0.55
+                  } : null, showCycleTips && form.enableCycleForTimes ? {
+                    position: 'relative',
+                    zIndex: 20
+                    // paddingBottom: px(48),
                   } : null],
                   children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
                     style: _editStyles.default.leftWithIcon,
@@ -341708,6 +341755,42 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                       children: "\u4E00\u4E2A\u5468\u671F\u5185\u6EE1\u8DB3\u6700\u9AD8\u6536\u8D39\u540E\u5C06\u4E0D\u518D\u8FDB\u884C\u8BA1\u8D39"
                     })
                   }) : null]
+                })]
+              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+                style: [_editStyles.default.row3, showCycleTips && form.chargeType === 'times' && form.enableCycleForTimes ? {
+                  zIndex: 1
+                } : null],
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+                  style: _editStyles.default.labelBox,
+                  children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                    style: _editStyles.default.label,
+                    children: "\u514D\u8D39\u65F6\u957F"
+                  })
+                }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+                  style: [_editStyles.default.inlineFeeRow, {
+                    borderBottomWidth: 0
+                  }],
+                  children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+                    style: _editStyles.default.inlineInput,
+                    children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "@ant-design/react-native").Input, {
+                      style: _editStyles.default.cardInput,
+                      inputStyle: _editStyles.default.cardInputText2,
+                      placeholder: "",
+                      type: "number",
+                      placeholderTextColor: "#CCCCCC",
+                      value: form.freeTime,
+                      onChangeText: function onChangeText(value) {
+                        return setForm(function (prev) {
+                          return Object.assign({}, prev, {
+                            freeTime: normalizeMinuteInput(String(value != null ? value : ''))
+                          });
+                        });
+                      }
+                    })
+                  }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                    style: _editStyles.default.inlineText,
+                    children: "\u5206\u949F"
+                  })]
                 })]
               })]
             })]
@@ -341892,14 +341975,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       paddingBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
       borderBottomWidth: 1,
       borderBottomColor: 'rgba(0, 0, 0, .05)',
-      position: 'relative'
+      position: 'relative',
+      zIndex: 10
     },
     'row2-top': {
       marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      position: 'relative'
+      position: 'relative',
+      zIndex: 10
     },
     rowWithDividerLast: {
       flexDirection: 'row',
@@ -341924,6 +342009,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     cardInput: {
       width: '100%',
+      height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(30),
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14)
+    },
+    cardInput2: {
+      flex: 1,
       height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(30),
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14)
     },
@@ -341961,7 +342051,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       justifyContent: 'flex-end',
       borderBottomWidth: 1,
       borderBottomColor: 'rgba(0, 0, 0, .05)',
-      gap: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+      gap: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
+      zIndex: 10
     },
     inlineFeeRowSimple: {
       flexDirection: 'row',
@@ -341969,7 +342060,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       justifyContent: 'center',
       borderBottomWidth: 1,
       borderBottomColor: 'rgba(0, 0, 0, .05)',
-      gap: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+      gap: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
+      zIndex: 10
     },
     inlineText: {
       color: '#333333',
@@ -341982,7 +342074,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#F3F3F3',
       alignItems: 'center',
       justifyContent: 'center',
-      paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+      paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
+      zIndex: 10,
+      position: 'relative'
     },
     inlineInput2: {
       width: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(60),
@@ -341991,7 +342085,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#F3F3F3',
       alignItems: 'center',
       justifyContent: 'center',
-      paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+      paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
+      zIndex: 10,
+      position: 'relative'
     },
     inlineInputText: {
       color: '#333',
@@ -342043,15 +342139,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(16)
     },
     tooltip: {
-      selectorDisabled: {
-        backgroundColor: '#F5F5F5'
-      },
-      selectorTextDisabled: {
-        color: '#B7B7B7'
-      },
-      disabledRow: {
-        opacity: 0.55
-      },
       position: 'absolute',
       left: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(40),
       top: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(50),
@@ -342060,6 +342147,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
       paddingVertical: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
       zIndex: 99999
+    },
+    selectorDisabled: {
+      backgroundColor: '#F5F5F5'
+    },
+    selectorTextDisabled: {
+      color: '#B7B7B7'
+    },
+    disabledRow: {
+      opacity: 0.55
     },
     tooltip2: {
       position: 'absolute',
@@ -342157,6 +342253,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#FFFFFF',
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(16),
       fontWeight: '500'
+    },
+    row3: {
+      width: '100%',
+      paddingTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
+      paddingBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderTopWidth: 1,
+      borderTopColor: 'rgba(0, 0, 0, .05)',
+      zIndex: 10,
+      position: 'relative'
     }
   });
   var _default = exports.default = styles;
@@ -342174,7 +342282,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNative = _$$_REQUIRE(_dependencyMap[5], "react-native");
   var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "D:\\xqkj\\bokeapp\\src/components/AppIcon"));
   var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "./styles"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime");
+  var _index = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/components/SimpleLoading/index"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[9], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\rcvPayment\\changeBank\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   function RcvPaymentChangeBank() {
@@ -342188,13 +342297,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _route$params6,
       _route$params7,
       _this = this;
-    var route = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useRoute)();
+    var route = (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useRoute)();
     var cardType = (_route$params = route.params) == null ? void 0 : _route$params.cardType;
     var regName = (_route$params2 = route.params) == null ? void 0 : _route$params2.regName;
     var changeBankStatus = (_route$params$changeB = (_route$params3 = route.params) == null ? void 0 : _route$params3.changeBankStatus) != null ? _route$params$changeB : (_route$params4 = route.params) == null ? void 0 : _route$params4['#sym:changeBankStatus'];
     var failReason = (_route$params$failRea = (_route$params5 = route.params) == null ? void 0 : _route$params5.failReason) != null ? _route$params$failRea : (_route$params6 = route.params) == null ? void 0 : _route$params6['#sym:failReason'];
     var numericChangeBankStatus = Number(changeBankStatus);
-    var navigation = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useNavigation)();
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/native").useNavigation)();
     var _useState = (0, _react.useState)(cardType),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       currentCardType = _useState2[0],
@@ -342211,107 +342320,130 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
       cardBackUri = _useState8[0],
       setCardBackUri = _useState8[1];
-    var _useState9 = (0, _react.useState)(''),
+    var _useState9 = (0, _react.useState)(false),
       _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
-      cardNo = _useState0[0],
-      setCardNo = _useState0[1];
+      hasGetCode = _useState0[0],
+      setHasGetCode = _useState0[1];
     var _useState1 = (0, _react.useState)(''),
       _useState10 = (0, _slicedToArray2.default)(_useState1, 2),
-      selectedBankId = _useState10[0],
-      setSelectedBankId = _useState10[1];
+      cardNo = _useState10[0],
+      setCardNo = _useState10[1];
     var _useState11 = (0, _react.useState)(''),
       _useState12 = (0, _slicedToArray2.default)(_useState11, 2),
-      openAddress = _useState12[0],
-      setOpenAddress = _useState12[1];
+      selectedBankId = _useState12[0],
+      setSelectedBankId = _useState12[1];
     var _useState13 = (0, _react.useState)(''),
       _useState14 = (0, _slicedToArray2.default)(_useState13, 2),
-      openBranch = _useState14[0],
-      setOpenBranch = _useState14[1];
+      openAddress = _useState14[0],
+      setOpenAddress = _useState14[1];
     var _useState15 = (0, _react.useState)(''),
       _useState16 = (0, _slicedToArray2.default)(_useState15, 2),
-      selectedBranchCode = _useState16[0],
-      setSelectedBranchCode = _useState16[1];
+      openBranch = _useState16[0],
+      setOpenBranch = _useState16[1];
     var _useState17 = (0, _react.useState)(''),
       _useState18 = (0, _slicedToArray2.default)(_useState17, 2),
-      mobile = _useState18[0],
-      setMobile = _useState18[1];
+      selectedBranchCode = _useState18[0],
+      setSelectedBranchCode = _useState18[1];
     var _useState19 = (0, _react.useState)(''),
       _useState20 = (0, _slicedToArray2.default)(_useState19, 2),
-      verifyCode = _useState20[0],
-      setVerifyCode = _useState20[1];
-    var _useState21 = (0, _react.useState)([]),
+      mobile = _useState20[0],
+      setMobile = _useState20[1];
+    var _useState21 = (0, _react.useState)(''),
       _useState22 = (0, _slicedToArray2.default)(_useState21, 2),
-      cityAreaTree = _useState22[0],
-      setCityAreaTree = _useState22[1];
-    var _useState23 = (0, _react.useState)(''),
+      verifyCode = _useState22[0],
+      setVerifyCode = _useState22[1];
+    var _useState23 = (0, _react.useState)([]),
       _useState24 = (0, _slicedToArray2.default)(_useState23, 2),
-      selectedProvinceCode = _useState24[0],
-      setSelectedProvinceCode = _useState24[1];
+      cityAreaTree = _useState24[0],
+      setCityAreaTree = _useState24[1];
     var _useState25 = (0, _react.useState)(''),
       _useState26 = (0, _slicedToArray2.default)(_useState25, 2),
-      selectedCityCode = _useState26[0],
-      setSelectedCityCode = _useState26[1];
+      selectedProvinceCode = _useState26[0],
+      setSelectedProvinceCode = _useState26[1];
     var _useState27 = (0, _react.useState)(''),
       _useState28 = (0, _slicedToArray2.default)(_useState27, 2),
-      selectedDistrictCode = _useState28[0],
-      setSelectedDistrictCode = _useState28[1];
-    var _useState29 = (0, _react.useState)([]),
+      selectedCityCode = _useState28[0],
+      setSelectedCityCode = _useState28[1];
+    var _useState29 = (0, _react.useState)(''),
       _useState30 = (0, _slicedToArray2.default)(_useState29, 2),
-      addressPickerValues = _useState30[0],
-      setAddressPickerValues = _useState30[1];
-    var _useState31 = (0, _react.useState)(false),
+      selectedDistrictCode = _useState30[0],
+      setSelectedDistrictCode = _useState30[1];
+    var _useState31 = (0, _react.useState)([]),
       _useState32 = (0, _slicedToArray2.default)(_useState31, 2),
-      bankPopupVisible = _useState32[0],
-      setBankPopupVisible = _useState32[1];
+      addressPickerValues = _useState32[0],
+      setAddressPickerValues = _useState32[1];
     var _useState33 = (0, _react.useState)(false),
       _useState34 = (0, _slicedToArray2.default)(_useState33, 2),
-      addressPopupVisible = _useState34[0],
-      setAddressPopupVisible = _useState34[1];
+      bankPopupVisible = _useState34[0],
+      setBankPopupVisible = _useState34[1];
     var _useState35 = (0, _react.useState)(false),
       _useState36 = (0, _slicedToArray2.default)(_useState35, 2),
-      branchPopupVisible = _useState36[0],
-      setBranchPopupVisible = _useState36[1];
-    var _useState37 = (0, _react.useState)(''),
+      bankPopupContentReady = _useState36[0],
+      setBankPopupContentReady = _useState36[1];
+    var _useState37 = (0, _react.useState)(false),
       _useState38 = (0, _slicedToArray2.default)(_useState37, 2),
-      bankKeyword = _useState38[0],
-      setBankKeyword = _useState38[1];
-    var _useState39 = (0, _react.useState)(''),
+      addressPopupVisible = _useState38[0],
+      setAddressPopupVisible = _useState38[1];
+    var _useState39 = (0, _react.useState)(false),
       _useState40 = (0, _slicedToArray2.default)(_useState39, 2),
-      branchKeyword = _useState40[0],
-      setBranchKeyword = _useState40[1];
-    var _useState41 = (0, _react.useState)([]),
+      branchPopupVisible = _useState40[0],
+      setBranchPopupVisible = _useState40[1];
+    var _useState41 = (0, _react.useState)(''),
       _useState42 = (0, _slicedToArray2.default)(_useState41, 2),
-      bankOptions = _useState42[0],
-      setBankOptions = _useState42[1];
-    var _useState43 = (0, _react.useState)([]),
+      bankKeyword = _useState42[0],
+      setBankKeyword = _useState42[1];
+    var _useState43 = (0, _react.useState)(''),
       _useState44 = (0, _slicedToArray2.default)(_useState43, 2),
-      branchOptions = _useState44[0],
-      setBranchOptions = _useState44[1];
-    var _useState45 = (0, _react.useState)(false),
+      branchKeyword = _useState44[0],
+      setBranchKeyword = _useState44[1];
+    var _useState45 = (0, _react.useState)([]),
       _useState46 = (0, _slicedToArray2.default)(_useState45, 2),
-      sendingCode = _useState46[0],
-      setSendingCode = _useState46[1];
-    var _useState47 = (0, _react.useState)(false),
+      bankOptions = _useState46[0],
+      setBankOptions = _useState46[1];
+    var _useState47 = (0, _react.useState)([]),
       _useState48 = (0, _slicedToArray2.default)(_useState47, 2),
-      submitting = _useState48[0],
-      setSubmitting = _useState48[1];
-    var _useState49 = (0, _react.useState)(numericChangeBankStatus),
+      branchOptions = _useState48[0],
+      setBranchOptions = _useState48[1];
+    var _useState49 = (0, _react.useState)(true),
       _useState50 = (0, _slicedToArray2.default)(_useState49, 2),
-      statusValue = _useState50[0],
-      setStatusValue = _useState50[1];
-    var _useState51 = (0, _react.useState)(String(failReason || '')),
+      loadingBankList = _useState50[0],
+      setLoadingBankList = _useState50[1];
+    var _useState51 = (0, _react.useState)(false),
       _useState52 = (0, _slicedToArray2.default)(_useState51, 2),
-      statusReason = _useState52[0],
-      setStatusReason = _useState52[1];
-    var _useState53 = (0, _react.useState)(false),
+      loadingBranchList = _useState52[0],
+      setLoadingBranchList = _useState52[1];
+    var _useState53 = (0, _react.useState)(true),
       _useState54 = (0, _slicedToArray2.default)(_useState53, 2),
-      echoingForm = _useState54[0],
-      setEchoingForm = _useState54[1];
+      loadingAddressList = _useState54[0],
+      setLoadingAddressList = _useState54[1];
+    var _useState55 = (0, _react.useState)(false),
+      _useState56 = (0, _slicedToArray2.default)(_useState55, 2),
+      sendingCode = _useState56[0],
+      setSendingCode = _useState56[1];
+    var _useState57 = (0, _react.useState)(false),
+      _useState58 = (0, _slicedToArray2.default)(_useState57, 2),
+      submitting = _useState58[0],
+      setSubmitting = _useState58[1];
+    var _useState59 = (0, _react.useState)(numericChangeBankStatus),
+      _useState60 = (0, _slicedToArray2.default)(_useState59, 2),
+      statusValue = _useState60[0],
+      setStatusValue = _useState60[1];
+    var _useState61 = (0, _react.useState)(String(failReason || '')),
+      _useState62 = (0, _slicedToArray2.default)(_useState61, 2),
+      statusReason = _useState62[0],
+      setStatusReason = _useState62[1];
+    var _useState63 = (0, _react.useState)(false),
+      _useState64 = (0, _slicedToArray2.default)(_useState63, 2),
+      echoingForm = _useState64[0],
+      setEchoingForm = _useState64[1];
     var pickerBusyRef = (0, _react.useRef)(false);
+    var bankListLoadedRef = (0, _react.useRef)(false);
+    var bankListLoadingRef = (0, _react.useRef)(false);
+    var addressListLoadingRef = (0, _react.useRef)(false);
     var isReviewing = statusValue === 1;
     var isReviewFailed = statusValue === 3;
     var showStatusView = isReviewing || isReviewFailed;
-    var _useCountDown = (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/hooks/useCountDown").useCountDown)(60),
+    var _useCountDown = (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/hooks/useCountDown").useCountDown)(60),
       count = _useCountDown.count,
       isCounting = _useCountDown.isCounting,
       start = _useCountDown.start;
@@ -342328,29 +342460,38 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     }, [bankKeyword, bankOptions]);
     var getBankIcon = (0, _react.useCallback)(function (bankName) {
-      if (!bankName) return _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO.通用银行;
-      if (_$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO[bankName]) return _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO[bankName];
-      var matched = Object.entries(_$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO).find(function (_ref) {
+      if (!bankName) return _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO['通用银行'];
+      if (_$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO[bankName]) return _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO[bankName];
+      var matched = Object.entries(_$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO).find(function (_ref) {
         var _ref2 = (0, _slicedToArray2.default)(_ref, 1),
           key = _ref2[0];
         return bankName.includes(key) || key.includes(bankName);
       });
-      return (matched == null ? void 0 : matched[1]) || _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO.通用银行;
+      return (matched == null ? void 0 : matched[1]) || _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/pages/balanceWallet/constants").BANK_INFO['通用银行'];
+    }, []);
+    var getDefaultAddressPickerValues = (0, _react.useCallback)(function (list) {
+      var _province$children, _city$children;
+      if (!list.length) return [];
+      var province = list[0];
+      var city = province == null || (_province$children = province.children) == null ? void 0 : _province$children[0];
+      var district = city == null || (_city$children = city.children) == null ? void 0 : _city$children[0];
+      return [province == null ? void 0 : province.value, city == null ? void 0 : city.value, district == null ? void 0 : district.value].filter(function (value) {
+        return Boolean(value);
+      });
     }, []);
     var fetchHuiFuBanks = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-      var withLoading = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      if (withLoading) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
-          title: '加载中...'
-        });
+      if (bankListLoadedRef.current || bankListLoadingRef.current) {
+        return;
       }
+      bankListLoadingRef.current = true;
+      setLoadingBankList(true);
       try {
         var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/services/user").getHuiFuTotalBank)({
           bankName: '',
           branchName: ''
         });
         if (!(res != null && res.success)) {
-          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: (res == null ? void 0 : res.msg) || (res == null ? void 0 : res.message) || '加载银行列表失败',
             icon: 'info'
           });
@@ -342369,18 +342510,35 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           };
         });
         setBankOptions(next);
+        bankListLoadedRef.current = true;
       } catch (_unused) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '加载银行列表失败',
           icon: 'info'
         });
         setBankOptions([]);
+        bankListLoadedRef.current = false;
       } finally {
-        if (withLoading) {
-          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-        }
+        bankListLoadingRef.current = false;
+        setLoadingBankList(false);
       }
     }), [getBankIcon]);
+    (0, _react.useEffect)(function () {
+      void fetchHuiFuBanks();
+    }, [fetchHuiFuBanks]);
+    (0, _react.useEffect)(function () {
+      if (!bankPopupVisible) {
+        setBankPopupContentReady(false);
+        return;
+      }
+      setBankPopupContentReady(false);
+      var task = _reactNative.InteractionManager.runAfterInteractions(function () {
+        setBankPopupContentReady(true);
+      });
+      return function () {
+        task.cancel();
+      };
+    }, [bankPopupVisible]);
     var fetchHuiFuBranchBanks = (0, _react.useCallback)(/*#__PURE__*/function () {
       var _ref4 = (0, _asyncToGenerator2.default)(function* (keyword) {
         var withLoading = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
@@ -342389,9 +342547,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           return;
         }
         if (withLoading) {
-          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
-            title: '加载中...'
-          });
+          setLoadingBranchList(true);
         }
         try {
           var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/services/user").getHuiFuInterBank)({
@@ -342399,7 +342555,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             branchName: keyword || ''
           });
           if (!(res != null && res.success)) {
-            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: (res == null ? void 0 : res.msg) || (res == null ? void 0 : res.message) || '加载开户行失败',
               icon: 'info'
             });
@@ -342418,14 +342574,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           });
           setBranchOptions(next);
         } catch (_unused2) {
-          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '加载开户行失败',
             icon: 'info'
           });
           setBranchOptions([]);
         } finally {
           if (withLoading) {
-            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            setLoadingBranchList(false);
           }
         }
       });
@@ -342434,31 +342590,39 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       };
     }(), [selectedBank == null ? void 0 : selectedBank.bankName]);
     var getDefaultAreaValues = (0, _react.useCallback)(function (list) {
-      var _province$children, _city$children;
+      var _province$children2, _city$children2;
       if (!selectedProvinceCode || !selectedCityCode || !selectedDistrictCode) {
         return [];
       }
       var province = list.find(function (item) {
         return String(item.value) === String(selectedProvinceCode);
       });
-      var city = province == null || (_province$children = province.children) == null ? void 0 : _province$children.find(function (item) {
+      var city = province == null || (_province$children2 = province.children) == null ? void 0 : _province$children2.find(function (item) {
         return String(item.value) === String(selectedCityCode);
       });
-      var district = city == null || (_city$children = city.children) == null ? void 0 : _city$children.find(function (item) {
+      var district = city == null || (_city$children2 = city.children) == null ? void 0 : _city$children2.find(function (item) {
         return String(item.value) === String(selectedDistrictCode);
       });
       return [(province == null ? void 0 : province.value) || '', (city == null ? void 0 : city.value) || '', (district == null ? void 0 : district.value) || ''].filter(Boolean);
     }, [selectedProvinceCode, selectedCityCode, selectedDistrictCode]);
     var fetchCityAreaTree = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      if (addressListLoadingRef.current) {
+        return;
+      }
+      addressListLoadingRef.current = true;
+      setLoadingAddressList(true);
       try {
         var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/services/user").getCityArea)({});
         var list = Array.isArray(res == null ? void 0 : res.data) ? res.data : Array.isArray(res) ? res : [];
         setCityAreaTree(list);
       } catch (_unused3) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '加载开户地址失败',
           icon: 'info'
         });
+      } finally {
+        addressListLoadingRef.current = false;
+        setLoadingAddressList(false);
       }
     }), []);
     var buildAddressText = (0, _react.useCallback)(function (provinceCode, cityCode, districtCode) {
@@ -342484,28 +342648,36 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       setOpenAddress(buildAddressText(selectedProvinceCode, selectedCityCode, selectedDistrictCode));
     }, [cityAreaTree, selectedProvinceCode, selectedCityCode, selectedDistrictCode, buildAddressText]);
     (0, _react.useEffect)(function () {
+      if (addressPickerValues.length) return;
+      if (!cityAreaTree.length) return;
+      var defaultValues = getDefaultAddressPickerValues(cityAreaTree);
+      if (defaultValues.length) {
+        setAddressPickerValues(defaultValues);
+      }
+    }, [addressPickerValues.length, cityAreaTree, getDefaultAddressPickerValues]);
+    (0, _react.useEffect)(function () {
       if (!branchPopupVisible) return;
       if (!branchKeyword.trim()) return;
       void fetchHuiFuBranchBanks(branchKeyword.trim());
     }, [branchPopupVisible, branchKeyword, fetchHuiFuBranchBanks]);
-    var codeButtonText = isCounting ? `${count}s` : verifyCode ? '重新获取' : '获取验证码';
+    var codeButtonText = isCounting ? `${count}s` : hasGetCode ? '重新获取' : '获取验证码';
     var submitDisabled = !cardFrontUri || !cardBackUri || !String(currentRegName || '').trim() || !cardNo.trim() || !selectedBank || !openAddress || !openBranch || !selectedBranchCode || !selectedProvinceCode || !selectedCityCode || !selectedDistrictCode || !mobile.trim() || verifyCode.trim().length !== 6;
     var sendSmsCode = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       if (isCounting || sendingCode) return;
       var mobileText = mobile.trim();
       if (!mobileText || mobileText.length !== 11) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '请输入正确手机号',
           icon: 'info'
         });
         return;
       }
       setSendingCode(true);
-      (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+      (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
         title: '发送中...'
       });
       try {
-        var userIdRaw = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").cacheGet)({
+        var userIdRaw = yield (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").cacheGet)({
           key: 'userId'
         });
         var userId = Number(userIdRaw);
@@ -342515,23 +342687,24 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         });
         if (res != null && res.success && (res == null ? void 0 : res.data) === true) {
           start();
-          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '验证码已发送',
             icon: 'success'
           });
+          setHasGetCode(true);
           return;
         }
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: (res == null ? void 0 : res.msg) || (res == null ? void 0 : res.message) || '验证码发送失败',
           icon: 'info'
         });
       } catch (_unused4) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '验证码发送失败',
           icon: 'info'
         });
       } finally {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
         setSendingCode(false);
       }
     }), [isCounting, mobile, sendingCode, start]);
@@ -342539,22 +342712,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       if (submitDisabled || submitting) return;
       var verifyCodeText = verifyCode.trim();
       if (verifyCodeText.length !== 6) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '请输入6位验证码',
+          icon: 'info'
+        });
+        return;
+      }
+      var backImageUrl = cardBackUri;
+      if (!backImageUrl) {
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          title: '请上传银行卡背面照片',
           icon: 'info'
         });
         return;
       }
       var cardImageUrl = cardFrontUri;
       if (!cardImageUrl) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '请上传银行卡卡号面照片',
           icon: 'info'
         });
         return;
       }
       setSubmitting(true);
-      (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+      (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
         title: '提交中...'
       });
       try {
@@ -342562,21 +342743,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/services/user").changeWithdrawalBankCard)({
           cardType: String(currentCardType != null ? currentCardType : ''),
           cardImageUrl: cardImageUrl,
-          cardName: cardName,
-          cardNo: cardNo.trim(),
-          bankCode: (selectedBank == null ? void 0 : selectedBank.bankCode) || '',
-          bankName: (selectedBank == null ? void 0 : selectedBank.bankName) || '',
-          branchName: openBranch.trim(),
-          branchCode: selectedBranchCode,
-          province: selectedProvinceCode,
-          city: selectedCityCode,
-          district: selectedDistrictCode,
-          mobile: mobile.trim(),
-          smsCode: verifyCodeText
-        });
-        console.log('changeWithdrawalBankCard res', {
-          cardType: String(currentCardType != null ? currentCardType : ''),
-          cardImageUrl: cardImageUrl,
+          backImageUrl: backImageUrl,
           cardName: cardName,
           cardNo: cardNo.trim(),
           bankCode: (selectedBank == null ? void 0 : selectedBank.bankCode) || '',
@@ -342590,31 +342757,31 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           smsCode: verifyCodeText
         });
         if (res != null && res.success) {
-          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '换绑申请已提交',
             icon: 'success'
           });
           navigation.goBack();
           return;
         }
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: (res == null ? void 0 : res.msg) || (res == null ? void 0 : res.message) || '提交失败',
           icon: 'info'
         });
       } catch (_unused5) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '提交失败',
           icon: 'info'
         });
       } finally {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
         setSubmitting(false);
       }
     }), [submitDisabled, submitting, verifyCode, (_route$params7 = route.params) == null ? void 0 : _route$params7.loginType, cardFrontUri, cardBackUri, currentCardType, currentRegName, cardNo, selectedBank == null ? void 0 : selectedBank.bankCode, selectedBank == null ? void 0 : selectedBank.bankName, openBranch, selectedBranchCode, selectedProvinceCode, selectedCityCode, selectedDistrictCode, mobile, navigation]);
     var onPressRetryEdit = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       if (echoingForm) return;
       setEchoingForm(true);
-      (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+      (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
         title: '加载中...'
       });
       try {
@@ -342622,7 +342789,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var detail = res == null ? void 0 : res.data;
         console.log('echoWithdrawalBankCard res', detail);
         if (!(res != null && res.success) || !detail) {
-          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: (res == null ? void 0 : res.msg) || (res == null ? void 0 : res.message) || '回显失败',
             icon: 'info'
           });
@@ -342677,12 +342844,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         setStatusReason(String((detail == null ? void 0 : detail.rejectReason) || statusReason || ''));
         setStatusValue(0);
       } catch (_unused6) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '回显失败',
           icon: 'info'
         });
       } finally {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
         setEchoingForm(false);
       }
     }), [buildAddressText, echoingForm, getBankIcon, statusReason]);
@@ -342692,7 +342859,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         cityCode = _addressPickerValues[1],
         districtCode = _addressPickerValues[2];
       if (!provinceCode || !cityCode || !districtCode) {
-        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '请选择完整开户地址',
           icon: 'info'
         });
@@ -342718,6 +342885,41 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       if (type === 'front') setCardFrontUri(uri);
       if (type === 'back') setCardBackUri(uri);
     }, []);
+    var uploadPickedCardImage = (0, _react.useCallback)(/*#__PURE__*/function () {
+      var _ref9 = (0, _asyncToGenerator2.default)(function* (type, asset) {
+        if (!(asset != null && asset.uri)) return;
+        (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+          title: '上传中...'
+        });
+        try {
+          var _uploadRes$data;
+          var uploadRes = yield (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").tencentUpload)({
+            file: asset.uri,
+            filename: asset.fileName || `bank_card_${type}.jpg`,
+            index: asset.fileSize || 0
+          });
+          var location = uploadRes == null || (_uploadRes$data = uploadRes.data) == null ? void 0 : _uploadRes$data.Location;
+          if (!(uploadRes != null && uploadRes.success) || !location) {
+            (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: '银行卡图片上传失败',
+              icon: 'info'
+            });
+            return;
+          }
+          setPickedCardUri(type, `https://${location}`);
+        } catch (_unused7) {
+          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: '银行卡图片上传失败',
+            icon: 'info'
+          });
+        } finally {
+          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+        }
+      });
+      return function (_x2, _x3) {
+        return _ref9.apply(this, arguments);
+      };
+    }(), [setPickedCardUri]);
     var ensureCameraPermission = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       if (_reactNative.Platform.OS !== 'android') return true;
       try {
@@ -342729,21 +342931,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           buttonNeutral: '稍后'
         });
         return granted === _reactNative.PermissionsAndroid.RESULTS.GRANTED;
-      } catch (_unused7) {
+      } catch (_unused8) {
         return false;
       }
     }), []);
     var pickFromCamera = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref0 = (0, _asyncToGenerator2.default)(function* (type) {
+      var _ref1 = (0, _asyncToGenerator2.default)(function* (type) {
         var ok = yield ensureCameraPermission();
         if (!ok) {
-          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '未获得相机权限',
             icon: 'info'
           });
           return;
         }
-        (0, _$$_REQUIRE(_dependencyMap[14], "react-native-image-picker").launchCamera)({
+        (0, _$$_REQUIRE(_dependencyMap[15], "react-native-image-picker").launchCamera)({
           mediaType: 'photo',
           quality: 0.8,
           saveToPhotos: false
@@ -342751,30 +342953,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var _response$assets;
           if (response.didCancel) return;
           if (response.errorCode || response.errorMessage) {
-            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: response.errorMessage || '拍照失败',
               icon: 'info'
             });
             return;
           }
-          var uri = (_response$assets = response.assets) == null || (_response$assets = _response$assets[0]) == null ? void 0 : _response$assets.uri;
-          if (!uri) {
-            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          var asset = (_response$assets = response.assets) == null ? void 0 : _response$assets[0];
+          if (!(asset != null && asset.uri)) {
+            (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: '未获取到图片',
               icon: 'info'
             });
             return;
           }
-          setPickedCardUri(type, uri);
+          void uploadPickedCardImage(type, asset);
         });
       });
-      return function (_x2) {
-        return _ref0.apply(this, arguments);
+      return function (_x4) {
+        return _ref1.apply(this, arguments);
       };
-    }(), [ensureCameraPermission, setPickedCardUri]);
+    }(), [ensureCameraPermission, uploadPickedCardImage]);
     var pickFromAlbum = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref1 = (0, _asyncToGenerator2.default)(function* (type) {
-        var photoPermission = yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils/permissions").checkPhotoPermission)();
+      var _ref10 = (0, _asyncToGenerator2.default)(function* (type) {
+        var photoPermission = yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils/permissions").checkPhotoPermission)();
         if (!photoPermission.granted) {
           if (photoPermission.canOpenSettings) {
             _reactNative.Alert.alert('需要相册权限', photoPermission.message || '相册权限已被永久拒绝，请前往设置开启', [{
@@ -342783,8 +342985,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }, {
               text: '去设置',
               onPress: function onPress() {
-                (0, _$$_REQUIRE(_dependencyMap[16], "react-native-permissions").openSettings)().catch(function () {
-                  (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                (0, _$$_REQUIRE(_dependencyMap[17], "react-native-permissions").openSettings)().catch(function () {
+                  (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                     title: '无法打开设置',
                     icon: 'info'
                   });
@@ -342792,14 +342994,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }
             }]);
           } else {
-            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: photoPermission.message || '相册权限被拒绝',
               icon: 'info'
             });
           }
           return;
         }
-        (0, _$$_REQUIRE(_dependencyMap[14], "react-native-image-picker").launchImageLibrary)({
+        (0, _$$_REQUIRE(_dependencyMap[15], "react-native-image-picker").launchImageLibrary)({
           mediaType: 'photo',
           selectionLimit: 1,
           quality: 0.8
@@ -342807,35 +343009,35 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var _response$assets2;
           if (response.didCancel) return;
           if (response.errorCode || response.errorMessage) {
-            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: response.errorMessage || '选择失败',
               icon: 'info'
             });
             return;
           }
-          var uri = (_response$assets2 = response.assets) == null || (_response$assets2 = _response$assets2[0]) == null ? void 0 : _response$assets2.uri;
-          if (!uri) {
-            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          var asset = (_response$assets2 = response.assets) == null ? void 0 : _response$assets2[0];
+          if (!(asset != null && asset.uri)) {
+            (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: '未获取到图片',
               icon: 'info'
             });
             return;
           }
-          setPickedCardUri(type, uri);
+          void uploadPickedCardImage(type, asset);
         });
       });
-      return function (_x3) {
-        return _ref1.apply(this, arguments);
+      return function (_x5) {
+        return _ref10.apply(this, arguments);
       };
-    }(), [setPickedCardUri]);
+    }(), [uploadPickedCardImage]);
     var onPickImage = (0, _react.useCallback)(function (type) {
       if (pickerBusyRef.current) return;
       pickerBusyRef.current = true;
-      _$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").ActionSheet.showActionSheetWithOptions({
+      _$$_REQUIRE(_dependencyMap[18], "@ant-design/react-native").ActionSheet.showActionSheetWithOptions({
         options: ['拍照', '从相册选择', '取消'],
         cancelButtonIndex: 2
       }, /*#__PURE__*/function () {
-        var _ref10 = (0, _asyncToGenerator2.default)(function* (index) {
+        var _ref11 = (0, _asyncToGenerator2.default)(function* (index) {
           try {
             if (index === undefined || index === 2) return;
             if (index === 0) {
@@ -342849,17 +343051,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             pickerBusyRef.current = false;
           }
         });
-        return function (_x4) {
-          return _ref10.apply(this, arguments);
+        return function (_x6) {
+          return _ref11.apply(this, arguments);
         };
       }());
     }, [pickFromAlbum, pickFromCamera]);
-    var Radio = function Radio(_ref11) {
-      var label = _ref11.label,
-        active = _ref11.active,
-        onPress = _ref11.onPress;
+    var Radio = function Radio(_ref12) {
+      var label = _ref12.label,
+        active = _ref12.active,
+        onPress = _ref12.onPress;
       return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
-        activeOpacity: 0.85,
+        activeOpacity: 1,
         style: _styles.default.radioItem,
         onPress: onPress,
         children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
@@ -342867,7 +343069,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           children: active ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
             name: "tick-white",
             color: "#FFFFFF",
-            size: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
+            size: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
           }) : null
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
           style: _styles.default.radioText,
@@ -342877,12 +343079,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     var statusIconUri = isReviewing ? 'https://g.18qjz.cn/img/boklock/wallet/img_wait.png' : 'https://g.18qjz.cn/img/boklock/wallet/img_wrong.png';
     var statusTitle = isReviewing ? '审核中' : '审核失败';
-    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
       backgroundColor: "#f3f4f7",
       statusBarStyle: "dark-content",
       statusBarBackgroundColor: "#FFFFFF",
       safeAreaEdges: ['top', 'bottom'],
-      scrollable: false,
+      scrollable: true,
       pageNavProps: {
         text: isReviewing ? '审核中' : isReviewFailed ? '审核失败' : '换绑银行卡',
         showBack: true,
@@ -342937,7 +343139,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.ScrollView, {
           style: _styles.default.scroll,
           contentContainerStyle: _styles.default.content,
-          showsVerticalScrollIndicator: false,
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
             style: _styles.default.sectionTitle,
             children: "\u5230\u8D26\u7C7B\u578B"
@@ -342990,7 +343191,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 style: _styles.default.uploadPlaceholder,
                 children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                   name: "camera",
-                  size: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
+                  size: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
                   color: "#C4C4C4"
                 })
               })]
@@ -343027,7 +343228,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 style: _styles.default.uploadPlaceholder,
                 children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                   name: "camera",
-                  size: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
+                  size: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
                   color: "#C4C4C4"
                 })
               })]
@@ -343059,9 +343260,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _styles.default.formRow,
               activeOpacity: 0.85,
               onPress: function onPress() {
-                setBankKeyword('');
                 setBankPopupVisible(true);
-                void fetchHuiFuBanks(true);
               },
               children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
                 style: _styles.default.formLabel,
@@ -343069,7 +343268,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: _styles.default.required,
                   children: "*"
                 }), "\u94F6\u884C\u540D\u79F0"]
-              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/components").Flex, {
                 align: "center",
                 style: {
                   flex: 1
@@ -343080,7 +343279,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   children: (selectedBank == null ? void 0 : selectedBank.bankName) || '请选择银行名称'
                 }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                   name: "a-headfor-20",
-                  size: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
+                  size: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
                   color: "#333333"
                 })]
               })]
@@ -343088,14 +343287,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _styles.default.formRow,
               activeOpacity: 0.85,
               onPress: function onPress() {
-                if (!cityAreaTree.length) {
-                  (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-                    title: '开户地址加载中，请稍后重试',
-                    icon: 'info'
-                  });
-                  return;
+                if (!cityAreaTree.length && !loadingAddressList) {
+                  void fetchCityAreaTree();
                 }
-                setAddressPickerValues(getDefaultAreaValues(cityAreaTree));
+                var areaValues = getDefaultAreaValues(cityAreaTree);
+                var defaultValues = areaValues.length > 0 ? areaValues : getDefaultAddressPickerValues(cityAreaTree);
+                setAddressPickerValues(defaultValues);
                 setAddressPopupVisible(true);
               },
               children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
@@ -343104,7 +343301,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: _styles.default.required,
                   children: "*"
                 }), "\u94F6\u884C\u5F00\u6237\u5730\u5740"]
-              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/components").Flex, {
                 align: "center",
                 style: {
                   flex: 1
@@ -343115,7 +343312,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   children: openAddress || '请选择开户地址'
                 }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                   name: "a-headfor-20",
-                  size: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
+                  size: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
                   color: "#333333"
                 })]
               })]
@@ -343124,7 +343321,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               activeOpacity: 0.85,
               onPress: function onPress() {
                 if (!(selectedBank != null && selectedBank.bankName)) {
-                  (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                  (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                     title: '请先选择银行名称',
                     icon: 'info'
                   });
@@ -343140,7 +343337,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   style: _styles.default.required,
                   children: "*"
                 }), "\u94F6\u884C\u5F00\u6237\u884C"]
-              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+              }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/components").Flex, {
                 align: "center",
                 style: {
                   flex: 1
@@ -343151,7 +343348,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                   children: openBranch || '请选择开户行'
                 }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                   name: "a-headfor-20",
-                  size: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
+                  size: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
                   color: "#333333"
                 })]
               })]
@@ -343208,7 +343405,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               })]
             })]
           })]
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/components").Popup, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/components").Popup, {
           visible: bankPopupVisible,
           onClose: function onClose() {
             return setBankPopupVisible(false);
@@ -343221,7 +343418,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _styles.default.searchWrap,
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                 name: "search",
-                size: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
+                size: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
                 color: "#B5B5B5"
               }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TextInput, {
                 value: bankKeyword,
@@ -343230,105 +343427,119 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 placeholderTextColor: "#CCCCCC",
                 style: _styles.default.searchInput
               })]
-            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.ScrollView, {
-              style: _styles.default.popupList,
-              showsVerticalScrollIndicator: false,
-              children: [bankList.map(function (item) {
-                return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
-                  activeOpacity: 0.85,
-                  style: _styles.default.popupItem,
-                  onPress: function onPress() {
-                    setSelectedBankId(item.id);
-                    setOpenBranch('');
-                    setSelectedBranchCode('');
-                    setBankPopupVisible(false);
-                  },
-                  children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/components").Flex, {
-                    align: "center",
-                    gap: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
-                    children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
-                      source: {
-                        uri: item.icon
-                      },
-                      style: _styles.default.bankIcon
-                    }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                      style: _styles.default.bankName,
-                      children: item.bankName
-                    })]
-                  }), selectedBankId === item.id ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
-                    style: {
-                      width: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
-                      height: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+              style: _styles.default.popupListWrap,
+              children: loadingBankList || !bankPopupContentReady ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_index.default, {}) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.FlatList, {
+                data: bankList,
+                style: _styles.default.popupList,
+                keyExtractor: function keyExtractor(item) {
+                  return item.id;
+                },
+                initialNumToRender: 12,
+                maxToRenderPerBatch: 12,
+                windowSize: 5,
+                removeClippedSubviews: true,
+                keyboardShouldPersistTaps: "handled",
+                extraData: selectedBankId,
+                renderItem: function renderItem(_ref13) {
+                  var item = _ref13.item;
+                  return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+                    activeOpacity: 0.85,
+                    style: _styles.default.popupItem,
+                    onPress: function onPress() {
+                      setBankPopupVisible(false);
+                      _reactNative.InteractionManager.runAfterInteractions(function () {
+                        setSelectedBankId(item.id);
+                        setOpenBranch('');
+                        setSelectedBranchCode('');
+                        setBankKeyword('');
+                      });
                     },
-                    source: {
-                      uri: 'https://g.18qjz.cn/img/boklock/wallet/img_checked.png'
-                    }
-                  }) : null]
-                }, item.id);
-              }), bankList.length === 0 ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-                style: _styles.default.emptyWrap,
-                children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                  style: _styles.default.emptyText,
-                  children: "\u672A\u641C\u7D22\u5230\u76F8\u5173\u94F6\u884C"
+                    children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/components").Flex, {
+                      align: "center",
+                      gap: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
+                      children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
+                        source: {
+                          uri: item.icon
+                        },
+                        style: _styles.default.bankIcon
+                      }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                        style: _styles.default.bankName,
+                        children: item.bankName
+                      })]
+                    }), selectedBankId === item.id ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
+                      style: {
+                        width: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
+                        height: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
+                      },
+                      source: {
+                        uri: 'https://g.18qjz.cn/img/boklock/wallet/img_checked.png'
+                      }
+                    }) : null]
+                  });
+                },
+                ListEmptyComponent: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+                  style: _styles.default.emptyWrap,
+                  children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                    style: _styles.default.emptyText,
+                    children: "\u672A\u641C\u7D22\u5230\u76F8\u5173\u94F6\u884C"
+                  })
                 })
-              }) : null]
+              })
             })]
           })
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/components").Popup, {
+        }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/components").Popup, {
           visible: addressPopupVisible,
           onClose: function onClose() {
             return setAddressPopupVisible(false);
           },
           title: "\u8BF7\u9009\u62E9",
           showClose: false,
-          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-            style: _styles.default.addressPickerPopupWrap,
-            children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-              style: _styles.default.addressPickerHeader,
-              children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-                activeOpacity: 0.85,
-                style: {
-                  width: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(60)
-                },
-                onPress: function onPress() {
-                  return setAddressPopupVisible(false);
-                },
-                children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                  style: _styles.default.addressPickerCancelText,
-                  children: "\u53D6\u6D88"
-                })
-              }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-                style: {
-                  width: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(60)
-                },
-                activeOpacity: 0.85,
-                onPress: handleConfirmAddressPicker,
-                children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                  style: _styles.default.addressPickerConfirmText,
-                  children: "\u5B8C\u6210"
-                })
-              })]
-            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-              style: _styles.default.addressPickerBody,
-              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "@ant-design/react-native").PickerView, {
-                data: cityAreaTree,
-                cols: 3,
-                cascade: true,
-                value: addressPickerValues,
-                itemHeight: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(52),
-                numberOfLines: 1,
-                style: {
-                  height: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(220)
-                },
-                indicatorStyle: _styles.default.addressPickerIndicator,
-                itemStyle: _styles.default.addressPickerItemText,
-                onChange: function onChange(values) {
-                  setAddressPickerValues(values || []);
-                }
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+            style: _styles.default.addressPickerHeader,
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+              activeOpacity: 0.85,
+              style: {
+                width: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(60)
+              },
+              onPress: function onPress() {
+                return setAddressPopupVisible(false);
+              },
+              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _styles.default.addressPickerCancelText,
+                children: "\u53D6\u6D88"
+              })
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+              style: {
+                width: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(60)
+              },
+              activeOpacity: 0.85,
+              onPress: handleConfirmAddressPicker,
+              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _styles.default.addressPickerConfirmText,
+                children: "\u5B8C\u6210"
               })
             })]
-          })
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/components").Popup, {
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+            style: _styles.default.addressPickerBody,
+            children: loadingAddressList ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_index.default, {}) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[18], "@ant-design/react-native").PickerView, {
+              data: cityAreaTree,
+              cols: 3,
+              cascade: true,
+              value: addressPickerValues,
+              itemHeight: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(52),
+              numberOfLines: 1,
+              style: {
+                height: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(220)
+              },
+              indicatorStyle: _styles.default.addressPickerIndicator,
+              itemStyle: _styles.default.addressPickerItemText,
+              onChange: function onChange(values) {
+                setAddressPickerValues(values || []);
+              }
+            })
+          })]
+        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/components").Popup, {
           visible: branchPopupVisible,
           onClose: function onClose() {
             return setBranchPopupVisible(false);
@@ -343341,7 +343552,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _styles.default.searchWrap,
               children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                 name: "search",
-                size: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
+                size: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
                 color: "#B5B5B5"
               }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TextInput, {
                 value: branchKeyword,
@@ -343350,45 +343561,59 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 placeholderTextColor: "#CCCCCC",
                 style: _styles.default.searchInput
               })]
-            }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.ScrollView, {
-              style: _styles.default.popupList,
-              showsVerticalScrollIndicator: false,
-              children: [branchOptions.map(function (item) {
-                return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
-                  activeOpacity: 0.85,
-                  style: _styles.default.popupItem,
-                  onPress: function onPress() {
-                    setOpenBranch(item.bankName);
-                    setSelectedBranchCode(item.bankCode);
-                    setBranchPopupVisible(false);
-                  },
-                  children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                    style: _styles.default.bankName,
-                    children: item.bankName
-                  }), selectedBranchCode === item.bankCode ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
-                    style: {
-                      width: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
-                      height: (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+              style: _styles.default.popupListWrap,
+              children: loadingBranchList ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_index.default, {}) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.FlatList, {
+                data: branchOptions,
+                style: _styles.default.popupList,
+                keyExtractor: function keyExtractor(item) {
+                  return item.id;
+                },
+                initialNumToRender: 12,
+                maxToRenderPerBatch: 12,
+                windowSize: 5,
+                removeClippedSubviews: true,
+                keyboardShouldPersistTaps: "handled",
+                extraData: selectedBranchCode,
+                renderItem: function renderItem(_ref14) {
+                  var item = _ref14.item;
+                  return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+                    activeOpacity: 0.85,
+                    style: _styles.default.popupItem,
+                    onPress: function onPress() {
+                      setBranchPopupVisible(false);
+                      setOpenBranch(item.bankName);
+                      setSelectedBranchCode(item.bankCode);
                     },
-                    source: {
-                      uri: 'https://g.18qjz.cn/img/boklock/wallet/img_checked.png'
-                    }
-                  }) : null]
-                }, item.id);
-              }), branchOptions.length === 0 ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-                style: _styles.default.emptyWrap,
-                children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                  style: _styles.default.emptyText,
-                  children: "\u672A\u641C\u7D22\u5230\u76F8\u5173\u5F00\u6237\u884C"
+                    children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                      style: _styles.default.bankName,
+                      children: item.bankName
+                    }), selectedBranchCode === item.bankCode ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
+                      style: {
+                        width: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
+                        height: (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
+                      },
+                      source: {
+                        uri: 'https://g.18qjz.cn/img/boklock/wallet/img_checked.png'
+                      }
+                    }) : null]
+                  });
+                },
+                ListEmptyComponent: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+                  style: _styles.default.emptyWrap,
+                  children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                    style: _styles.default.emptyText,
+                    children: "\u672A\u641C\u7D22\u5230\u76F8\u5173\u5F00\u6237\u884C"
+                  })
                 })
-              }) : null]
+              })
             })]
           })
         })]
       })
     });
   }
-},2066,[1,7,2,25,42,3,1370,2067,88,1080,1654,2068,1183,1213,1663,1190,1191,559,556,1548],"src\\pages\\rcvPayment\\changeBank\\index.tsx");
+},2066,[1,7,2,25,42,3,1370,2067,1622,88,1080,1654,2068,1213,1183,1663,1190,1191,559,556,1548],"src\\pages\\rcvPayment\\changeBank\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -343464,7 +343689,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#333333'
     },
     radioText: {
-      color: '#333333',
+      color: 'rgba(33,33,33,0.8)',
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(15)
     },
     innerDivider: {
@@ -343505,8 +343730,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       position: 'relative'
     },
     bankCardImage: {
-      width: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(76),
-      height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(50),
+      width: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(64),
+      height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(64),
       borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
     },
     imageClose: {
@@ -343555,7 +343780,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     formValue: {
       color: '#333333',
-      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14)
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14),
+      maxWidth: '90%'
     },
     placeholderText: {
       color: '#CCCCCC'
@@ -343614,9 +343840,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontWeight: '500'
     },
     popupWrap: {
+      position: 'relative',
       paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
       paddingBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(14),
       minHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(220)
+    },
+    popupListWrap: {
+      position: 'relative'
     },
     searchWrap: {
       height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(40),
@@ -343636,6 +343866,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     popupList: {
       maxHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(340)
+    },
+    popupLoadingMask: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(255,255,255,0.88)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 10,
+      elevation: 10
+    },
+    popupLoading: {
+      minHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(160)
     },
     popupItem: {
       height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(39),
@@ -343678,10 +343923,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#333333',
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(15)
     },
-    addressPickerPopupWrap: {
-      position: 'relative',
-      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(-14)
-    },
     addressPickerHeader: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -343712,6 +343953,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#FFFFFF',
       paddingBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
     },
+    addressPickerBodyWrap: {
+      position: 'relative'
+    },
     addressPickerIndicator: {
       borderTopWidth: 1,
       borderBottomWidth: 1,
@@ -343732,8 +343976,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginRight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6)
     },
     radioIconWrapActive: {
-      borderColor: '#333333',
-      backgroundColor: '#333333'
+      borderColor: 'rgba(33,33,33,0.8)',
+      backgroundColor: 'rgba(33,33,33,0.8)'
     },
     statusWrap: {
       flex: 1,
@@ -343785,15 +344029,23 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.STATE_COLOR = exports.PROGRESS_IMAGE = exports.BANK_INFO = void 0;
   var BANK_INFO = exports.BANK_INFO = {
     工商银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-gongshang.png',
+    中国工商银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-gongshang.png',
     建设银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-jianshe.png',
+    中国建设银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-jianshe.png',
     交通银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-jiaotong.png',
+    中国交通银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-jiaotong.png',
     民生银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-minsheng.png',
+    中国民生银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-minsheng.png',
     农业银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-nongye.png',
+    中国农业银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-nongye.png',
     上海浦东发展银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-pufa.png',
     通用银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-tongyong.png',
     兴业银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-xingye.png',
+    中国兴业银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-xingye.png',
     邮政银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-youzheng.png',
+    中国邮政银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-youzheng.png',
     招商银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-zhaoshang.png',
+    中国招商银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-zhaoshang.png',
     中国银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-zhongguo.png',
     中信银行: 'https://g.18qjz.cn/img/boklock/wallet/bankIcon/bank-zhongxin.png'
   };
@@ -344588,7 +344840,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var bankCard = (bankCardList == null ? void 0 : bankCardList.find(function (item) {
       return (item == null ? void 0 : item.id) === selectedBankCardId;
     })) || (bankCardList == null ? void 0 : bankCardList[0]);
-    var bankImage = bankCard != null && bankCard.bankName ? _$$_REQUIRE(_dependencyMap[17], "../constants").BANK_INFO[bankCard == null ? void 0 : bankCard.bankName] : '';
+    var bankImage = bankCard != null && bankCard.bankName && _$$_REQUIRE(_dependencyMap[17], "../constants").BANK_INFO[bankCard == null ? void 0 : bankCard.bankName] ? _$$_REQUIRE(_dependencyMap[17], "../constants").BANK_INFO[bankCard == null ? void 0 : bankCard.bankName] : _$$_REQUIRE(_dependencyMap[17], "../constants").BANK_INFO['通用银行'];
     var formatAmountInput = function formatAmountInput(text) {
       var sanitized = (text || '').replace(/[^\d.]/g, '');
       if (!sanitized) return '';
@@ -344764,6 +345016,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_PageContainer.default, {
       backgroundColor: "#F5F6FA",
       safeAreaEdges: ['top'],
+      scrollable: _reactNative.Platform.OS === 'ios',
       pageNavProps: {
         text: '提现',
         showBack: true
@@ -344805,7 +345058,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
                 ref: amountInputRef,
                 value: amount,
                 onChangeText: handleChangeAmount,
-                placeholder: "\u8BF7\u8F93\u5165",
+                placeholder: "\u8BF7\u8F93\u5165\u63D0\u73B0\u91D1\u989D",
                 placeholderTextColor: "#B9B9B9",
                 keyboardType: "decimal-pad",
                 onPressIn: handleAmountInputPressIn,
@@ -344894,7 +345147,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               showsVerticalScrollIndicator: false,
               children: (bankCardList || []).map(function (item) {
                 var _item$cardNo;
-                var itemImage = item != null && item.bankName ? _$$_REQUIRE(_dependencyMap[17], "../constants").BANK_INFO[item == null ? void 0 : item.bankName] : '';
+                var itemImage = item != null && item.bankName && _$$_REQUIRE(_dependencyMap[17], "../constants").BANK_INFO[item == null ? void 0 : item.bankName] ? _$$_REQUIRE(_dependencyMap[17], "../constants").BANK_INFO[item == null ? void 0 : item.bankName] : _$$_REQUIRE(_dependencyMap[17], "../constants").BANK_INFO['通用银行'];
                 var active = pendingBankCardId === (item == null ? void 0 : item.id);
                 var status = bankStatusMap[Number((item == null ? void 0 : item.status) || 2)];
                 return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
@@ -345086,16 +345339,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(14)
     },
     currency: {
-      color: '#1F1F1F',
+      color: '#333',
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(20),
       fontWeight: '800',
       marginRight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
     },
     amountInput: {
       flex: 1,
-      color: '#1F1F1F',
+      color: '#333',
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(20),
-      fontWeight: '600',
+      // fontWeight: '500',
       paddingVertical: 0
     },
     fillAllText: {
@@ -345457,6 +345710,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         try {
           var res = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/services/order").getAfterSaleRedDotCount)({});
+          console.log(res, 'rrrr');
           if (res != null && res.success) {
             setAftersaleBadge(Number((res == null ? void 0 : res.data) || 0));
             return;
@@ -345652,27 +345906,27 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             style: _styles.default.statusTabsWrap,
             children: statusTabs.map(function (tab, index) {
               var active = activeStatusTab === index;
-              return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+              return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
                 style: [_styles.default.tabItemBox, index == 0 && {
                   paddingLeft: (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(0)
                 }],
-                children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+                children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
                   style: [_styles.default.statusTab, active ? _styles.default.statusTabActive : null],
                   onPress: function onPress() {
                     return handleStatusTabChange(index);
                   },
                   activeOpacity: 0.85,
-                  children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                  children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
                     style: active ? _styles.default.statusTabTextActive : _styles.default.statusTabText,
                     children: tab.name
-                  }), activeOrderType === 1 && tab.id === 4 && aftersaleBadge > 0 ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-                    style: _styles.default.statusBadge,
-                    children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                      style: _styles.default.statusBadgeText,
-                      children: aftersaleBadge > 99 ? '99+' : aftersaleBadge
-                    })
-                  }) : null]
-                })
+                  })
+                }), activeOrderType === 1 && tab.id === 4 && aftersaleBadge > 0 ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+                  style: _styles.default.statusBadge,
+                  children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                    style: _styles.default.statusBadgeText,
+                    children: aftersaleBadge > 99 ? '99+' : aftersaleBadge
+                  })
+                }) : null]
               }, tab.name);
             })
           })
@@ -345793,8 +346047,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     statusBadge: {
       position: 'absolute',
-      top: -(0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6),
-      right: -(0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6),
+      top: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
+      right: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(0),
       minWidth: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
       height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
       borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(9),
@@ -345875,13 +346129,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     },
     redDot: {
       position: 'absolute',
-      top: -(0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
-      right: -(0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(18),
+      top: -(0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
+      right: -(0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
       width: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
       height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
       borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(5),
       backgroundColor: '#FF2B24',
-      zIndex: 999
+      zIndex: 9999
     }
   });
 },2076,[3,556],"src\\pages\\myOrder\\styles.ts");
@@ -345940,7 +346194,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var orderType = ((_route$params2 = route.params) == null ? void 0 : _route$params2.orderType) || routeItem.orderType || 'expense';
     var orderNo = String(((_route$params3 = route.params) == null ? void 0 : _route$params3.orderNo) || routeItem.orderNo || '');
     var detail = (0, _react.useMemo)(function () {
-      var _detailData$currentFe, _detailData$currentFe2, _detailData$orderAmou, _detailData$orderAmou2, _detailData$reduceAmo, _detailData$reduceAmo2, _detailData$payAmount, _detailData$payAmount2, _detailData$payAmount3, _detailData$payAmount4, _detailData$refundAmo, _detailData$refundAmo2, _detailData$refundAmo3, _detailData$refundAmo4;
+      var _detailData$currentFe, _detailData$currentFe2, _detailData$orderAmou, _detailData$orderAmou2, _detailData$reduceAmo, _detailData$reduceAmo2, _detailData$payAmount, _detailData$payAmount2, _detailData$payAmount3, _detailData$payAmount4, _detailData$refundAmo, _detailData$refundAmo2, _detailData$afsApplyA, _detailData$afsApplyA2, _detailData$refundAmo3, _detailData$refundAmo4;
       if (!detailData) return null;
       console.log(detailData, '===detailData===');
       var orderStatusText = STATUS_MAP[detailData.tabStatus] || '';
@@ -345974,7 +346228,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         payTime: detailData.payTime ? (0, _dayjs.default)(detailData.payTime).format('YYYY-MM-DD HH:mm:ss') : undefined,
         aftersaleStartTime: detailData.afsApplyTime ? (0, _dayjs.default)(detailData.afsApplyTime).format('YYYY-MM-DD HH:mm:ss') : undefined,
         aftersaleReason: detailData.afsReason || undefined,
-        refundedAmount: detailData.refundAmount !== undefined ? `${(_detailData$refundAmo3 = (_detailData$refundAmo4 = detailData.refundAmount) == null ? void 0 : _detailData$refundAmo4.toFixed(2)) != null ? _detailData$refundAmo3 : 0}元` : undefined
+        afsApplyAmount: detailData.afsApplyAmount !== undefined ? `${(_detailData$afsApplyA = (_detailData$afsApplyA2 = detailData.afsApplyAmount) == null ? void 0 : _detailData$afsApplyA2.toFixed(2)) != null ? _detailData$afsApplyA : 0}元` : undefined,
+        refundedAmount: detailData.refundAmount !== undefined ? `${(_detailData$refundAmo3 = (_detailData$refundAmo4 = detailData.refundAmount) == null ? void 0 : _detailData$refundAmo4.toFixed(2)) != null ? _detailData$refundAmo3 : 0}元` : undefined,
+        afsCompleteTime: detailData.afsCompleteTime ? (0, _dayjs.default)(detailData.afsCompleteTime).format('YYYY-MM-DD HH:mm:ss') : undefined
       };
     }, [detailData, orderType]);
     var showPayBtn = detailData == null ? void 0 : detailData.canPay;
@@ -346021,14 +346277,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       void fetchDetail();
     }, [fetchDetail]);
     var submitUserRefund = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-      var _ref3, _ref4, _detailData$canRefund;
+      var _detailData$canRefund;
       if (submittingRefund) return;
       var reason = refundReason.trim();
       if (!reason) {
         setRefundReasonError('请输入售后原因');
         return;
       }
-      var applyRefundAmount = Number((_ref3 = (_ref4 = (_detailData$canRefund = detailData == null ? void 0 : detailData.canRefundAmount) != null ? _detailData$canRefund : detailData == null ? void 0 : detailData.orderAmount) != null ? _ref4 : detailData == null ? void 0 : detailData.currentFee) != null ? _ref3 : 0);
+      var applyRefundAmount = Number((_detailData$canRefund = detailData == null ? void 0 : detailData.canRefundAmount) != null ? _detailData$canRefund : 0);
       if (!applyRefundAmount || applyRefundAmount <= 0) {
         (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '暂无可退款金额',
@@ -346102,7 +346358,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       var amount = parseAmount(handleRefundAmount);
       var reason = handleRefundReason.trim();
       var hasError = false;
-      if (!handleRefundAmount.trim() || !amount || amount <= 0) {
+      if (!handleRefundAmount.trim() || amount < 0) {
         setHandleRefundAmountError('请输入退款金额');
         (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '请输入退款金额',
@@ -346227,7 +346483,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       value: detail.aftersaleReason
     }] : [])) : [];
     var toPay = /*#__PURE__*/function () {
-      var _ref6 = (0, _asyncToGenerator2.default)(function* () {
+      var _ref4 = (0, _asyncToGenerator2.default)(function* () {
         try {
           var _tokenRes$data;
           var tokenRes = yield (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/services/common").getMiniToken)({});
@@ -346263,7 +346519,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function toPay() {
-        return _ref6.apply(this, arguments);
+        return _ref4.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
@@ -346283,7 +346539,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         style: _$$_REQUIRE(_dependencyMap[15], "./styles").default.footerBtns,
         children: [showContactBtn ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
           activeOpacity: 0.85,
-          style: [_$$_REQUIRE(_dependencyMap[15], "./styles").default[(detail == null ? void 0 : detail.orderStatusText) !== '售后' ? 'footerBtn2' : 'footerBtn'], _$$_REQUIRE(_dependencyMap[15], "./styles").default.footerBtnGhost],
+          style: [_$$_REQUIRE(_dependencyMap[15], "./styles").default['footerBtn'], _$$_REQUIRE(_dependencyMap[15], "./styles").default.footerBtnGhost],
           onPress: function onPress() {
             return setContactPopupVisible(true);
           },
@@ -346383,7 +346639,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             style: _$$_REQUIRE(_dependencyMap[15], "./styles").default.refundDetailWrap,
             children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
               style: _$$_REQUIRE(_dependencyMap[15], "./styles").default.value,
-              children: (detail == null ? void 0 : detail.refundedAmount) || ''
+              children: detail != null && detail.afsCompleteTime ? (detail == null ? void 0 : detail.afsApplyAmount) || '' : ''
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
               activeOpacity: 0.85,
               style: _$$_REQUIRE(_dependencyMap[15], "./styles").default.refundDetailBtn,
@@ -346518,9 +346774,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           setHandleRefundAmountError('');
           setHandleRefundReasonError('');
         },
-        title: "\u5904\u7406\u9000\u6B3E"
-        // androidKeyboardMaxOffset={px(120)}
-        ,
+        title: "\u5904\u7406\u9000\u6B3E",
         showClose: true,
         children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
           style: _$$_REQUIRE(_dependencyMap[15], "./styles").default.popWrap,
@@ -346915,6 +347169,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       var _route$params2;
       if (Array.isArray(apiRecords) && apiRecords.length > 0) {
         return apiRecords.map(function (item, index) {
+          console.log('item', item);
           var statusList = Array.isArray(item == null ? void 0 : item.statusList) ? item.statusList : [];
           var firstStatus = statusList[0];
           var secondStatus = statusList[1];
@@ -346922,14 +347177,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var secondAmount = Number((secondStatus == null ? void 0 : secondStatus.amount) || 0);
           var firstText = firstStatus ? `${firstAmount}元${(firstStatus == null ? void 0 : firstStatus.statusDesc) || ''}` : '';
           var secondText = secondStatus ? `${secondAmount}元${(secondStatus == null ? void 0 : secondStatus.statusDesc) || ''}` : '';
+          var refuseRefund = (item == null ? void 0 : item.completeTime) && item.totalRefundAmount == 0;
           return {
             id: String((item == null ? void 0 : item.id) || (item == null ? void 0 : item.applyNo) || index),
             time: item != null && item.applyTime ? (0, _dayjs.default)(item.applyTime).format('YYYY-MM-DD HH:mm:ss') : '',
             applyAmount: Number((item == null ? void 0 : item.applyRefundAmount) || 0),
             reason: String((item == null ? void 0 : item.refundReason) || '--'),
-            resultText: secondText ? `${firstText}  ${secondText}` : firstText,
-            resultColor: getStatusColor(firstStatus == null ? void 0 : firstStatus.status),
-            secondColor: getStatusColor(secondStatus == null ? void 0 : secondStatus.status)
+            resultText: refuseRefund ? '商家拒绝退款' : item != null && item.completeTime ? secondText ? `${firstText}  ${secondText}` : firstText : `商家处理中`,
+            resultColor: refuseRefund ? '#FF2B24' : item != null && item.completeTime ? getStatusColor(firstStatus == null ? void 0 : firstStatus.status) : '#FF8C62',
+            secondColor: refuseRefund ? '#FF2B24' : item != null && item.completeTime ? getStatusColor(secondStatus == null ? void 0 : secondStatus.status) : '#FF8C62'
           };
         });
       }

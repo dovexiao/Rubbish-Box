@@ -2,6 +2,20 @@
 import { IconFontTTFName } from '@/iconfont/IconFontTTF';
 
 const harmonyPngMap: Partial<Record<IconFontTTFName, number>> = {
+  'icon_mute': require('../assets/harmony-icons/icon_mute.png'),
+  'icon_voice': require('../assets/harmony-icons/icon_voice.png'),
+  'bank-zhaoshang': require('../assets/harmony-icons/bank-zhaoshang.png'),
+  'bank-youzheng': require('../assets/harmony-icons/bank-youzheng.png'),
+  'bank-minsheng': require('../assets/harmony-icons/bank-minsheng.png'),
+  'bank-jianshe': require('../assets/harmony-icons/bank-jianshe.png'),
+  'bank-jiaotong': require('../assets/harmony-icons/bank-jiaotong.png'),
+  'bank-gongshang': require('../assets/harmony-icons/bank-gongshang.png'),
+  'bank-nongye': require('../assets/harmony-icons/bank-nongye.png'),
+  'bank-zhongxin': require('../assets/harmony-icons/bank-zhongxin.png'),
+  'bank-tongyong': require('../assets/harmony-icons/bank-tongyong.png'),
+  'bank-zhongguo': require('../assets/harmony-icons/bank-zhongguo.png'),
+  'bank-pufa': require('../assets/harmony-icons/bank-pufa.png'),
+  'bank-xingye': require('../assets/harmony-icons/bank-xingye.png'),
   'install-video': require('../assets/harmony-icons/install-video.png'),
   'time': require('../assets/harmony-icons/time.png'),
   'camera1': require('../assets/harmony-icons/camera1.png'),

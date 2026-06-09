@@ -24,7 +24,7 @@ import {
   sendWithdrawalSms,
 } from '@/services/user';
 import { useFocusEffect } from '@react-navigation/core';
-import { BANK_INFO, STATE_COLOR } from '../constants';
+import { BANK_INFO } from '../constants';
 import { hideLoading, showLoading } from '@/utils/index';
 import { cacheGet } from '@/utils/cache';
 import { useNavigation } from '@react-navigation/native';

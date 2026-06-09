@@ -17,7 +17,9 @@ export interface DeviceItemDTO {
   /*角色名称 */
   roleName: string;
   /*设备数 */
-  count: number;
+  count?: number;
+  /*设备数 */
+  groupCount?: number;
   /*设备图片 */
   imageUrl: string;
 }

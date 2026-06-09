@@ -62,6 +62,8 @@ import {
   showPermissionPromptIfNeeded,
 } from '@/utils/permissions';
 import { fontSize, px } from '@/utils/ui';
+import MyEmpty from '@/components/MyEmpty';
+import SimpleLoading from '@/components/SimpleLoading';
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
@@ -93,6 +95,7 @@ const DeviceInfo = () => {
     string | number | null
   >(null);
   const [chargeRuleList, setChargeRuleList] = useState<any[]>([]);
+  const [chargeRuleLoading, setChargeRuleLoading] = useState(true);
   const pageContainerRef = useRef<PageContainerRef>(null);
   const qrCodePopRef = useRef<PopCenterRef>(null);
   const batteryReminderRef = useRef<AnimationPopRef>(null);
@@ -132,6 +135,8 @@ const DeviceInfo = () => {
     } catch {
       showToast({ title: '加载收费规则失败', icon: 'info' });
       return [];
+    } finally {
+      setChargeRuleLoading(false);
     }
   }, []);
 
@@ -1042,27 +1047,39 @@ const DeviceInfo = () => {
         }
       >
         <View style={styles.chargeRulePickerPanel}>
-          <PickerView
-            data={chargeRuleList.map(option => ({
-              label: option.templateName,
-              value: option.id,
-            }))}
-            value={[
-              pendingChargeRuleId ??
-                selectedChargeRuleId ??
-                chargeRuleList[0]?.id,
-            ]}
-            cols={1}
-            cascade={false}
-            itemHeight={px(54)}
-            numberOfLines={1}
-            style={{ height: px(180) }}
-            indicatorStyle={styles.chargeRulePickerIndicator}
-            itemStyle={styles.chargeRulePickerItemText}
-            onChange={(values: Array<string | number>) => {
-              setPendingChargeRuleId(values?.[0] ?? pendingChargeRuleId);
-            }}
-          />
+          {chargeRuleLoading ? (
+            <SimpleLoading />
+          ) : chargeRuleList.length > 0 ? (
+            <PickerView
+              data={chargeRuleList.map(option => ({
+                label: option.templateName,
+                value: option.id,
+              }))}
+              value={[
+                pendingChargeRuleId ??
+                  selectedChargeRuleId ??
+                  chargeRuleList[0]?.id,
+              ]}
+              cols={1}
+              cascade={false}
+              itemHeight={px(54)}
+              numberOfLines={1}
+              style={{ height: px(180) }}
+              indicatorStyle={styles.chargeRulePickerIndicator}
+              itemStyle={styles.chargeRulePickerItemText}
+              onChange={(values: Array<string | number>) => {
+                setPendingChargeRuleId(values?.[0] ?? pendingChargeRuleId);
+              }}
+            />
+          ) : (
+            <View style={{ height: px(220) }}>
+              <MyEmpty
+                emptyText="暂无收费规则"
+                marginTop={px(20)}
+                paddingBottom={px(20)}
+              />
+            </View>
+          )}
         </View>
       </Popup>
 

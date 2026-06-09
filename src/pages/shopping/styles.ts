@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   tabContent: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F6F7FA',
     flex: 1,
     overflow: 'hidden',
   },

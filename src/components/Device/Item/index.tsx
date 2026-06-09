@@ -12,6 +12,9 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
   onSelect,
   onChangeName,
 }) => {
+  data.count = [null, undefined].includes(data.count as any)
+    ? data.groupCount
+    : data.count;
   return (
     <TouchableOpacity
       activeOpacity={0.8}
