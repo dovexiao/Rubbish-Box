@@ -314,4 +314,13 @@ export const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
   },
+  cardValueLinkText: {
+    color: '#333333',
+    fontSize: fontSize(14),
+    lineHeight: px(20),
+  },
+  pickerContent: {
+    marginTop: px(12),
+    backgroundColor: 'red',
+  },
 });

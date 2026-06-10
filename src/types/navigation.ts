@@ -41,6 +41,12 @@ export type RootStackParamList = {
   };
   Message: { lockId: number };
   MessageDetail: { msgId: number };
+  RemoteKeyUnbind: { lockId?: number; videoUrl?: string; posterUrl?: string };
+  RemoteKeyPairingVideo: {
+    lockId?: number;
+    videoUrl?: string;
+    posterUrl?: string;
+  };
 };
 
 export type MainTabParamList = {

@@ -46,4 +46,11 @@ export interface lockInfoProps {
 
   /*用电类型名称：0-续航版 1-市电款 2-均衡版 */
   powerTypeName: string;
+
+  has433Key: boolean;
+
+  keyCount: number;
+  resetTime: string;
+
+  buttonKeyFlag: boolean;
 }
