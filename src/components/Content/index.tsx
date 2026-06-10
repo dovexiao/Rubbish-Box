@@ -466,7 +466,6 @@ const Content: React.FC<ContentProps> = ({
   };
   const hasAutoOperate = detail?.powerType !== 1 && !detail?.isGroup;
   const hasOpenCoverOperate = detail?.powerType === 1 && detail.canOpenCover;
-  console.log(detail?.isGroup, hasAutoOperate, hasOpenCoverOperate);
 
   return (
     <View style={styles.contentBox}>

@@ -31,3 +31,4 @@ export { default as BluetoothStatus } from './bluetoothStatus';
 export { GlobalLoading } from './GlobalLoading';
 export { GlobalToast } from './GlobalToast';
 export { default as MediaCarousel } from './MediaCarousel';
+export { default as SimpleLoading } from './SimpleLoading';

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   ImageBackground,
   ImageSourcePropType,
+  KeyboardAvoidingView,
   Platform,
   StatusBar,
   View,
@@ -25,6 +26,7 @@ import StatusError from './StatusError';
 import StatusLogin from './StatusLogin';
 import { LOGIN } from '@/constants';
 import { useTheme } from '@/context/ThemeContext';
+import { SimpleLoading } from '@/components';
 import { px } from '@/utils/ui';
 
 /**
@@ -80,8 +82,10 @@ interface PageContainerProps {
   scrollable?: boolean;
   /** 键盘交互模式 */
   keyboardShouldPersistTaps?: 'always' | 'never' | 'handled';
-  /** 是否启用键盘避让视图 (暂未实装，预留接口) */
+  /** 是否启用键盘避让视图 */
   keyboardAvoidingView?: boolean;
+  /** 键盘避让时的顶部偏移量 */
+  keyboardVerticalOffset?: number;
 
   // --- 状态栏 ---
   /** 是否显示状态栏 */
@@ -104,6 +108,8 @@ interface PageContainerProps {
   // --- 状态展示 ---
   /** 是否处于加载中 */
   loading?: boolean;
+  /** 加载展示类型：遮罩层或内容区 */
+  loadingType?: 'overlay' | 'content';
   /** 加载中遮罩样式 */
   loadingStyle?: ViewStyle;
   /** 加载指示器颜色 */
@@ -159,6 +165,8 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       safeAreaEdges = ['top', 'bottom'],
       scrollable = false,
       keyboardShouldPersistTaps = 'handled',
+      keyboardAvoidingView = true,
+      keyboardVerticalOffset = 0,
       // 状态栏默认值
       statusBarStyle,
       statusBarBackgroundColor,
@@ -170,6 +178,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       pageNavProps,
       // 状态展示
       loading = false,
+      loadingType = 'overlay',
       loadingStyle,
       loadingIndicatorColor = '#333333',
       // loadingBackgroundColor = 'rgba(0,0,0,0.3)',
@@ -194,6 +203,8 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
     }));
 
     const [refreshing, setRefreshing] = useState(false);
+    const isOverlayLoading = loading && loadingType === 'overlay';
+    const isContentLoading = loading && loadingType === 'content';
 
     // 解析主题默认值
     const defaultBackgroundColor =
@@ -301,6 +312,10 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
     );
 
     const renderContent = useMemo(() => {
+      if (isContentLoading) {
+        return <SimpleLoading />;
+      }
+
       // A. 全屏错误展示
       if (error && fullScreenError) {
         const codeStr =
@@ -375,6 +390,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       reloadSeed,
       refreshing,
       onRefresh,
+      isContentLoading,
     ]);
 
     // 3. 安全区与背景图适配 (Safe Area & Background)
@@ -410,9 +426,59 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       return style;
     }, [backgroundImage, safeAreaEdges, insets]);
 
+    const renderMainStructure = useMemo(() => {
+      const mainContent = (
+        <View style={[styles.pageContainer, manualPaddingStyle]}>
+          {/* 头部区域 */}
+          {(header || pageNavProps) && (
+            <View style={styles.headerContainer}>{renderNavHeader}</View>
+          )}
+
+          {/* 内容区域 */}
+          {renderContent}
+
+          {/* 底部区域 */}
+          {footer && (
+            <View
+              style={[
+                styles.footerContainer,
+                Platform.OS !== 'ios' && {
+                  paddingBottom: insets.bottom + px(20),
+                },
+              ]}
+            >
+              {footer}
+            </View>
+          )}
+        </View>
+      );
+
+      if (!keyboardAvoidingView) return mainContent;
+
+      return (
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={keyboardVerticalOffset}
+        >
+          {mainContent}
+        </KeyboardAvoidingView>
+      );
+    }, [
+      footer,
+      header,
+      insets.bottom,
+      keyboardAvoidingView,
+      keyboardVerticalOffset,
+      manualPaddingStyle,
+      pageNavProps,
+      renderContent,
+      renderNavHeader,
+    ]);
+
     // 4. Loading 遮罩
     const renderLoading = () => {
-      if (!loading) return null;
+      if (!isOverlayLoading) return null;
       return (
         <View
           style={[
@@ -438,7 +504,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
           showStatusBar &&
           !!defaultStatusBarBackgroundColor &&
           defaultStatusBarBackgroundColor !== 'transparent' &&
-          !loading && (
+          !isOverlayLoading && (
             <View
               pointerEvents="none"
               style={{
@@ -458,7 +524,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
           <StatusBar
             barStyle={defaultStatusBarStyle}
             backgroundColor={
-              loading ? 'transparent' : defaultStatusBarBackgroundColor
+              isOverlayLoading ? 'transparent' : defaultStatusBarBackgroundColor
             }
             showHideTransition={'none'}
             // iOS 必须 translucent=true，才能让页面的兜底 View 覆盖状态栏区域
@@ -488,32 +554,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                 edges={finalEdges}
               >
                 {/* 页面主结构 */}
-                <View style={[styles.pageContainer, manualPaddingStyle]}>
-                  {/* 头部区域 */}
-                  {(header || pageNavProps) && (
-                    <View style={styles.headerContainer}>
-                      {renderNavHeader}
-                    </View>
-                  )}
-
-                  {/* 内容区域 */}
-                  {renderContent}
-
-                  {/* 底部区域 */}
-                  {footer && (
-                    <View
-                      style={[
-                        styles.footerContainer,
-                        // Android 底部额外 padding 适配
-                        Platform.OS !== 'ios' && {
-                          paddingBottom: insets.bottom + px(20),
-                        },
-                      ]}
-                    >
-                      {footer}
-                    </View>
-                  )}
-                </View>
+                {renderMainStructure}
               </SafeAreaView>
 
               {renderLoading()}
@@ -532,31 +573,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                 edges={finalEdges}
               >
                 {/* 页面主结构 */}
-                <View style={[styles.pageContainer, manualPaddingStyle]}>
-                  {/* 头部区域 */}
-                  {(header || pageNavProps) && (
-                    <View style={styles.headerContainer}>
-                      {renderNavHeader}
-                    </View>
-                  )}
-
-                  {/* 内容区域 */}
-                  {renderContent}
-
-                  {/* 底部区域 */}
-                  {footer && (
-                    <View
-                      style={[
-                        styles.footerContainer,
-                        Platform.OS !== 'ios' && {
-                          paddingBottom: insets.bottom + px(20),
-                        },
-                      ]}
-                    >
-                      {footer}
-                    </View>
-                  )}
-                </View>
+                {renderMainStructure}
               </SafeAreaView>
 
               {renderLoading()}
