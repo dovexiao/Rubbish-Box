@@ -375,6 +375,16 @@ export const routes = {
       label: '用户操作地锁',
     },
     {
+      name: 'RemoteKeyUnbind',
+      component: require('@/pages/remoteKeyUnbind').default,
+      label: '遥控钥匙解绑',
+    },
+    {
+      name: 'RemoteKeyPairingVideo',
+      component: require('@/pages/remoteKeyPairingVideo').default,
+      label: '遥控钥匙配对视频',
+    },
+    {
       name: 'RcvPayment',
       component: require('@/pages/rcvPayment/index').default,
       label: '收款设置',

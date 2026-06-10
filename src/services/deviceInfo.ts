@@ -60,3 +60,107 @@ export const lastVersion = createFetch<any, any>(
   '/boke/userLock/lastVersion',
   'GET',
 );
+
+// 复位升锁
+export const resetRiseLock = createFetch<any, any>(
+  '/boke/userLock/setting/resetTime',
+  'POST',
+);
+
+// 复位升锁结果
+export const resetRiseLockResult = createFetch<any, any>(
+  '/boke/userLock/setting/resetTimeRes',
+  'GET',
+);
+
+// 获取设备钥匙列表
+export const getDeviceKeyList = createFetch<any, any>(
+  '/boke/userLock/key/list',
+  'GET',
+);
+
+// 获取设备钥匙响应
+export const getDeviceKeyResponse = createFetch<any, any>(
+  '/boke/userLock/key/lastResponse',
+  'GET',
+);
+
+// 解绑钥匙短信
+export const unbindKeySms = createFetch<any, any>(
+  '/boke/userLock/key/unbindSms',
+  'GET',
+);
+
+// 解绑钥匙
+export const unbindKey = createFetch<any, any>(
+  '/boke/userLock/key/unbind',
+  'POST',
+);
+
+//解绑钥匙结果
+export const unbindKeyResult = createFetch<any, any>(
+  '/boke/userLock/key/unbindRes',
+  'POST',
+);
+
+// 开始配对
+export const startPairing = createFetch<any, any>(
+  '/boke/userLock/key/startPair',
+  'POST',
+);
+
+// 开始配对结果
+export const startPairingResult = createFetch<any, any>(
+  '/boke/userLock/key/startPairRes',
+  'POST',
+);
+
+// 绑定钥匙
+export const bindKey = createFetch<any, any>('/boke/userLock/key/bind', 'POST');
+
+//绑定钥匙结果
+export const bindKeyResult = createFetch<any, any>(
+  '/boke/userLock/key/bindRes',
+  'POST',
+);
+
+// 开始配对
+export const testStartPairing = createFetch<any, any>(
+  '/boke/deviceTest/key/startPair',
+  'POST',
+);
+
+// 开始配对结果
+export const testStartPairingResult = createFetch<any, any>(
+  '/boke/deviceTest/key/startPairRes',
+  'POST',
+);
+
+// 绑定钥匙
+export const testBindKey = createFetch<any, any>(
+  '/boke/deviceTest/key/bind',
+  'GET',
+);
+
+//绑定钥匙结果
+export const testBindKeyResult = createFetch<any, any>(
+  '/boke/deviceTest/key/bindRes',
+  'GET',
+);
+
+export const getDeviceTestKeyResponse = createFetch<any, any>(
+  '/boke/deviceTest/key/lastResponse',
+  'GET',
+);
+
+// 全部删除钥匙
+export const allDeleteKey = createFetch<any, any>(
+  '/boke/userLock/key/unbindAll',
+  'POST',
+);
+
+// 全部删除钥匙结果
+export const allDeleteKeyResult = createFetch<any, any>(
+  '/boke/userLock/key/unbindAllRes',
+  'POST',
+);

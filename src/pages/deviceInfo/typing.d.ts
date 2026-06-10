@@ -52,4 +52,11 @@ export interface lockInfoProps {
 
   /*收费模板ID */
   feeTemplateId: number;
+
+  has433Key: boolean;
+
+  keyCount: number;
+  resetTime: string;
+
+  buttonKeyFlag: boolean;
 }

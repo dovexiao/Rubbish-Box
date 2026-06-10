@@ -148,6 +148,12 @@ export interface LockInfoDTO {
   bleName: string;
 
   needPin: number;
+
+  has433Key: boolean;
+
+  keyCount: number;
+
+  resetTime: string;
 }
 
 interface LowBatteryNoticeList {
