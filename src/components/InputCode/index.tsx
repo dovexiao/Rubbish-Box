@@ -1,6 +1,20 @@
-import React, { useEffect, useImperativeHandle, useRef, useState, forwardRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Keyboard } from 'react-native';
+import React, {
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  forwardRef,
+} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import styles from './styles';
+
+const MAX_CODE_LEN = 6;
 
 export interface InputCodeRef {
   getParams: () => Record<number, string>;
@@ -15,205 +29,301 @@ interface InputCodeProps {
   errorMessage?: string;
 }
 
+const buildParams = (value: string): Record<number, string> => {
+  const next: Record<number, string> = {
+    0: '',
+    1: '',
+    2: '',
+    3: '',
+    4: '',
+    5: '',
+  };
+  value.split('').forEach((char, idx) => {
+    if (idx < MAX_CODE_LEN) next[idx] = char;
+  });
+  return next;
+};
+
+const normalizeCode = (value: string) =>
+  String(value || '')
+    .replace(/\D/g, '')
+    .slice(0, MAX_CODE_LEN);
+
 const InputCode = forwardRef<InputCodeRef, InputCodeProps>(
   ({ showError, onUpdate, code: propCode, errorMessage }, ref) => {
-    const [code, setCode] = useState('');
-    const [params, setParams] = useState<Record<number, string>>({
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-    });
-    const [focus, setFocus] = useState(true);
-    const [selectionStart, setSelectionStart] = useState(0);
-    const [inputKey, setInputKey] = useState(0);
     const inputRef = useRef<TextInput>(null);
+    const selectionRef = useRef({ start: 0, end: 0 });
+    const skipNextNativeChangeRef = useRef(false);
 
-    // 同步外部 code prop
-    useEffect(() => {
-      const raw = propCode || '';
-      const value = String(raw).replace(/\D/g, '').slice(0, 6);
-      const newParams: Record<number, string> = {
-        0: '',
-        1: '',
-        2: '',
-        3: '',
-        4: '',
-        5: '',
-      };
-      value.split('').forEach((text, index) => {
-        if (index < 6) newParams[index] = text;
-      });
-      setCode(value);
-      setParams(newParams);
-    }, [propCode]);
+    const [code, setCode] = useState('');
+    const [params, setParams] = useState<Record<number, string>>(
+      buildParams(''),
+    );
+    const [selection, setSelection] = useState({ start: 0, end: 0 });
 
-    // 处理输入变化
-    const handleCodeChange = (text: string) => {
-      const value = String(text).replace(/\D/g, ''); // 只保留数字
-      const pure = value.slice(0, 6);
+    const updateSelection = (start: number, end = start) => {
+      const len = code.length;
+      const safeStart = Math.max(0, Math.min(start, len));
+      const safeEnd = Math.max(safeStart, Math.min(end, len));
+      setSelection({ start: safeStart, end: safeEnd });
+      selectionRef.current = { start: safeStart, end: safeEnd };
+    };
 
-      const newParams: Record<number, string> = {
-        0: '',
-        1: '',
-        2: '',
-        3: '',
-        4: '',
-        5: '',
-      };
-      pure.split('').forEach((text, index) => {
-        newParams[index] = text;
-      });
+    const focusInputWithSelection = (start: number, end = start) => {
+      updateSelection(start, end);
 
-      const prevCode = code || '';
-      const prevLen = prevCode.length;
-      const len = pure.length;
-
-      let nextSelection: number;
-      if (len === 0) {
-        nextSelection = 0;
-      } else if (len < prevLen) {
-        // 删除：保持当前位不变，除非删掉的是最后一位
-        nextSelection = selectionStart < len ? selectionStart : len - 1;
-      } else {
-        // 输入：默认高亮最后一位
-        nextSelection = len - 1;
+      // Android 上键盘手动收起后可能残留焦点，先 blur 再 focus 更稳定。
+      if (Platform.OS === 'android') {
+        inputRef.current?.blur();
       }
 
-      setCode(pure);
-      setParams(newParams);
-      setSelectionStart(nextSelection);
-      setFocus(pure.length < 6);
-
-      onUpdate(pure);
+      setTimeout(
+        () => {
+          inputRef.current?.focus();
+          const current = selectionRef.current;
+          inputRef.current?.setNativeProps({
+            selection: { start: current.start, end: current.end },
+          });
+        },
+        Platform.OS === 'android' ? 80 : 0,
+      );
     };
 
-    // 点击整体区域，聚焦输入框
-    const handleContainerPress = () => {
-      setFocus(true);
-      setInputKey(Date.now());
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-    };
+    const applyNextState = (
+      nextCode: string,
+      nextStart: number,
+      nextEnd = nextStart,
+    ) => {
+      const safeCode = normalizeCode(nextCode);
+      setCode(safeCode);
+      setParams(buildParams(safeCode));
+      const safeStart = Math.max(0, Math.min(nextStart, safeCode.length));
+      const safeEnd = Math.max(safeStart, Math.min(nextEnd, safeCode.length));
+      setSelection({ start: safeStart, end: safeEnd });
+      selectionRef.current = { start: safeStart, end: safeEnd };
+      onUpdate(safeCode);
 
-    // 点击单个格子
-    const handleItemPress = (num: number) => {
-      const len = (code || '').length;
-      const idx = len === 0 ? 0 : Math.max(0, Math.min(num, len));
-      setSelectionStart(idx);
-      setFocus(true);
-      setInputKey(Date.now());
       setTimeout(() => {
-        inputRef.current?.focus();
-        // 设置光标位置
         inputRef.current?.setNativeProps({
-          selection: { start: idx, end: idx },
+          selection: selectionRef.current,
         });
-      }, 100);
+      }, 0);
     };
 
-    // 暴露方法给父组件
+    useEffect(() => {
+      const value = normalizeCode(propCode || '');
+      if (value === code) return;
+
+      setCode(value);
+      setParams(buildParams(value));
+      const currentSel = selectionRef.current;
+      const nextStart = Math.max(0, Math.min(currentSel.start, value.length));
+      const nextEnd = Math.max(
+        nextStart,
+        Math.min(currentSel.end, value.length),
+      );
+      setSelection({ start: nextStart, end: nextEnd });
+      selectionRef.current = { start: nextStart, end: nextEnd };
+    }, [propCode]);
+
+    const handleCodeChange = (text: string) => {
+      if (skipNextNativeChangeRef.current) {
+        skipNextNativeChangeRef.current = false;
+        return;
+      }
+
+      let nextCode = normalizeCode(text);
+      const prevCode = code;
+      const prevLen = prevCode.length;
+      let nextLen = nextCode.length;
+      const prevSel = selectionRef.current;
+
+      let nextStart = 0;
+      let nextEnd = 0;
+
+      // 把中间输入改为覆盖模式：在已有值中输入时，覆盖当前位而不是插入。
+      if (
+        prevSel.start === prevSel.end &&
+        prevSel.start < prevLen &&
+        nextLen === prevLen + 1
+      ) {
+        const inserted = nextCode[prevSel.start] || '';
+        nextCode = `${prevCode.slice(
+          0,
+          prevSel.start,
+        )}${inserted}${prevCode.slice(prevSel.start + 1)}`;
+        nextLen = nextCode.length;
+        nextStart = Math.max(0, Math.min(prevSel.start + 1, nextLen));
+        nextEnd = nextStart;
+        applyNextState(nextCode, nextStart, nextEnd);
+        return;
+      }
+
+      if (nextLen > prevLen) {
+        const replacedCount = Math.max(0, prevSel.end - prevSel.start);
+        const insertedCount = nextLen - (prevLen - replacedCount);
+        nextStart = Math.min(
+          nextLen,
+          prevSel.start + Math.max(1, insertedCount),
+        );
+        nextEnd = nextStart;
+      } else if (nextLen < prevLen) {
+        if (prevSel.end > prevSel.start) {
+          // 删除选中位：当前位仍有值则继续选中当前位；当前位无值时再前移。
+          const keepAt = Math.max(0, Math.min(prevSel.start, nextLen - 1));
+          if (nextLen > 0 && keepAt >= 0 && keepAt < nextLen) {
+            nextStart = keepAt;
+            nextEnd = Math.min(keepAt + 1, nextLen);
+          } else {
+            nextStart = Math.max(0, nextLen - 1);
+            nextEnd = nextStart;
+          }
+        } else {
+          // 普通退格：光标左移。
+          nextStart = Math.max(0, Math.min(prevSel.start - 1, nextLen));
+          nextEnd = nextStart;
+        }
+      } else {
+        // 等长通常是替换：输入后移到下一位。
+        nextStart = Math.max(0, Math.min(prevSel.start + 1, nextLen));
+        nextEnd = nextStart;
+      }
+
+      applyNextState(nextCode, nextStart, nextEnd);
+    };
+
+    const handleKeyPress = (e: any) => {
+      if (e?.nativeEvent?.key !== 'Backspace') return;
+
+      if (!code) return;
+
+      const prevSel = selectionRef.current;
+      let nextCode = code;
+      let nextStart = prevSel.start;
+      let nextEnd = prevSel.start;
+
+      if (prevSel.end > prevSel.start) {
+        nextCode = `${code.slice(0, prevSel.start)}${code.slice(prevSel.end)}`;
+        if (nextCode.length > 0 && prevSel.start < nextCode.length) {
+          nextStart = prevSel.start;
+          nextEnd = Math.min(prevSel.start + 1, nextCode.length);
+        } else {
+          nextStart = Math.max(0, nextCode.length - 1);
+          nextEnd = nextStart;
+        }
+      } else {
+        const prevIndex = prevSel.start - 1;
+        if (prevIndex >= 0 && code[prevIndex]) {
+          // 前一位有值：删前一位。
+          nextCode = `${code.slice(0, prevIndex)}${code.slice(prevSel.start)}`;
+          nextStart = prevIndex;
+          nextEnd = nextStart;
+        } else if (prevSel.start < code.length) {
+          // 前一位无值：删当前位。
+          nextCode = `${code.slice(0, prevSel.start)}${code.slice(
+            prevSel.start + 1,
+          )}`;
+          if (nextCode.length > 0 && prevSel.start < nextCode.length) {
+            nextStart = prevSel.start;
+            nextEnd = Math.min(prevSel.start + 1, nextCode.length);
+          } else {
+            nextStart = Math.max(0, nextCode.length - 1);
+            nextEnd = nextStart;
+          }
+        } else {
+          return;
+        }
+      }
+
+      skipNextNativeChangeRef.current = true;
+      applyNextState(nextCode, nextStart, nextEnd);
+    };
+
+    const handleContainerPress = () => {
+      focusInputWithSelection(code.length, code.length);
+    };
+
+    const handleItemPress = (index: number) => {
+      const len = code.length;
+      if (index < len) {
+        // 点击已有值：选中该位，删除时删除这一位。
+        focusInputWithSelection(index, index + 1);
+        return;
+      }
+
+      // 点击空位：定位到该空位，输入后进入下一空位。
+      focusInputWithSelection(len, len);
+    };
+
     useImperativeHandle(
       ref,
       () => ({
         getParams: () => params,
         clearCode: () => {
           setCode('');
-          setParams({
-            0: '',
-            1: '',
-            2: '',
-            3: '',
-            4: '',
-            5: '',
-          });
-          setSelectionStart(0);
-          setFocus(true);
-          setInputKey(Date.now());
+          setParams(buildParams(''));
+          setSelection({ start: 0, end: 0 });
+          selectionRef.current = { start: 0, end: 0 };
           onUpdate('');
         },
         setCode: (newCode: string) => {
-          const value = String(newCode).replace(/\D/g, '').slice(0, 6);
-          const newParams: Record<number, string> = {
-            0: '',
-            1: '',
-            2: '',
-            3: '',
-            4: '',
-            5: '',
-          };
-          value.split('').forEach((text, index) => {
-            if (index < 6) newParams[index] = text;
-          });
+          const value = normalizeCode(newCode);
           setCode(value);
-          setParams(newParams);
-          setSelectionStart(value.length === 0 ? 0 : value.length - 1);
-          setInputKey(Date.now());
+          setParams(buildParams(value));
+          // 外部设置后，高亮到下一空位。
+          setSelection({ start: value.length, end: value.length });
+          selectionRef.current = { start: value.length, end: value.length };
           onUpdate(value);
         },
       }),
-      [params, code, onUpdate],
+      [onUpdate, params],
     );
 
-    // 当 focus 变化时，控制输入框聚焦
-    useEffect(() => {
-      if (focus) {
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 100);
-      }
-    }, [focus, inputKey]);
+    const activeIndex =
+      selection.end > selection.start
+        ? selection.start
+        : Math.min(selection.start, MAX_CODE_LEN - 1);
 
     return (
       <>
         <TouchableOpacity
           activeOpacity={1}
           style={styles.passwordCode}
-          onPress={handleContainerPress}>
-          {Array.from({ length: 6 }).map((_, num) => (
+          onPress={handleContainerPress}
+        >
+          {Array.from({ length: MAX_CODE_LEN }).map((_, idx) => (
             <TouchableOpacity
-              key={num}
+              key={idx}
               activeOpacity={1}
               style={[
                 styles.codeItem,
                 showError && styles.error,
-                selectionStart === num && !showError && styles.active,
+                !showError && activeIndex === idx ? styles.active : null,
               ]}
-              onPress={() => handleItemPress(num)}>
-              <Text style={styles.codeItemText}>{params[num] || ''}</Text>
+              onPress={() => handleItemPress(idx)}
+            >
+              <Text style={styles.codeItemText}>{params[idx] || ''}</Text>
             </TouchableOpacity>
           ))}
         </TouchableOpacity>
-        {showError && errorMessage && (
+
+        {showError && errorMessage ? (
           <View style={styles.errorMessage}>
             <Text style={styles.errorMessageText}>{errorMessage}</Text>
           </View>
-        )}
+        ) : null}
 
-        {/* 隐藏的输入框，支持一次性粘贴 6 位 */}
         <TextInput
-          key={inputKey}
           ref={inputRef}
           style={styles.hideInput}
           value={code}
           onChangeText={handleCodeChange}
+          onKeyPress={handleKeyPress}
+          selection={selection}
           keyboardType="number-pad"
-          maxLength={6}
+          maxLength={MAX_CODE_LEN}
           autoFocus={false}
-          onBlur={() => setFocus(false)}
-          onFocus={() => {
-            setFocus(true);
-            // 聚焦时设置光标位置
-            setTimeout(() => {
-              inputRef.current?.setNativeProps({
-                selection: { start: selectionStart, end: selectionStart },
-              });
-            }, 50);
-          }}
-          showSoftInputOnFocus={true}
+          showSoftInputOnFocus
           caretHidden={false}
         />
       </>

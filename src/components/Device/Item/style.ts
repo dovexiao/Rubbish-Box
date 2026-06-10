@@ -3,11 +3,11 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   deviceItem: {
     padding: px(12),
-    borderRadius: px(8),
+    borderRadius: px(12),
     width: '100%',
   },
   defaultBgColor: {
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#f7f7fb',
   },
   deviceItemActive: {
     // backgroundColor: '#fff',

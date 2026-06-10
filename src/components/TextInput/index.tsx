@@ -23,6 +23,8 @@ export interface TextInputProps extends RNTextInputProps {
   showClear?: boolean;
   // 类似 Taro 的 type，简化键盘类型配置
   type?: 'text' | 'number' | 'password' | 'phone';
+  // 小数位数控制，传入后会自动截断并规范输入
+  decimalScale?: number;
 }
 
 /**
@@ -61,6 +63,7 @@ export const TextInput = React.forwardRef<
     style,
     value,
     type,
+    decimalScale,
     defaultValue,
     onChangeText,
     clearIconStyle = { width: px(16), color: '#cccccc' },
@@ -69,13 +72,37 @@ export const TextInput = React.forwardRef<
 
   const innerRef = useRef<RNTextInput | null>(null);
   const focusedRef = useRef(false);
+  const lastEmittedValueRef = useRef<string | null>(null);
   const getCurrentText = (): string => {
     if (typeof value === 'string') return value;
     if (typeof defaultValue === 'string') return defaultValue;
     return '';
   };
 
+  const platformOS = Platform.OS as string;
+  const isHarmony = platformOS === 'harmony' || platformOS === 'ohos';
+  const isControlled = typeof value === 'string';
+  const useHarmonyBufferedValue = isHarmony && isControlled;
+
+  const [bufferedValue, setBufferedValue] = useState(getCurrentText());
+
   const [hasValue, setHasValue] = useState(getCurrentText().length > 0);
+
+  useEffect(() => {
+    const nextText = getCurrentText();
+
+    if (useHarmonyBufferedValue && focusedRef.current) {
+      // 外部值回传与最近一次输入一致时，保持本地显示，避免鸿蒙下旧值回弹闪烁
+      if (
+        lastEmittedValueRef.current !== null &&
+        nextText === lastEmittedValueRef.current
+      ) {
+        return;
+      }
+    }
+
+    setBufferedValue(nextText);
+  }, [defaultValue, useHarmonyBufferedValue, value]);
 
   // 当外部 value 或 defaultValue 变化时，同步 hasValue 状态
   useEffect(() => {
@@ -93,8 +120,42 @@ export const TextInput = React.forwardRef<
   };
 
   const handleChangeText = (text: string) => {
-    setHasValue(text.length > 0);
-    onChangeText?.(text);
+    let nextText = String(text ?? '');
+
+    if (typeof decimalScale === 'number') {
+      const cleanText = nextText.replace(/[^\d.]/g, '');
+      if (decimalScale <= 0) {
+        nextText = cleanText.replace(/\./g, '');
+      } else {
+        const normalizedText = cleanText.startsWith('.')
+          ? `0${cleanText}`
+          : cleanText;
+        const [intPartRaw = '', ...decimalParts] = normalizedText.split('.');
+        const intPart = intPartRaw.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+        const normalizedIntPart =
+          intPart || (cleanText.includes('.') ? '0' : '');
+        const decimalPart = decimalParts
+          .join('')
+          .replace(/\./g, '')
+          .slice(0, decimalScale);
+
+        if (!normalizedIntPart && !cleanText.includes('.')) {
+          nextText = '';
+        } else if (cleanText.includes('.')) {
+          nextText = `${normalizedIntPart || '0'}.${decimalPart}`;
+        } else {
+          nextText = normalizedIntPart || '';
+        }
+      }
+    }
+
+    if (useHarmonyBufferedValue) {
+      setBufferedValue(nextText);
+    }
+
+    lastEmittedValueRef.current = nextText;
+    setHasValue(nextText.length > 0);
+    onChangeText?.(nextText);
   };
 
   useEffect(() => {
@@ -106,7 +167,9 @@ export const TextInput = React.forwardRef<
       // Android 上点击“收起键盘”时，输入框可能仍保持 focus，导致再次点击不弹键盘
       // 在组件内部统一 blur，一次性修复所有页面
       if (focusedRef.current) {
-        innerRef.current?.blur();
+        setTimeout(() => {
+          innerRef.current?.blur();
+        }, 100);
       }
     });
 
@@ -117,15 +180,31 @@ export const TextInput = React.forwardRef<
 
   const handleFocus: RNTextInputProps['onFocus'] = event => {
     focusedRef.current = true;
+
+    if (useHarmonyBufferedValue) {
+      setBufferedValue(getCurrentText());
+    }
+
     props.onFocus?.(event);
   };
 
   const handleBlur: RNTextInputProps['onBlur'] = event => {
     focusedRef.current = false;
+
+    if (useHarmonyBufferedValue) {
+      setBufferedValue(getCurrentText());
+    }
+
+    lastEmittedValueRef.current = null;
     props.onBlur?.(event);
   };
 
   const handleClear = () => {
+    if (useHarmonyBufferedValue) {
+      setBufferedValue('');
+    }
+
+    lastEmittedValueRef.current = '';
     // 优先通过回调让外部把 value 置空（受控场景）
     onChangeText?.('');
     setHasValue(false);
@@ -151,6 +230,7 @@ export const TextInput = React.forwardRef<
     restProps.secureTextEntry !== undefined
       ? restProps.secureTextEntry
       : type === 'password';
+  const resolvedInputValue = useHarmonyBufferedValue ? bufferedValue : value;
 
   // 不需要清除按钮时，保持原有行为，但仍通过 handleChangeText 透传 onChangeText
   if (!showClear) {
@@ -158,7 +238,7 @@ export const TextInput = React.forwardRef<
       <RNTextInput
         {...restProps}
         ref={setRefs}
-        value={value}
+        value={resolvedInputValue}
         defaultValue={defaultValue}
         style={[styles.defaultInput, style]}
         cursorColor={cursorColor}
@@ -178,7 +258,7 @@ export const TextInput = React.forwardRef<
       <RNTextInput
         {...restProps}
         ref={setRefs}
-        value={value}
+        value={resolvedInputValue}
         defaultValue={defaultValue}
         style={[styles.defaultInput, styles.clearInput, style]}
         cursorColor={cursorColor}

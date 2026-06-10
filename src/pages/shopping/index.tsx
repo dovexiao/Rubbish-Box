@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { PageContainer, Flex } from '@/components';
 import AppIcon from '@/components/AppIcon';
 import { getGoodsList } from '@/services/mall';
+import Order from '@/pages/order';
 import styles from './styles';
 import { showToast } from '@/utils';
 import { fontSize, px } from '@/utils/ui';
@@ -30,7 +31,6 @@ type GoodsCardProps = {
   onPress: (id: number) => void;
 };
 
-const CARD_HEIGHT = 164;
 const CARD_WIDTH = (Dimensions.get('window').width - px(32) - px(13)) / 2;
 
 const GoodsCard: React.FC<GoodsCardProps> = ({ data, onPress }) => {
@@ -97,6 +97,7 @@ export default function Shopping() {
   const [goodsList, setGoodsList] = useState<GoodsItemDTO[]>([]);
   const [loading, setLoading] = useState(false);
   const [complete, setComplete] = useState(false);
+  const [currentTab, setCurrentTab] = useState(0);
 
   const loadList = useCallback(
     async (reload: boolean) => {
@@ -141,20 +142,21 @@ export default function Shopping() {
     [navigation],
   );
 
-  const footer = (
-    <View style={styles.bottomBtnContent}>
-      <TouchableOpacity
-        activeOpacity={0.8}
-        style={styles.bottomBtn}
-        onPress={() => {
-          navigation.navigate('PickupCodeDaily');
-        }}
-      >
-        <Text style={styles.bottomBtnText}>绑定礼品卡</Text>
-        <AppIcon name="a-nextpage" color="#333333" size={px(20)} />
-      </TouchableOpacity>
-    </View>
-  );
+  const footer =
+    currentTab === 0 ? (
+      <View style={styles.bottomBtnContent}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.bottomBtn}
+          onPress={() => {
+            navigation.navigate('PickupCodeDaily');
+          }}
+        >
+          <Text style={styles.bottomBtnText}>绑定礼品卡</Text>
+          <AppIcon name="a-nextpage" color="#333333" size={px(20)} />
+        </TouchableOpacity>
+      </View>
+    ) : null;
 
   const renderItem: ListRenderItem<GoodsItemDTO> = useCallback(
     ({ item }) => <GoodsCard data={item} onPress={handlePressItem} />,
@@ -173,25 +175,65 @@ export default function Shopping() {
         showBack: true,
         background: '#FFFFFF',
       }}
-      loading={loading && !goodsList.length}
+      loading={currentTab === 0 && loading && !goodsList.length}
       footer={footer}
     >
       <View style={{ flex: 1 }}>
-        <FlatList
-          style={{ flex: 1 }}
-          data={goodsList}
-          keyExtractor={item => String(item.id)}
-          numColumns={2}
-          renderItem={renderItem}
-          contentContainerStyle={styles.container}
-          columnWrapperStyle={styles.goodsList}
-          onEndReached={() => {
-            if (!loading && !complete) {
-              void loadList(false);
-            }
-          }}
-          onEndReachedThreshold={0.3}
-        />
+        <View style={styles.tabContainer}>
+          <View style={styles.tabItemList}>
+            <TouchableOpacity
+              style={[styles.tabItem, currentTab === 0 && styles.tabItemActive]}
+              onPress={() => setCurrentTab(0)}
+              activeOpacity={1}
+            >
+              <Text
+                style={[
+                  styles.tabItemText,
+                  currentTab === 0 && styles.tabItemTextActive,
+                ]}
+              >
+                商品
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tabItem, currentTab === 1 && styles.tabItemActive]}
+              onPress={() => setCurrentTab(1)}
+              activeOpacity={1}
+            >
+              <Text
+                style={[
+                  styles.tabItemText,
+                  currentTab === 1 && styles.tabItemTextActive,
+                ]}
+              >
+                订单
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.tabContent}>
+          {currentTab === 0 ? (
+            <FlatList
+              style={{ flex: 1 }}
+              data={goodsList}
+              keyExtractor={item => String(item.id)}
+              numColumns={2}
+              renderItem={renderItem}
+              contentContainerStyle={styles.goodsListContent}
+              columnWrapperStyle={styles.goodsList}
+              onEndReached={() => {
+                if (!loading && !complete) {
+                  void loadList(false);
+                }
+              }}
+              onEndReachedThreshold={0.3}
+            />
+          ) : (
+            <View style={styles.orderListContainer}>
+              <Order embedded />
+            </View>
+          )}
+        </View>
       </View>
     </PageContainer>
   );

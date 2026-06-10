@@ -12,6 +12,9 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
   onSelect,
   onChangeName,
 }) => {
+  data.count = [null, undefined].includes(data.count as any)
+    ? data.groupCount
+    : data.count;
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -40,7 +43,10 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
                 flexDirection: 'row',
                 alignItems: 'center',
               }}
-              onPress={() => onChangeName?.()}
+              onPress={event => {
+                event.stopPropagation();
+                onChangeName?.(event);
+              }}
             >
               <Text style={styles.editText}>编辑</Text>
               <AppIcon name="pen16" color="#999999" size={px(16)} />
@@ -50,7 +56,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
 
         <Flex direction="column" align="center">
           <Text style={styles.deviceTypeText}>
-            {data.groupCount === 1 ? '单个设备' : '组合设备'}
+            {data.count === 1 ? '单个设备' : '组合设备'}
           </Text>
           <Flex style={{ marginTop: px(14) }} align="center">
             {data.imageUrl && data.imageUrl !== 'null' ? (
@@ -69,7 +75,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
                 }}
               />
             )}
-            {data.groupCount !== 1 && (
+            {data.count !== 1 && (
               <>
                 <AppIcon
                   name="multiplication"
@@ -77,7 +83,7 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
                   size={px(6)}
                   style={{ marginHorizontal: px(2) }}
                 />
-                <Text style={styles.deviceCountText}>{data.groupCount}</Text>
+                <Text style={styles.deviceCountText}>{data.count}</Text>
               </>
             )}
           </Flex>

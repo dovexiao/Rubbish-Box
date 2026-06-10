@@ -17,15 +17,20 @@ import styles from './styles';
 import { showToast } from '@/utils';
 
 const TAB_LIST = [
+  { id: 'all', name: '全部', orderStatus: 40 },
   { id: 'pending-shipment', name: '待发货', orderStatus: 20 },
   { id: 'shipped', name: '已发货', orderStatus: 30 },
-  { id: 'all', name: '全部', orderStatus: 40 },
 ] as const;
 
 const PAGE_SIZE = 10;
 const EMPTY_IMG = 'https://g.18qjz.cn/img/boklock/order_empty.png';
 
-export default function Order() {
+type OrderProps = {
+  /** 嵌入商城等父页面时设为 true，不渲染 PageContainer */
+  embedded?: boolean;
+};
+
+export default function Order({ embedded = false }: OrderProps) {
   const navigation = useNavigation<any>();
   const [orderList, setOrderList] = useState<OrderItemDTO[]>([]);
   const [currentTab, setCurrentTab] = useState(0);
@@ -115,20 +120,8 @@ export default function Order() {
     </View>
   );
 
-  return (
-    <PageContainer
-      backgroundColor="#F6F7FA"
-      statusBarStyle="dark-content"
-      statusBarBackgroundColor="#FFFFFF"
-      safeAreaEdges={['top']}
-      scrollable={false}
-      pageNavProps={{
-        text: '我的订单',
-        showBack: true,
-        background: '#FFFFFF',
-      }}
-      loading={initialLoading && orderList.length === 0}
-    >
+  const content = (
+    <>
       <View style={styles.tabsWrap}>
         <View style={styles.tabsBox}>
           {TAB_LIST.map((tab, index) => (
@@ -170,6 +163,28 @@ export default function Order() {
           ) : undefined
         }
       />
+    </>
+  );
+
+  if (embedded) {
+    return <View style={{ flex: 1 }}>{content}</View>;
+  }
+
+  return (
+    <PageContainer
+      backgroundColor="#F6F7FA"
+      statusBarStyle="dark-content"
+      statusBarBackgroundColor="#FFFFFF"
+      safeAreaEdges={['top']}
+      scrollable={false}
+      pageNavProps={{
+        text: '我的订单',
+        showBack: true,
+        background: '#FFFFFF',
+      }}
+      loading={initialLoading && orderList.length === 0}
+    >
+      {content}
     </PageContainer>
   );
 }

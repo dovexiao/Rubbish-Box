@@ -47,6 +47,12 @@ export interface lockInfoProps {
   /*用电类型名称：0-续航版 1-市电款 2-均衡版 */
   powerTypeName: string;
 
+  /*是否展示地锁收费 */
+  canFee: boolean;
+
+  /*收费模板ID */
+  feeTemplateId: number;
+
   has433Key: boolean;
 
   keyCount: number;

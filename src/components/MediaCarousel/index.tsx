@@ -5,13 +5,48 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { View, Text, Image, ScrollView, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import Video from 'react-native-video';
 import AppIcon from '@/components/AppIcon';
 import styles from './styles';
 import { px } from '@/utils/ui';
 
 const DEFAULT_BG = 'https://g.18qjz.cn/img/boklock/default_ad_bg.png';
+
+let sharedMuted = true;
+const sharedMutedListeners = new Set<(muted: boolean) => void>();
+
+const setSharedMuted = (muted: boolean) => {
+  if (sharedMuted === muted) return;
+  sharedMuted = muted;
+  sharedMutedListeners.forEach(listener => listener(sharedMuted));
+};
+
+const subscribeSharedMuted = (listener: (muted: boolean) => void) => {
+  sharedMutedListeners.add(listener);
+  return () => {
+    sharedMutedListeners.delete(listener);
+  };
+};
+
+const useSharedMuted = () => {
+  const [muted, setMuted] = useState(sharedMuted);
+
+  useEffect(() => subscribeSharedMuted(setMuted), []);
+
+  const toggleMuted = useCallback(() => {
+    setSharedMuted(!sharedMuted);
+  }, []);
+
+  return { muted, setMuted: setSharedMuted, toggleMuted };
+};
 
 interface MediaCarouselProps {
   itemList: string[];
@@ -21,6 +56,7 @@ export default function MediaCarousel({ itemList }: MediaCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const carouselRef = useRef<ScrollView>(null);
+  const { muted, toggleMuted } = useSharedMuted();
 
   const screenWidth = Dimensions.get('window').width;
   const carouselWidth = screenWidth - 32;
@@ -177,23 +213,41 @@ export default function MediaCarousel({ itemList }: MediaCarouselProps) {
               ]}
             >
               {item?.endsWith?.('.mp4') ? (
-                isFocused ? (
-                  <Video
-                    source={{ uri: item }}
-                    style={{ width: '100%', height: '100%' }}
-                    resizeMode="cover"
-                    repeat={false}
-                    paused={false}
-                    onEnd={handleVideoEnd}
-                  />
-                ) : (
-                  <View style={styles.videoPlaceholder}>
-                    <AppIcon name="play" size={px(40)} color="#fff" />
-                    <Text style={{ color: '#fff', marginTop: px(8) }}>
-                      视频
+                <View style={{ width: '100%', height: '100%' }}>
+                  {isFocused ? (
+                    <Video
+                      source={{ uri: item }}
+                      style={{ width: '100%', height: '100%' }}
+                      resizeMode="cover"
+                      repeat={false}
+                      paused={false}
+                      muted={muted}
+                      onEnd={handleVideoEnd}
+                    />
+                  ) : (
+                    <View style={styles.videoPlaceholder}>
+                      <AppIcon name="play" size={px(40)} color="#fff" />
+                      <Text style={{ color: '#fff', marginTop: px(8) }}>
+                        视频
+                      </Text>
+                    </View>
+                  )}
+
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={styles.videoMuteBtn}
+                    onPress={toggleMuted}
+                  >
+                    <AppIcon
+                      name={muted ? 'icon_voice' : 'icon_mute'}
+                      size={px(16)}
+                      color="#fff"
+                    />
+                    <Text style={styles.videoMuteBtnText}>
+                      声音：{muted ? '关' : '开'}
                     </Text>
-                  </View>
-                )
+                  </TouchableOpacity>
+                </View>
               ) : /\.(png|jpe?g|webp|gif)$/i.test(item) ? (
                 <Image
                   source={{ uri: item }}

@@ -85,10 +85,10 @@ def getVersionNameByProperty() {
     def name
     if (hasProperty('DEPLOY_ENV') && getProperty('DEPLOY_ENV') == 'real') {
       // 线上环境
-      name = '1.0.9'
+      name = '1.0.11'
     } else {
       // 测试环境
-      name = '1.0.9'
+      name = '1.0.11'
     }
     return name
 }
@@ -97,10 +97,10 @@ def getVersionCodeByProperty() {
     def code
     if (hasProperty('DEPLOY_ENV') && getProperty('DEPLOY_ENV') == 'real') {
       // 线上环境
-      code = 10
+      code = 12
     } else {
       // 测试环境
-      code = 9
+      code = 11
     }
     return code
 }

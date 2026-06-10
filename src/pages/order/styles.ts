@@ -4,48 +4,43 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   orderContainer: {
     flex: 1,
-    paddingTop: px(12),
-    backgroundColor: '#F6F7FA',
+    // backgroundColor: '#F6F7FA',
   },
   tabsWrap: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
   },
   /** 固定宽度，Tabs 通过 onLayout 取到该宽度后 tab 栏才会变窄 */
   tabsBox: {
-    width: px(220),
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    gap: px(12),
+    paddingBottom: px(12),
   },
   tab: {
-    paddingHorizontal: px(10),
-    paddingVertical: px(6),
+    width: px(76),
+    height: px(36),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: px(12),
+    backgroundColor: '#ffffff',
   },
   tabActive: {
-    borderBottomWidth: px(2),
+    borderWidth: px(1),
     borderBottomColor: '#333333',
   },
   tabText: {
     fontSize: fontSize(14),
-    color: '#666666',
+    color: '#999999',
   },
   tabTextActive: {
     fontSize: fontSize(14),
     color: '#333333',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
-  tabLine: {
-    position: 'absolute',
-    bottom: 0,
-    height: px(2),
-    backgroundColor: '#333333',
-    borderRadius: px(1),
-  },
+
   listWrapper: {
-    paddingHorizontal: px(16),
+    // paddingHorizontal: px(16),
     paddingBottom: px(24),
   },
   emptyContainer: {

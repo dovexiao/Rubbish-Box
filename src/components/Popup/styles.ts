@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     fontSize: fontSize(16),
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#333333',
     textAlign: 'center',
     width: '100%',

@@ -395,3 +395,81 @@ export const getMessagePush = createFetch<any, any>(
   '/boke/userApi/messagePush',
   'POST',
 );
+
+// 获取余额和今天订单量
+export const getOrderStat = createFetch<any, any>(
+  '/boke/user/order/stat',
+  'GET',
+);
+
+// 结算明细列表
+export const getSettlementList = createFetch<any, any>(
+  '/boke/merchant/withdrawal/settlementList',
+  'POST',
+);
+
+// 提现记录列表
+export const getWithdrawalList = createFetch<any, any>(
+  '/boke/merchant/withdrawal/list',
+  'POST',
+);
+
+// 商户提现银行卡列表
+export const getWithdrawalBankCardList = createFetch<any, any>(
+  '/boke/merchant/withdrawal/bankCard/list',
+  'GET',
+);
+
+// 商户提现发送短信验证
+export const sendWithdrawalSms = createFetch<any, any>(
+  '/boke/merchant/withdrawal/sendSms',
+  'GET',
+);
+
+// 商户发起提现
+export const applyWithdrawal = createFetch<any, any>(
+  '/boke/merchant/withdrawal/apply',
+  'POST',
+);
+
+// 单条提现记录详情
+export const getWithdrawalInfo = createFetch<any, any>(
+  '/boke/merchant/withdrawal/info',
+  'GET',
+);
+
+// 省市区编码查询
+export const getCityArea = createFetch<any, any>(
+  '/boke/huifu/cityArea/tree',
+  'GET',
+);
+
+// 汇付银行总行查询
+export const getHuiFuTotalBank = createFetch<any, any>(
+  '/boke/huifu/total/bank',
+  'POST',
+);
+
+// 汇付联行号查询
+export const getHuiFuInterBank = createFetch<any, any>(
+  '/boke/huifu/bank/tree',
+  'POST',
+);
+
+// 变更提现银行卡发送验证码
+export const sendChangeWithdrawalBankSms = createFetch<any, any>(
+  '/boke/sendSms',
+  'POST',
+);
+
+// 商户变更提现银行卡
+export const changeWithdrawalBankCard = createFetch<any, any>(
+  '/boke/merchant/withdrawal/bankCard/change',
+  'POST',
+);
+
+// 回显最新一条变更提现银行卡详情
+export const echoWithdrawalBankCard = createFetch<any, any>(
+  '/boke/merchant/withdrawal/bankCard/echo',
+  'GET',
+);
