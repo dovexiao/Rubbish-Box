@@ -69,7 +69,6 @@ import {
 import { fontSize, px } from '@/utils/ui';
 import MyEmpty from '@/components/MyEmpty';
 import SimpleLoading from '@/components/SimpleLoading';
-import { PickerView } from '@ant-design/react-native';
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
