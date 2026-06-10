@@ -389,7 +389,7 @@ const DeviceInfo = () => {
   };
 
   const getDeviceKeys = async () => {
-    const res = await getDeviceKeyList({ deviceNo: deviceInfo?.deviceNo });
+    const res = await getDeviceKeyList({ deviceNo: lockInfo?.deviceNo });
     if (res.code === 200 && res.success) {
       const keys = res.data.map((item: any) => {
         return {
@@ -404,7 +404,7 @@ const DeviceInfo = () => {
   // 解绑所有钥匙
   const handleallDeleteKey = async () => {
     showLoading({ title: '删除中...' });
-    const res = await allDeleteKey({ deviceNo: deviceInfo?.deviceNo });
+    const res = await allDeleteKey({ deviceNo: lockInfo?.deviceNo });
     if (res.code === 200 && res.success) {
       return await loopallDeleteKey();
     }
@@ -419,7 +419,7 @@ const DeviceInfo = () => {
       let timer: ReturnType<typeof setTimeout> | null = null;
       const { start, stop } = loopFunc(async () => {
         const res = await allDeleteKeyResult({
-          deviceNo: deviceInfo?.deviceNo,
+          deviceNo: lockInfo?.deviceNo,
         });
         if (res.data) {
           fetchLockInfo();
@@ -446,8 +446,9 @@ const DeviceInfo = () => {
   };
 
   useEffect(() => {
+    if (!lockInfo?.deviceNo) return;
     getDeviceKeys();
-  }, [deviceInfo?.deviceNo]);
+  }, [lockInfo?.deviceNo]);
 
   return (
     <PageContainer
@@ -726,7 +727,7 @@ const DeviceInfo = () => {
                       navigation.navigate('RemoteKeyPairingVideo');
                     } else {
                       navigation.navigate('RemoteKeyPairingVideo', {
-                        lockId: deviceInfo?.deviceNo,
+                        lockId: lockInfo?.id,
                       });
                     }
                   } else {
@@ -1044,7 +1045,7 @@ const DeviceInfo = () => {
                   navigation.navigate('RemoteKeyPairingVideo');
                 } else {
                   navigation.navigate('RemoteKeyPairingVideo', {
-                    lockId: deviceInfo?.deviceNo,
+                    lockId: lockInfo?.id,
                   });
                 }
               }}
@@ -1056,9 +1057,9 @@ const DeviceInfo = () => {
               onPress={() => {
                 setRemoteKeyPopVisible(false);
                 navigation.navigate('RemoteKeyUnbind', {
-                  deviceNo: deviceInfo?.deviceNo,
+                  deviceNo: lockInfo?.deviceNo,
                   key: selectedDeviceKey,
-                  id: deviceInfo?.id,
+                  id: lockInfo?.id,
                   hasButtonKeyFlag: lockInfo?.buttonKeyFlag,
                 });
               }}
