@@ -589,6 +589,8 @@ const DeviceInfo = () => {
     getDeviceKeys();
   }, [lockInfo?.deviceNo]);
 
+  console.log('===lockInfo', lockInfo);
+
   return (
     <PageContainer
       ref={pageContainerRef}
@@ -752,7 +754,7 @@ const DeviceInfo = () => {
             <Text style={styles.cardTitle}>设备功能</Text>
           </Flex>
 
-          {lockInfo?.canFee && (
+          {lockInfo?.canFee && lockInfo?.closeCarCheck === 0 && (
             <Flex
               isTouchView={deviceInfo?.role === 1}
               style={styles.cardRows}
@@ -864,26 +866,29 @@ const DeviceInfo = () => {
             </Flex>
           )}
 
-          <Flex style={styles.cardRows}>
-            <Text style={styles.cardLable}>离车升锁</Text>
-            <TouchableOpacity
-              style={styles.cardRowsTouch}
-              onPress={() => {
-                if (lockInfo?.powerType !== 1) {
-                  return;
-                }
-                leaveRiseLockRef.current?.open();
-                setLecaveType('1');
-              }}
-            >
-              <Text
-                style={styles.cardValue}
-              >{`车辆离开${lockInfo?.leaveUpTime}秒后升起`}</Text>
-              {lockInfo?.powerType === 1 && (
-                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
-              )}
-            </TouchableOpacity>
-          </Flex>
+          {lockInfo?.closeCarCheck === 0 && (
+            <Flex style={styles.cardRows}>
+              <Text style={styles.cardLable}>离车升锁</Text>
+              <TouchableOpacity
+                style={styles.cardRowsTouch}
+                onPress={() => {
+                  if (lockInfo?.powerType !== 1) {
+                    return;
+                  }
+                  leaveRiseLockRef.current?.open();
+                  setLecaveType('1');
+                }}
+              >
+                <Text
+                  style={styles.cardValue}
+                >{`车辆离开${lockInfo?.leaveUpTime}秒后升起`}</Text>
+                {lockInfo?.powerType === 1 && (
+                  <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
+                )}
+              </TouchableOpacity>
+            </Flex>
+          )}
+
           {lockInfo?.has433Key && (
             <Flex style={styles.cardRows}>
               <Flex direction="row" align="center" style={{ gap: px(4) }}>
@@ -914,26 +919,28 @@ const DeviceInfo = () => {
             </Flex>
           )}
 
-          <Flex style={styles.cardRows}>
-            <Text style={styles.cardLable}>复位升锁</Text>
-            <TouchableOpacity
-              style={styles.cardRowsTouch}
-              onPress={() => {
-                if (lockInfo?.powerType !== 1) {
-                  return;
-                }
-                leaveRiseLockRef.current?.open();
-                setLecaveType('2');
-              }}
-            >
-              <Text style={styles.cardValue}>{`地锁降下${
-                lockInfo?.resetTime || 20
-              }秒，无车自动复位升起`}</Text>
-              {lockInfo?.powerType === 1 && (
-                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
-              )}
-            </TouchableOpacity>
-          </Flex>
+          {lockInfo?.closeCarCheck === 0 && (
+            <Flex style={styles.cardRows}>
+              <Text style={styles.cardLable}>复位升锁</Text>
+              <TouchableOpacity
+                style={styles.cardRowsTouch}
+                onPress={() => {
+                  if (lockInfo?.powerType !== 1) {
+                    return;
+                  }
+                  leaveRiseLockRef.current?.open();
+                  setLecaveType('2');
+                }}
+              >
+                <Text style={styles.cardValue}>{`地锁降下${
+                  lockInfo?.resetTime || 20
+                }秒，无车自动复位升起`}</Text>
+                {lockInfo?.powerType === 1 && (
+                  <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
+                )}
+              </TouchableOpacity>
+            </Flex>
+          )}
         </Flex>
       </TouchableOpacity>
 
