@@ -113,8 +113,8 @@ export const LeaveRiseLockPop = forwardRef<
               btnBorderRadius={px(12)}
               onPress={async () => {
                 const n = Number(leaveUpTime);
-                if (Number.isNaN(n) || n < 3 || n > 60) {
-                  showToast({ title: '请输入3-60s的时间', icon: 'info' });
+                if (Number.isNaN(n) || n < 90 || n > 120) {
+                  showToast({ title: '请输入90-120s的时间', icon: 'info' });
                   return;
                 }
                 const res = await onConfirm(n);
