@@ -231,6 +231,12 @@ export const TextInput = React.forwardRef<
       ? restProps.secureTextEntry
       : type === 'password';
   const resolvedInputValue = useHarmonyBufferedValue ? bufferedValue : value;
+  const isMultiline = restProps.multiline === true;
+  const inputStyle = [
+    styles.defaultInput,
+    isMultiline && styles.defaultMultilineInput,
+    style,
+  ];
 
   // 不需要清除按钮时，保持原有行为，但仍通过 handleChangeText 透传 onChangeText
   if (!showClear) {
@@ -240,7 +246,7 @@ export const TextInput = React.forwardRef<
         ref={setRefs}
         value={resolvedInputValue}
         defaultValue={defaultValue}
-        style={[styles.defaultInput, style]}
+        style={inputStyle}
         cursorColor={cursorColor}
         selectionColor={selectionColor}
         underlineColorAndroid={underlineColorAndroid}
@@ -260,7 +266,7 @@ export const TextInput = React.forwardRef<
         ref={setRefs}
         value={resolvedInputValue}
         defaultValue={defaultValue}
-        style={[styles.defaultInput, styles.clearInput, style]}
+        style={[styles.defaultInput, isMultiline && styles.defaultMultilineInput, styles.clearInput, style]}
         cursorColor={cursorColor}
         selectionColor={selectionColor}
         underlineColorAndroid={underlineColorAndroid}
@@ -300,6 +306,11 @@ const styles = StyleSheet.create({
     lineHeight: px(20),
     height: px(20),
     color: '#333333',
+  },
+  defaultMultilineInput: {
+    height: undefined,
+    minHeight: px(20),
+    textAlignVertical: 'top',
   },
   clearContainer: {
     flexDirection: 'row',

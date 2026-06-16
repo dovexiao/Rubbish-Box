@@ -2,9 +2,9 @@
   font-family: "iconfont"; /* Project id 4985985 */
   /* Color fonts */
   src: 
-       url('//at.alicdn.com/t/c/font_4985985_mtw5jwdmu4.woff2?t=1780990115382') format('woff2'),
-       url('//at.alicdn.com/t/c/font_4985985_mtw5jwdmu4.woff?t=1780990115382') format('woff'),
-       url('//at.alicdn.com/t/c/font_4985985_mtw5jwdmu4.ttf?t=1780990115382') format('truetype');
+       url('//at.alicdn.com/t/c/font_4985985_rryc173a42.woff2?t=1781513844603') format('woff2'),
+       url('//at.alicdn.com/t/c/font_4985985_rryc173a42.woff?t=1781513844603') format('woff'),
+       url('//at.alicdn.com/t/c/font_4985985_rryc173a42.ttf?t=1781513844603') format('truetype');
 }
 
 .iconfont {
@@ -13,6 +13,22 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-icon_voice_input:before {
+  content: "\e74b";
+}
+
+.icon-icon_send1:before {
+  content: "\e74c";
+}
+
+.icon-icon_send:before {
+  content: "\e74d";
+}
+
+.icon-icon_keyboard:before {
+  content: "\e74a";
 }
 
 .icon-icon_mute:before {
