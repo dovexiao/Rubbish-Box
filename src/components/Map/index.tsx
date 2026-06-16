@@ -38,6 +38,7 @@ export interface MapComponentProps {
   longitude: number;
   latitude: number;
   address?: string;
+  needAuthLoc?: boolean;
   markers?: Array<{
     id: string;
     latitude: number;
@@ -65,8 +66,10 @@ type InternalMarker = {
 };
 
 export default function MapComponent(props: MapComponentProps) {
-  const { style, address, longitude, latitude, markers, onClick } = props;
+  const { style, address, longitude, latitude, markers, needAuthLoc, onClick } =
+    props;
 
+  const needAuth = typeof needAuthLoc === 'boolean' ? needAuthLoc : true;
   const [makersList, setMakersList] = useState<InternalMarker[]>([]);
   const [locationReady, setLocationReady] = useState(false);
   const hasInitLocation = useRef(false);
@@ -148,36 +151,37 @@ export default function MapComponent(props: MapComponentProps) {
 
   const initLocation = async () => {
     await runInPermissionQueue(async () => {
-      if (isHarmonyMapUnavailable) {
-        setLocationReady(true);
-        return;
-      }
-
-      const hasLocationPermission = await showPermissionPromptIfNeeded(
-        'location',
-      );
-      if (!hasLocationPermission) {
-        setLocationReady(true);
-        return;
-      }
-
-      if (IS_HARMONY) {
-        const granted = await requestHarmonyLocationPermission();
-        if (!granted) {
-          console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+      if (needAuth) {
+        if (isHarmonyMapUnavailable) {
           setLocationReady(true);
           return;
         }
-      }
+        const hasLocationPermission = await showPermissionPromptIfNeeded(
+          'location',
+        );
+        if (!hasLocationPermission) {
+          setLocationReady(true);
+          return;
+        }
 
-      if (Platform.OS === 'android') {
-        try {
-          await PermissionsAndroid.requestMultiple([
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-          ]);
-        } catch (e) {
-          console.warn('定位权限请求失败:', e);
+        if (IS_HARMONY) {
+          const granted = await requestHarmonyLocationPermission();
+          if (!granted) {
+            console.warn('[Harmony] 定位权限未授权，跳过定位获取');
+            setLocationReady(true);
+            return;
+          }
+        }
+
+        if (Platform.OS === 'android') {
+          try {
+            await PermissionsAndroid.requestMultiple([
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+              PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+            ]);
+          } catch (e) {
+            console.warn('定位权限请求失败:', e);
+          }
         }
       }
 

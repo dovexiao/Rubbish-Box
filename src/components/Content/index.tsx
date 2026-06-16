@@ -613,6 +613,7 @@ const Content: React.FC<ContentProps> = ({
         >
           <MapComponent
             style={{ flex: 1 }}
+            needAuthLoc={false}
             address={detail?.locationList?.[0]?.formattedAddress}
             longitude={detail?.locationList?.[0]?.longitude as number}
             latitude={detail?.locationList?.[0]?.latitude as number}

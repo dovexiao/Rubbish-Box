@@ -11,7 +11,6 @@ import { unreadCount as fetchUnreadCount } from '@/services/user';
 import Flex from '@/components/Flex';
 import PopConfirm from '@/components/popConfirm';
 import {
-  reLaunch,
   cacheGetSync,
   eventCenter,
   getBluetoothDeviceInfo,
@@ -93,7 +92,7 @@ const Index = () => {
     initAMapGeolocation();
     //延时获取 避免闪退
     setTimeout(() => {
-      initBluetooth();
+      // initBluetooth();
     }, 2000);
   }, []);
 
