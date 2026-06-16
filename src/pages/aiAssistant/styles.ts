@@ -2,7 +2,6 @@ import { fontSize, px } from '@/utils/ui';
 import { Platform, StyleSheet } from 'react-native';
 
 export const INPUT_MIN_HEIGHT = px(20);
-export const INPUT_MAX_HEIGHT = px(120);
 
 const styles = StyleSheet.create({
   navHeader: {
@@ -32,24 +31,23 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    flexDirection: 'column',
     padding: px(12),
     minHeight: 0,
   },
   messageList: {
     flex: 1,
     minHeight: 0,
+    width: '100%',
   },
   messageListInner: {
-    paddingBottom: px(8),
-  },
-  inputFooter: {
-    flexShrink: 0,
-    width: '100%',
+    flexGrow: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: px(4),
   },
   userInputContent: {
     width: '100%',
     flexShrink: 0,
-    paddingBottom: px(12),
     gap: px(12),
     zIndex: 2,
   },
@@ -100,7 +98,7 @@ const styles = StyleSheet.create({
   },
   questionInputContent: {
     width: '100%',
-    minHeight: px(24),
+    minHeight: px(48),
     paddingVertical: px(12),
     paddingHorizontal: px(16),
     borderRadius: px(12),
@@ -109,18 +107,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: px(8),
-    overflow: 'hidden',
-  },
-  questionInputContentText: {
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    overflow: 'visible',
   },
   questionInputContentFocused: {
-    minHeight: px(24),
+    minHeight: px(48),
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    paddingTop: px(12),
+    paddingBottom: px(12),
+    paddingHorizontal: px(16),
+  },
+  questionInputContentExpanded: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'stretch',
   },
   questionInputContentRecording: {
-    height: px(24),
+    height: px(48),
     padding: 0,
     backgroundColor: 'transparent',
     borderWidth: 0,
@@ -135,7 +137,6 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   questionInputContentInput: {
-    flex: 1,
     minWidth: 0,
     padding: 0,
     margin: 0,
@@ -144,14 +145,17 @@ const styles = StyleSheet.create({
     color: '#333333',
     backgroundColor: 'transparent',
   },
+  questionInputContentInputRow: {
+    flex: 1,
+  },
   questionInputContentInputFocused: {
     flexGrow: 0,
     flexShrink: 0,
     alignSelf: 'stretch',
     width: '100%',
     minHeight: INPUT_MIN_HEIGHT,
-    maxHeight: INPUT_MAX_HEIGHT,
-    marginBottom: px(12),
+    marginBottom: px(16),
+    lineHeight: px(20),
     textAlignVertical: 'top',
     ...Platform.select({
       android: {
@@ -188,7 +192,7 @@ const styles = StyleSheet.create({
     height: px(24),
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: px(12),
+    borderRadius: px(6),
     overflow: 'hidden',
   },
   questionInputContentVoiceText: {
@@ -198,16 +202,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   questionInputContentVoiceRecording: {
-    height: px(24),
+    height: px(48),
     borderRadius: px(12),
   },
   questionInputContentVoiceCancel: {
-    height: px(24),
+    height: px(48),
     borderRadius: px(12),
   },
   voiceRecordingRipple: {
-    width: px(40),
-    height: px(24),
+    width: px(80),
+    height: px(48),
     justifyContent: 'center',
     alignItems: 'center',
   },

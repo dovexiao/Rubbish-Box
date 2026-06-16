@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  KeyboardAvoidingView as RNKeyboardAvoidingView,
+  Keyboard,
   NativeSyntheticEvent,
   PanResponder,
   Platform,
@@ -17,7 +17,7 @@ import { LinearGradient, PageContainer, TextInput } from '@/components';
 import { showToast } from '@/utils';
 import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
-import styles, { INPUT_MAX_HEIGHT, INPUT_MIN_HEIGHT } from './styles';
+import styles, { INPUT_MIN_HEIGHT } from './styles';
 import { ChatMessage } from './typing';
 
 type VoiceStatus = 'idle' | 'recording' | 'cancel';
@@ -109,11 +109,11 @@ const getMockAssistantReply = (userText: string): ChatMessage => {
 const AiAssistant = () => {
   const [inputText, setInputText] = useState('');
   const [inputHeight, setInputHeight] = useState(INPUT_MIN_HEIGHT);
-  const [inputExtraHeight, setInputExtraHeight] = useState(0);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [type, setType] = useState<'text' | 'voice'>('text');
   const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>('idle');
   const [messages, setMessages] = useState<ChatMessage[]>(MOCK_MESSAGES);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const messageListRef = useRef<ScrollView>(null);
   const touchStartYRef = useRef(0);
@@ -130,9 +130,33 @@ const AiAssistant = () => {
     inputTypeRef.current = type;
   }, [type]);
 
-  useEffect(() => {
+  const scrollToBottom = useCallback(() => {
     messageListRef.current?.scrollToEnd({ animated: true });
-  }, [messages, inputExtraHeight]);
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, inputHeight, scrollToBottom]);
+
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSubscription = Keyboard.addListener(showEvent, event => {
+      setKeyboardHeight(event.endCoordinates?.height ?? 0);
+      scrollToBottom();
+    });
+    const hideSubscription = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, [scrollToBottom]);
 
   useFocusEffect(
     useCallback(() => {
@@ -146,12 +170,7 @@ const AiAssistant = () => {
   const handleInputContentSizeChange = useCallback(
     (event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
       const nextHeight = Math.ceil(event.nativeEvent.contentSize.height);
-      const clampedHeight = Math.min(
-        INPUT_MAX_HEIGHT,
-        Math.max(INPUT_MIN_HEIGHT, nextHeight),
-      );
-      setInputHeight(clampedHeight);
-      setInputExtraHeight(Math.max(clampedHeight - INPUT_MIN_HEIGHT, 0));
+      setInputHeight(Math.max(INPUT_MIN_HEIGHT, nextHeight));
     },
     [],
   );
@@ -160,7 +179,6 @@ const AiAssistant = () => {
     setInputText(text);
     if (!text) {
       setInputHeight(INPUT_MIN_HEIGHT);
-      setInputExtraHeight(0);
     }
   }, []);
 
@@ -205,7 +223,6 @@ const AiAssistant = () => {
       setMessages(prev => [...prev, userMessage, assistantMessage]);
       setInputText('');
       setInputHeight(INPUT_MIN_HEIGHT);
-      setInputExtraHeight(0);
       setIsInputFocused(false);
     },
     [inputText],
@@ -266,6 +283,8 @@ const AiAssistant = () => {
   ).current;
 
   const isVoiceRecording = type === 'voice' && voiceStatus !== 'idle';
+  const isExpandedInput =
+    type === 'text' && (isInputFocused || inputText.length > 0);
   const canSend = inputText.trim().length > 0;
 
   const handleClickSend = () => {
@@ -293,11 +312,7 @@ const AiAssistant = () => {
       style={styles.questionInputContentRight}
       onPress={handleClickSend}
     >
-      <AppIcon
-        name={canSend ? 'icon_send1' : 'icon_send'}
-        size={px(24)}
-        // color="#333333"
-      />
+      <AppIcon name={canSend ? 'icon_send1' : 'icon_send'} size={px(24)} />
     </TouchableOpacity>
   );
 
@@ -324,6 +339,44 @@ const AiAssistant = () => {
     </View>
   );
 
+  const renderVoiceButton = () => {
+    if (voiceStatus === 'idle') {
+      return (
+        <View {...panResponder.panHandlers} style={{ flex: 1, minWidth: 0 }}>
+          <View style={styles.questionInputContentVoice}>
+            <Text style={styles.questionInputContentVoiceText}>按住说话</Text>
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <View {...panResponder.panHandlers} style={{ flex: 1, minWidth: 0 }}>
+        <LinearGradient
+          colors={
+            voiceStatus === 'cancel'
+              ? ['#ff6b6b', '#ffa8a8', '#fff5f5']
+              : [
+                  'rgba(82, 152, 255, 0.08)',
+                  'rgba(82, 152, 255, 0.35)',
+                  '#5298ff',
+                ]
+          }
+          start={{ x: 0, y: 0 }}
+          end={voiceStatus === 'cancel' ? { x: 1, y: 0 } : { x: 0, y: 1 }}
+          style={[
+            styles.questionInputContentVoice,
+            voiceStatus === 'recording'
+              ? styles.questionInputContentVoiceRecording
+              : styles.questionInputContentVoiceCancel,
+          ]}
+        >
+          {voiceStatus === 'recording' ? renderVoiceRipple() : null}
+        </LinearGradient>
+      </View>
+    );
+  };
+
   const renderQuestionInput = () => {
     if (isVoiceRecording) {
       return (
@@ -333,80 +386,8 @@ const AiAssistant = () => {
             styles.questionInputContentRecording,
           ]}
         >
-          <View
-            {...panResponder.panHandlers}
-            style={{ flex: 1, width: '100%' }}
-          >
-            <LinearGradient
-              colors={
-                voiceStatus === 'cancel'
-                  ? ['#ff6b6b', '#ffa8a8', '#fff5f5']
-                  : [
-                      'rgba(82, 152, 255, 0.08)',
-                      'rgba(82, 152, 255, 0.35)',
-                      '#5298ff',
-                    ]
-              }
-              start={{ x: 0, y: 0 }}
-              end={voiceStatus === 'cancel' ? { x: 1, y: 0 } : { x: 0, y: 1 }}
-              style={[
-                styles.questionInputContentVoice,
-                voiceStatus === 'recording'
-                  ? styles.questionInputContentVoiceRecording
-                  : styles.questionInputContentVoiceCancel,
-              ]}
-            >
-              {renderVoiceRipple()}
-            </LinearGradient>
-          </View>
+          {renderVoiceButton()}
         </View>
-      );
-    }
-
-    if (type === 'text') {
-      return (
-        <LinearGradient
-          colors={['#f7f7f7', '#ffffff']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={[
-            styles.questionInputContent,
-            isInputFocused && styles.questionInputContentText,
-            isInputFocused && styles.questionInputContentFocused,
-            styles.questionInputShadow,
-          ]}
-        >
-          {!isInputFocused && renderInputToggleIcon()}
-          <TextInput
-            autoFocus={isInputFocused}
-            multiline={isInputFocused}
-            scrollEnabled={isInputFocused && inputHeight >= INPUT_MAX_HEIGHT}
-            style={[
-              styles.questionInputContentInput,
-              isInputFocused && styles.questionInputContentInputFocused,
-              isInputFocused ? { height: inputHeight } : null,
-            ]}
-            value={inputText}
-            placeholder="有什么需要问我吗？"
-            placeholderTextColor="#cccccc"
-            returnKeyType="default"
-            blurOnSubmit={false}
-            onFocus={() => setIsInputFocused(true)}
-            onBlur={() => setIsInputFocused(false)}
-            onChangeText={handleInputTextChange}
-            onContentSizeChange={
-              isInputFocused ? handleInputContentSizeChange : undefined
-            }
-          />
-          {isInputFocused ? (
-            <View style={styles.questionInputContentActions}>
-              {renderInputToggleIcon()}
-              {renderSendButton()}
-            </View>
-          ) : (
-            renderSendButton()
-          )}
-        </LinearGradient>
       );
     }
 
@@ -415,82 +396,67 @@ const AiAssistant = () => {
         colors={['#f7f7f7', '#ffffff']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={[styles.questionInputContent, styles.questionInputShadow]}
+        style={[
+          styles.questionInputContent,
+          isExpandedInput && styles.questionInputContentFocused,
+          styles.questionInputShadow,
+        ]}
       >
-        {renderInputToggleIcon()}
-        <View {...panResponder.panHandlers} style={{ flex: 1, minWidth: 0 }}>
-          <View style={styles.questionInputContentVoice}>
-            <Text style={styles.questionInputContentVoiceText}>按住说话</Text>
+        {isExpandedInput ? (
+          <View style={styles.questionInputContentExpanded}>
+            <TextInput
+              autoFocus={isInputFocused}
+              multiline
+              style={[
+                styles.questionInputContentInput,
+                styles.questionInputContentInputFocused,
+                { height: inputHeight },
+              ]}
+              value={inputText}
+              placeholder="有什么需要问我吗？"
+              placeholderTextColor="#cccccc"
+              onBlur={() => setIsInputFocused(false)}
+              onFocus={() => setIsInputFocused(true)}
+              onChangeText={handleInputTextChange}
+              onContentSizeChange={handleInputContentSizeChange}
+            />
+            <View style={styles.questionInputContentActions}>
+              {renderInputToggleIcon()}
+              {renderSendButton()}
+            </View>
           </View>
-        </View>
+        ) : (
+          <>
+            {renderInputToggleIcon()}
+            {type === 'voice' ? (
+              renderVoiceButton()
+            ) : (
+              <TextInput
+                style={[
+                  styles.questionInputContentInput,
+                  styles.questionInputContentInputRow,
+                ]}
+                value={inputText}
+                placeholder="有什么需要问我吗？"
+                placeholderTextColor="#cccccc"
+                returnKeyType="send"
+                onFocus={() => setIsInputFocused(true)}
+                onSubmitEditing={handleClickSend}
+                onChangeText={handleInputTextChange}
+              />
+            )}
+            {type === 'text' && renderSendButton()}
+          </>
+        )}
       </LinearGradient>
     );
   };
-
-  const renderInputArea = () => (
-    <Flex direction="column" style={styles.userInputContent}>
-      {!isVoiceRecording && (
-        <Flex direction="row" align="center" style={styles.commonQuestionsRow}>
-          <Text style={styles.commonQuestionsText}>常用问题：</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.commonQuestionsScroll}
-            contentContainerStyle={styles.commonQuestionsItemList}
-            keyboardShouldPersistTaps="handled"
-          >
-            {COMMON_QUESTIONS.map(item => (
-              <TouchableOpacity
-                key={item}
-                activeOpacity={0.85}
-                style={styles.commonQuestionsItem}
-                onPress={() => handleSendMessage(item)}
-              >
-                <Text style={styles.commonQuestionsItemText}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </Flex>
-      )}
-
-      {isVoiceRecording && (
-        <Text
-          style={[
-            styles.voiceRecordingHint,
-            voiceStatus === 'cancel' && styles.voiceRecordingHintCancel,
-          ]}
-        >
-          {voiceStatus === 'cancel' ? '松手取消' : '松手发送 上滑取消'}
-        </Text>
-      )}
-
-      {renderQuestionInput()}
-    </Flex>
-  );
-
-  const renderChatBody = () => (
-    <View style={styles.content}>
-      <Flex style={styles.messageList} direction="column">
-        {messages.map(message => (
-          <MessageItem
-            key={message.id}
-            data={message}
-            onConfirmCancel={handleConfirmCancel}
-            onConfirmSubmit={handleConfirmSubmit}
-          />
-        ))}
-      </Flex>
-
-      {renderInputArea()}
-    </View>
-  );
 
   return (
     <PageContainer
       backgroundColor="#f4f4f4"
       statusBarBackgroundColor="#ffffff"
       statusBarStyle="dark-content"
-      scrollable={false}
       safeAreaEdges={['top']}
       header={
         <View style={styles.navHeader}>
@@ -506,7 +472,77 @@ const AiAssistant = () => {
         </View>
       }
     >
-      {renderChatBody()}
+      <View style={styles.content}>
+        <ScrollView
+          ref={messageListRef}
+          style={styles.messageList}
+          contentContainerStyle={styles.messageListInner}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          onContentSizeChange={scrollToBottom}
+        >
+          {messages.map(message => (
+            <MessageItem
+              key={message.id}
+              data={message}
+              onConfirmCancel={handleConfirmCancel}
+              onConfirmSubmit={handleConfirmSubmit}
+            />
+          ))}
+        </ScrollView>
+
+        <Flex
+          direction="column"
+          style={[
+            styles.userInputContent,
+            {
+              paddingBottom:
+                keyboardHeight > 0 ? keyboardHeight + px(24) : px(24),
+            },
+          ]}
+        >
+          {!isVoiceRecording && (
+            <Flex
+              direction="row"
+              align="center"
+              style={styles.commonQuestionsRow}
+            >
+              <Text style={styles.commonQuestionsText}>常用问题：</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.commonQuestionsScroll}
+                contentContainerStyle={styles.commonQuestionsItemList}
+                keyboardShouldPersistTaps="handled"
+              >
+                {COMMON_QUESTIONS.map(item => (
+                  <TouchableOpacity
+                    key={item}
+                    activeOpacity={0.85}
+                    style={styles.commonQuestionsItem}
+                    onPress={() => handleSendMessage(item)}
+                  >
+                    <Text style={styles.commonQuestionsItemText}>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </Flex>
+          )}
+
+          {isVoiceRecording && (
+            <Text
+              style={[
+                styles.voiceRecordingHint,
+                voiceStatus === 'cancel' && styles.voiceRecordingHintCancel,
+              ]}
+            >
+              {voiceStatus === 'cancel' ? '松手取消' : '松手发送 上滑取消'}
+            </Text>
+          )}
+
+          {renderQuestionInput()}
+        </Flex>
+      </View>
     </PageContainer>
   );
 };

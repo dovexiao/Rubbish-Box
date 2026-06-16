@@ -335,9 +335,6 @@ PODS:
     - React-Core
   - react-native-image-picker (4.10.3):
     - React-Core
-  - react-native-keyboard-controller (1.12.7-0.0.5):
-    - RCT-Folly (= 2021.07.22.00)
-    - React-Core
   - react-native-netinfo (9.5.0):
     - React-Core
   - react-native-restart (0.0.27):
@@ -554,7 +551,6 @@ DEPENDENCIES:
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-gif-player (from `../node_modules/react-native-gif-player`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
-  - "react-native-keyboard-controller (from `../node_modules/@react-native-oh-tpl/react-native-keyboard-controller`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -676,8 +672,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gif-player"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
-  react-native-keyboard-controller:
-    :path: "../node_modules/@react-native-oh-tpl/react-native-keyboard-controller"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-restart:
@@ -802,7 +796,6 @@ SPEC CHECKSUMS:
   react-native-date-picker: 2eca217a8fb09c517f5bb6b23978718c6cec59ec
   react-native-gif-player: 083df0008a64b9f417c38ab91fe27f4a4145dad1
   react-native-image-picker: 1f5318beec2ebed6695454ffb9bea8c4152f1598
-  react-native-keyboard-controller: 434876af9c86d7e363ecde275b30be3435e40f97
   react-native-netinfo: 26560022f28c06d8ef00a9ff1e03beefbbb60c2d
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
