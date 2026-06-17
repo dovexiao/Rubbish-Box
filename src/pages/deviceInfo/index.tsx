@@ -919,7 +919,7 @@ const DeviceInfo = () => {
             </Flex>
           )}
 
-          {lockInfo?.closeCarCheck === 0 && (
+          {lockInfo?.closeCarCheck === 0 && lockInfo?.has433Key && (
             <Flex style={styles.cardRows}>
               <Text style={styles.cardLable}>复位升锁</Text>
               <TouchableOpacity
