@@ -154,6 +154,8 @@ export interface LockInfoDTO {
   keyCount: number;
 
   resetTime: string;
+
+  closeCarCheck: number;
 }
 
 interface LowBatteryNoticeList {

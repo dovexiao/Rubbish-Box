@@ -59,4 +59,6 @@ export interface lockInfoProps {
   resetTime: string;
 
   buttonKeyFlag: boolean;
+
+  closeCarCheck: number;
 }

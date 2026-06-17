@@ -373,16 +373,17 @@ export default function Mine() {
               <Text
                 style={[
                   styles.businessCenterBodyItemText,
-                  [null, undefined, 0].includes(
-                    orderStat?.todayOrderCount as any,
-                  ) && styles.businessCenterBodyItemTextBold,
+                  // [null, undefined, 0].includes(
+                  //   orderStat?.todayOrderCount as any,
+                  // ) && styles.businessCenterBodyItemTextBold,
                 ]}
               >
-                {[null, undefined, 0].includes(
+                {orderStat?.todayOrderCount ?? 0}
+                {/* {[null, undefined, 0].includes(
                   orderStat?.todayOrderCount as any,
                 )
                   ? '暂无订单'
-                  : orderStat?.todayOrderCount}
+                  : orderStat?.todayOrderCount} */}
               </Text>
               <Text style={styles.businessCenterBodyItemValue}>今日订单量</Text>
             </TouchableOpacity>

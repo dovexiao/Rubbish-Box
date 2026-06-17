@@ -668,13 +668,15 @@ const Content: React.FC<ContentProps> = ({
             </Flex>
           ) : (
             <View style={styles.infoList}>
-              <View style={styles.infoRow}>
-                <AppIcon name={'a-Upgradelock'} size={px(16)} color="#ccc" />
-                <Text style={styles.infoLabel}>离车升锁</Text>
-                <Text style={styles.infoValue}>
-                  {detail?.leaveUpTime ? `${detail?.leaveUpTime}s` : '20s'}
-                </Text>
-              </View>
+              {detail?.closeCarCheck === 0 && (
+                <View style={styles.infoRow}>
+                  <AppIcon name={'a-Upgradelock'} size={px(16)} color="#ccc" />
+                  <Text style={styles.infoLabel}>离车升锁</Text>
+                  <Text style={styles.infoValue}>
+                    {detail?.leaveUpTime ? `${detail?.leaveUpTime}s` : '20s'}
+                  </Text>
+                </View>
+              )}
               <View style={styles.infoRow}>
                 <AppIcon name={'bell'} size={px(16)} color="#ccc" />
                 <Text style={styles.infoLabel}>蜂鸣碰撞</Text>
