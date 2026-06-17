@@ -75,7 +75,7 @@ export const LeaveRiseLockPop = forwardRef<
             <TextInput
               value={leaveUpTime}
               keyboardType="number-pad"
-              maxLength={2}
+              maxLength={3}
               style={styles.timeInput}
               onChangeText={setLeaveUpTime}
             />

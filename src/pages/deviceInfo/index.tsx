@@ -1076,8 +1076,8 @@ const DeviceInfo = () => {
         lecaveType={lecaveType}
         time={
           lecaveType === '1'
-            ? Number(deviceInfo?.leaveUpTime)
-            : Number(deviceInfo?.resetTime)
+            ? Number(deviceInfo?.leaveUpTime || 0)
+            : Number(deviceInfo?.resetTime || 0)
         }
         onConfirm={async leaveUpTime => {
           if (lecaveType === '1') {
