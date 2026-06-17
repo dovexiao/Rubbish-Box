@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Keyboard,
-  NativeSyntheticEvent,
   PanResponder,
   Platform,
   ScrollView,
   Text,
-  TextInputContentSizeChangeEventData,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -17,7 +15,7 @@ import { LinearGradient, PageContainer, TextInput } from '@/components';
 import { showToast } from '@/utils';
 import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
-import styles, { INPUT_MIN_HEIGHT } from './styles';
+import styles from './styles';
 import { ChatMessage } from './typing';
 
 type VoiceStatus = 'idle' | 'recording' | 'cancel';
@@ -108,7 +106,6 @@ const getMockAssistantReply = (userText: string): ChatMessage => {
 
 const AiAssistant = () => {
   const [inputText, setInputText] = useState('');
-  const [inputHeight, setInputHeight] = useState(INPUT_MIN_HEIGHT);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [type, setType] = useState<'text' | 'voice'>('text');
   const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>('idle');
@@ -136,7 +133,7 @@ const AiAssistant = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, inputHeight, scrollToBottom]);
+  }, [messages, scrollToBottom]);
 
   useEffect(() => {
     const showEvent =
@@ -167,19 +164,12 @@ const AiAssistant = () => {
     }, []),
   );
 
-  const handleInputContentSizeChange = useCallback(
-    (event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-      const nextHeight = Math.ceil(event.nativeEvent.contentSize.height);
-      setInputHeight(Math.max(INPUT_MIN_HEIGHT, nextHeight));
-    },
-    [],
-  );
+  const handleInputContentSizeChange = useCallback(() => {
+    scrollToBottom();
+  }, [scrollToBottom]);
 
   const handleInputTextChange = useCallback((text: string) => {
     setInputText(text);
-    if (!text) {
-      setInputHeight(INPUT_MIN_HEIGHT);
-    }
   }, []);
 
   const handleChangeType = useCallback((nextType: 'text' | 'voice') => {
@@ -222,7 +212,6 @@ const AiAssistant = () => {
 
       setMessages(prev => [...prev, userMessage, assistantMessage]);
       setInputText('');
-      setInputHeight(INPUT_MIN_HEIGHT);
       setIsInputFocused(false);
     },
     [inputText],
@@ -407,10 +396,10 @@ const AiAssistant = () => {
             <TextInput
               autoFocus={isInputFocused}
               multiline
+              scrollEnabled={false}
               style={[
                 styles.questionInputContentInput,
                 styles.questionInputContentInputFocused,
-                { height: inputHeight },
               ]}
               value={inputText}
               placeholder="有什么需要问我吗？"
