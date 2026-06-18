@@ -307,7 +307,7 @@ const DeviceInfo = () => {
   const deviceResetRiseLock = async (resetTime: number) => {
     showLoading({ title: '修改中...' });
     const res = await resetRiseLock({
-      t: resetTime,
+      time: resetTime,
       deviceNo: deviceInfo?.deviceNo,
     });
     if (res.success) {
@@ -362,7 +362,7 @@ const DeviceInfo = () => {
       const { start, stop } = loopFunc(async () => {
         const res = await resetRiseLockResult({
           deviceNo: deviceInfo?.deviceNo,
-          t,
+          time: t,
         });
         if (res.data) {
           fetchLockInfo();
