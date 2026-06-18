@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { impact } from 'react-native-haptic-feedback';
 import { useFocusEffect } from '@react-navigation/core';
 import AppIcon from '@/components/AppIcon';
 import Flex from '@/components/Flex';
 import { LinearGradient, PageContainer, TextInput } from '@/components';
+import { triggerLightHaptic } from '@/utils/haptics';
 import { showToast } from '@/utils';
 import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
@@ -27,14 +27,8 @@ const MIN_RECORD_DURATION = 1000;
 const VOICE_HOLD_DELAY_MS = 500;
 
 const triggerLightVibration = () => {
-  try {
-    impact('impactHeavy', 1, {
-      enableVibrateFallback: true,
-      ignoreAndroidSystemSettings: false,
-    });
-  } catch {
-    // 设备不支持触觉反馈时静默跳过
-  }
+  console.log('trigger light vibration');
+  triggerLightHaptic();
 };
 
 const MOCK_MESSAGES: ChatMessage[] = [

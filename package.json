@@ -61,6 +61,7 @@
     "@react-native-community/segmented-control": "^2.2.2",
     "@react-native-community/slider": "^4.4.2",
     "@react-native-oh-tpl/react-native-view-shot": "3.8.0-0.3.2",
+    "@react-native-oh-tpl/react-native-haptic-feedback": "2.2.1-rc.1",
     "@react-native-oh-tpl/react-native-webview": "13.10.4",
     "@react-native-ohos/clipboard": "1.16.3-rc.1",
     "@react-native-ohos/react-native-ble-plx": "3.2.1-rc.2",
@@ -171,7 +172,8 @@
       "react-native-screens@3.18.2": "patches/react-native-screens@3.18.2.patch",
       "metro-file-map@0.76.8": "patches/metro-file-map@0.76.8.patch",
       "react-native@0.72.5": "patches/react-native@0.72.5.patch",
-      "@react-native-ohos/react-native-ble-plx@3.2.1-rc.2": "patches/@react-native-ohos+react-native-ble-plx@3.2.1-rc.2.patch"
+      "@react-native-ohos/react-native-ble-plx@3.2.1-rc.2": "patches/@react-native-ohos+react-native-ble-plx@3.2.1-rc.2.patch",
+      "react-native-haptic-feedback@3.0.0": "patches/react-native-haptic-feedback@3.0.0.patch"
     },
     "overrides": {
       "@react-native-oh/react-native-harmony-cli": "0.77.50",

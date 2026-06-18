@@ -21,6 +21,9 @@ patchedDependencies:
   react-native-amap3d:
     hash: 14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb
     path: patches/react-native-amap3d.patch
+  react-native-haptic-feedback@3.0.0:
+    hash: 5d0a1c0cb1096b70a603ab7e4d354288d21c428e388c0778d3d40d3abddf491c
+    path: patches/react-native-haptic-feedback@3.0.0.patch
   react-native-intent-launcher:
     hash: abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8
     path: patches/react-native-intent-launcher.patch
@@ -65,6 +68,9 @@ importers:
       '@react-native-community/slider':
         specifier: ^4.4.2
         version: 4.5.7
+      '@react-native-oh-tpl/react-native-haptic-feedback':
+        specifier: 2.2.1-rc.1
+        version: 2.2.1-rc.1(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))
       '@react-native-oh-tpl/react-native-view-shot':
         specifier: 3.8.0-0.3.2
         version: 3.8.0-0.3.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -178,7 +184,7 @@ importers:
         version: 1.0.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-haptic-feedback:
         specifier: 3.0.0
-        version: 3.0.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+        version: 3.0.0(patch_hash=5d0a1c0cb1096b70a603ab7e4d354288d21c428e388c0778d3d40d3abddf491c)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-iconfont-cli:
         specifier: ^2.2.4
         version: 2.2.4(react-native-svg@13.10.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -1735,6 +1741,11 @@ packages:
 
   '@react-native-community/slider@4.5.7':
     resolution: {integrity: sha512-WMDDZjNF2Bd8M8TrSqKf5xhM9ikdfCHtSPur64Ow3bB/OVrKufUQZ59NmYdNZNeGPvcHHTsafuYTY8zfZfbchQ==}
+
+  '@react-native-oh-tpl/react-native-haptic-feedback@2.2.1-rc.1':
+    resolution: {integrity: sha512-TFXcwh6lvel/WZ6bQiNpAlvOgSr3OyNH0kl4Ls6c7JNKqTL8qOtxJkbPg3Cy16APMVclM0HVmTo6EyUuTaEzmg==}
+    peerDependencies:
+      react-native: '>=0.60.0'
 
   '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2':
     resolution: {integrity: sha512-SovSCe4fPz+A7KXJ8NisTCcPwvRmAjtXIWSxKVyGWrkishZ6Ru3ApdoJySf4y18dugW3qrV4MuQElicGkujGQQ==}
@@ -4879,6 +4890,11 @@ packages:
       react: '*'
       react-native: '*'
 
+  react-native-haptic-feedback@2.3.4:
+    resolution: {integrity: sha512-3nHECsi+pL1c2TKNpOD5aPtAfFzrkjpABjioi6OUBb6OVeuUObQlx9idoXSbj1h/L7TCaC13LqKT5ILl0xxHjQ==}
+    peerDependencies:
+      react-native: '>=0.60.0'
+
   react-native-haptic-feedback@3.0.0:
     resolution: {integrity: sha512-yxBQFHhXU8S0xupGtzDRToGw5yMWezUdLzxtlx2Oi9YpjPwprWZWCw8foPt0S2t84B0ZikzZYyOHiMSXIelUxg==}
     peerDependencies:
@@ -7898,6 +7914,11 @@ snapshots:
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
   '@react-native-community/slider@4.5.7': {}
+
+  '@react-native-oh-tpl/react-native-haptic-feedback@2.2.1-rc.1(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))':
+    dependencies:
+      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+      react-native-haptic-feedback: 2.3.4(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))
 
   '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -12264,7 +12285,11 @@ snapshots:
       react: 18.2.0
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
-  react-native-haptic-feedback@3.0.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+  react-native-haptic-feedback@2.3.4(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)):
+    dependencies:
+      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+
+  react-native-haptic-feedback@3.0.0(patch_hash=5d0a1c0cb1096b70a603ab7e4d354288d21c428e388c0778d3d40d3abddf491c)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
     dependencies:
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
     optionalDependencies:
