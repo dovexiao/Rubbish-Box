@@ -65,9 +65,6 @@ importers:
       '@react-native-community/slider':
         specifier: ^4.4.2
         version: 4.5.7
-      '@react-native-oh-tpl/react-native-keyboard-controller':
-        specifier: 1.12.7-0.0.5
-        version: 1.12.7-0.0.5(react-native-keyboard-controller@1.12.7(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       '@react-native-oh-tpl/react-native-view-shot':
         specifier: 3.8.0-0.3.2
         version: 3.8.0-0.3.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -179,6 +176,9 @@ importers:
       react-native-gif-player:
         specifier: ^1.0.2
         version: 1.0.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+      react-native-haptic-feedback:
+        specifier: 3.0.0
+        version: 3.0.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-iconfont-cli:
         specifier: ^2.2.4
         version: 2.2.4(react-native-svg@13.10.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -191,9 +191,6 @@ importers:
       react-native-keyboard-aware-scroll-view:
         specifier: ^0.9.5
         version: 0.9.5(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))
-      react-native-keyboard-controller:
-        specifier: 1.12.7
-        version: 1.12.7(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-linear-gradient:
         specifier: ^2.8.3
         version: 2.8.3(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -1738,14 +1735,6 @@ packages:
 
   '@react-native-community/slider@4.5.7':
     resolution: {integrity: sha512-WMDDZjNF2Bd8M8TrSqKf5xhM9ikdfCHtSPur64Ow3bB/OVrKufUQZ59NmYdNZNeGPvcHHTsafuYTY8zfZfbchQ==}
-
-  '@react-native-oh-tpl/react-native-keyboard-controller@1.12.7-0.0.5':
-    resolution: {integrity: sha512-Lf/v0vhTkM6Eok8r+deFbhf4cqwjXdNi4gWfTYchDYj4Mf0I/9zlHcDY1UoqsJsQNZyK5iJsWEkuo7T55vQbwA==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-      react-native-keyboard-controller: 1.12.7
-      react-native-reanimated: '>=3.0.0'
 
   '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2':
     resolution: {integrity: sha512-SovSCe4fPz+A7KXJ8NisTCcPwvRmAjtXIWSxKVyGWrkishZ6Ru3ApdoJySf4y18dugW3qrV4MuQElicGkujGQQ==}
@@ -4890,6 +4879,15 @@ packages:
       react: '*'
       react-native: '*'
 
+  react-native-haptic-feedback@3.0.0:
+    resolution: {integrity: sha512-yxBQFHhXU8S0xupGtzDRToGw5yMWezUdLzxtlx2Oi9YpjPwprWZWCw8foPt0S2t84B0ZikzZYyOHiMSXIelUxg==}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-native: '>=0.71.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+
   react-native-iconfont-cli@2.2.4:
     resolution: {integrity: sha512-qTjfHG2f/sc3/YKWZJvIJk/SwiTu8C9/SvtoLxRX+GM/6pvOJq0ge6rcV3vTh4s3QJDuNDOD6+a4hGD6vv2vSg==}
     hasBin: true
@@ -4922,13 +4920,6 @@ packages:
     resolution: {integrity: sha512-XwfRn+T/qBH9WjTWIBiJD2hPWg0yJvtaEw6RtPCa5/PYHabzBaWxYBOl0usXN/368BL1XktnZPh8C2lmTpOREA==}
     peerDependencies:
       react-native: '>=0.48.4'
-
-  react-native-keyboard-controller@1.12.7:
-    resolution: {integrity: sha512-eccg0JtZk5n/up3I7pEg606Bo9eLsgVGtTPnmdv507AJg5UeAAMEhx93P7YXDZmwJ+38oFn3DbL7a0eIUE3Lxw==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-      react-native-reanimated: '>=2.11.0'
 
   react-native-linear-gradient@2.8.3:
     resolution: {integrity: sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==}
@@ -7907,13 +7898,6 @@ snapshots:
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
   '@react-native-community/slider@4.5.7': {}
-
-  '@react-native-oh-tpl/react-native-keyboard-controller@1.12.7-0.0.5(react-native-keyboard-controller@1.12.7(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      react: 18.2.0
-      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
-      react-native-keyboard-controller: 1.12.7(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
-      react-native-reanimated: 3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
 
   '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -12280,6 +12264,12 @@ snapshots:
       react: 18.2.0
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
+  react-native-haptic-feedback@3.0.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+    optionalDependencies:
+      react: 18.2.0
+
   react-native-iconfont-cli@2.2.4(react-native-svg@13.10.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
     dependencies:
       colors: 1.4.0
@@ -12316,12 +12306,6 @@ snapshots:
       prop-types: 15.8.1
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
       react-native-iphone-x-helper: 1.3.1(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))
-
-  react-native-keyboard-controller@1.12.7(react-native-reanimated@3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
-    dependencies:
-      react: 18.2.0
-      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
-      react-native-reanimated: 3.10.1(@babel/core@7.29.0)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
 
   react-native-linear-gradient@2.8.3(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
     dependencies:

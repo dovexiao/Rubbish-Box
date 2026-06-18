@@ -487,6 +487,9 @@ PODS:
     - React-Core
   - RNPermissions (3.10.1):
     - React-Core
+  - RNReactNativeHapticFeedback (3.0.0):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - RNReanimated (3.10.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -587,6 +590,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -744,6 +748,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@notifee/react-native"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -832,6 +838,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 5fe9e4f847b51d8cc9006cec6c7dc6718dd82809
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNPermissions: 0d05c67486f028260077fffac5d689e86f18bffa
+  RNReactNativeHapticFeedback: d399bfe5ca95998a63b2c501e6558addbc65d1e8
   RNReanimated: f6f47ab6afca5c924255917beda5edc7e9dafe41
   RNScreens: 10cefd0dd5c6ccd8651c6ca8b276790ea10a7f20
   RNSVG: 51fc2eb4e3fc8056fa19c34101461fc26a4326f9

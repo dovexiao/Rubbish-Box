@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
   userInputContent: {
     width: '100%',
     flexShrink: 0,
+    flexDirection: 'column',
     gap: px(12),
     zIndex: 2,
   },
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
     color: '#999999',
     lineHeight: px(17),
     textAlign: 'center',
+    marginTop: px(12),
   },
   voiceRecordingHintCancel: {
     color: '#ff4d4f',
@@ -124,10 +126,18 @@ const styles = StyleSheet.create({
   questionInputContentRecording: {
     height: px(48),
     padding: 0,
+    alignItems: 'stretch',
+    position: 'relative',
     backgroundColor: 'transparent',
     borderWidth: 0,
     shadowOpacity: 0,
     elevation: 0,
+  },
+  questionInputContentVoiceRow: {
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    minHeight: px(48),
+    position: 'relative',
   },
   questionInputShadow: {
     shadowColor: '#000000',
@@ -187,14 +197,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexShrink: 0,
   },
-  questionInputContentVoice: {
-    flex: 1,
-    minWidth: 0,
-    height: px(24),
+  questionInputContentVoiceTouchable: {
+    width: '100%',
+    height: px(48),
+    alignSelf: 'stretch',
+  },
+  questionInputContentVoiceFull: {
+    width: '100%',
+    height: px(48),
+    position: 'relative',
+  },
+  questionInputContentVoiceToggle: {
+    position: 'absolute',
+    left: px(16),
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  questionInputContentVoiceIdle: {
+    width: '100%',
+    height: px(48),
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: px(6),
-    overflow: 'hidden',
+    borderRadius: px(12),
   },
   questionInputContentVoiceText: {
     fontSize: fontSize(14),
@@ -202,13 +228,19 @@ const styles = StyleSheet.create({
     lineHeight: px(24),
     textAlign: 'center',
   },
-  questionInputContentVoiceRecording: {
+  questionInputContentVoiceActiveWrap: {
+    flex: 1,
+    width: '100%',
     height: px(48),
-    borderRadius: px(12),
+    alignSelf: 'stretch',
   },
-  questionInputContentVoiceCancel: {
+  questionInputContentVoiceActive: {
+    width: '100%',
     height: px(48),
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: px(12),
+    overflow: 'hidden',
   },
   voiceRecordingRipple: {
     width: px(80),

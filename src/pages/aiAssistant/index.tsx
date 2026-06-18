@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { impact } from 'react-native-haptic-feedback';
 import { useFocusEffect } from '@react-navigation/core';
 import AppIcon from '@/components/AppIcon';
 import Flex from '@/components/Flex';
@@ -17,11 +18,24 @@ import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
 import styles from './styles';
 import { ChatMessage } from './typing';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type VoiceStatus = 'idle' | 'recording' | 'cancel';
 
-const CANCEL_SLIDE_THRESHOLD = 60;
+const CANCEL_SLIDE_THRESHOLD = 120;
 const MIN_RECORD_DURATION = 1000;
+const VOICE_HOLD_DELAY_MS = 500;
+
+const triggerLightVibration = () => {
+  try {
+    impact('impactHeavy', 1, {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    });
+  } catch {
+    // 设备不支持触觉反馈时静默跳过
+  }
+};
 
 const MOCK_MESSAGES: ChatMessage[] = [
   {
@@ -105,6 +119,7 @@ const getMockAssistantReply = (userText: string): ChatMessage => {
 };
 
 const AiAssistant = () => {
+  const insets = useSafeAreaInsets();
   const [inputText, setInputText] = useState('');
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [type, setType] = useState<'text' | 'voice'>('text');
@@ -113,11 +128,18 @@ const AiAssistant = () => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const messageListRef = useRef<ScrollView>(null);
-  const touchStartYRef = useRef(0);
+  const userInputContentRef = useRef<View>(null);
+  const voiceButtonRef = useRef<View>(null);
   const recordStartTimeRef = useRef(0);
-  const shouldSendRef = useRef(false);
   const voiceStatusRef = useRef<VoiceStatus>('idle');
   const inputTypeRef = useRef(type);
+  const pressActiveRef = useRef(false);
+  const hasStartedRef = useRef(false);
+  const cancelingRef = useRef(false);
+  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const userInputBoundsRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
+  const voiceButtonBoundsRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
+  const wasInsideUserInputRef = useRef(true);
 
   useEffect(() => {
     voiceStatusRef.current = voiceStatus;
@@ -154,15 +176,6 @@ const AiAssistant = () => {
       hideSubscription.remove();
     };
   }, [scrollToBottom]);
-
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        shouldSendRef.current = false;
-        setVoiceStatus('idle');
-      };
-    }, []),
-  );
 
   const handleInputContentSizeChange = useCallback(() => {
     scrollToBottom();
@@ -219,7 +232,9 @@ const AiAssistant = () => {
 
   const finishVoiceRecording = useCallback(
     (isCancel: boolean) => {
-      shouldSendRef.current = !isCancel;
+      hasStartedRef.current = false;
+      cancelingRef.current = false;
+      wasInsideUserInputRef.current = true;
 
       if (!isCancel) {
         const duration = Date.now() - recordStartTimeRef.current;
@@ -235,38 +250,211 @@ const AiAssistant = () => {
     [handleVoiceSend],
   );
 
+  const clearHoldTimer = useCallback(() => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+  }, []);
+
+  const updateUserInputBounds = useCallback(() => {
+    userInputContentRef.current?.measureInWindow((x, y, width, height) => {
+      userInputBoundsRef.current = { x, y, width, height };
+    });
+  }, []);
+
+  const updateVoiceButtonBounds = useCallback(() => {
+    voiceButtonRef.current?.measureInWindow((x, y, width, height) => {
+      voiceButtonBoundsRef.current = { x, y, width, height };
+    });
+  }, []);
+
+  const isTouchOnVoiceButton = useCallback((pageX: number, pageY: number) => {
+    const { x, y, width, height } = voiceButtonBoundsRef.current;
+    if (width <= 0 || height <= 0) {
+      return true;
+    }
+    return (
+      pageX >= x && pageX <= x + width && pageY >= y && pageY <= y + height
+    );
+  }, []);
+
+  const isTouchInsideUserInput = useCallback((pageX: number, pageY: number) => {
+    const { x, y, width, height } = userInputBoundsRef.current;
+    if (width <= 0 || height <= 0) {
+      return true;
+    }
+    return (
+      pageX >= x && pageX <= x + width && pageY >= y && pageY <= y + height
+    );
+  }, []);
+
+  const updateCancelStateFromTouch = useCallback(
+    (moveX: number, moveY: number, startY: number) => {
+      const isInsideUserInput = isTouchInsideUserInput(moveX, moveY);
+
+      if (
+        hasStartedRef.current &&
+        isInsideUserInput !== wasInsideUserInputRef.current
+      ) {
+        wasInsideUserInputRef.current = isInsideUserInput;
+        triggerLightVibration();
+      }
+
+      const shouldCancel =
+        !isInsideUserInput || startY - moveY > CANCEL_SLIDE_THRESHOLD;
+
+      if (shouldCancel !== cancelingRef.current) {
+        cancelingRef.current = shouldCancel;
+        setVoiceStatus(shouldCancel ? 'cancel' : 'recording');
+      }
+    },
+    [isTouchInsideUserInput],
+  );
+
+  const beginVoiceRecording = useCallback(() => {
+    if (!pressActiveRef.current || hasStartedRef.current) {
+      return;
+    }
+
+    hasStartedRef.current = true;
+    cancelingRef.current = false;
+    wasInsideUserInputRef.current = true;
+    recordStartTimeRef.current = Date.now();
+    triggerLightVibration();
+    setVoiceStatus('recording');
+  }, []);
+
+  const resetVoicePressState = useCallback(() => {
+    pressActiveRef.current = false;
+    clearHoldTimer();
+  }, [clearHoldTimer]);
+
+  useEffect(() => {
+    return () => {
+      clearHoldTimer();
+    };
+  }, [clearHoldTimer]);
+
+  useEffect(() => {
+    if (voiceStatus !== 'idle') {
+      requestAnimationFrame(() => {
+        updateUserInputBounds();
+        updateVoiceButtonBounds();
+      });
+    }
+  }, [voiceStatus, updateUserInputBounds, updateVoiceButtonBounds]);
+
+  const voicePanHandlersRef = useRef({
+    updateUserInputBounds,
+    updateVoiceButtonBounds,
+    clearHoldTimer,
+    beginVoiceRecording,
+    updateCancelStateFromTouch,
+    resetVoicePressState,
+    finishVoiceRecording,
+    isTouchOnVoiceButton,
+  });
+
+  useEffect(() => {
+    voicePanHandlersRef.current = {
+      updateUserInputBounds,
+      updateVoiceButtonBounds,
+      clearHoldTimer,
+      beginVoiceRecording,
+      updateCancelStateFromTouch,
+      resetVoicePressState,
+      finishVoiceRecording,
+      isTouchOnVoiceButton,
+    };
+  }, [
+    updateUserInputBounds,
+    updateVoiceButtonBounds,
+    clearHoldTimer,
+    beginVoiceRecording,
+    updateCancelStateFromTouch,
+    resetVoicePressState,
+    finishVoiceRecording,
+    isTouchOnVoiceButton,
+  ]);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        resetVoicePressState();
+        hasStartedRef.current = false;
+        cancelingRef.current = false;
+        wasInsideUserInputRef.current = true;
+        setVoiceStatus('idle');
+      };
+    }, [resetVoicePressState]),
+  );
+
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () =>
-        inputTypeRef.current === 'voice' && voiceStatusRef.current === 'idle',
-      onMoveShouldSetPanResponder: () => voiceStatusRef.current !== 'idle',
-      onPanResponderGrant: evt => {
-        if (voiceStatusRef.current !== 'idle') return;
-
-        const touch = evt.nativeEvent;
-        touchStartYRef.current = touch.pageY;
-        shouldSendRef.current = true;
-        recordStartTimeRef.current = Date.now();
-        setVoiceStatus('recording');
-      },
-      onPanResponderMove: evt => {
-        if (voiceStatusRef.current === 'idle') return;
-
-        const deltaY = touchStartYRef.current - evt.nativeEvent.pageY;
-        const nextStatus: VoiceStatus =
-          deltaY > CANCEL_SLIDE_THRESHOLD ? 'cancel' : 'recording';
-
-        if (nextStatus !== voiceStatusRef.current) {
-          setVoiceStatus(nextStatus);
+      onStartShouldSetPanResponder: (evt, _gestureState) => {
+        if (inputTypeRef.current !== 'voice' || pressActiveRef.current) {
+          return false;
         }
+
+        const { pageX, pageY } = evt.nativeEvent;
+        return voicePanHandlersRef.current.isTouchOnVoiceButton(pageX, pageY);
       },
-      onPanResponderRelease: () => {
-        if (voiceStatusRef.current === 'idle') return;
-        finishVoiceRecording(voiceStatusRef.current === 'cancel');
+      onMoveShouldSetPanResponder: () => pressActiveRef.current,
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: (evt, _gestureState) => {
+        if (inputTypeRef.current !== 'voice' || hasStartedRef.current) {
+          return;
+        }
+
+        const handlers = voicePanHandlersRef.current;
+        pressActiveRef.current = true;
+        cancelingRef.current = false;
+        handlers.updateUserInputBounds();
+        handlers.updateVoiceButtonBounds();
+        handlers.clearHoldTimer();
+
+        holdTimerRef.current = setTimeout(() => {
+          handlers.beginVoiceRecording();
+        }, VOICE_HOLD_DELAY_MS);
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        if (!hasStartedRef.current) {
+          return;
+        }
+
+        const pageX = evt.nativeEvent.pageX ?? gestureState.moveX;
+        const pageY = evt.nativeEvent.pageY ?? gestureState.moveY;
+
+        voicePanHandlersRef.current.updateCancelStateFromTouch(
+          pageX,
+          pageY,
+          gestureState.y0,
+        );
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        const handlers = voicePanHandlersRef.current;
+        handlers.resetVoicePressState();
+
+        if (!hasStartedRef.current) {
+          return;
+        }
+
+        const pageX = evt.nativeEvent.pageX ?? gestureState.moveX;
+        const pageY = evt.nativeEvent.pageY ?? gestureState.moveY;
+
+        handlers.updateCancelStateFromTouch(pageX, pageY, gestureState.y0);
+        handlers.finishVoiceRecording(cancelingRef.current);
       },
       onPanResponderTerminate: () => {
-        if (voiceStatusRef.current === 'idle') return;
-        finishVoiceRecording(voiceStatusRef.current === 'cancel');
+        const handlers = voicePanHandlersRef.current;
+        handlers.resetVoicePressState();
+
+        if (!hasStartedRef.current) {
+          return;
+        }
+
+        handlers.finishVoiceRecording(true);
       },
     }),
   ).current;
@@ -331,67 +519,45 @@ const AiAssistant = () => {
   const renderVoiceButton = () => {
     if (voiceStatus === 'idle') {
       return (
-        <View {...panResponder.panHandlers} style={{ flex: 1, minWidth: 0 }}>
-          <View style={styles.questionInputContentVoice}>
-            <Text style={styles.questionInputContentVoiceText}>按住说话</Text>
-          </View>
-        </View>
-      );
-    }
-
-    return (
-      <View {...panResponder.panHandlers} style={{ flex: 1, minWidth: 0 }}>
-        <LinearGradient
-          colors={
-            voiceStatus === 'cancel'
-              ? ['#ff6b6b', '#ffa8a8', '#fff5f5']
-              : [
-                  'rgba(82, 152, 255, 0.08)',
-                  'rgba(82, 152, 255, 0.35)',
-                  '#5298ff',
-                ]
-          }
-          start={{ x: 0, y: 0 }}
-          end={voiceStatus === 'cancel' ? { x: 1, y: 0 } : { x: 0, y: 1 }}
-          style={[
-            styles.questionInputContentVoice,
-            voiceStatus === 'recording'
-              ? styles.questionInputContentVoiceRecording
-              : styles.questionInputContentVoiceCancel,
-          ]}
-        >
-          {voiceStatus === 'recording' ? renderVoiceRipple() : null}
-        </LinearGradient>
-      </View>
-    );
-  };
-
-  const renderQuestionInput = () => {
-    if (isVoiceRecording) {
-      return (
-        <View
-          style={[
-            styles.questionInputContent,
-            styles.questionInputContentRecording,
-          ]}
-        >
-          {renderVoiceButton()}
+        <View style={styles.questionInputContentVoiceIdle}>
+          <Text style={styles.questionInputContentVoiceText}>按住说话</Text>
         </View>
       );
     }
 
     return (
       <LinearGradient
-        colors={['#f7f7f7', '#ffffff']}
+        colors={
+          voiceStatus === 'cancel'
+            ? ['#ff6b6b', '#ffa8a8', '#fff5f5']
+            : [
+                'rgba(82, 152, 255, 0.08)',
+                'rgba(82, 152, 255, 0.35)',
+                '#5298ff',
+              ]
+        }
         start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={[
-          styles.questionInputContent,
-          isExpandedInput && styles.questionInputContentFocused,
-          styles.questionInputShadow,
-        ]}
+        end={voiceStatus === 'cancel' ? { x: 1, y: 0 } : { x: 0, y: 1 }}
+        style={styles.questionInputContentVoiceActive}
       >
-        {isExpandedInput ? (
+        {voiceStatus === 'recording' ? renderVoiceRipple() : null}
+      </LinearGradient>
+    );
+  };
+
+  const renderQuestionInput = () => {
+    if (isExpandedInput) {
+      return (
+        <LinearGradient
+          colors={['#f7f7f7', '#ffffff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={[
+            styles.questionInputContent,
+            styles.questionInputContentFocused,
+            styles.questionInputShadow,
+          ]}
+        >
           <View style={styles.questionInputContentExpanded}>
             <TextInput
               autoFocus={isInputFocused}
@@ -414,29 +580,79 @@ const AiAssistant = () => {
               {renderSendButton()}
             </View>
           </View>
-        ) : (
-          <>
-            {renderInputToggleIcon()}
-            {type === 'voice' ? (
-              renderVoiceButton()
-            ) : (
-              <TextInput
-                style={[
-                  styles.questionInputContentInput,
-                  styles.questionInputContentInputRow,
-                ]}
-                value={inputText}
-                placeholder="有什么需要问我吗？"
-                placeholderTextColor="#cccccc"
-                returnKeyType="send"
-                onFocus={() => setIsInputFocused(true)}
-                onSubmitEditing={handleClickSend}
-                onChangeText={handleInputTextChange}
-              />
-            )}
-            {type === 'text' && renderSendButton()}
-          </>
-        )}
+        </LinearGradient>
+      );
+    }
+
+    if (type === 'voice') {
+      const voiceInputBody = (
+        <>
+          {!isVoiceRecording && (
+            <View style={styles.questionInputContentVoiceToggle}>
+              {renderInputToggleIcon()}
+            </View>
+          )}
+          <View
+            ref={voiceButtonRef}
+            onLayout={updateVoiceButtonBounds}
+            style={styles.questionInputContentVoiceFull}
+          >
+            {renderVoiceButton()}
+          </View>
+        </>
+      );
+
+      if (isVoiceRecording) {
+        return (
+          <View
+            style={[
+              styles.questionInputContent,
+              styles.questionInputContentRecording,
+            ]}
+          >
+            {voiceInputBody}
+          </View>
+        );
+      }
+
+      return (
+        <LinearGradient
+          colors={['#f7f7f7', '#ffffff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={[
+            styles.questionInputContent,
+            styles.questionInputContentVoiceRow,
+            styles.questionInputShadow,
+          ]}
+        >
+          {voiceInputBody}
+        </LinearGradient>
+      );
+    }
+
+    return (
+      <LinearGradient
+        colors={['#f7f7f7', '#ffffff']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={[styles.questionInputContent, styles.questionInputShadow]}
+      >
+        {renderInputToggleIcon()}
+        <TextInput
+          style={[
+            styles.questionInputContentInput,
+            styles.questionInputContentInputRow,
+          ]}
+          value={inputText}
+          placeholder="有什么需要问我吗？"
+          placeholderTextColor="#cccccc"
+          returnKeyType="send"
+          onFocus={() => setIsInputFocused(true)}
+          onSubmitEditing={handleClickSend}
+          onChangeText={handleInputTextChange}
+        />
+        {renderSendButton()}
       </LinearGradient>
     );
   };
@@ -480,13 +696,20 @@ const AiAssistant = () => {
           ))}
         </ScrollView>
 
-        <Flex
-          direction="column"
+        <View
+          ref={userInputContentRef}
+          onLayout={() => {
+            updateUserInputBounds();
+            updateVoiceButtonBounds();
+          }}
+          {...(type === 'voice' ? panResponder.panHandlers : {})}
           style={[
             styles.userInputContent,
             {
               paddingBottom:
-                keyboardHeight > 0 ? keyboardHeight + px(24) : px(24),
+                keyboardHeight > 0
+                  ? keyboardHeight - px(60 + Math.max(insets.bottom, 24))
+                  : px(24),
             },
           ]}
         >
@@ -525,12 +748,14 @@ const AiAssistant = () => {
                 voiceStatus === 'cancel' && styles.voiceRecordingHintCancel,
               ]}
             >
-              {voiceStatus === 'cancel' ? '松手取消' : '松手发送 上滑取消'}
+              {voiceStatus === 'cancel'
+                ? '松手取消'
+                : '松手发送，移出输入区取消'}
             </Text>
           )}
 
           {renderQuestionInput()}
-        </Flex>
+        </View>
       </View>
     </PageContainer>
   );

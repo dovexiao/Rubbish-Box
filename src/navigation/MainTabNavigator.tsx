@@ -106,7 +106,7 @@ export const MainTabNavigator: React.FC = () => {
           tabBarActiveTintColor: '#333333',
           tabBarInactiveTintColor: '#666666',
           tabBarStyle,
-          tabBarHideOnKeyboard: true,
+          tabBarHideOnKeyboard: false,
           tabBarLabelStyle: {
             fontSize: fontSize(11),
             fontWeight: '400',
