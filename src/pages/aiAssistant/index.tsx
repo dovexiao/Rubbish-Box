@@ -1,35 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Keyboard,
-  PanResponder,
   Platform,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/core';
 import AppIcon from '@/components/AppIcon';
 import Flex from '@/components/Flex';
 import { LinearGradient, PageContainer, TextInput } from '@/components';
-import { triggerLightHaptic } from '@/utils/haptics';
+import { useHoldToTalk, VoiceRipple } from '@/components/HoldToTalk';
 import { showToast } from '@/utils';
 import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
 import styles from './styles';
 import { ChatMessage } from './typing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-type VoiceStatus = 'idle' | 'recording' | 'cancel';
-
-const CANCEL_SLIDE_THRESHOLD = 120;
-const MIN_RECORD_DURATION = 1000;
-const VOICE_HOLD_DELAY_MS = 500;
-
-const triggerLightVibration = () => {
-  console.log('trigger light vibration');
-  triggerLightHaptic();
-};
 
 const MOCK_MESSAGES: ChatMessage[] = [
   {
@@ -117,31 +104,10 @@ const AiAssistant = () => {
   const [inputText, setInputText] = useState('');
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [type, setType] = useState<'text' | 'voice'>('text');
-  const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>('idle');
   const [messages, setMessages] = useState<ChatMessage[]>(MOCK_MESSAGES);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const messageListRef = useRef<ScrollView>(null);
-  const userInputContentRef = useRef<View>(null);
-  const voiceButtonRef = useRef<View>(null);
-  const recordStartTimeRef = useRef(0);
-  const voiceStatusRef = useRef<VoiceStatus>('idle');
-  const inputTypeRef = useRef(type);
-  const pressActiveRef = useRef(false);
-  const hasStartedRef = useRef(false);
-  const cancelingRef = useRef(false);
-  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const userInputBoundsRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
-  const voiceButtonBoundsRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
-  const wasInsideUserInputRef = useRef(true);
-
-  useEffect(() => {
-    voiceStatusRef.current = voiceStatus;
-  }, [voiceStatus]);
-
-  useEffect(() => {
-    inputTypeRef.current = type;
-  }, [type]);
 
   const scrollToBottom = useCallback(() => {
     messageListRef.current?.scrollToEnd({ animated: true });
@@ -186,14 +152,6 @@ const AiAssistant = () => {
     }
   }, []);
 
-  const handleVoiceSend = useCallback(
-    (_tempFilePath: string, duration: number) => {
-      // TODO: 接入语音识别 / 发送语音消息
-      console.log('voice recorded', _tempFilePath, duration);
-    },
-    [],
-  );
-
   const handleConfirmCancel = useCallback((messageId: string) => {
     showToast({ title: '已取消', icon: 'none' });
     console.log('confirm cancel', messageId);
@@ -224,236 +182,18 @@ const AiAssistant = () => {
     [inputText],
   );
 
-  const finishVoiceRecording = useCallback(
-    (isCancel: boolean) => {
-      hasStartedRef.current = false;
-      cancelingRef.current = false;
-      wasInsideUserInputRef.current = true;
-
-      if (!isCancel) {
-        const duration = Date.now() - recordStartTimeRef.current;
-        if (duration < MIN_RECORD_DURATION) {
-          showToast({ title: '说话时间太短', icon: 'none' });
-        } else {
-          handleVoiceSend('', duration);
-        }
-      }
-
-      setVoiceStatus('idle');
-    },
-    [handleVoiceSend],
-  );
-
-  const clearHoldTimer = useCallback(() => {
-    if (holdTimerRef.current) {
-      clearTimeout(holdTimerRef.current);
-      holdTimerRef.current = null;
-    }
-  }, []);
-
-  const updateUserInputBounds = useCallback(() => {
-    userInputContentRef.current?.measureInWindow((x, y, width, height) => {
-      userInputBoundsRef.current = { x, y, width, height };
-    });
-  }, []);
-
-  const updateVoiceButtonBounds = useCallback(() => {
-    voiceButtonRef.current?.measureInWindow((x, y, width, height) => {
-      voiceButtonBoundsRef.current = { x, y, width, height };
-    });
-  }, []);
-
-  const isTouchOnVoiceButton = useCallback((pageX: number, pageY: number) => {
-    const { x, y, width, height } = voiceButtonBoundsRef.current;
-    if (width <= 0 || height <= 0) {
-      return true;
-    }
-    return (
-      pageX >= x && pageX <= x + width && pageY >= y && pageY <= y + height
-    );
-  }, []);
-
-  const isTouchInsideUserInput = useCallback((pageX: number, pageY: number) => {
-    const { x, y, width, height } = userInputBoundsRef.current;
-    if (width <= 0 || height <= 0) {
-      return true;
-    }
-    return (
-      pageX >= x && pageX <= x + width && pageY >= y && pageY <= y + height
-    );
-  }, []);
-
-  const updateCancelStateFromTouch = useCallback(
-    (moveX: number, moveY: number, startY: number) => {
-      const isInsideUserInput = isTouchInsideUserInput(moveX, moveY);
-
-      if (
-        hasStartedRef.current &&
-        isInsideUserInput !== wasInsideUserInputRef.current
-      ) {
-        wasInsideUserInputRef.current = isInsideUserInput;
-        triggerLightVibration();
-      }
-
-      const shouldCancel =
-        !isInsideUserInput || startY - moveY > CANCEL_SLIDE_THRESHOLD;
-
-      if (shouldCancel !== cancelingRef.current) {
-        cancelingRef.current = shouldCancel;
-        setVoiceStatus(shouldCancel ? 'cancel' : 'recording');
-      }
-    },
-    [isTouchInsideUserInput],
-  );
-
-  const beginVoiceRecording = useCallback(() => {
-    if (!pressActiveRef.current || hasStartedRef.current) {
-      return;
-    }
-
-    hasStartedRef.current = true;
-    cancelingRef.current = false;
-    wasInsideUserInputRef.current = true;
-    recordStartTimeRef.current = Date.now();
-    triggerLightVibration();
-    setVoiceStatus('recording');
-  }, []);
-
-  const resetVoicePressState = useCallback(() => {
-    pressActiveRef.current = false;
-    clearHoldTimer();
-  }, [clearHoldTimer]);
-
-  useEffect(() => {
-    return () => {
-      clearHoldTimer();
-    };
-  }, [clearHoldTimer]);
-
-  useEffect(() => {
-    if (voiceStatus !== 'idle') {
-      requestAnimationFrame(() => {
-        updateUserInputBounds();
-        updateVoiceButtonBounds();
-      });
-    }
-  }, [voiceStatus, updateUserInputBounds, updateVoiceButtonBounds]);
-
-  const voicePanHandlersRef = useRef({
-    updateUserInputBounds,
+  const {
+    voiceStatus,
+    isVoiceRecording,
+    voiceButtonRef,
+    cancelAreaRef,
+    panHandlers,
     updateVoiceButtonBounds,
-    clearHoldTimer,
-    beginVoiceRecording,
-    updateCancelStateFromTouch,
-    resetVoicePressState,
-    finishVoiceRecording,
-    isTouchOnVoiceButton,
+    updateCancelAreaBounds,
+  } = useHoldToTalk({
+    enabled: type === 'voice',
+    onResult: handleSendMessage,
   });
-
-  useEffect(() => {
-    voicePanHandlersRef.current = {
-      updateUserInputBounds,
-      updateVoiceButtonBounds,
-      clearHoldTimer,
-      beginVoiceRecording,
-      updateCancelStateFromTouch,
-      resetVoicePressState,
-      finishVoiceRecording,
-      isTouchOnVoiceButton,
-    };
-  }, [
-    updateUserInputBounds,
-    updateVoiceButtonBounds,
-    clearHoldTimer,
-    beginVoiceRecording,
-    updateCancelStateFromTouch,
-    resetVoicePressState,
-    finishVoiceRecording,
-    isTouchOnVoiceButton,
-  ]);
-
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        resetVoicePressState();
-        hasStartedRef.current = false;
-        cancelingRef.current = false;
-        wasInsideUserInputRef.current = true;
-        setVoiceStatus('idle');
-      };
-    }, [resetVoicePressState]),
-  );
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: (evt, _gestureState) => {
-        if (inputTypeRef.current !== 'voice' || pressActiveRef.current) {
-          return false;
-        }
-
-        const { pageX, pageY } = evt.nativeEvent;
-        return voicePanHandlersRef.current.isTouchOnVoiceButton(pageX, pageY);
-      },
-      onMoveShouldSetPanResponder: () => pressActiveRef.current,
-      onPanResponderTerminationRequest: () => false,
-      onPanResponderGrant: (evt, _gestureState) => {
-        if (inputTypeRef.current !== 'voice' || hasStartedRef.current) {
-          return;
-        }
-
-        const handlers = voicePanHandlersRef.current;
-        pressActiveRef.current = true;
-        cancelingRef.current = false;
-        handlers.updateUserInputBounds();
-        handlers.updateVoiceButtonBounds();
-        handlers.clearHoldTimer();
-
-        holdTimerRef.current = setTimeout(() => {
-          handlers.beginVoiceRecording();
-        }, VOICE_HOLD_DELAY_MS);
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        if (!hasStartedRef.current) {
-          return;
-        }
-
-        const pageX = evt.nativeEvent.pageX ?? gestureState.moveX;
-        const pageY = evt.nativeEvent.pageY ?? gestureState.moveY;
-
-        voicePanHandlersRef.current.updateCancelStateFromTouch(
-          pageX,
-          pageY,
-          gestureState.y0,
-        );
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        const handlers = voicePanHandlersRef.current;
-        handlers.resetVoicePressState();
-
-        if (!hasStartedRef.current) {
-          return;
-        }
-
-        const pageX = evt.nativeEvent.pageX ?? gestureState.moveX;
-        const pageY = evt.nativeEvent.pageY ?? gestureState.moveY;
-
-        handlers.updateCancelStateFromTouch(pageX, pageY, gestureState.y0);
-        handlers.finishVoiceRecording(cancelingRef.current);
-      },
-      onPanResponderTerminate: () => {
-        const handlers = voicePanHandlersRef.current;
-        handlers.resetVoicePressState();
-
-        if (!hasStartedRef.current) {
-          return;
-        }
-
-        handlers.finishVoiceRecording(true);
-      },
-    }),
-  ).current;
-
-  const isVoiceRecording = type === 'voice' && voiceStatus !== 'idle';
   const isExpandedInput =
     type === 'text' && (isInputFocused || inputText.length > 0);
   const canSend = inputText.trim().length > 0;
@@ -487,29 +227,6 @@ const AiAssistant = () => {
     </TouchableOpacity>
   );
 
-  const renderVoiceRipple = () => (
-    <View style={styles.voiceRecordingRipple}>
-      <View
-        style={[
-          styles.voiceRecordingRippleRing,
-          styles.voiceRecordingRippleRing1,
-        ]}
-      />
-      <View
-        style={[
-          styles.voiceRecordingRippleRing,
-          styles.voiceRecordingRippleRing2,
-        ]}
-      />
-      <View
-        style={[
-          styles.voiceRecordingRippleRing,
-          styles.voiceRecordingRippleRing3,
-        ]}
-      />
-    </View>
-  );
-
   const renderVoiceButton = () => {
     if (voiceStatus === 'idle') {
       return (
@@ -534,7 +251,7 @@ const AiAssistant = () => {
         end={voiceStatus === 'cancel' ? { x: 1, y: 0 } : { x: 0, y: 1 }}
         style={styles.questionInputContentVoiceActive}
       >
-        {voiceStatus === 'recording' ? renderVoiceRipple() : null}
+        {voiceStatus === 'recording' ? <VoiceRipple /> : null}
       </LinearGradient>
     );
   };
@@ -691,12 +408,12 @@ const AiAssistant = () => {
         </ScrollView>
 
         <View
-          ref={userInputContentRef}
+          ref={cancelAreaRef}
           onLayout={() => {
-            updateUserInputBounds();
+            updateCancelAreaBounds();
             updateVoiceButtonBounds();
           }}
-          {...(type === 'voice' ? panResponder.panHandlers : {})}
+          {...(type === 'voice' ? panHandlers : {})}
           style={[
             styles.userInputContent,
             {

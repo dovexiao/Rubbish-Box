@@ -26,6 +26,8 @@ export const PERMISSION_PROMPT_MESSAGES: Record<string, string> = {
     '我们将向您申请蓝牙权限，用于与您的专属地锁设备进行近场连接控制等交互功能，您可以拒绝授权，后续如有需要可在系统设置中开启。',
   location:
     '我们将向您申请位置权限，用于设备定位、地图展示方便您查看与地锁距离快捷导航等功能，您可以拒绝授权，后续如有需要可在系统设置中开启。',
+  microphone:
+    '我们将向您申请麦克风权限，用于语音输入与 AI 对话等功能，您可以拒绝授权，后续如有需要可在系统设置中开启。',
 };
 
 const permissionPromptMemoryCache: Record<string, true | undefined> = {};
@@ -409,6 +411,64 @@ export async function checkAndRequestCameraPermission(): Promise<boolean> {
   }
 
   return false;
+}
+
+/**
+ * 检查麦克风权限
+ */
+export async function checkMicrophonePermission(): Promise<boolean> {
+  return permissionMutex.lock(async () => {
+    try {
+      if (Platform.OS === 'android') {
+        const permission = PERMISSIONS.ANDROID.RECORD_AUDIO;
+        const checkResult = await check(permission);
+
+        if (checkResult === RESULTS.GRANTED) {
+          return true;
+        }
+
+        if (checkResult === RESULTS.DENIED) {
+          await showPermissionPromptIfNeeded('microphone');
+          const requestResult = await request(permission);
+          return requestResult === RESULTS.GRANTED;
+        }
+
+        if (checkResult === RESULTS.BLOCKED) {
+          showToast('麦克风权限已被永久拒绝，请在设置中开启');
+          return false;
+        }
+
+        return false;
+      }
+
+      if (Platform.OS === 'ios') {
+        const permission = PERMISSIONS.IOS.MICROPHONE;
+        const checkResult = await check(permission);
+
+        if (checkResult === RESULTS.GRANTED) {
+          return true;
+        }
+
+        if (checkResult === RESULTS.DENIED) {
+          await showPermissionPromptIfNeeded('microphone');
+          const requestResult = await request(permission);
+          return requestResult === RESULTS.GRANTED;
+        }
+
+        if (checkResult === RESULTS.BLOCKED) {
+          showToast('麦克风权限已被永久拒绝，请在设置中开启');
+          return false;
+        }
+
+        return false;
+      }
+
+      return true;
+    } catch (error: any) {
+      console.error('检查麦克风权限失败:', error);
+      return false;
+    }
+  });
 }
 
 /**
