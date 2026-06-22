@@ -110,11 +110,12 @@ const LockVisual: React.FC<LockVisualProps> = props => {
   const handlePressAction = () => {
     if (!showActionButton) return;
     if (detail?.isGroup) {
-      navigation.navigate('CombineDevice', {
-        id: detail?.id,
-        lockName: detail?.lockName,
-        type: false,
-      });
+      // navigation.navigate('CombineDevice', {
+      //   id: detail?.id,
+      //   lockName: detail?.lockName,
+      //   type: false,
+      // });
+      navigation.navigate('NetWorkMiddle' as any);
       return;
     } else {
       navigation.navigate('BindDevice');

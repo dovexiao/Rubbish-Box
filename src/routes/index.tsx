@@ -434,5 +434,15 @@ export const routes = {
       component: require('@/pages/myOrder/refundDetail/index').default,
       label: '退款详情',
     },
+    {
+      name: 'NetWorkMiddle',
+      component: require('@/pages/netWorkMiddle').default,
+      label: '创建组合设备页面',
+    },
+    {
+      name: 'AddNetWork',
+      component: require('@/pages/addNetWork').default,
+      label: '新增组合设备页面',
+    },
   ],
 } as const;

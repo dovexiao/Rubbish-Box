@@ -17,7 +17,8 @@ const NoDevices: React.FC<NoDevicesProps> = ({ hasDevice }) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              navigation.navigate('CombineDevice');
+              // navigation.navigate('CombineDevice');
+              navigation.navigate('NetWorkMiddle' as any);
             }}
             style={styles.combineBtn}
           >
