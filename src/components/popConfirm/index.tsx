@@ -119,7 +119,7 @@ const PopConfirm = forwardRef<PopConfirmRef, PopConfirmProps>(
           >
             {showClose && (
               <GradientButton
-                // colors={['transparent', 'transparent']}
+                colors={['#ffffff', '#ffffff']}
                 width={px(124)}
                 height={px(42)}
                 onPress={handleCancel}
