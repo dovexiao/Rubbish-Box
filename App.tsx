@@ -829,7 +829,7 @@ function App() {
                           }}
                         >
                           <GradientButton
-                            colors={['transparent', 'transparent']}
+                            colors={['#282828', '#4A4A4A']}
                             width={px(124)}
                             height={px(42)}
                             onPress={() => {
@@ -845,7 +845,7 @@ function App() {
                               borderRadius: px(12),
                             }}
                           >
-                            <Text style={{ color: '#666' }}>不同意</Text>
+                            <Text style={{ color: '#fff' }}>不同意</Text>
                           </GradientButton>
 
                           <GradientButton

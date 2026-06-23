@@ -17,6 +17,7 @@ export type HoldToTalkOptions = {
   holdDelayMs?: number;
   minDurationMs?: number;
   cancelSlideThreshold?: number;
+  cancelAreaPadding?: number;
   maxDurationMs?: number;
   startRecording?: () => Promise<VoiceRecordingHandler>;
   onResult: (text: string) => void;
@@ -25,6 +26,7 @@ export type HoldToTalkOptions = {
 const DEFAULT_HOLD_DELAY_MS = 100;
 const DEFAULT_MIN_DURATION_MS = 1000;
 const DEFAULT_CANCEL_SLIDE_THRESHOLD = 120;
+const DEFAULT_CANCEL_AREA_PADDING = 16;
 const DEFAULT_MAX_DURATION_MS = 60 * 1000;
 
 const triggerLightVibration = () => {
@@ -36,6 +38,7 @@ export const useHoldToTalk = ({
   holdDelayMs = DEFAULT_HOLD_DELAY_MS,
   minDurationMs = DEFAULT_MIN_DURATION_MS,
   cancelSlideThreshold = DEFAULT_CANCEL_SLIDE_THRESHOLD,
+  cancelAreaPadding = DEFAULT_CANCEL_AREA_PADDING,
   maxDurationMs = DEFAULT_MAX_DURATION_MS,
   startRecording = startVoiceRecording,
   onResult,
@@ -99,15 +102,20 @@ export const useHoldToTalk = ({
     );
   }, []);
 
-  const isTouchOnVoiceButton = useCallback((pageX: number, pageY: number) => {
-    const { x, y, width, height } = voiceButtonBoundsRef.current;
-    if (width <= 0 || height <= 0) {
-      return true;
-    }
-    return (
-      pageX >= x && pageX <= x + width && pageY >= y && pageY <= y + height
-    );
-  }, []);
+  const isTouchOnVoiceButton = useCallback(
+    (pageX: number, pageY: number) => {
+      const { x, y, width, height } = voiceButtonBoundsRef.current;
+      if (width <= 0 || height <= 0) {
+        return false;
+      }
+      const left = x - cancelAreaPadding;
+      const right = x + width + cancelAreaPadding;
+      const top = y - cancelAreaPadding;
+      const bottom = y + height + cancelAreaPadding;
+      return pageX >= left && pageX <= right && pageY >= top && pageY <= bottom;
+    },
+    [cancelAreaPadding],
+  );
 
   const isTouchInsideCancelArea = useCallback(
     (pageX: number, pageY: number) => {
@@ -115,11 +123,13 @@ export const useHoldToTalk = ({
       if (width <= 0 || height <= 0) {
         return true;
       }
-      return (
-        pageX >= x && pageX <= x + width && pageY >= y && pageY <= y + height
-      );
+      const left = x - cancelAreaPadding;
+      const right = x + width + cancelAreaPadding;
+      const top = y - cancelAreaPadding;
+      const bottom = y + height + cancelAreaPadding;
+      return pageX >= left && pageX <= right && pageY >= top && pageY <= bottom;
     },
-    [],
+    [cancelAreaPadding],
   );
 
   const resetVoiceState = useCallback(() => {
@@ -192,8 +202,15 @@ export const useHoldToTalk = ({
         triggerLightVibration();
       }
 
-      const shouldCancel =
-        !isInsideCancelArea || startY - moveY > cancelSlideThreshold;
+      // Add hysteresis threshold for sliding back down
+      const slideUpDistance = startY - moveY;
+      const recoverThreshold = cancelSlideThreshold * 0.7; // Needs more sliding back down to recover
+
+      const shouldCancelBySlide = cancelingRef.current
+        ? slideUpDistance > recoverThreshold
+        : slideUpDistance > cancelSlideThreshold;
+
+      const shouldCancel = !isInsideCancelArea || shouldCancelBySlide;
 
       if (shouldCancel !== cancelingRef.current) {
         cancelingRef.current = shouldCancel;
@@ -227,6 +244,14 @@ export const useHoldToTalk = ({
     }
 
     try {
+      // Immediate UI feedback for pressing (100ms reached)
+      hasStartedRef.current = true;
+      cancelingRef.current = false;
+      wasInsideCancelAreaRef.current = true;
+      recordStartTimeRef.current = Date.now();
+      triggerLightVibration();
+      setVoiceStatus('recording');
+
       const handler = await startRecording();
 
       if (!pressActiveRef.current) {
@@ -240,17 +265,14 @@ export const useHoldToTalk = ({
       }
 
       stopRecordingRef.current = handler.stop;
-      hasStartedRef.current = true;
-      cancelingRef.current = false;
-      wasInsideCancelAreaRef.current = true;
-      recordStartTimeRef.current = Date.now();
-      triggerLightVibration();
-      setVoiceStatus('recording');
 
       maxDurationTimerRef.current = setTimeout(() => {
         finishRecording(cancelingRef.current);
       }, maxDurationMs);
     } catch {
+      hasStartedRef.current = false;
+      cancelingRef.current = false;
+      wasInsideCancelAreaRef.current = true;
       busyRef.current = false;
       setVoiceStatus('idle');
     }
@@ -330,6 +352,7 @@ export const useHoldToTalk = ({
       },
       onMoveShouldSetPanResponder: () => pressActiveRef.current,
       onPanResponderTerminationRequest: () => false,
+      onShouldBlockNativeResponder: () => true,
       onPanResponderGrant: (_evt, _gestureState) => {
         if (!enabledRef.current || hasStartedRef.current) {
           return;

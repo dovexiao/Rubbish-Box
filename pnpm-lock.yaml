@@ -71,6 +71,9 @@ importers:
       '@react-native-oh-tpl/react-native-haptic-feedback':
         specifier: 2.2.1-rc.1
         version: 2.2.1-rc.1(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))
+      '@react-native-oh-tpl/react-native-linear-gradient':
+        specifier: 3.0.0-0.5.0
+        version: 3.0.0-0.5.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       '@react-native-oh-tpl/react-native-view-shot':
         specifier: 3.8.0-0.3.2
         version: 3.8.0-0.3.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -1746,6 +1749,12 @@ packages:
     resolution: {integrity: sha512-TFXcwh6lvel/WZ6bQiNpAlvOgSr3OyNH0kl4Ls6c7JNKqTL8qOtxJkbPg3Cy16APMVclM0HVmTo6EyUuTaEzmg==}
     peerDependencies:
       react-native: '>=0.60.0'
+
+  '@react-native-oh-tpl/react-native-linear-gradient@3.0.0-0.5.0':
+    resolution: {integrity: sha512-u+hIeTa7lnP0keb2qurFTpfLtD8iVuov50C+aqLzXbOC9voAbeNwSAcCsXXkTWzL3c+sH7SX0zeUAyit+0s77g==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2':
     resolution: {integrity: sha512-SovSCe4fPz+A7KXJ8NisTCcPwvRmAjtXIWSxKVyGWrkishZ6Ru3ApdoJySf4y18dugW3qrV4MuQElicGkujGQQ==}
@@ -7919,6 +7928,12 @@ snapshots:
     dependencies:
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
       react-native-haptic-feedback: 2.3.4(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))
+
+  '@react-native-oh-tpl/react-native-linear-gradient@3.0.0-0.5.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      react: 18.2.0
+      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+      react-native-linear-gradient: 2.8.3(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
 
   '@react-native-oh-tpl/react-native-view-shot@3.8.0-0.3.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
     dependencies:

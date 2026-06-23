@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: px(48),
     paddingVertical: px(12),
-    paddingHorizontal: px(16),
+    paddingLeft: px(16),
+    paddingRight: px(8),
     borderRadius: px(12),
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.75)',
@@ -110,6 +111,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(8),
   },
+
   questionInputContentFocused: {
     minHeight: px(48),
     flexDirection: 'column',
@@ -129,6 +131,8 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     position: 'relative',
     backgroundColor: 'transparent',
+    borderRadius: px(12),
+    overflow: 'hidden',
     borderWidth: 0,
     shadowOpacity: 0,
     elevation: 0,
@@ -182,6 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     flexShrink: 0,
+    borderRadius: px(12),
   },
   questionInputContentLeft: {
     width: px(24),
@@ -240,6 +245,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: px(12),
+    backgroundColor: 'transparent',
     overflow: 'hidden',
   },
   voiceRecordingRipple: {

@@ -32,10 +32,7 @@ function getImpactFn(): ImpactFn | null {
 export function triggerLightHaptic(): void {
   try {
     const impact = getImpactFn();
-    console.log(11111);
     if (impact) {
-      console.log(22222);
-
       impact('impactHeavy', 1, {
         enableVibrateFallback: true,
         ignoreAndroidSystemSettings: false,

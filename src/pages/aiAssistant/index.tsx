@@ -194,6 +194,18 @@ const AiAssistant = () => {
     enabled: type === 'voice',
     onResult: handleSendMessage,
   });
+
+  useEffect(() => {
+    if (type !== 'voice') {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      updateCancelAreaBounds();
+      updateVoiceButtonBounds();
+    });
+  }, [type, updateCancelAreaBounds, updateVoiceButtonBounds]);
+
   const isExpandedInput =
     type === 'text' && (isInputFocused || inputText.length > 0);
   const canSend = inputText.trim().length > 0;
@@ -228,30 +240,36 @@ const AiAssistant = () => {
   );
 
   const renderVoiceButton = () => {
-    if (voiceStatus === 'idle') {
-      return (
-        <View style={styles.questionInputContentVoiceIdle}>
-          <Text style={styles.questionInputContentVoiceText}>按住说话</Text>
-        </View>
-      );
-    }
+    const isIdle = voiceStatus === 'idle';
 
     return (
       <LinearGradient
         colors={
-          voiceStatus === 'cancel'
-            ? ['#ff6b6b', '#ffa8a8', '#fff5f5']
-            : [
-                'rgba(82, 152, 255, 0.08)',
-                'rgba(82, 152, 255, 0.35)',
-                '#5298ff',
-              ]
+          isIdle
+            ? ['rgba(0,0,0,0)', 'rgba(0,0,0,0)', 'rgba(0,0,0,0)']
+            : voiceStatus === 'cancel'
+            ? ['#fbcbca', '#fd908f', '#fbcbca']
+            : ['#cddef9', '#88affd', '#cddef9']
         }
+        locations={[0, 0.5, 1]}
         start={{ x: 0, y: 0 }}
-        end={voiceStatus === 'cancel' ? { x: 1, y: 0 } : { x: 0, y: 1 }}
-        style={styles.questionInputContentVoiceActive}
+        end={{ x: 1, y: 0 }}
+        style={
+          isIdle
+            ? styles.questionInputContentVoiceIdle
+            : styles.questionInputContentVoiceActive
+        }
       >
-        {voiceStatus === 'recording' ? <VoiceRipple /> : null}
+        {isIdle && (
+          <View pointerEvents="none">
+            <Text style={styles.questionInputContentVoiceText}>按住说话</Text>
+          </View>
+        )}
+        {voiceStatus === 'recording' ? (
+          <View pointerEvents="none">
+            <VoiceRipple />
+          </View>
+        ) : null}
       </LinearGradient>
     );
   };
@@ -313,29 +331,25 @@ const AiAssistant = () => {
         </>
       );
 
-      if (isVoiceRecording) {
-        return (
-          <View
-            style={[
-              styles.questionInputContent,
-              styles.questionInputContentRecording,
-            ]}
-          >
-            {voiceInputBody}
-          </View>
-        );
-      }
-
       return (
         <LinearGradient
-          colors={['#f7f7f7', '#ffffff']}
+          key="voice"
+          colors={
+            isVoiceRecording
+              ? ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
+              : ['#f7f7f7', '#ffffff']
+          }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
-          style={[
-            styles.questionInputContent,
-            styles.questionInputContentVoiceRow,
-            styles.questionInputShadow,
-          ]}
+          style={
+            isVoiceRecording
+              ? styles.questionInputContentRecording
+              : [
+                  styles.questionInputContent,
+                  styles.questionInputContentVoiceRow,
+                  styles.questionInputShadow,
+                ]
+          }
         >
           {voiceInputBody}
         </LinearGradient>
@@ -419,8 +433,8 @@ const AiAssistant = () => {
             {
               paddingBottom:
                 keyboardHeight > 0
-                  ? keyboardHeight - px(60 + Math.max(insets.bottom, 24))
-                  : px(24),
+                  ? keyboardHeight - px(60 + Math.max(insets.bottom, 6))
+                  : px(6),
             },
           ]}
         >
