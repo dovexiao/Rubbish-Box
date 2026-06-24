@@ -21,6 +21,20 @@ const styles = StyleSheet.create({
     color: '#fd8e62',
     lineHeight: px(22),
   },
+  titleCancelled: {
+    marginBottom: px(8),
+    fontWeight: '500',
+    fontSize: fontSize(14),
+    color: '#999999',
+    lineHeight: px(22),
+  },
+  titleCompleted: {
+    marginBottom: px(8),
+    fontWeight: '500',
+    fontSize: fontSize(14),
+    color: '#52c41a',
+    lineHeight: px(22),
+  },
   content: {
     marginBottom: px(16),
     fontSize: fontSize(16),

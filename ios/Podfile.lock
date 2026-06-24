@@ -464,6 +464,8 @@ PODS:
     - React-perflogger (= 0.72.5)
   - rn-fetch-blob (0.12.0):
     - React-Core
+  - RNAudioRecorderPlayer (3.6.14-rc.1):
+    - React-Core
   - RNCAsyncStorage (1.24.0):
     - React-Core
   - RNCClipboard (1.16.3):
@@ -487,8 +489,7 @@ PODS:
     - React-Core
   - RNPermissions (3.10.1):
     - React-Core
-  - RNReactNativeHapticFeedback (3.0.0):
-    - RCT-Folly (= 2021.07.22.00)
+  - RNReactNativeHapticFeedback (2.2.1-rc.1):
     - React-Core
   - RNReanimated (3.10.1):
     - RCT-Folly (= 2021.07.22.00)
@@ -581,6 +582,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+  - "RNAudioRecorderPlayer (from `../node_modules/@react-native-ohos/react-native-audio-recorder-player`)"
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -590,7 +592,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
-  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
+  - "RNReactNativeHapticFeedback (from `../node_modules/@react-native-oh-tpl/react-native-haptic-feedback`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -730,6 +732,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
+  RNAudioRecorderPlayer:
+    :path: "../node_modules/@react-native-ohos/react-native-audio-recorder-player"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
@@ -749,7 +753,7 @@ EXTERNAL SOURCES:
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReactNativeHapticFeedback:
-    :path: "../node_modules/react-native-haptic-feedback"
+    :path: "../node_modules/@react-native-oh-tpl/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -829,6 +833,7 @@ SPEC CHECKSUMS:
   React-utils: 5b4df8692e966fd50e2d75c0f9659e176a292384
   ReactCommon: dab8c31069604c833aacc7409ad5ce729ef6ee62
   rn-fetch-blob: 25612b6d6f6e980c6f17ed98ba2f58f5696a51ca
+  RNAudioRecorderPlayer: a340219f020b0f4f95a5cd17e626e8866278647e
   RNCAsyncStorage: b6410dead2732b5c72a7fdb1ecb5651bbcf4674b
   RNCClipboard: f6679d470d0da2bce2a37b0af7b9e0bf369ecda5
   RNDeviceInfo: e5219d380b51ddb7f97e650ab99a518476b90203
@@ -838,7 +843,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 5fe9e4f847b51d8cc9006cec6c7dc6718dd82809
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNPermissions: 0d05c67486f028260077fffac5d689e86f18bffa
-  RNReactNativeHapticFeedback: d399bfe5ca95998a63b2c501e6558addbc65d1e8
+  RNReactNativeHapticFeedback: e8f01f13edba92c9e6f2f80914257960af65b3c3
   RNReanimated: f6f47ab6afca5c924255917beda5edc7e9dafe41
   RNScreens: 10cefd0dd5c6ccd8651c6ca8b276790ea10a7f20
   RNSVG: 51fc2eb4e3fc8056fa19c34101461fc26a4326f9

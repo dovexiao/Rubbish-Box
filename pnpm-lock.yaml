@@ -22,7 +22,7 @@ patchedDependencies:
     hash: 14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb
     path: patches/react-native-amap3d.patch
   react-native-haptic-feedback@3.0.0:
-    hash: 5d0a1c0cb1096b70a603ab7e4d354288d21c428e388c0778d3d40d3abddf491c
+    hash: b78e31b33b2bffb1fcf4bf082d630bf93f77ca05144ee6239216ab469a579e1f
     path: patches/react-native-haptic-feedback@3.0.0.patch
   react-native-intent-launcher:
     hash: abda0664466a060494213bccba0eccdc90ee9d21bf5e10febaf4ab919f2237e8
@@ -83,6 +83,9 @@ importers:
       '@react-native-ohos/clipboard':
         specifier: 1.16.3-rc.1
         version: 1.16.3-rc.1(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+      '@react-native-ohos/react-native-audio-recorder-player':
+        specifier: 3.6.14-rc.1
+        version: 3.6.14-rc.1(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       '@react-native-ohos/react-native-ble-plx':
         specifier: 3.2.1-rc.2
         version: 3.2.1-rc.2(patch_hash=a81d7ff30ce54fae0a3ee5328193c9baa33c07d0ee53bbb886a879777956dc36)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -152,6 +155,9 @@ importers:
       react-native-amap3d:
         specifier: ^3.2.4
         version: 3.2.4(patch_hash=14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb)
+      react-native-audio-recorder-player:
+        specifier: 3.6.12
+        version: 3.6.12(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-ble-plx:
         specifier: 3.5.0
         version: 3.5.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -187,7 +193,7 @@ importers:
         version: 1.0.2(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-haptic-feedback:
         specifier: 3.0.0
-        version: 3.0.0(patch_hash=5d0a1c0cb1096b70a603ab7e4d354288d21c428e388c0778d3d40d3abddf491c)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+        version: 3.0.0(patch_hash=b78e31b33b2bffb1fcf4bf082d630bf93f77ca05144ee6239216ab469a579e1f)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-iconfont-cli:
         specifier: ^2.2.4
         version: 2.2.4(react-native-svg@13.10.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0))(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -1792,6 +1798,12 @@ packages:
       react-native-windows:
         optional: true
 
+  '@react-native-ohos/react-native-audio-recorder-player@3.6.14-rc.1':
+    resolution: {integrity: sha512-umiEh0dok1019whYpw68inhAq2q6Ya0kfKsAnfOBfJlsojHLkEHWPIWjnlr8nWWViC88c7QKJPPHYy+cT0L2WQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
   '@react-native-ohos/react-native-ble-plx@3.2.1-rc.2':
     resolution: {integrity: sha512-DbuKYlRJ0sqll+GX8yHOJNctIhsjMTiDOO9VxgglGR6E3pmNMUp1LcmGeOukLoG0H02IkReoyQ2uX0WeMbWC2A==}
     engines: {node: '>= 16.0.0'}
@@ -2765,6 +2777,10 @@ packages:
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
 
+  dooboolab-welcome@1.3.2:
+    resolution: {integrity: sha512-2NbMaIIURElxEf/UAoVUFlXrO+7n/FRhLCiQlk4fkbGRh9cJ3/f8VEMPveR9m4Ug2l2Zey+UCXjd6EcBqHJ5bw==}
+    hasBin: true
+
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
@@ -3321,6 +3337,10 @@ packages:
   human-signals@8.0.1:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
+
+  hyochan-welcome@1.0.1:
+    resolution: {integrity: sha512-WRZNH5grESkOXP/r7xc7TMhO9cUqxaJIuZcQDAjzHWs6viGP+sWtVbiBigxc9YVRrw3hnkESQWwzqg+oOga65A==}
+    hasBin: true
 
   hyperdyperid@1.2.0:
     resolution: {integrity: sha512-Y93lCzHYgGWdrJ66yIktxiaGULYc6oGiABxhcO5AufBeOyoIdZF7bIfLaOrbM0iGIOXQQgxxRrFEnb+Y6w1n4A==}
@@ -4814,6 +4834,20 @@ packages:
 
   react-native-amap3d@3.2.4:
     resolution: {integrity: sha512-Cp7Tqd87arrxoBQdUGwmtjv7BuSt1XAqc/G+a/woI/pJqlUQScMqW/iHNJKC4jWr3wrJeaOYcjkOouoWCdDoOw==}
+
+  react-native-audio-recorder-player@3.6.12:
+    resolution: {integrity: sha512-/pnZxPA2jvQ9K7oDtrjcAjc/hn124swi451Q/i1Z6yesDVqupE38moNm12HgY1IVupdUCjeiZVqPoShcE0N8mw==}
+    deprecated: This package has been deprecated. Please use react-native-nitro-sound instead.
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  react-native-audio-recorder-player@3.6.14:
+    resolution: {integrity: sha512-F6SvHbuLvsbhBytR4+vaGIL6LFqC1cnB+SX3v191aHNvGDt63BX56w/Y19nIzxaLnG0b0vbxx/UZ1nzIvDyqWA==}
+    deprecated: This package has been deprecated. Please use react-native-nitro-sound instead.
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   react-native-ble-plx@3.2.0:
     resolution: {integrity: sha512-GVfgA8zXOD9u0t6bwWEm2MLZpl4nkZJJ35hMowIF9CUrrKyBDpIGK9KJHkCBJR1YRDWbtGLVgNS/DzOFRQPNfQ==}
@@ -8016,6 +8050,13 @@ snapshots:
       react: 18.2.0
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
+  '@react-native-ohos/react-native-audio-recorder-player@3.6.14-rc.1(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      dooboolab-welcome: 1.3.2
+      react: 18.2.0
+      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+      react-native-audio-recorder-player: 3.6.14(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+
   '@react-native-ohos/react-native-ble-plx@3.2.1-rc.2(patch_hash=a81d7ff30ce54fae0a3ee5328193c9baa33c07d0ee53bbb886a879777956dc36)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@expo/config-plugins': 8.0.11
@@ -9179,6 +9220,8 @@ snapshots:
       domelementtype: 2.3.0
       domhandler: 5.0.3
 
+  dooboolab-welcome@1.3.2: {}
+
   dunder-proto@1.0.1:
     dependencies:
       call-bind-apply-helpers: 1.0.2
@@ -9887,6 +9930,8 @@ snapshots:
   human-signals@2.1.0: {}
 
   human-signals@8.0.1: {}
+
+  hyochan-welcome@1.0.1: {}
 
   hyperdyperid@1.2.0: {}
 
@@ -12213,6 +12258,18 @@ snapshots:
     dependencies:
       supercluster: 7.1.5
 
+  react-native-audio-recorder-player@3.6.12(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      hyochan-welcome: 1.0.1
+      react: 18.2.0
+      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+
+  react-native-audio-recorder-player@3.6.14(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      hyochan-welcome: 1.0.1
+      react: 18.2.0
+      react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+
   react-native-ble-plx@3.2.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
     dependencies:
       '@expo/config-plugins': 8.0.11
@@ -12304,7 +12361,7 @@ snapshots:
     dependencies:
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 
-  react-native-haptic-feedback@3.0.0(patch_hash=5d0a1c0cb1096b70a603ab7e4d354288d21c428e388c0778d3d40d3abddf491c)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+  react-native-haptic-feedback@3.0.0(patch_hash=b78e31b33b2bffb1fcf4bf082d630bf93f77ca05144ee6239216ab469a579e1f)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
     dependencies:
       react-native: 0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
     optionalDependencies:

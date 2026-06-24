@@ -10,29 +10,47 @@ interface Props {
 }
 
 export default function ConfirmCard({ data, onCancel, onConfirm }: Props) {
+  const showActions = !data.submitted;
+
+  const getTitle = () => {
+    if (data.approved) {
+      return { text: '执行完成', style: styles.titleCompleted };
+    }
+    if (data.rejected) {
+      return { text: '已取消', style: styles.titleCancelled };
+    }
+    return { text: data.title || '需要确认', style: styles.title };
+  };
+
+  const title = getTitle();
+
   return (
     <View style={styles.messageRow}>
       <View style={styles.card}>
-        <Text style={styles.title}>{data.title || '需要确认'}</Text>
+        <Text style={title.style}>{title.text}</Text>
         <Text style={styles.content}>{data.content}</Text>
-        <View style={styles.actions}>
-          <TouchableOpacity
-            activeOpacity={0.85}
-            style={styles.cancelBtn}
-            onPress={onCancel}
-          >
-            <Text style={styles.cancelBtnText}>{data.cancelText || '取消'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.85}
-            style={styles.confirmBtn}
-            onPress={onConfirm}
-          >
-            <Text style={styles.confirmBtnText}>
-              {data.confirmText || '确认执行'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {showActions ? (
+          <View style={styles.actions}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              style={styles.cancelBtn}
+              onPress={onCancel}
+            >
+              <Text style={styles.cancelBtnText}>
+                {data.cancelText || '取消'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              style={styles.confirmBtn}
+              onPress={onConfirm}
+            >
+              <Text style={styles.confirmBtnText}>
+                {data.confirmText || '确认执行'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </View>
     </View>
   );

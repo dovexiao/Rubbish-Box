@@ -275,6 +275,11 @@ const styles = StyleSheet.create({
     height: px(56),
     opacity: 0.25,
   },
+  questionInputContentInputText: {
+    fontSize: fontSize(14),
+    color: '#cccccc',
+    lineHeight: px(20),
+  },
 });
 
 export default styles;

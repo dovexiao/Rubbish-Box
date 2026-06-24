@@ -1,8 +1,14 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useCallback } from 'react';
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import AppIcon from '@/components/AppIcon';
-import { TextInput } from '@/components';
 import { PhoneChangeMessage } from '../../typing';
+import { getPageTypeConfig } from '../../constants';
 import { px } from '@/utils/ui';
 import styles from './styles';
 
@@ -11,44 +17,46 @@ interface Props {
 }
 
 export default function PhoneChangeCard({ data }: Props) {
-  const maskedPhone = data.maskedPhone || '182****8367';
+  const navigation = useNavigation<any>();
+  const maskedPhone = data.maskedPhone;
+  const pageConfig = getPageTypeConfig(data?.pageType, 7);
+
+  const handleNavigate = useCallback(() => {
+    const route = pageConfig?.route;
+    if (!route) return;
+
+    const params =
+      maskedPhone &&
+      typeof maskedPhone === 'object' &&
+      Object.keys(maskedPhone).length > 0
+        ? maskedPhone
+        : undefined;
+
+    navigation.navigate(route, params);
+  }, [maskedPhone, navigation, pageConfig?.route]);
 
   return (
     <View style={styles.messageRow}>
       <View style={styles.card}>
         <View style={styles.header}>
-          <Text style={styles.title}>更换手机号</Text>
-          <View style={styles.link}>
+          <Text style={styles.title}>{data?.intro}</Text>
+          <TouchableOpacity
+            activeOpacity={0.85}
+            style={styles.link}
+            onPress={handleNavigate}
+          >
             <Text style={styles.linkText}>点击前往</Text>
             <AppIcon name="a-nextpage" size={px(12)} color="#999999" />
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.formCard}>
-          <Text style={styles.formTitle}>原手机号码验证</Text>
-          <Text style={styles.formDesc}>
-            {`请输入改账号绑定的原手机号${maskedPhone}，完成手机验证`}
-          </Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="number-pad"
-            placeholder="请输入手机号"
-            placeholderTextColor="#cccccc"
-          />
-          <View style={styles.codeRow}>
-            <TextInput
-              style={styles.codeInput}
-              keyboardType="number-pad"
-              placeholder="请输入验证码"
-              placeholderTextColor="#cccccc"
+          {pageConfig?.imgUrl ? (
+            <Image
+              source={{ uri: pageConfig.imgUrl }}
+              style={styles.img}
+              resizeMode="contain"
             />
-            <View style={styles.codeDivider} />
-            <View style={styles.codeBtn}>
-              <Text style={styles.codeBtnText}>获取验证码</Text>
-            </View>
-          </View>
-          <View style={styles.submitBtn}>
-            <Text style={styles.submitBtnText}>确定</Text>
-          </View>
+          ) : null}
         </View>
       </View>
     </View>

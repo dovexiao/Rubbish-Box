@@ -20,7 +20,10 @@ export type HoldToTalkOptions = {
   cancelAreaPadding?: number;
   maxDurationMs?: number;
   startRecording?: () => Promise<VoiceRecordingHandler>;
+  /** 本地转文字后回调文本 */
   onResult: (text: string) => void;
+  /** 若提供则跳过本地转文字，直接上传录音文件 */
+  onVoiceFile?: (filePath: string) => void;
 };
 
 const DEFAULT_HOLD_DELAY_MS = 100;
@@ -42,6 +45,7 @@ export const useHoldToTalk = ({
   maxDurationMs = DEFAULT_MAX_DURATION_MS,
   startRecording = startVoiceRecording,
   onResult,
+  onVoiceFile,
 }: HoldToTalkOptions) => {
   const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>('idle');
 
@@ -59,12 +63,17 @@ export const useHoldToTalk = ({
   const stopRecordingRef = useRef<null | (() => Promise<string>)>(null);
   const wasInsideCancelAreaRef = useRef(true);
   const enabledRef = useRef(enabled);
+  const onVoiceFileRef = useRef(onVoiceFile);
   const voiceButtonBoundsRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
   const cancelAreaBoundsRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
 
   useEffect(() => {
     enabledRef.current = enabled;
   }, [enabled]);
+
+  useEffect(() => {
+    onVoiceFileRef.current = onVoiceFile;
+  }, [onVoiceFile]);
 
   const clearHoldTimer = useCallback(() => {
     if (holdTimerRef.current) {
@@ -178,6 +187,16 @@ export const useHoldToTalk = ({
 
       try {
         const filePath = await stopRecording();
+        const uploadVoice = onVoiceFileRef.current;
+        if (uploadVoice) {
+          if (filePath) {
+            uploadVoice(filePath);
+          } else {
+            showToast({ title: '录音文件无效', icon: 'none' });
+          }
+          return;
+        }
+
         const { text } = await speechToText(filePath);
         const trimmedText = text.trim();
         if (trimmedText) {

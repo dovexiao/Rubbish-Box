@@ -1,47 +1,81 @@
-import { Platform, Vibration } from 'react-native';
+import {
+  NativeModules,
+  Platform,
+  TurboModuleRegistry,
+  Vibration,
+} from 'react-native';
 
-type ImpactOptions = {
-  enableVibrateFallback?: boolean;
-  ignoreAndroidSystemSettings?: boolean;
-};
-
-type ImpactFn = (
+type TriggerFn = (
   type: string,
-  intensity?: number,
-  options?: ImpactOptions,
+  options?: {
+    enableVibrateFallback?: boolean;
+    ignoreAndroidSystemSettings?: boolean;
+  },
 ) => void;
 
-const isNativeMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+let hapticAvailable: boolean | null = null;
+let triggerFn: TriggerFn | null | undefined;
 
-function getImpactFn(): ImpactFn | null {
-  try {
-    const mod = isNativeMobile
-      ? require('react-native-haptic-feedback')
-      : require('@react-native-oh-tpl/react-native-haptic-feedback');
-
-    if (mod && typeof mod.impact === 'function') {
-      return mod.impact as ImpactFn;
-    }
-  } catch {
-    // Ignore and fall back to built-in vibration.
+function detectHapticModule(): boolean {
+  if (hapticAvailable !== null) {
+    return hapticAvailable;
   }
 
-  return null;
+  try {
+    hapticAvailable =
+      TurboModuleRegistry.get('RNHapticFeedback') != null ||
+      TurboModuleRegistry.get('HapticFeedbackNativeModule') != null ||
+      NativeModules.RNHapticFeedback != null;
+  } catch {
+    hapticAvailable = false;
+  }
+
+  return hapticAvailable;
+}
+
+function getTriggerFn(): TriggerFn | null {
+  if (triggerFn !== undefined) {
+    return triggerFn;
+  }
+
+  if (!detectHapticModule()) {
+    triggerFn = null;
+    return triggerFn;
+  }
+
+  try {
+    const mod = require('@react-native-oh-tpl/react-native-haptic-feedback') as {
+      trigger?: TriggerFn;
+      default?: { trigger?: TriggerFn };
+    };
+
+    triggerFn = mod.trigger ?? mod.default?.trigger ?? null;
+  } catch {
+    triggerFn = null;
+  }
+
+  return triggerFn;
+}
+
+function vibrateFallback(): void {
+  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+    Vibration.vibrate(20);
+  }
 }
 
 export function triggerLightHaptic(): void {
   try {
-    const impact = getImpactFn();
-    if (impact) {
-      impact('impactHeavy', 1, {
+    const trigger = getTriggerFn();
+    if (trigger) {
+      trigger('impactLight', {
         enableVibrateFallback: true,
         ignoreAndroidSystemSettings: false,
       });
       return;
     }
 
-    Vibration.vibrate(20);
+    vibrateFallback();
   } catch {
-    // Ignore failures on unsupported devices.
+    vibrateFallback();
   }
 }

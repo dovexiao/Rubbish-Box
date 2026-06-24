@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
   Keyboard,
   Platform,
@@ -7,107 +7,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppIcon from '@/components/AppIcon';
 import Flex from '@/components/Flex';
 import { LinearGradient, PageContainer, TextInput } from '@/components';
 import { useHoldToTalk, VoiceRipple } from '@/components/HoldToTalk';
-import { showToast } from '@/utils';
+import { useAIChat } from '@/hooks/useAIChat';
 import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
+import TextMessageItem from './com/textMessage';
 import styles from './styles';
-import { ChatMessage } from './typing';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const MOCK_MESSAGES: ChatMessage[] = [
-  {
-    id: '1',
-    role: 'assistant',
-    type: 'text',
-    content:
-      '我可以帮你查设备状态、控制地锁、查看成员和跳转设置页面。涉及控制、删除、退款等动作时，会先让你确认。',
-  },
-  {
-    id: '2',
-    role: 'user',
-    type: 'text',
-    content: '修改手机号',
-  },
-  {
-    id: '3',
-    role: 'assistant',
-    type: 'phoneChange',
-    intro:
-      '好的，因为修改手机号有一定风险，已为你找到修改手机号页面，点击即可进入。',
-    maskedPhone: '182****8367',
-  },
-  {
-    id: '4',
-    role: 'user',
-    type: 'text',
-    content: '降下地锁',
-  },
-  {
-    id: '5',
-    role: 'assistant',
-    type: 'confirm',
-    content: '即将对Boke973DC6C3E8E6执行"手动降锁"',
-  },
-];
 
 const COMMON_QUESTIONS = ['我的地锁现在什么状态？', '修改手机号', '降下地锁'];
 
-const createMessageId = () =>
-  `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-
-const getMockAssistantReply = (userText: string): ChatMessage => {
-  const text = userText.trim();
-
-  if (text === '修改手机号') {
-    return {
-      id: createMessageId(),
-      role: 'assistant',
-      type: 'phoneChange',
-      intro:
-        '好的，因为修改手机号有一定风险，已为你找到修改手机号页面，点击即可进入。',
-      maskedPhone: '182****8367',
-    };
-  }
-
-  if (text === '降下地锁') {
-    return {
-      id: createMessageId(),
-      role: 'assistant',
-      type: 'confirm',
-      content: '即将对Boke973DC6C3E8E6执行"手动降锁"',
-    };
-  }
-
-  if (text === '我的地锁现在什么状态？') {
-    return {
-      id: createMessageId(),
-      role: 'assistant',
-      type: 'text',
-      content: '当前地锁处于升起状态，电量 85%，信号良好。',
-    };
-  }
-
-  return {
-    id: createMessageId(),
-    role: 'assistant',
-    type: 'text',
-    content: '收到你的问题，我正在处理中，请稍候...',
-  };
-};
-
 const AiAssistant = () => {
   const insets = useSafeAreaInsets();
-  const [inputText, setInputText] = useState('');
-  const [isInputFocused, setIsInputFocused] = useState(false);
-  const [type, setType] = useState<'text' | 'voice'>('text');
-  const [messages, setMessages] = useState<ChatMessage[]>(MOCK_MESSAGES);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [inputText, setInputText] = React.useState('');
+  const [isInputFocused, setIsInputFocused] = React.useState(false);
+  const [type, setType] = React.useState<'text' | 'voice'>('text');
+  const [keyboardHeight, setKeyboardHeight] = React.useState(0);
 
   const messageListRef = useRef<ScrollView>(null);
+
+  const { messages, isLoading, sendMessage, sendVoiceMessage, confirmToolCall } =
+    useAIChat();
 
   const scrollToBottom = useCallback(() => {
     messageListRef.current?.scrollToEnd({ animated: true });
@@ -141,45 +64,39 @@ const AiAssistant = () => {
     scrollToBottom();
   }, [scrollToBottom]);
 
-  const handleInputTextChange = useCallback((text: string) => {
-    setInputText(text);
-  }, []);
-
   const handleChangeType = useCallback((nextType: 'text' | 'voice') => {
     setType(nextType);
     if (nextType === 'voice') {
       setIsInputFocused(false);
+      Keyboard.dismiss();
     }
   }, []);
 
-  const handleConfirmCancel = useCallback((messageId: string) => {
-    showToast({ title: '已取消', icon: 'none' });
-    console.log('confirm cancel', messageId);
-  }, []);
+  const handleConfirmCancel = useCallback(
+    (sessionId: string) => {
+      confirmToolCall(sessionId, { approved: false });
+    },
+    [confirmToolCall],
+  );
 
-  const handleConfirmSubmit = useCallback((messageId: string) => {
-    showToast({ title: '已确认执行', icon: 'none' });
-    console.log('confirm submit', messageId);
-  }, []);
+  const handleConfirmSubmit = useCallback(
+    (sessionId: string) => {
+      confirmToolCall(sessionId, { approved: true });
+    },
+    [confirmToolCall],
+  );
 
   const handleSendMessage = useCallback(
     (text?: string) => {
       const content = (text ?? inputText).trim();
-      if (!content) return;
+      if (!content || isLoading) return;
 
-      const userMessage: ChatMessage = {
-        id: createMessageId(),
-        role: 'user',
-        type: 'text',
-        content,
-      };
-      const assistantMessage = getMockAssistantReply(content);
-
-      setMessages(prev => [...prev, userMessage, assistantMessage]);
+      sendMessage(content);
       setInputText('');
       setIsInputFocused(false);
+      Keyboard.dismiss();
     },
-    [inputText],
+    [inputText, isLoading, sendMessage],
   );
 
   const {
@@ -191,8 +108,9 @@ const AiAssistant = () => {
     updateVoiceButtonBounds,
     updateCancelAreaBounds,
   } = useHoldToTalk({
-    enabled: type === 'voice',
+    enabled: type === 'voice' && !isLoading,
     onResult: handleSendMessage,
+    onVoiceFile: sendVoiceMessage,
   });
 
   useEffect(() => {
@@ -208,7 +126,14 @@ const AiAssistant = () => {
 
   const isExpandedInput =
     type === 'text' && (isInputFocused || inputText.length > 0);
-  const canSend = inputText.trim().length > 0;
+  const canSend = inputText.trim().length > 0 && !isLoading;
+  const hasStreamingAssistant = messages.some(
+    message =>
+      message.role === 'assistant' &&
+      message.type === 'text' &&
+      message.isStreaming,
+  );
+  const showThinking = isLoading && !hasStreamingAssistant;
 
   const handleClickSend = () => {
     if (!canSend) return;
@@ -292,6 +217,7 @@ const AiAssistant = () => {
               autoFocus={isInputFocused}
               multiline
               scrollEnabled={false}
+              editable={!isLoading}
               style={[
                 styles.questionInputContentInput,
                 styles.questionInputContentInputFocused,
@@ -301,7 +227,7 @@ const AiAssistant = () => {
               placeholderTextColor="#cccccc"
               onBlur={() => setIsInputFocused(false)}
               onFocus={() => setIsInputFocused(true)}
-              onChangeText={handleInputTextChange}
+              onChangeText={setInputText}
               onContentSizeChange={handleInputContentSizeChange}
             />
             <View style={styles.questionInputContentActions}>
@@ -364,19 +290,17 @@ const AiAssistant = () => {
         style={[styles.questionInputContent, styles.questionInputShadow]}
       >
         {renderInputToggleIcon()}
-        <TextInput
+        <TouchableOpacity
           style={[
             styles.questionInputContentInput,
             styles.questionInputContentInputRow,
           ]}
-          value={inputText}
-          placeholder="有什么需要问我吗？"
-          placeholderTextColor="#cccccc"
-          returnKeyType="send"
-          onFocus={() => setIsInputFocused(true)}
-          onSubmitEditing={handleClickSend}
-          onChangeText={handleInputTextChange}
-        />
+          onPress={() => setIsInputFocused(true)}
+        >
+          <Text style={styles.questionInputContentInputText}>
+            有什么需要问我吗？
+          </Text>
+        </TouchableOpacity>
         {renderSendButton()}
       </LinearGradient>
     );
@@ -419,6 +343,17 @@ const AiAssistant = () => {
               onConfirmSubmit={handleConfirmSubmit}
             />
           ))}
+          {showThinking ? (
+            <TextMessageItem
+              data={{
+                id: '__thinking__',
+                role: 'assistant',
+                type: 'text',
+                content: '',
+                isStreaming: true,
+              }}
+            />
+          ) : null}
         </ScrollView>
 
         <View
@@ -458,6 +393,7 @@ const AiAssistant = () => {
                     activeOpacity={0.85}
                     style={styles.commonQuestionsItem}
                     onPress={() => handleSendMessage(item)}
+                    disabled={isLoading}
                   >
                     <Text style={styles.commonQuestionsItemText}>{item}</Text>
                   </TouchableOpacity>
