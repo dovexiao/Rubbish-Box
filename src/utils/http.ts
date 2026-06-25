@@ -216,12 +216,23 @@ http.interceptors.request.use(
         secret ? String(secret) : undefined,
       );
 
+      const headerEntries = Object.entries(
+        (config.headers || {}) as Record<string, any>,
+      );
+      const hasContentTypeHeader = headerEntries.some(
+        ([key, value]) =>
+          key.toLowerCase() === 'content-type' && value !== undefined,
+      );
+
       // 4) 公共请求头（RN 专用）
       config.headers = (config.headers || {}) as any;
       (config.headers as any)['Accept'] = '*/*';
       if (isFormData) {
-        // multipart 需由 axios 自动带上 boundary，不能强制 application/json
-        delete (config.headers as any)['Content-Type'];
+        // multipart 需由 axios 自动带上 boundary；如果调用方已显式指定，则保留它
+        // 注意：此处必须使用首字母大写的 Content-Type，防止在鸿蒙端与底层强制追加的 Content-Type 产生双重 header
+        if (!hasContentTypeHeader) {
+          (config.headers as any)['Content-Type'] = 'multipart/form-data';
+        }
       } else {
         (config.headers as any)['Content-Type'] = 'application/json';
       }
@@ -243,6 +254,7 @@ http.interceptors.request.use(
         console.warn('无法获取 token:', error);
       }
     }
+
     return config;
   },
   error => {
@@ -331,6 +343,7 @@ http.interceptors.response.use(
     }
 
     if (error?.request) {
+      console.log(error?.request, '=====');
       const unified: CreateFetchResponse<any> = {
         header: {},
         success: false,

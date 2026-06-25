@@ -61,7 +61,9 @@ function hasNativeHapticModule(): boolean {
   try {
     return (
       TurboModuleRegistry.get('RNHapticFeedback') != null ||
-      NativeModules.RNHapticFeedback != null
+      NativeModules.RNHapticFeedback != null ||
+      NativeModules.RNReactNativeHapticFeedback != null ||
+      TurboModuleRegistry.get('RNReactNativeHapticFeedback') != null
     );
   } catch {
     return false;
@@ -120,18 +122,28 @@ function triggerNative(type: string): void {
   }
 
   if (IS_HARMONY) {
-    const mod =
-      require('@react-native-oh-tpl/react-native-haptic-feedback') as {
-        trigger?: HapticFeedbackModule['trigger'];
-        default?: { trigger?: HapticFeedbackModule['trigger'] };
-      };
-    const trigger = mod.trigger ?? mod.default?.trigger;
-    if (trigger) {
-      trigger(type, HAPTIC_OPTIONS);
+    // 防止尚未链接原生模块时频繁报警告
+    if (!hasNativeHapticModule()) {
+      vibrateFallback();
       return;
     }
-    vibrateFallback();
-    return;
+
+    try {
+      const mod =
+        require('@react-native-oh-tpl/react-native-haptic-feedback') as {
+          trigger?: HapticFeedbackModule['trigger'];
+          default?: { trigger?: HapticFeedbackModule['trigger'] };
+        };
+      const trigger = mod.trigger ?? mod.default?.trigger;
+      if (trigger) {
+        trigger(type, HAPTIC_OPTIONS);
+        return;
+      }
+    } catch {
+      // 鸿蒙环境如果没有安装该库，静默失败
+      vibrateFallback();
+      return;
+    }
   }
 
   if (!hasNativeHapticModule()) {

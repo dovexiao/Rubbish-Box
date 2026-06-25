@@ -29,6 +29,10 @@ type RecordingAttempt = {
   meteringEnabled: boolean;
 };
 
+const audioRecorderPlayerLib = IS_HARMONY
+  ? require('@react-native-ohos/react-native-audio-recorder-player')
+  : require('react-native-audio-recorder-player');
+
 let sharedRecorder: AudioRecorderPlayerInstance | null = null;
 
 function ensureNativeRecorderModule() {
@@ -46,8 +50,7 @@ function ensureNativeRecorderModule() {
 function getSharedRecorder(): AudioRecorderPlayerInstance {
   if (!sharedRecorder) {
     ensureNativeRecorderModule();
-    const AudioRecorderPlayer =
-      require('react-native-audio-recorder-player').default;
+    const AudioRecorderPlayer = audioRecorderPlayerLib.default;
     sharedRecorder = new AudioRecorderPlayer() as AudioRecorderPlayerInstance;
   }
   return sharedRecorder;
@@ -55,7 +58,7 @@ function getSharedRecorder(): AudioRecorderPlayerInstance {
 
 function getIosRecordingAttempts(): RecordingAttempt[] {
   const { AVEncodingOption, AVEncoderAudioQualityIOSType } =
-    require('react-native-audio-recorder-player');
+    audioRecorderPlayerLib;
 
   const fileName = `voice_${Date.now()}.m4a`;
 
@@ -92,7 +95,7 @@ function getRecordingAttempts(): RecordingAttempt[] {
       AudioSourceHarmonyType,
       AudioMimeHarmonyType,
       AudioFormatHarmonyType,
-    } = require('react-native-audio-recorder-player');
+    } = audioRecorderPlayerLib;
 
     return [
       {

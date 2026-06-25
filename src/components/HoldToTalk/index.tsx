@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  type GestureResponderEvent,
-  View,
-} from 'react-native';
+import { type GestureResponderEvent, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
-import { triggerHoldToTalkTransitionHaptic, triggerLightHaptic } from '@/utils/haptics';
+import {
+  triggerHoldToTalkTransitionHaptic,
+  triggerLightHaptic,
+} from '@/utils/haptics';
 import { checkMicrophonePermission } from '@/utils/permissions';
 import { showToast } from '@/utils';
 import { speechToText } from '@/services/speechToText';
@@ -43,7 +43,9 @@ function triggerHoldFeedback(toCancel: boolean, recorderActive: boolean) {
   triggerHoldToTalkTransitionHaptic(toCancel, recorderActive);
 }
 
-function measureViewBounds(viewRef: React.RefObject<View | null>): Promise<Bounds> {
+function measureViewBounds(
+  viewRef: React.RefObject<View | null>,
+): Promise<Bounds> {
   return new Promise(resolve => {
     viewRef.current?.measureInWindow(
       (x: number, y: number, width: number, height: number) => {
@@ -148,12 +150,7 @@ export const useHoldToTalk = ({
       if (bounds.width <= 0 || bounds.height <= 0) {
         return false;
       }
-      return isPointInsideBounds(
-        pageX,
-        pageY,
-        bounds,
-        cancelAreaPadding,
-      );
+      return isPointInsideBounds(pageX, pageY, bounds, cancelAreaPadding);
     },
     [cancelAreaPadding],
   );
@@ -283,27 +280,9 @@ export const useHoldToTalk = ({
     }
 
     busyRef.current = true;
-    hasStartedRef.current = true;
-    cancelingRef.current = false;
-    lastInsideInputRef.current = true;
-    recordStartTimeRef.current = Date.now();
-    setVoiceStatus('recording');
-
-    await refreshBounds();
-    setTimeout(() => {
-      void refreshBounds();
-    }, 50);
 
     const granted = await checkMicrophonePermission();
-    if (!granted) {
-      hasStartedRef.current = false;
-      busyRef.current = false;
-      setVoiceStatus('idle');
-      return;
-    }
-
-    if (!pressActiveRef.current) {
-      hasStartedRef.current = false;
+    if (!granted || !pressActiveRef.current) {
       busyRef.current = false;
       setVoiceStatus('idle');
       return;
@@ -312,7 +291,8 @@ export const useHoldToTalk = ({
     try {
       const handler = await startRecording();
 
-      if (!pressActiveRef.current || !hasStartedRef.current) {
+      // 如果在请求权限或者启动录音期间，用户已经松开了手
+      if (!pressActiveRef.current) {
         try {
           await handler.stop();
         } catch {
@@ -321,6 +301,20 @@ export const useHoldToTalk = ({
         busyRef.current = false;
         return;
       }
+
+      hasStartedRef.current = true;
+      cancelingRef.current = false;
+      lastInsideInputRef.current = true;
+      recordStartTimeRef.current = Date.now();
+
+      // 成功启动且用户仍按住时，再进入录音状态并触发震动
+      triggerLightHaptic();
+      setVoiceStatus('recording');
+
+      await refreshBounds();
+      setTimeout(() => {
+        void refreshBounds();
+      }, 50);
 
       stopRecordingRef.current = handler.stop;
 
@@ -356,7 +350,6 @@ export const useHoldToTalk = ({
       clearHoldTimer();
 
       holdTimerRef.current = setTimeout(() => {
-        triggerLightHaptic();
         void beginVoiceRecording();
       }, holdDelayMs);
     },
@@ -411,10 +404,7 @@ export const useHoldToTalk = ({
       if (!enabledRef.current || pressActiveRef.current) {
         return false;
       }
-      return isTouchOnVoiceButton(
-        evt.nativeEvent.pageX,
-        evt.nativeEvent.pageY,
-      );
+      return isTouchOnVoiceButton(evt.nativeEvent.pageX, evt.nativeEvent.pageY);
     },
     [isTouchOnVoiceButton],
   );
