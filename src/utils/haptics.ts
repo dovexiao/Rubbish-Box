@@ -4,57 +4,51 @@ import {
   TurboModuleRegistry,
   Vibration,
 } from 'react-native';
+import { IS_HARMONY } from '@/constants';
 
-type TriggerFn = (
-  type: string,
-  options?: {
-    enableVibrateFallback?: boolean;
-    ignoreAndroidSystemSettings?: boolean;
-  },
-) => void;
+type TriggerOptions = {
+  enableVibrateFallback?: boolean;
+  ignoreAndroidSystemSettings?: boolean;
+};
 
-let hapticAvailable: boolean | null = null;
-let triggerFn: TriggerFn | null | undefined;
+type HapticFeedbackModule = {
+  trigger: (type: string, options?: TriggerOptions) => void;
+};
 
-function detectHapticModule(): boolean {
-  if (hapticAvailable !== null) {
-    return hapticAvailable;
-  }
+type AppModuleHaptic = {
+  triggerUIKitHaptic?: (feedbackType: string) => void;
+  triggerUIKitHapticWithSessionRelease?: (feedbackType: string) => void;
+};
 
-  try {
-    hapticAvailable =
-      TurboModuleRegistry.get('RNHapticFeedback') != null ||
-      TurboModuleRegistry.get('HapticFeedbackNativeModule') != null ||
-      NativeModules.RNHapticFeedback != null;
-  } catch {
-    hapticAvailable = false;
-  }
+type AudioRecorderNative = {
+  pauseRecorder?: () => Promise<string>;
+  resumeRecorder?: () => Promise<string>;
+};
 
-  return hapticAvailable;
+const HAPTIC_OPTIONS: TriggerOptions = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false,
+};
+
+const IOS_HAPTIC_TYPE_MAP: Record<string, string> = {
+  impactLight: 'light',
+  impactMedium: 'medium',
+  impactHeavy: 'heavy',
+  notificationWarning: 'warning',
+  notificationSuccess: 'success',
+  selection: 'selection',
+};
+
+let recordingHapticQueue: Promise<void> = Promise.resolve();
+
+function enqueueRecordingHaptic(task: () => Promise<void>): void {
+  recordingHapticQueue = recordingHapticQueue.then(task).catch(() => {});
 }
 
-function getTriggerFn(): TriggerFn | null {
-  if (triggerFn !== undefined) {
-    return triggerFn;
-  }
-
-  if (!detectHapticModule()) {
-    triggerFn = null;
-    return triggerFn;
-  }
-
-  try {
-    const mod = require('@react-native-oh-tpl/react-native-haptic-feedback') as {
-      trigger?: TriggerFn;
-      default?: { trigger?: TriggerFn };
-    };
-
-    triggerFn = mod.trigger ?? mod.default?.trigger ?? null;
-  } catch {
-    triggerFn = null;
-  }
-
-  return triggerFn;
+function waitNextFrame(): Promise<void> {
+  return new Promise(resolve => {
+    requestAnimationFrame(() => resolve());
+  });
 }
 
 function vibrateFallback(): void {
@@ -63,19 +57,128 @@ function vibrateFallback(): void {
   }
 }
 
+function hasNativeHapticModule(): boolean {
+  try {
+    return (
+      TurboModuleRegistry.get('RNHapticFeedback') != null ||
+      NativeModules.RNHapticFeedback != null
+    );
+  } catch {
+    return false;
+  }
+}
+
+function triggerUIKitHapticIOS(rnType: string): void {
+  const appModule = NativeModules.AppModule as AppModuleHaptic | undefined;
+  const uiType = IOS_HAPTIC_TYPE_MAP[rnType] ?? 'heavy';
+
+  if (appModule?.triggerUIKitHaptic) {
+    appModule.triggerUIKitHaptic(uiType);
+    return;
+  }
+
+  vibrateFallback();
+}
+
+async function triggerHeavyHapticDuringRecording(): Promise<void> {
+  const recorder = NativeModules.RNAudioRecorderPlayer as
+    | AudioRecorderNative
+    | undefined;
+  const appModule = NativeModules.AppModule as AppModuleHaptic | undefined;
+  let paused = false;
+
+  if (recorder?.pauseRecorder) {
+    try {
+      await recorder.pauseRecorder();
+      paused = true;
+    } catch {
+      // ignore
+    }
+  }
+
+  if (appModule?.triggerUIKitHapticWithSessionRelease) {
+    appModule.triggerUIKitHapticWithSessionRelease('heavy');
+  } else {
+    triggerUIKitHapticIOS('impactHeavy');
+  }
+
+  await waitNextFrame();
+
+  if (paused && recorder?.resumeRecorder) {
+    try {
+      await recorder.resumeRecorder();
+    } catch {
+      // ignore
+    }
+  }
+}
+
+function triggerNative(type: string): void {
+  if (Platform.OS === 'ios') {
+    triggerUIKitHapticIOS(type);
+    return;
+  }
+
+  if (IS_HARMONY) {
+    const mod =
+      require('@react-native-oh-tpl/react-native-haptic-feedback') as {
+        trigger?: HapticFeedbackModule['trigger'];
+        default?: { trigger?: HapticFeedbackModule['trigger'] };
+      };
+    const trigger = mod.trigger ?? mod.default?.trigger;
+    if (trigger) {
+      trigger(type, HAPTIC_OPTIONS);
+      return;
+    }
+    vibrateFallback();
+    return;
+  }
+
+  if (!hasNativeHapticModule()) {
+    vibrateFallback();
+    return;
+  }
+
+  const mod = require('react-native-haptic-feedback') as {
+    default: HapticFeedbackModule;
+  };
+  mod.default.trigger(type, HAPTIC_OPTIONS);
+}
+
 export function triggerLightHaptic(): void {
   try {
-    const trigger = getTriggerFn();
-    if (trigger) {
-      trigger('impactLight', {
-        enableVibrateFallback: true,
-        ignoreAndroidSystemSettings: false,
-      });
+    triggerNative('impactHeavy');
+  } catch (error) {
+    console.warn('[haptics] trigger failed', error);
+    vibrateFallback();
+  }
+}
+
+/** 按住说话：移入/移出取消区时的震动 */
+export function triggerHoldToTalkTransitionHaptic(
+  _toCancel: boolean,
+  recorderActive = false,
+): void {
+  try {
+    if (Platform.OS === 'ios' && recorderActive) {
+      enqueueRecordingHaptic(triggerHeavyHapticDuringRecording);
       return;
     }
 
-    vibrateFallback();
-  } catch {
+    if (Platform.OS === 'ios') {
+      triggerUIKitHapticIOS('impactHeavy');
+      return;
+    }
+
+    triggerNative('impactHeavy');
+    Vibration.vibrate(25);
+  } catch (error) {
+    console.warn('[haptics] hold transition failed', error);
     vibrateFallback();
   }
+}
+
+/** @deprecated 请直接使用 triggerLightHaptic */
+export function triggerTransitionHaptic(): void {
+  triggerLightHaptic();
 }

@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import { IS_HARMONY } from '@/constants';
 
 export type VoiceRecordingHandler = {
@@ -15,6 +15,7 @@ type AudioRecorderPlayerInstance = {
   stopRecorder: () => Promise<string>;
   addRecordBackListener: (callback: (event: RecordBackEvent) => void) => void;
   removeRecordBackListener: () => void;
+  _isRecording?: boolean;
 };
 
 type RecordBackEvent = {
@@ -22,25 +23,104 @@ type RecordBackEvent = {
   currentMetering?: number;
 };
 
-let recorderInstance: AudioRecorderPlayerInstance | null = null;
+type RecordingAttempt = {
+  filePath: string;
+  audioSet: Record<string, unknown>;
+  meteringEnabled: boolean;
+};
 
-function getRecorder(): AudioRecorderPlayerInstance {
-  if (!recorderInstance) {
-    const AudioRecorderPlayer =
-      require('react-native-audio-recorder-player').default;
-    recorderInstance = new AudioRecorderPlayer() as AudioRecorderPlayerInstance;
+let sharedRecorder: AudioRecorderPlayerInstance | null = null;
+
+function ensureNativeRecorderModule() {
+  if (IS_HARMONY) {
+    return;
   }
-  return recorderInstance;
+
+  if (!NativeModules.RNAudioRecorderPlayer) {
+    throw new Error(
+      'RNAudioRecorderPlayer 原生模块未链接，请重新执行 pod install 并编译',
+    );
+  }
 }
 
-function getRecordingFilePath(): string {
+function getSharedRecorder(): AudioRecorderPlayerInstance {
+  if (!sharedRecorder) {
+    ensureNativeRecorderModule();
+    const AudioRecorderPlayer =
+      require('react-native-audio-recorder-player').default;
+    sharedRecorder = new AudioRecorderPlayer() as AudioRecorderPlayerInstance;
+  }
+  return sharedRecorder;
+}
+
+function getIosRecordingAttempts(): RecordingAttempt[] {
+  const { AVEncodingOption, AVEncoderAudioQualityIOSType } =
+    require('react-native-audio-recorder-player');
+
+  const fileName = `voice_${Date.now()}.m4a`;
+
+  return [
+    {
+      filePath: 'DEFAULT',
+      audioSet: { AVFormatIDKeyIOS: AVEncodingOption.aac },
+      meteringEnabled: false,
+    },
+    {
+      filePath: fileName,
+      audioSet: { AVFormatIDKeyIOS: AVEncodingOption.aac },
+      meteringEnabled: false,
+    },
+    {
+      filePath: fileName,
+      audioSet: {
+        AVFormatIDKeyIOS: AVEncodingOption.aac,
+        AVNumberOfChannelsKeyIOS: 1,
+        AVSampleRateKeyIOS: 44100,
+        AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.medium,
+      },
+      meteringEnabled: true,
+    },
+  ];
+}
+
+function getRecordingAttempts(): RecordingAttempt[] {
   const extension = IS_HARMONY || Platform.OS === 'ios' ? 'm4a' : 'mp4';
   const fileName = `voice_${Date.now()}.${extension}`;
 
   if (IS_HARMONY) {
-    return fileName;
+    const {
+      AudioSourceHarmonyType,
+      AudioMimeHarmonyType,
+      AudioFormatHarmonyType,
+    } = require('react-native-audio-recorder-player');
+
+    return [
+      {
+        filePath: fileName,
+        audioSet: {
+          AudioSourceHarmony: AudioSourceHarmonyType.MIC,
+          AudioMimeHarmony: AudioMimeHarmonyType.AUDIO_AAC,
+          AudioFileFormatHarmony: AudioFormatHarmonyType.MPEG_4A,
+          AudioSamplingRateHarmony: 16000,
+          AudioEncodingBitRateHarmony: 48000,
+          AudioChannelsHarmony: 1,
+        },
+        meteringEnabled: true,
+      },
+    ];
   }
 
+  if (Platform.OS === 'ios') {
+    return getIosRecordingAttempts();
+  }
+
+  const {
+    AudioEncoderAndroidType,
+    AudioSourceAndroidType,
+    OutputFormatAndroidType,
+  } = require('react-native-audio-recorder-player');
+
+  let filePath = fileName;
   try {
     const RNFS = require('react-native-fs') as {
       CachesDirectoryPath?: string;
@@ -51,67 +131,37 @@ function getRecordingFilePath(): string {
       RNFS.CachesDirectoryPath ||
       RNFS.DocumentDirectoryPath ||
       RNFS.TemporaryDirectoryPath;
-
     if (directory) {
-      return `${directory}/${fileName}`;
+      filePath = `${directory}/${fileName}`;
     }
   } catch {
-    // ignore and fall back to file name
+    // ignore
   }
 
-  return fileName;
+  return [
+    {
+      filePath,
+      audioSet: {
+        AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
+        AudioSourceAndroid: AudioSourceAndroidType.MIC,
+        OutputFormatAndroid: OutputFormatAndroidType.MPEG_4,
+        AudioSamplingRateAndroid: 16000,
+        AudioChannelsAndroid: 1,
+        AudioEncodingBitRateAndroid: 48000,
+      },
+      meteringEnabled: true,
+    },
+  ];
 }
 
-function getVoiceAudioSet(): Record<string, unknown> {
-  const {
-    AudioEncoderAndroidType,
-    AudioSourceAndroidType,
-    AVEncodingOption,
-    AVEncoderAudioQualityIOSType,
-    AVModeIOSOption,
-    OutputFormatAndroidType,
-  } = require('react-native-audio-recorder-player');
-
-  if (IS_HARMONY) {
-    const {
-      AudioSourceHarmonyType,
-      AudioMimeHarmonyType,
-      AudioFormatHarmonyType,
-    } = require('react-native-audio-recorder-player');
-
-    return {
-      AudioSourceHarmony: AudioSourceHarmonyType.MIC,
-      AudioMimeHarmony: AudioMimeHarmonyType.AUDIO_AAC,
-      AudioFileFormatHarmony: AudioFormatHarmonyType.MPEG_4A,
-      AudioSamplingRateHarmony: 16000,
-      AudioEncodingBitRateHarmony: 48000,
-      AudioChannelsHarmony: 1,
-    };
-  }
-
-  return {
-    AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
-    AudioSourceAndroid: AudioSourceAndroidType.MIC,
-    OutputFormatAndroid: OutputFormatAndroidType.MPEG_4,
-    AudioSamplingRateAndroid: 16000,
-    AudioChannelsAndroid: 1,
-    AudioEncodingBitRateAndroid: 48000,
-    AVFormatIDKeyIOS: AVEncodingOption.aac,
-    AVNumberOfChannelsKeyIOS: 1,
-    AVSampleRateKeyIOS: 16000,
-    AVModeIOS: AVModeIOSOption.spokenaudio,
-    AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.medium,
-  };
-}
-
-function normalizeRecordingPath(path: string): string {
+function normalizeRecordingPath(path: string, fallbackPath?: string): string {
   const trimmed = path?.trim?.() ?? '';
   if (
     !trimmed ||
     trimmed === 'Already stopped' ||
     trimmed === 'Already recording'
   ) {
-    return '';
+    return fallbackPath?.replace(/^file:\/\//, '') ?? '';
   }
 
   return trimmed.replace(/^file:\/\//, '');
@@ -122,48 +172,83 @@ function normalizeMeteringLevel(currentMetering?: number): number {
     return 0;
   }
 
-  // currentMetering 通常为 -160 ~ 0 dB
   return Math.max(0, Math.min(1, (currentMetering + 160) / 160));
 }
 
-async function resetRecorderState(player: AudioRecorderPlayerInstance) {
+async function forceResetRecorder(player: AudioRecorderPlayerInstance) {
+  player.removeRecordBackListener();
+  player._isRecording = false;
+
   try {
-    await player.stopRecorder();
+    await NativeModules.RNAudioRecorderPlayer.stopRecorder();
   } catch {
-    // ignore stale recorder state
-  } finally {
-    player.removeRecordBackListener();
+    // ignore when native recorder is already idle
   }
 }
 
+async function tryStartRecorder(
+  player: AudioRecorderPlayerInstance,
+  attempt: RecordingAttempt,
+): Promise<string> {
+  await forceResetRecorder(player);
+
+  const startedUri = await player.startRecorder(
+    attempt.filePath,
+    attempt.audioSet,
+    attempt.meteringEnabled,
+  );
+
+  if (startedUri === 'Already recording') {
+    throw new Error('Already recording');
+  }
+
+  // 原生录音会定时发送 rn-recordback；无监听器时 RN 会反复告警并可能阻塞 JS 线程
+  player.addRecordBackListener(() => {});
+
+  return startedUri;
+}
+
 export async function startVoiceRecording(): Promise<VoiceRecordingHandler> {
-  const player = getRecorder();
-  await resetRecorderState(player);
+  const player = getSharedRecorder();
+  const attempts = getRecordingAttempts();
+  let lastError: unknown;
 
-  const filePath = getRecordingFilePath();
-  const audioSet = getVoiceAudioSet();
+  for (const attempt of attempts) {
+    try {
+      const startedUri = await tryStartRecorder(player, attempt);
+      const resolvedPath = normalizeRecordingPath(startedUri, attempt.filePath);
 
-  await player.startRecorder(filePath, audioSet, true);
+      return {
+        stop: async () => {
+          try {
+            const result = await player.stopRecorder();
+            player.removeRecordBackListener();
+            return normalizeRecordingPath(result, resolvedPath);
+          } catch (error) {
+            player.removeRecordBackListener();
+            console.warn('[voiceRecorder] stop failed', error);
+            return resolvedPath;
+          }
+        },
+        onLevel: listener => {
+          if (!attempt.meteringEnabled) {
+            return () => {};
+          }
 
-  return {
-    stop: async () => {
-      try {
-        const result = await player.stopRecorder();
-        player.removeRecordBackListener();
-        return normalizeRecordingPath(result);
-      } catch {
-        player.removeRecordBackListener();
-        return '';
-      }
-    },
-    onLevel: listener => {
-      player.addRecordBackListener(event => {
-        listener(normalizeMeteringLevel(event.currentMetering));
-      });
+          player.addRecordBackListener(event => {
+            listener(normalizeMeteringLevel(event.currentMetering));
+          });
 
-      return () => {
-        player.removeRecordBackListener();
+          return () => {
+            player.removeRecordBackListener();
+          };
+        },
       };
-    },
-  };
+    } catch (error) {
+      lastError = error;
+      console.warn('[voiceRecorder] attempt failed', attempt.filePath, error);
+    }
+  }
+
+  throw lastError ?? new Error('录音启动失败');
 }

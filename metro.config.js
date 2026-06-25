@@ -245,6 +245,20 @@ baseConfig.resolver = {
           platform,
         );
       }
+
+      if (moduleName === 'react-native-haptic-feedback') {
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(
+            __dirname,
+            'node_modules/@react-native-oh-tpl/react-native-haptic-feedback/lib/commonjs/index.js',
+          ),
+          platform,
+        );
+      }
     }
 
     // 强制 axios 在 React Native 中使用 browser bundle，避免引用 Node 的 crypto 等内置模块

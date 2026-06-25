@@ -1383,7 +1383,10 @@ export const useAIChat = (options?: UseAIChatOptions) => {
         console.log('log====', log);
 
         if (!log.success) {
-          showToast({ title: '识别失败', icon: 'none' });
+          showToast({
+            title: log.message || log.msg || '识别失败',
+            icon: 'none',
+          });
           return;
         }
         if (!log.data?.length) {

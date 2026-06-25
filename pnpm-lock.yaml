@@ -21,6 +21,9 @@ patchedDependencies:
   react-native-amap3d:
     hash: 14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb
     path: patches/react-native-amap3d.patch
+  react-native-audio-recorder-player@3.6.12:
+    hash: 8a4cef5084e3da8dbc9f30eb0b7fcd42908604bc8bd2a171b7b9317194c07881
+    path: patches/react-native-audio-recorder-player@3.6.12.patch
   react-native-haptic-feedback@3.0.0:
     hash: b78e31b33b2bffb1fcf4bf082d630bf93f77ca05144ee6239216ab469a579e1f
     path: patches/react-native-haptic-feedback@3.0.0.patch
@@ -157,7 +160,7 @@ importers:
         version: 3.2.4(patch_hash=14b145cffd51d9083941d4b04d96a63811aca2b7c9ed949e8b1bb383eed8decb)
       react-native-audio-recorder-player:
         specifier: 3.6.12
-        version: 3.6.12(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
+        version: 3.6.12(patch_hash=8a4cef5084e3da8dbc9f30eb0b7fcd42908604bc8bd2a171b7b9317194c07881)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-ble-plx:
         specifier: 3.5.0
         version: 3.5.0(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -12258,7 +12261,7 @@ snapshots:
     dependencies:
       supercluster: 7.1.5
 
-  react-native-audio-recorder-player@3.6.12(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+  react-native-audio-recorder-player@3.6.12(patch_hash=8a4cef5084e3da8dbc9f30eb0b7fcd42908604bc8bd2a171b7b9317194c07881)(react-native@0.72.5(patch_hash=f3fa0322216810a9e3eb4265ff4e72bc8a68285e5ad3906f92053eaab79f085a)(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
     dependencies:
       hyochan-welcome: 1.0.1
       react: 18.2.0

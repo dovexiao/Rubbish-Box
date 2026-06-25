@@ -173,6 +173,122 @@ target 'boklock' do
     qcloud_netinet_patch.call('QCloudTrack/QCloudTrack/Classes/Default/Utils/QCloudTrackNetworkUtils.m')
     qcloud_netinet_patch.call('QCloudCore/QCloudCore/Classes/Base/QCLOUDRestNet/reachability/QCloudReachability.m')
 
+    # 修复 RNAudioRecorderPlayer：AAC 录音误带 PCM 参数导致 iOS record() 失败
+    recorder_swift = File.join(
+      installer.config.installation_root,
+      '..',
+      'node_modules',
+      'react-native-audio-recorder-player',
+      'ios',
+      'RNAudioRecorderPlayer.swift',
+    )
+    if File.exist?(recorder_swift)
+      content = File.read(recorder_swift)
+      original = content.dup
+
+      unless content.include?('URL(fileURLWithPath: String(path.dropFirst("file://".count)))')
+        content.gsub!(
+          '        } else if (path.hasPrefix("http://") || path.hasPrefix("https://") || path.hasPrefix("file://")) {
+            audioFileURL = URL(string: path)
+        } else {',
+          '        } else if (path.hasPrefix("http://") || path.hasPrefix("https://")) {
+            audioFileURL = URL(string: path)
+        } else if (path.hasPrefix("file://")) {
+            audioFileURL = URL(fileURLWithPath: String(path.dropFirst("file://".count)))
+        } else {',
+        )
+      end
+
+      if content.include?('AVLinearPCMBitDepthKey: avLPCMBitDepth ?? AVLinearPCMBitDepthKey.count')
+        content.gsub!(
+          /        func startRecording\(\) \{\n            let settings = \[\n                AVSampleRateKey: sampleRate!,\n                AVFormatIDKey: avFormat,\n                AVNumberOfChannelsKey: numberOfChannel!,\n                AVEncoderAudioQualityKey: audioQuality!,\n                AVLinearPCMBitDepthKey: avLPCMBitDepth \?\? AVLinearPCMBitDepthKey\.count,\n                AVLinearPCMIsBigEndianKey: avLPCMIsBigEndian \?\? true,\n                AVLinearPCMIsFloatKey: avLPCMIsFloatKey \?\? false,\n                AVLinearPCMIsNonInterleaved: avLPCMIsNonInterleaved \?\? false,\n                 AVEncoderBitRateKey: bitRate!\n            \] as \[String : Any\]\n\n            do \{\n                audioRecorder = try AVAudioRecorder\(url: audioFileURL!, settings: settings\)\n\n                if \(audioRecorder != nil\) \{\n                    audioRecorder\.prepareToRecord\(\)\n                    audioRecorder\.delegate = self\n                    audioRecorder\.isMeteringEnabled = _meteringEnabled\n                    let isRecordStarted = audioRecorder\.record\(\)\n\n                    if !isRecordStarted \{\n                        reject\("RNAudioPlayerRecorder", "Error occured during initiating recorder", nil\)\n                        return\n                    \}/m,
+          <<~SWIFT.chomp
+            func startRecording() {
+                if (audioRecorder != nil) {
+                    audioRecorder.stop()
+                    audioRecorder = nil
+                }
+
+                if let fileURL = audioFileURL, FileManager.default.fileExists(atPath: fileURL.path) {
+                    try? FileManager.default.removeItem(at: fileURL)
+                }
+
+                var settings: [String: Any] = [
+                    AVSampleRateKey: sampleRate!,
+                    AVFormatIDKey: avFormat,
+                    AVNumberOfChannelsKey: numberOfChannel!,
+                    AVEncoderAudioQualityKey: audioQuality!,
+                    AVEncoderBitRateKey: bitRate!
+                ]
+
+                if avFormat == kAudioFormatLinearPCM || avFormat == kAudioFormatAppleIMA4 {
+                    settings[AVLinearPCMBitDepthKey] = avLPCMBitDepth ?? 16
+                    settings[AVLinearPCMIsBigEndianKey] = avLPCMIsBigEndian ?? false
+                    settings[AVLinearPCMIsFloatKey] = avLPCMIsFloatKey ?? false
+                    settings[AVLinearPCMIsNonInterleaved] = avLPCMIsNonInterleaved ?? false
+                }
+
+                do {
+                    audioRecorder = try AVAudioRecorder(url: audioFileURL!, settings: settings)
+
+                    if (audioRecorder != nil) {
+                        audioRecorder.delegate = self
+                        audioRecorder.isMeteringEnabled = _meteringEnabled
+
+                        if !audioRecorder.prepareToRecord() {
+                            audioRecorder = nil
+                            reject("RNAudioPlayerRecorder", "Error occured during initiating recorder", nil)
+                            return
+                        }
+
+                        let isRecordStarted = audioRecorder.record()
+
+                        if !isRecordStarted {
+                            audioRecorder.stop()
+                            audioRecorder = nil
+                            reject("RNAudioPlayerRecorder", "Error occured during initiating recorder", nil)
+                            return
+                        }
+          SWIFT
+        )
+      end
+
+      content.gsub!(
+        'try audioSession.setActive(true)',
+        'try audioSession.setActive(true, options: .notifyOthersOnDeactivation)',
+      ) unless content.include?('notifyOthersOnDeactivation')
+
+      unless content.include?('sessionOptions.insert(AVAudioSession.CategoryOptions(rawValue: 128))')
+        content.gsub!(
+          'try audioSession.setCategory(.playAndRecord, mode: avMode, options: [AVAudioSession.CategoryOptions.defaultToSpeaker, AVAudioSession.CategoryOptions.allowBluetooth])',
+          <<~SWIFT.chomp
+            var sessionOptions: AVAudioSession.CategoryOptions = [.defaultToSpeaker, .allowBluetooth]
+            if #available(iOS 13.0, *) {
+                sessionOptions.insert(AVAudioSession.CategoryOptions(rawValue: 128))
+            }
+            try audioSession.setCategory(.playAndRecord, mode: avMode, options: sessionOptions)
+          SWIFT
+        )
+        content.gsub!(
+          'try audioSession.setCategory(.playAndRecord, mode: avMode, options: [AVAudioSession.CategoryOptions.defaultToSpeaker, AVAudioSession.CategoryOptions.allowBluetooth, AVAudioSession.CategoryOptions.allowHapticsAndSystemSoundsDuringRecording])',
+          <<~SWIFT.chomp
+            var sessionOptions: AVAudioSession.CategoryOptions = [.defaultToSpeaker, .allowBluetooth]
+            if #available(iOS 13.0, *) {
+                sessionOptions.insert(AVAudioSession.CategoryOptions(rawValue: 128))
+            }
+            try audioSession.setCategory(.playAndRecord, mode: avMode, options: sessionOptions)
+          SWIFT
+        )
+      end
+
+      if content != original
+        File.write(recorder_swift, content)
+        Pod::UI.puts '[Podfile] Patched RNAudioRecorderPlayer.swift'.green
+      else
+        Pod::UI.puts '[Podfile] RNAudioRecorderPlayer.swift patch OK'.green
+      end
+    end
+
     installer.pods_project.save
   end
 end

@@ -104,9 +104,8 @@ const AiAssistant = () => {
     isVoiceRecording,
     voiceButtonRef,
     cancelAreaRef,
-    panHandlers,
-    updateVoiceButtonBounds,
-    updateCancelAreaBounds,
+    gestureCaptureProps,
+    refreshBounds,
   } = useHoldToTalk({
     enabled: type === 'voice' && !isLoading,
     onResult: handleSendMessage,
@@ -119,10 +118,9 @@ const AiAssistant = () => {
     }
 
     requestAnimationFrame(() => {
-      updateCancelAreaBounds();
-      updateVoiceButtonBounds();
+      void refreshBounds();
     });
-  }, [type, updateCancelAreaBounds, updateVoiceButtonBounds]);
+  }, [type, refreshBounds]);
 
   const isExpandedInput =
     type === 'text' && (isInputFocused || inputText.length > 0);
@@ -242,18 +240,21 @@ const AiAssistant = () => {
     if (type === 'voice') {
       const voiceInputBody = (
         <>
+          <View
+            ref={voiceButtonRef}
+            onLayout={() => {
+              void refreshBounds();
+            }}
+            {...gestureCaptureProps}
+            style={styles.questionInputContentVoiceFull}
+          >
+            {renderVoiceButton()}
+          </View>
           {!isVoiceRecording && (
             <View style={styles.questionInputContentVoiceToggle}>
               {renderInputToggleIcon()}
             </View>
           )}
-          <View
-            ref={voiceButtonRef}
-            onLayout={updateVoiceButtonBounds}
-            style={styles.questionInputContentVoiceFull}
-          >
-            {renderVoiceButton()}
-          </View>
         </>
       );
 
@@ -333,6 +334,7 @@ const AiAssistant = () => {
           contentContainerStyle={styles.messageListInner}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          scrollEnabled={!isVoiceRecording}
           onContentSizeChange={scrollToBottom}
         >
           {messages.map(message => (
@@ -359,10 +361,8 @@ const AiAssistant = () => {
         <View
           ref={cancelAreaRef}
           onLayout={() => {
-            updateCancelAreaBounds();
-            updateVoiceButtonBounds();
+            void refreshBounds();
           }}
-          {...(type === 'voice' ? panHandlers : {})}
           style={[
             styles.userInputContent,
             {

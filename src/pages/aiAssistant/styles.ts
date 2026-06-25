@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     justifyContent: 'center',
-    zIndex: 1,
+    zIndex: 10,
   },
   questionInputContentVoiceIdle: {
     width: '100%',
