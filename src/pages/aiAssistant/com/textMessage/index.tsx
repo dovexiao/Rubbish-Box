@@ -1,70 +1,62 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
+import MarkdownView from '@/components/MarkdownView';
+import { isStreamingExecuteJsonContent } from '../../utils/extractJsonCardsFromMarkdown';
 import { ErrorMessage, TextMessage } from '../../typing';
 import styles from './styles';
 
 interface Props {
   data: TextMessage | ErrorMessage;
-  onConfirmCancel?: () => void;
-  onConfirmSubmit?: () => void;
 }
 
-const TYPEWRITER_INTERVAL = 40;
-
-export default function TextMessageItem({
-  data,
-  onConfirmCancel,
-  onConfirmSubmit,
-}: Props) {
+export default function TextMessageItem({ data }: Props) {
   const isError = data.type === 'error';
   const isUser = data.role === 'user';
-  const confirm = !isError && data.type === 'text' ? data.confirm : undefined;
-  const showConfirmActions = Boolean(
-    confirm && !confirm.submitted && !confirm.rejected && !confirm.approved,
-  );
-
-  const getConfirmTitle = () => {
-    if (!confirm) return null;
-    if (confirm.approved) {
-      return { text: '执行完成', style: styles.confirmTitleCompleted };
-    }
-    if (confirm.rejected) {
-      return { text: '已取消', style: styles.confirmTitleCancelled };
-    }
-    return { text: confirm.title || '需要确认', style: styles.confirmTitle };
-  };
-
-  const confirmTitle = getConfirmTitle();
-  const [displayText, setDisplayText] = useState(data.content);
-  const targetRef = useRef(data.content);
-
-  useEffect(() => {
-    targetRef.current = data.content;
-
-    if (isUser || isError) {
-      setDisplayText(data.content);
-      return;
-    }
-
-    if (!('isStreaming' in data) || !data.isStreaming) {
-      setDisplayText(data.content);
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setDisplayText(prev => {
-        const target = targetRef.current;
-        if (prev.length >= target.length) return prev;
-        return target.slice(0, prev.length + 1);
-      });
-    }, TYPEWRITER_INTERVAL);
-
-    return () => clearInterval(timer);
-  }, [data.content, data.type, isUser, isError, data]);
-
   const isStreaming = !isError && 'isStreaming' in data && data.isStreaming;
-  const isThinking =
-    !isUser && !isError && isStreaming && !(data.content ?? '').trim();
+  const content = data.content ?? '';
+  const isEmptyStreaming = !isUser && !isError && isStreaming && !content.trim();
+  const isExecuteJsonStreaming =
+    !isUser && !isError && isStreaming && isStreamingExecuteJsonContent(content);
+  const showThinking = isEmptyStreaming || isExecuteJsonStreaming;
+
+  if (showThinking) {
+    return (
+      <View style={[styles.messageRow, styles.messageRowAssistant]}>
+        <View
+          style={[styles.bubble, styles.bubbleAssistant, styles.bubbleThinking]}
+        >
+          <Text style={[styles.text, styles.thinkingText]} selectable>
+            正在思考中...
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  const renderMessageContent = () => {
+    if (isUser) {
+      return (
+        <Text style={styles.text} selectable>
+          {content}
+        </Text>
+      );
+    }
+
+    if (isError) {
+      return (
+        <Text style={[styles.text, styles.errorText]} selectable>
+          {content}
+        </Text>
+      );
+    }
+
+    return (
+      <View style={styles.markdownWrap}>
+        <MarkdownView content={content} isStreaming={Boolean(isStreaming)} />
+        {isStreaming ? <Text style={styles.cursor}>|</Text> : null}
+      </View>
+    );
+  };
 
   return (
     <View
@@ -81,53 +73,9 @@ export default function TextMessageItem({
             : isError
             ? styles.bubbleError
             : styles.bubbleAssistant,
-          confirm ? styles.bubbleWithConfirm : null,
         ]}
       >
-        {confirmTitle ? (
-          <Text style={confirmTitle.style}>{confirmTitle.text}</Text>
-        ) : null}
-        <Text
-          style={[
-            styles.text,
-            isThinking && styles.thinkingText,
-            isError && styles.errorText,
-          ]}
-        >
-          {isUser ? data.content : isThinking ? '正在思考中...' : displayText}
-          {!isUser && isStreaming && !isThinking ? (
-            <Text style={styles.cursor}>|</Text>
-          ) : null}
-        </Text>
-
-        {confirm?.rejected && confirm.rejectedHint ? (
-          <Text style={styles.rejectedHint}>{confirm.rejectedHint}</Text>
-        ) : null}
-
-        {showConfirmActions ? (
-          <View style={styles.confirmSection}>
-            <View style={styles.confirmActions}>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                style={styles.cancelBtn}
-                onPress={onConfirmCancel}
-              >
-                <Text style={styles.cancelBtnText}>
-                  {confirm!.cancelText || '取消'}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                style={styles.confirmBtn}
-                onPress={onConfirmSubmit}
-              >
-                <Text style={styles.confirmBtnText}>
-                  {confirm!.confirmText || '确认执行'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : null}
+        {renderMessageContent()}
       </View>
     </View>
   );

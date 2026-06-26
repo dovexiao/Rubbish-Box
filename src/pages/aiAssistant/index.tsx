@@ -7,21 +7,60 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/core';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AvoidSoftInput } from 'react-native-avoid-softinput';
 import AppIcon from '@/components/AppIcon';
 import Flex from '@/components/Flex';
 import { LinearGradient, PageContainer, TextInput } from '@/components';
 import { useHoldToTalk, VoiceRipple } from '@/components/HoldToTalk';
 import { useAIChat } from '@/hooks/useAIChat';
+import { showToast } from '@/utils';
+import { checkMicrophonePermission } from '@/utils/permissions';
 import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
 import TextMessageItem from './com/textMessage';
 import styles from './styles';
+import { ChatMessage, TextMessage } from './typing';
+import { useTabBarHeight } from '@/hooks/useTabBarHeight';
 
 const COMMON_QUESTIONS = ['我的地锁现在什么状态？', '修改手机号', '降下地锁'];
+const DEFAULT_MESSAGES: TextMessage[] = [
+  {
+    id: '1',
+    role: 'assistant',
+    type: 'text',
+    content:
+      '你好！我是你的泊刻地锁专属小助手，我能帮你看看地锁现在什么状态，也可以帮你升降地锁、管理成员，快来向我提问吧！',
+    isStreaming: false,
+  },
+];
+
+function hasActiveConfirmFlow(messages: ChatMessage[]): boolean {
+  return messages.some(message => {
+    if (message.type === 'confirm') {
+      return (
+        message.processing ||
+        message.submitted ||
+        Boolean(message.isReplyStreaming)
+      );
+    }
+    if (message.type === 'text' && message.confirm) {
+      const confirm = message.confirm;
+      return (
+        confirm.processing ||
+        confirm.submitted ||
+        Boolean(confirm.isReplyStreaming)
+      );
+    }
+    return false;
+  });
+}
 
 const AiAssistant = () => {
   const insets = useSafeAreaInsets();
+  const bottomSafePadding = Math.max(insets.bottom, px(6));
+  const { tabBarHeight } = useTabBarHeight();
   const [inputText, setInputText] = React.useState('');
   const [isInputFocused, setIsInputFocused] = React.useState(false);
   const [type, setType] = React.useState<'text' | 'voice'>('text');
@@ -29,8 +68,13 @@ const AiAssistant = () => {
 
   const messageListRef = useRef<ScrollView>(null);
 
-  const { messages, isLoading, sendMessage, sendVoiceMessage, confirmToolCall } =
-    useAIChat();
+  const {
+    messages,
+    isLoading,
+    sendMessage,
+    sendVoiceMessage,
+    confirmToolCall,
+  } = useAIChat({ initialMessages: DEFAULT_MESSAGES });
 
   const scrollToBottom = useCallback(() => {
     messageListRef.current?.scrollToEnd({ animated: true });
@@ -64,24 +108,33 @@ const AiAssistant = () => {
     scrollToBottom();
   }, [scrollToBottom]);
 
-  const handleChangeType = useCallback((nextType: 'text' | 'voice') => {
-    setType(nextType);
+  const handleChangeType = useCallback(async (nextType: 'text' | 'voice') => {
     if (nextType === 'voice') {
+      const granted = await checkMicrophonePermission();
+      if (!granted) {
+        showToast({ title: '需要麦克风权限才能语音输入', icon: 'none' });
+        return;
+      }
       setIsInputFocused(false);
       Keyboard.dismiss();
     }
+    setType(nextType);
   }, []);
 
+  const handleToggleInputType = useCallback(() => {
+    void handleChangeType(type === 'text' ? 'voice' : 'text');
+  }, [handleChangeType, type]);
+
   const handleConfirmCancel = useCallback(
-    (sessionId: string) => {
-      confirmToolCall(sessionId, { approved: false });
+    (sessionId: string, confirmMessageId?: string) => {
+      confirmToolCall(sessionId, { approved: false, confirmMessageId });
     },
     [confirmToolCall],
   );
 
   const handleConfirmSubmit = useCallback(
-    (sessionId: string) => {
-      confirmToolCall(sessionId, { approved: true });
+    (sessionId: string, confirmMessageId?: string) => {
+      confirmToolCall(sessionId, { approved: true, confirmMessageId });
     },
     [confirmToolCall],
   );
@@ -99,28 +152,13 @@ const AiAssistant = () => {
     [inputText, isLoading, sendMessage],
   );
 
-  const {
-    voiceStatus,
-    isVoiceRecording,
-    voiceButtonRef,
-    cancelAreaRef,
-    gestureCaptureProps,
-    refreshBounds,
-  } = useHoldToTalk({
-    enabled: type === 'voice' && !isLoading,
-    onResult: handleSendMessage,
-    onVoiceFile: sendVoiceMessage,
-  });
-
-  useEffect(() => {
-    if (type !== 'voice') {
-      return;
-    }
-
-    requestAnimationFrame(() => {
-      void refreshBounds();
+  const { voiceStatus, isVoiceRecording, voiceButtonRef, gestureCaptureProps } =
+    useHoldToTalk({
+      enabled: type === 'voice' && !isLoading,
+      onResult: handleSendMessage,
+      onVoiceFile: sendVoiceMessage,
+      holdDelayMs: 0,
     });
-  }, [type, refreshBounds]);
 
   const isExpandedInput =
     type === 'text' && (isInputFocused || inputText.length > 0);
@@ -131,18 +169,34 @@ const AiAssistant = () => {
       message.type === 'text' &&
       message.isStreaming,
   );
-  const showThinking = isLoading && !hasStreamingAssistant;
+  const showThinking =
+    isLoading && !hasStreamingAssistant && !hasActiveConfirmFlow(messages);
 
   const handleClickSend = () => {
     if (!canSend) return;
     handleSendMessage();
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== 'android') {
+        return undefined;
+      }
+
+      AvoidSoftInput.setAdjustNothing();
+
+      return () => {
+        Keyboard.dismiss();
+        AvoidSoftInput.setDefaultAppSoftInputMode();
+      };
+    }, []),
+  );
+
   const renderInputToggleIcon = () => (
     <TouchableOpacity
       activeOpacity={0.85}
       style={styles.questionInputContentLeft}
-      onPress={() => handleChangeType(type === 'text' ? 'voice' : 'text')}
+      onPress={handleToggleInputType}
     >
       <AppIcon
         name={type === 'text' ? 'icon_voice_input' : 'icon_keyboard'}
@@ -242,9 +296,6 @@ const AiAssistant = () => {
         <>
           <View
             ref={voiceButtonRef}
-            onLayout={() => {
-              void refreshBounds();
-            }}
             {...gestureCaptureProps}
             style={styles.questionInputContentVoiceFull}
           >
@@ -313,6 +364,7 @@ const AiAssistant = () => {
       statusBarBackgroundColor="#ffffff"
       statusBarStyle="dark-content"
       safeAreaEdges={['top']}
+      scrollable={false}
       header={
         <View style={styles.navHeader}>
           <Flex
@@ -359,17 +411,13 @@ const AiAssistant = () => {
         </ScrollView>
 
         <View
-          ref={cancelAreaRef}
-          onLayout={() => {
-            void refreshBounds();
-          }}
           style={[
             styles.userInputContent,
             {
               paddingBottom:
                 keyboardHeight > 0
-                  ? keyboardHeight - px(60 + Math.max(insets.bottom, 6))
-                  : px(6),
+                  ? keyboardHeight + px(6) - tabBarHeight
+                  : bottomSafePadding,
             },
           ]}
         >
@@ -409,9 +457,7 @@ const AiAssistant = () => {
                 voiceStatus === 'cancel' && styles.voiceRecordingHintCancel,
               ]}
             >
-              {voiceStatus === 'cancel'
-                ? '松手取消'
-                : '松手发送，移出输入区取消'}
+              {voiceStatus === 'cancel' ? '松手取消' : '松手发送 上滑取消'}
             </Text>
           )}
 

@@ -51,7 +51,20 @@ const PAGE_TYPE_ENTRIES = {
   },
   13: {
     imgUrl: 'https://g.18qjz.cn/img/boklock/deviceChargingPoster.png',
-    videoUrl: 'https://g.18qjz.cn/img/boklock/deviceChargingVideo_compatible.mp4',
+    videoUrl:
+      'https://g.18qjz.cn/img/boklock/deviceChargingVideo_compatible.mp4',
+  },
+  14: {
+    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_6.png', //解绑微信
+    route: 'Account',
+  },
+  15: {
+    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_3.png', //编辑组合设备
+    route: 'CombineDevice',
+  },
+  16: {
+    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_3.png', //修改组合设备
+    route: 'MultipleDevice',
   },
 } satisfies Record<number, PageTypeConfig>;
 

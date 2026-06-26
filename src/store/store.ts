@@ -12,3 +12,5 @@ export const bindDeviceSuccessStore = atom(undefined) as PrimitiveAtom<
 export const bluetoothOperationLockFallStatusStore = atom(
   'RISE',
 ) as PrimitiveAtom<'RISE' | 'DOWN'>;
+
+export const tabBarHeightStore = atom(0) as PrimitiveAtom<number>;

@@ -25,6 +25,9 @@ export interface ConfirmAction {
   content?: string;
   cancelText?: string;
   confirmText?: string;
+  processing?: boolean;
+  replyContent?: string;
+  isReplyStreaming?: boolean;
   rejected?: boolean;
   approved?: boolean;
   submitted?: boolean;
@@ -80,8 +83,13 @@ export interface ConfirmMessage extends BaseMessage {
   sessionId?: string;
   replyId?: string;
   submitted?: boolean;
+  processing?: boolean;
+  replyContent?: string;
+  isReplyStreaming?: boolean;
   rejected?: boolean;
   approved?: boolean;
+  rejectedMessage?: string;
+  rejectedHint?: string;
 }
 
 export type ChatMessage =

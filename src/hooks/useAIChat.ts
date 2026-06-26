@@ -1,313 +1,289 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { BASE_URL } from '@/config';
-import { showToast } from '@/utils';
-import { triggerLightHaptic } from '@/utils/haptics';
-import { aiWebSocketService, WSMessage } from '@/services/aiWebSocketService';
-import { getUserSessionKey, userVoiceToText } from '@/services/ai';
+import {useState, useEffect, useRef, useCallback} from 'react'
+import {BASE_URL} from '@/config'
+import {showToast} from '@/utils'
+import {triggerLightHaptic} from '@/utils/haptics'
+import {aiWebSocketService, WSMessage} from '@/services/aiWebSocketService'
+import {getUserSessionKey, userVoiceToText} from '@/services/ai'
 import type {
   ChatMessage,
   ConfirmAction,
   ConfirmMessage,
   TextMessage,
-  VideoGuideMessage,
-} from '@/pages/aiAssistant/typing';
-import { getPageTypeConfig } from '@/pages/aiAssistant/constants';
+} from '@/pages/aiAssistant/typing'
+import {
+  extractJsonCardsFromTextContent,
+  mapExecutePayloadToCard,
+  type ExecutePayload,
+} from '@/pages/aiAssistant/utils/extractJsonCardsFromMarkdown'
 
 export interface UseAIChatOptions {
-  initialMessages?: ChatMessage[];
-  extraParams?: Record<string, any>;
+  initialMessages?: ChatMessage[]
+  extraParams?: Record<string, unknown>
 }
 
-const createMessageId = () =>
-  `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+const createMessageId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 
 const getWebSocketUrl = (): string => {
-  const wsDomain = BASE_URL.replace(/^http:\/\//, 'ws://').replace(
-    /^https:\/\//,
-    'wss://',
-  );
-  return `${wsDomain}/boke/ws/user/chat`;
-};
-
-const getStreamMessageId = (wsMessage: WSMessage, fallbackId?: string | null) =>
-  wsMessage.sessionId ||
-  wsMessage.conversationId ||
-  fallbackId ||
-  createMessageId();
-
-const EXECUTE_CODE_BLOCK_MARKER = '```json';
-const EXECUTE_JSON_START = '{';
-const PAGE_TYPE_MARKER = '"pageType"';
-const EXECUTE_END_PATTERN = /\n```\r?\n/;
-const EXECUTE_FIELD_MARKERS = [
-  '"pageType"',
-  '"toolName"',
-  '"errorMsg"',
-  '"interactionType"',
-  '"pageName"',
-  '"supplyMsg"',
-];
-
-const looksLikeExecuteJson = (str: string): boolean => {
-  const trimmed = str.trim();
-  if (!trimmed) return false;
-  if (/^\s*\{/.test(trimmed)) return true;
-  if (
-    trimmed.endsWith('}') &&
-    EXECUTE_FIELD_MARKERS.some(marker => trimmed.includes(marker))
-  ) {
-    return true;
-  }
-  return EXECUTE_FIELD_MARKERS.some(marker => trimmed.includes(marker));
-};
-
-const normalizeExecuteJsonRaw = (raw: string): string => {
-  const trimmed = raw.trim();
-  if (!trimmed) return trimmed;
-  if (trimmed.startsWith('{')) return trimmed;
-  if (looksLikeExecuteJson(trimmed)) return `{${trimmed}`;
-  return trimmed;
-};
-
-const findExecuteEndIndex = (buffer: string) => {
-  const match = buffer.match(EXECUTE_END_PATTERN);
-  if (!match || match.index === undefined) return -1;
-  return match.index;
-};
-
-const getExecuteEndMarkerLength = (buffer: string, endIdx: number) => {
-  const slice = buffer.slice(endIdx);
-  const match = slice.match(EXECUTE_END_PATTERN);
-  return match?.[0]?.length ?? 0;
-};
-
-/** 从首个 { 起匹配完整 JSON 对象闭合位置（相对 str 起点） */
-const findBraceCloseIndex = (str: string): number => {
-  let depth = 0;
-  let started = false;
-  let inString = false;
-  let escaped = false;
-
-  for (let i = 0; i < str.length; i++) {
-    const ch = str[i];
-    if (inString) {
-      if (escaped) {
-        escaped = false;
-      } else if (ch === '\\') {
-        escaped = true;
-      } else if (ch === '"') {
-        inString = false;
-      }
-      continue;
-    }
-
-    if (ch === '"') {
-      inString = true;
-    } else if (ch === '{') {
-      depth += 1;
-      started = true;
-    } else if (ch === '}') {
-      depth -= 1;
-      if (started && depth === 0) {
-        return i;
-      }
-    }
-  }
-  return -1;
-};
-
-/** 流结束后从原始字符串提取可解析的 JSON */
-const extractJsonObject = (raw: string): string | null => {
-  const trimmed = normalizeExecuteJsonRaw(raw);
-  if (!trimmed) return null;
-
-  try {
-    JSON.parse(trimmed);
-    return trimmed;
-  } catch {
-    // continue
-  }
-
-  const start = trimmed.indexOf(EXECUTE_JSON_START);
-  if (start === -1) return null;
-
-  const closeIdx = findBraceCloseIndex(trimmed.slice(start));
-  if (closeIdx === -1) return null;
-
-  const candidate = trimmed.slice(start, start + closeIdx + 1);
-  try {
-    JSON.parse(candidate);
-    return candidate;
-  } catch {
-    const lastEnd = trimmed.lastIndexOf('}');
-    if (lastEnd > start) {
-      const fallback = trimmed.slice(start, lastEnd + 1);
-      try {
-        JSON.parse(fallback);
-        return fallback;
-      } catch {
-        return null;
-      }
-    }
-  }
-  return null;
-};
-
-/** 起始：开头为 {，或包含 pageType（```json / {） */
-const findExecuteStart = (
-  buffer: string,
-): {
-  index: number;
-  skip: number;
-  isCodeBlock: boolean;
-  prependLeadingBrace?: boolean;
-} | null => {
-  const jsonAtStart = buffer.match(/^\s*\{/);
-  if (jsonAtStart) {
-    const index = buffer.indexOf(EXECUTE_JSON_START);
-    return { index, skip: 0, isCodeBlock: false };
-  }
-
-  const codeBlockIdx = buffer.indexOf(EXECUTE_CODE_BLOCK_MARKER);
-  if (codeBlockIdx !== -1) {
-    return {
-      index: codeBlockIdx,
-      skip: EXECUTE_CODE_BLOCK_MARKER.length,
-      isCodeBlock: true,
-    };
-  }
-
-  const pageTypeIdx = buffer.indexOf(PAGE_TYPE_MARKER);
-  if (pageTypeIdx !== -1) {
-    const jsonStartIdx = buffer.lastIndexOf(EXECUTE_JSON_START, pageTypeIdx);
-    if (jsonStartIdx !== -1) {
-      return { index: jsonStartIdx, skip: 0, isCodeBlock: false };
-    }
-    return { index: 0, skip: 0, isCodeBlock: false, prependLeadingBrace: true };
-  }
-
-  if (looksLikeExecuteJson(buffer)) {
-    return null;
-  }
-
-  return null;
-};
-
-type StreamPhase = 'text' | 'execute';
-
-interface StreamParserState {
-  phase: StreamPhase;
-  buffer: string;
-  executeJsonBuffer: string;
-  currentTextId: string | null;
-  cardCount: number;
-  sessionId: string;
-  isCodeBlockJson: boolean;
-  prependLeadingBrace: boolean;
+  const wsDomain = BASE_URL.replace(/^http:\/\//, 'ws://')
+    .replace(/^https:\/\//, 'wss://')
+    .replace(/\/$/, '')
+  return `${wsDomain}/boke/ws/user/chat`
 }
 
-const getNextTextSegmentIndex = (
-  messages: ChatMessage[],
-  sessionId: string,
-): number => {
-  let maxIndex = -1;
-  const prefix = `${sessionId}-text-`;
+const getErrorMessage = (error: unknown, fallback: string): string =>
+  error instanceof Error && error.message ? error.message : fallback
+
+const getStreamMessageId = (wsMessage: WSMessage, fallbackId?: string | null) =>
+  wsMessage.sessionId || wsMessage.conversationId || fallbackId || createMessageId()
+
+interface StreamParserState {
+  currentTextId: string | null
+  textSegmentIndex: number
+  sessionId: string
+}
+
+const getNextTextSegmentIndex = (messages: ChatMessage[], sessionId: string): number => {
+  let maxIndex = -1
+  const prefix = `${sessionId}-text-`
 
   for (const msg of messages) {
-    if (msg.type !== 'text' || msg.role !== 'assistant') continue;
+    if (msg.type !== 'text' || msg.role !== 'assistant') continue
     if (msg.id === sessionId) {
-      maxIndex = Math.max(maxIndex, 0);
-      continue;
+      maxIndex = Math.max(maxIndex, 0)
+      continue
     }
-    if (!msg.id.startsWith(prefix)) continue;
-    const index = Number(msg.id.slice(prefix.length));
+    if (!msg.id.startsWith(prefix)) continue
+    const index = Number(msg.id.slice(prefix.length))
     if (!Number.isNaN(index)) {
-      maxIndex = Math.max(maxIndex, index);
+      maxIndex = Math.max(maxIndex, index)
     }
   }
 
-  return maxIndex + 1;
-};
+  return maxIndex + 1
+}
 
-const createStreamParserState = (
-  sessionId: string,
-  cardCount = 0,
-): StreamParserState => ({
-  phase: 'text',
-  buffer: '',
-  executeJsonBuffer: '',
-  currentTextId: `${sessionId}-text-${cardCount}`,
-  cardCount,
+const createStreamParserState = (sessionId: string, textSegmentIndex = 0): StreamParserState => ({
+  currentTextId: `${sessionId}-text-${textSegmentIndex}`,
+  textSegmentIndex,
   sessionId,
-  isCodeBlockJson: false,
-  prependLeadingBrace: false,
-});
+})
 
-/** 保留 buffer 末尾可能是 marker 前缀的部分，避免跨 chunk 截断 */
-const findSafeFlushIndex = (
-  str: string,
-  marker: string,
-  isComplete: boolean,
-) => {
-  if (isComplete) return str.length;
-  for (let len = Math.min(str.length, marker.length - 1); len > 0; len--) {
-    if (marker.startsWith(str.slice(-len))) {
-      return str.length - len;
+const cloneParserSnapshot = (parser: StreamParserState): StreamParserState => ({
+  ...parser,
+})
+
+const resolveStreamParser = (
+  prev: ChatMessage[],
+  streamId: string,
+  existing?: StreamParserState | null,
+): StreamParserState => {
+  if (existing && existing.sessionId === streamId) {
+    return cloneParserSnapshot(existing)
+  }
+  return createStreamParserState(streamId, getNextTextSegmentIndex(prev, streamId))
+}
+
+const removeTextSegment = (messages: ChatMessage[], textId: string | null): ChatMessage[] => {
+  if (!textId) return messages
+  return messages.filter(message => !(message.id === textId && message.type === 'text'))
+}
+
+const ensureEmptyStreamingText = (messages: ChatMessage[], textId: string): ChatMessage[] => {
+  if (messages.some(item => item.id === textId && item.type === 'text')) {
+    return messages
+  }
+  return [
+    ...messages,
+    {
+      id: textId,
+      role: 'assistant',
+      type: 'text',
+      content: '',
+      isStreaming: true,
+    },
+  ]
+}
+
+const isEmptyStreamingAssistant = (msg: ChatMessage): msg is TextMessage =>
+  msg.type === 'text' &&
+  msg.role === 'assistant' &&
+  Boolean(msg.isStreaming) &&
+  !msg.content?.trim()
+
+const removeEmptyStreamingAssistants = (messages: ChatMessage[]): ChatMessage[] =>
+  messages.filter(msg => !isEmptyStreamingAssistant(msg))
+
+const beginAssistantStream = (
+  messages: ChatMessage[],
+  streamId: string,
+): {messages: ChatMessage[]; state: StreamParserState} => {
+  const state = createStreamParserState(streamId, getNextTextSegmentIndex(messages, streamId))
+  return {
+    messages: ensureEmptyStreamingText(messages, state.currentTextId!),
+    state,
+  }
+}
+
+/** 将发送阶段占位流对齐到服务端 streamId，无 type:start 时也能复用同一条思考气泡 */
+const adoptStreamId = (
+  messages: ChatMessage[],
+  oldState: StreamParserState | null,
+  streamId: string,
+): {messages: ChatMessage[]; state: StreamParserState} => {
+  if (oldState?.sessionId === streamId && oldState.currentTextId) {
+    return {
+      messages: ensureEmptyStreamingText(messages, oldState.currentTextId),
+      state: cloneParserSnapshot(oldState),
     }
   }
-  return str.length;
-};
 
-const findSafeFlushIndexForText = (str: string, isComplete: boolean) => {
-  if (looksLikeExecuteJson(str)) {
-    return 0;
+  const state = createStreamParserState(streamId, getNextTextSegmentIndex(messages, streamId))
+  const newTextId = state.currentTextId!
+  const oldTextId = oldState?.currentTextId
+
+  if (!oldTextId) {
+    return {messages: ensureEmptyStreamingText(messages, newTextId), state}
   }
-  if (isComplete) return str.length;
-  if (/^\s*\{/.test(str)) {
-    return str.indexOf(EXECUTE_JSON_START);
+
+  const oldIndex = messages.findIndex(msg => msg.id === oldTextId && msg.type === 'text')
+  if (oldIndex < 0) {
+    return {messages: ensureEmptyStreamingText(messages, newTextId), state}
   }
-  return Math.min(
-    findSafeFlushIndex(str, PAGE_TYPE_MARKER, false),
-    findSafeFlushIndex(str, EXECUTE_CODE_BLOCK_MARKER, false),
-    findSafeFlushIndex(str, EXECUTE_JSON_START, false),
-  );
-};
 
-const getTextSegmentContent = (
-  messages: ChatMessage[],
-  textId: string | null,
-): string => {
-  if (!textId) return '';
-  const item = messages.find(
-    message => message.id === textId && message.type === 'text',
-  );
-  return item?.type === 'text' ? item.content ?? '' : '';
-};
-
-const findLeakedExecuteText = (
-  messages: ChatMessage[],
-  sessionId: string,
-): { textId: string; content: string } | null => {
-  for (const message of messages) {
-    if (message.type !== 'text' || message.role !== 'assistant') continue;
-    if (!message.id.startsWith(`${sessionId}-text-`)) continue;
-    const content = message.content ?? '';
-    if (looksLikeExecuteJson(content)) {
-      return { textId: message.id, content };
-    }
+  const next = [...messages]
+  next[oldIndex] = {
+    ...(next[oldIndex] as TextMessage),
+    id: newTextId,
+    isStreaming: true,
   }
-  return null;
-};
 
-const removeTextSegment = (
+  return {
+    messages: ensureEmptyStreamingText(next, newTextId),
+    state,
+  }
+}
+
+const isConfirmSessionMatchById = (msg: ConfirmMessage, sessionId: string) => {
+  const confirmSessionId = msg.sessionId || msg.replyId || msg.id
+  return confirmSessionId === sessionId || msg.replyId === sessionId || msg.id === sessionId
+}
+
+interface ConfirmTarget {
+  sessionId: string
+  confirmMessageId?: string
+}
+
+const matchConfirmMessage = (msg: ConfirmMessage, target: ConfirmTarget) => {
+  if (target.confirmMessageId && msg.id === target.confirmMessageId) {
+    return true
+  }
+  return isConfirmSessionMatchById(msg, target.sessionId)
+}
+
+const isConfirmSessionMatch = (confirm: ConfirmAction, sessionId: string) =>
+  confirm.sessionId === sessionId || confirm.replyId === sessionId
+
+const matchConfirmTargetInText = (
+  msg: TextMessage,
+  target: ConfirmTarget,
+): boolean => {
+  if (!msg.confirm) return false
+  if (target.confirmMessageId && `${msg.id}-confirm` === target.confirmMessageId) {
+    return true
+  }
+  return isConfirmSessionMatch(msg.confirm, target.sessionId)
+}
+
+const upsertConfirmReply = (
   messages: ChatMessage[],
-  textId: string | null,
+  target: ConfirmTarget,
+  appendContent: string,
+  isReplyStreaming: boolean,
 ): ChatMessage[] => {
-  if (!textId) return messages;
-  return messages.filter(
-    message => !(message.id === textId && message.type === 'text'),
-  );
-};
+  let matched = false
+  const next = messages.map(msg => {
+    if (msg.type === 'confirm' && matchConfirmMessage(msg, target)) {
+      matched = true
+      return {
+        ...msg,
+        processing: false,
+        replyContent: `${msg.replyContent ?? ''}${appendContent}`,
+        isReplyStreaming,
+      }
+    }
+
+    if (msg.type === 'text' && matchConfirmTargetInText(msg, target)) {
+      matched = true
+      return {
+        ...msg,
+        confirm: {
+          ...msg.confirm!,
+          processing: false,
+          replyContent: `${msg.confirm!.replyContent ?? ''}${appendContent}`,
+          isReplyStreaming,
+        },
+      }
+    }
+
+    return msg
+  })
+
+  if (matched || !appendContent) {
+    return next
+  }
+
+  for (let i = next.length - 1; i >= 0; i--) {
+    const msg = next[i]
+    if (msg?.type === 'confirm' && msg.submitted && !msg.approved && !msg.rejected) {
+      next[i] = {
+        ...msg,
+        processing: false,
+        replyContent: `${msg.replyContent ?? ''}${appendContent}`,
+        isReplyStreaming,
+      }
+      break
+    }
+  }
+
+  return next
+}
+
+const finalizeConfirmReply = (messages: ChatMessage[], target: ConfirmTarget): ChatMessage[] =>
+  messages.map(msg => {
+    if (msg.type === 'confirm' && matchConfirmMessage(msg, target)) {
+      return {...msg, processing: false, isReplyStreaming: false}
+    }
+
+    if (msg.type === 'text' && matchConfirmTargetInText(msg, target)) {
+      return {
+        ...msg,
+        confirm: {
+          ...msg.confirm!,
+          processing: false,
+          isReplyStreaming: false,
+        },
+      }
+    }
+
+    return msg
+  })
+
+interface ProcessStreamOptions {
+  confirmTarget?: ConfirmTarget
+}
+
+const upsertStreamText = (
+  messages: ChatMessage[],
+  textId: string,
+  appendContent: string,
+  isStreaming: boolean,
+  options?: ProcessStreamOptions,
+): ChatMessage[] => {
+  if (options?.confirmTarget) {
+    return upsertConfirmReply(messages, options.confirmTarget, appendContent, isStreaming)
+  }
+  return upsertTextSegment(messages, textId, appendContent, isStreaming)
+}
 
 const upsertTextSegment = (
   prev: ChatMessage[],
@@ -315,21 +291,17 @@ const upsertTextSegment = (
   appendContent: string,
   isStreaming: boolean,
 ): ChatMessage[] => {
-  if (!appendContent) return prev;
-  const index = prev.findIndex(
-    item => item.id === textId && item.type === 'text',
-  );
+  if (!appendContent) return prev
+  const index = prev.findIndex(item => item.id === textId && item.type === 'text')
   if (index >= 0) {
-    const current = prev[index] as Extract<ChatMessage, { type: 'text' }>;
-    if (!current.confirm?.submitted) {
-      const next = [...prev];
-      next[index] = {
-        ...current,
-        content: (current.content ?? '') + appendContent,
-        isStreaming,
-      };
-      return next;
+    const current = prev[index] as Extract<ChatMessage, {type: 'text'}>
+    const next = [...prev]
+    next[index] = {
+      ...current,
+      content: (current.content ?? '') + appendContent,
+      isStreaming,
     }
+    return next
   }
   return [
     ...prev,
@@ -340,79 +312,47 @@ const upsertTextSegment = (
       content: appendContent,
       isStreaming,
     },
-  ];
-};
-
-const finalizeTextSegment = (
-  prev: ChatMessage[],
-  textId: string | null,
-): ChatMessage[] => {
-  if (!textId) return prev;
-  return prev.map(item =>
-    item.id === textId && item.type === 'text' && item.isStreaming
-      ? { ...item, isStreaming: false }
-      : item,
-  );
-};
-
-interface ExecutePayload {
-  type?: string;
-  messageType?: string;
-  pageType?: string | number;
-  pageName?: string;
-  message?: string;
-  intro?: string;
-  maskedPhone?: string;
-  title?: string;
-  content?: string;
-  cancelText?: string;
-  confirmText?: string;
-  replyId?: string;
-  messageId?: string;
-  sessionId?: string;
-  rejectedMessage?: string;
-  rejectedHint?: string;
-  videoUrl?: string;
-  posterUrl?: string;
-  poster?: string;
-  extend?: any;
+  ]
 }
 
-const DEFAULT_REJECTED_MESSAGE = '未下发地锁控制指令。';
-const DEFAULT_REJECTED_HINT = '你可以继续询问设备状态，或重新发起控制。';
+const finalizeTextSegment = (prev: ChatMessage[], textId: string | null): ChatMessage[] => {
+  if (!textId) return prev
+  return prev.map(item =>
+    item.id === textId && item.type === 'text' && item.isStreaming
+      ? {...item, isStreaming: false}
+      : item,
+  )
+}
+
+const DEFAULT_REJECTED_MESSAGE = '未下发地锁控制指令。'
+const DEFAULT_REJECTED_HINT = '你可以继续询问设备状态，或重新发起控制。'
 
 const parseWSMessageData = (data: unknown): ExecutePayload | null => {
-  if (!data) return null;
+  if (!data) return null
   if (typeof data === 'string') {
     try {
-      return JSON.parse(data.trim()) as ExecutePayload;
+      return JSON.parse(data.trim()) as ExecutePayload
     } catch {
-      return null;
+      return null
     }
   }
-  if (typeof data === 'object') {
-    return data as ExecutePayload;
+  if (typeof data === 'object' && !Array.isArray(data)) {
+    return data as ExecutePayload
   }
-  return null;
-};
+  return null
+}
 
-const mapConfirmPayloadToAction = (
-  payload: ExecutePayload,
-  fallbackId: string,
-): ConfirmAction => ({
+const mapConfirmPayloadToAction = (payload: ExecutePayload, fallbackId: string): ConfirmAction => ({
   sessionId: payload.sessionId || fallbackId,
   replyId: payload.replyId || payload.messageId || fallbackId,
   title: payload.title || payload.pageName,
   content: payload.content || payload.message,
   cancelText: payload.cancelText,
   confirmText: payload.confirmText,
-});
+})
 
-const mapConfirmPayloadToCard = (
-  payload: ExecutePayload,
-  fallbackId: string,
-): ConfirmMessage => {
-  const action = mapConfirmPayloadToAction(payload, fallbackId);
+const mapConfirmPayloadToCard = (payload: ExecutePayload, fallbackId: string): ConfirmMessage => {
+  const action = mapConfirmPayloadToAction(payload, fallbackId)
   return {
     id: fallbackId,
     role: 'assistant',
@@ -423,100 +363,35 @@ const mapConfirmPayloadToCard = (
     confirmText: action.confirmText,
     sessionId: action.sessionId,
     replyId: action.replyId,
-  };
-};
-
-const parseVideoGuideMedia = (
-  parsed: ExecutePayload,
-  pageType: string | number,
-) => {
-  const pageConfig = getPageTypeConfig(pageType);
-  let videoUrl = parsed.videoUrl || '';
-  let posterUrl = parsed.posterUrl || parsed.poster || '';
-  const extend = parsed.extend;
-
-  if (typeof extend === 'string') {
-    const trimmed = extend.trim();
-    if (trimmed.startsWith('http') && /\.mp4(\?|$)/i.test(trimmed)) {
-      videoUrl = trimmed;
-    } else if (trimmed.startsWith('{')) {
-      try {
-        const ext = JSON.parse(trimmed) as Record<string, string | undefined>;
-        videoUrl = ext['videoUrl'] || ext['url'] || ext['video'] || videoUrl;
-        posterUrl = ext['posterUrl'] || ext['poster'] || posterUrl;
-      } catch {
-        // ignore invalid extend json
-      }
-    }
-  } else if (extend && typeof extend === 'object') {
-    const ext = extend as Record<string, string | undefined>;
-    videoUrl = ext['videoUrl'] || ext['url'] || ext['video'] || videoUrl;
-    posterUrl = ext['posterUrl'] || ext['poster'] || posterUrl;
   }
+}
 
-  if (!videoUrl && pageConfig?.videoUrl) {
-    videoUrl = pageConfig.videoUrl;
-  }
-  if (!posterUrl && pageConfig?.imgUrl) {
-    posterUrl = pageConfig.imgUrl;
-  }
-
-  return { videoUrl, posterUrl };
-};
-
-const mapVideoGuidePayloadToCard = (
-  payload: ExecutePayload,
-  fallbackId: string,
-  pageType: string | number,
-): VideoGuideMessage => {
-  const { videoUrl, posterUrl } = parseVideoGuideMedia(payload, pageType);
-  return {
-    id: fallbackId,
-    role: 'assistant',
-    type: 'videoGuide',
-    intro: payload.message || payload.intro || payload.pageName || '充电指导',
-    videoUrl,
-    posterUrl,
-    pageType,
-  };
-};
-
-const confirmMessageToAction = (card: ConfirmMessage): ConfirmAction => ({
-  sessionId: card.sessionId || card.id,
-  replyId: card.replyId || card.id,
-  title: card.title,
-  content: card.content,
-  cancelText: card.cancelText,
-  confirmText: card.confirmText,
-});
-
-const isConfirmSessionMatch = (confirm: ConfirmAction, sessionId: string) =>
-  confirm.sessionId === sessionId || confirm.replyId === sessionId;
-
-const applyConfirmSubmittedState = (
+const applyConfirmProcessingState = (
   messages: ChatMessage[],
-  sessionId: string,
-  approved: boolean,
+  target: ConfirmTarget,
 ): ChatMessage[] =>
   messages.map(msg => {
     if (msg.type === 'confirm') {
-      const confirmSessionId = msg.sessionId || msg.replyId || msg.id;
-      if (
-        confirmSessionId !== sessionId &&
-        msg.replyId !== sessionId &&
-        msg.id !== sessionId
-      ) {
-        return msg;
+      if (!matchConfirmMessage(msg, target)) {
+        return msg
       }
-      return { ...msg, submitted: true, approved, rejected: !approved };
+      return {
+        ...msg,
+        submitted: true,
+        processing: true,
+        replyContent: undefined,
+        isReplyStreaming: true,
+        approved: undefined,
+        rejected: undefined,
+      }
     }
 
     if (
       msg.type !== 'text' ||
       !msg.confirm ||
-      !isConfirmSessionMatch(msg.confirm, sessionId)
+      !isConfirmSessionMatch(msg.confirm, target.sessionId)
     ) {
-      return msg;
+      return msg
     }
 
     return {
@@ -524,24 +399,82 @@ const applyConfirmSubmittedState = (
       confirm: {
         ...msg.confirm,
         submitted: true,
-        approved,
-        rejected: !approved,
+        processing: true,
+        replyContent: undefined,
+        isReplyStreaming: true,
+        approved: undefined,
+        rejected: undefined,
       },
-    };
-  });
+    }
+  })
+
+const applyConfirmResetProcessingState = (
+  messages: ChatMessage[],
+  target: ConfirmTarget,
+): ChatMessage[] =>
+  messages.map(msg => {
+    if (msg.type === 'confirm') {
+      if (!matchConfirmMessage(msg, target)) {
+        return msg
+      }
+      return {
+        ...msg,
+        submitted: false,
+        processing: false,
+        approved: undefined,
+        rejected: undefined,
+      }
+    }
+
+    if (
+      msg.type !== 'text' ||
+      !msg.confirm ||
+      !isConfirmSessionMatch(msg.confirm, target.sessionId)
+    ) {
+      return msg
+    }
+
+    return {
+      ...msg,
+      confirm: {
+        ...msg.confirm,
+        submitted: false,
+        processing: false,
+        approved: undefined,
+        rejected: undefined,
+      },
+    }
+  })
 
 const applyConfirmRejectedState = (
   messages: ChatMessage[],
-  sessionId: string,
-  payload?: { rejectedMessage?: string; rejectedHint?: string },
+  target: ConfirmTarget,
+  payload?: {rejectedMessage?: string; rejectedHint?: string},
 ): ChatMessage[] =>
   messages.map(msg => {
+    if (msg.type === 'confirm') {
+      if (!matchConfirmMessage(msg, target)) {
+        return msg
+      }
+      return {
+        ...msg,
+        submitted: true,
+        processing: false,
+        isReplyStreaming: false,
+        rejected: true,
+        approved: false,
+        rejectedMessage:
+          payload?.rejectedMessage || msg.rejectedMessage || DEFAULT_REJECTED_MESSAGE,
+        rejectedHint: payload?.rejectedHint || msg.rejectedHint || DEFAULT_REJECTED_HINT,
+      }
+    }
+
     if (
       msg.type !== 'text' ||
       !msg.confirm ||
-      !isConfirmSessionMatch(msg.confirm, sessionId)
+      !isConfirmSessionMatch(msg.confirm, target.sessionId)
     ) {
-      return msg;
+      return msg
     }
 
     return {
@@ -549,915 +482,891 @@ const applyConfirmRejectedState = (
       confirm: {
         ...msg.confirm,
         submitted: true,
+        processing: false,
         rejected: true,
+        approved: false,
         rejectedMessage:
-          payload?.rejectedMessage ||
-          msg.confirm.rejectedMessage ||
-          DEFAULT_REJECTED_MESSAGE,
-        rejectedHint:
-          payload?.rejectedHint ||
-          msg.confirm.rejectedHint ||
-          DEFAULT_REJECTED_HINT,
+          payload?.rejectedMessage || msg.confirm.rejectedMessage || DEFAULT_REJECTED_MESSAGE,
+        rejectedHint: payload?.rejectedHint || msg.confirm.rejectedHint || DEFAULT_REJECTED_HINT,
       },
-    };
-  });
-
-const findLastAssistantTextIndex = (
-  messages: ChatMessage[],
-  sessionId?: string,
-): number => {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const message = messages[i];
-    if (!message) continue;
-    if (message.role !== 'assistant' || message.type !== 'text') continue;
-    if (message.confirm?.submitted) continue;
-    if (
-      sessionId &&
-      !message.id.startsWith(`${sessionId}-text-`) &&
-      message.id !== sessionId
-    ) {
-      continue;
     }
-    return i;
-  }
+  })
 
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const message = messages[i];
-    if (
-      message?.role === 'assistant' &&
-      message?.type === 'text' &&
-      !message.confirm?.submitted
-    ) {
-      return i;
-    }
-  }
-
-  return -1;
-};
-
-const mergeConfirmIntoMessages = (
-  messages: ChatMessage[],
-  action: ConfirmAction,
-  options?: { sessionId?: string; appendContent?: string },
-): ChatMessage[] => {
-  const next = [...messages];
-  const index = findLastAssistantTextIndex(next, options?.sessionId);
-  const extra = options?.appendContent?.trim();
-
-  if (index >= 0) {
-    const textMessage = next[index] as TextMessage;
-    if (textMessage.confirm?.submitted) {
-      return [
-        ...next,
-        {
-          id: `${
-            options?.sessionId || action.replyId
-          }-text-${getNextTextSegmentIndex(
-            next,
-            options?.sessionId || action.sessionId,
-          )}`,
-          role: 'assistant',
-          type: 'text',
-          content: extra || action.content || '',
-          confirm: action,
-        },
-      ];
-    }
-
-    let content = textMessage.content ?? '';
-    if (extra && !content.includes(extra)) {
-      content = content ? `${content}\n${extra}` : extra;
-    }
-
-    next[index] = {
-      ...textMessage,
-      content,
-      isStreaming: false,
-      confirm: action,
-    };
-    return next;
-  }
-
-  return [
-    ...next,
-    {
-      id: options?.sessionId || action.replyId,
-      role: 'assistant',
-      type: 'text',
-      content: extra || action.content || '',
-      confirm: action,
-    },
-  ];
-};
+const isSameConfirmCard = (card: ConfirmMessage, sessionId?: string) => {
+  const cardSessionId = card.sessionId || card.replyId || card.id
+  return Boolean(
+    sessionId &&
+      (cardSessionId === sessionId || card.replyId === sessionId || card.id === sessionId),
+  )
+}
 
 const mergeConfirmCardIntoMessages = (
   messages: ChatMessage[],
   card: ConfirmMessage,
   sessionId?: string,
-): ChatMessage[] =>
-  mergeConfirmIntoMessages(messages, confirmMessageToAction(card), {
-    sessionId,
-    appendContent: card.content,
-  });
+): ChatMessage[] => {
+  const finalized = messages.map(item =>
+    item.type === 'text' && item.isStreaming ? {...item, isStreaming: false} : item,
+  )
 
-const appendOrMergeCard = (
+  const existingIndex = finalized.findIndex(
+    msg => msg.type === 'confirm' && isSameConfirmCard(msg, sessionId || card.sessionId || card.id),
+  )
+
+  if (existingIndex >= 0) {
+    const next = [...finalized]
+    next[existingIndex] = {
+      ...(next[existingIndex] as ConfirmMessage),
+      ...card,
+    }
+    return next
+  }
+
+  return [...finalized, card]
+}
+
+const getSessionIdFromTextId = (textId: string): string => {
+  const match = textId.match(/^(.*)-text-\d+$/)
+  return match?.[1] || textId
+}
+
+const materializeJsonCardsFromText = (
   messages: ChatMessage[],
-  card: ChatMessage,
+  textId: string,
   sessionId: string,
 ): ChatMessage[] => {
-  if (card.type === 'confirm') {
-    return mergeConfirmCardIntoMessages(messages, card, sessionId);
-  }
-  return [...messages, card];
-};
+  const textIndex = messages.findIndex(item => item.id === textId && item.type === 'text')
+  if (textIndex < 0) return messages
 
-const mapExecuteJsonToCard = (
-  raw: string,
-  sessionId: string,
-  cardIndex: number,
-): ChatMessage | null => {
-  try {
-    const parsed = JSON.parse(raw.trim()) as ExecutePayload;
-    if (
-      parsed.pageType === undefined ||
-      parsed.pageType === null ||
-      parsed.pageType === ''
-    ) {
-      return null;
+  const textMessage = messages[textIndex] as TextMessage
+  const cardCount = messages.filter(
+    item => item.id.startsWith(`${sessionId}-card-`) && item.type !== 'text',
+  ).length
+  const {textContent, cards} = extractJsonCardsFromTextContent(
+    textMessage.content ?? '',
+    sessionId,
+    cardCount,
+  )
+
+  const contentChanged = textContent !== textMessage.content
+  if (!cards.length && !contentChanged) return messages
+
+  let next = [...messages]
+  if (textContent.trim()) {
+    next[textIndex] = {
+      ...textMessage,
+      content: textContent,
+      isStreaming: false,
     }
-
-    const cardId = `${sessionId}-card-${cardIndex}`;
-    const pageType = String(parsed.pageType);
-
-    if (pageType === '4') {
-      return mapConfirmPayloadToCard(parsed, cardId);
-    }
-
-    if (pageType === '13') {
-      return mapVideoGuidePayloadToCard(parsed, cardId, parsed.pageType!);
-    }
-
-    return {
-      id: cardId,
-      role: 'assistant',
-      type: 'phoneChange',
-      intro: parsed.message || parsed.intro || parsed.pageName,
-      maskedPhone: parsed.maskedPhone || parsed.extend,
-      pageType: parsed.pageType,
-    };
-  } catch {
-    // 流式阶段 JSON 可能尚未完整，忽略
-  }
-  return null;
-};
-
-const tryCreateCardFromRawJson = (
-  raw: string,
-  sessionId: string,
-  cardIndex: number,
-): { card: ChatMessage | null; jsonStr: string | null } => {
-  const jsonStr = extractJsonObject(raw);
-  if (!jsonStr) return { card: null, jsonStr: null };
-  const card = mapExecuteJsonToCard(jsonStr, sessionId, cardIndex);
-  return { card, jsonStr };
-};
-
-const finalizeExecutePhase = (
-  messages: ChatMessage[],
-  state: StreamParserState,
-): { messages: ChatMessage[]; rest: string } => {
-  const leaked = findLeakedExecuteText(messages, state.sessionId);
-  let rawJson = state.executeJsonBuffer + state.buffer;
-  if (state.prependLeadingBrace && !rawJson.trimStart().startsWith('{')) {
-    rawJson = `{${rawJson}`;
-  }
-  if (leaked) {
-    rawJson = normalizeExecuteJsonRaw(`${leaked.content}${rawJson}`);
+  } else {
+    next.splice(textIndex, 1)
   }
 
-  const { card, jsonStr } = tryCreateCardFromRawJson(
-    rawJson,
-    state.sessionId,
-    state.cardCount,
-  );
-  let nextMessages = messages;
-
-  if (card) {
+  let insertAt = textContent.trim() ? textIndex + 1 : textIndex
+  for (const card of cards) {
     if (card.type === 'confirm') {
-      nextMessages = removeTextSegment(
-        nextMessages,
-        leaked?.textId ?? state.currentTextId,
-      );
-      nextMessages = mergeConfirmCardIntoMessages(
-        nextMessages,
-        card,
-        state.sessionId,
-      );
-    } else {
-      nextMessages = removeTextSegment(
-        nextMessages,
-        leaked?.textId ?? state.currentTextId,
-      );
-      nextMessages = [...nextMessages, card];
+      next = mergeConfirmCardIntoMessages(next, card, sessionId)
+      insertAt = next.length
+      continue
     }
-    state.cardCount += 1;
-  } else if (jsonStr) {
-    state.cardCount += 1;
+    next.splice(insertAt, 0, card)
+    insertAt += 1
   }
 
-  const rest = jsonStr
-    ? rawJson.slice(rawJson.indexOf(jsonStr) + jsonStr.length)
-    : rawJson;
-  return { messages: nextMessages, rest };
-};
+  return next
+}
+
+const materializeAllJsonCardsInMessages = (messages: ChatMessage[]): ChatMessage[] => {
+  let next = messages
+  const textMessages = next.filter(
+    (item): item is TextMessage =>
+      item.type === 'text' && item.role === 'assistant' && !item.isStreaming,
+  )
+
+  for (const textMessage of textMessages) {
+    next = materializeJsonCardsFromText(
+      next,
+      textMessage.id,
+      getSessionIdFromTextId(textMessage.id),
+    )
+  }
+
+  return next
+}
 
 const processStreamChunk = (
   prev: ChatMessage[],
   state: StreamParserState,
   chunk: string,
   isComplete: boolean,
-): { messages: ChatMessage[]; state: StreamParserState } => {
-  state.buffer += chunk;
-  let messages = prev;
+  options?: ProcessStreamOptions,
+): {messages: ChatMessage[]; state: StreamParserState} => {
+  let messages = prev
 
-  while (true) {
-    if (state.phase === 'text') {
-      const executeStart = findExecuteStart(state.buffer);
-      if (!executeStart) {
-        const safeEnd = findSafeFlushIndexForText(state.buffer, isComplete);
-        const textPart = state.buffer.slice(0, safeEnd);
-        if (textPart && state.currentTextId) {
-          messages = upsertTextSegment(
-            messages,
-            state.currentTextId,
-            textPart,
-            !isComplete,
-          );
-        }
-        state.buffer = state.buffer.slice(safeEnd);
-        break;
-      }
-
-      const textBefore = state.buffer.slice(0, executeStart.index);
-      if (textBefore && state.currentTextId) {
-        messages = upsertTextSegment(
-          messages,
-          state.currentTextId,
-          textBefore,
-          false,
-        );
-        messages = finalizeTextSegment(messages, state.currentTextId);
-      }
-      state.buffer = state.buffer.slice(executeStart.index + executeStart.skip);
-      state.phase = 'execute';
-      state.executeJsonBuffer = '';
-      state.isCodeBlockJson = executeStart.isCodeBlock;
-      state.prependLeadingBrace = Boolean(executeStart.prependLeadingBrace);
-      state.currentTextId = null;
-      continue;
-    }
-
-    // 纯 JSON 流式：只累积，等 end 再解析，避免中途 } 误截断
-    if (!state.isCodeBlockJson) {
-      state.executeJsonBuffer += state.buffer;
-      state.buffer = '';
-      break;
-    }
-
-    const codeEndIdx = findExecuteEndIndex(state.buffer);
-    if (codeEndIdx === -1) {
-      const safeEnd = findSafeFlushIndex(state.buffer, '\n```\n', isComplete);
-      state.executeJsonBuffer += state.buffer.slice(0, safeEnd);
-      state.buffer = state.buffer.slice(safeEnd);
-      break;
-    }
-
-    const jsonPart =
-      state.executeJsonBuffer + state.buffer.slice(0, codeEndIdx);
-    const card = mapExecuteJsonToCard(
-      jsonPart,
-      state.sessionId,
-      state.cardCount,
-    );
-    if (card) {
-      messages = appendOrMergeCard(messages, card, state.sessionId);
-    }
-    state.cardCount += 1;
-    const endLen = getExecuteEndMarkerLength(state.buffer, codeEndIdx);
-    state.buffer = state.buffer.slice(codeEndIdx + endLen);
-    state.phase = 'text';
-    state.executeJsonBuffer = '';
-    state.isCodeBlockJson = false;
-    state.currentTextId = `${state.sessionId}-text-${state.cardCount}`;
-    continue;
-  }
-
-  if (isComplete) {
-    if (state.phase === 'execute') {
-      const { messages: nextMessages, rest } = finalizeExecutePhase(
-        messages,
-        state,
-      );
-      messages = nextMessages;
-      state.buffer = rest;
-      state.executeJsonBuffer = '';
-      state.phase = 'text';
-      state.isCodeBlockJson = false;
-      state.prependLeadingBrace = false;
-      state.currentTextId = `${state.sessionId}-text-${state.cardCount}`;
-    } else if (state.buffer || state.currentTextId) {
-      const leakedText = getTextSegmentContent(messages, state.currentTextId);
-      const combined = `${leakedText}${state.buffer}`;
-
-      if (looksLikeExecuteJson(combined)) {
-        const { card } = tryCreateCardFromRawJson(
-          combined,
-          state.sessionId,
-          state.cardCount,
-        );
-        if (card) {
-          messages = removeTextSegment(messages, state.currentTextId);
-          messages = appendOrMergeCard(messages, card, state.sessionId);
-          state.cardCount += 1;
-          state.buffer = '';
-        } else if (state.buffer && state.currentTextId) {
-          messages = upsertTextSegment(
-            messages,
-            state.currentTextId,
-            state.buffer,
-            false,
-          );
-          state.buffer = '';
-        }
-      } else if (state.buffer && state.currentTextId) {
-        messages = upsertTextSegment(
-          messages,
-          state.currentTextId,
-          state.buffer,
-          false,
-        );
-        state.buffer = '';
-      }
-    }
-    if (state.currentTextId) {
-      messages = finalizeTextSegment(messages, state.currentTextId);
+  if (chunk && state.currentTextId) {
+    messages = upsertStreamText(messages, state.currentTextId, chunk, !isComplete, options)
+    if (options?.confirmTarget) {
+      messages = removeTextSegment(messages, state.currentTextId)
     }
   }
 
-  return { messages, state };
-};
+  if (isComplete && state.currentTextId) {
+    if (!options?.confirmTarget) {
+      messages = finalizeTextSegment(messages, state.currentTextId)
+    }
+    messages = materializeJsonCardsFromText(messages, state.currentTextId, state.sessionId)
+  }
+
+  return {messages, state}
+}
 
 const isSpecialCardMessage = (wsMessage: WSMessage) => {
-  const data = parseWSMessageData(wsMessage.data);
-  const messageType = data?.type || data?.messageType;
-  return (
-    messageType === 'phoneChange' ||
-    messageType === 'confirm' ||
-    messageType === 'videoGuide'
-  );
-};
+  const data = parseWSMessageData(wsMessage.data)
+  const messageType = data?.type || data?.messageType
+  return messageType === 'confirm' || messageType === 'videoGuide' || data?.pageType !== undefined
+}
 
-const mapWSMessageToChatMessage = (
-  wsMessage: WSMessage,
-): ChatMessage | null => {
-  const { content, data: rawData } = wsMessage;
-  const data = parseWSMessageData(rawData);
-  const messageType = data?.type || data?.messageType;
-  const messageId = getStreamMessageId(wsMessage);
+const mapWSMessageToChatMessage = (wsMessage: WSMessage): ChatMessage | null => {
+  const {content, data: rawData} = wsMessage
+  const data = parseWSMessageData(rawData)
+  const messageType = data?.type || data?.messageType
+  const messageId = getStreamMessageId(wsMessage)
 
-  if (messageType === 'phoneChange') {
-    return {
-      id: messageId,
-      role: 'assistant',
-      type: 'phoneChange',
-      intro: data?.intro || content,
-      maskedPhone: data?.maskedPhone,
-      pageType: data?.pageType,
-    };
-  }
+  if (data) {
+    const pageType =
+      data.pageType ??
+      (messageType === 'confirm' ? 4 : messageType === 'videoGuide' ? 13 : undefined)
 
-  if (messageType === 'videoGuide') {
-    const pageType = data?.pageType ?? 13;
-    const { videoUrl, posterUrl } = parseVideoGuideMedia(data || {}, pageType);
-    return {
-      id: messageId,
-      role: 'assistant',
-      type: 'videoGuide',
-      intro: data?.intro || data?.message || content,
-      videoUrl: data?.videoUrl || videoUrl,
-      posterUrl: data?.posterUrl || data?.poster || posterUrl,
-      pageType,
-    };
+    if (pageType !== undefined) {
+      const card = mapExecutePayloadToCard({...data, pageType}, messageId)
+      if (card?.type === 'confirm') {
+        return {
+          ...card,
+          content: content || data.content || data.message || '',
+        }
+      }
+      if (card?.type === 'videoGuide') {
+        return {
+          ...card,
+          intro: data.intro || data.message || content || card.intro,
+        }
+      }
+      return card
+    }
   }
 
   if (messageType === 'confirm') {
-    if (data) {
-      return {
-        ...mapConfirmPayloadToCard(data, messageId),
-        content: content || data.content || data.message || '',
-      };
-    }
     return {
       id: messageId,
       role: 'assistant',
       type: 'confirm',
       content: content || '',
-    };
+      sessionId: messageId,
+      replyId: messageId,
+    }
   }
 
-  return null;
-};
+  return null
+}
 
-const mapTopLevelConfirmMessage = (
-  wsMessage: WSMessage,
-): ConfirmMessage | null => {
-  const { content, data: rawData } = wsMessage;
-  const fallbackId = getStreamMessageId(wsMessage);
-  const parsed = parseWSMessageData(rawData);
+const mapTopLevelConfirmMessage = (wsMessage: WSMessage): ConfirmMessage | null => {
+  const {content, data: rawData} = wsMessage
+  const fallbackId = getStreamMessageId(wsMessage)
+  const parsed = parseWSMessageData(rawData)
 
-  if (!parsed && !content && !rawData) return null;
+  if (!parsed && !content && !rawData) return null
 
   if (parsed) {
     return {
       ...mapConfirmPayloadToCard(parsed, fallbackId),
       content: content || parsed.content || parsed.message || '',
-    };
+    }
   }
 
   return {
     id: fallbackId,
     role: 'assistant',
     type: 'confirm',
-    content: content || '',
+    content: content || '是否执行？',
     sessionId: fallbackId,
     replyId: fallbackId,
-  };
-};
+  }
+}
 
 const finalizeStreamingMessages = (prev: ChatMessage[]) =>
   prev.map(item =>
-    item.type === 'text' && item.isStreaming
-      ? { ...item, isStreaming: false }
-      : item,
-  );
+    item.type === 'text' && item.isStreaming ? {...item, isStreaming: false} : item,
+  )
 
 const hasUnresolvedConfirm = (messages: ChatMessage[]) =>
   messages.some(
     msg =>
-      (msg.type === 'text' &&
-        msg.confirm &&
-        !msg.confirm.rejected &&
-        !msg.confirm.submitted) ||
+      (msg.type === 'text' && msg.confirm && !msg.confirm.rejected && !msg.confirm.submitted) ||
       (msg.type === 'confirm' && !msg.submitted),
-  );
+  )
+
+const findConfirmIndex = (messages: ChatMessage[], target: ConfirmTarget): number => {
+  const directIndex = messages.findIndex(
+    msg => msg.type === 'confirm' && matchConfirmMessage(msg, target),
+  )
+  if (directIndex >= 0) return directIndex
+
+  // 后端偶尔返回新的 sessionId；仅在候选卡片唯一时回退，避免串到旧确认卡片。
+  const submittedIndexes = messages.reduce<number[]>((indexes, msg, index) => {
+    if (msg.type === 'confirm' && msg.submitted && !msg.rejected) indexes.push(index)
+    return indexes
+  }, [])
+  return submittedIndexes.length === 1 ? submittedIndexes[0]! : -1
+}
+
+const isTextForConfirmTarget = (message: TextMessage, target: ConfirmTarget): boolean => {
+  const sessionId = getSessionIdFromTextId(message.id)
+  return sessionId === target.sessionId || message.id === target.sessionId
+}
+
+/** 确认后将 confirm 卡片之后的所有助手文本合并进卡片，并标记执行完成 */
+const consolidateConfirmReplyMessages = (
+  messages: ChatMessage[],
+  target: ConfirmTarget,
+): ChatMessage[] => {
+  const confirmIndex = findConfirmIndex(messages, target)
+  if (confirmIndex < 0) return messages
+
+  const confirm = messages[confirmIndex] as ConfirmMessage
+  const textIdsToRemove: string[] = []
+  const textParts: string[] = []
+
+  if (confirm.replyContent?.trim()) {
+    textParts.push(confirm.replyContent.trim())
+  }
+
+  for (let i = confirmIndex + 1; i < messages.length; i++) {
+    const msg = messages[i]
+    if (
+      msg?.type === 'text' &&
+      msg.role === 'assistant' &&
+      msg.content?.trim() &&
+      isTextForConfirmTarget(msg, target)
+    ) {
+      textParts.push(msg.content.trim())
+      textIdsToRemove.push(msg.id)
+    }
+  }
+
+  const replyContent = textParts.join('\n\n')
+  const next = messages.filter(msg => !textIdsToRemove.includes(msg.id))
+  const newConfirmIndex = next.findIndex(msg => msg.id === confirm.id)
+  if (newConfirmIndex < 0) return next
+
+  next[newConfirmIndex] = {
+    ...(next[newConfirmIndex] as ConfirmMessage),
+    processing: false,
+    isReplyStreaming: false,
+    replyContent: replyContent || confirm.replyContent || '',
+    submitted: true,
+    approved: true,
+    rejected: false,
+  }
+
+  return next
+}
+
+const shouldConsolidateConfirmReply = (messages: ChatMessage[], target: ConfirmTarget): boolean => {
+  const confirmIndex = findConfirmIndex(messages, target)
+  if (confirmIndex < 0) return false
+
+  const confirm = messages[confirmIndex] as ConfirmMessage
+  if (confirm.approved) return false
+
+  const hasTextsAfter = messages
+    .slice(confirmIndex + 1)
+    .some(
+      msg =>
+        msg.type === 'text' &&
+        msg.role === 'assistant' &&
+        msg.content?.trim() &&
+        isTextForConfirmTarget(msg, target),
+    )
+
+  return Boolean(confirm.replyContent?.trim() || hasTextsAfter)
+}
 
 export const useAIChat = (options?: UseAIChatOptions) => {
-  const [messages, setMessages] = useState<ChatMessage[]>(
-    options?.initialMessages ?? [],
-  );
-  const [isConnected, setIsConnected] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>(options?.initialMessages ?? [])
+  const [isConnected, setIsConnected] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const chatKeyRef = useRef<string | null>(null);
-  const conversationIdRef = useRef<string | null>(null);
-  const sessionIdRef = useRef<string | null>(null);
-  const streamingMessageIdRef = useRef<string | null>(null);
-  const streamParserRef = useRef<StreamParserState | null>(null);
+  const conversationIdRef = useRef<string | null>(null)
+  const sessionIdRef = useRef<string | null>(null)
+  const streamingMessageIdRef = useRef<string | null>(null)
+  const streamParserRef = useRef<StreamParserState | null>(null)
   const pendingConfirmRef = useRef<{
-    sessionId: string;
-    approved: boolean;
-  } | null>(null);
-  const optionsRef = useRef<UseAIChatOptions | undefined>(options);
-  const messagesRef = useRef(messages);
+    sessionId: string
+    approved: boolean
+    confirmMessageId?: string
+  } | null>(null)
+  const lastApprovedConfirmTargetRef = useRef<ConfirmTarget | null>(null)
+  const optionsRef = useRef<UseAIChatOptions | undefined>(options)
+  const messagesRef = useRef(messages)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const connectionEpochRef = useRef(0)
 
   useEffect(() => {
-    optionsRef.current = options;
-  }, [options]);
+    optionsRef.current = options
+  }, [options])
 
-  useEffect(() => {
-    messagesRef.current = messages;
-  }, [messages]);
+  /**
+   * WebSocket 回调可能在 React 提交 state 前连续触发。
+   * 同步更新 ref 可避免后一个 chunk 读取到旧消息，也让 end 分支拿到真实最终结果。
+   */
+  const commitMessages = useCallback(
+    (updater: (current: ChatMessage[]) => ChatMessage[]): ChatMessage[] => {
+      const next = updater(messagesRef.current)
+      messagesRef.current = next
+      setMessages(next)
+      return next
+    },
+    [],
+  )
+
+  const abortActiveAssistantStream = useCallback(() => {
+    const textId = streamParserRef.current?.currentTextId
+    streamingMessageIdRef.current = null
+    streamParserRef.current = null
+    commitMessages(prev =>
+      textId ? removeTextSegment(prev, textId) : removeEmptyStreamingAssistants(prev),
+    )
+  }, [commitMessages])
+
+  const clearScheduledClose = useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }, [])
+
+  const scheduleSocketClose = useCallback(() => {
+    clearScheduledClose()
+    closeTimerRef.current = setTimeout(() => {
+      // 主动关闭前使旧连接回调失效，避免 onClose 再次修改当前流。
+      connectionEpochRef.current += 1
+      aiWebSocketService.close()
+      setIsConnected(false)
+      closeTimerRef.current = null
+    }, 100)
+  }, [clearScheduledClose])
+
+  const getPendingConfirmTarget = (): ConfirmTarget | undefined => {
+    const pending = pendingConfirmRef.current
+    if (!pending) return undefined
+    return {
+      sessionId: pending.sessionId,
+      confirmMessageId: pending.confirmMessageId,
+    }
+  }
 
   const finalizeStream = useCallback(() => {
-    setIsLoading(false);
-    streamingMessageIdRef.current = null;
-    streamParserRef.current = null;
-    setMessages(prev => finalizeStreamingMessages(prev));
-  }, []);
+    setIsLoading(false)
+    commitMessages(prev => {
+      let next = materializeAllJsonCardsInMessages(finalizeStreamingMessages(prev))
+      next = removeEmptyStreamingAssistants(next)
+      const pending = pendingConfirmRef.current
+      if (pending) {
+        next = applyConfirmResetProcessingState(next, {
+          sessionId: pending.sessionId,
+          confirmMessageId: pending.confirmMessageId,
+        })
+      }
+      streamParserRef.current = null
+      streamingMessageIdRef.current = null
+      pendingConfirmRef.current = null
+      lastApprovedConfirmTargetRef.current = null
+      return next
+    })
+  }, [commitMessages])
 
   const appendStreamContent = useCallback(
     (wsMessage: WSMessage, chunk: string, isComplete = false) => {
-      const streamId = getStreamMessageId(
-        wsMessage,
-        streamingMessageIdRef.current,
-      );
-      streamingMessageIdRef.current = streamId;
+      const streamId = getStreamMessageId(wsMessage, streamingMessageIdRef.current)
+      streamingMessageIdRef.current = streamId
 
-      setMessages(prev => {
-        if (
-          !streamParserRef.current ||
-          streamParserRef.current.sessionId !== streamId
-        ) {
-          streamParserRef.current = createStreamParserState(
-            streamId,
-            getNextTextSegmentIndex(prev, streamId),
-          );
-        }
+      commitMessages(prev => {
+        const adopted = adoptStreamId(prev, streamParserRef.current, streamId)
 
-        const parserSnapshot: StreamParserState = {
-          ...streamParserRef.current,
-          buffer: streamParserRef.current.buffer,
-          executeJsonBuffer: streamParserRef.current.executeJsonBuffer,
-        };
+        const confirmTarget = getPendingConfirmTarget()
+        const streamOptions: ProcessStreamOptions | undefined = confirmTarget
+          ? {confirmTarget}
+          : undefined
 
-        const { messages, state } = processStreamChunk(
-          prev,
-          parserSnapshot,
+        const {messages, state} = processStreamChunk(
+          adopted.messages,
+          adopted.state,
           chunk,
           isComplete,
-        );
-        streamParserRef.current = state;
-        return messages;
-      });
+          streamOptions,
+        )
+        streamParserRef.current = state
+        return messages
+      })
     },
-    [],
-  );
+    [commitMessages],
+  )
 
-  const finishPendingConfirmReject = useCallback((wsMessage: WSMessage) => {
-    const pending = pendingConfirmRef.current;
-    if (!pending || pending.approved) return;
+  const finishPendingConfirmReject = useCallback(
+    (wsMessage: WSMessage) => {
+      const pending = pendingConfirmRef.current
+      if (!pending || pending.approved) return
 
-    const parsed = parseWSMessageData(wsMessage.data);
-    setMessages(prev =>
-      applyConfirmRejectedState(prev, pending.sessionId, {
-        rejectedMessage: parsed?.rejectedMessage || wsMessage.content,
-        rejectedHint: parsed?.rejectedHint,
-      }),
-    );
-    showToast({ title: '已取消', icon: 'none' });
-    pendingConfirmRef.current = null;
-  }, []);
+      const parsed = parseWSMessageData(wsMessage.data)
+      const target: ConfirmTarget = {
+        sessionId: pending.sessionId,
+        confirmMessageId: pending.confirmMessageId,
+      }
+      commitMessages(prev => {
+        let next = finalizeConfirmReply(prev, target)
+        next = applyConfirmRejectedState(next, target, {
+          rejectedMessage: parsed?.rejectedMessage || wsMessage.content,
+          rejectedHint: parsed?.rejectedHint,
+        })
+        return next
+      })
+      showToast({title: '已取消', icon: 'none'})
+      pendingConfirmRef.current = null
+    },
+    [commitMessages],
+  )
 
   const handleWSMessage = useCallback(
     (wsMessage: WSMessage) => {
-      console.log('wsMessage', wsMessage);
-      const { type, content, conversationId, sessionId } = wsMessage;
+      const {type, content, conversationId, sessionId} = wsMessage
 
       if (conversationId) {
-        conversationIdRef.current = conversationId;
+        conversationIdRef.current = conversationId
       }
 
       if (sessionId) {
-        sessionIdRef.current = sessionId;
+        sessionIdRef.current = sessionId
       }
 
       if (type === 'start') {
-        setIsLoading(true);
-        triggerLightHaptic();
-        if (pendingConfirmRef.current?.approved) {
-          showToast({ title: '已确认执行', icon: 'none' });
+        setIsLoading(true)
+        triggerLightHaptic()
+        const streamId = getStreamMessageId(wsMessage, streamingMessageIdRef.current)
+        streamingMessageIdRef.current = streamId
+
+        if (!pendingConfirmRef.current) {
+          commitMessages(prev => {
+            const adopted = adoptStreamId(prev, streamParserRef.current, streamId)
+            streamParserRef.current = adopted.state
+            return adopted.messages
+          })
+        } else {
+          streamParserRef.current = createStreamParserState(
+            streamId,
+            getNextTextSegmentIndex(messagesRef.current, streamId),
+          )
         }
-        const streamId = getStreamMessageId(
-          wsMessage,
-          streamingMessageIdRef.current,
-        );
-        streamingMessageIdRef.current = streamId;
-        streamParserRef.current = createStreamParserState(
-          streamId,
-          getNextTextSegmentIndex(messagesRef.current, streamId),
-        );
-        return;
+        return
       }
 
       if (type === 'confirm') {
-        setIsLoading(false);
-        const cardMessage = mapTopLevelConfirmMessage(wsMessage);
+        setIsLoading(false)
+        const cardMessage = mapTopLevelConfirmMessage(wsMessage)
         if (cardMessage) {
-          const sessionId = getStreamMessageId(wsMessage);
-          setMessages(prev =>
-            mergeConfirmCardIntoMessages(
-              finalizeStreamingMessages(prev),
-              cardMessage,
-              sessionId,
-            ),
-          );
+          const sessionId = getStreamMessageId(wsMessage)
+          commitMessages(prev => {
+            let finalized = finalizeStreamingMessages(prev)
+            finalized = removeEmptyStreamingAssistants(finalized)
+            return mergeConfirmCardIntoMessages(finalized, cardMessage, sessionId)
+          })
         }
-        streamingMessageIdRef.current = null;
-        streamParserRef.current = null;
-        return;
+        streamingMessageIdRef.current = null
+        streamParserRef.current = null
+        return
       }
 
       if (type === 'message' || type === 'execute') {
         if (type === 'execute' && isSpecialCardMessage(wsMessage)) {
-          const cardMessage = mapWSMessageToChatMessage(wsMessage);
+          const cardMessage = mapWSMessageToChatMessage(wsMessage)
           if (cardMessage) {
-            const sessionId = getStreamMessageId(wsMessage);
-            setMessages(prev => {
-              const finalized = finalizeStreamingMessages(prev);
+            const sessionId = getStreamMessageId(wsMessage)
+            commitMessages(prev => {
+              let finalized = finalizeStreamingMessages(prev)
+              finalized = removeEmptyStreamingAssistants(finalized)
               if (cardMessage.type === 'confirm') {
-                return mergeConfirmCardIntoMessages(
-                  finalized,
-                  cardMessage,
-                  sessionId,
-                );
+                return mergeConfirmCardIntoMessages(finalized, cardMessage, sessionId)
               }
-              return [...finalized, cardMessage];
-            });
-            streamingMessageIdRef.current = null;
-            streamParserRef.current = null;
+              return [...finalized, cardMessage]
+            })
+            streamingMessageIdRef.current = null
+            streamParserRef.current = null
           }
-          return;
+          return
         }
 
-        setIsLoading(true);
-        appendStreamContent(wsMessage, content || '');
-        return;
+        setIsLoading(true)
+        appendStreamContent(wsMessage, content || '')
+        return
       }
 
       if (type === 'error') {
         if (pendingConfirmRef.current && !pendingConfirmRef.current.approved) {
-          finishPendingConfirmReject(wsMessage);
-        } else {
-          pendingConfirmRef.current = null;
+          finishPendingConfirmReject(wsMessage)
+          streamingMessageIdRef.current = null
+          streamParserRef.current = null
+          setIsLoading(false)
+          return
         }
-        const messageId = getStreamMessageId(
-          wsMessage,
-          streamingMessageIdRef.current,
-        );
-        streamingMessageIdRef.current = null;
-        streamParserRef.current = null;
-        setIsLoading(false);
-        setMessages(prev => {
-          const finalized = finalizeStreamingMessages(prev);
+
+        pendingConfirmRef.current = null
+        lastApprovedConfirmTargetRef.current = null
+        const messageId = getStreamMessageId(wsMessage, streamingMessageIdRef.current)
+        streamingMessageIdRef.current = null
+        streamParserRef.current = null
+        setIsLoading(false)
+        commitMessages(prev => {
+          let finalized = finalizeStreamingMessages(prev)
+          finalized = removeEmptyStreamingAssistants(finalized)
           const index = finalized.findIndex(
-            item =>
-              item.id === messageId &&
-              (item.type === 'text' || item.type === 'error'),
-          );
+            item => item.id === messageId && (item.type === 'text' || item.type === 'error'),
+          )
           const errorMessage: ChatMessage = {
             id: messageId,
             role: 'assistant',
             type: 'error',
             content: content || '请求失败，请重试',
-          };
-          if (index >= 0) {
-            const next = [...finalized];
-            next[index] = errorMessage;
-            return next;
           }
-          return [...finalized, errorMessage];
-        });
-        return;
+          if (index >= 0) {
+            const next = [...finalized]
+            next[index] = errorMessage
+            return next
+          }
+          return [...finalized, errorMessage]
+        })
+        return
       }
 
       if (type === 'end') {
-        const streamId = getStreamMessageId(
-          wsMessage,
-          streamingMessageIdRef.current,
-        );
+        const streamId = getStreamMessageId(wsMessage, streamingMessageIdRef.current)
+        const pendingConfirm = pendingConfirmRef.current
+        const parserAtEnd = streamParserRef.current
+          ? cloneParserSnapshot(streamParserRef.current)
+          : null
 
-        let finalizedMessages: ChatMessage[] = [];
-        setMessages(prev => {
-          if (
-            !streamParserRef.current ||
-            streamParserRef.current.sessionId !== streamId
-          ) {
-            streamParserRef.current = createStreamParserState(
-              streamId,
-              getNextTextSegmentIndex(prev, streamId),
-            );
-          }
+        const finalizedMessages = commitMessages(prev => {
+          const parserSnapshot = resolveStreamParser(prev, streamId, parserAtEnd)
 
-          const parserSnapshot: StreamParserState = {
-            ...streamParserRef.current,
-            buffer: streamParserRef.current.buffer,
-            executeJsonBuffer: streamParserRef.current.executeJsonBuffer,
-          };
+          const confirmTarget =
+            (pendingConfirm
+              ? {
+                  sessionId: pendingConfirm.sessionId,
+                  confirmMessageId: pendingConfirm.confirmMessageId,
+                }
+              : undefined) ??
+            lastApprovedConfirmTargetRef.current ??
+            getPendingConfirmTarget()
 
-          const { messages } = processStreamChunk(
+          const streamOptions: ProcessStreamOptions | undefined = confirmTarget
+            ? {confirmTarget}
+            : undefined
+
+          const {messages} = processStreamChunk(
             prev,
             parserSnapshot,
             content || '',
             true,
-          );
-          finalizedMessages = finalizeStreamingMessages(messages);
-          return finalizedMessages;
-        });
+            streamOptions,
+          )
+          let nextMessages = materializeAllJsonCardsInMessages(finalizeStreamingMessages(messages))
+          nextMessages = removeEmptyStreamingAssistants(nextMessages)
 
-        const isConfirmRejectResponse =
-          Boolean(pendingConfirmRef.current) &&
-          !pendingConfirmRef.current!.approved;
+          const consolidateTarget =
+            (pendingConfirm?.approved ? confirmTarget : undefined) ??
+            lastApprovedConfirmTargetRef.current ??
+            undefined
+
+          if (consolidateTarget) {
+            const shouldConsolidate =
+              Boolean(pendingConfirm?.approved) ||
+              shouldConsolidateConfirmReply(nextMessages, consolidateTarget)
+            if (shouldConsolidate) {
+              nextMessages = consolidateConfirmReplyMessages(nextMessages, consolidateTarget)
+              lastApprovedConfirmTargetRef.current = null
+            }
+          }
+
+          streamParserRef.current = null
+          streamingMessageIdRef.current = null
+          return nextMessages
+        })
+
+        const isConfirmRejectResponse = Boolean(pendingConfirm) && !pendingConfirm!.approved
 
         if (isConfirmRejectResponse) {
-          finishPendingConfirmReject(wsMessage);
-        } else if (pendingConfirmRef.current?.approved) {
-          pendingConfirmRef.current = null;
+          finishPendingConfirmReject(wsMessage)
+        } else if (pendingConfirm?.approved) {
+          pendingConfirmRef.current = null
+          lastApprovedConfirmTargetRef.current = null
         }
 
-        setIsLoading(false);
-        streamingMessageIdRef.current = null;
-        streamParserRef.current = null;
-        triggerLightHaptic();
+        setIsLoading(false)
+        triggerLightHaptic()
 
-        if (
-          isConfirmRejectResponse ||
-          !hasUnresolvedConfirm(finalizedMessages)
-        ) {
-          setTimeout(() => {
-            aiWebSocketService.close();
-            setIsConnected(false);
-          }, 100);
+        if (isConfirmRejectResponse || !hasUnresolvedConfirm(finalizedMessages)) {
+          scheduleSocketClose()
         }
       }
     },
-    [appendStreamContent, finalizeStream, finishPendingConfirmReject],
-  );
+    [appendStreamContent, commitMessages, finishPendingConfirmReject, scheduleSocketClose],
+  )
 
   const connectChatWebSocket = useCallback(
-    async (requestParams: Record<string, any>, afterConnect?: () => void) => {
+    async (requestParams: Record<string, unknown>, afterConnect?: () => void) => {
+      clearScheduledClose()
+      const connectionEpoch = ++connectionEpochRef.current
+
       try {
-        const params: Record<string, any> = {
+        const params: Record<string, unknown> = {
           ...requestParams,
           ...optionsRef.current?.extraParams,
-        };
-
-        if (conversationIdRef.current) {
-          params['conversationId'] = conversationIdRef.current;
         }
 
-        if (sessionIdRef.current) {
-          params['sessionId'] = sessionIdRef.current;
-        }
+        if (conversationIdRef.current) params['conversationId'] = conversationIdRef.current
+        if (sessionIdRef.current) params['sessionId'] = sessionIdRef.current
 
-        const res = await getUserSessionKey(params);
+        const res = await getUserSessionKey(params)
+        if (connectionEpoch !== connectionEpochRef.current) return false
+
         if (!res.success || !res.data) {
-          setIsLoading(false);
-          pendingConfirmRef.current = null;
-          showToast({ title: res.message || '获取会话失败', icon: 'none' });
-          return false;
+          setIsLoading(false)
+          if (!pendingConfirmRef.current) {
+            abortActiveAssistantStream()
+          } else {
+            pendingConfirmRef.current = null
+          }
+          showToast({title: res.message || '获取会话失败', icon: 'none'})
+          return false
         }
 
-        chatKeyRef.current = res.data;
-        const wsUrl = getWebSocketUrl();
-        console.log('wsUrl====', wsUrl);
+        const wsUrl = getWebSocketUrl()
+        if (connectionEpoch !== connectionEpochRef.current) return false
+        if (!wsUrl) {
+          setIsLoading(false)
+          if (!pendingConfirmRef.current) {
+            abortActiveAssistantStream()
+          } else {
+            pendingConfirmRef.current = null
+          }
+          showToast({title: 'WebSocket 地址无效', icon: 'none'})
+          return false
+        }
 
         aiWebSocketService.connect({
           url: wsUrl,
           chatKey: res.data,
           onOpen: () => {
-            setIsConnected(true);
-            afterConnect?.();
+            if (connectionEpoch !== connectionEpochRef.current) return
+            setIsConnected(true)
+            afterConnect?.()
           },
           onClose: () => {
-            setIsConnected(false);
-            finalizeStream();
+            if (connectionEpoch !== connectionEpochRef.current) return
+            setIsConnected(false)
+            finalizeStream()
           },
           onError: () => {
-            setIsConnected(false);
-            setIsLoading(false);
-            pendingConfirmRef.current = null;
-            showToast({ title: '连接失败，请重试', icon: 'none' });
+            if (connectionEpoch !== connectionEpochRef.current) return
+            setIsConnected(false)
+            setIsLoading(false)
+            if (!pendingConfirmRef.current) {
+              abortActiveAssistantStream()
+            }
+            pendingConfirmRef.current = null
+            lastApprovedConfirmTargetRef.current = null
+            showToast({title: '连接失败，请重试', icon: 'none'})
           },
-          onMessage: handleWSMessage,
-        });
-        return true;
-      } catch (error) {
-        console.error('初始化 WebSocket 失败:', error);
-        setIsLoading(false);
-        pendingConfirmRef.current = null;
-        showToast({ title: '发送失败，请重试', icon: 'none' });
-        return false;
+          onMessage: wsMessage => {
+            if (connectionEpoch !== connectionEpochRef.current) return
+            handleWSMessage(wsMessage)
+          },
+        })
+        return true
+      } catch (error: unknown) {
+        if (connectionEpoch !== connectionEpochRef.current) return false
+        console.error('初始化 WebSocket 失败:', error)
+        setIsLoading(false)
+        if (!pendingConfirmRef.current) {
+          abortActiveAssistantStream()
+        } else {
+          pendingConfirmRef.current = null
+        }
+        lastApprovedConfirmTargetRef.current = null
+        showToast({
+          title: getErrorMessage(error, '发送失败，请重试'),
+          icon: 'none',
+        })
+        return false
       }
     },
-    [handleWSMessage, finalizeStream],
-  );
+    [abortActiveAssistantStream, clearScheduledClose, finalizeStream, handleWSMessage],
+  )
 
   const initWebSocket = useCallback(
     async (message: string, sessionId?: string) => {
       await connectChatWebSocket({
         message,
-        ...(sessionId ? { sessionId } : {}),
-      });
+        ...(sessionId ? {sessionId} : {}),
+      })
     },
     [connectChatWebSocket],
-  );
+  )
 
   const sendMessage = useCallback(
     async (content: string) => {
-      const text = content.trim();
-      if (!text) return;
+      const text = content.trim()
+      if (!text) return
+      if (pendingConfirmRef.current) {
+        showToast({title: '请等待当前操作完成', icon: 'none'})
+        return
+      }
 
       const userMessage: ChatMessage = {
         id: createMessageId(),
         role: 'user',
         type: 'text',
         content: text,
-      };
+      }
 
-      setMessages(prev => [...prev, userMessage]);
-      setIsLoading(true);
+      const streamId = createMessageId()
+      streamingMessageIdRef.current = streamId
+
+      commitMessages(prev => {
+        const withUser = [...prev, userMessage]
+        const begun = beginAssistantStream(withUser, streamId)
+        streamParserRef.current = begun.state
+        return begun.messages
+      })
+      setIsLoading(true)
 
       try {
         if (aiWebSocketService.isConnected()) {
-          aiWebSocketService.close();
-          setIsConnected(false);
+          aiWebSocketService.close()
+          setIsConnected(false)
         }
-        await initWebSocket(text);
+        await initWebSocket(text)
       } catch (error) {
-        console.error('发送消息失败:', error);
-        setIsLoading(false);
+        console.error('发送消息失败:', error)
+        abortActiveAssistantStream()
+        setIsLoading(false)
       }
     },
-    [initWebSocket],
-  );
+    [abortActiveAssistantStream, commitMessages, initWebSocket],
+  )
 
   const sendVoiceMessage = useCallback(
     async (filePath: string) => {
       if (!filePath) {
-        showToast({ title: '录音文件无效', icon: 'none' });
-        return;
+        showToast({title: '录音文件无效', icon: 'none'})
+        return
       }
-      console.log('filePath====', filePath);
+
       try {
-        const log = await userVoiceToText(filePath);
-        console.log('log====', log);
+        const log = await userVoiceToText(filePath)
 
         if (!log.success) {
-          showToast({
-            title: log.message || log.msg || '识别失败',
-            icon: 'none',
-          });
-          return;
+          showToast({title: log.message || log.msg || '识别失败', icon: 'none'})
+          return
         }
         if (!log.data?.length) {
-          showToast({ title: '未识别到语音内容', icon: 'none' });
-          return;
+          showToast({title: '未识别到语音内容', icon: 'none'})
+          return
         }
 
-        await sendMessage(log.data);
-      } catch (err: any) {
-        showToast({ title: err?.message || '语音识别失败', icon: 'none' });
+        await sendMessage(log.data)
+      } catch (error: unknown) {
+        showToast({
+          title: getErrorMessage(error, '语音识别失败'),
+          icon: 'none',
+        })
       }
     },
     [sendMessage],
-  );
+  )
 
   const confirmToolCall = useCallback(
-    async (sessionId: string, params?: { approved?: boolean }) => {
-      const approved = params?.approved !== false;
+    async (sessionId: string, params?: {approved?: boolean; confirmMessageId?: string}) => {
+      if (pendingConfirmRef.current) return
 
-      setMessages(prev =>
-        applyConfirmSubmittedState(prev, sessionId, approved),
-      );
+      const approved = params?.approved !== false
+      const target: ConfirmTarget = {
+        sessionId,
+        confirmMessageId: params?.confirmMessageId,
+      }
+
+      commitMessages(prev => applyConfirmProcessingState(prev, target))
 
       const sendConfirmPayload = () => {
-        aiWebSocketService.send({ sessionId, approved });
-      };
+        aiWebSocketService.send({sessionId, approved})
+      }
 
       try {
-        pendingConfirmRef.current = { sessionId, approved };
-        setIsLoading(true);
+        pendingConfirmRef.current = {
+          sessionId,
+          approved,
+          confirmMessageId: params?.confirmMessageId,
+        }
+        lastApprovedConfirmTargetRef.current = approved ? target : null
+        setIsLoading(true)
 
         if (aiWebSocketService.isConnected()) {
-          sendConfirmPayload();
-          return;
+          sendConfirmPayload()
+          return
         }
 
-        const connected = await connectChatWebSocket(
-          { sessionId, approved },
-          sendConfirmPayload,
-        );
+        const connected = await connectChatWebSocket({sessionId, approved}, sendConfirmPayload)
         if (!connected) {
-          pendingConfirmRef.current = null;
-          setIsLoading(false);
+          pendingConfirmRef.current = null
+          lastApprovedConfirmTargetRef.current = null
+          setIsLoading(false)
+          commitMessages(prev => applyConfirmResetProcessingState(prev, target))
         }
-      } catch (err: any) {
-        pendingConfirmRef.current = null;
-        setIsLoading(false);
-        showToast({ title: err?.message || '操作失败', icon: 'none' });
+      } catch (error: unknown) {
+        pendingConfirmRef.current = null
+        lastApprovedConfirmTargetRef.current = null
+        setIsLoading(false)
+        commitMessages(prev => applyConfirmResetProcessingState(prev, target))
+        showToast({title: getErrorMessage(error, '操作失败'), icon: 'none'})
       }
     },
-    [connectChatWebSocket],
-  );
+    [commitMessages, connectChatWebSocket],
+  )
 
   const disconnect = useCallback(() => {
-    aiWebSocketService.close();
-    setIsConnected(false);
-    chatKeyRef.current = null;
-    conversationIdRef.current = null;
-    pendingConfirmRef.current = null;
-  }, []);
+    clearScheduledClose()
+    connectionEpochRef.current += 1
+    aiWebSocketService.close()
+    setIsConnected(false)
+    setIsLoading(false)
+    conversationIdRef.current = null
+    sessionIdRef.current = null
+    streamingMessageIdRef.current = null
+    streamParserRef.current = null
+    pendingConfirmRef.current = null
+    lastApprovedConfirmTargetRef.current = null
+  }, [clearScheduledClose])
 
   const clearMessages = useCallback(() => {
-    setMessages([]);
-    conversationIdRef.current = null;
-  }, []);
+    disconnect()
+    commitMessages(() => [])
+  }, [commitMessages, disconnect])
 
   useEffect(() => {
     return () => {
-      disconnect();
-    };
-  }, [disconnect]);
+      clearScheduledClose()
+      connectionEpochRef.current += 1
+      aiWebSocketService.close()
+    }
+  }, [clearScheduledClose])
 
   return {
     messages,
@@ -1469,5 +1378,5 @@ export const useAIChat = (options?: UseAIChatOptions) => {
     disconnect,
     clearMessages,
     reconnect: initWebSocket,
-  };
-};
+  }
+}

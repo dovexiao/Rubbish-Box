@@ -29,6 +29,11 @@ const styles = StyleSheet.create({
     lineHeight: px(22),
     marginRight: px(8),
   },
+  introMarkdown: {
+    flex: 1,
+    minWidth: 0,
+    marginRight: px(8),
+  },
   link: {
     flexDirection: 'row',
     alignItems: 'center',

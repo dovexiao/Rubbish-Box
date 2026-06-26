@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import MarkdownView from '@/components/MarkdownView';
 import AppIcon from '@/components/AppIcon';
 import { PhoneChangeMessage } from '../../typing';
 import { getPageTypeConfig } from '../../constants';
@@ -39,7 +40,9 @@ export default function PhoneChangeCard({ data }: Props) {
     <View style={styles.messageRow}>
       <View style={styles.card}>
         <View style={styles.header}>
-          <Text style={styles.title}>{data?.intro}</Text>
+          {data?.intro ? (
+            <MarkdownView content={data.intro} style={styles.introMarkdown} />
+          ) : null}
           <TouchableOpacity
             activeOpacity={0.85}
             style={styles.link}

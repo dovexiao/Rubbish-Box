@@ -41,6 +41,19 @@ const styles = StyleSheet.create({
     color: '#000000',
     lineHeight: px(22),
   },
+  contentMarkdown: {
+    marginBottom: px(16),
+  },
+  replyBubble: {
+    width: '100%',
+  },
+  replyBubbleThinking: {
+    alignSelf: 'flex-start',
+    width: 'auto',
+  },
+  rejectedHint: {
+    marginTop: px(8),
+  },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',

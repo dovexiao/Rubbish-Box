@@ -20,7 +20,6 @@ export type HoldToTalkOptions = {
   holdDelayMs?: number;
   minDurationMs?: number;
   cancelSlideThreshold?: number;
-  cancelAreaPadding?: number;
   maxDurationMs?: number;
   startRecording?: () => Promise<VoiceRecordingHandler>;
   /** 本地转文字后回调文本 */
@@ -29,47 +28,13 @@ export type HoldToTalkOptions = {
   onVoiceFile?: (filePath: string) => void;
 };
 
-type Bounds = { x: number; y: number; width: number; height: number };
-
 const DEFAULT_HOLD_DELAY_MS = 100;
 const DEFAULT_MIN_DURATION_MS = 1000;
-const DEFAULT_CANCEL_SLIDE_THRESHOLD = 120;
-const DEFAULT_CANCEL_AREA_PADDING = 16;
-const DEFAULT_MAX_DURATION_MS = 60 * 1000;
-
-const EMPTY_BOUNDS: Bounds = { x: 0, y: 0, width: 0, height: 0 };
+const DEFAULT_CANCEL_SLIDE_THRESHOLD = 60;
+const DEFAULT_MAX_DURATION_MS = 180 * 1000;
 
 function triggerHoldFeedback(toCancel: boolean, recorderActive: boolean) {
   triggerHoldToTalkTransitionHaptic(toCancel, recorderActive);
-}
-
-function measureViewBounds(
-  viewRef: React.RefObject<View | null>,
-): Promise<Bounds> {
-  return new Promise(resolve => {
-    viewRef.current?.measureInWindow(
-      (x: number, y: number, width: number, height: number) => {
-        resolve({ x, y, width, height });
-      },
-    );
-  });
-}
-
-function isPointInsideBounds(
-  pageX: number,
-  pageY: number,
-  bounds: Bounds,
-  padding: number,
-): boolean {
-  const { x, y, width, height } = bounds;
-  if (width <= 0 || height <= 0) {
-    return true;
-  }
-  const left = x - padding;
-  const right = x + width + padding;
-  const top = y - padding;
-  const bottom = y + height + padding;
-  return pageX >= left && pageX <= right && pageY >= top && pageY <= bottom;
 }
 
 export const useHoldToTalk = ({
@@ -77,7 +42,6 @@ export const useHoldToTalk = ({
   holdDelayMs = DEFAULT_HOLD_DELAY_MS,
   minDurationMs = DEFAULT_MIN_DURATION_MS,
   cancelSlideThreshold = DEFAULT_CANCEL_SLIDE_THRESHOLD,
-  cancelAreaPadding = DEFAULT_CANCEL_AREA_PADDING,
   maxDurationMs = DEFAULT_MAX_DURATION_MS,
   startRecording = startVoiceRecording,
   onResult,
@@ -86,7 +50,6 @@ export const useHoldToTalk = ({
   const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>('idle');
 
   const voiceButtonRef = useRef<View>(null);
-  const cancelAreaRef = useRef<View>(null);
   const recordStartTimeRef = useRef(0);
   const touchStartYRef = useRef(0);
   const pressActiveRef = useRef(false);
@@ -98,11 +61,8 @@ export const useHoldToTalk = ({
     null,
   );
   const stopRecordingRef = useRef<null | (() => Promise<string>)>(null);
-  const lastInsideInputRef = useRef(true);
   const enabledRef = useRef(enabled);
   const onVoiceFileRef = useRef(onVoiceFile);
-  const voiceButtonBoundsRef = useRef<Bounds>({ ...EMPTY_BOUNDS });
-  const inputAreaBoundsRef = useRef<Bounds>({ ...EMPTY_BOUNDS });
 
   useEffect(() => {
     enabledRef.current = enabled;
@@ -132,46 +92,10 @@ export const useHoldToTalk = ({
     busyRef.current = false;
   }, [clearMaxDurationTimer]);
 
-  const refreshBounds = useCallback(async () => {
-    const [voiceBounds, inputBounds] = await Promise.all([
-      measureViewBounds(voiceButtonRef),
-      measureViewBounds(cancelAreaRef),
-    ]);
-    voiceButtonBoundsRef.current = voiceBounds;
-    inputAreaBoundsRef.current =
-      inputBounds.width > 0 && inputBounds.height > 0
-        ? inputBounds
-        : voiceBounds;
-  }, []);
-
-  const isTouchOnVoiceButton = useCallback(
-    (pageX: number, pageY: number) => {
-      const bounds = voiceButtonBoundsRef.current;
-      if (bounds.width <= 0 || bounds.height <= 0) {
-        return false;
-      }
-      return isPointInsideBounds(pageX, pageY, bounds, cancelAreaPadding);
-    },
-    [cancelAreaPadding],
-  );
-
-  const isTouchInsideInputArea = useCallback(
-    (pageX: number, pageY: number) => {
-      return isPointInsideBounds(
-        pageX,
-        pageY,
-        inputAreaBoundsRef.current,
-        cancelAreaPadding,
-      );
-    },
-    [cancelAreaPadding],
-  );
-
   const resetVoiceState = useCallback(() => {
     pressActiveRef.current = false;
     hasStartedRef.current = false;
     cancelingRef.current = false;
-    lastInsideInputRef.current = true;
     clearHoldTimer();
     cleanupRecording();
     setVoiceStatus('idle');
@@ -181,7 +105,6 @@ export const useHoldToTalk = ({
     async (isCancel: boolean) => {
       hasStartedRef.current = false;
       cancelingRef.current = false;
-      lastInsideInputRef.current = true;
       clearMaxDurationTimer();
 
       const stopRecording = stopRecordingRef.current;
@@ -236,37 +159,23 @@ export const useHoldToTalk = ({
   );
 
   const updateCancelStateFromTouch = useCallback(
-    (pageX: number, pageY: number, startY: number) => {
+    (pageY: number, startY: number) => {
       if (!hasStartedRef.current) {
         return;
       }
 
-      const isInsideInput = isTouchInsideInputArea(pageX, pageY);
-      const inputAreaCrossed = isInsideInput !== lastInsideInputRef.current;
-
       const slideUpDistance = startY - pageY;
-      const recoverThreshold = cancelSlideThreshold * 0.7;
-      const shouldCancelBySlide = cancelingRef.current
-        ? slideUpDistance > recoverThreshold
-        : slideUpDistance > cancelSlideThreshold;
-
-      const shouldCancel = !isInsideInput || shouldCancelBySlide;
+      const shouldCancel = slideUpDistance > cancelSlideThreshold;
       const cancelStateChanged = shouldCancel !== cancelingRef.current;
       const recorderActive = !!stopRecordingRef.current;
 
-      if (inputAreaCrossed) {
-        lastInsideInputRef.current = isInsideInput;
-        triggerHoldFeedback(!isInsideInput, recorderActive);
-      } else if (cancelStateChanged) {
-        triggerHoldFeedback(shouldCancel, recorderActive);
-      }
-
       if (cancelStateChanged) {
+        triggerHoldFeedback(shouldCancel, recorderActive);
         cancelingRef.current = shouldCancel;
         setVoiceStatus(shouldCancel ? 'cancel' : 'recording');
       }
     },
-    [cancelSlideThreshold, isTouchInsideInputArea],
+    [cancelSlideThreshold],
   );
 
   const beginVoiceRecording = useCallback(async () => {
@@ -304,17 +213,9 @@ export const useHoldToTalk = ({
 
       hasStartedRef.current = true;
       cancelingRef.current = false;
-      lastInsideInputRef.current = true;
       recordStartTimeRef.current = Date.now();
 
-      // 成功启动且用户仍按住时，再进入录音状态并触发震动
-      triggerLightHaptic();
       setVoiceStatus('recording');
-
-      await refreshBounds();
-      setTimeout(() => {
-        void refreshBounds();
-      }, 50);
 
       stopRecordingRef.current = handler.stop;
 
@@ -324,13 +225,12 @@ export const useHoldToTalk = ({
     } catch (error) {
       hasStartedRef.current = false;
       cancelingRef.current = false;
-      lastInsideInputRef.current = true;
       busyRef.current = false;
       setVoiceStatus('idle');
       console.warn('[HoldToTalk] start recording failed', error);
       showToast({ title: '录音启动失败，请重试', icon: 'none' });
     }
-  }, [finishRecording, maxDurationMs, refreshBounds, startRecording]);
+  }, [finishRecording, maxDurationMs, startRecording]);
 
   const resetVoicePressState = useCallback(() => {
     pressActiveRef.current = false;
@@ -346,14 +246,14 @@ export const useHoldToTalk = ({
       touchStartYRef.current = evt.nativeEvent.pageY;
       pressActiveRef.current = true;
       cancelingRef.current = false;
-      void refreshBounds();
+      triggerLightHaptic();
       clearHoldTimer();
 
       holdTimerRef.current = setTimeout(() => {
         void beginVoiceRecording();
       }, holdDelayMs);
     },
-    [beginVoiceRecording, clearHoldTimer, holdDelayMs, refreshBounds],
+    [beginVoiceRecording, clearHoldTimer, holdDelayMs],
   );
 
   const handleMove = useCallback(
@@ -363,7 +263,6 @@ export const useHoldToTalk = ({
       }
 
       updateCancelStateFromTouch(
-        evt.nativeEvent.pageX,
         evt.nativeEvent.pageY,
         touchStartYRef.current,
       );
@@ -380,7 +279,6 @@ export const useHoldToTalk = ({
       }
 
       updateCancelStateFromTouch(
-        evt.nativeEvent.pageX,
         evt.nativeEvent.pageY,
         touchStartYRef.current,
       );
@@ -399,22 +297,16 @@ export const useHoldToTalk = ({
     void finishRecording(true);
   }, [finishRecording, resetVoicePressState]);
 
-  const shouldCaptureTouch = useCallback(
-    (evt: GestureResponderEvent) => {
-      if (!enabledRef.current || pressActiveRef.current) {
-        return false;
-      }
-      return isTouchOnVoiceButton(evt.nativeEvent.pageX, evt.nativeEvent.pageY);
-    },
-    [isTouchOnVoiceButton],
-  );
+  const shouldStartVoicePress = useCallback(() => {
+    return enabledRef.current && !pressActiveRef.current;
+  }, []);
 
   const gestureCaptureProps = useMemo(
     () => ({
-      onStartShouldSetResponderCapture: shouldCaptureTouch,
+      onStartShouldSetResponderCapture: shouldStartVoicePress,
       onMoveShouldSetResponderCapture: () =>
         pressActiveRef.current || hasStartedRef.current,
-      onStartShouldSetResponder: shouldCaptureTouch,
+      onStartShouldSetResponder: shouldStartVoicePress,
       onMoveShouldSetResponder: () =>
         pressActiveRef.current || hasStartedRef.current,
       onResponderTerminationRequest: () => false,
@@ -428,7 +320,7 @@ export const useHoldToTalk = ({
       handleMove,
       handleRelease,
       handleTerminate,
-      shouldCaptureTouch,
+      shouldStartVoicePress,
     ],
   );
 
@@ -438,14 +330,6 @@ export const useHoldToTalk = ({
       clearMaxDurationTimer();
     };
   }, [clearHoldTimer, clearMaxDurationTimer]);
-
-  useEffect(() => {
-    if (voiceStatus !== 'idle') {
-      requestAnimationFrame(() => {
-        void refreshBounds();
-      });
-    }
-  }, [voiceStatus, refreshBounds]);
 
   useFocusEffect(
     useCallback(() => {
@@ -459,9 +343,7 @@ export const useHoldToTalk = ({
     voiceStatus,
     isVoiceRecording: voiceStatus !== 'idle',
     voiceButtonRef,
-    cancelAreaRef,
     gestureCaptureProps,
-    refreshBounds,
     resetVoiceState,
   };
 };

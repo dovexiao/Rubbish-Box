@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import Video from 'react-native-video';
+import MarkdownView from '@/components/MarkdownView';
 import AppIcon from '@/components/AppIcon';
 import { showToast } from '@/utils';
 import { VideoGuideMessage } from '../../typing';
@@ -27,7 +28,7 @@ export default function VideoGuideCard({ data }: Props) {
   return (
     <View style={styles.messageRow}>
       <View style={styles.card}>
-        <Text style={styles.title}>{data.intro || '充电指导'}</Text>
+        <MarkdownView content={data.intro || '充电指导'} style={styles.title} />
         {videoUrl ? (
           <View style={styles.videoWrap}>
             <Video
