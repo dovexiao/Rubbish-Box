@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, Image, Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
+import { useRoute } from '@react-navigation/native';
 import PageContainer from '@/components/PageContainer';
 import Header from '@/components/Header';
 import NoDevices from '@/components/NoDevices';
@@ -28,7 +29,13 @@ import { styles } from '@/pages/index/style';
 import { checkIfDeviceIgnoredOnIOS } from '@/utils/api';
 
 const Index = () => {
+  const route = useRoute<any>();
+  const pageType = route.params?.pageType;
+  const autoOpenAt = route.params?._autoOpenAt as number | undefined;
+
   const [loading, setLoading] = useState(false);
+  const [shouldOpenManagePop, setShouldOpenManagePop] = useState(false);
+  const lastConsumedAutoOpenAt = useRef<number | undefined>();
   const [hasDevice, setHasDevice] = useState<boolean>(true);
   const [unreadCount, setUnreadCount] = useState(0);
   const [detail, setDetail] = useState<LockInfoDTO | undefined>(undefined);
@@ -147,6 +154,15 @@ const Index = () => {
 
   useFocusEffect(
     useCallback(() => {
+      const isNewAutoOpen =
+        autoOpenAt !== undefined &&
+        autoOpenAt !== lastConsumedAutoOpenAt.current &&
+        String(pageType) === '16';
+      if (isNewAutoOpen) {
+        lastConsumedAutoOpenAt.current = autoOpenAt;
+        setShouldOpenManagePop(true);
+      }
+
       let stopped = false;
       let first = true;
 
@@ -202,7 +218,7 @@ const Index = () => {
         stopped = true;
         poller.stop();
       };
-    }, [load]),
+    }, [autoOpenAt, load, pageType]),
   );
 
   const showGuestWelcome = !hasToken && guestMode;
@@ -479,6 +495,8 @@ const Index = () => {
                 isMultiple={true}
                 isAutoOpenBluetooth={isAutoOpenBluetooth}
                 currentDeviceStatus={currentDeviceStatus}
+                shouldOpenManagePop={shouldOpenManagePop}
+                onManagePopOpened={() => setShouldOpenManagePop(false)}
               >
                 <LockVisual
                   detail={detail}

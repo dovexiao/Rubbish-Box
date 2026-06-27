@@ -1,10 +1,5 @@
 import React, { useCallback } from 'react';
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MarkdownView from '@/components/MarkdownView';
 import AppIcon from '@/components/AppIcon';
@@ -18,9 +13,10 @@ interface Props {
 }
 
 export default function PhoneChangeCard({ data }: Props) {
+  console.log('data', data);
   const navigation = useNavigation<any>();
   const maskedPhone = data.maskedPhone;
-  const pageConfig = getPageTypeConfig(data?.pageType, 7);
+  const pageConfig = getPageTypeConfig(data?.pageType, 1);
 
   const handleNavigate = useCallback(() => {
     const route = pageConfig?.route;
@@ -32,9 +28,24 @@ export default function PhoneChangeCard({ data }: Props) {
       Object.keys(maskedPhone).length > 0
         ? maskedPhone
         : undefined;
+    if (String(data?.pageType) === '16') {
+      navigation.navigate('MainTabs', {
+        screen: route,
+        params: {
+          ...params,
+          pageType: data?.pageType,
+          _autoOpenAt: Date.now(),
+        },
+      });
+      return;
+    }
 
-    navigation.navigate(route, params);
-  }, [maskedPhone, navigation, pageConfig?.route]);
+    navigation.navigate(route, {
+      ...params,
+      pageType: data?.pageType || 1,
+      _autoOpenAt: Date.now(),
+    });
+  }, [data?.pageType, maskedPhone, navigation, pageConfig?.route]);
 
   return (
     <View style={styles.messageRow}>

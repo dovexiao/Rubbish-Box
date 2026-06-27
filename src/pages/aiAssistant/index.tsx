@@ -157,7 +157,7 @@ const AiAssistant = () => {
       enabled: type === 'voice' && !isLoading,
       onResult: handleSendMessage,
       onVoiceFile: sendVoiceMessage,
-      holdDelayMs: 0,
+      skipPermissionCheck: true,
     });
 
   const isExpandedInput =

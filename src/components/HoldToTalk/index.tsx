@@ -21,6 +21,8 @@ export type HoldToTalkOptions = {
   minDurationMs?: number;
   cancelSlideThreshold?: number;
   maxDurationMs?: number;
+  /** 切换语音模式时已检查过麦克风权限时可设为 true，避免重复走权限队列 */
+  skipPermissionCheck?: boolean;
   startRecording?: () => Promise<VoiceRecordingHandler>;
   /** 本地转文字后回调文本 */
   onResult: (text: string) => void;
@@ -43,6 +45,7 @@ export const useHoldToTalk = ({
   minDurationMs = DEFAULT_MIN_DURATION_MS,
   cancelSlideThreshold = DEFAULT_CANCEL_SLIDE_THRESHOLD,
   maxDurationMs = DEFAULT_MAX_DURATION_MS,
+  skipPermissionCheck = false,
   startRecording = startVoiceRecording,
   onResult,
   onVoiceFile,
@@ -190,10 +193,15 @@ export const useHoldToTalk = ({
 
     busyRef.current = true;
 
-    const granted = await checkMicrophonePermission();
-    if (!granted || !pressActiveRef.current) {
+    if (!skipPermissionCheck) {
+      const granted = await checkMicrophonePermission();
+      if (!granted || !pressActiveRef.current) {
+        busyRef.current = false;
+        setVoiceStatus('idle');
+        return;
+      }
+    } else if (!pressActiveRef.current) {
       busyRef.current = false;
-      setVoiceStatus('idle');
       return;
     }
 
@@ -228,9 +236,11 @@ export const useHoldToTalk = ({
       busyRef.current = false;
       setVoiceStatus('idle');
       console.warn('[HoldToTalk] start recording failed', error);
-      showToast({ title: '录音启动失败，请重试', icon: 'none' });
+      if (pressActiveRef.current) {
+        showToast({ title: '录音启动失败，请重试', icon: 'none' });
+      }
     }
-  }, [finishRecording, maxDurationMs, startRecording]);
+  }, [finishRecording, maxDurationMs, skipPermissionCheck, startRecording]);
 
   const resetVoicePressState = useCallback(() => {
     pressActiveRef.current = false;

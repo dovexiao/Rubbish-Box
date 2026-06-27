@@ -34,6 +34,18 @@ const audioRecorderPlayerLib = IS_HARMONY
   : require('react-native-audio-recorder-player');
 
 let sharedRecorder: AudioRecorderPlayerInstance | null = null;
+let recorderOperationQueue = Promise.resolve();
+
+function withRecorderLock<T>(task: () => Promise<T>): Promise<T> {
+  const run = recorderOperationQueue.then(task, task);
+  recorderOperationQueue = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
+}
+
+const RETRY_DELAY_MS = 80;
 
 function ensureNativeRecorderModule() {
   if (IS_HARMONY) {
@@ -212,46 +224,58 @@ async function tryStartRecorder(
 }
 
 export async function startVoiceRecording(): Promise<VoiceRecordingHandler> {
-  const player = getSharedRecorder();
-  const attempts = getRecordingAttempts();
-  let lastError: unknown;
+  return withRecorderLock(async () => {
+    const player = getSharedRecorder();
+    const attempts = getRecordingAttempts();
+    let lastError: unknown;
 
-  for (const attempt of attempts) {
-    try {
-      const startedUri = await tryStartRecorder(player, attempt);
-      const resolvedPath = normalizeRecordingPath(startedUri, attempt.filePath);
+    for (let index = 0; index < attempts.length; index += 1) {
+      const attempt = attempts[index];
+      try {
+        const startedUri = await tryStartRecorder(player, attempt);
+        const resolvedPath = normalizeRecordingPath(
+          startedUri,
+          attempt.filePath,
+        );
 
-      return {
-        stop: async () => {
-          try {
-            const result = await player.stopRecorder();
-            player.removeRecordBackListener();
-            return normalizeRecordingPath(result, resolvedPath);
-          } catch (error) {
-            player.removeRecordBackListener();
-            console.warn('[voiceRecorder] stop failed', error);
-            return resolvedPath;
-          }
-        },
-        onLevel: listener => {
-          if (!attempt.meteringEnabled) {
-            return () => {};
-          }
+        return {
+          stop: async () =>
+            withRecorderLock(async () => {
+              try {
+                const result = await player.stopRecorder();
+                player.removeRecordBackListener();
+                return normalizeRecordingPath(result, resolvedPath);
+              } catch (error) {
+                player.removeRecordBackListener();
+                console.warn('[voiceRecorder] stop failed', error);
+                return resolvedPath;
+              }
+            }),
+          onLevel: listener => {
+            if (!attempt.meteringEnabled) {
+              return () => {};
+            }
 
-          player.addRecordBackListener(event => {
-            listener(normalizeMeteringLevel(event.currentMetering));
+            player.addRecordBackListener(event => {
+              listener(normalizeMeteringLevel(event.currentMetering));
+            });
+
+            return () => {
+              player.removeRecordBackListener();
+            };
+          },
+        };
+      } catch (error) {
+        lastError = error;
+        console.warn('[voiceRecorder] attempt failed', attempt.filePath, error);
+        if (index < attempts.length - 1) {
+          await new Promise<void>(resolve => {
+            setTimeout(resolve, RETRY_DELAY_MS);
           });
-
-          return () => {
-            player.removeRecordBackListener();
-          };
-        },
-      };
-    } catch (error) {
-      lastError = error;
-      console.warn('[voiceRecorder] attempt failed', attempt.filePath, error);
+        }
+      }
     }
-  }
 
-  throw lastError ?? new Error('录音启动失败');
+    throw lastError ?? new Error('录音启动失败');
+  });
 }

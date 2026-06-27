@@ -1,11 +1,19 @@
 import React, { memo, useMemo } from 'react';
-import { Linking, StyleProp, Text, View, ViewStyle } from 'react-native';
+import {
+  Linking,
+  ScrollView,
+  StyleProp,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Markdown, {
   renderRules as defaultRenderRules,
 } from 'react-native-markdown-display';
 import { showToast } from '@/utils';
 import { markdownStyles } from './styles';
+import { normalizeMarkdownTables } from './normalizeMarkdownTables';
 
 const SELECTABLE_RULE_KEYS = [
   'text',
@@ -44,6 +52,61 @@ function withSelectableRules(
 
 const selectableRenderRules = withSelectableRules(defaultRenderRules);
 
+function isEmptyTableCell(
+  node: { content?: string },
+  children: React.ReactNode,
+): boolean {
+  if (node.content?.trim()) {
+    return false;
+  }
+
+  let hasText = false;
+  React.Children.forEach(children, child => {
+    if (typeof child === 'string' && child.trim()) {
+      hasText = true;
+      return;
+    }
+    if (React.isValidElement(child) && child.type === Text) {
+      const text = String(
+        (child.props as { children?: unknown }).children ?? '',
+      );
+      if (text.trim()) {
+        hasText = true;
+      }
+    }
+  });
+
+  return !hasText;
+}
+
+const markdownRenderRules = {
+  ...selectableRenderRules,
+  table: (node, children, parent, styles) => (
+    <ScrollView
+      key={node.key}
+      horizontal
+      nestedScrollEnabled
+      showsHorizontalScrollIndicator
+      style={styles._VIEW_SAFE_tableScroll}
+      contentContainerStyle={styles._VIEW_SAFE_tableScrollContent}
+    >
+      <View style={styles._VIEW_SAFE_table}>{children}</View>
+    </ScrollView>
+  ),
+  th: (node, children, parent, styles) => {
+    if (isEmptyTableCell(node, children)) {
+      return null;
+    }
+    return selectableRenderRules.th!(node, children, parent, styles);
+  },
+  td: (node, children, parent, styles) => {
+    if (isEmptyTableCell(node, children)) {
+      return null;
+    }
+    return selectableRenderRules.td!(node, children, parent, styles);
+  },
+};
+
 export interface MarkdownViewProps {
   content: string;
   isStreaming?: boolean;
@@ -53,6 +116,10 @@ export interface MarkdownViewProps {
 function MarkdownView({ content, style }: MarkdownViewProps) {
   const trimmed = content?.trim() ?? '';
   const markdownStyle = useMemo(() => markdownStyles, []);
+  const normalizedContent = useMemo(
+    () => normalizeMarkdownTables(trimmed),
+    [trimmed],
+  );
 
   if (!trimmed) {
     return null;
@@ -78,10 +145,11 @@ function MarkdownView({ content, style }: MarkdownViewProps) {
     <View style={style}>
       <Markdown
         style={markdownStyle}
-        rules={selectableRenderRules}
+        mergeStyle={false}
+        rules={markdownRenderRules}
         onLinkPress={handleLinkPress}
       >
-        {content}
+        {normalizedContent}
       </Markdown>
     </View>
   );

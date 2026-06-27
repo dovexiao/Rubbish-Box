@@ -27,7 +27,7 @@ const PAGE_TYPE_ENTRIES = {
   },
   7: {
     imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_7.png',
-    route: 'ChangeMobile',
+    route: 'Account',
   },
   8: {
     imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_8.png',
@@ -55,16 +55,16 @@ const PAGE_TYPE_ENTRIES = {
       'https://g.18qjz.cn/img/boklock/deviceChargingVideo_compatible.mp4',
   },
   14: {
-    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_6.png', //解绑微信
+    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_14.png', //解绑微信
     route: 'Account',
   },
   15: {
-    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_3.png', //编辑组合设备
+    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_15.png', //编辑组合设备
     route: 'CombineDevice',
   },
   16: {
-    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_3.png', //修改组合设备
-    route: 'MultipleDevice',
+    imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_16.png', //修改组合设备
+    route: 'Multiple',
   },
 } satisfies Record<number, PageTypeConfig>;
 

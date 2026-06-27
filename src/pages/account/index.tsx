@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, AppState } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Flex, PageContainer } from '@/components';
 import AppIcon from '@/components/AppIcon';
 import { getAccountInfo, getThirdState, userThirdBind } from '@/services/user';
@@ -20,25 +20,54 @@ interface AccountInfo {
 
 export default function Account() {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const pageType = route.params?.pageType;
+  const autoOpenAt = route.params?._autoOpenAt as number | undefined;
+
   const [detail, setDetail] = useState<AccountInfo | null>(null);
+  const [shouldOpenMobilePop, setShouldOpenMobilePop] = useState(false);
+  const [shouldOpenUnbindWechatPop, setShouldOpenUnbindWechatPop] =
+    useState(false);
   const popConfirmRef = useRef<any>(null);
   const unbindWechatRef = useRef<any>(null);
   const appStateSubRef = useRef<any>(null);
-
-  const loadAccount = useCallback(async () => {
-    try {
-      const res = await getAccountInfo({});
-      const data = (res as any)?.data ?? res ?? {};
-      setDetail(data);
-    } catch (e) {
-      showToast({ title: '获取账号信息失败', icon: 'info' });
-    }
-  }, []);
+  const lastConsumedAutoOpenAt = useRef<number | undefined>();
 
   useFocusEffect(
     useCallback(() => {
-      loadAccount();
-    }, [loadAccount]),
+      let active = true;
+
+      (async () => {
+        try {
+          const res = await getAccountInfo({});
+          const data = (res as any)?.data ?? res ?? {};
+          if (!active) return;
+
+          const isNewAutoOpen =
+            autoOpenAt !== undefined &&
+            autoOpenAt !== lastConsumedAutoOpenAt.current;
+          const shouldOpen7 =
+            isNewAutoOpen && String(pageType) === '7';
+          const shouldOpen14 =
+            isNewAutoOpen && String(pageType) === '14';
+          if (shouldOpen7 || shouldOpen14) {
+            lastConsumedAutoOpenAt.current = autoOpenAt;
+          }
+
+          setDetail(data);
+          setShouldOpenMobilePop(shouldOpen7);
+          setShouldOpenUnbindWechatPop(shouldOpen14);
+        } catch (e) {
+          if (active) {
+            showToast({ title: '获取账号信息失败', icon: 'info' });
+          }
+        }
+      })();
+
+      return () => {
+        active = false;
+      };
+    }, [autoOpenAt, pageType]),
   );
 
   const handleChangeMobile = () => {
@@ -131,6 +160,18 @@ export default function Account() {
     if (!detail?.mobile) return;
     navigation.navigate('Logoff', { mobile: detail.mobile });
   };
+
+  useEffect(() => {
+    if (!detail || !shouldOpenMobilePop) return;
+    popConfirmRef.current?.open();
+    setShouldOpenMobilePop(false);
+  }, [detail, shouldOpenMobilePop]);
+
+  useEffect(() => {
+    if (!detail || !shouldOpenUnbindWechatPop) return;
+    unbindWechatRef.current?.open();
+    setShouldOpenUnbindWechatPop(false);
+  }, [detail, shouldOpenUnbindWechatPop]);
 
   return (
     <PageContainer

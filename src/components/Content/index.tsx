@@ -61,6 +61,8 @@ interface ContentProps {
   isMultiple?: boolean;
   isAutoOpenBluetooth?: boolean;
   currentDeviceStatus: LockVisualStatus;
+  shouldOpenManagePop?: boolean;
+  onManagePopOpened?: () => void;
 }
 
 const Content: React.FC<ContentProps> = ({
@@ -72,6 +74,8 @@ const Content: React.FC<ContentProps> = ({
   children,
   isAutoOpenBluetooth,
   currentDeviceStatus,
+  shouldOpenManagePop,
+  onManagePopOpened,
 }) => {
   const navigation = useAppNavigation();
 
@@ -104,6 +108,14 @@ const Content: React.FC<ContentProps> = ({
       funs();
     }
   }, [detail]);
+
+  useEffect(() => {
+    if (!detail || !shouldOpenManagePop || !isMultiple || detail.role !== 1) {
+      return;
+    }
+    manageMultipleRef.current?.open();
+    onManagePopOpened?.();
+  }, [detail, shouldOpenManagePop, isMultiple, onManagePopOpened]);
 
   const sleep = (time: number) =>
     new Promise((resolve: any) => setTimeout(resolve, time));
