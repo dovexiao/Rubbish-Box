@@ -462,6 +462,8 @@ PODS:
     - React-jsi (= 0.72.5)
     - React-logger (= 0.72.5)
     - React-perflogger (= 0.72.5)
+  - ReactNativeAvoidSoftinput (4.0.2):
+    - React-Core
   - rn-fetch-blob (0.12.0):
     - React-Core
   - RNAudioRecorderPlayer (3.6.12):
@@ -582,6 +584,7 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - ReactNativeAvoidSoftinput (from `../node_modules/react-native-avoid-softinput`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNAudioRecorderPlayer (from `../node_modules/react-native-audio-recorder-player`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
@@ -731,6 +734,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  ReactNativeAvoidSoftinput:
+    :path: "../node_modules/react-native-avoid-softinput"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
   RNAudioRecorderPlayer:
@@ -833,6 +838,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 9ba186f20b99bb21a3728a46f46dfe292600fab5
   React-utils: 5b4df8692e966fd50e2d75c0f9659e176a292384
   ReactCommon: dab8c31069604c833aacc7409ad5ce729ef6ee62
+  ReactNativeAvoidSoftinput: fbd41ddcc102ce097b50589189578ef52bcf80fc
   rn-fetch-blob: 25612b6d6f6e980c6f17ed98ba2f58f5696a51ca
   RNAudioRecorderPlayer: 11df0c7b614e9767ef24d896465c3a758c592de7
   RNCAsyncStorage: b6410dead2732b5c72a7fdb1ecb5651bbcf4674b
