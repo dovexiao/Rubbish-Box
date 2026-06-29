@@ -23,6 +23,12 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     maxWidth: px(260),
   },
+  tagBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(6),
+  },
   tagContainer: {
     marginLeft: px(6),
     paddingHorizontal: px(4),
@@ -47,5 +53,12 @@ export const styles = StyleSheet.create({
     fontSize: fontSize(16),
     color: '#333',
     fontWeight: 'bold',
+  },
+  gatewayTag: {
+    backgroundColor: '#dcedff',
+    color: '#1890ff',
+  },
+  gatewayTagContainer: {
+    backgroundColor: '#dcedff',
   },
 });

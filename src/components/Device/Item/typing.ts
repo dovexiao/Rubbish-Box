@@ -22,4 +22,7 @@ export interface DeviceItemDTO {
   groupCount?: number;
   /*设备图片 */
   imageUrl: string;
+
+  /*是否是433网关 */
+  isGateway?: number;
 }

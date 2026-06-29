@@ -49,6 +49,9 @@ interface PageNavProps {
   onBackPress?: () => void;
   /** 标题颜色 */
   titleColor?: string;
+
+  /** 自定义导航栏标题 */
+  customTitle?: React.ReactNode;
 }
 
 /**
@@ -233,6 +236,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
           rightContent,
           onBackPress,
           titleColor = '#333333',
+          customTitle,
         } = pageNavProps;
 
         const navRightContent = extraNode || rightContent;
@@ -270,14 +274,17 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                 </TouchableOpacity>
               )}
             </View>
-            {text && (
+            {(text || customTitle) && (
               <View style={styles.navHeaderCenter}>
-                <Text
-                  style={[styles.navHeaderTitle, { color: titleColor }]}
-                  numberOfLines={1}
-                >
-                  {text}
-                </Text>
+                {text && (
+                  <Text
+                    style={[styles.navHeaderTitle, { color: titleColor }]}
+                    numberOfLines={1}
+                  >
+                    {text}
+                  </Text>
+                )}
+                {customTitle && customTitle}
               </View>
             )}
             <View style={styles.navHeaderRight}>{navRightContent}</View>

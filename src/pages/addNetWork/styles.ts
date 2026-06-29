@@ -75,6 +75,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     lineHeight: px(22),
   },
+  scanFrameWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scanFrame: {
+    width: px(300),
+    height: px(300),
+    marginTop: px(82),
+    marginBottom: px(32),
+  },
 });
 
 export default styles;

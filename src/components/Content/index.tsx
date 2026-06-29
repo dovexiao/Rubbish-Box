@@ -774,6 +774,8 @@ const Content: React.FC<ContentProps> = ({
               manageMultipleRef.current?.close();
               navigation.navigate('CompositeManage', {
                 lockId: detail.id,
+                isGateway: detail?.isGateway,
+                gatewayKeySn: detail?.gatewayKeySn,
               });
             }}
           >

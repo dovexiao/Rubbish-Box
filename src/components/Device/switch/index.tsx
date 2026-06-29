@@ -135,11 +135,12 @@ export const DeviceSwitch: React.FC<Props> = ({
 
   const handleClick = () => {
     if (lockInfo?.isGroup) {
-      navigation.navigate('CombineDevice', {
-        type: false,
-        id: lockInfo?.id,
-        lockName: lockInfo?.lockName,
-      });
+      // navigation.navigate('CombineDevice', {
+      //   type: false,
+      //   id: lockInfo?.id,
+      //   lockName: lockInfo?.lockName,
+      // });
+      navigation.navigate('NetWorkMiddle');
     } else {
       navigation.navigate('BindDevice');
     }

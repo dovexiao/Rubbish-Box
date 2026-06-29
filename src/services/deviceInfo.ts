@@ -164,3 +164,15 @@ export const allDeleteKeyResult = createFetch<any, any>(
   '/boke/userLock/key/unbindAllRes',
   'POST',
 );
+
+// 校验sn
+export const checkSn = createFetch<any, any>(
+  '/boke/userLock/gateway/group/bind',
+  'POST',
+);
+
+// 网关变更
+export const gatewayChange = createFetch<any, any>(
+  '/boke/userLock/update/gateway/group',
+  'POST',
+);

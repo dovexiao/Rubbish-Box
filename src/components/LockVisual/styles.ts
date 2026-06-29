@@ -30,6 +30,19 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: px(45),
   },
+  gatewayTagContainer: {
+    position: 'absolute',
+    top: px(108),
+    right: px(47),
+    backgroundColor: '#dcedff',
+    borderRadius: px(6),
+    paddingHorizontal: px(6),
+    paddingVertical: px(3),
+  },
+  gatewayTag: {
+    fontSize: fontSize(12),
+    color: '#1890ff',
+  },
   actionButtonDeep: {
     backgroundColor: 'rgba(0,0,0,0.2)',
   },

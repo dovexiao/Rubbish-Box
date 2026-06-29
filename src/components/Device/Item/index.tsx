@@ -32,8 +32,15 @@ export const DeviceItem: React.FC<DeviceItemProps> = ({
             <Text style={styles.deviceNameText} numberOfLines={1}>
               {data.lockName}
             </Text>
-            <View style={styles.tagContainer}>
-              <Text style={styles.tag}>{data.roleName}</Text>
+            <View style={styles.tagBox}>
+              <View style={styles.tagContainer}>
+                <Text style={styles.tag}>{data.roleName}</Text>
+              </View>
+              {!!data.isGateway && (
+                <Flex style={[styles.tagContainer, styles.gatewayTagContainer]}>
+                  <Text style={[styles.tag, styles.gatewayTag]}>433网关</Text>
+                </Flex>
+              )}
             </View>
           </Flex>
           {data.role === 1 && (
