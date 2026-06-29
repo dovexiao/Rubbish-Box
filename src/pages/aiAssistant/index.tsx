@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput as RNTextInput,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -66,6 +67,7 @@ const AiAssistant = () => {
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
 
   const messageListRef = useRef<ScrollView>(null);
+  const questionInputRef = useRef<RNTextInput>(null);
 
   const {
     messages,
@@ -165,6 +167,20 @@ const AiAssistant = () => {
   const showThinking =
     isLoading && !hasStreamingAssistant && !hasActiveConfirmFlow(messages);
 
+  useEffect(() => {
+    if (!isExpandedInput || !isInputFocused) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      questionInputRef.current?.focus();
+    }, 30);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isExpandedInput, isInputFocused]);
+
   const handleClickSend = () => {
     if (!canSend) return;
     handleSendMessage();
@@ -259,7 +275,7 @@ const AiAssistant = () => {
         >
           <View style={styles.questionInputContentExpanded}>
             <TextInput
-              autoFocus={isInputFocused}
+              ref={questionInputRef}
               multiline
               scrollEnabled={false}
               editable={!isLoading}

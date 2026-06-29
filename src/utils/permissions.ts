@@ -1,4 +1,5 @@
 import { Platform, Linking } from 'react-native';
+import { Camera } from 'react-native-vision-camera';
 import {
   check,
   request,
@@ -461,6 +462,34 @@ export async function checkMicrophonePermission(): Promise<boolean> {
         }
 
         return false;
+      }
+
+      // Add HarmonyOS support
+      const platformOS = Platform.OS as string;
+      if (platformOS === 'harmony' || platformOS === 'ohos') {
+        try {
+          const checkResult = await Camera.getMicrophonePermissionStatus();
+
+          if (checkResult === 'granted') {
+            return true;
+          }
+
+          await showPermissionPromptIfNeeded('microphone');
+          const requestResult = await Camera.requestMicrophonePermission();
+          if (requestResult === 'granted') {
+            return true;
+          }
+
+          if (requestResult === 'denied' || requestResult === 'restricted') {
+            showToast('麦克风权限已被永久拒绝，请在设置中开启');
+            return false;
+          }
+
+          return false;
+        } catch (error) {
+          console.warn('HarmonyOS check microphone permission error:', error);
+          return false;
+        }
       }
 
       return true;
